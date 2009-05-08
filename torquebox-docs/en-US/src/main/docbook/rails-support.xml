@@ -58,6 +58,44 @@
     </section>
 
     <section>
+      <title>Include the TorqueBox gem</title>
+
+      <para>In order to gain access to the advanced features of TorqueBox, you
+      must include the TorqueBox gem into your project.</para>
+
+      <para></para>
+
+      <section>
+        <title>Using Git Submodules</title>
+
+        <para>IF you are using Git for the revision-control of your project,
+        you may want to use Git's submodule facility to link the gem from the
+        official repository into your project.</para>
+
+        <para><example>
+            <title>Using Git submodule for
+            <filename>torquebox-gem</filename></title>
+
+            <para><screen><prompt>$</prompt> <command>git submodule add git://github.com/torquebox/torquebox-gem.git vendor/plugins/torquebox-gem</command>
+<computeroutput>Initialize vendor/plugins/torquebox-gem/.git
+Initialized empty Git repository in /Users/bob/myapp/vendor/plugins/torquebox-gem/.git/
+remote: Counting objects: 26, done.
+remote: Compressing objects: 100% (23/23), done.
+remote: Total 26 (delta 1), reused 0 (delta 0)
+Receiving objects: 100% (26/26), 7.30 KiB, done.
+Resolving deltas: 100% (1/1), done.</computeroutput>
+<prompt>$</prompt> <command>cd vendor/plugins/torquebox-gem</command>
+<prompt>$</prompt> <command>git checkout ${project.version}</command></screen></para>
+          </example></para>
+
+        <para>Your project will be linked to ${project.version} of
+        <filename>torquebox-gem</filename>. To later update the version you're
+        using with your project, simply <command>checkout</command> a new
+        commit, tag or branch.</para>
+      </section>
+    </section>
+
+    <section>
       <title>Eliminate or replace "native" Gems</title>
 
       <para>TODO</para>
