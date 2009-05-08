@@ -13,3 +13,6 @@
 [submodule "torquebox-spi"]
 	path = torquebox-spi
 	url = git://github.com/torquebox/torquebox-spi.git
+[submodule "torquebox-rails"]
+	path = torquebox-rails
+	url = git://github.com/torquebox/torquebox-rails.git
