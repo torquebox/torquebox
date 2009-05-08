@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<structure>
+    <context>
+        <path name=""/>
+        <metaDataPath>
+            <path name="META-INF"/>
+        </metaDataPath>
+        <classpath>
+            <path name="lib/core/"         suffixes=".jar"/>
+            <path name="lib/dependencies/" suffixes=".jar"/>
+        </classpath>
+    </context>
+</structure>

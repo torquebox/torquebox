@@ -1,0 +1,6 @@
+--- 
+application: 
+  RAILS_ENV: development
+  RAILS_ROOT: /Users/bob/oddthesis/oddthesis
+web: 
+  context: /

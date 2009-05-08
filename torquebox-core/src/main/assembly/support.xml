@@ -1,0 +1,47 @@
+<assembly>
+  <id>support</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>jboss-rails-support</directory>
+      <outputDirectory>/jboss-rails-support-${pom.version}</outputDirectory>
+      <includes>
+        <include>**/*</include>
+      </includes>
+      <excludes>
+        <exclude>Rakefile</exclude>
+        <exclude>*.gemspec</exclude>
+        <exclude>.git/**</exclude>
+        <exclude>**/.gitignore</exclude>
+        <exclude>**/*.swp</exclude>
+        <exclude>pkg/**</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+<!--
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/jboss-rails-support-${pom.version}/client-lib/core</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>org.jboss.rails:jboss-rails</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/jboss-rails-support-${pom.version}/client-lib/dependencies</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <scope>provided</scope>
+      <includes>
+        <include>javax.jms:jms</include>
+        <include>jboss.messaging:jboss-messaging</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+-->
+</assembly>
