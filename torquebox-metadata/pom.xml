@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox</artifactId>
+    <version>0.9.1-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-metadata</artifactId>
+  <packaging>jar</packaging>
+  <name>TorqueBox MetaData</name>
+  <description></description>
+
+  <scm>
+    <connection>scm:git:git://github.com/bobmcwhirter/jboss-rails.git</connection>
+    <developerConnection>scm:git:ssh://github.com/bobmcwhirter/jboss-rails.git</developerConnection>
+    <url>http://github.com/bobmcwhirter/jboss-rails/tree/master</url>
+  </scm>
+
+  <distributionManagement>
+    <repository>
+      <id>oddthesis.repo</id>
+      <name>Odd Thesis repository</name>
+      <url>scpexe://repo.oddthesis.org/opt/oddthesis/repo/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>oddthesis.SNAPSHOT.repo</id>
+      <name>Odd Thesis SNAPSHOT repository</name>
+      <url>scpexe://repo.oddthesis.org/opt/oddthesis/repo/maven2/SNAPSHOTS</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-vfs-spi</artifactId>
+      <version>${jboss.mc.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+</project>
