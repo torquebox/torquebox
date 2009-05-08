@@ -1,0 +1,15 @@
+[submodule "torquebox-core"]
+	path = torquebox-core
+	url = torquebox-core/
+[submodule "torquebox-docs"]
+	path = torquebox-docs
+	url = torquebox-docs/
+[submodule "torquebox-gem"]
+	path = torquebox-gem
+	url = torquebox-gem
+[submodule "torquebox-metadata"]
+	path = torquebox-metadata
+	url = torquebox-metadata/
+[submodule "torquebox-spi"]
+	path = torquebox-spi
+	url = torquebox-spi/

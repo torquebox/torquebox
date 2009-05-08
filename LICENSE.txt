@@ -1,0 +1,6 @@
+
+JBoss Rails is licensed under the LGPL.  
+- Please see LICENSE-LGPL.txt.
+
+ActiveRecord-JDBC-Adapter is licensed under the MIT license.  
+- Please see LICENSE-MIT.txt.

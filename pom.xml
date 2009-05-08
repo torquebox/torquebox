@@ -1,0 +1,168 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox</artifactId>
+  <version>0.9.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>TorqueBox</name>
+  <url>http://www.torquebox.org/</url>
+
+  <description>
+    The TorqueBox Ruby Application Platform
+  </description>
+
+<!--
+  <scm>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/trunk/</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/microcontainer/trunk/</developerConnection>
+    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/microcontainer/trunk/</url>
+  </scm>
+-->
+
+  <properties>
+    <jboss.as.version>5.0.1.GA</jboss.as.version>
+    <jboss.mc.version>2.0.4.GA</jboss.mc.version>
+    <jruby.version>1.2.0</jruby.version>
+    <jboss.vfs.version>2.1.0.GA</jboss.vfs.version>
+    <cxf.version>2.1.3</cxf.version>
+    <mobicents.sip.version>0.9-SNAPSHOT</mobicents.sip.version>
+    <mobicents.spec.version>1.1.9-SNAPSHOT</mobicents.spec.version>
+    <jboss.messaging.version>1.4.3.GA</jboss.messaging.version>
+    <jboss.messaging.jms.version>1.1</jboss.messaging.jms.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>repository.jboss.org</id>
+      <name>JBoss Releases Repository</name>
+      <url>http://repository.jboss.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>snapshots.jboss.org</id>
+      <name>JBoss Snapshots Repository</name>
+      <url>http://snapshots.jboss.org/maven2</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>apache-ws-snapshots2</id>
+      <name>Apache WS Repository</name>
+      <layout>default</layout>
+      <url>http://ws.zones.apache.org/repository2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+
+
+  <!-- Plugin Repositories -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repository.jboss.org</id>
+      <name>JBoss Plugin Releases</name>
+      <url>http://repository.jboss.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>snapshots.jboss.org</id>
+      <name>JBoss Plugin Snapshots</name>
+      <url>http://snapshots.jboss.org/maven2</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>snapshots.repository.codehaus.org</id>
+      <name>Codehaus Snapshots Repository</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${artifactId}</finalName>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <modules>
+    <module>torquebox-spi</module>
+    <module>torquebox-metadata</module>
+    <module>torquebox-core</module>
+    <module>torquebox-docs</module>
+  </modules>
+
+
+</project>
