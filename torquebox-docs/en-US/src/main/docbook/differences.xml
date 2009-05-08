@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+  <title>Differences between TorqueBox &amp; Traditional Ruby</title>
+
+  <section>
+    <title>The "application platform" concept</title>
+
+    <para>Traditionally, Ruby applications were resposible for
+    their services from the ground-up.  You literally ran the
+    application.  It would import support libraries to handle
+    HTTP listening, for example.
+    </para>
+
+    <para><mediaobject>
+        <imageobject role="html">
+          <imagedata align="center" fileref="images/vs-traditional.png"
+                     format="PNG" />
+        </imageobject>
+
+        <imageobject role="fo">
+          <imagedata align="center" fileref="images/vs-traditional.svg"
+                     format="SVG" scale="80" />
+        </imageobject>
+      </mediaobject>
+    </para>
+
+    <para>
+    An application platform provides the foundations for any and all
+    application functionality.  The deliverable application itself
+    does not need to handle the networking layers, the messaging facilities
+    or the clustering logic.  This is provided to the application
+    "for free".
+    </para>
+
+    <para><mediaobject>
+        <imageobject role="html">
+          <imagedata align="center" fileref="images/vs-jboss.png" format="PNG" />
+        </imageobject>
+
+        <imageobject role="fo">
+          <imagedata align="center" fileref="images/vs-jboss.svg" format="SVG"
+                     scale="80" />
+        </imageobject>
+      </mediaobject></para>
+
+
+  </section>
+</chapter>

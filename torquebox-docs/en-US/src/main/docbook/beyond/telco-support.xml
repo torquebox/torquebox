@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="telco-support">
+  <title>Telco Support</title>
+
+  <para>Telco support allows to build powerful converged VoIP applications by
+  providing means for an application to handle/send SIP Messages. Note that
+  Mobicents Sip Servlets is needed to be able to use this feature and that it
+  is higly recommended to have knowledge about SIP and SIP Servlets 1.1 Java
+  Specification to use it effectively.</para>
+
+  <sect1>
+    <title>Making phone calls</title>
+
+    <para>To be able to initiate the setup of a call from your JRuby-Rails
+    application here is what you need to do in your controller :</para>
+
+    <para><example>
+        <title>Code Excerpt to set up a call</title>
+
+        <para><screen># get the sip factory from the servlet context
+@sip_factory = $servlet_context.get_attribute('javax.servlet.sip.SipFactory')
+puts @sip_factory
+
+# create a new sip application session
+@app_session = request.env['servlet_request'].get_session().get_application_session();
+
+# create a new sip servlet request to start a call to the sip phone with from header equals to "sip:my_jruby_app_rocks@mobicents.org" and the to header equals to the sip_uri from the complaint variable
+@sip_request = @sip_factory.create_request(@app_session, 'INVITE', 'sip:my_jruby_app_rocks@mobicents.org', @complaint.sip_uri);
+
+# actually sending the request out to the sip phone
+@sip_request.send();</screen></para>
+      </example>This piece of code will create a SIP Request and send it out.
+    But when the user will answer OK, you need to have some code to handle the
+    response and this can be done by defining your own SIP controller</para>
+  </sect1>
+
+  <sect1>
+    <title>Ruby Telco Classes</title>
+
+    <para>In your Ruby or Rails application, all SIP classes should be placed
+    under <filename>RAILS_ROOT/app/sip/</filename>. No special naming
+    convention is required, but the class name must match the path to the file
+    containing it.</para>
+
+    <informaltable>
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry align="center">File name</entry>
+
+            <entry align="center">Class name</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><filename>RAILS_ROOT/app/sip/telco_handler</filename></entry>
+
+            <entry><type>SipHandler</type></entry>
+          </row>
+
+          <row>
+            <entry><filename>RAILS_ROOT/app/sip/telco/handler</filename></entry>
+
+            <entry><type>Telco::Handler</type></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>Additionally, each Telco class must descend, at some point, from
+    <type>JBoss::Jobs::SipBaseHandler</type>.</para>
+
+    <para><example>
+        <title>SIP Telco class example
+        (<filename>telco/handler.rb</filename>)</title>
+
+        <para><screen>module Telco
+  class Handler &lt; JBoss::Sip::SipBaseHandler
+    # Handle INVITE request to setup a call by answering 200 OK
+    def do_invite(request) 
+      request.create_response(200).send
+    end
+    
+    # Handle BYE request to tear down a call by answering 200 OK
+    def do_bye(request) 
+      request.create_response(200).send
+    end
+
+    # Handle REGISTER request so that a SIP Phone can register with the application by answering 200 OK
+    def do_register(request) 
+      request.create_response(200).send
+    end
+ 
+    # Handle a successful response to an application initiated INVITE to set up a call (when a new complaint is filed throught the web part) by send an acknowledgment
+    def do_success_response(response)
+      response.create_ack.send
+    end
+  end
+end</screen></para>
+      </example></para>
+
+    <para>Note that this is an example but the handler class can extend all
+    the do_XXX methods as defined per the Sip Servlets 1.1 Java
+    Specification.</para>
+  </sect1>
+</chapter>

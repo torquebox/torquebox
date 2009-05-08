@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+  <title>Installation</title>
+
+  <section>
+    <title>Installation using Complete Binary Distribution</title>
+
+    <para>The latest Complete Binary Distribution contains:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The TorqueBox server, ready-to-run</para>
+      </listitem>
+
+      <listitem>
+        <para>A complete JRuby installation</para>
+      </listitem>
+    </itemizedlist>
+
+    <section>
+      <title>Get the latest version</title>
+
+      <para>You can obtain the latest version of TorqueBox from the TorqueBox
+      repository. As of this writing, the latest version is
+      ${project.version}.</para>
+
+      <para><ulink
+      url="http://repository.torquebox.org/maven2/org/torquebox/torquebox/${project.version}/torquebox-${project.version}-complete.zip">http://repository.torquebox.org/releases/torquebox-${project.version}-complete.zip</ulink></para>
+    </section>
+
+    <section>
+      <title>Unzip it somewhere handy</title>
+
+      <para>We'll install TorqueBox under your user's $HOME directory. The
+      <envar>$TORQUEBOX_HOME</envar> variable should be set to the path where
+      the TorqueBox server is unpacked.</para>
+
+      <para><screen><prompt>$</prompt> <command>unzip torquebox-${project.version}-complete.zip</command>
+<prompt>$</prompt> <command>cd torquebox-${project.version}</command>
+<prompt>$</prompt> <command>export TORQUEBOX_HOME=$PWD</command>
+</screen></para>
+
+      <para>Alternatively, you can set <envar>$TORQUEBOX_HOME</envar> from
+      your <filename>.bashrc</filename> or similar file</para>
+
+      <para><screen>export TORQUEBOX_HOME=$HOME/torquebox-${project.version}</screen></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Installing the TorqueBox deployer into an existing JBoss AS
+    5</title>
+
+    <para>To enable an existing JBoss AS5 installation for Ruby support, a
+    single JAR file, the <emphasis>TorqueBox Deployer</emphasis> needs to be
+    installed.</para>
+
+    <para>Before installing the TorqueBox Deployer into an existing JBoss AS,
+    you need to ensure that JBoss is not running. Once the AS is stopped,
+    follow the directions below to enable your AS to become
+    Ruby-compatible.</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Locate the latest version of the TorqueBox Deployer JAR from the
+        Odd Thesis repository: <itemizedlist>
+            <listitem>
+              <ulink
+              url="http://repo.oddthesis.org/maven2/org/jboss/rails/jboss-rails/">Official
+              releases</ulink>
+            </listitem>
+
+            <listitem>
+              <ulink
+              url="http://repository.torquebox.org/maven2-SNAPSHOTS/org/torquebox/torquebox-deployer/torquebox-deployer-${project.version}.jar">Interim
+              snapshot releases</ulink>
+            </listitem>
+          </itemizedlist></para>
+      </listitem>
+
+      <listitem>
+        <para>Download the JAR with the name in the format of
+        <emphasis>torquebox-deployer-${project.version}.jar</emphasis>.
+        </para>
+      </listitem>
+
+      <listitem>
+        <para>Determine the location of your JBoss AS5 server and the
+        configuration you plan to use. For clustering the
+        <emphasis>all</emphasis> configuration is required. For
+        non-clustering, the <emphasis>web</emphasis> or
+        <emphasis>default</emphasis> configurations are acceptable.</para>
+
+        <para>The <envar>$JBOSS_HOME</envar> environment variable should be
+        set to the top of your JBoss AS5 installation directory. By
+        convention, the <envar>$JBOSS_CONF</envar> environment variable should
+        contain the name of the configuration you are using.</para>
+      </listitem>
+
+      <listitem>
+        <para>Copy the deployer JAR into the <filename>deployers/</filename>
+        directory of the configuration.</para>
+
+
+        <screen><prompt>$</prompt> <command>cp torquebox-deployer-${project.version}.jar $JBOSS_HOME/server/$JBOSS_CONF/deployers</command></screen>
+      </listitem>
+    </orderedlist>
+  </section>
+</chapter>

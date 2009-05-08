@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+  <title>Rack Support</title>
+
+  <section>
+    <title>Ruby-Rack</title>
+
+    <para>Ruby-Rack is a generalized framework for interfacing web-servers
+    with web frameworks such as Ruby-on-Rails, Merb, or Sinatra. Internally
+    TorqueBox uses Rack to integrate with Rails currently. Further exposure of
+    Rack support for other frameworks, along with bare Rack capabilities
+    (<filename>config.ru</filename>) is planned.</para>
+  </section>
+</chapter>

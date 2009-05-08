@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="scheduled-jobs">
+  <title>Scheduled Jobs</title>
+
+  <para>Scheduled jobs allow an application to have recurring activities that
+  occur outside of any web thread-of-control.</para>
+
+  <sect1>
+    <title>Ruby Job Classes</title>
+
+    <para>Each scheduled job maps to exactly one Ruby class. In your Rails
+    application, all scheduled job classes should be placed under
+    <filename>RAILS_ROOT/app/jobs/</filename>. No special naming convention is
+    required, but the class name must match the path to the file containing
+    it.</para>
+
+    <informaltable>
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry align="center">File name</entry>
+
+            <entry align="center">Class name</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><filename>RAILS_ROOT/app/jobs/mail_notifier</filename></entry>
+
+            <entry><type>MailNotifier</type></entry>
+          </row>
+
+          <row>
+            <entry><filename>RAILS_ROOT/app/jobs/mail/notifier</filename></entry>
+
+            <entry><type>Mail::Notifier</type></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>Additionally, each job class must descend, at some point, from
+    <type>JBoss::Jobs::BaseJob</type>.</para>
+
+    <para><example>
+        <title>Skeleton scheduled job class
+        (<filename>mail/notifier.rb</filename>)</title>
+
+        <para><screen>module Mail
+  class Notifier &lt; JBoss::Jobs::BaseJob
+
+    # implementation goes here
+
+  end
+end</screen></para>
+      </example>Each job class should implement a no-argument
+    <methodname>run()</methodname> method to perform the work when
+    fired.</para>
+
+    <para><example>
+        <title>Scheduled job implementation
+        (<filename>mail/notifier.rb</filename>)</title>
+
+        <para><screen>module Mail
+  class Notifier &lt; JBoss::Jobs::BaseJob
+
+    def run()
+
+      # perform work here
+
+    end
+
+  end
+end</screen></para>
+      </example></para>
+
+    <para>From within the class's <methodname>run()</methodname> method, the
+    full application environment is available. ActiveRecord models may be used
+    in a manner similar to controllers.</para>
+  </sect1>
+
+  <sect1>
+    <title>JBoss::Jobs::BaseJob functionality</title>
+
+    <para>The JBoss::Jobs::BaseJob class provides access to helpful
+    functionality.</para>
+
+    <sect2>
+      <title>Logging</title>
+
+      <para>To gain access to a logging device, the
+      <methodname>log()</methodname> method is available. Messages of various
+      level can be logged.</para>
+
+      <informaltable>
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Method</entry>
+
+              <entry align="center">Use</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><methodname>trace()</methodname></entry>
+
+              <entry>Tracing program execution</entry>
+            </row>
+
+            <row>
+              <entry><methodname>debug()</methodname></entry>
+
+              <entry>Development-time debug information</entry>
+            </row>
+
+            <row>
+              <entry><methodname>info()</methodname></entry>
+
+              <entry>Information messages for the user</entry>
+            </row>
+
+            <row>
+              <entry><methodname>warn()</methodname></entry>
+
+              <entry>Warnings for the user</entry>
+            </row>
+
+            <row>
+              <entry><methodname>error()</methodname></entry>
+
+              <entry>Severe errors during execution</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+    </sect2>
+  </sect1>
+</chapter>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="task-queues">
+  <title>Task Queues</title>
+
+  <section>
+    <title>What Are Task Queues?</title>
+
+    <para>Task queues allow for asynchronous execution of code outside of the
+    calling (or client) thread of execution.</para>
+
+    <para>Queues are normally used for long-running tasks that are triggered
+    by some user interaction. This may include tasks such as sending an email,
+    fullfilling a financial trade, or executing a long-running report against
+    database.</para>
+  </section>
+
+  <section>
+    <title>Ruby Task Queue Classes</title>
+
+    <para>A single task queue maps to an individual Ruby class. Each queue may
+    support a variety of related tasks. Each task is represented by a method
+    that takes a single <parameter>payload</parameter> argument.</para>
+
+    <para><example>
+        <title>Example task queue class
+        (f<filename>orex/execute_trade.rb</filename>)</title>
+
+        <para><screen>module Forex
+  class ExecuteTrade
+
+    def buy(payload={})
+      # perform work    
+    end
+    
+    def sell(payload={})
+      # perform work
+    end
+
+  end
+end</screen></para>
+      </example></para>
+  </section>
+
+  <section>
+    <title><classname>TorqueBox::Queues::Base</classname> module</title>
+
+    <para>The optional <classname>TorqueBox::Queues::Base</classname> module
+    provides access to helpful functionality, including simplified client
+    access for enqueuing work. It is not required to be included in your Ruby
+    job class. By including it, though, extra functionality is introduced into
+    your classes.</para>
+
+    <para><example>
+        <title>Using <classname>TorqueBox::Queues::Base</classname>
+        module</title>
+
+        <para><screen><emphasis>require 'torquebox/queues/base'</emphasis>
+
+module Forex
+  class ExecuteTrade
+
+    <emphasis>include TorqueBox::Queues::Base</emphasis>
+
+    def buy(payload={})
+      log.info( "Buy #{payload[:quantity]}" )
+    end
+    
+    def sell(payload={})
+      log.info( "Sell #{payload[:quantity]}" )
+    end
+
+  end
+end</screen></para>
+      </example></para>
+
+    <para>The task queue class has full access to the Ruby environment,
+    allowing you to use other models and classes in from the application. Some
+    frameworks, such as ActiveRecord even allow inclusion of models in the
+    payload delivered to the task method.</para>
+  </section>
+
+  <section>
+    <title>Logging</title>
+
+    <para>To gain access to a logging device, the
+    <methodname>log()</methodname> method is available. Messages of various
+    level can be logged.</para>
+
+    <informaltable>
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry align="center">Method</entry>
+
+            <entry align="center">Use</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><methodname>trace()</methodname></entry>
+
+            <entry>Tracing program execution</entry>
+          </row>
+
+          <row>
+            <entry><methodname>debug()</methodname></entry>
+
+            <entry>Development-time debug information</entry>
+          </row>
+
+          <row>
+            <entry><methodname>info()</methodname></entry>
+
+            <entry>Information messages for the user</entry>
+          </row>
+
+          <row>
+            <entry><methodname>warn()</methodname></entry>
+
+            <entry>Warnings for the user</entry>
+          </row>
+
+          <row>
+            <entry><methodname>error()</methodname></entry>
+
+            <entry>Severe errors during execution</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+
+    <para>The log messages will be logged in the normal
+    <filename>server.log</filename>.</para>
+
+    <para><screen>10:02:35,074 INFO  [ExecuteTrade] Buy 100
+10:02:40,074 INFO  [ExecuteTrade] Sell 100</screen></para>
+  </section>
+
+  <section>
+    <title>Enqueuing work</title>
+
+    <section>
+      <title>Using <classname>TorqueBox::Queues::Base</classname></title>
+
+      <para>By including <classname>TorqueBox::Queues::Base</classname> in
+      your task queue class, simplified client access is provided in order to
+      enqueue work. A class method <methodname>enqueue(...)</methodname> is
+      added to your task class when you include the TorqueBox helper module.
+      </para>
+
+      <para>The <methodname>enqueue(...)</methodname> method takes two
+      parameters: <parameter>taskname</parameter> and
+      <parameter>payload</parameter>.</para>
+
+      <para><example>
+          <title>Enqueing work with
+          <methodname>enqueue(...)</methodname></title>
+
+          <para><screen># load the task queue class
+<emphasis>require 'forex/execute_trade'</emphasis>
+
+class TradeController &lt; ApplicationController
+
+  def buy
+    # call enqueue(...) with task-name and payload
+    <emphasis>Forex::ExecuteTrade.enqueue( :buy, { :quantity=&gt;100 } )</emphasis>
+  end
+end</screen></para>
+        </example></para>
+    </section>
+
+    <section>
+      <title>Using the Ruby Messaging Client</title>
+
+      <para>TODO</para>
+    </section>
+
+    <section>
+      <title>Using Raw JMS</title>
+
+      <para>The Ruby task queues are implemented using the Java Messaging
+      Service (JMS). Each class maps to a single JMS destination. The
+      destination may be retrieved using JNDI.</para>
+
+      <section>
+        <title>JMS Destinations</title>
+
+        <para>Each destination is named according to the pattern of
+        <code>appname.Converted.Class.Name</code>.</para>
+
+        <para>If your application is named "myapp", the JMS desintation
+        matching the <classname>Forex::ExecuteTrade</classname> task class
+        would be <code>myapp.Forex.ExecuteTrade</code>.</para>
+      </section>
+
+      <section>
+        <title>Message format</title>
+
+        <para>An <classname>javax.jms.ObjectMessage</classname> is expected to
+        contain the raw payload. The payload may optionally be a marshalled
+        object if the <property>IsRubyMarshal</property> boolean property is
+        set to <code>true</code>.</para>
+
+        <para>The <property>TaskName</property> string property of the message
+        must be set to the name of the task method which should handle the
+        message.</para>
+      </section>
+    </section>
+  </section>
+</chapter>

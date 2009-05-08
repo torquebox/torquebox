@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-docs</artifactId>
+    <version>0.9.1-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-docs-${translation}</artifactId>
+<!--
+  <version>1.0.0.Beta8-SNAPSHOT</version>
+-->
+  <packaging>jdocbook</packaging>
+  <name>TorqueBox Documentation (${translation})</name>
+  <description>TorqueBox Documentation (${translation})</description>
+  
+<!--
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/docbook-src</outputDirectory>
+              <encoding>UTF-8</encoding>
+              <resources>          
+                <resource>
+                  <directory>src/main/docbook</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>              
+            </configuration>            
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+-->
+  
+  <properties>
+    <translation>en_US</translation>
+  </properties>
+  
+</project>

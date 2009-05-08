@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="preparing-your-rails-app">
+  <title>Preparing your Rails application</title>
+
+  <para>While JBoss Rails is 100% compatible with Ruby-on-Rails, there are a
+  few steps that must be taken to ensure success.</para>
+
+  <sect1 id="install-support-plugin" revision="1">
+    <title>Install the JBoss Rails Support package</title>
+
+    <para>The JBoss Rails Support package is a small bit of code that you
+    install directly into your Rails application's
+    <filename>vendor/plugins/</filename> directory. This enables several
+    important capabilities for your application: <itemizedlist>
+        <listitem>
+           Rake tasks for preparing your application for JDBC database access. 
+        </listitem>
+
+        <listitem>
+           Rake tasks for deploying and undeploying your application. 
+        </listitem>
+
+        <listitem>
+           Rake tasks for running JBoss AS. 
+        </listitem>
+
+        <listitem>
+           Extensions to allow you to go beyond Rails, with SOAP, scheduling and task queues. 
+        </listitem>
+      </itemizedlist></para>
+
+    <sect2>
+      <title>Install via bare zip archive</title>
+
+      <para>&lt;&lt; grab from repo, unzip under vendor/plugins/
+      &gt;&gt;</para>
+    </sect2>
+
+    <sect2 id="via-binary">
+      <title>Install via the binary distribution</title>
+
+      <para>If you installed the JBoss Rails Deployer using the binary
+      distribution, you already have the JBoss Rails Support package.</para>
+
+      <para>&lt;&lt; follow directions above under vendor/plugins/
+      &gt;&gt;</para>
+    </sect2>
+
+    <sect2>
+      <title>Install via git submodule</title>
+
+      <para><example>
+          <title>Installation via git submodules</title>
+
+          <para><screen><prompt>$</prompt> git submodule add \
+                git://github.com/bobmcwhirter/jboss-rails-support \
+                vendor/plugins/jboss-rails-support</screen></para>
+        </example></para>
+    </sect2>
+  </sect1>
+</chapter>
