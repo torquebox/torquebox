@@ -1,0 +1,38 @@
+
+require File.dirname(__FILE__) + '/../config/environment.rb'
+
+puts "RAILS ROOT #{RAILS_ROOT}"
+require 'jruby'
+
+Dir[ File.dirname(__FILE__) + '/../client/lib/core/*.jar' ].each do |jar|
+  require jar
+end
+Dir[ File.dirname(__FILE__) + '/../client/lib/dependencies/*.jar' ].each do |jar|
+  require jar
+end
+
+#Dir[ File.dirname(__FILE__) + '/../vendor/plugins/*' ].each do |dir|
+  #if ( File.directory?( dir ) )
+    #if ( File.exist?( dir + "/lib" ) )
+      #$: << dir + "/lib"
+    #end
+  #end
+#end
+
+queues_dir = File.dirname(__FILE__) + '/../app/queues'
+if ( File.exist?( queues_dir ) )
+  $: << queues_dir
+  Dir[ "#{queues_dir}/**/*_queue.rb" ].each do |queue_file|
+    puts "queue: #{queue_file}"
+    simple_path = queue_file[ queues_dir.length+1..-4 ]
+    puts "simple path [#{simple_path}]"
+    constant_name = simple_path.camelize
+    puts "constant name [#{constant_name}]"
+    puts "autoload #{constant_name.to_sym}, #{simple_path}"
+    autoload constant_name.to_sym, simple_path
+  end
+end
+
+
+require 'org/jboss/ruby/enterprise/client/client'
+require 'jboss/queues/base_queue'
