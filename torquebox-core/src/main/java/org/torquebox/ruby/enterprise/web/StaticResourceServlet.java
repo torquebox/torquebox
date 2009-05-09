@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.servlets.DefaultServlet;
+import org.apache.naming.resources.FileDirContext;
 
 public class StaticResourceServlet extends DefaultServlet {
 	
@@ -37,6 +38,7 @@ public class StaticResourceServlet extends DefaultServlet {
 		super.init();
 		String resourceRoot = getServletConfig().getInitParameter( "resource.root" );
 		this.resourceRoot = resourceRoot;
+		((FileDirContext)this.resources.getDirContext()).setAllowLinking( true );
 	}
 
 	@Override
