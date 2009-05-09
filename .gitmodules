@@ -16,3 +16,6 @@
 [submodule "torquebox-rails"]
 	path = torquebox-rails
 	url = git://github.com/torquebox/torquebox-rails.git
+[submodule "torquebox-capistrano"]
+	path = torquebox-capistrano
+	url = git://github.com/torquebox/torquebox-capistrano.git
