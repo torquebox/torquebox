@@ -1,0 +1,19 @@
+#!/bin/sh
+
+top="$(dirname $0 )/.."
+ 
+modules=$top/torquebox-*
+
+echo ""
+for module in $modules ; do
+  pushd $module 2>&1 > /dev/null
+  echo "######### $(basename $module)"
+  git $*
+  echo ""
+  popd 2>&1 > /dev/null
+done
+
+pushd $top 2>&1 > /dev/null
+echo "######### torquebox"
+git $*
+popd 2>&1 > /dev/null
