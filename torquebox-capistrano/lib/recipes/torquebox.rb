@@ -52,10 +52,21 @@ Capistrano::Configuration.instance.load do
     end
   
     task :after_symlink do
+      deployment_symlink
       #deployment_descriptor
     end
+
+    desc "Emit the deployment symlink"
+    task :deployment_symlink do
+      symlink_path = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}"
+      cmd = "if [ -h #{symlink_path} ] ; then "
+      cmd += "rm #{symlink_path} "
+      cmd += ";fi "
+      cmd += "&& ln -s #{latest_release} #{symlink_path}"
+      run cmd
+    end
   
-    desc "Emit #{application}-rails.yml"
+    #desc "Emit #{application}-rails.yml"
     task :deployment_descriptor do
       puts "creating deployment descriptor"
   
