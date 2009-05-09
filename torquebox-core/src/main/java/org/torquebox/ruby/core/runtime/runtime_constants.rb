@@ -45,5 +45,3 @@ module JBoss
   end
   
 end
-
-puts "loaded JBoss runtime_constants.rb"

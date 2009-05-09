@@ -122,7 +122,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	}
 
 	private void injectKernel(Ruby runtime) {
-		runtime.evalScriptlet("require %q(torquebox/kernel)");
+		runtime.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/kernel)");
 		RubyModule jbossKernel = runtime.getClassFromPath("TorqueBox::Kernel");
 		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=", new Object[] { this.kernel }, void.class);
 	}
