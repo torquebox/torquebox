@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
-<chapter id="telco-support">
-  <title>Telco Support</title>
+<chapter id="telecom">
+  <title>Telecom (SIP)</title>
 
-  <para>Telco support allows to build powerful converged VoIP applications by
-  providing means for an application to handle/send SIP Messages. Note that
+  <para>Telecom support allows to build powerful converged VoIP applications
+  by providing means for an application to handle/send SIP Messages. Note that
   Mobicents Sip Servlets is needed to be able to use this feature and that it
   is higly recommended to have knowledge about SIP and SIP Servlets 1.1 Java
   Specification to use it effectively.</para>
 
-  <sect1>
+  <section>
     <title>Making phone calls</title>
 
-    <para>To be able to initiate the setup of a call from your JRuby-Rails
+    <para>To be able to initiate the setup of a call from your TorqueBox
     application here is what you need to do in your controller :</para>
 
     <para><example>
@@ -34,13 +34,13 @@ puts @sip_factory
       </example>This piece of code will create a SIP Request and send it out.
     But when the user will answer OK, you need to have some code to handle the
     response and this can be done by defining your own SIP controller</para>
-  </sect1>
+  </section>
 
-  <sect1>
+  <section>
     <title>Ruby Telco Classes</title>
 
     <para>In your Ruby or Rails application, all SIP classes should be placed
-    under <filename>RAILS_ROOT/app/sip/</filename>. No special naming
+    under <filename>$RAILS_ROOT/app/sip/</filename>. No special naming
     convention is required, but the class name must match the path to the file
     containing it.</para>
 
@@ -56,13 +56,13 @@ puts @sip_factory
 
         <tbody>
           <row>
-            <entry><filename>RAILS_ROOT/app/sip/telco_handler</filename></entry>
+            <entry><filename>$RAILS_ROOT/app/sip/telco_handler</filename></entry>
 
             <entry><type>SipHandler</type></entry>
           </row>
 
           <row>
-            <entry><filename>RAILS_ROOT/app/sip/telco/handler</filename></entry>
+            <entry><filename>$RAILS_ROOT/app/sip/telco/handler</filename></entry>
 
             <entry><type>Telco::Handler</type></entry>
           </row>
@@ -103,7 +103,7 @@ end</screen></para>
       </example></para>
 
     <para>Note that this is an example but the handler class can extend all
-    the do_XXX methods as defined per the Sip Servlets 1.1 Java
-    Specification.</para>
-  </sect1>
+    the <methodname>do_<replaceable>XXX</replaceable></methodname> methods as
+    defined per the Sip Servlets 1.1 Java Specification.</para>
+  </section>
 </chapter>

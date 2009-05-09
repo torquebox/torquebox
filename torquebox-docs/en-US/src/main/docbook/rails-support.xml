@@ -85,7 +85,16 @@ remote: Total 26 (delta 1), reused 0 (delta 0)
 Receiving objects: 100% (26/26), 7.30 KiB, done.
 Resolving deltas: 100% (1/1), done.</computeroutput>
 <prompt>$</prompt> <command>cd vendor/plugins/torquebox-gem</command>
-<prompt>$</prompt> <command>git checkout ${project.version}</command></screen></para>
+<prompt>$</prompt> <command>git checkout ${project.version}</command>
+<prompt>$</prompt> <command>cd ../..</command>
+<prompt>$</prompt> <command>git submodule add git://github.com/torquebox/torquebox-rails.git vendor/plugins/torquebox-rails</command>
+<computeroutput>Initialize vendor/plugins/torquebox-rails/.git
+Initialized empty Git repository in /Users/bob/myapp/vendor/plugins/torquebox-rails/.git/
+remote: Counting objects: 10, done.
+remote: Compressing objects: 100% (9/9), done.
+remote: Total 10 (delta 0), reused 0 (delta 0)
+Receiving objects: 100% (10/10), done.</computeroutput>
+</screen></para>
           </example></para>
 
         <para>Your project will be linked to ${project.version} of
@@ -98,13 +107,19 @@ Resolving deltas: 100% (1/1), done.</computeroutput>
     <section>
       <title>Eliminate or replace "native" Gems</title>
 
-      <para>TODO</para>
+      <para>"Native" gems that rely upon machine-specific compiled code do not
+      function with JRuby and TorqueBox. You must replaced these gems with
+      pure-Ruby or pure-Java implementations. In the future, native gems using
+      the FFI facilities will be usable.</para>
     </section>
 
     <section>
       <title>Freeze Gems</title>
 
-      <para>TODO</para>
+      <para>In addition to freezing the TorqueBox gems into your Rails
+      project, you must freeze all other gems used by your project. The
+      system-wide <envar>$GEM_PATH</envar> is ignored by the TorqueBox
+      Server.</para>
     </section>
   </section>
 
