@@ -52,13 +52,13 @@ Capistrano::Configuration.instance.load do
     end
   
     task :after_symlink do
-      deployment_symlink
-      #deployment_descriptor
+      #deployment_symlink
+      deployment_descriptor
     end
 
-    desc "Emit the deployment symlink"
+    #desc "Emit the deployment symlink"
     task :deployment_symlink do
-      symlink_path = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}"
+      symlink_path = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}.rails"
       cmd = "if [ -h #{symlink_path} ] ; then "
       cmd += "rm #{symlink_path} "
       cmd += ";fi "
@@ -72,11 +72,7 @@ Capistrano::Configuration.instance.load do
   
       dd = {
         'application'=>{
-          'RAILS_ENV'=>rails_env,
           'RAILS_ROOT'=>"#{latest_release}",
-        },
-        'web'=>{
-          'context'=>'/'
         },
       }
   
