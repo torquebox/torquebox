@@ -164,6 +164,9 @@
     <module>torquebox-docs</module>
     <module>torquebox-gem</module>
     <module>torquebox-rails</module>
+    <module>torquebox-capistrano</module>
+
+    <module>torquebox-bin</module>
   </modules>
 
 
