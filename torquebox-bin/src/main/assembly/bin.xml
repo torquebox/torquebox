@@ -1,0 +1,29 @@
+<assembly>
+  <id></id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory>/torquebox-${pom.version}-bin</outputDirectory>
+      <includes>
+        <include>LICENSE*.txt</include>
+        <include>INSTALL.txt</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/torquebox-${pom.version}-bin</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <useProjectAttachments>true</useProjectAttachments>
+      <includes>
+        <include>*:deployer:*</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
