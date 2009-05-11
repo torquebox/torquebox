@@ -6,12 +6,25 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>.</directory>
+      <directory>target/stage</directory>
       <outputDirectory>/torquebox-${pom.version}-bin</outputDirectory>
+      <excludes>
+        <exclude>jboss/bin/*.sh</exclude>
+        <exclude>jruby/bin/*</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>target/stage/jboss/bin</directory>
+      <outputDirectory>/torquebox-${pom.version}-bin/jboss/bin</outputDirectory>
+      <fileMode>755</fileMode>
       <includes>
-        <include>LICENSE*.txt</include>
-        <include>INSTALL.txt</include>
+        <include>*.sh</include>
       </includes>
+    </fileSet>
+    <fileSet>
+      <directory>target/stage/jruby/bin</directory>
+      <outputDirectory>/torquebox-${pom.version}-bin/jruby/bin</outputDirectory>
+      <fileMode>755</fileMode>
     </fileSet>
   </fileSets>
   <dependencySets>
@@ -20,10 +33,12 @@
       <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
       <unpack>false</unpack>
       <scope>runtime</scope>
-      <useProjectAttachments>true</useProjectAttachments>
-      <includes>
-        <include>*:deployer:*</include>
-      </includes>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useProjectAttachments>false</useProjectAttachments>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <excludes>
+        <exclude>*:deployer:*</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>

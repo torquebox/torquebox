@@ -1,0 +1,86 @@
+require 'fileutils'
+
+DEPEND_DIR = "#{File.dirname(__FILE__)}/target/dependencies"
+PKG_DIR    = "#{File.dirname(__FILE__)}/target/packages"
+STAGE_DIR  = "#{File.dirname(__FILE__)}/target/stage"
+CACHE_DIR  = "#{File.dirname(__FILE__)}/../package-cache"
+
+JBOSS_VERSION = ENV['jboss.as.version'] || '5.1.0.CR1'
+JRUBY_PKG_VERSION = ENV['jruby.version'] || '1.2.0'
+
+JBOSS_BASE_URL="http://voxel.dl.sourceforge.net/sourceforge/jboss/"
+JRUBY_BASE_URL="http://dist.codehaus.org/jruby"
+
+namespace :maven do
+  task 'compile'=>[ 'stage' ]
+end
+
+task 'pull-packages'=>[ 'pull-jboss', 'pull-jruby' ]
+
+directory "#{PKG_DIR}/jboss"
+directory "#{PKG_DIR}/jruby"
+directory "#{CACHE_DIR}/jboss"
+directory "#{CACHE_DIR}/jruby"
+directory "#{STAGE_DIR}"
+
+task 'pull-jboss'=> [
+    "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip",
+  ]
+
+file "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip"=>[
+    "#{CACHE_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip",
+    "#{PKG_DIR}/jboss"
+  ] do
+  puts "Copying JBoss #{JBOSS_VERSION} JDK6 from package-cache"
+  FileUtils.cp( "#{CACHE_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip", "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip" )
+end
+
+file "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"=>[
+    "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip",
+    "#{PKG_DIR}/jruby"
+  ] do
+  puts "Copying JRuby #{JBOSS_VERSION} from package-cache"
+  FileUtils.cp( "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip", "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip" )
+end
+
+file "#{CACHE_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip"=>[ "#{CACHE_DIR}/jboss" ] do
+  Dir.chdir( "#{CACHE_DIR}/jboss" ) do 
+    puts "Downloading JBoss #{JBOSS_VERSION} JDK6"
+    url = "#{JBOSS_BASE_URL}/jboss-#{JBOSS_VERSION}-jdk6.zip"
+    puts `wget --quiet #{url}`
+  end
+end
+
+file "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"=>[ "#{CACHE_DIR}/jruby" ] do
+  Dir.chdir( "#{CACHE_DIR}/jruby" ) do 
+    puts "Downloading JRuby #{JRUBY_PKG_VERSION}"
+    url = "#{JRUBY_BASE_URL}/#{JRUBY_PKG_VERSION}/jruby-bin-#{JRUBY_PKG_VERSION}.zip"
+    puts `wget --quiet #{url}`
+  end
+end
+
+
+task 'stage'=> ['stage-jdk6' ]
+
+task 'stage-jdk6'=>[ "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip", "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip", "#{STAGE_DIR}" ] do
+  puts "Staging"
+  Dir[ "#{STAGE_DIR}/*" ].each do |item|
+    FileUtils.rm_rf( item )
+  end
+  Dir.chdir( "#{STAGE_DIR}" ) do
+    puts `unzip -q #{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip`
+    FileUtils.mv( "jboss-#{JBOSS_VERSION}", 'jboss' ) 
+    Dir.chdir( "jboss/server/" ) do
+      Dir[ '*/deploy/ROOT.war' ].each do |root_war|
+        conf = root_war.split('/').first
+        puts "#{conf}: Removing ROOT.war"
+        FileUtils.rm_rf( root_war )
+        puts "#{conf}: Installing TorqueBox deployer"
+        FileUtils.cp( "#{DEPEND_DIR}/torquebox-core-deployer.jar", "#{conf}/deployers" )
+      end
+    end
+    puts `unzip -q #{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip`
+    FileUtils.mv( "jruby-#{JRUBY_PKG_VERSION}", 'jruby' ) 
+  end
+end
+
