@@ -43,8 +43,6 @@ public class RubyJobHandler implements Job, StatefulJob {
 	}
 
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-
-		log.info( "executing job" );
 		JobDetail jobDetail = context.getJobDetail();
 		JobDataMap jobDataMap = jobDetail.getJobDataMap();
 
@@ -93,10 +91,10 @@ public class RubyJobHandler implements Job, StatefulJob {
 		if (isInjectable) {
 			String loggerName = rubyClassName.replaceAll("::", ".");
 			Logger logger = Logger.getLogger(loggerName);
-			log.info( "injecting " + logger );
+			//log.info( "injecting " + logger );
 			JavaEmbedUtils.invokeMethod(rubyJob.getRuntime(), rubyJob, "log=", new Object[] { logger }, void.class);
 		} else {
-			log.warn("Unable to inject log into " + rubyClassName);
+			//log.warn("Unable to inject log into " + rubyClassName);
 		}
 	}
 
