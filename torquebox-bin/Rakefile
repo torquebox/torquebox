@@ -12,6 +12,7 @@ JBOSS_BASE_URL="http://voxel.dl.sourceforge.net/sourceforge/jboss/"
 JRUBY_BASE_URL="http://dist.codehaus.org/jruby"
 
 namespace :maven do
+  #task 'compile'
   task 'compile'=>[ 'stage' ]
 end
 

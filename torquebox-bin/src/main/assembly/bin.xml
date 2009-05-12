@@ -38,7 +38,32 @@
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <excludes>
         <exclude>*:deployer:*</exclude>
+        <exclude>org.torquebox:torquebox-docs-en_US:*</exclude>
       </excludes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/torquebox-${pom.version}-bin/docs/html</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}</outputFileNameMapping>
+      <unpack>true</unpack>
+      <scope>runtime</scope>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useProjectAttachments>false</useProjectAttachments>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <includes>
+        <include>org.torquebox:torquebox-docs-en_US:zip:html</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/torquebox-${pom.version}-bin/docs</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useProjectAttachments>false</useProjectAttachments>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <includes>
+        <include>org.torquebox:torquebox-docs-en_US:pdf</include>
+      </includes>
     </dependencySet>
   </dependencySets>
 </assembly>
