@@ -54,7 +54,13 @@ Generate html using:   mvn docbkx:generate-html
 
   <xi:include href="lgpl-3.0.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="mit.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
 <!--
+  <xi:include href="cc-sa.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
   <part>
     <title>Basics</title>
 

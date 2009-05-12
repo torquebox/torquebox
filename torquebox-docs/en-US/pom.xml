@@ -12,44 +12,59 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-docs-${translation}</artifactId>
-<!--
-  <version>1.0.0.Beta8-SNAPSHOT</version>
--->
   <packaging>jdocbook</packaging>
   <name>TorqueBox Documentation (${translation})</name>
   <description>TorqueBox Documentation (${translation})</description>
   
-<!--
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/docbook-src</outputDirectory>
-              <encoding>UTF-8</encoding>
-              <resources>          
-                <resource>
-                  <directory>src/main/docbook</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>              
-            </configuration>            
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
--->
-  
   <properties>
     <translation>en_US</translation>
   </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/html.xml</descriptor>
+            <descriptor>src/main/assembly/html-single.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+<!--
+        <version>1.1</version>
+-->
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/docbook/publish/en-US/pdf/${project.artifactId}.pdf</file>
+                  <type>pdf</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+  
+    </plugins>
+  </build>
   
 </project>
