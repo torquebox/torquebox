@@ -57,6 +57,7 @@
                 <artifact>
                   <file>target/docbook/publish/en-US/pdf/${project.artifactId}.pdf</file>
                   <type>pdf</type>
+                  <classifier></classifier>
                 </artifact>
               </artifacts>
             </configuration>
