@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox</artifactId>
-    <version>0.9.1-SNAPSHOT</version>
+    <version>1.0.0.Beta10-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -13,27 +13,6 @@
   <packaging>jar</packaging>
   <name>TorqueBox Core</name>
   <description></description>
-
-  <scm>
-    <connection>scm:git:git://github.com/bobmcwhirter/jboss-rails.git</connection>
-    <developerConnection>scm:git:ssh://github.com/bobmcwhirter/jboss-rails.git</developerConnection>
-    <url>http://github.com/bobmcwhirter/jboss-rails/tree/master</url>
-  </scm>
-
-  <distributionManagement>
-    <repository>
-      <id>oddthesis.repo</id>
-      <name>Odd Thesis repository</name>
-      <url>scpexe://repo.oddthesis.org/opt/oddthesis/repo/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>oddthesis.SNAPSHOT.repo</id>
-      <name>Odd Thesis SNAPSHOT repository</name>
-      <url>scpexe://repo.oddthesis.org/opt/oddthesis/repo/maven2/SNAPSHOTS</url>
-    </snapshotRepository>
-  </distributionManagement>
-
-
 
   <dependencies>
 
