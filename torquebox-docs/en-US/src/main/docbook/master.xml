@@ -37,6 +37,9 @@ Generate html using:   mvn docbkx:generate-html
   <xi:include href="task-queues.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
+  <xi:include href="crypto.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
   <xi:include href="soap-endpoints.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 

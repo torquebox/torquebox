@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="crypto">
+  <title>Cryptography</title>
+
+  <section id="crypto-key-stores">
+    <title>Cryptographic Key Stores</title>
+
+    <para>Cryptographic key stores may be configured for the application and
+    used by any service requiring key material. Keystores themselves are
+    encrypted to secure the key material itself.</para>
+  </section>
+
+  <section>
+    <title>Configure Key Stores: <filename>crypto.yml</filename></title>
+
+    <para>A file named crypto.yml should contain a section for each keystore
+    you wish to make available within your application.</para>
+
+    <para>Each key store defined within <filename>crypto.yml</filename> must
+    provide a path to the store, along with the password required to access
+    the store.</para>
+
+    <para><example>
+        <title>Example <filename>crypto.yml</filename></title>
+
+        <para><screen>truststore:
+  store: truststore.jks
+  password: foobar
+
+keystore:
+  store: keystore.jks
+  password: foobar</screen></para>
+      </example></para>
+
+    <para>Each keystore is labelled with an identifier used to access it from
+    other services. While any number of key stores may be configured with
+    arbitrary identifiers, many services look for specific key stores by
+    default.</para>
+
+    <para>Some services, such as SOAP Endpoints attempt to use a key store
+    named <classname>truststore</classname> if inbound signature verification
+    is enabled. Likewise, the key store named <classname>keystore</classname>
+    is the default for signing outbound responses.</para>
+
+    <para>If the path to the keystore in the <parameter>store</parameter>
+    parameter is an absolute path, it will be used as specified. If the path
+    is relative, the application framework is responsible for defining those
+    semantics.</para>
+
+    <section>
+      <title>Ruby-on-Rails and <filename>crypto.yml</filename></title>
+
+      <para>To use cryptogrpahic key stores from your Ruby-on-Rails
+      application, place crypto.yml in your application's
+      <filename>config/</filename> directory. Relative paths to key stores
+      specified in the store parameter are relative to the directory
+      <filename><envar>$RAILS_ROOT</envar>/auth/</filename>.</para>
+
+      <para><screen>RAILS_ROOT/
+  config/
+    crypto.yml
+  auth/
+    truststore.jks
+    keystore.jks</screen></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Managing Key Stores</title>
+
+    <para>Key stores are kept in the Java Key Store format and managed using
+    the <command>keytool</command> command-line utility that ships with the
+    JDK.</para>
+
+    <section>
+      <title>Create a New Key Store</title>
+
+      <para>When you generate or import your first key into the key store, it
+      will be created as needed. The path to the key store is specified using
+      the <option>-keystore</option> option.</para>
+
+      <para><screen>$ keytool <emphasis>-keystore auth/keystore.jks</emphasis></screen>
+      When a key store is first created while importing or generating a new
+      key, you will be prompted to provide and verify the password to protect
+      the entire keystore. This is the same password you provide through
+      <filename>crypto.yml</filename>.</para>
+
+      <para><screen>$ keytool -keystore auth/keystore.jks
+<emphasis>Enter keystore password: 
+Re-enter new password:</emphasis> </screen></para>
+    </section>
+
+    <section>
+      <title>Create a New Key Pair</title>
+
+      <para>To create a new key pair to use for signing or encrypting
+      functions, the <option>-genkey</option> option is used. The keytool
+      utility will prompt you for several pieces of information. Each key is
+      identified by an <emphasis>alias</emphasis>. By default -genkey attempts
+      to create a key named <classname>mykey</classname>. The
+      <option>-alias</option> option may be used to provide a different alias
+      to register the key.</para>
+
+      <para><screen>$ keytool -keystore truststore.jks <emphasis>-genkey -alias bobmcwhirter</emphasis> 
+Enter keystore password:  
+What is your first and last name?
+  [Unknown]:  Bob McWhirter
+What is the name of your organizational unit?
+  [Unknown]:  TorqueBox
+What is the name of your organization?
+  [Unknown]:  JBoss
+What is the name of your City or Locality?
+  [Unknown]:  Wytheville
+What is the name of your State or Province?
+  [Unknown]:  Virginia
+What is the two-letter country code for this unit?
+  [Unknown]:  US
+Is CN=Bob McWhirter, OU=TorqueBox, O=JBoss, L=Wytheville, ST=Virginia, C=US correct?
+  [no]:  yes
+
+Enter key password for &lt;bobmcwhirter&gt;
+        (RETURN if same as keystore password):  
+Re-enter new password:
+$</screen></para>
+    </section>
+
+    <section>
+      <title>Inspect the Key Store</title>
+
+      <para>The -list option may be used to list the contents of a key
+      store.</para>
+
+      <para><screen>$ keytool -keystore truststore.jks -list                      
+Enter keystore password:  
+
+Keystore type: JKS
+Keystore provider: SUN
+
+Your keystore contains 2 entries
+
+<emphasis>bobmcwhirter</emphasis>, May 13, 2009, PrivateKeyEntry, 
+Certificate fingerprint (MD5): E1:73:2B:34:26:80:CA:55:7C:E8:BC:C6:A2:F6:D0:10
+<emphasis>mykey</emphasis>, May 13, 2009, PrivateKeyEntry, 
+Certificate fingerprint (MD5): 24:3E:29:E2:6A:5F:AA:24:A2:F3:25:68:B6:6E:92:FF</screen></para>
+
+      <para></para>
+
+      <para></para>
+
+      <para></para>
+    </section>
+  </section>
+</chapter>
