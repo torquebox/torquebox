@@ -30,6 +30,8 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer;
 import org.torquebox.ruby.enterprise.crypto.metadata.CryptoMetaData;
@@ -37,6 +39,7 @@ import org.torquebox.ruby.enterprise.crypto.metadata.CryptoStoreMetaData;
 import org.torquebox.ruby.enterprise.endpoints.RubyEndpoint;
 import org.torquebox.ruby.enterprise.endpoints.metadata.InboundSecurityMetaData;
 import org.torquebox.ruby.enterprise.endpoints.metadata.RubyEndpointMetaData;
+import org.torquebox.ruby.enterprise.endpoints.metadata.RubyEndpointsMetaData;
 import org.torquebox.ruby.enterprise.endpoints.metadata.SecurityMetaData;
 
 /**
@@ -51,34 +54,28 @@ import org.torquebox.ruby.enterprise.endpoints.metadata.SecurityMetaData;
  * 
  * @author Bob McWhirter
  */
-public class RubyEndpointDeployer extends AbstractDeployer {
+public class RubyEndpointsDeployer extends AbstractSimpleVFSRealDeployer<RubyEndpointsMetaData> {
 
 	private static final String BEAN_PREFIX = "jboss.ruby.enterprise.webservices";
 
-	private static final Logger log = Logger.getLogger(RubyEndpointDeployer.class);
+	private static final Logger log = Logger.getLogger(RubyEndpointsDeployer.class);
 
-	public RubyEndpointDeployer() {
-		super();
-		setStage(DeploymentStages.REAL);
-		setAllInputs(true);
+	public RubyEndpointsDeployer() {
+		super( RubyEndpointsMetaData.class );
 		addInput(CryptoMetaData.class);
 		setOutput(BeanMetaData.class);
 	}
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends RubyEndpointMetaData> allMetaData = unit.getAllMetaData(RubyEndpointMetaData.class);
-
-		if (allMetaData.size() == 0) {
-			return;
-		}
-
+	@Override
+	public void deploy(VFSDeploymentUnit unit, RubyEndpointsMetaData metaData) throws DeploymentException {
+		
 		BeanMetaData busBean = unit.getAttachment(BeanMetaData.class + "$cxf.bus", BeanMetaData.class);
 		if (busBean == null) {
 			throw new DeploymentException("No CXF Bus available");
 		}
-
-		for (RubyEndpointMetaData each : allMetaData) {
-			deployWebService(unit, busBean, each);
+		
+		for ( RubyEndpointMetaData each : metaData.getEndpoints() ) {
+			deployWebService( unit, busBean, each );
 		}
 	}
 
@@ -130,7 +127,7 @@ public class RubyEndpointDeployer extends AbstractDeployer {
 							throw new DeploymentException( "no such crypto store: " + storeName );
 						}
 					} else {
-						throw new DeploymentException( "unable to setup crypto" );
+						throw new DeploymentException( "No cryptographic stores have been configured.  Please double-check 'crypto.yml'." );
 					}
 				}
 			}
@@ -142,4 +139,5 @@ public class RubyEndpointDeployer extends AbstractDeployer {
 		BeanMetaData beanMetaData = beanBuilder.getBeanMetaData();
 		unit.addAttachment(BeanMetaData.class + "$endpoint." + metaData.getName(), beanMetaData, BeanMetaData.class);
 	}
+
 }

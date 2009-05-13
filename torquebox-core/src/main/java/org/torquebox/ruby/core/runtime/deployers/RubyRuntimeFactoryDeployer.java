@@ -32,6 +32,7 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
 import org.jboss.virtual.VirtualFile;
+import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.DefaultRubyRuntimeFactory;
 import org.torquebox.ruby.core.runtime.DefaultRubyDynamicClassLoader;
 import org.torquebox.ruby.core.runtime.RubyRuntimeFactoryProxy;
@@ -39,11 +40,13 @@ import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
 import org.torquebox.ruby.core.runtime.metadata.RubyRuntimeMetaData;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 
-/** Deployer which actually creates a RubyRuntimeFactory and attaches it to the unit.
+/**
+ * Deployer which actually creates a RubyRuntimeFactory and attaches it to the
+ * unit.
  * 
  * <p>
- * This CLASSLOADER-stage deployer actually creates an instance of RubyRuntimeFactory
- * and attaches it to the unit.
+ * This CLASSLOADER-stage deployer actually creates an instance of
+ * RubyRuntimeFactory and attaches it to the unit.
  * </p>
  * 
  * @author Bob McWhirter
@@ -62,15 +65,18 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		setStage(DeploymentStages.CLASSLOADER);
 	}
 
-	/** Set the kernel.
+	/**
+	 * Set the kernel.
 	 * 
-	 * @param kernel The kernel.
+	 * @param kernel
+	 *            The kernel.
 	 */
 	public void setKernel(Kernel kernel) {
 		this.kernel = kernel;
 	}
 
-	/** Get the kernel.
+	/**
+	 * Get the kernel.
 	 * 
 	 * @return The kernel.
 	 */
@@ -94,12 +100,22 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 
 		unit.addAttachment(RubyRuntimeFactory.class, factory);
 
+		try {
+			Ruby ruby = factory.createRubyRuntime();
+			unit.addAttachment(Ruby.class, ruby);
+		} catch (Exception e) {
+			throw new DeploymentException(e);
+		}
+
 	}
 
-	/** Create the dynamic ClassLoader used by the Ruby runtimes for the unit.
+	/**
+	 * Create the dynamic ClassLoader used by the Ruby runtimes for the unit.
 	 * 
-	 * @param unit The deployment unit.
-	 * @param metaData The runtime environment configuration.
+	 * @param unit
+	 *            The deployment unit.
+	 * @param metaData
+	 *            The runtime environment configuration.
 	 * @return The dynamic ClassLoader.
 	 * @throws MalformedURLException
 	 */
@@ -119,14 +135,15 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		}
 
 		ClassLoader parentClassLoader = null;
-		
+
 		try {
 			parentClassLoader = unit.getClassLoader();
 		} catch (IllegalStateException e) {
 			parentClassLoader = getClass().getClassLoader();
 		}
 
-		DefaultRubyDynamicClassLoader classLoader = DefaultRubyDynamicClassLoader.create(unit.getSimpleName(), urls, parentClassLoader, baseDir);
+		DefaultRubyDynamicClassLoader classLoader = DefaultRubyDynamicClassLoader.create(unit.getSimpleName(), urls, parentClassLoader,
+				baseDir);
 		return classLoader;
 	}
 

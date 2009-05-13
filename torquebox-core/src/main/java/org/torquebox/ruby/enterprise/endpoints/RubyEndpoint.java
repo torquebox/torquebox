@@ -130,6 +130,7 @@ public class RubyEndpoint {
 	}
 
 	public void setWsdlLocation(URL wsdlLocation) {
+		log.info( "setWsdlLocation [" + wsdlLocation + "]" );
 		this.wsdlLocation = wsdlLocation;
 	}
 
@@ -211,7 +212,7 @@ public class RubyEndpoint {
 
 		RubyEndpointHandler serviceBean = createServiceBean();
 		serverFactory.setServiceName(new QName(getTargetNamespace(), getPortName()));
-		serverFactory.setEndpointName(new QName(getTargetNamespace(), getPortName()));
+		serverFactory.setEndpointName(new QName(getTargetNamespace(), getPortName() + "Port"));
 		serverFactory.setServiceClass(RubyEndpointHandler.class);
 		serverFactory.setInvoker(createInvoker(serviceBean));
 

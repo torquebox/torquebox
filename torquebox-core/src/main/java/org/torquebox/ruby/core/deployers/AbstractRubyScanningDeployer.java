@@ -82,10 +82,14 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 			List<VirtualFile> children = null;
 			
 			if ( this.filter != null ) {
+				log.info( "scanning recursively with " + this.filter + " against " + scanRoot );
 				children = scanRoot.getChildrenRecursively( this.filter );
 			} else {
 				children = scanRoot.getChildrenRecursively();
+				log.info( "all children of " + scanRoot );
 			}
+			
+			log.info( "results: " + children );
 			
 			int prefixLength = scanRoot.getPathName().length();
 			

@@ -21,44 +21,39 @@
  */
 package org.torquebox.ruby.enterprise.endpoints.deployers;
 
-import java.util.Set;
-
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.ruby.core.runtime.DefaultRubyDynamicClassLoader;
-import org.torquebox.ruby.core.runtime.spi.RubyDynamicClassLoader;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyTypeSpace;
 import org.torquebox.ruby.enterprise.endpoints.metadata.RubyEndpointMetaData;
+import org.torquebox.ruby.enterprise.endpoints.metadata.RubyEndpointsMetaData;
 
-public class RubyTypeSpaceDeployer extends AbstractDeployer {
+public class RubyTypeSpaceDeployer extends AbstractSimpleVFSRealDeployer<RubyEndpointsMetaData> {
 
 	private static final String PREFIX = "jboss.ruby.databinding.";
 
 	public RubyTypeSpaceDeployer() {
+		super( RubyEndpointsMetaData.class );
 		setStage(DeploymentStages.POST_CLASSLOADER);
-		setAllInputs(true);
 		addOutput(BeanMetaData.class);
 	}
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends RubyEndpointMetaData> allMetaData = unit.getAllMetaData(RubyEndpointMetaData.class);
-
-		if (allMetaData.size() == 0) {
-			return;
-		}
-
+	@Override
+	public void deploy(VFSDeploymentUnit unit, RubyEndpointsMetaData metaData) throws DeploymentException {
 		log.debug("deploying for: " + unit);
 
 		BeanMetaData busMetaData = unit.getAttachment(BeanMetaData.class + "$cxf.bus", BeanMetaData.class);
 
-		RubyDynamicClassLoader classLoader = unit.getAttachment(DefaultRubyDynamicClassLoader.class);
+		DefaultRubyDynamicClassLoader classLoader = unit.getAttachment(DefaultRubyDynamicClassLoader.class);
+		log.info( "Dynamic Class Loader: " + classLoader );
 
-		for (RubyEndpointMetaData endpointMetaData : allMetaData) {
+		for (RubyEndpointMetaData endpointMetaData : metaData.getEndpoints() ) {
 			String beanName = getBeanName(unit, endpointMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyTypeSpace.class.getName());
 
@@ -77,5 +72,6 @@ public class RubyTypeSpaceDeployer extends AbstractDeployer {
 	public static String getBeanName(DeploymentUnit unit, String serviceName) {
 		return PREFIX + unit.getSimpleName() + "." + serviceName;
 	}
+
 
 }

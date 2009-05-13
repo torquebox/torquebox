@@ -59,8 +59,8 @@
 
   <!-- Endpoint Services -->
 
-  <bean name="RubyEndpointIntrospectionDeployer"      class="org.torquebox.ruby.enterprise.endpoints.deployers.RubyEndpointIntrospectionDeployer"/>
-  <bean name="RubyEndpointDeployer"                   class="org.torquebox.ruby.enterprise.endpoints.deployers.RubyEndpointDeployer"/>
+  <bean name="RubyEndpointsIntrospectingDeployer"     class="org.torquebox.ruby.enterprise.endpoints.deployers.RubyEndpointsIntrospectingDeployer"/>
+  <bean name="RubyEndpointsDeployer"                  class="org.torquebox.ruby.enterprise.endpoints.deployers.RubyEndpointsDeployer"/>
 
   <!-- 
      |

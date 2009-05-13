@@ -57,7 +57,7 @@ public class RubyEndpointHandler {
 	private RubyTypeSpace typeSpace;
 
 	public RubyEndpointHandler(RubyRuntimePool runtimePool, String classLocation, String endpointClassName, RubyTypeSpace typeSpace) {
-		this.endpointLogger = Logger.getLogger( "jboss.ruby.endpoints." + endpointClassName );
+		this.endpointLogger = Logger.getLogger( "torquebox.endpoints." + endpointClassName );
 		this.runtimePool = runtimePool;
 		this.classLocation = classLocation;
 		this.endpointClassName = endpointClassName;
@@ -79,16 +79,14 @@ public class RubyEndpointHandler {
 		try {
 			ruby = runtimePool.borrowRuntime();
 
-			loadSupport(ruby);
 			loadEndpointClassLocation(ruby);
 
 			RubyClass endpointClass = ruby.getClass(this.endpointClassName);
 
-			BaseEndpointRb javaEndpoint = createEndpoint(endpointClass);
-			inject(javaEndpoint, principal, request, responseCreator);
+			IRubyObject endpoint = createEndpoint(endpointClass);
+			inject(endpoint, principal, request, responseCreator);
 
-			IRubyObject rubyEndpoint = JavaEmbedUtils.javaToRuby(ruby, javaEndpoint);
-			response = invoke(rubyEndpoint, operationName);
+			response = invoke(endpoint, operationName);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Fault(e);
@@ -100,17 +98,26 @@ public class RubyEndpointHandler {
 		return response;
 	}
 
-	protected BaseEndpointRb createEndpoint(RubyClass endpointClass) {
-		return (BaseEndpointRb) JavaEmbedUtils
-				.invokeMethod(endpointClass.getRuntime(), endpointClass, "new", EMPTY_OBJECT_ARRAY, BaseEndpointRb.class);
+	protected IRubyObject createEndpoint(RubyClass endpointClass) {
+		return (IRubyObject) JavaEmbedUtils.invokeMethod(endpointClass.getRuntime(), endpointClass, "new", EMPTY_OBJECT_ARRAY, Object.class );
 	}
 
-	private void inject(BaseEndpointRb endpoint, Principal principal, Object request, String responseCreator) {
+	private void inject(IRubyObject endpoint, Principal principal, Object request, String responseCreator) {
 		log.trace("inject(" + endpoint + ", ...)");
-		endpoint.setPrincipal(principal);
-		endpoint.setRequest(request);
-		endpoint.setResponseCreator(responseCreator);
-		endpoint.setLogger( this.endpointLogger );
+		inject( endpoint, "principal=", principal );
+		inject( endpoint, "request=", request );
+		inject( endpoint, "response_creator=", responseCreator );
+		inject( endpoint, "logger=", this.endpointLogger );
+	}
+	
+	private void inject(IRubyObject endpoint, String meth, Object value) {
+		Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( endpoint.getRuntime(), endpoint, "respond_to?", new Object[] { meth }, Boolean.class );
+		
+		if ( respondTo != null ) {
+			if ( respondTo.booleanValue() ) {
+				JavaEmbedUtils.invokeMethod( endpoint.getRuntime(), endpoint, meth, new Object[] { value }, void.class );
+			}
+		}
 	}
 
 	private Object invoke(IRubyObject endpoint, String operationName) {
@@ -119,11 +126,6 @@ public class RubyEndpointHandler {
 		Object response = JavaEmbedUtils.invokeMethod(endpoint.getRuntime(), endpoint, methodName, EMPTY_OBJECT_ARRAY, Object.class);
 		log.trace("response is: " + response);
 		return response;
-	}
-
-	protected void loadSupport(Ruby runtime) {
-		String supportScript = "require %q(jboss/endpoints/base_endpoint)\n";
-		runtime.evalScriptlet(supportScript);
 	}
 
 	private void loadEndpointClassLocation(Ruby ruby) {

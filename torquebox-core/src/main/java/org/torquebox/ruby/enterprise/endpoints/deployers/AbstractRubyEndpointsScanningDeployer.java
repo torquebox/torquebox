@@ -35,39 +35,44 @@ import org.torquebox.ruby.enterprise.endpoints.metadata.RubyEndpointsMetaData;
 
 public class AbstractRubyEndpointsScanningDeployer extends AbstractRubyScanningDeployer {
 
-	private static final String ENDPOINTS_DIR = "app/endpoints/";
-
-	private static final String SUFFIX = ".wsdl";
+	private static final String SUFFIX = "_endpoint.rb";
 	
-	private static final SuffixMatchFilter WSDL_FILTER = new SuffixMatchFilter(SUFFIX);
+	private static final SuffixMatchFilter ENDPOINT_CLASS_FILTER = new SuffixMatchFilter(SUFFIX);
 
 	@SuppressWarnings("unused")
 	private static final String DEFAULT_TRUST_STORE = "auth/truststore.jks";
 
 	public AbstractRubyEndpointsScanningDeployer() {
 		addOutput(RubyEndpointsMetaData.class);
-		setPath(ENDPOINTS_DIR, true);
-		setFilter( WSDL_FILTER );
+		setFilter( ENDPOINT_CLASS_FILTER );
 	}
 
-	protected void deploy(VFSDeploymentUnit unit, VirtualFile wsdl, String relativePath) throws DeploymentException {
-		String wsdlLocation  = relativePath;
-		String name          = wsdlLocation.substring(0, wsdlLocation.length() - SUFFIX.length());
-		String classLocation = name + "_endpoint";
-		String rubyFileName = classLocation + ".rb";
+	protected void deploy(VFSDeploymentUnit unit, VirtualFile rubyFile, String relativePath) throws DeploymentException {
+		log.info( "deploy " + relativePath );
+		String rubyFileName  = relativePath;
+		String name          = rubyFileName.substring(0, rubyFileName.length() - SUFFIX.length());
+		String wsdlLocation  = name + ".wsdl";
+		
+		log.info( "name [" + name + "]" );
+		log.info( "rubyFileName [" + rubyFileName + "]" );
+		log.info( "wsdlLocation [" + wsdlLocation + "]" );
+		log.info( "className [" + getEndpointClassName(name) + "]" );
+		
 		try {
-			//VirtualFile rubyFile = wsdl.getParent().getChild(rubyFileName);
-			VirtualFile rubyFile = unit.getRoot().getChild( ENDPOINTS_DIR ).getChild( rubyFileName );
-			if (rubyFile == null) {
-				log.warn("No Ruby endpoint handler definition '" + name + SUFFIX + "' found for WSDL: " + wsdl);
-				return;
-			}
+			VirtualFile wsdlFile = unit.getRoot().getChild( getPath() ).getChild( wsdlLocation );
+			log.info( "wsdlFile " + wsdlFile );
 			
 			RubyEndpointMetaData metaData = new RubyEndpointMetaData();
 
 			metaData.setName(name);
 			metaData.setEndpointClassName(getEndpointClassName(name));
-			metaData.setWsdlLocation(wsdl.toURL());
+			
+			if ( wsdlFile != null ) {
+				log.info( "defaulting to WSDL at " + wsdlFile );
+				metaData.setWsdlLocation(wsdlFile.toURL());
+			}
+			
+			String classLocation = rubyFileName.substring(0, rubyFileName.length() - 3 );
 			metaData.setClassLocation(classLocation);
 			
 			RubyEndpointsMetaData endpoints = unit.getAttachment( RubyEndpointsMetaData.class );

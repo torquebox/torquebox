@@ -76,6 +76,7 @@ public class RubyComplexType extends RubyType {
 
 	public String getNewInstanceFragment() {
 		return getName() + ".new()";
+		//return getName();
 	}
 
 	public String toString() {

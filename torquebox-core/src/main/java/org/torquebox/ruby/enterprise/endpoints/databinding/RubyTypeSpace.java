@@ -21,7 +21,7 @@
  */
 package org.torquebox.ruby.enterprise.endpoints.databinding;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -43,7 +43,6 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectTable;
 import org.jboss.logging.Logger;
-import org.torquebox.ruby.core.runtime.DefaultRubyDynamicClassLoader;
 import org.torquebox.ruby.core.runtime.spi.RubyDynamicClassLoader;
 import org.torquebox.ruby.enterprise.endpoints.databinding.complex.RubyComplexType;
 import org.torquebox.ruby.enterprise.endpoints.databinding.simple.RubyBooleanType;
@@ -57,21 +56,21 @@ public class RubyTypeSpace {
 
 	private static final String XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema";
 	private static final Logger log = Logger.getLogger(RubyTypeSpace.class);
-	
+
 	private URL wsdlLocation;
 
 	private Bus bus;
-	private DefaultRubyDynamicClassLoader classLoader;
-	
+	private RubyDynamicClassLoader classLoader;
+
 	private Map<String, Element> schemaList = new HashMap<String, Element>();
-	private Map<QName,RubyType> typesByQName = new HashMap<QName,RubyType>();
-	private Map<String,RubyType> typesByClassName = new HashMap<String,RubyType>();
+	private Map<QName, RubyType> typesByQName = new HashMap<QName, RubyType>();
+	private Map<String, RubyType> typesByClassName = new HashMap<String, RubyType>();
 	private String rubyPath;
 
 	public RubyTypeSpace() {
 
 	}
-	
+
 	public void setWsdlLocation(URL wsdlLocation) {
 		this.wsdlLocation = wsdlLocation;
 	}
@@ -87,25 +86,25 @@ public class RubyTypeSpace {
 	public Bus getBus() {
 		return bus;
 	}
-	
-	public void setRubyDynamicClassLoader(DefaultRubyDynamicClassLoader classLoader) {
+
+	public void setRubyDynamicClassLoader(RubyDynamicClassLoader classLoader) {
 		this.classLoader = classLoader;
 	}
-	
+
 	public RubyDynamicClassLoader getRubyDynamicClassLoader() {
 		return this.classLoader;
 	}
-	
+
 	public void setRubyPath(String rubyPath) {
 		this.rubyPath = rubyPath;
 	}
-	
+
 	public String getRubyPath() {
 		return this.rubyPath;
 	}
 
-	public void start() throws WSDLException, MalformedURLException {
-		
+	public void start() throws WSDLException, IOException {
+
 		initializePrimitiveTypes();
 
 		ServiceSchemaInfo serviceSchemaInfo = setUpSchemas();
@@ -114,37 +113,40 @@ public class RubyTypeSpace {
 
 		for (SchemaInfo schema : schemas) {
 			XmlSchema xmlSchema = schema.getSchema();
-			loadSchema( xmlSchema );
+			loadSchema(xmlSchema);
 		}
 
-		log.trace( getRubyClassDefinitions() );
-		
-		this.classLoader.putFile( rubyPath + ".rb", getRubyClassDefinitions() );
+		log.trace(getRubyClassDefinitions());
+
+		this.classLoader.putFile(rubyPath + ".rb", getRubyClassDefinitions());
 	}
-	
+
 	private void initializePrimitiveTypes() {
-		
-		typesByQName.put( new QName( XML_SCHEMA_NS, "string" ),  RubyStringType.INSTANCE );
-		typesByQName.put( new QName( XML_SCHEMA_NS, "boolean" ), RubyBooleanType.INSTANCE );
-		
-		typesByQName.put( new QName( XML_SCHEMA_NS, "int" ),  RubyIntegerType.INSTANCE );
-		typesByQName.put( new QName( XML_SCHEMA_NS, "integer" ), RubyIntegerType.INSTANCE );
-		
-		typesByQName.put( new QName( XML_SCHEMA_NS, "decimal" ), RubyFloatType.INSTANCE );
-		typesByQName.put( new QName( XML_SCHEMA_NS, "float" ), RubyFloatType.INSTANCE );
-		typesByQName.put( new QName( XML_SCHEMA_NS, "double" ), RubyFloatType.INSTANCE );
-		
-		//typesByQName.put( new QName( XML_SCHEMA_NS, "duration" ), new RubyPrimitiveType( "Duration", "Duration.new" ) );
-		typesByQName.put( new QName( XML_SCHEMA_NS, "dateTime" ), RubyDateTimeType.INSTANCE );
-		//typesByQName.put( new QName( XML_SCHEMA_NS, "time" ), new RubyPrimitiveType( "Time", "Time.now") );
-		//typesByQName.put( new QName( XML_SCHEMA_NS, "date" ), new RubyPrimitiveType( "Time", "Time.now") );
+
+		typesByQName.put(new QName(XML_SCHEMA_NS, "string"), RubyStringType.INSTANCE);
+		typesByQName.put(new QName(XML_SCHEMA_NS, "boolean"), RubyBooleanType.INSTANCE);
+
+		typesByQName.put(new QName(XML_SCHEMA_NS, "int"), RubyIntegerType.INSTANCE);
+		typesByQName.put(new QName(XML_SCHEMA_NS, "integer"), RubyIntegerType.INSTANCE);
+
+		typesByQName.put(new QName(XML_SCHEMA_NS, "decimal"), RubyFloatType.INSTANCE);
+		typesByQName.put(new QName(XML_SCHEMA_NS, "float"), RubyFloatType.INSTANCE);
+		typesByQName.put(new QName(XML_SCHEMA_NS, "double"), RubyFloatType.INSTANCE);
+
+		// typesByQName.put( new QName( XML_SCHEMA_NS, "duration" ), new
+		// RubyPrimitiveType( "Duration", "Duration.new" ) );
+		typesByQName.put(new QName(XML_SCHEMA_NS, "dateTime"), RubyDateTimeType.INSTANCE);
+		// typesByQName.put( new QName( XML_SCHEMA_NS, "time" ), new
+		// RubyPrimitiveType( "Time", "Time.now") );
+		// typesByQName.put( new QName( XML_SCHEMA_NS, "date" ), new
+		// RubyPrimitiveType( "Time", "Time.now") );
 	}
-	
+
 	ServiceSchemaInfo setUpSchemas() throws WSDLException {
 		WSDLManager wsdlManager = bus.getExtension(WSDLManager.class);
 
 		Definition def = wsdlManager.getDefinition(wsdlLocation);
-		
+
 		ServiceSchemaInfo serviceSchemaInfo = wsdlManager.getSchemasForDefinition(def);
 
 		if (serviceSchemaInfo == null) {
@@ -161,40 +163,40 @@ public class RubyTypeSpace {
 		}
 
 		schemaList.putAll(serviceSchemaInfo.getSchemaElementList());
-		
+
 		return serviceSchemaInfo;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void loadSchema(XmlSchema schema) {
 		XmlSchemaObjectTable types = schema.getSchemaTypes();
-		
-		for ( Iterator<QName> i = types.getNames(); i.hasNext() ; ) {
+
+		for (Iterator<QName> i = types.getNames(); i.hasNext();) {
 			QName name = i.next();
-			loadType( name, types.getItem( name ) );
+			loadType(name, types.getItem(name));
 		}
-		
-		for ( RubyType type : this.typesByQName.values() ) {
-			type.initialize( this );
+
+		for (RubyType type : this.typesByQName.values()) {
+			type.initialize(this);
 		}
-		
+
 	}
 
 	private void loadType(QName name, XmlSchemaObject xsdType) {
-		RubyComplexType type = new RubyComplexType( (XmlSchemaComplexType) xsdType );
-		this.typesByQName.put( name, type );
-		this.typesByClassName.put( type.getName(), type );
+		RubyComplexType type = new RubyComplexType((XmlSchemaComplexType) xsdType);
+		this.typesByQName.put(name, type);
+		this.typesByClassName.put(type.getName(), type);
 	}
-	
+
 	public String getRubyClassDefinitions() {
 		StringBuilder defs = new StringBuilder();
-		for ( RubyType type : this.typesByQName.values() ) {
-			if ( type instanceof RubyComplexType ) {
-				defs.append( ((RubyComplexType)type).toRubyClass() );
-				defs.append( "\n" );
+		for (RubyType type : this.typesByQName.values()) {
+			if (type instanceof RubyComplexType) {
+				defs.append(((RubyComplexType) type).toRubyClass());
+				defs.append("\n");
 			}
 		}
-		
+
 		return defs.toString();
 	}
 
@@ -203,10 +205,10 @@ public class RubyTypeSpace {
 	}
 
 	public RubyType getTypeByQName(QName qname) {
-		return this.typesByQName.get( qname );
+		return this.typesByQName.get(qname);
 	}
 
 	public RubyType getTypeByClassName(String className) {
-		return this.typesByClassName.get( className );
+		return this.typesByClassName.get(className);
 	}
 }
