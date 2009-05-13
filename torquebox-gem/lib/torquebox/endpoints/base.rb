@@ -1,7 +1,5 @@
 
-require 'jboss/endpoints/security_metadata'
-
-import org.jboss.ruby.enterprise.endpoints.BaseEndpointRb
+require 'torquebox/endpoints/security_metadata'
 
 module TorqueBox
   module Endpoints
