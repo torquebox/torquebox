@@ -9,4 +9,6 @@ public interface RubyDynamicClassLoader {
 	public abstract void addLoadPaths(List<String> paths)
 			throws URISyntaxException, IOException;
 
+	public abstract void putFile(String string, String contents) throws IOException;
+
 }
