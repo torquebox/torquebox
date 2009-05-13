@@ -7,7 +7,7 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox</artifactId>
-  <version>0.9.1-SNAPSHOT</version>
+  <version>1.0.0.Beta10-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TorqueBox</name>
   <url>http://www.torquebox.org/</url>
@@ -16,13 +16,24 @@
     The TorqueBox Ruby Application Platform
   </description>
 
-<!--
   <scm>
-    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossas/projects/microcontainer/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossas/projects/microcontainer/trunk/</developerConnection>
-    <url>http://viewvc.jboss.org/cgi-bin/viewvc.cgi/jbossas/projects/microcontainer/trunk/</url>
+    <connection>scm:git:git://github.com/torquebox/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:ssh://github.com/torquebox/${project.artifactId}.git</developerConnection>
+    <url>http://github.com/torquebox/${project.artifactId}/tree/master</url>
   </scm>
--->
+
+  <distributionManagement>
+    <repository>
+      <id>torquebox.repository</id>
+      <name>TorqueBox Repository</name>
+      <url>scpexe://repository.oddthesis.org/opt/torquebox/repository/maven2</url>
+    </repository>
+    <snapshotRepository>
+      <id>torquebox.SNAPSHOT.repository</id>
+      <name>TorqueBox SNAPSHOT Repository</name>
+      <url>scpexe://repository.oddthesis.org/opt/torquebox/repository/maven2-SNAPSHOT</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <properties>
     <jboss.as.version>5.0.1.GA</jboss.as.version>
