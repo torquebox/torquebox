@@ -22,19 +22,45 @@
     <url>http://github.com/torquebox/${project.artifactId}/tree/master</url>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>torquebox.repository</id>
-      <name>TorqueBox Repository</name>
-      <url>scpexe://repository.oddthesis.org/opt/torquebox/repository/maven2</url>
-    </repository>
-    <snapshotRepository>
-      <id>torquebox.SNAPSHOT.repository</id>
-      <name>TorqueBox SNAPSHOT Repository</name>
-      <url>scpexe://repository.oddthesis.org/opt/torquebox/repository/maven2-SNAPSHOT</url>
-    </snapshotRepository>
-  </distributionManagement>
-
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>torquebox.release.repository</id>
+          <name>TorqueBox Release Repository</name>
+          <url>scpexe://repository.torquebox.org/opt/torquebox/repository/maven2/releases</url>
+        </repository>
+        <snapshotRepository>
+          <id>torquebox.snapshot.repository</id>
+          <name>TorqueBox Snapshot Repository</name>
+          <url>scpexe://repository.torquebox.org/opt/torquebox/repository/maven2/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>torquebox.release.repository</id>
+          <name>TorqueBox Release Repository</name>
+          <url>file:///opt/torquebox/repository/maven2/releases</url>
+        </repository>
+        <snapshotRepository>
+          <id>torquebox.snapshot.repository</id>
+          <name>TorqueBox Snapshot Repository</name>
+          <url>file:///opt/torquebox/repository/maven2/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+  </profiles>
+    
   <properties>
     <jboss.as.version>5.0.1.GA</jboss.as.version>
     <jboss.mc.version>2.0.4.GA</jboss.mc.version>
