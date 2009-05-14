@@ -14,6 +14,12 @@
   <name>TorqueBox Binary Distribution</name>
   <description></description>
 
+  <scm>
+    <connection>scm:git:git://github.com/torquebox/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:ssh://github.com/torquebox/${project.artifactId}.git</developerConnection>
+    <url>http://github.com/torquebox/${project.artifactId}/tree/master</url>
+  </scm>
+
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
@@ -75,9 +81,9 @@
               <tasks>
                 <exec executable="rake">
                   <arg value="maven:compile"/>
-                  <env key="project.version"  value="${project.version}"/>
-                  <env key="jboss.as.version" value="${jboss.as.version}"/>
-                  <env key="jruby.version"    value="${jruby.version}"/>
+                  <env key="project.version"   value="${project.version}"/>
+                  <env key="jboss.as.version"  value="${jboss.as.version}"/>
+                  <env key="jruby.version"     value="${jruby.version}"/>
                 </exec>
               </tasks>
             </configuration>
