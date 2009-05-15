@@ -6,10 +6,14 @@ ROOT_REPOSITORY=File.dirname( __FILE__ )
 
 task 'init' do
   run( "git submodule update --init" )  
+end
+
+task 'dev-init'=>[ 'init' ] do
   each_repository( :up ) do
     run "git checkout master"
   end
 end
+
 
 task 'add-commit-remotes' do
   each_repository do |repo|
