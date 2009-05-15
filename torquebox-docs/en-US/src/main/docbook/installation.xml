@@ -34,18 +34,19 @@
       <title>Unzip it somewhere handy</title>
 
       <para>We'll install TorqueBox under your user's $HOME directory. The
-      <envar>$TORQUEBOX_HOME</envar> variable should be set to the path where
-      the TorqueBox server is unpacked.</para>
+      <envar>$JBOSS_HOME</envar> variable should be set to the path where
+      JBoss is unpacked within the TorqueBox server.</para>
 
-      <para><screen><prompt>$</prompt> <command>unzip torquebox-${project.version}-complete.zip</command>
+      <para><screen><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
 <prompt>$</prompt> <command>cd torquebox-${project.version}</command>
-<prompt>$</prompt> <command>export TORQUEBOX_HOME=$PWD</command>
+<prompt>$</prompt> <command>cd jboss</command>
+<prompt>$</prompt> <command>export JBOSS_HOME=$PWD</command>
 </screen></para>
 
-      <para>Alternatively, you can set <envar>$TORQUEBOX_HOME</envar> from
-      your <filename>.bashrc</filename> or similar file</para>
+      <para>Alternatively, you can set <envar>$JBOSS_HOME</envar> from your
+      <filename>.bashrc</filename> or similar file</para>
 
-      <para><screen>export TORQUEBOX_HOME=$HOME/torquebox-${project.version}</screen></para>
+      <para><screen>export JBOSS_HOME=$HOME/torquebox-${project.version}/jboss</screen></para>
     </section>
   </section>
 
