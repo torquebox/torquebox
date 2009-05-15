@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox</artifactId>
-    <version>1.0.0.Beta10-SNAPSHOT</version>
+    <version>1.0.0.Beta10</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -80,10 +79,10 @@
             <configuration>
               <tasks>
                 <exec executable="rake">
-                  <arg value="maven:compile"/>
-                  <env key="project.version"   value="${project.version}"/>
-                  <env key="jboss.as.version"  value="${jboss.as.version}"/>
-                  <env key="jruby.version"     value="${jruby.version}"/>
+                  <arg value="maven:compile"></arg>
+                  <env key="project.version" value="${project.version}"></env>
+                  <env key="jboss.as.version" value="${jboss.as.version}"></env>
+                  <env key="jruby.version" value="${jruby.version}"></env>
                 </exec>
               </tasks>
             </configuration>
