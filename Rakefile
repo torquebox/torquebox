@@ -40,7 +40,7 @@ task 'remove-tag' do
   puts "removing #{tag_name}"
   each_repository do
     run "git tag -d #{tag_name}", true, true
-    run "git push --dry-run commit :#{tag_name}"
+    run "git push commit :#{tag_name}"
   end
 end
 
