@@ -47,6 +47,14 @@ task 'remove-tag' do
   end
 end
 
+task 'commit-all' do
+  script = []
+  each_repository do
+    script << "pushd #{Dir.pwd} && git commit -a && popd"
+  end
+  puts script.join( " && \\\n " )
+end
+
 def run(cmd,actually_run=true, ignore_exit=false, &block)
   cmd.strip!
   if ( $last_announced_dir != Dir.pwd )
