@@ -6,6 +6,9 @@ ROOT_REPOSITORY=File.dirname( __FILE__ )
 
 task 'init' do
   run( "git submodule update --init" )  
+  each_repository( :up ) do
+    run "git checkout master"
+  end
 end
 
 task 'add-commit-remotes' do
