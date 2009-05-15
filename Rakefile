@@ -55,6 +55,12 @@ task 'commit-all' do
   puts script.join( " && \\\n " )
 end
 
+task 'push-all' do
+  each_repository( :up ) do
+    run "git push commit HEAD:master"
+  end
+end
+
 def run(cmd,actually_run=true, ignore_exit=false, &block)
   cmd.strip!
   if ( $last_announced_dir != Dir.pwd )
@@ -103,6 +109,7 @@ def each_repository(mode=:down,path=ROOT_REPOSITORY,&block)
     end
     if ( mode == :up )
       if ( File.exist?( '.git' ) )
+        puts "(in #{Dir.pwd})"
         block.call
       end
     end
