@@ -58,12 +58,16 @@
     </section>
 
     <section>
-      <title>Include the TorqueBox gem</title>
+      <title>Install the JDBC Gems for Database Connectivity</title>
+
+      <para>TODO</para>
+    </section>
+
+    <section>
+      <title>Include the TorqueBox Ruby packages</title>
 
       <para>In order to gain access to the advanced features of TorqueBox, you
-      must include the TorqueBox gem into your project.</para>
-
-      <para></para>
+      must include the TorqueBox packages into your project.</para>
 
       <section>
         <title>Using Git Submodules</title>
@@ -87,13 +91,6 @@ Resolving deltas: 100% (1/1), done.</computeroutput>
 <prompt>$</prompt> <command>cd vendor/plugins/torquebox-gem</command>
 <prompt>$</prompt> <command>git checkout ${project.version}</command>
 <prompt>$</prompt> <command>cd ../..</command>
-<prompt>$</prompt> <command>git submodule add git://github.com/torquebox/torquebox-rails.git vendor/plugins/torquebox-rails</command>
-<computeroutput>Initialize vendor/plugins/torquebox-rails/.git
-Initialized empty Git repository in /Users/bob/myapp/vendor/plugins/torquebox-rails/.git/
-remote: Counting objects: 10, done.
-remote: Compressing objects: 100% (9/9), done.
-remote: Total 10 (delta 0), reused 0 (delta 0)
-Receiving objects: 100% (10/10), done.</computeroutput>
 </screen></para>
           </example></para>
 
@@ -101,6 +98,9 @@ Receiving objects: 100% (10/10), done.</computeroutput>
         <filename>torquebox-gem</filename>. To later update the version you're
         using with your project, simply <command>checkout</command> a new
         commit, tag or branch.</para>
+
+        <para>You should perform the same action with the
+        <code>torquebox-rails</code> package also.</para>
       </section>
     </section>
 
@@ -153,16 +153,16 @@ Receiving objects: 100% (10/10), done.</computeroutput>
       and undeploy your application from an instance of the TorqueBox
       Server.</para>
 
-      <para>First, the variable <envar>$TORQUEBOX_HOME</envar> must be set to
-      the path of the top of your JBoss AS5 installation.</para>
+      <para>First, the variable <envar>$JBOSS_HOME</envar> must be set to the
+      path of the top of your JBoss AS5 installation.</para>
 
-      <para><screen><prompt>$</prompt> <command>export TORQUEBOX_HOME=/path/to/torquebox</command></screen></para>
+      <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
 
       <para>If you're using any configuration other than
       <emphasis>default</emphasis>, you must also set
       <envar>$JBOSS_CONF</envar>.</para>
 
-      <para><screen><prompt>$</prompt> <command>export TORQUEBOX_CONF=web</command></screen></para>
+      <para><screen><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></para>
 
       <para>Once these variables are set, you may perform a default deployment
       using the <command>jboss:rails:deploy</command> task.</para>

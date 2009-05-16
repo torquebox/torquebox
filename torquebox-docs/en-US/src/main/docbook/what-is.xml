@@ -12,8 +12,8 @@
     <title>Built upon JBoss AS5</title>
 
     <para>Instead of building a Ruby Application Platform from the ground-up,
-    TorqueBox leverages the existing enterprise-grade functionality JBoss has
-    been shipping for years in the JBoss Application Server. JBoss AS includes
+    TorqueBox leverages the existing ninja-grade functionality JBoss has been
+    shipping for years in the JBoss Application Server. JBoss AS includes
     high-performance clustering, caching and messaging functionality. By
     building Ruby capabilities on top of this foundation, your Ruby
     applications gain more capabilities right out-of-the-box.</para>
@@ -34,6 +34,6 @@
     <para>TorqueBox is a product of the JBoss Community, and is completely
     open-source software. TorqueBox is licensed under the LGPL. You may
     download the binaries or the source-code, modify it if you desire, and use
-    it, even for profit, without any licensing costs. </para>
+    it, even for profit, without any licensing costs.</para>
   </section>
 </chapter>

@@ -66,16 +66,16 @@
     <orderedlist>
       <listitem>
         <para>Locate the latest version of the TorqueBox Deployer JAR from the
-        Odd Thesis repository: <itemizedlist>
+        TorqueBox repository: <itemizedlist>
             <listitem>
               <ulink
-              url="http://repo.oddthesis.org/maven2/org/jboss/rails/jboss-rails/">Official
+              url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/">Official
               releases</ulink>
             </listitem>
 
             <listitem>
               <ulink
-              url="http://repository.torquebox.org/maven2-SNAPSHOTS/org/torquebox/torquebox-deployer/torquebox-deployer-${project.version}.jar">Interim
+              url="http://repository.torquebox.org/maven2-SNAPSHOTS/org/torquebox/torquebox-core/">Interim
               snapshot releases</ulink>
             </listitem>
           </itemizedlist></para>
@@ -83,7 +83,7 @@
 
       <listitem>
         <para>Download the JAR with the name in the format of
-        <emphasis>torquebox-deployer-${project.version}.jar</emphasis>.</para>
+        <emphasis>torquebox-core-${project.version}-deployer.jar</emphasis>.</para>
       </listitem>
 
       <listitem>
@@ -103,7 +103,7 @@
         <para>Copy the deployer JAR into the <filename>deployers/</filename>
         directory of the configuration.</para>
 
-        <screen><prompt>$</prompt> <command>cp torquebox-deployer-${project.version}.jar $JBOSS_HOME/server/$JBOSS_CONF/deployers</command></screen>
+        <screen><prompt>$</prompt> <command>cp torquebox-core-${project.version}-deployer.jar $JBOSS_HOME/server/$JBOSS_CONF/deployers</command></screen>
       </listitem>
     </orderedlist>
   </section>
