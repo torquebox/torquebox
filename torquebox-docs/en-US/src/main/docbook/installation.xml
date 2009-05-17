@@ -27,7 +27,7 @@
       ${project.version}.</para>
 
       <para><ulink
-      url="http://repository.torquebox.org/maven2/org/torquebox/torquebox/${project.version}/torquebox-${project.version}-complete.zip">http://repository.torquebox.org/releases/torquebox-${project.version}-complete.zip</ulink></para>
+      url="http://repository.torquebox.org/releases/maven2/org/torquebox/torquebox-bin/torquebox-bin-${project.version}.zip">http://repository.torquebox.org/releases/maven2/org/torquebox/torquebox-bin/torquebox-bin-${project.version}.zip</ulink></para>
     </section>
 
     <section>
@@ -47,6 +47,32 @@
       <filename>.bashrc</filename> or similar file</para>
 
       <para><screen>export JBOSS_HOME=$HOME/torquebox-${project.version}/jboss</screen></para>
+    </section>
+
+    <section>
+      <title>Ensure you have Java 6</title>
+
+      <para>TorqueBox requires Java JDK 6. </para>
+
+      <para>To determine which version, if any, is installed on your system,
+      at a command-line, attempt to run the <command>java</command> command
+      with the <option>-version</option> argument.</para>
+
+      <para><screen><prompt>$</prompt> <command>java -version</command>
+<computeroutput>java version "1.6.0_07"
+Java(TM) SE Runtime Environment (build 1.6.0_07-b06-153)
+Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</computeroutput></screen></para>
+
+      <para>If the version is at least 1.6, you version of Java is
+      sufficient.</para>
+
+      <para>If you have no Java installed, or a version less than 1.6, you'll
+      need to install a Java Development Kit. For many systems, it is easy to
+      install the open-source OpenJDK. </para>
+
+      <para>For installation on Ubuntu, Fedora, OpenSuse, or Debian, please
+      refer to the <ulink url="http://openjdk.java.net/install/">installation
+      instructions provided</ulink> by the OpenJDK project.</para>
     </section>
   </section>
 
@@ -68,15 +94,15 @@
         <para>Locate the latest version of the TorqueBox Deployer JAR from the
         TorqueBox repository: <itemizedlist>
             <listitem>
-              <ulink
+              <para><ulink
               url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/">Official
-              releases</ulink>
+              releases</ulink></para>
             </listitem>
 
             <listitem>
-              <ulink
+              <para><ulink
               url="http://repository.torquebox.org/maven2-SNAPSHOTS/org/torquebox/torquebox-core/">Interim
-              snapshot releases</ulink>
+              snapshot releases</ulink></para>
             </listitem>
           </itemizedlist></para>
       </listitem>
