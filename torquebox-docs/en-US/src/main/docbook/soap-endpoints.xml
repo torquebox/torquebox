@@ -89,7 +89,7 @@ end</screen></para>
 
         <para>If the WSDL is present in the same directory, and is named the
         same as the class, minus the _endpoint suffix, it will implicitly be
-        used. For example, <filename>amazon/ec_2.wsdl</filename> would be used
+        used. For example, <filename>amazon/ec2.wsdl</filename> would be used
         for <filename>amazon/ec2_endpoint.rb</filename> unless otherwise
         specified using the <parameter>wsdl_location</parameter> configuration
         parameter.</para>
@@ -334,7 +334,7 @@ end</screen></para>
       the <type>item</type> element is not transliterated into the Ruby class.
       The <type>&lt;keySet&gt;</type> element translates into
       <classname>Array</classname> of <type>DescribeKeyPairsItemType</type>
-      objects. </para>
+      objects.</para>
 
       <para>Navigating from a root <type>DescribeKeyPairsType</type> object to
       the key names works intuitively.</para>

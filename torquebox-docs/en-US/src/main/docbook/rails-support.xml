@@ -159,7 +159,7 @@ Resolving deltas: 100% (1/1), done.</computeroutput>
       <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
 
       <para>If you're using any configuration other than
-      <emphasis>default</emphasis>, you must also set
+      <classname>default</classname>, you must also set
       <envar>$JBOSS_CONF</envar>.</para>
 
       <para><screen><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></para>
