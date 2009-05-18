@@ -53,7 +53,7 @@ end
 
 task 'commit-all' do
   script = []
-  each_repository do
+  each_repository( :up ) do
     script << "pushd #{Dir.pwd} && ( git commit -a || [ $? -eq 1 ] ) && popd"
   end
   puts script.join( " && \\\n " )
