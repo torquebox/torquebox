@@ -5,6 +5,11 @@ module JBoss
   module RakeUtils
     def self.jboss_home
       jboss_home = ENV['JBOSS_HOME']
+      if ( ! jboss_home )
+        if ( ENV['TOQUEBOX_HOME'] )
+          jboss_home = ENV['TORQUEBOX_HOME'] + '/jboss'
+        end
+      end
       raise "$JBOSS_HOME is not set" unless jboss_home
       return jboss_home
     end
