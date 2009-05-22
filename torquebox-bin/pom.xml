@@ -31,21 +31,21 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-gem</artifactId>
       <version>${project.version}</version>
-      <type>zip</type>
+      <type>gem</type>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rails</artifactId>
       <version>${project.version}</version>
-      <type>zip</type>
+      <type>gem</type>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-capistrano</artifactId>
       <version>${project.version}</version>
-      <type>zip</type>
+      <type>gem</type>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -100,14 +100,15 @@
           <execution>
             <phase>package</phase>
             <goals>
+              <goal>single</goal>
 <!--
               <goal>directory-single</goal>
 -->
-              <goal>single</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
+<!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -124,12 +125,56 @@
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
-              <stripVersion>true</stripVersion>
               <excludeTransitive>true</excludeTransitive>
             </configuration>
           </execution>
         </executions>
       </plugin>
+-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.torquebox</groupId>
+                  <artifactId>torquebox-core</artifactId>
+                  <classifier>deployer</classifier>
+                  <outputDirectory>target/deployer</outputDirectory>
+                  <destFileName>torquebox-core-deployer.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.torquebox</groupId>
+                  <artifactId>torquebox-gem</artifactId>
+                  <type>gem</type>
+                  <outputDirectory>target/gems</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.torquebox</groupId>
+                  <artifactId>torquebox-rails</artifactId>
+                  <type>gem</type>
+                  <outputDirectory>target/gems</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.torquebox</groupId>
+                  <artifactId>torquebox-capistrano</artifactId>
+                  <type>gem</type>
+                  <outputDirectory>target/gems</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      
     </plugins>
   </build>
 

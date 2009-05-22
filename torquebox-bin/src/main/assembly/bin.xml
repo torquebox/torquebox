@@ -29,17 +29,18 @@
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>/torquebox-${pom.version}-bin</outputDirectory>
+      <outputDirectory>/torquebox-${pom.version}-bin/gems</outputDirectory>
       <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
       <unpack>false</unpack>
       <scope>runtime</scope>
       <useProjectArtifact>false</useProjectArtifact>
       <useProjectAttachments>false</useProjectAttachments>
       <useTransitiveDependencies>false</useTransitiveDependencies>
-      <excludes>
-        <exclude>*:deployer:*</exclude>
-        <exclude>org.torquebox:torquebox-docs-en_US:*</exclude>
-      </excludes>
+      <includes>
+        <include>org.torquebox:torquebox-gem:gem</include>
+        <include>org.torquebox:torquebox-rails:gem</include>
+        <include>org.torquebox:torquebox-capistrano:gem</include>
+      </includes>
     </dependencySet>
     <dependencySet>
       <outputDirectory>/torquebox-${pom.version}-bin/docs/html</outputDirectory>
