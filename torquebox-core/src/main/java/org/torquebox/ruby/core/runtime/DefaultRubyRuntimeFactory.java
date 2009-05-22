@@ -21,6 +21,7 @@
  */
 package org.torquebox.ruby.core.runtime;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,7 +31,6 @@ import java.util.Map;
 import org.jboss.Version;
 import org.jboss.kernel.Kernel;
 import org.jruby.Ruby;
-import org.jruby.RubyClass;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -55,11 +55,11 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	public DefaultRubyRuntimeFactory(RuntimeInitializer initializer) {
 		this.initializer = initializer;
 	}
-	
+
 	public void setApplicationName(String applicationName) {
 		this.applicationName = applicationName;
 	}
-	
+
 	public String getApplicationName() {
 		return this.applicationName;
 	}
@@ -83,19 +83,42 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	public synchronized Ruby createRubyRuntime() throws Exception {
 		RubyInstanceConfig config = new RubyInstanceConfig();
 
-		DefaultRubyDynamicClassLoader childLoader = this.classLoader.createChild();
+		DefaultRubyDynamicClassLoader childLoader = this.classLoader
+				.createChild();
 		config.setLoader(childLoader);
-		
-		if ( this.classCache == null ) {
-			this.classCache = new ClassCache<Object>( this.classLoader );
-		}
-		config.setClassCache( classCache );
 
-		try {
-			String binjruby = RubyInstanceConfig.class.getResource("/META-INF/jruby.home/bin/jruby").toURI().getSchemeSpecificPart();
-			config.setJRubyHome(binjruby.substring(0, binjruby.length() - 10));
-		} catch (Exception e) {
-			// ignore
+		if (this.classCache == null) {
+			this.classCache = new ClassCache<Object>(this.classLoader);
+		}
+		config.setClassCache(classCache);
+
+		String jrubyHome = null;
+
+		jrubyHome = System.getProperty("jruby.home");
+		
+		if (jrubyHome == null) {
+			jrubyHome = System.getenv("JRUBY_HOME");
+		}
+		
+		if ( jrubyHome == null ) {
+			String jbossHome = System.getProperty( "jboss.home" );
+			
+			if ( jbossHome != null ) {
+				File candidatePath = new File( jbossHome, "../jruby" );
+				if ( candidatePath.exists() && candidatePath.isDirectory() ) {
+					jrubyHome = candidatePath.getAbsolutePath();
+				}
+			}
+			
+		}
+		
+		if ( jrubyHome == null ) {
+			String binJruby = RubyInstanceConfig.class.getResource( "/META-INF/jruby.home/bin/jruby").toURI() .getSchemeSpecificPart();
+			jrubyHome =  binJruby.substring(0, binJruby.length() - 10);
+		}
+		
+		if ( jrubyHome != null ) {
+			config.setJRubyHome( jrubyHome );
 		}
 
 		config.setEnvironment(getEnvironment());
@@ -111,20 +134,25 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 			this.initializer.initialize(childLoader, runtime);
 		}
 		injectKernel(runtime);
-		setUpConstants(runtime, this.applicationName );
+		setUpConstants(runtime, this.applicationName);
 		return runtime;
 	}
 
 	private void setUpConstants(Ruby runtime, String applicationName) {
-		runtime.evalScriptlet( "require %q(org/torquebox/ruby/core/runtime/runtime_constants)\n" );
+		runtime
+				.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/runtime_constants)\n");
 		RubyModule jbossModule = runtime.getClassFromPath("JBoss");
-		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants", new Object[] { Version.getInstance(), applicationName }, void.class );
+		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants",
+				new Object[] { Version.getInstance(), applicationName },
+				void.class);
 	}
 
 	private void injectKernel(Ruby runtime) {
-		runtime.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/kernel)");
+		runtime
+				.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/kernel)");
 		RubyModule jbossKernel = runtime.getClassFromPath("TorqueBox::Kernel");
-		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=", new Object[] { this.kernel }, void.class);
+		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=",
+				new Object[] { this.kernel }, void.class);
 	}
 
 	public Map<Object, Object> getEnvironment() {
