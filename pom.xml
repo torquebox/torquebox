@@ -197,7 +197,6 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
-
     </plugins>
     <pluginManagement>
       <plugins>
