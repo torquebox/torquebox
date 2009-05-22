@@ -1,2 +1,2 @@
 
-
+require 'torquebox-rails'
