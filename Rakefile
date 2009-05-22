@@ -65,6 +65,12 @@ task 'push-all' do
   end
 end
 
+task 'status-all' do
+  each_repository( :up ) do
+    run "git status", true, true
+  end
+end
+
 def run(cmd,actually_run=true, ignore_exit=false, &block)
   cmd.strip!
   if ( $last_announced_dir != Dir.pwd )
