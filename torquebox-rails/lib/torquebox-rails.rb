@@ -1,3 +1,2 @@
 
-require 'torquebox/tasks'
 
