@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<chapter>
+<chapter id="installation">
   <title>Installation</title>
 
   <section>
@@ -20,59 +20,85 @@
     </itemizedlist>
 
     <section>
-      <title>Get the latest version</title>
-
-      <para>You can obtain the latest version of TorqueBox from the TorqueBox
-      repository. As of this writing, the latest version is
-      ${project.version}.</para>
-
-      <para><ulink
-      url="http://repository.torquebox.org/releases/maven2/org/torquebox/torquebox-bin/torquebox-bin-${project.version}.zip">http://repository.torquebox.org/releases/maven2/org/torquebox/torquebox-bin/torquebox-bin-${project.version}.zip</ulink></para>
-    </section>
-
-    <section>
-      <title>Unzip it somewhere handy</title>
-
-      <para>We'll install TorqueBox under your user's $HOME directory. The
-      <envar>$JBOSS_HOME</envar> variable should be set to the path where
-      JBoss is unpacked within the TorqueBox server.</para>
-
-      <para><screen><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
-<prompt>$</prompt> <command>cd torquebox-${project.version}</command>
-<prompt>$</prompt> <command>cd jboss</command>
-<prompt>$</prompt> <command>export JBOSS_HOME=$PWD</command>
-</screen></para>
-
-      <para>Alternatively, you can set <envar>$JBOSS_HOME</envar> from your
-      <filename>.bashrc</filename> or similar file</para>
-
-      <para><screen>export JBOSS_HOME=$HOME/torquebox-${project.version}/jboss</screen></para>
-    </section>
-
-    <section>
       <title>Ensure you have Java 6</title>
 
-      <para>TorqueBox requires Java JDK 6. </para>
+      <para>TorqueBox requires Java JDK 6.</para>
 
       <para>To determine which version, if any, is installed on your system,
       at a command-line, attempt to run the <command>java</command> command
       with the <option>-version</option> argument.</para>
 
       <para><screen><prompt>$</prompt> <command>java -version</command>
-<computeroutput>java version "1.6.0_07"
+java version "1.6.0_07"
 Java(TM) SE Runtime Environment (build 1.6.0_07-b06-153)
-Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</computeroutput></screen></para>
+Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></para>
 
       <para>If the version is at least 1.6, you version of Java is
       sufficient.</para>
 
       <para>If you have no Java installed, or a version less than 1.6, you'll
       need to install a Java Development Kit. For many systems, it is easy to
-      install the open-source OpenJDK. </para>
+      install the open-source OpenJDK.</para>
 
       <para>For installation on Ubuntu, Fedora, OpenSuse, or Debian, please
       refer to the <ulink url="http://openjdk.java.net/install/">installation
-      instructions provided</ulink> by the OpenJDK project.</para>
+      instructions provided</ulink> by the OpenJDK project. If you find a
+      <command>java</command> on your system, ensure that it is not actually
+      <command>gcj</command>. The <command>gcj</command> is insufficient for
+      running the TorqueBox server.</para>
+
+      <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
+    </section>
+
+    <section>
+      <title>Get the latest version of TorqueBox binary package</title>
+
+      <para>You can obtain the latest version of TorqueBox from the TorqueBox
+      repository. As of this writing, the latest version is
+      ${project.version}.</para>
+
+      <para><ulink
+      url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-bin/torquebox-bin-${project.version}.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-bin/${project.version}/torquebox-bin-${project.version}.zip</ulink></para>
+    </section>
+
+    <section>
+      <title>Unzip it somewhere handy</title>
+
+      <para>We'll install TorqueBox under your user's $HOME directory. </para>
+
+      <para><screen><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
+<prompt>$</prompt> <command>cd torquebox-${project.version}</command>
+</screen></para>
+
+      <para>Before using the TorqueBox server, you must set up your
+      environment. To make it easier to upgrade without having to reconfigure
+      your environment, it is useful to create a symlink to the versioned
+      directory produced when you unpackaged the distribution.</para>
+
+      <para><screen><prompt>$</prompt> <command>ln -s torquebox-bin-${project.version} torquebox-current</command></screen></para>
+
+      <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar>
+      and <envar>$JRUBY_HOME</envar> need to be set, and adjusting your
+      <envar>$PATH</envar> will make working with the package easier. You can
+      either run the following commands each time on the command-line, or add
+      them to your <filename>.bash_profile</filename>.</para>
+
+      <para>First, the various
+      <envar>$<replaceable>X</replaceable>_HOME</envar> variables are set so
+      that each subsystem can find its supporting files.</para>
+
+      <para><screen>export TORQUEBOX_HOME=$HOME/torquebox-current
+export JBOSS_HOME=$TORQUEBOX_HOME/jboss
+export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
+
+      <para>Next, we make sure that JRuby's binaries are first in our
+      executable <envar>$PATH</envar>, before any previously-installed Ruby
+      packages.</para>
+
+      <para><screen>export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing this,
+      commands such as <command>rake</command>, <command>gem</command>, and
+      <command>rails</command> will load from the TorqueBox-provided JRuby
+      installation.</para>
     </section>
   </section>
 
@@ -101,7 +127,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</computero
 
             <listitem>
               <para><ulink
-              url="http://repository.torquebox.org/maven2-SNAPSHOTS/org/torquebox/torquebox-core/">Interim
+              url="http://repository.torquebox.org/maven2/snapshots/org/torquebox/torquebox-core/">Interim
               snapshot releases</ulink></para>
             </listitem>
           </itemizedlist></para>

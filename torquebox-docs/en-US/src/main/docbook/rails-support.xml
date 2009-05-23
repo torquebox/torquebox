@@ -54,53 +54,164 @@
     <section>
       <title>Freeze Rails</title>
 
-      <para>TODO</para>
+      <para>Before a rails application can be deployed on the TorqueBox
+      server, the Rails framework must be <emphasis>frozen</emphasis>.
+      Freezing Rails copies its gems from the system-wide RubyGem repository
+      under your application's <filename>vendor/rails/</filename>
+      directory.</para>
+
+      <section>
+        <title>Using the <command>rake</command> task</title>
+
+        <para>Every Rails application has a handful of pre-defined
+        <command>rake</command> tasks. The
+        <command>rails:freeze:gems</command> task will automatically copy the
+        version of Rails your application is using under
+        <filename>vendor/rails/</filename>.</para>
+
+        <para><screen><prompt>$</prompt> <command>rake rails:freeze:gems</command>
+(in /Users/bob/myapp)
+Freezing to the gems for Rails 2.3.2
+rm -rf vendor/rails
+mkdir -p vendor/rails
+cd vendor/rails
+Unpacked gem: '/Users/bob/writing/demo-app/vendor/rails/activesupport-2.3.2'
+mv activesupport-2.3.2 activesupport
+Unpacked gem: '/Users/bob/writing/demo-app/vendor/rails/activerecord-2.3.2'
+mv activerecord-2.3.2 activerecord
+Unpacked gem: '/Users/bob/writing/demo-app/vendor/rails/actionpack-2.3.2'
+mv actionpack-2.3.2 actionpack
+Unpacked gem: '/Users/bob/writing/demo-app/vendor/rails/actionmailer-2.3.2'
+mv actionmailer-2.3.2 actionmailer
+Unpacked gem: '/Users/bob/writing/demo-app/vendor/rails/activeresource-2.3.2'
+mv activeresource-2.3.2 activeresource
+Unpacked gem: '/Users/bob/writing/demo-app/vendor/rails/rails-2.3.2'
+cd -</screen></para>
+      </section>
     </section>
 
     <section>
-      <title>Install the JDBC Gems for Database Connectivity</title>
+      <title>Include the JDBC Gems for Database Connectivity</title>
 
-      <para>TODO</para>
+      <para>ActiveRecord applications deployed on TorqueBox benefit from using
+      the Java-based JDBC database drivers. These drivers are provided as a
+      handful of gems which you may include into your application through
+      <filename>config/environment.rb</filename>.</para>
+
+      <para>JDBC for many popular databases is pre-installed with the
+      TorqueBox server. You simply must reference them from your
+      <filename>environment.rb</filename> within the
+      <code>Rails::Initializer.run</code> block.</para>
+
+      <para><screen>Rails::Initializer.run do |config|
+
+  config.gem "activerecord-jdbc-adapter",
+             :lib=&gt;'jdbc_adapter'
+
+  config.gem "activerecord-jdbcpostgresql-adapter",
+             :lib=&gt;'active_record/connection_adapters/jdbcpostgresql_adapter'
+
+  config.gem "jdbc-postgres",
+             :lib=&gt;'jdbc/postgres'
+
+end</screen></para>
+
+      <para>All databases will require inclusion of the
+      <filename>activerecord-jdbc-adapter</filename>. A database-specific
+      ActiveRecord adapter is also required, along with the actual Java-based
+      JDBC driver wrapped in Gem format.</para>
+
+      <informaltable>
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Database</entry>
+
+              <entry align="center">Gems</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>Derby</entry>
+
+              <entry><para>activerecord-jdbcderby-adapter</para><para>jdbc-derby</para></entry>
+            </row>
+
+            <row>
+              <entry>H2</entry>
+
+              <entry><para>activerecord-jdbch2-adapter</para><para>jdbc-h2</para></entry>
+            </row>
+
+            <row>
+              <entry>HSQLDB</entry>
+
+              <entry><para>activerecord-jdbchsqldb-adapter</para><para>jdbc-hsqldb</para></entry>
+            </row>
+
+            <row>
+              <entry>MySQL</entry>
+
+              <entry><para>activerecord-jdbcmysql-adapter</para><para>jdbc-mysql</para></entry>
+            </row>
+
+            <row>
+              <entry>PostgreSQL</entry>
+
+              <entry><para>activerecord-jdbcpostgresql-adapter</para><para>jdbc-postgresql</para></entry>
+            </row>
+
+            <row>
+              <entry>SQLite3</entry>
+
+              <entry><para>activerecord-sqlite3-adapter</para><para>jdbc-sqlite3</para></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
     </section>
 
     <section>
       <title>Include the TorqueBox Ruby packages</title>
 
       <para>In order to gain access to the advanced features of TorqueBox, you
-      must include the TorqueBox packages into your project.</para>
+      must include the TorqueBox packages into your project. The TorqueBox
+      gems are also included into your application through
+      <filename>config/environment.rb</filename>.<screen>Rails::Initializer.run do |config|
+  
+  config.gem "torquebox-gem"
+  config.gem "torquebox-rails"
+
+end</screen></para>
 
       <section>
-        <title>Using Git Submodules</title>
+        <title><filename>torquebox-gem</filename></title>
 
-        <para>IF you are using Git for the revision-control of your project,
-        you may want to use Git's submodule facility to link the gem from the
-        official repository into your project.</para>
+        <para>The <filename>torquebox-gem</filename> provides access to
+        advanced functionality, such as scheduled jobs and task queues.</para>
+      </section>
 
-        <para><example>
-            <title>Using Git submodule for
-            <filename>torquebox-gem</filename></title>
+      <section>
+        <title><filename>torquebox-rails</filename></title>
 
-            <para><screen><prompt>$</prompt> <command>git submodule add git://github.com/torquebox/torquebox-gem.git vendor/plugins/torquebox-gem</command>
-<computeroutput>Initialize vendor/plugins/torquebox-gem/.git
-Initialized empty Git repository in /Users/bob/myapp/vendor/plugins/torquebox-gem/.git/
-remote: Counting objects: 26, done.
-remote: Compressing objects: 100% (23/23), done.
-remote: Total 26 (delta 1), reused 0 (delta 0)
-Receiving objects: 100% (26/26), 7.30 KiB, done.
-Resolving deltas: 100% (1/1), done.</computeroutput>
-<prompt>$</prompt> <command>cd vendor/plugins/torquebox-gem</command>
-<prompt>$</prompt> <command>git checkout ${project.version}</command>
-<prompt>$</prompt> <command>cd ../..</command>
-</screen></para>
-          </example></para>
+        <para>The <filename>torquebox-rails</filename> provides additional
+        <command>rake</command> tasks to your application. These tasks assist
+        in deploying, undeploying, and executing the TorqueBox server. To make
+        these tasks available to your project, you also need to add a
+        <command>require</command> statement to the Rakefile at the top of
+        your application. </para>
 
-        <para>Your project will be linked to ${project.version} of
-        <filename>torquebox-gem</filename>. To later update the version you're
-        using with your project, simply <command>checkout</command> a new
-        commit, tag or branch.</para>
+        <para><screen>require 'torquebox/tasks'</screen></para>
 
-        <para>You should perform the same action with the
-        <code>torquebox-rails</code> package also.</para>
+        <para>Invoking <command>rake -T</command> will show the tasks now
+        available within your project.</para>
+
+        <para><screen>rake torquebox:rails:check_frozen         # Check for that Rails has been f...
+rake torquebox:rails:deploy               # Deploy the Rails app
+rake torquebox:rails:undeploy             # Undeploy the Rails app
+rake torquebox:server:check               # Check your installation of the ...
+rake torquebox:server:run                 # Run TorqueBox server</screen></para>
       </section>
     </section>
 
@@ -111,15 +222,6 @@ Resolving deltas: 100% (1/1), done.</computeroutput>
       function with JRuby and TorqueBox. You must replaced these gems with
       pure-Ruby or pure-Java implementations. In the future, native gems using
       the FFI facilities will be usable.</para>
-    </section>
-
-    <section>
-      <title>Freeze Gems</title>
-
-      <para>In addition to freezing the TorqueBox gems into your Rails
-      project, you must freeze all other gems used by your project. The
-      system-wide <envar>$GEM_PATH</envar> is ignored by the TorqueBox
-      Server.</para>
     </section>
   </section>
 
@@ -154,7 +256,8 @@ Resolving deltas: 100% (1/1), done.</computeroutput>
       Server.</para>
 
       <para>First, the variable <envar>$JBOSS_HOME</envar> must be set to the
-      path of the top of your JBoss AS5 installation.</para>
+      path of the top of your JBoss installation as described in <xref
+      linkend="installation" /></para>
 
       <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
 
@@ -199,13 +302,13 @@ Resolving deltas: 100% (1/1), done.</computeroutput>
         directory of the AS configuration in use. If you are using the default
         configuration, the path would be:</para>
 
-        <para><screen><filename>$TORQUEBOX_HOME/server/default/deploy/</filename></screen></para>
+        <para><screen><filename>$JBOSS_HOME/server/default/deploy/</filename></screen></para>
 
         <para>The descriptor is a YAML file, and must end with the suffix of
         <filename>-rails.yml</filename>. The prefix is arbitrary, but is
         usually some form of your application's name.</para>
 
-        <para><screen><filename>$TORQUEBOX_HOME/server/default/deploy/<emphasis
+        <para><screen><filename>$JBOSS_HOME/server/default/deploy/<emphasis
                 role="bold">myapp-rails.yml</emphasis></filename></screen></para>
       </section>
 
@@ -360,13 +463,12 @@ sip:
       provided.</para>
 
       <para><screen><prompt>$</prompt> <command>rake torquebox:server:run</command>
-<computeroutput>TorqueBox Server OK: /Users/bob/oddthesis/jboss/jdk1.6/current/server/default
+TorqueBox Server OK: /Users/bob/oddthesis/jboss/jdk1.6/current/server/default
 =========================================================================
 
-  JBoss Bootstrap Environment</computeroutput></screen>To stop the server,
-      simply interrupt the terminal using <emphasis>control-c</emphasis>.
-      While the server is running, applications may be repeatedly deployed and
-      undeployed.</para>
+  JBoss Bootstrap Environment</screen>To stop the server, simply interrupt the
+      terminal using <emphasis>control-c</emphasis>. While the server is
+      running, applications may be repeatedly deployed and undeployed.</para>
     </section>
   </section>
 </chapter>
