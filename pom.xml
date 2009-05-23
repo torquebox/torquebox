@@ -219,7 +219,9 @@
     <module>torquebox-spi</module>
     <module>torquebox-metadata</module>
     <module>torquebox-core</module>
+
     <module>torquebox-docs</module>
+
     <module>torquebox-gem</module>
     <module>torquebox-rails</module>
     <module>torquebox-capistrano</module>
