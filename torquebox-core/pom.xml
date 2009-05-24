@@ -85,6 +85,7 @@
     </dependency>
 	
     <!-- Microcontainer, VFS and Deployers -->
+
     <dependency>
       <groupId>org.jboss.microcontainer</groupId>
       <artifactId>jboss-kernel</artifactId>
@@ -94,61 +95,61 @@
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-client-spi</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-client</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-core-spi</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-core</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-impl</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-spi</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-spi</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-structure-spi</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs</artifactId>
-      <version>${jboss.mc.version}</version>
+      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
