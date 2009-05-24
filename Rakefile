@@ -71,6 +71,12 @@ task 'status-all' do
   end
 end
 
+task 'log-from' do
+  each_repository( :up ) do
+    run "git log #{ENV['FROM']}..HEAD"
+  end
+end
+
 def run(cmd,actually_run=true, ignore_exit=false, &block)
   cmd.strip!
   if ( $last_announced_dir != Dir.pwd )
