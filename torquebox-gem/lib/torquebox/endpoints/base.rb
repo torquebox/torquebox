@@ -3,27 +3,42 @@ require 'torquebox/endpoints/security_metadata'
 
 module TorqueBox
   module Endpoints
-    module Base
 
-      def self.included(target)
-        puts "included into #{target}"
+    class Configuration
+      def initialize(&block)
+        instance_eval &block if block
       end
-      
-      def self.target_namespace(ns=nil)
+
+      def target_namespace(ns=nil)
         ( @target_namspace = ns ) if ( ns != nil )
         @target_namspace ||= nil
       end
   
-      def self.port_name(pn=nil)
+      def port_name(pn=nil)
         ( @port_name = pn ) if ( pn != nil )
         @port_name ||= nil
       end
 
-      def self.security(&block) 
+      def security(&block) 
         unless block.nil?
           @security = SecurityMetaData.new( &block )
         end
         @security
+      end
+    end
+
+    module Base
+
+      def self.included(into)
+        puts "enhancing #{into}"
+        class << into
+          def endpoint_configuration(&block)
+            unless block.nil?
+              @configuration = Configuration.new( &block ) 
+            end
+            @configuration
+          end
+        end
       end
 
       def log=(logger)
@@ -71,3 +86,4 @@ module TorqueBox
   end
 end
   
+
