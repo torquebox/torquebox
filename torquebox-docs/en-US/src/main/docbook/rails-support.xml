@@ -98,78 +98,23 @@ cd -</screen></para>
       handful of gems which you may include into your application through
       <filename>config/environment.rb</filename>.</para>
 
-      <para>JDBC for many popular databases is pre-installed with the
-      TorqueBox server. You simply must reference them from your
-      <filename>environment.rb</filename> within the
-      <code>Rails::Initializer.run</code> block.</para>
+      <para>JDBC gems for many popular databases is pre-installed with the
+      TorqueBox server. You simply must reference the
+      activerecord-jdbc-adapter from your <filename>environment.rb</filename>
+      within the <code>Rails::Initializer.run</code> block.</para>
 
       <para><screen>Rails::Initializer.run do |config|
 
   config.gem "activerecord-jdbc-adapter",
              :lib=&gt;'jdbc_adapter'
 
-  config.gem "activerecord-jdbcpostgresql-adapter",
-             :lib=&gt;'active_record/connection_adapters/jdbcpostgresql_adapter'
-
-  config.gem "jdbc-postgres",
-             :lib=&gt;'jdbc/postgres'
-
 end</screen></para>
 
       <para>All databases will require inclusion of the
-      <filename>activerecord-jdbc-adapter</filename>. A database-specific
-      ActiveRecord adapter is also required, along with the actual Java-based
-      JDBC driver wrapped in Gem format.</para>
-
-      <informaltable>
-        <tgroup cols="2">
-          <thead>
-            <row>
-              <entry align="center">Database</entry>
-
-              <entry align="center">Gems</entry>
-            </row>
-          </thead>
-
-          <tbody>
-            <row>
-              <entry>Derby</entry>
-
-              <entry><para>activerecord-jdbcderby-adapter</para><para>jdbc-derby</para></entry>
-            </row>
-
-            <row>
-              <entry>H2</entry>
-
-              <entry><para>activerecord-jdbch2-adapter</para><para>jdbc-h2</para></entry>
-            </row>
-
-            <row>
-              <entry>HSQLDB</entry>
-
-              <entry><para>activerecord-jdbchsqldb-adapter</para><para>jdbc-hsqldb</para></entry>
-            </row>
-
-            <row>
-              <entry>MySQL</entry>
-
-              <entry><para>activerecord-jdbcmysql-adapter</para><para>jdbc-mysql</para></entry>
-            </row>
-
-            <row>
-              <entry>PostgreSQL</entry>
-
-              <entry><para>activerecord-jdbcpostgresql-adapter</para><para>jdbc-postgresql</para></entry>
-            </row>
-
-            <row>
-              <entry>SQLite3</entry>
-
-              <entry><para>activerecord-sqlite3-adapter</para><para>jdbc-sqlite3</para></entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </informaltable>
+      <filename>activerecord-jdbc-adapter</filename>. No other gems need to be
+      required or loaded, since ActiveRecord will perform further discovery on
+      its own. Database gems supporting Derby, H2, HSQLDB, MySQL, PostgreSQL,
+      and SQLite3 are supplied in the TorqueBox binary distribution.</para>
     </section>
 
     <section>
@@ -200,7 +145,7 @@ end</screen></para>
         in deploying, undeploying, and executing the TorqueBox server. To make
         these tasks available to your project, you also need to add a
         <command>require</command> statement to the Rakefile at the top of
-        your application. </para>
+        your application.</para>
 
         <para><screen>require 'torquebox/tasks'</screen></para>
 
