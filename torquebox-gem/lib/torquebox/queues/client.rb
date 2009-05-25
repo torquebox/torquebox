@@ -3,7 +3,7 @@ module TorqueBox
   module Queues
     class Client
       def initialize(destination, naming_host=localhost, naming_port=1099)
-        @client = org.jboss.ruby.enterprise.queues.RubyTaskQueueClient.new( naming_host, naming_port )
+        @client = org.torquebox.ruby.enterprise.queues.RubyTaskQueueClient.new( naming_host, naming_port )
         @client.set_destination( destination )
       end
 

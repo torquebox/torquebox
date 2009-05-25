@@ -1,7 +1,7 @@
 
-import org.jboss.ruby.enterprise.endpoints.metadata.SecurityMetaData
-import org.jboss.ruby.enterprise.endpoints.metadata.InboundSecurityMetaData
-import org.jboss.ruby.enterprise.endpoints.metadata.OutboundSecurityMetaData
+import org.torquebox.ruby.enterprise.endpoints.metadata.SecurityMetaData
+import org.torquebox.ruby.enterprise.endpoints.metadata.InboundSecurityMetaData
+import org.torquebox.ruby.enterprise.endpoints.metadata.OutboundSecurityMetaData
 
 class SecurityMetaData
 
