@@ -5,7 +5,7 @@
   <title>Capistrano Support</title>
 
   <section>
-    <title>Capistrano</title>
+    <title id="capistrano-support.title">Capistrano</title>
 
     <para>Capistrano is a deployment tool to assist in moving code from a
     repository to a production server.</para>

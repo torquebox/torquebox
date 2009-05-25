@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="rails-support">
   <title>Ruby-on-Rails Support</title>
 
@@ -229,6 +229,26 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
       TorqueBox Server's web space, without any virtual host configuration. To
       access the application once deployed, you should use your browser to
       access <uri>http://localhost:8080/</uri>.</para>
+
+      <para>When the application is deployed, a deployment descriptor is
+      written to the
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename> directory
+      with a filename based upon the directory name of your
+      <filename>$RAILS_ROOT</filename>.</para>
+
+      <para>For instance, if your application was deployed from
+      /Users/bob/myapp/, the deployment descriptor would be named
+      <filename>myapp-rails.yml</filename>.</para>
+
+      <para>Rewriting or simply updating the last-modified time (using a
+      command such as <command>touch</command>) of this descriptor will cause
+      the TorqueBox server to redeploy the application. The
+      <command>torquebox:rails:deploy</command> task simply emits this
+      file.</para>
+
+      <para>Removing the descriptor will cause the TorqueBox server to
+      undeploy the application. This is what the
+      <command>torquebox:rails:undeploy</command> task does.</para>
     </section>
 
     <section>
@@ -393,6 +413,69 @@ web:
 sip: 
   appName: DummyApplication
   rubycontroller: SipHandler</screen></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Deployment using a partial descriptor</title>
+
+      <para>While the
+      <filename><replaceable>myapp</replaceable>-rails.yml</filename>
+      descriptor may contain all the abovementioned information, you may also
+      deploy using a combination of descriptor and additional files in your
+      <filename>config/</filename> directory. The bare minimum required in the
+      descriptor is the <varname>RAILS_ROOT</varname> setting for the
+      <code>application:</code> block.</para>
+
+      <para>The primary purpose is to allow an application to be fully
+      self-contained, specifying all vital production information within the
+      same codebase as the rest of the application. This is useful for
+      Capistrano-based deployments.</para>
+
+      <section>
+        <title><filename>config/web.yml</filename></title>
+
+        <para>The entire <code>web:</code> section of
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename> may be
+        supplied from within the application's own
+        <filename>config/web.yml</filename> file, if present. If both
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename> and
+        <filename>config/web.yml</filename> exist, the
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename>
+        configuration values take precedent.</para>
+
+        <para>This allows for typical values to be placed in
+        <filename>config/web.yml</filename> for production deployment, while
+        allowing developers to override them through
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename> during
+        development deployments.</para>
+
+        <para><example>
+            <title><filename>config/web.yml</filename></title>
+
+            <para><screen>host: torquebox.org
+context: /</screen></para>
+          </example></para>
+      </section>
+
+      <section>
+        <title><filename>config/rails-env.yml</filename></title>
+
+        <para>If present in your application, config/rails-env.yml can specify
+        the default value for <varname>RAILS_ENV</varname>. A value specified
+        in myapp-rails.yml deployment descriptor may still override the value
+        provided by the application's own
+        <filename>config/rails-env.yml</filename>.</para>
+
+        <para><example>
+            <title>Example <filename>config/rails-env.yml</filename></title>
+
+            <para><screen>RAILS_ENV: production</screen></para>
+          </example></para>
+
+        <para>Similar to config/web.yml, usage of config/rails-env.yml can
+        simplify production deployment by providing the correct value from
+        within the app.</para>
       </section>
     </section>
   </section>
