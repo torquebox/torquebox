@@ -394,8 +394,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
           <para><example>
               <title>SIP configuration in *-rails.yml</title>
 
-              <para><screen>sip:
-  appName: DummyApplication
+              <para><screen>sip:  
   rubycontroller: SipHandler</screen></para>
             </example></para>
         </section>
@@ -410,8 +409,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
 web:
   host:    www.mycorp.com
   context: /app-one
-sip: 
-  appName: DummyApplication
+sip:   
   rubycontroller: SipHandler</screen></para>
       </section>
     </section>

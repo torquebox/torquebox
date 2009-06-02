@@ -187,7 +187,6 @@
             <title>SIP configuration in *-rails.yml</title>
 
             <para><screen>sip:
-  appName: DummyApplication
   rubycontroller: SipHandler</screen></para>
           </example></para>
       </sect3>
@@ -202,7 +201,6 @@ web:
   host:    www.mycorp.com
   context: /app-one
 sip: 
-  appName: DummyApplication
   rubycontroller: SipHandler</screen></para>
       </sect3>
     </sect2>

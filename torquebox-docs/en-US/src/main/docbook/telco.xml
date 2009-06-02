@@ -71,14 +71,15 @@ puts @sip_factory
     </informaltable>
 
     <para>Additionally, each Telco class must descend, at some point, from
-    <type>JBoss::Jobs::SipBaseHandler</type>.</para>
+    <type>TorqueBox::Sip::Base</type>.</para>
 
     <para><example>
         <title>SIP Telco class example
         (<filename>telco/handler.rb</filename>)</title>
 
-        <para><screen>module Telco
-  class Handler &lt; JBoss::Sip::SipBaseHandler
+        <para><screen>require 'torquebox/sip/base'
+        module Telco
+  class Handler &lt; TorqueBox::Sip::Base
     # Handle INVITE request to setup a call by answering 200 OK
     def do_invite(request) 
       request.create_response(200).send
