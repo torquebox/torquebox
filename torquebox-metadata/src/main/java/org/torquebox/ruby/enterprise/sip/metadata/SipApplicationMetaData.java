@@ -27,24 +27,9 @@ package org.torquebox.ruby.enterprise.sip.metadata;
  *
  */
 public class SipApplicationMetaData {
-	private String applicationName;
-	private String mainServlet;
 	private String rubyController;
 	
-	//private Logger log = Logger.getLogger(SipApplicationMetaData.class);
-	
-	public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
-	public String getApplicationName() {
-		return applicationName;
-	}
-	public void setMainServlet(String mainServlet) {
-		this.mainServlet = mainServlet;
-	}
-	public String getMainServlet() {
-		return mainServlet;
-	}
+	//private Logger log = Logger.getLogger(SipApplicationMetaData.class);	
 	/**
 	 * @param rubyController the rubyController to set
 	 */
