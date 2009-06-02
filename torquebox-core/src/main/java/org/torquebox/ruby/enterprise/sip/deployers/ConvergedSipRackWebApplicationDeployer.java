@@ -80,15 +80,9 @@ public class ConvergedSipRackWebApplicationDeployer extends AbstractSimpleVFSRea
 		convergedMetaData.merge(webMetaData, null);
 		convergedMetaData.merge(sipAnnotatedMetaData, null);
 		
-		if(metaData.getApplicationName() != null) {
-			convergedMetaData.setApplicationName(metaData.getApplicationName());
-		}
+		convergedMetaData.setApplicationName(unit.getSimpleName());
 		
-		if(metaData.getMainServlet() != null) {
-			ServletSelectionMetaData servletSelectionMetaData = new ServletSelectionMetaData();
-			servletSelectionMetaData.setMainServlet(metaData.getMainServlet());
-			convergedMetaData.setServletSelection(servletSelectionMetaData);
-		} else if(metaData.getRubyController() != null) {			
+		if(metaData.getRubyController() != null) {			
 			ServletSelectionMetaData servletSelectionMetaData = new ServletSelectionMetaData();
 						
 			String rackAppFactoryName = null;

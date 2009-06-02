@@ -52,9 +52,7 @@ public class SipYamlParsingDeployer extends
 	protected SipApplicationMetaData parse(VFSDeploymentUnit unit,
 			VirtualFile file, SipApplicationMetaData arg2) throws Exception {
 		Map<String, String> sip = (Map<String, String>) Yaml.load(file.openStream());
-		
-		String applicationName = sip.get("appname");
-		String mainServlet = sip.get("mainservlet");	
+				
 		String rubyController = sip.get("rubycontroller");
 		
 		SipApplicationMetaData sipMetaData = unit.getAttachment(SipApplicationMetaData.class);
@@ -62,15 +60,7 @@ public class SipYamlParsingDeployer extends
 		if (sipMetaData == null) {
 			sipMetaData = new SipApplicationMetaData();
 			unit.addAttachment( SipApplicationMetaData.class, sipMetaData );
-		}
-
-		if ( sipMetaData.getApplicationName() == null ) {
-			sipMetaData.setApplicationName(applicationName);
-		}
-		
-		if ( sipMetaData.getMainServlet() == null ) {
-			sipMetaData.setMainServlet(mainServlet);
-		}
+		}		
 		
 		if ( sipMetaData.getRubyController() == null ) {
 			sipMetaData.setRubyController(rubyController);

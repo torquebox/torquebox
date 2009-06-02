@@ -21,11 +21,11 @@
  */
 package org.torquebox.ruby.enterprise.sip;
 
+import javax.servlet.ServletContext;
+import javax.servlet.sip.SipServletMessage;
+
 import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
-import org.jruby.Ruby;
-import org.mobicents.servlet.sip.message.SipServletRequestImpl;
-import org.mobicents.servlet.sip.message.SipServletResponseImpl;
 import org.mobicents.servlet.sip.ruby.SipRubyController;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
@@ -35,8 +35,7 @@ import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
  *
  */
 public class StandardSipRubyController implements SipRubyController {
-	private static final Logger log = Logger.getLogger(StandardSipRubyController.class);
-	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
+	private static final Logger log = Logger.getLogger(StandardSipRubyController.class);	
 	private String name;
 	private RackApplicationPool rackAppFactory;
 	private String rackAppFactoryName;
@@ -57,32 +56,14 @@ public class StandardSipRubyController implements SipRubyController {
 		}
 	}
 	
-	public void routeSipRequestToRubyApp(SipServletRequestImpl request) {
+	public void routeSipMessageToRubyApp(ServletContext servletContext, SipServletMessage sipServletMessage) {
 		RackApplication rackApp = null;
 		initEnv();		
 		try {			
-			rackApp = rackAppFactory.borrowApplication();
-//			Object rackEnv = rackApp.createEnvironment(getServletContext(), request);
-			//rackApp.dispatchSipRequest(request, name);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (rackApp != null) {
-				rackAppFactory.releaseApplication(rackApp);
-				rackApp = null;
-			}
-		}
-	}	
-	
-	public void routeSipResponseToRubyApp(SipServletResponseImpl response) {
-		
-		RackApplication rackApp = null;
-		initEnv();
-		try {
-			rackApp = rackAppFactory.borrowApplication();
-//			Object rackEnv = rackApp.createEnvironment(getServletContext(), response);
+			rackApp = rackAppFactory.borrowApplication();			
+			Object rackEnv = rackApp.createEnvironment(servletContext, sipServletMessage, name);
 			
-			//rackApp.dispatchSipResponse(response, name);
+			rackApp.call(rackEnv);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -91,7 +72,7 @@ public class StandardSipRubyController implements SipRubyController {
 				rackApp = null;
 			}
 		}
-	}
+	}			
 
 	public void setName(String name) {
 		this.name = name;
@@ -99,10 +80,5 @@ public class StandardSipRubyController implements SipRubyController {
 
 	public String getName() {
 		return name;
-	}	
-	
-	protected void loadSupport(Ruby runtime) {
-		String supportScript = "require %q(org/torquebox/ruby/enterprise/sip/sip_base_handler)\n";
-		runtime.evalScriptlet(supportScript);
-	}
+	}		
 }

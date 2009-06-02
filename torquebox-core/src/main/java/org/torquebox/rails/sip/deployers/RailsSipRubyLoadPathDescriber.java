@@ -21,44 +21,14 @@
  */
 package org.torquebox.rails.sip.deployers;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.virtual.VirtualFile;
 import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
-import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
+import org.torquebox.ruby.core.deployers.SimpleRubyLoadPathDescriber;
 
-public class RailsSipRubyLoadPathDescriber extends AbstractSimpleVFSRealDeployer<RailsApplicationMetaData> {
+public class RailsSipRubyLoadPathDescriber extends SimpleRubyLoadPathDescriber<RailsApplicationMetaData> {
 
 	public RailsSipRubyLoadPathDescriber() {
 		super(RailsApplicationMetaData.class);
-		addOutput(RubyLoadPathMetaData.class);
-		setStage(DeploymentStages.DESCRIBE);
-	}
-
-	@Override
-	public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData root) throws DeploymentException {
-		VirtualFile sipDir;
-		try {
-			sipDir = unit.getRoot().getChild("app/sip");
-			if (sipDir != null) {
-				log.debug( "adding sipDir [" + sipDir.toURL() + "]" );
-				RubyLoadPathMetaData loadPathMetaData = new RubyLoadPathMetaData();
-				loadPathMetaData.setURL( sipDir.toURL() );
-				unit.addAttachment( RubyLoadPathMetaData.class.getName() + "$sip", loadPathMetaData, RubyLoadPathMetaData.class );
-			}
-
-		} catch (IOException e) {
-			// ignore
-			return;
-		} catch (URISyntaxException e) {
-			throw new DeploymentException( e );
-		}
-
+		setPath( "app/sip" );
 	}
 
 }
