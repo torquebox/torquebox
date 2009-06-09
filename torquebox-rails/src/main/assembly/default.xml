@@ -1,0 +1,16 @@
+<assembly>
+  <id></id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>.</directory>
+      <includes>
+        <include>lib/**</include>
+      </includes>
+      <outputDirectory>/torquebox-rails-${pom.version}</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>
