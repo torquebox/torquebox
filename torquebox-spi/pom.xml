@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox</artifactId>
+    <version>1.0.0.Beta13-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-spi</artifactId>
+  <packaging>jar</packaging>
+  <name>TorqueBox SPI</name>
+  <description></description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>${jruby.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-as-tomcat</artifactId>
+      <version>${jboss.as.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Sip Servlets spec dependency -->
+  <dependency>
+      <groupId>org.mobicents.servlet.sip</groupId>
+      <artifactId>sip-servlets-spec</artifactId>
+      <version>${mobicents.spec.version}</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+</project>
