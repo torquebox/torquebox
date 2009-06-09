@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Created-By: @java.vm.version@ (@java.vm.vendor@)
+Specification-Title: @specification.title@
+Specification-Version: @specification.version@
+Specification-Vendor: @specification.vendor@
+Implementation-Title: @implementation.title@
+Implementation-URL: @implementation.url@
+Implementation-Version: @implementation.version@
+Implementation-Vendor: @implementation.vendor@
+Implementation-Vendor-Id: @implementation.vendor.id@

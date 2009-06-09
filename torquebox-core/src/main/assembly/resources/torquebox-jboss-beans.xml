@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <!-- 
+     |
+     | Ruby
+     |
+     -->
+
+  <!-- Crypto -->
+
+<!--
+  <bean name="CryptoYamlParsingDeployer"              class="org.torquebox.ruby.enterprise.crypto.deployers.CryptoYamlParsingDeployer" />
+-->
+  
+  <!-- Rack and Web --> 
+
+  <bean name="WebYamlParsingDeployer"                 class="org.torquebox.ruby.enterprise.web.rack.deployers.WebYamlParsingDeployer"/>
+
+  <bean name="RubyRackApplicationFactoryDeployer"     class="org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationFactoryDeployer"/>
+  <bean name="RackWebApplicationDeployer"             class="org.torquebox.ruby.enterprise.web.rack.deployers.RackWebApplicationDeployer"/>
+
+  <!-- SIP Servlets -->
+  <bean name="SipYamlParsingDeployer"                 class="org.torquebox.ruby.enterprise.sip.deployers.SipYamlParsingDeployer"/>
+  <bean name="SipRubyControllerDeployer"              class="org.torquebox.ruby.enterprise.sip.deployers.SipRubyControllerDeployer"/>
+  <bean name="ConvergedSipRackWebApplicationDeployer" class="org.torquebox.ruby.enterprise.sip.deployers.ConvergedSipRackWebApplicationDeployer">
+  	<property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+  </bean>
+
+  <!-- Runtime factories -->
+
+  <bean name="RubyRuntimeFactoryDeployer"             class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimeFactoryDeployer">
+    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+  </bean>
+  <bean name="RubyRuntimeFactoryPublisher"            class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimeFactoryPublisher"/>
+  <bean name="RubyRuntimePoolDeployer"                class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer"/>
+
+  <!-- Job Scheduling -->
+
+  <bean name="JobsYamlParsingDeployer"                class="org.torquebox.ruby.enterprise.jobs.deployers.JobsYamlParsingDeployer"/>
+  <bean name="RubySchedulerDeployer"                  class="org.torquebox.ruby.enterprise.jobs.deployers.RubySchedulerDeployer"/>
+  <bean name="RubyJobDeployer"                        class="org.torquebox.ruby.enterprise.jobs.deployers.RubyJobDeployer"/>
+
+  <!-- Task Queues -->
+
+  <bean name="QueuesYamlParsingDeployer"              class="org.torquebox.ruby.enterprise.queues.deployers.QueuesYamlParsingDeployer"/>
+  <bean name="RubyTaskQueuesDeployer"                 class="org.torquebox.ruby.enterprise.queues.deployers.RubyTaskQueuesDeployer"/>
+  <bean name="RubyTaskQueueHandlersDeployer"          class="org.torquebox.ruby.enterprise.queues.deployers.RubyTaskQueueHandlersDeployer"/>
+
+  <!-- Endpoint Infrastructure -->
+
+  <bean name="CXFBusDeployer"                         class="org.torquebox.ruby.enterprise.endpoints.cxf.deployers.CXFBusDeployer"/>
+  <bean name="CXFServletDeployer"                     class="org.torquebox.ruby.enterprise.endpoints.cxf.deployers.CXFServletDeployer"/>
+
+  <!-- Endpoint Databinding -->
+
+  <bean name="RubyTypeSpaceDeployer"                  class="org.torquebox.ruby.enterprise.endpoints.deployers.RubyTypeSpaceDeployer"/>
+
+  <!-- Endpoint Services -->
+
+  <bean name="RubyEndpointsIntrospectingDeployer"     class="org.torquebox.ruby.enterprise.endpoints.deployers.RubyEndpointsIntrospectingDeployer"/>
+  <bean name="RubyEndpointsDeployer"                  class="org.torquebox.ruby.enterprise.endpoints.deployers.RubyEndpointsDeployer"/>
+
+  <!-- 
+     |
+     | Rails
+     |
+     -->
+
+  <!-- RAILS_ROOT structure & recognition -->
+  <bean name="RailsStructure"                       class="org.torquebox.rails.core.deployers.RailsStructure"/>
+  <bean name="RailsRootRecognizingDeployer"         class="org.torquebox.rails.core.deployers.RailsRootRecognizingDeployer"/>
+
+  <bean name="Rails-v2.2.x-RackUp"                  class="org.torquebox.rails.web.v2_2.Rails_v2_2_RackUpScriptProvider"/>
+  <bean name="Rails-v2.3.x-RackUp"                  class="org.torquebox.rails.web.v2_3.Rails_v2_3_RackUpScriptProvider"/>
+
+
+  <!-- Crypto -->
+  <bean name="RailsCryptoYamlParsingDeployer"       class="org.torquebox.rails.crypto.deployers.RailsCryptoYamlParsingDeployer"/>
+
+  <!-- Rack -->
+  <bean name="RailsRackDeployer"                    class="org.torquebox.rails.web.deployers.RailsRackDeployer"/>
+
+  <!-- rails-env.yml -->
+  <bean name="RailsEnvYamlParsingDeployer"          class="org.torquebox.rails.core.deployers.RailsEnvYamlParsingDeployer"/>
+
+  <!-- vendor/rails/.../version.rb -->
+  <bean name="RailsVersionDeployer"                 class="org.torquebox.rails.core.deployers.RailsVersionDeployer"/>
+
+  <bean name="AppRailsYamlParsingDeployer"          class="org.torquebox.rails.core.deployers.AppRailsYamlParsingDeployer"/>
+
+  <bean name="RailsRubyRuntimeFactoryDescriber"     class="org.torquebox.rails.runtime.deployers.RailsRubyRuntimeFactoryDescriber"/>
+
+  <!-- Endpoint Deployment  -->
+  <bean name="RailsEndpointsScanningDeployer"       class="org.torquebox.rails.endpoints.deployers.RailsEndpointsScanningDeployer"/>
+
+  <bean name="RailsJobsRubyLoadPathDescriber"       class="org.torquebox.rails.jobs.deployers.RailsJobsRubyLoadPathDescriber"/>
+
+  <!-- SIP -->
+  
+  <bean name="RailsSipRubyLoadPathDescriber"        class="org.torquebox.rails.sip.deployers.RailsSipRubyLoadPathDescriber"/>
+
+  <!-- Task Queue Deployment  -->
+
+  <bean name="RailsQueuesScanningDeployer"          class="org.torquebox.rails.queues.deployers.RailsQueuesScanningDeployer"/>
+  <bean name="RailsQueuesRubyLoadPathDescriber"     class="org.torquebox.rails.queues.deployers.RailsQueuesRubyLoadPathDescriber"/>
+
+</deployment>

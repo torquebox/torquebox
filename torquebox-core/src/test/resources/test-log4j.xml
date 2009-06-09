@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
+
+  <appender name="TEST.CONSOLE" class="org.apache.log4j.FileAppender">
+    <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+    <param name="File"       value="${basedir}/target/rspec.log"/>
+    <param name="Threshold"  value="TRACE"/>
+    <param name="Append"     value="false"/>
+
+    <layout class="org.apache.log4j.PatternLayout">
+      <!-- The default pattern: Date Priority [Category] Message\n -->
+<!--
+      <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
+-->
+      <param name="ConversionPattern" value="%-5p [%c{1}]%n      %m%n"/>
+    </layout>
+  </appender>
+
+  <category name="org.jboss.ruby">
+    <priority value="TRACE"/>
+  </category>
+
+  <category name="org.jboss.rails">
+    <priority value="TRACE"/>
+  </category>
+
+  <category name="org.jboss.deployers.structure">
+    <priority value="TRACE"/>
+  </category>
+
+  <root>
+    <priority value="ERROR"/>
+    <appender-ref ref="TEST.CONSOLE"/>
+  </root>
+
+</log4j:configuration>

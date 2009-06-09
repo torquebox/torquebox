@@ -1,0 +1,33 @@
+<assembly>
+  <id>deployer</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/assembly/resources</directory>
+      <outputDirectory>/META-INF</outputDirectory>
+    </fileSet>
+  </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/lib/core</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>org.torquebox:torquebox-core</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/lib/dependencies</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping> 
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <excludes>
+        <exclude>org.torquebox:torquebox-core</exclude>
+      </excludes>
+    </dependencySet>
+  </dependencySets>
+</assembly>
