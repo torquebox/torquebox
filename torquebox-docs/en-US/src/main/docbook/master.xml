@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!--
+Id
+Generate html using:   mvn docbkx:generate-html
+-->
+<book lang="en">
+  <bookinfo>
+    <title>TorqueBox</title>
+
+    <subtitle>The Ruby Application Platform</subtitle>
+
+    <releaseinfo>${project.version}</releaseinfo>
+
+    <authorgroup>
+      <corpauthor>
+        JBoss Middleware, a division of Red Hat, Inc.
+      </corpauthor>
+    </authorgroup>
+  </bookinfo>
+
+  <toc></toc>
+
+  <xi:include href="what-is.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="differences.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="installation.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="scheduled-jobs.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="task-queues.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="crypto.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="soap-endpoints.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="telco.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="rails-support.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="capistrano-support.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="rack-support.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="lgpl-3.0.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="mit.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+<!--
+  <xi:include href="cc-sa.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <part>
+    <title>Basics</title>
+
+    <xi:include href="basics/deployer-installation.xml"
+                xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+    <xi:include href="basics/preparing-your-rails-app.xml"
+                xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+    <xi:include href="basics/deploying.xml"
+                xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+    <xi:include href="basics/managing-jboss-as.xml"
+                xmlns:xi="http://www.w3.org/2001/XInclude" />
+  </part>
+
+  <part>
+    <title>Beyond</title>
+
+    <xi:include href="beyond/task-queues.xml"
+                xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+    <xi:include href="beyond/scheduled-jobs.xml"
+                xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+    <xi:include href="beyond/soap-endpoints.xml"
+                xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+    <xi:include href="beyond/telco-support.xml"
+		xmlns:xi="http://www.w3.org/2001/XInclude" />	
+  </part>
+-->
+</book>

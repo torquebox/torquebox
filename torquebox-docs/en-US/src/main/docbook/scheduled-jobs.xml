@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="scheduled-jobs">
+  <title>Scheduled Jobs</title>
+
+  <section>
+    <title>What Are Scheduled Jobs?</title>
+
+    <para>Scheduled jobs are simply components that execute on a
+    possibly-recurring schedule instead of in response to user interaction.
+    Scheduled jobs fire asynchronously, outside of the normal web-browser
+    thread-of-control. Scheduled jobs have full access to the entire Ruby
+    environment. This allows them to interact with database models and other
+    application functionality.</para>
+  </section>
+
+  <section>
+    <title>Ruby Job Classes</title>
+
+    <para>Each scheduled job maps to exactly one Ruby class. The path and
+    filename should match the class name of the job contained in the file.
+    </para>
+
+    <informaltable>
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry align="center">File name</entry>
+
+            <entry align="center">Class name</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><filename>mail_notifier.rb</filename></entry>
+
+            <entry><type>MailNotifier</type></entry>
+          </row>
+
+          <row>
+            <entry><filename>mail/notifier.rb</filename></entry>
+
+            <entry><type>Mail::Notifier</type></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </informaltable>
+
+    <para><example>
+        <title>Skeleton scheduled job class
+        (<filename>mail/notifier.rb</filename>)</title>
+
+        <para><screen>module Mail
+  class Notifier
+
+    # implementation goes here
+
+  end
+end</screen></para>
+      </example>Each job class should implement a no-argument
+    <methodname>run()</methodname> method to perform the work when
+    fired.</para>
+
+    <para><example>
+        <title>Scheduled job implementation
+        (<filename>mail/notifier.rb</filename>)</title>
+
+        <para><screen>module Mail
+  class Notifier
+
+    def run()
+
+      # perform work here
+
+    end
+
+  end
+end</screen></para>
+      </example></para>
+
+    <para>From within the class's <methodname>run()</methodname> method, the
+    full application environment is available.</para>
+  </section>
+
+  <section>
+    <title><classname>TorqueBox::Jobs::Base</classname> module</title>
+
+    <para>The optional <classname>TorqueBox::Jobs::Base</classname> module
+    provides access to helpful functionality. It is not required to be
+    included in your Ruby job class. By including it, though, extra
+    functionality is introduced into your classes.</para>
+
+    <para><example>
+        <title>Using <classname>TorqueBox::Jobs::Base</classname>
+        module</title>
+
+        <para><screen><emphasis>require 'torquebox/jobs/base'</emphasis>
+
+module Mail
+  class Notifier
+    <emphasis>include TorqueBox::Jobs::Base
+</emphasis>
+    def run()
+
+      # Use the logger provided by TorqueBox::Jobs::Base
+      log.info( "Executing the job" )
+
+      # perform work here
+    end
+  end
+end</screen></para>
+      </example></para>
+
+    <section>
+      <title>Logging</title>
+
+      <para>To gain access to a logging device, the
+      <methodname>log()</methodname> method is available. Messages of various
+      level can be logged.</para>
+
+      <informaltable>
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Method</entry>
+
+              <entry align="center">Use</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><methodname>trace()</methodname></entry>
+
+              <entry>Tracing program execution</entry>
+            </row>
+
+            <row>
+              <entry><methodname>debug()</methodname></entry>
+
+              <entry>Development-time debug information</entry>
+            </row>
+
+            <row>
+              <entry><methodname>info()</methodname></entry>
+
+              <entry>Information messages for the user</entry>
+            </row>
+
+            <row>
+              <entry><methodname>warn()</methodname></entry>
+
+              <entry>Warnings for the user</entry>
+            </row>
+
+            <row>
+              <entry><methodname>error()</methodname></entry>
+
+              <entry>Severe errors during execution</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </informaltable>
+
+      <para>The log messages will be logged in the normal
+      <filename>server.log</filename>.</para>
+
+      <para><screen>10:02:35,074 INFO  [Notifier] Executing the job
+10:02:40,074 INFO  [Notifier] Executing the job</screen></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Scheduling Jobs</title>
+
+    <para>The job schedule defines the time(s) that a job should execute. This
+    may be defined to be single point in time, or more often, as recurring
+    event. The job schedule is defined with a file named
+    <filename>jobs.yml</filename>.</para>
+
+    <section>
+      <title>Ruby-on-Rails:
+      <filename>$RAILS_ROOT/config/jobs.yml</filename></title>
+
+      <para>For Ruby-on-Rails applications, the schedule should be placed at
+      <filename>$RAILS_ROOT/config/jobs.yml</filename>.</para>
+    </section>
+
+    <section>
+      <title><filename>jobs.yml</filename> Format</title>
+
+      <para>Within <filename>jobs.yml</filename>, a block of information is
+      provided for each job. The block starts with arbitrary name for the job.
+      Each block must also define the implementation class and the schedule
+      specification. Optionally a description may be provided.</para>
+
+      <para><example>
+          <title>Example <filename>jobs.yml</filename></title>
+
+          <para><screen>mail.notifier
+  class:       Mail::Notifier
+  cron:        0 */5 * * * ?
+  description: Deliver queued mail notifications</screen></para>
+        </example></para>
+
+      <para>The cron attribute should contain a typical crontab-like entry. It
+      is composed of 7 fields (6 are required).</para>
+
+      <para><informaltable>
+          <tgroup cols="7">
+            <thead>
+              <row>
+                <entry align="center">Seconds</entry>
+
+                <entry align="center">Minutes</entry>
+
+                <entry align="center">Hours</entry>
+
+                <entry align="center">Day of Month</entry>
+
+                <entry align="center">Month</entry>
+
+                <entry align="center">Day of Week</entry>
+
+                <entry align="center">Year</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry>0-59</entry>
+
+                <entry>0-59</entry>
+
+                <entry>0-23</entry>
+
+                <entry>1-31</entry>
+
+                <entry>1-2 or JAN-DEC</entry>
+
+                <entry>1-7 or SUN-SAT</entry>
+
+                <entry>1970-2099 (optional)</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </informaltable></para>
+
+      <para>For several fields, you may denote subdivision by using the
+      forward-slash (<code>/</code>) character. To execute a task every 5
+      minutes, <code>*/5</code> in the minutes field would specify this
+      condition. </para>
+
+      <para>Spans may be indicated using the dash (<code>-</code>) character.
+      To execute a task Monday through Friday, <code>MON-FRI</code> should be
+      used in the day-of-week field. </para>
+
+      <para>Multiple values may be separated using the comma (<code>,</code>)
+      characeter. The specification of <code>1,15</code> in the day-of-month
+      field would result in the job firing on the 1st and 15th of each
+      month.</para>
+
+      <para>Either day-of-month or day-of-week must be specified using the
+      <code>?</code> character, since specifying both is contradictory.
+      </para>
+    </section>
+  </section>
+</chapter>

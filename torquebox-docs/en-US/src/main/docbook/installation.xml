@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="installation">
+  <title>Installation</title>
+
+  <section>
+    <title>Installation using Complete Binary Distribution</title>
+
+    <para>The latest Complete Binary Distribution contains:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The TorqueBox server, ready-to-run</para>
+      </listitem>
+
+      <listitem>
+        <para>A complete JRuby installation</para>
+      </listitem>
+    </itemizedlist>
+
+    <section>
+      <title>Ensure you have Java 6</title>
+
+      <para>TorqueBox requires Java JDK 6.</para>
+
+      <para>To determine which version, if any, is installed on your system,
+      at a command-line, attempt to run the <command>java</command> command
+      with the <option>-version</option> argument.</para>
+
+      <para><screen><prompt>$</prompt> <command>java -version</command>
+java version "1.6.0_07"
+Java(TM) SE Runtime Environment (build 1.6.0_07-b06-153)
+Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></para>
+
+      <para>If the version is at least 1.6, you version of Java is
+      sufficient.</para>
+
+      <para>If you have no Java installed, or a version less than 1.6, you'll
+      need to install a Java Development Kit. For many systems, it is easy to
+      install the open-source OpenJDK.</para>
+
+      <para>For installation on Ubuntu, Fedora, OpenSuse, or Debian, please
+      refer to the <ulink url="http://openjdk.java.net/install/">installation
+      instructions provided</ulink> by the OpenJDK project. If you find a
+      <command>java</command> on your system, ensure that it is not actually
+      <command>gcj</command>. The <command>gcj</command> is insufficient for
+      running the TorqueBox server.</para>
+
+      <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
+    </section>
+
+    <section>
+      <title>Get the latest version of TorqueBox binary package</title>
+
+      <para>You can obtain the latest version of TorqueBox from the TorqueBox
+      repository. As of this writing, the latest version is
+      ${project.version}.</para>
+
+      <para><ulink
+      url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-bin/torquebox-bin-${project.version}.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-bin/${project.version}/torquebox-bin-${project.version}.zip</ulink></para>
+    </section>
+
+    <section>
+      <title>Unzip it somewhere handy</title>
+
+      <para>We'll install TorqueBox under your user's $HOME directory. </para>
+
+      <para><screen><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
+<prompt>$</prompt> <command>cd torquebox-${project.version}</command>
+</screen></para>
+
+      <para>Before using the TorqueBox server, you must set up your
+      environment. To make it easier to upgrade without having to reconfigure
+      your environment, it is useful to create a symlink to the versioned
+      directory produced when you unpackaged the distribution.</para>
+
+      <para><screen><prompt>$</prompt> <command>ln -s torquebox-bin-${project.version} torquebox-current</command></screen></para>
+
+      <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar>
+      and <envar>$JRUBY_HOME</envar> need to be set, and adjusting your
+      <envar>$PATH</envar> will make working with the package easier. You can
+      either run the following commands each time on the command-line, or add
+      them to your <filename>.bash_profile</filename>.</para>
+
+      <para>First, the various
+      <envar>$<replaceable>X</replaceable>_HOME</envar> variables are set so
+      that each subsystem can find its supporting files.</para>
+
+      <para><screen>export TORQUEBOX_HOME=$HOME/torquebox-current
+export JBOSS_HOME=$TORQUEBOX_HOME/jboss
+export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
+
+      <para>Next, we make sure that JRuby's binaries are first in our
+      executable <envar>$PATH</envar>, before any previously-installed Ruby
+      packages.</para>
+
+      <para><screen>export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing this,
+      commands such as <command>rake</command>, <command>gem</command>, and
+      <command>rails</command> will load from the TorqueBox-provided JRuby
+      installation.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Installing the TorqueBox deployer into an existing JBoss AS
+    5</title>
+
+    <para>To enable an existing JBoss AS5 installation for Ruby support, a
+    single JAR file, the <emphasis>TorqueBox Deployer</emphasis> needs to be
+    installed.</para>
+
+    <para>Before installing the TorqueBox Deployer into an existing JBoss AS,
+    you need to ensure that JBoss is not running. Once the AS is stopped,
+    follow the directions below to enable your AS to become
+    Ruby-compatible.</para>
+
+    <orderedlist>
+      <listitem>
+        <para>Locate the latest version of the TorqueBox Deployer JAR from the
+        TorqueBox repository: <itemizedlist>
+            <listitem>
+              <para><ulink
+              url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/">Official
+              releases</ulink></para>
+            </listitem>
+
+            <listitem>
+              <para><ulink
+              url="http://repository.torquebox.org/maven2/snapshots/org/torquebox/torquebox-core/">Interim
+              snapshot releases</ulink></para>
+            </listitem>
+          </itemizedlist></para>
+      </listitem>
+
+      <listitem>
+        <para>Download the JAR with the name in the format of
+        <emphasis>torquebox-core-${project.version}-deployer.jar</emphasis>.</para>
+      </listitem>
+
+      <listitem>
+        <para>Determine the location of your JBoss AS5 server and the
+        configuration you plan to use. For clustering the
+        <emphasis>all</emphasis> configuration is required. For
+        non-clustering, the <emphasis>web</emphasis> or
+        <emphasis>default</emphasis> configurations are acceptable.</para>
+
+        <para>The <envar>$JBOSS_HOME</envar> environment variable should be
+        set to the top of your JBoss AS5 installation directory. By
+        convention, the <envar>$JBOSS_CONF</envar> environment variable should
+        contain the name of the configuration you are using.</para>
+      </listitem>
+
+      <listitem>
+        <para>Copy the deployer JAR into the <filename>deployers/</filename>
+        directory of the configuration.</para>
+
+        <screen><prompt>$</prompt> <command>cp torquebox-core-${project.version}-deployer.jar $JBOSS_HOME/server/$JBOSS_CONF/deployers</command></screen>
+      </listitem>
+    </orderedlist>
+  </section>
+</chapter>

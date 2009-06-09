@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="capistrano-support">
+  <title>Capistrano Support</title>
+
+  <section>
+    <title id="capistrano-support.title">Capistrano</title>
+
+    <para>Capistrano is a deployment tool to assist in moving code from a
+    repository to a production server.</para>
+  </section>
+
+  <section>
+    <title>App-Server separate from App</title>
+
+    <para>The TorqueBox server in production is a separate entity from the
+    applications being deployed upon it. When deploying with mongrel or other
+    traditional Ruby solutions, part of the deployment normally includes
+    restarting the server. TorqueBox does not need to be restarted nearly as
+    often.</para>
+
+    <para>Generally the TorqueBox server is installed in a system-wide
+    location since it may support multiple applications simultaneously. For
+    install, you may simply unpackage and install it under
+    <filename>/opt/torquebox-server</filename>.</para>
+
+    <para>The TorqueBox server can be managed through a normal
+    <filename>init.d/</filename> script, or through Daniel Bernstein's
+    <command>daemontools</command>. The Capistrano support provided by
+    TorqueBox can work with either process for manaing the server, when
+    necessary.</para>
+
+    <para>Either way, two settings in the your application's deploy.rb are
+    required to be able to deploy to a remove TorqueBox server.</para>
+
+    <para><screen>set :jboss_home,       "/opt/torquebox-server/jboss"
+set :jboss_config,     :default</screen>These should point to the same
+    location as <envar>$JBOSS_HOME</envar> on the server. The
+    <varname>:jboss_config</varname> matches the <envar>$JBOSS_CONF</envar>,
+    and is only required if a configuration other than default is
+    desired.</para>
+
+    <para><note>
+        <para>Capistrano support is still evolving and will be fully
+        documented once it settles.</para>
+      </note></para>
+  </section>
+</chapter>

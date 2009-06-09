@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="what-is">
+  <title>What is TorqueBox?</title>
+
+  <para>TorqueBox provides an enterprise-grade environment that not only
+  provides complete Ruby-on-Rails compatibility, but also goes beyond the
+  functionality offered in traditional Rails environments.</para>
+
+  <section>
+    <title>Built upon JBoss AS5</title>
+
+    <para>Instead of building a Ruby Application Platform from the ground-up,
+    TorqueBox leverages the existing ninja-grade functionality JBoss has been
+    shipping for years in the JBoss Application Server. JBoss AS includes
+    high-performance clustering, caching and messaging functionality. By
+    building Ruby capabilities on top of this foundation, your Ruby
+    applications gain more capabilities right out-of-the-box.</para>
+  </section>
+
+  <section>
+    <title>Built upon JRuby</title>
+
+    <para>JRuby is a fast, compliant implementation of the Ruby language upon
+    the Java Virtual Machine. Pure Ruby applications run un-modified within
+    the JRuby interpreter. By binding JRuby to the components within JBoss,
+    their functionality is exposed in a manner suitable to Rubyists.</para>
+  </section>
+
+  <section>
+    <title>Open-Source</title>
+
+    <para>TorqueBox is a product of the JBoss Community, and is completely
+    open-source software. TorqueBox is licensed under the LGPL. You may
+    download the binaries or the source-code, modify it if you desire, and use
+    it, even for profit, without any licensing costs.</para>
+  </section>
+</chapter>
