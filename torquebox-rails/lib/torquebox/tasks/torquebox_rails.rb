@@ -9,9 +9,10 @@ namespace :torquebox do
     end
 
     desc "Deploy the Rails app"
-    task :deploy=>['torquebox:server:check', 'torquebox:rails:check_frozen'] do
+    task :deploy, :context_path, :needs =>['torquebox:server:check', 'torquebox:rails:check_frozen'] do |t, args|
+      args.with_defaults(:context_path => '/')
       app_name = File.basename( RAILS_ROOT )
-      JBoss::RakeUtils.deploy( app_name, RAILS_ROOT )
+      JBoss::RakeUtils.deploy( app_name, RAILS_ROOT, args[:context_path] )
       puts "Deployed #{app_name}"
     end
 
@@ -23,3 +24,4 @@ namespace :torquebox do
     end
   end
 end
+

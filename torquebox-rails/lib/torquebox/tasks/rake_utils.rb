@@ -4,12 +4,7 @@ require 'tmpdir'
 module JBoss
   module RakeUtils
     def self.jboss_home
-      jboss_home = ENV['JBOSS_HOME']
-      if ( ! jboss_home )
-        if ( ENV['TOQUEBOX_HOME'] )
-          jboss_home = ENV['TORQUEBOX_HOME'] + '/jboss'
-        end
-      end
+      jboss_home = ENV['JBOSS_HOME'] || ENV['TOQUEBOX_HOME'] && ENV['TORQUEBOX_HOME'] + '/jboss'
       raise "$JBOSS_HOME is not set" unless jboss_home
       return jboss_home
     end
@@ -35,12 +30,12 @@ module JBoss
           threads = []
           threads << Thread.new(stdout) do |input_str|
             while ( ( l = input_str.gets ) != nil )
-              puts l 
+              puts l
             end
           end
           threads << Thread.new(stderr) do |input_str|
-            while ( ( l = input_str.gets ) != nil )  
-              puts l 
+            while ( ( l = input_str.gets ) != nil )
+              puts l
             end
           end
           threads.each{|t|t.join}
@@ -48,14 +43,14 @@ module JBoss
         trap("INT", old_trap )
       end
     end
-    def self.deploy(app_name, rails_root)
+    def self.deploy(app_name, rails_root, context_path = '/')
       deployment_descriptor = {
         'application' => {
           'RAILS_ROOT'=>rails_root,
           'RAILS_ENV'=>RAILS_ENV,
         },
         'web' => {
-          'context'=>'/'
+          'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
         }
       }
 
@@ -70,3 +65,4 @@ module JBoss
     end
   end
 end
+
