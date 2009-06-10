@@ -60,16 +60,23 @@
   </profiles>
     
   <properties>
+
+    <jruby.version>1.3.0</jruby.version>
+
     <jboss.as.version>5.1.0.GA</jboss.as.version>
     <jboss.mc.version>2.0.6.GA</jboss.mc.version>
     <jboss.deployers.version>2.0.7.GA</jboss.deployers.version>
-    <jruby.version>1.2.0</jruby.version>
     <jboss.vfs.version>2.1.2.GA</jboss.vfs.version>
+
     <cxf.version>2.1.3</cxf.version>
-    <mobicents.sip.version>1.0-SNAPSHOT</mobicents.sip.version>
-    <mobicents.spec.version>1.1.10-SNAPSHOT</mobicents.spec.version>
+
     <jboss.messaging.version>1.4.3.GA</jboss.messaging.version>
     <jboss.messaging.jms.version>1.1</jboss.messaging.jms.version>
+
+    <mobicents.sip.version>1.0-SNAPSHOT</mobicents.sip.version>
+    <mobicents.spec.version>1.1.10-SNAPSHOT</mobicents.spec.version>
+
+
   </properties>
 
   <repositories>
@@ -201,6 +208,11 @@
     </plugins>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.jboss.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
         <plugin>
           <groupId>org.jboss.maven.plugins</groupId>
           <artifactId>maven-jdocbook-plugin</artifactId>

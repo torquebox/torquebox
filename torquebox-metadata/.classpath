@@ -1,7 +1,6 @@
 <classpath>
-  <classpathentry kind="src" path="src/main/java"/>
+  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1.1/activation-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/wutka-dtdparser/dtdparser121/1.2.1/dtdparser121-1.2.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/sun-jaxb/jaxb-api/2.1.9/jaxb-api-2.1.9.jar"/>
@@ -24,8 +23,10 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/jbossxb/2.0.1.GA/jbossxb-2.0.1.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jruby/jruby-complete/1.2.0/jruby-complete-1.2.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-spec/1.1.10-SNAPSHOT/sip-servlets-spec-1.1.10-SNAPSHOT.jar"/>
   <classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0/stax-api-1.0.jar"/>
   <classpathentry kind="src" path="/torquebox-spi"/>
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xercesImpl/2.9.1/xercesImpl-2.9.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/apache-xerces/xml-apis/2.9.1/xml-apis-2.9.1.jar"/>
+  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 </classpath>
