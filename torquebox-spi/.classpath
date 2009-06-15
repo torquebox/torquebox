@@ -143,7 +143,7 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/naming/jnpserver/5.0.3.GA/jnpserver-5.0.3.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/jpl-pattern/jpl-pattern/1.0/jpl-pattern-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/jpl-util/jpl-util/1.0/jpl-util-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jruby/jruby-complete/1.2.0/jruby-complete-1.2.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jruby/jruby-complete/1.3.0/jruby-complete-1.3.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/sun-jaxws/jsr181-api/2.1.1/jsr181-api-2.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.14/log4j-1.2.14.jar"/>

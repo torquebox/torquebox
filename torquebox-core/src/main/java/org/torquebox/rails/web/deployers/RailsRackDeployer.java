@@ -84,6 +84,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 			rackWebAppMetaData = new RackWebApplicationMetaData();
 			rackWebAppMetaData.setContext("/");
 			unit.addAttachment(RackWebApplicationMetaData.class, rackWebAppMetaData);
+			log.debug( "attaching RackWebApplicationMetaData" );
 		}
 
 		//String appFactoryName = "jboss.rack.app." + unit.getSimpleName();

@@ -31,13 +31,16 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
+import org.jboss.metadata.javaee.spec.ResourceReferenceMetaData;
 import org.jboss.metadata.web.jboss.JBossServletMetaData;
-import org.jboss.metadata.web.jboss.JBossServletsMetaData;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
 import org.jboss.metadata.web.spec.FilterMappingMetaData;
 import org.jboss.metadata.web.spec.FilterMetaData;
 import org.jboss.metadata.web.spec.FiltersMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
+import org.jboss.metadata.web.spec.ServletMetaData;
+import org.jboss.metadata.web.spec.ServletsMetaData;
+import org.jboss.metadata.web.spec.WebMetaData;
 import org.torquebox.ruby.enterprise.web.StaticResourceServlet;
 import org.torquebox.ruby.enterprise.web.rack.RackFilter;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
@@ -51,10 +54,11 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 	public RackWebApplicationDeployer() {
 		super(RackWebApplicationMetaData.class);
+		addInput(WebMetaData.class);
 		addInput(JBossWebMetaData.class);
+		addOutput(WebMetaData.class);
 		addOutput(JBossWebMetaData.class);
-		setStage(DeploymentStages.PRE_REAL);
-		setRelativeOrder(1000);
+		setStage(DeploymentStages.DESCRIBE );
 	}
 
 	@Override
@@ -62,11 +66,12 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 		log.debug("deploying " + unit);
 
-		JBossWebMetaData webMetaData = unit.getAttachment(JBossWebMetaData.class);
+		WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
 
 		if (webMetaData == null) {
-			webMetaData = new JBossWebMetaData();
-			unit.addAttachment(JBossWebMetaData.class, webMetaData);
+			log.debug( "creating a new web.xml metadata" );
+			webMetaData = new WebMetaData();
+			unit.addAttachment(WebMetaData.class, webMetaData);
 		}
 
 		FilterMetaData rackFilter = new FilterMetaData();
@@ -99,15 +104,10 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		}
 
 		filterMappings.add(filterMapping);
-
-		webMetaData.setContextRoot(metaData.getContext());
-		if (metaData.getHost() != null) {
-			webMetaData.setVirtualHosts(Collections.singletonList(metaData.getHost()));
-		}
-
+		
 		if (metaData.getStaticPathPrefix() != null) {
-			JBossServletsMetaData servlets = new JBossServletsMetaData();
-			JBossServletMetaData staticServlet = new JBossServletMetaData();
+			ServletsMetaData servlets = new ServletsMetaData();
+			ServletMetaData staticServlet = new ServletMetaData();
 			staticServlet.setServletClass(StaticResourceServlet.class.getName());
 			staticServlet.setServletName( SERVLET_NAME );
 			staticServlet.setId( SERVLET_NAME );
@@ -131,6 +131,24 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 			servletMappings.add(staticMapping);
 		}
 
-		unit.addAttachment(JBossWebMetaData.class, webMetaData);
+		JBossWebMetaData jbossWebMetaData = unit.getAttachment( JBossWebMetaData.class );
+		
+		if ( jbossWebMetaData == null ) {
+			log.debug( "creating a new jboss-web.xml metadata" );
+			jbossWebMetaData = new JBossWebMetaData();
+			unit.addAttachment( JBossWebMetaData.class, jbossWebMetaData);
+		}
+		
+		
+		for (  ResourceReferenceMetaData r: jbossWebMetaData.getResourceReferences() ) {
+			log.debug( "resource ref " + r );
+		}
+		
+		jbossWebMetaData.setContextRoot(metaData.getContext());
+		
+		if (metaData.getHost() != null) {
+			jbossWebMetaData.setVirtualHosts(Collections.singletonList(metaData.getHost()));
+		}
+		
 	}
 }
