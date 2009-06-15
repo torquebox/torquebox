@@ -15,7 +15,7 @@ Generate html using:   mvn docbkx:generate-html
 
     <authorgroup>
       <corpauthor>
-        JBoss Middleware, a division of Red Hat, Inc.
+        JBoss by Red Hat
       </corpauthor>
     </authorgroup>
   </bookinfo>
