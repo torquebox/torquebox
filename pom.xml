@@ -81,6 +81,17 @@
 
   <repositories>
     <repository>
+      <id>repository.codehaus.org</id>
+      <name>Codehaus Releases Repository</name>
+      <url>http://repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>repository.jboss.org</id>
       <name>JBoss Releases Repository</name>
       <url>http://repository.jboss.org/maven2</url>

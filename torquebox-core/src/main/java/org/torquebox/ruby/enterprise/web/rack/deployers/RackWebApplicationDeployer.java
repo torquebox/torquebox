@@ -139,11 +139,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 			unit.addAttachment( JBossWebMetaData.class, jbossWebMetaData);
 		}
 		
-		
-		for (  ResourceReferenceMetaData r: jbossWebMetaData.getResourceReferences() ) {
-			log.debug( "resource ref " + r );
-		}
-		
 		jbossWebMetaData.setContextRoot(metaData.getContext());
 		
 		if (metaData.getHost() != null) {
