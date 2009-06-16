@@ -31,8 +31,6 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
-import org.jboss.metadata.javaee.spec.ResourceReferenceMetaData;
-import org.jboss.metadata.web.jboss.JBossServletMetaData;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
 import org.jboss.metadata.web.spec.FilterMappingMetaData;
 import org.jboss.metadata.web.spec.FilterMetaData;
@@ -45,12 +43,14 @@ import org.torquebox.ruby.enterprise.web.StaticResourceServlet;
 import org.torquebox.ruby.enterprise.web.rack.RackFilter;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 
-public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<RackWebApplicationMetaData> {
+public class RackWebApplicationDeployer extends
+		AbstractSimpleVFSRealDeployer<RackWebApplicationMetaData> {
 
 	public static final String FILTER_NAME = "torquebox.rack";
 	public static final String SERVLET_NAME = "torquebox.static";
-	
-	private static final Logger log = Logger.getLogger(RackWebApplicationDeployer.class);
+
+	private static final Logger log = Logger
+			.getLogger(RackWebApplicationDeployer.class);
 
 	public RackWebApplicationDeployer() {
 		super(RackWebApplicationMetaData.class);
@@ -58,45 +58,52 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		addInput(JBossWebMetaData.class);
 		addOutput(WebMetaData.class);
 		addOutput(JBossWebMetaData.class);
-		setStage(DeploymentStages.DESCRIBE );
+		setStage(DeploymentStages.DESCRIBE);
 	}
 
 	@Override
-	public void deploy(VFSDeploymentUnit unit, RackWebApplicationMetaData metaData) throws DeploymentException {
+	public void deploy(VFSDeploymentUnit unit,
+			RackWebApplicationMetaData metaData) throws DeploymentException {
 
 		log.debug("deploying " + unit);
 
 		WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
 
 		if (webMetaData == null) {
-			log.debug( "creating a new web.xml metadata" );
+			log.debug("creating a new web.xml metadata");
 			webMetaData = new WebMetaData();
 			unit.addAttachment(WebMetaData.class, webMetaData);
 		}
 
 		FilterMetaData rackFilter = new FilterMetaData();
-		rackFilter.setId( FILTER_NAME );
+		rackFilter.setId(FILTER_NAME);
 		rackFilter.setFilterClass(RackFilter.class.getName());
-		rackFilter.setFilterName( FILTER_NAME );
+		rackFilter.setFilterName(FILTER_NAME);
 
 		List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
 		ParamValueMetaData rackAppFactory = new ParamValueMetaData();
 		rackAppFactory.setParamName(RackFilter.RACK_APP_POOL_INIT_PARAM);
-		rackAppFactory.setParamValue(metaData.getRackApplicationFactoryName() + ".pool");
+		rackAppFactory.setParamValue(metaData.getRackApplicationFactoryName()
+				+ ".pool");
 		initParams.add(rackAppFactory);
 
 		rackFilter.setInitParam(initParams);
 
-		FiltersMetaData filters = new FiltersMetaData();
+		FiltersMetaData filters = webMetaData.getFilters();
+
+		if (filters == null) {
+			filters = new FiltersMetaData();
+			webMetaData.setFilters(filters);
+		}
+
 		filters.add(rackFilter);
 
-		webMetaData.setFilters(filters);
-
 		FilterMappingMetaData filterMapping = new FilterMappingMetaData();
-		filterMapping.setFilterName( FILTER_NAME );
+		filterMapping.setFilterName(FILTER_NAME);
 		filterMapping.setUrlPatterns(Collections.singletonList("/*"));
 
-		List<FilterMappingMetaData> filterMappings = webMetaData.getFilterMappings();
+		List<FilterMappingMetaData> filterMappings = webMetaData
+				.getFilterMappings();
 
 		if (filterMappings == null) {
 			filterMappings = new ArrayList<FilterMappingMetaData>();
@@ -104,26 +111,29 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		}
 
 		filterMappings.add(filterMapping);
-		
+
 		if (metaData.getStaticPathPrefix() != null) {
 			ServletsMetaData servlets = new ServletsMetaData();
 			ServletMetaData staticServlet = new ServletMetaData();
-			staticServlet.setServletClass(StaticResourceServlet.class.getName());
-			staticServlet.setServletName( SERVLET_NAME );
-			staticServlet.setId( SERVLET_NAME );
+			staticServlet
+					.setServletClass(StaticResourceServlet.class.getName());
+			staticServlet.setServletName(SERVLET_NAME);
+			staticServlet.setId(SERVLET_NAME);
 
 			ParamValueMetaData resourceRootParam = new ParamValueMetaData();
 			resourceRootParam.setParamName("resource.root");
 			resourceRootParam.setParamValue(metaData.getStaticPathPrefix());
-			staticServlet.setInitParam(Collections.singletonList(resourceRootParam));
+			staticServlet.setInitParam(Collections
+					.singletonList(resourceRootParam));
 			servlets.add(staticServlet);
 			webMetaData.setServlets(servlets);
 
 			ServletMappingMetaData staticMapping = new ServletMappingMetaData();
-			staticMapping.setServletName( SERVLET_NAME );
+			staticMapping.setServletName(SERVLET_NAME);
 			staticMapping.setUrlPatterns(Collections.singletonList("/*"));
 
-			List<ServletMappingMetaData> servletMappings = webMetaData.getServletMappings();
+			List<ServletMappingMetaData> servletMappings = webMetaData
+					.getServletMappings();
 			if (servletMappings == null) {
 				servletMappings = new ArrayList<ServletMappingMetaData>();
 				webMetaData.setServletMappings(servletMappings);
@@ -131,19 +141,21 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 			servletMappings.add(staticMapping);
 		}
 
-		JBossWebMetaData jbossWebMetaData = unit.getAttachment( JBossWebMetaData.class );
-		
-		if ( jbossWebMetaData == null ) {
-			log.debug( "creating a new jboss-web.xml metadata" );
+		JBossWebMetaData jbossWebMetaData = unit
+				.getAttachment(JBossWebMetaData.class);
+
+		if (jbossWebMetaData == null) {
+			log.debug("creating a new jboss-web.xml metadata");
 			jbossWebMetaData = new JBossWebMetaData();
-			unit.addAttachment( JBossWebMetaData.class, jbossWebMetaData);
+			unit.addAttachment(JBossWebMetaData.class, jbossWebMetaData);
 		}
-		
+
 		jbossWebMetaData.setContextRoot(metaData.getContext());
-		
+
 		if (metaData.getHost() != null) {
-			jbossWebMetaData.setVirtualHosts(Collections.singletonList(metaData.getHost()));
+			jbossWebMetaData.setVirtualHosts(Collections.singletonList(metaData
+					.getHost()));
 		}
-		
+
 	}
 }
