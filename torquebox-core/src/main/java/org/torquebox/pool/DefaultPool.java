@@ -15,9 +15,6 @@ import org.torquebox.pool.spi.Pool;
 /**
  * Constrained pool implementation optimized for slow-to-create items.
  * 
- * The first thread to encounter an empty pool pays the price for new object
- * creation. Subsequent threads may exit first due to resources being released.
- * 
  * @author Bob McWhirter
  * 
  * @param <T>
