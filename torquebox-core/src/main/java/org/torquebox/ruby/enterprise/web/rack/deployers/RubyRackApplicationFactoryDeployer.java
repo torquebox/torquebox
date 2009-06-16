@@ -22,7 +22,6 @@
 package org.torquebox.ruby.enterprise.web.rack.deployers;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
@@ -30,10 +29,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 import org.torquebox.ruby.enterprise.web.rack.RubyRackApplicationFactory;
-import org.torquebox.ruby.enterprise.web.rack.SharedRackApplicationPool;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
 
 public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RubyRackApplicationMetaData> {
 
@@ -58,22 +54,11 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
 
-		// TODO: break into a separate deployer
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + RackApplicationFactory.class.getName() + "$" + unit.getName(),
-				beanMetaData, BeanMetaData.class);
-
-		builder = BeanMetaDataBuilder.createBuilder(beanName + ".pool", SharedRackApplicationPool.class.getName());
-		ValueMetaData appFactoryInjection = builder.createInject(beanName);
-		builder.addConstructorParameter(RackApplicationFactory.class.getName(), appFactoryInjection);
-
-		beanMetaData = builder.getBeanMetaData();
-
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + RackApplicationPool.class.getName() + "$" + unit.getName(),
-				beanMetaData);
+		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName,  beanMetaData, BeanMetaData.class);
 	}
 	
 	public static String getBeanName(VFSDeploymentUnit unit) {
-		String beanName = "jboss.rack.app." + unit.getSimpleName();
+		String beanName = "torquebox.rack.app.factory." + unit.getSimpleName();
 		return beanName;
 	}
 

@@ -19,6 +19,7 @@
   <bean name="WebYamlParsingDeployer"                 class="org.torquebox.ruby.enterprise.web.rack.deployers.WebYamlParsingDeployer"/>
 
   <bean name="RubyRackApplicationFactoryDeployer"     class="org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationFactoryDeployer"/>
+  <bean name="RubyRackApplicationPoolDeployer"        class="org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationPoolDeployer"/>
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.ruby.enterprise.web.rack.deployers.RackWebApplicationDeployer"/>
 
   <!-- SIP Servlets -->
@@ -34,6 +35,9 @@
     <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
   </bean>
   <bean name="RubyRuntimeFactoryPublisher"            class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimeFactoryPublisher"/>
+
+  <bean name="PoolingYamlParsingDeployer"             class="org.torquebox.ruby.core.runtime.deployers.PoolingYamlParsingDeployer"/>
+
   <bean name="RubyRuntimePoolDeployer"                class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer"/>
 
   <!-- Job Scheduling -->

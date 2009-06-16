@@ -51,7 +51,7 @@ public class RubyRackApplicationFactory implements RackApplicationFactory {
 		return this.rackUpScript;
 	}
 	
-	public RackApplication createRackApplication() throws Exception {
+	public RackApplication create() throws Exception {
 		Ruby ruby = getRubyRuntimeFactory().createRubyRuntime();
 		
 		RubyRackApplication rackApp = new RubyRackApplication( ruby, rackUpScript );

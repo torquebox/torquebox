@@ -21,7 +21,7 @@
  */
 package org.torquebox.ruby.enterprise.web.rack.spi;
 
+import org.torquebox.pool.spi.InstanceFactory;
 
-public interface RackApplicationFactory {
-	RackApplication createRackApplication() throws Exception;
+public interface RackApplicationFactory extends InstanceFactory<RackApplication> {
 }

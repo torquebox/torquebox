@@ -26,7 +26,6 @@ import java.util.Map;
 import org.ho.yaml.Yaml;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.metadata.web.spec.WebMetaData;
 import org.jboss.virtual.VirtualFile;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 

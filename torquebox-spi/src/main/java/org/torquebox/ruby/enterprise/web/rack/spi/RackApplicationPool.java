@@ -24,7 +24,7 @@ package org.torquebox.ruby.enterprise.web.rack.spi;
 
 public interface RackApplicationPool {
 	
-	RackApplication borrowApplication();
+	RackApplication borrowApplication() throws Exception;
 	void releaseApplication(RackApplication app);
 
 }

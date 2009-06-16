@@ -21,24 +21,25 @@
  */
 package org.torquebox.ruby.enterprise.web.rack;
 
+import org.torquebox.pool.SharedPool;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
 
-public class SharedRackApplicationPool implements RackApplicationPool {
+public class SharedRackApplicationPool extends SharedPool<RackApplication> implements RackApplicationPool {
 	
-	private RackApplication app;
-
 	public SharedRackApplicationPool(RackApplicationFactory factory) throws Exception {
-		this.app = factory.createRackApplication();
+		super( factory );
 	}
 
-	public RackApplication borrowApplication() {
-		return this.app;
+	@Override
+	public RackApplication borrowApplication() throws Exception {
+		return borrowInstance();
 	}
 
+	@Override
 	public void releaseApplication(RackApplication app) {
-		// intentionally left blank.
+		releaseInstance( app );
 	}
 
 }

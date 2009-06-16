@@ -47,18 +47,23 @@ public class RackFilter implements Filter {
 
 	public static final String RACK_APP_POOL_INIT_PARAM = "jboss.rack.app.pool.name";
 
-	private RackApplicationPool rackAppFactory;
+	private RackApplicationPool rackAppPool;
 
 	private ServletContext servletContext;
 
 	@SuppressWarnings("deprecation")
 	public void init(FilterConfig filterConfig) throws ServletException {
 		Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute(KERNEL_NAME);
-		String rackAppFactoryName = filterConfig.getInitParameter(RACK_APP_POOL_INIT_PARAM);
-		KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppFactoryName);
+		String rackAppPoolName = filterConfig.getInitParameter(RACK_APP_POOL_INIT_PARAM);
+		log.info( "fetching pool [" + rackAppPoolName + "]" );
+		KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppPoolName);
 		if (entry != null) {
-			this.rackAppFactory = (RackApplicationPool) entry.getTarget();
+			this.rackAppPool = (RackApplicationPool) entry.getTarget();
+		} else {
+			throw new ServletException( "Unable to obtain Rack application pool '" + rackAppPoolName + "'" );
 		}
+		
+		log.info( "pool is " + rackAppPool );
 		
 		this.servletContext = filterConfig.getServletContext();
 	}
@@ -105,11 +110,11 @@ public class RackFilter implements Filter {
 	}
 
 	private RackApplication borrowRackApplication() throws Exception {
-		return this.rackAppFactory.borrowApplication();
+		return this.rackAppPool.borrowApplication();
 	}
 
 	private void releaseRackApplication(RackApplication rackApp) {
-		this.rackAppFactory.releaseApplication(rackApp);
+		this.rackAppPool.releaseApplication(rackApp);
 	}
 
 }

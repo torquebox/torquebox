@@ -26,7 +26,7 @@ public class RackWebApplicationMetaData {
 	private String host;
 	private String context;
 	
-	private String rackApplicationFactoryName;
+	private String rackApplicationPoolName;
 	
 	private String staticPathPrefix;
 
@@ -50,12 +50,12 @@ public class RackWebApplicationMetaData {
 		return this.context;
 	}
 	
-	public void setRackApplicationFactoryName(String rackApplicationFactoryName) {
-		this.rackApplicationFactoryName = rackApplicationFactoryName;
+	public void setRackApplicationPoolName(String rackApplicationPoolName) {
+		this.rackApplicationPoolName = rackApplicationPoolName;
 	}
 	
-	public String getRackApplicationFactoryName() {
-		return this.rackApplicationFactoryName;
+	public String getRackApplicationPoolName() {
+		return this.rackApplicationPoolName;
 	}
 	
 	public void setStaticPathPrefix(String staticPathPrefix) {

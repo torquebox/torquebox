@@ -31,7 +31,7 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
 import org.torquebox.rails.core.metadata.RailsVersionMetaData;
-import org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationFactoryDeployer;
+import org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationPoolDeployer;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
 
@@ -87,9 +87,8 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 			log.debug( "attaching RackWebApplicationMetaData" );
 		}
 
-		//String appFactoryName = "jboss.rack.app." + unit.getSimpleName();
-		String appFactoryName = RubyRackApplicationFactoryDeployer.getBeanName( unit );
-		rackWebAppMetaData.setRackApplicationFactoryName(appFactoryName);
+		String appPoolName = RubyRackApplicationPoolDeployer.getBeanName( unit );
+		rackWebAppMetaData.setRackApplicationPoolName(appPoolName);
 		rackWebAppMetaData.setStaticPathPrefix( "/public" );
 
 		RubyRackApplicationMetaData rubyRackAppMetaData = new RubyRackApplicationMetaData();
