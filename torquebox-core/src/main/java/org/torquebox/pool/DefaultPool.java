@@ -32,7 +32,6 @@ public class DefaultPool<T> implements Pool<T> {
 	private int timeout = 30;
 
 	private Semaphore available = new Semaphore(0, true);
-	private Semaphore creation = new Semaphore(1);
 	private Thread managementThread;
 
 	public DefaultPool(InstanceFactory<T> factory) {
@@ -58,7 +57,6 @@ public class DefaultPool<T> implements Pool<T> {
 	}
 
 	public synchronized void start() throws Exception {
-		log.info("starting pool");
 		startManagementThread();
 	}
 
@@ -67,28 +65,28 @@ public class DefaultPool<T> implements Pool<T> {
 			public void run() {
 				while (true) {
 					synchronized (availableInstances) {
-						log.info("acquiring availableInstances lock");
-						log.info("acquired availableInstances lock");
+						log.trace("acquiring availableInstances lock");
+						log.trace("acquired availableInstances lock");
 						while (!availableInstances.isEmpty()) {
 							try {
-								log.info("waiting for empty notification");
+								log.trace("waiting for empty notification");
 								availableInstances.wait();
 							} catch (InterruptedException e) {
-								log.info("management thread exiting");
+								log.trace("management thread exiting");
 								return;
 							}
 						}
-						log.info("notified about empty");
+						log.trace("notified about empty");
 						if (availableInstances.isEmpty()) {
-							log.info("is still empty");
+							log.trace("is still empty");
 							if (instances.size() < maxInstances) {
 								try {
-									log.info("creating instance");
+									log.trace("creating instance");
 									T instance = factory.create();
 									instances.add(instance);
 									availableInstances.add(instance);
 									available.release();
-									log.info("created & released a new instance " + availableInstances.size() + "/"
+									log.trace("created & released a new instance " + availableInstances.size() + "/"
 											+ instances.size() + " = " + available.availablePermits());
 								} catch (Exception e) {
 									log.error("unable to create instance", e);
@@ -131,20 +129,19 @@ public class DefaultPool<T> implements Pool<T> {
 
 		synchronized (this.availableInstances) {
 			if (this.availableInstances.isEmpty()) {
-				log.info("asking to create some");
 				this.availableInstances.notify();
 			}
 		}
 
-		log.info("waiting to borrow, pool before [" + availableInstances.size() + " / " + instances.size() + " = "
+		log.trace("waiting to borrow, pool before [" + availableInstances.size() + " / " + instances.size() + " = "
 				+ available.availablePermits() + "]");
 		if (available.tryAcquire(this.timeout, TimeUnit.SECONDS)) {
-			log.info("borrowing 1, pool minus my permit [" + availableInstances.size() + " / " + instances.size()
+			log.trace("borrowing 1, pool minus my permit [" + availableInstances.size() + " / " + instances.size()
 					+ " = " + available.availablePermits() + "]");
 			Iterator<T> iterator = availableInstances.iterator();
 			T instance = iterator.next();
 			iterator.remove();
-			log.info("borrowed 1, pool minus my instance [" + availableInstances.size() + " / " + instances.size()
+			log.trace("borrowed 1, pool minus my instance [" + availableInstances.size() + " / " + instances.size()
 					+ " = " + available.availablePermits() + "]");
 			return instance;
 		}
@@ -155,7 +152,7 @@ public class DefaultPool<T> implements Pool<T> {
 	public synchronized void releaseInstance(T instance) {
 		this.availableInstances.add(instance);
 		this.available.release();
-		log.info("released 1, pool now [" + availableInstances.size() + " / " + instances.size() + " = "
+		log.trace("released 1, pool now [" + availableInstances.size() + " / " + instances.size() + " = "
 				+ available.availablePermits() + "]");
 	}
 
