@@ -497,8 +497,8 @@ context: /</screen></para>
     <filename><envar>$RAILS_ROOT</envar>/config/pooling.yml</filename>. This
     file is optional, and only required if you wish to enable pooling.</para>
 
-    <para>This file contains a section for each configurable pool of
-    runtimes.</para>
+    <para>The <filename>pooling.yml</filename> file contains a section for
+    each configurable pool of runtimes.</para>
 
     <section>
       <title>Pooling for web requests</title>
@@ -525,6 +525,21 @@ context: /</screen></para>
   max: 30</screen></para>
         </example></para>
     </section>
+  </section>
+
+  <section>
+    <title>Integrate additional JEE components</title>
+
+    <para>The <filename><envar>$RAILS_ROOT</envar>/config/</filename>
+    directory may also hold other JEE and JBoss deployment descriptors. It is
+    conceptually equivalent to <filename>META-INF/</filename> or
+    <filename>WEB-INF/</filename> in JARs and WARs.</para>
+
+    <para>For instance, it may contain
+    <filename><replaceable>mydb</replaceable>-ds.xml</filename> to deploy a
+    datasoure, <filename>web.xml</filename> to configure additional Servlets
+    and Filters, or a <filename>jboss-web.xml</filename> to manage the
+    enterprise naming context.</para>
   </section>
 
   <section>
