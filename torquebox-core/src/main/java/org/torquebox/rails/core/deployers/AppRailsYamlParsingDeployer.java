@@ -69,7 +69,7 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		addOutput(SipApplicationMetaData.class);
 		setSuffix("-rails.yml");
 		setStage(DeploymentStages.REAL);
-		setTopLevelOnly(true);
+		//setTopLevelOnly(true);
 	}
 
 	@Override
@@ -115,8 +115,8 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		deployer.addDeployment(deployment);
 		deployer.process();
 		deployer.checkComplete(deployment);
-		unit.addAttachment("jboss.rails.root.deployment", deployment);
-		unit.addAttachment("jboss.rails.root.deployer", deployer);
+		unit.addAttachment("torquebox.rails.root.deployment", deployment);
+		unit.addAttachment("torquebox.rails.root.deployer", deployer);
 	}
 
 	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackWebApplicationMetaData webMetaData,

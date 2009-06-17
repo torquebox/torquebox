@@ -1,6 +1,7 @@
 
 require 'helpers/jboss/deployer_test_helper'
 
+puts "defining shared ALL DEPLOYERS"
 describe "all deployers", :shared=>true do
   
   include DeployerTestHelper

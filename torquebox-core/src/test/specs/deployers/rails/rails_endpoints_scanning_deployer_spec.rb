@@ -91,7 +91,7 @@ describe RailsEndpointsScanningDeployer do
     endpoint.getClassLocation().should eql( "bar_endpoint" )
   end
   
-  it "should ignore any *_endpoint.rb without a matching .wsdl" do
+  it "should accept any *_endpoint.rb even without a matching .wsdl" do
     deployment = deploy {
        root {
          dir( "app/endpoints" ) { 
@@ -110,8 +110,13 @@ describe RailsEndpointsScanningDeployer do
     meta_data  = unit.getAttachment( RubyEndpointsMetaData.java_class )
      
     meta_data.should_not be_nil
-    meta_data.getEndpoints().size().should eql( 1 )
+    meta_data.getEndpoints().size().should eql( 2 )
      
+    endpoint = meta_data.getEndpointByName( "foo" )
+    endpoint.should_not be_nil
+    endpoint.getEndpointClassName().should eql( "FooEndpoint" )
+    endpoint.getClassLocation().should eql( "foo_endpoint" )
+    
     endpoint = meta_data.getEndpointByName( "bar" )
     endpoint.should_not be_nil
     endpoint.getEndpointClassName().should eql( "BarEndpoint" )

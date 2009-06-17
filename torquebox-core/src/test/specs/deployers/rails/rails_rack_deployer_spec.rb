@@ -5,7 +5,7 @@ import org.torquebox.rails.web.deployers.RailsRackDeployer
 import org.torquebox.rails.core.metadata.RailsApplicationMetaData
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData
 import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData
-import org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationFactoryDeployer
+import org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationPoolDeployer
 
 
 describe RailsRackDeployer do
@@ -36,9 +36,9 @@ describe RailsRackDeployer do
     web_metadata.getHost().should be_nil
     web_metadata.getContext().should eql( '/' )
     web_metadata.getStaticPathPrefix().should eql( '/public' )
-    web_metadata.getRackApplicationFactoryName().should_not be_nil
-    web_metadata.getRackApplicationFactoryName().should eql( RubyRackApplicationFactoryDeployer.getBeanName( unit ) )
-    web_metadata.getRackApplicationFactoryName().should match /test-deployment/
+    web_metadata.getRackApplicationPoolName().should_not be_nil
+    web_metadata.getRackApplicationPoolName().should eql( RubyRackApplicationPoolDeployer.getBeanName( unit ) )
+    web_metadata.getRackApplicationPoolName().should match /test-deployment/
     
   end
   

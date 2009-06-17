@@ -23,6 +23,16 @@ public class SharedPool<T> implements Pool<T> {
 	public void setFactory(InstanceFactory<T> factory) {
 		this.factory = factory;
 	}
+	
+	public void start() throws Exception {
+		if ( this.instance != null ) {
+			return;
+		}
+		
+		if ( this.factory != null ) {
+			this.instance = factory.create();
+		}
+	}
 
 	@Override
 	public T borrowInstance() throws Exception {

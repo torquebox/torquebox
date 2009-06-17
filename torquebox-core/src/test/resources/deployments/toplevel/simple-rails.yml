@@ -1,6 +1,6 @@
 --- 
 application: 
   RAILS_ENV: development
-  RAILS_ROOT: /Users/bob/oddthesis/oddthesis
+  RAILS_ROOT: /tmp
 web: 
   context: /

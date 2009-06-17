@@ -11,10 +11,7 @@
 
     <layout class="org.apache.log4j.PatternLayout">
       <!-- The default pattern: Date Priority [Category] Message\n -->
-<!--
       <param name="ConversionPattern" value="%d{ABSOLUTE} %-5p [%c{1}] %m%n"/>
--->
-      <param name="ConversionPattern" value="%-5p [%c{1}]%n      %m%n"/>
     </layout>
   </appender>
 
@@ -22,7 +19,7 @@
     <priority value="TRACE"/>
   </category>
 
-  <category name="org.jboss.rails">
+  <category name="org.torquebox">
     <priority value="TRACE"/>
   </category>
 

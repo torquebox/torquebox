@@ -1,6 +1,7 @@
 
 require 'deployers/shared_spec'
 
+import org.jboss.metadata.web.spec.WebMetaData
 import org.jboss.metadata.web.jboss.JBossWebMetaData
 import org.torquebox.ruby.enterprise.web.rack.deployers.RackWebApplicationDeployer
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData
@@ -15,22 +16,20 @@ describe RackWebApplicationDeployer do
     ]
   end
   
-  it "should configure a new JBossWebMetaData" do
+  it "should configure a new WebMetaData" do
     deployment = deploy {
       attachments {
         attach( RackWebApplicationMetaData ) do |md, root|
           md.setContext( "/" )
-          md.setRackApplicationFactoryName( "test-factory" )
+          md.setRackApplicationPoolName( "test-pool" )
           md.setStaticPathPrefix( "/public" )
         end
       }
     }
     unit = deployment_unit_for( deployment )
     
-    web_metadata = unit.getAttachment( JBossWebMetaData.java_class )
-    
+    web_metadata = unit.getAttachment( WebMetaData.java_class )
     web_metadata.should_not be_nil
-    web_metadata.getContextRoot().should eql( "/" )
     
     filter = web_metadata.getFilters().get( RackWebApplicationDeployer::FILTER_NAME )
     filter.should_not be_nil
@@ -61,12 +60,13 @@ describe RackWebApplicationDeployer do
     static_root.getParamValue().should eql( "/public" )
   end
   
-  it "should configure a new JBossWebMetaData with a non-root context" do
+  
+  it "should configure a new JBossWebMetaData" do
     deployment = deploy {
       attachments {
         attach( RackWebApplicationMetaData ) do |md, root|
-          md.setContext( "/some-context/" )
-          md.setRackApplicationFactoryName( "test-factory" )
+          md.setContext( "/" )
+          md.setRackApplicationPoolName( "test-pool" )
           md.setStaticPathPrefix( "/public" )
         end
       }
@@ -74,9 +74,26 @@ describe RackWebApplicationDeployer do
     unit = deployment_unit_for( deployment )
     
     web_metadata = unit.getAttachment( JBossWebMetaData.java_class )
-    
     web_metadata.should_not be_nil
-    web_metadata.getContextRoot().should eql( "/some-context/" )
+    
+    web_metadata.getContextRoot().should eql( "/" )
+  end
+  
+  
+  it "should configure a new WebMetaData with a non-root context" do
+    deployment = deploy {
+      attachments {
+        attach( RackWebApplicationMetaData ) do |md, root|
+          md.setContext( "/some-context/" )
+          md.setRackApplicationPoolName( "test-pool" )
+          md.setStaticPathPrefix( "/public" )
+        end
+      }
+    }
+    unit = deployment_unit_for( deployment )
+    
+    web_metadata = unit.getAttachment( WebMetaData.java_class )
+    web_metadata.should_not be_nil
     
     filter = web_metadata.getFilters().get( RackWebApplicationDeployer::FILTER_NAME )
     filter.should_not be_nil
@@ -90,12 +107,31 @@ describe RackWebApplicationDeployer do
     url_pattern.should eql( "/*" )
   end
   
+ 
+  it "should configure a new JBossWebMetaData with a non-root context" do
+    deployment = deploy {
+      attachments {
+        attach( RackWebApplicationMetaData ) do |md, root|
+          md.setContext( "/some-context/" )
+          md.setRackApplicationPoolName( "test-pool" )
+          md.setStaticPathPrefix( "/public" )
+        end
+      }
+    }
+    unit = deployment_unit_for( deployment )
+    
+    web_metadata = unit.getAttachment( JBossWebMetaData.java_class )
+    web_metadata.should_not be_nil
+    
+    web_metadata.getContextRoot().should eql( "/some-context/" )
+  end
+  
   it "should not configure the static servlet if no static prefix is set" do
     deployment = deploy {
       attachments {
         attach( RackWebApplicationMetaData ) do |md, root|
           md.setContext( "/some-context/" )
-          md.setRackApplicationFactoryName( "test-factory" )
+          md.setRackApplicationPoolName( "test-pool" )
         end
       }
     }

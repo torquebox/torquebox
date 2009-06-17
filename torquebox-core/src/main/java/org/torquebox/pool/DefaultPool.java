@@ -17,8 +17,7 @@ import org.torquebox.pool.spi.Pool;
  * 
  * @author Bob McWhirter
  * 
- * @param <T>
- *            The poolable resource.
+ * @param <T> The poolable resource.
  */
 public class DefaultPool<T> implements Pool<T> {
 
@@ -96,7 +95,7 @@ public class DefaultPool<T> implements Pool<T> {
 								}
 							} else {
 								try {
-									Thread.sleep( 1000 );
+									Thread.sleep(1000);
 								} catch (InterruptedException e) {
 									return;
 								}
@@ -140,13 +139,13 @@ public class DefaultPool<T> implements Pool<T> {
 		log.info("waiting to borrow, pool before [" + availableInstances.size() + " / " + instances.size() + " = "
 				+ available.availablePermits() + "]");
 		if (available.tryAcquire(this.timeout, TimeUnit.SECONDS)) {
-			log.info("borrowing 1, pool minus my permit [" + availableInstances.size() + " / " + instances.size() + " = "
-					+ available.availablePermits() + "]");
+			log.info("borrowing 1, pool minus my permit [" + availableInstances.size() + " / " + instances.size()
+					+ " = " + available.availablePermits() + "]");
 			Iterator<T> iterator = availableInstances.iterator();
 			T instance = iterator.next();
 			iterator.remove();
-			log.info("borrowed 1, pool minus my instance [" + availableInstances.size() + " / " + instances.size() + " = "
-					+ available.availablePermits() + "]");
+			log.info("borrowed 1, pool minus my instance [" + availableInstances.size() + " / " + instances.size()
+					+ " = " + available.availablePermits() + "]");
 			return instance;
 		}
 

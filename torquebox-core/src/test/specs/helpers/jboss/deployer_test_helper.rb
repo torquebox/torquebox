@@ -39,6 +39,7 @@ require 'helpers/jboss/deployment_builder'
 module DeployerTestHelper
   
   def setup_microcontainer
+    puts "setup_microcontainer"
     @bootstrap = BasicBootstrap.new()
     @bootstrap.run()
     @kernel = @bootstrap.getKernel()
@@ -49,6 +50,7 @@ module DeployerTestHelper
   end
   
   def cleanup_vfs
+    puts "cleanup_vfs"
     @cleanup.each do |clean_me|
       Java::OrgJbossVirtualPluginsContextMemory::MemoryContextFactory.getInstance().deleteRoot( clean_me.toURL() )
     end    
@@ -56,9 +58,11 @@ module DeployerTestHelper
   end
   
   def destroy_microcontainer
+    puts "destroy_microcontainer"
   end
   
   def deploy(path=nil,&block)
+    puts "deploy(#{path},...)"
     vfs_file = nil
     structure = nil
     
@@ -75,7 +79,9 @@ module DeployerTestHelper
       end
     end
     
+    puts "adding deployment #{deployment}"
     @main_deployer.addDeployment( deployment )    
+    puts "processing"
     @main_deployer.process()
     deployment
   end
@@ -130,6 +136,7 @@ module DeployerTestHelper
     mdc = create_managed_deployment_creator();
     main_deployer.setMgtDeploymentCreator(mdc);
     create_deployers.each do |deployer|
+      puts "adding deployer #{deployer}"
       deployers.addDeployer( deployer )      
     end
     main_deployer 

@@ -61,7 +61,7 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 		}
 
 		if (!deployed) {
-			log.info( "deploying a shared rack pool" );
+			log.debug( "deploying a shared rack pool" );
 			deploySharedPool(unit);
 		}
 	}
