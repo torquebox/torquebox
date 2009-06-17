@@ -249,6 +249,19 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
       <para>Removing the descriptor will cause the TorqueBox server to
       undeploy the application. This is what the
       <command>torquebox:rails:undeploy</command> task does.</para>
+
+      <section>
+        <title>Deploying a non-root context</title>
+
+        <para>By default, the <command>torquebox:rails:deploy</command> task
+        will attach your application to the root context. If you would rather
+        deploy to a non-root context, you may provide it as an argument to the
+        task invocation.</para>
+
+        <para><screen><prompt>$</prompt> <command>rake torquebox:rails:deploy['/my-application']</command></screen>The
+        root of your application would then be accessible at
+        <uri>http://localhost:8080/my-application</uri>.</para>
+      </section>
     </section>
 
     <section>
