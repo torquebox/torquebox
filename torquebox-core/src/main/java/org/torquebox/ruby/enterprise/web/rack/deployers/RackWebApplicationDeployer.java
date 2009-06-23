@@ -39,7 +39,6 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
-import org.torquebox.ruby.enterprise.web.StaticResourceServlet;
 import org.torquebox.ruby.enterprise.web.rack.RackFilter;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 
