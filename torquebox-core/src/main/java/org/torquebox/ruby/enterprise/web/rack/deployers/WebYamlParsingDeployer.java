@@ -23,10 +23,11 @@ package org.torquebox.ruby.enterprise.web.rack.deployers;
 
 import java.util.Map;
 
-import org.ho.yaml.Yaml;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
+import org.jruby.util.ByteList;
+import org.jvyamlb.YAML;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 
 public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebApplicationMetaData> {
@@ -37,36 +38,44 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebAp
 	}
 
 	@SuppressWarnings("unchecked")
-	protected RackWebApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackWebApplicationMetaData arg2) throws Exception {
-		Map<String, String> web = (Map<String, String>) Yaml.load(file.openStream());
+	protected RackWebApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackWebApplicationMetaData root)
+			throws Exception {
+		Map<ByteList, ByteList> web = (Map<ByteList, ByteList>) YAML.load(file.openStream());
 
-		String context = web.get("context");
+		ByteList contextBytes = web.get(ByteList.create("context"));
+		String context = null;
 
-		if (context == null) {
+		if (contextBytes == null) {
 			context = "/";
 		}
 
-		String host = web.get("host");
+		ByteList hostBytes = web.get(ByteList.create("host"));
+		String host = null;
 
-		if (host == null || host.trim().equals("*")) {
+		if (hostBytes == null) {
 			host = "localhost";
+		} else {
+			host = hostBytes.toString().trim();
+			if (host.equals("")) {
+				host = "localhost";
+			}
 		}
 
 		RackWebApplicationMetaData webMetaData = unit.getAttachment(RackWebApplicationMetaData.class);
 
 		if (webMetaData == null) {
 			webMetaData = new RackWebApplicationMetaData();
-			unit.addAttachment( RackWebApplicationMetaData.class, webMetaData );
+			unit.addAttachment(RackWebApplicationMetaData.class, webMetaData);
 		}
 
-		if ( webMetaData.getContext() == null ) {
+		if (webMetaData.getContext() == null) {
 			webMetaData.setContext(context);
 		}
-		
-		if ( webMetaData.getHost() == null ) {
+
+		if (webMetaData.getHost() == null) {
 			webMetaData.setHost(host);
 		}
-		
+
 		return webMetaData;
 	}
 

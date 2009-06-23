@@ -24,12 +24,13 @@ package org.torquebox.ruby.enterprise.jobs.deployers;
 import java.io.IOException;
 import java.util.Map;
 
-import org.ho.yaml.Yaml;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
+import org.jruby.util.ByteList;
+import org.jvyamlb.YAML;
 import org.torquebox.ruby.enterprise.jobs.metadata.RubyJobMetaData;
 
 public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
@@ -54,22 +55,24 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 	@SuppressWarnings("unchecked")
 	protected void parse(VFSDeploymentUnit unit, VirtualFile file) throws DeploymentException {
 		try {
-			Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) Yaml.load(file.openStream());
+			Map<ByteList, Map<ByteList, ByteList>> results = (Map<ByteList, Map<ByteList, ByteList>>) YAML.load(file.openStream());
 
-			for (String jobName : results.keySet()) {
-				Map<String, String> jobSpec = results.get(jobName);
-				String description = jobSpec.get("description");
-				String job = jobSpec.get("job");
-				String cron = jobSpec.get("cron");
+			for (ByteList jobName : results.keySet()) {
+				Map<ByteList, ByteList> jobSpec = results.get(jobName);
+				ByteList description = jobSpec.get( ByteList.create( "description") );
+				ByteList job = jobSpec.get( ByteList.create( "job") );
+				ByteList cron = jobSpec.get( ByteList.create( "cron") );
 
 				if (job != null) {
 					RubyJobMetaData jobMetaData = new RubyJobMetaData();
 
-					jobMetaData.setName(jobName);
+					jobMetaData.setName(jobName.toString());
 					jobMetaData.setGroup(unit.getName());
-					jobMetaData.setDescription(description);
-					jobMetaData.setRubyClassName(job);
-					jobMetaData.setCronExpression(cron.trim());
+					if ( description != null ) {
+						jobMetaData.setDescription(description.toString());
+					}
+					jobMetaData.setRubyClassName(job.toString());
+					jobMetaData.setCronExpression(cron.toString().trim());
 					unit.addAttachment(RubyJobMetaData.class.getName() + "$" + jobName, jobMetaData, RubyJobMetaData.class);
 				}
 			}

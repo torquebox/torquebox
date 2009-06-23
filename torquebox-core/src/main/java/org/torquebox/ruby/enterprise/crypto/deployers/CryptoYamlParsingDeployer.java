@@ -23,11 +23,12 @@ package org.torquebox.ruby.enterprise.crypto.deployers;
 
 import java.util.Map;
 
-import org.ho.yaml.Yaml;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
+import org.jruby.util.ByteList;
+import org.jvyamlb.YAML;
 import org.torquebox.ruby.enterprise.crypto.metadata.CryptoMetaData;
 import org.torquebox.ruby.enterprise.crypto.metadata.CryptoStoreMetaData;
 
@@ -54,16 +55,16 @@ public class CryptoYamlParsingDeployer extends AbstractVFSParsingDeployer<Crypto
 	@SuppressWarnings("unchecked")
 	@Override
 	protected CryptoMetaData parse(VFSDeploymentUnit unit, VirtualFile file, CryptoMetaData root) throws Exception {
-		Map<String,Map<String,String>> crypto = (Map<String, Map<String,String>>) Yaml.load( file.openStream() );
+		Map<ByteList,Map<ByteList,ByteList>> crypto = (Map<ByteList, Map<ByteList,ByteList>>) YAML.load( file.openStream() );
 		
 		CryptoMetaData metaData = new CryptoMetaData();
 		
-		for ( String name : crypto.keySet() ) {
+		for ( ByteList name : crypto.keySet() ) {
 			CryptoStoreMetaData storeMetaData = new CryptoStoreMetaData();
-			Map<String, String> store = crypto.get( name );
-			storeMetaData.setName( name );
-			String storePath = store.get( "store" );
-			if ( ! storePath.startsWith( "/" )  ) {
+			Map<ByteList, ByteList> store = crypto.get( name );
+			storeMetaData.setName( name.toString() );
+			String storePath = store.get( ByteList.create( "store" ) ).toString();
+			if ( ! storePath.toString().startsWith( "/" )  ) {
 				if ( this.storeBasePath == null || this.storeBasePath.equals( "" ) ) {
 					throw new DeploymentException( "Relative store specified (" + storePath + ") but storeBasePath not set on CryptoYamlParsingDeployer" );
 				}
@@ -71,7 +72,7 @@ public class CryptoYamlParsingDeployer extends AbstractVFSParsingDeployer<Crypto
 				
 			}
 			storeMetaData.setStore( storePath );
-			storeMetaData.setPassword( store.get( "password" ) );
+			storeMetaData.setPassword( store.get( ByteList.create( "password" ) ).toString() );
 			metaData.addCryptoStoreMetaData( storeMetaData );
 		}
 		
