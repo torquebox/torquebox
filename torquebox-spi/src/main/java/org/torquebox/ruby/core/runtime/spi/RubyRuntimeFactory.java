@@ -22,18 +22,12 @@
 package org.torquebox.ruby.core.runtime.spi;
 
 import org.jruby.Ruby;
+import org.torquebox.pool.spi.InstanceFactory;
 
 /** Factory to create Ruby instances.
  * 
  * @author Bob McWhirter
  */
-public interface RubyRuntimeFactory {
-	
-	/** Create a new, un-managed Ruby runtime instance.
-	 * 
-	 * @return The new Ruby instance.
-	 * @throws Exception
-	 */
-	Ruby createRubyRuntime() throws Exception;
+public interface RubyRuntimeFactory extends InstanceFactory<Ruby> {
 
 }

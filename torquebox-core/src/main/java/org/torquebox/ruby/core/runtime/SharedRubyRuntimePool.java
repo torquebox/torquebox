@@ -22,30 +22,28 @@
 package org.torquebox.ruby.core.runtime;
 
 import org.jruby.Ruby;
+import org.torquebox.pool.SharedPool;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
+import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
-public class SharedRubyRuntimePool extends AbstractRubyRuntimePool {
-	
-	protected Ruby instance;
+public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool {
 	
 	public SharedRubyRuntimePool(RubyRuntimeFactory factory) {
 		super( factory );
 	}
-
-	public void start() throws Exception {
-		this.instance = factory.createRubyRuntime();
-	}
 	
-	public void stop() {
-		this.instance = null;
-	}
-	
-	public Ruby borrowRuntime() {
-		return this.instance;
+	public SharedRubyRuntimePool(Ruby ruby) {
+		super( ruby );
 	}
 
+	@Override
+	public Ruby borrowRuntime() throws Exception {
+		return borrowInstance();
+	}
+
+	@Override
 	public void returnRuntime(Ruby runtime) {
-		// nothing
+		releaseInstance( runtime );
 	}
 
 }

@@ -80,7 +80,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		return this.classLoader;
 	}
 
-	public synchronized Ruby createRubyRuntime() throws Exception {
+	public synchronized Ruby create() throws Exception {
 		RubyInstanceConfig config = new RubyInstanceConfig();
 
 		DefaultRubyDynamicClassLoader childLoader = this.classLoader

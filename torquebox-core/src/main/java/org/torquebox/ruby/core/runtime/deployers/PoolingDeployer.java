@@ -1,0 +1,80 @@
+package org.torquebox.ruby.core.runtime.deployers;
+
+import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.beans.metadata.spi.ValueMetaData;
+import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
+import org.jboss.deployers.spi.DeploymentException;
+import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jruby.Ruby;
+import org.torquebox.ruby.core.runtime.DefaultRubyRuntimePool;
+import org.torquebox.ruby.core.runtime.SharedRubyRuntimePool;
+import org.torquebox.ruby.core.runtime.metadata.PoolMetaData;
+import org.torquebox.ruby.core.runtime.metadata.PoolingMetaData;
+import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
+
+public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaData> {
+
+	private static final String[] VALID_POOLS = { "web", "jobs", "queues", "test1", "test2", "test3" };
+
+	public PoolingDeployer() {
+		super(PoolingMetaData.class);
+	}
+
+	@Override
+	public void deploy(VFSDeploymentUnit unit, PoolingMetaData poolingMetaData) throws DeploymentException {
+		log.info("Deploying all pools");
+
+		for (String poolName : VALID_POOLS) {
+			log.info("Trying pool " + poolName);
+			PoolMetaData poolMetaData = poolingMetaData.getPool(poolName);
+			log.info("MetaData: " + poolMetaData);
+
+			if (poolMetaData != null) {
+				deploy(unit, poolMetaData);
+			}
+		}
+	}
+
+	protected void deploy(VFSDeploymentUnit unit, PoolMetaData poolMetaData) throws DeploymentException {
+
+		String beanName = getBeanName(unit, poolMetaData.getName());
+
+		log.debug("creating RubyRuntimePool: " + beanName);
+
+		BeanMetaData poolBean = null;
+
+		if (poolMetaData.isGlobal()) {
+			log.info("creating global pool for " + poolMetaData.getName());
+			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class
+					.getName());
+			Ruby globalRuntime = unit.getAttachment(Ruby.class);
+			builder.addConstructorParameter(Ruby.class.getName(), globalRuntime);
+			poolBean = builder.getBeanMetaData();
+		} else if (poolMetaData.isShared()) {
+			log.info("creating shared pool for " + poolMetaData.getName());
+			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class
+					.getName());
+			ValueMetaData factoryInjection = builder.createInject("jboss.ruby.runtime.factory." + unit.getSimpleName());
+			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
+			poolBean = builder.getBeanMetaData();
+		} else {
+			log.info("creating non-shared pool for " + poolMetaData.getName());
+			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRubyRuntimePool.class
+					.getName());
+			ValueMetaData factoryInjection = builder.createInject("jboss.ruby.runtime.factory." + unit.getSimpleName());
+			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
+			builder.addPropertyMetaData("minInstances", poolMetaData.getMinimumSize());
+			builder.addPropertyMetaData("maxInstances", poolMetaData.getMaximumSize());
+			poolBean = builder.getBeanMetaData();
+		}
+		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, poolBean, BeanMetaData.class);
+
+	}
+
+	public static String getBeanName(DeploymentUnit unit, String poolName) {
+		return "torquebox.ruby.runtime.pool." + unit.getSimpleName() + "." + poolName;
+	}
+
+}

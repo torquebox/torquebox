@@ -43,11 +43,11 @@ public class RubyRuntimeFactoryProxy implements RubyRuntimeFactory {
 		return this.delegate;
 	}
 
-	public Ruby createRubyRuntime() throws Exception {
+	public Ruby create() throws Exception {
 		if ( this.delegate == null ) {
 			throw new Exception( "No delegate" );
 		}
-		return this.delegate.createRubyRuntime();
+		return this.delegate.create();
 	}
 
 }
