@@ -21,6 +21,7 @@
  */
 package org.torquebox.ruby.core.runtime;
 
+import org.jboss.beans.metadata.api.annotations.Create;
 import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 
@@ -43,7 +44,9 @@ public class RubyRuntimeFactoryProxy implements RubyRuntimeFactory {
 		return this.delegate;
 	}
 
+	@Create(ignored=true)
 	public Ruby create() throws Exception {
+		new Exception().printStackTrace();
 		if ( this.delegate == null ) {
 			throw new Exception( "No delegate" );
 		}

@@ -22,45 +22,42 @@
 package org.torquebox.ruby.enterprise.web.rack;
 
 import org.jboss.beans.metadata.api.annotations.Create;
-import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
 
-public class RubyRackApplicationFactory implements RackApplicationFactory {
-	
-	private static final Logger log = Logger.getLogger( RubyRackApplicationFactory.class );
-	private RubyRuntimeFactory runtimeFactory;
-	private String rackUpScript;
+public class GlobalRubyRackApplicationFactory implements RackApplicationFactory {
 
-	public RubyRackApplicationFactory() {
-		
+	private Ruby ruby;
+	private String rackUpScript;
+	private RubyRackApplication rackApp;
+
+	public GlobalRubyRackApplicationFactory() {
+
 	}
 	
-	public void setRubyRuntimeFactory(RubyRuntimeFactory runtimeFactory) {
-		this.runtimeFactory = runtimeFactory;
+	public void setRuby(Ruby ruby) {
+		this.ruby = ruby;
 	}
-	
-	public RubyRuntimeFactory getRubyRuntimeFactory() {
-		return this.runtimeFactory;
+
+	public Ruby setRuby() {
+		return this.ruby;
 	}
-	
+
 	public void setRackUpScript(String rackUpScript) {
 		this.rackUpScript = rackUpScript;
 	}
-	
+
 	public String getRackUpScript() {
 		return this.rackUpScript;
 	}
-	
+
 	@Create(ignored=true)
-	public RackApplication create() throws Exception {
-		log.info( "Creating instance for RubyRackApplicationFactory" );
-		Ruby ruby = getRubyRuntimeFactory().create();
-		
-		RubyRackApplication rackApp = new RubyRackApplication( ruby, rackUpScript );
-		
+	public synchronized RackApplication create() throws Exception {
+		if (rackApp == null) {
+			rackApp = new RubyRackApplication(ruby, rackUpScript);
+		}
+
 		return rackApp;
 	}
 

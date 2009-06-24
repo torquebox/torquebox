@@ -49,6 +49,7 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 			log.info("creating global pool for " + poolMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class
 					.getName());
+			builder.addPropertyMetaData( "name", poolMetaData.getName() );
 			Ruby globalRuntime = unit.getAttachment(Ruby.class);
 			builder.addConstructorParameter(Ruby.class.getName(), globalRuntime);
 			poolBean = builder.getBeanMetaData();
@@ -56,19 +57,21 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 			log.info("creating shared pool for " + poolMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class
 					.getName());
+			builder.addPropertyMetaData( "name", poolMetaData.getName() );
 			ValueMetaData factoryInjection = builder.createInject("jboss.ruby.runtime.factory." + unit.getSimpleName());
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
 			poolBean = builder.getBeanMetaData();
 		} else {
 			log.info("creating non-shared pool for " + poolMetaData.getName());
-			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRubyRuntimePool.class
-					.getName());
+			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRubyRuntimePool.class.getName() );
 			ValueMetaData factoryInjection = builder.createInject("jboss.ruby.runtime.factory." + unit.getSimpleName());
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
+			builder.addPropertyMetaData( "name", poolMetaData.getName() );
 			builder.addPropertyMetaData("minInstances", poolMetaData.getMinimumSize());
 			builder.addPropertyMetaData("maxInstances", poolMetaData.getMaximumSize());
 			poolBean = builder.getBeanMetaData();
 		}
+		
 		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, poolBean, BeanMetaData.class);
 
 	}

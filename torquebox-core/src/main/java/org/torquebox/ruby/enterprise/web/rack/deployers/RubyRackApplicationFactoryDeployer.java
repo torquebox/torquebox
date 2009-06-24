@@ -27,7 +27,11 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
+import org.jruby.Ruby;
+import org.torquebox.ruby.core.runtime.metadata.PoolMetaData;
+import org.torquebox.ruby.core.runtime.metadata.PoolingMetaData;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
+import org.torquebox.ruby.enterprise.web.rack.GlobalRubyRackApplicationFactory;
 import org.torquebox.ruby.enterprise.web.rack.RubyRackApplicationFactory;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
 
@@ -37,26 +41,53 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 
 	public RubyRackApplicationFactoryDeployer() {
 		super(RubyRackApplicationMetaData.class);
+		addInput(PoolingMetaData.class);
 		addOutput(BeanMetaData.class);
 	}
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
-		String beanName = getBeanName( unit );
+		String beanName = getBeanName(unit);
 
 		log.debug("deploying rack app factory: " + beanName);
 
-		RubyRuntimeFactory factory = unit.getAttachment(RubyRuntimeFactory.class);
+		PoolingMetaData pooling = unit.getAttachment(PoolingMetaData.class);
 
-		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyRackApplicationFactory.class.getName());
-		builder.addPropertyMetaData("rubyRuntimeFactory", factory);
-		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
-
-		BeanMetaData beanMetaData = builder.getBeanMetaData();
-
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName,  beanMetaData, BeanMetaData.class);
+		BeanMetaData beanMetaData = null;
+		
+		
+		if (pooling == null ) {
+			beanMetaData = createGlobal( unit, metaData );
+		} else {
+			PoolMetaData pool = pooling.getPool( "web" );
+			if ( pool == null || pool.isGlobal() ) {
+				beanMetaData = createGlobal( unit, metaData );
+			} else {
+				beanMetaData = createDefault( unit, metaData);
+			}
+		}
+		
+		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class);
 	}
 	
+	protected BeanMetaData createGlobal(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
+		String beanName = getBeanName( unit );
+		Ruby ruby = unit.getAttachment(Ruby.class);
+		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, GlobalRubyRackApplicationFactory.class.getName());
+		builder.addPropertyMetaData("ruby", ruby);
+		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
+		return builder.getBeanMetaData();
+	}
+	
+	protected BeanMetaData createDefault(VFSDeploymentUnit unit,RubyRackApplicationMetaData metaData) throws DeploymentException {
+		String beanName = getBeanName( unit );
+		RubyRuntimeFactory factory = unit.getAttachment(RubyRuntimeFactory.class);
+		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyRackApplicationFactory.class .getName());
+		builder.addPropertyMetaData("rubyRuntimeFactory", factory);
+		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
+		return builder.getBeanMetaData();
+	}
+
 	public static String getBeanName(VFSDeploymentUnit unit) {
 		String beanName = "torquebox.rack.app.factory." + unit.getSimpleName();
 		return beanName;

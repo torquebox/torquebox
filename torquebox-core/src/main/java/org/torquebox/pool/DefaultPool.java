@@ -21,21 +21,30 @@ import org.torquebox.pool.spi.Pool;
  */
 public class DefaultPool<T> implements Pool<T> {
 
-	private static final Logger log = Logger.getLogger(DefaultPool.class);
 	private InstanceFactory<T> factory;
 
 	private List<T> instances = new ArrayList<T>();
 	private Set<T> availableInstances = new HashSet<T>();
 
+	private String name = "anonymous";
 	private int minInstances = 0;
 	private int maxInstances = -1;
 	private int timeout = 30;
 
 	private Semaphore available = new Semaphore(0, true);
 	private Thread managementThread;
+	private Logger log;
 
 	public DefaultPool(InstanceFactory<T> factory) {
 		this.factory = factory;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return this.name;
 	}
 
 	public void setMinInstances(int minInstances) {
@@ -57,6 +66,7 @@ public class DefaultPool<T> implements Pool<T> {
 	}
 
 	public synchronized void start() throws Exception {
+		log = Logger.getLogger( this.getClass().getName() + "-" + this.name );
 		startManagementThread();
 	}
 
@@ -106,6 +116,7 @@ public class DefaultPool<T> implements Pool<T> {
 
 		while (instances.size() < minInstances) {
 			try {
+				log.info( "creating instance for DefaultPool" );
 				T instance = factory.create();
 				instances.add(instance);
 				availableInstances.add(instance);

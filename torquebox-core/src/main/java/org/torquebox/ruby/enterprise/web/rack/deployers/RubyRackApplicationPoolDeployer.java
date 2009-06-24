@@ -27,9 +27,11 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.metadata.PoolMetaData;
 import org.torquebox.ruby.core.runtime.metadata.PoolingMetaData;
 import org.torquebox.ruby.enterprise.web.rack.DefaultRackApplicationPool;
+import org.torquebox.ruby.enterprise.web.rack.GlobalRubyRackApplicationFactory;
 import org.torquebox.ruby.enterprise.web.rack.SharedRackApplicationPool;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
@@ -47,25 +49,20 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 
 		PoolingMetaData pooling = unit.getAttachment(PoolingMetaData.class);
 
-		boolean deployed = false;
-
-		if (pooling != null) {
-			log.info("pooling metadata: " + pooling);
-			PoolMetaData pool = pooling.getPool("web");
-
-			log.info("pool metadata: " + pool);
-			if (pool != null && !pool.isShared()) {
+		if ( pooling == null ) {
+			deploySharedPool( unit );
+		} else {
+			PoolMetaData pool = pooling.getPool( "web" );
+			
+			if (pool == null || pool.isGlobal() || pool.isShared() ) {
+				deploySharedPool( unit );
+			} else {
 				deployDefaultPool(unit, pool);
-				deployed = true;
 			}
 		}
 
-		if (!deployed) {
-			log.debug( "deploying a shared rack pool" );
-			deploySharedPool(unit);
-		}
 	}
-
+	
 	protected void deploySharedPool(VFSDeploymentUnit unit) throws DeploymentException {
 		String beanName = getBeanName(unit);
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRackApplicationPool.class

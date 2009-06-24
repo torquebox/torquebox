@@ -6,7 +6,7 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer;
+import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
 import org.torquebox.ruby.enterprise.queues.RubyTaskQueueHandler;
 import org.torquebox.ruby.enterprise.queues.metadata.RubyTaskQueueMetaData;
 import org.torquebox.ruby.enterprise.queues.metadata.RubyTaskQueuesMetaData;
@@ -37,7 +37,7 @@ public class RubyTaskQueueHandlersDeployer extends AbstractSimpleVFSRealDeployer
 		builder.addPropertyMetaData( "queueClassName", queueMetaData.getQueueClassName() );
 		builder.addPropertyMetaData( "queueClassLocation", queueMetaData.getQueueClassLocation() );
 		
-		String runtimePoolName = RubyRuntimePoolDeployer.getBeanName( unit );
+		String runtimePoolName = PoolingDeployer.getBeanName( unit, "queues" );
 		ValueMetaData runtimePoolInject = builder.createInject( runtimePoolName );
 		builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
 		

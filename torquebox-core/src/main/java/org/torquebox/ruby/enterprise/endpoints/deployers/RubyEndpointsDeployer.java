@@ -21,19 +21,15 @@
  */
 package org.torquebox.ruby.enterprise.endpoints.deployers;
 
-import java.util.Set;
-
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
-import org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer;
+import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
 import org.torquebox.ruby.enterprise.crypto.metadata.CryptoMetaData;
 import org.torquebox.ruby.enterprise.crypto.metadata.CryptoStoreMetaData;
 import org.torquebox.ruby.enterprise.endpoints.RubyEndpoint;
@@ -86,7 +82,8 @@ public class RubyEndpointsDeployer extends AbstractSimpleVFSRealDeployer<RubyEnd
 
 		BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder(beanName, RubyEndpoint.class.getName());
 
-		ValueMetaData poolInjection = beanBuilder.createInject(RubyRuntimePoolDeployer.getBeanName(unit));
+		String runtimePoolName = PoolingDeployer.getBeanName( unit, "endpoints" );
+		ValueMetaData poolInjection = beanBuilder.createInject(runtimePoolName);
 		beanBuilder.addPropertyMetaData("rubyRuntimePool", poolInjection);
 		beanBuilder.addPropertyMetaData("name", metaData.getName());
 		beanBuilder.addPropertyMetaData("classLocation", metaData.getClassLocation());

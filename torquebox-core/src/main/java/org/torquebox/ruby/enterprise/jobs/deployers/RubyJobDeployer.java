@@ -31,10 +31,7 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
-import org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer;
-import org.torquebox.ruby.core.runtime.metadata.PoolMetaData;
 import org.torquebox.ruby.enterprise.jobs.RubyJob;
-import org.torquebox.ruby.enterprise.jobs.RubyScheduler;
 import org.torquebox.ruby.enterprise.jobs.metadata.RubyJobMetaData;
 
 public class RubyJobDeployer extends AbstractDeployer {
