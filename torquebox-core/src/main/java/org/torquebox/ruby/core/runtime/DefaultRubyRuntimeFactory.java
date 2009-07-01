@@ -85,7 +85,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 	@Create(ignored=true)
 	public synchronized Ruby create() throws Exception {
-		log.error( "CREATING RUBY RUNTIME HERE: ", new Exception() );
+//		log.error( "CREATING RUBY RUNTIME HERE: ", new Exception() );
 		RubyInstanceConfig config = new RubyInstanceConfig();
 
 		DefaultRubyDynamicClassLoader childLoader = this.classLoader
