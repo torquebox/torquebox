@@ -126,7 +126,7 @@ public class RubyRackApplication implements RackApplication {
 	
 			IRubyObject rubySipHandler = JavaEmbedUtils
 					.javaToRuby(ruby, sipHandler);
-	
+			
 			if(message instanceof SipServletRequest) {
 				JavaEmbedUtils.invokeMethod(ruby, rubySipHandler,
 					"service", new Object[] { message, null }, void.class);

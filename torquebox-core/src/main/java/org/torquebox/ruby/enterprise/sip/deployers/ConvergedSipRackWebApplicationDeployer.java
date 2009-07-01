@@ -37,6 +37,7 @@ import org.jboss.metadata.sip.spec.Sip11MetaData;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
 import org.jboss.metadata.web.spec.FilterMetaData;
 import org.jboss.metadata.web.spec.FiltersMetaData;
+import org.jboss.metadata.web.spec.WebMetaData;
 import org.torquebox.ruby.enterprise.sip.StandardSipRubyController;
 import org.torquebox.ruby.enterprise.sip.metadata.SipApplicationMetaData;
 import org.torquebox.ruby.enterprise.sip.metadata.SipRubyControllerMetaData;
@@ -67,7 +68,8 @@ public class ConvergedSipRackWebApplicationDeployer extends AbstractSimpleVFSRea
 			throws DeploymentException {
 		log.debug("deploying " + unit);
 		
-		JBossWebMetaData webMetaData = unit.getAttachment(JBossWebMetaData.class);
+		WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
+		JBossWebMetaData jbossWebMetaData = unit.getAttachment(JBossWebMetaData.class);
 		
 		JBossConvergedSipMetaData convergedMetaData = unit.getAttachment(JBossConvergedSipMetaData.class);
 		if (convergedMetaData == null) {
@@ -76,10 +78,10 @@ public class ConvergedSipRackWebApplicationDeployer extends AbstractSimpleVFSRea
 		}
 		String sipKey = ConvergedSipAnnotationMetaDataDeployer.SIP_ANNOTATED_ATTACHMENT_NAME;
 	    Sip11MetaData sipAnnotatedMetaData = unit.getAttachment(sipKey, Sip11MetaData.class);
-	      
-		convergedMetaData.merge(webMetaData, null);
+	       
+		convergedMetaData.merge(jbossWebMetaData, webMetaData);
 		convergedMetaData.merge(sipAnnotatedMetaData, null);
-		
+		 
 		convergedMetaData.setApplicationName(unit.getSimpleName());
 		
 		if(metaData.getRubyController() != null) {			
