@@ -23,18 +23,18 @@ package org.torquebox.ruby.enterprise.sip.deployers;
 
 import java.util.Map;
 
-import org.ho.yaml.Yaml;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
+import org.jruby.util.ByteList;
+import org.jvyamlb.YAML;
 import org.torquebox.ruby.enterprise.sip.metadata.SipApplicationMetaData;
 
 /**
  * @author jean.deruelle@gmail.com
- *
+ * 
  */
-public class SipYamlParsingDeployer extends
-		AbstractVFSParsingDeployer<SipApplicationMetaData> {
+public class SipYamlParsingDeployer extends AbstractVFSParsingDeployer<SipApplicationMetaData> {
 
 	/**
 	 * @param output
@@ -44,28 +44,35 @@ public class SipYamlParsingDeployer extends
 		setName("sip.yml");
 	}
 
-	/* (non-Javadoc)
-	 * @see org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer#parse(org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit, org.jboss.virtual.VirtualFile, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer#parse
+	 * (org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit,
+	 * org.jboss.virtual.VirtualFile, java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	protected SipApplicationMetaData parse(VFSDeploymentUnit unit,
-			VirtualFile file, SipApplicationMetaData arg2) throws Exception {
-		Map<String, String> sip = (Map<String, String>) Yaml.load(file.openStream());
-				
-		String rubyController = sip.get("rubycontroller");
-		
+	protected SipApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, SipApplicationMetaData arg2)
+			throws Exception {
+		Map<ByteList, ByteList> sip = (Map<ByteList, ByteList>) YAML.load(file.openStream());
+
+		ByteList rubyController = sip.get( ByteList.create( "rubycontroller") );
+
 		SipApplicationMetaData sipMetaData = unit.getAttachment(SipApplicationMetaData.class);
 
 		if (sipMetaData == null) {
 			sipMetaData = new SipApplicationMetaData();
-			unit.addAttachment( SipApplicationMetaData.class, sipMetaData );
-		}		
-		
-		if ( sipMetaData.getRubyController() == null ) {
-			sipMetaData.setRubyController(rubyController);
+			unit.addAttachment(SipApplicationMetaData.class, sipMetaData);
 		}
-		
+
+		if (sipMetaData.getRubyController() == null) {
+			if ( rubyController != null ) {
+				sipMetaData.setRubyController(rubyController.toString());
+			}
+		}
+
 		return sipMetaData;
 	}
 

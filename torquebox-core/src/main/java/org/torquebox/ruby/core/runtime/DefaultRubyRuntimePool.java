@@ -21,82 +21,25 @@
  */
 package org.torquebox.ruby.core.runtime;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import org.jruby.Ruby;
+import org.torquebox.pool.DefaultPool;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
+import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
-public class DefaultRubyRuntimePool extends AbstractRubyRuntimePool {
-
-	private List<Ruby> instances = new ArrayList<Ruby>();
-	private Set<Ruby> availableInstances = new HashSet<Ruby>();
-	private int minInstances = 0;
-	private int maxInstances = -1;
-	private int timeout = 30;
+public class DefaultRubyRuntimePool extends DefaultPool<Ruby> implements RubyRuntimePool  {
 
 	public DefaultRubyRuntimePool(RubyRuntimeFactory factory) {
 		super(factory);
 	}
 
-	public void setMinInstances(int minInstances) {
-		this.minInstances = minInstances;
+	@Override
+	public Ruby borrowRuntime() throws Exception {
+		return borrowInstance();
 	}
 
-	public void setMaxInstances(int maxInstances) {
-		this.maxInstances = maxInstances;
+	@Override
+	public void returnRuntime(Ruby runtime) {
+		releaseInstance( runtime );
 	}
 	
-	/** Time-out to fetch an instance.
-	 * 
-	 * @param timeout Time-out length, in seconds.
-	 */
-	public void setTimeout(int timeout) {
-		this.timeout = timeout;
-	}
-
-	public synchronized void start() throws Exception {
-		prepopulateRuntimes();
-	}
-
-	private void prepopulateRuntimes() throws Exception {
-		for (int i = 0; i < this.minInstances; ++i) {
-			Ruby ruby = factory.createRubyRuntime();
-			this.instances.add( ruby );
-			this.availableInstances.add( ruby );
-		}
-	}
-
-	public void stop() {
-		this.instances.clear();
-	}
-
-	public synchronized Ruby borrowRuntime() throws Exception {
-		if (availableInstances.isEmpty()) {
-			if (this.maxInstances < 0 || this.instances.size() < this.maxInstances) {
-				Ruby runtime = factory.createRubyRuntime();
-				this.instances.add(runtime);
-				return runtime;
-			}
-			if (this.instances.size() >= this.maxInstances) {
-				while (availableInstances.isEmpty()) {
-					wait( this.timeout * 1000 );
-				}
-			}
-		}
-
-		Iterator<Ruby> iterator = availableInstances.iterator();
-		Ruby ruby = iterator.next();
-		iterator.remove();
-		return ruby;
-	}
-
-	public synchronized void returnRuntime(Ruby ruby) {
-		this.availableInstances.add( ruby );
-		notifyAll();
-	}
-
 }

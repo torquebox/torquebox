@@ -29,7 +29,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.Version;
+import org.jboss.beans.metadata.api.annotations.Create;
 import org.jboss.kernel.Kernel;
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
@@ -41,6 +43,7 @@ import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 
 public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
+	private static final Logger log = Logger.getLogger( DefaultRubyRuntimeFactory.class );
 	private Kernel kernel;
 	private RuntimeInitializer initializer;
 
@@ -80,7 +83,9 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		return this.classLoader;
 	}
 
-	public synchronized Ruby createRubyRuntime() throws Exception {
+	@Create(ignored=true)
+	public synchronized Ruby create() throws Exception {
+		log.error( "CREATING RUBY RUNTIME HERE: ", new Exception() );
 		RubyInstanceConfig config = new RubyInstanceConfig();
 
 		DefaultRubyDynamicClassLoader childLoader = this.classLoader

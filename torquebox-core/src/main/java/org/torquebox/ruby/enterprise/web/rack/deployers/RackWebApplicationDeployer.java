@@ -39,7 +39,6 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
-import org.torquebox.ruby.enterprise.web.StaticResourceServlet;
 import org.torquebox.ruby.enterprise.web.rack.RackFilter;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 
@@ -47,6 +46,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 	public static final String FILTER_NAME = "torquebox.rack";
 	public static final String SERVLET_NAME = "torquebox.static";
+	public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.ruby.enterprise.web.StaticResourceServlet";
 
 	private static final Logger log = Logger.getLogger(RackWebApplicationDeployer.class);
 
@@ -110,7 +110,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		if (metaData.getStaticPathPrefix() != null) {
 			ServletsMetaData servlets = new ServletsMetaData();
 			ServletMetaData staticServlet = new ServletMetaData();
-			staticServlet.setServletClass(StaticResourceServlet.class.getName());
+			staticServlet.setServletClass(STATIC_RESOURCE_SERVLET_CLASS_NAME);
 			staticServlet.setServletName(SERVLET_NAME);
 			staticServlet.setId(SERVLET_NAME);
 

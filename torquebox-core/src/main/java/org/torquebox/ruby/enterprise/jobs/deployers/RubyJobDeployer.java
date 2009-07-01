@@ -30,9 +30,8 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer;
+import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
 import org.torquebox.ruby.enterprise.jobs.RubyJob;
-import org.torquebox.ruby.enterprise.jobs.RubyScheduler;
 import org.torquebox.ruby.enterprise.jobs.metadata.RubyJobMetaData;
 
 public class RubyJobDeployer extends AbstractDeployer {
@@ -49,7 +48,7 @@ public class RubyJobDeployer extends AbstractDeployer {
 		if (allMetaData.size() == 0) {
 			return;
 		}
-
+		
 		for (RubyJobMetaData metaData : allMetaData) {
 			deploy(unit, metaData);
 		}
@@ -69,13 +68,11 @@ public class RubyJobDeployer extends AbstractDeployer {
 		builder.addPropertyMetaData("description", metaData.getDescription());
 		builder.addPropertyMetaData("cronExpression", metaData.getCronExpression());
 		
-		BeanMetaData schedulerBean = unit.getAttachment( BeanMetaData.class.getName() + "$" + RubyScheduler.class.getName(), BeanMetaData.class );
-		
-		ValueMetaData schedulerInjection = builder.createInject( schedulerBean.getName(), "scheduler" );
+		ValueMetaData schedulerInjection = builder.createInject(RubySchedulerDeployer.getBeanName( unit ), "scheduler" );
 		
 		builder.addPropertyMetaData("scheduler", schedulerInjection);
 
-		ValueMetaData poolInjection = builder.createInject(RubyRuntimePoolDeployer.getBeanName(unit));
+		ValueMetaData poolInjection = builder.createInject(PoolingDeployer.getBeanName( unit, "jobs" ) );
 		builder.addPropertyMetaData("rubyRuntimePool", poolInjection);
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();

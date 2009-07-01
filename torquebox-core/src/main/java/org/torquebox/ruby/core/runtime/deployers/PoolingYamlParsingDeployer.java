@@ -24,7 +24,6 @@ public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<Pooli
 		PoolingMetaData poolingMetaData = new PoolingMetaData();
 
 		for (ByteList name : pooling.keySet()) {
-			log.debug("configuring pool " + name);
 
 			Object pool = pooling.get(name);
 
@@ -48,6 +47,8 @@ public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<Pooli
 			} else if (pool instanceof ByteList) {
 				if ( pool.toString().equals( "shared" ) ) {
 					poolMetaData.setShared();
+				} else if ( pool.toString().equals( "global" ) ) {
+					poolMetaData.setGlobal();
 				}
 				log.debug("pool data is " + pool.getClass() + " -- " + pool);
 			}

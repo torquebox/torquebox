@@ -9,7 +9,6 @@ public class PoolingMetaData {
 	private Map<String,PoolMetaData> pools = new HashMap<String,PoolMetaData>();
 	
 	public PoolingMetaData() {
-		
 	}
 	
 	public void addPool(PoolMetaData pool) {
@@ -21,7 +20,8 @@ public class PoolingMetaData {
 	}
 	
 	public PoolMetaData getPool(String name) {
-		return this.pools.get( name );
+		return this.pools.get(name);
 	}
+	
 
 }

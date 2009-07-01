@@ -61,7 +61,7 @@
     
   <properties>
 
-    <jruby.version>1.3.0</jruby.version>
+    <jruby.version>1.3.1</jruby.version>
 
     <jboss.as.version>5.1.0.GA</jboss.as.version>
     <jboss.mc.version>2.0.6.GA</jboss.mc.version>

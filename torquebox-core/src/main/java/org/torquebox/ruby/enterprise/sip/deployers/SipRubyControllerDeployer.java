@@ -28,7 +28,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer;
+import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
 import org.torquebox.ruby.enterprise.sip.metadata.SipApplicationMetaData;
 import org.torquebox.ruby.enterprise.sip.metadata.SipRubyControllerMetaData;
 
@@ -59,7 +59,7 @@ public class SipRubyControllerDeployer extends
 
 		builder.addPropertyMetaData("name", metaData.getRubyController());
 		
-		ValueMetaData poolInjection = builder.createInject(RubyRuntimePoolDeployer.getBeanName(unit));
+		ValueMetaData poolInjection = builder.createInject(PoolingDeployer.getBeanName( unit, "web" ) );
 		builder.addPropertyMetaData("rubyRuntimePool", poolInjection);
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();

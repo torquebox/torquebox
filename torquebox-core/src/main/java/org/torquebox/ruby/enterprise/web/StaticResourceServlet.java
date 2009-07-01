@@ -21,30 +21,46 @@
  */
 package org.torquebox.ruby.enterprise.web;
 
+import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.servlets.DefaultServlet;
+import org.apache.naming.resources.CacheEntry;
 import org.apache.naming.resources.FileDirContext;
+import org.jboss.logging.Logger;
 
 public class StaticResourceServlet extends DefaultServlet {
-	
+
 	private static final long serialVersionUID = 7173759925797350928L;
-	
+
+	private static final Logger log = Logger.getLogger(StaticResourceServlet.class);
+
 	private String resourceRoot;
 
 	@Override
 	public void init() throws ServletException {
 		super.init();
-		String resourceRoot = getServletConfig().getInitParameter( "resource.root" );
+		String resourceRoot = getServletConfig().getInitParameter("resource.root");
 		this.resourceRoot = resourceRoot;
-		((FileDirContext)this.resources.getDirContext()).setAllowLinking( true );
+		((FileDirContext) this.resources.getDirContext()).setAllowLinking(true);
 	}
 
 	@Override
 	protected String getRelativePath(HttpServletRequest request) {
-		String path = super.getRelativePath(request);
-		return resourceRoot + path;
+		String path = resourceRoot + super.getRelativePath(request);
+		CacheEntry cacheEntry = resources.lookupCache( path );
+		
+		if ( cacheEntry != null ) {
+			if ( cacheEntry.context != null ) {
+				if ( path.endsWith( "/" ) ) {
+					path = path + "index.html";
+				} else {
+					path = path + "/index.html";
+				}
+			}
+		}
+		return path;
 	}
 
 }
