@@ -2,13 +2,23 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
 "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
 <chapter id="telecom">
-  <title>Telecom (SIP)</title>
+  <title>Telecom (SIP and Media)</title>
 
   <para>Telecom support allows to build powerful converged VoIP applications
-  by providing means for an application to handle/send SIP Messages. Note that
-  Mobicents Sip Servlets is needed to be able to use this feature and that it
-  is higly recommended to have knowledge about SIP and SIP Servlets 1.1 Java
-  Specification to use it effectively.</para>
+  by providing means for an application to handle/send SIP Messages. By
+  including a <ulink url="http://jcp.org/en/jsr/detail?id=309">JSR 309</ulink>
+  (Media Server Control API) implementation, such as the <ulink
+  url="http://www.mobicents.org/mms-jsr309-main.html">Mobicents JSR 309
+  implementation</ulink>, in your application, you can also control a Media
+  Server remotely and so implement IVR, PBX, Call centers, Conference kind of
+  applications.</para>
+
+  <para>Note that Mobicents Sip Servlets 1.0 is needed to be able to use this
+  feature and that it is higly recommended to have knowledge about SIP (<ulink
+  url="http://jcp.org/en/jsr/detail?id=289">SIP Servlets 1.1 Java
+  Specification</ulink>) and Media (<ulink
+  url="http://jcp.org/en/jsr/detail?id=309">Media Server Control API Java
+  Specification</ulink>) to use it effectively.</para>
 
   <section>
     <title>Making phone calls</title>
@@ -37,7 +47,7 @@ puts @sip_factory
   </section>
 
   <section>
-    <title>Ruby Telco Classes</title>
+    <title>Handling phone calls (Ruby Telco Classes)</title>
 
     <para>In your Ruby or Rails application, all SIP classes should be placed
     under <filename>$RAILS_ROOT/app/sip/</filename>. No special naming
@@ -106,5 +116,111 @@ end</screen></para>
     <para>Note that this is an example but the handler class can extend all
     the <methodname>do_<replaceable>XXX</replaceable></methodname> methods as
     defined per the Sip Servlets 1.1 Java Specification.</para>
+
+    <para>To help you getting started with you can play with and checkout the
+    code of our <ulink
+    url="http://www.mobicents.org/mss-pure-jruby-telco.html">sample
+    application demonstrating Announcement and DTMF Detection</ulink></para>
+  </section>
+
+  <section>
+    <title>Media Support</title>
+
+    <para>Mobicents Sip Servlets (and its bundled Media Server) and Torquebox
+    allows you to include Media in your applications as well now.</para>
+
+    <para>This allows you to control a remote Media Server using the MGCP
+    protocol and let you create Telco Applications such as IVR, Conferences,
+    Announcement, DTMF recognition, Call Centers, PBX, ...</para>
+
+    <para>To be able to use the Mobicents JSR 309 implementation, you may want
+    to create a maven pom.xml at the root directory of your JRuby application
+    containing the following :</para>
+
+    <para><screen>&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"&gt;
+&lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+&lt;parent&gt;
+ &lt;groupId&gt;org.test&lt;/groupId&gt;
+ &lt;artifactId&gt;torquebox-media-example&lt;/artifactId&gt;
+ &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+ &lt;packaging&gt;jar&lt;/packaging&gt;
+ &lt;name&gt;Torquebox Media Demo Application&lt;/name&gt;
+ &lt;url&gt;http://www.mobicents.org/mss-pure-jruby-telco.html&lt;/url&gt;
+
+ &lt;dependencies&gt;
+  &lt;!-- media dependencies --&gt;
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.mobicents.external.jsr309&lt;/groupId&gt;
+   &lt;artifactId&gt;mscontrol&lt;/artifactId&gt;
+   &lt;version&gt;0.3&lt;/version&gt;
+  &lt;/dependency&gt;
+  
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.mobicents.jsr309&lt;/groupId&gt;
+   &lt;artifactId&gt;mobicents-jsr309-impl&lt;/artifactId&gt;
+   &lt;version&gt;2.0.0.BETA2&lt;/version&gt;
+   &lt;scope&gt;runtime&lt;/scope&gt;
+  &lt;/dependency&gt;
+  
+  &lt;dependency&gt;
+   &lt;groupId&gt;org.mobicents.servlet.sip&lt;/groupId&gt;
+   &lt;artifactId&gt;sip-servlets-spec&lt;/artifactId&gt;
+   &lt;version&gt;1.1.11-SNAPSHOT&lt;/version&gt;
+  &lt;/dependency&gt; 
+ &lt;/dependencies&gt;
+
+ &lt;build&gt;
+  &lt;plugins&gt;
+   &lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-dependency-plugin&lt;/artifactId&gt;
+    &lt;executions&gt;
+     &lt;execution&gt;
+      &lt;id&gt;copy-dependencies&lt;/id&gt;
+      &lt;phase&gt;package&lt;/phase&gt;
+      &lt;goals&gt;
+       &lt;goal&gt;copy-dependencies&lt;/goal&gt;
+      &lt;/goals&gt;
+      &lt;configuration&gt;
+       &lt;outputDirectory&gt;${basedir}/lib/java&lt;/outputDirectory&gt;
+       &lt;includeScope&gt;runtime&lt;/includeScope&gt;
+      &lt;/configuration&gt;
+     &lt;/execution&gt;
+    &lt;/executions&gt;
+   &lt;/plugin&gt;
+  &lt;/plugins&gt;
+ &lt;/build&gt;
+
+ &lt;repositories&gt;  
+  &lt;repository&gt;   
+   &lt;id&gt;JbossRepository&lt;/id&gt;
+   &lt;name&gt;Jboss Repository&lt;/name&gt;
+   &lt;url&gt;http://repository.jboss.org/maven2&lt;/url&gt;
+   &lt;snapshots&gt;
+    &lt;enabled&gt;true&lt;/enabled&gt;
+   &lt;/snapshots&gt;
+   &lt;releases&gt;
+    &lt;enabled&gt;true&lt;/enabled&gt;
+   &lt;/releases&gt;
+  &lt;/repository&gt;
+ &lt;/repositories&gt; 
+&lt;/project&gt;</screen>and type the following command in a shell<screen>mvn clean install</screen></para>
+
+    <para>or copy the dependencies mentioned in the maven pom above from the
+    jboss repository located at <ulink
+    url="http://repository.jboss.org/maven2">http://repository.jboss.org/maven2</ulink>
+    in the following directory of their JRuby application
+    <emphasis>lib/java</emphasis></para>
+
+    <para><emphasis><emphasis>The next step is to start using the JSR 309 API
+    to control the Media Server and build Media applications, you can read the
+    specification at this address : <ulink
+    url="http://jcp.org/en/jsr/detail?id=309">http://jcp.org/en/jsr/detail?id=309</ulink></emphasis></emphasis></para>
+
+    <para>To help you getting started with you can play with and checkout the
+    code of our <ulink
+    url="http://www.mobicents.org/mss-pure-jruby-telco.html">sample
+    application demonstrating Announcement and DTMF Detection</ulink></para>
   </section>
 </chapter>
