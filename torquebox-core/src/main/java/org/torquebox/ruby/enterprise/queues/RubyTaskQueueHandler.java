@@ -9,12 +9,9 @@ import javax.jms.Session;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.jboss.logging.Logger;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
 public class RubyTaskQueueHandler {
-
-	private static final Logger log = Logger.getLogger(RubyTaskQueueHandler.class);
 
 	private String destinationName;
 

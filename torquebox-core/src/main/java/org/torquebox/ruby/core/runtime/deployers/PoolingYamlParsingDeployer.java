@@ -17,6 +17,7 @@ public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<Pooli
 		setName("pooling.yml");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected PoolingMetaData parse(VFSDeploymentUnit unit, VirtualFile file, PoolingMetaData root) throws Exception {
 		Map<ByteList, Object> pooling = (Map<ByteList, Object>) YAML.load(file.openStream());

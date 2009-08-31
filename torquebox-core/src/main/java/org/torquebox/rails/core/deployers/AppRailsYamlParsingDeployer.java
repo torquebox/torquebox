@@ -59,8 +59,6 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 	private static final ByteList HOST_KEY = ByteList.create("host");
 	private static final ByteList CONTEXT_KEY = ByteList.create("context");
 
-	private static final ByteList APPNAME_KEY = ByteList.create("appname");
-	private static final ByteList MAINSERVLET_KEY = ByteList.create("mainservlet");
 	private static final ByteList RUBYCONTROLLER_KEY = ByteList.create("rubycontroller");
 
 	public AppRailsYamlParsingDeployer() {

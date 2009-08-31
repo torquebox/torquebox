@@ -36,7 +36,6 @@ import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 import org.torquebox.ruby.core.util.StringUtils;
 
 public class RubyJobHandler implements Job, StatefulJob {
-	private static final Logger log = Logger.getLogger(RubyJobHandler.class);
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
 	public RubyJobHandler() {

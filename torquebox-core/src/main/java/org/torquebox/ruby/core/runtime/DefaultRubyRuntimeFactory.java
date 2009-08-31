@@ -31,7 +31,6 @@ import java.util.Map;
 import org.jboss.Version;
 import org.jboss.beans.metadata.api.annotations.Create;
 import org.jboss.kernel.Kernel;
-import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
@@ -43,7 +42,6 @@ import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 
 public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
-	private static final Logger log = Logger.getLogger( DefaultRubyRuntimeFactory.class );
 	private Kernel kernel;
 	private RuntimeInitializer initializer;
 
@@ -83,13 +81,11 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		return this.classLoader;
 	}
 
-	@Create(ignored=true)
+	@Create(ignored = true)
 	public synchronized Ruby create() throws Exception {
-		log.error( "CREATING RUBY RUNTIME HERE: ", new Exception() );
 		RubyInstanceConfig config = new RubyInstanceConfig();
 
-		DefaultRubyDynamicClassLoader childLoader = this.classLoader
-				.createChild();
+		DefaultRubyDynamicClassLoader childLoader = this.classLoader.createChild();
 		config.setLoader(childLoader);
 
 		if (this.classCache == null) {
@@ -100,30 +96,31 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		String jrubyHome = null;
 
 		jrubyHome = System.getProperty("jruby.home");
-		
+
 		if (jrubyHome == null) {
 			jrubyHome = System.getenv("JRUBY_HOME");
 		}
-		
-		if ( jrubyHome == null ) {
-			String jbossHome = System.getProperty( "jboss.home" );
-			
-			if ( jbossHome != null ) {
-				File candidatePath = new File( jbossHome, "../jruby" );
-				if ( candidatePath.exists() && candidatePath.isDirectory() ) {
+
+		if (jrubyHome == null) {
+			String jbossHome = System.getProperty("jboss.home");
+
+			if (jbossHome != null) {
+				File candidatePath = new File(jbossHome, "../jruby");
+				if (candidatePath.exists() && candidatePath.isDirectory()) {
 					jrubyHome = candidatePath.getAbsolutePath();
 				}
 			}
-			
+
 		}
-		
-		if ( jrubyHome == null ) {
-			String binJruby = RubyInstanceConfig.class.getResource( "/META-INF/jruby.home/bin/jruby").toURI() .getSchemeSpecificPart();
-			jrubyHome =  binJruby.substring(0, binJruby.length() - 10);
+
+		if (jrubyHome == null) {
+			String binJruby = RubyInstanceConfig.class.getResource("/META-INF/jruby.home/bin/jruby").toURI()
+					.getSchemeSpecificPart();
+			jrubyHome = binJruby.substring(0, binJruby.length() - 10);
 		}
-		
-		if ( jrubyHome != null ) {
-			config.setJRubyHome( jrubyHome );
+
+		if (jrubyHome != null) {
+			config.setJRubyHome(jrubyHome);
 		}
 
 		config.setEnvironment(getEnvironment());
@@ -144,20 +141,16 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	}
 
 	private void setUpConstants(Ruby runtime, String applicationName) {
-		runtime
-				.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/runtime_constants)\n");
+		runtime.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/runtime_constants)\n");
 		RubyModule jbossModule = runtime.getClassFromPath("JBoss");
-		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants",
-				new Object[] { Version.getInstance(), applicationName },
-				void.class);
+		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants", new Object[] { Version.getInstance(),
+				applicationName }, void.class);
 	}
 
 	private void injectKernel(Ruby runtime) {
-		runtime
-				.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/kernel)");
+		runtime.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/kernel)");
 		RubyModule jbossKernel = runtime.getClassFromPath("TorqueBox::Kernel");
-		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=",
-				new Object[] { this.kernel }, void.class);
+		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=", new Object[] { this.kernel }, void.class);
 	}
 
 	public Map<Object, Object> getEnvironment() {

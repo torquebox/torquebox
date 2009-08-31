@@ -4,17 +4,12 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
-import org.jboss.virtual.VirtualFileFilter;
-import org.jboss.virtual.VisitorAttributes;
-import org.jboss.virtual.plugins.vfs.helpers.SuffixMatchFilter;
 import org.torquebox.ruby.core.deployers.AbstractRubyScanningDeployer;
 import org.torquebox.ruby.core.util.StringUtils;
 import org.torquebox.ruby.enterprise.queues.metadata.RubyTaskQueueMetaData;
 import org.torquebox.ruby.enterprise.queues.metadata.RubyTaskQueuesMetaData;
 
 public class AbstractRubyQueuesScanningDeployer extends AbstractRubyScanningDeployer {
-
-	private static final VirtualFileFilter QUEUE_FILTER = new SuffixMatchFilter("_queue.rb", VisitorAttributes.DEFAULT);
 
 	public AbstractRubyQueuesScanningDeployer() {
 		addInput(RubyTaskQueuesMetaData.class);

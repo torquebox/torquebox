@@ -3,7 +3,6 @@ package org.torquebox.ruby.enterprise.queues.deployers;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-import org.apache.log4j.Logger;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
@@ -19,8 +18,6 @@ import org.torquebox.ruby.enterprise.queues.metadata.RubyTaskQueueMetaData;
 import org.torquebox.ruby.enterprise.queues.metadata.RubyTaskQueuesMetaData;
 
 public class RubyTaskQueuesDeployer extends AbstractSimpleVFSRealDeployer<RubyTaskQueuesMetaData> {
-
-	private static final Logger log = Logger.getLogger(RubyTaskQueuesDeployer.class );
 	
 	private static final String SERVER_PEER_NAME = "jboss.messaging:service=ServerPeer";
 
@@ -40,6 +37,8 @@ public class RubyTaskQueuesDeployer extends AbstractSimpleVFSRealDeployer<RubyTa
 		ServiceMetaData metaData = new ServiceMetaData();
 
 		metaData.setCode(QueueService.class.getName());
+		QueueService s = new QueueService();
+		
 
 		String simpleQueueName = queueMetaData.getQueueClassName();
 		simpleQueueName = simpleQueueName.replaceAll("::", ".");

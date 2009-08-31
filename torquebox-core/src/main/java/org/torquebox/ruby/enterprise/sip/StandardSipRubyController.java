@@ -25,7 +25,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.sip.SipServletMessage;
 
 import org.jboss.kernel.Kernel;
-import org.jboss.logging.Logger;
+import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.mobicents.servlet.sip.ruby.SipRubyController;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
@@ -35,7 +35,6 @@ import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
  *
  */
 public class StandardSipRubyController implements SipRubyController {
-	private static final Logger log = Logger.getLogger(StandardSipRubyController.class);	
 	private String name;
 	private RackApplicationPool rackAppFactory;
 	private String rackAppFactoryName;
@@ -47,9 +46,10 @@ public class StandardSipRubyController implements SipRubyController {
 		this.rackAppFactoryName = rackAppFactoryName;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initEnv() {
 		if(rackAppFactory == null) {
-			org.jboss.kernel.spi.registry.KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppFactoryName);
+			KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppFactoryName);
 			if (entry != null) {
 				rackAppFactory = (RackApplicationPool) entry.getTarget();
 			}			
