@@ -37,8 +37,6 @@ public class RubyTaskQueuesDeployer extends AbstractSimpleVFSRealDeployer<RubyTa
 		ServiceMetaData metaData = new ServiceMetaData();
 
 		metaData.setCode(QueueService.class.getName());
-		QueueService s = new QueueService();
-		
 
 		String simpleQueueName = queueMetaData.getQueueClassName();
 		simpleQueueName = simpleQueueName.replaceAll("::", ".");

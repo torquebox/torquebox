@@ -30,6 +30,7 @@ JDBC_GEMS = [
 
 JBOSS_VERSION = ENV['jboss.as.version'] || '5.1.0.GA'
 JRUBY_PKG_VERSION = ENV['jruby.version'] || '1.2.0'
+RAILS_VERSION = ENV['rails.version'] || '2.3.3'
 
 JBOSS_BASE_URL="http://voxel.dl.sourceforge.net/sourceforge/jboss/"
 JRUBY_BASE_URL="http://dist.codehaus.org/jruby"
@@ -105,12 +106,16 @@ task 'stage-jdk6'=>[ "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip", "#{PKG_
     end
     puts `unzip -q #{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip`
     FileUtils.mv( "jruby-#{JRUBY_PKG_VERSION}", 'jruby' ) 
+    original_jruby_home = ENV['JRUBY_HOME']
     Dir.chdir( 'jruby' ) do
+      ENV['JRUBY_HOME'] = Dir.pwd
       puts "Install gems in #{Dir.pwd}"
-      puts `./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{GEMS_DIR}/*.gem`
-      puts `./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{JDBC_GEMS.join(' ')}`
-      puts `./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 rails`
+      puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{GEMS_DIR}/*.gem`
+      puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{JDBC_GEMS.join(' ')}`
+      puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 rails -v #{RAILS_VERSION}`
+      puts "Installed gems in #{Dir.pwd}"
     end
+    ENV['JRUBY_HOME'] = original_jruby_home
   end
 end
 

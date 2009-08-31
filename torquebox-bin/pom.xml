@@ -78,11 +78,15 @@
             </goals>
             <configuration>
               <tasks>
-                <exec executable="rake">
+                <exec executable="ruby">
+                  <arg value="-S"></arg>
+                  <arg value="rake"></arg>
                   <arg value="maven:compile"></arg>
+                  <arg value="--trace"></arg>
                   <env key="project.version" value="${project.version}"></env>
                   <env key="jboss.as.version" value="${jboss.as.version}"></env>
                   <env key="jruby.version" value="${jruby.version}"></env>
+                  <env key="rails.version" value="${rails.version}"></env>
                 </exec>
               </tasks>
             </configuration>
