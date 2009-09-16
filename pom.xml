@@ -5,7 +5,7 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox</artifactId>
-  <version>1.0.0.Beta14-SNAPSHOT</version>
+  <version>1.0.0.Beta14</version>
   <packaging>pom</packaging>
   <name>TorqueBox</name>
   <url>http://www.torquebox.org/</url>
@@ -62,7 +62,7 @@
   <properties>
 
     <jruby.version>1.3.1</jruby.version>
-    <rails.version>2.3.3</rails.version>
+    <rails.version>2.3.4</rails.version>
 
     <jboss.as.version>5.1.0.GA</jboss.as.version>
     <jboss.mc.version>2.0.6.GA</jboss.mc.version>
