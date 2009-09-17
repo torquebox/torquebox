@@ -47,7 +47,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 		addInput(RailsVersionMetaData.class);
 		addOutput(RackWebApplicationMetaData.class);
 		addOutput(RubyRackApplicationMetaData.class);
-		setStage(DeploymentStages.POST_PARSE);
+		setStage(DeploymentStages.POST_CLASSLOADER);
 	}
 	
 	@Install
