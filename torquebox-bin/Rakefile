@@ -28,6 +28,10 @@ JDBC_GEMS = [
   'jdbc-sqlite3',
 ]
 
+OTHER_GEMS = [
+  'rack',
+]
+
 JBOSS_VERSION = ENV['jboss.as.version'] || '5.1.0.GA'
 JRUBY_PKG_VERSION = ENV['jruby.version'] || '1.2.0'
 RAILS_VERSION = ENV['rails.version'] || '2.3.3'
@@ -112,6 +116,7 @@ task 'stage-jdk6'=>[ "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip", "#{PKG_
       puts "Install gems in #{Dir.pwd}"
       puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{GEMS_DIR}/*.gem`
       puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{JDBC_GEMS.join(' ')}`
+      puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{OTHER_GEMS.join(' ')}`
       puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 rails -v #{RAILS_VERSION}`
       puts "Installed gems in #{Dir.pwd}"
     end

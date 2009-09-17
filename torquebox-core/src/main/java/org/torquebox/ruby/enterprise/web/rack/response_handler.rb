@@ -25,19 +25,23 @@ module JBoss
         status  = rack_response[0]
         headers = rack_response[1]
         body    = rack_response[2]
-        
-        status_code = status.to_i
-        servlet_response.setStatus( status_code )
-        
-        headers.each{|key,value|
-          for v in value
-            servlet_response.addHeader( key, v )
-          end
-        }
-        out = servlet_response.getWriter()
-        body.each{|str|
-          out.write( str );
-        }
+        begin
+          
+          status_code = status.to_i
+          servlet_response.setStatus( status_code )
+          
+          headers.each{|key,value|
+            for v in value
+              servlet_response.addHeader( key, v )
+            end
+          }
+          out = servlet_response.getWriter()
+          body.each{|str|
+            out.write( str );
+          }
+        ensure
+          body.close if body && body.respond_to?( :close )
+        end
       end
     end
   end
