@@ -13,7 +13,17 @@ if ( Rails::VERSION::MAJOR == 2 )
   end
 end
 
+module TorqueBox
+  module Rails
+    def self.app=(app)
+      @app = app      
+    end 
+    
+    def self.app
+      @app      
+    end
+  end  
+end
 puts "using generator #{generator}"
-app = generator.generate( TORQUEBOX_RACKUP_CONTEXT )
-puts "created app #{app}"
-TORQUEBOX_RACKUP_APP = app
+TorqueBox::Rails.app = generator.generate( TORQUEBOX_RACKUP_CONTEXT )
+puts "created app #{TorqueBox::Rails.app}"

@@ -75,7 +75,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 		}
 		return "TORQUEBOX_RACKUP_CONTEXT=%q(" + context + ")\n" +
 		       "require %q(org/torquebox/rails/web/deployers/rackup.rb)\n" +
-		       "TORQUEBOX_RACKUP_APP\n";
+		       "TorqueBox::Rails.app\n";
 			
 	}
 
