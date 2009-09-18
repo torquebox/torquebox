@@ -55,52 +55,69 @@ public class RackFilter implements Filter {
 	public void init(FilterConfig filterConfig) throws ServletException {
 		Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute(KERNEL_NAME);
 		String rackAppPoolName = filterConfig.getInitParameter(RACK_APP_POOL_INIT_PARAM);
-		log.info( "fetching pool [" + rackAppPoolName + "]" );
+		log.info("fetching pool [" + rackAppPoolName + "]");
 		KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppPoolName);
 		if (entry != null) {
 			this.rackAppPool = (RackApplicationPool) entry.getTarget();
 		} else {
-			throw new ServletException( "Unable to obtain Rack application pool '" + rackAppPoolName + "'" );
+			throw new ServletException("Unable to obtain Rack application pool '" + rackAppPoolName + "'");
 		}
-		
-		log.info( "pool is " + rackAppPool );
-		
+
+		log.info("pool is " + rackAppPool);
+
 		this.servletContext = filterConfig.getServletContext();
 	}
 
 	public void destroy() {
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+			ServletException {
 		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
 			doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
 		}
 	}
 
-	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException {
+	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		log.info("AAA");
 		HttpServletResponseCapture responseCapture = new HttpServletResponseCapture(response);
+		log.info("BBB");
 		try {
+			log.info("CCC");
 			chain.doFilter(request, responseCapture);
-			if ( responseCapture.isError() ) {
+			log.info("DDD");
+			if (responseCapture.isError()) {
+				log.info("EEE");
 				response.reset();
 			} else {
 				return;
 			}
 		} catch (ServletException e) {
-			log.error( e );
+			log.error(e);
 		}
-		doRack( request, response );
+		log.info("FFF");
+		doRack(request, response);
 	}
 
-	protected void doRack(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected void doRack(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		RackApplication rackApp = null;
 
+		log.info("rack -AAA");
 		try {
+			log.info("rack -BBB");
 			rackApp = borrowRackApplication();
+			log.info("rack -CCC " + rackApp );
 			Object rackEnv = rackApp.createEnvironment(servletContext, request);
+			log.info("rack -DDD " + rackEnv );
 			rackApp.call(rackEnv).respond(response);
+			log.info("rack -EEE " + rackEnv );
 		} catch (Exception e) {
+			log.info( "DAMINT" );
 			e.printStackTrace();
+			log.error("Rack dispatch failed", e);
+			log.info( "DONE DAMINT" );
+			throw new ServletException( e );
 		} finally {
 			if (rackApp != null) {
 				releaseRackApplication(rackApp);

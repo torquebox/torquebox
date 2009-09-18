@@ -21,16 +21,11 @@
  */
 package org.torquebox.rails.web.deployers;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import org.jboss.beans.metadata.api.annotations.Install;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
-import org.torquebox.rails.core.metadata.RailsVersionMetaData;
 import org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationPoolDeployer;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
@@ -39,41 +34,14 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 
 	//private static final Logger log = Logger.getLogger(RailsRackDeployer.class);
 	
-	private SortedSet<RailsRackUpScriptProvider> providers = new TreeSet<RailsRackUpScriptProvider>();
-
 	public RailsRackDeployer() {
 		super(RailsApplicationMetaData.class);
 		addInput(RackWebApplicationMetaData.class);
-		addInput(RailsVersionMetaData.class);
 		addOutput(RackWebApplicationMetaData.class);
 		addOutput(RubyRackApplicationMetaData.class);
 		setStage(DeploymentStages.POST_PARSE);
 	}
 	
-	@Install
-	public void addRailsRackUpScriptProvider(RailsRackUpScriptProvider provider) {
-		this.providers.add( provider );
-	}
-	
-	protected RailsRackUpScriptProvider findProvider(RailsVersionMetaData version) {
-		RailsRackUpScriptProvider candidate = null;
-		
-		for ( RailsRackUpScriptProvider each : this.providers ) {
-			if ( each.getMajorVersion() > version.getMajor() ) {
-				break;
-			}
-			if ( each.getMinorVersion() > version.getMinor() ) {
-				break;
-			}
-			if ( each.getTinyVersion() > version.getTiny() ) {
-				break;
-			}
-			candidate = each;
-		}
-		
-		return candidate;
-	}
-
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
 
@@ -93,34 +61,22 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 
 		RubyRackApplicationMetaData rubyRackAppMetaData = new RubyRackApplicationMetaData();
 		
-		RailsVersionMetaData version = unit.getAttachment(RailsVersionMetaData.class);
-		RailsRackUpScriptProvider provider = findProvider( version );
+		String rackUpScript = getRackUpScript( rackWebAppMetaData.getContext() );
 		
-		if ( provider == null ) {
-			throw new DeploymentException( "Unsupport Rails version: " + version.getVersionString() );
-		}
-		
-		rubyRackAppMetaData.setRackUpScript( provider.getRackUpScript( rackWebAppMetaData.getContext() ) );
+		rubyRackAppMetaData.setRackUpScript( rackUpScript );
 
 		unit.addAttachment(RubyRackApplicationMetaData.class, rubyRackAppMetaData);
-		
 	}
-
-	/*
+	
 	protected String getRackUpScript(String context) {
+		log.info( "context is [" + context + "]" );
 		if ( context.endsWith( "/" ) ) {
 			context = context.substring( 0, context.length() - 1 );
 		}
-		
-		String script = 
-			"require %q(org/jboss/rails/web/deployers/rails_rack_dispatcher)\n" +
-			"::Rack::Builder.new {\n" + 
-			"  run JBoss::Rails::Rack::Dispatcher.new(%q("+ context + "))\n" +
-			"}.to_app\n";
-
-		return script;
-
+		return "TORQUEBOX_RACKUP_CONTEXT=%q(" + context + ")\n" +
+		       "require %q(org/torquebox/rails/web/deployers/rackup.rb)\n" +
+		       "TORQUEBOX_RACKUP_APP\n";
+			
 	}
-	*/
 
 }

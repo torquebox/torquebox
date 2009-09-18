@@ -19,7 +19,16 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  
 require %q(org/torquebox/rails/runtime/deployers/as_logger)
-require %q(vendor/rails/railties/lib/initializer)
+
+load_style=:gems
+
+if ( load_style == :gems )
+  require %q(rubygems)
+  gem %q(rails)
+  require %(initializer)
+else
+  require %q(vendor/rails/railties/lib/initializer)
+end
 
 module Rails
   

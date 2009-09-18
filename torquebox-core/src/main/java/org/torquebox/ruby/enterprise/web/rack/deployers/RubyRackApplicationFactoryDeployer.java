@@ -49,12 +49,11 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 	public void deploy(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
 		String beanName = getBeanName(unit);
 
-		log.debug("deploying rack app factory: " + beanName);
+		log.info("deploying rack app factory: " + beanName);
 
 		PoolingMetaData pooling = unit.getAttachment(PoolingMetaData.class);
 
 		BeanMetaData beanMetaData = null;
-		
 		
 		if (pooling == null ) {
 			beanMetaData = createGlobal( unit, metaData );

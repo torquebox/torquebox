@@ -51,8 +51,10 @@ public class RubyRackApplication implements RackApplication {
 	}
 
 	private void rackUp(String script) {
+		log.info( "rackUp(" + script + ")" );
 		String fullScript = "require %q(rack/builder)\n" + script;
 		rubyApp = this.ruby.evalScriptlet(fullScript);		
+		log.info( "resulting app is " + rubyApp );
 	}
 
 	public Object createEnvironment(ServletContext context, HttpServletRequest request) throws Exception {
@@ -101,8 +103,10 @@ public class RubyRackApplication implements RackApplication {
 				return null;
 			}					
 		}
+		log.info( "before calling call on " + this.rubyApp );
 		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.ruby, this.rubyApp, "call", new Object[] { env },
 				RubyArray.class);
+		log.info( "after calling call, response is " + response );
 		return new RubyRackResponse(response);
 	}
 	

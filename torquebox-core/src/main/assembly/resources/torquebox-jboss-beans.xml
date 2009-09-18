@@ -81,8 +81,10 @@
   <bean name="RailsStructure"                       class="org.torquebox.rails.core.deployers.RailsStructure"/>
   <bean name="RailsRootRecognizingDeployer"         class="org.torquebox.rails.core.deployers.RailsRootRecognizingDeployer"/>
 
+<!--
   <bean name="Rails-v2.2.x-RackUp"                  class="org.torquebox.rails.web.v2_2.Rails_v2_2_RackUpScriptProvider"/>
   <bean name="Rails-v2.3.x-RackUp"                  class="org.torquebox.rails.web.v2_3.Rails_v2_3_RackUpScriptProvider"/>
+-->
 
 
   <!-- Crypto -->
