@@ -21,40 +21,20 @@
  */
 package org.torquebox.rails.core.metadata;
 
-public class RailsVersionMetaData {
+public class RailsGemVersionMetaData {
 
-	private int major;
-	private int minor;
-	private int tiny;
-
-	public RailsVersionMetaData(int major, int minor, int tiny) {
-		this.major = major;
-		this.minor = minor;
-		this.tiny = tiny;
+	private String versionSpec;
+	
+	public RailsGemVersionMetaData(String versionSpec) {
+		this.versionSpec = versionSpec;
 	}
 	
-	public boolean isThreadSafe() {
-		return ( ( this.major == 2 && this.minor >= 2 ) || ( this.major > 2 ) );
-	}
-
-	public int getMajor() {
-		return this.major;
-	}
-
-	public int getMinor() {
-		return this.minor;
-	}
-
-	public int getTiny() {
-		return this.tiny;
+	public String getVersionSpec() {
+		return this.versionSpec;
 	}
 	
 	public String toString() {
-		return "[RailsVersionMetaData: major=" + major + "; minor=" + minor + "; tiny=" + tiny + "]";
-	}
-
-	public String getVersionString() {
-		return major + "." + minor + "." + tiny;
+		return "[RailsGemVersionMetaData: version=" + versionSpec + "]";
 	}
 
 }

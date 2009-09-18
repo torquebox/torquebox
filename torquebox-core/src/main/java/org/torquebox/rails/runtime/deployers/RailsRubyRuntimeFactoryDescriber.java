@@ -32,6 +32,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
 import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.core.metadata.RailsGemVersionMetaData;
 import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
 import org.torquebox.ruby.core.runtime.metadata.RubyRuntimeMetaData;
 
@@ -40,6 +41,7 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 	public RailsRubyRuntimeFactoryDescriber() {
 		setStage(DeploymentStages.PRE_DESCRIBE);
 		setInput(RailsApplicationMetaData.class);
+		addInput(RailsGemVersionMetaData.class);
 		addOutput(RubyRuntimeMetaData.class);
 	}
 
@@ -51,16 +53,18 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
 		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-		
+
 		RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(RubyRuntimeMetaData.class);
 		if (runtimeMetaData == null) {
 			runtimeMetaData = new RubyRuntimeMetaData();
-			runtimeMetaData.setBaseDir( railsMetaData.getRailsRoot() );
+			runtimeMetaData.setBaseDir(railsMetaData.getRailsRoot());
 			unit.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
 		}
 
-		addRuntimeInitializer(runtimeMetaData, railsMetaData );
-		
+		RailsGemVersionMetaData railsGemVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
+
+		addRuntimeInitializer(runtimeMetaData, railsMetaData, railsGemVersionMetaData);
+
 		try {
 			addRailsRootLoadPath(runtimeMetaData, railsMetaData);
 			addRailtiesLibLoadPath(runtimeMetaData, railsMetaData);
@@ -76,30 +80,44 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 
 	}
 
-	protected void addRuntimeInitializer(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData) {
+	protected void addRuntimeInitializer(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData,
+			RailsGemVersionMetaData railsGemVersionMetaData) {
 		RailsRuntimeInitializer initializer = createRuntimeInitializer(railsMetaData.getRailsRoot(), railsMetaData
-				.getRailsEnv());
+				.getRailsEnv(), railsGemVersionMetaData);
 
 		runtimeMetaData.setRuntimeInitializer(initializer);
 	}
 
-	protected void addRailsRootLoadPath(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData) throws MalformedURLException, URISyntaxException {
+	protected void addRailsRootLoadPath(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData)
+			throws MalformedURLException, URISyntaxException {
 		RubyLoadPathMetaData railsRootPath = new RubyLoadPathMetaData();
-		railsRootPath.setURL( railsMetaData.getRailsRoot().toURL() );
-		runtimeMetaData.appendLoadPath( railsRootPath );
+		railsRootPath.setURL(railsMetaData.getRailsRoot().toURL());
+		runtimeMetaData.appendLoadPath(railsRootPath);
 	}
 
-	protected void addRailtiesLibLoadPath(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData) throws IOException, URISyntaxException {
+	protected void addRailtiesLibLoadPath(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData)
+			throws IOException, URISyntaxException {
 		VirtualFile railtiesLib = railsMetaData.getRailsRoot().getChild("vendor/rails/railties/lib");
 		if (railtiesLib != null) {
 			RubyLoadPathMetaData railtiesPath = new RubyLoadPathMetaData();
 			railtiesPath.setURL(railtiesLib.toURL());
-			runtimeMetaData.appendLoadPath( railtiesPath );
+			runtimeMetaData.appendLoadPath(railtiesPath);
 		}
 	}
 
-	public RailsRuntimeInitializer createRuntimeInitializer(VirtualFile railsRoot, String railsEnv) {
-		return new RailsRuntimeInitializer(railsRoot, railsEnv);
+	public RailsRuntimeInitializer createRuntimeInitializer(VirtualFile railsRoot, String railsEnv,
+			RailsGemVersionMetaData railsGemVersionMetaData) {
+		log.info( "initializer for " + railsGemVersionMetaData );
+		boolean loadUsingGems = false;
+		String versionSpec = null;
+
+		if (railsGemVersionMetaData != null) {
+			loadUsingGems = true;
+			versionSpec = railsGemVersionMetaData.getVersionSpec();
+		}
+		log.info("load using gems: " + loadUsingGems);
+		log.info("load version spec: " + versionSpec);
+		return new RailsRuntimeInitializer(railsRoot, railsEnv, loadUsingGems, versionSpec);
 	}
 
 }

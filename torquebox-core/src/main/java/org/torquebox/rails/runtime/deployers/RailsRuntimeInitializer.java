@@ -34,57 +34,81 @@ import org.torquebox.ruby.core.runtime.spi.RubyDynamicClassLoader;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 
 public class RailsRuntimeInitializer implements RuntimeInitializer {
-	
+
 	private VirtualFile railsRoot;
 	private String railsEnv;
+	private boolean loadUsingGems;
+	private String versionSpec;
 
-	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv) {
-		this.railsRoot = railsRoot;
-		this.railsEnv  = railsEnv;
+	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems) {
+		this( railsRoot, railsEnv, loadUsingGems, null );
 	}
 	
+	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems, String versionSpec) {
+		this.railsRoot = railsRoot;
+		this.railsEnv = railsEnv;
+		this.loadUsingGems = loadUsingGems;
+		this.versionSpec = versionSpec;
+	}
+
 	public VirtualFile getRailsRoot() {
 		return this.railsRoot;
 	}
-	
+
 	public String getRailsEnv() {
 		return this.railsEnv;
 	}
 
 	public void initialize(RubyDynamicClassLoader cl, Ruby ruby) throws Exception {
 		String railsRootPath = railsRoot.toURL().getFile();
-		if ( railsRootPath.endsWith( "/" ) ) {
-			railsRootPath = railsRootPath.substring( 0, railsRootPath.length() - 1 );
+		if (railsRootPath.endsWith("/")) {
+			railsRootPath = railsRootPath.substring(0, railsRootPath.length() - 1);
 		}
-		
-		Logger logger = Logger.getLogger( railsRootPath );
-		IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby( ruby,  logger );
-		ruby.getGlobalVariables().set( "$JBOSS_RAILS_LOGGER", rubyLogger );
-		ruby.evalScriptlet( createProlog( railsRootPath ) );
-		
-		RubyArray rubyLoadPath = (RubyArray) ruby.getGlobalVariables().get( "$LOAD_PATH" );
-		
+
+		Logger logger = Logger.getLogger(railsRootPath);
+		IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
+		ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
+		ruby.evalScriptlet(createProlog(railsRootPath));
+
+		RubyArray rubyLoadPath = (RubyArray) ruby.getGlobalVariables().get("$LOAD_PATH");
+
 		List<String> loadPaths = new ArrayList<String>();
 		int len = rubyLoadPath.size();
-		for ( int i = 0 ; i < len ; ++i ) {
-			String path = (String) rubyLoadPath.get( i );
-			loadPaths.add( path );
+		for (int i = 0; i < len; ++i) {
+			String path = (String) rubyLoadPath.get(i);
+			loadPaths.add(path);
 		}
-		
-		cl.addLoadPaths( loadPaths );
-		
-		ruby.evalScriptlet( createEpilog() );
+
+		cl.addLoadPaths(loadPaths);
+
+		ruby.evalScriptlet(createEpilog());
 	}
-	
+
 	protected String createProlog(String railsRootPath) {
-		return
-			"RAILS_ROOT='" + railsRootPath + "'\n" + 
-			"RAILS_ENV='" + railsEnv + "'\n" + 
-		    "require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
+		return "RAILS_ROOT='" + railsRootPath + "'\n" + "RAILS_ENV='" + railsEnv + "'\n" + railsGemVersionConfig()
+				+ "require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
 	}
-	
+
+	protected String railsGemVersionConfig() {
+		StringBuilder config = new StringBuilder();
+		
+		if ( loadUsingGems ) {
+			config.append( "TORQUEBOX_RAILS_LOAD_STYLE=:gems\n" );
+			if ( versionSpec == null ) {
+				config.append( "TORQUEBOX_RAILS_GEM_VERSION=nil\n" );
+			} else {
+				config.append( "TORQUEBOX_RAILS_GEM_VERSION=%q(" + versionSpec + ")\n" );
+			}
+		} else {
+			config.append( "TORQUEBOX_RAILS_LOAD_STYLE=:vendor\n" );
+		}
+		System.err.println( "GEM VERSION CONFIG\n" + config.toString() + "\n\n" );
+		
+		return config.toString();
+	}
+
 	protected String createEpilog() {
-		return  "load %q(config/environment.rb)\n";
+		return "load %q(config/environment.rb)\n";
 	}
 
 }

@@ -96,8 +96,8 @@
   <!-- rails-env.yml -->
   <bean name="RailsEnvYamlParsingDeployer"          class="org.torquebox.rails.core.deployers.RailsEnvYamlParsingDeployer"/>
 
-  <!-- vendor/rails/.../version.rb -->
-  <bean name="RailsVersionDeployer"                 class="org.torquebox.rails.core.deployers.RailsVersionDeployer"/>
+  <!-- config/environment.rb: RAILS_GEM_VERSION -->
+  <bean name="RailsGemVersionDeployer"              class="org.torquebox.rails.core.deployers.RailsGemVersionDeployer"/>
 
   <bean name="AppRailsYamlParsingDeployer"          class="org.torquebox.rails.core.deployers.AppRailsYamlParsingDeployer"/>
 

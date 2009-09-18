@@ -18,16 +18,22 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  
-require %q(org/torquebox/rails/runtime/deployers/as_logger)
+require 'org/torquebox/rails/runtime/deployers/as_logger'
 
-load_style=:gems
-
-if ( load_style == :gems )
-  require %q(rubygems)
-  gem %q(rails)
-  require %(initializer)
+if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
+  puts "************** using vendor rails"
+  require 'vendor/rails/railties/lib/initializer'
 else
-  require %q(vendor/rails/railties/lib/initializer)
+  puts "************** using gem rails"
+  require 'rubygems'
+  if ( TORQUEBOX_RAILS_GEM_VERSION.nil? )
+    puts "************** using DEFAULT gem rails"
+    gem 'rails'
+  else
+    puts "************** using #{TORQUEBOX_RAILS_GEM_VERSION} gem rails"
+    gem 'rails', TORQUEBOX_RAILS_GEM_VERSION
+  end
+  require 'initializer'
 end
 
 module Rails
