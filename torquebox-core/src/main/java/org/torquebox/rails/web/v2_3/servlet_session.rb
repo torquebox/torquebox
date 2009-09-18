@@ -37,6 +37,7 @@ module JBoss
       
       def load_session(env)
         env['rack.session'] = load_session_data( env['java.servlet_request'].getSession(true) )
+        env['rack.session.options' ] = {}
       end
       
       def commit_session(env, status, headers, body) 
