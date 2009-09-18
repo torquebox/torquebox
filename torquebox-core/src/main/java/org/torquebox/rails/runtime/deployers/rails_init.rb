@@ -21,16 +21,12 @@
 require 'org/torquebox/rails/runtime/deployers/as_logger'
 
 if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
-  puts "************** using vendor rails"
   require 'vendor/rails/railties/lib/initializer'
 else
-  puts "************** using gem rails"
   require 'rubygems'
   if ( TORQUEBOX_RAILS_GEM_VERSION.nil? )
-    puts "************** using DEFAULT gem rails"
     gem 'rails'
   else
-    puts "************** using #{TORQUEBOX_RAILS_GEM_VERSION} gem rails"
     gem 'rails', TORQUEBOX_RAILS_GEM_VERSION
   end
   require 'initializer'
@@ -77,3 +73,6 @@ end
 
 Rails::Initializer.run(:install_gem_spec_stubs)
 Rails::Initializer.run(:set_load_path)
+Rails::Initializer.run(:add_gem_load_paths)
+Rails::Initializer.run(:require_frameworks)
+require 'active_record/version' if defined?( ActiveRecord )

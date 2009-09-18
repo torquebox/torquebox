@@ -107,7 +107,6 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 
 	public RailsRuntimeInitializer createRuntimeInitializer(VirtualFile railsRoot, String railsEnv,
 			RailsGemVersionMetaData railsGemVersionMetaData) {
-		log.info( "initializer for " + railsGemVersionMetaData );
 		boolean loadUsingGems = false;
 		String versionSpec = null;
 
@@ -115,8 +114,6 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 			loadUsingGems = true;
 			versionSpec = railsGemVersionMetaData.getVersionSpec();
 		}
-		log.info("load using gems: " + loadUsingGems);
-		log.info("load version spec: " + versionSpec);
 		return new RailsRuntimeInitializer(railsRoot, railsEnv, loadUsingGems, versionSpec);
 	}
 

@@ -85,8 +85,10 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 	}
 
 	protected String createProlog(String railsRootPath) {
-		return "RAILS_ROOT='" + railsRootPath + "'\n" + "RAILS_ENV='" + railsEnv + "'\n" + railsGemVersionConfig()
-				+ "require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
+		return "RAILS_ROOT='" + railsRootPath + "'\n" + 
+			"RAILS_ENV='" + railsEnv + "'\n"  + 
+			railsGemVersionConfig() + 
+			"require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
 	}
 
 	protected String railsGemVersionConfig() {
@@ -102,7 +104,6 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 		} else {
 			config.append( "TORQUEBOX_RAILS_LOAD_STYLE=:vendor\n" );
 		}
-		System.err.println( "GEM VERSION CONFIG\n" + config.toString() + "\n\n" );
 		
 		return config.toString();
 	}

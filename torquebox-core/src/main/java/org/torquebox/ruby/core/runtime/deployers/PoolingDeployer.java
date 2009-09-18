@@ -24,13 +24,9 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, PoolingMetaData poolingMetaData) throws DeploymentException {
-		log.info("Deploying all pools");
 
 		for (String poolName : VALID_POOLS) {
-			log.info("Trying pool " + poolName);
 			PoolMetaData poolMetaData = poolingMetaData.getPool(poolName);
-			log.info("MetaData: " + poolMetaData);
-
 			if (poolMetaData != null) {
 				deploy(unit, poolMetaData);
 			}
@@ -41,12 +37,9 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 
 		String beanName = getBeanName(unit, poolMetaData.getName());
 
-		log.debug("creating RubyRuntimePool: " + beanName);
-
 		BeanMetaData poolBean = null;
 
 		if (poolMetaData.isGlobal()) {
-			log.info("creating global pool for " + poolMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class
 					.getName());
 			builder.addPropertyMetaData( "name", poolMetaData.getName() );
@@ -54,7 +47,6 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 			builder.addConstructorParameter(Ruby.class.getName(), globalRuntime);
 			poolBean = builder.getBeanMetaData();
 		} else if (poolMetaData.isShared()) {
-			log.info("creating shared pool for " + poolMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class
 					.getName());
 			builder.addPropertyMetaData( "name", poolMetaData.getName() );
@@ -62,7 +54,6 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
 			poolBean = builder.getBeanMetaData();
 		} else {
-			log.info("creating non-shared pool for " + poolMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRubyRuntimePool.class.getName() );
 			ValueMetaData factoryInjection = builder.createInject("jboss.ruby.runtime.factory." + unit.getSimpleName());
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
