@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
@@ -45,8 +44,6 @@ public class RailsVersionDeployer extends AbstractParsingDeployer {
 	public RailsVersionDeployer() {
 		setInput(RailsApplicationMetaData.class);
 		setOutput(RailsVersionMetaData.class);
-		setStage( DeploymentStages.POST_CLASSLOADER );
-		setRelativeOrder( -200 );
 	}
 
 	public void deploy(DeploymentUnit unit) throws DeploymentException {

@@ -56,8 +56,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		addInput(JBossWebMetaData.class);
 		addOutput(WebMetaData.class);
 		addOutput(JBossWebMetaData.class);
-		setStage(DeploymentStages.POST_CLASSLOADER);
-		setRelativeOrder( -100 );
+		setStage(DeploymentStages.DESCRIBE);
 	}
 
 	@Override
