@@ -6,6 +6,8 @@ STAGE_DIR    = "#{File.dirname(__FILE__)}/target/stage"
 GEMS_DIR     = "#{File.dirname(__FILE__)}/target/gems"
 CACHE_DIR    = ENV['PACKAGE_CACHE_DIR'] || "#{File.dirname(__FILE__)}/../package-cache"
 
+SRC_DIR      = "#{File.dirname(__FILE__)}/src/main/resources"
+
 JDBC_GEMS = [
   'activerecord-jdbc-adapter',
 
@@ -32,9 +34,9 @@ OTHER_GEMS = [
   'rack',
 ]
 
-JBOSS_VERSION = ENV['jboss.as.version'] || '5.1.0.GA'
-JRUBY_PKG_VERSION = ENV['jruby.version'] || '1.2.0'
-RAILS_VERSION = ENV['rails.version'] || '2.3.3'
+JBOSS_VERSION     = ENV['jboss.as.version'] || '5.1.0.GA'
+JRUBY_PKG_VERSION = ENV['jruby.version']    || '1.3.1'
+RAILS_VERSION     = ENV['rails.version']    || '2.3.4'
 
 JBOSS_BASE_URL="http://voxel.dl.sourceforge.net/sourceforge/jboss/"
 JRUBY_BASE_URL="http://dist.codehaus.org/jruby"
@@ -119,6 +121,7 @@ task 'stage-jdk6'=>[ "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}-jdk6.zip", "#{PKG_
       puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{OTHER_GEMS.join(' ')}`
       puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 rails -v #{RAILS_VERSION}`
       puts "Installed gems in #{Dir.pwd}"
+      FileUtils.cp( "#{SRC_DIR}/bin/rails.bat", './bin/rails.bat' )
     end
     ENV['JRUBY_HOME'] = original_jruby_home
   end
