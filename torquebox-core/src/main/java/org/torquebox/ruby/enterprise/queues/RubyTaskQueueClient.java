@@ -64,10 +64,6 @@ public class RubyTaskQueueClient {
 		ConnectionFactory connectionFactory = (ConnectionFactory) jndiContext.lookup("java:/ConnectionFactory");
 		Destination destination = (Destination) jndiContext.lookup("queue/" + destinationName);
 
-		log.info("using destination: " + destination);
-
-		log.info("connection factory: " + connectionFactory);
-
 		Connection connection = connectionFactory.createConnection();
 		try {
 			Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -77,16 +73,12 @@ public class RubyTaskQueueClient {
 			ObjectMessage message = session.createObjectMessage();
 			message.setStringProperty("TaskName", taskName);
 
-			log.info("sending payload: " + payload);
-			log.info("sending message: " + message);
-
 			if (payload instanceof IRubyObject) {
 				IRubyObject rubyPayload = (IRubyObject) payload;
 				Ruby ruby = rubyPayload.getRuntime();
 				RubyModule marshal = ruby.getClassFromPath("Marshal");
 				String marshalled = (String) JavaEmbedUtils.invokeMethod(ruby, marshal, "dump", new Object[] { rubyPayload },
 						String.class);
-				log.info("marshalled to [" + marshalled + "]");
 				message.setObject(marshalled);
 				message.setBooleanProperty("IsRubyMarshal", true);
 			} else if (payload instanceof Serializable) {
@@ -97,9 +89,7 @@ public class RubyTaskQueueClient {
 			producer.send(message);
 		} finally {
 			if (connection != null) {
-				System.err.println( "closing connection" );
 				connection.close();
-				System.err.println( "closed connection" );
 			}
 		}
 	}

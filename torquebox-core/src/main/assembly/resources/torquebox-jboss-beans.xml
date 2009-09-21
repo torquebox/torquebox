@@ -91,6 +91,7 @@
   <bean name="RailsCryptoYamlParsingDeployer"       class="org.torquebox.rails.crypto.deployers.RailsCryptoYamlParsingDeployer"/>
 
   <!-- Rack -->
+  <bean name="AppRackYamlParsingDeployer"           class="org.torquebox.ruby.enterprise.web.rack.AppRackYamlParsingDeployer"/>
   <bean name="RailsRackDeployer"                    class="org.torquebox.rails.web.deployers.RailsRackDeployer"/>
 
   <!-- rails-env.yml -->

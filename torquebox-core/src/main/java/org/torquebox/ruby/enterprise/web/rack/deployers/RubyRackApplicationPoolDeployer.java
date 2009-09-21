@@ -27,6 +27,7 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.virtual.VirtualFile;
 import org.torquebox.ruby.core.runtime.metadata.PoolMetaData;
 import org.torquebox.ruby.core.runtime.metadata.PoolingMetaData;
 import org.torquebox.ruby.enterprise.web.rack.DefaultRackApplicationPool;
@@ -63,8 +64,8 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 	
 	protected void deploySharedPool(VFSDeploymentUnit unit) throws DeploymentException {
 		String beanName = getBeanName(unit);
-		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRackApplicationPool.class
-				.getName());
+		log.info( "Deploying shared pool: " + beanName );
+		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRackApplicationPool.class.getName());
 
 		String factoryBeanName = RubyRackApplicationFactoryDeployer.getBeanName(unit);
 		ValueMetaData appFactoryInjection = builder.createInject(factoryBeanName);
@@ -92,8 +93,15 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 	}
 
 	public static String getBeanName(VFSDeploymentUnit unit) {
-		String beanName = "torquebox.rack.app.pool." + unit.getSimpleName();
-		return beanName;
+		return getBeanName( unit.getRoot() );
+	}
+	
+	public static String getBeanName(VirtualFile file) {
+		return getBeanName( file.getName() );
+	}
+	
+	public static String getBeanName(String base) {
+		return "torquebox.rack.app.pool." + base;
 	}
 
 }

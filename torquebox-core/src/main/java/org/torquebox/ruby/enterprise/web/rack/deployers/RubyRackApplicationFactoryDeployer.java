@@ -66,6 +66,7 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 			}
 		}
 		
+		log.info( "attached: " + beanMetaData );
 		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class);
 	}
 	

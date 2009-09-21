@@ -20,6 +20,7 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 
 	public PoolingDeployer() {
 		super(PoolingMetaData.class);
+		addOutput( BeanMetaData.class );
 	}
 
 	@Override
