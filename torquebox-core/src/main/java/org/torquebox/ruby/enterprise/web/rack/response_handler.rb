@@ -36,8 +36,9 @@ module JBoss
             end
           }
           out = servlet_response.getWriter()
+          
           body.each{|str|
-            out.write( str );
+            out.write( str.to_s );
           }
         ensure
           body.close if body && body.respond_to?( :close )
