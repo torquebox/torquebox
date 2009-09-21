@@ -26,7 +26,6 @@ public class BaseRubyMessageListener implements MessageListener {
 	}
 
 	public void onMessage(Message message) {
-		log.info("handling message: " + message);
 
 		Ruby ruby = null;
 
@@ -40,19 +39,13 @@ public class BaseRubyMessageListener implements MessageListener {
 			
 			String taskName = message.getStringProperty("TaskName");
 
-			log.info("invoke task [" + taskName + "]");
-
 			Object payload = ((ObjectMessage) message).getObject();
 
 			if (message.getBooleanProperty("IsRubyMarshal")) {
-				log.info("unmarshal ruby");
 				RubyModule marshal = ruby.getClassFromPath("Marshal");
 				payload = JavaEmbedUtils.invokeMethod(ruby, marshal, "restore", new Object[] { payload }, Object.class);
 			}
-
-			log.info("FINAL PAYLOAD [" + payload + "]");
 			
-			//IRubyObject rubyQueueInstance = JavaEmbedUtils.javaToRuby( ruby, queueInstance );
 			injectLogger(rubyQueue);
 
 			JavaEmbedUtils.invokeMethod(ruby, rubyQueue, taskName, new Object[] { payload }, void.class);

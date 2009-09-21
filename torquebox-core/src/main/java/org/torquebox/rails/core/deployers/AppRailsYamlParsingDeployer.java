@@ -94,11 +94,10 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 	@Override
 	public void undeploy(DeploymentUnit unit) {
-		log.trace("attempting undeploy from: " + unit.getName());
-		Deployment deployment = unit.getAttachment("jboss.rails.root.deployment", Deployment.class);
+		Deployment deployment = unit.getAttachment("torquebox.rails.root.deployment", Deployment.class);
 		if (deployment != null) {
-			log.debug("Undeploying: " + deployment.getName());
-			MainDeployer deployer = unit.getAttachment("jboss.rails.root.deployer", MainDeployer.class);
+			log.info("Undeploying: " + deployment.getName());
+			MainDeployer deployer = unit.getAttachment("torquebox.rails.root.deployer", MainDeployer.class);
 			try {
 				deployer.removeDeployment(deployment);
 				deployer.process();
