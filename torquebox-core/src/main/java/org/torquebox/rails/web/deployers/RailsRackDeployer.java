@@ -58,9 +58,10 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 		rackWebAppMetaData.setStaticPathPrefix( "/public" );
 
 		RubyRackApplicationMetaData rubyRackAppMetaData = new RubyRackApplicationMetaData();
+		rubyRackAppMetaData.setRackRoot( railsAppMetaData.getRailsRoot() );
+		rubyRackAppMetaData.setRackEnv( railsAppMetaData.getRailsEnv() );
 		
 		String rackUpScript = getRackUpScript( rackWebAppMetaData.getContext() );
-		
 		rubyRackAppMetaData.setRackUpScript( rackUpScript );
 
 		unit.addAttachment(RubyRackApplicationMetaData.class, rubyRackAppMetaData);

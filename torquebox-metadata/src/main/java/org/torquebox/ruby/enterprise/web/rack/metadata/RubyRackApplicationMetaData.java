@@ -21,12 +21,32 @@
  */
 package org.torquebox.ruby.enterprise.web.rack.metadata;
 
+import org.jboss.virtual.VirtualFile;
+
 public class RubyRackApplicationMetaData {
 	
+	private String rackEnv;
+	private VirtualFile rackRoot;
 	private String rackUpScript;
 
 	public RubyRackApplicationMetaData() {
 		
+	}
+	
+	public void setRackRoot(VirtualFile rackRoot) {
+		this.rackRoot = rackRoot;
+	}
+	
+	public VirtualFile getRackRoot() {
+		return this.rackRoot;
+	}
+	
+	public void setRackEnv(String rackEnv) {
+		this.rackEnv = rackEnv;
+	}
+	
+	public String getRackEnv() {
+		return this.rackEnv;
 	}
 	
 	public void setRackUpScript(String rackUpScript) {

@@ -56,8 +56,8 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	private static final ByteList WEB_KEY = ByteList.create("web");
 
 	private static final ByteList RACK_ROOT_KEY = ByteList.create("RACK_ROOT");
-	private static final ByteList RACKUP_KEY = ByteList.create("rackup");
 	private static final ByteList RACK_ENV_KEY = ByteList.create("RACK_ENV");
+	private static final ByteList RACKUP_KEY = ByteList.create("rackup");
 
 	private static final ByteList HOST_KEY = ByteList.create("host");
 	private static final ByteList CONTEXT_KEY = ByteList.create("context");
@@ -139,9 +139,10 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 			throws IOException {
 		Map<ByteList, Object> application = (Map<ByteList, Object>) config.get(APPLICATION_KEY);
 		RubyRackApplicationMetaData rackMetaData = new RubyRackApplicationMetaData();
+		
+		rackMetaData.setRackRoot( rackRootFile );
 
 		if (application != null) {
-			// ByteList rackEnv = (ByteList) application.get(RACK_ENV_KEY);
 
 			ByteList rackup = (ByteList) application.get(RACKUP_KEY);
 
@@ -151,12 +152,16 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 			} else {
 				rackupScriptPath = "config.ru";
 			}
-
-			log.info("rackupScriptPath = " + rackupScriptPath);
+			
+			ByteList rackEnv = (ByteList) application.get(RACK_ENV_KEY);
+			
+			if ( rackEnv != null ) {
+				rackMetaData.setRackEnv( rackEnv.toString() );
+			} else {
+				rackMetaData.setRackEnv( "development" );
+			}
 
 			VirtualFile rackupFile = rackRootFile.getChild(rackupScriptPath);
-
-			log.info("rackupFile = " + rackupFile);
 
 			if (rackupFile != null && rackupFile.exists()) {
 				StringBuilder rackupScript = new StringBuilder();

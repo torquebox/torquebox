@@ -21,6 +21,7 @@
  */
 package org.torquebox.rails.runtime.deployers;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,12 +82,13 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 
 		cl.addLoadPaths(loadPaths);
 
-		ruby.evalScriptlet(createEpilog());
+		//ruby.evalScriptlet(createEpilog());
+		ruby.executeScript(createEpilog(), new URL( railsRoot.toURL(), "torquebox-init.rb" ).toExternalForm() );
 	}
 
 	protected String createProlog(String railsRootPath) {
-		return "RAILS_ROOT='" + railsRootPath + "'\n" + 
-			"RAILS_ENV='" + railsEnv + "'\n"  + 
+		return "RAILS_ROOT=%q(" + railsRootPath + ")\n" + 
+			"RAILS_ENV=%q(" + railsEnv + ")\n"  + 
 			railsGemVersionConfig() + 
 			"require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
 	}
