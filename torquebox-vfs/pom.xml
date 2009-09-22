@@ -1,0 +1,121 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox</artifactId>
+    <version>1.0.0.Beta16-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-vfs</artifactId>
+  <packaging>jar</packaging>
+  <name>TorqueBox VFS</name>
+  <description></description>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
+      <version>${jboss.vfs.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+<!--
+    <resources> 
+      <resource> 
+        <directory>src/main/resources</directory> 
+      </resource> 
+      <resource> 
+        <directory>src/main/java</directory> 
+        <includes>
+          <include>**/*.rb</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource> 
+      <resource> 
+        <directory>src/main/ruby</directory> 
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources> 
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+-->
+    <plugins> 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <stripVersion>true</stripVersion>
+              <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+<!--
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <version>1.0-beta-6</version>
+        <configuration>
+          <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
+          <sourceDirectory>${basedir}/src/test/specs</sourceDirectory>
+          <outputDirectory>${basedir}/target</outputDirectory>
+          <skipTests>false</skipTests>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>test-log4j.xml</value>
+            </property>
+            <property>
+              <name>java.protocol.handler.pkgs</name>
+              <value>org.jboss.virtual.protocol</value>
+            </property>
+          </systemProperties>
+        </configuration>
+        <executions>
+          <execution>
+            <id>test</id>
+            <phase>test</phase>
+            <goals>
+              <goal>spec</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>jboss-log4j.xml</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+-->
+    </plugins>
+  </build>
+
+</project>
