@@ -44,17 +44,18 @@ task 'spec' do
   puts "running #{spec_files}"
   cmd = "jruby -J-classpath #{jars.join(':')} -S spec #{spec_files}" 
   r = Open3.popen3( cmd ) do |stdin, stdout, stderr|
-    stdout_thr = Thread.new(stdout) {|io|
-      io.readlines.each do |l|
-        puts l
-      end
-    }
-    stderr_thr = Thread.new(stderr) {|io|
-      io.readlines.each do |l|
-        puts l
-      end
-    }
     stdin.close
+    stdout_thr = Thread.new(stdout) {|stdout_io|
+      stdout_io.readlines.each do |l|
+        puts "stdout: #{l}"
+      end
+      stdout_io.close
+    }
+    stderr_thr = Thread.new(stderr) {|stderr_io|
+      stderr_io.readlines.each do |l|
+        puts "stderr: #{l}"
+      end
+    }
     stdout_thr.join
     stderr_thr.join
   end
