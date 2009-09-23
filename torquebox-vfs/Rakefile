@@ -1,0 +1,62 @@
+
+require 'open3'
+
+TEST_DATA_IN  = File.dirname(__FILE__) + '/test-data'
+TEST_DATA_OUT = File.dirname(__FILE__) + '/target/test-data'
+
+desc "Prepare test-data"
+task 'test:data:prepare' do
+  puts "preparing test-data"
+
+  FileUtils.rm_rf( TEST_DATA_OUT )
+  FileUtils.mkdir_p( TEST_DATA_OUT )
+
+  paths = Dir[ TEST_DATA_IN + '/**/*' ]
+  paths.sort!{|l,r| r.length <=> l.length}
+  #paths = paths.collect{|e| e[ TEST_DATA_IN.length..-1] }
+
+  paths.each do |path|
+    subpath = path[ TEST_DATA_IN.length..-1 ]
+    if ( File.directory?( path ) )
+      if ( path =~ /\.jar$/ )
+        puts "replace dir with real jar for #{subpath}"
+        Dir.chdir( "#{TEST_DATA_OUT}/#{subpath}" ) do 
+          cmd = "jar cvf #{TEST_DATA_OUT}/#{subpath}.tmp ."
+          puts cmd
+          `#{cmd}`
+        end
+        FileUtils.rm_rf "#{TEST_DATA_OUT}/#{subpath}"
+        FileUtils.mv "#{TEST_DATA_OUT}/#{subpath}.tmp", "#{TEST_DATA_OUT}/#{subpath}"
+      end
+    else
+      FileUtils.mkdir_p "#{TEST_DATA_OUT}/#{File.dirname(subpath)}"
+      FileUtils.cp path, "#{TEST_DATA_OUT}/#{subpath}"
+    end
+  end
+end
+
+
+desc "Run all examples"
+task 'spec' do
+  jar_dir = File.dirname(__FILE__) + '/target/dependencies'
+  jars = Dir[ "#{jar_dir}/*.jar" ]
+  spec_files = FileList['specs/**/*_spec.rb']
+  puts "running #{spec_files}"
+  cmd = "jruby -J-classpath #{jars.join(':')} -S spec #{spec_files}" 
+  r = Open3.popen3( cmd ) do |stdin, stdout, stderr|
+    stdout_thr = Thread.new(stdout) {|io|
+      io.readlines.each do |l|
+        puts l
+      end
+    }
+    stderr_thr = Thread.new(stderr) {|io|
+      io.readlines.each do |l|
+        puts l
+      end
+    }
+    stdin.close
+    stdout_thr.join
+    stderr_thr.join
+  end
+end
+
