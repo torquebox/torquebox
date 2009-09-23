@@ -24,9 +24,26 @@ class Dir
     end
 
     def glob(pattern,flags=nil)
-      return glob_before_vfs( pattern ) unless ( pattern =~ %r(^vfs[^:]+:) )
+      #return glob_before_vfs( pattern ) unless ( pattern =~ %r(^vfs[^:]+:) )
       first_special = ( pattern =~ /[\*\?\[\{]/ )
       base    = pattern[0, first_special]
+      if ( File.exist?( base ) && File.directory?( base ) )
+        return glob_before_vfs( pattern )
+      end
+      c = base
+      while ( c != '.' && c != '/' )
+        if ( File.exist?( c ) )
+          break
+        end
+        c = File.dirname( c )
+      end
+      c_base = File.basename( c )
+      Java::OrgJbossVirtualPluginsContextJar::JarUtils
+      is_archive = Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( c_base )
+      if ( is_archive )
+        base = "vfszip://#{Dir.pwd}/#{c}"
+        matcher = pattern[ c.length..-1 ]
+      end
       matcher = pattern[first_special..-1]
       root = org.jboss.virtual.VFS.root( base[0..-1] )
       root.children_recursively( GlobFilter.new( matcher ) ).collect{|e| "#{base}#{e.path_name}"}

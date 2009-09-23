@@ -37,7 +37,8 @@ end
 
 
 desc "Run all examples"
-task 'spec'=>[ 'test:data:prepare' ] do
+#task 'spec'=>[ 'test:data:prepare' ] do
+task 'spec' do
   jar_dir = File.dirname(__FILE__) + '/target/dependencies'
   jars = Dir[ "#{jar_dir}/*.jar" ]
   spec_files = FileList['specs/**/*_spec.rb']

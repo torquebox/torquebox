@@ -28,4 +28,16 @@ describe "Dir extensions for VFS" do
     items.should include "#{base}/manifest.txt"
   end
 
+  it "should determine if VFS is needed for archives" do
+    base = "#{TEST_DATA_DIR}/home/larry/archive1.jar"
+    items = Dir.glob( "#{base}/*" )
+    items.should_not be_empty
+  end
+
+  it "should determine if VFS is needed for nested archives" do
+    base = "#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar"
+    items = Dir.glob( "#{base}/*" )
+    items.should_not be_empty
+  end
+
 end
