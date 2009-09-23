@@ -4,10 +4,9 @@ class Dir
   class << self
 
     #alias_method :open_before_vfs, :open
-    #alias_method :glob_before_vfs, :glob
+    alias_method :glob_before_vfs, :glob
 
     def open(str)
-      return open_before_vfs( str) unless ( str =~ /^(vfs.*):/// )
       result = dir = VFSDir.new( str )
       if block_given?
         begin
@@ -24,21 +23,14 @@ class Dir
       self.glob( pattern )
     end
 
-=begin
     def glob(pattern,flags=nil)
-      puts "GLOAB #{pattern}"
-      return []
-      is_vfs = ( pattern =~ %r(^vfs[^:]+:) )
-      throw is_vfs
-      stderr.puts "IS VFS #{is_vfs}"
       return glob_before_vfs( pattern ) unless ( pattern =~ %r(^vfs[^:]+:) )
       first_special = ( pattern =~ /[\*\?\[\{]/ )
       base    = pattern[0, first_special]
       matcher = pattern[first_special..-1]
-      root = org.jboss.virtual.VFS.root( base )
+      root = org.jboss.virtual.VFS.root( base[0..-1] )
       root.children_recursively( GlobFilter.new( matcher ) ).collect{|e| "#{base}#{e.path_name}"}
     end
-=end
 
   end
 

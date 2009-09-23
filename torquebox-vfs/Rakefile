@@ -37,7 +37,7 @@ end
 
 
 desc "Run all examples"
-task 'spec' do
+task 'spec'=>[ 'test:data:prepare' ] do
   jar_dir = File.dirname(__FILE__) + '/target/dependencies'
   jars = Dir[ "#{jar_dir}/*.jar" ]
   spec_files = FileList['specs/**/*_spec.rb']
@@ -47,13 +47,13 @@ task 'spec' do
     stdin.close
     stdout_thr = Thread.new(stdout) {|stdout_io|
       stdout_io.readlines.each do |l|
-        puts "stdout: #{l}"
+        puts l
       end
       stdout_io.close
     }
     stderr_thr = Thread.new(stderr) {|stderr_io|
       stderr_io.readlines.each do |l|
-        puts "stderr: #{l}"
+        puts l
       end
     }
     stdout_thr.join
