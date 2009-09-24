@@ -2,8 +2,9 @@
 class IO
 
   class << self
-    alias_method :open_before_vfs, :open
-    alias_method :read_before_vfs, :read
+
+    alias_method :open_without_vfs, :open
+    alias_method :read_without_vfs, :read
 
     def open(fd,mode_str='r')
       file = org.jboss.virtual.VFS.root( fd )
@@ -18,12 +19,19 @@ class IO
       end
       io
      
-      #open_before_vfs(*args)
     end
 
-    def read(name,length=nil,offset=nil)
-      puts "jack into read"
-      file = org.jboss.virtual.VFS.root( name )
+    def read(name, length=nil, offset=nil)
+      return read_without_vfs(name, length) if File.exist?( name )
+      existing = VFS.first_existing( name )
+      remainder = name[existing.length..-1]
+      is_archive = Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( File.basename( existing ) )
+      if ( is_archive )
+        prefix = "vfszip://#{Dir.pwd}"
+        base = "#{prefix}/#{existing}/"
+      end
+      root = org.jboss.virtual.VFS.root( base )
+      file = root.get_child( remainder )
       stream = file.openStream()
       io = stream.to_io 
       begin
@@ -32,7 +40,6 @@ class IO
         io.close()
       end
       s
-      #read_before_vfs(*args)
     end
   end
 

@@ -5,6 +5,7 @@ require 'vfs/ext/vfs'
 require 'vfs/dir'
 require 'vfs/ext/dir'
 require 'vfs/glob_filter'
+require 'vfs/ext/io'
 
 
 module VFS

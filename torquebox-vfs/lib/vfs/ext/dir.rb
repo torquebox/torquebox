@@ -31,19 +31,28 @@ class Dir
         return glob_before_vfs( pattern )
       end
 
+      original_base = base
+      prefix = nil
       unless ( base =~ %r(^vfs[^:]+) )
         existing = VFS.first_existing( base )
         return [] unless existing
         is_archive = Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( File.basename( existing ) )
         if ( is_archive )
-          base = "vfszip://#{Dir.pwd}/#{existing}"
+          prefix = "vfszip://#{Dir.pwd}"
+          base = "#{prefix}/#{existing}/"
           matcher = pattern[ existing.length+1..-1 ]
         end
       else
         matcher = pattern[first_special..-1]
       end
       root = org.jboss.virtual.VFS.root( base[0..-1] )
-      root.children_recursively( VFS::GlobFilter.new( matcher ) ).collect{|e| "#{base}#{e.path_name}"}
+      paths = root.children_recursively( VFS::GlobFilter.new( matcher ) ).collect{|e| 
+        "#{base}#{e.path_name}"
+      }
+      paths = paths.collect{|fq_path|
+        prefix ? fq_path[prefix.length+1..-1] : fq_path
+      }
+      paths
     end
 
   end
