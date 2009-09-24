@@ -8,7 +8,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-vfs</artifactId>
+  <artifactId>vfs</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox VFS</name>
   <description></description>
@@ -102,6 +102,28 @@
                   <env key="project.version" value="${project.version}"></env>
                 </exec>
               </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/gems/${project.artifactId}-1.0.0.gem</file>
+                  <type>gem</type>
+                  <classifier></classifier>
+                </artifact>
+              </artifacts>
             </configuration>
           </execution>
         </executions>

@@ -40,6 +40,7 @@
         <include>org.torquebox:torquebox-gem:gem</include>
         <include>org.torquebox:torquebox-rails:gem</include>
         <include>org.torquebox:torquebox-capistrano:gem</include>
+        <include>org.torquebox:vfs:gem</include>
       </includes>
     </dependencySet>
     <dependencySet>

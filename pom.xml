@@ -264,6 +264,8 @@
     <module>torquebox-capistrano</module>
 
     <module>torquebox-bin</module>
+
+    <module>torquebox-vfs</module>
   </modules>
 
 
