@@ -18,11 +18,10 @@ class IO
         end
       end
       io
-     
     end
 
     def read(name, length=nil, offset=nil)
-      return read_without_vfs(name, length) if File.exist?( name )
+      return read_without_vfs(name, length) if File.exist_without_vfs?( name )
       existing = VFS.first_existing( name )
       remainder = name[existing.length..-1]
       is_archive = Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( File.basename( existing ) )

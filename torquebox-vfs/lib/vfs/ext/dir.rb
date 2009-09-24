@@ -27,7 +27,7 @@ class Dir
       first_special = ( pattern =~ /[\*\?\[\{]/ )
       base          = pattern[0, first_special]
 
-      if ( File.exist?( base ) && File.directory?( base ) )
+      if ( File.exist_without_vfs?( base ) && File.directory?( base ) )
         return glob_before_vfs( pattern )
       end
 
