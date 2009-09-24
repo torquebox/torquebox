@@ -40,4 +40,11 @@ describe "Dir extensions for VFS" do
     items.should_not be_empty
   end
 
+  it "should determine if VFS is needed with relative paths" do
+    base = "#{TEST_DATA_BASE}/home/larry/archive1.jar/lib/archive2.jar"
+    items = Dir.glob( "#{base}/*" )
+    items.should_not be_empty
+    items.should include( "#{base}/manifest.txt" )
+  end
+
 end
