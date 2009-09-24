@@ -7,7 +7,7 @@ class Dir
     alias_method :glob_before_vfs, :glob
 
     def open(str)
-      result = dir = VFSDir.new( str )
+      result = dir = VFS::Dir.new( str )
       if block_given?
         begin
           result = yield( dir )
@@ -43,7 +43,7 @@ class Dir
         matcher = pattern[first_special..-1]
       end
       root = org.jboss.virtual.VFS.root( base[0..-1] )
-      root.children_recursively( TorqueBox::VFS::GlobFilter.new( matcher ) ).collect{|e| "#{base}#{e.path_name}"}
+      root.children_recursively( VFS::GlobFilter.new( matcher ) ).collect{|e| "#{base}#{e.path_name}"}
     end
 
   end

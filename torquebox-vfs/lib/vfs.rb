@@ -1,12 +1,11 @@
 
-class Java::OrgJbossVirtual::VFS
+require 'java'
 
-  def self.root(uri_str)
-    uri = java.net.URI.new( uri_str )
-    self.getRoot( uri )
-  end
+require 'vfs/ext/vfs'
+require 'vfs/dir'
+require 'vfs/ext/dir'
+require 'vfs/glob_filter'
 
-end
 
 module VFS
   def self.first_existing(path)
