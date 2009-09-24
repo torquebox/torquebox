@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-vfs</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <name>TorqueBox VFS</name>
   <description></description>
 
@@ -71,50 +71,41 @@
           </execution>
         </executions>
       </plugin>
-<!--
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rspec-maven-plugin</artifactId>
-        <version>1.0-beta-6</version>
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
-          <sourceDirectory>${basedir}/src/test/specs</sourceDirectory>
-          <outputDirectory>${basedir}/target</outputDirectory>
-          <skipTests>false</skipTests>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>test-log4j.xml</value>
-            </property>
-            <property>
-              <name>java.protocol.handler.pkgs</name>
-              <value>org.jboss.virtual.protocol</value>
-            </property>
-          </systemProperties>
+          <descriptors>
+            <descriptor>src/main/assembly/default.xml</descriptor>
+          </descriptors>
         </configuration>
         <executions>
           <execution>
-            <id>test</id>
-            <phase>test</phase>
+            <phase>package</phase>
             <goals>
-              <goal>spec</goal>
+              <goal>single</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>jboss-log4j.xml</value>
-            </property>
-          </systemProperties>
-        </configuration>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <exec executable="rake">
+                  <arg value="maven:package"></arg>
+                  <env key="project.version" value="${project.version}"></env>
+                </exec>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
--->
     </plugins>
   </build>
 

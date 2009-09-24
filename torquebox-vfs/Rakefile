@@ -1,5 +1,7 @@
 
 require 'open3'
+require 'rake/gempackagetask'
+
 
 TEST_DATA_IN  = File.dirname(__FILE__) + '/test-data'
 TEST_DATA_OUT = File.dirname(__FILE__) + '/target/test-data'
@@ -62,3 +64,17 @@ task 'spec' do
   end
 end
 
+
+version = ENV['project.version'] || ENV['VERSION'] || '0.0.0'
+
+if ( version =~ /^([0-9]+)\.([0-9]+)\.([0-9]+)(\..*)?/ )
+  PROJECT_VERSION="#{$1}.#{$2}.#{$3}"
+end
+
+task 'maven:package'=>[ :package ]
+
+spec = eval( File.read( "src/main/assembly/vfs.gemspec" ) )
+
+Rake::GemPackageTask.new(spec) do |pkg|
+    pkg.package_dir = 'target/gems'
+end

@@ -1,0 +1,17 @@
+<assembly>
+  <id></id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>.</directory>
+      <includes>
+        <include>lib/**</include>
+        <include>init.rb</include>
+      </includes>
+      <outputDirectory>/vfs-${pom.version}</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>

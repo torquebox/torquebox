@@ -26,4 +26,10 @@ describe "File extensions for VFS" do
   it "should test existance of files in an archive" do
     File.exist?( "#{TEST_DATA_DIR}/home/larry/archive1.jar/web.xml" ).should be_true
   end
+
+  it "should test directoryness for normal files" do
+    File.exist?( "#{TEST_DATA_DIR}/home/larry" ).should be_true
+    File.exist?( "#{TEST_DATA_DIR}/home/larry/file1.txt" ).should be_false
+  end
+
 end
