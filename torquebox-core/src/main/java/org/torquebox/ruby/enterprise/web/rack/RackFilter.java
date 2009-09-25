@@ -80,6 +80,11 @@ public class RackFilter implements Filter {
 		
 		if ( request.getPathInfo().equals( "/" ) && ! ( request.getRequestURI().endsWith( "/" ) ) ) {
 			String redirectUri = request.getRequestURI() + "/";
+			String queryString = request.getQueryString();
+			if ( queryString != null ) {
+				redirectUri = redirectUri + "?" + queryString;
+			}
+			redirectUri = response.encodeRedirectURL( redirectUri );
 			response.sendRedirect( redirectUri );
 			return;
 		}
