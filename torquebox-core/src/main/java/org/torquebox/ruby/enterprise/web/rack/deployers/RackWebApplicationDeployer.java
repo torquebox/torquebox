@@ -96,7 +96,8 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 		FilterMappingMetaData filterMapping = new FilterMappingMetaData();
 		filterMapping.setFilterName(FILTER_NAME);
-		filterMapping.setUrlPatterns(Collections.singletonList("/*"));
+		filterMapping.setUrlPatterns(Collections.singletonList("*"));
+		//filterMapping.setUrlPatterns(Collections.singletonList("/*"));
 
 		List<FilterMappingMetaData> filterMappings = webMetaData.getFilterMappings();
 
