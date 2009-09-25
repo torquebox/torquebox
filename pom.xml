@@ -265,7 +265,7 @@
 
     <module>torquebox-bin</module>
 
-    <module>torquebox-vfs</module>
+    <module>vfs</module>
   </modules>
 
 

@@ -179,6 +179,12 @@
                   <type>gem</type>
                   <outputDirectory>target/gems</outputDirectory>
                 </artifactItem>
+                <artifactItem>
+                  <groupId>org.torquebox</groupId>
+                  <artifactId>vfs</artifactId>
+                  <type>gem</type>
+                  <outputDirectory>target/gems</outputDirectory>
+                </artifactItem>
               </artifactItems>
             </configuration>
           </execution>

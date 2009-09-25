@@ -47,8 +47,11 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebAp
 
 		if (contextBytes == null) {
 			context = "/";
+		} else {
+			context = contextBytes.toString().trim();
 		}
 
+		log.info( "CONTEXT [" + context + "]" );
 		ByteList hostBytes = web.get(ByteList.create("host"));
 		String host = null;
 
