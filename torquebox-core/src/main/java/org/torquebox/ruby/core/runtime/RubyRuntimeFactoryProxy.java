@@ -46,7 +46,6 @@ public class RubyRuntimeFactoryProxy implements RubyRuntimeFactory {
 
 	@Create(ignored=true)
 	public Ruby create() throws Exception {
-		new Exception().printStackTrace();
 		if ( this.delegate == null ) {
 			throw new Exception( "No delegate" );
 		}

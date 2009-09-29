@@ -50,6 +50,9 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 		String beanName = getBeanName(unit);
 
 		log.info("deploying rack app factory: " + beanName);
+		log.info("rackup: " + metaData.getRackUpScript() );
+		log.info("RACK_ENV: " + metaData.getRackEnv() );
+		log.info("RACK_ROOT: " + metaData.getRackRoot() );
 
 		PoolingMetaData pooling = unit.getAttachment(PoolingMetaData.class);
 

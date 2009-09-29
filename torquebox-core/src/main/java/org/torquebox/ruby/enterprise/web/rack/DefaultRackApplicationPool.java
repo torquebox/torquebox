@@ -13,11 +13,13 @@ public class DefaultRackApplicationPool extends DefaultPool<RackApplication> imp
 
 	@Override
 	public RackApplication borrowApplication() throws Exception {
+		log.info( "borrowApplication" );
 		return borrowInstance();
 	}
 
 	@Override
 	public void releaseApplication(RackApplication app) {
+		log.info( "releaseApplication" );
 		releaseInstance( app );
 	}
 

@@ -77,6 +77,7 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 	}
 
 	protected void deployDefaultPool(VFSDeploymentUnit unit, PoolMetaData metaData) throws DeploymentException {
+		log.info( "Deploying default pool" );
 		String beanName = getBeanName(unit);
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRackApplicationPool.class
 				.getName());

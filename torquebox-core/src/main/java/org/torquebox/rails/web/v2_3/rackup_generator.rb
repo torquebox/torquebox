@@ -11,7 +11,6 @@ module TorqueBox
             const_set( 'RELATIVE_URL_ROOT', context )
             
             ::Rack::Builder.new {
-              #run ActionController::Dispatcher.new
               run TorqueBox::Rails::V2_3::Rack::Dispatcher.new( context )
             }.to_app
           end

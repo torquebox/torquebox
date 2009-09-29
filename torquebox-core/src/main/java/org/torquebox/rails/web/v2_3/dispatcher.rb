@@ -1,5 +1,7 @@
+puts "loading servlet_session"
 require 'org/torquebox/rails/web/v2_3/servlet_session'
 
+puts "loading TorqueBox Dispatcher"
 module TorqueBox
   module Rails
     module V2_3

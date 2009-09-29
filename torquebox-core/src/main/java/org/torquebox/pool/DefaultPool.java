@@ -33,7 +33,7 @@ public class DefaultPool<T> implements Pool<T> {
 
 	private Semaphore available = new Semaphore(0, true);
 	private Thread managementThread;
-	private Logger log;
+	protected Logger log;
 
 	public DefaultPool(InstanceFactory<T> factory) {
 		this.factory = factory;
