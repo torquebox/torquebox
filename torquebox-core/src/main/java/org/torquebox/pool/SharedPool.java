@@ -7,7 +7,7 @@ import org.torquebox.pool.spi.Pool;
 public class SharedPool<T> implements Pool<T> {
 	
 	
-	private String name = "anonymous";
+	private String name = "anonymous-pool";
 	private Logger log;
 	private T instance;
 	private InstanceFactory<T> factory;
@@ -42,7 +42,6 @@ public class SharedPool<T> implements Pool<T> {
 		}
 		
 		if ( this.factory != null ) {
-			log.info( "creating instance for SharedPool" );
 			this.instance = factory.create();
 		}
 	}

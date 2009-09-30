@@ -63,10 +63,10 @@ module Rails
     	end
     	$LOAD_PATH.uniq!
   	end
-  	def initialize_logger
-  	  logger = ActiveSupport::BufferedLogger.new( JBoss::Rails::ASLogger.new( $JBOSS_RAILS_LOGGER ) )
-      silence_warnings { Object.const_set "RAILS_DEFAULT_LOGGER", logger }
-  	end
+  	#def initialize_logger
+  	  #logger = ActiveSupport::BufferedLogger.new( JBoss::Rails::ASLogger.new( $JBOSS_RAILS_LOGGER ) )
+      #silence_warnings { Object.const_set "RAILS_DEFAULT_LOGGER", logger }
+  	#end
 	end
   
 end

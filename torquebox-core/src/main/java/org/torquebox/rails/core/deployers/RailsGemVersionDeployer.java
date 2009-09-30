@@ -49,7 +49,6 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
 		VirtualFile railsRoot = railsMetaData.getRailsRoot();
 
-		log.debug("Determining version of Rails for " + railsRoot);
 
 		try {
 			VirtualFile vendorRails = railsRoot.getChild( "vendor/rails" );
@@ -91,7 +90,6 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 				Matcher matcher = pattern.matcher(line);
 				if ( matcher.matches() ) {
 					String versionSpec = matcher.group(1).trim();
-					log.info( "Version spec [" + versionSpec + "]" );
 					return new RailsGemVersionMetaData( versionSpec );
 				}
 			}

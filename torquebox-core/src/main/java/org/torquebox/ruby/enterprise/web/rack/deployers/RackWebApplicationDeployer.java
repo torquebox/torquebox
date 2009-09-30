@@ -61,13 +61,9 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackWebApplicationMetaData metaData) throws DeploymentException {
-
-		log.debug("deploying " + unit);
-
 		WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
 
 		if (webMetaData == null) {
-			log.debug("creating a new web.xml metadata");
 			webMetaData = new WebMetaData();
 			unit.addAttachment(WebMetaData.class, webMetaData);
 		}
@@ -97,7 +93,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		FilterMappingMetaData filterMapping = new FilterMappingMetaData();
 		filterMapping.setFilterName(FILTER_NAME);
 		filterMapping.setUrlPatterns(Collections.singletonList("*"));
-		//filterMapping.setUrlPatterns(Collections.singletonList("/*"));
 
 		List<FilterMappingMetaData> filterMappings = webMetaData.getFilterMappings();
 

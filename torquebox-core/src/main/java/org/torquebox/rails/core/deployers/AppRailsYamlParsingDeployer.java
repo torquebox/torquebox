@@ -73,7 +73,6 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 	@Override
 	protected RailsApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RailsApplicationMetaData root)
 			throws Exception {
-		log.debug("parse( " + vfsUnit + ", " + file + ", " + root + ")");
 
 		if (!file.equals(vfsUnit.getRoot())) {
 			log.debug("not deploying non-root: " + file);
@@ -96,7 +95,6 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 	public void undeploy(DeploymentUnit unit) {
 		Deployment deployment = unit.getAttachment("torquebox.rails.root.deployment", Deployment.class);
 		if (deployment != null) {
-			log.info("Undeploying: " + deployment.getName());
 			MainDeployer deployer = unit.getAttachment("torquebox.rails.root.deployer", MainDeployer.class);
 			try {
 				deployer.removeDeployment(deployment);

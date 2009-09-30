@@ -29,7 +29,6 @@ module JBoss
       end 
       
       def call(env)
-        puts "Session::Servlet.call(...)"
         load_session(env)
         status, headers, body = @app.call(env)
         commit_session(env, status, headers, body)
@@ -39,8 +38,6 @@ module JBoss
       def load_session(env)
         env['rack.session'] = load_session_data( env['java.servlet_request'].getSession(true) )
         env['rack.session.options' ] = {}
-        puts "rack.session = #{env['rack.session']}"
-        puts "rack.session.options = #{env['rack.session.options']}"
       end
       
       def commit_session(env, status, headers, body) 

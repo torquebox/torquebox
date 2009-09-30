@@ -102,7 +102,6 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 
 		try {
 			Ruby ruby = factory.create();
-			log.info( "Created Ruby Runtime " + ruby );
 			unit.addAttachment(Ruby.class, ruby);
 		} catch (Exception e) {
 			throw new DeploymentException(e);

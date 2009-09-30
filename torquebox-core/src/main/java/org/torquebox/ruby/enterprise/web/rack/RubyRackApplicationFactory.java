@@ -56,7 +56,6 @@ public class RubyRackApplicationFactory implements RackApplicationFactory {
 	
 	@Create(ignored=true)
 	public RackApplication create() throws Exception {
-		log.info( "Creating instance for RubyRackApplicationFactory" );
 		Ruby ruby = getRubyRuntimeFactory().create();
 		
 		RubyRackApplication rackApp = new RubyRackApplication( ruby, rackUpScript );
