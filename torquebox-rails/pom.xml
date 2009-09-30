@@ -69,8 +69,8 @@
                   <classifier></classifier>
                 </artifact>
                 <artifact>
-                  <file>target/share/rails-template.rb</file>
-                  <type>rails-template</type>
+                  <file>share/rails-template.rb</file>
+                  <type>template.rb</type>
                   <classifier></classifier>
                 </artifact>
               </artifacts>

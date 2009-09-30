@@ -67,5 +67,17 @@
         <include>org.torquebox:torquebox-docs-en_US:pdf</include>
       </includes>
     </dependencySet>
+    <dependencySet>
+      <outputDirectory>/torquebox-${pom.version}-bin/share/rails</outputDirectory>
+      <outputFileNameMapping>${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <useProjectArtifact>false</useProjectArtifact>
+      <useProjectAttachments>false</useProjectAttachments>
+      <useTransitiveDependencies>false</useTransitiveDependencies>
+      <includes>
+        <include>org.torquebox:torquebox-rails:template.rb</include>
+      </includes>
+    </dependencySet>
   </dependencySets>
 </assembly>
