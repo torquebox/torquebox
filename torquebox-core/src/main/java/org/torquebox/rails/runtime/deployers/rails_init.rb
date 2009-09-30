@@ -75,4 +75,15 @@ Rails::Initializer.run(:install_gem_spec_stubs)
 Rails::Initializer.run(:set_load_path)
 Rails::Initializer.run(:add_gem_load_paths)
 Rails::Initializer.run(:require_frameworks)
+            
+if ( Rails::VERSION::MAJOR == 2 )
+  case ( Rails::VERSION::MINOR ) 
+      when 2
+        # do nothing special?
+      when 3
+        require 'org/torquebox/rails/web/v2_3/servlet_session'
+        ActionController::Base.session_store     = JBoss::Session::Servlet
+  end
+end
+
 require 'active_record/version' if defined?( ActiveRecord )

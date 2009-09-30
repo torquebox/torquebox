@@ -33,6 +33,7 @@ module JBoss
         env['CONTENT_TYPE']      = servlet_request.getContentType()
         env['CONTENT_LENGTH']    = servlet_request.getContentLength()
         env['REQUEST_URI']       = servlet_request.getRequestURI() 
+        env['REMOTE_ADDR']       = servlet_request.getRemoteAddr()
         env['rack.version']      = [ 0, 1 ]
         env['rack.multithread']  = true
         env['rack.multiprocess'] = true
