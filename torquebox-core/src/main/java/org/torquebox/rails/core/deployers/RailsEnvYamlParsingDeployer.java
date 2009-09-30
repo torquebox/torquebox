@@ -56,7 +56,6 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 			try {
 				RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
 				railsAppMetaData = parse(unit, file, railsAppMetaData);
-				log.info( "adding " + railsAppMetaData );
 				unit.addAttachment(RailsApplicationMetaData.class, railsAppMetaData);
 			} catch (Exception e) {
 				throw new DeploymentException(e);
