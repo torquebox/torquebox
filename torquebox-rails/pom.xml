@@ -68,6 +68,11 @@
                   <type>gem</type>
                   <classifier></classifier>
                 </artifact>
+                <artifact>
+                  <file>target/share/rails-template.rb</file>
+                  <type>rails-template</type>
+                  <classifier></classifier>
+                </artifact>
               </artifacts>
             </configuration>
           </execution>
