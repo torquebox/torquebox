@@ -22,16 +22,14 @@ class IO
 
     def read(name, length=nil, offset=nil)
       return read_without_vfs(name, length) if File.exist_without_vfs?( name )
-      existing = VFS.first_existing( name )
-      remainder = name[existing.length..-1]
-      is_archive = Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( File.basename( existing ) )
-      if ( is_archive )
-        prefix = "vfszip://#{Dir.pwd}"
-        base = "#{prefix}/#{existing}/"
-      end
-      root = org.jboss.virtual.VFS.root( base )
-      file = root.get_child( remainder )
-      stream = file.openStream()
+
+      vfs_url = VFS.resolve_within_archive(name)
+      return nil unless vfs_url
+
+      virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+      return nil unless virtual_file
+
+      stream = virtual_file.openStream()
       io = stream.to_io 
       begin
         s = io.read

@@ -13,6 +13,11 @@ module VFS
         else
           gs.gsub!( /\*/, '[^\/]*')
           gs.gsub!( /\?/, '.')
+          gs.gsub!( /\{[^\}]+\}/ ) do |m|
+            options = m[1..-2].split(',')
+            options = options.collect{|e| "(#{e})"}
+            "(#{options.join('|')})"
+          end
           regexp_segments << gs
         end
       end

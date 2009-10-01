@@ -49,6 +49,7 @@ task 'spec', :key do |t, args|
 
   puts "running #{spec_files}"
   cmd = "jruby -J-classpath #{jars.join(':')} -S spec #{spec_files}" 
+  puts cmd
   r = Open3.popen3( cmd ) do |stdin, stdout, stderr|
     stdin.close
     stdout_thr = Thread.new(stdout) {|stdout_io|
@@ -68,7 +69,7 @@ task 'spec', :key do |t, args|
 end
 
 
-version = ENV['project.version'] || ENV['VERSION'] || '0.0.0'
+version = ENV['project.version'] || ENV['VERSION'] || '1.0.0'
 
 if ( version =~ /^([0-9]+)\.([0-9]+)\.([0-9]+)(\..*)?/ )
   PROJECT_VERSION="#{$1}.#{$2}.#{$3}"

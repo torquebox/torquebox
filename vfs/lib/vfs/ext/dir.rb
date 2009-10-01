@@ -23,34 +23,33 @@ class Dir
     end
 
     def glob(pattern,flags=nil)
+      segments = pattern.split( '/' )
 
-      first_special = ( pattern =~ /[\*\?\[\{]/ )
-      base          = pattern[0, first_special]
+      base_segments = []
+      for segment in segments
+        if ( segment =~ /[\*\?\[\{]/ )
+          break
+        end
+        base_segments << segment
+      end
 
-      if ( File.exist_without_vfs?( base ) && File.directory_without_vfs?( base ) )
+      base = base_segments.join( '/' )
+
+      if ( ::File.exist_without_vfs?( base ) && ::File.directory_without_vfs?( base ) )
         return glob_before_vfs( pattern )
       end
 
-      original_base = base
-      prefix = nil
-      unless ( base =~ %r(^vfs[^:]+) )
-        existing = VFS.first_existing( base )
-        return [] unless existing
-        is_archive = Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( File.basename( existing ) )
-        if ( is_archive )
-          prefix = "vfszip://#{Dir.pwd}"
-          base = "#{prefix}/#{existing}/"
-          matcher = pattern[ existing.length+1..-1 ]
-        end
-      else
-        matcher = pattern[first_special..-1]
-      end
-      root = org.jboss.virtual.VFS.root( base[0..-1] )
+      vfs_base = VFS.resolve_within_archive( base )
+
+      return []       if vfs_base.nil?
+      return [ base ] if segments.size == base_segments.size
+
+      matcher_segments = segments - base_segments
+      matcher = matcher_segments.join( '/' )
+
+      root = org.jboss.virtual.VFS.root( vfs_base )
       paths = root.children_recursively( VFS::GlobFilter.new( matcher ) ).collect{|e| 
-        "#{base}#{e.path_name}"
-      }
-      paths = paths.collect{|fq_path|
-        prefix ? fq_path[prefix.length+1..-1] : fq_path
+        "#{base}/#{e.path_name}"
       }
       paths
     end
