@@ -28,8 +28,8 @@ describe "File extensions for VFS" do
   end
 
   it "should test directoryness for normal files" do
-    File.exist?( "#{TEST_DATA_DIR}/home/larry" ).should be_true
-    File.exist?( "#{TEST_DATA_DIR}/home/larry/file1.txt" ).should be_false
+    File.directory?( "#{TEST_DATA_DIR}/home/larry" ).should be_true
+    File.directory?( "#{TEST_DATA_DIR}/home/larry/file1.txt" ).should be_false
   end
 
 end

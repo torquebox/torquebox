@@ -40,10 +40,13 @@ end
 
 desc "Run all examples"
 #task 'spec'=>[ 'test:data:prepare' ] do
-task 'spec' do
+task 'spec', :key do |t, args|
   jar_dir = File.dirname(__FILE__) + '/target/dependencies'
   jars = Dir[ "#{jar_dir}/*.jar" ]
-  spec_files = FileList['specs/**/*_spec.rb']
+
+  args.with_defaults( :key=>'*' )
+  spec_files = FileList["specs/**/#{args[:key]}_spec.rb"]
+
   puts "running #{spec_files}"
   cmd = "jruby -J-classpath #{jars.join(':')} -S spec #{spec_files}" 
   r = Open3.popen3( cmd ) do |stdin, stdout, stderr|
