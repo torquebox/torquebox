@@ -36,20 +36,27 @@ class Dir
       base = base_segments.join( '/' )
 
       if ( ::File.exist_without_vfs?( base ) && ::File.directory_without_vfs?( base ) )
-        return glob_before_vfs( pattern )
+        paths = glob_before_vfs( pattern )
+        return paths
       end
 
-      vfs_base = VFS.resolve_within_archive( base )
+      vfs_url, child_path = VFS.resolve_within_archive( base )
 
-      return []       if vfs_base.nil?
+      return []       if vfs_url.nil?
       return [ base ] if segments.size == base_segments.size
 
       matcher_segments = segments - base_segments
       matcher = matcher_segments.join( '/' )
 
-      root = org.jboss.virtual.VFS.root( vfs_base )
-      paths = root.children_recursively( VFS::GlobFilter.new( matcher ) ).collect{|e| 
-        "#{base}/#{e.path_name}"
+      starting_point = root = org.jboss.virtual.VFS.root( vfs_url )
+      starting_point = root.get_child( child_path ) unless ( child_path.nil? || child_path == '' )
+      return [] if ( starting_point.nil? || ! starting_point.exists? )
+      paths = starting_point.children_recursively( VFS::GlobFilter.new( child_path, matcher ) ).collect{|e| 
+        if ( child_path )
+          File.join( base[0..-(child_path.length+1)], e.path_name )
+        else
+          File.join( base, e.path_name )
+        end
       }
       paths
     end

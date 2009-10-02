@@ -51,6 +51,21 @@ describe "File extensions for VFS" do
         File.directory?( "#{prefix}#{TEST_DATA_DIR}/home/larry" ).should be_true
         File.directory?( "#{prefix}#{TEST_DATA_DIR}/home/larry/file1.txt" ).should be_false
       end
+
+      it "should test directoryness for files within an archive" do
+        File.directory?( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib" ).should be_true
+        File.directory?( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/web.xml" ).should be_false
+      end
+
+      it "should test fileness for normal files" do
+        File.file?( "#{prefix}#{TEST_DATA_DIR}/home/larry" ).should be_false
+        File.file?( "#{prefix}#{TEST_DATA_DIR}/home/larry/file1.txt" ).should be_true
+      end
+
+      it "should test fileness for files within an archive" do
+        File.file?( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib" ).should be_false
+        File.file?( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/web.xml" ).should be_true
+      end
     end
   end
 end

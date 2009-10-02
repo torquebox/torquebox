@@ -92,6 +92,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 			this.classCache = new ClassCache<Object>(this.classLoader);
 		}
 		config.setClassCache(classCache);
+		config.setLoadServiceCreator( new VFSLoadServiceCreator() );
 
 		String jrubyHome = null;
 

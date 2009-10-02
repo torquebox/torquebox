@@ -5,16 +5,16 @@ describe "Dir extensions for VFS" do
 
   describe "with vfszip urls" do
     it "should allow globbing within archives with explicit vfszip" do
-      base = "vfszip://#{Dir.pwd}/#{TEST_DATA_DIR}/home/larry/archive1.jar/"
+      base = "vfszip:#{Dir.pwd}/#{TEST_DATA_DIR}/home/larry/archive1.jar"
       pattern = "#{base}/*"
       items = Dir.glob( pattern )
       items.should_not be_empty
-      items.should include "#{base}/web.xml"
-      items.should include "#{base}/lib"
+      items.should include File.join( base, 'web.xml' )
+      items.should include File.join( base, 'lib' )
     end
  
     it "should allow globbing within nested archives with explicit vfszip" do
-      base = "vfszip://#{Dir.pwd}/#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar"
+      base = "vfszip:#{Dir.pwd}/#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar"
       pattern = "#{base}/*"
       items = Dir.glob( pattern )
       items.should_not be_empty

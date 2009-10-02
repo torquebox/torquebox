@@ -23,13 +23,14 @@ class IO
     def read(name, length=nil, offset=nil)
       return read_without_vfs(name, length) if File.exist_without_vfs?( name )
 
-      vfs_url = VFS.resolve_within_archive(name)
+      vfs_url, child_path = VFS.resolve_within_archive(name)
       return nil unless vfs_url
 
       virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
-      return nil unless virtual_file
+      child = virtual_file.getChild( child_path )
+      raise ::Errno::ENOENT unless child
 
-      stream = virtual_file.openStream()
+      stream = child.openStream()
       io = stream.to_io 
       begin
         s = io.read

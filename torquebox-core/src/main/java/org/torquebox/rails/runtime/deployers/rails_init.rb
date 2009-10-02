@@ -20,6 +20,9 @@
  
 require 'org/torquebox/rails/runtime/deployers/as_logger'
 
+require 'rubygems'
+require 'vfs'
+
 if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
   require 'vendor/rails/railties/lib/initializer'
 else
@@ -51,7 +54,10 @@ module Rails
         paths << "#{framework.to_s.gsub('_', '')}/lib" if frameworks.include? framework
       end
 
-      paths.map { |dir| "#{framework_root_path}/#{dir}" }
+      paths.map { |dir| 
+        puts "FWP #{framework_root_path}/#{dir}" 
+        "#{framework_root_path}/#{dir}" 
+      }
     end
 	end
 

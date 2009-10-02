@@ -3,7 +3,8 @@ module VFS
   class GlobFilter
     include org.jboss.virtual.VirtualFileFilter
   
-    def initialize(glob)
+    def initialize(child_path, glob)
+      @child_path = child_path
       glob_segments = glob.split( '/' )
       regexp_segments = []
   
@@ -23,7 +24,11 @@ module VFS
       end
       
       regexp_str = regexp_segments.join( '/' )
-      regexp_str = "^#{regexp_str}$"
+      if ( @child_path && @child_path != '' )
+        regexp_str = "^#{@child_path}/#{regexp_str}$"
+      else
+        regexp_str = "^#{regexp_str}$"
+      end
       @regexp = Regexp.new( regexp_str )
     end
   

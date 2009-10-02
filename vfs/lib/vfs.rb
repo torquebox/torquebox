@@ -15,8 +15,7 @@ module VFS
         if ( cur[-1,1] == '/' )
           cur = cur[0..-2]
         end
-        cur = "#{cur}/#{child_path}"
-        return VFS.resolve_path_url( cur )
+        return VFS.resolve_path_url( cur ), child_path
       end
       cur = ::File.dirname( cur ) + '/'
     end
@@ -24,7 +23,7 @@ module VFS
   end
 
   def self.resolve_path_url(path)
-    prefix = "vfszip://"
+    prefix = "vfszip:"
     prefix += ::Dir.pwd unless ( path =~ /^\// )
     base = "#{prefix}/#{path}"
   end
@@ -34,7 +33,6 @@ end
 require 'vfs/file'
 require 'vfs/dir'
 require 'vfs/glob_filter'
-require 'vfs/ext/kernel'
 require 'vfs/ext/vfs'
 require 'vfs/ext/io'
 require 'vfs/ext/file'
