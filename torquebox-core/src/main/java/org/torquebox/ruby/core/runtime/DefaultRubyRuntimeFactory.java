@@ -45,7 +45,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	private Kernel kernel;
 	private RuntimeInitializer initializer;
 
-	private DefaultRubyDynamicClassLoader classLoader;
+	private ClassLoader classLoader;
 	private ClassCache<?> classCache;
 	private String applicationName;
 
@@ -73,11 +73,11 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		return this.kernel;
 	}
 
-	public void setClassLoader(DefaultRubyDynamicClassLoader classLoader) {
+	public void setClassLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;
 	}
 
-	public RubyDynamicClassLoader getClassLoader() {
+	public ClassLoader getClassLoader() {
 		return this.classLoader;
 	}
 
@@ -85,8 +85,8 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	public synchronized Ruby create() throws Exception {
 		RubyInstanceConfig config = new RubyInstanceConfig();
 
-		DefaultRubyDynamicClassLoader childLoader = this.classLoader.createChild();
-		config.setLoader(childLoader);
+		//DefaultRubyDynamicClassLoader childLoader = this.classLoader.createChild();
+		//config.setLoader(childLoader);
 
 		if (this.classCache == null) {
 			this.classCache = new ClassCache<Object>(this.classLoader);
@@ -134,7 +134,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		Ruby runtime = JavaEmbedUtils.initialize(loadPath, config);
 
 		if (this.initializer != null) {
-			this.initializer.initialize(childLoader, runtime);
+			this.initializer.initialize(runtime);
 		}
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);

@@ -98,9 +98,19 @@ describe "Dir extensions for VFS" do
         items = Dir.glob( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive*{.zip,.jar,.ear}" )
         items.should_not be_empty
         items.size.should eql 3
-        items.should include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar" )
-        items.should include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive3.ear" )
-        items.should include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive4.zip" )
+        items.should     include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar" )
+        items.should     include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive3.ear" )
+        items.should     include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive4.zip" )
+        items.should_not include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive4.txt" )
+      end
+
+      it "should allow for double-star globbing within archives" do
+        #items = Dir.glob( "#{prefix}#{TEST_DATA_DIR}/home/larry/**/*{.zip,.jar,.ear}" )
+        items = Dir.glob( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/**/*.jar" )
+        items.should_not be_empty
+        #items.size.should eql 1
+        items.should     include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar" )
+        items.should     include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/other_lib/subdir/archive6.jar" )
         items.should_not include( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive4.txt" )
       end
     end

@@ -31,6 +31,6 @@ import org.jruby.Ruby;
  */
 public interface RuntimeInitializer {
 	
-	public void initialize(RubyDynamicClassLoader cl, Ruby ruby) throws Exception;
+	public void initialize(Ruby ruby) throws Exception;
 
 }

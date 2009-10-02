@@ -17,10 +17,9 @@ class File
       return nil unless vfs_url
 
       virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+      virtual_file = virtual_file.get_child( child_path ) if child_path
 
-      child = virtual_file.get_child( child_path )
-
-      Time.at( child.getLastModified() / 1000 )
+      Time.at( virtual_file.getLastModified() / 1000 )
     end
 
     def stat(filename)
@@ -30,9 +29,9 @@ class File
       return nil unless vfs_url
 
       virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
-      child = virtual_file.get_child( child_path )
+      virtual_file = virtual_file.get_child( child_path ) if child_path
 
-      VFS::File::Stat.new( child )
+      VFS::File::Stat.new( virtual_file )
     end
 
     def exist?(filename)
@@ -41,10 +40,14 @@ class File
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       return false unless vfs_url
 
-      virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
-      child = virtual_file.get_child( child_path )
-
-      return ( ( ! child.nil? ) && child.exists() )
+      begin
+        virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+        virtual_file = virtual_file.get_child( child_path ) if child_path
+  
+        return ( ( ! virtual_file.nil? ) && virtual_file.exists() )
+      rescue Java::JavaIo::IOException => e
+        return false
+      end
     end
 
     def directory?(filename)
@@ -53,22 +56,32 @@ class File
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       return false unless vfs_url
 
-      virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
-      child = virtual_file.get_child( child_path )
+      puts "directory?(#{filename}) -> #{vfs_url} #{child_path}"
+      begin
+        virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+        virtual_file = virtual_file.get_child( child_path ) if child_path
   
-      return ( ( ! child.nil? ) && ( ! child.isLeaf() ) )
+        return ( ( ! virtual_file.nil? ) && ( ! virtual_file.isLeaf() ) )
+      rescue Java::JavaIo::IOException => e
+        return false
+      end
     end
 
     def file?(filename)
+      puts "File.file?(#{filename})"
       return true if file_without_vfs?( filename )
 
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       return false unless vfs_url
 
-      virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
-      child = virtual_file.get_child( child_path )
+      begin
+        virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+        virtual_file = virtual_file.get_child( child_path ) if child_path
 
-      return ( ( ! child.nil? ) && ( child.isLeaf() ) )
+        return ( ( ! virtual_file.nil? ) && ( virtual_file.isLeaf() ) )
+      rescue Java::JavaIo::IOException => e
+        return false
+      end
     end
 
   end

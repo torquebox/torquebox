@@ -23,17 +23,19 @@ require 'org/torquebox/rails/runtime/deployers/as_logger'
 require 'rubygems'
 require 'vfs'
 
-if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
-  require 'vendor/rails/railties/lib/initializer'
-else
-  require 'rubygems'
-  if ( TORQUEBOX_RAILS_GEM_VERSION.nil? )
-    gem 'rails'
+puts "BEFORE INIT"
+begin
+  if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
+    require 'vendor/rails/railties/lib/initializer'
   else
-    gem 'rails', TORQUEBOX_RAILS_GEM_VERSION
+    require 'rubygems'
+    if ( TORQUEBOX_RAILS_GEM_VERSION.nil? )
+      gem 'rails'
+    else
+      gem 'rails', TORQUEBOX_RAILS_GEM_VERSION
+    end
+    require 'initializer'
   end
-  require 'initializer'
-end
 
 module Rails
   
@@ -93,3 +95,10 @@ if ( Rails::VERSION::MAJOR == 2 )
 end
 
 require 'active_record/version' if defined?( ActiveRecord )
+
+rescue => e
+  puts e.backtrace
+  raise e
+end
+
+puts "AFTER INIT"

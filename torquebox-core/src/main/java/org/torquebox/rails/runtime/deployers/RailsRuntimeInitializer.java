@@ -60,35 +60,21 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 		return this.railsEnv;
 	}
 
-	public void initialize(RubyDynamicClassLoader cl, Ruby ruby) throws Exception {
-		String railsRootPath = railsRoot.toURL().getFile();
-		if (railsRootPath.endsWith("/")) {
-			railsRootPath = railsRootPath.substring(0, railsRootPath.length() - 1);
-		}
-
-		Logger logger = Logger.getLogger(railsRootPath);
+	public void initialize(Ruby ruby) throws Exception {
+		Logger logger = Logger.getLogger(railsRoot.toURL().toExternalForm());
 		IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
 		ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
-		ruby.evalScriptlet(createProlog(railsRootPath));
-
-		RubyArray rubyLoadPath = (RubyArray) ruby.getGlobalVariables().get("$LOAD_PATH");
-
-		List<String> loadPaths = new ArrayList<String>();
-		int len = rubyLoadPath.size();
-		for (int i = 0; i < len; ++i) {
-			String path = (String) rubyLoadPath.get(i);
-			loadPaths.add(path);
-		}
-
-		cl.addLoadPaths(loadPaths);
-
-		//ruby.evalScriptlet(createEpilog());
-		ruby.executeScript(createEpilog(), new URL( railsRoot.toURL(), "torquebox-init.rb" ).toExternalForm() );
+		
+		String scriptLocationBase = new URL( railsRoot.toURL(), "<torquebox-bootstrap>" ).toExternalForm();
+		
+		ruby.executeScript(createProlog(railsRoot.toURL().toExternalForm() ), scriptLocationBase + "-prolog.rb" );
+		ruby.executeScript(createEpilog(), scriptLocationBase + "-epilog.rb" );
 	}
 
 	protected String createProlog(String railsRootPath) {
 		return "RAILS_ROOT=%q(" + railsRootPath + ")\n" + 
 			"RAILS_ENV=%q(" + railsEnv + ")\n"  + 
+			"puts %Q(file is #{__FILE__})\n" +
 			railsGemVersionConfig() + 
 			"require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
 	}
@@ -111,7 +97,11 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 	}
 
 	protected String createEpilog() {
-		return "load %q(config/environment.rb)\n";
+		return "begin\n" +
+		"load %Q(#{RAILS_ROOT}/config/environment.rb)\n" +
+		"rescue => e\n" +
+		" puts e.backtrace\n" +
+		"end";
 	}
 
 }

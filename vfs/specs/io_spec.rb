@@ -3,6 +3,13 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 
 describe "IO extensions for VFS" do
 
+  it "should allow reading of full VFS URLs" do
+    content = IO.read( "vfszip:#{Dir.pwd}/#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar/manifest.txt" ).chomp
+    content.should_not be_nil
+    content.should_not be_empty
+    content.should eql( "This is manifest.txt" )
+  end
+
   [ :absolute, :relative ].each do |style|
     describe "with #{style} paths" do
 
