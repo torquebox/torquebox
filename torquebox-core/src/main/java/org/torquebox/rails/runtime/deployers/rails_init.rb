@@ -26,7 +26,7 @@ require 'vfs'
 puts "BEFORE INIT"
 begin
   if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
-    require 'vendor/rails/railties/lib/initializer'
+    require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
   else
     require 'rubygems'
     if ( TORQUEBOX_RAILS_GEM_VERSION.nil? )
