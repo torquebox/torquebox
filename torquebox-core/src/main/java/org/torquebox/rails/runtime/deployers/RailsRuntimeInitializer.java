@@ -22,16 +22,12 @@
 package org.torquebox.rails.runtime.deployers;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.jboss.virtual.VirtualFile;
 import org.jruby.Ruby;
-import org.jruby.RubyArray;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.ruby.core.runtime.spi.RubyDynamicClassLoader;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 
 public class RailsRuntimeInitializer implements RuntimeInitializer {

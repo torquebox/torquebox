@@ -22,21 +22,15 @@
 package org.torquebox.ruby.core.runtime.deployers;
 
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
-import org.jboss.virtual.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.DefaultRubyRuntimeFactory;
-import org.torquebox.ruby.core.runtime.DefaultRubyDynamicClassLoader;
 import org.torquebox.ruby.core.runtime.RubyRuntimeFactoryProxy;
-import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
 import org.torquebox.ruby.core.runtime.metadata.RubyRuntimeMetaData;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 
@@ -90,14 +84,8 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		factory.setKernel(this.kernel);
 		factory.setApplicationName(unit.getSimpleName());
 
-		try {
-			DefaultRubyDynamicClassLoader classLoader = createClassLoader(unit, metaData);
-			factory.setClassLoader(classLoader);
-			unit.addAttachment(DefaultRubyDynamicClassLoader.class, classLoader);
-		} catch (MalformedURLException e) {
-			throw new DeploymentException(e);
-		}
-
+		ClassLoader classLoader = unit.getClassLoader();
+		factory.setClassLoader(classLoader);
 		unit.addAttachment(RubyRuntimeFactory.class, factory);
 
 		try {
@@ -107,53 +95,6 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 			throw new DeploymentException(e);
 		}
 
-	}
-
-	/**
-	 * Create the dynamic ClassLoader used by the Ruby runtimes for the unit.
-	 * 
-	 * @param unit
-	 *            The deployment unit.
-	 * @param metaData
-	 *            The runtime environment configuration.
-	 * @return The dynamic ClassLoader.
-	 * @throws MalformedURLException
-	 */
-	private DefaultRubyDynamicClassLoader createClassLoader(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData)
-			throws MalformedURLException {
-
-		List<URL> urls = new ArrayList<URL>();
-
-		for (RubyLoadPathMetaData each : metaData.getLoadPaths()) {
-			urls.add(each.getURL());
-		}
-
-		VirtualFile baseDir = metaData.getBaseDir();
-
-		if (baseDir == null) {
-			baseDir = unit.getRoot();
-		}
-
-		ClassLoader parentClassLoader = null;
-
-		try {
-			parentClassLoader = unit.getClassLoader();
-		} catch (IllegalStateException e) {
-			parentClassLoader = getClass().getClassLoader();
-		}
-
-		DefaultRubyDynamicClassLoader classLoader = DefaultRubyDynamicClassLoader.create(unit.getSimpleName(), urls, parentClassLoader,
-				baseDir);
-		return classLoader;
-	}
-
-	@Override
-	public void undeploy(VFSDeploymentUnit unit, RubyRuntimeMetaData deployment) {
-		DefaultRubyDynamicClassLoader cl = unit.getAttachment(DefaultRubyDynamicClassLoader.class);
-
-		if (cl != null) {
-			cl.destroy();
-		}
 	}
 
 }

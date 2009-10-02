@@ -36,7 +36,6 @@ import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
-import org.torquebox.ruby.core.runtime.spi.RubyDynamicClassLoader;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 

@@ -29,7 +29,6 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.ruby.core.runtime.DefaultRubyDynamicClassLoader;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyTypeSpace;
 import org.torquebox.ruby.enterprise.endpoints.metadata.RubyEndpointMetaData;
 import org.torquebox.ruby.enterprise.endpoints.metadata.RubyEndpointsMetaData;
@@ -50,16 +49,13 @@ public class RubyTypeSpaceDeployer extends AbstractSimpleVFSRealDeployer<RubyEnd
 
 		BeanMetaData busMetaData = unit.getAttachment(BeanMetaData.class + "$cxf.bus", BeanMetaData.class);
 
-		DefaultRubyDynamicClassLoader classLoader = unit.getAttachment(DefaultRubyDynamicClassLoader.class);
-		log.info( "Dynamic Class Loader: " + classLoader );
-
 		for (RubyEndpointMetaData endpointMetaData : metaData.getEndpoints() ) {
 			String beanName = getBeanName(unit, endpointMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyTypeSpace.class.getName());
 
 			builder.addPropertyMetaData("rubyPath", "jboss/databinding/" + endpointMetaData.getName() );
 			builder.addPropertyMetaData("wsdlLocation", endpointMetaData.getWsdlLocation());
-			builder.addPropertyMetaData("rubyDynamicClassLoader", classLoader);
+			builder.addPropertyMetaData("classLoader", unit.getClassLoader() );
 			
 			ValueMetaData busInjection = builder.createInject(busMetaData.getName());
 			builder.addPropertyMetaData("bus", busInjection);

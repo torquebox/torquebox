@@ -43,7 +43,6 @@ import org.apache.ws.commons.schema.XmlSchemaComplexType;
 import org.apache.ws.commons.schema.XmlSchemaObject;
 import org.apache.ws.commons.schema.XmlSchemaObjectTable;
 import org.jboss.logging.Logger;
-import org.torquebox.ruby.core.runtime.spi.RubyDynamicClassLoader;
 import org.torquebox.ruby.enterprise.endpoints.databinding.complex.RubyComplexType;
 import org.torquebox.ruby.enterprise.endpoints.databinding.simple.RubyBooleanType;
 import org.torquebox.ruby.enterprise.endpoints.databinding.simple.RubyDateTimeType;
@@ -60,7 +59,7 @@ public class RubyTypeSpace {
 	private URL wsdlLocation;
 
 	private Bus bus;
-	private RubyDynamicClassLoader classLoader;
+	private ClassLoader classLoader;
 
 	private Map<String, Element> schemaList = new HashMap<String, Element>();
 	private Map<QName, RubyType> typesByQName = new HashMap<QName, RubyType>();
@@ -87,11 +86,11 @@ public class RubyTypeSpace {
 		return bus;
 	}
 
-	public void setRubyDynamicClassLoader(RubyDynamicClassLoader classLoader) {
+	public void setClassLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;
 	}
 
-	public RubyDynamicClassLoader getRubyDynamicClassLoader() {
+	public ClassLoader getClassLoader() {
 		return this.classLoader;
 	}
 
@@ -118,7 +117,7 @@ public class RubyTypeSpace {
 
 		log.trace(getRubyClassDefinitions());
 
-		this.classLoader.putFile(rubyPath + ".rb", getRubyClassDefinitions());
+		//this.classLoader.putFile(rubyPath + ".rb", getRubyClassDefinitions());
 	}
 
 	private void initializePrimitiveTypes() {
