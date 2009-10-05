@@ -23,7 +23,6 @@ class Dir
     end
 
     def glob(pattern,flags=nil)
-      puts "Dir.glob(#{pattern})"
       segments = pattern.split( '/' )
 
       base_segments = []
@@ -54,27 +53,14 @@ class Dir
         starting_point = root.get_child( child_path ) unless ( child_path.nil? || child_path == '' )
         return [] if ( starting_point.nil? || ! starting_point.exists? )
         child_path = starting_point.path_name
-        puts "base=#{base}"
-        puts "child_path=#{child_path} #{child_path.nil?}"
-        #puts "differential=#{differential}"
         paths = starting_point.children_recursively( VFS::GlobFilter.new( child_path, matcher ) ).collect{|e| 
-          puts "collect #{e.path_name}"
-          #if ( child_path )
-            path_name = e.path_name
-            result = File.join( base[0..-(child_path.length+1)], path_name )
-            puts "with child to #{result}"
-          #else
-          #  path_name = e.path_name[differential.length..-1]
-          #  result = File.join( base, path_name )
-          #  puts "w/o child to #{result}"
-          #end
+          path_name = e.path_name
+          result = File.join( base[0..-(child_path.length+1)], path_name )
           result
         }
         paths
       rescue Java::JavaIo::IOException => e
         return []
-      rescue => e
-        puts e.backtrace
       end
     end
 

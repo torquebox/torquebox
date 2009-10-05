@@ -33,7 +33,6 @@ module VFS
     end
   
     def accepts(file)
-      puts "#{@regexp} =~ #{file.path_name}"
       !!( file.path_name =~ @regexp )
     end
   end

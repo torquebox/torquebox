@@ -31,6 +31,10 @@ public class SharedPool<T> implements Pool<T> {
 		return this.name;
 	}
 	
+	protected Logger getLog() {
+		return this.log;
+	}
+	
 	public void setFactory(InstanceFactory<T> factory) {
 		this.factory = factory;
 	}

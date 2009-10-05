@@ -23,7 +23,6 @@ require 'org/torquebox/rails/runtime/deployers/as_logger'
 require 'rubygems'
 require 'vfs'
 
-puts "BEFORE INIT"
 begin
   if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
     require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
@@ -40,7 +39,7 @@ begin
 module Rails
   
   def self.vendor_rails?
-    true
+    ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
   end
   
   class Configuration
@@ -48,6 +47,7 @@ module Rails
       @root_path = RAILS_ROOT
     end
     
+=begin
     def framework_paths
       paths = %w(railties railties/lib activesupport/lib)
       paths << 'actionpack/lib' if frameworks.include? :action_controller or frameworks.include? :action_view
@@ -57,10 +57,10 @@ module Rails
       end
 
       paths.map { |dir| 
-        puts "FWP #{framework_root_path}/#{dir}" 
         "#{framework_root_path}/#{dir}" 
       }
     end
+=end
 	end
 
 	class Initializer
@@ -100,5 +100,3 @@ rescue => e
   puts e.backtrace
   raise e
 end
-
-puts "AFTER INIT"

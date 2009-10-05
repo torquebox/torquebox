@@ -15,7 +15,6 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -23,8 +22,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.ruby.enterprise.client.RubyClient;
 
 public class RubyTaskQueueClient {
-
-	private static final Logger log = Logger.getLogger(RubyTaskQueueClient.class);
 
 	private String destinationName;
 

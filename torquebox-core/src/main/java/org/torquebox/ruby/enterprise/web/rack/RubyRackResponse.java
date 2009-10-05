@@ -23,7 +23,6 @@ package org.torquebox.ruby.enterprise.web.rack;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -31,7 +30,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackResponse;
 
 public class RubyRackResponse implements RackResponse {
-	private static final Logger log = Logger.getLogger( RubyRackResponse.class );
 	private IRubyObject rackResponse;
 
 	public RubyRackResponse(IRubyObject rackResponse) {

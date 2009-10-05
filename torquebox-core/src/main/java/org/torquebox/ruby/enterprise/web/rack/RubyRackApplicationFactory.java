@@ -22,7 +22,6 @@
 package org.torquebox.ruby.enterprise.web.rack;
 
 import org.jboss.beans.metadata.api.annotations.Create;
-import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
@@ -30,7 +29,6 @@ import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
 
 public class RubyRackApplicationFactory implements RackApplicationFactory {
 	
-	private static final Logger log = Logger.getLogger( RubyRackApplicationFactory.class );
 	private RubyRuntimeFactory runtimeFactory;
 	private String rackUpScript;
 

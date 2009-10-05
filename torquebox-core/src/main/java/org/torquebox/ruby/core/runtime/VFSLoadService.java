@@ -11,6 +11,8 @@ import org.jboss.virtual.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyString;
 import org.jruby.runtime.load.ExternalScript;
+import org.jruby.runtime.load.JarredScript;
+import org.jruby.runtime.load.JavaCompiledScript;
 import org.jruby.runtime.load.Library;
 import org.jruby.runtime.load.LoadService;
 import org.jruby.runtime.load.LoadServiceResource;
@@ -25,7 +27,7 @@ public class VFSLoadService extends LoadService {
 
 	@Override
 	public void load(String file, boolean wrap) {
-		log.info("load(" + file + ", " + wrap + ")");
+		log.debug("load(" + file + ", " + wrap + ")");
 
 		if (!runtime.getProfile().allowLoad(file)) {
 			throw runtime.newLoadError("No such file to load -- " + file);
@@ -54,13 +56,13 @@ public class VFSLoadService extends LoadService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean require(String file) {
-		log.info("require(" + file + ")");
-		if (file.startsWith("vfs")) {
+		log.debug("require(" + file + ")");
+		if (file.startsWith("vfszip:") || file.startsWith( "vfsfile:" ) ) {
 			VirtualFile virtualFile = null;
 			for (String suffix : LoadService.SuffixType.Both.getSuffixes()) {
 				try {
 					String fileUrl = file + suffix;
-					log.info("try [" + fileUrl + "]");
+					log.debug("try [" + fileUrl + "]");
 					virtualFile = VFS.getRoot(new URL(fileUrl));
 					if (virtualFile != null) {
 						break;
@@ -95,13 +97,28 @@ public class VFSLoadService extends LoadService {
 		}
 		return super.require(file);
 	}
+	
+    protected Library createLibrary(String file, LoadServiceResource resource) {
+        if (resource == null) {
+            return null;
+        }
+        if (file.contains(".so")) {
+            throw runtime.newLoadError("JRuby does not support .so libraries from filesystem");
+        } else if (file.endsWith(".jar")) {
+            return new JarredScript(resource);
+        } else if (file.endsWith(".class")) {
+            return new JavaCompiledScript(resource);
+        } else {
+            return new ExternalScript(resource, file);
+        }      
+    }
 
 	private Library findLibrary(String file) throws MalformedURLException, URISyntaxException {
 
-		if (file.startsWith("vfszip")) {
+		if (file.startsWith("vfszip:") || file.startsWith( "vfsfile:" )) {
 			try {
 				VirtualFile virtualFile = VFS.getRoot(new URL(file));
-				log.info("findLibrary() ==> " + virtualFile.toURL());
+				log.debug("findLibrary() " + virtualFile.toURL());
 				LoadServiceResource resource = new LoadServiceResource(virtualFile.toURL(), virtualFile.toURL()
 						.toExternalForm());
 				return new ExternalScript(resource, virtualFile.getName());
@@ -113,14 +130,14 @@ public class VFSLoadService extends LoadService {
 				String eachPath = (String) eachObj;
 				URL url = makeUrl(eachPath, file);
 
-				log.info("try [" + url + "]");
+				log.debug("try [" + url + "]");
 				if (url != null) {
 					try {
 						VirtualFile virtualFile = VFS.getRoot(url);
-						log.info("findLibrary() ==> " + virtualFile.toURL());
+						log.debug("findLibrary() ==> " + virtualFile.toURL());
 						LoadServiceResource resource = new LoadServiceResource(virtualFile.toURL(), virtualFile.toURL()
 								.toExternalForm());
-						return new ExternalScript(resource, virtualFile.getName());
+						return createLibrary( virtualFile.getName(), resource );
 					} catch (IOException e) {
 						// ignore
 					}
@@ -134,7 +151,7 @@ public class VFSLoadService extends LoadService {
 
 	private URL makeUrl(String base, String path) throws MalformedURLException {
 
-		if (base.startsWith("vfs")) {
+		if (base.startsWith("vfszip:") || base.startsWith( "vfsfile:" )) {
 			return new URL(new URL(base), path);
 		}
 

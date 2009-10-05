@@ -21,8 +21,6 @@
  */
 package org.torquebox.ruby.core.runtime.deployers;
 
-import java.net.MalformedURLException;
-
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
