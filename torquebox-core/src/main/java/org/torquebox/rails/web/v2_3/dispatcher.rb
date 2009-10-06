@@ -1,3 +1,4 @@
+require 'action_controller/dispatcher'
 
 module TorqueBox
   module Rails

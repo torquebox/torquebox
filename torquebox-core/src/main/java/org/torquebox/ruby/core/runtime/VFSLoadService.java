@@ -57,7 +57,7 @@ public class VFSLoadService extends LoadService {
 	@Override
 	public boolean require(String file) {
 		log.debug("require(" + file + ")");
-		if (file.startsWith("vfszip:") || file.startsWith( "vfsfile:" ) ) {
+		if (file.startsWith("vfszip:") || file.startsWith("vfsfile:")) {
 			VirtualFile virtualFile = null;
 			for (String suffix : LoadService.SuffixType.Both.getSuffixes()) {
 				try {
@@ -97,25 +97,25 @@ public class VFSLoadService extends LoadService {
 		}
 		return super.require(file);
 	}
-	
-    protected Library createLibrary(String file, LoadServiceResource resource) {
-        if (resource == null) {
-            return null;
-        }
-        if (file.contains(".so")) {
-            throw runtime.newLoadError("JRuby does not support .so libraries from filesystem");
-        } else if (file.endsWith(".jar")) {
-            return new JarredScript(resource);
-        } else if (file.endsWith(".class")) {
-            return new JavaCompiledScript(resource);
-        } else {
-            return new ExternalScript(resource, file);
-        }      
-    }
+
+	protected Library createLibrary(String file, LoadServiceResource resource) {
+		if (resource == null) {
+			return null;
+		}
+		if (file.contains(".so")) {
+			throw runtime.newLoadError("JRuby does not support .so libraries from filesystem");
+		} else if (file.endsWith(".jar")) {
+			return new JarredScript(resource);
+		} else if (file.endsWith(".class")) {
+			return new JavaCompiledScript(resource);
+		} else {
+			return new ExternalScript(resource, file);
+		}
+	}
 
 	private Library findLibrary(String file) throws MalformedURLException, URISyntaxException {
 
-		if (file.startsWith("vfszip:") || file.startsWith( "vfsfile:" )) {
+		if (file.startsWith("vfszip:") || file.startsWith("vfsfile:")) {
 			try {
 				VirtualFile virtualFile = VFS.getRoot(new URL(file));
 				log.debug("findLibrary() " + virtualFile.toURL());
@@ -137,12 +137,19 @@ public class VFSLoadService extends LoadService {
 						log.debug("findLibrary() ==> " + virtualFile.toURL());
 						LoadServiceResource resource = new LoadServiceResource(virtualFile.toURL(), virtualFile.toURL()
 								.toExternalForm());
-						return createLibrary( virtualFile.getName(), resource );
+						return createLibrary(virtualFile.getName(), resource);
 					} catch (IOException e) {
 						// ignore
 					}
 				}
 			}
+		}
+
+		ClassLoader classLoader = runtime.getInstanceConfig().getLoader();
+		URL resourceUrl = classLoader.getResource(file);
+		if (resourceUrl != null) {
+			LoadServiceResource resource = new LoadServiceResource(resourceUrl, resourceUrl.toExternalForm());
+			return createLibrary(resourceUrl.getPath(), resource);
 		}
 
 		return null;
@@ -151,7 +158,7 @@ public class VFSLoadService extends LoadService {
 
 	private URL makeUrl(String base, String path) throws MalformedURLException {
 
-		if (base.startsWith("vfszip:") || base.startsWith( "vfsfile:" )) {
+		if (base.startsWith("vfszip:") || base.startsWith("vfsfile:")) {
 			return new URL(new URL(base), path);
 		}
 

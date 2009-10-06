@@ -21,6 +21,8 @@
  */
 package org.torquebox.rails.runtime.deployers;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
@@ -63,17 +65,29 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 		
 		String scriptLocationBase = new URL( railsRoot.toURL(), "<torquebox-bootstrap>" ).toExternalForm();
 		
-		ruby.executeScript(createProlog(railsRoot.toURL().toExternalForm() ), scriptLocationBase + "-prolog.rb" );
-		ruby.executeScript(createEpilog(), scriptLocationBase + "-epilog.rb" );
+		ruby.executeScript(createBoot(railsRoot), scriptLocationBase + "-boot.rb" );
 	}
 
-	protected String createProlog(String railsRootPath) {
+	protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
+		return "RAILS_ROOT=%q(" + railsRoot.toURL().toExternalForm() + ")\n" +
+		"require %q(org/torquebox/rails/runtime/deployers/boot)\n";
+	}
+	/*
+	protected String createBoot(String railsRootPath) {
 		return "RAILS_ROOT=%q(" + railsRootPath + ")\n" + 
 			"RAILS_ENV=%q(" + railsEnv + ")\n"  + 
-			"puts %Q(file is #{__FILE__})\n" +
-			railsGemVersionConfig() + 
-			"require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
+			"puts %Q(RAILS_ROOT=#{RAILS_ROOT})\n" +
+			"require %q(rubygems)\n" +
+			"require %q(vfs)\n" +
+			"begin\n" +
+			"  load %Q(#{RAILS_ROOT}/config/boot.rb)\n" +
+			"rescue => e\n" +
+			"  puts e.backtrace\n" +
+			"end\n";
+			//railsGemVersionConfig() + 
+			//"require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
 	}
+	*/
 
 	protected String railsGemVersionConfig() {
 		StringBuilder config = new StringBuilder();
@@ -90,14 +104,6 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 		}
 		
 		return config.toString();
-	}
-
-	protected String createEpilog() {
-		return "begin\n" +
-		"load %Q(#{RAILS_ROOT}/config/environment.rb)\n" +
-		"rescue => e\n" +
-		" puts e.backtrace\n" +
-		"end";
 	}
 
 }

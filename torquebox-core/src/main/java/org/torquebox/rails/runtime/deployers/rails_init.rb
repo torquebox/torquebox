@@ -23,18 +23,19 @@ require 'org/torquebox/rails/runtime/deployers/as_logger'
 require 'rubygems'
 require 'vfs'
 
-begin
-  if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
-    require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
+puts "LOAD STYLE #{TORQUEBOX_RAILS_LOAD_STYLE}"
+
+if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
+  require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
+else
+  require 'rubygems'
+  if ( TORQUEBOX_RAILS_GEM_VERSION.nil? )
+    gem 'rails'
   else
-    require 'rubygems'
-    if ( TORQUEBOX_RAILS_GEM_VERSION.nil? )
-      gem 'rails'
-    else
-      gem 'rails', TORQUEBOX_RAILS_GEM_VERSION
-    end
-    require 'initializer'
+    gem 'rails', TORQUEBOX_RAILS_GEM_VERSION
   end
+  require 'initializer'
+end
 
 module Rails
   
@@ -43,38 +44,23 @@ module Rails
   end
   
   class Configuration
+=begin
   	def set_root_path!
       @root_path = RAILS_ROOT
-    end
-    
-=begin
-    def framework_paths
-      paths = %w(railties railties/lib activesupport/lib)
-      paths << 'actionpack/lib' if frameworks.include? :action_controller or frameworks.include? :action_view
-
-      [:active_record, :action_mailer, :active_resource, :action_web_service].each do |framework|
-        paths << "#{framework.to_s.gsub('_', '')}/lib" if frameworks.include? framework
-      end
-
-      paths.map { |dir| 
-        "#{framework_root_path}/#{dir}" 
-      }
     end
 =end
 	end
 
 	class Initializer
-  	def set_load_path
-      load_paths = configuration.load_paths + configuration.framework_paths
-    	load_paths.reverse_each do |dir| 
-        $LOAD_PATH.unshift(dir)
-    	end
-    	$LOAD_PATH.uniq!
-  	end
-  	#def initialize_logger
-  	  #logger = ActiveSupport::BufferedLogger.new( JBoss::Rails::ASLogger.new( $JBOSS_RAILS_LOGGER ) )
-      #silence_warnings { Object.const_set "RAILS_DEFAULT_LOGGER", logger }
-  	#end
+    def load_application_initializers
+      puts "load_application_initializers"
+      if gems_dependencies_loaded
+        Dir["#{configuration.root_path}/config/initializers/**/*.rb"].sort.each do |initializer|
+          puts "loading application initializer #{initializer}"
+          load(initializer)
+        end
+      end
+    end
 	end
   
 end
@@ -96,7 +82,8 @@ end
 
 require 'active_record/version' if defined?( ActiveRecord )
 
+begin
+  load "#{RAILS_ROOT}/config/environment.rb"
 rescue => e
-  puts e.backtrace
-  raise e
+ puts e.backtrace
 end
