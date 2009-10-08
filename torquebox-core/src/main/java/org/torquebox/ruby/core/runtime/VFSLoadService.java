@@ -35,7 +35,7 @@ public class VFSLoadService extends LoadService {
 
 		Library library = null;
 		try {
-			library = findLibrary(file);
+			library = findLibraryExactly(file);
 		} catch (MalformedURLException e) {
 			throw runtime.newLoadError("URL error -- " + file);
 		} catch (URISyntaxException e) {
@@ -57,52 +57,57 @@ public class VFSLoadService extends LoadService {
 	@Override
 	public boolean require(String file) {
 		log.debug("require(" + file + ")");
-		if (file.startsWith("vfszip:") || file.startsWith("vfsfile:")) {
-			VirtualFile virtualFile = null;
-			for (String suffix : LoadService.SuffixType.Both.getSuffixes()) {
-				try {
-					String fileUrl = file + suffix;
-					log.debug("try [" + fileUrl + "]");
-					virtualFile = VFS.getRoot(new URL(fileUrl));
-					if (virtualFile != null) {
-						break;
-					}
-				} catch (MalformedURLException e) {
-					// ignore
-				} catch (IOException e) {
-					// ignore
-				}
+		
+		RubyString loadNameRubyString = RubyString.newString(runtime, file);
+		if (loadedFeaturesInternal.contains(loadNameRubyString)) {
+			log.info( "already loaded [" + file + "]" );
+			return false;
+		}
+		try {
+			return super.require(file);
+		} catch (Exception e) {
+			//log.info("error during super.require(...) " + e.getClass());
+			// ignore
+		}
+		log.debug("not found in super.require(...)");
+
+		Library library = null;
+
+		for (String suffix : LoadService.SuffixType.Both.getSuffixes()) {
+			String path = file + suffix;
+			log.debug("try [" + path + "]");
+			try {
+				library = findLibraryExactly(file + suffix);
+			} catch (MalformedURLException e) {
+				// ignore
+			} catch (URISyntaxException e) {
+				// ingore
 			}
-			if (virtualFile != null) {
-				try {
-					LoadServiceResource resource = new LoadServiceResource(virtualFile.toURL(), virtualFile.toURL()
-							.toExternalForm());
-					Library library = new ExternalScript(resource, virtualFile.getName());
-					synchronized (loadedFeaturesInternal) {
-						RubyString loadNameRubyString = RubyString.newString(runtime, file);
-						if (loadedFeaturesInternal.contains(loadNameRubyString)) {
-							return false;
-						} else {
-							loadedFeaturesInternal.add(loadNameRubyString);
-						}
-					}
-					library.load(runtime, false);
-					return true;
-				} catch (IOException e) {
-					throw runtime.newLoadError("IO error -- " + file);
-				} catch (URISyntaxException e) {
-					throw runtime.newLoadError("URL error -- " + file);
-				}
+			if (library != null) {
+				break;
 			}
 		}
-		return super.require(file);
+
+		log.debug("library=" + library);
+		if (library != null) {
+			loadedFeaturesInternal.add(loadNameRubyString);
+			try {
+				log.info("loading " + library);
+				library.load(runtime, false);
+				return true;
+			} catch (IOException e) {
+				throw runtime.newLoadError("IO error -- " + file);
+			}
+		}
+
+		return false;
 	}
 
 	protected Library createLibrary(String file, LoadServiceResource resource) {
 		if (resource == null) {
 			return null;
 		}
-		if (file.contains(".so")) {
+		if (file.endsWith(".so")) {
 			throw runtime.newLoadError("JRuby does not support .so libraries from filesystem");
 		} else if (file.endsWith(".jar")) {
 			return new JarredScript(resource);
@@ -113,17 +118,19 @@ public class VFSLoadService extends LoadService {
 		}
 	}
 
-	private Library findLibrary(String file) throws MalformedURLException, URISyntaxException {
+	private Library findLibraryExactly(String file) throws MalformedURLException, URISyntaxException {
 
+		log.info("findLibraryExactly(" + file + ")");
 		if (file.startsWith("vfszip:") || file.startsWith("vfsfile:")) {
 			try {
 				VirtualFile virtualFile = VFS.getRoot(new URL(file));
 				log.debug("findLibrary() " + virtualFile.toURL());
 				LoadServiceResource resource = new LoadServiceResource(virtualFile.toURL(), virtualFile.toURL()
 						.toExternalForm());
-				return new ExternalScript(resource, virtualFile.getName());
+				// return new ExternalScript(resource, virtualFile.getName());
+				return createLibrary(virtualFile.getName(), resource);
 			} catch (IOException e) {
-				throw runtime.newLoadError("IO error -- " + file);
+				return null;
 			}
 		} else {
 			for (Object eachObj : this.loadPath) {
