@@ -8,6 +8,7 @@ module VFS
     while ( cur != '.' && cur != '/' )
       if ( ::File.exist_without_vfs?( cur ) )
          
+        puts "isArchive=#{Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( ::File.basename( cur ) )}"
         return nil unless Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( ::File.basename( cur ) )
      
         child_path = path[cur.length..-1]

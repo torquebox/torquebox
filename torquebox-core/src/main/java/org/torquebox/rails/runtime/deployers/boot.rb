@@ -21,14 +21,20 @@ class Class
      	  self.class_eval do
           alias_method :load_application_initializers_before_torquebox, :load_application_initializers      	    
           def load_application_initializers()
+            puts "about to load application initializers"
             load_application_initializers_before_torquebox()              
+            puts "completed to load application initializers"
             def (ActionController::SessionManagement::ClassMethods).raw_session_store()
               return class_variable_get( :@@session_store ) if class_variable_defined?( :@@session_store )
               nil
             end
+            puts "raw_session_store=#{ActionController::SessionManagement::ClassMethods.raw_session_store}"
             if ( ActionController::SessionManagement::ClassMethods.raw_session_store.nil? )
+              puts "Setting to servlet store"
               require 'org/torquebox/rails/web/v2_3/servlet_session'
               ActionController::Base.session_store = JBoss::Session::Servlet
+            else
+              puts "Using session store #{ActionController::Base.session_store}"
             end
        	  end
         end
