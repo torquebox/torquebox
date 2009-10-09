@@ -20,7 +20,7 @@ namespace :torquebox do
     namespace :deploy do
       desc "Deploy the bundled Rails app"
       task :bundle=>[ 'torquebox:rails:bundle' ] do
-        bundle_name = File.basename( RAILS_ROOT ) + '.jar'
+        bundle_name = File.basename( RAILS_ROOT ) + '.rails'
         src  = "#{RAILS_ROOT}/#{bundle_name}"
         dest = "#{ENV['JBOSS_HOME']}/server/default/deploy/"
         puts "deploying #{bundle_name}"
@@ -31,7 +31,7 @@ namespace :torquebox do
     desc "Bundle the Rails app"
     task :bundle do
       puts "Bundling #{RAILS_ROOT}"
-      bundle_name = File.basename( RAILS_ROOT ) + '.jar'
+      bundle_name = File.basename( RAILS_ROOT ) + '.rails'
       FileUtils.rm_rf( bundle_name )
   
       skip_files = [
