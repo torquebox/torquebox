@@ -78,7 +78,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData) throws DeploymentException {
-		log.info( "Deploying Ruby runtime factory for " + unit.getRelativePath() ) ;
+		log.info("Create RubyRuntimeFactory: " + unit.getSimpleName());
 		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory(metaData.getRuntimeInitializer());
 		factory.setKernel(this.kernel);
 		factory.setApplicationName(unit.getSimpleName());
@@ -88,7 +88,10 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		unit.addAttachment(RubyRuntimeFactory.class, factory);
 
 		try {
+			long startTime = System.currentTimeMillis();
 			Ruby ruby = factory.create();
+			long endTime = System.currentTimeMillis();
+			log.info( "Ruby runtime initialization took " + ((endTime-startTime)/1000) + "s" );
 			unit.addAttachment(Ruby.class, ruby);
 		} catch (Exception e) {
 			throw new DeploymentException(e);
