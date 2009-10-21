@@ -68,32 +68,17 @@ public class VFSLoadService extends LoadService {
 		return null;
 	}
 
-	private Library findBuiltinLibrary(SearchState state, String baseName, SuffixType suffixType) {
-		for (String suffix : suffixType.getSuffixes()) {
-			String namePlusSuffix = baseName + suffix;
-			if (builtinLibraries.containsKey(namePlusSuffix)) {
-				state.loadName = namePlusSuffix;
-				return builtinLibraries.get(namePlusSuffix);
-			}
-		}
-		return null;
-	}
-
 	private Library findLibraryWithoutCWD(SearchState state, String baseName, SuffixType suffixType) {
 		Library library = null;
 
 		switch (suffixType) {
 		case Both:
 			library = findBuiltinLibrary(state, baseName, SuffixType.Source);
-			if (library == null)
-				library = createLibrary(state, tryResourceFromLoadPathOrURL(state, baseName, SuffixType.Source));
-			// If we fail to find as a normal Ruby script, we try to find as an
-			// extension,
+			if (library == null) library = createLibrary(state, tryResourceFromLoadPathOrURL(state, baseName, SuffixType.Source));
+			// If we fail to find as a normal Ruby script, we try to find as an extension,
 			// checking for a builtin first.
-			if (library == null)
-				library = findBuiltinLibrary(state, baseName, SuffixType.Extension);
-			if (library == null)
-				library = createLibrary(state, tryResourceFromLoadPathOrURL(state, baseName, SuffixType.Extension));
+			if (library == null) library = findBuiltinLibrary(state, baseName, SuffixType.Extension);
+			if (library == null) library = createLibrary(state, tryResourceFromLoadPathOrURL(state, baseName, SuffixType.Extension));
 			break;
 		case Source:
 		case Extension:
@@ -163,34 +148,6 @@ public class VFSLoadService extends LoadService {
 						break Outer; // end suffix iteration
 					}
 				}
-			}
-		}
-
-		return foundResource;
-	}
-
-	private LoadServiceResource tryResourceFromCWD(SearchState state, String baseName, SuffixType suffixType)
-			throws RaiseException {
-		LoadServiceResource foundResource = null;
-
-		for (String suffix : suffixType.getSuffixes()) {
-			String namePlusSuffix = baseName + suffix;
-			// check current directory; if file exists, retrieve URL and return
-			// resource
-			try {
-				JRubyFile file = JRubyFile.create(runtime.getCurrentDirectory(), RubyFile.expandUserPath(runtime
-						.getCurrentContext(), namePlusSuffix));
-				if (file.isFile() && file.isAbsolute()) {
-					try {
-						foundResource = new LoadServiceResource(file.toURI().toURL(), namePlusSuffix);
-						state.loadName = namePlusSuffix;
-						break;
-					} catch (MalformedURLException e) {
-						throw runtime.newIOErrorFromException(e);
-					}
-				}
-			} catch (IllegalArgumentException illArgEx) {
-			} catch (SecurityException secEx) {
 			}
 		}
 
