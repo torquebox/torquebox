@@ -487,6 +487,59 @@ context: /</screen></para>
         within the app.</para>
       </section>
     </section>
+
+    <section>
+      <title>Deployment using a bundle</title>
+
+      <para>Rails applications may be deployed as atomic
+      <emphasis>bundles</emphasis>. A bundle is simply an archive of the
+      application's directory. The TorqueBox server deploys bundles created
+      with the Java <command>jar</command> tool. Rake tasks are provided to
+      assist with the creation and deployment of bundles.</para>
+
+      <section>
+        <title>Creating a bundle</title>
+
+        <para>The <command>torquebox:rails:bundle</command> rake task may be
+        used to create a bundle of the application. The task invokes the Java
+        <command>jar</command> commandline tool to bundle up the project
+        directory, <emphasis>excluding</emphasis> <filename>tmp/</filename>
+        and <filename>log/</filename> directories.</para>
+
+        <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:bundle</command></screen>The
+        resulting bundle will be placed at the root of the application, as a
+        file named
+        <filename><replaceable>myapp</replaceable>.rails</filename>. To
+        inspect the contents, you may use the <command>jar</command>
+        tool.</para>
+
+        <para><screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails
+<computeroutput>META-INF/
+META-INF/MANIFEST.MF
+app/
+app/controllers/
+app/controllers/application_controller.rb
+...</computeroutput></filename></screen></para>
+      </section>
+
+      <section>
+        <title>Deploying a bundle</title>
+
+        <para>To deploy a bundle, simply copy it to the
+        <filename>deploy/</filename> directory of the server. The
+        <command>torquebox:rails:deploy:bundle</command> rake task may be used
+        to both create and deploy a bundle.</para>
+
+        <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:deploy:bundle</command></screen>If
+        you wish to deploy manually, a command similar to the following may be
+        used</para>
+
+        <para><screen>$ <command>rake</command> <command>torquebox:rails:bundle</command>
+$ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filename> <filename><envar>$JBOSS_HOME</envar>/server/default/deploy/</filename></screen>If
+        you redeploy a bundle, the server will remove the previous version,
+        and hot-redeploy the bundle just copied.</para>
+      </section>
+    </section>
   </section>
 
   <section>
