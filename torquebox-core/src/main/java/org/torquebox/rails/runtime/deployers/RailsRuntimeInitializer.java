@@ -31,8 +31,9 @@ import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
+import org.torquebox.ruby.enterprise.web.rack.RackRuntimeInitializer;
 
-public class RailsRuntimeInitializer implements RuntimeInitializer {
+public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
 	private VirtualFile railsRoot;
 	private String railsEnv;
@@ -44,6 +45,7 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 	}
 	
 	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems, String versionSpec) {
+		super( railsRoot, railsEnv );
 		this.railsRoot = railsRoot;
 		this.railsEnv = railsEnv;
 		this.loadUsingGems = loadUsingGems;
@@ -59,6 +61,7 @@ public class RailsRuntimeInitializer implements RuntimeInitializer {
 	}
 
 	public void initialize(Ruby ruby) throws Exception {
+		super.initialize(ruby);
 		Logger logger = Logger.getLogger(railsRoot.toURL().toExternalForm());
 		IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
 		ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
