@@ -21,6 +21,9 @@
  */
 package org.torquebox.ruby.core.runtime.deployers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
@@ -29,6 +32,7 @@ import org.jboss.kernel.Kernel;
 import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.DefaultRubyRuntimeFactory;
 import org.torquebox.ruby.core.runtime.RubyRuntimeFactoryProxy;
+import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
 import org.torquebox.ruby.core.runtime.metadata.RubyRuntimeMetaData;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 
@@ -80,6 +84,13 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 	public void deploy(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData) throws DeploymentException {
 		log.info("Create RubyRuntimeFactory: " + unit.getSimpleName());
 		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory(metaData.getRuntimeInitializer());
+		List<String> loadPaths = new ArrayList<String>();
+		
+		for ( RubyLoadPathMetaData loadPath : metaData.getLoadPaths() ) {
+			loadPaths.add( loadPath.getURL().toExternalForm() );
+		}
+		
+		factory.setLoadPaths( loadPaths );
 		factory.setKernel(this.kernel);
 		factory.setApplicationName(unit.getSimpleName());
 

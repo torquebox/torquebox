@@ -61,7 +61,7 @@ public class BaseRubyMessageListener implements MessageListener {
 	}
 
 	private void loadSupport(Ruby ruby) {
-		String load = "load %q(torquebox/queues/base.rb)\n";
+		String load = "require %q(torquebox/queues/base)\n";
 		ruby.evalScriptlet(load);
 	}
 	
@@ -72,7 +72,6 @@ public class BaseRubyMessageListener implements MessageListener {
 		if (isInjectable) {
 			String loggerName = queueClassName.replaceAll("::", ".");
 			Logger logger = Logger.getLogger(loggerName);
-			log.info( "injecting " + logger );
 			JavaEmbedUtils.invokeMethod(rubyQueue.getRuntime(), rubyQueue, "log=", new Object[] { logger }, void.class);
 		} else {
 			log.warn("Unable to inject log into " + queueClassName);

@@ -27,20 +27,20 @@ module VFS
       end
       
       regexp_str = regexp_segments.join
-      puts "regexp_str(1) [#{regexp_str}]"
+      ##puts "regexp_str(1) [#{regexp_str}]"
       if ( @child_path && @child_path != '' )
         regexp_str = ::File.join( "^#{@child_path}", "#{regexp_str}$" )
       else
         regexp_str = "^#{regexp_str}$"
       end
-      puts "regexp_str(2) [#{regexp_str}]"
+      #puts "regexp_str(2) [#{regexp_str}]"
       @regexp = Regexp.new( regexp_str )
     end
   
     def accepts(file)
-      puts "accepts(#{file.path_name}) vs #{@regexp}"
+      #puts "accepts(#{file.path_name}) vs #{@regexp}"
       acceptable = ( !!( file.path_name =~ @regexp ) )
-      puts "   -> #{acceptable}"
+      #puts "   -> #{acceptable}"
       !!( file.path_name =~ @regexp )
     end
   end

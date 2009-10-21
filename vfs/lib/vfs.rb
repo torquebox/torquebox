@@ -8,7 +8,7 @@ module VFS
     while ( cur != '.' && cur != '/' )
       if ( ::File.exist_without_vfs?( cur ) )
          
-        puts "isArchive=#{Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( ::File.basename( cur ) )}"
+        #puts "isArchive=#{Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( ::File.basename( cur ) )}"
         return nil unless Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( ::File.basename( cur ) )
      
         child_path = path[cur.length..-1]
@@ -38,5 +38,6 @@ require 'vfs/ext/vfs'
 require 'vfs/ext/io'
 require 'vfs/ext/file'
 require 'vfs/ext/dir'
+#require 'vfs/ext/kernel'
 
 

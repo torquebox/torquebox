@@ -30,7 +30,6 @@ import org.jboss.virtual.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 import org.torquebox.ruby.enterprise.web.rack.RackRuntimeInitializer;
 
 public class RailsRuntimeInitializer extends RackRuntimeInitializer {
@@ -72,25 +71,10 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 	}
 
 	protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
-		return "RAILS_ROOT=%q(" + railsRoot.toURL().toExternalForm() + ")\n" +
+		return "RAILS_ROOT=RACK_ROOT\n" +
+		 "RAILS_ENV=RACK_ENV\n" +
 		"require %q(org/torquebox/rails/runtime/deployers/boot)\n";
 	}
-	/*
-	protected String createBoot(String railsRootPath) {
-		return "RAILS_ROOT=%q(" + railsRootPath + ")\n" + 
-			"RAILS_ENV=%q(" + railsEnv + ")\n"  + 
-			"puts %Q(RAILS_ROOT=#{RAILS_ROOT})\n" +
-			"require %q(rubygems)\n" +
-			"require %q(vfs)\n" +
-			"begin\n" +
-			"  load %Q(#{RAILS_ROOT}/config/boot.rb)\n" +
-			"rescue => e\n" +
-			"  puts e.backtrace\n" +
-			"end\n";
-			//railsGemVersionConfig() + 
-			//"require %q(org/torquebox/rails/runtime/deployers/rails_init.rb)\n";
-	}
-	*/
 
 	protected String railsGemVersionConfig() {
 		StringBuilder config = new StringBuilder();

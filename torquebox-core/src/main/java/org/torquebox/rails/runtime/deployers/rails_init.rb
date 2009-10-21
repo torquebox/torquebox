@@ -23,8 +23,6 @@ require 'org/torquebox/rails/runtime/deployers/as_logger'
 require 'rubygems'
 require 'vfs'
 
-puts "LOAD STYLE #{TORQUEBOX_RAILS_LOAD_STYLE}"
-
 if ( TORQUEBOX_RAILS_LOAD_STYLE == :vendor )
   require "#{RAILS_ROOT}/vendor/rails/railties/lib/initializer"
 else
@@ -53,10 +51,8 @@ module Rails
 
 	class Initializer
     def load_application_initializers
-      puts "load_application_initializers"
       if gems_dependencies_loaded
         Dir["#{configuration.root_path}/config/initializers/**/*.rb"].sort.each do |initializer|
-          puts "loading application initializer #{initializer}"
           load(initializer)
         end
       end

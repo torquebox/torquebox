@@ -54,12 +54,10 @@ module TorqueBox
   	
     # A safe Kernel::load, issuing the hooks depending on the results
     def safe_load(file, mtime, stderr = $stderr)
-      puts "safe_load(#{file})"
    	  if ( file =~ /app.rb/ )
         ::Sinatra::Application.reset! 
       end
       load(file)
-      stderr.puts "#{self.class}: reloaded `#{file}'"
       file
     rescue LoadError, SyntaxError => ex
       stderr.puts ex

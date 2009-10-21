@@ -1,6 +1,6 @@
 require 'rake/gempackagetask'
 
-version = ENV['project.version'] || ENV['VERSION'] || '0.0.0'
+version = ENV['project.version'] || ENV['VERSION'] || '1.0.0'
 
 if ( version =~ /^([0-9]+)\.([0-9]+)\.([0-9]+)(\..*)?/ )
   PROJECT_VERSION="#{$1}.#{$2}.#{$3}"

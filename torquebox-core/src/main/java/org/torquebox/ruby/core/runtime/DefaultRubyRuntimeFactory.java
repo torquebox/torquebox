@@ -36,6 +36,7 @@ import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
+import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 
@@ -47,6 +48,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	private ClassLoader classLoader;
 	private ClassCache<?> classCache;
 	private String applicationName;
+	private List<String> loadPaths;
 
 	public DefaultRubyRuntimeFactory() {
 		this(null);
@@ -129,6 +131,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 		List<String> loadPath = new ArrayList<String>();
 		loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
+		loadPath.addAll( this.loadPaths );
 
 		Ruby runtime = JavaEmbedUtils.initialize(loadPath, config);
 
@@ -163,5 +166,9 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 	public PrintStream getError() {
 		return System.err;
+	}
+
+	public void setLoadPaths(List<String> loadPaths) {
+		this.loadPaths = loadPaths;
 	}
 }
