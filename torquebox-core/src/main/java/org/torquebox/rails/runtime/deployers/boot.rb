@@ -38,4 +38,13 @@ class Class
   end # method_added
 end
 
-load RAILS_ROOT + '/config/environment.rb'
+begin
+  load RAILS_ROOT + '/config/environment.rb'
+rescue => e
+  puts e.message
+  puts e.backtrace
+  puts ""
+  puts ""
+  puts ""
+  raise e
+end

@@ -98,7 +98,7 @@ public class RackFilter implements Filter {
 				return;
 			}
 		} catch (ServletException e) {
-			log.error(e);
+			log.error( "Error performing request", e );
 		}
 		doRack(request, response);
 	}
@@ -111,6 +111,7 @@ public class RackFilter implements Filter {
 			Object rackEnv = rackApp.createEnvironment(servletContext, request);
 			rackApp.call(rackEnv).respond(response);
 		} catch (Exception e) {
+			log.error( "Error invoking Rack filter", e );
 			throw new ServletException( e );
 		} finally {
 			if (rackApp != null) {

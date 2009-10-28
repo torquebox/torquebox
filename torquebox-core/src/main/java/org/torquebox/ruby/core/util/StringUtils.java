@@ -82,6 +82,7 @@ public class StringUtils {
 		m = p.matcher( str );
 		while ( m.find() ) {
 			str = m.replaceFirst( m.group(2).toUpperCase() );
+			m = p.matcher( str );
 		}
 		
 		if ( str.length() > 0 ) {

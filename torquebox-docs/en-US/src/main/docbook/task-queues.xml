@@ -92,7 +92,7 @@ end</screen></para>
       <tgroup cols="2">
         <thead>
           <row>
-            <entry align="center">Method</entry>
+            <entry align="center">Methode</entry>
 
             <entry align="center">Use</entry>
           </row>
@@ -143,39 +143,33 @@ end</screen></para>
     <title>Enqueuing work</title>
 
     <section>
-      <title>Using <classname>TorqueBox::Queues::Base</classname></title>
+      <title>Using <classname>TorqueBox::Queues</classname></title>
 
-      <para>By including <classname>TorqueBox::Queues::Base</classname> in
-      your task queue class, simplified client access is provided in order to
-      enqueue work. A class method <methodname>enqueue(...)</methodname> is
-      added to your task class when you include the TorqueBox helper module.
-      </para>
+      <para>The <classname>TorqueBox::Queues</classname> module is provided in
+      order to enqueue work. A class method
+      <methodname>enqueue(...)</methodname> is available send a payload to any
+      action on any queue.</para>
 
-      <para>The <methodname>enqueue(...)</methodname> method takes two
-      parameters: <parameter>taskname</parameter> and
+      <para>The <methodname>enqueue(...)</methodname> method takes three
+      parameters: <parameter>queue_name</parameter>,
+      <parameter>task_name</parameter> and
       <parameter>payload</parameter>.</para>
 
       <para><example>
           <title>Enqueing work with
           <methodname>enqueue(...)</methodname></title>
 
-          <para><screen># load the task queue class
-<emphasis>require 'forex/execute_trade'</emphasis>
+          <para><screen># load the task queues class
+<emphasis>require 'torquebox/queues'</emphasis>
 
 class TradeController &lt; ApplicationController
 
   def buy
     # call enqueue(...) with task-name and payload
-    <emphasis>Forex::ExecuteTrade.enqueue( :buy, { :quantity=&gt;100 } )</emphasis>
+    <emphasis>TorqueBox::Queues.enqueue( 'Forex::ExecuteTrade", :buy, { :quantity=&gt;100 } )</emphasis>
   end
 end</screen></para>
         </example></para>
-    </section>
-
-    <section>
-      <title>Using the Ruby Messaging Client</title>
-
-      <para>TODO</para>
     </section>
 
     <section>

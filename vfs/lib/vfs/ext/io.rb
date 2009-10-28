@@ -7,8 +7,11 @@ class IO
     alias_method :read_without_vfs, :read
 
     def open(fd,mode_str='r', &block)
-      return open(fd, mode_str, &block) if ::File.exist_without_vfs?( name )
+      unless ( fd =~ /^vfszip:/ || fd =~ /^vfsfile:/ )
+        return open_without_vfs(fd, mode_str, &block) 
+      end
       file = org.jboss.virtual.VFS.root( fd )
+      raise Errno::ENOENT unless file
       stream = file.openStream()
       io = stream.to_io 
       block.call( io ) if block
