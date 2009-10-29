@@ -56,7 +56,6 @@ class File
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       return false unless vfs_url
 
-      puts "directory?(#{filename}) -> #{vfs_url} #{child_path}"
       begin
         virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
         virtual_file = virtual_file.get_child( child_path ) if child_path
@@ -68,7 +67,6 @@ class File
     end
 
     def file?(filename)
-      puts "File.file?(#{filename})"
       return true if file_without_vfs?( filename )
 
       vfs_url, child_path = VFS.resolve_within_archive(filename)

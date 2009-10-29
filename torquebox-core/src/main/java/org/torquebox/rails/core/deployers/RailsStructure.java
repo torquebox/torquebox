@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
+import org.jboss.deployers.spi.deployer.matchers.JarExtensionProvider;
 import org.jboss.deployers.spi.structure.ClassPathEntry;
 import org.jboss.deployers.spi.structure.ContextInfo;
 import org.jboss.deployers.spi.structure.StructureMetaDataFactory;
@@ -44,7 +45,7 @@ import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
  * 
  * @author Bob McWhirter
  */
-public class RailsStructure extends AbstractVFSStructureDeployer {
+public class RailsStructure extends AbstractVFSStructureDeployer implements JarExtensionProvider {
 
 	/** Filter for finding *.jar files. */
 	private static final VirtualFileFilter JAR_FILTER = new SuffixMatchFilter(".jar", VisitorAttributes.DEFAULT);
@@ -132,6 +133,11 @@ public class RailsStructure extends AbstractVFSStructureDeployer {
 				addClassPath(structureContext, jar, true, true, context);
 			}
 		}
+	}
+
+	@Override
+	public String getJarExtension() {
+		return "rails";
 	}
 
 }

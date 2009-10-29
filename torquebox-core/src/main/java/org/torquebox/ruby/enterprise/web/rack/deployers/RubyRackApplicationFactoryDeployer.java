@@ -26,7 +26,6 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.metadata.PoolMetaData;
 import org.torquebox.ruby.core.runtime.metadata.PoolingMetaData;
@@ -36,8 +35,6 @@ import org.torquebox.ruby.enterprise.web.rack.RubyRackApplicationFactory;
 import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
 
 public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RubyRackApplicationMetaData> {
-
-	private static final Logger log = Logger.getLogger(RubyRackApplicationFactoryDeployer.class);
 
 	public RubyRackApplicationFactoryDeployer() {
 		super(RubyRackApplicationMetaData.class);

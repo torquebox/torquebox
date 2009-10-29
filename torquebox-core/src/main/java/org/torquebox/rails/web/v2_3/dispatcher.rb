@@ -1,3 +1,4 @@
+require 'action_controller/dispatcher'
 
 module TorqueBox
   module Rails
@@ -6,7 +7,7 @@ module TorqueBox
         class Dispatcher < ActionController::Dispatcher
           def initialize(context)
             super()
-            ActionController::Base.relative_url_root = context
+            #ActionController::Base.relative_url_root = context
           end          
         end 
       end
