@@ -13,7 +13,10 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>/lib/core</outputDirectory>
+<!--
       <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+-->
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping> 
       <unpack>false</unpack>
       <scope>runtime</scope>
       <includes>
@@ -22,12 +25,14 @@
     </dependencySet>
     <dependencySet>
       <outputDirectory>/lib/dependencies</outputDirectory>
-      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping> 
+      <outputFileNameMapping>${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping> 
       <unpack>false</unpack>
       <scope>runtime</scope>
       <excludes>
         <exclude>org.torquebox:torquebox-core</exclude>
         <exclude>org.bouncycastle:*</exclude>
+        <exclude>org.jruby.extras:bytelist</exclude>
+        <exclude>org.jruby.jcodings:*</exclude>
       </excludes>
     </dependencySet>
   </dependencySets>

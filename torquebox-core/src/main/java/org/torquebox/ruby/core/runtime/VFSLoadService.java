@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 
-import org.jboss.logging.Logger;
 import org.jboss.virtual.VFS;
 import org.jboss.virtual.VirtualFile;
 import org.jruby.Ruby;
@@ -17,6 +16,11 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.runtime.load.Library;
 import org.jruby.runtime.load.LoadService;
 import org.jruby.runtime.load.LoadServiceResource;
+import org.jruby.runtime.load.LoadService.AlreadyLoaded;
+import org.jruby.runtime.load.LoadService.LoadSearcher;
+import org.jruby.runtime.load.LoadService.NormalSearcher;
+import org.jruby.runtime.load.LoadService.SearchState;
+import org.jruby.runtime.load.LoadService.SuffixType;
 import org.jruby.util.JRubyFile;
 
 public class VFSLoadService extends LoadService {
@@ -68,7 +72,7 @@ public class VFSLoadService extends LoadService {
 		return null;
 	}
 
-	private Library findLibraryWithoutCWD(SearchState state, String baseName, SuffixType suffixType) {
+	protected Library findLibraryWithoutCWD(SearchState state, String baseName, SuffixType suffixType) {
 		Library library = null;
 
 		switch (suffixType) {
@@ -96,7 +100,7 @@ public class VFSLoadService extends LoadService {
 		return library;
 	}
 
-	private LoadServiceResource tryResourceFromLoadPathOrURL(SearchState state, String baseName, SuffixType suffixType) {
+	protected LoadServiceResource tryResourceFromLoadPathOrURL(SearchState state, String baseName, SuffixType suffixType) {
 		LoadServiceResource foundResource = null;
 
 		// if it's a ./ baseName, use CWD logic
@@ -154,7 +158,7 @@ public class VFSLoadService extends LoadService {
 		return foundResource;
 	}
 
-	private LoadServiceResource tryResourceFromLoadPath(String namePlusSuffix, String loadPathEntry)
+	protected LoadServiceResource tryResourceFromLoadPath(String namePlusSuffix, String loadPathEntry)
 			throws RaiseException {
 		LoadServiceResource foundResource = null;
 
@@ -208,7 +212,7 @@ public class VFSLoadService extends LoadService {
 		return foundResource;
 	}
 
-	private LoadServiceResource tryResourceAsIs(String namePlusSuffix) throws RaiseException {
+	protected LoadServiceResource tryResourceAsIs(String namePlusSuffix) throws RaiseException {
 		LoadServiceResource foundResource = null;
 
 		try {

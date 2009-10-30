@@ -34,6 +34,13 @@
       <scope>compile</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.jruby.extras</groupId>
+      <artifactId>jvyamlb</artifactId>
+      <version>0.2.5</version>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- Tomcat -->
     <dependency>
       <groupId>org.jboss.jbossas</groupId>
