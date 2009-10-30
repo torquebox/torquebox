@@ -14,8 +14,9 @@ class IO
       raise Errno::ENOENT unless file
       stream = file.openStream()
       io = stream.to_io 
-      block.call( io ) if block
-      io
+      result = io
+      ( result = block.call( io ) ) if block
+      result
     end
 
     def read(name, length=nil, offset=nil)

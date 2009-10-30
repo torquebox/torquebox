@@ -1,5 +1,4 @@
 
-=begin
 module Kernel
   alias_method :open_without_vfs, :open
 
@@ -11,4 +10,3 @@ module Kernel
   end
 
 end
-=end

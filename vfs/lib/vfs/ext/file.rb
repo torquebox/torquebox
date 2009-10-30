@@ -4,11 +4,17 @@ class File
 
   class << self
 
-    alias_method :mtime_without_vfs,      :mtime
-    alias_method :stat_without_vfs,       :stat
-    alias_method :exist_without_vfs?,     :exist?
-    alias_method :directory_without_vfs?, :directory?
-    alias_method :file_without_vfs?,      :file?
+    alias_method :mtime_without_vfs,       :mtime
+    alias_method :stat_without_vfs,        :stat
+    alias_method :exist_without_vfs?,      :exist?
+    alias_method :directory_without_vfs?,  :directory?
+    alias_method :file_without_vfs?,       :file?
+    alias_method :expand_path_without_vfs, :expand_path
+
+    def expand_path(*args)
+      return args[0].to_s.dup if ( args[0] =~ /^(vfszip|vfsfile):/ )
+      expand_path_without_vfs(*args) 
+    end
 
     def mtime(filename)
       return mtime_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
