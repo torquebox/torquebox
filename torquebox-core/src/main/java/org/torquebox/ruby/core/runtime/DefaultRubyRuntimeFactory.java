@@ -157,11 +157,11 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 	public Map<Object, Object> getEnvironment() {
 		Map<Object,Object> env = new HashMap<Object,Object>();
-		String path = System.getenv( "PATH" );
+		env.putAll( System.getenv() );
+		String path = (String) env.get( "PATH" );
 		if ( path == null ) {
-			path = "";
+			env.put( "PATH", "" );
 		}
-		env.put( "PATH", path );
 		return env;
 	}
 
