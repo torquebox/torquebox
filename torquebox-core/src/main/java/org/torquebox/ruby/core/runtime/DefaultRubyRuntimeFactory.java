@@ -24,7 +24,7 @@ package org.torquebox.ruby.core.runtime;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +36,6 @@ import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
-import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 
@@ -157,7 +156,13 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	}
 
 	public Map<Object, Object> getEnvironment() {
-		return Collections.emptyMap();
+		Map<Object,Object> env = new HashMap<Object,Object>();
+		String path = System.getenv( "PATH" );
+		if ( path == null ) {
+			path = "";
+		}
+		env.put( "PATH", path );
+		return env;
 	}
 
 	public PrintStream getOutput() {
