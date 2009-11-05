@@ -61,7 +61,7 @@
     
   <properties>
 
-    <jruby.version>1.4.0RC3</jruby.version>
+    <jruby.version>1.4.0</jruby.version>
     <rails.version>2.3.4</rails.version>
 
     <jboss.as.version>5.1.0.GA</jboss.as.version>
