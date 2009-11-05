@@ -59,6 +59,9 @@ module JBoss
           end
         end
         session_data[:session_id] = session.getId()
+        def session_data.url_suffix()
+          ";jsessionid=#{self[:session_id]}" 
+        end
         session_data
       end
       

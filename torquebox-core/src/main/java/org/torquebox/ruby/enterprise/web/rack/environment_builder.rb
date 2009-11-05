@@ -35,7 +35,6 @@ module JBoss
         #env['REQUEST_URI']       = servlet_request.getRequestURI() 
         env['REQUEST_URI']       = "#{servlet_request.getContextPath()}#{servlet_request.getServletPath()}#{servlet_request.getPathInfo()}"
         env['REMOTE_ADDR']       = servlet_request.getRemoteAddr()
-        puts env.inspect
         env['rack.version']      = [ 0, 1 ]
         env['rack.multithread']  = true
         env['rack.multiprocess'] = true
