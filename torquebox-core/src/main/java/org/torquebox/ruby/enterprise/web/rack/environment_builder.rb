@@ -32,7 +32,8 @@ module JBoss
         env['SERVER_PORT']       = servlet_request.getServerPort()
         env['CONTENT_TYPE']      = servlet_request.getContentType()
         env['CONTENT_LENGTH']    = servlet_request.getContentLength()
-        env['REQUEST_URI']       = servlet_request.getRequestURI() 
+        #env['REQUEST_URI']       = servlet_request.getRequestURI() 
+        env['REQUEST_URI']       = "#{servlet_request.getContextPath()}#{servlet_request.getServletPath()}#{servlet_request.getPathInfo()}"
         env['REMOTE_ADDR']       = servlet_request.getRemoteAddr()
         puts env.inspect
         env['rack.version']      = [ 0, 1 ]

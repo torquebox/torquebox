@@ -21,9 +21,13 @@ public class RackContext extends StandardContext implements RackContextMBean {
 		log.info( "init()" );
 		super.init();
 		
-		SessionRepairValve sessionRepairValve = new SessionRepairValve();
-		sessionRepairValve.setContainer( this );
-		this.addValve( sessionRepairValve );
+		//SessionRepairValve sessionRepairValve = new SessionRepairValve();
+		//sessionRepairValve.setContainer( this );
+		//this.addValve( sessionRepairValve );
+		
+		RequestDumperValve valve = new RequestDumperValve();
+		valve.setContainer( this );
+		this.addValve( valve );
 		
 	}
 	
