@@ -1,5 +1,6 @@
 require 'open3'
 require 'tmpdir'
+require 'rbconfig'
 
 module JBoss
   module RakeUtils
@@ -25,7 +26,13 @@ module JBoss
         old_trap = trap("INT") do
           puts "caught SIGINT, shutting down"
         end
-        pid = Open3.popen3( "/bin/sh bin/run.sh -c #{jboss_conf}" ) do |stdin, stdout, stderr|
+        cmd = nil
+        if ( Config::CONFIG['host_os'] =~ /mswin/ ) 
+          cmd = "bin\\run"
+        else
+          cmd = "/bin/sh bin/run.sh"
+        end
+        pid = Open3.popen3( "#{cmd} -c #{jboss_conf}" ) do |stdin, stdout, stderr|
           #stdin.close
           threads = []
           threads << Thread.new(stdout) do |input_str|

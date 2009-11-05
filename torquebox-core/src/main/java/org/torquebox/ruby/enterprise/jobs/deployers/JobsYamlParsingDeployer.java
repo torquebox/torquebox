@@ -55,26 +55,33 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 	@SuppressWarnings("unchecked")
 	protected void parse(VFSDeploymentUnit unit, VirtualFile file) throws DeploymentException {
 		try {
-			Map<ByteList, Map<ByteList, ByteList>> results = (Map<ByteList, Map<ByteList, ByteList>>) YAML.load(file.openStream());
+			Map<ByteList, Map<ByteList, ByteList>> results = (Map<ByteList, Map<ByteList, ByteList>>) YAML.load(file
+					.openStream());
 
 			for (ByteList jobName : results.keySet()) {
 				Map<ByteList, ByteList> jobSpec = results.get(jobName);
-				ByteList description = jobSpec.get( ByteList.create( "description") );
-				ByteList job = jobSpec.get( ByteList.create( "job") );
-				ByteList cron = jobSpec.get( ByteList.create( "cron") );
+				ByteList description = jobSpec.get(ByteList.create("description"));
+				ByteList job = jobSpec.get(ByteList.create("job"));
+				ByteList cron = jobSpec.get(ByteList.create("cron"));
 
-				if (job != null) {
-					RubyJobMetaData jobMetaData = new RubyJobMetaData();
-
-					jobMetaData.setName(jobName.toString());
-					jobMetaData.setGroup(unit.getName());
-					if ( description != null ) {
-						jobMetaData.setDescription(description.toString());
-					}
-					jobMetaData.setRubyClassName(job.toString());
-					jobMetaData.setCronExpression(cron.toString().trim());
-					unit.addAttachment(RubyJobMetaData.class.getName() + "$" + jobName, jobMetaData, RubyJobMetaData.class);
+				if (job == null) {
+					throw new DeploymentException( "Attribute 'job' must be specified" );
 				}
+				
+				if (cron == null) {
+					throw new DeploymentException( "Attribute 'cron' must be specified" );
+				}
+
+				RubyJobMetaData jobMetaData = new RubyJobMetaData();
+
+				jobMetaData.setName(jobName.toString());
+				jobMetaData.setGroup(unit.getName());
+				if (description != null) {
+					jobMetaData.setDescription(description.toString());
+				}
+				jobMetaData.setRubyClassName(job.toString());
+				jobMetaData.setCronExpression(cron.toString().trim());
+				unit.addAttachment(RubyJobMetaData.class.getName() + "$" + jobName, jobMetaData, RubyJobMetaData.class);
 			}
 		} catch (IOException e) {
 			throw new DeploymentException(e);

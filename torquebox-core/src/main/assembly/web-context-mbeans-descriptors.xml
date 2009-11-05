@@ -1,0 +1,16 @@
+<assembly>
+  <id>web-context-mbeans-descriptors</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>src/main/java</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>**/mbeans-descriptors.xml</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>

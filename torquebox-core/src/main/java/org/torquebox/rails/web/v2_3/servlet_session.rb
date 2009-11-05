@@ -58,6 +58,7 @@ module JBoss
             session_data[key] = session.getAttribute(key)
           end
         end
+        session_data[:session_id] = session.getId()
         session_data
       end
       

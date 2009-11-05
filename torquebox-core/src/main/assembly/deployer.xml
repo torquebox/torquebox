@@ -6,16 +6,17 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>src/main/assembly/resources</directory>
+      <directory>src/main/assembly/resources/META-INF</directory>
       <outputDirectory>/META-INF</outputDirectory>
+    </fileSet>
+    <fileSet>
+      <directory>src/main/assembly/resources</directory>
+      <outputDirectory>/</outputDirectory>
     </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
       <outputDirectory>/lib/core</outputDirectory>
-<!--
-      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
--->
       <outputFileNameMapping>${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping> 
       <unpack>false</unpack>
       <scope>runtime</scope>

@@ -142,6 +142,5 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		if (metaData.getHost() != null) {
 			jbossWebMetaData.setVirtualHosts(Collections.singletonList(metaData.getHost()));
 		}
-
 	}
 }
