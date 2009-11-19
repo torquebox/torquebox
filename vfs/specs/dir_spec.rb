@@ -33,6 +33,12 @@ describe "Dir extensions for VFS" do
         items.should_not be_empty
         items.should include( "#{prefix}#{TEST_DATA_DIR}/home/larry/" )
       end
+      
+      it "should allow globbing without any special globbing characters on a single normal file" do
+        items = Dir.glob( "#{prefix}#{TEST_DATA_DIR}/home/larry/file1.txt" )
+        items.should_not be_empty
+        items.should include( "#{prefix}#{TEST_DATA_DIR}/home/larry/file1.txt" )
+      end
 
       it "should allow globbing without any special globbing characters for archives" do
         items = Dir.glob( "#{prefix}#{TEST_DATA_DIR}/home/larry/archive1.jar" )

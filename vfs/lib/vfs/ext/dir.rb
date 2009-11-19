@@ -40,7 +40,7 @@ class Dir
 
       base = base_segments.join( '/' )
 
-      if ( ::File.exist_without_vfs?( base ) && ::File.directory_without_vfs?( base ) )
+      if ( ::File.exist_without_vfs?( base ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( base ) )
         paths = glob_before_vfs( pattern )
         return paths
       end
@@ -67,8 +67,11 @@ class Dir
         unless ( child_path =~ %r(/$) )
           child_path = "#{child_path}/"
         end
+        child_path = "" if child_path == "/"
         #puts "child_path=#{child_path}"
-        prefix = base[0..-(child_path.length+1)]
+        end_index = if child_path == "" then 1 else child_path.length end
+        #end_index = child_path.length if child_path != ""
+        prefix = base[0..-(end_index)]
         #puts "prefix=#{prefix}"
         paths = starting_point.children_recursively( VFS::GlobFilter.new( child_path, matcher ) ).collect{|e| 
           path_name = e.path_name
