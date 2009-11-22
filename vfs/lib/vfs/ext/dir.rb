@@ -70,7 +70,6 @@ class Dir
         child_path = "" if child_path == "/"
         #puts "child_path=#{child_path}"
         end_index = if child_path == "" then 1 else child_path.length end
-        #end_index = child_path.length if child_path != ""
         prefix = base[0..-(end_index)]
         #puts "prefix=#{prefix}"
         paths = starting_point.children_recursively( VFS::GlobFilter.new( child_path, matcher ) ).collect{|e| 
