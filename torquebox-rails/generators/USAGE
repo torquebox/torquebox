@@ -4,10 +4,10 @@
 # Email: jrubyist-at-gmail-dot-com
 # Since: 11/27/2009
 
-jruby script/generate SomeClassNameEndingWithQueue
+jruby script/generate torquebox_queue SomeClassNameEndingWithQueue
 
 # For example...
-jruby script/generate Forex::ExecuteTradeQueue
+jruby script/generate torquebox_queue Forex::ExecuteTradeQueue
 
 # ****************************************************************
 # Generates app/queues/forex/execute_trade_queue.rb
