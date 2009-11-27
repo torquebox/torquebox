@@ -1,6 +1,13 @@
+# Created by Dan Tylenda-Emmons
+# Twitter: jrubyist
+# Email: jrubyist-at-gmail-dot-com
+# Since: 11/27/2009
+
 class TorqueboxQueueGenerator < Rails::Generator::NamedBase
   
   def manifest
+    raise "Class name must end with Queue" unless the_class_name =~ /.*Queue\z/
+
     record do |m|
       m.directory "app/queues"
       m.directory "app/queues/#{module_names_path}"
@@ -17,7 +24,7 @@ class TorqueboxQueueGenerator < Rails::Generator::NamedBase
   end
 
   def module_names
-	  modules = class_name_parts - [the_class_name]
+    class_name_parts - [the_class_name]
   end
   
   def class_name_parts
