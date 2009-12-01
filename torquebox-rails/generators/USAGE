@@ -1,0 +1,39 @@
+# **** TorqueBox Task Generator **********************************
+# Created by Dan Tylenda-Emmons
+# Twitter: jrubyist
+# Email: jrubyist-at-gmail-dot-com
+# Since: 11/27/2009
+
+jruby script/generate torquebox_queue SomeClassNameEndingWithQueue
+
+# For example...
+jruby script/generate torquebox_queue Forex::ExecuteTradeQueue
+
+# ****************************************************************
+# Generates app/queues/forex/execute_trade_queue.rb
+# ****************************************************************
+require 'torquebox/queues/base'
+
+module Forex
+  class ExecuteTradeQueue
+    include TorqueBox::Queues::Base
+
+    def task_action( payload = {} )
+      log.info "#{self.class}.task_action"
+    end
+  end
+end
+
+# ****************************************************************
+# In your controller...
+# call TorqueBox::Queues.enqueue( queue_name, task_name, payload )
+# ****************************************************************
+require 'torquebox/queues'
+
+class TradeController < ApplicationController
+  def buy_asynchronously
+    TorqueBox::Queues.enqueue( 'Forex.ExecuteTradeQueue', :task_action, {:side=>'buy', :quantity=>100} )
+  end
+end
+
+
