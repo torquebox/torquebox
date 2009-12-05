@@ -39,5 +39,3 @@ require 'vfs/ext/io'
 require 'vfs/ext/file'
 require 'vfs/ext/dir'
 require 'vfs/ext/kernel'
-
-

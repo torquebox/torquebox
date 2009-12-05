@@ -1,0 +1,18 @@
+#!/bin/sh
+
+DEP_DIR=./target/dependencies
+export CLASSPATH=$DEP_DIR/jboss-common-core.jar:$DEP_DIR/jboss-logging-spi.jar:$DEP_DIR/jboss-vfs.jar
+
+THIS_DIR=$(dirname $0)
+
+echo "Running from $THIS_DIR"
+
+T=$PWD/bin/vfs-jrubyis
+
+PATH=$PWD/bin:$PATH
+
+mspec \
+  -t j \
+  -B $THIS_DIR/../../../rubyspec/ruby.1.8.mspec \
+  $THIS_DIR/../../../rubyspec/core/dir
+
