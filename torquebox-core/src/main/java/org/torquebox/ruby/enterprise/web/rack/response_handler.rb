@@ -22,6 +22,7 @@ module JBoss
   module Rack
     class ResponseHandler
       def self.handle(rack_response, servlet_response)
+        puts "handling response"
         status  = rack_response[0]
         headers = rack_response[1]
         body    = rack_response[2]
@@ -35,10 +36,12 @@ module JBoss
               servlet_response.addHeader( key, v )
             end
           }
-          out = servlet_response.getWriter()
+          out = servlet_response.getOutputStream()
           
-          body.each{|str|
-            out.write( str.to_s );
+          puts "body is #{body}"
+          
+          body.each{|chunk|
+            out.write( chunk.to_java_bytes)
           }
         ensure
           body.close if body && body.respond_to?( :close )
