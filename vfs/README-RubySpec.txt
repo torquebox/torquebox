@@ -19,7 +19,7 @@ The report will be placed in
 
 If you need to compare with-VFS to without-VFS, simply add the rake target 'novfs' before 'rubyspec'
 
-	rake novfs rubyspec
+	jruby -S rake novfs rubyspec
 
 A report will be placed in
 
