@@ -6,6 +6,11 @@ require 'rake/gempackagetask'
 TEST_DATA_IN  = File.dirname(__FILE__) + '/test-data'
 TEST_DATA_OUT = File.dirname(__FILE__) + '/target/test-data'
 
+DEP_JARS_DIR = File.dirname(__FILE__) + '/target/dependencies'
+
+RUBYSPEC_DIR = File.dirname(__FILE__) + '/rubyspec'
+BIN_DIR      = File.dirname(__FILE__) + '/bin'
+
 desc "Prepare test-data"
 task 'test:data:prepare' do
   puts "preparing test-data"
@@ -50,22 +55,7 @@ task 'spec', :key do |t, args|
   puts "running #{spec_files}"
   cmd = "jruby -J-classpath #{jars.join(':')} -S spec #{spec_files}" 
   puts cmd
-  r = Open3.popen3( cmd ) do |stdin, stdout, stderr|
-    stdin.close
-    stdout_thr = Thread.new(stdout) {|stdout_io|
-      stdout_io.readlines.each do |l|
-        puts l
-      end
-      stdout_io.close
-    }
-    stderr_thr = Thread.new(stderr) {|stderr_io|
-      stderr_io.readlines.each do |l|
-        puts l
-      end
-    }
-    stdout_thr.join
-    stderr_thr.join
-  end
+  run3( cmd )
 end
 
 
@@ -81,4 +71,49 @@ spec = eval( File.read( "src/main/assembly/vfs.gemspec" ) )
 
 Rake::GemPackageTask.new(spec) do |pkg|
     pkg.package_dir = 'target/gems'
+end
+
+task 'rubyspec' => [ 'rubyspec:checkout' ] do
+  #cmd = "#{File.dirname(__FILE__)}/rubyspec/bin/vfs-mspec -B #{RUBYSPEC_DIR}/ruby1.8.mspec -t vfs-jruby #{RUBYSPEC_DIR}/core/dir"
+  classpath = Dir[ "#{DEP_JARS_DIR}/*.jar" ].join(':')
+
+  cmd = [ 'jruby',
+          "-J-classpath #{classpath}",
+          '-S mspec',
+          "-B #{RUBYSPEC_DIR}/ruby.1.8.mspec",
+          "-T-I#{File.dirname(__FILE__)}/lib",
+          '-T-rvfs',
+          '--format html',
+          "--output #{File.dirname(__FILE__)}/target/rubyspec.html",
+          "#{RUBYSPEC_DIR}/core/dir/glob" ]
+  run3( cmd.join(' ') )
+end
+
+file RUBYSPEC_DIR do
+  cmd = "git clone git://github.com/torquebox/rubyspec.git #{RUBYSPEC_DIR}"
+  run3(cmd)
+end
+
+task 'rubyspec:checkout'=>[ RUBYSPEC_DIR]
+  
+
+def run3(cmd)
+  puts "Running:\n  #{cmd}"
+  r = Open3.popen3( cmd ) do |stdin, stdout, stderr|
+    stdin.close
+    stdout_thr = Thread.new(stdout) {|stdout_io|
+      while ( ! ( c = stdout_io.getc ).nil? )
+        putc c
+      end
+      stdout_io.close
+    }
+    stderr_thr = Thread.new(stderr) {|stderr_io|
+      while ( ! ( c = stderr_io.getc ).nil? )
+        putc c
+      end
+      stderr_io.close
+    }
+    stdout_thr.join
+    stderr_thr.join
+  end
 end

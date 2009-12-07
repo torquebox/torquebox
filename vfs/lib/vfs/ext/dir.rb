@@ -25,10 +25,13 @@ class Dir
     def glob(pattern,flags=nil)
       #puts "============"
       #puts "glob(#{pattern})"
+      #puts "glob(#{pattern.inspect})"
+      #puts "glob(#{pattern.to_s})"
 
       is_absolute_vfs = false
 
-      segments = pattern.split( '/' )
+      str_pattern = pattern.to_str
+      segments = str_pattern.split( '/' )
 
       base_segments = []
       for segment in segments
@@ -40,8 +43,9 @@ class Dir
 
       base = base_segments.join( '/' )
 
+      puts "BASE [#{base}]"
       if ( ::File.exist_without_vfs?( base ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( base ) )
-        paths = glob_before_vfs( pattern )
+        paths = glob_before_vfs( str_pattern )
         return paths
       end
 

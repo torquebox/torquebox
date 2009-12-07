@@ -1,4 +1,0 @@
-#!/bin/sh
-
-echo "Running vfs-jruby"
-$JRUBY_HOME/bin/jruby -J-classpath ./target/dependencies/jboss-vfs.jar:./target/dependencies/jboss-logging-spi.jar:target/dependencies/jboss-common-core.jar -I./lib -rvfs $*
