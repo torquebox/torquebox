@@ -11,6 +11,10 @@ DEP_JARS_DIR = File.dirname(__FILE__) + '/target/dependencies'
 RUBYSPEC_DIR = File.dirname(__FILE__) + '/rubyspec'
 BIN_DIR      = File.dirname(__FILE__) + '/bin'
 
+SPECS = [
+  'core/dir',
+]
+
 desc "Prepare test-data"
 task 'test:data:prepare' do
   puts "preparing test-data"
@@ -73,19 +77,32 @@ Rake::GemPackageTask.new(spec) do |pkg|
     pkg.package_dir = 'target/gems'
 end
 
+task 'novfs' do
+  ENV['NOVFS']='true'
+end
+
 task 'rubyspec' => [ 'rubyspec:checkout' ] do
-  #cmd = "#{File.dirname(__FILE__)}/rubyspec/bin/vfs-mspec -B #{RUBYSPEC_DIR}/ruby1.8.mspec -t vfs-jruby #{RUBYSPEC_DIR}/core/dir"
+  fq_specs = SPECS.collect{|e| "#{RUBYSPEC_DIR}/#{e}"}
   classpath = Dir[ "#{DEP_JARS_DIR}/*.jar" ].join(':')
 
-  cmd = [ 'jruby',
-          "-J-classpath #{classpath}",
-          '-S mspec',
-          "-B #{RUBYSPEC_DIR}/ruby.1.8.mspec",
-          "-T-I#{File.dirname(__FILE__)}/lib",
-          '-T-rvfs',
-          '--format html',
-          "--output #{File.dirname(__FILE__)}/target/rubyspec.html",
-          "#{RUBYSPEC_DIR}/core/dir/glob" ]
+  cmd = [ 'jruby' ]
+
+  unless ( ENV['NOVFS'] )
+    cmd << "-J-classpath #{classpath}"
+  end
+
+  cmd << '-S mspec'
+  cmd << "-B #{RUBYSPEC_DIR}/ruby.1.8.mspec" 
+
+  unless( ENV['NOVFS'] )
+    cmd << "-T-I#{File.dirname(__FILE__)}/lib"
+    cmd << '-T-rvfs' 
+  end
+  
+  cmd << '--format html'
+  cmd << "--output #{File.dirname(__FILE__)}/target/rubyspec#{ ENV['NOVFS'] ? '-novfs' : '' }.html"
+  cmd << fq_specs 
+  cmd.flatten!
   run3( cmd.join(' ') )
 end
 

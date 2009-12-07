@@ -3,18 +3,24 @@ class Dir
 
   class << self
 
-    #alias_method :open_before_vfs, :open
+    alias_method :open_before_vfs, :open
     alias_method :glob_before_vfs, :glob
 
-    def open(str)
-      result = dir = VFS::Dir.new( str )
-      if block_given?
+    def open(str,&block)
+      if ( ::File.exist_without_vfs?( str.to_str ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( str.to_str ) )
+        return open_before_vfs(str,&block)
+      end
+      puts "open(#{str})"
+      result = dir = VFS::Dir.new( str.to_str )
+      puts "  result = #{result}"
+      if block
         begin
-          result = yield( dir )
+          result = block.call(dir)
         ensure
           dir.close 
         end
       end
+      puts "open(#{str}) return #{result}"
       result
     end
 
@@ -22,20 +28,17 @@ class Dir
       self.glob( pattern )
     end
 
-    def glob(pattern,flags=nil)
-      #puts "============"
-      #puts "glob(#{pattern})"
-      #puts "glob(#{pattern.inspect})"
-      #puts "glob(#{pattern.to_s})"
-
+    def glob(pattern,flags=0, &block)
       is_absolute_vfs = false
 
       str_pattern = pattern.to_str
+      #puts "glob(#{str_pattern})"
+
       segments = str_pattern.split( '/' )
 
       base_segments = []
       for segment in segments
-        if ( segment =~ /[\*\?\[\{]/ )
+        if ( segment =~ /[\*\?\[\{\}]/ )
           break
         end
         base_segments << segment
@@ -43,9 +46,11 @@ class Dir
 
       base = base_segments.join( '/' )
 
-      puts "BASE [#{base}]"
-      if ( ::File.exist_without_vfs?( base ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( base ) )
-        paths = glob_before_vfs( str_pattern )
+      base.gsub!( /\\(.)/, '\1' )
+
+      if ( base.empty? || 
+           ( ::File.exist_without_vfs?( base ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( base ) ) )
+        paths = glob_before_vfs( str_pattern, flags, &block )
         return paths
       end
 
@@ -83,6 +88,7 @@ class Dir
           #puts "(collect) result=#{path_name}"
           result
         }
+        paths.each{|p| block.call(p)} if block
         paths
       rescue Java::JavaIo::IOException => e
         return []

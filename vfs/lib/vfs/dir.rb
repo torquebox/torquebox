@@ -7,8 +7,11 @@ module VFS
     alias_method :tell, :pos
 
     def initialize(path)
+      puts "initialize(#{path})"
       @path         = path
+      puts "path=#{@path}"
       @virtual_file = org.jboss.virtual.VFS.root( path )
+      puts "virtual_file=#{@virtual_file}"
       @pos          = 0
       @closed       = false
     end
