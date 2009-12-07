@@ -10,7 +10,11 @@ module VFS
       puts "initialize(#{path})"
       @path         = path
       puts "path=#{@path}"
-      @virtual_file = org.jboss.virtual.VFS.root( path )
+      begin
+        @virtual_file = org.jboss.virtual.VFS.root( path )
+      rescue Java::JavaLang::NullPointerException 
+        raise Errno::ENOENT.new
+      end
       puts "virtual_file=#{@virtual_file}"
       @pos          = 0
       @closed       = false
