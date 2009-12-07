@@ -3,7 +3,7 @@ we've wired up RubySpec to run.
 
 First, ensure you have the 'mspec' gem installed.
 
-	jruby -S gem instsall mspec
+	jruby -S gem install mspec
 
 Secondly, make sure VFS maven project has been built
 

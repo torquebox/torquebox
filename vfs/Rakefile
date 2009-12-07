@@ -13,6 +13,8 @@ BIN_DIR      = File.dirname(__FILE__) + '/bin'
 
 SPECS = [
   'core/dir',
+  'core/file',
+  #'core/io',
 ]
 
 desc "Prepare test-data"
