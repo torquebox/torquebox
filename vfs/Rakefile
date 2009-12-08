@@ -8,8 +8,10 @@ TEST_DATA_OUT = File.dirname(__FILE__) + '/target/test-data'
 
 DEP_JARS_DIR = File.dirname(__FILE__) + '/target/dependencies'
 
-RUBYSPEC_DIR = File.dirname(__FILE__) + '/rubyspec'
 BIN_DIR      = File.dirname(__FILE__) + '/bin'
+
+TARGET_DIR   = File.dirname(__FILE__) + '/target'
+JRUBY_DIR    = TARGET_DIR + '/jruby'
 
 SPECS = [
   #'core/dir',
@@ -83,8 +85,7 @@ task 'novfs' do
   ENV['NOVFS']='true'
 end
 
-task 'rubyspec' => [ 'rubyspec:checkout' ] do
-  fq_specs = SPECS.collect{|e| "#{RUBYSPEC_DIR}/#{e}"}
+task 'rubyspec' => [ 'rubyspec:prepare' ] do
   classpath = Dir[ "#{DEP_JARS_DIR}/*.jar" ].join(':')
 
   cmd = [ 'jruby' ]
@@ -94,9 +95,10 @@ task 'rubyspec' => [ 'rubyspec:checkout' ] do
   end
 
   cmd << '-S mspec'
+  cmd << 'ci'
   cmd << '--verbose'
   cmd << '--debug'
-  cmd << "--config #{RUBYSPEC_DIR}/ruby.1.8.mspec" 
+  cmd << "--config jruby.1.8.mspec" 
 
   unless( ENV['NOVFS'] )
     cmd << "-T-I#{File.dirname(__FILE__)}/lib"
@@ -105,17 +107,32 @@ task 'rubyspec' => [ 'rubyspec:checkout' ] do
   
   cmd << '--format html'
   cmd << "--output #{File.dirname(__FILE__)}/target/rubyspec#{ ENV['NOVFS'] ? '-novfs' : '' }.html"
-  cmd << fq_specs 
+  cmd << SPECS.collect{|e| "ruby/#{e}"}
+  #cmd << SPECS
   cmd.flatten!
-  run3( cmd.join(' ') )
+  Dir.chdir( JRUBY_DIR + '/spec' ) do 
+    run3( cmd.join(' ') )
+  end
 end
 
-file RUBYSPEC_DIR do
-  cmd = "git clone git://github.com/torquebox/rubyspec.git #{RUBYSPEC_DIR}"
+directory TARGET_DIR
+
+file JRUBY_DIR do
+  cmd = "git clone git://github.com/jruby/jruby.git #{JRUBY_DIR}"
   run3(cmd)
+  Dir.chdir( JRUBY_DIR ) do
+    run3( "git checkout 1.4.0" )
+  end
 end
 
-task 'rubyspec:checkout'=>[ RUBYSPEC_DIR]
+task 'jruby:checkout'=>[ JRUBY_DIR ]
+
+desc 'Prepare RubySpec for running'
+task 'rubyspec:prepare'=>[ 'jruby:checkout' ] do
+  Dir.chdir( JRUBY_DIR ) do
+    run3( 'ant fetch-stable-specs' )
+  end
+end
   
 
 def run3(cmd)
