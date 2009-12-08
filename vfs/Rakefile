@@ -12,9 +12,9 @@ RUBYSPEC_DIR = File.dirname(__FILE__) + '/rubyspec'
 BIN_DIR      = File.dirname(__FILE__) + '/bin'
 
 SPECS = [
-  'core/dir',
-  'core/file', 
-  #'core/io',
+  #'core/dir',
+  #'core/file', 
+  'core/io',
 ]
 
 desc "Prepare test-data"
@@ -94,8 +94,8 @@ task 'rubyspec' => [ 'rubyspec:checkout' ] do
   end
 
   cmd << '-S mspec'
-  #cmd << '--verbose'
-  #cmd << '--debug'
+  cmd << '--verbose'
+  cmd << '--debug'
   cmd << "--config #{RUBYSPEC_DIR}/ruby.1.8.mspec" 
 
   unless( ENV['NOVFS'] )
