@@ -14,13 +14,16 @@ TARGET_DIR   = File.dirname(__FILE__) + '/target'
 JRUBY_DIR    = TARGET_DIR + '/jruby'
 
 SPECS = [
-  #'core/dir',
-  #'core/file', 
+  'core/dir',
+  'core/file', 
   'core/io',
 ]
 
 desc "Prepare test-data"
-task 'test:data:prepare' do
+task 'test:data:prepare'=>[ TEST_DATA_OUT ]
+
+file TEST_DATA_OUT do
+
   puts "preparing test-data"
 
   FileUtils.rm_rf( TEST_DATA_OUT )
@@ -53,7 +56,8 @@ end
 
 desc "Run all examples"
 #task 'spec'=>[ 'test:data:prepare' ] do
-task 'spec', :key do |t, args|
+#task 'spec', :key do |t, args|
+task 'spec', :key, :needs=>TEST_DATA_OUT do |t, args|
   jar_dir = File.dirname(__FILE__) + '/target/dependencies'
   jars = Dir[ "#{jar_dir}/*.jar" ]
 
@@ -94,7 +98,7 @@ task 'rubyspec' => [ 'rubyspec:prepare' ] do
     cmd << "-J-classpath #{classpath}"
   end
 
-  cmd << '-S mspec'
+  cmd << './mspec/bin/mspec'
   cmd << 'ci'
   cmd << '--verbose'
   cmd << '--debug'

@@ -20,7 +20,7 @@ class IO
     end
 
     def read(name, length=nil, offset=nil)
-      return read_without_vfs(name, length) if ::File.exist_without_vfs?( name )
+      return read_without_vfs(name, length, offset) if ::File.exist_without_vfs?( name )
 
       vfs_url, child_path = VFS.resolve_within_archive(name)
       raise ::Errno::ENOENT unless vfs_url
