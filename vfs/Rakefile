@@ -13,7 +13,7 @@ BIN_DIR      = File.dirname(__FILE__) + '/bin'
 
 SPECS = [
   'core/dir',
-  'core/file',
+  'core/file', 
   #'core/io',
 ]
 
@@ -94,7 +94,9 @@ task 'rubyspec' => [ 'rubyspec:checkout' ] do
   end
 
   cmd << '-S mspec'
-  cmd << "-B #{RUBYSPEC_DIR}/ruby.1.8.mspec" 
+  #cmd << '--verbose'
+  #cmd << '--debug'
+  cmd << "--config #{RUBYSPEC_DIR}/ruby.1.8.mspec" 
 
   unless( ENV['NOVFS'] )
     cmd << "-T-I#{File.dirname(__FILE__)}/lib"

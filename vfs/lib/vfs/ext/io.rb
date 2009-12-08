@@ -3,12 +3,12 @@ class IO
 
   class << self
 
-    alias_method :open_without_vfs, :open
+    #alias_method :open_without_vfs, :open
     alias_method :read_without_vfs, :read
 
-    def open(fd,mode_str='r',perm=nil,&block)
-      unless ( fd =~ /^vfszip:/ || fd =~ /^vfsfile:/ )
-        return open_without_vfs(fd, mode_str, perm, &block) 
+    def vfs_open(fd,mode_str='r', &block)
+      unless ( (String === fd) && ( fd =~ /^vfszip:/ || fd =~ /^vfsfile:/ ) )
+        return open_without_vfs(fd, mode_str, &block )
       end
       file = org.jboss.virtual.VFS.root( fd )
       raise Errno::ENOENT unless file
