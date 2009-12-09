@@ -14,9 +14,10 @@ TARGET_DIR   = File.dirname(__FILE__) + '/target'
 JRUBY_DIR    = TARGET_DIR + '/jruby'
 
 SPECS = [
-  'core/dir',
-  'core/file', 
-  'core/io',
+  #'core/dir',
+  #'core/file', 
+  #'core/io',
+  'core/kernel',
 ]
 
 desc "Prepare test-data"
@@ -103,6 +104,7 @@ task 'rubyspec' => [ 'rubyspec:prepare' ] do
   cmd << '--verbose'
   cmd << '--debug'
   cmd << "--config jruby.1.8.mspec" 
+  cmd << "-t #{ENV['JRUBY_HOME']}/bin/jruby" 
 
   unless( ENV['NOVFS'] )
     cmd << "-T-I#{File.dirname(__FILE__)}/lib"
