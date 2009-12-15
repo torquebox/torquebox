@@ -74,8 +74,8 @@
     <jboss.messaging.version>1.4.3.GA</jboss.messaging.version>
     <jboss.messaging.jms.version>1.1</jboss.messaging.jms.version>
 
-    <mobicents.sip.version>1.0-SNAPSHOT</mobicents.sip.version>
-    <mobicents.spec.version>1.1.10-SNAPSHOT</mobicents.spec.version>
+    <mobicents.sip.version>1.2-SNAPSHOT</mobicents.sip.version>
+    <mobicents.spec.version>1.1.12-SNAPSHOT</mobicents.spec.version>
 
 
   </properties>
