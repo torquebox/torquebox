@@ -27,7 +27,7 @@ public class AbstractRubyQueuesScanningDeployer extends AbstractRubyScanningDepl
 
 		String simplePath = relativePath.substring(0, relativePath.length() - 3);
         String rubyClassName = StringUtils.camelize(simplePath);
-        //rubyClassName = rubyClassName.replaceAll("\\.", "::");
+        rubyClassName = rubyClassName.replaceAll("\\.", "::");
 
 		RubyTaskQueueMetaData queueMetaData = metaData.getQueueByClassName(rubyClassName);
 

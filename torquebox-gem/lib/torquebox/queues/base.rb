@@ -21,7 +21,7 @@ module TorqueBox
           def enqueue(task, payload=nil)
            
             TorqueBox::Client.connect() do |torquebox_client|
-              destination_name = "#{torquebox_client.application_name}.#{self.name.to_s.camelize}"
+              destination_name = "#{torquebox_client.application_name}.#{self.name.to_s.gsub( /::/, '.' )}"
               client = Java::OrgTorqueboxRubyEnterpriseQueues::RubyTaskQueueClient.new
               client.set_destination_name( destination_name )
               client.enqueue( task.to_s, payload )
