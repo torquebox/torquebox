@@ -1,7 +1,10 @@
 
+
+puts "Defining VFS::GlobFilter #{__FILE__}:#{__LINE__}"
+puts "VFF=#{Java::org.jboss.virtual.VirtualFileFilter} #{__FILE__}:#{__LINE__}"
 module VFS
   class GlobFilter
-    include org.jboss.virtual.VirtualFileFilter
+    include Java::org.jboss.virtual.VirtualFileFilter
   
     def initialize(child_path, glob)
       @child_path = child_path
@@ -45,3 +48,5 @@ module VFS
     end
   end
 end
+
+puts "Defined VFS::GlobFilter #{__FILE__}:#{__LINE__}"

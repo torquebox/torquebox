@@ -1,5 +1,7 @@
 
 module Kernel
+
+  private
   alias_method :open_without_vfs, :open
 
   def open(name, *rest, &block)

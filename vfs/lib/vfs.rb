@@ -2,6 +2,19 @@
 require 'java'
 
 module VFS
+end
+
+require 'vfs/file'
+require 'vfs/dir'
+require 'vfs/glob_filter'
+require 'vfs/ext/vfs'
+require 'vfs/ext/io'
+require 'vfs/ext/file'
+require 'vfs/ext/dir'
+require 'vfs/ext/kernel'
+
+
+module VFS
   def self.resolve_within_archive(path)
     return path if ( path =~ %r(^vfs[^:]+) )
     cur = path
@@ -30,13 +43,3 @@ module VFS
   end
 
 end
-
-require 'vfs/file'
-require 'vfs/dir'
-require 'vfs/glob_filter'
-require 'vfs/ext/vfs'
-require 'vfs/ext/io'
-require 'vfs/ext/file'
-require 'vfs/ext/dir'
-require 'vfs/ext/kernel'
-
