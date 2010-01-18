@@ -10,9 +10,9 @@ class Dir
       if ( ::File.exist_without_vfs?( str.to_str ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( str.to_str ) )
         return open_before_vfs(str,&block)
       end
-      puts "open(#{str})"
+      #puts "open(#{str})"
       result = dir = VFS::Dir.new( str.to_str )
-      puts "  result = #{result}"
+      #puts "  result = #{result}"
       if block
         begin
           result = block.call(dir)
@@ -20,7 +20,7 @@ class Dir
           dir.close 
         end
       end
-      puts "open(#{str}) return #{result}"
+      #puts "open(#{str}) return #{result}"
       result
     end
 

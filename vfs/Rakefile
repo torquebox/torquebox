@@ -14,14 +14,20 @@ TARGET_DIR   = File.dirname(__FILE__) + '/target'
 JRUBY_DIR    = TARGET_DIR + '/jruby'
 
 SPECS = [
+  #'core',
   #'core/dir',
   #'core/file', 
   #'core/io',
+  #'core/kernel/at_exit_spec.rb',
   'core/kernel',
 ]
 
 desc "Prepare test-data"
 task 'test:data:prepare'=>[ TEST_DATA_OUT ]
+
+task 'check:dependencies' do
+  fail( "** Dependencies not found\n** Please run 'mvn package'" ) if Dir[ "#{DEP_JARS_DIR}" ].empty?
+end
 
 file TEST_DATA_OUT do
 
@@ -58,7 +64,7 @@ end
 desc "Run all examples"
 #task 'spec'=>[ 'test:data:prepare' ] do
 #task 'spec', :key do |t, args|
-task 'spec', :key, :needs=>TEST_DATA_OUT do |t, args|
+task 'spec', :key, :needs=>[ 'check:dependencies', TEST_DATA_OUT ] do |t, args|
   jar_dir = File.dirname(__FILE__) + '/target/dependencies'
   jars = Dir[ "#{jar_dir}/*.jar" ]
 
@@ -86,11 +92,17 @@ Rake::GemPackageTask.new(spec) do |pkg|
     pkg.package_dir = 'target/gems'
 end
 
+task 'jruby:prepare'=>[ 'jruby:checkout' ] do
+  Dir.chdir( JRUBY_DIR ) do
+    run3( "ant jar" )
+  end
+end
+
 task 'novfs' do
   ENV['NOVFS']='true'
 end
 
-task 'rubyspec' => [ 'rubyspec:prepare' ] do
+task 'rubyspec' => [ 'install:dependencies', 'rubyspec:prepare' ] do
   classpath = Dir[ "#{DEP_JARS_DIR}/*.jar" ].join(':')
 
   cmd = [ 'jruby' ]
@@ -104,7 +116,7 @@ task 'rubyspec' => [ 'rubyspec:prepare' ] do
   cmd << '--verbose'
   cmd << '--debug'
   cmd << "--config jruby.1.8.mspec" 
-  cmd << "-t #{ENV['JRUBY_HOME']}/bin/jruby" 
+  cmd << "-t #{JRUBY_DIR}/bin/jruby" 
 
   unless( ENV['NOVFS'] )
     cmd << "-T-I#{File.dirname(__FILE__)}/lib"
@@ -121,6 +133,12 @@ task 'rubyspec' => [ 'rubyspec:prepare' ] do
   end
 end
 
+task 'rubyspec:novfs'=>['rubyspec:prepare'] do
+  ENV['NOVFS']='true'
+  Rake::Task[ 'rubyspec' ].invoke
+  ENV['NOVFS']=nil
+end
+
 directory TARGET_DIR
 
 file JRUBY_DIR do
@@ -134,7 +152,7 @@ end
 task 'jruby:checkout'=>[ JRUBY_DIR ]
 
 desc 'Prepare RubySpec for running'
-task 'rubyspec:prepare'=>[ 'jruby:checkout' ] do
+task 'rubyspec:prepare'=>[ 'jruby:prepare' ] do
   Dir.chdir( JRUBY_DIR ) do
     run3( 'ant fetch-stable-specs' )
   end
