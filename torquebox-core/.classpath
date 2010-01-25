@@ -1,7 +1,7 @@
 <classpath>
   <classpathentry kind="src" path="src/test/java" output="target/test-classes" including="**/*.java"/>
   <classpathentry kind="src" path="src/test/resources" output="target/test-classes" excluding="**/*.java"/>
-  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
+  <classpathentry kind="src" path="src/main/java"/>
   <classpathentry kind="src" path="src/main/ruby" including="**/*" excluding="**/*.java"/>
   <classpathentry kind="output" path="target/classes"/>
   <classpathentry kind="var" path="M2_REPO/javax/activation/activation/1.1.1/activation-1.1.1.jar"/>
@@ -28,7 +28,7 @@
   <classpathentry kind="var" path="M2_REPO/cglib/cglib/2.1.3/cglib-2.1.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-collections/commons-collections/3.1/commons-collections-3.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/commons-lang/commons-lang/2.4/commons-lang-2.4.jar"/>
-  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar" sourcepath="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/oswego-concurrent/concurrent/1.3.4-jboss-update1/concurrent-1.3.4-jboss-update1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-api/2.2.3/cxf-api-2.2.3.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/cxf/cxf-common-schemas/2.2.3/cxf-common-schemas-2.2.3.jar"/>
@@ -134,7 +134,7 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/microcontainer/jboss-kernel/2.0.6.GA/jboss-kernel-2.0.6.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/logbridge/jboss-logbridge/1.0.0.GA/jboss-logbridge-1.0.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging-log4j/2.0.5.GA/jboss-logging-log4j-2.0.5.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging-spi/2.0.5.GA/jboss-logging-spi-2.0.5.GA.jar" sourcepath="M2_REPO/org/jboss/logging/jboss-logging-spi/2.0.5.GA/jboss-logging-spi-2.0.5.GA-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging-spi/2.0.5.GA/jboss-logging-spi-2.0.5.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/logmanager/jboss-logmanager/1.0.0.GA/jboss-logmanager-1.0.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/man/jboss-managed/2.1.0.CR8/jboss-managed-2.1.0.CR8.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/jboss-mdr/2.0.1.GA/jboss-mdr-2.0.1.GA.jar"/>
@@ -143,7 +143,7 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/man/jboss-metatype/2.1.0.CR8/jboss-metatype-2.1.0.CR8.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/profiler/jvmti/jboss-profiler-jvmti/1.0.0.CR5/jboss-profiler-jvmti-1.0.0.CR5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/integration/jboss-profileservice-spi/5.1.0.GA/jboss-profileservice-spi-5.1.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/jboss-reflect/2.0.2.GA/jboss-reflect-2.0.2.GA.jar" sourcepath="M2_REPO/org/jboss/jboss-reflect/2.0.2.GA/jboss-reflect-2.0.2.GA-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jboss/jboss-reflect/2.0.2.GA/jboss-reflect-2.0.2.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/remoting/jboss-remoting/2.5.1/jboss-remoting-2.5.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/aspects/jboss-remoting-aspects/1.0.2/jboss-remoting-aspects-1.0.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/aspects/jboss-security-aspects/1.0.0.GA/jboss-security-aspects-1.0.0.GA.jar"/>
@@ -164,7 +164,7 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/ws/native/jbossws-native-saaj/3.1.2.GA/jbossws-native-saaj-3.1.2.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/ws/jbossws-spi/1.1.2.GA/jbossws-spi-1.1.2.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jboss/security/jbossxacml/2.0.3/jbossxacml-2.0.3.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/jbossxb/2.0.1.GA/jbossxb-2.0.1.GA.jar" sourcepath="M2_REPO/org/jboss/jbossxb/2.0.1.GA/jbossxb-2.0.1.GA-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jboss/jbossxb/2.0.1.GA/jbossxb-2.0.1.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/net/jcip/jcip-annotations/1.0/jcip-annotations-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jruby/jcodings/jcodings/1.0.0/jcodings-1.0.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/jgroups/jgroups/2.6.10.GA/jgroups-2.6.10.GA.jar"/>
@@ -172,7 +172,7 @@
   <classpathentry kind="var" path="M2_REPO/org/jboss/naming/jnpserver/5.0.3.GA/jnpserver-5.0.3.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/jpl-pattern/jpl-pattern/1.0/jpl-pattern-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/jpl-util/jpl-util/1.0/jpl-util-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jruby/jruby-complete/1.4.0RC3/jruby-complete-1.4.0RC3.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/jruby/jruby-complete/1.4.0/jruby-complete-1.4.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/sun-jaxws/jsr181-api/2.1.1/jsr181-api-2.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/jruby/extras/jvyamlb/0.2.5/jvyamlb-0.2.5.jar"/>
@@ -183,10 +183,10 @@
   <classpathentry kind="var" path="M2_REPO/quartz/quartz/1.5.2/quartz-1.5.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/xalan/serializer/2.7.1/serializer-2.7.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/jboss/web/servlet-api/2.1.1.GA/servlet-api-2.1.1.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-annotations/1.0-SNAPSHOT/sip-servlets-annotations-1.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-impl/1.0-SNAPSHOT/sip-servlets-impl-1.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-jboss5-metadata/1.0-SNAPSHOT/sip-servlets-jboss5-metadata-1.0-SNAPSHOT.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-spec/1.1.10-SNAPSHOT/sip-servlets-spec-1.1.10-SNAPSHOT.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-annotations/1.0/sip-servlets-annotations-1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-impl/1.0/sip-servlets-impl-1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-jboss5-metadata/1.0/sip-servlets-jboss5-metadata-1.0.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-spec/1.1.10/sip-servlets-spec-1.1.10.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5.5/spring-beans-2.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.5.5/spring-context-2.5.5.jar"/>
