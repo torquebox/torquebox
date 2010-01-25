@@ -77,7 +77,6 @@
     <mobicents.sip.version>1.0</mobicents.sip.version>
     <mobicents.spec.version>1.1.10</mobicents.spec.version>
 
-
   </properties>
 
   <repositories>

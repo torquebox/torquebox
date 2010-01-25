@@ -1,6 +1,9 @@
 output
 target
 *.swp
+*.iml
+*.ipr
+*.iws
 *.log
 log
 tmp

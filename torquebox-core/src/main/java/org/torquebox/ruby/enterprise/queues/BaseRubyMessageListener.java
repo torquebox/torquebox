@@ -70,7 +70,7 @@ public class BaseRubyMessageListener implements MessageListener {
 				new Object[] { "log=" }, Boolean.class)).booleanValue();
 
 		if (isInjectable) {
-			String loggerName = queueClassName.replaceAll("::", ".");
+			String loggerName = queueClassName;
 			Logger logger = Logger.getLogger(loggerName);
 			JavaEmbedUtils.invokeMethod(rubyQueue.getRuntime(), rubyQueue, "log=", new Object[] { logger }, void.class);
 		} else {
