@@ -15,6 +15,6 @@ public class DuplicateDestinationException extends Exception {
 	}
 	
 	public String toString() {
-		return "Already a destination named: " + getName();
+		return "Duplicate destination name '" + getName() + "'";
 	}
 }

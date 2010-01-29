@@ -51,11 +51,19 @@
   <bean name="RubySchedulerDeployer"                  class="org.torquebox.ruby.enterprise.jobs.deployers.RubySchedulerDeployer"/>
   <bean name="RubyJobDeployer"                        class="org.torquebox.ruby.enterprise.jobs.deployers.RubyJobDeployer"/>
 
+  <!-- Messaging-->
+
+  <bean name="QueuesYamlParsingDeployer"           class="org.torquebox.ruby.enterprise.messaging.deployers.QueuesYamlParsingDeployer"/>
+  <bean name="QueuesDeployer"                      class="org.torquebox.ruby.enterprise.messaging.deployers.QueuesDeployer"/>
+
   <!-- Task Queues -->
 
+<!--
   <bean name="QueuesYamlParsingDeployer"              class="org.torquebox.ruby.enterprise.queues.deployers.QueuesYamlParsingDeployer"/>
+
   <bean name="RubyTaskQueuesDeployer"                 class="org.torquebox.ruby.enterprise.queues.deployers.RubyTaskQueuesDeployer"/>
   <bean name="RubyTaskQueueHandlersDeployer"          class="org.torquebox.ruby.enterprise.queues.deployers.RubyTaskQueueHandlersDeployer"/>
+-->
 
   <!-- Endpoint Infrastructure -->
 

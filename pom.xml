@@ -125,6 +125,11 @@
         <enabled>true</enabled>
       </releases>
     </repository>
+    <repository>
+      <id>snakeyaml</id>
+      <name>SnakeYAML repository</name>
+      <url>http://snakeyamlrepo.appspot.com/repository</url>
+    </repository>
   </repositories>
 
 

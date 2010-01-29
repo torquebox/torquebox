@@ -41,6 +41,13 @@
       <scope>compile</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.5</version>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- Tomcat -->
     <dependency>
       <groupId>org.jboss.jbossas</groupId>

@@ -188,6 +188,7 @@
   <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-jboss5-metadata/1.0/sip-servlets-jboss5-metadata-1.0.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-spec/1.1.10/sip-servlets-spec-1.1.10.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.5/snakeyaml-1.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-beans/2.5.5/spring-beans-2.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-context/2.5.5/spring-context-2.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.5/spring-core-2.5.5.jar"/>

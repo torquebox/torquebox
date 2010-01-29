@@ -9,7 +9,7 @@ public class DuplicateQueueException extends DuplicateDestinationException {
 	}
 	
 	public String toString() {
-		return "Already a queue named '" + getName() + "'"; 
+		return "Duplicate queue name '" + getName() + "'"; 
 	}
 
 }
