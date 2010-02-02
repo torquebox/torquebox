@@ -2,11 +2,11 @@
 module JBoss
   
   class Version
-    def initialize(version)
-      @major = version.getMajor()
-      @minor = version.getMinor()
-      @revision = version.getRevision()
-      @tag = version.getTag()
+    def initialize(major, minor, revision, tag)
+      @major = major
+      @minor = minor
+      @revision = revision
+      @tag = tag
     end
     
     def major
@@ -39,8 +39,8 @@ module JBoss
     @application_name
   end
   
-  def self.setup_constants(version, application_name)
-    @version          = Version.new( version  )
+  def self.setup_constants(application_name)
+    @version          = Version.new( 6, 0, 0, 'M1' )
     @application_name = application_name
   end
   

@@ -55,6 +55,8 @@
 
   <bean name="QueuesYamlParsingDeployer"           class="org.torquebox.ruby.enterprise.messaging.deployers.QueuesYamlParsingDeployer"/>
   <bean name="QueuesDeployer"                      class="org.torquebox.ruby.enterprise.messaging.deployers.QueuesDeployer"/>
+  <bean name="TopicsYamlParsingDeployer"           class="org.torquebox.ruby.enterprise.messaging.deployers.TopicsYamlParsingDeployer"/>
+  <bean name="TopicsDeployer"                      class="org.torquebox.ruby.enterprise.messaging.deployers.TopicsDeployer"/>
 
   <!-- Task Queues -->
 

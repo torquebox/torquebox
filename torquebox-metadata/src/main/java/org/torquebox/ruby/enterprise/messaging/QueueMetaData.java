@@ -1,6 +1,6 @@
 package org.torquebox.ruby.enterprise.messaging;
 
-public class QueueMetaData extends AbstractDestinationMetaData {
+public class QueueMetaData extends DestinationMetaData {
 	
 	public QueueMetaData() {
 		

@@ -17,6 +17,7 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<Queues
 		setName( "queues.yml" );
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected QueuesMetaData parse(VFSDeploymentUnit unit, VirtualFile file, QueuesMetaData root) throws Exception {
 		InputStream in = null;

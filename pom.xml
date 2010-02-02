@@ -5,7 +5,7 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox</artifactId>
-  <version>1.0.0.Beta18</version>
+  <version>1.0.0.Beta19-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TorqueBox</name>
   <url>http://www.torquebox.org/</url>
@@ -64,10 +64,10 @@
     <jruby.version>1.4.0</jruby.version>
     <rails.version>2.3.4</rails.version>
 
-    <jboss.as.version>5.1.0.GA</jboss.as.version>
-    <jboss.mc.version>2.0.6.GA</jboss.mc.version>
-    <jboss.deployers.version>2.0.7.GA</jboss.deployers.version>
-    <jboss.vfs.version>2.1.2.GA</jboss.vfs.version>
+    <jboss.as.version>6.0.0.M1</jboss.as.version>
+    <jboss.mc.version>2.0.9.GA</jboss.mc.version>
+    <jboss.deployers.version>2.0.9.GA</jboss.deployers.version>
+    <jboss.vfs.version>2.2.0.Alpha1</jboss.vfs.version>
 
     <cxf.version>2.2.3</cxf.version>
 

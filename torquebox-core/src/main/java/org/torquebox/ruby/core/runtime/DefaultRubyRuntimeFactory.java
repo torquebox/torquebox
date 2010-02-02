@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.Version;
 import org.jboss.beans.metadata.api.annotations.Create;
 import org.jboss.kernel.Kernel;
 import org.jruby.Ruby;
@@ -145,8 +144,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	private void setUpConstants(Ruby runtime, String applicationName) {
 		runtime.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/runtime_constants)\n");
 		RubyModule jbossModule = runtime.getClassFromPath("JBoss");
-		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants", new Object[] { Version.getInstance(),
-				applicationName }, void.class);
+		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants", new Object[] { applicationName }, void.class);
 	}
 
 	private void injectKernel(Ruby runtime) {
