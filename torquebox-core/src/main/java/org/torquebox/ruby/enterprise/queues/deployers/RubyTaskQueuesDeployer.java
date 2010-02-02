@@ -7,7 +7,6 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.jms.server.destination.QueueService;
 import org.jboss.system.metadata.ServiceAttributeMetaData;
 import org.jboss.system.metadata.ServiceConstructorMetaData;
 import org.jboss.system.metadata.ServiceDependencyMetaData;
@@ -36,7 +35,7 @@ public class RubyTaskQueuesDeployer extends AbstractSimpleVFSRealDeployer<RubyTa
 
 		ServiceMetaData metaData = new ServiceMetaData();
 
-		metaData.setCode(QueueService.class.getName());
+		//metaData.setCode(QueueService.class.getName());
 
 		String queueObjectName = getObjectName(unit, queueMetaData.getQueueClassName() );
 

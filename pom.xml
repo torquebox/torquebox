@@ -68,6 +68,7 @@
     <jboss.mc.version>2.0.9.GA</jboss.mc.version>
     <jboss.deployers.version>2.0.9.GA</jboss.deployers.version>
     <jboss.vfs.version>2.2.0.Alpha1</jboss.vfs.version>
+    <hornetq.version>2.0.0.GA</hornetq.version>
 
     <cxf.version>2.2.3</cxf.version>
 

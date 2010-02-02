@@ -79,9 +79,9 @@
     <!-- Messaging -->
 
     <dependency>
-      <groupId>jboss.messaging</groupId>
-      <artifactId>jboss-messaging</artifactId>
-      <version>${jboss.messaging.version}</version>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-core</artifactId>
+      <version>${hornetq.version}</version>
       <scope>provided</scope>
     </dependency>
 
