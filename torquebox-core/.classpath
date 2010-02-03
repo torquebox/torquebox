@@ -54,6 +54,7 @@
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-core/3.5.0-Beta-2/hibernate-core-3.5.0-Beta-2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hibernate/hibernate-entitymanager/3.5.0-Beta-2/hibernate-entitymanager-3.5.0-Beta-2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-core/2.0.0.GA/hornetq-core-2.0.0.GA.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-jms/2.0.0.GA/hornetq-jms-2.0.0.GA.jar"/>
   <classpathentry kind="var" path="M2_REPO/hsqldb/hsqldb/1.8.0.2/hsqldb-1.8.0.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/jacorb/jacorb/2.3.1jboss.patch01-brew/jacorb-2.3.1jboss.patch01-brew.jar"/>
   <classpathentry kind="var" path="M2_REPO/javassist/javassist/3.11.0.GA/javassist-3.11.0.GA.jar"/>
@@ -213,8 +214,8 @@
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.5/spring-core-2.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/2.5.5/spring-web-2.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0/stax-api-1.0.jar"/>
-  <classpathentry kind="src" path="/torquebox-metadata"/>
-  <classpathentry kind="src" path="/torquebox-spi"/>
+  <classpathentry kind="var" path="M2_REPO/org/torquebox/torquebox-metadata/1.0.0.Beta19-SNAPSHOT/torquebox-metadata-1.0.0.Beta19-SNAPSHOT.jar" sourcepath="M2_REPO/org/torquebox/torquebox-metadata/1.0.0.Beta19-SNAPSHOT/torquebox-metadata-1.0.0.Beta19-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="var" path="M2_REPO/org/torquebox/torquebox-spi/1.0.0.Beta19-SNAPSHOT/torquebox-spi-1.0.0.Beta19-SNAPSHOT.jar" sourcepath="M2_REPO/org/torquebox/torquebox-spi/1.0.0.Beta19-SNAPSHOT/torquebox-spi-1.0.0.Beta19-SNAPSHOT-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/trove/trove/2.1.1/trove-2.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/wsdl4j/wsdl4j/1.6.2/wsdl4j-1.6.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/ws/security/wss4j/1.5.8/wss4j-1.5.8.jar"/>

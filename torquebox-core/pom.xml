@@ -86,6 +86,14 @@
     </dependency>
 
     <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-jms</artifactId>
+      <version>${hornetq.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+
+    <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms</artifactId>
       <version>${jboss.messaging.jms.version}</version>
