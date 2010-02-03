@@ -9,7 +9,7 @@ public class Topic extends Destination {
 	public void start() throws Exception {
 		log.info( "start topic " + getName() );
 		
-		getServer().createTopic(getName(), "queues/" + getName());
+		getServer().createTopic(getName(), "topics/" + getName());
 	}
 	
 	public void stop() throws Exception {
