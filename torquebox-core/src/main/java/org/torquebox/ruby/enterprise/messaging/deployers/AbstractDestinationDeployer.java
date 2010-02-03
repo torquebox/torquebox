@@ -41,9 +41,9 @@ public abstract class AbstractDestinationDeployer<S extends DestinationMetaData,
 
 		log.info("Deploy for " + this.destinationClass + " [" + destinationMetaData.getName() + "]");
 		
-		String objectName = "torquebox.queue." + destinationMetaData.getName();
+		String beanName = getBeanName( destinationMetaData.getName() );
 		
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( objectName, getDestinationClass().getName() );
+		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, getDestinationClass().getName() );
 		
 		builder.addPropertyMetaData( "name", destinationMetaData.getName() );
 		ValueMetaData hornetServerInjection = builder.createInject("JMSServerManager" );
@@ -51,8 +51,20 @@ public abstract class AbstractDestinationDeployer<S extends DestinationMetaData,
 		
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
 
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + objectName, beanMetaData,
+		unit.addAttachment(BeanMetaData.class.getName() + "$" + getDestinationClass().getName() + "$" + beanName, beanMetaData,
 				BeanMetaData.class);
+	}
+	
+	protected String getBeanName(String destinationName) {
+		String className = getDestinationClass().getName();
+		int lastDot = className.lastIndexOf( "." );
+		String beanName = "torquebox";
+		if ( lastDot > 0 ) {
+			beanName += className.substring( lastDot ).toLowerCase();
+		}
+		beanName += ".";
+		beanName += destinationName;
+		return beanName;
 	}
 
 }
