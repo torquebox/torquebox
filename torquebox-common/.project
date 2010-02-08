@@ -1,9 +1,7 @@
 <projectDescription>
-  <name>torquebox-core</name>
+  <name>torquebox-common</name>
   <comment></comment>
   <projects>
-    <project>torquebox-common</project>
-    <project>torquebox-metadata</project>
     <project>torquebox-spi</project>
   </projects>
   <buildSpec>

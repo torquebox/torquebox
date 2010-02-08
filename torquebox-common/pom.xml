@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox</artifactId>
+    <version>1.0.0.Beta19-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-common</artifactId>
+  <packaging>jar</packaging>
+  <name>TorqueBox Common Library</name>
+  <description></description>
+
+  <dependencies>
+
+    <!-- TorqueBox-->
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- JRuby-related -->
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>${jruby.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.5</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <!-- Testing -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <resources> 
+      <resource> 
+        <directory>src/main/resources</directory> 
+      </resource> 
+      <resource> 
+        <directory>src/main/java</directory> 
+        <includes>
+          <include>**/*.rb</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource> 
+      <resource> 
+        <directory>src/main/ruby</directory> 
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources> 
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+  </build>
+
+</project>

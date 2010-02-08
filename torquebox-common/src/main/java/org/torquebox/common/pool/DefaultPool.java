@@ -1,4 +1,4 @@
-package org.torquebox.pool;
+package org.torquebox.common.pool;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import org.jboss.logging.Logger;
 import org.torquebox.pool.spi.InstanceFactory;
 import org.torquebox.pool.spi.Pool;
 
@@ -33,7 +32,6 @@ public class DefaultPool<T> implements Pool<T> {
 
 	private Semaphore available = new Semaphore(0, true);
 	private Thread managementThread;
-	protected Logger log;
 
 	public DefaultPool(InstanceFactory<T> factory) {
 		this.factory = factory;
@@ -66,7 +64,6 @@ public class DefaultPool<T> implements Pool<T> {
 	}
 
 	public synchronized void start() throws Exception {
-		log = Logger.getLogger( this.getClass().getName() + "-" + this.name );
 		startManagementThread();
 	}
 
@@ -75,31 +72,22 @@ public class DefaultPool<T> implements Pool<T> {
 			public void run() {
 				while (true) {
 					synchronized (availableInstances) {
-						log.trace("acquiring availableInstances lock");
-						log.trace("acquired availableInstances lock");
 						while (!availableInstances.isEmpty()) {
 							try {
-								log.trace("waiting for empty notification");
 								availableInstances.wait();
 							} catch (InterruptedException e) {
-								log.trace("management thread exiting");
 								return;
 							}
 						}
-						log.trace("notified about empty");
 						if (availableInstances.isEmpty()) {
-							log.trace("is still empty");
 							if (instances.size() < maxInstances) {
 								try {
-									log.trace("creating instance");
 									T instance = factory.create();
 									instances.add(instance);
 									availableInstances.add(instance);
 									available.release();
-									log.trace("created & released a new instance " + availableInstances.size() + "/"
-											+ instances.size() + " = " + available.availablePermits());
 								} catch (Exception e) {
-									log.error("unable to create instance", e);
+									e.printStackTrace();
 								}
 							} else {
 								try {
@@ -116,13 +104,12 @@ public class DefaultPool<T> implements Pool<T> {
 
 		while (instances.size() < minInstances) {
 			try {
-				log.info( "creating instance for DefaultPool" );
 				T instance = factory.create();
 				instances.add(instance);
 				availableInstances.add(instance);
 				available.release();
 			} catch (Exception e) {
-				log.error("unable to create instance", e);
+				e.printStackTrace();
 			}
 		}
 
@@ -144,16 +131,10 @@ public class DefaultPool<T> implements Pool<T> {
 			}
 		}
 
-		log.trace("waiting to borrow, pool before [" + availableInstances.size() + " / " + instances.size() + " = "
-				+ available.availablePermits() + "]");
 		if (available.tryAcquire(this.timeout, TimeUnit.SECONDS)) {
-			log.trace("borrowing 1, pool minus my permit [" + availableInstances.size() + " / " + instances.size()
-					+ " = " + available.availablePermits() + "]");
 			Iterator<T> iterator = availableInstances.iterator();
 			T instance = iterator.next();
 			iterator.remove();
-			log.trace("borrowed 1, pool minus my instance [" + availableInstances.size() + " / " + instances.size()
-					+ " = " + available.availablePermits() + "]");
 			return instance;
 		}
 
@@ -163,8 +144,6 @@ public class DefaultPool<T> implements Pool<T> {
 	public synchronized void releaseInstance(T instance) {
 		this.availableInstances.add(instance);
 		this.available.release();
-		log.trace("released 1, pool now [" + availableInstances.size() + " / " + instances.size() + " = "
-				+ available.availablePermits() + "]");
 	}
 
 }

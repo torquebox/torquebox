@@ -260,7 +260,10 @@
   <modules>
     <module>torquebox-spi</module>
     <module>torquebox-metadata</module>
+    <module>torquebox-common</module>
+
     <module>torquebox-core</module>
+    <module>torquebox-messaging</module>
 
     <module>torquebox-docs</module>
 

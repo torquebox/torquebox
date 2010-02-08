@@ -21,7 +21,7 @@
  */
 package org.torquebox.ruby.enterprise.web.rack;
 
-import org.torquebox.pool.SharedPool;
+import org.torquebox.common.pool.SharedPool;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;

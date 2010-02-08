@@ -214,8 +214,9 @@
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-core/2.5.5/spring-core-2.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/2.5.5/spring-web-2.5.5.jar"/>
   <classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0/stax-api-1.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/torquebox/torquebox-metadata/1.0.0.Beta19-SNAPSHOT/torquebox-metadata-1.0.0.Beta19-SNAPSHOT.jar" sourcepath="M2_REPO/org/torquebox/torquebox-metadata/1.0.0.Beta19-SNAPSHOT/torquebox-metadata-1.0.0.Beta19-SNAPSHOT-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/torquebox/torquebox-spi/1.0.0.Beta19-SNAPSHOT/torquebox-spi-1.0.0.Beta19-SNAPSHOT.jar" sourcepath="M2_REPO/org/torquebox/torquebox-spi/1.0.0.Beta19-SNAPSHOT/torquebox-spi-1.0.0.Beta19-SNAPSHOT-sources.jar"/>
+  <classpathentry kind="src" path="/torquebox-common"/>
+  <classpathentry kind="src" path="/torquebox-metadata"/>
+  <classpathentry kind="src" path="/torquebox-spi"/>
   <classpathentry kind="var" path="M2_REPO/trove/trove/2.1.1/trove-2.1.1.jar"/>
   <classpathentry kind="var" path="M2_REPO/wsdl4j/wsdl4j/1.6.2/wsdl4j-1.6.2.jar"/>
   <classpathentry kind="var" path="M2_REPO/org/apache/ws/security/wss4j/1.5.8/wss4j-1.5.8.jar"/>

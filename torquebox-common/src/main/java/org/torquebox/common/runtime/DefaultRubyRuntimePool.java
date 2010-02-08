@@ -19,21 +19,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.torquebox.ruby.core.runtime;
+package org.torquebox.common.runtime;
 
 import org.jruby.Ruby;
-import org.torquebox.pool.SharedPool;
+import org.torquebox.common.pool.DefaultPool;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
-public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool {
-	
-	public SharedRubyRuntimePool(RubyRuntimeFactory factory) {
-		super( factory );
-	}
-	
-	public SharedRubyRuntimePool(Ruby ruby) {
-		super( ruby );
+public class DefaultRubyRuntimePool extends DefaultPool<Ruby> implements RubyRuntimePool  {
+
+	public DefaultRubyRuntimePool(RubyRuntimeFactory factory) {
+		super(factory);
 	}
 
 	@Override
@@ -45,5 +41,5 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
 	public void returnRuntime(Ruby runtime) {
 		releaseInstance( runtime );
 	}
-
+	
 }

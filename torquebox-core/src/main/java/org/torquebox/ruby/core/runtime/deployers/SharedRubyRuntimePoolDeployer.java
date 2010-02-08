@@ -26,7 +26,7 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractSimpleRealDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.ruby.core.runtime.SharedRubyRuntimePool;
+import org.torquebox.common.runtime.SharedRubyRuntimePool;
 import org.torquebox.ruby.core.runtime.metadata.SharedRubyRuntimePoolMetaData;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 

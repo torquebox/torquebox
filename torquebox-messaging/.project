@@ -1,11 +1,7 @@
 <projectDescription>
-  <name>torquebox-core</name>
+  <name>torquebox-messaging</name>
   <comment></comment>
-  <projects>
-    <project>torquebox-common</project>
-    <project>torquebox-metadata</project>
-    <project>torquebox-spi</project>
-  </projects>
+  <projects/>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>

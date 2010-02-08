@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="**/*.java" including="**/*" kind="src" path="src/main/ruby"/>
+	<classpathentry kind="var" path="M2_REPO/javax/jms/jms/1.1/jms-1.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-core/2.0.0.GA/hornetq-core-2.0.0.GA.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-jms/2.0.0.GA/hornetq-jms-2.0.0.GA.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/jruby/jruby-complete/1.4.0/jruby-complete-1.4.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/3.8.1/junit-3.8.1.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-spec/1.1.10/sip-servlets-spec-1.1.10.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.5/snakeyaml-1.5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/torquebox-common"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/torquebox-spi"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

@@ -1,6 +1,5 @@
-package org.torquebox.pool;
+package org.torquebox.common.pool;
 
-import org.jboss.logging.Logger;
 import org.torquebox.pool.spi.InstanceFactory;
 import org.torquebox.pool.spi.Pool;
 
@@ -8,7 +7,6 @@ public class SharedPool<T> implements Pool<T> {
 	
 	
 	private String name = "anonymous-pool";
-	private Logger log;
 	private T instance;
 	private InstanceFactory<T> factory;
 	
@@ -31,16 +29,11 @@ public class SharedPool<T> implements Pool<T> {
 		return this.name;
 	}
 	
-	protected Logger getLog() {
-		return this.log;
-	}
-	
 	public void setFactory(InstanceFactory<T> factory) {
 		this.factory = factory;
 	}
 	
 	public void start() throws Exception {
-		this.log = Logger.getLogger( getClass().getName() + "-" + this.name );
 		if ( this.instance != null ) {
 			return;
 		}

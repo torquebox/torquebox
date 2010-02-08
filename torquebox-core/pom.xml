@@ -25,6 +25,11 @@
       <artifactId>torquebox-metadata</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- JRuby-related -->
     <dependency>
