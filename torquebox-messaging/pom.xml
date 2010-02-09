@@ -69,6 +69,19 @@
     </dependency>
 
     <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-transports</artifactId>
+      <version>${hornetq.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.netty</groupId>
+      <artifactId>netty</artifactId>
+      <version>3.1.5.GA</version>
+    </dependency>
+
+    <dependency>
       <groupId>javax.jms</groupId>
       <artifactId>jms</artifactId>
       <version>${jboss.messaging.jms.version}</version>
@@ -138,7 +151,6 @@
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
-              <excludeTransitive>true</excludeTransitive>
             </configuration>
           </execution>
         </executions>

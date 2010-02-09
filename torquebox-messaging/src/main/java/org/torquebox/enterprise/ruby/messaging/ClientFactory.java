@@ -1,12 +1,13 @@
-package org.torquebox.enterprise.ruby.messaging.container;
+package org.torquebox.enterprise.ruby.messaging;
 
 import java.util.Properties;
 
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-public class ContainerFactory {
+public class ClientFactory {
 
 	public static final String DEFAULT_CONTEXT_FACTORY_CLASS_NAME = "org.jnp.interfaces.NamingContextFactory";
 	public static final String DEFAULT_URL_PKG_PREFIXES = "org.jboss.naming.client";
@@ -20,12 +21,12 @@ public class ContainerFactory {
 	private String contextFactoryClassName = DEFAULT_CONTEXT_FACTORY_CLASS_NAME;
 	private String urlPackagePrefixes = DEFAULT_URL_PKG_PREFIXES;
 
-	public ContainerFactory() {
+	public ClientFactory() {
 
 	}
 	
 	public String toString() {
-		return "[ContainerFactory: connectionFactoryJndiName=" + this.connectionFactoryJndiName + "]";
+		return "[ClientFactory: connectionFactoryJndiName=" + this.connectionFactoryJndiName + "]";
 	}
 	
 	public void setContextFactoryClassName(String contextFactoryClassName) {
@@ -70,11 +71,14 @@ public class ContainerFactory {
 		return this.connectionFactoryJndiName;
 	}
 	
-	public Container createContainer() throws NamingException {
-		Container container = new Container();
-		container.setContext( createInitialContext() );
-		container.setConnectionFactoryJndiName( getConnectionFactoryJndiName() );
-		return container;
+	public Client createClient() throws NamingException {
+		Context context = createInitialContext();
+		ConnectionFactory connectionFactory = (ConnectionFactory) context.lookup( getConnectionFactoryJndiName() );
+		
+		Client client = new Client();
+		client.setConnectionFactory( connectionFactory );
+		client.setContext( context );
+		return client;
 	}
 	
 

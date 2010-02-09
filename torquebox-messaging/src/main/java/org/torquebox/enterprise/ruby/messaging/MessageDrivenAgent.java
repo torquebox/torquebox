@@ -7,6 +7,8 @@ import javax.jms.JMSException;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
+import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+
 public class MessageDrivenAgent {
 
 	private Destination destination;
@@ -16,8 +18,10 @@ public class MessageDrivenAgent {
 	private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 	
 	private MessageHandler messageHandler;
+	private RubyRuntimePool rubyRuntimePool;
 	
 	private Connection connection;
+	private Session session;
 
 	public MessageDrivenAgent() {
 		
@@ -63,22 +67,36 @@ public class MessageDrivenAgent {
 		return this.messageHandler;
 	}
 	
+	public void setRubyRuntimePool(RubyRuntimePool rubyRuntimePool) {
+		this.rubyRuntimePool = rubyRuntimePool;
+	}
+	
+	public RubyRuntimePool getRubyRuntimePool() {
+		return this.rubyRuntimePool;
+	}
+	
 	public void create() throws JMSException {
 		this.connection = this.connectionFactory.createConnection();
 		
-		Session session = this.connection.createSession( isTransacted(), getAcknowledgeMode() );
+		this.session = this.connection.createSession( isTransacted(), getAcknowledgeMode() );
 		MessageConsumer consumer = session.createConsumer( getDestination() );
 		
 		consumer.setMessageListener( getMessageHandler() );
+		this.messageHandler.setRubyRuntimePool( getRubyRuntimePool() );
 	}
 		
 	public void start() throws JMSException {
 		if ( connection != null ) {
+			System.err.println( "starting agent on " + getDestination() + " with " + getMessageHandler() );
 			connection.start();
 		}
 	}
 	
 	public void stop() throws JMSException {
+		if ( this.session != null ) {
+			this.session.commit();
+			this.session.close();
+		}
 		if ( connection != null ) {
 			this.connection.stop();
 		}

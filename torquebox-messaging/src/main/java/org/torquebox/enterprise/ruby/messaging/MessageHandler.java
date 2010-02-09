@@ -24,6 +24,10 @@ public class MessageHandler implements MessageListener {
 		
 	}
 	
+	public String toString() {
+		return "[MessageHandler: rubyClassName=" + rubyClassName + "]";
+	}
+	
 	void setSession(Session session) {
 		this.session = session;
 	}
@@ -60,6 +64,7 @@ public class MessageHandler implements MessageListener {
 			ReflectionHelper.setIfPossible( ruby, listener, "session", getSession() );
 			
 			JavaEmbedUtils.invokeMethod( ruby, listener, "on_message", new Object[] { message }, void.class);
+			message.acknowledge();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {

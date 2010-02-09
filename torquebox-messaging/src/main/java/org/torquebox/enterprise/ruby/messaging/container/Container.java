@@ -18,7 +18,7 @@ public class Container {
 
 	private Context context;
 	private List<MessageDrivenAgent> agents = new ArrayList<MessageDrivenAgent>();
-	
+
 	private ConnectionFactory connectionFactory;
 	private String connectionFactoryJndiName;
 	private RubyRuntimePool rubyRuntimePool;
@@ -27,62 +27,75 @@ public class Container {
 
 	}
 
+	public String toString() {
+		return "[Container: context=" + this.context + "; connectionFactoryJndiName=" + this.connectionFactoryJndiName
+				+ "]";
+	}
+
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
+
 	public Context getContext() {
 		return this.context;
 	}
-	
+
 	public void setConnectionFactoryJndiName(String connectionFactoryName) {
 		this.connectionFactoryJndiName = connectionFactoryName;
 	}
-	
+
 	public String getConnectionFactoryJndiName() {
 		return this.connectionFactoryJndiName;
 	}
-	
+
 	protected ConnectionFactory getConnectionFactory() {
 		return this.connectionFactory;
 	}
-	
+
 	public void setRubyRuntimePool(RubyRuntimePool rubyRuntimePool) {
 		this.rubyRuntimePool = rubyRuntimePool;
 	}
-	
+
 	public RubyRuntimePool getRubyRuntimePool() {
 		return this.rubyRuntimePool;
 	}
-	
+
 	synchronized void addMessageDrivenAgent(MessageDrivenAgent agent) {
 		this.agents.add(agent);
 	}
-	
+
 	public void addMessageDrivenAgent(MessageDrivenAgentConfig agentConfig) throws NamingException {
 		MessageDrivenAgent agent = new MessageDrivenAgent();
-		
-		agent.setConnectionFactory( getConnectionFactory() );
-		
+
+		agent.setConnectionFactory(getConnectionFactory());
+
 		MessageHandler messageHandler = new MessageHandler();
-		messageHandler.setRubyClassName( agentConfig.getRubyClassName() );
-		messageHandler.setRubyRuntimePool( getRubyRuntimePool() );
-		agent.setMessageHandler( messageHandler );
-		
-		Destination destination = (Destination) getContext().lookup( agentConfig.getDestinationName() );
-		agent.setDestination( destination );
-		
-		addMessageDrivenAgent( agent );
+		messageHandler.setRubyClassName(agentConfig.getRubyClassName());
+		messageHandler.setRubyRuntimePool(getRubyRuntimePool());
+		agent.setMessageHandler(messageHandler);
+
+		Destination destination = (Destination) getContext().lookup(agentConfig.getDestinationName());
+		agent.setDestination(destination);
+
+		addMessageDrivenAgent(agent);
 	}
-	
+
 	public void create() throws Exception {
-		this.connectionFactory = (ConnectionFactory) getContext().lookup( getConnectionFactoryJndiName() );
+		this.connectionFactory = (ConnectionFactory) getContext().lookup(getConnectionFactoryJndiName());
+		for (MessageDrivenAgent agent : this.agents) {
+			try {
+				agent.setConnectionFactory(getConnectionFactory());
+				agent.setRubyRuntimePool( getRubyRuntimePool() );
+				agent.create();
+			} catch (JMSException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	synchronized public void start() {
-		for ( MessageDrivenAgent agent : this.agents ) {
+		for (MessageDrivenAgent agent : this.agents) {
 			try {
-				agent.setConnectionFactory( getConnectionFactory() );
 				agent.start();
 			} catch (JMSException e) {
 				e.printStackTrace();
@@ -91,9 +104,19 @@ public class Container {
 	}
 
 	synchronized public void stop() {
-		for ( MessageDrivenAgent agent : this.agents ) {
+		for (MessageDrivenAgent agent : this.agents) {
 			try {
 				agent.stop();
+			} catch (JMSException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	synchronized public void destroy() {
+		for (MessageDrivenAgent agent : this.agents) {
+			try {
+				agent.destroy();
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
