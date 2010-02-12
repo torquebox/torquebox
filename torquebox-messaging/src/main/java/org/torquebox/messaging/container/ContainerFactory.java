@@ -1,4 +1,4 @@
-package org.torquebox.enterprise.ruby.messaging.container;
+package org.torquebox.messaging.container;
 
 import java.util.Properties;
 

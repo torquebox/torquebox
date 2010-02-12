@@ -1,4 +1,4 @@
-class Java::org.torquebox.enterprise.ruby.messaging::Client
+class Java::org.torquebox.messaging.client::Client
 end
 
 module TorqueBox
@@ -6,7 +6,7 @@ module TorqueBox
 
     class Client 
       def self.connect(opts={},&block)
-        factory = Java::org.torquebox.enterprise.ruby.messaging::ClientFactory.new
+        factory = Java::org.torquebox.messaging.client::ClientFactory.new
         factory.naming_provider_url          = opts[:naming_provider_url]          unless ( opts[:naming_provider_url].nil? )
         factory.context_factory_class_name   = opts[:context_factory_class_name]   unless ( opts[:context_factory_class_name].nil? )
         factory.url_package_prefixes         = opts[:url_package_prefixes]         unless ( opts[:url_package_prefixes].nil? )

@@ -1,4 +1,4 @@
-package org.torquebox.enterprise.ruby.messaging.metadata;
+package org.torquebox.messaging;
 
 public class MessageDrivenConsumerConfig {
 	

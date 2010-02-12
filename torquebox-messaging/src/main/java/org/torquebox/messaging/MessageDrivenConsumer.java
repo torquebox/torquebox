@@ -1,4 +1,4 @@
-package org.torquebox.enterprise.ruby.messaging;
+package org.torquebox.messaging;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;

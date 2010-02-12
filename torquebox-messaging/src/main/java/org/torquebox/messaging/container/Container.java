@@ -1,4 +1,4 @@
-package org.torquebox.enterprise.ruby.messaging.container;
+package org.torquebox.messaging.container;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +9,8 @@ import javax.jms.JMSException;
 import javax.naming.Context;
 import javax.naming.NamingException;
 
-import org.torquebox.enterprise.ruby.messaging.MessageDrivenConsumer;
-import org.torquebox.enterprise.ruby.messaging.metadata.MessageDrivenConsumerConfig;
+import org.torquebox.messaging.MessageDrivenConsumer;
+import org.torquebox.messaging.MessageDrivenConsumerConfig;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
 public class Container {

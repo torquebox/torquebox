@@ -1,4 +1,4 @@
-class Java::org.torquebox.enterprise.ruby.messaging.container::Container
+class Java::org.torquebox.messaging.container::Container
   def wait_until(signal)
     keep_running = true
     Signal.trap( signal ) {
@@ -14,7 +14,7 @@ end
 
 module TorqueBox
   module Messaging
-    class Container < Java::org.torquebox.enterprise.ruby.messaging.container::Container
+    class Container < Java::org.torquebox.messaging.container::Container
       class Config
 
         attr_accessor :connection_factory_jndi_name
@@ -67,7 +67,7 @@ module TorqueBox
           end
          
           def map(destination_name, ruby_class_name)
-            consumer_config = Java::org.torquebox.enterprise.ruby.messaging.metadata::MessageDrivenConsumerConfig.new
+            consumer_config = Java::org.torquebox.messaging::MessageDrivenConsumerConfig.new
             consumer_config.destination_name = destination_name
             consumer_config.ruby_class_name = ruby_class_name.to_s
             @config.consumer_configs << consumer_config
@@ -77,7 +77,7 @@ module TorqueBox
 
       def self.new(&block)
         config = Config.new( &block )
-        factory = Java::org.torquebox.enterprise.ruby.messaging.container::ContainerFactory.new
+        factory = Java::org.torquebox.messaging.container::ContainerFactory.new
 
         factory.context_factory_class_name = config.context_factory_class_name unless config.context_factory_class_name.nil?
         factory.url_package_prefixes       = config.url_package_prefixes       unless config.url_package_prefixes.nil?
