@@ -51,34 +51,35 @@
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-core</artifactId>
       <version>${hornetq.version}</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-jms</artifactId>
       <version>${hornetq.version}</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-jms-client</artifactId>
       <version>${hornetq.version}</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-transports</artifactId>
       <version>${hornetq.version}</version>
-      <scope>compile</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.netty</groupId>
       <artifactId>netty</artifactId>
       <version>3.1.5.GA</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -93,12 +94,14 @@
       <groupId>org.jboss.naming</groupId>
       <artifactId>jnp-client</artifactId>
       <version>5.0.4.GA</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-spi</artifactId>
       <version>2.2.0.CR1</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- Testing -->
@@ -218,7 +221,6 @@
         </configuration>
       </plugin>
 -->
-<!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -232,8 +234,8 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>target/${project.artifactId}-web-context-mbeans-descriptors.jar</file>
-                  <type>jar</type>
+                  <file>target/${project.artifactId}-1.0.0.gem</file>
+                  <type>gem</type>
                   <classifier></classifier>
                 </artifact>
               </artifacts>
@@ -241,7 +243,6 @@
           </execution>
         </executions>
       </plugin>
--->
     </plugins>
   </build>
 

@@ -1,4 +1,11 @@
 class Java::org.torquebox.messaging.client::Client
+
+  alias_method :core_send, :send
+
+  def send(destination, msg_or_opts={})
+    core_send( destination, msg_or_opts.to_s )
+  end
+
 end
 
 module TorqueBox
