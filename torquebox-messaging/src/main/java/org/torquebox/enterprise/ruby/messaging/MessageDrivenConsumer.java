@@ -37,7 +37,7 @@ public class MessageDrivenConsumer implements MessageListener {
 	}
 	
 	public String toString() {
-		return "[MessageDrivenConsumer: rubyClassName=" + this.rubyClassName + " " +  System.identityHashCode( this ) + "]";
+		return "[MessageDrivenConsumer: rubyClassName=" + this.rubyClassName + "]";
 	}
 	
 	public void setRubyClassName(String rubyClassName) {
@@ -83,21 +83,18 @@ public class MessageDrivenConsumer implements MessageListener {
 		
 	public void start() throws JMSException {
 		if ( connection != null ) {
-			System.err.println( "starting agent on " + getDestination() + " with " + this );
 			connection.start();
 		}
 	}
 	
 	public void stop() throws JMSException {
 		if ( connection != null ) {
-			System.err.println( "stopping agent on " + getDestination() + " with " + this );
 			this.connection.stop();
 		}
 	}
 	
 	public void destroy() throws JMSException {
 		if ( connection != null ) {
-			System.err.println( "closing agent on " + getDestination() + " with " + this );
 			this.connection.close();
 			this.connection = null;
 		}
@@ -105,7 +102,6 @@ public class MessageDrivenConsumer implements MessageListener {
 	
 	@Override
 	public void onMessage(Message message) {
-		System.err.println( this + " onMessage(" + message + ")" );
 		Ruby ruby = null;
 		
 		try {

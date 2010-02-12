@@ -10,7 +10,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.torquebox.enterprise.ruby.messaging.MessageDrivenConsumer;
-import org.torquebox.enterprise.ruby.messaging.metadata.MessageDrivenAgentConfig;
+import org.torquebox.enterprise.ruby.messaging.metadata.MessageDrivenConsumerConfig;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
 public class Container {
@@ -59,31 +59,31 @@ public class Container {
 		return this.rubyRuntimePool;
 	}
 
-	synchronized void addMessageDrivenAgent(MessageDrivenConsumer agent) {
-		this.consumers.add(agent);
+	synchronized void addMessageDrivenConsumer(MessageDrivenConsumer consumer) {
+		this.consumers.add(consumer);
 	}
 
-	public void addMessageDrivenAgent(MessageDrivenAgentConfig agentConfig) throws NamingException {
+	public void addMessageDrivenConsumer(MessageDrivenConsumerConfig consumerConfig) throws NamingException {
 		MessageDrivenConsumer consumer = new MessageDrivenConsumer();
 
 		consumer.setConnectionFactory(getConnectionFactory());
 
-		consumer.setRubyClassName(agentConfig.getRubyClassName());
+		consumer.setRubyClassName(consumerConfig.getRubyClassName());
 		consumer.setRubyRuntimePool(getRubyRuntimePool());
 
-		Destination destination = (Destination) getContext().lookup(agentConfig.getDestinationName());
+		Destination destination = (Destination) getContext().lookup(consumerConfig.getDestinationName());
 		consumer.setDestination(destination);
 
-		addMessageDrivenAgent(consumer);
+		addMessageDrivenConsumer( consumer );
 	}
 
-	public void create() throws Exception {
+	synchronized public void create() throws Exception {
 		this.connectionFactory = (ConnectionFactory) getContext().lookup(getConnectionFactoryJndiName());
-		for (MessageDrivenConsumer agent : this.consumers) {
+		for (MessageDrivenConsumer consumer : this.consumers) {
 			try {
-				agent.setConnectionFactory(getConnectionFactory());
-				agent.setRubyRuntimePool( getRubyRuntimePool() );
-				agent.create();
+				consumer.setConnectionFactory(getConnectionFactory());
+				consumer.setRubyRuntimePool( getRubyRuntimePool() );
+				consumer.create();
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
@@ -93,7 +93,6 @@ public class Container {
 	synchronized public void start() {
 		for (MessageDrivenConsumer consumer : this.consumers) {
 			try {
-				System.err.println( "starting consumer: " + consumer );
 				consumer.start();
 			} catch (JMSException e) {
 				e.printStackTrace();
@@ -109,9 +108,10 @@ public class Container {
 				e.printStackTrace();
 			}
 		}
+		destroy();
 	}
 	
-	synchronized public void destroy() {
+	synchronized private void destroy() {
 		for (MessageDrivenConsumer consumer : this.consumers) {
 			try {
 				consumer.destroy();
@@ -119,6 +119,8 @@ public class Container {
 				e.printStackTrace();
 			}
 		}
+		
+		this.consumers.clear();
 	}
 
 }

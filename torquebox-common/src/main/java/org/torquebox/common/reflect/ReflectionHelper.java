@@ -11,7 +11,7 @@ public class ReflectionHelper {
 		Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name + "=" }, Boolean.class );
 		
 		if ( respondTo.booleanValue() ) {
-			JavaEmbedUtils.invokeMethod( ruby, target, name, new Object[]{ value }, void.class );
+			JavaEmbedUtils.invokeMethod( ruby, target, name + "=", new Object[]{ value }, void.class );
 		}
 		
 		return success;

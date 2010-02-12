@@ -7,15 +7,14 @@ GEM_DIR = File.dirname( __FILE__ ) + '/target/gem-stage'
 $: << GEM_DIR + '/lib'
 
 Dir[ GEM_DIR + '/lib/*.jar' ].each do |jar|
-  puts "require #{jar}"
   require jar
 end
 
 require 'torquebox/messaging/client'
 
-TorqueBox::Messaging::Client.new do
+TorqueBox::Messaging::Client.connect do |client|
   1.upto( 10 ) do |i|
-    send( '/queues/foo', "howdy #{i} #{Time.now}" )
+    client.send( '/queues/foo', "#{i} #{Time.now}" )
   end
 end
 

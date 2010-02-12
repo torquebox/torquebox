@@ -25,7 +25,7 @@ public class ContainerFactory {
 	}
 	
 	public String toString() {
-		return "[ContainerFactory: connectionFactoryJndiName=" + this.connectionFactoryJndiName + "]";
+		return "[ContainerFactory: namingProviderUrl=" + namingProviderUrl + "; connectionFactoryJndiName=" + this.connectionFactoryJndiName + "]";
 	}
 	
 	public void setContextFactoryClassName(String contextFactoryClassName) {
@@ -70,7 +70,7 @@ public class ContainerFactory {
 		return this.connectionFactoryJndiName;
 	}
 	
-	public Container createContainer() throws NamingException {
+	public Container createContainer() throws Exception {
 		Container container = new Container();
 		container.setContext( createInitialContext() );
 		container.setConnectionFactoryJndiName( getConnectionFactoryJndiName() );

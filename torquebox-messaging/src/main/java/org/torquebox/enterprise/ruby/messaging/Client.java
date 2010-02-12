@@ -11,9 +11,11 @@ import javax.naming.NamingException;
 
 public class Client {
 
+	private Context context;
+
 	private ConnectionFactory connectionFactory;
 	private Connection connection;
-	private Context context;
+	private Session session;
 
 	public Client() {
 
@@ -22,11 +24,11 @@ public class Client {
 	public void setContext(Context context) {
 		this.context = context;
 	}
-	
+
 	public Context getContext() {
 		return this.context;
 	}
-	
+
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
 	}
@@ -35,41 +37,64 @@ public class Client {
 		return this.connectionFactory;
 	}
 
-	public void create() throws JMSException {
+	protected void create() throws JMSException {
 		this.connection = getConnectionFactory().createConnection();
+		this.session = this.connection.createSession(true, Session.AUTO_ACKNOWLEDGE);
 	}
 
-	public void start() throws JMSException {
-		if ( this.connection != null ) {
+	protected void start() throws JMSException {
+		if (this.connection != null) {
 			this.connection.start();
 		}
 	}
 
-	public void stop() throws JMSException {
-		if ( this.connection != null ) {
+	protected void stop() throws JMSException {
+		if (this.connection != null) {
 			this.connection.stop();
 		}
 	}
 
-	public void destroy() throws JMSException {
+	protected void destroy() throws JMSException {
 		if (this.connection != null) {
 			this.connection.close();
 			this.connection = null;
 		}
 	}
 
-	protected void send(Destination destination, Object message) throws JMSException {
-		System.err.println("sending " + message + " to " + destination);
-		Session session = this.connection.createSession(true, Session.AUTO_ACKNOWLEDGE );
-		MessageProducer producer = session.createProducer( destination );
-		producer.send( session.createTextMessage( message.toString() ) );
-		session.commit();
-		session.close();
-		System.err.println( "committed session" );
+	public void commit() throws JMSException {
+		if (this.session == null) {
+			throw new IllegalStateException("No session");
+		}
+		this.session.commit();
 	}
-	
-	protected void send(String destinationName, Object message) throws NamingException, JMSException {
-		Destination destination = (Destination) getContext().lookup( destinationName );
+
+	public void rollback() throws JMSException {
+		if (this.session == null) {
+			throw new IllegalStateException("No session");
+		}
+		this.session.rollback();
+	}
+
+	public void connect() throws JMSException {
+		create();
+		start();
+	}
+
+	public void close() throws JMSException {
+		if ( this.session != null ) {
+			commit();
+		}
+		stop();
+		destroy();
+	}
+
+	public void send(Destination destination, Object message) throws JMSException {
+		MessageProducer producer = this.session.createProducer(destination);
+		producer.send(this.session.createTextMessage(message.toString()));
+	}
+
+	public void send(String destinationName, Object message) throws NamingException, JMSException {
+		Destination destination = (Destination) getContext().lookup(destinationName);
 		send(destination, message);
 	}
 

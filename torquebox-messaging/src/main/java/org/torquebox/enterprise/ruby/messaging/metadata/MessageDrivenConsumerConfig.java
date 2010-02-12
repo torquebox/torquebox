@@ -1,11 +1,11 @@
 package org.torquebox.enterprise.ruby.messaging.metadata;
 
-public class MessageDrivenAgentConfig {
+public class MessageDrivenConsumerConfig {
 	
 	private String rubyClassName;
 	private String destinationName;
 
-	public MessageDrivenAgentConfig() {
+	public MessageDrivenConsumerConfig() {
 	}
 	
 	public void setRubyClassName(String rubyClassName) {
