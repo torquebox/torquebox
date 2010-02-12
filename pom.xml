@@ -70,6 +70,8 @@
     <jruby.version>1.4.0</jruby.version>
     <rails.version>2.3.4</rails.version>
 
+    <version.jbossas>6.0.0.M1</version.jbossas>
+
 <!--
     <jboss.as.version>6.0.0.M1</jboss.as.version>
     <jboss.mc.version>2.0.9.GA</jboss.mc.version>

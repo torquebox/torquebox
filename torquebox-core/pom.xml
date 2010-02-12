@@ -48,7 +48,13 @@
     <dependency>
       <groupId>org.jboss.jbossas</groupId>
       <artifactId>jboss-as-system-jmx</artifactId>
-      <version>6.0.0.M1</version>
+      <version>${version.jbossas}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-common-core</artifactId>
       <scope>provided</scope>
     </dependency>
 

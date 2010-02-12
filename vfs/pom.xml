@@ -18,7 +18,6 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-vfs</artifactId>
-      <version>${jboss.vfs.version}</version>
       <scope>provided</scope>
     </dependency>
 
