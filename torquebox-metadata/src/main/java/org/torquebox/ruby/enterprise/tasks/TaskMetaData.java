@@ -1,6 +1,6 @@
 package org.torquebox.ruby.enterprise.tasks;
 
-import org.torquebox.ruby.enterprise.messaging.DestinationMetaData;
+import org.torquebox.messaging.metadata.DestinationMetaData;
 
 public class TaskMetaData {
 	

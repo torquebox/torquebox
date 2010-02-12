@@ -22,7 +22,6 @@
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <version>${jboss.mc.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>

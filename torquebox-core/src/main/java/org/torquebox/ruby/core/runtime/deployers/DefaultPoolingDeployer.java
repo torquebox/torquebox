@@ -10,7 +10,7 @@ import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaDa
 
 public class DefaultPoolingDeployer extends AbstractDeployer {
 	
-	public static final String[] DEFAULT_POOLS = { "web", "jobs", "queues", "endpoints" };
+	public static final String[] DEFAULT_POOLS = { "web", "jobs", "queues", "endpoints", "messaging" };
 
 	public DefaultPoolingDeployer() {
 		setInput(RubyRackApplicationMetaData.class);

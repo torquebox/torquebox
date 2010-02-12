@@ -1,8 +1,8 @@
-package org.torquebox.ruby.enterprise.messaging.deployers;
+package org.torquebox.messaging.deployers;
 
+import org.torquebox.messaging.metadata.QueueMetaData;
+import org.torquebox.messaging.metadata.QueuesMetaData;
 import org.torquebox.ruby.enterprise.messaging.Queue;
-import org.torquebox.ruby.enterprise.messaging.QueueMetaData;
-import org.torquebox.ruby.enterprise.messaging.QueuesMetaData;
 
 public class QueuesDeployer extends AbstractDestinationDeployer<QueueMetaData, QueuesMetaData> {
 

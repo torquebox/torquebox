@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging.deployers;
+package org.torquebox.messaging.deployers;
 
 import java.io.InputStream;
 import java.util.Map;
@@ -6,8 +6,8 @@ import java.util.Map;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
-import org.torquebox.ruby.enterprise.messaging.TopicMetaData;
-import org.torquebox.ruby.enterprise.messaging.TopicsMetaData;
+import org.torquebox.messaging.metadata.TopicMetaData;
+import org.torquebox.messaging.metadata.TopicsMetaData;
 import org.yaml.snakeyaml.Yaml;
 
 public class TopicsYamlParsingDeployer extends AbstractVFSParsingDeployer<TopicsMetaData>{

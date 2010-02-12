@@ -3,6 +3,7 @@
   <comment></comment>
   <projects>
     <project>torquebox-common</project>
+    <project>torquebox-messaging</project>
     <project>torquebox-metadata</project>
     <project>torquebox-spi</project>
   </projects>

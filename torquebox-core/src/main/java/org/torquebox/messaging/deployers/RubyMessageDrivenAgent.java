@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging.deployers;
+package org.torquebox.messaging.deployers;
 
 public class RubyMessageDrivenAgent {
 

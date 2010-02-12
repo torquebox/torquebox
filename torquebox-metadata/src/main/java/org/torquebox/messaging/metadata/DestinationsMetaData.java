@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging;
+package org.torquebox.messaging.metadata;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -14,18 +14,32 @@
   <description></description>
 
   <dependencies>
+
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <version>${jruby.version}</version>
       <scope>compile</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-tomcat</artifactId>
-      <version>${jboss.as.version}</version>
+      <groupId>jboss.web</groupId>
+      <artifactId>jbossweb</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>jboss.web</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.microcontainer</groupId>
+      <artifactId>jboss-kernel</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Sip Servlets spec dependency -->
   <dependency>
       <groupId>org.mobicents.servlet.sip</groupId>

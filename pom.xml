@@ -3,6 +3,12 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.jboss.jbossas</groupId>
+    <artifactId>jboss-as-component-matrix</artifactId>
+    <version>6.0.0.M1</version>
+  </parent>
+
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox</artifactId>
   <version>1.0.0.Beta19-SNAPSHOT</version>
@@ -64,16 +70,19 @@
     <jruby.version>1.4.0</jruby.version>
     <rails.version>2.3.4</rails.version>
 
+<!--
     <jboss.as.version>6.0.0.M1</jboss.as.version>
     <jboss.mc.version>2.0.9.GA</jboss.mc.version>
     <jboss.deployers.version>2.0.9.GA</jboss.deployers.version>
     <jboss.vfs.version>2.2.0.Alpha1</jboss.vfs.version>
+-->
     <hornetq.version>2.0.0.GA</hornetq.version>
-
     <cxf.version>2.2.3</cxf.version>
 
+<!--
     <jboss.messaging.version>1.4.3.GA</jboss.messaging.version>
     <jboss.messaging.jms.version>1.1</jboss.messaging.jms.version>
+-->
 
     <mobicents.sip.version>1.0</mobicents.sip.version>
     <mobicents.spec.version>1.1.10</mobicents.spec.version>
@@ -190,6 +199,12 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging-spi</artifactId>
+      <version>2.2.0.CR1</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -238,6 +253,11 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.2</version>
+        </plugin>
+        <plugin>
           <groupId>org.jboss.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <version>2.3</version>
@@ -249,9 +269,11 @@
           <extensions>true</extensions>
         </plugin>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.2</version>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <followSymLinks>false</followSymLinks>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

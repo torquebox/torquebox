@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging.deployers;
+package org.torquebox.messaging.deployers;
 
 import javax.jms.Message;
 import javax.jms.MessageListener;

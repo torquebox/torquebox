@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging.deployers;
+package org.torquebox.messaging.deployers;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -7,9 +7,9 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.torquebox.messaging.metadata.DestinationMetaData;
+import org.torquebox.messaging.metadata.DestinationsMetaData;
 import org.torquebox.ruby.enterprise.messaging.Destination;
-import org.torquebox.ruby.enterprise.messaging.DestinationMetaData;
-import org.torquebox.ruby.enterprise.messaging.DestinationsMetaData;
 
 public abstract class AbstractDestinationDeployer<S extends DestinationMetaData, P extends DestinationsMetaData<S>>
 		extends AbstractSimpleVFSRealDeployer<P> {
@@ -44,8 +44,8 @@ public abstract class AbstractDestinationDeployer<S extends DestinationMetaData,
 		String beanName = getBeanName( destinationMetaData.getName() );
 		
 		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, getDestinationClass().getName() );
-		
 		builder.addPropertyMetaData( "name", destinationMetaData.getName() );
+		
 		ValueMetaData hornetServerInjection = builder.createInject("JMSServerManager" );
 		builder.addPropertyMetaData( "server", hornetServerInjection );
 		

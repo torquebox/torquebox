@@ -20,15 +20,36 @@
       <artifactId>torquebox-spi</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-metadata</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-common</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.metadata</groupId>
+      <artifactId>jboss-metadata</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-as-system-jmx</artifactId>
+      <version>6.0.0.M1</version>
+      <scope>provided</scope>
     </dependency>
 
     <!-- JRuby-related -->
@@ -53,11 +74,23 @@
       <scope>compile</scope>
     </dependency>
 
-    <!-- Tomcat -->
+    <!-- Scheduler -->
     <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-tomcat</artifactId>
-      <version>${jboss.as.version}</version>
+      <groupId>quartz</groupId>
+      <artifactId>quartz</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Web -->
+    <dependency>
+      <groupId>jboss.web</groupId>
+      <artifactId>jbossweb</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>jboss.web</groupId>
+      <artifactId>servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
     
@@ -81,102 +114,66 @@
       <scope>compile</scope>
     </dependency>
 
-    <!-- Messaging -->
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-core</artifactId>
-      <version>${hornetq.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-jms</artifactId>
-      <version>${hornetq.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-
-    <dependency>
-      <groupId>javax.jms</groupId>
-      <artifactId>jms</artifactId>
-      <version>${jboss.messaging.jms.version}</version>
-      <scope>provided</scope>
-    </dependency>
-	
     <!-- Microcontainer, VFS and Deployers -->
 
     <dependency>
       <groupId>org.jboss.microcontainer</groupId>
       <artifactId>jboss-kernel</artifactId>
-      <version>${jboss.mc.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-client-spi</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-client</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-core-spi</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-core</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-impl</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-spi</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-spi</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-structure-spi</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs</artifactId>
-      <version>${jboss.deployers.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-vfs</artifactId>
-      <version>${jboss.vfs.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -189,7 +186,15 @@
         <exclusion>
           <groupId>com.sun.xml.bind</groupId>
           <artifactId>jaxb-xjc</artifactId>
-          </exclusion>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.fastinfoset</groupId>
+          <artifactId>FastInfoset</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -200,6 +205,14 @@
         <exclusion>
           <groupId>com.sun.xml.bind</groupId>
           <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.sun.xml.bind</groupId>
+          <artifactId>jaxb-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -222,6 +235,10 @@
         <exclusion>
           <groupId>com.sun.xml.bind</groupId>
           <artifactId>jaxb-xjc</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>javax.xml.bind</groupId>
+          <artifactId>jaxb-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

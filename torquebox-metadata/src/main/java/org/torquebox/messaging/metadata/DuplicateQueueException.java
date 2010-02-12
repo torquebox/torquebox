@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging;
+package org.torquebox.messaging.metadata;
 
 public class DuplicateQueueException extends DuplicateDestinationException {
 	
