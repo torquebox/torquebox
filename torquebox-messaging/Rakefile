@@ -7,16 +7,30 @@ end
 
 task :default=>[:package]
 
-task :package do 
+
+task :package=>[ :package_container, :package_client ]
+
+task :stage do 
   Dir.chdir( "target/gem-stage" ) do 
-    
-    FileUtils.cp( "../torquebox-messaging.jar", "lib/torquebox-messaging-#{version}.jar" )
-    FileUtils.cp( '../../src/main/ruby/init.rb', 'init.rb' )
-    FileUtils.rm_f( 'lib/torquebox' )
-    FileUtils.ln_s( '../../../src/main/ruby/lib/torquebox/',     'lib/torquebox/' )
-    gem_spec = eval( File.read( "../../torquebox-messaging.gemspec" ) )
+    FileUtils.cp( "../torquebox-messaging.jar", "java-lib/torquebox-messaging-#{version}.jar" )
+    FileUtils.rm_f( 'lib' )
+    FileUtils.ln_s( '../../src/main/ruby/lib',     'lib' )
+  end
+end
+
+task :package_container=>:stage do 
+  Dir.chdir( "target/gem-stage" ) do 
+    gem_spec = eval( File.read( "../../torquebox-messaging-container.gemspec" ) )
     Gem::Builder.new( gem_spec ).build
-    FileUtils.mv( "torquebox-messaging-#{PROJECT_VERSION}.gem", "../torquebox-messaging-#{PROJECT_VERSION}.gem" )
+    FileUtils.mv( "torquebox-messaging-container-#{PROJECT_VERSION}.gem", "../torquebox-messaging-container-#{PROJECT_VERSION}.gem" )
+  end
+end
+
+task :package_client=>:stage do 
+  Dir.chdir( "target/gem-stage" ) do 
+    gem_spec = eval( File.read( "../../torquebox-messaging-client.gemspec" ) )
+    Gem::Builder.new( gem_spec ).build
+    FileUtils.mv( "torquebox-messaging-client-#{PROJECT_VERSION}.gem", "../torquebox-messaging-client-#{PROJECT_VERSION}.gem" )
   end
 end
 

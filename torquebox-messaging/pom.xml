@@ -147,7 +147,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/gem-stage/lib</outputDirectory>
+              <outputDirectory>${project.build.directory}/gem-stage/java-lib</outputDirectory>
               <includeScope>runtime</includeScope>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
@@ -232,9 +232,14 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>target/${project.artifactId}-1.0.0.gem</file>
+                  <file>target/${project.artifactId}-container-1.0.0.gem</file>
                   <type>gem</type>
-                  <classifier></classifier>
+                  <classifier>container</classifier>
+                </artifact>
+                <artifact>
+                  <file>target/${project.artifactId}-client-1.0.0.gem</file>
+                  <type>gem</type>
+                  <classifier>client</classifier>
                 </artifact>
               </artifacts>
             </configuration>
