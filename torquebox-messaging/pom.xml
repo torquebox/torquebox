@@ -9,244 +9,58 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-messaging</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <name>TorqueBox Messaging</name>
   <description></description>
 
-  <dependencies>
+  <dependencyManagement>
+    <dependencies>
 
-    <!-- TorqueBox-->
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-core</artifactId>
+        <version>${version.hornetq}</version>
+      </dependency>
 
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-jms</artifactId>
+        <version>${version.hornetq}</version>
+      </dependency>
 
-    <!-- JRuby-related -->
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <version>${jruby.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-jms-client</artifactId>
+        <version>${version.hornetq}</version>
+      </dependency>
 
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <version>1.5</version>
-      <scope>compile</scope>
-    </dependency>
+      <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-transports</artifactId>
+        <version>${version.hornetq}</version>
+      </dependency>
 
-    <!-- Messaging -->
+      <dependency>
+        <groupId>org.jboss.netty</groupId>
+        <artifactId>netty</artifactId>
+        <version>${version.netty}</version>
+      </dependency>
 
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-core</artifactId>
-      <version>${hornetq.version}</version>
-      <scope>compile</scope>
-    </dependency>
+      <dependency>
+        <groupId>javax.jms</groupId>
+        <artifactId>jms</artifactId>
+        <version>${version.jms}</version>
+        <scope>compile</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-jms</artifactId>
-      <version>${hornetq.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-jms-client</artifactId>
-      <version>${hornetq.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-transports</artifactId>
-      <version>${hornetq.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.netty</groupId>
-      <artifactId>netty</artifactId>
-      <version>3.1.5.GA</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.jms</groupId>
-      <artifactId>jms</artifactId>
-      <version>1.1</version>
-      <scope>compile</scope>
-    </dependency>
-	
-    <!-- Naming -->
-    <dependency>
-      <groupId>org.jboss.naming</groupId>
-      <artifactId>jnp-client</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-spi</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <!-- Testing -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <resources> 
-      <resource> 
-        <directory>src/main/resources</directory> 
-      </resource> 
-      <resource> 
-        <directory>src/main/java</directory> 
-        <includes>
-          <include>**/*.rb</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource> 
-      <resource> 
-        <directory>src/main/ruby</directory> 
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-    </resources> 
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
-    <plugins> 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/gem-stage/java-lib</outputDirectory>
-              <includeScope>runtime</includeScope>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <exec executable="rake">
-                  <arg value="package"></arg>
-                  <env key="project.version" value="${project.version}"></env>
-                </exec>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+  <modules>
+    <module>runtime</module>
 <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>rspec-maven-plugin</artifactId>
-        <version>1.0-beta-6</version>
-        <configuration>
-          <jrubyHome>${env.JRUBY_HOME}</jrubyHome>
-          <sourceDirectory>${basedir}/src/test/specs</sourceDirectory>
-          <outputDirectory>${basedir}/target</outputDirectory>
-          <skipTests>false</skipTests>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>test-log4j.xml</value>
-            </property>
-            <property>
-              <name>java.protocol.handler.pkgs</name>
-              <value>org.jboss.virtual.protocol</value>
-            </property>
-          </systemProperties>
-        </configuration>
-        <executions>
-          <execution>
-            <id>test</id>
-            <phase>test</phase>
-            <goals>
-              <goal>spec</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>jboss-log4j.xml</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
+    <module>client</module>
+    <module>container</module>
 -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>target/${project.artifactId}-container-1.0.0.gem</file>
-                  <type>gem</type>
-                  <classifier>container</classifier>
-                </artifact>
-                <artifact>
-                  <file>target/${project.artifactId}-client-1.0.0.gem</file>
-                  <type>gem</type>
-                  <classifier>client</classifier>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+  </modules>
 
 </project>

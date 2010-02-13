@@ -1,0 +1,23 @@
+
+version = ENV['project.version'] || ENV['VERSION'] || '1.0.0'
+
+if ( version =~ /^([0-9]+)\.([0-9]+)\.([0-9]+)(\..*)?/ )
+  PROJECT_VERSION="#{$1}.#{$2}.#{$3}"
+end
+
+task :default=>[:package]
+
+
+task :stage do 
+  Dir.chdir( "target/stage" ) do 
+    FileUtils.ln_s( "../../lib", "lib" )
+  end
+end
+
+task :package=>:stage do
+  Dir.chdir( "target/stage" ) do 
+    gem_spec = eval( File.read( "../../torquebox-messaging-runtime.gemspec" ) )
+    Gem::Builder.new( gem_spec ).build
+    FileUtils.mv( "torquebox-messaging-runtime-#{PROJECT_VERSION}.gem", "../torquebox-messaging-runtime-#{PROJECT_VERSION}.gem" )
+  end
+end

@@ -65,26 +65,36 @@
     </profile>
   </profiles>
     
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>org.jruby</groupId>
+        <artifactId>jruby-complete</artifactId>
+        <version>${version.jruby}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${version.snakeyaml}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <properties>
 
-    <jruby.version>1.4.0</jruby.version>
+    <version.jruby>1.4.0</version.jruby>
+    <version.snakeyaml>1.5</version.snakeyaml>
+
     <rails.version>2.3.4</rails.version>
 
     <version.jbossas>6.0.0.M1</version.jbossas>
 
-<!--
-    <jboss.as.version>6.0.0.M1</jboss.as.version>
-    <jboss.mc.version>2.0.9.GA</jboss.mc.version>
-    <jboss.deployers.version>2.0.9.GA</jboss.deployers.version>
-    <jboss.vfs.version>2.2.0.Alpha1</jboss.vfs.version>
--->
-    <hornetq.version>2.0.0.GA</hornetq.version>
-    <cxf.version>2.2.3</cxf.version>
+    <version.hornetq>2.0.0.GA</version.hornetq>
+    <version.netty>3.1.5.GA</version.netty>
+    <version.jms>1.1</version.jms>
 
-<!--
-    <jboss.messaging.version>1.4.3.GA</jboss.messaging.version>
-    <jboss.messaging.jms.version>1.1</jboss.messaging.jms.version>
--->
+    <cxf.version>2.2.3</cxf.version>
 
     <mobicents.sip.version>1.0</mobicents.sip.version>
     <mobicents.spec.version>1.1.10</mobicents.spec.version>
