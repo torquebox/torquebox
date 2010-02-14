@@ -123,7 +123,7 @@
   <classpathentry kind="var" path="M2_REPO/org/springframework/spring-web/2.5.5/spring-web-2.5.5.jar" sourcepath="M2_REPO/org/springframework/spring-web/2.5.5/spring-web-2.5.5-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/stax/stax-api/1.0/stax-api-1.0.jar"/>
   <classpathentry kind="src" path="/torquebox-common"/>
-  <classpathentry kind="src" path="/torquebox-messaging"/>
+  <classpathentry kind="src" path="/torquebox-messaging-container"/>
   <classpathentry kind="src" path="/torquebox-metadata"/>
   <classpathentry kind="src" path="/torquebox-spi"/>
   <classpathentry kind="var" path="M2_REPO/trove/trove/1.0.2/trove-1.0.2.jar"/>

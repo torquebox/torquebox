@@ -29,15 +29,16 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging</artifactId>
+      <artifactId>torquebox-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common</artifactId>
+      <artifactId>torquebox-messaging-container</artifactId>
       <version>${project.version}</version>
     </dependency>
+
 
     <dependency>
       <groupId>org.jboss.metadata</groupId>
@@ -58,11 +59,16 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- JRuby-related -->
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>${jruby.version}</version>
       <scope>compile</scope>
     </dependency>
 

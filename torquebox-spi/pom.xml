@@ -18,7 +18,6 @@
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <version>${jruby.version}</version>
       <scope>compile</scope>
     </dependency>
 

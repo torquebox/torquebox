@@ -13,54 +13,10 @@
   <name>TorqueBox Messaging</name>
   <description></description>
 
-  <dependencyManagement>
-    <dependencies>
-
-      <dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-core</artifactId>
-        <version>${version.hornetq}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-jms</artifactId>
-        <version>${version.hornetq}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-jms-client</artifactId>
-        <version>${version.hornetq}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hornetq</groupId>
-        <artifactId>hornetq-transports</artifactId>
-        <version>${version.hornetq}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.jboss.netty</groupId>
-        <artifactId>netty</artifactId>
-        <version>${version.netty}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.jms</groupId>
-        <artifactId>jms</artifactId>
-        <version>${version.jms}</version>
-        <scope>compile</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
   <modules>
     <module>runtime</module>
-<!--
     <module>client</module>
     <module>container</module>
--->
   </modules>
 
 </project>

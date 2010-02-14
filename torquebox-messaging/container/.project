@@ -1,11 +1,9 @@
 <projectDescription>
-  <name>torquebox-core</name>
+  <name>torquebox-messaging-container</name>
   <comment></comment>
   <projects>
     <project>torquebox-common</project>
-    <project>torquebox-messaging-container</project>
     <project>torquebox-messaging-runtime</project>
-    <project>torquebox-metadata</project>
     <project>torquebox-spi</project>
   </projects>
   <buildSpec>

@@ -8,9 +8,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-messaging-client</artifactId>
+  <artifactId>torquebox-messaging-container</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Messaging Client</name>
+  <name>TorqueBox Messaging Container</name>
   <description></description>
 
   <dependencies>
