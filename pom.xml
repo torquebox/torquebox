@@ -329,14 +329,7 @@
   </build>
 
   <modules>
-    <module>torquebox-spi</module>
-    <module>torquebox-metadata</module>
-    <module>torquebox-common</module>
 
-    <module>torquebox-core</module>
-    <module>torquebox-messaging</module>
-
-    <module>torquebox-docs</module>
 
     <module>torquebox-gem</module>
     <module>torquebox-rails</module>
@@ -344,6 +337,14 @@
 
     <module>torquebox-bin</module>
 
+    <module>metadata</module>
+
+    <module>core</module>
+    <module>docs</module>
+
+    <module>spi</module>
+    <module>common</module>
+    <module>messaging</module>
     <module>vfs</module>
   </modules>
 
