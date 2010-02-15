@@ -16,7 +16,7 @@ import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
 
 public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaData> {
 
-	private static final String[] VALID_POOLS = { "web", "jobs", "queues", "test1", "test2", "test3" };
+	private static final String[] VALID_POOLS = { "web", "jobs", "queues", "messaging", "test1", "test2", "test3" };
 
 	public PoolingDeployer() {
 		super(PoolingMetaData.class);

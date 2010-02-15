@@ -59,6 +59,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 	public RubyRuntimeFactoryDeployer() {
 		super(RubyRuntimeMetaData.class);
 		setStage(DeploymentStages.CLASSLOADER);
+		addOutput( Ruby.class );
 	}
 
 	/**

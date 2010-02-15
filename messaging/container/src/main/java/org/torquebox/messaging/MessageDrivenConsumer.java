@@ -9,14 +9,18 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
+import org.torquebox.common.util.StringUtils;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
 public class MessageDrivenConsumer implements MessageListener {
+	
+	private static final Logger log = Logger.getLogger( MessageDrivenConsumer.class );
 	
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
@@ -102,10 +106,14 @@ public class MessageDrivenConsumer implements MessageListener {
 	
 	@Override
 	public void onMessage(Message message) {
+		log.info( "onMessage()" );
 		Ruby ruby = null;
 		
 		try {
 			ruby = getRubyRuntimePool().borrowRuntime();
+			String location = StringUtils.underscore( getRubyClassName() );
+			log.info( "require [" + location + "]" );
+			ruby.evalScriptlet( "require %(" + location + ")\n" );
 			RubyClass rubyClass = (RubyClass) ruby.getClassFromPath( getRubyClassName() );
 			IRubyObject listener = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, rubyClass, "new", EMPTY_OBJECT_ARRAY, IRubyObject.class );
 			
@@ -114,6 +122,7 @@ public class MessageDrivenConsumer implements MessageListener {
 			JavaEmbedUtils.invokeMethod( ruby, listener, "on_message", new Object[] { message }, void.class);
 			message.acknowledge();
 		} catch (Exception e) {
+			log.error( "unable to dispatch", e );
 			e.printStackTrace();
 		} finally {
 			if ( ruby != null ) {

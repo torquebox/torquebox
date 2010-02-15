@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.torquebox.ruby.core.util;
+package org.torquebox.common.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,6 +62,7 @@ public class StringUtils {
         String secondPattern = "([a-z\\d])([A-Z])";
         String replacementPattern = "$1_$2";
         word = word.replaceAll("\\.", "/"); // replace package separator with slash
+        word = word.replaceAll("::", "/"); // replace package separator with slash
         word = word.replaceAll("\\$", "__"); // replace $ with two underscores for inner classes
         word = word.replaceAll(firstPattern, replacementPattern); // replace capital letter with _ plus lowercase letter
         word = word.replaceAll(secondPattern, replacementPattern);

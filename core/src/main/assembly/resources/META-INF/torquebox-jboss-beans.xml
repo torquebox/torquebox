@@ -58,6 +58,9 @@
   <bean name="TopicsYamlParsingDeployer"           class="org.torquebox.messaging.deployers.TopicsYamlParsingDeployer"/>
   <bean name="TopicsDeployer"                      class="org.torquebox.messaging.deployers.TopicsDeployer"/>
 
+  <bean name="ConsumersRbParsingDeployer"          class="org.torquebox.messaging.deployers.ConsumersRbParsingDeployer"/>
+  <bean name="MessageDrivenConsumerDeployer"       class="org.torquebox.messaging.deployers.MessageDrivenConsumerDeployer"/>
+
   <!-- Task Queues -->
 
 <!--
@@ -128,4 +131,5 @@
   <bean name="RailsQueuesScanningDeployer"          class="org.torquebox.rails.queues.deployers.RailsQueuesScanningDeployer"/>
   <bean name="RailsQueuesRubyLoadPathDescriber"     class="org.torquebox.rails.queues.deployers.RailsQueuesRubyLoadPathDescriber"/>
 
+  <bean name="RailsConsumersRubyLoadPathDescriber"       class="org.torquebox.rails.messaging.deployers.RailsConsumersRubyLoadPathDescriber"/>
 </deployment>

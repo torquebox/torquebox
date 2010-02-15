@@ -35,7 +35,7 @@ import org.jruby.RubyIO;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.ruby.core.util.StringUtils;
+import org.torquebox.common.util.StringUtils;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackResponse;
 

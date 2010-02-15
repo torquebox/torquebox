@@ -6,6 +6,11 @@ module TorqueBox
         attr_accessor :connection_factory_jndi_name
         attr_accessor :consumer_configs
 
+        def self.create(&block)
+          config = Config.new( &block )
+          config.consumer_configs
+        end
+
         def initialize(&block)
           @consumer_configs = []
           @naming_provider_url = nil
@@ -13,6 +18,7 @@ module TorqueBox
           @url_package_prefixes = nil
           instance_eval &block if block
         end
+
 
         def naming_provider_url(val=nil)
           unless val.nil?
