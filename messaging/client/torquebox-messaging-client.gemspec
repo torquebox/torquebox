@@ -15,5 +15,6 @@ Gem::Specification.new do |s|
     ].flatten
     s.require_paths  =   [ 'lib', 'java-lib' ]
     s.has_rdoc  =   true
+    s.add_dependency 'torquebox-messaging-runtime', s.version
 end
 
