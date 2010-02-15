@@ -335,7 +335,6 @@
     <module>torquebox-rails</module>
     <module>torquebox-capistrano</module>
 
-    <module>torquebox-bin</module>
 
     <module>metadata</module>
 
@@ -346,6 +345,8 @@
     <module>common</module>
     <module>messaging</module>
     <module>vfs</module>
+
+    <module>dist</module>
   </modules>
 
 

@@ -10,7 +10,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-bin</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Binary Distribution</name>
+  <name>TorqueBox Distribution</name>
   <description></description>
 
   <scm>
