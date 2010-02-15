@@ -10,6 +10,7 @@ task :default=>[:package]
 
 task :stage do 
   Dir.chdir( "target/stage" ) do 
+    FileUtils.rm_f( 'lib' )
     FileUtils.ln_s( "../../lib", "lib" )
   end
 end

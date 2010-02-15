@@ -13,6 +13,7 @@ task :stage do
   Dir.chdir( "target/stage" ) do 
     FileUtils.mkdir_p( "java-lib" )
     FileUtils.cp( "../torquebox-messaging-client.jar", "java-lib/" )
+    FileUtils.rm_f( 'lib' )
     FileUtils.ln_s( "../../lib", "lib" )
   end
 end

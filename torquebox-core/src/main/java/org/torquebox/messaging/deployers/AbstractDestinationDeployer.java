@@ -7,9 +7,9 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.torquebox.messaging.Destination;
 import org.torquebox.messaging.metadata.DestinationMetaData;
 import org.torquebox.messaging.metadata.DestinationsMetaData;
-import org.torquebox.ruby.enterprise.messaging.Destination;
 
 public abstract class AbstractDestinationDeployer<S extends DestinationMetaData, P extends DestinationsMetaData<S>>
 		extends AbstractSimpleVFSRealDeployer<P> {

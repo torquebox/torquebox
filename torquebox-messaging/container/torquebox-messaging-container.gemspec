@@ -10,9 +10,10 @@ Gem::Specification.new do |s|
     s.summary   =   "TorqueBox Messaging Container"
     s.files     =   [
       Dir['lib/**/*.rb'],
-      Dir['java-lib/**/*.rb'],
+      Dir['java-lib/**/*.jar'],
     ].flatten
     s.require_paths  =   [ 'lib', 'java-lib' ]
     s.has_rdoc  =   true
+    s.add_dependency 'torquebox-messaging-runtime', s.version
 end
 

@@ -9,9 +9,10 @@ Gem::Specification.new do |s|
     s.email     =   "info@torquebox.org"
     s.summary   =   "TorqueBox Messaging Runtime"
     s.files     =   [
-      Dir['lib/**/*.jar'],
+      Dir['lib/**/*.rb'],
+      Dir['java-lib/**/*.jar'],
     ].flatten
-    s.require_paths  =   [ 'lib' ]
+    s.require_paths  =   [ 'lib', 'java-lib' ]
     s.has_rdoc  =   true
 end
 

@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging;
+package org.torquebox.messaging;
 
 public class Topic extends Destination {
 	
@@ -15,7 +15,7 @@ public class Topic extends Destination {
 	public void stop() throws Exception {
 		log.info( "stop topic " + getName() );
 		
-		getServer().destroyQueue( getName() );
+		getServer().destroyTopic( getName() );
 	}
 
 }

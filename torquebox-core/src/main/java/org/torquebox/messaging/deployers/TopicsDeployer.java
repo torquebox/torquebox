@@ -1,8 +1,8 @@
 package org.torquebox.messaging.deployers;
 
+import org.torquebox.messaging.Topic;
 import org.torquebox.messaging.metadata.TopicMetaData;
 import org.torquebox.messaging.metadata.TopicsMetaData;
-import org.torquebox.ruby.enterprise.messaging.Topic;
 
 public class TopicsDeployer extends AbstractDestinationDeployer<TopicMetaData, TopicsMetaData> {
 

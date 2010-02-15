@@ -1,4 +1,4 @@
-package org.torquebox.ruby.enterprise.messaging;
+package org.torquebox.messaging;
 
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.logging.Logger;
