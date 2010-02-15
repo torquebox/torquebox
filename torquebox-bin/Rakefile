@@ -175,15 +175,19 @@ task 'stage'=>[
       jruby_home = ENV['JRUBY_HOME'] = Dir.pwd
       puts "Install gems in #{Dir.pwd}"
 
-      install_gem( jruby_home, "#{GEMS_DIR}/*.gem" )
+      install_gem( jruby_home, "#{GEMS_DIR}/*.gem", true )
+      #install_gem( jruby_home, "#{GEMS_DIR}/torquebox-capistrano*.gem" )
+      #install_gem( jruby_home, "#{GEMS_DIR}/torquebox-gem*.gem" )
+      #install_gem( jruby_home, "#{GEMS_DIR}/torquebox-messaging-runtime*.gem" )
+      #install_gem( jruby_home, "#{GEMS_DIR}/torquebox-messaging-client*.gem" )
+      #install_gem( jruby_home, "#{GEMS_DIR}/torquebox-messaging-container*.gem" )
+      #install_gem( jruby_home, "#{GEMS_DIR}/torquebox-rails*.gem" )
+      #install_gem( jruby_home, "#{GEMS_DIR}/vfs*.gem" )
+
       install_gem( jruby_home, "#{JDBC_GEMS.join(' ')}" )
       install_gem( jruby_home, "#{OTHER_GEMS.join(' ')}" )
       install_gem( jruby_home, "rails -v #{RAILS_VERSION}" )
 
-      #puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{GEMS_DIR}/*.gem`
-      #puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{JDBC_GEMS.join(' ')}`
-      #puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 #{OTHER_GEMS.join(' ')}`
-      #puts `./bin/jruby ./bin/gem install --bindir ./bin --install-dir ./lib/ruby/gems/1.8 rails -v #{RAILS_VERSION}`
       puts "Installed gems in #{Dir.pwd}"
       FileUtils.cp( "#{SRC_DIR}/bin/rails.bat", './bin/rails.bat' )
     end
@@ -191,9 +195,9 @@ task 'stage'=>[
   end
 end
 
-def install_gem(jruby_home, gems)
+def install_gem(jruby_home, gems, ignore_deps=false)
   puts "Install Gems: #{gems} (#{Dir.pwd})"
-  cmd = "#{jruby_home}/bin/jruby #{jruby_home}/bin/gem install --bindir #{jruby_home}/bin --install-dir #{jruby_home}/lib/ruby/gems/1.8 #{gems}"
+  cmd = "#{jruby_home}/bin/jruby #{jruby_home}/bin/gem install #{ignore_deps ? '--ignore-dependencies' : ''} --bindir #{jruby_home}/bin --install-dir #{jruby_home}/lib/ruby/gems/1.8 #{gems}"
   Open3.popen3( cmd ) do |stdin, stdout, stderr|
     stdin.close
     stdout_thr = Thread.new(stdout) {|io|
