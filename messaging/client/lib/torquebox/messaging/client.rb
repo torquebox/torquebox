@@ -1,9 +1,28 @@
+require 'base64'
+
 class Java::org.torquebox.messaging.client::Client
 
   alias_method :core_send, :send
 
-  def send(destination, msg_or_opts={})
-    core_send( destination, msg_or_opts.to_s )
+  def send(destination, opts)
+    message = nil
+    if ( ! opts[:object].nil? )
+      message = session.create_text_message
+      message.set_string_property( 'torqueboxMessageType', 'object' )
+      marshalled = Marshal.dump( opts[:object] )
+      encoded = Base64.encode64( marshalled )
+      message.text = encoded
+    elsif ( ! opts[:text].nil? )
+      message = session.create_text_message
+      message.set_string_property( 'torqueboxMessageType', 'text' )
+      message.text = opts[:text].to_s 
+    end
+    if ( message.nil? )
+      puts "no message to send for #{opts.inspect}, :text or :object required"
+    else
+      producer = session.create_producer( self.lookup( destination ) )
+      producer.send( message )
+    end
   end
 
 end

@@ -113,7 +113,7 @@ public class MessageDrivenConsumer implements MessageListener {
 			ruby = getRubyRuntimePool().borrowRuntime();
 			String location = StringUtils.underscore( getRubyClassName() );
 			log.info( "require [" + location + "]" );
-			ruby.evalScriptlet( "require %(" + location + ")\n" );
+			ruby.evalScriptlet( "load %(" + location + ".rb)\n" );
 			RubyClass rubyClass = (RubyClass) ruby.getClassFromPath( getRubyClassName() );
 			IRubyObject listener = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, rubyClass, "new", EMPTY_OBJECT_ARRAY, IRubyObject.class );
 			

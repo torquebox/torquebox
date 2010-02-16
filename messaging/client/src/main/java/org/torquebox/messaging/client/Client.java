@@ -2,7 +2,6 @@ package org.torquebox.messaging.client;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -35,6 +34,14 @@ public class Client {
 
 	public ConnectionFactory getConnectionFactory() {
 		return this.connectionFactory;
+	}
+	
+	public Connection getConnection() {
+		return this.connection;
+	}
+	
+	public Session getSession() {
+		return this.session;
 	}
 
 	protected void create() throws JMSException {
@@ -87,15 +94,9 @@ public class Client {
 		stop();
 		destroy();
 	}
-
-	public void send(Destination destination, Object message) throws JMSException {
-		MessageProducer producer = this.session.createProducer(destination);
-		producer.send(this.session.createTextMessage(message.toString()));
-	}
-
-	public void send(String destinationName, Object message) throws NamingException, JMSException {
-		Destination destination = (Destination) getContext().lookup(destinationName);
-		send(destination, message);
+	
+	public Object lookup(String name) throws NamingException {
+		return this.context.lookup( name );
 	}
 
 }
