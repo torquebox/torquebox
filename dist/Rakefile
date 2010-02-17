@@ -35,10 +35,11 @@ OTHER_GEMS = [
   'rack',
 ]
 
-JBOSS_VERSION     = ENV['jboss.as.version'] || '6.0.0.M1'
-JRUBY_PKG_VERSION = ENV['jruby.version']    || '1.4.0'
-HORNETQ_VERSION   = ENV['hornetq.version']  || '2.0.0.GA'
-RAILS_VERSION     = ENV['rails.version']    || '2.3.4'
+JBOSS_VERSION         = ENV['jboss.as.version']         || '6.0.0.20100216-M2'
+JBOSS_PACKAGE_VERSION = ENV['jboss.as.package.version'] || '6.0.0.M2'
+JRUBY_PKG_VERSION     = ENV['jruby.version']            || '1.4.0'
+HORNETQ_VERSION       = ENV['hornetq.version']          || '2.0.0.GA'
+RAILS_VERSION         = ENV['rails.version']            || '2.3.4'
 
 JBOSS_BASE_URL  = "http://voxel.dl.sourceforge.net/sourceforge/jboss/"
 HORNETQ_BASE_URL= "http://downloads.sourceforge.net/project/hornetq/"
@@ -56,19 +57,19 @@ directory "#{CACHE_DIR}/jboss"
 directory "#{CACHE_DIR}/jruby"
 directory "#{STAGE_DIR}"
 
-file "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip"=>[
-    "#{CACHE_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip",
+file "#{PKG_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip"=>[
+    "#{CACHE_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip",
     "#{PKG_DIR}/jboss"
   ] do
-  puts "Copying JBoss #{JBOSS_VERSION} JDK6 from package-cache"
-  FileUtils.cp( "#{CACHE_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip", "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip" )
+  puts "Copying JBoss #{JBOSS_PACKAGE_VERSION} JDK6 from package-cache"
+  FileUtils.cp( "#{CACHE_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip", "#{PKG_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip" )
 end
 
 file "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"=>[
     "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip",
     "#{PKG_DIR}/jruby"
   ] do
-  puts "Copying JRuby #{JBOSS_VERSION} from package-cache"
+  puts "Copying JRuby #{JRUBY_PKG_VERSION} from package-cache"
   FileUtils.cp( "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip", "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip" )
 end
 
@@ -81,7 +82,7 @@ file "#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"=>[
 end
 
 desc "Cache JBoss"
-task 'cache:jboss'=>["#{CACHE_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip"]
+task 'cache:jboss'=>["#{CACHE_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip"]
 
 desc "Cache HornetQ"
 task 'cache:hornetq'=>["#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"]
@@ -89,10 +90,11 @@ task 'cache:hornetq'=>["#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"]
 desc "Cache JRuby"
 task 'cache:jruby'=>["#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"]
 
-file "#{CACHE_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip"=>[ "#{CACHE_DIR}/jboss" ] do
+file "#{CACHE_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip"=>[ "#{CACHE_DIR}/jboss" ] do
   Dir.chdir( "#{CACHE_DIR}/jboss" ) do 
-    puts "Downloading JBoss #{JBOSS_VERSION} JDK6"
-    url = "#{JBOSS_BASE_URL}/jboss-#{JBOSS_VERSION}.zip"
+    puts "Downloading JBoss #{JBOSS_PACKAGE_VERSION} JDK6"
+    url = "#{JBOSS_BASE_URL}/jboss-#{JBOSS_PACKAGE_VERSION}.zip"
+    puts "grabbing #{url}"
     puts `wget --quiet #{url}`
   end
 end
@@ -115,7 +117,7 @@ end
 
 
 task 'stage'=>[ 
-        "#{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip", 
+        "#{PKG_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip", 
         "#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip", 
         "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip", 
         "#{STAGE_DIR}" 
@@ -125,7 +127,7 @@ task 'stage'=>[
     FileUtils.rm_rf( item )
   end
   Dir.chdir( "#{STAGE_DIR}" ) do
-    puts `unzip -qo #{PKG_DIR}/jboss/jboss-#{JBOSS_VERSION}.zip`
+    puts `unzip -qo #{PKG_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip`
     FileUtils.mv( "jboss-#{JBOSS_VERSION}", 'jboss' ) 
     Dir.chdir( "jboss/server/" ) do
       Dir[ '*/deploy/ROOT.war' ].each do |root_war|

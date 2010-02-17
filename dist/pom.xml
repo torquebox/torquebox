@@ -120,6 +120,7 @@
                   <arg value="maven:compile"></arg>
                   <arg value="--trace"></arg>
                   <env key="project.version" value="${project.version}"></env>
+                  <env key="jboss.as.package.version" value="${version.jbossas.package}"></env>
                   <env key="jboss.as.version" value="${version.jbossas}"></env>
                   <env key="hornetq.version" value="${version.hornetq}"></env>
                   <env key="jruby.version" value="${version.jruby}"></env>
