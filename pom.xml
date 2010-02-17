@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.jboss.jbossas</groupId>
     <artifactId>jboss-as-component-matrix</artifactId>
-    <version>6.0.0.M1</version>
+    <version>6.0.0.20100216-M2</version>
   </parent>
 
   <groupId>org.torquebox</groupId>
@@ -125,7 +125,8 @@
 
     <rails.version>2.3.4</rails.version>
 
-    <version.jbossas>6.0.0.M1</version.jbossas>
+    <version.jbossas>6.0.0.20100216-M2</version.jbossas>
+    <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
 
     <version.hornetq>2.0.0.GA</version.hornetq>
     <version.netty>3.1.5.GA</version.netty>
@@ -245,7 +246,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>

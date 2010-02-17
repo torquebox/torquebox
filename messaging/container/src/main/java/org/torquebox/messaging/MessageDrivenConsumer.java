@@ -11,10 +11,8 @@ import javax.jms.Session;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.jruby.RubyClass;
+import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
-import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
 
@@ -111,15 +109,10 @@ public class MessageDrivenConsumer implements MessageListener {
 		
 		try {
 			ruby = getRubyRuntimePool().borrowRuntime();
-			String location = StringUtils.underscore( getRubyClassName() );
-			log.info( "require [" + location + "]" );
-			ruby.evalScriptlet( "load %(" + location + ".rb)\n" );
-			RubyClass rubyClass = (RubyClass) ruby.getClassFromPath( getRubyClassName() );
-			IRubyObject listener = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, rubyClass, "new", EMPTY_OBJECT_ARRAY, IRubyObject.class );
-			
-			ReflectionHelper.setIfPossible( ruby, listener, "session", this.session );
-			
-			JavaEmbedUtils.invokeMethod( ruby, listener, "on_message", new Object[] { message }, void.class);
+			String location = StringUtils.underscore( getRubyClassName() ) + ".rb";
+			ruby.evalScriptlet( "require %(torquebox/messaging/dispatcher)\n" );
+			RubyModule dispatcher = (RubyModule) ruby.getClassFromPath( "TorqueBox::Messaging::Dispatcher" );
+			JavaEmbedUtils.invokeMethod( ruby, dispatcher, "dispatch", new Object[] { getRubyClassName(), location, session, message }, void.class);
 			message.acknowledge();
 		} catch (Exception e) {
 			log.error( "unable to dispatch", e );
