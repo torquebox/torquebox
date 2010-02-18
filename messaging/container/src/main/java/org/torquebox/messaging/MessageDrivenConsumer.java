@@ -75,6 +75,7 @@ public class MessageDrivenConsumer implements MessageListener {
 	}
 	
 	public void create() throws JMSException {
+		log.info( "creating for " + getDestination() );
 		this.connection = this.connectionFactory.createConnection();
 		
 		this.session = this.connection.createSession( true, Session.AUTO_ACKNOWLEDGE );
@@ -84,18 +85,21 @@ public class MessageDrivenConsumer implements MessageListener {
 	}
 		
 	public void start() throws JMSException {
+		log.info( "starting for " + getDestination() );
 		if ( connection != null ) {
 			connection.start();
 		}
 	}
 	
 	public void stop() throws JMSException {
+		log.info( "stopping for " + getDestination() );
 		if ( connection != null ) {
 			this.connection.stop();
 		}
 	}
 	
 	public void destroy() throws JMSException {
+		log.info( "destroying for " + getDestination() );
 		if ( connection != null ) {
 			this.connection.close();
 			this.connection = null;

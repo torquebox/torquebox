@@ -61,6 +61,9 @@
   <bean name="ConsumersRbParsingDeployer"          class="org.torquebox.messaging.deployers.ConsumersRbParsingDeployer"/>
   <bean name="MessageDrivenConsumerDeployer"       class="org.torquebox.messaging.deployers.MessageDrivenConsumerDeployer"/>
 
+  <bean name="TasksDeployer"                       class="org.torquebox.messaging.deployers.TasksDeployer"/>
+
+
   <!-- Task Queues -->
 
 <!--
@@ -132,4 +135,10 @@
   <bean name="RailsQueuesRubyLoadPathDescriber"     class="org.torquebox.rails.queues.deployers.RailsQueuesRubyLoadPathDescriber"/>
 
   <bean name="RailsConsumersRubyLoadPathDescriber"       class="org.torquebox.rails.messaging.deployers.RailsConsumersRubyLoadPathDescriber"/>
+
+  <bean name="RailsTasksScanningDeployer"       class="org.torquebox.messaging.deployers.TasksScanningDeployer">
+    <property name="suffixFilter">_task.rb</property>
+    <property name="path">app/tasks/</property>
+  </bean>
+
 </deployment>

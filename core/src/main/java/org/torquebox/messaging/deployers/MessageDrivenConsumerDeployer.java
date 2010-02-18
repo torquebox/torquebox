@@ -2,8 +2,6 @@ package org.torquebox.messaging.deployers;
 
 import java.util.Set;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -57,7 +55,6 @@ public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 		builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
 		builder.addPropertyMetaData("rubyClassName", consumerConfig
 				.getRubyClassName());
-
 
 		
 		/*

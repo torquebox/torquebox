@@ -1,0 +1,2 @@
+
+require 'torquebox/messaging/tasks'

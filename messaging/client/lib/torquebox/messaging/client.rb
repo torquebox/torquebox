@@ -6,7 +6,15 @@ class Java::org.torquebox.messaging.client::Client
 
   def send(destination, opts)
     message = nil
-    if ( ! opts[:object].nil? )
+    if ( ( ! opts[:task].nil? ) && ( ! opts[:payload].nil? ) )
+      puts "sending a TASK #{opts.inspect}"
+      message = session.create_text_message
+      message.set_string_property( 'torqueboxMessageType', 'task' )
+      message.set_string_property( 'torqueboxTask', opts[:task] )
+      marshalled = Marshal.dump( opts[:payload] )
+      encoded = Base64.encode64( marshalled )
+      message.text = encoded
+    elsif ( ! opts[:object].nil? )
       message = session.create_text_message
       message.set_string_property( 'torqueboxMessageType', 'object' )
       marshalled = Marshal.dump( opts[:object] )

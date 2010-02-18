@@ -11,6 +11,8 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.virtual.VirtualFile;
 import org.jboss.virtual.VirtualFileFilter;
+import org.jboss.virtual.VisitorAttributes;
+import org.jboss.virtual.plugins.vfs.helpers.SuffixMatchFilter;
 import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
 import org.torquebox.ruby.core.runtime.metadata.RubyRuntimeMetaData;
 
@@ -47,6 +49,11 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
 	public void setFilter(VirtualFileFilter filter) {
 		this.filter = filter;
+	}
+	
+	public void setSuffixFilter(String suffix) {
+		this.filter =  new SuffixMatchFilter( suffix, VisitorAttributes.DEFAULT);
+		
 	}
 
 	public VirtualFileFilter getFilter() {

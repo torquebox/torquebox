@@ -17,6 +17,7 @@
     <module>runtime</module>
     <module>client</module>
     <module>container</module>
+    <module>tasks</module>
   </modules>
 
 </project>

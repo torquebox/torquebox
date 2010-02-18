@@ -78,6 +78,13 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-tasks</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-docs-en_US</artifactId>
       <version>${project.version}</version>
       <classifier>html</classifier>
@@ -231,6 +238,12 @@
                 <artifactItem>
                   <groupId>org.torquebox</groupId>
                   <artifactId>torquebox-messaging-container</artifactId>
+                  <type>gem</type>
+                  <outputDirectory>target/gems</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.torquebox</groupId>
+                  <artifactId>torquebox-messaging-tasks</artifactId>
                   <type>gem</type>
                   <outputDirectory>target/gems</outputDirectory>
                 </artifactItem>
