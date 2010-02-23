@@ -11,7 +11,7 @@ public class ClientFactory {
 
 	public static final String DEFAULT_CONTEXT_FACTORY_CLASS_NAME = "org.jnp.interfaces.NamingContextFactory";
 	public static final String DEFAULT_URL_PKG_PREFIXES = "org.jboss.naming.client";
-	public static final String DEFAULT_NAMING_PROVIDER_URL = "jnp://localhost:1099";
+	public static final String DEFAULT_NAMING_PROVIDER_URL = "jnp://" + System.getProperty("jboss.bind.address", "127.0.0.1") + ":1099";
 	
 	public static final String DEFAULT_CONNECTION_FACTORY_JNDI_NAME = "/ConnectionFactory";
 	
