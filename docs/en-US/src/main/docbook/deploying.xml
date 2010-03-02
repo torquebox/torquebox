@@ -15,7 +15,7 @@
     undeploy your application from an instance of JBoss AS.</para>
 
     <para>First, the variable <envar>$JBOSS_HOME</envar> must be set to the
-    path of the top of your JBoss AS5 installation.</para>
+    path of the top of your JBoss AS installation.</para>
 
     <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/jboss</command></screen></para>
 
@@ -104,9 +104,9 @@
         <para><example>
             <title>Application configuration in *-rails.yml</title>
 
-            <para><screen>application:
+            <para><programlisting>application:
   RAILS_ROOT: /path/to/myapp
-  RAILS_ENV:  development</screen></para>
+  RAILS_ENV:  development</programlisting></para>
           </example></para>
       </sect3>
 
@@ -134,8 +134,8 @@
           <para><example>
               <title>Virtual host configuration in *-rails.yml</title>
 
-              <para><screen>web:
-  host: www.host-one.com</screen></para>
+              <para><programlisting>web:
+  host: www.host-one.com</programlisting></para>
             </example></para>
         </sect4>
 
@@ -158,8 +158,8 @@
           <para><example>
               <title>Context path configuration in *-rails.yml</title>
 
-              <para><screen>web:
-  context: /app-one</screen></para>
+              <para><programlisting>web:
+  context: /app-one</programlisting></para>
             </example></para>
 
           <para>The context path and virtual host configurations can be used
@@ -169,9 +169,9 @@
               <title>Virtual host with context path configuration in
               *-rails.ymls</title>
 
-              <para><screen>web:
+              <para><programlisting>web:
   host: www.mycorp.com
-  context: /app-one</screen></para>
+  context: /app-one</programlisting></para>
             </example></para>
         </sect4>
       </sect3>
@@ -186,22 +186,22 @@
         <para><example>
             <title>SIP configuration in *-rails.yml</title>
 
-            <para><screen>sip:
-  rubycontroller: SipHandler</screen></para>
+            <para><programlisting>sip:
+  rubycontroller: SipHandler</programlisting></para>
           </example></para>
       </sect3>
 
       <sect3>
         <title>Complete *-rails.yml Deployment Descriptor Example</title>
 
-        <para><screen>application:
+        <para><programlisting>application:
   RAILS_ROOT:  /path/to/myappp
   RAILS_ENV:   development
 web:
   host:    www.mycorp.com
   context: /app-one
 sip: 
-  rubycontroller: SipHandler</screen></para>
+  rubycontroller: SipHandler</programlisting></para>
       </sect3>
     </sect2>
   </sect1>

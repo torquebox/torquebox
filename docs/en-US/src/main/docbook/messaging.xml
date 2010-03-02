@@ -1,0 +1,659 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<chapter id="messaging">
+  <title>Messaging</title>
+
+  <section>
+    <title>Message Broker</title>
+
+    <section>
+      <title>Basics</title>
+
+      <para>A message broker is simply a service that facilitates asynchronous
+      message-passing between application components.</para>
+    </section>
+
+    <section>
+      <title>HornetQ</title>
+
+      <para>TorqueBox integrates the JBoss HornetQ message broker technology.
+      It is automatically available to you, with no additional configuration
+      required to start the messaging service. HornetQ supports clustered
+      messaging, to allow for load-balancing, failover, and other advanced
+      deployments.</para>
+    </section>
+
+    <section>
+      <title>Producers and Consumers</title>
+
+      <para>While some components may be purely a producer, or purely a
+      consumer, the roles are not mutually exclusive. Many components may
+      rightly play multiple roles, consuming and producing messages in the act
+      of performing its actions.</para>
+
+      <section>
+        <title>Producers</title>
+
+        <para>Any component or client code that creates messages and gives
+        them to the message broker for delivery is considered a
+        <glossterm>producer</glossterm>. Generally speaking, the producer does
+        not know the details of the destination.</para>
+      </section>
+
+      <section>
+        <title>Consumers</title>
+
+        <para>Any component that waits for messages to be delivered to it by
+        the message broker is consider a <glossterm>consumer</glossterm>. A
+        consumer is unaware of the producer and any other consumers,
+        potentially.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Queues and Topics</title>
+
+      <para>The message broker supports two different delivery semantics,
+      referred to as <glossterm>queues</glossterm> and
+      <glossterm>topics</glossterm>, which are specialization of the generic
+      idea of <glossterm>destinations</glossterm>.</para>
+
+      <section>
+        <title>Destinations</title>
+
+        <para>A destination represents a place a message producer sends
+        messages. From the producer's point-of-view, every destination,
+        whether a queue or a topic, is simply a place to deposit messages.
+        From the consumer's point-of-view, every destination, whether a queue
+        or a topic, is simply a place to pick up messages.</para>
+
+        <para>The specific semantics of a destination, while important in the
+        design of application components, does not necessary affect how
+        individual producers or consumers are created. The topology of how
+        messages flow between them is defined outside of the scope of any
+        individual producer or consumer.</para>
+
+        <para>In all cases, a destination may be fed messages from multiple
+        producers.</para>
+      </section>
+
+      <section>
+        <title>Queues</title>
+
+        <para>A queue is a destination that allows multiple consumers to
+        withdraw messages from it, but each message is delivered to exactly
+        one consumer. Imagine a bank with multiple customer service windows,
+        but a single line. As each bank teller becomes available, the next
+        person in line goes to the next open window. In this scenario, the
+        window tellers are the consumers, and the line of customers waiting
+        service represent the queue of messages.</para>
+
+        <para>While a single consumer is allowed to consume each message,
+        multiple producers may be responsible for placing messages into the
+        queue.</para>
+      </section>
+
+      <section>
+        <title>Topics</title>
+
+        <para>A topic is a destination that sends a copy of a message to all
+        interested consumers. Presentations at conferences may be thought of
+        as topics. Each audience member has expressed interest in a particular
+        topic, and the message producers are the presenters at the front of
+        the hall.</para>
+
+        <para>Multiple consumers receive the same message, and multiple
+        producers may be adding messages to the topic.</para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Deploying Destinations</title>
+
+    <para>Queues and topics (collectively known as destinations) may be
+    deployed with with your application, or separate from your application.
+    Additionally, various parts of your application may also implicitly deploy
+    and use some destinations.</para>
+
+    <para>Each method has advantages and disadvantages involving the
+    expectations of your application and its interaction with resources
+    outside the scope of the application.</para>
+
+    <section>
+      <title>Deployment Styles</title>
+
+      <section>
+        <title>Deploying destinations with your application</title>
+
+        <para>If you decide to deploy your queues and topics with your
+        application, you automatically align their lifecycle to the deployment
+        cycle of your application. If you undeploy your application, your
+        queues and topics will also disappear, and be unable to receive
+        messages. If the queues are used only internally to your application,
+        and short lifespan semantics are useful to you, deploying destinations
+        with your application reduces deployment steps and moving
+        parts.</para>
+      </section>
+
+      <section>
+        <title>Deploying destinations apart from your application</title>
+
+        <para>If you deploy destinations separate and apart from your
+        application, they become long-lived first-class component citizens in
+        your environment. Applications may be deployed and undeployed, while
+        the destinations continue to function, accepting and processing
+        messages to the best of their ability.</para>
+
+        <para>If the consumers to a destination are offline, the destination
+        may persist and store any unhandled messages until a consumer
+        re-attaches.</para>
+
+        <para>The downside is that by making destinations first-class
+        top-level components of your environment, you must also manage, deploy
+        and undeploy them separate from any app, creating additional
+        work.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Deployment Descriptors</title>
+
+      <para>Deploying queues and topics is as easy as creating simple YAML
+      files, and placing them either in your application's config/ directory,
+      or in the application server's deploy/ directory, depending on which
+      deployment style you've chosen. Both methods may be combined.
+      Server-deployed destinations and application-deployed destinations are
+      indistinguishable once deployed.</para>
+
+      <section>
+        <title><filename>queues.yml</filename></title>
+
+        <para>To deploy queues, a simple YAML file is required, simply naming
+        the queue, and providing additional configuration parameters.
+        Currently, no additional configuration parameters are allowed.</para>
+
+        <para><example>
+            <title>queues.yml</title>
+
+            <para><programlisting>/queues/my_queue:
+
+/queues/my_other_queue:
+
+</programlisting>The name of the queue will be used when registering the queue
+            in the naming-service, and is used to discover the queue for
+            attaching consumers and producers.</para>
+
+            <para>By convention, queues are named with the prefix of
+            <filename>/queues</filename>.</para>
+          </example></para>
+      </section>
+
+      <section>
+        <title><filename>topics.yml</filename></title>
+
+        <para>To deploy topics, a simple YAML file is required, simply naming
+        the topic, and providing additional configuration parameters.
+        Currently, no additional configuration parameters are allowed.</para>
+
+        <para><example>
+            <title>topics.yml</title>
+
+            <para><programlisting>/queues/my_topic:
+
+/queues/my_other_topic:
+
+</programlisting>The name of the queue will be used when registering the topic
+            in the naming-service, and is used to discover the topic for
+            attaching consumers and producers.</para>
+
+            <para>By convention, topics are named with the prefix of
+            <filename>/topics</filename>.</para>
+          </example></para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Ruby Consumers</title>
+
+    <para>Message consumers may be implemented in Ruby and easily attached to
+    destinations. A Ruby consumer may either interact at the lowest JMS-level,
+    or take advantage of higher-level semantics.</para>
+
+    <section>
+      <title>Low-level message consumption</title>
+
+      <para>For the lowest-level implementation of a Ruby consumer, the class
+      must simply implement <function>on_message(msg)</function> which
+      receives a <classname>javax.jms.Message</classname> as its parameter.
+      Admittedly, this gets quite a lot of Java in your Ruby, but it's
+      available if needed.</para>
+
+      <para><example>
+          <title>Low-level message consumer</title>
+
+          <para><programlisting>class MyLowConsumer
+  def on_message(msg)
+    # manipulate the javax.jms.Message here
+  end
+end</programlisting></para>
+        </example></para>
+    </section>
+
+    <section>
+      <title>Higher-level message consumption</title>
+
+      <para>If you know the producers of messages will be using the TorqueBox
+      client API (or following the correct conventions, at least), you may
+      wish to take advantage of higher-level messaging semantics, and easier
+      APIs.</para>
+
+      <para>For instance, message consumers may be triggered with either
+      simple text, or a complex Ruby object graph as the message payload,
+      instead of having to directly manipulate an instance of
+      <classname>javax.jms.Message</classname>.</para>
+
+      <para>Using higher-level messaging semantics requires the cooperation of
+      both the producer and consumer of messages.</para>
+
+      <section>
+        <title>Text-based messages</title>
+
+        <para>For simple text-based messages, a consumer may instead implement
+        an <function>on_text(text)</function> method which will receive a
+        string payload of the message.</para>
+
+        <para><example>
+            <title>Text-based message consumer</title>
+
+            <para><programlisting>class MyTextConsumer
+  def on_text(text)
+    # process the string `text` payload
+  end
+end</programlisting></para>
+          </example></para>
+      </section>
+
+      <section>
+        <title>Object-based message</title>
+
+        <para>Consumers may also easily treat the message payload as a
+        marshalled Ruby object graph. By implementing on_object(obj) method,
+        the consumer will receive the unmarshalled Ruby object without
+        additional work.</para>
+
+        <para><example>
+            <title>Object-based message consumer</title>
+
+            <para><programlisting>class MyObjectConsumer
+  def on_object(obj)
+    # work with Ruby object `obj` payload
+  end
+end</programlisting></para>
+          </example></para>
+      </section>
+
+      <section>
+        <title>Mixed consumption</title>
+
+        <para>In the event you want the best of both worlds, both
+        <function>on_text(...)</function> and
+        <function>on_object(...)</function> may take a second parameter,
+        through which the original <classname>javax.jms.Message</classname>
+        will be passed. This can be useful if your consumer needs to generate
+        a response back to a temporary reply-to destination.</para>
+
+        <para><example>
+            <title>Mixed consumption</title>
+
+            <para><programlisting>class MyMixedConsumer
+  def on_object(obj, message)
+    # work with Ruby object `obj` payload
+    # AND have access to the `message` javax.jms.Message object
+  end
+end</programlisting></para>
+          </example></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Connecting Consumers to Destinations</title>
+
+      <para>You can connect consumers hosted within a TorqueBox-based
+      application, or in external scripts. The method for each environment is
+      similar, but slightly different, since TorqueBox-hosted consumers get
+      more baked-in support from the container.</para>
+
+      <section>
+        <title>Connecting consumers within TorqueBox</title>
+
+        <para>To connect consumers within a TorqueBox-deployed application,
+        you typically need to create a <filename>consumers.rb</filename> file,
+        such as <filename>config/consumers.rb</filename> for Rails
+        applications.</para>
+
+        <para>This file should evaluate to a container configuration object. A
+        simple, no-op consumers.rb configuration looks like</para>
+
+        <para><programlisting>TorqueBox::Messaging::Container::Config.create {
+
+}</programlisting></para>
+
+        <para>Within the block, you may configure general connection
+        information, such as the naming-service URL.</para>
+
+        <para><example>
+            <title>Configuring naing-service within
+            <filename>consumers.rb</filename></title>
+
+            <para><programlisting>TorqueBox::Messaging::Container::Config.create {
+
+  naming_provider_url 'jnp://some.other.host.com:1099/'
+
+}</programlisting></para>
+          </example>Additionally, you may create a
+        <function>consumers</function> sub-block, then use the
+        <function>map</function> method to link destinations with
+        consumers.</para>
+
+        <para><example>
+            <title>Mapping destinations to consumers</title>
+
+            <para><programlisting>TorqueBox::Messaging::Container::Configu.create {
+
+  consumers {
+    map '/queues/my_queue', 'MyConsumer'
+  }
+}</programlisting>Note that the consumer name should be a string and not a
+            constant in this configuration file, due to load-time
+            constraints.</para>
+          </example></para>
+
+        <section>
+          <title>Connecting Consumers outside of TorqueBox</title>
+
+          <para>You may also connect consumers outside of TorqueBox. The
+          configuration is very similar, but your script must also launch the
+          container that manages the consumers and their lifecycle.</para>
+
+          <para>Assuming you have the full array of required Ruby gems, any
+          script can host consumers.</para>
+
+          <para><example>
+              <title>Consumer hosting outside of TorqueBox</title>
+
+              <para><programlisting>#!/usr/bin/env jruby
+
+require 'rubygems'
+require 'torquebox-messaging-container'
+
+class MyConsumer
+  attr_accessor :session
+
+  def on_message(msg)
+    puts "Received: #{msg.text}"
+  end
+end
+
+container = TorqueBox::Messaging::Container.new {
+
+  naming_provider_url 'jnp://localhost:1099/'
+
+  consumers {
+    map '/queues/foo', MyConsumer
+  }
+}
+
+container.start
+container.wait_until( 'INT' )
+</programlisting>Notice that the consumer may be specified with a constant in
+              this case, since the constant is definitely in-scope.</para>
+            </example></para>
+        </section>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Ruby Producers</title>
+
+    <para>While consuming messages is easy with Ruby objects, producing them
+    is just as simple.</para>
+
+    <para>The client library, usable outside of the core TorqueBox server
+    even, is available as a Ruby gem named
+    <package>torquebox-messaging-client</package>. A client is created, and
+    can then be used to send either bare javax.jms.Message objects, or
+    higher-level text and Ruby object graph messages.</para>
+
+    <section>
+      <title>Create a client</title>
+
+      <para>A client represents a configured connection capable of locating
+      and using destinations managed by the message broker. To accomplish
+      this, it needs to be able to connect to the naming-service where the
+      queues and topics are registered. By default, this is
+      <uri>jnp://localhost:1099/</uri>, which indicates it should connect
+      through the Java Naming Protocol to the server running on port 1099 of
+      the current host.</para>
+
+      <para>This is the default case for when you are running the TorqueBox
+      server, as it provides a naming-service used by the components. If, by
+      chance, you have bound the server to a non-localhost port, or are
+      attempting to reach it from an external machine, you will need to adjust
+      this connection parameter.</para>
+
+      <section>
+        <title>Create a client within TorqueBox</title>
+
+        <para>Within an application running inside TorqueBox, you may simply
+        create a client with the simple no-argument version of connect(), and
+        begin using it to communicate with the message broker.</para>
+
+        <para><example>
+            <title>Client within TorqueBox</title>
+
+            <para><programlisting>TorqueBox::Message::Client.connect do |client|
+  # use `client` here
+end</programlisting></para>
+          </example></para>
+      </section>
+
+      <section>
+        <title>Create a client in external scripts</title>
+
+        <para>You may connect a client from any external script also, provided
+        you have all the appropriate gems and JRuby installed. This is easy if
+        you use the JRuby distribution that ships with TorqueBox.</para>
+
+        <para>Simply require <package>rubygems</package>, and
+        <package>torquebox-message-client</package>, then optionally provide
+        additional configuration information to the
+        <function>connect(...)</function> method.</para>
+
+        <para><example>
+            <title>Client from external script</title>
+
+            <para><programlisting>#!/usr/bin/env jruby
+
+require 'rubygems'
+require 'torquebox-messaging-client'
+
+
+Torquebox::Messaging::Client.connect(
+  :naming_provider_url=&gt;'jnp://some.other.host.com:1099/' ) do |client|
+  # use `client` here
+end</programlisting></para>
+          </example></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Using the client</title>
+
+      <para>Within the client block, your code can perform the role of a
+      producer by sending messages to destinations using the
+      <function>send(...)</function> method.</para>
+    </section>
+
+    <section>
+      <title>Sending a text message</title>
+
+      <para>To send a high-level text message, which a consumer may receive
+      using <function>on_text(text)</function>, the <option>:text</option>
+      option may be used.</para>
+
+      <para><example>
+          <title>Sending a text message</title>
+
+          <para><programlisting>client.send( '/queues/my_queue', 
+             :text=&gt;'PING' )</programlisting></para>
+        </example></para>
+    </section>
+
+    <section>
+      <title>Sending an object message</title>
+
+      <para>To send a high-level object message, which a consumer may receive
+      using <function>on_object(obj)</function>, the <option>:object</option>
+      option may be used.</para>
+
+      <para><example>
+          <title>Sending an object message</title>
+
+          <para><programlisting>client.send( '/queues/my_queue', 
+             :object=&gt;{ :time=&gt;Time.now, 
+                        :crazy=&gt;:legs } )</programlisting></para>
+        </example></para>
+    </section>
+
+    <section id="async-tasks">
+      <title>Tasks</title>
+
+      <para>A special case of message queues is to execute some task
+      asynchronously. In this case, the messaging aspect happens to just be an
+      implementation detail.</para>
+
+      <section>
+        <title>Task Classes</title>
+
+        <para>Task classes simply implement one or more methods that take a
+        single object payload. It is often advisable to use a Ruby
+        <classname>Hash</classname> for the payload parameter.</para>
+
+        <para>The method will be called asynchronously by the server when an
+        object has been enqueued to it.</para>
+
+        <para><example>
+            <title>Example task class</title>
+
+            <para><programlisting>class EmailerTask
+  def send_welcome(payload)
+    address = payload[:address]
+    # send welcome email to the user
+  end
+
+  def send_password_reset(payload)
+    address = payload[:address]
+    # send password-reset email to the user
+  end
+end</programlisting></para>
+          </example></para>
+
+        <para>In Rails applications, these tasks should be placed in the
+        <filename>app/tasks/</filename> directory, and be named with a suffix
+        of <filename>_task.rb</filename> on the file, and a suffix of
+        <classname>Task</classname> on the class name.</para>
+      </section>
+
+      <section>
+        <title>Task Queues</title>
+
+        <para>Each task discovered and deployed will also have a matching
+        queue deployed. This queue is not supposed to be directly accessed,
+        and is rather simply an implementation detail of the asynchronous task
+        system.</para>
+      </section>
+
+      <section>
+        <title>Enqueue a task</title>
+
+        <para>Tasks can be enqueued from within an application running inside
+        TorqueBox, or from external scripts.</para>
+      </section>
+
+      <section>
+        <title>Enqueuing from within TorqueBox</title>
+
+        <para>From code running within the TorqueBox server, simply calling
+        the class-level <function>enqueue(...)</function> method on
+        <classname>TorqueBox::Messaging::Tasks</classname> will result in
+        triggering the task consumer on the other end of the queue.</para>
+
+        <para><example>
+            <title>Enqueuing a task within TorqueBox</title>
+
+            <para><programlisting>TorqueBox::Messaging::Tasks.enqueue( 
+  'emailer#send_password_reset', 
+  { :time=&gt;Time.now, :user=&gt;22 } 
+)</programlisting>The <function>enqueue(...)</function> method takes two
+            parameters. The first is a string which specifies the task and the
+            method upon it to execute. The second parameter is the object
+            payload to hand to the task method.</para>
+          </example></para>
+      </section>
+
+      <section>
+        <title>Enqueuing from external scripts</title>
+
+        <para>From scripts running outside of the TorqueBox server, you may
+        still enqueue objects to the tasks running within it. In the case
+        where the external script is running on the same host as the TorqueBox
+        server, you may use the same simple invocation style as above.</para>
+
+        <para>You must include the
+        <package>torquebox-messaging-tasks</package> gem in your
+        script.</para>
+
+        <para><example>
+            <title>Enqueuing a task from external scripts, same host</title>
+
+            <para><programlisting>#!/usr/bin/env jruby
+
+require 'rubygems'
+require 'torquebox-messaging-tasks'
+
+TorqueBox::Messaging::Tasks.enqueue( 
+  'emailer#send_password_reset', 
+  { :time=&gt;Time.now, :user=&gt;22 } 
+)</programlisting></para>
+          </example>In the event you need to configure a tasks client to
+        communicate with another, external message broker, you may use the
+        <classname>TorqueBox::Messaging::Tasks::Client</classname> class, and
+        connect it similar to connecting a generic messaging client.</para>
+
+        <para><example>
+            <title>Enqueuing a task from external scripts, different
+            host</title>
+
+            <para><programlisting>
+#!/usr/bin/env jruby
+
+require 'rubygems'
+require 'torquebox-messaging-tasks'
+
+TorqueBox::Messaging::Tasks::Client.connect( 
+  :naming_provider_url=&gt;'jnp://some.other.host.com:1099/' ) do |client| 
+  
+  client.enqueue( 
+    'emailer#send_password_reset', 
+    { :time=&gt;Time.now, :user=&gt;22 }
+  )
+end</programlisting></para>
+          </example></para>
+      </section>
+    </section>
+  </section>
+</chapter>

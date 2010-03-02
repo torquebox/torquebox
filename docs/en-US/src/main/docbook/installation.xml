@@ -64,7 +64,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></
     <section>
       <title>Unzip it somewhere handy</title>
 
-      <para>We'll install TorqueBox under your user's $HOME directory. </para>
+      <para>We'll install TorqueBox under your user's $HOME directory.</para>
 
       <para><screen><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
 <prompt>$</prompt> <command>cd torquebox-${project.version}</command>
@@ -100,63 +100,5 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
       <command>rails</command> will load from the TorqueBox-provided JRuby
       installation.</para>
     </section>
-  </section>
-
-  <section>
-    <title>Installing the TorqueBox deployer into an existing JBoss AS
-    5</title>
-
-    <para>To enable an existing JBoss AS5 installation for Ruby support, a
-    single JAR file, the <emphasis>TorqueBox Deployer</emphasis> needs to be
-    installed.</para>
-
-    <para>Before installing the TorqueBox Deployer into an existing JBoss AS,
-    you need to ensure that JBoss is not running. Once the AS is stopped,
-    follow the directions below to enable your AS to become
-    Ruby-compatible.</para>
-
-    <orderedlist>
-      <listitem>
-        <para>Locate the latest version of the TorqueBox Deployer JAR from the
-        TorqueBox repository: <itemizedlist>
-            <listitem>
-              <para><ulink
-              url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-core/">Official
-              releases</ulink></para>
-            </listitem>
-
-            <listitem>
-              <para><ulink
-              url="http://repository.torquebox.org/maven2/snapshots/org/torquebox/torquebox-core/">Interim
-              snapshot releases</ulink></para>
-            </listitem>
-          </itemizedlist></para>
-      </listitem>
-
-      <listitem>
-        <para>Download the JAR with the name in the format of
-        <emphasis>torquebox-core-${project.version}-deployer.jar</emphasis>.</para>
-      </listitem>
-
-      <listitem>
-        <para>Determine the location of your JBoss AS5 server and the
-        configuration you plan to use. For clustering the
-        <emphasis>all</emphasis> configuration is required. For
-        non-clustering, the <emphasis>web</emphasis> or
-        <emphasis>default</emphasis> configurations are acceptable.</para>
-
-        <para>The <envar>$JBOSS_HOME</envar> environment variable should be
-        set to the top of your JBoss AS5 installation directory. By
-        convention, the <envar>$JBOSS_CONF</envar> environment variable should
-        contain the name of the configuration you are using.</para>
-      </listitem>
-
-      <listitem>
-        <para>Copy the deployer JAR into the <filename>deployers/</filename>
-        directory of the configuration.</para>
-
-        <screen><prompt>$</prompt> <command>cp torquebox-core-${project.version}-deployer.jar $JBOSS_HOME/server/$JBOSS_CONF/deployers</command></screen>
-      </listitem>
-    </orderedlist>
   </section>
 </chapter>

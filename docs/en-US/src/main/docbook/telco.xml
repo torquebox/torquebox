@@ -29,7 +29,7 @@
     <para><example>
         <title>Code Excerpt to set up a call</title>
 
-        <para><screen># get the sip factory from the servlet context
+        <para><programlisting># get the sip factory from the servlet context
 @sip_factory = $servlet_context.get_attribute('javax.servlet.sip.SipFactory')
 puts @sip_factory
 
@@ -40,7 +40,7 @@ puts @sip_factory
 @sip_request = @sip_factory.create_request(@app_session, 'INVITE', 'sip:my_jruby_app_rocks@mobicents.org', @complaint.sip_uri);
 
 # actually sending the request out to the sip phone
-@sip_request.send();</screen></para>
+@sip_request.send();</programlisting></para>
       </example>This piece of code will create a SIP Request and send it out.
     But when the user will answer OK, you need to have some code to handle the
     response and this can be done by defining your own SIP controller</para>
@@ -87,7 +87,7 @@ puts @sip_factory
         <title>SIP Telco class example
         (<filename>telco/handler.rb</filename>)</title>
 
-        <para><screen>require 'torquebox/sip/base'
+        <para><programlisting>require 'torquebox/sip/base'
         module Telco
   class Handler &lt; TorqueBox::Sip::Base
     # Handle INVITE request to setup a call by answering 200 OK
@@ -110,7 +110,7 @@ puts @sip_factory
       response.create_ack.send
     end
   end
-end</screen></para>
+end</programlisting></para>
       </example></para>
 
     <para>Note that this is an example but the handler class can extend all
@@ -137,7 +137,7 @@ end</screen></para>
     to create a maven pom.xml at the root directory of your JRuby application
     containing the following :</para>
 
-    <para><screen>&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    <para><programlisting>&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"&gt;
 &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 &lt;parent&gt;
@@ -205,7 +205,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
    &lt;/releases&gt;
   &lt;/repository&gt;
  &lt;/repositories&gt; 
-&lt;/project&gt;</screen>and type the following command in a shell<screen>mvn clean install</screen></para>
+&lt;/project&gt;</programlisting>and type the following command in a shell<programlisting>mvn clean install</programlisting></para>
 
     <para>or copy the dependencies mentioned in the maven pom above from the
     jboss repository located at <ulink

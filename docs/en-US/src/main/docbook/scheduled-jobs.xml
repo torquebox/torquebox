@@ -52,13 +52,13 @@
         <title>Skeleton scheduled job class
         (<filename>mail/notifier.rb</filename>)</title>
 
-        <para><screen>module Mail
+        <para><programlisting>module Mail
   class Notifier
 
     # implementation goes here
 
   end
-end</screen></para>
+end</programlisting></para>
       </example>Each job class should implement a no-argument
     <methodname>run()</methodname> method to perform the work when
     fired.</para>
@@ -67,7 +67,7 @@ end</screen></para>
         <title>Scheduled job implementation
         (<filename>mail/notifier.rb</filename>)</title>
 
-        <para><screen>module Mail
+        <para><programlisting>module Mail
   class Notifier
 
     def run()
@@ -77,7 +77,7 @@ end</screen></para>
     end
 
   end
-end</screen></para>
+end</programlisting></para>
       </example></para>
 
     <para>From within the class's <methodname>run()</methodname> method, the
@@ -96,7 +96,7 @@ end</screen></para>
         <title>Using <classname>TorqueBox::Jobs::Base</classname>
         module</title>
 
-        <para><screen><emphasis>require 'torquebox/jobs/base'</emphasis>
+        <para><programlisting><emphasis>require 'torquebox/jobs/base'</emphasis>
 
 module Mail
   class Notifier
@@ -110,7 +110,7 @@ module Mail
       # perform work here
     end
   end
-end</screen></para>
+end</programlisting></para>
       </example></para>
 
     <section>
@@ -199,10 +199,10 @@ end</screen></para>
       <para><example>
           <title>Example <filename>jobs.yml</filename></title>
 
-          <para><screen>mail.notifier
+          <para><programlisting>mail.notifier
   job:         Mail::Notifier
   cron:        0 */5 * * * ?
-  description: Deliver queued mail notifications</screen></para>
+  description: Deliver queued mail notifications</programlisting></para>
         </example></para>
 
       <para>The cron attribute should contain a typical crontab-like entry. It

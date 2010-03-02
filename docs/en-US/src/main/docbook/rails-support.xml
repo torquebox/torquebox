@@ -98,12 +98,12 @@
         <filename>environment.rb</filename> within the
         <code>Rails::Initializer.run</code> block.</para>
 
-        <para><screen>Rails::Initializer.run do |config|
+        <para><programlisting>Rails::Initializer.run do |config|
 
   config.gem "activerecord-jdbc-adapter",
              :lib=&gt;'jdbc_adapter'
 
-end</screen></para>
+end</programlisting></para>
 
         <para>All databases will require inclusion of the
         <filename>activerecord-jdbc-adapter</filename>. No other gems need to
@@ -119,12 +119,12 @@ end</screen></para>
         <para>In order to gain access to the advanced features of TorqueBox,
         you must include the TorqueBox packages into your project. The
         TorqueBox gems are also included into your application through
-        <filename>config/environment.rb</filename>.<screen>Rails::Initializer.run do |config|
+        <filename>config/environment.rb</filename>.<programlisting>Rails::Initializer.run do |config|
   
   config.gem "torquebox-gem"
   config.gem "torquebox-rails"
 
-end</screen></para>
+end</programlisting></para>
 
         <section>
           <title><filename>torquebox-gem</filename></title>
@@ -144,7 +144,7 @@ end</screen></para>
           to add a <command>require</command> statement to the Rakefile at the
           top of your application.</para>
 
-          <para><screen>require 'torquebox/tasks'</screen></para>
+          <para><programlisting>require 'torquebox/tasks'</programlisting></para>
 
           <para>Invoking <command>rake -T</command> will show the tasks now
           available within your project.</para>
@@ -179,9 +179,9 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
   <section>
     <title>Task Queues</title>
 
-    <para>Rails applications support <link linkend="task-queues">task
+    <para>Rails applications support <link linkend="async-tasks">task
     queues</link> located under
-    <filename>$RAILS_ROOT/app/queues/</filename>.</para>
+    <filename>$RAILS_ROOT/app/tasks/</filename>.</para>
   </section>
 
   <section>

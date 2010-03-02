@@ -15,13 +15,13 @@
     to use RubyGems or other libraries, it is up to you to require the
     necessary files (for instance, <code>require 'rubygems'</code>).</para>
 
-    <para><screen>app = lambda{|env| 
+    <para><programlisting>app = lambda{|env| 
         [ 200, 
           { 'Content-Type' =&gt; 'text/html' }, 
           'Hello World'
         ] 
       }
-run app</screen></para>
+run app</programlisting></para>
   </section>
 
   <section>
@@ -41,14 +41,14 @@ run app</screen></para>
       directory of the AS configuration in use. If you are using the default
       configuration, the path would be:</para>
 
-      <para><screen><filename>$JBOSS_HOME/server/default/deploy/</filename></screen></para>
+      <para><programlisting><filename>$JBOSS_HOME/server/default/deploy/</filename></programlisting></para>
 
       <para>The descriptor is a YAML file, and must end with the suffix of
       <filename>-rack.yml</filename>. The prefix is arbitrary, but is usually
       some form of your application's name.</para>
 
-      <para><screen><filename>$JBOSS_HOME/server/default/deploy/<emphasis
-              role="bold">myapp-rack.yml</emphasis></filename></screen></para>
+      <para><programlisting><filename>$JBOSS_HOME/server/default/deploy/<emphasis
+              role="bold">myapp-rack.yml</emphasis></filename></programlisting></para>
     </section>
 
     <section>
@@ -82,9 +82,9 @@ run app</screen></para>
         <para><example>
             <title>Application configuration in *-rack.yml</title>
 
-            <para><screen>application:
+            <para><programlisting>application:
   RACK_ROOT: /path/to/myapp
-  RACK_ENV:  development</screen></para>
+  RACK_ENV:  development</programlisting></para>
           </example></para>
       </section>
 
@@ -112,8 +112,8 @@ run app</screen></para>
           <para><example>
               <title>Virtual host configuration in *-rack.yml</title>
 
-              <para><screen>web:
-  host: www.host-one.com</screen></para>
+              <para><programlisting>web:
+  host: www.host-one.com</programlisting></para>
             </example></para>
         </section>
 
@@ -136,8 +136,8 @@ run app</screen></para>
           <para><example>
               <title>Context path configuration in *-rack.yml</title>
 
-              <para><screen>web:
-  context: /app-one</screen></para>
+              <para><programlisting>web:
+  context: /app-one</programlisting></para>
             </example></para>
 
           <para>The context path and virtual host configurations can be used
@@ -147,9 +147,9 @@ run app</screen></para>
               <title>Virtual host with context path configuration in
               *-rack.ymls</title>
 
-              <para><screen>web:
+              <para><programlisting>web:
   host: www.mycorp.com
-  context: /app-one</screen></para>
+  context: /app-one</programlisting></para>
             </example></para>
         </section>
       </section>

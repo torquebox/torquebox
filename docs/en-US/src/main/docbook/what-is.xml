@@ -9,7 +9,7 @@
   functionality offered in traditional Rails environments.</para>
 
   <section>
-    <title>Built upon JBoss AS5</title>
+    <title>Built upon JBoss AS</title>
 
     <para>Instead of building a Ruby Application Platform from the ground-up,
     TorqueBox leverages the existing ninja-grade functionality JBoss has been
