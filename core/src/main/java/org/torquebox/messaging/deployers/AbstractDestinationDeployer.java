@@ -20,7 +20,7 @@ public abstract class AbstractDestinationDeployer<S extends DestinationMetaData,
 
 	public AbstractDestinationDeployer(Class<P> cls) {
 		super(cls);
-		setRelativeOrder( 500 );
+		setRelativeOrder( 1000 );
 	}
 	
 	protected Class<? extends Destination> getDestinationClass() {
@@ -56,15 +56,8 @@ public abstract class AbstractDestinationDeployer<S extends DestinationMetaData,
 				BeanMetaData.class);
 	}
 	
-	protected String getBeanName(String destinationName) {
-		String className = getDestinationClass().getName();
-		int lastDot = className.lastIndexOf( "." );
-		String beanName = "torquebox";
-		if ( lastDot > 0 ) {
-			beanName += className.substring( lastDot ).toLowerCase();
-		}
-		beanName += ".";
-		beanName += destinationName;
+	public static String getBeanName(String destinationName) {
+		String beanName = "torquebox.messaging.destination." + destinationName;
 		return beanName;
 	}
 

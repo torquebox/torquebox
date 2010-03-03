@@ -10,12 +10,15 @@ import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
+import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.messaging.MessageDrivenConsumer;
 import org.torquebox.messaging.MessageDrivenConsumerConfig;
+import org.torquebox.messaging.metadata.QueuesMetaData;
+import org.torquebox.messaging.metadata.TopicsMetaData;
 import org.torquebox.microcontainer.JndiRefMetaData;
 import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
 
@@ -58,20 +61,11 @@ public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 				.getRubyClassName());
 
 		
-		/*
-		ValueMetaData destinationInject = builder.createInject(consumerConfig
-				.getDestinationName());
-		Destination destination = (Destination) compEnv.lookup(consumerConfig
-				.getDestinationName());
+		if ( demandDestination( unit, consumerConfig.getDestinationName() ) ) {
+			String destinationBeanName = AbstractDestinationDeployer.getBeanName( consumerConfig.getDestinationName() );
+			builder.addDemand( destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null );
+		}
 		
-		ConnectionFactory connectionFactory = (ConnectionFactory) compEnv
-				.lookup("/ConnectionFactory");
-				
-		ValueMetaData connectionFactoryInject = builder
-				.createInject("/ConnectionFactory");
-		
-
-				*/
 		
 		Context context = new InitialContext();
 		
@@ -84,6 +78,23 @@ public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
 		
 		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class);
+	}
+	
+	protected boolean demandDestination(DeploymentUnit unit, String destinationName) {
+		
+		QueuesMetaData queues = unit.getAttachment(QueuesMetaData.class);
+		
+		if ( ( queues != null ) && ( queues.getDestination( destinationName ) != null ) ) {
+			return true;
+		}
+		
+		TopicsMetaData topics = unit.getAttachment( TopicsMetaData.class );
+		
+		if ( ( topics != null ) && ( topics.getDestination( destinationName ) != null ) ) {
+			return true;
+		}
+		
+		return false;
 	}
 
 }

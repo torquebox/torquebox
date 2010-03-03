@@ -23,5 +23,6 @@ public class MessageDrivenConsumerConfig {
 	public String getDestinationName() {
 		return this.destinationName;
 	}
+	
 
 }
