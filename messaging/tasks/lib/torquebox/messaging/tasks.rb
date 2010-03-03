@@ -5,7 +5,7 @@ module TorqueBox
     module Tasks
 
 
-      def self.enqueue(task_spec, payload, connect_opts=nil)
+      def self.enqueue(task_spec, payload, connect_opts={})
         TaskClient.connect( connect_opts ) do |client|
           client.enqueue( task_spec, payload )
         end 
@@ -13,11 +13,11 @@ module TorqueBox
 
       class TaskClient
 
-        def self.connect(connect_opts=nil,&block)
-          Tasks.new( connect_opts, &block )
+        def self.connect(connect_opts={},&block)
+          TaskClient.new( connect_opts, &block )
         end
 
-        def initialize(connect_opts=nil,&block)
+        def initialize(connect_opts={},&block)
           @client = TorqueBox::Messaging::Client.connect( connect_opts ) 
           if ( block ) 
             begin

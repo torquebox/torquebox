@@ -57,6 +57,8 @@ module TorqueBox
           ensure
             client.close
           end
+        else
+          return client
         end
       end
 
