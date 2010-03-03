@@ -63,6 +63,7 @@ public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 		
 		if ( demandDestination( unit, consumerConfig.getDestinationName() ) ) {
 			String destinationBeanName = AbstractDestinationDeployer.getBeanName( consumerConfig.getDestinationName() );
+			log.info( consumerConfig.getDestinationName() + " DEMAND " + destinationBeanName );
 			builder.addDemand( destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null );
 		}
 		

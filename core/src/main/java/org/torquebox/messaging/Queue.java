@@ -13,8 +13,8 @@ public class Queue extends Destination {
 		getServer().createQueue(getName(), getName(), null, true);
 	}
 	
-	public void stop() throws Exception {
-		log.info( "stop queue " + getName() );
+	public void destroy() throws Exception {
+		log.info( "destroy queue " + getName() );
 		
 		getServer().destroyQueue( getName() );
 	}

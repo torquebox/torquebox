@@ -12,8 +12,8 @@ public class Topic extends Destination {
 		getServer().createTopic(getName(), getName());
 	}
 	
-	public void stop() throws Exception {
-		log.info( "stop topic " + getName() );
+	public void destroy() throws Exception {
+		log.info( "destroy topic " + getName() );
 		
 		getServer().destroyTopic( getName() );
 	}
