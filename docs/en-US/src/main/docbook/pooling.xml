@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="pooling">
+  <title>Ruby Runtime Pooling</title>
+
+  <section>
+    <title>Control thread concurrency using
+    <filename>pooling.yml</filename></title>
+
+    <para>Since the TorqueBox platform supports Rails 2.2+, which are
+    threadsafe, the default mode of operation is to share a single Ruby
+    runtime across threads.</para>
+
+    <para>If your application is not designed to be threadsafe, you can
+    instead pool the runtimes allowing a single-theaded model. Typically, if
+    your application creates and uses global variables to manage state for a
+    single request, you may have problems with the default multithreaded
+    behavior.</para>
+
+    <para>To enable pooling-mode instead of shared multithreading you need to
+    add a YAML file at
+    <filename><envar>$RAILS_ROOT</envar>/config/pooling.yml</filename>. This
+    file is optional, and only required if you wish to enable pooling.</para>
+
+    <section>
+      <title>Pooling for web requests</title>
+
+      <para>A section named web defines the pooling configuration for all
+      regular web requests. This does not include SOAP endpoints. SIP requests
+      do participate in the web pool, though.</para>
+
+      <para>Web pooling is defined by creating a section named
+      <classname>web</classname>, and specifying <parameter>min</parameter>
+      and <parameter>max</parameter> parameters for the pool. The minimum
+      number of runtimes will be created before your application starts. As
+      the available items in the pool are exhausted, new ones will be
+      asynchronously created, up to the maximum specified.</para>
+
+      <para>Currently there is no reaping performed on the pool reduce its
+      size.</para>
+
+      <para><example>
+          <title>Example config/pooling.yml</title>
+
+          <para><screen>web:
+  min: 2
+  max: 30</screen></para>
+        </example></para>
+    </section>
+  </section>
+
+</chapter>
