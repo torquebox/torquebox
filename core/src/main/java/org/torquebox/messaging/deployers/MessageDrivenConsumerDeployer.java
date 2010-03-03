@@ -25,6 +25,7 @@ public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 		setStage(DeploymentStages.REAL);
 		addInput(MessageDrivenConsumerConfig.class);
 		addOutput(BeanMetaData.class);
+		setRelativeOrder( 1000 );
 	}
 
 	@Override

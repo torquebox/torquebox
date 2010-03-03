@@ -20,6 +20,7 @@ public abstract class AbstractDestinationDeployer<S extends DestinationMetaData,
 
 	public AbstractDestinationDeployer(Class<P> cls) {
 		super(cls);
+		setRelativeOrder( 500 );
 	}
 	
 	protected Class<? extends Destination> getDestinationClass() {
