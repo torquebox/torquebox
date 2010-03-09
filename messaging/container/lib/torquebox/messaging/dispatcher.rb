@@ -3,10 +3,7 @@ require 'base64'
 module TorqueBox
   module Messaging
     module Dispatcher
-      def self.dispatch(listener_class_name, listener_class_location, session, message)
-        unless ( listener_class_location.nil? )
-          load listener_class_location
-        end
+      def self.dispatch(listener_class_name, session, message)
         listener_class = eval listener_class_name
         listener = listener_class.new
         listener.session = session if ( listener.respond_to?( "session=" ) )
