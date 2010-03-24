@@ -38,6 +38,7 @@ public class TasksDeployer extends AbstractDeployer {
 		
 		if ( queues == null ) {
 			queues = new QueuesMetaData();
+			unit.addAttachment( QueuesMetaData.class, queues );
 		}
 		
 		String baseQueueName = task.getRubyClassName();
