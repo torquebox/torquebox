@@ -345,7 +345,7 @@ end</programlisting></para>
         information, such as the naming-service URL.</para>
 
         <para><example>
-            <title>Configuring naing-service within
+            <title>Configuring naming-service within
             <filename>consumers.rb</filename></title>
 
             <para><programlisting>TorqueBox::Messaging::Container::Config.create {
@@ -361,7 +361,7 @@ end</programlisting></para>
         <para><example>
             <title>Mapping destinations to consumers</title>
 
-            <para><programlisting>TorqueBox::Messaging::Container::Configu.create {
+            <para><programlisting>TorqueBox::Messaging::Container::Config.create {
 
   consumers {
     map '/queues/my_queue', 'MyConsumer'
@@ -455,7 +455,7 @@ container.wait_until( 'INT' )
         <para><example>
             <title>Client within TorqueBox</title>
 
-            <para><programlisting>TorqueBox::Message::Client.connect do |client|
+            <para><programlisting>TorqueBox::Messaging::Client.connect do |client|
   # use `client` here
 end</programlisting></para>
           </example></para>
