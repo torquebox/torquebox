@@ -26,12 +26,14 @@ public class DefaultPool<T> implements Pool<T> {
 	private Set<T> availableInstances = new HashSet<T>();
 
 	private String name = "anonymous";
-	private int minInstances = 0;
-	private int maxInstances = -1;
-	private int timeout = 30;
+	private int minInstances = 1;
+	private int maxInstances = 1;
+	private long timeout = 30;
+	private TimeUnit timeoutUnit = TimeUnit.SECONDS;
 
 	private Semaphore available = new Semaphore(0, true);
 	private Thread managementThread;
+
 
 	public DefaultPool(InstanceFactory<T> factory) {
 		this.factory = factory;
@@ -45,10 +47,18 @@ public class DefaultPool<T> implements Pool<T> {
 		return this.name;
 	}
 
+	public int getMinInstances() {
+		return this.minInstances;
+	}
+	
 	public void setMinInstances(int minInstances) {
 		this.minInstances = minInstances;
 	}
 
+	public int getMaxInstances() {
+		return this.maxInstances;
+	}
+	
 	public void setMaxInstances(int maxInstances) {
 		this.maxInstances = maxInstances;
 	}
@@ -59,12 +69,29 @@ public class DefaultPool<T> implements Pool<T> {
 	 * @param timeout
 	 *            Time-out length, in seconds.
 	 */
-	public void setTimeout(int timeout) {
+	public void setTimeout(long timeout, TimeUnit timeoutUnit) {
 		this.timeout = timeout;
+		this.timeoutUnit = timeoutUnit;
 	}
 
 	public synchronized void start() throws Exception {
+		if ( this.minInstances > this.maxInstances ) {
+			throw new IllegalArgumentException( "minInstances may not be greater than maxInstances" );
+		}
+		
 		startManagementThread();
+	}
+	
+	public int getAvailableInstanceCount() {
+		synchronized ( availableInstances ) {
+			return this.availableInstances.size();
+		}
+	}
+	
+	public int getInstanceCount() {
+		synchronized ( availableInstances ) {
+			return this.instances.size();
+		}
 	}
 
 	protected void startManagementThread() throws Exception {
@@ -124,6 +151,10 @@ public class DefaultPool<T> implements Pool<T> {
 	}
 
 	public T borrowInstance() throws Exception {
+		return borrowInstance( this.timeout, this.timeoutUnit );
+	}
+	
+	public T borrowInstance(long timeout, TimeUnit timeoutUnit) throws Exception {
 
 		synchronized (this.availableInstances) {
 			if (this.availableInstances.isEmpty()) {
@@ -131,7 +162,7 @@ public class DefaultPool<T> implements Pool<T> {
 			}
 		}
 
-		if (available.tryAcquire(this.timeout, TimeUnit.SECONDS)) {
+		if (available.tryAcquire(timeout, timeoutUnit)) {
 			Iterator<T> iterator = availableInstances.iterator();
 			T instance = iterator.next();
 			iterator.remove();
@@ -140,7 +171,7 @@ public class DefaultPool<T> implements Pool<T> {
 
 		return null;
 	}
-
+	
 	public synchronized void releaseInstance(T instance) {
 		this.availableInstances.add(instance);
 		this.available.release();
