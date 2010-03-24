@@ -261,6 +261,13 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.jboss.reloaded</groupId>
+      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
+      <version>${version.jboss.reloaded}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

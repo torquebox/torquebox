@@ -16,11 +16,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.runtime.load.Library;
 import org.jruby.runtime.load.LoadService;
 import org.jruby.runtime.load.LoadServiceResource;
-import org.jruby.runtime.load.LoadService.AlreadyLoaded;
-import org.jruby.runtime.load.LoadService.LoadSearcher;
-import org.jruby.runtime.load.LoadService.NormalSearcher;
-import org.jruby.runtime.load.LoadService.SearchState;
-import org.jruby.runtime.load.LoadService.SuffixType;
 import org.jruby.util.JRubyFile;
 
 public class VFSLoadService extends LoadService {

@@ -120,6 +120,9 @@
 
   <properties>
 
+    <version.junit>4.7</version.junit>
+    <version.jboss.reloaded>0.1.0</version.jboss.reloaded>
+
     <version.jruby>1.4.0</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
 
@@ -247,6 +250,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
