@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
 import org.jvyamlb.YAML;
 import org.torquebox.ruby.enterprise.sip.metadata.SipApplicationMetaData;

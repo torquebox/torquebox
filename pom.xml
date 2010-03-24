@@ -3,11 +3,13 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+<!--
   <parent>
     <groupId>org.jboss.jbossas</groupId>
     <artifactId>jboss-as-component-matrix</artifactId>
     <version>6.0.0.20100216-M2</version>
   </parent>
+-->
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox</artifactId>
@@ -69,6 +71,15 @@
     <dependencies>
 
       <dependency>
+        <groupId>org.jboss.jbossas</groupId>
+        <artifactId>jboss-as-component-matrix</artifactId>
+        <!--<version>6.0.0.20100216-M2</version>-->
+        <version>6.0.0-SNAPSHOT</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby-complete</artifactId>
         <version>${version.jruby}</version>
@@ -119,7 +130,6 @@
   </dependencyManagement>
 
   <properties>
-
     <version.junit>4.7</version.junit>
     <version.jboss.reloaded>0.1.0</version.jboss.reloaded>
 

@@ -2,7 +2,7 @@
 package org.jboss.ruby;
 
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 
 public class NameableVFSDeployment extends AbstractVFSDeployment {
 	

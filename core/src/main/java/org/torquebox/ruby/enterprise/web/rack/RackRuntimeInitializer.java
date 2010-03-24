@@ -3,7 +3,7 @@ package org.torquebox.ruby.enterprise.web.rack;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 

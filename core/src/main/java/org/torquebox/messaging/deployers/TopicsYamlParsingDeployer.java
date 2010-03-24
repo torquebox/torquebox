@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.messaging.metadata.TopicMetaData;
 import org.torquebox.messaging.metadata.TopicsMetaData;
 import org.yaml.snakeyaml.Yaml;

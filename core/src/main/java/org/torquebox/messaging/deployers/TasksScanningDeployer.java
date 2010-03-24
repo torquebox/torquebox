@@ -2,7 +2,7 @@ package org.torquebox.messaging.deployers;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.messaging.TaskMetaData;
 import org.torquebox.ruby.core.deployers.AbstractRubyScanningDeployer;

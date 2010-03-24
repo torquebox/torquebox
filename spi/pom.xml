@@ -28,8 +28,8 @@
     </dependency>
 
     <dependency>
-      <groupId>jboss.web</groupId>
-      <artifactId>servlet-api</artifactId>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
 

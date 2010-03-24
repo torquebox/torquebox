@@ -7,8 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
 
-import org.jboss.virtual.VFS;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyFile;
 import org.jruby.exceptions.RaiseException;

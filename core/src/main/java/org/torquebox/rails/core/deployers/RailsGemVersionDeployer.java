@@ -32,7 +32,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
 import org.torquebox.rails.core.metadata.RailsGemVersionMetaData;
 

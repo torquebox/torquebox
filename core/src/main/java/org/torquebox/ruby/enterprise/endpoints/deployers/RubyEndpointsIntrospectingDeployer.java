@@ -28,7 +28,7 @@ import java.net.URL;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.runtime.builtin.IRubyObject;

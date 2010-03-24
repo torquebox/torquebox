@@ -27,7 +27,7 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.ruby.core.runtime.metadata.PoolMetaData;
 import org.torquebox.ruby.core.runtime.metadata.PoolingMetaData;
 import org.torquebox.ruby.enterprise.web.rack.DefaultRackApplicationPool;

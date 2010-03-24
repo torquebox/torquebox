@@ -24,7 +24,7 @@ package org.torquebox.rails.core.metadata;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 
 public class RailsApplicationMetaData {
 

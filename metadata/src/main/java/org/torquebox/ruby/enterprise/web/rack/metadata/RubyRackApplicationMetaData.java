@@ -21,7 +21,7 @@
  */
 package org.torquebox.ruby.enterprise.web.rack.metadata;
 
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 
 public class RubyRackApplicationMetaData {
 	

@@ -24,7 +24,7 @@ package org.torquebox.ruby.core.runtime.metadata;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.jboss.virtual.VirtualFile;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
 
 public class RubyRuntimeMetaData {
