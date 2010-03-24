@@ -112,19 +112,15 @@ public class MessageDrivenConsumer implements MessageListener {
 
 	@Override
 	public void onMessage(Message message) {
-		log.info("onMessage()");
 		Ruby ruby = null;
 
 		try {
 			ruby = getRubyRuntimePool().borrowRuntime();
-			String location = StringUtils.underscore(getRubyClassName())
-					+ ".rb";
 			ruby.evalScriptlet("require %(torquebox/messaging/dispatcher)\n");
 			RubyModule dispatcher = (RubyModule) ruby
 					.getClassFromPath("TorqueBox::Messaging::Dispatcher");
 			JavaEmbedUtils.invokeMethod(ruby, dispatcher, "dispatch",
-					new Object[] { getRubyClassName(), location, session,
-							message }, void.class);
+					new Object[] { getRubyClassName(), session, message }, void.class);
 			message.acknowledge();
 		} catch (Exception e) {
 			log.error("unable to dispatch", e);

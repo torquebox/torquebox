@@ -58,10 +58,10 @@ module TorqueBox
             instance_eval &block if block
           end
          
-          def map(destination_name, ruby_class_name)
+          def map(ruby_class, destination_name)
             consumer_config = Java::org.torquebox.messaging::MessageDrivenConsumerConfig.new
             consumer_config.destination_name = destination_name
-            consumer_config.ruby_class_name = ruby_class_name.to_s
+            consumer_config.ruby_class_name = ruby_class.to_s
             @config.consumer_configs << consumer_config
           end
         end # ConsumerConfig
