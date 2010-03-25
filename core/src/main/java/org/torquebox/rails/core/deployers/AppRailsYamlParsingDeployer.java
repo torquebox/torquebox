@@ -21,7 +21,9 @@
  */
 package org.torquebox.rails.core.deployers;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -67,12 +69,11 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		addOutput(SipApplicationMetaData.class);
 		setSuffix("-rails.yml");
 		setStage(DeploymentStages.REAL);
-		//setTopLevelOnly(true);
+		// setTopLevelOnly(true);
 	}
 
 	@Override
-	protected RailsApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RailsApplicationMetaData root)
-			throws Exception {
+	protected RailsApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RailsApplicationMetaData root) throws Exception {
 
 		if (!file.equals(vfsUnit.getRoot())) {
 			log.debug("not deploying non-root: " + file);
@@ -135,8 +136,10 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 	@SuppressWarnings("unchecked")
 	private Deployment parseAndSetUp(VirtualFile file) throws URISyntaxException, IOException {
+		InputStream in = null;
 		try {
-			Map<String, Object> results = (Map<String, Object>) YAML.load(file.openStream());
+			in = file.openStream();
+			Map<String, Object> results = (Map<String, Object>) YAML.load(in);
 
 			Map<ByteList, Object> application = (Map<ByteList, Object>) results.get(APPLICATION_KEY);
 			Map<ByteList, Object> web = (Map<ByteList, Object>) results.get(WEB_KEY);
@@ -145,10 +148,13 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData();
 
 			if (application != null) {
-				ByteList railsRoot = (ByteList) application.get(RAILS_ROOT_KEY);
-				ByteList railsEnv = (ByteList) application.get(RAILS_ENV_KEY);
-				URL railsRootUrl = new URL("file://" + railsRoot);
-				VirtualFile railsRootFile = VFS.getRoot(railsRootUrl);
+				String railsRoot = application.get(RAILS_ROOT_KEY).toString();
+				String railsEnv = application.get(RAILS_ENV_KEY).toString();
+				
+				VirtualFile railsRootFile = VFS.getChild(railsRoot);
+				// TODO close handle on undeploy
+				VFS.mountReal(new File(railsRoot), railsRootFile );
+				
 				railsMetaData.setRailsRoot(railsRootFile);
 				if (railsEnv != null) {
 					railsMetaData.setRailsEnv(railsEnv.toString());
@@ -173,8 +179,8 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 			if (sip != null) {
 				ByteList rubyController = (ByteList) sip.get(RUBYCONTROLLER_KEY);
-				sipMetaData = new SipApplicationMetaData();				
-				if(rubyController != null) {
+				sipMetaData = new SipApplicationMetaData();
+				if (rubyController != null) {
 					sipMetaData.setRubyController(rubyController.toString());
 				}
 			}
@@ -182,7 +188,9 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			return createDeployment(railsMetaData, webMetaData, sipMetaData);
 
 		} finally {
-			file.closeStreams();
+			if ( in != null ) {
+				in.close();
+			}
 		}
 	}
 

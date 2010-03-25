@@ -54,7 +54,7 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
 		VirtualFile root = unit.getRoot();
 		
 		try {
-			if ( root.getChild( "config/environment.rb" ) != null ) {
+			if ( root.getChild( "config/environment.rb" ).exists() ) {
 				log.debug( "attaching: " + unit );
 				RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData( root );
 				unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );

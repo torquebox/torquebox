@@ -74,7 +74,7 @@
         <groupId>org.jboss.jbossas</groupId>
         <artifactId>jboss-as-component-matrix</artifactId>
         <!--<version>6.0.0.20100216-M2</version>-->
-        <version>6.0.0-SNAPSHOT</version>
+        <version>${version.jbossas}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -138,8 +138,9 @@
 
     <rails.version>2.3.4</rails.version>
 
-    <version.jbossas>6.0.0.20100216-M2</version.jbossas>
-    <version.jbossas.package>6.0.0.M2</version.jbossas.package>
+    <!--<version.jbossas>6.0.0.20100216-M2</version.jbossas>-->
+    <version.jbossas>6.0.0-SNAPSHOT</version.jbossas>
+    <version.jbossas.package>6.0.x</version.jbossas.package>
     <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
 
     <version.hornetq>2.0.0.GA</version.hornetq>

@@ -64,15 +64,6 @@
   <bean name="TasksDeployer"                       class="org.torquebox.messaging.deployers.TasksDeployer"/>
 
 
-  <!-- Task Queues -->
-
-<!--
-  <bean name="QueuesYamlParsingDeployer"              class="org.torquebox.ruby.enterprise.queues.deployers.QueuesYamlParsingDeployer"/>
-
-  <bean name="RubyTaskQueuesDeployer"                 class="org.torquebox.ruby.enterprise.queues.deployers.RubyTaskQueuesDeployer"/>
-  <bean name="RubyTaskQueueHandlersDeployer"          class="org.torquebox.ruby.enterprise.queues.deployers.RubyTaskQueueHandlersDeployer"/>
--->
-
   <!-- Endpoint Infrastructure -->
 
   <bean name="CXFBusDeployer"                         class="org.torquebox.ruby.enterprise.endpoints.cxf.deployers.CXFBusDeployer"/>
@@ -107,6 +98,7 @@
   <bean name="RailsCryptoYamlParsingDeployer"       class="org.torquebox.rails.crypto.deployers.RailsCryptoYamlParsingDeployer"/>
 
   <!-- Rack -->
+  <bean name="RackStructure"                        class="org.torquebox.ruby.enterprise.web.rack.deployers.RackStructure"/>
   <bean name="AppRackYamlParsingDeployer"           class="org.torquebox.ruby.enterprise.web.rack.AppRackYamlParsingDeployer"/>
   <bean name="RailsRackDeployer"                    class="org.torquebox.rails.web.deployers.RailsRackDeployer"/>
 
@@ -131,14 +123,6 @@
 
   <!-- Task Queue Deployment  -->
 
-  <bean name="RailsQueuesScanningDeployer"          class="org.torquebox.rails.queues.deployers.RailsQueuesScanningDeployer"/>
-  <bean name="RailsQueuesRubyLoadPathDescriber"     class="org.torquebox.rails.queues.deployers.RailsQueuesRubyLoadPathDescriber"/>
-
   <bean name="RailsConsumersRubyLoadPathDescriber"       class="org.torquebox.rails.messaging.deployers.RailsConsumersRubyLoadPathDescriber"/>
-
-  <bean name="RailsTasksScanningDeployer"       class="org.torquebox.messaging.deployers.TasksScanningDeployer">
-    <property name="suffixFilter">_task.rb</property>
-    <property name="path">app/tasks/</property>
-  </bean>
 
 </deployment>

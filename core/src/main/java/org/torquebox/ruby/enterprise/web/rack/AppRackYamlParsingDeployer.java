@@ -22,6 +22,7 @@
 package org.torquebox.ruby.enterprise.web.rack;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -72,8 +73,8 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	}
 
 	@Override
-	protected RubyRackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file,
-			RubyRackApplicationMetaData root) throws Exception {
+	protected RubyRackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RubyRackApplicationMetaData root)
+			throws Exception {
 		log.debug("parse( " + vfsUnit + ", " + file + ", " + root + ")");
 
 		if (!file.equals(vfsUnit.getRoot())) {
@@ -81,7 +82,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 			return null;
 		}
 
-		Deployment deployment = parseAndSetUp( vfsUnit, file );
+		Deployment deployment = parseAndSetUp(vfsUnit, file);
 
 		performDeploy(vfsUnit, deployment);
 
@@ -118,8 +119,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	}
 
 	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData,
-			RubyRackApplicationMetaData rackMetaData, RackWebApplicationMetaData webMetaData)
-			throws MalformedURLException, IOException {
+			RubyRackApplicationMetaData rackMetaData, RackWebApplicationMetaData webMetaData) throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackRoot);
 
 		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
@@ -135,12 +135,11 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	}
 
 	@SuppressWarnings("unchecked")
-	private RubyRackApplicationMetaData parseAndSetUpApplication(VirtualFile rackRootFile, Map<String, Object> config)
-			throws IOException {
+	private RubyRackApplicationMetaData parseAndSetUpApplication(VirtualFile rackRootFile, Map<String, Object> config) throws IOException {
 		Map<ByteList, Object> application = (Map<ByteList, Object>) config.get(APPLICATION_KEY);
 		RubyRackApplicationMetaData rackMetaData = new RubyRackApplicationMetaData();
-		
-		rackMetaData.setRackRoot( rackRootFile );
+
+		rackMetaData.setRackRoot(rackRootFile);
 
 		if (application != null) {
 
@@ -152,13 +151,13 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 			} else {
 				rackupScriptPath = "config.ru";
 			}
-			
+
 			ByteList rackEnv = (ByteList) application.get(RACK_ENV_KEY);
-			
-			if ( rackEnv != null ) {
-				rackMetaData.setRackEnv( rackEnv.toString() );
+
+			if (rackEnv != null) {
+				rackMetaData.setRackEnv(rackEnv.toString());
 			} else {
-				rackMetaData.setRackEnv( "development" );
+				rackMetaData.setRackEnv("development");
 			}
 
 			VirtualFile rackupFile = rackRootFile.getChild(rackupScriptPath);
@@ -175,7 +174,10 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 						rackupScript.append("\n");
 					}
 				} finally {
-					rackupFile.closeStreams();
+					// rackupFile.closeStreams();
+					if (in != null) {
+						in.close();
+					}
 				}
 
 				rackMetaData.setRackUpScript(rackupScript.toString());
@@ -212,8 +214,8 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	private RubyRuntimeMetaData parseAndSetUpRuntime(VirtualFile rackRoot, String rackEnv) {
 		RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
 		runtimeMetaData.setBaseDir(rackRoot);
-		RackRuntimeInitializer initializer = new RackRuntimeInitializer( rackRoot, rackEnv );
-		runtimeMetaData.setRuntimeInitializer( initializer );
+		RackRuntimeInitializer initializer = new RackRuntimeInitializer(rackRoot, rackEnv);
+		runtimeMetaData.setRuntimeInitializer(initializer);
 		return runtimeMetaData;
 	}
 
@@ -221,28 +223,25 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	private VirtualFile getRackRoot(Map<String, Object> config) throws IOException {
 
 		Map<ByteList, Object> application = (Map<ByteList, Object>) config.get(APPLICATION_KEY);
-		ByteList rackRoot = (ByteList) application.get(RACK_ROOT_KEY);
-		URL rackRootUrl = new URL("file://" + rackRoot);
+		String rackRoot = application.get(RACK_ROOT_KEY).toString();
 
-		VirtualFile rackRootFile = VFS.getRoot(rackRootUrl);
+		VirtualFile rackRootFile = VFS.getChild(rackRoot);
+		// TODO close handle on undeploy
+		VFS.mountReal(new File(rackRoot), rackRootFile);
 
 		return rackRootFile;
 	}
 
 	@SuppressWarnings("unchecked")
 	private Deployment parseAndSetUp(VFSDeploymentUnit unit, VirtualFile file) throws URISyntaxException, IOException {
-		try {
-			Map<String, Object> config = (Map<String, Object>) YAML.load(file.openStream());
+		Map<String, Object> config = (Map<String, Object>) YAML.load(file.openStream());
 
-			VirtualFile rackRootFile = getRackRoot(config);
-			RubyRackApplicationMetaData rackMetaData = parseAndSetUpApplication(rackRootFile, config);
-			RackWebApplicationMetaData webMetaData = parseAndSetUpWeb(rackRootFile, config);
+		VirtualFile rackRootFile = getRackRoot(config);
+		RubyRackApplicationMetaData rackMetaData = parseAndSetUpApplication(rackRootFile, config);
+		RackWebApplicationMetaData webMetaData = parseAndSetUpWeb(rackRootFile, config);
 
-			RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv() );
+		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv());
 
-			return createDeployment(rackRootFile, runtimeMetaData, rackMetaData, webMetaData);
-		} finally {
-			file.closeStreams();
-		}
+		return createDeployment(rackRootFile, runtimeMetaData, rackMetaData, webMetaData);
 	}
 }

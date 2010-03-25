@@ -8,7 +8,7 @@ import org.jboss.bootstrap.api.mc.server.MCServerFactory;
 import org.jboss.reloaded.api.ReloadedDescriptors;
 import org.junit.BeforeClass;
 
-public class AbstractDeployerTestCase {
+public abstract class AbstractDeployerTestCase {
 	
 	   /**
 	    * Creates the server
@@ -24,10 +24,10 @@ public class AbstractDeployerTestCase {
 	      descriptors.add(ReloadedDescriptors.getClassLoadingDescriptor());
 	      descriptors.add(ReloadedDescriptors.getVdfDescriptor());
 
-	      log.info("Using bootstrap descriptors:" + descriptors);
+	      //log.info("Using bootstrap descriptors:" + descriptors);
 
 	      // Set
-	      server = mcServer;
+	      //server = mcServer;
 	   }
 
 

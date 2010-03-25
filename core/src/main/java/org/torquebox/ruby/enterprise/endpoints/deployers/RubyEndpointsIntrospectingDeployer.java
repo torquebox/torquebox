@@ -92,8 +92,6 @@ public class RubyEndpointsIntrospectingDeployer extends AbstractRubyIntrospectin
 							}
 						} catch (IOException e1) {
 							// ignore
-						} catch (URISyntaxException e1) {
-							throw new DeploymentException( e );
 						}
 					}
 				}

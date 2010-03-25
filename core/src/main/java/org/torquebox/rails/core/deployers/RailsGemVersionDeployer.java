@@ -38,7 +38,7 @@ import org.torquebox.rails.core.metadata.RailsGemVersionMetaData;
 
 public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
-	private static final Logger log = Logger.getLogger(RailsGemVersionDeployer.class);
+	//private static final Logger log = Logger.getLogger(RailsGemVersionDeployer.class);
 
 	public RailsGemVersionDeployer() {
 		setInput(RailsApplicationMetaData.class);
@@ -48,39 +48,35 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
 		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
 		VirtualFile railsRoot = railsMetaData.getRailsRoot();
+		
+		log.info( "Rails Root = " + railsRoot );
 
-
-		try {
-			VirtualFile vendorRails = railsRoot.getChild( "vendor/rails" );
-			if ( vendorRails != null && vendorRails.exists() ) {
-				return;
-			}
-		} catch (IOException e) {
-			// ignore, not vendorized
+		VirtualFile vendorRails = railsRoot.getChild("vendor/rails");
+		if (vendorRails != null && vendorRails.exists()) {
+			return;
 		}
-		
+
 		RailsGemVersionMetaData railsVersionMetaData = determineRailsGemVersion(railsRoot);
-		
+
 		unit.addAttachment(RailsGemVersionMetaData.class, railsVersionMetaData);
 		log.debug("deploying Rails version: " + railsVersionMetaData);
 	}
 
 	protected RailsGemVersionMetaData determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
 		VirtualFile configEnvironmentFile = null;
+
+		configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
 		
-		try {
-			configEnvironmentFile = railsRoot.getChild( "/config/environment.rb" );
-			if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
-				return null;
-			}
-		} catch (IOException e) {
+		log.info( "config/environment.rb = " + configEnvironmentFile );
+		
+		if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
 			return null;
 		}
-		
-		Pattern pattern  = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
-		
+
+		Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
+
 		BufferedReader in = null;
-		
+
 		try {
 			InputStream inStream = configEnvironmentFile.openStream();
 			InputStreamReader inReader = new InputStreamReader(inStream);
@@ -88,14 +84,14 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 			String line = null;
 			while ((line = in.readLine()) != null) {
 				Matcher matcher = pattern.matcher(line);
-				if ( matcher.matches() ) {
+				if (matcher.matches()) {
 					String versionSpec = matcher.group(1).trim();
-					return new RailsGemVersionMetaData( versionSpec );
+					return new RailsGemVersionMetaData(versionSpec);
 				}
 			}
 		} catch (IOException e) {
-			throw new DeploymentException( e );
+			throw new DeploymentException(e);
 		}
-		return new RailsGemVersionMetaData( null );
+		return new RailsGemVersionMetaData(null);
 	}
 }

@@ -163,14 +163,13 @@ public class VFSLoadService extends LoadService {
 				if (loadPathEntry.startsWith("vfszip:") || loadPathEntry.startsWith("vfsfile:")) {
 					try {
 						URL vfsUrl = makeUrl(loadPathEntry, namePlusSuffix);
-						VirtualFile file = VFS.getRoot(vfsUrl);
+						//VirtualFile file = VFS.getRoot(vfsUrl);
+						VirtualFile file = VFS.getChild( vfsUrl );
 						if (file != null && file.exists()) {
 							return new LoadServiceResource(file.toURI().toURL(), vfsUrl.toExternalForm());
 						}
 						return null;
 					} catch (MalformedURLException e) {
-						//log.error( "vfs failure", e );
-					} catch (IOException e) {
 						//log.error( "vfs failure", e );
 					} catch (URISyntaxException e) {
 						//log.error( "vfs failure", e );
@@ -217,7 +216,8 @@ public class VFSLoadService extends LoadService {
 				if (reportedPath.startsWith("vfszip:") || reportedPath.startsWith("vfsfile:")) {
 					try {
 						URL vfsUrl = new URL(reportedPath);
-						VirtualFile file = VFS.getRoot(vfsUrl);
+						//VirtualFile file = VFS.getRoot(vfsUrl);
+						VirtualFile file = VFS.getChild( vfsUrl );
 						if (file != null && file.exists()) {
 							return new LoadServiceResource(file.toURI().toURL(), reportedPath);
 						}

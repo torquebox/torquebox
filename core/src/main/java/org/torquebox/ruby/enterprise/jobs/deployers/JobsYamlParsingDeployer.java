@@ -22,6 +22,7 @@
 package org.torquebox.ruby.enterprise.jobs.deployers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
@@ -54,9 +55,10 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 
 	@SuppressWarnings("unchecked")
 	protected void parse(VFSDeploymentUnit unit, VirtualFile file) throws DeploymentException {
+		InputStream in = null;
 		try {
-			Map<ByteList, Map<ByteList, ByteList>> results = (Map<ByteList, Map<ByteList, ByteList>>) YAML.load(file
-					.openStream());
+			in = file.openStream();
+			Map<ByteList, Map<ByteList, ByteList>> results = (Map<ByteList, Map<ByteList, ByteList>>) YAML.load(in);
 
 			for (ByteList jobName : results.keySet()) {
 				Map<ByteList, ByteList> jobSpec = results.get(jobName);
@@ -86,7 +88,13 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 		} catch (IOException e) {
 			throw new DeploymentException(e);
 		} finally {
-			file.closeStreams();
+			if ( in != null ) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					throw new DeploymentException(e);
+				}
+			}
 		}
 	}
 }

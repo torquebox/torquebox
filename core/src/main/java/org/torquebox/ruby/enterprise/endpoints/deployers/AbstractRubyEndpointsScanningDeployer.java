@@ -22,7 +22,6 @@
 package org.torquebox.ruby.enterprise.endpoints.deployers;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
@@ -83,8 +82,6 @@ public class AbstractRubyEndpointsScanningDeployer extends AbstractRubyScanningD
 			}
 			endpoints.addEndpoint( metaData );
 		} catch (IOException e) {
-			throw new DeploymentException(e);
-		} catch (URISyntaxException e) {
 			throw new DeploymentException(e);
 		}
 	}

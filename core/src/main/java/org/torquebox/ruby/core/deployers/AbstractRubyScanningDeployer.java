@@ -103,8 +103,6 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
 		} catch (IOException e) {
 			throw new DeploymentException(e);
-		} catch (URISyntaxException e) {
-			throw new DeploymentException(e);
 		}
 	}
 	

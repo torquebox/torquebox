@@ -21,6 +21,7 @@
  */
 package org.torquebox.rails.core.deployers;
 
+import java.io.InputStream;
 import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
@@ -65,8 +66,10 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 
 	@SuppressWarnings("unchecked")
 	protected RailsApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RailsApplicationMetaData root) throws Exception {
+		InputStream in = null;
 		try {
-			Map<ByteList, ByteList> parsed = (Map<ByteList, ByteList>) YAML.load(file.openStream());
+			in = file.openStream();
+			Map<ByteList, ByteList> parsed = (Map<ByteList, ByteList>) YAML.load(in);
 
 			ByteList railsEnv = parsed.get( RAILS_ENV_KEY );
 
@@ -89,7 +92,9 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 			}
 			return railsMetaData;
 		} finally {
-			file.closeStreams();
+			if ( in != null ) {
+				in.close();
+			}
 		}
 	}
 }

@@ -69,7 +69,7 @@ public class CXFServletDeployer extends AbstractDeployer {
 		servletMetaData.setId( SERVLET_NAME );
 		servletMetaData.setServletName( SERVLET_NAME );
 		servletMetaData.setServletClass( RubyCXFServlet.class.getName() );
-		servletMetaData.setLoadOnStartup( 1 );
+		servletMetaData.setLoadOnStartupInt( 1 );
 		
 		List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
 		ParamValueMetaData cxfBusNameParam = new ParamValueMetaData();

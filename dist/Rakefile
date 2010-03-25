@@ -73,19 +73,19 @@ file "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"=>[
   FileUtils.cp( "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip", "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip" )
 end
 
-file "#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"=>[
-    "#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip",
-    "#{PKG_DIR}/jboss"
-  ] do
-  puts "Copying HornetQ #{HORNETQ_VERSION} from package-cache"
-  FileUtils.cp( "#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip", "#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip" )
-end
+#file "#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"=>[
+    #"#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip",
+    #"#{PKG_DIR}/jboss"
+  #] do
+  #puts "Copying HornetQ #{HORNETQ_VERSION} from package-cache"
+  #FileUtils.cp( "#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip", "#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip" )
+#end
 
 desc "Cache JBoss"
 task 'cache:jboss'=>["#{CACHE_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip"]
 
-desc "Cache HornetQ"
-task 'cache:hornetq'=>["#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"]
+#desc "Cache HornetQ"
+#task 'cache:hornetq'=>["#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"]
 
 desc "Cache JRuby"
 task 'cache:jruby'=>["#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"]
@@ -107,18 +107,18 @@ file "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"=>[ "#{CACHE_DIR}/jr
   end
 end
 
-file "#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"=>[ "#{CACHE_DIR}/jboss" ] do
-  Dir.chdir( "#{CACHE_DIR}/jboss" ) do 
-    puts "Downloading HornetQ #{HORNETQ_VERSION}"
-    url = "#{HORNETQ_BASE_URL}/#{HORNETQ_VERSION}/hornetq-#{HORNETQ_VERSION}.zip"
-    puts `wget --quiet #{url}`
-  end
-end
+#file "#{CACHE_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip"=>[ "#{CACHE_DIR}/jboss" ] do
+  #Dir.chdir( "#{CACHE_DIR}/jboss" ) do 
+    #puts "Downloading HornetQ #{HORNETQ_VERSION}"
+    ##url = "#{HORNETQ_BASE_URL}/#{HORNETQ_VERSION}/hornetq-#{HORNETQ_VERSION}.zip"
+    #puts `wget --quiet #{url}`
+  #end
+#end
 
 
 task 'stage'=>[ 
         "#{PKG_DIR}/jboss/jboss-#{JBOSS_PACKAGE_VERSION}.zip", 
-        "#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip", 
+        #"#{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip", 
         "#{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip", 
         "#{STAGE_DIR}" 
       ] do
@@ -136,38 +136,6 @@ task 'stage'=>[
         FileUtils.rm_rf( root_war )
         puts "#{conf}: Installing TorqueBox deployer"
         FileUtils.cp( "#{DEPLOYER_DIR}/torquebox-core-deployer.jar", "#{conf}/deployers" )
-      end
-    end
-    puts `unzip -qo #{PKG_DIR}/jboss/hornetq-#{HORNETQ_VERSION}.zip`
-    Dir.chdir( 'hornetq-2.0.0.GA/config/jboss-as' ) do
-      ENV['JBOSS_HOME'] = "#{STAGE_DIR}/jboss/"
-      cmd = "/bin/sh build.sh"
-      Open3.popen3( cmd ) do |stdin, stdout, stderr|
-        stdin.close
-        stdout_thr = Thread.new(stdout) {|io|
-          io.each_line do |l|
-            $stdout.puts l
-            $stdout.flush
-          end
-        }
-        stderr_thr = Thread.new(stderr) {|io|
-          io.each_line do |l|
-            $stderr.puts l
-            $stderr.flush
-          end
-        }
-        stdout_thr.join
-        stderr_thr.join
-      end
-    end
-    Dir.chdir( 'jboss/server' ) do
-      Dir[ '*-with-hornetq' ].each do |profile|
-        if ( profile =~ /(.*)-with-hornetq/ )
-          base_profile = $1
-          puts "Making HornetQ default for #{base_profile}"
-          FileUtils.rm_rf( base_profile )
-          FileUtils.mv( profile, base_profile )
-        end
       end
     end
     puts `unzip -qo #{PKG_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip`

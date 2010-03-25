@@ -1,20 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="src" path="src/main/java" including="**/*.java"/>
-  <classpathentry kind="output" path="target/classes"/>
-  <classpathentry kind="var" path="M2_REPO/javax/jms/jms/1.1/jms-1.1.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-core/2.0.0.GA/hornetq-core-2.0.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-jms/2.0.0.GA/hornetq-jms-2.0.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-jms-client/2.0.0.GA/hornetq-jms-client-2.0.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/hornetq/hornetq-transports/2.0.0.GA/hornetq-transports-2.0.0.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/jboss-common-core/2.2.17.GA/jboss-common-core-2.2.17.GA.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/logging/jboss-logging-spi/2.2.0.CR1/jboss-logging-spi-2.2.0.CR1.jar" sourcepath="M2_REPO/org/jboss/logging/jboss-logging-spi/2.2.0.CR1/jboss-logging-spi-2.2.0.CR1-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/naming/jnp-client/5.0.4.GA/jnp-client-5.0.4.GA.jar" sourcepath="M2_REPO/org/jboss/naming/jnp-client/5.0.4.GA/jnp-client-5.0.4.GA-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jruby/jruby-complete/1.4.0/jruby-complete-1.4.0.jar"/>
-  <classpathentry kind="var" path="M2_REPO/junit/junit/4.7/junit-4.7.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/jboss/netty/netty/3.1.5.GA/netty-3.1.5.GA.jar" sourcepath="M2_REPO/org/jboss/netty/netty/3.1.5.GA/netty-3.1.5.GA-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/mobicents/servlet/sip/sip-servlets-spec/1.1.10/sip-servlets-spec-1.1.10.jar" sourcepath="M2_REPO/org/mobicents/servlet/sip/sip-servlets-spec/1.1.10/sip-servlets-spec-1.1.10-sources.jar"/>
-  <classpathentry kind="var" path="M2_REPO/org/yaml/snakeyaml/1.5/snakeyaml-1.5.jar" sourcepath="M2_REPO/org/yaml/snakeyaml/1.5/snakeyaml-1.5-sources.jar"/>
-  <classpathentry kind="src" path="/torquebox-common"/>
-  <classpathentry kind="src" path="/torquebox-spi"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
 </classpath>
