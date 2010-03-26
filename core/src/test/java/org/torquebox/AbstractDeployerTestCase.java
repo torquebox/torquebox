@@ -31,8 +31,7 @@ public abstract class AbstractDeployerTestCase {
 		descriptors.add(ReloadedDescriptors.getClassLoadingDescriptor());
 		descriptors.add(ReloadedDescriptors.getVdfDescriptor());
 
-		log.info("Using bootstrap descriptors:" + descriptors);
-		System.err.println("Create server");
+		//log.info("Using bootstrap descriptors:" + descriptors);
 
 		// Set
 		server = mcServer;
@@ -40,15 +39,21 @@ public abstract class AbstractDeployerTestCase {
 
 	@Before
 	public void startServer() throws Exception {
-		log.info("Start server");
-		System.err.println("Start server");
 		server.start();
+		
+		long start = System.currentTimeMillis();
+		
+		while ( server.getState() == LifecycleState.STARTING ) {
+			Thread.sleep( 50 );
+		}
+		
+		long elapsed = System.currentTimeMillis() - start;
+		
+		log.info( "Server started in " + elapsed + "ms" );
 	}
 
 	@After
 	public void stopServer() throws Exception {
-		log.info("Stop server");
-		System.err.println("Stop server");
 		if (server != null && server.getState().equals(LifecycleState.STARTED)) {
 			server.stop();
 		}

@@ -356,7 +356,7 @@
           <systemProperties>
             <property>
               <name>log4j.configuration</name>
-              <value>jboss-log4j.xml</value>
+              <value>test-log4j.xml</value>
             </property>
           </systemProperties>
         </configuration>

@@ -3,11 +3,10 @@
 
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
-  <appender name="TEST.CONSOLE" class="org.apache.log4j.FileAppender">
+  <appender name="TEST.CONSOLE" class="org.apache.log4j.ConsoleAppender">
     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
-    <param name="File"       value="${basedir}/target/rspec.log"/>
+    <param name="Target"     value="System.err"/>
     <param name="Threshold"  value="TRACE"/>
-    <param name="Append"     value="false"/>
 
     <layout class="org.apache.log4j.PatternLayout">
       <!-- The default pattern: Date Priority [Category] Message\n -->
@@ -15,15 +14,7 @@
     </layout>
   </appender>
 
-  <category name="org.jboss.ruby">
-    <priority value="TRACE"/>
-  </category>
-
   <category name="org.torquebox">
-    <priority value="TRACE"/>
-  </category>
-
-  <category name="org.jboss.deployers.structure">
     <priority value="TRACE"/>
   </category>
 
