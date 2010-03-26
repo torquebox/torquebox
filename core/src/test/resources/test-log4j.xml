@@ -15,7 +15,7 @@
   </appender>
 
   <category name="org.torquebox">
-    <priority value="TRACE"/>
+    <priority value="DEBUG"/>
   </category>
 
   <root>

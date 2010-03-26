@@ -9,9 +9,9 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.messaging.metadata.QueuesMetaData;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
-public class QueuesYamlParsingDeployer extends
-		AbstractVFSParsingDeployer<QueuesMetaData> {
+public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueuesMetaData> {
 
 	public QueuesYamlParsingDeployer() {
 		super(QueuesMetaData.class);
@@ -20,37 +20,39 @@ public class QueuesYamlParsingDeployer extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected QueuesMetaData parse(VFSDeploymentUnit unit, VirtualFile file,
-			QueuesMetaData root) throws Exception {
+	protected QueuesMetaData parse(VFSDeploymentUnit unit, VirtualFile file, QueuesMetaData root) throws Exception {
 		InputStream in = null;
 
 		QueuesMetaData queues = unit.getAttachment(QueuesMetaData.class);
 		if (queues == null) {
 			queues = new QueuesMetaData();
-			unit.addAttachment(QueuesMetaData.class, queues);
 		}
 
 		try {
 			in = file.openStream();
 			Yaml yaml = new Yaml();
-			Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) yaml
-					.load(in);
+			Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) yaml.load(in);
 
 			if (data != null) {
 				for (String queueName : data.keySet()) {
-					log
-							.info("Read configuration for queue [" + queueName
-									+ "]");
+					log.info("Read configuration for queue [" + queueName + "]");
 					QueueMetaData queue = new QueueMetaData(queueName);
 					queues.addQueue(queue);
 				}
 			}
+		} catch (YAMLException e) {
+			log.error("Error parsing " + file + ": " + e.getMessage());
 		} finally {
 			if (in != null) {
 				in.close();
 			}
 		}
-		return null;
+
+		if ( queues.getQueues().isEmpty() ) {
+			queues = null;
+		}
+		
+		return queues;
 	}
 
 }

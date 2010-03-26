@@ -132,6 +132,7 @@
   <properties>
     <version.junit>4.7</version.junit>
     <version.jboss.reloaded>0.1.1</version.jboss.reloaded>
+    <version.jboss.shrinkwrap>1.0.0-alpha-6</version.jboss.shrinkwrap>
 
     <version.jruby>1.4.0</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
