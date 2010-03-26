@@ -9,7 +9,7 @@ module VFS
     def initialize(path)
       @path         = path
       begin
-        @virtual_file = org.jboss.virtual.VFS.root( path )
+        @virtual_file = org.jboss.vfs.VFS.child( path )
       rescue Java::JavaLang::NullPointerException 
         raise Errno::ENOENT.new
       end

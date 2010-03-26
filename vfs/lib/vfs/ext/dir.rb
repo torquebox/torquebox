@@ -7,7 +7,8 @@ class Dir
     alias_method :glob_before_vfs, :glob
 
     def open(str,&block)
-      if ( ::File.exist_without_vfs?( str.to_str ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( str.to_str ) )
+      #if ( ::File.exist_without_vfs?( str.to_str ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( str.to_str ) )
+      if ( ::File.exist_without_vfs?( str.to_str ) )
         return open_before_vfs(str,&block)
       end
       #puts "open(#{str})"
@@ -48,8 +49,8 @@ class Dir
 
       base.gsub!( /\\(.)/, '\1' )
 
-      if ( base.empty? || 
-           ( ::File.exist_without_vfs?( base ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( base ) ) )
+      #if ( base.empty? || ( ::File.exist_without_vfs?( base ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( base ) ) )
+      if ( base.empty? || ( ::File.exist_without_vfs?( base ) ) )
         paths = glob_before_vfs( str_pattern, flags, &block )
         return paths
       end
@@ -68,7 +69,7 @@ class Dir
       #puts "matcher [#{matcher}]"
 
       begin
-        starting_point = root = org.jboss.virtual.VFS.root( vfs_url )
+        starting_point = root = org.jboss.vfs.VFS.child( vfs_url )
         starting_point = root.get_child( child_path ) unless ( child_path.nil? || child_path == '' )
         #puts "starting_point=#{starting_point.path_name}"
         return [] if ( starting_point.nil? || ! starting_point.exists? )

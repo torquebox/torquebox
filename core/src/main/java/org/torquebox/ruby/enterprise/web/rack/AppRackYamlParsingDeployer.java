@@ -227,7 +227,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 
 		VirtualFile rackRootFile = VFS.getChild(rackRoot);
 		// TODO close handle on undeploy
-		VFS.mountReal(new File(rackRoot), rackRootFile);
+		// VFS.mountReal(new File(rackRoot), rackRootFile);
 
 		return rackRootFile;
 	}

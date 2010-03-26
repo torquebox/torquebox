@@ -20,7 +20,7 @@ class File
       unless ( (String === fname ) && ( fname =~ /^vfszip:/ || fname =~ /^vfsfile:/ ) )
         return File.open_without_vfs(fname, mode_str, flags, &block )
       end
-      file = org.jboss.virtual.VFS.root( fd )
+      file = org.jboss.vfs.VFS.child( fd )
       raise Errno::ENOENT unless file
       stream = file.openStream()
       io = stream.to_io
@@ -40,7 +40,7 @@ class File
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       raise Errno::ENOENT.new unless vfs_url
 
-      virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+      virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
       virtual_file = virtual_file.get_child( child_path ) if child_path
 
       Time.at( virtual_file.getLastModified() / 1000 )
@@ -52,7 +52,7 @@ class File
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       raise Errno::ENOENT.new nil unless vfs_url
 
-      virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+      virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
       virtual_file = virtual_file.get_child( child_path ) if child_path
 
       VFS::File::Stat.new( virtual_file )
@@ -65,7 +65,7 @@ class File
       return false unless vfs_url
 
       begin
-        virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+        virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
         virtual_file = virtual_file.get_child( child_path ) if child_path
   
         return ( ( ! virtual_file.nil? ) && virtual_file.exists() )
@@ -81,7 +81,7 @@ class File
       return false unless vfs_url
 
       begin
-        virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+        virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
         virtual_file = virtual_file.get_child( child_path ) if child_path
   
         return ( ( ! virtual_file.nil? ) && ( ! virtual_file.isLeaf() ) )
@@ -97,7 +97,7 @@ class File
       return false unless vfs_url
 
       begin
-        virtual_file = Java::OrgJbossVirtual::VFS.root( vfs_url )
+        virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
         virtual_file = virtual_file.get_child( child_path ) if child_path
 
         return ( ( ! virtual_file.nil? ) && ( virtual_file.isLeaf() ) )

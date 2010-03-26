@@ -41,6 +41,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 		script.append( "RACK_ENV=%q(" + this.rackEnv + ")\n" );
 		script.append( "ENV['RACK_ROOT']=%q(" + rackRootPath +")\n" );
 		script.append( "ENV['RACK_ENV']=%q(" + this.rackEnv + ")\n" );
+		System.err.println( "INIT SCRIPT \n" + script.toString() + "\n\n" );
 		return script.toString();
 	}
 
