@@ -21,12 +21,10 @@
  */
 package org.torquebox.rails.deployers;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Map;
 
 import org.jboss.deployers.client.spi.Deployment;
@@ -42,10 +40,9 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
-import org.jvyamlb.YAML;
 import org.torquebox.rack.metadata.RackWebApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.ruby.enterprise.sip.metadata.SipApplicationMetaData;
+import org.yaml.snakeyaml.Yaml;
 
 public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<RailsApplicationMetaData> {
 
@@ -66,7 +63,7 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 	public AppRailsYamlParsingDeployer() {
 		super(RailsApplicationMetaData.class);
 		addOutput(RackWebApplicationMetaData.class);
-		addOutput(SipApplicationMetaData.class);
+		//addOutput(SipApplicationMetaData.class);
 		setSuffix("-rails.yml");
 		setStage(DeploymentStages.REAL);
 		// setTopLevelOnly(true);
@@ -115,8 +112,8 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		unit.addAttachment("torquebox.rails.root.deployer", deployer);
 	}
 
-	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackWebApplicationMetaData webMetaData,
-			SipApplicationMetaData sipMetaData) throws MalformedURLException, IOException {
+	//private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackWebApplicationMetaData webMetaData, SipApplicationMetaData sipMetaData) throws MalformedURLException, IOException {
+	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackWebApplicationMetaData webMetaData) throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(railsMetaData.getRailsRoot());
 
 		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
@@ -127,9 +124,11 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			attachments.addAttachment(RackWebApplicationMetaData.class, webMetaData);
 		}
 
+		/*
 		if (sipMetaData != null) {
 			attachments.addAttachment(SipApplicationMetaData.class, sipMetaData);
 		}
+		*/
 
 		return deployment;
 	}
@@ -139,11 +138,12 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		InputStream in = null;
 		try {
 			in = file.openStream();
-			Map<String, Object> results = (Map<String, Object>) YAML.load(in);
+			Yaml yaml = new Yaml();
+			Map<String, Object> results = (Map<String, Object>) yaml.load(in);
 
-			Map<ByteList, Object> application = (Map<ByteList, Object>) results.get(APPLICATION_KEY);
-			Map<ByteList, Object> web = (Map<ByteList, Object>) results.get(WEB_KEY);
-			Map<ByteList, Object> sip = (Map<ByteList, Object>) results.get(SIP_KEY);
+			Map<String, Object> application = (Map<String, Object>) results.get(APPLICATION_KEY);
+			Map<String, Object> web = (Map<String, Object>) results.get(WEB_KEY);
+			//Map<String, Object> sip = (Map<String, Object>) results.get(SIP_KEY);
 
 			RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData();
 
@@ -175,6 +175,7 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 				}
 			}
 
+			/*
 			SipApplicationMetaData sipMetaData = null;
 
 			if (sip != null) {
@@ -184,8 +185,10 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 					sipMetaData.setRubyController(rubyController.toString());
 				}
 			}
+			*/
 
-			return createDeployment(railsMetaData, webMetaData, sipMetaData);
+			//return createDeployment(railsMetaData, webMetaData, sipMetaData);
+			return createDeployment(railsMetaData, webMetaData);
 
 		} finally {
 			if ( in != null ) {

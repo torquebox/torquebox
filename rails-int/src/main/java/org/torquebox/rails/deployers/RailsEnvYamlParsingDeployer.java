@@ -31,12 +31,13 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
-import org.jvyamlb.YAML;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.yaml.snakeyaml.Yaml;
+import org.yecht.YAML;
 
 public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 	
-	public static final ByteList RAILS_ENV_KEY = ByteList.create( "RAILS_ENV" );
+	public static final String RAILS_ENV_KEY = "RAILS_ENV";
 	
 	public RailsEnvYamlParsingDeployer() {
 		setStage(DeploymentStages.PARSE);
@@ -69,25 +70,27 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 		InputStream in = null;
 		try {
 			in = file.openStream();
-			Map<ByteList, ByteList> parsed = (Map<ByteList, ByteList>) YAML.load(in);
+			Yaml yaml = new Yaml();
+			Map<String, String> parsed = (Map<String, String>) yaml.load(in);
 
-			ByteList railsEnv = parsed.get( RAILS_ENV_KEY );
+			String railsEnv = parsed.get( RAILS_ENV_KEY );
 
-			String railsEnvStr = "development";
 			if (railsEnv != null ) {
-				railsEnvStr = railsEnv.toString().trim();
-				if ( railsEnvStr.equals( "" ) ) {
-					railsEnvStr = "development";
+				railsEnv = railsEnv.trim();
+				if ( railsEnv.equals( "" ) ) {
+					railsEnv = "development";
 				}
+			} else {
+				railsEnv = "development";
 			}
 
 			RailsApplicationMetaData railsMetaData = root;
 
 			if (railsMetaData == null) {
-				railsMetaData = new RailsApplicationMetaData(unit.getRoot(), railsEnvStr);
+				railsMetaData = new RailsApplicationMetaData(unit.getRoot(), railsEnv);
 			} else {
 				if (railsMetaData.getRailsEnv() == null) {
-					railsMetaData.setRailsEnv(railsEnvStr);
+					railsMetaData.setRailsEnv(railsEnv);
 				}
 			}
 			return railsMetaData;

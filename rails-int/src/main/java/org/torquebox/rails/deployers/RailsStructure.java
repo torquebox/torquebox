@@ -31,8 +31,8 @@ import org.jboss.deployers.spi.attachments.MutableAttachments;
 import org.jboss.deployers.spi.structure.ContextInfo;
 import org.jboss.deployers.vfs.spi.structure.StructureContext;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.mc.vdf.AbstractRubyStructureDeployer;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.vdf.AbstractRubyStructureDeployer;
 
 /**
  * StructureDeployer to identify Ruby-on-Rails applications.

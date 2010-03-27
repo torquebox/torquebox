@@ -30,9 +30,8 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
-import org.jruby.util.ByteList;
-import org.jvyamlb.YAML;
 import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.yaml.snakeyaml.Yaml;
 
 public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 
@@ -58,13 +57,14 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 		InputStream in = null;
 		try {
 			in = file.openStream();
-			Map<ByteList, Map<ByteList, ByteList>> results = (Map<ByteList, Map<ByteList, ByteList>>) YAML.load(in);
+			Yaml yaml = new Yaml();
+			Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) yaml.load(in);
 
-			for (ByteList jobName : results.keySet()) {
-				Map<ByteList, ByteList> jobSpec = results.get(jobName);
-				ByteList description = jobSpec.get(ByteList.create("description"));
-				ByteList job = jobSpec.get(ByteList.create("job"));
-				ByteList cron = jobSpec.get(ByteList.create("cron"));
+			for (String jobName : results.keySet()) {
+				Map<String, String> jobSpec = results.get(jobName);
+				String description = jobSpec.get("description");
+				String job = jobSpec.get("job");
+				String cron = jobSpec.get("cron");
 
 				if (job == null) {
 					throw new DeploymentException( "Attribute 'job' must be specified" );
