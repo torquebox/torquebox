@@ -28,7 +28,7 @@ import org.apache.cxf.databinding.AbstractDataBinding;
 import org.apache.cxf.databinding.DataReader;
 import org.apache.cxf.databinding.DataWriter;
 import org.apache.cxf.service.Service;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyTypeSpace;
 import org.w3c.dom.Node;
 

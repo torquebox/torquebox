@@ -31,10 +31,10 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.interp.metadata.RubyLoadPathMetaData;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
 import org.torquebox.rails.core.metadata.RailsGemVersionMetaData;
-import org.torquebox.ruby.core.runtime.metadata.RubyLoadPathMetaData;
-import org.torquebox.ruby.core.runtime.metadata.RubyRuntimeMetaData;
 
 public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 

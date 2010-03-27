@@ -81,6 +81,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-jms</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- JRuby-related -->
     <dependency>
       <groupId>org.jruby</groupId>

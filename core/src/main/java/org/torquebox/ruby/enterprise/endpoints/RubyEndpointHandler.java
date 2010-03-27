@@ -32,7 +32,7 @@ import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyType;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyTypeSpace;
 

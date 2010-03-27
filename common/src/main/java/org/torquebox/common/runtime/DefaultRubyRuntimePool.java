@@ -23,8 +23,8 @@ package org.torquebox.common.runtime;
 
 import org.jruby.Ruby;
 import org.torquebox.common.pool.DefaultPool;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class DefaultRubyRuntimePool extends DefaultPool<Ruby> implements RubyRuntimePool  {
 

@@ -29,7 +29,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
-import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
+import org.torquebox.interp.deployers.PoolingDeployer;
 import org.torquebox.ruby.enterprise.crypto.metadata.CryptoMetaData;
 import org.torquebox.ruby.enterprise.crypto.metadata.CryptoStoreMetaData;
 import org.torquebox.ruby.enterprise.endpoints.RubyEndpoint;

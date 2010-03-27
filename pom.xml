@@ -90,6 +90,7 @@
         <version>${version.snakeyaml}</version>
       </dependency>
 
+<!--
       <dependency>
         <groupId>org.hornetq</groupId>
         <artifactId>hornetq-core</artifactId>
@@ -113,6 +114,7 @@
         <artifactId>hornetq-transports</artifactId>
         <version>${version.hornetq}</version>
       </dependency>
+-->
 
       <dependency>
         <groupId>org.jboss.netty</groupId>
@@ -347,11 +349,19 @@
 
   <modules>
 
+    <module>interp-spi</module>
+    <module>interp-core</module>
+    <module>interp-metadata</module>
+    <module>interp-int</module>
+
+    <module>messaging-runtime</module>
+    <module>messaging-client</module>
+    <module>messaging-container</module>
+    <module>messaging-tasks</module>
 
     <module>torquebox-gem</module>
     <module>torquebox-rails</module>
     <module>torquebox-capistrano</module>
-
 
     <module>metadata</module>
 
@@ -360,7 +370,6 @@
 
     <module>spi</module>
     <module>common</module>
-    <module>messaging</module>
     <module>vfs</module>
 
     <module>dist</module>

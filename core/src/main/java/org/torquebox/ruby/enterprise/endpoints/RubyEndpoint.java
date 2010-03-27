@@ -39,7 +39,7 @@ import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor;
 import org.apache.ws.security.handler.WSHandlerConstants;
 import org.jboss.logging.Logger;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.ruby.enterprise.endpoints.cxf.RubyDataBinding;
 import org.torquebox.ruby.enterprise.endpoints.cxf.RubyEndpointInvoker;
 import org.torquebox.ruby.enterprise.endpoints.cxf.RubyReflectionServiceFactoryBean;

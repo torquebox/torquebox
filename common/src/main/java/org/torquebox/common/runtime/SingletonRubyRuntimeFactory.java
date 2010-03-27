@@ -1,7 +1,7 @@
 package org.torquebox.common.runtime;
 
 import org.jruby.Ruby;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimeFactory;
+import org.torquebox.interp.spi.RubyRuntimeFactory;
 
 public class SingletonRubyRuntimeFactory implements RubyRuntimeFactory {
 

@@ -33,14 +33,12 @@ import org.junit.BeforeClass;
 
 public abstract class AbstractDeployerTestCase {
 
-	private static Logger baseLog = Logger.getLogger(AbstractDeployerTestCase.class);
-
 	/**
 	 * MC bean name of the {@link MainDeployer}
 	 */
 	protected static final String MC_MAIN_DEPLOYER_NAME = "MainDeployer";
 
-	private static MCServer server;
+	private MCServer server;
 
 	protected Logger log;
 	
@@ -53,43 +51,40 @@ public abstract class AbstractDeployerTestCase {
 	 */
 	@BeforeClass
 	public static void createAndConfigureServer() {
-		final MCServer mcServer = MCServerFactory.createServer();
-
-		final List<BootstrapDescriptor> descriptors = mcServer.getConfiguration().getBootstrapDescriptors();
-		descriptors.add(ReloadedDescriptors.getClassLoadingDescriptor());
-		descriptors.add(ReloadedDescriptors.getVdfDescriptor());
-
-		server = mcServer;
 	}
 
 	private Closeable mount;
 
 	@Before
 	public void startServer() throws Exception {
-		server.start();
+		this.server = MCServerFactory.createServer();
+
+		final List<BootstrapDescriptor> descriptors = this.server.getConfiguration().getBootstrapDescriptors();
+		descriptors.add(ReloadedDescriptors.getClassLoadingDescriptor());
+		descriptors.add(ReloadedDescriptors.getVdfDescriptor());
 
 		long start = System.currentTimeMillis();
-
+		this.server.start();
 		long elapsed = System.currentTimeMillis() - start;
 
-		baseLog.info("Server started in " + elapsed + "ms");
+		log.info("Server started in " + elapsed + "ms");
 	}
 
 	@After
 	public void stopServer() throws Exception {
-		if ( mount != null ) {
-			mount.close();
-			mount = null;
+		if ( this.mount != null ) {
+			this.mount.close();
+			this.mount = null;
 		}
-		if (server != null && server.getState().equals(LifecycleState.STARTED)) {
-			server.stop();
+		if (this.server != null && this.server.getState().equals(LifecycleState.STARTED)) {
+			this.server.stop();
 		}
 
 	}
 
 	protected void addDeployer(Deployer deployer) throws Throwable {
 
-		KernelController controller = server.getKernel().getController();
+		KernelController controller = this.server.getKernel().getController();
 		String deployerName = deployer.getClass().getSimpleName();
 		BeanMetaDataBuilder bmdb = BeanMetaDataBuilder.createBuilder(deployerName, deployer.getClass().getName());
 		controller.install(bmdb.getBeanMetaData(), deployer);
@@ -105,7 +100,7 @@ public abstract class AbstractDeployerTestCase {
 		assembly.add( name, VFS.getChild( url ) );
 		
 		VirtualFile mountPoint = VFS.getChild( tmpRoot.getAbsolutePath() );
-		mount = VFS.mountAssembly(assembly, mountPoint);
+		this.mount = VFS.mountAssembly(assembly, mountPoint);
 		
 		return addDeployment( mountPoint.getChild( name ) );
 	}
@@ -132,7 +127,7 @@ public abstract class AbstractDeployerTestCase {
 	}
 
 	protected KernelController getKernelController() {
-		return server.getKernel().getController();
+		return this.server.getKernel().getController();
 	}
 
 	protected MainDeployer getMainDeployer() {

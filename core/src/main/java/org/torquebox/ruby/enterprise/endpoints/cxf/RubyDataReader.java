@@ -35,7 +35,7 @@ import org.apache.cxf.message.Attachment;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyType;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyTypeSpace;
 import org.torquebox.ruby.enterprise.endpoints.databinding.RubyXMLStreamDataReader;

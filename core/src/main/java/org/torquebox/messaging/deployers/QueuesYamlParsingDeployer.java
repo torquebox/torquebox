@@ -23,11 +23,6 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<Queues
 	protected QueuesMetaData parse(VFSDeploymentUnit unit, VirtualFile file, QueuesMetaData root) throws Exception {
 		InputStream in = null;
 
-		QueuesMetaData queues = unit.getAttachment(QueuesMetaData.class);
-		if (queues == null) {
-			queues = new QueuesMetaData();
-		}
-
 		try {
 			in = file.openStream();
 			Yaml yaml = new Yaml();
@@ -37,7 +32,7 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<Queues
 				for (String queueName : data.keySet()) {
 					log.info("Read configuration for queue [" + queueName + "]");
 					QueueMetaData queue = new QueueMetaData(queueName);
-					queues.addQueue(queue);
+					unit.addAttachment(QueueMetaData.class.getName() + "$" + queueName, queue, QueueMetaData.class);
 				}
 			}
 		} catch (YAMLException e) {
@@ -48,11 +43,7 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<Queues
 			}
 		}
 
-		if ( queues.getQueues().isEmpty() ) {
-			queues = null;
-		}
-		
-		return queues;
+		return null;
 	}
 
 }

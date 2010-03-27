@@ -15,12 +15,12 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.interp.deployers.PoolingDeployer;
 import org.torquebox.messaging.MessageDrivenConsumer;
 import org.torquebox.messaging.MessageDrivenConsumerConfig;
 import org.torquebox.messaging.metadata.QueuesMetaData;
 import org.torquebox.messaging.metadata.TopicsMetaData;
 import org.torquebox.microcontainer.JndiRefMetaData;
-import org.torquebox.ruby.core.runtime.deployers.PoolingDeployer;
 
 public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 

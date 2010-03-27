@@ -33,7 +33,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyJobHandler implements Job, StatefulJob {
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};

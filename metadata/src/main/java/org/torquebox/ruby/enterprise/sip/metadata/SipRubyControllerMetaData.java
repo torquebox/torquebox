@@ -21,7 +21,7 @@
  */
 package org.torquebox.ruby.enterprise.sip.metadata;
 
-import org.torquebox.ruby.core.runtime.spi.RubyRuntimePool;
+import org.torquebox.interp.spi.RubyRuntimePool;
 
 /**
  * @author jean.deruelle@gmail.com

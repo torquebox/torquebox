@@ -5,7 +5,7 @@ import java.net.URISyntaxException;
 
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
-import org.torquebox.ruby.core.runtime.spi.RuntimeInitializer;
+import org.torquebox.interp.spi.RuntimeInitializer;
 
 public class RackRuntimeInitializer implements RuntimeInitializer {
 	
