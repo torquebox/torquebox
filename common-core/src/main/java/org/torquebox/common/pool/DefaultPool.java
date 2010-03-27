@@ -8,8 +8,9 @@ import java.util.Set;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import org.torquebox.pool.spi.InstanceFactory;
-import org.torquebox.pool.spi.Pool;
+import org.torquebox.common.spi.InstanceFactory;
+import org.torquebox.common.spi.Pool;
+
 
 /**
  * Constrained pool implementation optimized for slow-to-create items.

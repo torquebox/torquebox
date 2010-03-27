@@ -22,7 +22,7 @@
 package org.torquebox.interp.spi;
 
 import org.jruby.Ruby;
-import org.torquebox.pool.spi.InstanceFactory;
+import org.torquebox.common.spi.InstanceFactory;
 
 /** Factory to create Ruby instances.
  * 

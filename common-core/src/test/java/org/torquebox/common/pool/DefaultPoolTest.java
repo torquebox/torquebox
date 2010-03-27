@@ -2,9 +2,10 @@ package org.torquebox.common.pool;
 
 import java.util.concurrent.TimeUnit;
 
+import org.torquebox.common.spi.InstanceFactory;
+
 import junit.framework.TestCase;
 
-import org.torquebox.pool.spi.InstanceFactory;
 
 public class DefaultPoolTest extends TestCase {
 

@@ -1,4 +1,4 @@
-package org.torquebox.pool.spi;
+package org.torquebox.common.spi;
 
 public interface Pool<T> {
 	

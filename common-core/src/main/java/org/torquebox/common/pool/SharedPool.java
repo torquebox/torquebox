@@ -1,7 +1,8 @@
 package org.torquebox.common.pool;
 
-import org.torquebox.pool.spi.InstanceFactory;
-import org.torquebox.pool.spi.Pool;
+import org.torquebox.common.spi.InstanceFactory;
+import org.torquebox.common.spi.Pool;
+
 
 public class SharedPool<T> implements Pool<T> {
 	

@@ -27,8 +27,8 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.interp.core.RubyRuntimeFactoryProxy;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
-import org.torquebox.ruby.core.runtime.RubyRuntimeFactoryProxy;
 
 /** Deployer which publishes an attached RubyRuntimeFactory.
  * 

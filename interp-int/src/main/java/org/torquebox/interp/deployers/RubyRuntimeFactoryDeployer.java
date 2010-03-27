@@ -30,11 +30,11 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
 import org.jruby.Ruby;
+import org.torquebox.interp.core.DefaultRubyRuntimeFactory;
+import org.torquebox.interp.core.RubyRuntimeFactoryProxy;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
-import org.torquebox.ruby.core.runtime.DefaultRubyRuntimeFactory;
-import org.torquebox.ruby.core.runtime.RubyRuntimeFactoryProxy;
 
 /**
  * Deployer which actually creates a RubyRuntimeFactory and attaches it to the
@@ -59,7 +59,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 	public RubyRuntimeFactoryDeployer() {
 		super(RubyRuntimeMetaData.class);
 		setStage(DeploymentStages.CLASSLOADER);
-		addOutput( Ruby.class );
+		addOutput(Ruby.class);
 	}
 
 	/**
@@ -86,12 +86,12 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		log.info("Create RubyRuntimeFactory: " + unit.getSimpleName());
 		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory(metaData.getRuntimeInitializer());
 		List<String> loadPaths = new ArrayList<String>();
-		
-		for ( RubyLoadPathMetaData loadPath : metaData.getLoadPaths() ) {
-			loadPaths.add( loadPath.getURL().toExternalForm() );
+
+		for (RubyLoadPathMetaData loadPath : metaData.getLoadPaths()) {
+			loadPaths.add(loadPath.getURL().toExternalForm());
 		}
-		
-		factory.setLoadPaths( loadPaths );
+
+		factory.setLoadPaths(loadPaths);
 		factory.setKernel(this.kernel);
 		factory.setApplicationName(unit.getSimpleName());
 
@@ -103,7 +103,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 			long startTime = System.currentTimeMillis();
 			Ruby ruby = factory.create();
 			long endTime = System.currentTimeMillis();
-			log.info( "Ruby runtime initialization took " + ((endTime-startTime)/1000) + "s" );
+			log.info("Ruby runtime initialization took " + ((endTime - startTime) / 1000) + "s");
 			unit.addAttachment(Ruby.class, ruby);
 		} catch (Exception e) {
 			throw new DeploymentException(e);

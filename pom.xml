@@ -349,6 +349,9 @@
 
   <modules>
 
+    <module>common-spi</module>
+    <module>common-core</module>
+
     <module>interp-spi</module>
     <module>interp-core</module>
     <module>interp-metadata</module>
@@ -378,7 +381,6 @@
     <module>docs</module>
 
     <module>spi</module>
-    <module>common</module>
     <module>vfs</module>
 
     <module>dist</module>

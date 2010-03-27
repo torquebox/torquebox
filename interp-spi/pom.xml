@@ -15,10 +15,17 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
+
   </dependencies>
 
 </project>

@@ -8,19 +8,23 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-common</artifactId>
+  <artifactId>torquebox-common-core</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Common Library</name>
+  <name>TorqueBox Common Core</name>
   <description></description>
 
   <dependencies>
 
-    <!-- TorqueBox-->
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-spi</artifactId>
+      <artifactId>torquebox-common-spi</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-interp-spi</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- JRuby-related -->
