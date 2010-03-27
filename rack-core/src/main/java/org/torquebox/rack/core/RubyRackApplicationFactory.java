@@ -24,8 +24,8 @@ package org.torquebox.rack.core;
 import org.jboss.beans.metadata.api.annotations.Create;
 import org.jruby.Ruby;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
+import org.torquebox.rack.spi.RackApplication;
+import org.torquebox.rack.spi.RackApplicationFactory;
 
 public class RubyRackApplicationFactory implements RackApplicationFactory {
 	

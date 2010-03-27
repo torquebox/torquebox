@@ -27,7 +27,7 @@ import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackResponse;
+import org.torquebox.rack.spi.RackResponse;
 
 public class RubyRackResponse implements RackResponse {
 	private IRubyObject rackResponse;

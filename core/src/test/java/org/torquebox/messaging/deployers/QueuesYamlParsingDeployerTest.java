@@ -6,6 +6,7 @@ import java.util.Set;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Test;
 import org.torquebox.AbstractDeployerTestCase;
+import org.torquebox.messaging.core.QueuesYamlParsingDeployer;
 import org.torquebox.messaging.metadata.QueueMetaData;
 
 import static org.junit.Assert.*;

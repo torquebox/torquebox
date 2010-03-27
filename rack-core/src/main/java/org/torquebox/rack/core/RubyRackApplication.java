@@ -36,8 +36,8 @@ import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackResponse;
+import org.torquebox.rack.spi.RackApplication;
+import org.torquebox.rack.spi.RackResponse;
 
 public class RubyRackApplication implements RackApplication {
 	private static final Logger log = Logger.getLogger(RubyRackApplication.class);

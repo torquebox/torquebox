@@ -36,8 +36,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jboss.logging.Logger;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
+import org.torquebox.rack.spi.RackApplication;
+import org.torquebox.rack.spi.RackApplicationPool;
 
 public class RackFilter implements Filter {
 

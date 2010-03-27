@@ -21,8 +21,8 @@
  */
 package org.torquebox.rails.sip.deployers;
 
+import org.torquebox.interp.deployers.SimpleRubyLoadPathDescriber;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.ruby.core.deployers.SimpleRubyLoadPathDescriber;
 
 public class RailsSipRubyLoadPathDescriber extends SimpleRubyLoadPathDescriber<RailsApplicationMetaData> {
 

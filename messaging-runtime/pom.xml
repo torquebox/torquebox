@@ -25,7 +25,7 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common</artifactId>
+      <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>

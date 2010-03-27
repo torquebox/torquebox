@@ -1,9 +1,9 @@
 package org.torquebox.rack.core;
 
 import org.torquebox.common.pool.DefaultPool;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
+import org.torquebox.rack.spi.RackApplication;
+import org.torquebox.rack.spi.RackApplicationFactory;
+import org.torquebox.rack.spi.RackApplicationPool;
 
 public class DefaultRackApplicationPool extends DefaultPool<RackApplication> implements RackApplicationPool {
 	

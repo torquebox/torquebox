@@ -16,8 +16,49 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-spi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-spi</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mobicents.servlet.sip</groupId>
+      <artifactId>sip-servlets-spec</artifactId>
+      <version>${mobicents.spec.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jboss.web</groupId>
+      <artifactId>jbossweb</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-kernel</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-aop-mc-int</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

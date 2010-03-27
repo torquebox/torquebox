@@ -6,9 +6,9 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
-import org.jvyamlb.YAML;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.PoolingMetaData;
+import org.yaml.snakeyaml.Yaml;
 
 public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<PoolingMetaData> {
 
@@ -20,11 +20,12 @@ public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<Pooli
 	@SuppressWarnings("unchecked")
 	@Override
 	protected PoolingMetaData parse(VFSDeploymentUnit unit, VirtualFile file, PoolingMetaData root) throws Exception {
-		Map<ByteList, Object> pooling = (Map<ByteList, Object>) YAML.load(file.openStream());
+		Yaml yaml = new Yaml();
+		Map<String,Object> pooling = (Map<String, Object>) yaml.load(file.openStream());
 
 		PoolingMetaData poolingMetaData = new PoolingMetaData();
 
-		for (ByteList name : pooling.keySet()) {
+		for (String name : pooling.keySet()) {
 
 			Object pool = pooling.get(name);
 

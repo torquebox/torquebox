@@ -6,14 +6,13 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.PoolingMetaData;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
 
 public class DefaultPoolingDeployer extends AbstractDeployer {
 	
 	public static final String[] DEFAULT_POOLS = { "web", "jobs", "queues", "endpoints", "messaging" };
 
 	public DefaultPoolingDeployer() {
-		setInput(RubyRackApplicationMetaData.class);
+		//setInput(RubyRackApplicationMetaData.class);
 		addInput(PoolingMetaData.class);
 		setStage( DeploymentStages.POST_PARSE );
 	}

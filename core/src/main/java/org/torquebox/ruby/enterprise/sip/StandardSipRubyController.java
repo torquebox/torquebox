@@ -27,8 +27,8 @@ import javax.servlet.sip.SipServletMessage;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.mobicents.servlet.sip.ruby.SipRubyController;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
+import org.torquebox.rack.spi.RackApplication;
+import org.torquebox.rack.spi.RackApplicationPool;
 
 /**
  * @author jean.deruelle@gmail.com

@@ -22,9 +22,10 @@
 package org.torquebox.rack.core;
 
 import org.torquebox.common.pool.SharedPool;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplication;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
-import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationPool;
+import org.torquebox.rack.spi.RackApplication;
+import org.torquebox.rack.spi.RackApplicationFactory;
+import org.torquebox.rack.spi.RackApplicationPool;
+
 
 public class SharedRackApplicationPool extends SharedPool<RackApplication> implements RackApplicationPool {
 	
