@@ -28,7 +28,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
 import org.jvyamlb.YAML;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rack.metadata.RackWebApplicationMetaData;
 
 public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebApplicationMetaData> {
 

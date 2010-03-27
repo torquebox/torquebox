@@ -21,7 +21,7 @@
  */
 package org.torquebox.rails.crypto.deployers;
 
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.ruby.enterprise.crypto.deployers.CryptoYamlParsingDeployer;
 
 public class RailsCryptoYamlParsingDeployer extends CryptoYamlParsingDeployer {

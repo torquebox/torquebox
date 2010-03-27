@@ -21,7 +21,7 @@
  */
 package org.torquebox.rails.jobs.deployers;
 
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.ruby.core.deployers.SimpleRubyLoadPathDescriber;
 
 public class RailsJobsRubyLoadPathDescriber extends SimpleRubyLoadPathDescriber<RailsApplicationMetaData> {

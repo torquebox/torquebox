@@ -25,10 +25,10 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationPoolDeployer;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
 
 public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplicationMetaData> {
 

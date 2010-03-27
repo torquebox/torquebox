@@ -32,7 +32,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
 import org.jvyamlb.YAML;
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
 public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 	

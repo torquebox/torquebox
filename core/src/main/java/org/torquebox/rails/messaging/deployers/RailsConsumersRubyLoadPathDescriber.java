@@ -21,7 +21,7 @@
  */
 package org.torquebox.rails.messaging.deployers;
 
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.ruby.core.deployers.SimpleRubyLoadPathDescriber;
 
 public class RailsConsumersRubyLoadPathDescriber extends SimpleRubyLoadPathDescriber<RailsApplicationMetaData> {

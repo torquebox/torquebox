@@ -43,9 +43,9 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
 import org.jvyamlb.YAML;
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.ruby.enterprise.sip.metadata.SipApplicationMetaData;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
 
 public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<RailsApplicationMetaData> {
 

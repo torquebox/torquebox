@@ -21,7 +21,7 @@
  */
 package org.torquebox.rails.endpoints.deployers;
 
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.ruby.enterprise.endpoints.deployers.AbstractRubyEndpointsScanningDeployer;
 
 public class RailsEndpointsScanningDeployer extends AbstractRubyEndpointsScanningDeployer {

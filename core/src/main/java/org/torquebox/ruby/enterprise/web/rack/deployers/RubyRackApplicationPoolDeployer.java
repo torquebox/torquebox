@@ -30,9 +30,9 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.PoolingMetaData;
-import org.torquebox.ruby.enterprise.web.rack.DefaultRackApplicationPool;
-import org.torquebox.ruby.enterprise.web.rack.SharedRackApplicationPool;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.core.DefaultRackApplicationPool;
+import org.torquebox.rack.core.SharedRackApplicationPool;
+import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
 import org.torquebox.ruby.enterprise.web.rack.spi.RackApplicationFactory;
 
 public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<RubyRackApplicationMetaData> {

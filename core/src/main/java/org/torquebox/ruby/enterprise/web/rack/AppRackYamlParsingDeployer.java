@@ -45,9 +45,10 @@ import org.jboss.vfs.VirtualFile;
 import org.jruby.util.ByteList;
 import org.jvyamlb.YAML;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.rack.core.RackRuntimeInitializer;
+import org.torquebox.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
 import org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationPoolDeployer;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RackWebApplicationMetaData;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
 
 public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyRackApplicationMetaData> {
 

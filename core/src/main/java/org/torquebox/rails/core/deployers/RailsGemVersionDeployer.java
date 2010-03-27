@@ -33,8 +33,8 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.rails.core.metadata.RailsApplicationMetaData;
-import org.torquebox.rails.core.metadata.RailsGemVersionMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 
 public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 

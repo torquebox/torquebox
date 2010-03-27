@@ -30,7 +30,7 @@ import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.ruby.enterprise.web.rack.RackRuntimeInitializer;
+import org.torquebox.rack.core.RackRuntimeInitializer;
 
 public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 

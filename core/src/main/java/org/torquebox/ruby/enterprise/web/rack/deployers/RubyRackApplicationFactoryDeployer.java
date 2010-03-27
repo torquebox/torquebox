@@ -30,9 +30,9 @@ import org.jruby.Ruby;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.PoolingMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
-import org.torquebox.ruby.enterprise.web.rack.GlobalRubyRackApplicationFactory;
-import org.torquebox.ruby.enterprise.web.rack.RubyRackApplicationFactory;
-import org.torquebox.ruby.enterprise.web.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.core.GlobalRubyRackApplicationFactory;
+import org.torquebox.rack.core.RubyRackApplicationFactory;
+import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
 
 public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RubyRackApplicationMetaData> {
 
