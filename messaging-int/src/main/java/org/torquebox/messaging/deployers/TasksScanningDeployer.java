@@ -1,11 +1,11 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.deployers.AbstractRubyScanningDeployer;
-import org.torquebox.jobs.metadata.TaskMetaData;
+import org.torquebox.messaging.metadata.TaskMetaData;
 
 public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
 

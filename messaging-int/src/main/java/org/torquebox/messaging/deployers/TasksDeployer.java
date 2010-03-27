@@ -1,4 +1,4 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
 import java.util.Set;
 
@@ -7,11 +7,11 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.jobs.metadata.MessageDrivenConsumerConfig;
-import org.torquebox.jobs.metadata.TaskMetaData;
 import org.torquebox.messaging.metadata.DuplicateQueueException;
+import org.torquebox.messaging.metadata.MessageDrivenConsumerConfig;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.messaging.metadata.QueuesMetaData;
+import org.torquebox.messaging.metadata.TaskMetaData;
 
 public class TasksDeployer extends AbstractDeployer {
 

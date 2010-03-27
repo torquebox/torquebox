@@ -1,38 +1,28 @@
 package org.torquebox.messaging.metadata;
 
-
 public class TaskMetaData {
 	
-	private String className;
-	private DestinationMetaData destination;
-	private String classLocation;
+	private String rubyClassName;
+	private String location;
 
 	public TaskMetaData() {
 		
 	}
 	
-	public void setClassLocation(String classLocation)  {
-		this.classLocation = classLocation;
+	public void setRubyClassName(String rubyClassName) {
+		this.rubyClassName = rubyClassName;
 	}
 	
-	public String getClassLocation() {
-		return this.classLocation;
+	public String getRubyClassName() {
+		return this.rubyClassName;
 	}
 	
-	public void setClassName(String className) {
-		this.className = className;
+	public void setLocation(String location) {
+		this.location = location;
 	}
 	
-	public String getClassName() {
-		return this.className;
-	}
-	
-	public void setDestination(DestinationMetaData destination) {
-		this.destination = destination;
-	}
-	
-	public DestinationMetaData getDestination() {
-		return this.destination;
+	public String getLocation() {
+		return this.location;
 	}
 
 }

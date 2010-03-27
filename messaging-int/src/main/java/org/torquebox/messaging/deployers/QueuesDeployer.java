@@ -1,5 +1,6 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
+import org.torquebox.messaging.core.Queue;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.messaging.metadata.QueuesMetaData;
 

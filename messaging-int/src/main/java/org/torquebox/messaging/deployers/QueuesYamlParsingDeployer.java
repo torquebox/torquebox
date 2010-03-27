@@ -1,4 +1,4 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
 import java.io.InputStream;
 import java.util.Map;

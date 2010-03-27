@@ -1,4 +1,4 @@
-package org.torquebox.jobs.metadata;
+package org.torquebox.messaging.metadata;
 
 public class MessageDrivenConsumerConfig {
 	

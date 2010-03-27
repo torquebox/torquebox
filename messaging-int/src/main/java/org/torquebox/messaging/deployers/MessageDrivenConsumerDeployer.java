@@ -1,4 +1,4 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
 import java.util.Set;
 
@@ -16,10 +16,11 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.interp.deployers.PoolingDeployer;
-import org.torquebox.jobs.metadata.MessageDrivenConsumerConfig;
+import org.torquebox.mc.JndiRefMetaData;
+import org.torquebox.messaging.core.MessageDrivenConsumer;
+import org.torquebox.messaging.metadata.MessageDrivenConsumerConfig;
 import org.torquebox.messaging.metadata.QueuesMetaData;
 import org.torquebox.messaging.metadata.TopicsMetaData;
-import org.torquebox.microcontainer.JndiRefMetaData;
 
 public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 

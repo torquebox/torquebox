@@ -1,4 +1,4 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
@@ -7,7 +7,7 @@ import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.jobs.metadata.MessageDrivenConsumerConfig;
+import org.torquebox.messaging.metadata.MessageDrivenConsumerConfig;
 
 public class ConsumersRbParsingDeployer extends
 		AbstractVFSParsingDeployer<MessageDrivenConsumerConfig> {

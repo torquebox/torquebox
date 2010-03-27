@@ -1,4 +1,4 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -7,6 +7,7 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.torquebox.messaging.core.Destination;
 import org.torquebox.messaging.metadata.DestinationMetaData;
 import org.torquebox.messaging.metadata.DestinationsMetaData;
 

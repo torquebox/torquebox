@@ -1,5 +1,6 @@
-package org.torquebox.messaging.core;
+package org.torquebox.messaging.deployers;
 
+import org.torquebox.messaging.core.Topic;
 import org.torquebox.messaging.metadata.TopicMetaData;
 import org.torquebox.messaging.metadata.TopicsMetaData;
 
