@@ -10,8 +10,8 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.torquebox.interp.spi.RubyRuntimePool;
-import org.torquebox.jobs.metadata.MessageDrivenConsumerConfig;
 import org.torquebox.messaging.core.MessageDrivenConsumer;
+import org.torquebox.messaging.metadata.MessageDrivenConsumerConfig;
 
 public class Container {
 

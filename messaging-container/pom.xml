@@ -17,7 +17,14 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-spi</artifactId>
+      <artifactId>torquebox-messaging-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-metadata</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
