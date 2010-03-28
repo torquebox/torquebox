@@ -8,25 +8,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-spi</artifactId>
+  <artifactId>torquebox-build-support</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter SPI</name>
+  <name>TorqueBox Build Support</name>
   <description></description>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-  </dependencies>
 
 </project>

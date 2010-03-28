@@ -19,24 +19,28 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-core</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-spi</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -64,5 +68,35 @@
     </dependency>
 
   </dependencies>
+
+  <build> 
+    <plugins> 
+      <plugin> 
+        <artifactId>maven-assembly-plugin</artifactId> 
+        <dependencies> 
+          <dependency> 
+            <groupId>org.torquebox</groupId> 
+            <artifactId>torquebox-build-support</artifactId> 
+            <version>${project.version}</version>
+          </dependency> 
+        </dependencies> 
+        <executions>
+          <execution>
+            <id>assemble-deployer</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration> 
+              <descriptorRefs> 
+                <descriptorRef>deployer</descriptorRef> 
+              </descriptorRefs>
+            </configuration> 
+          </execution>
+        </executions>
+      </plugin> 
+    </plugins> 
+  </build> 
+
 
 </project>

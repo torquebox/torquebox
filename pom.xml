@@ -277,6 +277,11 @@
 
   <build>
     <finalName>${project.artifactId}</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
@@ -348,6 +353,8 @@
   </build>
 
   <modules>
+
+    <module>build-support</module>
 
     <module>mc-int</module>
 

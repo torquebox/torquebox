@@ -19,18 +19,21 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-spi</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-common-spi</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

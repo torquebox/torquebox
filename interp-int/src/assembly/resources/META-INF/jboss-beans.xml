@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <bean name="RubyRuntimeFactoryDeployer"             class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimeFactoryDeployer">
+    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+  </bean>
+  <bean name="RubyRuntimeFactoryPublisher"            class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimeFactoryPublisher"/>
+
+  <bean name="PoolingYamlParsingDeployer"             class="org.torquebox.ruby.core.runtime.deployers.PoolingYamlParsingDeployer"/>
+  <bean name="DefaultPoolingDeployer"                 class="org.torquebox.ruby.core.runtime.deployers.DefaultPoolingDeployer"/>
+  <bean name="PoolingDeployer"                        class="org.torquebox.ruby.core.runtime.deployers.PoolingDeployer"/>
+
+
+<!--
+  <bean name="RubyRuntimePoolDeployer"                class="org.torquebox.ruby.core.runtime.deployers.RubyRuntimePoolDeployer"/>
+-->
+
+</deployment>
