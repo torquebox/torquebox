@@ -2,10 +2,10 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="WebYamlParsingDeployer"                 class="org.torquebox.ruby.enterprise.web.rack.deployers.WebYamlParsingDeployer"/>
+  <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>
 
-  <bean name="RubyRackApplicationFactoryDeployer"     class="org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationFactoryDeployer"/>
-  <bean name="RubyRackApplicationPoolDeployer"        class="org.torquebox.ruby.enterprise.web.rack.deployers.RubyRackApplicationPoolDeployer"/>
-  <bean name="RackWebApplicationDeployer"             class="org.torquebox.ruby.enterprise.web.rack.deployers.RackWebApplicationDeployer"/>
+  <bean name="RubyRackApplicationFactoryDeployer"     class="org.torquebox.rack.deployers.RubyRackApplicationFactoryDeployer"/>
+  <bean name="RubyRackApplicationPoolDeployer"        class="org.torquebox.rack.deployers.RubyRackApplicationPoolDeployer"/>
+  <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>
 
 </deployment>
