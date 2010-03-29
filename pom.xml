@@ -298,7 +298,6 @@
     <module>build-support</module>
 
     <module>mc-support</module>
-
     <module>base-int</module>
 
     <module>common-spi</module>
