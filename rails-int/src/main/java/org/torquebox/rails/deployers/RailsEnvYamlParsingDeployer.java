@@ -30,10 +30,8 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
-import org.jruby.util.ByteList;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
-import org.yecht.YAML;
 
 public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 	

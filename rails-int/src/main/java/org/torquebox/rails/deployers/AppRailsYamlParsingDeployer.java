@@ -39,7 +39,6 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-import org.jruby.util.ByteList;
 import org.torquebox.rack.metadata.RackWebApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
@@ -48,17 +47,17 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 	private Logger log = Logger.getLogger(AppRailsYamlParsingDeployer.class);
 
-	private static final ByteList APPLICATION_KEY = ByteList.create("application");
-	private static final ByteList WEB_KEY = ByteList.create("web");
-	private static final ByteList SIP_KEY = ByteList.create("sip");
+	private static final String APPLICATION_KEY = "application";
+	private static final String WEB_KEY = "web";
+	private static final String SIP_KEY = "sip";
 
-	private static final ByteList RAILS_ROOT_KEY = ByteList.create("RAILS_ROOT");
-	private static final ByteList RAILS_ENV_KEY = ByteList.create("RAILS_ENV");
+	private static final String RAILS_ROOT_KEY = "RAILS_ROOT";
+	private static final String RAILS_ENV_KEY = "RAILS_ENV";
 
-	private static final ByteList HOST_KEY = ByteList.create("host");
-	private static final ByteList CONTEXT_KEY = ByteList.create("context");
+	private static final String HOST_KEY = "host";
+	private static final String CONTEXT_KEY = "context";
 
-	private static final ByteList RUBYCONTROLLER_KEY = ByteList.create("rubycontroller");
+	private static final String RUBYCONTROLLER_KEY = "rubycontroller";
 
 	public AppRailsYamlParsingDeployer() {
 		super(RailsApplicationMetaData.class);
@@ -164,8 +163,8 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			RackWebApplicationMetaData webMetaData = null;
 
 			if (web != null) {
-				ByteList context = (ByteList) web.get(CONTEXT_KEY);
-				ByteList host = (ByteList) web.get(HOST_KEY);
+				String context = (String) web.get(CONTEXT_KEY);
+				String host    = (String) web.get(HOST_KEY);
 				webMetaData = new RackWebApplicationMetaData();
 				if (host != null) {
 					webMetaData.setHost(host.toString());

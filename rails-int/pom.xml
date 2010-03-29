@@ -16,39 +16,45 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-mc-int</artifactId>
+      <artifactId>torquebox-mc-support</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-core</artifactId>
+      <artifactId>torquebox-rails-metadata</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-int</artifactId>
-      <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rails-core</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-int</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rack-metadata</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rails-metadata</artifactId>
-      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
@@ -70,6 +76,39 @@
       <artifactId>jboss-deployers-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
+  <build> 
+    <plugins> 
+      <plugin> 
+        <artifactId>maven-assembly-plugin</artifactId> 
+        <dependencies> 
+          <dependency> 
+            <groupId>org.torquebox</groupId> 
+            <artifactId>torquebox-build-support</artifactId> 
+            <version>${project.version}</version>
+          </dependency> 
+        </dependencies> 
+        <executions>
+          <execution>
+            <id>assemble-deployer</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration> 
+              <descriptorRefs> 
+                <descriptorRef>deployer</descriptorRef> 
+              </descriptorRefs>
+            </configuration> 
+          </execution>
+        </executions>
+      </plugin> 
+    </plugins> 
+  </build> 
 </project>

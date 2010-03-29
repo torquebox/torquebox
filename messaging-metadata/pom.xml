@@ -10,7 +10,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-messaging-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Messaging MetaData</name>
+  <name>TorqueBox Messaging Metadata</name>
   <description></description>
 
   <dependencies>

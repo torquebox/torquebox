@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-mc-int</artifactId>
+      <artifactId>torquebox-mc-support</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

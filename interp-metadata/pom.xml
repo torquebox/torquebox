@@ -10,7 +10,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-interp-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter MetaData</name>
+  <name>TorqueBox Ruby Interpreter Metadata</name>
   <description></description>
 
   <dependencies>

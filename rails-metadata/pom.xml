@@ -10,7 +10,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-rails-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Rails MetaData</name>
+  <name>TorqueBox Rails Metadata</name>
   <description></description>
 
   <dependencies>

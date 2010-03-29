@@ -10,7 +10,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-rack-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Rack MetaData</name>
+  <name>TorqueBox Rack Metadata</name>
   <description></description>
 
   <dependencies>

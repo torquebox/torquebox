@@ -14,8 +14,6 @@
   <description></description>
 
   <dependencies>
-
-    <!-- TorqueBox-->
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-runtime</artifactId>
@@ -23,7 +21,11 @@
       <scope>compile</scope>
       <type>pom</type>
     </dependency>
-
+    <dependency>
+      <groupId>org.jboss.spec.javax.jms</groupId>
+      <artifactId>jboss-jms-api_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>

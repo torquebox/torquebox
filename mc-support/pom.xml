@@ -8,9 +8,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-mc-int</artifactId>
+  <artifactId>torquebox-mc-support</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Microcontainer Integration</name>
+  <name>TorqueBox Microcontainer Support</name>
   <description></description>
 
   <dependencies>

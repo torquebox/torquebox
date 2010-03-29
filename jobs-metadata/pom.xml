@@ -10,7 +10,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-jobs-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Scheduled Jobs MetaData</name>
+  <name>TorqueBox Scheduled Jobs Metadata</name>
   <description></description>
 
   <dependencies>
