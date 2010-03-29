@@ -25,7 +25,7 @@ public class PoolingDeployer extends AbstractSimpleVFSRealDeployer<PoolingMetaDa
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, PoolingMetaData poolingMetaData) throws DeploymentException {
-
+		log.info( "deploy pools for " + unit );
 		for (String poolName : VALID_POOLS) {
 			PoolMetaData poolMetaData = poolingMetaData.getPool(poolName);
 			if (poolMetaData != null) {

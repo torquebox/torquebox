@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <bean name="RailsStructure"                       class="org.torquebox.rails.deployers.RailsStructure"/>
+  <bean name="RailsRootRecognizingDeployer"         class="org.torquebox.rails.deployers.RailsRootRecognizingDeployer"/>
+  <bean name="RailsGemVersionDeployer"              class="org.torquebox.rails.deployers.RailsGemVersionDeployer"/>
+  <bean name="AppRailsYamlParsingDeployer"          class="org.torquebox.rails.deployers.AppRailsYamlParsingDeployer"/>
+  <bean name="RailsRubyRuntimeFactoryDescriber"     class="org.torquebox.rails.deployers.RailsRubyRuntimeFactoryDescriber"/>
+
+</deployment>
