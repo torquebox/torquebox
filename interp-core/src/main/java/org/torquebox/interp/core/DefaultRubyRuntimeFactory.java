@@ -204,13 +204,13 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	}
 
 	private void setUpConstants(Ruby runtime, String applicationName) {
-		runtime.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/runtime_constants)\n");
+		runtime.evalScriptlet("require %q(org/torquebox/interp/core/runtime_constants)\n");
 		RubyModule jbossModule = runtime.getClassFromPath("JBoss");
 		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants", new Object[] { applicationName }, void.class);
 	}
 
 	private void injectKernel(Ruby runtime) {
-		runtime.evalScriptlet("require %q(org/torquebox/ruby/core/runtime/kernel)");
+		runtime.evalScriptlet("require %q(org/torquebox/interp/core/kernel)");
 		RubyModule jbossKernel = runtime.getClassFromPath("TorqueBox::Kernel");
 		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=", new Object[] { this.kernel }, void.class);
 	}
