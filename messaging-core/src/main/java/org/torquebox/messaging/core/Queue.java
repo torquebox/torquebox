@@ -10,7 +10,7 @@ public class Queue extends Destination {
 	public void start() throws Exception {
 		log.info( "start queue " + getName() );
 		
-		getServer().createQueue(getName(), getName(), null, true);
+		getServer().createQueue(false, getName(), "", false );
 	}
 	
 	public void destroy() throws Exception {

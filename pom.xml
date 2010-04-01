@@ -78,6 +78,27 @@
         <artifactId>snakeyaml</artifactId>
         <version>${version.snakeyaml}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jboss.reloaded</groupId>
+        <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
+        <version>${version.jboss.reloaded}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-api</artifactId>
+        <version>${version.jboss.shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-impl-base</artifactId>
+        <version>${version.jboss.shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -211,7 +232,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${version.junit}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -296,6 +316,7 @@
   <modules>
 
     <module>build-support</module>
+    <module>test-support</module>
 
     <module>mc-support</module>
     <module>base-int</module>
