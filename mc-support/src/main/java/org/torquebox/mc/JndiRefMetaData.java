@@ -8,6 +8,8 @@ import org.jboss.reflect.spi.TypeInfo;
 
 public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 
+	private static final long serialVersionUID = 1L;
+
 	private static final String DEPENDS_JNDI_PREFIX = "jndi:";
 
 	private Context context;

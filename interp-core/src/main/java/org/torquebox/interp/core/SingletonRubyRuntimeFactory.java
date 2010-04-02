@@ -1,4 +1,6 @@
-package org.torquebox.common.runtime;
+/* Copyright 2010 Red Hat, Inc. */
+
+package org.torquebox.interp.core;
 
 import org.jruby.Ruby;
 import org.torquebox.interp.spi.RubyRuntimeFactory;

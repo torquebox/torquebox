@@ -1,3 +1,5 @@
+/* Copyright 2010, Red Hat, Inc. */
+
 package org.torquebox.common.pool;
 
 import java.util.ArrayList;
@@ -11,55 +13,104 @@ import java.util.concurrent.TimeUnit;
 import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.Pool;
 
-
 /**
  * Constrained pool implementation optimized for slow-to-create items.
  * 
- * @author Bob McWhirter
+ * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
  * @param <T> The poolable resource.
  */
 public class DefaultPool<T> implements Pool<T> {
 
+	/** Instance factory. */
 	private InstanceFactory<T> factory;
 
+	/** All instances. */
 	private List<T> instances = new ArrayList<T>();
+
+	/** All available instances. */
 	private Set<T> availableInstances = new HashSet<T>();
 
+	/** Factory name. */
 	private String name = "anonymous";
+
+	/** Minimum number of instances in the pool. */
 	private int minInstances = 1;
+
+	/** Maximum number of instances in the pool. */
 	private int maxInstances = 1;
+
+	/** Timeout for waiting to acquire an instance. */
 	private long timeout = 30;
+
+	/** Timeout units. */
 	private TimeUnit timeoutUnit = TimeUnit.SECONDS;
 
+	/** Semaphore for safely tracking available instances. */
 	private Semaphore available = new Semaphore(0, true);
+
+	/** Pool population management thread. */
 	private Thread managementThread;
 
-
+	/**
+	 * Construct.
+	 * 
+	 * @param factory The instance factory.
+	 */
 	public DefaultPool(InstanceFactory<T> factory) {
 		this.factory = factory;
 	}
-	
+
+	/**
+	 * Set the name.
+	 * 
+	 * @param name The name.
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	/**
+	 * Retrieve the name.
+	 * 
+	 * @return The name.
+	 */
 	public String getName() {
 		return this.name;
 	}
 
+	/**
+	 * Retrieve the minimum number of instances in the pool.
+	 * 
+	 * @return The minimum number of instances in the pool.
+	 */
 	public int getMinInstances() {
 		return this.minInstances;
 	}
-	
+
+	/**
+	 * Set the minimum number of instances in the pool.
+	 * 
+	 * @param minInstances The minimum number of instances in the pool.
+	 */
 	public void setMinInstances(int minInstances) {
 		this.minInstances = minInstances;
 	}
 
+	/**
+	 * Retrieve the maximun number of instances in the pool.
+	 * 
+	 * @return The maximum number of instances in the pool.
+	 */
 	public int getMaxInstances() {
 		return this.maxInstances;
 	}
-	
+
+	/**
+	 * Set the maximum number of instances in the pool.
+	 * 
+	 * @param maxInstances The maximum number of instances in the pool.
+	 */
 	public void setMaxInstances(int maxInstances) {
 		this.maxInstances = maxInstances;
 	}
@@ -67,34 +118,51 @@ public class DefaultPool<T> implements Pool<T> {
 	/**
 	 * Time-out to fetch an instance.
 	 * 
-	 * @param timeout
-	 *            Time-out length, in seconds.
+	 * @param timeout Time-out length, in seconds.
 	 */
 	public void setTimeout(long timeout, TimeUnit timeoutUnit) {
 		this.timeout = timeout;
 		this.timeoutUnit = timeoutUnit;
 	}
 
+	/** Start the pool
+	 * 
+	 * <p>Starts the population management thread.
+	 * 
+	 * @throws Exception if an error occurs starting the pool.
+	 */
 	public synchronized void start() throws Exception {
-		if ( this.minInstances > this.maxInstances ) {
-			throw new IllegalArgumentException( "minInstances may not be greater than maxInstances" );
+		if (this.minInstances > this.maxInstances) {
+			throw new IllegalArgumentException("minInstances may not be greater than maxInstances");
 		}
-		
+
 		startManagementThread();
 	}
-	
+
+	/** Retrieve the number of available instances.
+	 * 
+	 * @return The number of available instances.
+	 */
 	public int getAvailableInstanceCount() {
-		synchronized ( availableInstances ) {
+		synchronized (availableInstances) {
 			return this.availableInstances.size();
 		}
 	}
-	
+
+	/** Retrieve the total number of instances (available and in-use).
+	 * 
+	 * @return The total number of instances.
+	 */
 	public int getInstanceCount() {
-		synchronized ( availableInstances ) {
+		synchronized (availableInstances) {
 			return this.instances.size();
 		}
 	}
 
+	/** Start population management thread.
+	 * 
+	 * @throws Exception if an error occurs starting the thread.
+	 */
 	protected void startManagementThread() throws Exception {
 		this.managementThread = new Thread() {
 			public void run() {
@@ -144,6 +212,8 @@ public class DefaultPool<T> implements Pool<T> {
 		this.managementThread.start();
 	}
 
+	/** Stop the pool.
+	 */
 	public void stop() {
 		this.managementThread.interrupt();
 		this.instances.clear();
@@ -151,10 +221,25 @@ public class DefaultPool<T> implements Pool<T> {
 		this.available = new Semaphore(0, true);
 	}
 
+	/** Borrow an instance with default timeout.
+	 * 
+	 * @return The instance borrowed.
+	 * 
+	 * @throws Exception if unable to obtain an instance.
+	 * 
+	 * @see #borrowInstance(long, TimeUnit)
+	 */
 	public T borrowInstance() throws Exception {
-		return borrowInstance( this.timeout, this.timeoutUnit );
+		return borrowInstance(this.timeout, this.timeoutUnit);
 	}
-	
+
+	/** Borrow an instance with a specified timeout.
+	 * 
+	 * @param timeout The length of timeout to wait for an instance.
+	 * @param timeoutUnit The units for the timeout parameter.
+	 * @return The instance borrowed.
+	 * @throws Exception if unable to object an instance.
+	 */
 	public T borrowInstance(long timeout, TimeUnit timeoutUnit) throws Exception {
 
 		synchronized (this.availableInstances) {
@@ -172,7 +257,11 @@ public class DefaultPool<T> implements Pool<T> {
 
 		return null;
 	}
-	
+
+	/** Release a borrowed instance.
+	 * 
+	 * @param instance The instance to return.
+	 */
 	public synchronized void releaseInstance(T instance) {
 		this.availableInstances.add(instance);
 		this.available.release();
