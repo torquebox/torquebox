@@ -45,5 +45,9 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
 	public void returnRuntime(Ruby runtime) {
 		releaseInstance( runtime );
 	}
+	
+	public RubyRuntimeFactory getRubyRuntimeFactory() {
+		return (RubyRuntimeFactory) getInstanceFactory();
+	}
 
 }

@@ -39,7 +39,11 @@ public class PoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData>
 		} else if (poolMetaData.isShared()) {
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class.getName());
 			builder.addPropertyMetaData("name", poolMetaData.getName());
-			ValueMetaData factoryInjection = builder.createInject("jboss.ruby.runtime.factory." + unit.getSimpleName());
+			String factoryName = poolMetaData.getInstanceFactoryName();
+			if (factoryName == null) {
+				factoryName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class);
+			}
+			ValueMetaData factoryInjection = builder.createInject( factoryName );
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
 			poolBean = builder.getBeanMetaData();
 		} else {

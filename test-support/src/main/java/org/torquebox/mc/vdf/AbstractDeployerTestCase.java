@@ -24,9 +24,13 @@ import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
 import org.jboss.kernel.spi.dependency.KernelController;
 import org.jboss.kernel.spi.dependency.KernelControllerContext;
+import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jboss.logging.Logger;
 import org.jboss.managed.api.ManagedDeployment;
 import org.jboss.reloaded.api.ReloadedDescriptors;
+import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileAssembly;
@@ -45,9 +49,9 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 	private MCServer server;
 
 	protected Logger log;
-	
+
 	public AbstractDeployerTestCase() {
-		this.log = Logger.getLogger( getClass() );
+		this.log = Logger.getLogger(getClass());
 	}
 
 	/**
@@ -76,7 +80,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 
 	@After
 	public void stopServer() throws Exception {
-		if ( this.mount != null ) {
+		if (this.mount != null) {
 			this.mount.close();
 			this.mount = null;
 		}
@@ -85,7 +89,6 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		}
 
 	}
-	
 
 	protected void addDeployer(Deployer deployer) throws Throwable {
 
@@ -95,34 +98,35 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		controller.install(bmdb.getBeanMetaData(), deployer);
 
 	}
-	
+
 	protected String addDeployment(URL url, String name) throws IOException, URISyntaxException, DeploymentException {
-		
-		File tmpRoot = File.createTempFile(getClass().getName(), ".tmp" );
+
+		File tmpRoot = File.createTempFile(getClass().getName(), ".tmp");
 		tmpRoot.deleteOnExit();
-		
+
 		VirtualFileAssembly assembly = new VirtualFileAssembly();
-		assembly.add( name, VFS.getChild( url ) );
-		
-		VirtualFile mountPoint = VFS.getChild( tmpRoot.getAbsolutePath() );
+		assembly.add(name, VFS.getChild(url));
+
+		VirtualFile mountPoint = VFS.getChild(tmpRoot.getAbsolutePath());
 		this.mount = VFS.mountAssembly(assembly, mountPoint);
-		
-		return addDeployment( mountPoint.getChild( name ) );
+
+		return addDeployment(mountPoint.getChild(name));
 	}
 
 	protected String addDeployment(File file) throws DeploymentException {
-		VirtualFile virtualFile = VFS.getChild( file.getAbsolutePath() );
-		return addDeployment( virtualFile );
+		VirtualFile virtualFile = VFS.getChild(file.getAbsolutePath());
+		return addDeployment(virtualFile);
 	}
-	
+
 	protected String addDeployment(URL url) throws DeploymentException, URISyntaxException {
-		VirtualFile file = VFS.getChild( url );
-		return addDeployment( file );
+		VirtualFile file = VFS.getChild(url);
+		return addDeployment(file);
 	}
-	
+
 	protected String addDeployment(VirtualFile file) throws DeploymentException {
+		log.info("addDeployment = " + file);
 		VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
-		return addDeployment( deployment );
+		return addDeployment(deployment);
 	}
 
 	protected String addDeployment(Deployment deployment) throws DeploymentException {
@@ -130,11 +134,11 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		mainDeployer.addDeployment(deployment);
 		return deployment.getName();
 	}
-	
+
 	protected String createDeployment(String name) throws IOException, DeploymentException {
-		File file = File.createTempFile( name, ".tmp" );
+		File file = File.createTempFile(name, ".tmp");
 		file.deleteOnExit();
-		return addDeployment( file );
+		return addDeployment(file);
 	}
 
 	protected KernelController getKernelController() {
@@ -144,40 +148,62 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 	protected MainDeployer getMainDeployer() {
 		return (MainDeployer) getKernelController().getInstalledContext(MC_MAIN_DEPLOYER_NAME).getTarget();
 	}
-	
+
 	protected void processDeployments() throws DeploymentException {
 		processDeployments(false);
 	}
-	
+
 	protected void processDeployments(boolean checkComplete) throws DeploymentException {
 		getMainDeployer().process();
-		if ( checkComplete ) {
+		if (checkComplete) {
 			getMainDeployer().checkComplete();
 		}
 	}
-	
+
 	protected ManagedDeployment getDeployment(String name) throws DeploymentException {
-		return getMainDeployer().getManagedDeployment( name );
+		return getMainDeployer().getManagedDeployment(name);
 	}
-	
+
 	protected DeploymentUnit getDeploymentUnit(String name) {
-		return ((MainDeployerImpl)getMainDeployer()).getDeploymentUnit( name );
+		return ((MainDeployerImpl) getMainDeployer()).getDeploymentUnit(name);
 	}
-	
+
 	protected BeanMetaData getBeanMetaData(DeploymentUnit unit, String name) {
-		Set<? extends BeanMetaData> metaData = unit.getAllMetaData( BeanMetaData.class );
-		
-		for ( BeanMetaData each : metaData ) {
-			if ( each.getName().equals( name ) ) {
+		Set<? extends BeanMetaData> metaData = unit.getAllMetaData(BeanMetaData.class);
+
+		for (BeanMetaData each : metaData) {
+			if (each.getName().equals(name)) {
 				return each;
 			}
 		}
-		
+
 		return null;
 	}
 	
+	@SuppressWarnings("deprecation")
+	protected Object getBean(String name) {
+		
+		KernelRegistryEntry entry = getKernelController().getKernel().getRegistry().findEntry( name );
+		if ( entry == null ) {
+			return null;
+		}
+		
+		return entry.getTarget();
+	}
+
 	protected void undeploy(String name) throws DeploymentException {
-		getMainDeployer().undeploy( name );
+		getMainDeployer().undeploy(name);
 		processDeployments(true);
+	}
+
+	protected JavaArchive createJar(String name) {
+		return Archives.create(name, JavaArchive.class);
+	}
+
+	protected File createJarFile(JavaArchive archive) throws IOException {
+		File archiveFile = File.createTempFile(archive.getName(), ".jar");
+		archive.as(ZipExporter.class).exportZip(archiveFile, true);
+		archiveFile.deleteOnExit();
+		return archiveFile;
 	}
 }
