@@ -1,7 +1,6 @@
 package org.torquebox.interp.core;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.torquebox.mc.vfs.AbstractVFSTestCase;
 
