@@ -1,6 +1,7 @@
 package org.torquebox.interp.deployers;
 
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.managed.api.ManagedDeployment;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,17 +15,22 @@ import static org.junit.Assert.*;
 public class PoolDeployerTest extends AbstractDeployerTestCase {
 	
 	private PoolDeployer deployer;
+	private String injectableDeploymentName;
 	
 	@Before
 	public void setUpDeployer() throws Throwable {
 		this.deployer = new PoolDeployer();
 		addDeployer( this.deployer );
-		addDeployment( getClass().getResource( "pool-deployer-jboss-beans.xml") );
+	}
+	
+	@Before
+	public void setUpInjectables() throws Throwable {
+		this.injectableDeploymentName = addDeployment( getClass().getResource( "pool-deployer-jboss-beans.xml") );
 	}
 	
 	@After
-	public void tearDownDeployer() throws Throwable {
-		
+	public void tearDownInjectables() throws Throwable {
+		undeploy( this.injectableDeploymentName );
 	}
 	
 	
@@ -48,6 +54,8 @@ public class PoolDeployerTest extends AbstractDeployerTestCase {
 		DefaultRubyRuntimePool poolOne = (DefaultRubyRuntimePool) getKernelController().getKernel().getRegistry().findEntry( beanName ).getTarget();
 		assertNotNull( poolOne );
 		assertNotNull( poolOne.getRubyRuntimeFactory() );
+		
+		undeploy( deploymentName );
 	}
 
 }

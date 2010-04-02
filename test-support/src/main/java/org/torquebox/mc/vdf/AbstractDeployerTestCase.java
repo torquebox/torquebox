@@ -81,7 +81,6 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 			this.mount = null;
 		}
 		if (this.server != null && this.server.getState().equals(LifecycleState.STARTED)) {
-			((MainDeployer)((KernelControllerContext) getKernelController().getInstalledContext( "MainDeployer" )).getTarget()).shutdown();
 			this.server.stop();
 		}
 
@@ -175,5 +174,10 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		}
 		
 		return null;
+	}
+	
+	protected void undeploy(String name) throws DeploymentException {
+		getMainDeployer().undeploy( name );
+		processDeployments(true);
 	}
 }
