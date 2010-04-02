@@ -57,6 +57,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	/** Shared interpreter class cache. */
 	private ClassCache<?> classCache;
 
+	/** Application name. */
 	private String applicationName;
 
 	/** Load paths for the interpreter. */

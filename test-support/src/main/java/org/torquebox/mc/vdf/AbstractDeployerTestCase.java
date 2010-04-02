@@ -30,8 +30,9 @@ import org.jboss.vfs.VirtualFileAssembly;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.torquebox.mc.vfs.AbstractVFSTestCase;
 
-public abstract class AbstractDeployerTestCase {
+public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 
 	/**
 	 * MC bean name of the {@link MainDeployer}

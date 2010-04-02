@@ -48,7 +48,7 @@ public class VFSLoadService extends LoadService {
 		super(runtime);
 	}
 
-	private URL makeUrl(String base, String path) throws MalformedURLException {
+	URL makeUrl(String base, String path) throws MalformedURLException {
 
 		base = base.replaceAll("\\/\\/+", "/");
 		path = path.replaceAll("\\/\\/+", "/");
