@@ -22,4 +22,8 @@ public class DefaultRubyRuntimePool extends DefaultPool<Ruby> implements RubyRun
 		releaseInstance( runtime );
 	}
 	
+	public RubyRuntimeFactory getRubyRuntimeFactory() {
+		return (RubyRuntimeFactory) getInstanceFactory();
+	}
+	
 }

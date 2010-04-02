@@ -60,6 +60,14 @@ public class DefaultPool<T> implements Pool<T> {
 	public DefaultPool(InstanceFactory<T> factory) {
 		this.factory = factory;
 	}
+	
+	/** Retrieve the instance factory.
+	 * 
+	 * @return The instance factory.
+	 */
+	public InstanceFactory<T> getInstanceFactory() {
+		return this.factory;
+	}
 
 	/**
 	 * Set the name.

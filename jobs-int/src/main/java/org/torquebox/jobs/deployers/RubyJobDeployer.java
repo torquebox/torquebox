@@ -30,9 +30,9 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.interp.deployers.PoolingDeployer;
 import org.torquebox.jobs.core.RubyJob;
 import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.mc.AttachmentUtils;
 
 public class RubyJobDeployer extends AbstractDeployer {
 
@@ -72,7 +72,8 @@ public class RubyJobDeployer extends AbstractDeployer {
 		
 		builder.addPropertyMetaData("scheduler", schedulerInjection);
 
-		ValueMetaData poolInjection = builder.createInject(PoolingDeployer.getBeanName( unit, "jobs" ) );
+		//ValueMetaData poolInjection = builder.createInject(PoolingDeployer.getBeanName( unit, "jobs" ) );
+		ValueMetaData poolInjection = builder.createInject(AttachmentUtils.beanName(unit, "pool", "jobs") );
 		builder.addPropertyMetaData("rubyRuntimePool", poolInjection);
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();

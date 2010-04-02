@@ -14,6 +14,12 @@
   <description></description>
 
   <dependencies>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-mc-support</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
@@ -21,18 +27,21 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-spi</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
-
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
       <scope>compile</scope>
     </dependency>
 
@@ -42,31 +51,34 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.jboss.kernel</groupId>
       <artifactId>jboss-kernel</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-spi</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.reloaded</groupId>
+      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build> 

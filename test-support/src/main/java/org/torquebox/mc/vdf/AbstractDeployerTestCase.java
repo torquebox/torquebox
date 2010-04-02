@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Set;
 
+import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.bootstrap.api.descriptor.BootstrapDescriptor;
 import org.jboss.bootstrap.api.lifecycle.LifecycleState;
@@ -21,6 +23,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeploymentFactory;
 import org.jboss.kernel.spi.dependency.KernelController;
+import org.jboss.kernel.spi.dependency.KernelControllerContext;
 import org.jboss.logging.Logger;
 import org.jboss.managed.api.ManagedDeployment;
 import org.jboss.reloaded.api.ReloadedDescriptors;
@@ -78,10 +81,12 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 			this.mount = null;
 		}
 		if (this.server != null && this.server.getState().equals(LifecycleState.STARTED)) {
+			((MainDeployer)((KernelControllerContext) getKernelController().getInstalledContext( "MainDeployer" )).getTarget()).shutdown();
 			this.server.stop();
 		}
 
 	}
+	
 
 	protected void addDeployer(Deployer deployer) throws Throwable {
 
@@ -126,6 +131,12 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		mainDeployer.addDeployment(deployment);
 		return deployment.getName();
 	}
+	
+	protected String createDeployment(String name) throws IOException, DeploymentException {
+		File file = File.createTempFile( name, ".tmp" );
+		file.deleteOnExit();
+		return addDeployment( file );
+	}
 
 	protected KernelController getKernelController() {
 		return this.server.getKernel().getController();
@@ -154,4 +165,15 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		return ((MainDeployerImpl)getMainDeployer()).getDeploymentUnit( name );
 	}
 	
+	protected BeanMetaData getBeanMetaData(DeploymentUnit unit, String name) {
+		Set<? extends BeanMetaData> metaData = unit.getAllMetaData( BeanMetaData.class );
+		
+		for ( BeanMetaData each : metaData ) {
+			if ( each.getName().equals( name ) ) {
+				return each;
+			}
+		}
+		
+		return null;
+	}
 }
