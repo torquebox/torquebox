@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+	<bean name="runtime_instance" class="org.jruby.Ruby">
+	    <constructor factoryMethod="create">
+	    	<factory bean="instance_factory"/>
+	    </constructor>
+    </bean>
+</deployment>

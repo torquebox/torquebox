@@ -81,6 +81,15 @@ public class SharedPool<T> implements Pool<T> {
 	}
 
 	/**
+	 * Retrieve the shared instance.
+	 * 
+	 * @return The shared instance.
+	 */
+	public T getInstance() {
+		return this.instance;
+	}
+
+	/**
 	 * Set the instance factory to create the initial instance.
 	 * 
 	 * @param factory The instance factory.
@@ -88,8 +97,9 @@ public class SharedPool<T> implements Pool<T> {
 	public void setInstanceFactory(InstanceFactory<T> factory) {
 		this.factory = factory;
 	}
-	
-	/** Retrieve the instance factory to create the initial instance.
+
+	/**
+	 * Retrieve the instance factory to create the initial instance.
 	 * 
 	 * @return The instance factory;
 	 */

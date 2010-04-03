@@ -33,8 +33,15 @@ public class PoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData>
 		if (poolMetaData.isGlobal()) {
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class.getName());
 			builder.addPropertyMetaData("name", poolMetaData.getName());
-			Ruby globalRuntime = unit.getAttachment(Ruby.class);
-			builder.addConstructorParameter(Ruby.class.getName(), globalRuntime);
+
+			String instanceName = poolMetaData.getInstanceName();
+			if (instanceName == null) {
+				Ruby runtime = unit.getAttachment(Ruby.class);
+				builder.addConstructorParameter(Ruby.class.getName(), runtime);
+			} else {
+				ValueMetaData runtimeInjection = builder.createInject(instanceName);
+				builder.addConstructorParameter(Ruby.class.getName(), runtimeInjection);
+			}
 			poolBean = builder.getBeanMetaData();
 		} else if (poolMetaData.isShared()) {
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class.getName());
@@ -43,7 +50,7 @@ public class PoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData>
 			if (factoryName == null) {
 				factoryName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class);
 			}
-			ValueMetaData factoryInjection = builder.createInject( factoryName );
+			ValueMetaData factoryInjection = builder.createInject(factoryName);
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
 			poolBean = builder.getBeanMetaData();
 		} else {
@@ -52,7 +59,7 @@ public class PoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData>
 			if (factoryName == null) {
 				factoryName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class);
 			}
-			ValueMetaData factoryInjection = builder.createInject( factoryName );
+			ValueMetaData factoryInjection = builder.createInject(factoryName);
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
 			builder.addPropertyMetaData("name", poolMetaData.getName());
 			builder.addPropertyMetaData("minInstances", poolMetaData.getMinimumSize());

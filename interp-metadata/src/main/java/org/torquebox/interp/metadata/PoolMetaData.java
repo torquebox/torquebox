@@ -47,6 +47,8 @@ public class PoolMetaData {
 
 	/** Name of the instance-factory to use if non-global. */
 	private String instanceFactoryName;
+
+	private String instanceName;
 	
 	/** Construct. 
 	 */
@@ -137,6 +139,23 @@ public class PoolMetaData {
 		return this.instanceFactoryName;
 	}
 	
+	/** Set the instance name for shared pools.
+	 * 
+	 * @param instanceName The instance name for shared pools.
+	 */
+	public void setInstanceName(String instanceName) {
+		this.instanceName = instanceName;
+	}
+	
+	/** Retrieve the instance name for shared pools.
+	 * 
+	 * @return The instance name for shared pools.
+	 */
+	public String getInstanceName() {
+		return this.instanceName;
+	}
+	
+	
 	/** Configure this pool to share the global instance.
 	 */
 	public void setGlobal() {
@@ -156,5 +175,5 @@ public class PoolMetaData {
 	public String toString() {
 		return "[PoolMetaData: name=" + this.name + "; min=" + this.minimumSize + "; max=" + this.maximumSize + "]";
 	}
-	
+
 }

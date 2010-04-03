@@ -54,13 +54,6 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		this.log = Logger.getLogger(getClass());
 	}
 
-	/**
-	 * Creates the server
-	 */
-	@BeforeClass
-	public static void createAndConfigureServer() {
-	}
-
 	private Closeable mount;
 
 	@Before
