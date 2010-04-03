@@ -1,24 +1,4 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
+/* Copyright 2009 Red Hat, Inc. */
 package org.torquebox.rack.core;
 
 import org.torquebox.common.pool.SharedPool;
@@ -27,10 +7,34 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.spi.RackApplicationPool;
 
 
+/** Rack application pool which shares a single instance between consumers.
+ * 
+ * <p>This pool implementation is backed by a single instance, which is
+ * concurrently shared across all consumers.</p>
+ * 
+ * <p>Multiple threads/requests may be manipulating the application
+ * at the same time, so it is important that the application be
+ * "thread-safe".</p>
+ * 
+ * @author Bob McWhirter <bmcwhirt@redhat.com>
+ */
 public class SharedRackApplicationPool extends SharedPool<RackApplication> implements RackApplicationPool {
 	
+	/** Construct with a factory.
+	 * 
+	 * @param factory The factory to create the shared application instance.
+	 * @throws Exception
+	 */
 	public SharedRackApplicationPool(RackApplicationFactory factory) throws Exception {
 		super( factory );
+	}
+	
+	/** Construct with an instance.
+	 * 
+	 * @param app The shared application instance.
+	 */
+	public SharedRackApplicationPool(RackApplication app) {
+		super( app );
 	}
 
 	@Override

@@ -39,7 +39,7 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
-import org.torquebox.rack.core.RackFilter;
+import org.torquebox.rack.core.servlet.RackFilter;
 import org.torquebox.rack.metadata.RackWebApplicationMetaData;
 
 public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<RackWebApplicationMetaData> {

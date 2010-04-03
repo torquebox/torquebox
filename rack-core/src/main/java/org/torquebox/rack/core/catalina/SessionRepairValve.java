@@ -1,4 +1,4 @@
-package org.torquebox.rack.core;
+package org.torquebox.rack.core.catalina;
 
 import java.io.IOException;
 import java.util.regex.Matcher;

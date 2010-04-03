@@ -1,4 +1,4 @@
-package org.torquebox.rack.core;
+package org.torquebox.rack.core.catalina;
 
 import org.apache.catalina.Valve;
 
