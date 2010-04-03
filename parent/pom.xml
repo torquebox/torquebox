@@ -7,7 +7,7 @@
   <artifactId>torquebox-parent</artifactId>
   <version>1.0.0.Beta19</version>
   <packaging>pom</packaging>
-  <name>TorqueBox</name>
+  <name>TorqueBox Parent</name>
   <url>http://www.torquebox.org/</url>
 
   <description>
