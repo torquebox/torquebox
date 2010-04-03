@@ -14,7 +14,7 @@ import org.torquebox.interp.core.SharedRubyRuntimePool;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.mc.vdf.AbstractDeployerTestCase;
+import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
 

@@ -33,7 +33,6 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
 import org.torquebox.interp.core.DefaultRubyRuntimeFactory;
-import org.torquebox.interp.core.RubyRuntimeFactoryProxy;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
@@ -49,9 +48,6 @@ import org.torquebox.mc.AttachmentUtils;
  * </p>
  * 
  * @author Bob McWhirter
- * 
- * @see RubyRuntimeFactoryPublisher
- * @see RubyRuntimeFactoryProxy
  */
 public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<RubyRuntimeMetaData> {
 

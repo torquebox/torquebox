@@ -1,4 +1,4 @@
-package org.torquebox.mc.vdf;
+package org.torquebox.test.mc.vdf;
 
 import java.io.Closeable;
 import java.io.File;
@@ -37,7 +37,7 @@ import org.jboss.vfs.VirtualFileAssembly;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.torquebox.mc.vfs.AbstractVFSTestCase;
+import org.torquebox.test.mc.vfs.AbstractVFSTestCase;
 
 public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 

@@ -1,3 +1,4 @@
+/* Copyright 2010 Red Hat, Inc. */
 package org.torquebox.interp.core;
 
 import java.io.File;
@@ -18,9 +19,11 @@ import org.jruby.runtime.load.LoadService;
 import org.jruby.runtime.load.LoadServiceResource;
 import org.jruby.util.JRubyFile;
 
+/** VFS-enabled {@link LoadService}
+ * 
+ * @author Bob McWhirter <bmcwhirt@redhat.com>
+ */
 public class VFSLoadService extends LoadService {
-
-	// private static final Logger log = Logger.getLogger(VFSLoadService.class);
 
 	{
 		for (int i = 0; i < searchers.size(); ++i) {

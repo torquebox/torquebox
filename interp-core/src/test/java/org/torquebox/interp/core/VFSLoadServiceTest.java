@@ -2,7 +2,7 @@ package org.torquebox.interp.core;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.mc.vfs.AbstractVFSTestCase;
+import org.torquebox.test.mc.vfs.AbstractVFSTestCase;
 
 import static org.junit.Assert.*;
 

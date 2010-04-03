@@ -7,7 +7,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.interp.metadata.PoolMetaData;
-import org.torquebox.mc.vdf.AbstractDeployerTestCase;
+import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
 

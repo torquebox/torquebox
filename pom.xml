@@ -9,6 +9,12 @@
   <packaging>pom</packaging>
   <name>TorqueBox</name>
   <url>http://www.torquebox.org/</url>
+  <inceptionYear>2008</inceptionYear>
+  <organization>
+    <name>Red Hat, Inc.</name>
+    <url>http://redhat.com</url>
+  </organization>
+
 
   <description>
     The TorqueBox Ruby Application Platform
@@ -16,27 +22,12 @@
 
   <build>
     <plugins>
-<!--
-      <plugin>
-        <artifactId>maven-reactor-plugin</artifactId>
-        <configuration>
-          <artifactList>torquebox-javadoc-support</artifactList> 
-        </configuration>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>make</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
--->
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.6.1</version>
-          <configuration>
+        <configuration>
           <stylesheetfile>${project.build.directory}/apidocs/stylesheet.css</stylesheetfile>
+          <excludePackageNames>org.torquebox.test.*</excludePackageNames>
           <resourcesArtifacts>
             <resourcesArtifact>
               <groupId>org.torquebox</groupId>

@@ -1,4 +1,4 @@
-package org.torquebox.mc.vfs;
+package org.torquebox.test.mc.vfs;
 
 import org.junit.BeforeClass;
 

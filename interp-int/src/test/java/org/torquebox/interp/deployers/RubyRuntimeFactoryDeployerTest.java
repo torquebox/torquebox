@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.mc.vdf.AbstractDeployerTestCase;
+import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
 
