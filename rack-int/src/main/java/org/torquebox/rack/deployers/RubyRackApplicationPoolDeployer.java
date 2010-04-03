@@ -29,7 +29,6 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.metadata.PoolMetaData;
-import org.torquebox.interp.metadata.PoolingMetaData;
 import org.torquebox.rack.core.DefaultRackApplicationPool;
 import org.torquebox.rack.core.SharedRackApplicationPool;
 import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
@@ -39,29 +38,23 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 
 	public RubyRackApplicationPoolDeployer() {
 		super(RubyRackApplicationMetaData.class);
-		addInput(PoolingMetaData.class);
+		addInput(PoolMetaData.class);
 		addOutput(BeanMetaData.class);
 	}
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
 
-		PoolingMetaData pooling = unit.getAttachment(PoolingMetaData.class);
+		PoolMetaData pool = getPoolMetaData(unit, "web");
 
-		if ( pooling == null ) {
-			deploySharedPool( unit );
+		if (pool == null || pool.isGlobal() || pool.isShared()) {
+			deploySharedPool(unit);
 		} else {
-			PoolMetaData pool = pooling.getPool( "web" );
-			
-			if (pool == null || pool.isGlobal() || pool.isShared() ) {
-				deploySharedPool( unit );
-			} else {
-				deployDefaultPool(unit, pool);
-			}
+			deployDefaultPool(unit, pool);
 		}
 
 	}
-	
+
 	protected void deploySharedPool(VFSDeploymentUnit unit) throws DeploymentException {
 		String beanName = getBeanName(unit);
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRackApplicationPool.class.getName());
@@ -77,8 +70,7 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 
 	protected void deployDefaultPool(VFSDeploymentUnit unit, PoolMetaData metaData) throws DeploymentException {
 		String beanName = getBeanName(unit);
-		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRackApplicationPool.class
-				.getName());
+		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRackApplicationPool.class.getName());
 
 		String factoryBeanName = RubyRackApplicationFactoryDeployer.getBeanName(unit);
 		ValueMetaData appFactoryInjection = builder.createInject(factoryBeanName);
@@ -92,15 +84,25 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 	}
 
 	public static String getBeanName(VFSDeploymentUnit unit) {
-		return getBeanName( unit.getRoot() );
+		return getBeanName(unit.getRoot());
 	}
-	
+
 	public static String getBeanName(VirtualFile file) {
-		return getBeanName( file.getName() );
+		return getBeanName(file.getName());
 	}
-	
+
 	public static String getBeanName(String base) {
 		return "torquebox.rack.app.pool." + base;
+	}
+
+	protected static PoolMetaData getPoolMetaData(VFSDeploymentUnit unit, String poolName) {
+		for (PoolMetaData each : unit.getAllMetaData(PoolMetaData.class)) {
+			if (each.getName().equals(poolName)) {
+				return each;
+			}
+		}
+
+		return null;
 	}
 
 }

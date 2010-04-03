@@ -1,44 +1,50 @@
-/*
- * JBoss, Home of Professional Open Source
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
- *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
+/* Copyright 2009 Red Hat, Inc. */
 package org.torquebox.interp.metadata;
 
 import java.net.URL;
 
+/** Describes a path to use for {@code LOAD_PATH} in a Ruby interpreter.
+ * 
+ * <p>While the load path is described as a collection of {@link URL} instances,
+ * the URLs are intended to be local or VFS-based URLs.  It is highly unlike a
+ * {@code http://} URL will work.</p>
+ * 
+ * @author Bob McWhirter <bmcwhirt@redhat.com>
+ * 
+ * @see RubyRuntimeMetaData
+ *
+ */
 public class RubyLoadPathMetaData {
 	
+	/** URL of the path. */
 	private URL url;
 
+	/** Construct without a path.
+	 */
 	public RubyLoadPathMetaData() {
 		
 	}
 	
+	/** Construct with a URL.
+	 * 
+	 * @param url The URL to add to the Ruby load path.
+	 */
 	public RubyLoadPathMetaData(URL url) {
 		this.url = url;
 	}
 	
+	/** Set the URL.
+	 * 
+	 * @param url The URL to add to the Ruby load path.
+	 */
 	public void setURL(URL url) {
 		this.url = url;
 	}
 	
+	/** Retrieve the URL.
+	 * 
+	 * @return The URL to add to the Ruby load path.
+	 */
 	public URL getURL() {
 		return this.url;
 	}
