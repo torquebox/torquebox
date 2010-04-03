@@ -6,7 +6,8 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 public class AttachmentUtils {
 	
 	public static void attach(DeploymentUnit unit, BeanMetaData bmd) {
-		unit.addAttachment( BeanMetaData.class.getName() + "$" + bmd.getName(), bmd, BeanMetaData.class );
+		String attachmentName = BeanMetaData.class.getName() + "$" + bmd.getName();
+		unit.addAttachment( attachmentName, bmd, BeanMetaData.class );
 	}
 	
 	public static void multipleAttach(DeploymentUnit unit, Object metaData, String name) {

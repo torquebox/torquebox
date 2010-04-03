@@ -24,17 +24,20 @@ package org.torquebox.interp.deployers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
+import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
-import org.jruby.Ruby;
 import org.torquebox.interp.core.DefaultRubyRuntimeFactory;
 import org.torquebox.interp.core.RubyRuntimeFactoryProxy;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.mc.AttachmentUtils;
 
 /**
  * Deployer which actually creates a RubyRuntimeFactory and attaches it to the
@@ -59,7 +62,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 	public RubyRuntimeFactoryDeployer() {
 		super(RubyRuntimeMetaData.class);
 		setStage(DeploymentStages.CLASSLOADER);
-		addOutput(Ruby.class);
+		addOutput(BeanMetaData.class);
 	}
 
 	/**
@@ -83,22 +86,24 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData) throws DeploymentException {
-		log.info("Create RubyRuntimeFactory: " + unit.getSimpleName());
-		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory(metaData.getRuntimeInitializer());
+		
+		String beanName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class );
+		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, DefaultRubyRuntimeFactory.class.getName() );
+		
 		List<String> loadPaths = new ArrayList<String>();
 
 		for (RubyLoadPathMetaData loadPath : metaData.getLoadPaths()) {
 			loadPaths.add(loadPath.getURL().toExternalForm());
 		}
+		
+		builder.addPropertyMetaData( "loadPaths", loadPaths );
+		builder.addPropertyMetaData( "kernel", this.kernel );
+		builder.addPropertyMetaData( "applicationName", unit.getSimpleName() );
+		builder.addPropertyMetaData( "classLoader", unit.getClassLoader() );
 
-		factory.setLoadPaths(loadPaths);
-		factory.setKernel(this.kernel);
-		factory.setApplicationName(unit.getSimpleName());
+		AttachmentUtils.attach(unit, builder.getBeanMetaData() );
 
-		ClassLoader classLoader = unit.getClassLoader();
-		factory.setClassLoader(classLoader);
-		unit.addAttachment(RubyRuntimeFactory.class, factory);
-
+		/*
 		try {
 			long startTime = System.currentTimeMillis();
 			Ruby ruby = factory.create();
@@ -108,6 +113,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		} catch (Exception e) {
 			throw new DeploymentException(e);
 		}
+		*/
 
 	}
 
