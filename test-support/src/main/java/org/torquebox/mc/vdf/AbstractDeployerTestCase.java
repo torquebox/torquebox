@@ -117,13 +117,13 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 	}
 
 	protected String addDeployment(VirtualFile file) throws DeploymentException {
-		log.info("addDeployment = " + file);
 		VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
 		return addDeployment(deployment);
 	}
 
 	protected String addDeployment(Deployment deployment) throws DeploymentException {
 		MainDeployer mainDeployer = getMainDeployer();
+		log.info("add deployment: " + deployment );
 		mainDeployer.addDeployment(deployment);
 		return deployment.getName();
 	}
