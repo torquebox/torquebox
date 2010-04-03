@@ -3,7 +3,7 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox</artifactId>
+    <artifactId>torquebox-parent</artifactId>
     <version>1.0.0.Beta19</version>
   </parent>
 

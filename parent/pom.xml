@@ -1,0 +1,382 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-parent</artifactId>
+  <version>1.0.0.Beta19</version>
+  <packaging>pom</packaging>
+  <name>TorqueBox</name>
+  <url>http://www.torquebox.org/</url>
+
+  <description>
+    The TorqueBox Parent POM
+  </description>
+
+  <scm>
+    <connection>scm:git:git://github.com/torquebox/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:ssh://github.com/torquebox/${project.artifactId}.git</developerConnection>
+    <url>http://github.com/torquebox/${project.artifactId}/tree/master</url>
+  </scm>
+
+  <profiles>
+    <profile>
+      <id>default</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>torquebox.release.repository</id>
+          <name>TorqueBox Release Repository</name>
+          <url>scpexe://repository.torquebox.org/opt/torquebox/repository/maven2/releases</url>
+        </repository>
+        <snapshotRepository>
+          <id>torquebox.snapshot.repository</id>
+          <name>TorqueBox Snapshot Repository</name>
+          <url>scpexe://repository.torquebox.org/opt/torquebox/repository/maven2/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <distributionManagement>
+        <repository>
+          <id>torquebox.release.repository</id>
+          <name>TorqueBox Release Repository</name>
+          <url>file:///opt/torquebox/repository/maven2/releases</url>
+        </repository>
+        <snapshotRepository>
+          <id>torquebox.snapshot.repository</id>
+          <name>TorqueBox Snapshot Repository</name>
+          <url>file:///opt/torquebox/repository/maven2/snapshots</url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+  </profiles>
+    
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.jbossas</groupId>
+        <artifactId>jboss-as-component-matrix</artifactId>
+        <version>${version.jbossas}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jruby</groupId>
+        <artifactId>jruby-complete</artifactId>
+        <version>${version.jruby}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${version.snakeyaml}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.reloaded</groupId>
+        <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
+        <version>${version.jboss.reloaded}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-api</artifactId>
+        <version>${version.jboss.shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.shrinkwrap</groupId>
+        <artifactId>shrinkwrap-impl-base</artifactId>
+        <version>${version.jboss.shrinkwrap}</version>
+      </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <properties>
+    <version.junit>4.7</version.junit>
+    <version.jboss.reloaded>0.1.1</version.jboss.reloaded>
+    <version.jboss.shrinkwrap>1.0.0-alpha-6</version.jboss.shrinkwrap>
+
+    <version.jruby>1.4.0</version.jruby>
+    <version.snakeyaml>1.5</version.snakeyaml>
+
+    <rails.version>2.3.4</rails.version>
+
+    <version.jbossas>6.0.0-SNAPSHOT</version.jbossas>
+    <version.jbossas.package>6.0.x</version.jbossas.package>
+    <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
+
+    <version.hornetq>2.0.0.GA</version.hornetq>
+    <version.netty>3.1.5.GA</version.netty>
+    <version.jms>1.1</version.jms>
+
+    <cxf.version>2.2.3</cxf.version>
+
+    <mobicents.sip.version>1.0</mobicents.sip.version>
+    <mobicents.spec.version>1.1.10</mobicents.spec.version>
+
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>repository.codehaus.org</id>
+      <name>Codehaus Releases Repository</name>
+      <url>http://repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>repository.jboss.org</id>
+      <name>JBoss Releases Repository</name>
+      <url>http://repository.jboss.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>snapshots.jboss.org</id>
+      <name>JBoss Snapshots Repository</name>
+      <url>http://snapshots.jboss.org/maven2</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>apache-ws-snapshots2</id>
+      <name>Apache WS Repository</name>
+      <layout>default</layout>
+      <url>http://ws.zones.apache.org/repository2/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+    <repository>
+      <id>snakeyaml</id>
+      <name>SnakeYAML repository</name>
+      <url>http://snakeyamlrepo.appspot.com/repository</url>
+    </repository>
+  </repositories>
+
+  <!-- Plugin Repositories -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repository.codehaus.org</id>
+      <name>Codehaus Releases Repository</name>
+      <url>http://repository.codehaus.org/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>repository.jboss.org</id>
+      <name>JBoss Plugin Releases</name>
+      <url>http://repository.jboss.org/maven2</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>snapshots.jboss.org</id>
+      <name>JBoss Plugin Snapshots</name>
+      <url>http://snapshots.jboss.org/maven2</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>snapshots.repository.codehaus.org</id>
+      <name>Codehaus Snapshots Repository</name>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <commitByProject>true</commitByProject>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jboss.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jboss.maven.plugins</groupId>
+          <artifactId>maven-jdocbook-plugin</artifactId>
+          <version>2.1.2</version>
+          <extensions>true</extensions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <followSymLinks>false</followSymLinks>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.6.1</version>
+          <configuration>
+            <stylesheetfile>${project.build.directory}/site/apidocs/stylesheet.css</stylesheetfile>
+            <docfilessubdirs>true</docfilessubdirs>
+            <resourcesArtifacts>
+              <resourcesArtifact>
+                <groupId>org.torquebox</groupId>
+                <artifactId>torquebox-javadoc-support</artifactId>
+                <version>${project.version}</version>
+              </resourcesArtifact>
+            </resourcesArtifacts>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+<!--
+  <modules>
+
+    <module>javadoc-support</module>
+    <module>build-support</module>
+    <module>test-support</module>
+
+    <module>mc-support</module>
+    <module>base-int</module>
+
+    <module>common-spi</module>
+    <module>common-core</module>
+
+    <module>interp-spi</module>
+    <module>interp-core</module>
+    <module>interp-metadata</module>
+    <module>interp-int</module>
+
+    <module>rack-spi</module>
+    <module>rack-core</module>
+    <module>rack-metadata</module>
+    <module>rack-int</module>
+
+    <module>rails-core</module>
+    <module>rails-metadata</module>
+    <module>rails-int</module>
+
+    <module>jobs-core</module>
+    <module>jobs-metadata</module>
+    <module>jobs-int</module>
+
+    <module>messaging-spi</module>
+    <module>messaging-core</module>
+    <module>messaging-metadata</module>
+    <module>messaging-int</module>
+
+
+    <module>messaging-runtime</module>
+    <module>messaging-client</module>
+    <module>messaging-container</module>
+    <module>messaging-tasks</module>
+
+    <module>torquebox-gem</module>
+    <module>torquebox-rails</module>
+    <module>torquebox-capistrano</module>
+
+  </modules>
+-->
+
+
+</project>
