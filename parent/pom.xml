@@ -99,11 +99,18 @@
         <artifactId>junit</artifactId>
         <version>${version.junit}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jmock</groupId>
+        <artifactId>jmock-junit4</artifactId>
+        <version>${version.jmock}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <properties>
     <version.junit>4.7</version.junit>
+    <version.jmock>2.5.1</version.jmock>
+
     <version.jboss.reloaded>0.1.1</version.jboss.reloaded>
     <version.jboss.shrinkwrap>1.0.0-alpha-6</version.jboss.shrinkwrap>
 

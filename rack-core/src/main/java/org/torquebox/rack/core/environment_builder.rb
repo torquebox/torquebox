@@ -23,17 +23,19 @@ module TorqueBox
     class EnvironmentBuilder
       def self.build(servlet_context, servlet_request, input, errors)
         ($servlet_context=servlet_context) unless defined?( $servlet_context ) 
+        context_path = servlet_request.context_path
+        servlet_path = servlet_request.servlet_path
+        path_info    = servlet_request.path_info
         env = {}
         env['REQUEST_METHOD']    = servlet_request.getMethod()
-        env['SCRIPT_NAME']       = "#{servlet_request.getContextPath()}#{servlet_request.getServletPath()}"
-        env['PATH_INFO']         = servlet_request.getPathInfo()
+        env['SCRIPT_NAME']       = "#{context_path}#{servlet_path}"
+        env['PATH_INFO']         = path_info
         env['QUERY_STRING']      = servlet_request.getQueryString() || ''
         env['SERVER_NAME']       = servlet_request.getServerName()
         env['SERVER_PORT']       = servlet_request.getServerPort()
         env['CONTENT_TYPE']      = servlet_request.getContentType()
         env['CONTENT_LENGTH']    = servlet_request.getContentLength()
-        #env['REQUEST_URI']       = servlet_request.getRequestURI() 
-        env['REQUEST_URI']       = "#{servlet_request.getContextPath()}#{servlet_request.getServletPath()}#{servlet_request.getPathInfo()}"
+        env['REQUEST_URI']       = "#{context_path}#{servlet_path}#{path_info}"
         env['REMOTE_ADDR']       = servlet_request.getRemoteAddr()
         env['rack.version']      = [ 0, 1 ]
         env['rack.multithread']  = true
