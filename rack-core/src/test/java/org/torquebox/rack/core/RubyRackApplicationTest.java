@@ -11,6 +11,6 @@ public class RubyRackApplicationTest extends AbstractRubyTestCase {
 		Ruby ruby = createRuby();
 		
 		String rackup = "";
-		//RubyRackApplication rackApp = new RubyRackApplication( ruby, rackup );
+		RubyRackApplication rackApp = new RubyRackApplication( ruby, rackup );
 	}
 }

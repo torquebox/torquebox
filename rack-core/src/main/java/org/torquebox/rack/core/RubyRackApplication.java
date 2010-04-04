@@ -52,7 +52,7 @@ public class RubyRackApplication implements RackApplication {
 	 */
 	private IRubyObject rackUp(Ruby ruby, String script) {
 		String fullScript = "require %q(rack/builder)\n" 
-			+ "require %q(org/torquebox/ruby/enterprise/web/rack/middleware/reloader)\n" 
+			//+ "require %q(org/torquebox/ruby/enterprise/web/rack/middleware/reloader)\n" 
 			+ "Rack::Builder.new{(\n" + script + "\n)}.to_app";
 
 		return ruby.executeScript(fullScript, "RubyRackApplication/rackup.rb");
