@@ -57,6 +57,10 @@ public class RubyRackApplication implements RackApplication {
 
 		return ruby.executeScript(fullScript, "RubyRackApplication/rackup.rb");
 	}
+	
+	protected IRubyObject getRubyApplication() {
+		return this.rubyApp;
+	}
 
 	/**
 	 * Create the request environment ({@code env}) for request handling.
@@ -72,9 +76,9 @@ public class RubyRackApplication implements RackApplication {
 		RubyIO input = new RubyIO(ruby, request.getInputStream());
 		RubyIO errors = new RubyIO(ruby, System.out);
 
-		ruby.evalScriptlet("require %q(org/torquebox/ruby/enterprise/web/rack/environment_builder)");
+		ruby.evalScriptlet("require %q(org/torquebox/rack/core/environment_builder)");
 
-		RubyModule envBuilder = ruby.getClassFromPath("JBoss::Rack::EnvironmentBuilder");
+		RubyModule envBuilder = ruby.getClassFromPath("TorqueBox::Rack::EnvironmentBuilder");
 
 		return JavaEmbedUtils.invokeMethod(ruby, envBuilder, "build", new Object[] { context, request, input, errors }, Object.class);
 	}

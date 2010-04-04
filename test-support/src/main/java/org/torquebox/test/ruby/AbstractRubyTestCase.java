@@ -8,6 +8,9 @@ import java.util.Map;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
+
+import static org.junit.Assert.*;
 
 public class AbstractRubyTestCase {
 	
@@ -24,6 +27,10 @@ public class AbstractRubyTestCase {
 		
 		ruby.evalScriptlet( "require %q(rubygems)");
 		return ruby;
+	}
+	
+	protected void assertNotNil(IRubyObject obj) {
+		assertFalse( "object is a Ruby nil", obj.isNil() );
 	}
 
 }
