@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-test-support</artifactId>
+  <artifactId>torquebox-vdf-test-support</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Testing Support</name>
+  <name>TorqueBox VDF Testing Support</name>
   <description></description>
 
   <dependencies>
@@ -39,11 +39,6 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap</groupId>
       <artifactId>shrinkwrap-impl-base</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>

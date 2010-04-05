@@ -6,7 +6,7 @@ import org.torquebox.test.mc.vfs.AbstractVFSTestCase;
 
 import static org.junit.Assert.*;
 
-public class VFSLoadServiceTest extends AbstractVFSTestCase{
+public class VFSLoadServiceTest extends AbstractVFSTestCase {
 
 	private VFSLoadService loadService;
 
@@ -54,5 +54,4 @@ public class VFSLoadServiceTest extends AbstractVFSTestCase{
 
 		assertEquals("vfs:/Users/bob/myapp/app/controllers/foo_controller.rb", url);
 	}
-
 }

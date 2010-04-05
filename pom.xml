@@ -165,7 +165,9 @@
     <module>parent</module>
     <module>javadoc-support</module>
     <module>build-support</module>
-    <module>test-support</module>
+
+    <module>vdf-test-support</module>
+    <module>ruby-test-support</module>
 
     <module>mc-support</module>
     <module>base-int</module>

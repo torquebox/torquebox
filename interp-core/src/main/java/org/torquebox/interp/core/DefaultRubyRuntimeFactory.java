@@ -68,6 +68,9 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 	/** Error stream for the interpreter. */
 	private PrintStream errorStream = System.err;
+	
+	/** GEM_PATH. */
+	private String gemPath;
 
 	/**
 	 * Construct.
@@ -92,6 +95,14 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 	public String getApplicationName() {
 		return this.applicationName;
+	}
+	
+	public void setGemPath(String gemPath) {
+		this.gemPath = gemPath;
+	}
+	
+	public String getGemPath() {
+		return this.gemPath;
 	}
 
 	/**
@@ -190,6 +201,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 		List<String> loadPath = new ArrayList<String>();
 		loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
+		loadPath.add("META-INF/jruby.home/lib/ruby/1.8");
 		if (this.loadPaths != null) {
 			loadPath.addAll(this.loadPaths);
 		}
@@ -222,6 +234,9 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		String path = (String) env.get("PATH");
 		if (path == null) {
 			env.put("PATH", "");
+		}
+		if ( this.gemPath != null ) {
+			env.put( "GEM_PATH", this.gemPath );
 		}
 		return env;
 	}

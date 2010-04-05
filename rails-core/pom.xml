@@ -28,6 +28,25 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-interp-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>vfs</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+      <type>gem</type>
+    </dependency>
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <scope>provided</scope>
@@ -41,6 +60,26 @@
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging-spi</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rails</artifactId>
+      <version>2.3.5</version>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-ruby-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -80,6 +119,25 @@
             </property>
           </systemProperties>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <version>0.10.0</version>
+        <extensions>true</extensions>
+        <configuration>
+          <gemHome>${project.build.directory}/rubygems</gemHome>
+          <gemPath>${project.build.directory}/rubygems</gemPath>
+          <fork>true</fork>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>initialize</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

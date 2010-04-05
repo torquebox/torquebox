@@ -9,21 +9,26 @@ import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.interp.core.DefaultRubyRuntimeFactory;
+import org.torquebox.interp.core.VFSLoadServiceCreator;
 
 import static org.junit.Assert.*;
 
 public class AbstractRubyTestCase {
 	
-	protected Ruby createRuby() {
+	protected Ruby createRuby() throws Exception {
 		
+		/*
 		List<String> loadPaths = new ArrayList<String>();
 		RubyInstanceConfig config = new RubyInstanceConfig();
 		
-		Map<String,String> env = new HashMap<String,String>();
-		env.put( "GEM_PATH", "target/rubygems" );
-		config.setEnvironment( env );
+		config.setLoadServiceCreator(new VFSLoadServiceCreator());
+		*/
 		
-		Ruby ruby = JavaEmbedUtils.initialize(loadPaths, config );
+		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory();
+		factory.setGemPath( "target/rubygems" );
+		
+		Ruby ruby = factory.create();
 		
 		ruby.evalScriptlet( "require %q(rubygems)");
 		return ruby;

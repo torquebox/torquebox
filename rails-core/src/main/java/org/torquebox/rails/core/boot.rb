@@ -8,7 +8,7 @@ class Class
   alias_method :method_added_before_torquebox, :method_added
   
   def method_added(method_name)
-    recursing = caller.find{|e| e =~ /org.torquebox.rails.runtime.deployers.*method_added/ }
+    recursing = caller.find{|e| e =~ /org.torquebox.rails.*method_added/ }
     unless ( recursing ) 
       if ( (self.to_s == 'Rails::Configuration') && ( method_name == :set_root_path! ) )
         self.class_eval do
