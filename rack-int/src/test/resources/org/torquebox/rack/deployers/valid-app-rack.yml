@@ -1,0 +1,3 @@
+application:
+  RACK_ROOT: /tmp
+  RACK_ENV: test

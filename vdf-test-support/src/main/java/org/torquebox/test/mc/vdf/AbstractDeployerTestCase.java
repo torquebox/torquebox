@@ -165,6 +165,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 		Set<? extends BeanMetaData> metaData = unit.getAllMetaData(BeanMetaData.class);
 
 		for (BeanMetaData each : metaData) {
+			System.err.println( "--" + each.getName() );
 			if (each.getName().equals(name)) {
 				return each;
 			}
