@@ -63,6 +63,7 @@ public class HttpServletResponseCapture extends HttpServletResponseWrapper {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setStatus(int status, String message) {
 		this.status = status;

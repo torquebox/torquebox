@@ -29,7 +29,9 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.metadata.PoolMetaData;
+import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.DefaultRackApplicationPool;
+import org.torquebox.rack.core.RubyRackApplicationFactory;
 import org.torquebox.rack.core.SharedRackApplicationPool;
 import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationFactory;
@@ -56,43 +58,27 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 	}
 
 	protected void deploySharedPool(VFSDeploymentUnit unit) throws DeploymentException {
-		String beanName = getBeanName(unit);
+		String beanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRackApplicationPool.class.getName());
 
-		String factoryBeanName = RubyRackApplicationFactoryDeployer.getBeanName(unit);
+		String factoryBeanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
 		ValueMetaData appFactoryInjection = builder.createInject(factoryBeanName);
 		builder.addConstructorParameter(RackApplicationFactory.class.getName(), appFactoryInjection);
 
-		BeanMetaData beanMetaData = builder.getBeanMetaData();
-
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, beanMetaData);
+		AttachmentUtils.attach( unit, builder.getBeanMetaData() );
 	}
 
 	protected void deployDefaultPool(VFSDeploymentUnit unit, PoolMetaData metaData) throws DeploymentException {
-		String beanName = getBeanName(unit);
+		String beanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRackApplicationPool.class.getName());
 
-		String factoryBeanName = RubyRackApplicationFactoryDeployer.getBeanName(unit);
+		String factoryBeanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
 		ValueMetaData appFactoryInjection = builder.createInject(factoryBeanName);
 		builder.addConstructorParameter(RackApplicationFactory.class.getName(), appFactoryInjection);
 		builder.addPropertyMetaData("minInstances", metaData.getMinimumSize());
 		builder.addPropertyMetaData("maxInstances", metaData.getMaximumSize());
 
-		BeanMetaData beanMetaData = builder.getBeanMetaData();
-
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, beanMetaData);
-	}
-
-	public static String getBeanName(VFSDeploymentUnit unit) {
-		return getBeanName(unit.getRoot());
-	}
-
-	public static String getBeanName(VirtualFile file) {
-		return getBeanName(file.getName());
-	}
-
-	public static String getBeanName(String base) {
-		return "torquebox.rack.app.pool." + base;
+		AttachmentUtils.attach( unit, builder.getBeanMetaData() );
 	}
 
 	protected static PoolMetaData getPoolMetaData(VFSDeploymentUnit unit, String poolName) {

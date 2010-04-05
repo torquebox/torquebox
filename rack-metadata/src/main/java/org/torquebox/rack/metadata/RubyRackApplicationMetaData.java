@@ -28,6 +28,8 @@ public class RubyRackApplicationMetaData {
 	private String rackEnv;
 	private VirtualFile rackRoot;
 	private String rackUpScript;
+	
+	private String rubyRuntimeFactoryName;
 
 	public RubyRackApplicationMetaData() {
 		
@@ -55,5 +57,13 @@ public class RubyRackApplicationMetaData {
 
 	public String getRackUpScript() {
 		return this.rackUpScript;
+	}
+	
+	public void setRubyRuntimeFactoryName(String rubyRuntimeFactoryName) {
+		this.rubyRuntimeFactoryName = rubyRuntimeFactoryName;
+	}
+	
+	public String getRubyRuntimeFactoryName() {
+		return this.rubyRuntimeFactoryName;
 	}
 }

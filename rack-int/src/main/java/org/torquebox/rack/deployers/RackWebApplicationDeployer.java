@@ -29,7 +29,6 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.logging.Logger;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
 import org.jboss.metadata.web.spec.FilterMappingMetaData;
@@ -47,8 +46,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 	public static final String FILTER_NAME = "torquebox.rack";
 	public static final String SERVLET_NAME = "torquebox.static";
 	public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.ruby.enterprise.web.StaticResourceServlet";
-
-	private static final Logger log = Logger.getLogger(RackWebApplicationDeployer.class);
 
 	public RackWebApplicationDeployer() {
 		super(RackWebApplicationMetaData.class);
@@ -132,7 +129,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		JBossWebMetaData jbossWebMetaData = unit.getAttachment(JBossWebMetaData.class);
 
 		if (jbossWebMetaData == null) {
-			log.debug("creating a new jboss-web.xml metadata");
 			jbossWebMetaData = new JBossWebMetaData();
 			unit.addAttachment(JBossWebMetaData.class, jbossWebMetaData);
 		}

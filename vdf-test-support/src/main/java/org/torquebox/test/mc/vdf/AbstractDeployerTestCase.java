@@ -84,6 +84,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 	}
 
 	protected void addDeployer(Deployer deployer) throws Throwable {
+		log.info( "add deployer - " + deployer.getClass().getName() );
 
 		KernelController controller = this.server.getKernel().getController();
 		String deployerName = deployer.getClass().getSimpleName();
