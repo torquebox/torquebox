@@ -1,11 +1,9 @@
 package org.torquebox.rack.core;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jruby.Ruby;
@@ -25,18 +23,18 @@ import static org.mockito.Mockito.*;
 public class RubyRackResponseTest extends AbstractRubyTestCase {
 
 	private Ruby ruby;
-	private Map<String, String> headers;
+	private RubyHash headers;
 
 	@Before
 	public void setUpRuby() throws Exception {
 		this.ruby = createRuby();
-		this.headers = new HashMap<String, String>() {
+		this.headers = createHash( new HashMap<String, String>() {
 			{
 				put("header1", "header_value1");
 				put("header2", "header_value2");
 				put("header3", "header_value3");
 			}
-		};
+		} );
 	}
 
 	@Test
@@ -115,19 +113,19 @@ public class RubyRackResponseTest extends AbstractRubyTestCase {
 		assertTrue(closed.booleanValue());
 	}
 
-	protected IRubyObject createRubyRackResponse(int status, Map<String, String> headers, IRubyObject body) {
-		Map<IRubyObject, IRubyObject> rubyHeaders = new HashMap<IRubyObject, IRubyObject>();
-		if (headers != null) {
-			for (String name : headers.keySet()) {
+	protected RubyHash createHash(Map<String, String> in) {
+		Map<IRubyObject, IRubyObject> out = new HashMap<IRubyObject, IRubyObject>();
+		if (in != null) {
+			for (String name : in.keySet()) {
 				IRubyObject rubyName = JavaEmbedUtils.javaToRuby(this.ruby, name);
-				IRubyObject rubyValue = JavaEmbedUtils.javaToRuby(this.ruby, headers.get(name));
+				IRubyObject rubyValue = JavaEmbedUtils.javaToRuby(this.ruby, in.get(name));
 
-				rubyHeaders.put(rubyName, rubyValue);
+				out.put(rubyName, rubyValue);
 			}
 		}
-		return createRubyRackResponse(status, new RubyHash(this.ruby, rubyHeaders, null), body);
+		return new RubyHash(this.ruby, out, null );
 	}
-
+	
 	protected IRubyObject createRubyRackResponse(int status, RubyHash headers, IRubyObject body) {
 		RubyArray rubyRackResponse = RubyArray.newArray(this.ruby);
 		rubyRackResponse.add(status);

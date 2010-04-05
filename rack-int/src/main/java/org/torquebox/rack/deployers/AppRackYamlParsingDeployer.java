@@ -34,11 +34,9 @@ import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.client.spi.DeployerClient;
 import org.jboss.deployers.client.spi.Deployment;
-import org.jboss.deployers.client.spi.main.MainDeployer;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
@@ -73,7 +71,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 		addOutput(BeanMetaData.class);
 		setSuffix("-rack.yml");
 		setStage(DeploymentStages.PARSE);
-		// setTopLevelOnly(true);
 	}
 
 	@Override
@@ -93,21 +90,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 		attachPojoDeploymentBeanMetaData(vfsUnit, deployment);
 		return null;
 
-	}
-
-	// @Override
-	public void notundeploy(DeploymentUnit unit) {
-		Deployment deployment = unit.getAttachment("torquebox.rack.root.deployment", Deployment.class);
-		if (deployment != null) {
-			log.info("Undeploying: " + deployment.getName());
-			MainDeployer deployer = unit.getAttachment("torquebox.rack.root.deployer", MainDeployer.class);
-			try {
-				deployer.removeDeployment(deployment);
-				deployer.process();
-			} catch (DeploymentException e) {
-				log.error(e);
-			}
-		}
 	}
 
 	protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
@@ -195,24 +177,11 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	}
 
 	@SuppressWarnings("unchecked")
-	private RackWebApplicationMetaData parseAndSetUpWeb(VirtualFile rackRootFile, Map<String, Object> config) {
-		Map<String, Object> web = (Map<String, Object>) config.get(WEB_KEY);
+	private RackWebApplicationMetaData parseAndSetUpWeb(VFSDeploymentUnit unit, VirtualFile rackRootFile, Map<String, Object> config) {
+		Map<String, String> web = (Map<String, String>) config.get(WEB_KEY);
+		
+		RackWebApplicationMetaData webMetaData = WebYamlParsingDeployer.parse( unit, web );
 
-		RackWebApplicationMetaData webMetaData = new RackWebApplicationMetaData();
-		if (web != null) {
-			String context = (String) web.get(CONTEXT_KEY);
-			String host = (String) web.get(HOST_KEY);
-			if (host != null) {
-				webMetaData.setHost(host.toString());
-			}
-			if (context != null) {
-				webMetaData.setContext(context.toString());
-			}
-		}
-
-		String appPoolName = RubyRackApplicationPoolDeployer.getBeanName(rackRootFile);
-		webMetaData.setRackApplicationPoolName(appPoolName);
-		webMetaData.setStaticPathPrefix("/public");
 		return webMetaData;
 	}
 
@@ -250,7 +219,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 
 		VirtualFile rackRootFile = getRackRoot(config);
 		RubyRackApplicationMetaData rackMetaData = parseAndSetUpApplication(rackRootFile, config);
-		RackWebApplicationMetaData webMetaData = parseAndSetUpWeb(rackRootFile, config);
+		RackWebApplicationMetaData webMetaData = parseAndSetUpWeb(unit, rackRootFile, config);
 
 		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv());
 

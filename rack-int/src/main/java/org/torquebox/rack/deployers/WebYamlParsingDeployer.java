@@ -23,6 +23,7 @@ package org.torquebox.rack.deployers;
 
 import java.util.Map;
 
+import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
@@ -37,28 +38,21 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebAp
 	}
 
 	@SuppressWarnings("unchecked")
-	protected RackWebApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackWebApplicationMetaData root)
-			throws Exception {
+	protected RackWebApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackWebApplicationMetaData root) throws Exception {
 		Yaml yaml = new Yaml();
 		Map<String, String> web = (Map<String, String>) yaml.load(file.openStream());
-
-		String context = web.get("context");
-
-		if (context == null) {
-			context = "/";
-		} else {
-			context = context.trim();
+		
+		if ( web == null ) {
+			throw new DeploymentException( "unable to parse: " + file );
 		}
 
-		String host = web.get("host");
+		return parse(unit, web);
+	}
 
-		if (host == null) {
-			host = "localhost";
-		} else {
-			host = host.trim();
-			if (host.equals("")) {
-				host = "localhost";
-			}
+	protected static RackWebApplicationMetaData parse(VFSDeploymentUnit unit, Map<String, String> web) {
+		
+		if ( web == null ) {
+			return null;
 		}
 
 		RackWebApplicationMetaData webMetaData = unit.getAttachment(RackWebApplicationMetaData.class);
@@ -68,12 +62,39 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebAp
 			unit.addAttachment(RackWebApplicationMetaData.class, webMetaData);
 		}
 
+		if (webMetaData.getHost() == null) {
+			String host = web.get("host");
+
+			if (host == null) {
+				host = "localhost";
+			} else {
+				host = host.trim();
+				if (host.equals("")) {
+					host = "localhost";
+				}
+			}
+
+			webMetaData.setHost(host);
+		}
+
 		if (webMetaData.getContext() == null) {
+			String context = web.get("context");
+
+			if (context == null) {
+				context = "/";
+			} else {
+				context = context.trim();
+			}
+
 			webMetaData.setContext(context);
 		}
 
-		if (webMetaData.getHost() == null) {
-			webMetaData.setHost(host);
+		if (webMetaData.getStaticPathPrefix() == null) {
+			String staticPathPrefix = web.get( "static" );
+			if ( staticPathPrefix == null ) {
+				staticPathPrefix = "/public";
+			}
+			webMetaData.setStaticPathPrefix( staticPathPrefix );
 		}
 
 		return webMetaData;
