@@ -30,6 +30,10 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.spi.RackResponse;
 
 public class RubyRackResponse implements RackResponse {
+	public static final String RESPONSE_HANDLER_RB = "org/torquebox/rack/core/response_handler";
+	public static final String RESPONSE_HANDLER_CLASS_NAME = "TorqueBox::Rack::ResponseHandler";
+	public static final String RESPONSE_HANDLER_METHOD_NAME = "handle";
+	
 	private IRubyObject rackResponse;
 
 	public RubyRackResponse(IRubyObject rackResponse) {
@@ -38,9 +42,9 @@ public class RubyRackResponse implements RackResponse {
 
 	public void respond(HttpServletResponse response) {
 		Ruby ruby = rackResponse.getRuntime();
-		ruby.evalScriptlet( "require %q(org/torquebox/ruby/enterprise/web/rack/response_handler)");
-		RubyClass responseHandler = (RubyClass) ruby.getClassFromPath( "JBoss::Rack::ResponseHandler" );
-		JavaEmbedUtils.invokeMethod( ruby, responseHandler, "handle", new Object[]{ rackResponse, response }, Object.class );
+		ruby.getLoadService().require( RESPONSE_HANDLER_RB );
+		RubyClass responseHandler = (RubyClass) ruby.getClassFromPath( RESPONSE_HANDLER_CLASS_NAME );
+		JavaEmbedUtils.invokeMethod( ruby, responseHandler, RESPONSE_HANDLER_METHOD_NAME, new Object[]{ rackResponse, response }, Object.class );
 	}
-
+	
 }

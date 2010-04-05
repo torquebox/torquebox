@@ -65,9 +65,6 @@ public class RubyRackApplicationTest extends AbstractRubyTestCase {
 		Map<String, Object> javaEnv = (Map<String, Object>) rubyEnv.toJava(Map.class);
 		assertNotNull(javaEnv);
 
-		for (String key : javaEnv.keySet()) {
-			System.err.println("[" + key + "]=[" + javaEnv.get(key) + "]");
-		}
 		assertEquals("GET", javaEnv.get("REQUEST_METHOD"));
 		assertEquals("/myapp/the_path", javaEnv.get("REQUEST_URI"));
 		assertEquals("cheese=cheddar&bob=mcwhirter", javaEnv.get("QUERY_STRING"));

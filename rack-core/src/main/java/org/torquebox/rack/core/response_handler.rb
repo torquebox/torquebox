@@ -18,15 +18,15 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module JBoss
+module TorqueBox
   module Rack
     class ResponseHandler
       def self.handle(rack_response, servlet_response)
         status  = rack_response[0]
         headers = rack_response[1]
         body    = rack_response[2]
+        
         begin
-          
           status_code = status.to_i
           servlet_response.setStatus( status_code )
           

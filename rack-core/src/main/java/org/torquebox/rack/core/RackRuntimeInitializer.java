@@ -44,19 +44,17 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 	 */
 	protected String getInitializerScript() throws MalformedURLException, URISyntaxException {
 		StringBuilder script = new StringBuilder();
-		String rackRootPath = this.rackRoot.toURL().toExternalForm();
+		String rackRootPath = this.rackRoot.toURI().toString();
 		if (rackRootPath.endsWith("/")) {
 			rackRootPath = rackRootPath.substring(0, rackRootPath.length() - 1);
 		}
 
-		if (rackRootPath.startsWith("vfsfile:/")) {
-			rackRootPath = rackRootPath.substring(9);
-
+		if (! rackRootPath.startsWith("vfs:/")) {
 			if (!rackRootPath.startsWith("/")) {
 				rackRootPath = "/" + rackRootPath;
 			}
 		}
-
+		
 		script.append("RACK_ROOT=%q(" + rackRootPath + ")\n");
 		script.append("RACK_ENV=%q(" + this.rackEnv + ")\n");
 		script.append("ENV['RACK_ROOT']=%q(" + rackRootPath + ")\n");

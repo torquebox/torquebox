@@ -201,6 +201,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 		List<String> loadPath = new ArrayList<String>();
 		loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
+		loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/shared");
 		loadPath.add("META-INF/jruby.home/lib/ruby/1.8");
 		if (this.loadPaths != null) {
 			loadPath.addAll(this.loadPaths);

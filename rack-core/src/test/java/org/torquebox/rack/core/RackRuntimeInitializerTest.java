@@ -17,7 +17,7 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 		initializer.initialize( ruby );
 		
 		String rackRoot = (String) ruby.evalScriptlet( "RACK_ROOT" ).toJava(String.class);
-		assertEquals( "vfs:/myapp", rackRoot );
+		assertEquals( "vfs:///myapp", rackRoot );
 		
 		String rackEnv = (String) ruby.evalScriptlet( "RACK_ENV" ).toJava(String.class);
 		assertEquals( "test", rackEnv );
