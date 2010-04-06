@@ -2,9 +2,9 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-parent</artifactId>
+    <artifactId>torquebox-int-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../parent/pom.xml</relativePath>
+    <relativePath>../int-parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -65,6 +65,33 @@
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-common-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>assemble-deployer</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-deployer</id>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

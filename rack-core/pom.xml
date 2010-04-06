@@ -69,6 +69,11 @@
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-common-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>rubygems</groupId>
