@@ -190,6 +190,8 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 			String binJruby = RubyInstanceConfig.class.getResource("/META-INF/jruby.home/bin/jruby").toURI().getSchemeSpecificPart();
 			jrubyHome = binJruby.substring(0, binJruby.length() - 10);
 		}
+		
+		System.err.println( "JRUBY_HOME=" + jrubyHome );
 
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
@@ -200,9 +202,9 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		config.setError(getError());
 
 		List<String> loadPath = new ArrayList<String>();
-		loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
-		loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/shared");
-		loadPath.add("META-INF/jruby.home/lib/ruby/1.8");
+		//loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
+		//loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/shared");
+		//loadPath.add("META-INF/jruby.home/lib/ruby/1.8");
 		if (this.loadPaths != null) {
 			loadPath.addAll(this.loadPaths);
 		}
@@ -214,6 +216,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		}
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);
+		runtime.getLoadService().require( "rubygems" );
 		return runtime;
 	}
 
@@ -236,9 +239,11 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		if (path == null) {
 			env.put("PATH", "");
 		}
+		/*
 		if ( this.gemPath != null ) {
 			env.put( "GEM_PATH", this.gemPath );
 		}
+		*/
 		return env;
 	}
 

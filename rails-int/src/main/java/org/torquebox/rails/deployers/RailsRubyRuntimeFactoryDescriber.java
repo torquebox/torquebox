@@ -53,6 +53,7 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 	}
 
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+		log.info( "deploying " + unit );
 		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
 
 		RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(RubyRuntimeMetaData.class);
