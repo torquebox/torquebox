@@ -45,7 +45,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 	public static final String FILTER_NAME = "torquebox.rack";
 	public static final String SERVLET_NAME = "torquebox.static";
-	public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.ruby.enterprise.web.StaticResourceServlet";
+	public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.rack.core.servlet.StaticResourceServlet";
 
 	public RackWebApplicationDeployer() {
 		super(RackWebApplicationMetaData.class);

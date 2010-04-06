@@ -6,6 +6,7 @@
 
   <bean name="RubyRackApplicationFactoryDeployer"     class="org.torquebox.rack.deployers.RubyRackApplicationFactoryDeployer"/>
   <bean name="RubyRackApplicationPoolDeployer"        class="org.torquebox.rack.deployers.RubyRackApplicationPoolDeployer"/>
+  <bean name="DefaultRackApplicationPoolDeployer"     class="org.torquebox.rack.deployers.DefaultRackApplicationPoolDeployer"/>
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>
 
 </deployment>

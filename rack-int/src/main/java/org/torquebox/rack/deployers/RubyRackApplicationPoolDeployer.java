@@ -25,9 +25,9 @@ import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
+import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.DefaultRackApplicationPool;
@@ -35,6 +35,7 @@ import org.torquebox.rack.core.RubyRackApplicationFactory;
 import org.torquebox.rack.core.SharedRackApplicationPool;
 import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationFactory;
+import org.torquebox.rack.spi.RackApplicationPool;
 
 public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<RubyRackApplicationMetaData> {
 
@@ -42,11 +43,13 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 		super(RubyRackApplicationMetaData.class);
 		addInput(PoolMetaData.class);
 		addOutput(BeanMetaData.class);
+		setStage( DeploymentStages.POST_CLASSLOADER );
 	}
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
 
+		System.err.println( "RubyRackApplicationPoolDeployer.deploy(" + unit + ")" );
 		PoolMetaData pool = getPoolMetaData(unit, "web");
 
 		if (pool == null || pool.isGlobal() || pool.isShared()) {
@@ -58,7 +61,7 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 	}
 
 	protected void deploySharedPool(VFSDeploymentUnit unit) throws DeploymentException {
-		String beanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRackApplicationPool.class.getName());
 
 		String factoryBeanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
@@ -69,7 +72,7 @@ public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeploy
 	}
 
 	protected void deployDefaultPool(VFSDeploymentUnit unit, PoolMetaData metaData) throws DeploymentException {
-		String beanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRackApplicationPool.class.getName());
 
 		String factoryBeanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );

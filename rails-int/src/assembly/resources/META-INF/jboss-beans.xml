@@ -7,5 +7,6 @@
   <bean name="RailsGemVersionDeployer"              class="org.torquebox.rails.deployers.RailsGemVersionDeployer"/>
   <bean name="AppRailsYamlParsingDeployer"          class="org.torquebox.rails.deployers.AppRailsYamlParsingDeployer"/>
   <bean name="RailsRubyRuntimeFactoryDescriber"     class="org.torquebox.rails.deployers.RailsRubyRuntimeFactoryDescriber"/>
+  <bean name="RailsRackDeployer"                    class="org.torquebox.rails.deployers.RailsRackDeployer"/>
 
 </deployment>

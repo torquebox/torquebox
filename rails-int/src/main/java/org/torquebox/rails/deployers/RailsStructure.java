@@ -45,9 +45,11 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 	 * Construct.
 	 */
 	public RailsStructure() {
+		setRelativeOrder( -1000 );
 	}
 
 	public boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
+		System.err.println( "determine structure for: " + structureContext.getFile() );
 		boolean recognized = false;
 		VirtualFile file = structureContext.getFile();
 
@@ -57,7 +59,7 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 			VirtualFile config = file.getChild("config");
 			if (config != null) {
 				VirtualFile environment = config.getChild("environment.rb");
-				if (environment != null) {
+				if (environment.exists() ) {
 					context = createContext(structureContext, new String[] { "config" });
 
 					addRailsApplicationMetaData(structureContext, context);
@@ -106,9 +108,13 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 	}
 
 	@Override
+	protected boolean hasValidName(VirtualFile file) {
+		return file.getName().endsWith( ".rails" ) || file.getChild( "config/environment.rb" ).exists();
+	}
+
+	@Override
 	protected boolean hasValidSuffix(String name) {
 		return true;
-		//return name.endsWith( ".rails" );
 	}
 
 }

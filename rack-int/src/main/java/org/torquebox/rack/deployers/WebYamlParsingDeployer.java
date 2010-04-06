@@ -27,7 +27,9 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rack.spi.RackApplicationPool;
 import org.yaml.snakeyaml.Yaml;
 
 public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebApplicationMetaData> {
@@ -41,17 +43,17 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebAp
 	protected RackWebApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackWebApplicationMetaData root) throws Exception {
 		Yaml yaml = new Yaml();
 		Map<String, String> web = (Map<String, String>) yaml.load(file.openStream());
-		
-		if ( web == null ) {
-			throw new DeploymentException( "unable to parse: " + file );
+
+		if (web == null) {
+			throw new DeploymentException("unable to parse: " + file);
 		}
 
 		return parse(unit, web);
 	}
 
 	protected static RackWebApplicationMetaData parse(VFSDeploymentUnit unit, Map<String, String> web) {
-		
-		if ( web == null ) {
+
+		if (web == null) {
 			return null;
 		}
 
@@ -90,11 +92,17 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebAp
 		}
 
 		if (webMetaData.getStaticPathPrefix() == null) {
-			String staticPathPrefix = web.get( "static" );
-			if ( staticPathPrefix == null ) {
+			String staticPathPrefix = web.get("static");
+			if (staticPathPrefix == null) {
 				staticPathPrefix = "/public";
 			}
-			webMetaData.setStaticPathPrefix( staticPathPrefix );
+			webMetaData.setStaticPathPrefix(staticPathPrefix);
+		}
+
+		if (webMetaData.getRackApplicationPoolName() == null) {
+			String beanName = AttachmentUtils.beanName(unit, RackApplicationPool.class);
+			webMetaData.setRackApplicationPoolName( beanName );
+
 		}
 
 		return webMetaData;

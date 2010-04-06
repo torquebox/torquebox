@@ -47,6 +47,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
 
+		log.info( "deploy(" + unit + ")" );
 		RackWebApplicationMetaData rackWebAppMetaData = unit.getAttachment(RackWebApplicationMetaData.class);
 
 		if (rackWebAppMetaData == null) {
@@ -59,6 +60,8 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 		String appPoolName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
 		rackWebAppMetaData.setRackApplicationPoolName(appPoolName);
 		rackWebAppMetaData.setStaticPathPrefix( "/public" );
+		rackWebAppMetaData.setRackApplicationPoolName( AttachmentUtils.beanName(unit, RackApplicationPool.class ) );
+		
 
 		RubyRackApplicationMetaData rubyRackAppMetaData = new RubyRackApplicationMetaData();
 		rubyRackAppMetaData.setRackRoot( railsAppMetaData.getRailsRoot() );

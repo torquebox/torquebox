@@ -65,5 +65,9 @@ public class RackWebApplicationMetaData {
 	public String getStaticPathPrefix() {
 		return this.staticPathPrefix;
 	}
+	
+	public String toString() {
+		return "[RackWebApplicationMetaData: pool=" + this.rackApplicationPoolName + "]";
+	}
 
 }

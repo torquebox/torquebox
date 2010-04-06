@@ -45,7 +45,7 @@ public class RackFilter implements Filter {
 
 	private static final String KERNEL_NAME = "jboss.kernel:service=Kernel";
 
-	public static final String RACK_APP_POOL_INIT_PARAM = "jboss.rack.app.pool.name";
+	public static final String RACK_APP_POOL_INIT_PARAM = "torquebox.rack.app.pool.name";
 
 	private RackApplicationPool rackAppPool;
 
@@ -53,6 +53,8 @@ public class RackFilter implements Filter {
 
 	@SuppressWarnings("deprecation")
 	public void init(FilterConfig filterConfig) throws ServletException {
+		log.info( "FILTER=" + filterConfig );
+		log.info( "INIT=" + filterConfig.getInitParameterNames() );
 		Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute(KERNEL_NAME);
 		String rackAppPoolName = filterConfig.getInitParameter(RACK_APP_POOL_INIT_PARAM);
 		KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppPoolName);

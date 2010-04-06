@@ -25,7 +25,7 @@ import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jruby.Ruby;
@@ -42,6 +42,7 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 		super(RubyRackApplicationMetaData.class);
 		addInput(PoolMetaData.class);
 		addOutput(BeanMetaData.class);
+		setStage( DeploymentStages.POST_CLASSLOADER );
 	}
 
 	@Override

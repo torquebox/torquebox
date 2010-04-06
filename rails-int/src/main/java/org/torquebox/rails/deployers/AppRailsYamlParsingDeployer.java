@@ -27,19 +27,25 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
+import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.beans.metadata.spi.ValueMetaData;
+import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
+import org.jboss.deployers.client.spi.DeployerClient;
 import org.jboss.deployers.client.spi.Deployment;
-import org.jboss.deployers.client.spi.main.MainDeployer;
-import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
+import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.mc.vdf.PojoDeployment;
 import org.torquebox.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rack.spi.RackApplicationPool;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
@@ -61,10 +67,11 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 	public AppRailsYamlParsingDeployer() {
 		super(RailsApplicationMetaData.class);
-		addOutput(RackWebApplicationMetaData.class);
-		//addOutput(SipApplicationMetaData.class);
+		//addOutput(RackWebApplicationMetaData.class);
+		addOutput( BeanMetaData.class );
+		// addOutput(SipApplicationMetaData.class);
 		setSuffix("-rails.yml");
-		setStage(DeploymentStages.REAL);
+		//setStage(DeploymentStages.REAL);
 		// setTopLevelOnly(true);
 	}
 
@@ -76,9 +83,11 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			return null;
 		}
 
-		Deployment deployment = parseAndSetUp(file);
+		Deployment deployment = parseAndSetUp(vfsUnit, file);
 
-		performDeploy(vfsUnit, deployment);
+		if (deployment != null) {
+			attachPojoDeploymentBeanMetaData(vfsUnit, deployment);
+		}
 
 		// Returning null since the RailsMetaData is actually
 		// attached as a predetermined managed object on the
@@ -88,30 +97,23 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 	}
 
-	@Override
-	public void undeploy(DeploymentUnit unit) {
-		Deployment deployment = unit.getAttachment("torquebox.rails.root.deployment", Deployment.class);
-		if (deployment != null) {
-			MainDeployer deployer = unit.getAttachment("torquebox.rails.root.deployer", MainDeployer.class);
-			try {
-				deployer.removeDeployment(deployment);
-				deployer.process();
-			} catch (DeploymentException e) {
-				log.error(e);
-			}
-		}
+	protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
+		String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, unit.getSimpleName());
+
+		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, PojoDeployment.class.getName());
+
+		ValueMetaData deployerInject = builder.createInject("MainDeployer");
+
+		builder.addConstructorParameter(DeployerClient.class.getName(), deployerInject);
+		builder.addConstructorParameter(VFSDeployment.class.getName(), deployment);
+
+		AttachmentUtils.attach(unit, builder.getBeanMetaData());
 	}
 
-	private void performDeploy(DeploymentUnit unit, Deployment deployment) throws DeploymentException {
-		MainDeployer deployer = unit.getMainDeployer();
-		deployer.addDeployment(deployment);
-		deployer.process();
-		deployer.checkComplete(deployment);
-		unit.addAttachment("torquebox.rails.root.deployment", deployment);
-		unit.addAttachment("torquebox.rails.root.deployer", deployer);
-	}
-
-	//private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackWebApplicationMetaData webMetaData, SipApplicationMetaData sipMetaData) throws MalformedURLException, IOException {
+	// private Deployment createDeployment(RailsApplicationMetaData
+	// railsMetaData, RackWebApplicationMetaData webMetaData,
+	// SipApplicationMetaData sipMetaData) throws MalformedURLException,
+	// IOException {
 	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackWebApplicationMetaData webMetaData) throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(railsMetaData.getRailsRoot());
 
@@ -124,16 +126,16 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		}
 
 		/*
-		if (sipMetaData != null) {
-			attachments.addAttachment(SipApplicationMetaData.class, sipMetaData);
-		}
-		*/
+		 * if (sipMetaData != null) {
+		 * attachments.addAttachment(SipApplicationMetaData.class, sipMetaData);
+		 * }
+		 */
 
 		return deployment;
 	}
 
 	@SuppressWarnings("unchecked")
-	private Deployment parseAndSetUp(VirtualFile file) throws URISyntaxException, IOException {
+	private Deployment parseAndSetUp(VFSDeploymentUnit unit, VirtualFile file) throws URISyntaxException, IOException {
 		InputStream in = null;
 		try {
 			in = file.openStream();
@@ -142,29 +144,32 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 			Map<String, Object> application = (Map<String, Object>) results.get(APPLICATION_KEY);
 			Map<String, Object> web = (Map<String, Object>) results.get(WEB_KEY);
-			//Map<String, Object> sip = (Map<String, Object>) results.get(SIP_KEY);
+			// Map<String, Object> sip = (Map<String, Object>)
+			// results.get(SIP_KEY);
 
 			RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData();
+			String poolBeanName = null;
 
 			if (application != null) {
 				String railsRoot = application.get(RAILS_ROOT_KEY).toString();
 				String railsEnv = application.get(RAILS_ENV_KEY).toString();
-				
+
 				VirtualFile railsRootFile = VFS.getChild(railsRoot);
 				// TODO close handle on undeploy
 				// VFS.mountReal(new File(railsRoot), railsRootFile );
-				
+
 				railsMetaData.setRailsRoot(railsRootFile);
 				if (railsEnv != null) {
 					railsMetaData.setRailsEnv(railsEnv.toString());
 				}
+				poolBeanName = "torquebox." + railsRootFile.getName() + ".RackApplicationPool";
 			}
 
 			RackWebApplicationMetaData webMetaData = null;
 
 			if (web != null) {
 				String context = (String) web.get(CONTEXT_KEY);
-				String host    = (String) web.get(HOST_KEY);
+				String host = (String) web.get(HOST_KEY);
 				webMetaData = new RackWebApplicationMetaData();
 				if (host != null) {
 					webMetaData.setHost(host.toString());
@@ -172,25 +177,24 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 				if (context != null) {
 					webMetaData.setContext(context.toString());
 				}
+				webMetaData.setRackApplicationPoolName(poolBeanName);
+				log.info("WEB_META: " + webMetaData);
 			}
 
 			/*
-			SipApplicationMetaData sipMetaData = null;
+			 * SipApplicationMetaData sipMetaData = null;
+			 * 
+			 * if (sip != null) { ByteList rubyController = (ByteList)
+			 * sip.get(RUBYCONTROLLER_KEY); sipMetaData = new
+			 * SipApplicationMetaData(); if (rubyController != null) {
+			 * sipMetaData.setRubyController(rubyController.toString()); } }
+			 */
 
-			if (sip != null) {
-				ByteList rubyController = (ByteList) sip.get(RUBYCONTROLLER_KEY);
-				sipMetaData = new SipApplicationMetaData();
-				if (rubyController != null) {
-					sipMetaData.setRubyController(rubyController.toString());
-				}
-			}
-			*/
-
-			//return createDeployment(railsMetaData, webMetaData, sipMetaData);
+			// return createDeployment(railsMetaData, webMetaData, sipMetaData);
 			return createDeployment(railsMetaData, webMetaData);
 
 		} finally {
-			if ( in != null ) {
+			if (in != null) {
 				in.close();
 			}
 		}
