@@ -25,9 +25,11 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.deployers.RubyRackApplicationPoolDeployer;
 import org.torquebox.rack.metadata.RackWebApplicationMetaData;
 import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.spi.RackApplicationPool;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
 public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplicationMetaData> {
@@ -53,7 +55,8 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 			unit.addAttachment(RackWebApplicationMetaData.class, rackWebAppMetaData);
 		}
 
-		String appPoolName = RubyRackApplicationPoolDeployer.getBeanName( unit );
+		//String appPoolName = RubyRackApplicationPoolDeployer.getBeanName( unit );
+		String appPoolName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
 		rackWebAppMetaData.setRackApplicationPoolName(appPoolName);
 		rackWebAppMetaData.setStaticPathPrefix( "/public" );
 

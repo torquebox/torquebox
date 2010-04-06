@@ -43,7 +43,7 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging-spi</artifactId>
+      <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
