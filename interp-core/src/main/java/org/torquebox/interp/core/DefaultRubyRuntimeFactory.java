@@ -27,9 +27,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.jboss.beans.metadata.api.annotations.Create;
 import org.jboss.kernel.Kernel;
+import org.jboss.vfs.TempFileProvider;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
@@ -68,7 +74,10 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 	/** Error stream for the interpreter. */
 	private PrintStream errorStream = System.err;
-	
+
+	/** JRUBY_HOME. */
+	private String jrubyHome;
+
 	/** GEM_PATH. */
 	private String gemPath;
 
@@ -82,8 +91,8 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	/**
 	 * Construct with an initializer.
 	 * 
-	 * @param initializer
-	 *            The initializer (or null) to use for each created runtime.
+	 * @param initializer The initializer (or null) to use for each created
+	 *        runtime.
 	 */
 	public DefaultRubyRuntimeFactory(RuntimeInitializer initializer) {
 		this.initializer = initializer;
@@ -96,20 +105,27 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	public String getApplicationName() {
 		return this.applicationName;
 	}
-	
+
 	public void setGemPath(String gemPath) {
 		this.gemPath = gemPath;
 	}
-	
+
 	public String getGemPath() {
 		return this.gemPath;
+	}
+
+	public void setJRubyHome(String jrubyHome) {
+		this.jrubyHome = jrubyHome;
+	}
+
+	public String getJRubyHome() {
+		return this.jrubyHome;
 	}
 
 	/**
 	 * Inject the Microcontainer kernel.
 	 * 
-	 * @param kernel
-	 *            The microcontainer kernel.
+	 * @param kernel The microcontainer kernel.
 	 */
 	public void setKernel(Kernel kernel) {
 		this.kernel = kernel;
@@ -127,8 +143,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	/**
 	 * Set the interpreter classloader.
 	 * 
-	 * @param classLoader
-	 *            The classloader.
+	 * @param classLoader The classloader.
 	 */
 	public void setClassLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;
@@ -158,7 +173,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	 */
 	@Create(ignored = true)
 	public synchronized Ruby create() throws Exception {
-		RubyInstanceConfig config = new RubyInstanceConfig();
+		RubyInstanceConfig config = new CustomRubyInstanceConfig();
 
 		if (this.classCache == null) {
 			this.classCache = new ClassCache<Object>(getClassLoader());
@@ -166,32 +181,77 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		config.setClassCache(classCache);
 		config.setLoadServiceCreator(new VFSLoadServiceCreator());
 
-		String jrubyHome = null;
-
-		jrubyHome = System.getProperty("jruby.home");
+		String jrubyHome = this.jrubyHome;
 
 		if (jrubyHome == null) {
-			jrubyHome = System.getenv("JRUBY_HOME");
-		}
 
-		if (jrubyHome == null) {
-			String jbossHome = System.getProperty("jboss.home");
+			jrubyHome = System.getProperty("jruby.home");
 
-			if (jbossHome != null) {
-				File candidatePath = new File(jbossHome, "../jruby");
-				if (candidatePath.exists() && candidatePath.isDirectory()) {
-					jrubyHome = candidatePath.getAbsolutePath();
-				}
+			if (jrubyHome == null) {
+				jrubyHome = System.getenv("JRUBY_HOME");
 			}
 
+			if (jrubyHome == null) {
+				String jbossHome = System.getProperty("jboss.home");
+
+				if (jbossHome != null) {
+					File candidatePath = new File(jbossHome, "../jruby");
+					if (candidatePath.exists() && candidatePath.isDirectory()) {
+						jrubyHome = candidatePath.getAbsolutePath();
+					}
+				}
+
+			}
 		}
 
 		if (jrubyHome == null) {
-			String binJruby = RubyInstanceConfig.class.getResource("/META-INF/jruby.home/bin/jruby").toURI().getSchemeSpecificPart();
-			jrubyHome = binJruby.substring(0, binJruby.length() - 10);
+			jrubyHome = RubyInstanceConfig.class.getResource("/META-INF/jruby.home").toURI().getSchemeSpecificPart();
+
+			if (jrubyHome.startsWith("file:") && jrubyHome.contains("!/")) {
+				int slashLoc = jrubyHome.indexOf('/');
+				int bangLoc = jrubyHome.indexOf('!');
+
+				String jarPath = jrubyHome.substring(slashLoc, bangLoc);
+
+				System.err.println("JAR [" + jarPath + "]");
+
+				String extraPath = jrubyHome.substring(bangLoc + 1);
+
+				System.err.println("EXTRA [" + extraPath + "]");
+
+				VirtualFile vfsJar = VFS.getChild(jarPath);
+
+				if (vfsJar.exists()) {
+					System.err.println("VFS JAR GOOD");
+					if (vfsJar.isDirectory()) {
+						System.err.println("VFS JAR MOUNTED");
+					} else {
+						System.err.println("VFS JAR needs mount");
+						ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+						TempFileProvider tempFileProvider = TempFileProvider.create( "jruby.home", executor);
+						VFS.mountZip( vfsJar, vfsJar, tempFileProvider  );
+						
+						if ( vfsJar.isDirectory() ) {
+							System.err.println(" SUCCESS MOUNT" );
+							
+							VirtualFile vfsJrubyHome = vfsJar.getChild( extraPath );
+							
+							if ( vfsJrubyHome.exists() ) {
+								System.err.println( "VFS_JRUBY_HOME=" + vfsJrubyHome );
+								jrubyHome = vfsJrubyHome.toURL().toExternalForm();
+							}
+						}
+					}
+				}
+
+			}
+
+			// jrubyHome = jrubyHome.replaceAll( "^file:", "vfs:" );
+			// jrubyHome = jrubyHome.replaceAll( "!/", "/" );
 		}
-		
-		System.err.println( "JRUBY_HOME=" + jrubyHome );
+
+		System.err.println("JRUBY_HOME=" + jrubyHome);
+		// new Exception().printStackTrace();
 
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
@@ -202,9 +262,9 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		config.setError(getError());
 
 		List<String> loadPath = new ArrayList<String>();
-		//loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
-		//loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/shared");
-		//loadPath.add("META-INF/jruby.home/lib/ruby/1.8");
+		// loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
+		// loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/shared");
+		// loadPath.add("META-INF/jruby.home/lib/ruby/1.8");
 		if (this.loadPaths != null) {
 			loadPath.addAll(this.loadPaths);
 		}
@@ -216,7 +276,9 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		}
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);
-		runtime.getLoadService().require( "rubygems" );
+		runtime.evalScriptlet("puts %Q(GEM_HOME=#{ENV['GEM_HOME']})");
+		runtime.evalScriptlet("puts %Q(GEM_PATH=#{ENV['GEM_PATH']})");
+		runtime.getLoadService().require("rubygems");
 		return runtime;
 	}
 
@@ -239,19 +301,17 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 		if (path == null) {
 			env.put("PATH", "");
 		}
-		/*
-		if ( this.gemPath != null ) {
-			env.put( "GEM_PATH", this.gemPath );
+		if (this.gemPath != null) {
+			System.err.println("GEM_PATH=" + this.gemPath);
+			env.put("GEM_PATH", this.gemPath);
 		}
-		*/
 		return env;
 	}
 
 	/**
 	 * Set the interpreter output stream.
 	 * 
-	 * @param outputStream
-	 *            The output stream.
+	 * @param outputStream The output stream.
 	 */
 	public void setOutput(PrintStream outputStream) {
 		this.outputStream = outputStream;
@@ -269,8 +329,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	/**
 	 * Set the interpreter error stream.
 	 * 
-	 * @param errorStream
-	 *            The error stream.
+	 * @param errorStream The error stream.
 	 */
 	public void setError(PrintStream errorStream) {
 		this.errorStream = errorStream;
@@ -292,8 +351,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	 * Load paths may be either real filesystem paths or VFS URLs
 	 * </p>
 	 * 
-	 * @param loadPaths
-	 *            The list of load paths.
+	 * @param loadPaths The list of load paths.
 	 */
 	public void setLoadPaths(List<String> loadPaths) {
 		this.loadPaths = loadPaths;

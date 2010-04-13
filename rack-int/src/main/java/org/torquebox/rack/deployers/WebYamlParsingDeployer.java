@@ -21,66 +21,65 @@
  */
 package org.torquebox.rack.deployers;
 
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rack.metadata.RackWebApplicationMetaData;
-import org.torquebox.rack.spi.RackApplicationPool;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
-public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebApplicationMetaData> {
+public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackApplicationMetaData> {
 
 	public WebYamlParsingDeployer() {
-		super(RackWebApplicationMetaData.class);
+		super(RackApplicationMetaData.class);
 		setName("web.yml");
 	}
 
 	@SuppressWarnings("unchecked")
-	protected RackWebApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackWebApplicationMetaData root) throws Exception {
+	protected RackApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackApplicationMetaData root) throws Exception {
 		Yaml yaml = new Yaml();
-		Map<String, String> web = (Map<String, String>) yaml.load(file.openStream());
+		Map<String, Object> web = (Map<String, Object>) yaml.load(file.openStream());
 
 		if (web == null) {
 			throw new DeploymentException("unable to parse: " + file);
 		}
 
-		return parse(unit, web);
+		return parse(unit, web, root);
 	}
 
-	protected static RackWebApplicationMetaData parse(VFSDeploymentUnit unit, Map<String, String> web) {
+	@SuppressWarnings("unchecked")
+	public static RackApplicationMetaData parse(VFSDeploymentUnit unit, Map<String, Object> web, RackApplicationMetaData rackMetaData) {
 
 		if (web == null) {
 			return null;
 		}
 
-		RackWebApplicationMetaData webMetaData = unit.getAttachment(RackWebApplicationMetaData.class);
-
-		if (webMetaData == null) {
-			webMetaData = new RackWebApplicationMetaData();
-			unit.addAttachment(RackWebApplicationMetaData.class, webMetaData);
+		if (rackMetaData == null) {
+			rackMetaData = new RackApplicationMetaData();
 		}
 
-		if (webMetaData.getHost() == null) {
-			String host = web.get("host");
+		if (rackMetaData.getHosts().isEmpty()) {
+			Object hosts = web.get("host");
 
-			if (host == null) {
-				host = "localhost";
-			} else {
-				host = host.trim();
-				if (host.equals("")) {
-					host = "localhost";
+			if (hosts != null) {
+				if (hosts instanceof List) {
+					List<String> hostList = (List<String>) hosts;
+					for (String each : hostList) {
+						rackMetaData.addHost(each);
+					}
+				} else {
+					rackMetaData.addHost(hosts.toString());
 				}
+			} else {
+				rackMetaData.addHost( "localhost" );
 			}
-
-			webMetaData.setHost(host);
 		}
 
-		if (webMetaData.getContext() == null) {
-			String context = web.get("context");
+		if (rackMetaData.getContextPath() == null) {
+			String context = (String) web.get("context");
 
 			if (context == null) {
 				context = "/";
@@ -88,24 +87,18 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackWebAp
 				context = context.trim();
 			}
 
-			webMetaData.setContext(context);
+			rackMetaData.setContextPath(context);
 		}
 
-		if (webMetaData.getStaticPathPrefix() == null) {
-			String staticPathPrefix = web.get("static");
+		if (rackMetaData.getStaticPathPrefix() == null) {
+			String staticPathPrefix = (String) web.get("static");
 			if (staticPathPrefix == null) {
 				staticPathPrefix = "/public";
 			}
-			webMetaData.setStaticPathPrefix(staticPathPrefix);
+			rackMetaData.setStaticPathPrefix(staticPathPrefix);
 		}
 
-		if (webMetaData.getRackApplicationPoolName() == null) {
-			String beanName = AttachmentUtils.beanName(unit, RackApplicationPool.class);
-			webMetaData.setRackApplicationPoolName( beanName );
-
-		}
-
-		return webMetaData;
+		return rackMetaData;
 	}
 
 }

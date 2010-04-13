@@ -1,16 +1,8 @@
 package org.torquebox.test.ruby;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.jruby.Ruby;
-import org.jruby.RubyInstanceConfig;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.interp.core.DefaultRubyRuntimeFactory;
-import org.torquebox.interp.core.VFSLoadServiceCreator;
 
 import static org.junit.Assert.*;
 

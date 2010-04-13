@@ -14,6 +14,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
 	@Test
 	public void testInitializeWithGems() throws Exception {
+		Class.forName( VFS.class.getName() );
 		Ruby ruby = createRuby();
 		
 		String railsRootStr = System.getProperty( "user.dir" ) + "/src/test/rails/ballast-2.3.5";

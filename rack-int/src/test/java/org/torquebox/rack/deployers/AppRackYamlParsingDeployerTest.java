@@ -13,7 +13,7 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
 import org.torquebox.rack.core.RackRuntimeInitializer;
-import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
@@ -58,7 +58,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		
 		Attachments attachments = deployment.getPredeterminedManagedObjects();
 		
-		RubyRackApplicationMetaData rackAppMetaData = attachments.getAttachment( RubyRackApplicationMetaData.class );
+		RackApplicationMetaData rackAppMetaData = attachments.getAttachment( RackApplicationMetaData.class );
 		assertNotNull( rackAppMetaData );
 		assertEquals( "test", rackAppMetaData.getRackEnv() );
 		

@@ -21,17 +21,24 @@
  */
 package org.torquebox.rack.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.vfs.VirtualFile;
 
-public class RubyRackApplicationMetaData {
+public class RackApplicationMetaData {
 	
 	private String rackEnv;
 	private VirtualFile rackRoot;
 	private String rackUpScript;
 	
+	private List<String> hosts = new ArrayList<String>();
+	private String contextPath;
+	private String staticPathPrefix;
+	
 	private String rubyRuntimeFactoryName;
 
-	public RubyRackApplicationMetaData() {
+	public RackApplicationMetaData() {
 		
 	}
 	
@@ -59,6 +66,30 @@ public class RubyRackApplicationMetaData {
 		return this.rackUpScript;
 	}
 	
+	public void addHost(String host) {
+		this.hosts.add( host );
+	}
+	
+	public List<String> getHosts() {
+		return this.hosts;
+	}
+	
+	public void setContextPath(String contextPath) {
+		this.contextPath = contextPath;
+	}
+	
+	public String getContextPath() {
+		return this.contextPath;
+	}
+	
+	public void setStaticPathPrefix(String staticPathPrefix) {
+		this.staticPathPrefix = staticPathPrefix;
+	}
+	
+	public String getStaticPathPrefix() {
+		return this.staticPathPrefix;
+	}
+	
 	public void setRubyRuntimeFactoryName(String rubyRuntimeFactoryName) {
 		this.rubyRuntimeFactoryName = rubyRuntimeFactoryName;
 	}
@@ -66,4 +97,5 @@ public class RubyRackApplicationMetaData {
 	public String getRubyRuntimeFactoryName() {
 		return this.rubyRuntimeFactoryName;
 	}
+	
 }

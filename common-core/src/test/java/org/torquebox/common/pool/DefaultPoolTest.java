@@ -21,11 +21,11 @@ public class DefaultPoolTest extends TestCase {
 	}
 
 	private MockInstanceFactory instanceFactory;
-	private DefaultPool<String> pool;
+	private ConstrainedPool<String> pool;
 
 	public void setUp() throws Exception {
 		this.instanceFactory = new MockInstanceFactory();
-		this.pool = new DefaultPool<String>(this.instanceFactory);
+		this.pool = new ConstrainedPool<String>(this.instanceFactory);
 	}
 
 	public void tearDown() throws Exception {

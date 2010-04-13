@@ -34,7 +34,6 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.client.spi.DeployerClient;
 import org.jboss.deployers.client.spi.Deployment;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
@@ -44,8 +43,8 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
-import org.torquebox.rack.metadata.RackWebApplicationMetaData;
-import org.torquebox.rack.spi.RackApplicationPool;
+import org.torquebox.rack.deployers.WebYamlParsingDeployer;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
@@ -114,15 +113,15 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 	// railsMetaData, RackWebApplicationMetaData webMetaData,
 	// SipApplicationMetaData sipMetaData) throws MalformedURLException,
 	// IOException {
-	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackWebApplicationMetaData webMetaData) throws MalformedURLException, IOException {
+	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackApplicationMetaData rackMetaData) throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(railsMetaData.getRailsRoot());
 
 		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
 
 		attachments.addAttachment(RailsApplicationMetaData.class, railsMetaData);
 
-		if (webMetaData != null) {
-			attachments.addAttachment(RackWebApplicationMetaData.class, webMetaData);
+		if (rackMetaData != null) {
+			attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		}
 
 		/*
@@ -165,22 +164,8 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 				poolBeanName = "torquebox." + railsRootFile.getName() + ".RackApplicationPool";
 			}
 
-			RackWebApplicationMetaData webMetaData = null;
-
-			if (web != null) {
-				String context = (String) web.get(CONTEXT_KEY);
-				String host = (String) web.get(HOST_KEY);
-				webMetaData = new RackWebApplicationMetaData();
-				if (host != null) {
-					webMetaData.setHost(host.toString());
-				}
-				if (context != null) {
-					webMetaData.setContext(context.toString());
-				}
-				webMetaData.setRackApplicationPoolName(poolBeanName);
-				log.info("WEB_META: " + webMetaData);
-			}
-
+			RackApplicationMetaData rackMetaData = WebYamlParsingDeployer.parse( unit, web, null );
+			
 			/*
 			 * SipApplicationMetaData sipMetaData = null;
 			 * 
@@ -191,7 +176,7 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			 */
 
 			// return createDeployment(railsMetaData, webMetaData, sipMetaData);
-			return createDeployment(railsMetaData, webMetaData);
+			return createDeployment(railsMetaData, rackMetaData);
 
 		} finally {
 			if (in != null) {

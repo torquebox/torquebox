@@ -18,15 +18,15 @@ import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
 
-public class PoolDeployerTest extends AbstractDeployerTestCase {
+public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 
-	private PoolDeployer deployer;
+	private RuntimePoolDeployer deployer;
 	private String runtimeInstanceFactoryDeploymentName;
 	private String runtimeInstanceDeploymentName;
 
 	@Before
 	public void setUpDeployer() throws Throwable {
-		this.deployer = new PoolDeployer();
+		this.deployer = new RuntimePoolDeployer();
 		addDeployer(this.deployer);
 	}
 
@@ -40,7 +40,7 @@ public class PoolDeployerTest extends AbstractDeployerTestCase {
 		PoolMetaData poolMetaData = new PoolMetaData();
 		poolMetaData.setInstanceFactoryName("instance_factory");
 		poolMetaData.setName("pool_one");
-		poolMetaData.setMinimumSize(10);
+		poolMetaData.setMinimumSize(2);
 		poolMetaData.setMaximumSize(200);
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
@@ -53,7 +53,7 @@ public class PoolDeployerTest extends AbstractDeployerTestCase {
 		
 		assertNotNull(poolOne);
 		assertEquals( "pool_one", poolOne.getName() );
-		assertEquals( 10, poolOne.getMinInstances() );
+		assertEquals( 2, poolOne.getMinInstances() );
 		assertEquals( 200, poolOne.getMaxInstances() );
 		assertSame( runtimeFactory, poolOne.getRubyRuntimeFactory() );
 

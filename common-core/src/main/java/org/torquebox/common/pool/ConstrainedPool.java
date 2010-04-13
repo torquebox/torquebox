@@ -20,7 +20,7 @@ import org.torquebox.common.spi.Pool;
  * 
  * @param <T> The poolable resource.
  */
-public class DefaultPool<T> implements Pool<T> {
+public class ConstrainedPool<T> implements Pool<T> {
 
 	/** Instance factory. */
 	private InstanceFactory<T> factory;
@@ -57,7 +57,7 @@ public class DefaultPool<T> implements Pool<T> {
 	 * 
 	 * @param factory The instance factory.
 	 */
-	public DefaultPool(InstanceFactory<T> factory) {
+	public ConstrainedPool(InstanceFactory<T> factory) {
 		this.factory = factory;
 	}
 	

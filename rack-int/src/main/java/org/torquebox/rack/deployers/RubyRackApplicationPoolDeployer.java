@@ -33,21 +33,21 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.DefaultRackApplicationPool;
 import org.torquebox.rack.core.RubyRackApplicationFactory;
 import org.torquebox.rack.core.SharedRackApplicationPool;
-import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.spi.RackApplicationPool;
 
-public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<RubyRackApplicationMetaData> {
+public class RubyRackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
 	public RubyRackApplicationPoolDeployer() {
-		super(RubyRackApplicationMetaData.class);
+		super(RackApplicationMetaData.class);
 		addInput(PoolMetaData.class);
 		addOutput(BeanMetaData.class);
 		setStage( DeploymentStages.POST_CLASSLOADER );
 	}
 
 	@Override
-	public void deploy(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
+	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
 
 		System.err.println( "RubyRackApplicationPoolDeployer.deploy(" + unit + ")" );
 		PoolMetaData pool = getPoolMetaData(unit, "web");

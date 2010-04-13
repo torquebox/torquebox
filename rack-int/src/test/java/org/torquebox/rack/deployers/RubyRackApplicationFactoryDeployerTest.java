@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.RubyRackApplicationFactory;
-import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
@@ -37,10 +37,10 @@ public class RubyRackApplicationFactoryDeployerTest extends AbstractDeployerTest
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 
 		
-		RubyRackApplicationMetaData rackAppMetaData = new RubyRackApplicationMetaData();
+		RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
 		rackAppMetaData.setRubyRuntimeFactoryName( "runtime-factory" );
 		
-		unit.addAttachment( RubyRackApplicationMetaData.class, rackAppMetaData );
+		unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
 		
 		PoolMetaData poolMetaData = new PoolMetaData();
 		poolMetaData.setName("web");

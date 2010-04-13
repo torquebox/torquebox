@@ -6,12 +6,12 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 public class DefaultRackApplicationPoolDeployer extends AbstractDeployer {
 
 	public DefaultRackApplicationPoolDeployer() {
-		setInput(RubyRackApplicationMetaData.class);
+		setInput(RackApplicationMetaData.class);
 		addInput(PoolMetaData.class);
 		addOutput(PoolMetaData.class);
 		setStage(DeploymentStages.DESCRIBE);

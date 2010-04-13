@@ -16,9 +16,9 @@ import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.AbstractMultipleMetaDataDeployer;
 
-public class PoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData> {
+public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData> {
 
-	public PoolDeployer() {
+	public RuntimePoolDeployer() {
 		super(PoolMetaData.class);
 		addOutput(BeanMetaData.class);
 		setStage(DeploymentStages.REAL);

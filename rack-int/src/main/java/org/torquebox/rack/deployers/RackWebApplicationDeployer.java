@@ -39,16 +39,16 @@ import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 import org.torquebox.rack.core.servlet.RackFilter;
-import org.torquebox.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<RackWebApplicationMetaData> {
+public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
 	public static final String FILTER_NAME = "torquebox.rack";
 	public static final String SERVLET_NAME = "torquebox.static";
 	public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.rack.core.servlet.StaticResourceServlet";
 
 	public RackWebApplicationDeployer() {
-		super(RackWebApplicationMetaData.class);
+		super(RackApplicationMetaData.class);
 		addInput(WebMetaData.class);
 		addInput(JBossWebMetaData.class);
 		addOutput(WebMetaData.class);
@@ -57,7 +57,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 	}
 
 	@Override
-	public void deploy(VFSDeploymentUnit unit, RackWebApplicationMetaData metaData) throws DeploymentException {
+	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
 		WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
 
 		if (webMetaData == null) {
@@ -72,8 +72,8 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 		List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
 		ParamValueMetaData rackAppFactory = new ParamValueMetaData();
-		rackAppFactory.setParamName(RackFilter.RACK_APP_POOL_INIT_PARAM);
-		rackAppFactory.setParamValue(metaData.getRackApplicationPoolName());
+		//rackAppFactory.setParamName(RackFilter.RACK_APP_POOL_INIT_PARAM);
+		//rackAppFactory.setParamValue(metaData.getRackApplicationPoolName());
 		initParams.add(rackAppFactory);
 
 		rackFilter.setInitParam(initParams);
@@ -133,10 +133,10 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 			unit.addAttachment(JBossWebMetaData.class, jbossWebMetaData);
 		}
 
-		jbossWebMetaData.setContextRoot(metaData.getContext());
+		jbossWebMetaData.setContextRoot(metaData.getContextPath());
 
-		if (metaData.getHost() != null) {
-			jbossWebMetaData.setVirtualHosts(Collections.singletonList(metaData.getHost()));
+		if (! metaData.getHosts().isEmpty() ) {
+			jbossWebMetaData.setVirtualHosts(metaData.getHosts());
 		}
 	}
 }

@@ -26,9 +26,7 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rack.deployers.RubyRackApplicationPoolDeployer;
-import org.torquebox.rack.metadata.RackWebApplicationMetaData;
-import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationPool;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
@@ -38,9 +36,9 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 	
 	public RailsRackDeployer() {
 		super(RailsApplicationMetaData.class);
-		addInput(RackWebApplicationMetaData.class);
-		addOutput(RackWebApplicationMetaData.class);
-		addOutput(RubyRackApplicationMetaData.class);
+		addInput(RackApplicationMetaData.class);
+		addOutput(RackApplicationMetaData.class);
+		addOutput(RackApplicationMetaData.class);
 		setStage(DeploymentStages.POST_PARSE);
 	}
 	
@@ -48,29 +46,29 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 	public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
 
 		log.info( "deploy(" + unit + ")" );
-		RackWebApplicationMetaData rackWebAppMetaData = unit.getAttachment(RackWebApplicationMetaData.class);
+		RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
 
-		if (rackWebAppMetaData == null) {
-			rackWebAppMetaData = new RackWebApplicationMetaData();
-			rackWebAppMetaData.setContext("/");
-			unit.addAttachment(RackWebApplicationMetaData.class, rackWebAppMetaData);
+		if (rackMetaData == null) {
+			rackMetaData = new RackApplicationMetaData();
+			rackMetaData.setContextPath("/");
+			unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		}
 
 		//String appPoolName = RubyRackApplicationPoolDeployer.getBeanName( unit );
-		String appPoolName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
-		rackWebAppMetaData.setRackApplicationPoolName(appPoolName);
-		rackWebAppMetaData.setStaticPathPrefix( "/public" );
-		rackWebAppMetaData.setRackApplicationPoolName( AttachmentUtils.beanName(unit, RackApplicationPool.class ) );
+		//String appPoolName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
+		//rackMetaData.setRackApplicationPoolName(appPoolName);
+		rackMetaData.setStaticPathPrefix( "/public" );
+		//rackMetaData.setRackApplicationPoolName( AttachmentUtils.beanName(unit, RackApplicationPool.class ) );
 		
 
-		RubyRackApplicationMetaData rubyRackAppMetaData = new RubyRackApplicationMetaData();
+		RackApplicationMetaData rubyRackAppMetaData = new RackApplicationMetaData();
 		rubyRackAppMetaData.setRackRoot( railsAppMetaData.getRailsRoot() );
 		rubyRackAppMetaData.setRackEnv( railsAppMetaData.getRailsEnv() );
 		
-		String rackUpScript = getRackUpScript( rackWebAppMetaData.getContext() );
+		String rackUpScript = getRackUpScript( rackMetaData.getContextPath() );
 		rubyRackAppMetaData.setRackUpScript( rackUpScript );
 
-		unit.addAttachment(RubyRackApplicationMetaData.class, rubyRackAppMetaData);
+		unit.addAttachment(RackApplicationMetaData.class, rubyRackAppMetaData);
 	}
 	
 	protected String getRackUpScript(String context) {

@@ -6,7 +6,9 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -19,7 +21,8 @@ import org.jruby.runtime.load.LoadService;
 import org.jruby.runtime.load.LoadServiceResource;
 import org.jruby.util.JRubyFile;
 
-/** VFS-enabled {@link LoadService}
+/**
+ * VFS-enabled {@link LoadService}
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
@@ -71,6 +74,7 @@ public class VFSLoadService extends LoadService {
 	}
 
 	protected Library findLibraryWithoutCWD(SearchState state, String baseName, SuffixType suffixType) {
+		//System.err.println("findLibraryWithoutCWD(" + baseName + "," + suffixType + ")");
 		Library library = null;
 
 		switch (suffixType) {
@@ -103,6 +107,7 @@ public class VFSLoadService extends LoadService {
 	}
 
 	protected LoadServiceResource tryResourceFromLoadPathOrURL(SearchState state, String baseName, SuffixType suffixType) {
+		//System.err.println("tryResourceFromLoadPathOrUrl(" + baseName + "," + suffixType + ")");
 		LoadServiceResource foundResource = null;
 
 		// if it's a ./ baseName, use CWD logic
@@ -161,6 +166,7 @@ public class VFSLoadService extends LoadService {
 	}
 
 	protected LoadServiceResource tryResourceFromLoadPath(String namePlusSuffix, String loadPathEntry) throws RaiseException {
+		//System.err.println("tryResourceFromLoadPath(" + namePlusSuffix + "," + loadPathEntry + ")");
 		LoadServiceResource foundResource = null;
 
 		try {
@@ -171,14 +177,15 @@ public class VFSLoadService extends LoadService {
 						URL vfsUrl = makeUrl(loadPathEntry, namePlusSuffix);
 						// VirtualFile file = VFS.getRoot(vfsUrl);
 						VirtualFile file = VFS.getChild(vfsUrl);
+						//System.err.println(file.exists() + " = " + file);
 						if (file != null && file.exists()) {
 							return new LoadServiceResource(file.toURI().toURL(), vfsUrl.toExternalForm());
 						}
 						return null;
 					} catch (MalformedURLException e) {
-						// log.error( "vfs failure", e );
+						e.printStackTrace();
 					} catch (URISyntaxException e) {
-						// log.error( "vfs failure", e );
+						e.printStackTrace();
 					}
 				}
 
@@ -194,8 +201,8 @@ public class VFSLoadService extends LoadService {
 					if (reportedPath.charAt(0) != '.') {
 						reportedPath = "./" + reportedPath;
 					}
-					actualPath = JRubyFile.create(JRubyFile.create(runtime.getCurrentDirectory(), loadPathEntry).getAbsolutePath(),
-							RubyFile.expandUserPath(runtime.getCurrentContext(), namePlusSuffix));
+					actualPath = JRubyFile.create(JRubyFile.create(runtime.getCurrentDirectory(), loadPathEntry).getAbsolutePath(), RubyFile
+							.expandUserPath(runtime.getCurrentContext(), namePlusSuffix));
 				}
 				if (actualPath.isFile()) {
 					try {
@@ -212,6 +219,7 @@ public class VFSLoadService extends LoadService {
 	}
 
 	protected LoadServiceResource tryResourceAsIs(String namePlusSuffix) throws RaiseException {
+		//System.err.println("tryResourceAsIs(" + namePlusSuffix + ")");
 		LoadServiceResource foundResource = null;
 
 		try {
@@ -261,6 +269,7 @@ public class VFSLoadService extends LoadService {
 	}
 
 	public void load(String file, boolean wrap) {
+		//System.err.println("load(" + file + ")");
 		if (!runtime.getProfile().allowLoad(file)) {
 			throw runtime.newLoadError("No such file to load -- " + file);
 		}

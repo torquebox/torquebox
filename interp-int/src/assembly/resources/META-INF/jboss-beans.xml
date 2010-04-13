@@ -2,19 +2,12 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="BootstrapRubyRuntimeDeployer"           class="org.torquebox.interp.deployers.BootstrapRubyRuntimeDeployer"/>
   <bean name="RubyRuntimeFactoryDeployer"             class="org.torquebox.interp.deployers.RubyRuntimeFactoryDeployer">
     <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
   </bean>
 
   <bean name="PoolingYamlParsingDeployer"             class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
-  <bean name="PoolDeployer"                           class="org.torquebox.interp.deployers.PoolDeployer"/>
-
-
-<!--
-  <bean name="PoolingYamlParsingDeployer"             class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
-  <bean name="DefaultPoolingDeployer"                 class="org.torquebox.interp.deployers.DefaultPoolingDeployer"/>
-  <bean name="RubyRuntimePoolDeployer"                class="org.torquebox.interp.deployers.RubyRuntimePoolDeployer"/>
--->
+  <bean name="RuntimePoolDeployer"                    class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
+  <bean name="BootstrapRubyRuntimeDeployer"           class="org.torquebox.interp.deployers.BootstrapRubyRuntimeDeployer"/>
 
 </deployment>

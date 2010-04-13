@@ -1,7 +1,7 @@
 /* Copyright 2010 Red Hat, Inc. */
 package org.torquebox.rack.core;
 
-import org.torquebox.common.pool.DefaultPool;
+import org.torquebox.common.pool.ConstrainedPool;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.spi.RackApplicationPool;
@@ -10,7 +10,7 @@ import org.torquebox.rack.spi.RackApplicationPool;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class DefaultRackApplicationPool extends DefaultPool<RackApplication> implements RackApplicationPool {
+public class DefaultRackApplicationPool extends ConstrainedPool<RackApplication> implements RackApplicationPool {
 	
 	/** Construct with a factory.
 	 * 

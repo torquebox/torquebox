@@ -48,11 +48,10 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
 import org.torquebox.rack.core.RackRuntimeInitializer;
-import org.torquebox.rack.metadata.RackWebApplicationMetaData;
-import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
-public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyRackApplicationMetaData> {
+public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackApplicationMetaData> {
 
 	private Logger log = Logger.getLogger(AppRackYamlParsingDeployer.class);
 
@@ -67,14 +66,14 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 	private static final String CONTEXT_KEY = "context";
 
 	public AppRackYamlParsingDeployer() {
-		super(RubyRackApplicationMetaData.class);
+		super(RackApplicationMetaData.class);
 		addOutput(BeanMetaData.class);
 		setSuffix("-rack.yml");
 		setStage(DeploymentStages.PARSE);
 	}
 
 	@Override
-	protected RubyRackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RubyRackApplicationMetaData root) throws Exception {
+	protected RackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RackApplicationMetaData root) throws Exception {
 
 		if (!file.equals(vfsUnit.getRoot())) {
 			log.debug("not deploying non-root: " + file);
@@ -105,26 +104,22 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 		AttachmentUtils.attach(unit, builder.getBeanMetaData());
 	}
 
-	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, RubyRackApplicationMetaData rackMetaData, RackWebApplicationMetaData webMetaData)
+	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, RackApplicationMetaData rackMetaData)
 			throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackRoot);
 
 		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
 
-		attachments.addAttachment(RubyRackApplicationMetaData.class, rackMetaData);
+		attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		attachments.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
-
-		if (webMetaData != null) {
-			attachments.addAttachment(RackWebApplicationMetaData.class, webMetaData);
-		}
 
 		return deployment;
 	}
 
 	@SuppressWarnings("unchecked")
-	private RubyRackApplicationMetaData parseAndSetUpApplication(VirtualFile rackRootFile, Map<String, Object> config) throws IOException {
+	private RackApplicationMetaData parseAndSetUpApplication(VFSDeploymentUnit unit, VirtualFile rackRootFile, Map<String, Object> config) throws IOException {
 		Map<String, Object> application = (Map<String, Object>) config.get(APPLICATION_KEY);
-		RubyRackApplicationMetaData rackMetaData = new RubyRackApplicationMetaData();
+		RackApplicationMetaData rackMetaData = new RackApplicationMetaData();
 
 		rackMetaData.setRackRoot(rackRootFile);
 
@@ -171,18 +166,12 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 
 			}
 		}
+		
+		Map<String, Object> web = (Map<String, Object>) config.get(WEB_KEY);
+		WebYamlParsingDeployer.parse( unit, web, rackMetaData );
 
 		return rackMetaData;
 
-	}
-
-	@SuppressWarnings("unchecked")
-	private RackWebApplicationMetaData parseAndSetUpWeb(VFSDeploymentUnit unit, VirtualFile rackRootFile, Map<String, Object> config) {
-		Map<String, String> web = (Map<String, String>) config.get(WEB_KEY);
-		
-		RackWebApplicationMetaData webMetaData = WebYamlParsingDeployer.parse( unit, web );
-
-		return webMetaData;
 	}
 
 	private RubyRuntimeMetaData parseAndSetUpRuntime(VirtualFile rackRoot, String rackEnv) {
@@ -218,11 +207,11 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RubyR
 		}
 
 		VirtualFile rackRootFile = getRackRoot(config);
-		RubyRackApplicationMetaData rackMetaData = parseAndSetUpApplication(rackRootFile, config);
-		RackWebApplicationMetaData webMetaData = parseAndSetUpWeb(unit, rackRootFile, config);
+		RackApplicationMetaData rackMetaData = parseAndSetUpApplication(unit, rackRootFile, config);
+		//RackWebApplicationMetaData webMetaData = parseAndSetUpWeb(unit, rackRootFile, config);
 
 		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv());
 
-		return createDeployment(rackRootFile, runtimeMetaData, rackMetaData, webMetaData);
+		return createDeployment(rackRootFile, runtimeMetaData, rackMetaData );
 	}
 }

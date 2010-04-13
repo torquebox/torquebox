@@ -34,19 +34,19 @@ import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.GlobalRubyRackApplicationFactory;
 import org.torquebox.rack.core.RubyRackApplicationFactory;
-import org.torquebox.rack.metadata.RubyRackApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RubyRackApplicationMetaData> {
+public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
 	public RubyRackApplicationFactoryDeployer() {
-		super(RubyRackApplicationMetaData.class);
+		super(RackApplicationMetaData.class);
 		addInput(PoolMetaData.class);
 		addOutput(BeanMetaData.class);
 		setStage( DeploymentStages.POST_CLASSLOADER );
 	}
 
 	@Override
-	public void deploy(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
+	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
 		PoolMetaData pool = getPoolMetaData(unit, "web");
 		System.err.println( "POOL: " + pool );
 
@@ -61,7 +61,7 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 		AttachmentUtils.attach( unit, beanMetaData );
 	}
 
-	protected BeanMetaData createGlobal(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
+	protected BeanMetaData createGlobal(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
 		String beanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
 		Ruby ruby = unit.getAttachment(Ruby.class);
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, GlobalRubyRackApplicationFactory.class.getName());
@@ -70,7 +70,7 @@ public class RubyRackApplicationFactoryDeployer extends AbstractSimpleVFSRealDep
 		return builder.getBeanMetaData();
 	}
 
-	protected BeanMetaData createDefault(VFSDeploymentUnit unit, RubyRackApplicationMetaData metaData) throws DeploymentException {
+	protected BeanMetaData createDefault(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
 		String beanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyRackApplicationFactory.class.getName());
 		

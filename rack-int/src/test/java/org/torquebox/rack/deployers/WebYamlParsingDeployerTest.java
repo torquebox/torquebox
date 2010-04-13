@@ -6,7 +6,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.rack.metadata.RackWebApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
@@ -38,13 +38,14 @@ public class WebYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         
-        RackWebApplicationMetaData webMetaData = unit.getAttachment( RackWebApplicationMetaData.class );
+        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
         
-        assertNotNull( webMetaData );
+        assertNotNull( rackMetaData );
         
-        assertEquals( "/tacos", webMetaData.getContext() );
-        assertEquals( "foobar.com", webMetaData.getHost() );
-        assertEquals( "/public", webMetaData.getStaticPathPrefix() );
+        assertEquals( "/tacos", rackMetaData.getContextPath() );
+        assertEquals( 1, rackMetaData.getHosts().size() );
+        assertEquals( "foobar.com", rackMetaData.getHosts().get(0) );
+        assertEquals( "/public", rackMetaData.getStaticPathPrefix() );
 	}
 	
 	@Test
@@ -56,12 +57,13 @@ public class WebYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         
-        RackWebApplicationMetaData webMetaData = unit.getAttachment( RackWebApplicationMetaData.class );
+        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
         
-        assertNotNull( webMetaData );
+        assertNotNull( rackMetaData );
         
-        assertEquals( "/tacos", webMetaData.getContext() );
-        assertEquals( "foobar.com", webMetaData.getHost() );
-        assertEquals( "/elsewhere", webMetaData.getStaticPathPrefix() );
+        assertEquals( "/tacos", rackMetaData.getContextPath() );
+        assertEquals( 1, rackMetaData.getHosts().size() );
+        assertEquals( "foobar.com", rackMetaData.getHosts().get(0) );
+        assertEquals( "/elsewhere", rackMetaData.getStaticPathPrefix() );
 	}
 }
