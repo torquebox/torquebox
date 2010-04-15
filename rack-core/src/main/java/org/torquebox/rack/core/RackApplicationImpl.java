@@ -3,9 +3,9 @@ package org.torquebox.rack.core;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.sip.SipServlet;
-import javax.servlet.sip.SipServletMessage;
-import javax.servlet.sip.SipServletRequest;
+//import javax.servlet.sip.SipServlet;
+//import javax.servlet.sip.SipServletMessage;
+//import javax.servlet.sip.SipServletRequest;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
@@ -90,6 +90,7 @@ public class RackApplicationImpl implements RackApplication {
 	/**
 	 * {@inheritDoc}
 	 */
+	/*
 	public Object createEnvironment(ServletContext context, SipServletMessage message, String sipRubyControllerName) throws Exception {
 		Ruby ruby = rubyApp.getRuntime();
 
@@ -105,22 +106,26 @@ public class RackApplicationImpl implements RackApplication {
 			return JavaEmbedUtils.invokeMethod(ruby, envBuilder, "build_env_response", new Object[] { context, message, sipRubyControllerName, errors }, Object.class);
 		}
 	}
+	*/
 
 	public RackResponse call(Object env) {
 		// SIP specifics
 		if (env instanceof RubyHash) {
 			RubyHash rackEnv = (RubyHash) env;
 			String sipRubyControllerName = (String) rackEnv.get("sip_ruby_controller_name");
+			/*
 			SipServletMessage sipServletMessage = (SipServletMessage) rackEnv.get("sip_servlet_message");
 			if (sipRubyControllerName != null) {
 				dispatchSipMessage(sipServletMessage, sipRubyControllerName);
 				return null;
 			}
+			*/
 		}
 		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.rubyApp.getRuntime(), this.rubyApp, "call", new Object[] { env }, RubyArray.class);
 		return new RackResponseImpl(response);
 	}
 
+	/*
 	protected void dispatchSipMessage(SipServletMessage message, String sipRubyControllerName) {
 		try {
 			String requirePath = StringUtils.underscore(sipRubyControllerName).replaceAll("::", "/");
@@ -144,4 +149,5 @@ public class RackApplicationImpl implements RackApplication {
 			throw e;
 		}
 	}
+	*/
 }

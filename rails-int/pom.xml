@@ -87,6 +87,14 @@
       <artifactId>snakeyaml</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activerecord-jdbc-adapter</artifactId>
+      <version>0.9.4</version>
+      <classifier>java</classifier>
+      <type>gem</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build> 

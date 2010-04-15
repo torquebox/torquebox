@@ -44,7 +44,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 	 */
 	protected String getInitializerScript() throws MalformedURLException, URISyntaxException {
 		StringBuilder script = new StringBuilder();
-		String rackRootPath = this.rackRoot.toURI().toString();
+		String rackRootPath = this.rackRoot.toURL().toString();
 		if (rackRootPath.endsWith("/")) {
 			rackRootPath = rackRootPath.substring(0, rackRootPath.length() - 1);
 		}

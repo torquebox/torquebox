@@ -154,6 +154,10 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 				String railsEnv = application.get(RAILS_ENV_KEY).toString();
 
 				VirtualFile railsRootFile = VFS.getChild(railsRoot);
+				
+				log.info( "RAILS_ROOT=" + railsRootFile );
+				log.info( "RAILS_ROOT.uri=" + railsRootFile.toURI() );
+				log.info( "RAILS_ROOT.url=" + railsRootFile.toURL() );
 				// TODO close handle on undeploy
 				// VFS.mountReal(new File(railsRoot), railsRootFile );
 
