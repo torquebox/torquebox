@@ -32,10 +32,11 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
-import org.torquebox.interp.core.DefaultRubyRuntimeFactory;
+import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.mc.AttachmentUtils;
 
 /**
@@ -84,7 +85,9 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 	public void deploy(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData) throws DeploymentException {
 		
 		String beanName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class );
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, DefaultRubyRuntimeFactory.class.getName() );
+		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyRuntimeFactoryImpl.class.getName() );
+		
+		builder.addConstructorParameter( RuntimeInitializer.class.getName(), metaData.getRuntimeInitializer() );
 		
 		List<String> loadPaths = new ArrayList<String>();
 

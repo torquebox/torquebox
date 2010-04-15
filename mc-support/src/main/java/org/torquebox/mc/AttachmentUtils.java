@@ -2,10 +2,13 @@ package org.torquebox.mc;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.logging.Logger;
 
 public class AttachmentUtils {
+	private static final Logger log = Logger.getLogger( AttachmentUtils.class );
 	
 	public static void attach(DeploymentUnit unit, BeanMetaData bmd) {
+		log.info( "attach: " + bmd.getName() + "\n" + bmd.getBean() );
 		String attachmentName = BeanMetaData.class.getName() + "$" + bmd.getName();
 		unit.addAttachment( attachmentName, bmd, BeanMetaData.class );
 	}

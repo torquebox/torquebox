@@ -123,7 +123,6 @@
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
-        <version>0.10.0</version>
         <extensions>true</extensions>
         <configuration>
           <gemHome>${project.build.directory}/rubygems</gemHome>

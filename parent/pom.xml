@@ -283,12 +283,13 @@
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
-        <version>0.10.0</version>
         <extensions>true</extensions>
+<!--
         <configuration>
           <gemHome>${project.parent.basedir}/target/rubygems</gemHome>
           <gemPath>${project.parent.basedir}/target/rubygems</gemPath>
         </configuration>
+-->
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
@@ -370,6 +371,12 @@
               </resourcesArtifact>
             </resourcesArtifacts>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>gem-maven-plugin</artifactId>
+          <version>0.11.1-SNAPSHOT</version>
+          <extensions>true</extensions>
         </plugin>
       </plugins>
     </pluginManagement>

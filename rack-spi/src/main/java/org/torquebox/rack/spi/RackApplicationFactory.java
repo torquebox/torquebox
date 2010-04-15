@@ -21,7 +21,9 @@
  */
 package org.torquebox.rack.spi;
 
-import org.torquebox.common.spi.InstanceFactory;
+import org.jruby.Ruby;
 
-public interface RackApplicationFactory extends InstanceFactory<RackApplication> {
+
+public interface RackApplicationFactory {
+	RackApplication createRackApplication(Ruby ruby);
 }

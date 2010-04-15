@@ -18,14 +18,14 @@ import static org.junit.Assert.*;
 
 import static org.mockito.Mockito.*;
 
-public class RubyRackApplicationTest extends AbstractRubyTestCase {
+public class RackApplicationImplTest extends AbstractRubyTestCase {
 
 	@Test
 	public void testConstruct() throws Exception {
 		Ruby ruby = createRuby();
 
 		String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-		RubyRackApplication rackApp = new RubyRackApplication(ruby, rackup);
+		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup);
 		IRubyObject rubyApp = rackApp.getRubyApplication();
 		assertNotNil(rubyApp);
 	}
@@ -35,7 +35,7 @@ public class RubyRackApplicationTest extends AbstractRubyTestCase {
 	public void testEnvironment() throws Exception {
 		Ruby ruby = createRuby();
 		String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-		RubyRackApplication rackApp = new RubyRackApplication(ruby, rackup);
+		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup);
 
 		final ServletContext servletContext = mock(ServletContext.class);
 		final HttpServletRequest servletRequest = mock(HttpServletRequest.class);

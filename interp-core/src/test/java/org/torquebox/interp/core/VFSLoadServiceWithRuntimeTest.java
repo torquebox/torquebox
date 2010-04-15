@@ -12,7 +12,7 @@ public class VFSLoadServiceWithRuntimeTest extends AbstractVFSTestCase {
 
 	@Before
 	public void setUp() throws Exception {
-		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory();
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
 		this.ruby = factory.create();
 		this.loadService = (VFSLoadService) this.ruby.getLoadService();
 	}

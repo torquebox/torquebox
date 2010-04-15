@@ -2,7 +2,7 @@ package org.torquebox.interp.core;
 
 import org.jruby.RubyInstanceConfig;
 
-public class CustomRubyInstanceConfig extends RubyInstanceConfig {
+public class TorqueBoxRubyInstanceConfig extends RubyInstanceConfig {
 	
 	private String jrubyHome;
 

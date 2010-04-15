@@ -15,6 +15,20 @@
   <description></description>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-base-int</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-interp-int</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-mc-support</artifactId>
@@ -48,6 +62,12 @@
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-common-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

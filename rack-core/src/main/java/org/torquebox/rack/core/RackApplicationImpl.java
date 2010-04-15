@@ -24,10 +24,10 @@ import org.torquebox.rack.spi.RackResponse;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class RubyRackApplication implements RackApplication {
+public class RackApplicationImpl implements RackApplication {
 
 	/** Log. */
-	private static final Logger log = Logger.getLogger(RubyRackApplication.class);
+	private static final Logger log = Logger.getLogger(RackApplicationImpl.class);
 
 	/** Empty object array for ruby invocation. */
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
@@ -41,7 +41,7 @@ public class RubyRackApplication implements RackApplication {
 	 * @param ruby The Ruby interpreter to use for this application.
 	 * @param rackUpScript The rackup script.
 	 */
-	public RubyRackApplication(Ruby ruby, String rackUpScript) {
+	public RackApplicationImpl(Ruby ruby, String rackUpScript) {
 		this.rubyApp = rackUp(ruby, rackUpScript);
 	}
 
@@ -60,6 +60,10 @@ public class RubyRackApplication implements RackApplication {
 	
 	protected IRubyObject getRubyApplication() {
 		return this.rubyApp;
+	}
+	
+	public Ruby getRuby() {
+		return this.rubyApp.getRuntime();
 	}
 
 	/**
@@ -114,7 +118,7 @@ public class RubyRackApplication implements RackApplication {
 			}
 		}
 		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.rubyApp.getRuntime(), this.rubyApp, "call", new Object[] { env }, RubyArray.class);
-		return new RubyRackResponse(response);
+		return new RackResponseImpl(response);
 	}
 
 	protected void dispatchSipMessage(SipServletMessage message, String sipRubyControllerName) {

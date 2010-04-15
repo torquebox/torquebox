@@ -21,43 +21,50 @@
  */
 package org.torquebox.rack.core;
 
-import org.jboss.beans.metadata.api.annotations.Create;
 import org.jruby.Ruby;
-import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.jruby.RubyModule;
+import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationFactory;
 
-public class RubyRackApplicationFactory implements RackApplicationFactory {
-	
-	private RubyRuntimeFactory runtimeFactory;
+public class RackApplicationFactoryImpl implements RackApplicationFactory {
+
 	private String rackUpScript;
 
-	public RubyRackApplicationFactory() {
-		
+	public RackApplicationFactoryImpl() {
+		System.err.println("RackApplicationFactoryImpl.ctor()" );
 	}
-	
-	public void setRubyRuntimeFactory(RubyRuntimeFactory runtimeFactory) {
-		this.runtimeFactory = runtimeFactory;
+
+	public RackApplicationFactoryImpl(String rackUpScript) {
+		this.rackUpScript = rackUpScript;
 	}
-	
-	public RubyRuntimeFactory getRubyRuntimeFactory() {
-		return this.runtimeFactory;
-	}
-	
+
 	public void setRackUpScript(String rackUpScript) {
 		this.rackUpScript = rackUpScript;
 	}
-	
+
 	public String getRackUpScript() {
 		return this.rackUpScript;
 	}
-	
-	@Create(ignored=true)
-	public RackApplication create() throws Exception {
-		Ruby ruby = getRubyRuntimeFactory().create();
-		
-		RubyRackApplication rackApp = new RubyRackApplication( ruby, rackUpScript );
-		
+
+	public RackApplication createRackApplication(Ruby ruby) {
+
+		IRubyObject rubyRackApp = null;
+		RackApplication rackApp = null;
+
+		RubyModule torqueboxModule = ruby.getClassFromPath("TorqueBox");
+		if (torqueboxModule.getConstantNames().contains("TORQUEBOX_RACK_APP")) {
+			rubyRackApp = torqueboxModule.getConstant("TORQUEBOX_RACK_APP");
+		}
+
+		if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
+			rackApp = new RackApplicationImpl(ruby, rackUpScript);
+			rubyRackApp = JavaEmbedUtils.javaToRuby(ruby, rackApp);
+			torqueboxModule.setConstant("TORQUEBOX_RACK_APP", rubyRackApp);
+		} else {
+			rackApp = (RackApplication) JavaEmbedUtils.rubyToJava(rubyRackApp);
+		}
 		return rackApp;
 	}
 

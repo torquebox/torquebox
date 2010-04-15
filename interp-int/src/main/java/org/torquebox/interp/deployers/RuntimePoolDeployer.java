@@ -13,6 +13,7 @@ import org.torquebox.interp.core.DefaultRubyRuntimePool;
 import org.torquebox.interp.core.SharedRubyRuntimePool;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.AbstractMultipleMetaDataDeployer;
 
@@ -26,7 +27,8 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
 
 	protected void deploy(DeploymentUnit unit, PoolMetaData poolMetaData) throws DeploymentException {
 
-		String beanName = AttachmentUtils.beanName(unit, "pool", poolMetaData.getName());
+		//String beanName = AttachmentUtils.beanName(unit, "pool", poolMetaData.getName());
+		String beanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, poolMetaData.getName());
 
 		BeanMetaData poolBean = null;
 

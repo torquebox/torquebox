@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
-	<bean name="runtime-factory" class="org.torquebox.interp.core.DefaultRubyRuntimeFactory"/>
+	<bean name="runtime-factory" class="org.torquebox.interp.core.RubyRuntimeFactoryImpl"/>
 </deployment>

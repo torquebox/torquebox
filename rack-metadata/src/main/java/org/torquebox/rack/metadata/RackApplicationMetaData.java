@@ -36,7 +36,9 @@ public class RackApplicationMetaData {
 	private String contextPath;
 	private String staticPathPrefix;
 	
-	private String rubyRuntimeFactoryName;
+	private String rubyRuntimePoolName;
+	private String rackApplicationFactoryName;
+	private String rackApplicationPoolName;
 
 	public RackApplicationMetaData() {
 		
@@ -90,12 +92,32 @@ public class RackApplicationMetaData {
 		return this.staticPathPrefix;
 	}
 	
-	public void setRubyRuntimeFactoryName(String rubyRuntimeFactoryName) {
-		this.rubyRuntimeFactoryName = rubyRuntimeFactoryName;
+	public void setRubyRuntimePoolName(String rubyRuntimePoolName) {
+		this.rubyRuntimePoolName = rubyRuntimePoolName;
 	}
 	
-	public String getRubyRuntimeFactoryName() {
-		return this.rubyRuntimeFactoryName;
+	public String getRubyRuntimePoolName() {
+		return this.rubyRuntimePoolName;
+	}
+	
+	public void setRackApplicationFactoryName(String rackApplicationFactoryName) {
+		this.rackApplicationFactoryName = rackApplicationFactoryName;
+	}
+	
+	public String getRackApplicationFactoryName() {
+		return this.rackApplicationFactoryName;
+	}
+
+	public void setRackApplicationPoolName(String rackApplicationPoolName) {
+		this.rackApplicationPoolName = rackApplicationPoolName;
+	}
+	
+	public String getRackApplicationPoolName() {
+		return this.rackApplicationPoolName;
+	}
+	
+	public String toString() {
+		return "[RackApplicationMetaData: runtimePool=" + this.rubyRuntimePoolName + "; appFactory=" + this.rackApplicationFactoryName + "; appPool=" + this.rackApplicationPoolName + "]";
 	}
 	
 }

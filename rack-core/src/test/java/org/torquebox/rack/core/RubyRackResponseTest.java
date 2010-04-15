@@ -41,7 +41,7 @@ public class RubyRackResponseTest extends AbstractRubyTestCase {
 	public void testHandleStatus() throws Exception {
 		IRubyObject rubyRackResponse = createRubyRackResponse(201, (RubyHash) null, null);
 
-		RubyRackResponse javaRackResponse = new RubyRackResponse(rubyRackResponse);
+		RackResponseImpl javaRackResponse = new RackResponseImpl(rubyRackResponse);
 
 		HttpServletResponse servletResponse = mock(HttpServletResponse.class);
 		javaRackResponse.respond(servletResponse);
@@ -52,7 +52,7 @@ public class RubyRackResponseTest extends AbstractRubyTestCase {
 	public void testHandleHeaders() throws Exception {
 		IRubyObject rubyRackResponse = createRubyRackResponse(200, this.headers, null);
 
-		RubyRackResponse javaRackResponse = new RubyRackResponse(rubyRackResponse);
+		RackResponseImpl javaRackResponse = new RackResponseImpl(rubyRackResponse);
 
 		HttpServletResponse servletResponse = mock(HttpServletResponse.class);
 		javaRackResponse.respond(servletResponse);
@@ -71,7 +71,7 @@ public class RubyRackResponseTest extends AbstractRubyTestCase {
 		
 		IRubyObject rubyRackResponse = createRubyRackResponse(200, this.headers, body);
 
-		RubyRackResponse javaRackResponse = new RubyRackResponse(rubyRackResponse);
+		RackResponseImpl javaRackResponse = new RackResponseImpl(rubyRackResponse);
 
 		HttpServletResponse servletResponse = mock(HttpServletResponse.class);
 		
@@ -97,7 +97,7 @@ public class RubyRackResponseTest extends AbstractRubyTestCase {
 		
 		IRubyObject rubyRackResponse = createRubyRackResponse(200, this.headers, body);
 
-		RubyRackResponse javaRackResponse = new RubyRackResponse(rubyRackResponse);
+		RackResponseImpl javaRackResponse = new RackResponseImpl(rubyRackResponse);
 
 		HttpServletResponse servletResponse = mock(HttpServletResponse.class);
 		ByteArrayOutputStream collector = new ByteArrayOutputStream();

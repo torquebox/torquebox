@@ -4,11 +4,8 @@
 
   <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>
 
-  <bean name="RubyRackApplicationFactoryDeployer"     class="org.torquebox.rack.deployers.RubyRackApplicationFactoryDeployer"/>
-  <bean name="RubyRackApplicationPoolDeployer"        class="org.torquebox.rack.deployers.RubyRackApplicationPoolDeployer"/>
-<!--
-  <bean name="DefaultRackApplicationPoolDeployer"     class="org.torquebox.rack.deployers.DefaultRackApplicationPoolDeployer"/>
--->
+  <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer"/>
+  <bean name="RackApplicationPoolDeployer"            class="org.torquebox.rack.deployers.RackApplicationPoolDeployer"/>
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>
 
 </deployment>

@@ -2,7 +2,7 @@ package org.torquebox.test.ruby;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.interp.core.DefaultRubyRuntimeFactory;
+import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 
 import static org.junit.Assert.*;
 
@@ -17,7 +17,7 @@ public class AbstractRubyTestCase {
 		config.setLoadServiceCreator(new VFSLoadServiceCreator());
 		*/
 		
-		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory();
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
 		factory.setGemPath( "target/rubygems" );
 		
 		Ruby ruby = factory.create();

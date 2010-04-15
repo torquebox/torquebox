@@ -25,9 +25,12 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.sip.SipServletMessage;
 
+import org.jruby.Ruby;
+
 
 
 public interface RackApplication extends RackMiddleware {
+	Ruby getRuby();
 	Object createEnvironment(ServletContext servletContext, HttpServletRequest request) throws Exception;
 	/**
 	 * 

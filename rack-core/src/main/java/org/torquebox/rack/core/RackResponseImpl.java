@@ -21,44 +21,30 @@
  */
 package org.torquebox.rack.core;
 
-import org.jboss.beans.metadata.api.annotations.Create;
+import javax.servlet.http.HttpServletResponse;
+
 import org.jruby.Ruby;
-import org.torquebox.rack.spi.RackApplication;
-import org.torquebox.rack.spi.RackApplicationFactory;
+import org.jruby.RubyClass;
+import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.rack.spi.RackResponse;
 
-public class GlobalRubyRackApplicationFactory implements RackApplicationFactory {
+public class RackResponseImpl implements RackResponse {
+	public static final String RESPONSE_HANDLER_RB = "org/torquebox/rack/core/response_handler";
+	public static final String RESPONSE_HANDLER_CLASS_NAME = "TorqueBox::Rack::ResponseHandler";
+	public static final String RESPONSE_HANDLER_METHOD_NAME = "handle";
+	
+	private IRubyObject rackResponse;
 
-	private Ruby ruby;
-	private String rackUpScript;
-	private RubyRackApplication rackApp;
+	public RackResponseImpl(IRubyObject rackResponse) {
+		this.rackResponse = rackResponse;
+	}
 
-	public GlobalRubyRackApplicationFactory() {
-
+	public void respond(HttpServletResponse response) {
+		Ruby ruby = rackResponse.getRuntime();
+		ruby.getLoadService().require( RESPONSE_HANDLER_RB );
+		RubyClass responseHandler = (RubyClass) ruby.getClassFromPath( RESPONSE_HANDLER_CLASS_NAME );
+		JavaEmbedUtils.invokeMethod( ruby, responseHandler, RESPONSE_HANDLER_METHOD_NAME, new Object[]{ rackResponse, response }, Object.class );
 	}
 	
-	public void setRuby(Ruby ruby) {
-		this.ruby = ruby;
-	}
-
-	public Ruby setRuby() {
-		return this.ruby;
-	}
-
-	public void setRackUpScript(String rackUpScript) {
-		this.rackUpScript = rackUpScript;
-	}
-
-	public String getRackUpScript() {
-		return this.rackUpScript;
-	}
-
-	@Create(ignored=true)
-	public synchronized RackApplication create() throws Exception {
-		if (rackApp == null) {
-			rackApp = new RubyRackApplication(ruby, rackUpScript);
-		}
-
-		return rackApp;
-	}
-
 }

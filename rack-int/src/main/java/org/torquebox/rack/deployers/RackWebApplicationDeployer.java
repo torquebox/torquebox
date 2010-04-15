@@ -54,10 +54,12 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		addOutput(WebMetaData.class);
 		addOutput(JBossWebMetaData.class);
 		setStage(DeploymentStages.DESCRIBE);
+		setRelativeOrder( 1000 );
 	}
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
+		log.info( "start with " + metaData );
 		WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
 
 		if (webMetaData == null) {
@@ -72,8 +74,8 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 		List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
 		ParamValueMetaData rackAppFactory = new ParamValueMetaData();
-		//rackAppFactory.setParamName(RackFilter.RACK_APP_POOL_INIT_PARAM);
-		//rackAppFactory.setParamValue(metaData.getRackApplicationPoolName());
+		rackAppFactory.setParamName(RackFilter.RACK_APP_POOL_INIT_PARAM);
+		rackAppFactory.setParamValue(metaData.getRackApplicationPoolName());
 		initParams.add(rackAppFactory);
 
 		rackFilter.setInitParam(initParams);
@@ -138,5 +140,13 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		if (! metaData.getHosts().isEmpty() ) {
 			jbossWebMetaData.setVirtualHosts(metaData.getHosts());
 		}
+		
+		List<String> depends = jbossWebMetaData.getDepends();
+		
+		if ( depends == null ) {
+			depends = new ArrayList<String>();
+			jbossWebMetaData.setDepends(depends);
+		}
+		depends.add( metaData.getRackApplicationPoolName() );
 	}
 }

@@ -3,11 +3,11 @@ require 'rubygems'
 
 Gem::Specification.new do |s|
     s.platform  =   Gem::Platform::RUBY
-    s.name      =   "vfs"
-    s.version   =   "#{PROJECT_VERSION}"
+    s.name      =   "${project.groupId}.${project.artifactId}"
+    s.version   =   "1.0.0.19"
     s.author    =   "The TorqueBox Project"
     s.email     =   "info@torquebox.org"
-    s.summary   =   "JBoss VFS Support."
+    s.summary   =   "TorqueBox VFS Support."
     s.files     =   [
       Dir['lib/**/*.rb'],
     ].flatten

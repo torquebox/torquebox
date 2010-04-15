@@ -7,22 +7,21 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rack.core.RubyRackApplicationFactory;
+import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
 
-public class RubyRackApplicationFactoryDeployerTest extends AbstractDeployerTestCase {
+public class RackApplicationFactoryDeployerTest extends AbstractDeployerTestCase {
 
-	private RubyRackApplicationFactoryDeployer deployer;
+	private RackApplicationFactoryDeployer deployer;
 	private String runtimeInstanceFactoryDeploymentName;
 
 	@Before
 	public void setUpDeployer() throws Throwable {
-		this.deployer = new RubyRackApplicationFactoryDeployer();
+		this.deployer = new RackApplicationFactoryDeployer();
 		addDeployer(this.deployer);
 	}
 
@@ -36,29 +35,18 @@ public class RubyRackApplicationFactoryDeployerTest extends AbstractDeployerTest
 		String deploymentName = createDeployment("shared");
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 
-		
 		RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
-		rackAppMetaData.setRubyRuntimeFactoryName( "runtime-factory" );
-		
 		unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
-		
-		PoolMetaData poolMetaData = new PoolMetaData();
-		poolMetaData.setName("web");
-		poolMetaData.setShared();
-
-		unit.addAttachment(PoolMetaData.class, poolMetaData);
 		
 		processDeployments(true);
 
-		String beanName = AttachmentUtils.beanName(unit, RubyRackApplicationFactory.class);
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
 		
 		BeanMetaData bmd = getBeanMetaData(unit, beanName);
 		assertNotNull( bmd );
 		
-		RubyRackApplicationFactory factory = (RubyRackApplicationFactory) getBean(beanName);
+		RackApplicationFactoryImpl factory = (RackApplicationFactoryImpl) getBean(beanName);
 		assertNotNull( factory );
-		
-		assertNotNull( factory.getRubyRuntimeFactory() );
 		
 		undeploy( deploymentName );
 		undeploy( this.runtimeInstanceFactoryDeploymentName );

@@ -10,7 +10,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
   <artifactId>vfs</artifactId>
-  <packaging>pom</packaging>
+  <packaging>gem</packaging>
   <name>TorqueBox VFS</name>
   <description></description>
 
@@ -19,6 +19,12 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-vfs</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
 
@@ -56,74 +62,20 @@
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
-            <phase>package</phase>
+            <id>install-vfs-jars</id>
+            <phase>install</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
               <stripVersion>true</stripVersion>
-              <outputDirectory>${project.build.directory}/dependencies</outputDirectory>
+              <outputDirectory>${env.JRUBY_HOME}/lib</outputDirectory>
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/default.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <exec executable="rake">
-                  <arg value="maven:package"></arg>
-                  <env key="project.version" value="${project.version}"></env>
-                </exec>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>target/gems/${project.artifactId}-1.0.0.gem</file>
-                  <type>gem</type>
-                  <classifier></classifier>
-                </artifact>
-              </artifacts>
+              <!--<includeArtifactIds>org.jboss.jboss-vfs,org.jboss.logging.jboss-logging</includeArtifactIds>-->
+              <includeArtifactIds>jboss-vfs,jboss-logging</includeArtifactIds>
+              <!--<includeArtifactIds>org.jboss.logging.jboss-logging</includeArtifactIds>-->
             </configuration>
           </execution>
         </executions>

@@ -13,6 +13,7 @@ import org.torquebox.interp.core.DefaultRubyRuntimePool;
 import org.torquebox.interp.core.SharedRubyRuntimePool;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
@@ -46,7 +47,7 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(PoolMetaData.class, poolMetaData);
 
-		String beanName = AttachmentUtils.beanName(unit, "pool", "pool_one");
+		String beanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, "pool_one");
 
 		processDeployments(true);
 		DefaultRubyRuntimePool poolOne = (DefaultRubyRuntimePool) getBean( beanName );
@@ -76,7 +77,7 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(PoolMetaData.class, poolMetaData);
 
-		String beanName = AttachmentUtils.beanName(unit, "pool", "pool_one");
+		String beanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, "pool_one");
 
 		processDeployments(true);
 		SharedRubyRuntimePool poolOne = (SharedRubyRuntimePool) getBean( beanName );
@@ -105,7 +106,7 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(PoolMetaData.class, poolMetaData);
 
-		String beanName = AttachmentUtils.beanName(unit, "pool", "pool_one");
+		String beanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, "pool_one");
 
 		processDeployments(true);
 		SharedRubyRuntimePool poolOne = (SharedRubyRuntimePool) getBean( beanName );

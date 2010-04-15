@@ -9,34 +9,30 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-rack-spi</artifactId>
+  <artifactId>torquebox-integration-tests</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Rack SPI</name>
+  <name>TorqueBox Integration Tests</name>
   <description></description>
 
   <dependencies>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium</artifactId>
+      <version>2.0a2</version>
+    </dependency> 
+
     <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mobicents.servlet.sip</groupId>
-      <artifactId>sip-servlets-spec</artifactId>
-      <version>${mobicents.spec.version}</version>
-      <scope>provided</scope>
-    </dependency>
+      <groupId>org.seleniumhq.selenium</groupId>
+      <artifactId>selenium-htmlunit-driver</artifactId>
+      <version>2.0a2</version>
+    </dependency> 
+
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <scope>provided</scope>
     </dependency>
+
   </dependencies>
 
 </project>

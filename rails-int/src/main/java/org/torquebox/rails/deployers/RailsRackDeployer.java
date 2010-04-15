@@ -38,7 +38,6 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 		super(RailsApplicationMetaData.class);
 		addInput(RackApplicationMetaData.class);
 		addOutput(RackApplicationMetaData.class);
-		addOutput(RackApplicationMetaData.class);
 		setStage(DeploymentStages.POST_PARSE);
 	}
 	
@@ -61,14 +60,13 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 		//rackMetaData.setRackApplicationPoolName( AttachmentUtils.beanName(unit, RackApplicationPool.class ) );
 		
 
-		RackApplicationMetaData rubyRackAppMetaData = new RackApplicationMetaData();
-		rubyRackAppMetaData.setRackRoot( railsAppMetaData.getRailsRoot() );
-		rubyRackAppMetaData.setRackEnv( railsAppMetaData.getRailsEnv() );
+		rackMetaData.setRackRoot( railsAppMetaData.getRailsRoot() );
+		rackMetaData.setRackEnv( railsAppMetaData.getRailsEnv() );
 		
 		String rackUpScript = getRackUpScript( rackMetaData.getContextPath() );
-		rubyRackAppMetaData.setRackUpScript( rackUpScript );
+		rackMetaData.setRackUpScript( rackUpScript );
 
-		unit.addAttachment(RackApplicationMetaData.class, rubyRackAppMetaData);
+		unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
 	}
 	
 	protected String getRackUpScript(String context) {

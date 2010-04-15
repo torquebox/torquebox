@@ -49,7 +49,7 @@ import org.torquebox.interp.spi.RuntimeInitializer;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
+public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 	/** MC Kernel. */
 	private Kernel kernel;
@@ -84,7 +84,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	/**
 	 * Construct.
 	 */
-	public DefaultRubyRuntimeFactory() {
+	public RubyRuntimeFactoryImpl() {
 		this(null);
 	}
 
@@ -94,7 +94,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	 * @param initializer The initializer (or null) to use for each created
 	 *        runtime.
 	 */
-	public DefaultRubyRuntimeFactory(RuntimeInitializer initializer) {
+	public RubyRuntimeFactoryImpl(RuntimeInitializer initializer) {
 		this.initializer = initializer;
 	}
 
@@ -173,7 +173,7 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 	 */
 	@Create(ignored = true)
 	public synchronized Ruby create() throws Exception {
-		RubyInstanceConfig config = new CustomRubyInstanceConfig();
+		RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
 		if (this.classCache == null) {
 			this.classCache = new ClassCache<Object>(getClassLoader());
@@ -223,23 +223,19 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 
 				if (vfsJar.exists()) {
 					System.err.println("VFS JAR GOOD");
-					if (vfsJar.isDirectory()) {
-						System.err.println("VFS JAR MOUNTED");
-					} else {
+					if (!vfsJar.isDirectory()) {
 						System.err.println("VFS JAR needs mount");
 						ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-						TempFileProvider tempFileProvider = TempFileProvider.create( "jruby.home", executor);
-						VFS.mountZip( vfsJar, vfsJar, tempFileProvider  );
-						
-						if ( vfsJar.isDirectory() ) {
-							System.err.println(" SUCCESS MOUNT" );
-							
-							VirtualFile vfsJrubyHome = vfsJar.getChild( extraPath );
-							
-							if ( vfsJrubyHome.exists() ) {
-								System.err.println( "VFS_JRUBY_HOME=" + vfsJrubyHome );
-								jrubyHome = vfsJrubyHome.toURL().toExternalForm();
-							}
+						TempFileProvider tempFileProvider = TempFileProvider.create("jruby.home", executor);
+						VFS.mountZip(vfsJar, vfsJar, tempFileProvider);
+					}
+
+					if (vfsJar.isDirectory()) {
+						System.err.println(" SUCCESS MOUNT");
+						VirtualFile vfsJrubyHome = vfsJar.getChild(extraPath);
+						if (vfsJrubyHome.exists()) {
+							System.err.println("VFS_JRUBY_HOME=" + vfsJrubyHome);
+							jrubyHome = vfsJrubyHome.toURL().toExternalForm();
 						}
 					}
 				}
@@ -302,8 +298,10 @@ public class DefaultRubyRuntimeFactory implements RubyRuntimeFactory {
 			env.put("PATH", "");
 		}
 		if (this.gemPath != null) {
-			System.err.println("GEM_PATH=" + this.gemPath);
+			System.err.println("set GEM_PATH=" + this.gemPath);
+			System.err.println("set GEM_HOME=" + this.gemPath);
 			env.put("GEM_PATH", this.gemPath);
+			env.put("GEM_HOME", this.gemPath);
 		}
 		return env;
 	}

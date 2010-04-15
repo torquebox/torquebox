@@ -9,11 +9,11 @@ import org.torquebox.interp.spi.RuntimeInitializer;
 
 import static org.junit.Assert.*;
 
-public class DefaultRubyRuntimeFactoryTest {
+public class RubyRuntimeFactoryImplTest {
 	
 	@Test
 	public void testExplicitClassLoader() throws Exception {
-		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory();
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
 		ClassLoader cl = new URLClassLoader(new URL[]{} );
 		factory.setClassLoader( cl );
 		assertSame( cl, factory.getClassLoader() );
@@ -21,7 +21,7 @@ public class DefaultRubyRuntimeFactoryTest {
 	
 	@Test
 	public void testContextClassLoader() throws Exception {
-		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory();
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
 		ClassLoader cl = new URLClassLoader(new URL[]{} );
 		Thread.currentThread().setContextClassLoader( cl );
 		assertSame( cl, factory.getClassLoader() );
@@ -29,7 +29,7 @@ public class DefaultRubyRuntimeFactoryTest {
 	
 	@Test
 	public void testNullInitializerIsAllowed() throws Exception {
-		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory( null );
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
 		Ruby ruby = factory.create();
 		assertNotNull( ruby );
 	}
@@ -37,7 +37,7 @@ public class DefaultRubyRuntimeFactoryTest {
 	@Test
 	public void testInitializerIsUsed() throws Exception {
 		MockRuntimeInitializer initializer = new MockRuntimeInitializer();
-		DefaultRubyRuntimeFactory factory = new DefaultRubyRuntimeFactory( initializer );
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( initializer );
 		
 		Ruby ruby = factory.create();
 		
