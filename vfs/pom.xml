@@ -31,32 +31,24 @@
   </dependencies>
 
   <build>
-<!--
-    <resources> 
-      <resource> 
-        <directory>src/main/resources</directory> 
-      </resource> 
-      <resource> 
-        <directory>src/main/java</directory> 
-        <includes>
-          <include>**/*.rb</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource> 
-      <resource> 
-        <directory>src/main/ruby</directory> 
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </resource>
-    </resources> 
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
--->
     <plugins> 
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-gems</id>
+            <phase>install</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+            <configuration>
+              <gemPath>${env.JRUBY_HOME}/lib/ruby/gems/1.8</gemPath>
+              <gemHome>${env.JRUBY_HOME}/lib/ruby/gems/1.8</gemHome>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -73,9 +65,7 @@
               <overWriteReleases>false</overWriteReleases>
               <overWriteSnapshots>false</overWriteSnapshots>
               <overWriteIfNewer>true</overWriteIfNewer>
-              <!--<includeArtifactIds>org.jboss.jboss-vfs,org.jboss.logging.jboss-logging</includeArtifactIds>-->
               <includeArtifactIds>jboss-vfs,jboss-logging</includeArtifactIds>
-              <!--<includeArtifactIds>org.jboss.logging.jboss-logging</includeArtifactIds>-->
             </configuration>
           </execution>
         </executions>
