@@ -35,11 +35,8 @@ public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 
 	@Override
 	public Object getValue() {
-		System.err.println("lookup JNDI [" + this.name + "]");
 		try {
-			Object value = this.context.lookup(this.name);
-			System.err.println("found [" + value + "]");
-			return value;
+			return this.context.lookup(this.name);
 		} catch (NamingException e) {
 			return null;
 		}

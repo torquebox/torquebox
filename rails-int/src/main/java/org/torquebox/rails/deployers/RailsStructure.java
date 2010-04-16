@@ -49,7 +49,6 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 	}
 
 	public boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
-		System.err.println( "determine structure for: " + structureContext.getFile() );
 		boolean recognized = false;
 		VirtualFile file = structureContext.getFile();
 

@@ -62,9 +62,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 	private static final String RACK_ENV_KEY = "RACK_ENV";
 	private static final String RACKUP_KEY = "rackup";
 
-	private static final String HOST_KEY = "host";
-	private static final String CONTEXT_KEY = "context";
-
 	public AppRackYamlParsingDeployer() {
 		super(RackApplicationMetaData.class);
 		addOutput(BeanMetaData.class);
@@ -185,7 +182,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 	@SuppressWarnings("unchecked")
 	private VirtualFile getRackRoot(Map<String, Object> config) throws IOException {
 
-		System.err.println("config=" + config);
 		Map<String, Object> application = (Map<String, Object>) config.get(APPLICATION_KEY);
 		String rackRoot = application.get(RACK_ROOT_KEY).toString();
 

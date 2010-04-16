@@ -15,7 +15,6 @@ public class RackApplicationPoolImpl implements RackApplicationPool {
 	}
 	
 	public RackApplicationPoolImpl(RubyRuntimePool runtimePool, RackApplicationFactory rackFactory) {
-		System.err.println("RackApplicationPoolImpl.ctor(" + runtimePool + ", " + rackFactory + ")" );
 		this.runtimePool = runtimePool;
 		this.rackFactory = rackFactory;
 	}

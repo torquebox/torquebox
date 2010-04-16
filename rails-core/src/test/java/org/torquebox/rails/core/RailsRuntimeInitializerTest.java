@@ -18,7 +18,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		Ruby ruby = createRuby();
 		
 		String railsRootStr = System.getProperty( "user.dir" ) + "/src/test/rails/ballast-2.3.5";
-		String vfsRailsRootStr = "vfs://" + railsRootStr;
+		String vfsRailsRootStr = "vfs:" + railsRootStr;
 		VirtualFile railsRoot = VFS.getChild( railsRootStr );
 		
 		System.err.println( "railsRoot=" + railsRoot);

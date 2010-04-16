@@ -33,7 +33,6 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
 	private String rackUpScript;
 
 	public RackApplicationFactoryImpl() {
-		System.err.println("RackApplicationFactoryImpl.ctor()" );
 	}
 
 	public RackApplicationFactoryImpl(String rackUpScript) {

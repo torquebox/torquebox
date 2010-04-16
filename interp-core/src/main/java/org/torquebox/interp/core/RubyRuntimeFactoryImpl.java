@@ -213,28 +213,20 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 				String jarPath = jrubyHome.substring(slashLoc, bangLoc);
 
-				System.err.println("JAR [" + jarPath + "]");
-
 				String extraPath = jrubyHome.substring(bangLoc + 1);
-
-				System.err.println("EXTRA [" + extraPath + "]");
 
 				VirtualFile vfsJar = VFS.getChild(jarPath);
 
 				if (vfsJar.exists()) {
-					System.err.println("VFS JAR GOOD");
 					if (!vfsJar.isDirectory()) {
-						System.err.println("VFS JAR needs mount");
 						ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 						TempFileProvider tempFileProvider = TempFileProvider.create("jruby.home", executor);
 						VFS.mountZip(vfsJar, vfsJar, tempFileProvider);
 					}
 
 					if (vfsJar.isDirectory()) {
-						System.err.println(" SUCCESS MOUNT");
 						VirtualFile vfsJrubyHome = vfsJar.getChild(extraPath);
 						if (vfsJrubyHome.exists()) {
-							System.err.println("VFS_JRUBY_HOME=" + vfsJrubyHome);
 							jrubyHome = vfsJrubyHome.toURL().toExternalForm();
 						}
 					}
@@ -246,7 +238,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			// jrubyHome = jrubyHome.replaceAll( "!/", "/" );
 		}
 
-		System.err.println("JRUBY_HOME=" + jrubyHome);
 		// new Exception().printStackTrace();
 
 		if (jrubyHome != null) {
@@ -298,8 +289,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			env.put("PATH", "");
 		}
 		if (this.gemPath != null) {
-			System.err.println("set GEM_PATH=" + this.gemPath);
-			System.err.println("set GEM_HOME=" + this.gemPath);
 			env.put("GEM_PATH", this.gemPath);
 			env.put("GEM_HOME", this.gemPath);
 		}
