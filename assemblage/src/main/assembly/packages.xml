@@ -1,0 +1,20 @@
+<assembly>
+  <id>packages</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <dependencySets>
+    <dependencySet>
+      <outputFileNameMapping>jruby.zip</outputFileNameMapping>
+      <unpack>false</unpack>
+      <includes>
+        <include>org.jruby:jruby-bin:zip</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputFileNameMapping>jboss.zip</outputFileNameMapping>
+      <unpack>false</unpack>
+      <includes>
+        <include>org.jboss.jbossas:jboss-as-distribution:zip</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
+</assembly>

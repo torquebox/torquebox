@@ -210,6 +210,8 @@
     <module>torquebox-capistrano</module>
 
 
+    <module>assemblage/dependencies</module>
+    <module>assemblage</module>
 <!--
     <module>all</module>
     <module>metadata</module>

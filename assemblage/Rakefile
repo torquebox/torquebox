@@ -1,0 +1,32 @@
+
+require 'rubygems'
+require 'zip/zip'
+
+def install_package(package, install_name) 
+  puts "Install #{package} as #{install_name}"
+
+  package_path = File.join( BUILD_DIR, 'torquebox-assemblage-packages', package )
+  root_dir_name = nil
+  Zip::ZipFile.foreach( package_path ) do |entry|
+    name = entry.name
+    root_dir_name = name[0,name.index('/')]
+    break
+  end
+
+  install_path = File.join( BUILD_DIR, 'stage', install_name )
+
+  puts "root_dir_name=#{root_dir_name}"
+
+  file install_path do
+    FileUtils.mkdir_p( install_path )
+    Zip::ZipFile.foreach( package_path ) do |entry|
+      dest_path = File.join( install_path, entry.name.sub( /^#{root_dir_name}/, '' ) )
+      puts "Extract: #{dest_path}"
+      entry.extract( dest_path )
+    end
+  end
+
+  task :default=>install_path
+end
+
+task :default

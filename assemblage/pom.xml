@@ -1,0 +1,108 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-parent</artifactId>
+    <version>1.0.0.Beta19</version>
+    <relativePath>../parent/pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-assemblage</artifactId>
+  <packaging>pom</packaging>
+  <name>TorqueBox Distribution Assemblage</name>
+  <description></description>
+
+  <scm>
+    <connection>scm:git:git://github.com/torquebox/${project.artifactId}.git</connection>
+    <developerConnection>scm:git:ssh://github.com/torquebox/${project.artifactId}.git</developerConnection>
+    <url>http://github.com/torquebox/${project.artifactId}/tree/master</url>
+  </scm>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-assemblage-dependencies</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-bin</artifactId>
+      <version>${version.jruby}</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-as-distribution</artifactId>
+      <version>${version.jbossas}</version>
+      <type>zip</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rubyzip</artifactId>
+      <version>0.9.4</version>
+      <type>gem</type>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins> 
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/main/assembly/packages.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>directory-single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-dependency-gems</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>initialize</goal>
+            </goals>
+            <configuration>
+              <useTransitiveDependencies>false</useTransitiveDependencies>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-packages</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>rake</goal>
+            </goals>
+            <configuration>
+              <script>
+                BUILD_DIR="${project.build.directory}"
+                load 'Rakefile'
+                install_package( 'jruby.zip', 'jruby' )
+                install_package( 'jboss.zip', 'jboss' )
+              </script>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
