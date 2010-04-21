@@ -117,8 +117,9 @@
               <outputDirectory>${stage.dir}</outputDirectory>
             </configuration>
           </execution>
+
           <execution>
-            <id>install-deployers</id>
+            <id>install-deployers-default-profile</id>
             <phase>package</phase>
             <goals>
               <goal>copy-dependencies</goal>
@@ -132,6 +133,70 @@
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
+          <execution>
+            <id>install-deployers-standard-profile</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeTypes>jar</includeTypes>
+              <includeClassifiers>deployer</includeClassifiers>
+              <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${stage.dir}/jboss/server/standard/deployers/torquebox.deployer</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-deployers-all-profile</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeTypes>jar</includeTypes>
+              <includeClassifiers>deployer</includeClassifiers>
+              <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${stage.dir}/jboss/server/all/deployers/torquebox.deployer</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-deployers-osgi-profile</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeTypes>jar</includeTypes>
+              <includeClassifiers>deployer</includeClassifiers>
+              <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${stage.dir}/jboss/server/osgi/deployers/torquebox.deployer</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-deployers-jbossweb-standalone-profile</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeTypes>jar</includeTypes>
+              <includeClassifiers>deployer</includeClassifiers>
+              <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${stage.dir}/jboss/server/jbossweb-standalone/deployers/torquebox.deployer</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+
+
+
+
           <execution>
             <id>install-jruby-vfs</id>
             <phase>package</phase>
