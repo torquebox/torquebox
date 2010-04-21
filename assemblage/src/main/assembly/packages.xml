@@ -16,5 +16,24 @@
         <include>org.jboss.jbossas:jboss-as-distribution:zip</include>
       </includes>
     </dependencySet>
+    <dependencySet>
+      <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <outputDirectory>deployers/</outputDirectory>
+      <includes>
+        <include>org.torquebox:*:jar:deployer</include>
+      </includes>
+    </dependencySet>
+<!--
+    <dependencySet>
+      <outputFileNameMapping>${artifact.artifactId}${dashClassifier?}.${artifact.extension}</outputFileNameMapping>
+      <unpack>false</unpack>
+      <outputDirectory>gems/</outputDirectory>
+      <useTransitiveDependencies>true</useTransitiveDependencies>
+      <includes>
+        <include>*:*:gem</include>
+      </includes>
+    </dependencySet>
+-->
   </dependencySets>
 </assembly>
