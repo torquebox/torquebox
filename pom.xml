@@ -135,6 +135,13 @@
             <version>${project.version}</version>
           </dependency>
 
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-assemblage-dependencies</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+          </dependency>
+
         </dependencies>
         <configuration>
           <aggregate>true</aggregate>
