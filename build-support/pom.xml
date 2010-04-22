@@ -1,17 +1,27 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../parent/pom.xml</relativePath>
+    <relativePath>../parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-build-support</artifactId>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
   <name>TorqueBox Build Support</name>
   <description></description>
+
+  <modules>
+    <module>javadoc-support</module>
+    <module>deployer-support</module>
+
+    <module>vdf-test-support</module>
+    <module>ruby-test-support</module>
+  </modules>
+
 
 </project>

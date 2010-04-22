@@ -1,6 +1,0 @@
---- 
-application: 
-  RAILS_ENV: development
-  RAILS_ROOT: /tmp
-web: 
-  context: /

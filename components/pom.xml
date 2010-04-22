@@ -1,0 +1,210 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-components</artifactId>
+  <version>1.0.0.Beta19</version>
+  <packaging>pom</packaging>
+  <name>TorqueBox</name>
+  <url>http://www.torquebox.org/</url>
+  <inceptionYear>2008</inceptionYear>
+  <organization>
+    <name>Red Hat, Inc.</name>
+    <url>http://redhat.com</url>
+  </organization>
+
+
+  <description>
+    The TorqueBox Ruby Application Platform
+  </description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.6.1</version>
+        <dependencies>
+
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-javadoc-support</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-base-int</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-interp-core</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-interp-metadata</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-interp-int</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-interp-spi</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-rack-core</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-rack-metadata</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-rack-int</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-rack-spi</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-rails-core</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-rails-metadata</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-rails-int</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-jobs-core</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-jobs-metadata</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-jobs-int</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+
+
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-messaging-core</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-messaging-metadata</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-messaging-int</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+          <dependency>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-messaging-spi</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <aggregate>true</aggregate>
+          <stylesheetfile>${project.build.directory}/apidocs/stylesheet.css</stylesheetfile>
+          <excludePackageNames>org.torquebox.test.*</excludePackageNames>
+          <resourcesArtifacts>
+            <resourcesArtifact>
+              <groupId>org.torquebox</groupId>
+              <artifactId>torquebox-javadoc-support</artifactId>
+              <version>${project.version}</version>
+            </resourcesArtifact>
+          </resourcesArtifacts>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>aggregate-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <modules>
+
+    <module>int-parent</module>
+
+    <module>mc-support</module>
+    <module>base-int</module>
+
+    <module>common-spi</module>
+    <module>common-core</module>
+
+    <module>interp-spi</module>
+    <module>interp-core</module>
+    <module>interp-metadata</module>
+    <module>interp-int</module>
+
+    <module>rack-spi</module>
+    <module>rack-core</module>
+    <module>rack-metadata</module>
+    <module>rack-int</module>
+
+    <module>rails-core</module>
+    <module>rails-metadata</module>
+    <module>rails-int</module>
+
+    <module>jobs-core</module>
+    <module>jobs-metadata</module>
+    <module>jobs-int</module>
+
+    <module>messaging-spi</module>
+    <module>messaging-core</module>
+    <module>messaging-metadata</module>
+    <module>messaging-int</module>
+
+
+    <module>messaging-runtime</module>
+    <module>messaging-client</module>
+    <module>messaging-container</module>
+    <module>messaging-tasks</module>
+
+    <module>torquebox-gem</module>
+    <module>torquebox-rails</module>
+    <module>torquebox-capistrano</module>
+
+    <module>vfs</module>
+
+  </modules>
+
+
+</project>

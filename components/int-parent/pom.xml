@@ -1,0 +1,116 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-parent</artifactId>
+    <version>1.0.0.Beta19</version>
+    <relativePath>../../parent</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-int-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>TorqueBox Integration Parent</name>
+  <description></description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-vdf-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.reloaded</groupId>
+      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build> 
+    <pluginManagement> 
+      <plugins> 
+        <plugin> 
+          <artifactId>maven-assembly-plugin</artifactId> 
+          <dependencies> 
+            <dependency> 
+              <groupId>org.torquebox</groupId> 
+              <artifactId>torquebox-deployer-support</artifactId> 
+              <version>${project.version}</version>
+            </dependency> 
+          </dependencies> 
+          <executions>
+            <execution>
+              <id>assemble-deployer</id>
+              <inherited>true</inherited>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+              <configuration> 
+                <descriptorRefs> 
+                  <descriptorRef>deployer</descriptorRef> 
+                </descriptorRefs>
+              </configuration> 
+            </execution>
+          </executions>
+        </plugin> 
+        <plugin> 
+          <artifactId>maven-dependency-plugin</artifactId> 
+          <configuration>
+            <artifactItems>
+              <artifactItem>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>${project.artifactId}</artifactId>
+                <classifier>deployer</classifier>
+                <version>${project.version}</version>
+                <type>jar</type>
+                <outputDirectory>${env.JBOSS_HOME}/server/default/deployers/torquebox.deployer/</outputDirectory>
+                <overWrite>true</overWrite>
+              </artifactItem>
+            </artifactItems>
+          </configuration>
+          <executions>
+            <execution>
+              <id>install-deployer</id>
+              <phase>install</phase>
+              <inherited>true</inherited>
+              <goals>
+                <goal>copy</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin> 
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>gem-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>install-dependency-gems</id>
+              <phase>install</phase>
+              <inherited>true</inherited>
+              <goals>
+                <goal>initialize</goal>
+              </goals>
+              <configuration>
+                <useTransitiveDependencies>true</useTransitiveDependencies>
+                <gemPath>${env.JRUBY_HOME}/lib/ruby/gems/1.8</gemPath>
+                <gemHome>${env.JRUBY_HOME}/lib/ruby/gems/1.8</gemHome>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins> 
+    </pluginManagement> 
+  </build> 
+
+
+</project>
