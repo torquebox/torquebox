@@ -2,6 +2,9 @@ Requirements
 ------------
 * Maven 3
 * Bob's jruby-maven-plugins fork (github.com/bobmcwhirter/jruby-maven-plugins), built and installed
+* Configuration of the JBoss Maven repository in your settings.xml
+  * http://community.jboss.org/wiki/MavenGettingStarted-Users
+  * http://community.jboss.org/wiki/MavenGettingStarted-Developers
 
 Building
 --------
