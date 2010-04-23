@@ -16,12 +16,7 @@
 
   <properties>
     <jruby.bin.url>http://jruby.org.s3.amazonaws.com/downloads/${version.jruby}/jruby-bin-${version.jruby}.zip</jruby.bin.url>
-    <jruby.bin.artifact.dir>${settings.localRepository}/org/jruby/jruby-bin/${version.jruby}</jruby.bin.artifact.dir>
-    <jruby.bin.artifact.zip>${jruby.bin.artifact.dir}/jruby-bin-${version.jruby}.zip</jruby.bin.artifact.zip>
-
     <jboss.bin.url>http://hudson.jboss.org/hudson/job/JBoss-AS-6.0.x/lastSuccessfulBuild/artifact/JBossAS_6_0/build/target/jboss-6.0.x.zip</jboss.bin.url>
-    <jboss.bin.artifact.dir>${settings.localRepository}/org/jboss/jbossas/jboss-as-distribution/${version.jbossas}</jboss.bin.artifact.dir>
-    <jboss.bin.artifact.zip>${jboss.bin.artifact.dir}/jboss-as-distribution-${version.jbossas}.zip</jboss.bin.artifact.zip>
   </properties>
 
   <build>

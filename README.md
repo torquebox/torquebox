@@ -1,6 +1,7 @@
 Requirements
 ------------
 * Maven 3
+* Bob's jruby-maven-plugins fork (github.com/bobmcwhirter/jruby-maven-plugins), built and installed
 
 Building
 --------
@@ -11,11 +12,10 @@ Simply type
 Layout
 ------
 
-Generally speaking:
+* `build-support/` Contains code related to building TorqueBox, but not 
+  involved at runtime.
 
-* `*-support`: Supports the build itself
-* `foo-spi`: Interfaces for service *foo*
-* `foo-core`: Implementation for service *foo*
-* `foo-metadata`: Configuration metadata for service *foo*
-* `foo-int`: VDF integration for service *foo*
+* `components/` Includes all code required at runtime.
 
+* `assemblage/` Contains instructions for building the assembled final
+  deliverables and distributions.

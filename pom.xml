@@ -21,8 +21,10 @@
   </description>
 
   <modules>
+    <module>parent</module>
     <module>build-support</module>
     <module>components</module>
+    <module>assemblage</module>
   </modules>
 
 
