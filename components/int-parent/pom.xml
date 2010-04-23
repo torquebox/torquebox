@@ -63,54 +63,71 @@
             </execution>
           </executions>
         </plugin> 
-        <plugin> 
-          <artifactId>maven-dependency-plugin</artifactId> 
-          <configuration>
-            <artifactItems>
-              <artifactItem>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>${project.artifactId}</artifactId>
-                <classifier>deployer</classifier>
-                <version>${project.version}</version>
-                <type>jar</type>
-                <outputDirectory>${env.JBOSS_HOME}/server/default/deployers/torquebox.deployer/</outputDirectory>
-                <overWrite>true</overWrite>
-              </artifactItem>
-            </artifactItems>
-          </configuration>
-          <executions>
-            <execution>
-              <id>install-deployer</id>
-              <phase>install</phase>
-              <inherited>true</inherited>
-              <goals>
-                <goal>copy</goal>
-              </goals>
-            </execution>
-          </executions>
-        </plugin> 
-        <plugin>
-          <groupId>de.saumya.mojo</groupId>
-          <artifactId>gem-maven-plugin</artifactId>
-          <executions>
-            <execution>
-              <id>install-dependency-gems</id>
-              <phase>install</phase>
-              <inherited>true</inherited>
-              <goals>
-                <goal>initialize</goal>
-              </goals>
-              <configuration>
-                <useTransitiveDependencies>true</useTransitiveDependencies>
-                <gemPath>${env.JRUBY_HOME}/lib/ruby/gems/1.8</gemPath>
-                <gemHome>${env.JRUBY_HOME}/lib/ruby/gems/1.8</gemHome>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
       </plugins> 
     </pluginManagement> 
   </build> 
+
+  <profiles>
+    <profile>
+      <id>assemblage-present</id>
+      <activation>
+        <file>
+          <exists>./../../assemblage/assembly/target/stage/</exists>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>de.saumya.mojo</groupId>
+              <artifactId>gem-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>install-dependency-gems</id>
+                  <phase>install</phase>
+                  <inherited>true</inherited>
+                  <goals>
+                    <goal>initialize</goal>
+                  </goals>
+                  <configuration>
+                    <useTransitiveDependencies>true</useTransitiveDependencies>
+                    <gemPath>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemPath>
+                    <gemHome>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemHome>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+            <plugin>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <configuration>
+                <artifactItems>
+                  <artifactItem>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <classifier>deployer</classifier>
+                    <version>${project.version}</version>
+                    <type>jar</type>
+                    <outputDirectory>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/server/default/deployers/torquebox.deployer/</outputDirectory>
+                    <overWrite>true</overWrite>
+                  </artifactItem>
+                </artifactItems>
+              </configuration>
+              <executions>
+                <execution>
+                  <id>install-deployer</id>
+                  <phase>install</phase>
+                  <inherited>true</inherited>
+                  <goals>
+                    <goal>copy</goal>
+                  </goals>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 
 
 </project>

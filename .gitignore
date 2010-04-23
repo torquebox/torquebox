@@ -9,7 +9,10 @@ log
 tmp
 cache
 .loadpath
+.classpath
 .settings
+.project
 *~
 package-cache
 release.properties
+
