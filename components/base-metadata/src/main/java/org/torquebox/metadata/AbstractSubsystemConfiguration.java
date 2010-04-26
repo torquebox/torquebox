@@ -3,8 +3,9 @@ package org.torquebox.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractSubsystemConfiguration {
+public abstract class AbstractSubsystemConfiguration implements SubsystemConfiguration {
 	
+	private String subsystemName;
 	private List<String> loadPaths = new ArrayList<String>();
 	
 	public AbstractSubsystemConfiguration() {
@@ -24,6 +25,14 @@ public abstract class AbstractSubsystemConfiguration {
 	
 	public List<String> getLoadPaths() {
 		return this.loadPaths;
+	}
+	
+	public void setSubsystemName(String subsystemName) {
+		this.subsystemName = subsystemName;
+	}
+	
+	public String getSubsystemName() {
+		return this.subsystemName;
 	}
 	
 }

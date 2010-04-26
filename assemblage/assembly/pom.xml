@@ -67,6 +67,12 @@
       <classifier>deployer</classifier>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-jobs-int</artifactId>
+      <classifier>deployer</classifier>
+      <version>${project.version}</version>
+    </dependency>
 <!--
     <dependency>
       <groupId>org.torquebox</groupId>
@@ -249,6 +255,22 @@
                 <delete dir="${stage.dir}/jboss/server/all/deploy/ROOT.war" failonerror="false"/>
                 <delete dir="${stage.dir}/jboss/server/osgi/deploy/ROOT.war" failonerror="false"/>
                 <delete dir="${stage.dir}/jboss/server/jbossweb-standalone/deploy/ROOT.war" failonerror="false"/>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>chmod-bin</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <chmod perm="ugo+x">
+                  <fileset dir="${stage.dir}/jboss/bin">
+                    <include name="*.sh"/>
+                  </fileset>
+                </chmod>
               </tasks>
             </configuration>
           </execution>

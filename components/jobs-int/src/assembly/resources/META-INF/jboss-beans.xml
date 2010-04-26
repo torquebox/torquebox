@@ -5,5 +5,16 @@
   <bean name="JobsYamlParsingDeployer" class="org.torquebox.jobs.deployers.JobsYamlParsingDeployer"/>
   <bean name="RubySchedulerDeployer"   class="org.torquebox.jobs.deployers.RubySchedulerDeployer"/>
   <bean name="RubyJobDeployer"         class="org.torquebox.jobs.deployers.RubyJobDeployer"/>
+  
+  <bean name="RailsJobsSubsystemConfigurator" class="org.torquebox.subsystems.BasicSubsystemConfigurationDeployer">
+    <property name="subsystemName">jobs</property>
+    <property name="triggerAttachmentName">org.torquebox.rails.metadata.RailsApplicationMetaData</property>
+    <property name="configurationClassName">org.torquebox.jobs.metadata.JobsSubsystemConfiguration</property>
+    <property name="loadPaths">
+      <list elementClass="java.lang.String">
+        <value>app/jobs</value>
+      </list>
+    </property>
+  </bean>
 
 </deployment>

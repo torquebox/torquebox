@@ -3,18 +3,31 @@ package org.torquebox.subsystems;
 import java.util.List;
 
 import org.jboss.deployers.spi.DeploymentException;
+import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.metadata.AbstractSubsystemConfiguration;
+import org.torquebox.metadata.SubsystemConfiguration;
 
 public class BasicSubsystemConfigurationDeployer extends AbstractDeployer {
 
+	private String subsystemName;
 	private String triggerAttachmentName;
 	private String configurationClassName;
 	private List<String> loadPaths;
 
 	public BasicSubsystemConfigurationDeployer() {
 		setAllInputs( true );
+		addOutput( SubsystemConfiguration.class );
+		setStage( DeploymentStages.POST_PARSE );
+	}
+	
+	public void setSubsystemName(String subsystemName) {
+		this.subsystemName = subsystemName;
+	}
+	
+	public String getSubsystemName() {
+		return this.subsystemName;
 	}
 	
 	public void setTriggerAttachmentName(String triggerAttachmentName) {
@@ -57,9 +70,13 @@ public class BasicSubsystemConfigurationDeployer extends AbstractDeployer {
 	}
 
 	protected void setUpConfiguration(DeploymentUnit unit) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		Class<AbstractSubsystemConfiguration> configurationClass = (Class<AbstractSubsystemConfiguration>) unit.getClassLoader().loadClass( this.configurationClassName );
+		log.info( "Configuring subsystem [" + this.subsystemName + "] for " + unit );
+		ClassLoader cl = Thread.currentThread().getContextClassLoader();
+		Class<AbstractSubsystemConfiguration> configurationClass = (Class<AbstractSubsystemConfiguration>) cl.loadClass( this.configurationClassName );
 		
 		AbstractSubsystemConfiguration configuration = configurationClass.newInstance();
+		
+		configuration.setSubsystemName( this.subsystemName );
 		
 		if ( this.loadPaths != null ) {
 			for ( String path : loadPaths ) {
