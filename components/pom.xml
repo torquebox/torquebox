@@ -172,6 +172,7 @@
 
     <module>mc-support</module>
     <module>base-int</module>
+    <module>base-metadata</module>
 
     <module>common-spi</module>
     <module>common-core</module>

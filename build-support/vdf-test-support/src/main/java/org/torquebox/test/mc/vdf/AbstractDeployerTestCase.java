@@ -84,13 +84,14 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 	}
 
 	protected void addDeployer(Deployer deployer) throws Throwable {
-		log.info( "add deployer - " + deployer.getClass().getName() );
-
-		KernelController controller = this.server.getKernel().getController();
 		String deployerName = deployer.getClass().getSimpleName();
+		addDeployer( deployer, deployerName );
+	}
+	
+	protected void addDeployer(Deployer deployer, String deployerName) throws Throwable {
+		KernelController controller = this.server.getKernel().getController();
 		BeanMetaDataBuilder bmdb = BeanMetaDataBuilder.createBuilder(deployerName, deployer.getClass().getName());
 		controller.install(bmdb.getBeanMetaData(), deployer);
-
 	}
 
 	protected String addDeployment(URL url, String name) throws IOException, URISyntaxException, DeploymentException {

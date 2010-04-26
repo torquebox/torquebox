@@ -9,17 +9,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-jobs-metadata</artifactId>
+  <artifactId>torquebox-base-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Scheduled Jobs Metadata</name>
+  <name>TorqueBox BaseMetadata</name>
   <description></description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-metadata</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
 
