@@ -4,7 +4,7 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-int-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../int-parent/</relativePath>
+    <relativePath>../int-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -39,6 +39,18 @@
       <artifactId>torquebox-interp-int</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.kernel</groupId>

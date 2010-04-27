@@ -29,6 +29,9 @@ public class RubyJobMetaData {
 	private String cronExpression;
 	private String rubyClassName;
 
+	private String rubyRuntimePoolName;
+	private String rubySchedulerName;
+	
 	public RubyJobMetaData() {
 		
 	}
@@ -71,5 +74,21 @@ public class RubyJobMetaData {
 	
 	public String getRubyClassName() {
 		return this.rubyClassName;
+	}
+	
+	public void setRubyRuntimePoolName(String rubyRuntimePoolName) {
+		this.rubyRuntimePoolName = rubyRuntimePoolName;
+	}
+	
+	public String getRubyRuntimePoolName() {
+		return this.rubyRuntimePoolName;
+	}
+	
+	public void setRubySchedulerName(String rubySchedulerName) {
+		this.rubySchedulerName = rubySchedulerName;
+	}
+	
+	public String getRubySchedulerName() {
+		return this.rubySchedulerName;
 	}
 }

@@ -35,8 +35,8 @@ public class RubyJob {
 	
 	private static final Logger log = Logger.getLogger( RubyJob.class );
 	
-	public static final String RUBY_CLASS_NAME_KEY = "jboss.ruby.class.name"; 
-	public static final String RUNTIME_POOL_KEY = "jboss.ruby.pool";
+	public static final String RUBY_CLASS_NAME_KEY = "torquebox.ruby.class.name"; 
+	public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
 	
 	private String group;
 	private String name;
@@ -124,7 +124,7 @@ public class RubyJob {
 		jobData.put( RUBY_CLASS_NAME_KEY, this.rubyClassName );
 		jobData.put( RUNTIME_POOL_KEY, this.runtimePool );
 		
-		log.info( "jobData=" + jobData );
+		log.info( "jobData=" + jobData.getWrappedMap() );
 
 		CronTrigger trigger = new CronTrigger(getTriggerName(), this.group, this.cronExpression );
 		
@@ -138,6 +138,10 @@ public class RubyJob {
 	public void stop() throws SchedulerException {
 		log.info( "Stopping Ruby job: " + this.group + "." + this.name );
 		scheduler.unscheduleJob( getTriggerName(), this.group );
+	}
+	
+	public String toString() {
+		return "[RubyJob: name=" + this.name + "; description=" + this.description + "; rubyClass=" + this.rubyClassName + "]";
 	}
 
 }

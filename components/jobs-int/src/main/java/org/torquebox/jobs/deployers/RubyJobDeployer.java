@@ -50,7 +50,7 @@ public class RubyJobDeployer extends AbstractDeployer {
 		if (allMetaData.size() == 0) {
 			return;
 		}
-		
+
 		for (RubyJobMetaData metaData : allMetaData) {
 			deploy(unit, metaData);
 		}
@@ -58,7 +58,7 @@ public class RubyJobDeployer extends AbstractDeployer {
 	}
 
 	protected void deploy(DeploymentUnit unit, RubyJobMetaData metaData) throws DeploymentException {
-		String beanName = "jboss.ruby.jobs." + unit.getName() + "." + metaData.getName();
+		String beanName = AttachmentUtils.beanName(unit, RubyJob.class, metaData.getName());
 
 		log.debug("deploying job: " + beanName);
 
@@ -69,19 +69,24 @@ public class RubyJobDeployer extends AbstractDeployer {
 		builder.addPropertyMetaData("rubyClassName", metaData.getRubyClassName());
 		builder.addPropertyMetaData("description", metaData.getDescription());
 		builder.addPropertyMetaData("cronExpression", metaData.getCronExpression());
-		
-		String schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
-		ValueMetaData schedulerInjection = builder.createInject(schedulerBeanName, "scheduler" );
-		
+
+		String schedulerBeanName = metaData.getRubySchedulerName();
+		if (schedulerBeanName == null) {
+			schedulerBeanName = AttachmentUtils.beanName(unit, RubyScheduler.class);
+		}
+		ValueMetaData schedulerInjection = builder.createInject(schedulerBeanName, "scheduler");
 		builder.addPropertyMetaData("scheduler", schedulerInjection);
 
-		ValueMetaData poolInjection = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, "jobs") );
+		String poolBeanName = metaData.getRubyRuntimePoolName();
+		if (poolBeanName == null) {
+			poolBeanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, "jobs");
+		}
+		ValueMetaData poolInjection = builder.createInject(poolBeanName);
 		builder.addPropertyMetaData("rubyRuntimePool", poolInjection);
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
 
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + RubyJob.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class);
-
+		AttachmentUtils.attach(unit, beanMetaData);
 	}
 
 }

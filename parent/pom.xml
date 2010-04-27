@@ -104,6 +104,11 @@
         <artifactId>mockito-all</artifactId>
         <version>${version.mockito}</version> 
       </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-all</artifactId>
+        <version>${version.hamcrest}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -111,6 +116,7 @@
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
+    <version.hamcrest>1.1</version.hamcrest>
 
     <version.jboss.reloaded>0.1.1</version.jboss.reloaded>
     <version.jboss.shrinkwrap>1.0.0-alpha-6</version.jboss.shrinkwrap>
