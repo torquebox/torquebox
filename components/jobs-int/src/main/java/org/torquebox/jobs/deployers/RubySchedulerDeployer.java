@@ -10,6 +10,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.mc.AttachmentUtils;
 
 public class RubySchedulerDeployer extends AbstractDeployer {
 	
@@ -25,18 +26,14 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 			return;
 		}
 		
-		String beanName = getBeanName(unit);
+		String beanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyScheduler.class.getName() );
 		
 		builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
 		
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
 		
-		unit.addAttachment( BeanMetaData.class.getName() + "$" + RubyScheduler.class.getName(), beanMetaData );
-	}
-	
-	public static String getBeanName(DeploymentUnit unit) {
-		return "jboss.ruby.jobs.scheduler." + unit.getSimpleName();
+		AttachmentUtils.attach( unit, beanMetaData );
 	}
 
 }

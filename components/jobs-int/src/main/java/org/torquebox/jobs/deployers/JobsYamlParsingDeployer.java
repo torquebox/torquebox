@@ -31,6 +31,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.mc.AttachmentUtils;
 import org.yaml.snakeyaml.Yaml;
 
 public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
@@ -60,35 +61,38 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 			Yaml yaml = new Yaml();
 			Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) yaml.load(in);
 
-			for (String jobName : results.keySet()) {
-				Map<String, String> jobSpec = results.get(jobName);
-				String description = jobSpec.get("description");
-				String job = jobSpec.get("job");
-				String cron = jobSpec.get("cron");
+			if (results != null) {
 
-				if (job == null) {
-					throw new DeploymentException( "Attribute 'job' must be specified" );
-				}
-				
-				if (cron == null) {
-					throw new DeploymentException( "Attribute 'cron' must be specified" );
-				}
+				for (String jobName : results.keySet()) {
+					Map<String, String> jobSpec = results.get(jobName);
+					String description = jobSpec.get("description");
+					String job = jobSpec.get("job");
+					String cron = jobSpec.get("cron");
 
-				RubyJobMetaData jobMetaData = new RubyJobMetaData();
+					if (job == null) {
+						throw new DeploymentException("Attribute 'job' must be specified");
+					}
 
-				jobMetaData.setName(jobName.toString());
-				jobMetaData.setGroup(unit.getName());
-				if (description != null) {
-					jobMetaData.setDescription(description.toString());
+					if (cron == null) {
+						throw new DeploymentException("Attribute 'cron' must be specified");
+					}
+
+					RubyJobMetaData jobMetaData = new RubyJobMetaData();
+
+					jobMetaData.setName(jobName.toString());
+					jobMetaData.setGroup(unit.getName());
+					if (description != null) {
+						jobMetaData.setDescription(description.toString());
+					}
+					jobMetaData.setRubyClassName(job.toString());
+					jobMetaData.setCronExpression(cron.toString().trim());
+					AttachmentUtils.multipleAttach(unit, jobMetaData, jobName);
 				}
-				jobMetaData.setRubyClassName(job.toString());
-				jobMetaData.setCronExpression(cron.toString().trim());
-				unit.addAttachment(RubyJobMetaData.class.getName() + "$" + jobName, jobMetaData, RubyJobMetaData.class);
 			}
 		} catch (IOException e) {
 			throw new DeploymentException(e);
 		} finally {
-			if ( in != null ) {
+			if (in != null) {
 				try {
 					in.close();
 				} catch (IOException e) {
