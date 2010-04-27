@@ -36,13 +36,15 @@ public class RubyJob {
 	private static final Logger log = Logger.getLogger( RubyJob.class );
 	
 	public static final String RUBY_CLASS_NAME_KEY = "torquebox.ruby.class.name"; 
+	public static final String RUBY_REQUIRE_PATH_KEY = "torquebox.ruby.require.path"; 
 	public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
 	
 	private String group;
 	private String name;
+	private String description;
 	
 	private String rubyClassName;
-	private String description;
+	private String rubyRequirePath;
 	
 	private String cronExpression;
 	
@@ -76,6 +78,14 @@ public class RubyJob {
 	
 	public String getRubyClassName() {
 		return this.rubyClassName;
+	}
+	
+	public void setRubyRequirePath(String rubyRequirePath) {
+		this.rubyRequirePath = rubyRequirePath;
+	}
+	
+	public String getRubyRequirePath() {
+		return this.rubyRequirePath;
 	}
 	
 	public void setDescription(String description) {

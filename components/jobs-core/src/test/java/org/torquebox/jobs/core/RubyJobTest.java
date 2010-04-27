@@ -5,16 +5,14 @@ import static org.mockito.Mockito.*;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.torquebox.interp.spi.RubyRuntimePool;
-import org.torquebox.test.ruby.AbstractRubyTestCase;
 
-public class RubyJobTest extends AbstractRubyTestCase {
+public class RubyJobTest {
 	
 	private RubyRuntimePool runtimePool;
 	private Scheduler scheduler;

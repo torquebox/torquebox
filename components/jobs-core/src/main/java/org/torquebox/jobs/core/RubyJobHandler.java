@@ -32,7 +32,6 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
-import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyJobHandler implements Job, StatefulJob {
@@ -53,22 +52,24 @@ public class RubyJobHandler implements Job, StatefulJob {
 		try {
 			ruby = runtimePool.borrowRuntime();
 			
-			loadSupport(ruby);
+			//loadSupport(ruby);
 			
-			String requirePath = StringUtils.underscore(rubyClassName).replaceAll("::", "/");
-			String require = "load %q(" + requirePath + ".rb)";
-
-			ruby.evalScriptlet(require);
+			//String requirePath = StringUtils.underscore(rubyClassName).replaceAll("::", "/");
+			String requirePath = jobDataMap.getString( RubyJob.RUBY_REQUIRE_PATH_KEY );
+			
+			if ( ( requirePath != null ) && (! requirePath.equals( "" ) ) ) {
+				ruby.getLoadService().load( requirePath, false );
+			}
 
 			RubyModule rubyClass = ruby.getClassFromPath(rubyClassName);
-
 			IRubyObject rubyJob = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, rubyClass, "new", EMPTY_OBJECT_ARRAY, Object.class);
-
 			injectLogger(rubyJob, rubyClassName);
 			
-			JavaEmbedUtils.invokeMethod( ruby, rubyJob, "run", EMPTY_OBJECT_ARRAY, void.class );
-
+			Object jobResult = JavaEmbedUtils.invokeMethod( ruby, rubyJob, "run", EMPTY_OBJECT_ARRAY, Object.class );
+			System.err.println( "JOB_RESULT: " + jobResult );
+			context.setResult( jobResult );
 		} catch (Exception e) {
+			context.setResult( e );
 			throw new JobExecutionException(e);
 		} finally {
 			if (ruby != null) {
