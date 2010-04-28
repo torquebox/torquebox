@@ -25,7 +25,8 @@ public class RubyJobHandlerTest extends AbstractRubyTestCase {
 	public void setUpRuby() throws Exception {
 		this.ruby = createRuby();
 		URL jobDefinitionsUrl = getClass().getResource( "job-definitions.rb" );
-		this.ruby.getLoadService().require( jobDefinitionsUrl.toExternalForm() );
+		System.err.println( "DEF [" + jobDefinitionsUrl.getPath() + "]" );
+		this.ruby.getLoadService().require( jobDefinitionsUrl.getPath() );
 		this.rubyRuntimePool = new SharedRubyRuntimePool( this.ruby );
 	}
 

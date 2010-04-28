@@ -23,7 +23,7 @@ package org.torquebox.jobs.core;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
+import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.quartz.Job;
@@ -58,10 +58,16 @@ public class RubyJobHandler implements Job, StatefulJob {
 			String requirePath = jobDataMap.getString( RubyJob.RUBY_REQUIRE_PATH_KEY );
 			
 			if ( ( requirePath != null ) && (! requirePath.equals( "" ) ) ) {
-				ruby.getLoadService().load( requirePath, false );
+				System.err.println( "loading [" + requirePath + ".rb]" );
+				ruby.getLoadService().load( requirePath + ".rb", false );
 			}
 
-			RubyModule rubyClass = ruby.getClassFromPath(rubyClassName);
+			System.err.println( "fetch " + rubyClassName );
+			
+			RubyClass rubyClass = (RubyClass) ruby.getClassFromPath(rubyClassName);
+			
+			System.err.println( "rubyClass=" + rubyClass );
+			
 			IRubyObject rubyJob = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, rubyClass, "new", EMPTY_OBJECT_ARRAY, Object.class);
 			injectLogger(rubyJob, rubyClassName);
 			

@@ -28,6 +28,7 @@ public class RubyJobMetaData {
 	private String description;
 	private String cronExpression;
 	private String rubyClassName;
+	private String rubyRequirePath;
 
 	private String rubyRuntimePoolName;
 	private String rubySchedulerName;
@@ -74,6 +75,14 @@ public class RubyJobMetaData {
 	
 	public String getRubyClassName() {
 		return this.rubyClassName;
+	}
+	
+	public void setRubyRequirePath(String rubyRequirePath) {
+		this.rubyRequirePath = rubyRequirePath;
+	}
+	
+	public String getRubyRequirePath() {
+		return this.rubyRequirePath;
 	}
 	
 	public void setRubyRuntimePoolName(String rubyRuntimePoolName) {

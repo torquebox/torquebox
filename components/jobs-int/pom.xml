@@ -88,6 +88,11 @@
       <artifactId>quartz</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>logkit</groupId>
+      <artifactId>logkit</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build> 

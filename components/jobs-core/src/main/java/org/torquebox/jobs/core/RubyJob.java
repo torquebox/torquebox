@@ -132,6 +132,7 @@ public class RubyJob {
 		JobDataMap jobData = jobDetail.getJobDataMap();
 
 		jobData.put( RUBY_CLASS_NAME_KEY, this.rubyClassName );
+		jobData.put( RUBY_REQUIRE_PATH_KEY, this.rubyRequirePath );
 		jobData.put( RUNTIME_POOL_KEY, this.runtimePool );
 		
 		log.info( "jobData=" + jobData.getWrappedMap() );

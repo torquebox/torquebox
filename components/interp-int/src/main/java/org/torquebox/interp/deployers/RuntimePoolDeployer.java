@@ -71,7 +71,7 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
 
 		AttachmentUtils.attach(unit, poolBean);
 
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, poolBean, BeanMetaData.class);
+		//unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, poolBean, BeanMetaData.class);
 	}
 
 }

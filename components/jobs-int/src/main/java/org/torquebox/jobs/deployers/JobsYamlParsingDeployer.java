@@ -30,6 +30,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.common.util.StringUtils;
 import org.torquebox.jobs.metadata.RubyJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.yaml.snakeyaml.Yaml;
@@ -84,8 +85,9 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 					if (description != null) {
 						jobMetaData.setDescription(description.toString());
 					}
-					jobMetaData.setRubyClassName(job.toString());
-					jobMetaData.setCronExpression(cron.toString().trim());
+					jobMetaData.setRubyClassName(job.trim());
+					jobMetaData.setCronExpression(cron.trim());
+					jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
 					AttachmentUtils.multipleAttach(unit, jobMetaData, jobName);
 				}
 			}

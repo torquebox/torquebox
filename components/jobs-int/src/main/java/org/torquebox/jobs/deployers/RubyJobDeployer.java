@@ -67,6 +67,7 @@ public class RubyJobDeployer extends AbstractDeployer {
 		builder.addPropertyMetaData("group", metaData.getGroup());
 		builder.addPropertyMetaData("name", metaData.getName());
 		builder.addPropertyMetaData("rubyClassName", metaData.getRubyClassName());
+		builder.addPropertyMetaData("rubyRequirePath", metaData.getRubyRequirePath());
 		builder.addPropertyMetaData("description", metaData.getDescription());
 		builder.addPropertyMetaData("cronExpression", metaData.getCronExpression());
 

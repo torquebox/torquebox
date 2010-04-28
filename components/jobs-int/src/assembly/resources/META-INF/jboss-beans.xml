@@ -5,6 +5,7 @@
   <bean name="JobsYamlParsingDeployer" class="org.torquebox.jobs.deployers.JobsYamlParsingDeployer"/>
   <bean name="RubySchedulerDeployer"   class="org.torquebox.jobs.deployers.RubySchedulerDeployer"/>
   <bean name="RubyJobDeployer"         class="org.torquebox.jobs.deployers.RubyJobDeployer"/>
+  <bean name="JobsRuntimePoolDeployer" class="org.torquebox.jobs.deployers.JobsRuntimePoolDeployer"/>
   
   <bean name="RailsJobsSubsystemConfigurator" class="org.torquebox.subsystems.BasicSubsystemConfigurationDeployer">
     <property name="subsystemName">jobs</property>

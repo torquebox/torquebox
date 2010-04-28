@@ -34,6 +34,8 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
 		String schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
 		BeanMetaData schedulerMetaData = getBeanMetaData(unit, schedulerBeanName);
 		assertNull( schedulerMetaData );
+		
+		undeploy( deploymentName );
 	}
 	
 	
@@ -55,6 +57,8 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
 		
 		RubyScheduler scheduler = (RubyScheduler) getBean( schedulerBeanName );
 		assertNotNull( scheduler );
+		
+		undeploy( deploymentName );
 	}
 	
 	
