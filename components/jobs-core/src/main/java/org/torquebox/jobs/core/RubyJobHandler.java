@@ -32,6 +32,7 @@ import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
+import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyJobHandler implements Job, StatefulJob {
@@ -44,38 +45,25 @@ public class RubyJobHandler implements Job, StatefulJob {
 		JobDetail jobDetail = context.getJobDetail();
 		JobDataMap jobDataMap = jobDetail.getJobDataMap();
 
-		String rubyClassName = (String) jobDataMap.get(RubyJob.RUBY_CLASS_NAME_KEY);
-		RubyRuntimePool runtimePool = (RubyRuntimePool) jobDataMap.get(RubyJob.RUNTIME_POOL_KEY);
+		String rubyClassName = jobDataMap.getString(RubyJob.RUBY_CLASS_NAME_KEY);
+		String rubyRequirePath = jobDataMap.getString(RubyJob.RUBY_REQUIRE_PATH_KEY);
 
+		InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+		resolver.setRubyClassName(rubyClassName);
+		resolver.setRubyRequirePath( rubyRequirePath );
+		resolver.setComponentInitializer( new JobComponentInitializer() );
+		
 		Ruby ruby = null;
+
+		RubyRuntimePool runtimePool = (RubyRuntimePool) jobDataMap.get(RubyJob.RUNTIME_POOL_KEY);
 
 		try {
 			ruby = runtimePool.borrowRuntime();
-			
-			//loadSupport(ruby);
-			
-			//String requirePath = StringUtils.underscore(rubyClassName).replaceAll("::", "/");
-			String requirePath = jobDataMap.getString( RubyJob.RUBY_REQUIRE_PATH_KEY );
-			
-			if ( ( requirePath != null ) && (! requirePath.equals( "" ) ) ) {
-				System.err.println( "loading [" + requirePath + ".rb]" );
-				ruby.getLoadService().load( requirePath + ".rb", false );
-			}
-
-			System.err.println( "fetch " + rubyClassName );
-			
-			RubyClass rubyClass = (RubyClass) ruby.getClassFromPath(rubyClassName);
-			
-			System.err.println( "rubyClass=" + rubyClass );
-			
-			IRubyObject rubyJob = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, rubyClass, "new", EMPTY_OBJECT_ARRAY, Object.class);
-			injectLogger(rubyJob, rubyClassName);
-			
-			Object jobResult = JavaEmbedUtils.invokeMethod( ruby, rubyJob, "run", EMPTY_OBJECT_ARRAY, Object.class );
-			System.err.println( "JOB_RESULT: " + jobResult );
-			context.setResult( jobResult );
+			IRubyObject rubyJob = resolver.resolve( ruby );
+			Object jobResult = JavaEmbedUtils.invokeMethod(ruby, rubyJob, "run", EMPTY_OBJECT_ARRAY, Object.class);
+			context.setResult(jobResult);
 		} catch (Exception e) {
-			context.setResult( e );
+			context.setResult(e);
 			throw new JobExecutionException(e);
 		} finally {
 			if (ruby != null) {
@@ -84,24 +72,4 @@ public class RubyJobHandler implements Job, StatefulJob {
 
 		}
 	}
-
-	protected void loadSupport(Ruby runtime) {
-		String supportScript = "require %q(torquebox/jobs/base)\n";
-		runtime.evalScriptlet(supportScript);
-	}
-
-	private void injectLogger(IRubyObject rubyJob, String rubyClassName) {
-		boolean isInjectable = ((Boolean) JavaEmbedUtils.invokeMethod(rubyJob.getRuntime(), rubyJob, "respond_to?",
-				new Object[] { "log=" }, Boolean.class)).booleanValue();
-
-		if (isInjectable) {
-			String loggerName = rubyClassName.replaceAll("::", ".");
-			Logger logger = Logger.getLogger(loggerName);
-			//log.info( "injecting " + logger );
-			JavaEmbedUtils.invokeMethod(rubyJob.getRuntime(), rubyJob, "log=", new Object[] { logger }, void.class);
-		} else {
-			//log.warn("Unable to inject log into " + rubyClassName);
-		}
-	}
-
 }
