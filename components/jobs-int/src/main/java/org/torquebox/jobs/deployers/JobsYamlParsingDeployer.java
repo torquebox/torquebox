@@ -31,14 +31,14 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.yaml.snakeyaml.Yaml;
 
 public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 
 	public JobsYamlParsingDeployer() {
-		addOutput(RubyJobMetaData.class);
+		addOutput(ScheduledJobMetaData.class);
 	}
 
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
@@ -78,7 +78,7 @@ public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 						throw new DeploymentException("Attribute 'cron' must be specified");
 					}
 
-					RubyJobMetaData jobMetaData = new RubyJobMetaData();
+					ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
 
 					jobMetaData.setName(jobName.toString());
 					jobMetaData.setGroup(unit.getName());

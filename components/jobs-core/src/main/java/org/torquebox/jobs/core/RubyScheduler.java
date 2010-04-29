@@ -28,6 +28,7 @@ import org.jboss.logging.Logger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
+import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyScheduler {
 
@@ -35,6 +36,11 @@ public class RubyScheduler {
 
 	private String name;
 	private Scheduler scheduler;
+	private RubyRuntimePool runtimePool;
+	
+	public RubyScheduler() {
+		
+	}
 
 	public void setName(String name) {
 		this.name = name;
@@ -42,6 +48,14 @@ public class RubyScheduler {
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
+		this.runtimePool = runtimePool;
+	}
+	
+	public RubyRuntimePool getRubyRuntimePool() {
+		return this.runtimePool;
 	}
 	
 	public Scheduler getScheduler() {
@@ -53,8 +67,13 @@ public class RubyScheduler {
 		Properties props = new Properties();
 		props.load(this.getClass().getResourceAsStream("scheduler.properties"));
 		props.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName());
+		
+		RubyJobFactory jobFactory = new RubyJobFactory();
+		jobFactory.setRubyRuntimePool( this.runtimePool );
+		
 		StdSchedulerFactory factory = new StdSchedulerFactory(props);
 		this.scheduler = factory.getScheduler();
+		this.scheduler.setJobFactory( jobFactory );
 		this.scheduler.start();
 	}
 

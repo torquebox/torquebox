@@ -10,8 +10,8 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.jobs.core.RubyJob;
-import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.jobs.core.ScheduledJob;
+import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
@@ -48,13 +48,12 @@ public class RubyJobDeployerTest extends AbstractDeployerTestCase {
 		String supportDeploymentName = addDeployment( archiveFile );
 		processDeployments(true);
 		
-		RubyJobMetaData jobMetaData = new RubyJobMetaData();
+		ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
 		jobMetaData.setName( "job.one" );
 		jobMetaData.setDescription( "test job" );
 		jobMetaData.setRubyClassName( "TestJob" );
 		jobMetaData.setCronExpression( "22 * * * * ?");
 		
-		jobMetaData.setRubyRuntimePoolName( "runtime-pool" );
 		jobMetaData.setRubySchedulerName( "scheduler" );
 		
 		String deploymentName = createDeployment( "simple" );
@@ -63,11 +62,11 @@ public class RubyJobDeployerTest extends AbstractDeployerTestCase {
 		
 		processDeployments( true );
 		
-		String jobBeanName = AttachmentUtils.beanName(unit, RubyJob.class, "job.one" );
+		String jobBeanName = AttachmentUtils.beanName(unit, ScheduledJob.class, "job.one" );
 		BeanMetaData jobBeanMetaData = getBeanMetaData(unit, jobBeanName );
 		assertNotNull( jobBeanMetaData );
 		
-		RubyJob jobBean = (RubyJob) getBean( jobBeanName );
+		ScheduledJob jobBean = (ScheduledJob) getBean( jobBeanName );
 		assertNotNull( jobBean );
 		assertEquals( "job.one", jobBean.getName() );
 		assertEquals( "22 * * * * ?", jobBean.getCronExpression() );

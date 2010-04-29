@@ -21,7 +21,7 @@
  */
 package org.torquebox.jobs.metadata;
 
-public class RubyJobMetaData {
+public class ScheduledJobMetaData {
 
 	private String group;
 	private String name;
@@ -30,10 +30,9 @@ public class RubyJobMetaData {
 	private String rubyClassName;
 	private String rubyRequirePath;
 
-	private String rubyRuntimePoolName;
 	private String rubySchedulerName;
 	
-	public RubyJobMetaData() {
+	public ScheduledJobMetaData() {
 		
 	}
 	
@@ -83,14 +82,6 @@ public class RubyJobMetaData {
 	
 	public String getRubyRequirePath() {
 		return this.rubyRequirePath;
-	}
-	
-	public void setRubyRuntimePoolName(String rubyRuntimePoolName) {
-		this.rubyRuntimePoolName = rubyRuntimePoolName;
-	}
-	
-	public String getRubyRuntimePoolName() {
-		return this.rubyRuntimePoolName;
 	}
 	
 	public void setRubySchedulerName(String rubySchedulerName) {

@@ -6,7 +6,7 @@ import java.util.Set;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import static org.junit.Assert.*;
@@ -34,7 +34,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         
         assertNotNull( unit );
         
-        Set<? extends RubyJobMetaData> allJobMetaData = unit.getAllMetaData( RubyJobMetaData.class );
+        Set<? extends ScheduledJobMetaData> allJobMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
         
         assertNotNull( allJobMetaData );
         assertTrue( allJobMetaData.isEmpty() );
@@ -52,12 +52,12 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         
         assertNotNull( unit );
         
-        Set<? extends RubyJobMetaData> allJobMetaData = unit.getAllMetaData( RubyJobMetaData.class );
+        Set<? extends ScheduledJobMetaData> allJobMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
         
         assertNotNull( allJobMetaData );
         assertEquals( 2, allJobMetaData.size() );
         
-        RubyJobMetaData jobOne = getJobMetaData(allJobMetaData, "job.one" );
+        ScheduledJobMetaData jobOne = getJobMetaData(allJobMetaData, "job.one" );
         assertNotNull( jobOne );
         assertEquals( "job.one", jobOne.getName() );
         assertEquals( "My Job is routine", jobOne.getDescription() );
@@ -65,7 +65,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals( "MyJobClass", jobOne.getRubyClassName() );
         assertNotNull( jobOne.getGroup() );
         
-        RubyJobMetaData jobTwo = getJobMetaData(allJobMetaData, "job.two" );
+        ScheduledJobMetaData jobTwo = getJobMetaData(allJobMetaData, "job.two" );
         assertNotNull( jobTwo );
         assertEquals( "job.two", jobTwo.getName() );
         assertEquals( "My other Job is extraodinary", jobTwo.getDescription() );
@@ -82,8 +82,8 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	 * @param name The search name
 	 * @return The found metadata, or null if no matching are found.
 	 */
-	protected RubyJobMetaData getJobMetaData(Set<? extends RubyJobMetaData> allJobMetaData, String name) {
-		for ( RubyJobMetaData each : allJobMetaData ) {
+	protected ScheduledJobMetaData getJobMetaData(Set<? extends ScheduledJobMetaData> allJobMetaData, String name) {
+		for ( ScheduledJobMetaData each : allJobMetaData ) {
 			if ( each.getName().equals( name ) ) {
 				return each;
 			}

@@ -8,7 +8,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.interp.metadata.PoolMetaData;
-import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
@@ -56,7 +56,7 @@ public class JobsRuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		
 		AttachmentUtils.multipleAttach( unit, jobsPoolMetaData, "jobs" );
 		
-		AttachmentUtils.multipleAttach( unit, new RubyJobMetaData(), "job.one" );
+		AttachmentUtils.multipleAttach( unit, new ScheduledJobMetaData(), "job.one" );
 		
 		processDeployments( true );
 		
@@ -91,7 +91,7 @@ public class JobsRuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		String deploymentName = createDeployment( "pool-required" );
 		DeploymentUnit unit = getDeploymentUnit( deploymentName );
 		
-		RubyJobMetaData rubyJobMetaData = new RubyJobMetaData();
+		ScheduledJobMetaData rubyJobMetaData = new ScheduledJobMetaData();
 		AttachmentUtils.multipleAttach(unit, rubyJobMetaData, "job.one" );
 		
 		processDeployments( true );

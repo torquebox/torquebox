@@ -31,9 +31,9 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.interp.spi.RubyRuntimePool;
-import org.torquebox.jobs.core.RubyJob;
+import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.core.RubyScheduler;
-import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
 public class RubyJobDeployer extends AbstractDeployer {
@@ -45,24 +45,24 @@ public class RubyJobDeployer extends AbstractDeployer {
 	}
 
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends RubyJobMetaData> allMetaData = unit.getAllMetaData(RubyJobMetaData.class);
+		Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData(ScheduledJobMetaData.class);
 
 		if (allMetaData.size() == 0) {
 			return;
 		}
 
-		for (RubyJobMetaData metaData : allMetaData) {
+		for (ScheduledJobMetaData metaData : allMetaData) {
 			deploy(unit, metaData);
 		}
 
 	}
 
-	protected void deploy(DeploymentUnit unit, RubyJobMetaData metaData) throws DeploymentException {
-		String beanName = AttachmentUtils.beanName(unit, RubyJob.class, metaData.getName());
+	protected void deploy(DeploymentUnit unit, ScheduledJobMetaData metaData) throws DeploymentException {
+		String beanName = AttachmentUtils.beanName(unit, ScheduledJob.class, metaData.getName());
 
 		log.debug("deploying job: " + beanName);
 
-		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyJob.class.getName());
+		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, ScheduledJob.class.getName());
 
 		builder.addPropertyMetaData("group", metaData.getGroup());
 		builder.addPropertyMetaData("name", metaData.getName());
@@ -77,13 +77,6 @@ public class RubyJobDeployer extends AbstractDeployer {
 		}
 		ValueMetaData schedulerInjection = builder.createInject(schedulerBeanName, "scheduler");
 		builder.addPropertyMetaData("scheduler", schedulerInjection);
-
-		String poolBeanName = metaData.getRubyRuntimePoolName();
-		if (poolBeanName == null) {
-			poolBeanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, "jobs");
-		}
-		ValueMetaData poolInjection = builder.createInject(poolBeanName);
-		builder.addPropertyMetaData("rubyRuntimePool", poolInjection);
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
 

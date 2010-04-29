@@ -7,7 +7,7 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.interp.metadata.PoolMetaData;
-import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
 public class JobsRuntimePoolDeployer extends AbstractDeployer {
@@ -20,7 +20,7 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
 
 	@Override
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if ( unit.getAllMetaData( RubyJobMetaData.class ).isEmpty() ) {
+		if ( unit.getAllMetaData( ScheduledJobMetaData.class ).isEmpty() ) {
 			return;
 		}
 		

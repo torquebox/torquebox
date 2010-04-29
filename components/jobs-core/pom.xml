@@ -38,6 +38,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-interp-core</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <scope>provided</scope>

@@ -42,13 +42,13 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-spi</artifactId>
+      <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-core</artifactId>
+      <artifactId>torquebox-common-spi</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

@@ -1,11 +1,14 @@
 package org.torquebox.jobs.deployers;
 
+import java.io.File;
+
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.jobs.core.RubyScheduler;
-import org.torquebox.jobs.metadata.RubyJobMetaData;
+import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
@@ -18,6 +21,7 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
 	@Before
 	public void setUp() throws Throwable {
 		this.deployer = new RubySchedulerDeployer();
+		this.deployer.setRubyRuntimePoolName( "runtime-pool" );
 		addDeployer( this.deployer );
 	}
 	
@@ -42,11 +46,17 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
 	/** Ensure that given at least one job, a scheduler is deployed. */
 	@Test
 	public void testSchedulerDeployment() throws Exception {
+		JavaArchive archive = createJar( "scheduler-support" );
+		archive.addResource(getClass().getResource("interp-jboss-beans.xml"), "interp-jboss-beans.xml");
+		File archiveFile = createJarFile( archive );
+		
+		String supportDeploymentName = addDeployment( archiveFile );
+		processDeployments(true);
 		
 		String deploymentName = createDeployment( "with-jobs" );
 		DeploymentUnit unit = getDeploymentUnit( deploymentName );
 		
-		RubyJobMetaData jobMeta = new RubyJobMetaData();
+		ScheduledJobMetaData jobMeta = new ScheduledJobMetaData();
 		AttachmentUtils.multipleAttach(unit, jobMeta, "job.one" );
 	
 		processDeployments( true );
@@ -59,6 +69,7 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
 		assertNotNull( scheduler );
 		
 		undeploy( deploymentName );
+		undeploy( supportDeploymentName );
 	}
 	
 	
