@@ -1,8 +1,8 @@
 package org.torquebox.messaging.core;
 
-public class Topic extends Destination {
+public class ManagedTopic extends AbstractManagedDestination {
 	
-	public Topic() {
+	public ManagedTopic() {
 		
 	}
 	

@@ -337,6 +337,12 @@
         </plugin>
         <plugin>
           <groupId>de.saumya.mojo</groupId>
+          <artifactId>rspec-maven-plugin</artifactId>
+          <version>0.11.1-SNAPSHOT</version>
+          <extensions>true</extensions>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
           <artifactId>jruby-maven-plugin</artifactId>
           <version>0.11.1-SNAPSHOT</version>
           <extensions>true</extensions>

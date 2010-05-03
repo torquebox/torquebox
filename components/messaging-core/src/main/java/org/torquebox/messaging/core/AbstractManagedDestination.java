@@ -3,14 +3,14 @@ package org.torquebox.messaging.core;
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.logging.Logger;
 
-public abstract class Destination {
+public abstract class AbstractManagedDestination {
 	
 	protected  Logger log;
 	
 	private JMSServerManager server;
 	private String name;
 
-	public Destination() {
+	public AbstractManagedDestination() {
 		log = Logger.getLogger( getClass() );
 	}
 	

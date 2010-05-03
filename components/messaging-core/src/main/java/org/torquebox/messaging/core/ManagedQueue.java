@@ -1,9 +1,9 @@
 package org.torquebox.messaging.core;
 
 
-public class Queue extends Destination {
+public class ManagedQueue extends AbstractManagedDestination {
 	
-	public Queue() {
+	public ManagedQueue() {
 		
 	}
 	

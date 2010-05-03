@@ -1,14 +1,14 @@
 package org.torquebox.messaging.metadata;
 
-public class DestinationMetaData {
+public class AbstractDestinationMetaData {
 
 	String name;
 	
-	public DestinationMetaData() {
+	public AbstractDestinationMetaData() {
 		
 	}
 	
-	public DestinationMetaData(String name) {
+	public AbstractDestinationMetaData(String name) {
 		this.name = name;
 	}
 	

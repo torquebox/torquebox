@@ -195,16 +195,18 @@
     <module>jobs-metadata</module>
     <module>jobs-int</module>
 
-    <module>messaging-spi</module>
     <module>messaging-core</module>
     <module>messaging-metadata</module>
+    <module>messaging-metadata-builder</module>
     <module>messaging-int</module>
 
 
+<!--
     <module>messaging-runtime</module>
     <module>messaging-client</module>
     <module>messaging-container</module>
     <module>messaging-tasks</module>
+-->
 
     <module>torquebox-gem</module>
     <module>torquebox-rails</module>

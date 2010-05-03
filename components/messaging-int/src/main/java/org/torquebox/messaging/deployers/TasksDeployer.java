@@ -7,10 +7,9 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.messaging.metadata.DuplicateQueueException;
-import org.torquebox.messaging.metadata.MessageDrivenConsumerConfig;
+import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
-import org.torquebox.messaging.metadata.QueuesMetaData;
 import org.torquebox.messaging.metadata.TaskMetaData;
 
 public class TasksDeployer extends AbstractDeployer {
@@ -19,8 +18,8 @@ public class TasksDeployer extends AbstractDeployer {
 		setStage( DeploymentStages.REAL );
 		setAllInputs( true );
 		addInput( TaskMetaData.class );
-		addOutput( MessageDrivenConsumerConfig.class );
-		addOutput( QueuesMetaData.class );
+		addOutput( MessageProcessorMetaData.class );
+		addOutput( QueueMetaData.class );
 	}
 
 	@Override
@@ -34,13 +33,6 @@ public class TasksDeployer extends AbstractDeployer {
 	}
 
 	protected void deploy(DeploymentUnit unit, TaskMetaData task) throws DeploymentException {
-		QueuesMetaData queues = unit.getAttachment( QueuesMetaData.class );
-		
-		if ( queues == null ) {
-			queues = new QueuesMetaData();
-			unit.addAttachment( QueuesMetaData.class, queues );
-		}
-		
 		String baseQueueName = task.getRubyClassName();
 		
 		if ( baseQueueName.endsWith( "Task" ) ) {
@@ -52,16 +44,12 @@ public class TasksDeployer extends AbstractDeployer {
 		QueueMetaData queue = new QueueMetaData();
 		queue.setName( "/queues/torquebox/tasks/" + baseQueueName );
 		
-		try {
-			queues.addQueue( queue );
-		} catch (DuplicateQueueException e) {
-			throw new DeploymentException( e );
-		}
+			AttachmentUtils.multipleAttach(unit, queue, queue.getName() );
 		
-		MessageDrivenConsumerConfig consumer = new MessageDrivenConsumerConfig();
-		consumer.setDestinationName( queue.getName() );
-		consumer.setRubyClassName( task.getRubyClassName() );
-		unit.addAttachment( MessageDrivenConsumerConfig.class.getName() + "$" + queue.getName() + "$" + task.getRubyClassName(), consumer, MessageDrivenConsumerConfig.class );
+		MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
+		processorMetaData.setDestinationName( queue.getName() );
+		processorMetaData.setRubyClassName( task.getRubyClassName() );
+		AttachmentUtils.multipleAttach(unit, processorMetaData, processorMetaData.getName() );
 	}
 
 }

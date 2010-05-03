@@ -1,13 +1,13 @@
 package org.torquebox.messaging.metadata;
 
-public class TopicMetaData extends DestinationMetaData {
+public class TopicMetaData extends AbstractDestinationMetaData {
 	
 	public TopicMetaData() {
 		
 	}
 	
 	public TopicMetaData(String name) {
-		setName( name );
+		super( name );
 	}
 
 }

@@ -10,13 +10,13 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.torquebox.interp.spi.RubyRuntimePool;
-import org.torquebox.messaging.core.MessageDrivenConsumer;
-import org.torquebox.messaging.metadata.MessageDrivenConsumerConfig;
+import org.torquebox.messaging.core.RubyMessageProcessor;
+import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 
 public class Container {
 
 	private Context context;
-	private List<MessageDrivenConsumer> consumers = new ArrayList<MessageDrivenConsumer>();
+	private List<RubyMessageProcessor> consumers = new ArrayList<RubyMessageProcessor>();
 
 	private ConnectionFactory connectionFactory;
 	private String connectionFactoryJndiName;
@@ -59,12 +59,12 @@ public class Container {
 		return this.rubyRuntimePool;
 	}
 
-	synchronized void addMessageDrivenConsumer(MessageDrivenConsumer consumer) {
+	synchronized void addMessageDrivenConsumer(RubyMessageProcessor consumer) {
 		this.consumers.add(consumer);
 	}
 
-	public void addMessageDrivenConsumer(MessageDrivenConsumerConfig consumerConfig) throws NamingException {
-		MessageDrivenConsumer consumer = new MessageDrivenConsumer();
+	public void addMessageDrivenConsumer(MessageProcessorMetaData consumerConfig) throws NamingException {
+		RubyMessageProcessor consumer = new RubyMessageProcessor();
 
 		consumer.setConnectionFactory(getConnectionFactory());
 
@@ -79,7 +79,7 @@ public class Container {
 
 	synchronized public void create() throws Exception {
 		this.connectionFactory = (ConnectionFactory) getContext().lookup(getConnectionFactoryJndiName());
-		for (MessageDrivenConsumer consumer : this.consumers) {
+		for (RubyMessageProcessor consumer : this.consumers) {
 			try {
 				consumer.setConnectionFactory(getConnectionFactory());
 				consumer.setRubyRuntimePool( getRubyRuntimePool() );
@@ -91,7 +91,7 @@ public class Container {
 	}
 
 	synchronized public void start() {
-		for (MessageDrivenConsumer consumer : this.consumers) {
+		for (RubyMessageProcessor consumer : this.consumers) {
 			try {
 				consumer.start();
 			} catch (JMSException e) {
@@ -101,7 +101,7 @@ public class Container {
 	}
 
 	synchronized public void stop() {
-		for (MessageDrivenConsumer consumer : this.consumers) {
+		for (RubyMessageProcessor consumer : this.consumers) {
 			try {
 				consumer.stop();
 			} catch (JMSException e) {
@@ -112,7 +112,7 @@ public class Container {
 	}
 	
 	synchronized private void destroy() {
-		for (MessageDrivenConsumer consumer : this.consumers) {
+		for (RubyMessageProcessor consumer : this.consumers) {
 			try {
 				consumer.destroy();
 			} catch (JMSException e) {

@@ -6,21 +6,21 @@ import java.util.Map;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.QueueMetaData;
-import org.torquebox.messaging.metadata.QueuesMetaData;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
-public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueuesMetaData> {
+public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueueMetaData> {
 
 	public QueuesYamlParsingDeployer() {
-		super(QueuesMetaData.class);
+		super(QueueMetaData.class);
 		setName("queues.yml");
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected QueuesMetaData parse(VFSDeploymentUnit unit, VirtualFile file, QueuesMetaData root) throws Exception {
+	protected QueueMetaData parse(VFSDeploymentUnit unit, VirtualFile file, QueueMetaData root) throws Exception {
 		InputStream in = null;
 
 		try {
@@ -31,8 +31,8 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<Queues
 			if (data != null) {
 				for (String queueName : data.keySet()) {
 					log.info("Read configuration for queue [" + queueName + "]");
-					QueueMetaData queue = new QueueMetaData(queueName);
-					unit.addAttachment(QueueMetaData.class.getName() + "$" + queueName, queue, QueueMetaData.class);
+					QueueMetaData queueMetaData = new QueueMetaData(queueName);
+					AttachmentUtils.multipleAttach(unit, queueMetaData, queueName );
 				}
 			}
 		} catch (YAMLException e) {

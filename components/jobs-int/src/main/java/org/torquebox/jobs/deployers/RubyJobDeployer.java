@@ -40,6 +40,7 @@ public class RubyJobDeployer extends AbstractDeployer {
 
 	public RubyJobDeployer() {
 		setAllInputs(true);
+		addInput(ScheduledJobMetaData.class);
 		addOutput(BeanMetaData.class);
 		setStage(DeploymentStages.REAL);
 	}

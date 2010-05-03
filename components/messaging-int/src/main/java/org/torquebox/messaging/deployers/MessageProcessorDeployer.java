@@ -17,53 +17,54 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.JndiRefMetaData;
-import org.torquebox.messaging.core.MessageDrivenConsumer;
-import org.torquebox.messaging.metadata.MessageDrivenConsumerConfig;
-import org.torquebox.messaging.metadata.QueuesMetaData;
-import org.torquebox.messaging.metadata.TopicsMetaData;
+import org.torquebox.messaging.core.AbstractManagedDestination;
+import org.torquebox.messaging.core.RubyMessageProcessor;
+import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
+import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 
-public class MessageDrivenConsumerDeployer extends AbstractDeployer {
+public class MessageProcessorDeployer extends AbstractDeployer {
 
-	public MessageDrivenConsumerDeployer() {
+	public MessageProcessorDeployer() {
 		setStage(DeploymentStages.REAL);
-		addInput(MessageDrivenConsumerConfig.class);
+		addInput(MessageProcessorMetaData.class);
 		addOutput(BeanMetaData.class);
 		setRelativeOrder(1000);
 	}
 
 	@Override
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends MessageDrivenConsumerConfig> consumerConfigs = unit.getAllMetaData(MessageDrivenConsumerConfig.class);
+		Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData(MessageProcessorMetaData.class);
 
-		for (MessageDrivenConsumerConfig consumerConfig : consumerConfigs) {
+		for (MessageProcessorMetaData each : allMetaData) {
 			try {
-				deploy(unit, consumerConfig);
+				deploy(unit, each);
 			} catch (NamingException e) {
 				throw new DeploymentException(e);
 			}
 		}
 	}
 
-	protected void deploy(DeploymentUnit unit, MessageDrivenConsumerConfig consumerConfig) throws NamingException {
-		String beanName = "message-driven." + consumerConfig.getRubyClassName() + "." + consumerConfig.getDestinationName();
+	protected void deploy(DeploymentUnit unit, MessageProcessorMetaData metaData) throws NamingException {
+		
+		String simpleName = metaData.getDestinationName() + "." + metaData.getRubyClassName();
+		String beanName = AttachmentUtils.beanName( unit, RubyMessageProcessor.class, simpleName );
 
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, MessageDrivenConsumer.class.getName());
+		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, RubyMessageProcessor.class.getName());
 
-		//ValueMetaData runtimePoolInject = builder.createInject(PoolingDeployer.getBeanName(unit, "messaging"));
 		ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, "pool", "messaging") );
 
 		builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
-		builder.addPropertyMetaData("rubyClassName", consumerConfig.getRubyClassName());
+		builder.addPropertyMetaData("rubyClassName", metaData.getRubyClassName());
+		builder.addPropertyMetaData("rubyRequirePath", metaData.getRubyRequirePath());
 
-		if (demandDestination(unit, consumerConfig.getDestinationName())) {
-			String destinationBeanName = AbstractDestinationDeployer.getBeanName(consumerConfig.getDestinationName());
-			log.info(consumerConfig.getDestinationName() + " DEMAND " + destinationBeanName);
+		if (demandDestination(unit, metaData.getDestinationName())) {
+			String destinationBeanName = AttachmentUtils.beanName(unit, AbstractManagedDestination.class, metaData.getDestinationName());
 			builder.addDemand(destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null);
 		}
 
 		Context context = new InitialContext();
 
-		JndiRefMetaData destinationJndiRef = new JndiRefMetaData(context, consumerConfig.getDestinationName());
+		JndiRefMetaData destinationJndiRef = new JndiRefMetaData(context, metaData.getDestinationName());
 		builder.addPropertyMetaData("destination", destinationJndiRef);
 
 		JndiRefMetaData connectionFactoryJndiRef = new JndiRefMetaData(context, "/ConnectionFactory");
@@ -75,19 +76,14 @@ public class MessageDrivenConsumerDeployer extends AbstractDeployer {
 	}
 
 	protected boolean demandDestination(DeploymentUnit unit, String destinationName) {
+		Set<? extends AbstractDestinationMetaData> destinations = unit.getAllMetaData( AbstractDestinationMetaData.class );
 
-		QueuesMetaData queues = unit.getAttachment(QueuesMetaData.class);
-
-		if ((queues != null) && (queues.getDestination(destinationName) != null)) {
-			return true;
+		for ( AbstractDestinationMetaData each : destinations ) {
+			if ( each.getName().equals( destinationName ) ) { 
+				return true;
+			}
 		}
-
-		TopicsMetaData topics = unit.getAttachment(TopicsMetaData.class);
-
-		if ((topics != null) && (topics.getDestination(destinationName) != null)) {
-			return true;
-		}
-
+		
 		return false;
 	}
 

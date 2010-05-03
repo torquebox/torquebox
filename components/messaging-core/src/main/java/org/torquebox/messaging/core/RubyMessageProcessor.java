@@ -13,12 +13,14 @@ import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class MessageDrivenConsumer implements MessageListener {
+public class RubyMessageProcessor implements MessageListener {
 
 	private static final Logger log = Logger
-			.getLogger(MessageDrivenConsumer.class);
+			.getLogger(RubyMessageProcessor.class);
 
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
@@ -27,13 +29,17 @@ public class MessageDrivenConsumer implements MessageListener {
 	private Session session;
 	private MessageConsumer consumer;
 
+	private String rubyClassName;
 	private RubyRuntimePool rubyRuntimePool;
 
 	private Connection connection;
 
-	private String rubyClassName;
+	private String rubyRequirePath;
 
-	public MessageDrivenConsumer() {
+	private InstantiatingRubyComponentResolver componentResolver;
+
+
+	public RubyMessageProcessor() {
 
 	}
 
@@ -48,6 +54,14 @@ public class MessageDrivenConsumer implements MessageListener {
 
 	public String getRubyClassName() {
 		return this.rubyClassName;
+	}
+	
+	public void setRubyRequirePath(String rubyRequirePath) {
+		this.rubyRequirePath = rubyRequirePath;
+	}
+	
+	public String getRubyRequirePath() {
+		return this.rubyRequirePath;
 	}
 
 	public void setDestination(Destination destination) {
@@ -76,6 +90,12 @@ public class MessageDrivenConsumer implements MessageListener {
 
 	public void create() throws JMSException {
 		log.info("creating for " + getDestination());
+		
+		this.componentResolver = new InstantiatingRubyComponentResolver();
+		this.componentResolver.setRubyClassName( this.rubyClassName );
+		this.componentResolver.setRubyRequirePath( this.rubyRequirePath );
+		this.componentResolver.setComponentName( "message-processor." + this.rubyClassName );
+		
 		this.connection = this.connectionFactory.createConnection();
 
 		this.session = this.connection.createSession(true,
@@ -115,11 +135,8 @@ public class MessageDrivenConsumer implements MessageListener {
 
 		try {
 			ruby = getRubyRuntimePool().borrowRuntime();
-			ruby.evalScriptlet("require %(torquebox/messaging/dispatcher)\n");
-			RubyModule dispatcher = (RubyModule) ruby
-					.getClassFromPath("TorqueBox::Messaging::Dispatcher");
-			JavaEmbedUtils.invokeMethod(ruby, dispatcher, "dispatch",
-					new Object[] { getRubyClassName(), session, message }, void.class);
+			IRubyObject rubyProcessor = this.componentResolver.resolve( ruby );
+			JavaEmbedUtils.invokeMethod(ruby, rubyProcessor, "on_message", new Object[] { message }, void.class);
 			message.acknowledge();
 		} catch (Exception e) {
 			log.error("unable to dispatch", e);
