@@ -54,6 +54,9 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 
 	/** Kernel. */
 	private Kernel kernel;
+	
+	/** Should use JRUBY_HOME environment variable? */
+	private boolean useJRubyHomeEnvVar = true;
 
 	/** Construct. */
 	public RubyRuntimeFactoryDeployer() {
@@ -80,6 +83,14 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 	public Kernel getKernel() {
 		return this.kernel;
 	}
+	
+	public void setUseJRubyHomeEnvVar(boolean useJRubyHomeEnvVar) {
+		this.useJRubyHomeEnvVar = useJRubyHomeEnvVar;
+	}
+	
+	public boolean useJRubyHomeEnvVar() {
+		return this.useJRubyHomeEnvVar;
+	}
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData) throws DeploymentException {
@@ -99,6 +110,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		builder.addPropertyMetaData( "kernel", this.kernel );
 		builder.addPropertyMetaData( "applicationName", unit.getSimpleName() );
 		builder.addPropertyMetaData( "classLoader", unit.getClassLoader() );
+		builder.addPropertyMetaData( "useJRubyHomeEnvVar", this.useJRubyHomeEnvVar );
 
 		AttachmentUtils.attach(unit, builder.getBeanMetaData() );
 

@@ -6,9 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;

@@ -27,11 +27,6 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-spi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-core</artifactId>
       <version>${project.version}</version>
     </dependency>

@@ -30,6 +30,7 @@ public class RubyRuntimeFactoryImplTest {
 	@Test
 	public void testNullInitializerIsAllowed() throws Exception {
 		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+		factory.setUseJRubyHomeEnvVar( false );
 		Ruby ruby = factory.create();
 		assertNotNull( ruby );
 	}
@@ -38,6 +39,7 @@ public class RubyRuntimeFactoryImplTest {
 	public void testInitializerIsUsed() throws Exception {
 		MockRuntimeInitializer initializer = new MockRuntimeInitializer();
 		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( initializer );
+		factory.setUseJRubyHomeEnvVar( false );
 		
 		Ruby ruby = factory.create();
 		

@@ -5,6 +5,7 @@ public class MessageProcessorMetaData {
 	private String rubyClassName;
 	private String rubyRequirePath;
 	private String destinationName;
+	private String messageSelector;
 
 	public MessageProcessorMetaData() {
 	}
@@ -42,5 +43,11 @@ public class MessageProcessorMetaData {
 		return this.destinationName;
 	}
 	
-
+	public void setMessageSelector(String messageSelector) {
+		this.messageSelector = messageSelector;
+	}
+	
+	public String getMessageSelector() {
+		return this.messageSelector;
+	}
 }

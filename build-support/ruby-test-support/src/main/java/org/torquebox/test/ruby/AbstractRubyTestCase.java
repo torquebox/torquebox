@@ -19,6 +19,7 @@ public class AbstractRubyTestCase {
 		
 		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
 		factory.setGemPath( "target/rubygems" );
+		factory.setUseJRubyHomeEnvVar( false );
 		
 		Ruby ruby = factory.create();
 		

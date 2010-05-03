@@ -80,6 +80,9 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 	/** GEM_PATH. */
 	private String gemPath;
+	
+	/** Should environment $JRUBY_HOME be considered? */
+	private boolean useJRubyHomeEnvVar = true;
 
 	/**
 	 * Construct.
@@ -120,6 +123,14 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 	public String getJRubyHome() {
 		return this.jrubyHome;
+	}
+	
+	public void setUseJRubyHomeEnvVar(boolean useJRubyEnvVar) {
+		this.useJRubyHomeEnvVar = useJRubyEnvVar;
+	}
+	
+	public boolean useJRubyHomeEnvVar() {
+		return this.useJRubyHomeEnvVar;
 	}
 
 	/**
@@ -187,7 +198,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 			jrubyHome = System.getProperty("jruby.home");
 
-			if (jrubyHome == null) {
+			if (jrubyHome == null && this.useJRubyHomeEnvVar ) {
 				jrubyHome = System.getenv("JRUBY_HOME");
 			}
 
@@ -239,6 +250,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		}
 
 		// new Exception().printStackTrace();
+		
+		System.err.println( "JRUBY_HOME=" + jrubyHome );
 
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);

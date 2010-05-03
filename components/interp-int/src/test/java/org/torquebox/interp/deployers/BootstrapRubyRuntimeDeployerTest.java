@@ -20,6 +20,7 @@ public class BootstrapRubyRuntimeDeployerTest extends AbstractDeployerTestCase {
 	@Before
 	public void setUpDeployers() throws Throwable {
 		this.rubyRuntimeFactoryDeployer = new RubyRuntimeFactoryDeployer();
+		this.rubyRuntimeFactoryDeployer.setUseJRubyHomeEnvVar( false );
 		addDeployer(this.rubyRuntimeFactoryDeployer);
 		this.bootstrapRubyRuntimeDeployer = new BootstrapRubyRuntimeDeployer();
 		addDeployer(this.bootstrapRubyRuntimeDeployer);

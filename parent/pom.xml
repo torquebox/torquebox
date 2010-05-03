@@ -150,6 +150,7 @@
         <checksumPolicy>ignore</checksumPolicy>
       </releases>
       <snapshots>
+        <updatePolicy>never</updatePolicy>
         <enabled>false</enabled>
       </snapshots>
       <url>http://rubygems.org/gems/</url>
