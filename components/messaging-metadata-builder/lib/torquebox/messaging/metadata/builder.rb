@@ -6,7 +6,7 @@ module TorqueBox
         attr_reader :processors
         def initialize(&block)
           @processors = []
-          instance_eval &block if block
+          block.call( self ) if block
         end
 
         def subscribe(processor, destination_name, opts={})
@@ -23,6 +23,8 @@ module TorqueBox
           end 
           metadata.destination_name = destination_name
           metadata.message_selector = opts[:filter]
+          processor_config = Marshal.dump( opts[:config] || {} )
+          metadata.ruby_config = processor_config
           @processors << metadata
         end
       end

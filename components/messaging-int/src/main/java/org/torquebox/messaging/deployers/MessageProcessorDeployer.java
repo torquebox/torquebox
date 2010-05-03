@@ -56,6 +56,8 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 		builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
 		builder.addPropertyMetaData("rubyClassName", metaData.getRubyClassName());
 		builder.addPropertyMetaData("rubyRequirePath", metaData.getRubyRequirePath());
+		builder.addPropertyMetaData("messageSelector", metaData.getMessageSelector() );
+		builder.addPropertyMetaData("rubyConfig", metaData.getRubyConfig() );
 
 		if (demandDestination(unit, metaData.getDestinationName())) {
 			String destinationBeanName = AttachmentUtils.beanName(unit, AbstractManagedDestination.class, metaData.getDestinationName());

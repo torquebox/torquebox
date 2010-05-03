@@ -78,6 +78,18 @@ describe TorqueBox::Messaging::MetaData::Builder do
     proc_1.message_selector.should be_nil
   end
 
+  it "should handle processor config" do
+    config = { :prop1=>"something" }
+    @builder.subscribe( "mock_processor", "/topic/what", :config=>config )
+    
+    processors = @builder.processors
+    processors.size.should eql(1)
+
+    proc_1 = processors.first
+    proc_1.should_not be_nil
+    proc_1.ruby_class_name.should eql( "MockProcessor" )
+    Marshal.load( proc_1.ruby_config ).should eql( config )
+  end
 
 end
 

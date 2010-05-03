@@ -11,7 +11,6 @@ import javax.jms.Session;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
@@ -25,6 +24,7 @@ public class RubyMessageProcessor implements MessageListener {
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
 	private Destination destination;
+	private String messageSelector;
 	private ConnectionFactory connectionFactory;
 	private Session session;
 	private MessageConsumer consumer;
@@ -37,6 +37,8 @@ public class RubyMessageProcessor implements MessageListener {
 	private String rubyRequirePath;
 
 	private InstantiatingRubyComponentResolver componentResolver;
+
+	private String rubyConfig;
 
 
 	public RubyMessageProcessor() {
@@ -71,6 +73,22 @@ public class RubyMessageProcessor implements MessageListener {
 	public Destination getDestination() {
 		return this.destination;
 	}
+	
+	public void setMessageSelector(String messageSelector) {
+		this.messageSelector = messageSelector;
+	}
+	
+	public String getMessageSelector() {
+		return this.messageSelector;
+	}
+	
+	public void setRubyConfig(String rubyConfig) {
+		this.rubyConfig = rubyConfig;
+	}
+	
+	public String getRubyConfig() {
+		return this.rubyConfig;
+	}
 
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
 		this.connectionFactory = connectionFactory;
@@ -101,7 +119,7 @@ public class RubyMessageProcessor implements MessageListener {
 		this.session = this.connection.createSession(true,
 				Session.AUTO_ACKNOWLEDGE);
 
-		this.consumer = session.createConsumer(getDestination());
+		this.consumer = session.createConsumer(getDestination(), getMessageSelector() );
 		this.consumer.setMessageListener(this);
 	}
 
