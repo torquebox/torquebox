@@ -1,5 +1,7 @@
 package org.torquebox.messaging.core;
 
+import java.util.Collections;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -11,17 +13,17 @@ import javax.jms.Session;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
+import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyMessageProcessor implements MessageListener {
 
-	private static final Logger log = Logger
-			.getLogger(RubyMessageProcessor.class);
-
-	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
+	private static final Logger log = Logger.getLogger(RubyMessageProcessor.class);
 
 	private Destination destination;
 	private String messageSelector;
@@ -40,14 +42,14 @@ public class RubyMessageProcessor implements MessageListener {
 
 	private String rubyConfig;
 
+	private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 
 	public RubyMessageProcessor() {
 
 	}
 
 	public String toString() {
-		return "[MessageDrivenConsumer: rubyClassName=" + this.rubyClassName
-				+ "]";
+		return "[MessageDrivenConsumer: rubyClassName=" + this.rubyClassName + "]";
 	}
 
 	public void setRubyClassName(String rubyClassName) {
@@ -57,11 +59,11 @@ public class RubyMessageProcessor implements MessageListener {
 	public String getRubyClassName() {
 		return this.rubyClassName;
 	}
-	
+
 	public void setRubyRequirePath(String rubyRequirePath) {
 		this.rubyRequirePath = rubyRequirePath;
 	}
-	
+
 	public String getRubyRequirePath() {
 		return this.rubyRequirePath;
 	}
@@ -73,21 +75,29 @@ public class RubyMessageProcessor implements MessageListener {
 	public Destination getDestination() {
 		return this.destination;
 	}
-	
+
 	public void setMessageSelector(String messageSelector) {
 		this.messageSelector = messageSelector;
 	}
-	
+
 	public String getMessageSelector() {
 		return this.messageSelector;
 	}
-	
+
 	public void setRubyConfig(String rubyConfig) {
 		this.rubyConfig = rubyConfig;
 	}
-	
+
 	public String getRubyConfig() {
 		return this.rubyConfig;
+	}
+
+	public void setAcknowledgeMode(int acknowledgeMode) {
+		this.acknowledgeMode = acknowledgeMode;
+	}
+
+	public int getAcknowledgeMode() {
+		return this.acknowledgeMode;
 	}
 
 	public void setConnectionFactory(ConnectionFactory connectionFactory) {
@@ -108,18 +118,17 @@ public class RubyMessageProcessor implements MessageListener {
 
 	public void create() throws JMSException {
 		log.info("creating for " + getDestination());
-		
+
 		this.componentResolver = new InstantiatingRubyComponentResolver();
-		this.componentResolver.setRubyClassName( this.rubyClassName );
-		this.componentResolver.setRubyRequirePath( this.rubyRequirePath );
-		this.componentResolver.setComponentName( "message-processor." + this.rubyClassName );
-		
+		this.componentResolver.setRubyClassName(this.rubyClassName);
+		this.componentResolver.setRubyRequirePath(this.rubyRequirePath);
+		this.componentResolver.setComponentName("message-processor." + this.rubyClassName);
+
 		this.connection = this.connectionFactory.createConnection();
 
-		this.session = this.connection.createSession(true,
-				Session.AUTO_ACKNOWLEDGE);
+		this.session = this.connection.createSession(true, this.acknowledgeMode);
 
-		this.consumer = session.createConsumer(getDestination(), getMessageSelector() );
+		this.consumer = session.createConsumer(getDestination(), getMessageSelector());
 		this.consumer.setMessageListener(this);
 	}
 
@@ -153,9 +162,9 @@ public class RubyMessageProcessor implements MessageListener {
 
 		try {
 			ruby = getRubyRuntimePool().borrowRuntime();
-			IRubyObject rubyProcessor = this.componentResolver.resolve( ruby );
-			JavaEmbedUtils.invokeMethod(ruby, rubyProcessor, "on_message", new Object[] { message }, void.class);
-			message.acknowledge();
+			IRubyObject processor = instantiateProcessor(ruby);
+			configureProcessor(processor);
+			dispatchMessage(processor, message);
 		} catch (Exception e) {
 			log.error("unable to dispatch", e);
 			e.printStackTrace();
@@ -163,12 +172,39 @@ public class RubyMessageProcessor implements MessageListener {
 			if (ruby != null) {
 				getRubyRuntimePool().returnRuntime(ruby);
 			}
-
 			try {
 				this.session.commit();
 			} catch (JMSException e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	protected IRubyObject instantiateProcessor(Ruby ruby) throws Exception {
+		return this.componentResolver.resolve(ruby);
+	}
+
+	protected void configureProcessor(IRubyObject processor) {
+		Ruby ruby = processor.getRuntime();
+
+		Object config = null;
+
+		if (this.rubyConfig != null) {
+			RubyModule marshal = ruby.getClassFromPath("Marshal");
+			config = JavaEmbedUtils.invokeMethod(ruby, marshal, "load", new Object[] { this.rubyConfig }, Object.class);
+		}
+		
+		if (config == null) {
+			config = RubyHash.newHash( ruby );
+		}
+		
+		System.err.println( "SETTING CONFIG: " + config );
+		
+		ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { config });
+	}
+
+	protected void dispatchMessage(IRubyObject processor, Message message) {
+		Ruby ruby = processor.getRuntime();
+		JavaEmbedUtils.invokeMethod(ruby, processor, "on_message", new Object[] { message }, void.class);
 	}
 }
