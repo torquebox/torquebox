@@ -2,32 +2,31 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-parent</artifactId>
+    <artifactId>torquebox-component-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../component-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-spi</artifactId>
+  <artifactId>torquebox-interp-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter SPI</name>
+  <name>TorqueBox Ruby Interpreter Metadata</name>
   <description></description>
 
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-spi</artifactId>
+      <artifactId>torquebox-interp-spi</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
-
   </dependencies>
+
 
 </project>

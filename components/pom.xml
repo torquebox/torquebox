@@ -65,6 +65,7 @@
 
   <modules>
 
+    <module>component-parent</module>
     <module>int-parent</module>
 
     <module>mc-support</module>
@@ -74,10 +75,10 @@
     <module>common-spi</module>
     <module>common-core</module>
 
-    <module>interp-spi</module>
-    <module>interp-core</module>
-    <module>interp-metadata</module>
-    <module>interp-int</module>
+    <module>interp/interp-spi</module>
+    <module>interp/interp-core</module>
+    <module>interp/interp-metadata</module>
+    <module>interp/interp-int</module>
 
     <module>rack-spi</module>
     <module>rack-core</module>

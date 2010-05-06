@@ -89,6 +89,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.slf4j</groupId>
+      <artifactId>slf4j-jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>logkit</groupId>
       <artifactId>logkit</artifactId>
       <scope>provided</scope>

@@ -2,60 +2,61 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-component-parent</artifactId>
+    <artifactId>torquebox-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../component-parent/pom.xml</relativePath>
+    <relativePath>../../parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-messaging-metadata-builder</artifactId>
-  <packaging>gem</packaging>
-  <name>TorqueBox Messaging Metadata Ruby Builder</name>
+  <artifactId>torquebox-component-parent</artifactId>
+  <packaging>pom</packaging>
+  <name>TorqueBox Component Parent</name>
   <description></description>
 
   <dependencies>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-core</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-metadata</artifactId>
+      <artifactId>torquebox-vdf-test-support</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <scope>test</scope>
     </dependency>
+
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rspec</artifactId>
-      <version>1.3.0</version>
-      <type>gem</type>
+      <groupId>org.jboss.reloaded</groupId>
+      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
+  <build> 
+    <plugins> 
       <plugin>
         <groupId>de.saumya.mojo</groupId>
-        <artifactId>rspec-maven-plugin</artifactId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <extensions>true</extensions>
         <configuration>
-          <jrubyVersion>1.5.0.RC2</jrubyVersion>
+          <jrubyVersion>${version.jruby}</jrubyVersion>
+          <gemHome>${project.build.directory}/rubygems</gemHome>
+          <gemPath>${project.build.directory}/rubygems</gemPath>
           <fork>true</fork>
         </configuration>
         <executions>
           <execution>
-            <id>run-specs</id>
-            <phase>test</phase>
+            <phase>process-test-classes</phase>
             <goals>
-              <goal>test</goal>
+              <goal>initialize</goal>
             </goals>
           </execution>
         </executions>
       </plugin>
-    </plugins>
-  </build>
+    </plugins> 
+  </build> 
 
 </project>

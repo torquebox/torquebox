@@ -2,9 +2,9 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-parent</artifactId>
+    <artifactId>torquebox-component-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../component-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -13,27 +13,6 @@
   <packaging>pom</packaging>
   <name>TorqueBox Integration Parent</name>
   <description></description>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-vdf-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.reloaded</groupId>
-      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 
   <build> 
     <pluginManagement> 

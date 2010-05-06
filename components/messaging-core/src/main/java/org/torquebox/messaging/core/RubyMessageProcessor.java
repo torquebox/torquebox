@@ -164,7 +164,7 @@ public class RubyMessageProcessor implements MessageListener {
 			ruby = getRubyRuntimePool().borrowRuntime();
 			IRubyObject processor = instantiateProcessor(ruby);
 			configureProcessor(processor);
-			dispatchMessage(processor, message);
+			processMessage(processor, message);
 		} catch (Exception e) {
 			log.error("unable to dispatch", e);
 			e.printStackTrace();
@@ -203,8 +203,8 @@ public class RubyMessageProcessor implements MessageListener {
 		ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { config });
 	}
 
-	protected void dispatchMessage(IRubyObject processor, Message message) {
+	protected void processMessage(IRubyObject processor, Message message) {
 		Ruby ruby = processor.getRuntime();
-		JavaEmbedUtils.invokeMethod(ruby, processor, "on_message", new Object[] { message }, void.class);
+		JavaEmbedUtils.invokeMethod(ruby, processor, "process!", new Object[] { message }, void.class);
 	}
 }

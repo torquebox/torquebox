@@ -3,6 +3,13 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>5</version>
+    <relativePath></relativePath>
+  </parent>
+
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-parent</artifactId>
   <version>1.0.0.Beta19</version>
@@ -109,6 +116,20 @@
         <artifactId>hamcrest-all</artifactId>
         <version>${version.hamcrest}</version>
       </dependency>
+
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activesupport</artifactId>
+        <version>${version.rails}</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rails</artifactId>
+        <version>${version.rails}</version>
+        <type>gem</type>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -124,8 +145,9 @@
     <!--<version.jruby>1.4.0</version.jruby>-->
     <version.jruby>1.5.0.RC2</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
-
-    <rails.version>2.3.4</rails.version>
+    <version.rails>2.3.5</version.rails>
+    <rails.version>2.3.5</rails.version>
+    <version.activemessaging>0.7.1</version.activemessaging>
 
     <version.jbossas>6.0.0-SNAPSHOT</version.jbossas>
     <version.jbossas.package>6.0.x</version.jbossas.package>
