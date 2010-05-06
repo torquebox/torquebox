@@ -69,48 +69,24 @@
     <module>int-parent</module>
 
     <module>mc-support</module>
-    <module>base-int</module>
-    <module>base-metadata</module>
 
-    <module>common/common-spi</module>
-    <module>common/common-core</module>
+    <module>base</module>
+    <module>common</module>
+    <module>interp</module>
 
-    <module>interp/interp-spi</module>
-    <module>interp/interp-core</module>
-    <module>interp/interp-metadata</module>
-    <module>interp/interp-int</module>
+    <module>rack</module>
+    <module>rails</module>
 
-    <module>rack/rack-spi</module>
-    <module>rack/rack-core</module>
-    <module>rack/rack-metadata</module>
-    <module>rack/rack-int</module>
-
-    <module>rails/rails-core</module>
-    <module>rails/rails-metadata</module>
-    <module>rails/rails-int</module>
-
-    <module>jobs/jobs-core</module>
-    <module>jobs/jobs-metadata</module>
-    <module>jobs/jobs-int</module>
-
-    <module>messaging/messaging-core</module>
-    <module>messaging/messaging-metadata</module>
-    <module>messaging/messaging-metadata-builder</module>
-    <module>messaging/messaging-int</module>
-
-
-<!--
-    <module>messaging-runtime</module>
-    <module>messaging-client</module>
-    <module>messaging-container</module>
-    <module>messaging-tasks</module>
--->
+    <module>jobs</module>
+    <module>messaging/</module>
+    <module>vfs</module>
 
     <module>torquebox-gem</module>
+<!--
     <module>torquebox-rails</module>
+-->
     <module>torquebox-capistrano</module>
 
-    <module>vfs</module>
 
   </modules>
 

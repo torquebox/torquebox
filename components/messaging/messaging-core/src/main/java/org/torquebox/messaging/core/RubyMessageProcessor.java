@@ -1,7 +1,5 @@
 package org.torquebox.messaging.core;
 
-import java.util.Collections;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -205,6 +203,9 @@ public class RubyMessageProcessor implements MessageListener {
 
 	protected void processMessage(IRubyObject processor, Message message) {
 		Ruby ruby = processor.getRuntime();
+		System.err.println( "before invoke >>>" );
+		System.err.println( "processor=" + processor );
 		JavaEmbedUtils.invokeMethod(ruby, processor, "process!", new Object[] { message }, void.class);
+		System.err.println( "<<<< after invoke" );
 	}
 }

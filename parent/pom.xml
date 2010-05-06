@@ -139,8 +139,8 @@
     <version.mockito>1.8.4</version.mockito>
     <version.hamcrest>1.1</version.hamcrest>
 
-    <version.jboss.reloaded>0.1.1</version.jboss.reloaded>
-    <version.jboss.shrinkwrap>1.0.0-alpha-6</version.jboss.shrinkwrap>
+    <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
+    <version.jboss.shrinkwrap>1.0.0-alpha-9</version.jboss.shrinkwrap>
 
     <!--<version.jruby>1.4.0</version.jruby>-->
     <version.jruby>1.5.0.RC2</version.jruby>
@@ -149,7 +149,7 @@
     <rails.version>2.3.5</rails.version>
     <version.activemessaging>0.7.1</version.activemessaging>
 
-    <version.jbossas>6.0.0-SNAPSHOT</version.jbossas>
+    <version.jbossas>6.0.0.20100429-M3</version.jbossas>
     <version.jbossas.package>6.0.x</version.jbossas.package>
     <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
 

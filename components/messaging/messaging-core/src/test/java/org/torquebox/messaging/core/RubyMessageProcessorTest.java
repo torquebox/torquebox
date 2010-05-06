@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jms.Message;
+import javax.jms.TextMessage;
 
 import org.jruby.Ruby;
 import org.jruby.RubySymbol;
@@ -68,7 +69,7 @@ public class RubyMessageProcessorTest extends AbstractRubyTestCase {
 	public void testDispatchMessage() throws Exception {
 		RubyMessageProcessor processor = new RubyMessageProcessor();
 		
-		Message message = mock(Message.class);
+		Message message = mock(TextMessage.class);
 		processor.processMessage( rubyProcessor, message);
 		
 		List messages = (List) ReflectionHelper.getIfPossible( ruby, rubyProcessor, "messages" );

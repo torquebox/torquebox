@@ -28,7 +28,7 @@ import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jboss.logging.Logger;
 import org.jboss.managed.api.ManagedDeployment;
 import org.jboss.reloaded.api.ReloadedDescriptors;
-import org.jboss.shrinkwrap.api.Archives;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.exporter.ZipExporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.vfs.VFS;
@@ -192,7 +192,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 	}
 
 	protected JavaArchive createJar(String name) {
-		return Archives.create(name, JavaArchive.class);
+		return ShrinkWrap.create(name, JavaArchive.class);
 	}
 
 	protected File createJarFile(JavaArchive archive) throws IOException {

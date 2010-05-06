@@ -1,8 +1,6 @@
+require 'torquebox-messaging-processor'
 
-require 'activesupport'
-require 'activemessaging'
-
-class TestMessageProcessor < ActiveMessaging::Processor
+class TestMessageProcessor < TorqueBox::Messaging::Processor
   
   CONFIG_ONE = Marshal.dump( { :prop1=>"cheese", :prop2=>42 } )
   
@@ -18,8 +16,9 @@ class TestMessageProcessor < ActiveMessaging::Processor
     @opts = opts    
   end
   
-  def on_message(message)
-    @messages << message
+  def on_message(body)
+    puts "TestMessageProcessor#on_message(#{self.message})"
+    @messages << self.message
   end
   
 end
