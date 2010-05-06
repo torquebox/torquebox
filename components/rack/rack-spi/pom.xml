@@ -9,24 +9,34 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-metadata</artifactId>
+  <artifactId>torquebox-rack-spi</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter Metadata</name>
+  <name>TorqueBox Rack SPI</name>
   <description></description>
 
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-spi</artifactId>
+      <artifactId>torquebox-common-spi</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-vfs</artifactId>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mobicents.servlet.sip</groupId>
+      <artifactId>sip-servlets-spec</artifactId>
+      <version>${mobicents.spec.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
 
 </project>

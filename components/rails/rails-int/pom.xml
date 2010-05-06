@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-int</artifactId>
+  <artifactId>torquebox-rails-int</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter Integration</name>
+  <name>TorqueBox Rails Integration</name>
   <description></description>
 
   <dependencies>
@@ -23,39 +23,43 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-int</artifactId>
+      <artifactId>torquebox-rails-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rails-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-core</artifactId>
+      <artifactId>torquebox-rack-int</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-metadata</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-core</artifactId>
+      <artifactId>torquebox-rack-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -65,17 +69,12 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-spi</artifactId>
+      <artifactId>jboss-deployers-client-spi</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.man</groupId>
-      <artifactId>jboss-managed</artifactId>
+      <artifactId>jboss-deployers-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -83,34 +82,22 @@
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-vdf-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <scope>provided</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.jboss.reloaded</groupId>
-      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
-      <scope>test</scope>
+      <groupId>rubygems</groupId>
+      <artifactId>activerecord-jdbc-adapter</artifactId>
+      <version>0.9.4</version>
+      <classifier>java</classifier>
+      <type>gem</type>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
   <build> 
-    <resources> 
-      <resource> 
-        <directory>src/main/resources</directory> 
-      </resource> 
-      <resource> 
-        <directory>src/main/java</directory> 
-        <includes>
-          <include>**/*.rb</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource> 
-    </resources> 
     <plugins> 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -128,8 +115,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-dependency-gems</id>
+          </execution>
+        </executions>
+      </plugin>
     </plugins> 
   </build> 
-
-
 </project>

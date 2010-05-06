@@ -9,23 +9,12 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-metadata</artifactId>
+  <artifactId>torquebox-messaging-metadata</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter Metadata</name>
+  <name>TorqueBox Messaging Metadata</name>
   <description></description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-spi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-vfs</artifactId>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
 

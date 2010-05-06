@@ -9,54 +9,36 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-int</artifactId>
+  <artifactId>torquebox-messaging-int</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter Integration</name>
+  <name>TorqueBox Messaging Integration</name>
   <description></description>
 
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-mc-support</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-int</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-core</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-metadata</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-mc-support</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-metadata</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-interp-int</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.kernel</groupId>
@@ -65,17 +47,12 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-spi</artifactId>
+      <artifactId>jboss-deployers-client-spi</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.man</groupId>
-      <artifactId>jboss-managed</artifactId>
+      <artifactId>jboss-deployers-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -83,35 +60,16 @@
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-vdf-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-common-core</artifactId>
+      <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.jboss.reloaded</groupId>
-      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
-  <build> 
-    <resources> 
-      <resource> 
-        <directory>src/main/resources</directory> 
-      </resource> 
-      <resource> 
-        <directory>src/main/java</directory> 
-        <includes>
-          <include>**/*.rb</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource> 
-    </resources> 
-    <plugins> 
+  <build>
+    <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
@@ -128,8 +86,7 @@
           </execution>
         </executions>
       </plugin>
-    </plugins> 
-  </build> 
-
+    </plugins>
+  </build>
 
 </project>

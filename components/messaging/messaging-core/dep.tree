@@ -1,0 +1,126 @@
+[INFO] Scanning for projects...
+Downloading: https://repository.jboss.org/nexus/content/groups/developer/org/codehaus/mojo/buildnumber-maven-plugin/1.0-beta-3/buildnumber-maven-plugin-1.0-beta-3.jar
+4/18 KB   8/18 KB   12/18 KB   16/18 KB   18/18 KB              Downloaded: https://repository.jboss.org/nexus/content/groups/developer/org/codehaus/mojo/buildnumber-maven-plugin/1.0-beta-3/buildnumber-maven-plugin-1.0-beta-3.jar (18 KB at 6.4 KB/sec)
+Downloading: https://repository.jboss.org/nexus/content/groups/developer/org/apache/maven/plugins/maven-checkstyle-plugin/2.4/maven-checkstyle-plugin-2.4.jar
+4/66 KB    8/66 KB   12/66 KB   16/66 KB   16/66 KB   20/66 KB   24/66 KB   28/66 KB   32/66 KB   36/66 KB   39/66 KB   43/66 KB   47/66 KB   51/66 KB   55/66 KB   59/66 KB   63/66 KB   66/66 KB              Downloaded: https://repository.jboss.org/nexus/content/groups/developer/org/apache/maven/plugins/maven-checkstyle-plugin/2.4/maven-checkstyle-plugin-2.4.jar (66 KB at 36.8 KB/sec)
+Downloading: https://repository.jboss.org/nexus/content/groups/developer/org/jboss/maven/plugins/maven-resources-plugin/2.3/maven-resources-plugin-2.3.jar
+[WARNING] Failed to retrieve plugin descriptor for org.jboss.maven.plugins:maven-resources-plugin:2.3: Plugin org.jboss.maven.plugins:maven-resources-plugin:2.3 or one of its dependencies could not be resolved: Missing:
+----------
+1) org.jboss.maven.plugins:maven-resources-plugin:maven-plugin:2.3
+
+  Try downloading the file manually from the project website.
+
+  Then, install it using the command: 
+      mvn install:install-file -DgroupId=org.jboss.maven.plugins -DartifactId=maven-resources-plugin -Dversion=2.3 -Dpackaging=maven-plugin -Dfile=/path/to/file
+
+  Alternatively, if you host your own repository you can deploy the file there: 
+      mvn deploy:deploy-file -DgroupId=org.jboss.maven.plugins -DartifactId=maven-resources-plugin -Dversion=2.3 -Dpackaging=maven-plugin -Dfile=/path/to/file -Durl=[url] -DrepositoryId=[id]
+
+----------
+1 required artifact is missing.
+
+for artifact: 
+  org.jboss.maven.plugins:maven-resources-plugin:maven-plugin:2.3
+
+from the specified remote repositories:
+  jboss-developer-repository-group (https://repository.jboss.org/nexus/content/groups/developer/, releases=true, snapshots=true)
+
+Downloading: https://repository.jboss.org/nexus/content/groups/developer/com/atlassian/maven/plugins/maven-clover2-plugin/2.5.1/maven-clover2-plugin-2.5.1.jar
+4/70 KB    8/70 KB   12/70 KB   16/70 KB   20/70 KB   23/70 KB   27/70 KB   31/70 KB   35/70 KB   39/70 KB   43/70 KB   47/70 KB   51/70 KB   55/70 KB   59/70 KB   63/70 KB   67/70 KB   70/70 KB              Downloaded: https://repository.jboss.org/nexus/content/groups/developer/com/atlassian/maven/plugins/maven-clover2-plugin/2.5.1/maven-clover2-plugin-2.5.1.jar (70 KB at 37.7 KB/sec)
+Downloading: https://repository.jboss.org/nexus/content/groups/developer/org/codehaus/mojo/cobertura-maven-plugin/2.3/cobertura-maven-plugin-2.3.jar
+4/32 KB    8/32 KB   12/32 KB   16/32 KB   16/32 KB   20/32 KB   24/32 KB   28/32 KB   32/32 KB   32/32 KB              Downloaded: https://repository.jboss.org/nexus/content/groups/developer/org/codehaus/mojo/cobertura-maven-plugin/2.3/cobertura-maven-plugin-2.3.jar (32 KB at 50.3 KB/sec)
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building TorqueBox Messaging Core 1.0.0.Beta19
+[INFO] ------------------------------------------------------------------------
+[WARNING] Failed to retrieve plugin descriptor for org.jboss.maven.plugins:maven-resources-plugin:2.3: Plugin org.jboss.maven.plugins:maven-resources-plugin:2.3 or one of its dependencies could not be resolved: Missing:
+----------
+1) org.jboss.maven.plugins:maven-resources-plugin:maven-plugin:2.3
+
+  Try downloading the file manually from the project website.
+
+  Then, install it using the command: 
+      mvn install:install-file -DgroupId=org.jboss.maven.plugins -DartifactId=maven-resources-plugin -Dversion=2.3 -Dpackaging=maven-plugin -Dfile=/path/to/file
+
+  Alternatively, if you host your own repository you can deploy the file there: 
+      mvn deploy:deploy-file -DgroupId=org.jboss.maven.plugins -DartifactId=maven-resources-plugin -Dversion=2.3 -Dpackaging=maven-plugin -Dfile=/path/to/file -Durl=[url] -DrepositoryId=[id]
+
+----------
+1 required artifact is missing.
+
+for artifact: 
+  org.jboss.maven.plugins:maven-resources-plugin:maven-plugin:2.3
+
+from the specified remote repositories:
+  jboss-developer-repository-group (https://repository.jboss.org/nexus/content/groups/developer/, releases=true, snapshots=true)
+
+[INFO] 
+[INFO] --- maven-dependency-plugin:2.1:tree (default-cli) @ torquebox-messaging-core ---
+[INFO] org.torquebox:torquebox-messaging-core:jar:1.0.0.Beta19
+[INFO] +- org.torquebox:torquebox-interp-spi:jar:1.0.0.Beta19:provided
+[INFO] +- org.torquebox:torquebox-interp-core:jar:1.0.0.Beta19:provided
+[INFO] |  \- org.torquebox:torquebox-interp-metadata:jar:1.0.0.Beta19:provided
+[INFO] +- org.torquebox:torquebox-common-core:jar:1.0.0.Beta19:provided
+[INFO] |  +- org.torquebox:torquebox-common-spi:jar:1.0.0.Beta19:provided
+[INFO] |  \- org.yaml:snakeyaml:jar:1.5:provided
+[INFO] +- org.jruby:jruby-complete:jar:1.5.0.RC2:provided
+[INFO] +- org.hornetq:hornetq-core:jar:2.1.0.BETA3:provided
+[INFO] +- org.hornetq:hornetq-jms:jar:2.1.0.BETA3:provided
+[INFO] +- org.jboss.spec.javax.jms:jboss-jms-api_1.1_spec:jar:1.0.0.Beta1:provided
+[INFO] +- org.jboss.logging:jboss-logging:jar:3.0.0.Beta2:provided
+[INFO] +- rubygems:activemessaging:gem:0.7.1:compile
+[INFO] |  \- rubygems:activesupport:gem:3.0.0.beta3:compile
+[INFO] |     +- rubygems:i18n:gem:0.4.0.beta1:compile
+[INFO] |     +- rubygems:tzinfo:gem:0.3.20:compile
+[INFO] |     +- rubygems:builder:gem:2.1.2:compile
+[INFO] |     \- rubygems:memcache-client:gem:1.8.3:compile
+[INFO] +- org.torquebox:torquebox-ruby-test-support:jar:1.0.0.Beta19:test
+[INFO] +- junit:junit:jar:4.7:test
+[INFO] +- org.jboss:jboss-vfs:jar:3.0.0.CR5:test
+[INFO] +- org.mockito:mockito-all:jar:1.8.4:test
+[INFO] +- org.torquebox:torquebox-vdf-test-support:jar:1.0.0.Beta19:test
+[INFO] |  +- org.jboss.shrinkwrap:shrinkwrap-api:jar:1.0.0-alpha-6:test
+[INFO] |  \- org.jboss.shrinkwrap:shrinkwrap-impl-base:jar:1.0.0-alpha-6:test
+[INFO] |     \- org.jboss.shrinkwrap:shrinkwrap-spi:jar:1.0.0-alpha-9:test (version managed from 1.0.0-alpha-6)
+[INFO] +- org.jboss.reloaded:jboss-reloaded-vdf-bootstrap-minimal:jar:0.1.1:test
+[INFO] |  +- org.jboss.bootstrap:jboss-bootstrap-impl-mc:jar:2.1.0-alpha-5:test (version managed from 2.1.0-alpha-4)
+[INFO] |  |  +- org.jboss.bootstrap:jboss-bootstrap-impl-base:jar:2.1.0-alpha-5:test
+[INFO] |  |  |  \- org.jboss.bootstrap:jboss-bootstrap-spi:jar:2.1.0-alpha-5:test
+[INFO] |  |  |     \- org.jboss.bootstrap:jboss-bootstrap-api:jar:2.1.0-alpha-5:test
+[INFO] |  |  +- org.jboss.bootstrap:jboss-bootstrap-spi-mc:jar:2.1.0-alpha-5:test
+[INFO] |  |  |  \- org.jboss.bootstrap:jboss-bootstrap-api-mc:jar:2.1.0-alpha-5:test
+[INFO] |  |  +- org.jboss.man:jboss-managed:jar:2.1.1.SP2:test (version managed from 2.1.1.SP1)
+[INFO] |  |  \- org.jboss.kernel:jboss-kernel:jar:2.2.0.Alpha9:test
+[INFO] |  |     +- org.jboss.kernel:jboss-dependency:jar:2.2.0.Alpha9:test
+[INFO] |  |     \- javax.inject:javax.inject:jar:1:test
+[INFO] |  +- org.jboss.deployers:jboss-deployers-vfs:jar:2.2.0.Alpha4:test
+[INFO] |  |  +- org.jboss.deployers:jboss-deployers-vfs-spi:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  +- org.jboss.deployers:jboss-deployers-spi:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  |  \- org.jboss.deployers:jboss-deployers-structure-spi:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  |     \- org.jboss.deployers:jboss-deployers-client-spi:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  |        \- org.jboss.deployers:jboss-deployers-core-spi:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  +- org.jboss.cl:jboss-classloading:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  \- stax:stax-api:jar:1.0:test
+[INFO] |  |  +- org.jboss.mcann:mcann-core:jar:1.0.0.Alpha2:test
+[INFO] |  |  |  \- javassist:javassist:jar:3.11.0.GA:test
+[INFO] |  |  +- org.jboss.cl:jboss-classloading-vfs:jar:2.2.0.Alpha4:test
+[INFO] |  |  +- org.jboss.cl:jboss-classloader:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  \- org.jboss.integration:jboss-classloading-spi:jar:6.0.0.CR1:test (version managed from 6.0.0-Alpha8)
+[INFO] |  |  +- org.jboss.deployers:jboss-deployers-core:jar:2.2.0.Alpha4:test
+[INFO] |  |  +- org.jboss.deployers:jboss-deployers-client:jar:2.2.0.Alpha4:test
+[INFO] |  |  +- org.jboss.deployers:jboss-deployers-impl:jar:2.2.0.Alpha4:test
+[INFO] |  |  |  \- org.jboss:jboss-mdr:jar:2.2.0.Alpha2:test
+[INFO] |  |  +- org.jboss:jboss-reflect:jar:2.2.0.Alpha4:test
+[INFO] |  |  \- org.jboss.man:jboss-metatype:jar:2.1.1.SP2:test
+[INFO] |  +- org.jboss:jbossxb:jar:2.0.2.Beta7:test
+[INFO] |  |  +- javax.activation:activation:jar:1.1:test (version managed from 1.1.1)
+[INFO] |  |  \- sun-jaxb:jaxb-api:jar:2.2:test
+[INFO] |  \- org.jboss:jboss-common-core:jar:2.2.17.GA:test
+[INFO] \- log4j:log4j:jar:1.2.14:test
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1:18.908s
+[INFO] Finished at: Wed May 05 12:29:22 EDT 2010
+[INFO] Final Memory: 13M/80M
+[INFO] ------------------------------------------------------------------------

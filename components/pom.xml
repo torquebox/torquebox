@@ -72,31 +72,31 @@
     <module>base-int</module>
     <module>base-metadata</module>
 
-    <module>common-spi</module>
-    <module>common-core</module>
+    <module>common/common-spi</module>
+    <module>common/common-core</module>
 
     <module>interp/interp-spi</module>
     <module>interp/interp-core</module>
     <module>interp/interp-metadata</module>
     <module>interp/interp-int</module>
 
-    <module>rack-spi</module>
-    <module>rack-core</module>
-    <module>rack-metadata</module>
-    <module>rack-int</module>
+    <module>rack/rack-spi</module>
+    <module>rack/rack-core</module>
+    <module>rack/rack-metadata</module>
+    <module>rack/rack-int</module>
 
-    <module>rails-core</module>
-    <module>rails-metadata</module>
-    <module>rails-int</module>
+    <module>rails/rails-core</module>
+    <module>rails/rails-metadata</module>
+    <module>rails/rails-int</module>
 
-    <module>jobs-core</module>
-    <module>jobs-metadata</module>
-    <module>jobs-int</module>
+    <module>jobs/jobs-core</module>
+    <module>jobs/jobs-metadata</module>
+    <module>jobs/jobs-int</module>
 
-    <module>messaging-core</module>
-    <module>messaging-metadata</module>
-    <module>messaging-metadata-builder</module>
-    <module>messaging-int</module>
+    <module>messaging/messaging-core</module>
+    <module>messaging/messaging-metadata</module>
+    <module>messaging/messaging-metadata-builder</module>
+    <module>messaging/messaging-int</module>
 
 
 <!--

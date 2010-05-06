@@ -4,14 +4,14 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-int-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../../int-parent/</relativePath>
+    <relativePath>../../int-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-int</artifactId>
+  <artifactId>torquebox-jobs-int</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter Integration</name>
+  <name>TorqueBox Scheduled Jobs Integration</name>
   <description></description>
 
   <dependencies>
@@ -21,42 +21,36 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-int</artifactId>
+      <artifactId>torquebox-jobs-core</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-jobs-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-interp-int</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-core</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-metadata</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.kernel</groupId>
@@ -65,17 +59,18 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-spi</artifactId>
+      <artifactId>jboss-deployers-client-spi</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs-spi</artifactId>
+      <artifactId>jboss-deployers-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.man</groupId>
-      <artifactId>jboss-managed</artifactId>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <version>1.5</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -83,34 +78,29 @@
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-vdf-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-common-core</artifactId>
+      <scope>provided</scope>
     </dependency>
-
     <dependency>
-      <groupId>org.jboss.reloaded</groupId>
-      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
-      <scope>test</scope>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.slf4j</groupId>
+      <artifactId>slf4j-jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>logkit</groupId>
+      <artifactId>logkit</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 
   <build> 
-    <resources> 
-      <resource> 
-        <directory>src/main/resources</directory> 
-      </resource> 
-      <resource> 
-        <directory>src/main/java</directory> 
-        <includes>
-          <include>**/*.rb</include>
-          <include>**/*.properties</include>
-        </includes>
-      </resource> 
-    </resources> 
     <plugins> 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -130,6 +120,5 @@
       </plugin>
     </plugins> 
   </build> 
-
 
 </project>

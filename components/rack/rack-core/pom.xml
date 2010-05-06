@@ -9,27 +9,21 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-interp-core</artifactId>
+  <artifactId>torquebox-rack-core</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Ruby Interpreter Core</name>
+  <name>TorqueBox Rack Core</name>
   <description></description>
 
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-metadata</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-spi</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -40,13 +34,19 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-vfs</artifactId>
+      <groupId>org.mobicents.servlet.sip</groupId>
+      <artifactId>sip-servlets-spec</artifactId>
+      <version>${mobicents.spec.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>jboss.web</groupId>
+      <artifactId>jbossweb</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -55,14 +55,37 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-aop-mc-int</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-common-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rack</artifactId>
+      <version>1.0.1</version>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-vdf-test-support</artifactId>
+      <artifactId>torquebox-ruby-test-support</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
