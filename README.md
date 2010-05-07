@@ -3,14 +3,32 @@ Requirements
 * Maven 3
 * Bob's jruby-maven-plugins fork (github.com/bobmcwhirter/jruby-maven-plugins), built and installed
 * Configuration of the JBoss Maven repository in your settings.xml
-  * http://community.jboss.org/wiki/MavenGettingStarted-Users
-  * http://community.jboss.org/wiki/MavenGettingStarted-Developers
 
 Building
 --------
-Simply type
+
+If you're a JBoss developer, you may setup your maven `settings.xml` to include
+access to the JBoss developer repository.
+
+* http://community.jboss.org/wiki/MavenGettingStarted-Developers
+
+Then, simply type
 
     mvn install
+
+If you're not a JBoss developer, you may setup your maven `settings.xml` to
+include the public JBoss repository
+
+* http://community.jboss.org/wiki/MavenGettingStarted-Users
+
+And then simply type
+
+    mvn install
+
+If you don't wish to modify your user `settings.xml`, you may use the `settings.xml`
+that is included:
+
+    mvn -s settings.xml install
 
 Layout
 ------
