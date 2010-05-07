@@ -5,6 +5,7 @@ target
 *.ipr
 *.iws
 *.log
+dep.tree
 log
 tmp
 cache
