@@ -213,6 +213,7 @@
 
   <!-- Plugin Repositories -->
   <pluginRepositories>
+<!--
     <pluginRepository>
       <id>saumya</id>
       <name>Saumyas Plugins</name>
@@ -268,6 +269,7 @@
         <enabled>true</enabled>
       </snapshots>
     </pluginRepository>
+-->
   </pluginRepositories>
 
   <dependencies>

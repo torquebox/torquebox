@@ -39,7 +39,7 @@
                 load 'Rakefile'
 
                 install_dependency( "${jruby.bin.url}", 'org.jruby', 'jruby-bin', '${version.jruby}', 'zip' )
-                install_dependency( "${jboss.bin.url}", 'org.jboss.jbossas', 'jboss-as-distribution', '${version.jbossas}', 'zip' )
+                #install_dependency( "${jboss.bin.url}", 'org.jboss.jbossas', 'jboss-as-distribution', '${version.jbossas}', 'zip' )
               </script>
             </configuration>
           </execution>
