@@ -31,7 +31,9 @@
     <plugins>
       <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
+<!--
         <version>2.6.1</version>
+-->
         <dependencies>
           <dependency>
             <groupId>org.torquebox</groupId>

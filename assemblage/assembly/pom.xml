@@ -28,19 +28,16 @@
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-bin</artifactId>
-      <version>${version.jruby}</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>org.jboss.jbossas</groupId>
       <artifactId>jboss-as-distribution</artifactId>
-      <version>${version.jbossas}</version>
       <type>zip</type>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rubyzip</artifactId>
-      <version>0.9.4</version>
       <type>gem</type>
     </dependency>
     <dependency>

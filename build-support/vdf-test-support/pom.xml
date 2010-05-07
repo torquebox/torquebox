@@ -33,7 +33,6 @@
     <dependency>
       <groupId>org.jboss.shrinkwrap</groupId>
       <artifactId>shrinkwrap-api</artifactId>
-      <version>${version.jboss.shrinkwrap}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
