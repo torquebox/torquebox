@@ -267,6 +267,16 @@
                   <fileset dir="${stage.dir}/jboss/bin">
                     <include name="*.sh"/>
                   </fileset>
+                  <fileset dir="${stage.dir}/jruby/bin">
+                    <include name="gem"/>
+                    <include name="jruby"/>
+                    <include name="jrubyc"/>
+                    <include name="jrubyd"/>
+                    <include name="jirb"/>
+                    <include name="rdoc"/>
+                    <include name="ri"/>
+                    <include name="rdebug"/>
+                  </fileset>
                 </chmod>
               </tasks>
             </configuration>

@@ -85,6 +85,7 @@
 
   <build>
     <plugins>
+<!--
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
@@ -92,8 +93,20 @@
           <execution>
             <id>install-dependency-gems</id>
           </execution>
+          <execution>
+            <id>default-cli</id>
+            <goals>
+              <goal>gemify</goal>
+            </goals>
+            <configuration>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>${project.artifactId}</artifactId>
+              <version>${project.version}</version>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
+-->
     </plugins> 
   </build> 
 
