@@ -42,7 +42,6 @@
         <artifactId>gem-maven-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <jrubyVersion>${version.jruby}</jrubyVersion>
           <gemHome>${project.build.directory}/rubygems</gemHome>
           <gemPath>${project.build.directory}/rubygems</gemPath>
           <fork>true</fork>

@@ -78,7 +78,6 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rack</artifactId>
-      <version>1.0.1</version>
       <type>gem</type>
       <scope>compile</scope>
     </dependency>

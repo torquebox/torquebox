@@ -90,7 +90,6 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>activerecord-jdbc-adapter</artifactId>
-      <version>0.9.4</version>
       <classifier>java</classifier>
       <type>gem</type>
       <scope>compile</scope>

@@ -119,6 +119,12 @@
 
       <dependency>
         <groupId>rubygems</groupId>
+        <artifactId>rack</artifactId>
+        <version>${version.rack}</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
         <artifactId>activesupport</artifactId>
         <version>${version.rails}</version>
         <type>gem</type>
@@ -129,6 +135,14 @@
         <version>${version.rails}</version>
         <type>gem</type>
       </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbc-adapter</artifactId>
+        <version>0.9.4</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+
 
     </dependencies>
   </dependencyManagement>
@@ -143,10 +157,10 @@
     <version.jboss.shrinkwrap>1.0.0-alpha-9</version.jboss.shrinkwrap>
 
     <!--<version.jruby>1.4.0</version.jruby>-->
-    <version.jruby>1.5.0.RC2</version.jruby>
+    <version.jruby>1.5.0.RC3</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
+    <version.rack>1.0.1</version.rack>
     <version.rails>2.3.5</version.rails>
-    <rails.version>2.3.5</rails.version>
     <version.activemessaging>0.7.1</version.activemessaging>
 
     <version.jbossas>6.0.0.20100429-M3</version.jbossas>
@@ -357,18 +371,27 @@
           <artifactId>gem-maven-plugin</artifactId>
           <version>0.11.1-SNAPSHOT</version>
           <extensions>true</extensions>
+          <configuration>
+            <jrubyVersion>${version.jruby}</jrubyVersion>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>de.saumya.mojo</groupId>
           <artifactId>rspec-maven-plugin</artifactId>
           <version>0.11.1-SNAPSHOT</version>
           <extensions>true</extensions>
+          <configuration>
+            <jrubyVersion>${version.jruby}</jrubyVersion>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>de.saumya.mojo</groupId>
           <artifactId>jruby-maven-plugin</artifactId>
           <version>0.11.1-SNAPSHOT</version>
           <extensions>true</extensions>
+          <configuration>
+            <jrubyVersion>${version.jruby}</jrubyVersion>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
