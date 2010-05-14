@@ -171,6 +171,7 @@
   </dependencyManagement>
 
   <properties>
+    <version.jruby-maven-plugins>0.11.1</version.jruby-maven-plugins>
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
@@ -179,7 +180,7 @@
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 
     <!--<version.jruby>1.4.0</version.jruby>-->
-    <version.jruby>1.5.0.RC3</version.jruby>
+    <version.jruby>1.5.0</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
     <version.rack>1.0.1</version.rack>
     <version.rails>2.3.5</version.rails>
@@ -395,7 +396,7 @@
         <plugin>
           <groupId>de.saumya.mojo</groupId>
           <artifactId>gem-maven-plugin</artifactId>
-          <version>0.11.1-SNAPSHOT</version>
+          <version>${version.jruby-maven-plugins}</version>
           <extensions>true</extensions>
           <configuration>
             <jrubyVersion>${version.jruby}</jrubyVersion>
@@ -404,7 +405,7 @@
         <plugin>
           <groupId>de.saumya.mojo</groupId>
           <artifactId>rspec-maven-plugin</artifactId>
-          <version>0.11.1-SNAPSHOT</version>
+          <version>${version.jruby-maven-plugins}</version>
           <extensions>true</extensions>
           <configuration>
             <jrubyVersion>${version.jruby}</jrubyVersion>
@@ -413,7 +414,7 @@
         <plugin>
           <groupId>de.saumya.mojo</groupId>
           <artifactId>jruby-maven-plugin</artifactId>
-          <version>0.11.1-SNAPSHOT</version>
+          <version>${version.jruby-maven-plugins}</version>
           <extensions>true</extensions>
           <configuration>
             <jrubyVersion>${version.jruby}</jrubyVersion>
