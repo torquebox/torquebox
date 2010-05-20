@@ -3,45 +3,80 @@ module TorqueBox
   module Container
     class Foundation
 
+      MC_MAIN_DEPLOYER_NAME = "MainDeployer"
+
+      attr_accessor :fundamental_deployment_paths
+      attr_accessor :fundamental_deployments
+
       def initialize()
         @server = Java::org.jboss.bootstrap.api.mc.server::MCServerFactory.createServer();
   
         descriptors = @server.configuration.bootstrap_descriptors
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.class_loading_descriptor
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.vdf_descriptor
-        @deployers = Deployers.new( self )
+        @fundamental_deployment_paths = []
+        @fundamental_deployments= []
       end
   
       def start
         @server.start
+        fundamental_deployment_paths.each do |path|
+          fundamental_deployments << deploy( path )
+        end
+        process_deployments( true )
       end
   
       def stop
+        fundamental_deployments.reverse.each do |deployment|
+          undeploy( deployment.name )
+        end
+        process_deployments( true )
         @server.stop
       end
   
-      def deployers
-        @deployers
+      def deploy(path)
+        puts "deploying #{path}"
+        virtual_file = Java::org.jboss.vfs::VFS.getChild( path )
+        puts "deploying VFS: #{virtual_file}"
+        deployment_factory = Java::org.jboss.deployers.vfs.spi.client::VFSDeploymentFactory.instance
+        deployment = deployment_factory.createVFSDeployment(virtual_file)
+        puts "deployment #{deployment}"
+        main_deployer.addDeployment(deployment)
+        puts "deployed #{deployment.name}"
+        deployment
       end
-  
-      def add_deployer(deployer)
-        deployer_name = deployer.class.simple_name
-        controller = @server.kernel.controller
-        bmdb = Java::org.jboss.beans.metadata.spi.builder::BeanMetaDataBuilder.createBuilder(deployer_name, deployer.class.name)
-        controller.install(bmdb.bean_meta_data, deployer);
+
+      def undeploy(deployment_name)
+        main_deployer.undeploy( deployment_name )
       end
-  
-  
-      class Deployers
-        def initialize(container)
-          @container = container
-        end
-  
-        def <<(deployer)
-          @container.add_deployer( deployer )
+
+      def process_deployments(check_complete=false)
+        puts "processing deployments"
+        main_deployer.process
+        if ( check_complete )
+          puts "checking completeness"
+          main_deployer.checkComplete
         end
       end
 
+      def kernel()
+        kernel_controller.kernel
+      end
+
+      def kernel_controller() 
+        @server.kernel.controller
+      end
+
+      def main_deployer()
+        kernel_controller.getInstalledContext(MC_MAIN_DEPLOYER_NAME).target
+      end
+     
+      def [](bean_name)
+        entry = kernel_controller.getInstalledContext( bean_name )
+        return nil if entry.nil?
+        entry.target
+      end
+  
     end
   end
 end

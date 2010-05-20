@@ -64,8 +64,8 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
 			ValueMetaData factoryInjection = builder.createInject(factoryName);
 			builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
 			builder.addPropertyMetaData("name", poolMetaData.getName());
-			builder.addPropertyMetaData("minInstances", poolMetaData.getMinimumSize());
-			builder.addPropertyMetaData("maxInstances", poolMetaData.getMaximumSize());
+			builder.addPropertyMetaData("minimumInstances", poolMetaData.getMinimumSize());
+			builder.addPropertyMetaData("maximumInstances", poolMetaData.getMaximumSize());
 			poolBean = builder.getBeanMetaData();
 		}
 

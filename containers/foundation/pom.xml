@@ -2,9 +2,9 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-parent</artifactId>
+    <artifactId>torquebox-container-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../container-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -37,6 +37,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-interp-int</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
@@ -51,22 +58,11 @@
         <artifactId>gem-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>install-dependencies</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>initialize</goal>
-            </goals>
-            <configuration>
-              <gemHome>${project.build.directory}/rubygems</gemHome>
-              <gemPath>${project.build.directory}/rubygems</gemPath>
-              <fork>true</fork>
-            </configuration>
+            <id>default-package</id>
           </execution>
           <execution>
-            <id>default-package</id>
-            <configuration>
-              <includeDependencies>true</includeDependencies>
-            </configuration>
+            <id>default-install</id>
+            <phase>install</phase>
           </execution>
         </executions>
       </plugin>
@@ -76,9 +72,16 @@
         <executions>
           <execution>
             <id>run-specs</id>
-            <phase>test</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>process-test-resources</phase>
             <goals>
-              <goal>test</goal>
+              <goal>testResources</goal>
             </goals>
           </execution>
         </executions>

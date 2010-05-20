@@ -1,0 +1,8 @@
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+  <bean name="QueuesYamlParsingDeployer" class="org.torquebox.messaging.deployers.QueuesYamlParsingDeployer"/>
+  <bean name="TopicsYamlParsingDeployer" class="org.torquebox.messaging.deployers.TopicsYamlParsingDeployer"/>
+
+  <bean name="ManagedQueueDeployer" class="org.torquebox.messaging.deployers.ManagedQueueDeployer"/>
+  <bean name="ManagedTopicDeployer" class="org.torquebox.messaging.deployers.ManagedTopicDeployer"/>
+
+</deployment>

@@ -126,12 +126,17 @@ public class SharedPool<T> implements Pool<T> {
 
 	@Override
 	public T borrowInstance() throws Exception {
-		return this.instance;
+		return borrowInstance(0);
 	}
 
 	@Override
 	public void releaseInstance(T instance) {
 		// nothing
+	}
+
+	@Override
+	public T borrowInstance(long timeout) throws Exception {
+		return this.instance;
 	}
 
 }

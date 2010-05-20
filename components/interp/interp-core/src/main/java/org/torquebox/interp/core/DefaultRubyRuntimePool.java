@@ -2,7 +2,7 @@
 package org.torquebox.interp.core;
 
 import org.jruby.Ruby;
-import org.torquebox.common.pool.ConstrainedPool;
+import org.torquebox.common.pool.ManagedPool;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
@@ -14,7 +14,9 @@ import org.torquebox.interp.spi.RubyRuntimePool;
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  *
  */
-public class DefaultRubyRuntimePool extends ConstrainedPool<Ruby> implements RubyRuntimePool  {
+public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRuntimePool  {
+
+	private String name;
 
 	/** Construct with a factory.
 	 * 
@@ -42,4 +44,12 @@ public class DefaultRubyRuntimePool extends ConstrainedPool<Ruby> implements Rub
 		return (RubyRuntimeFactory) getInstanceFactory();
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getName() {
+		return this.name;
+	}
+
 }

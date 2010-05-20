@@ -2,14 +2,14 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-parent</artifactId>
+    <artifactId>torquebox-container-parent</artifactId>
     <version>1.0.0.Beta19</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../container-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-messaging</artifactId>
+  <artifactId>torquebox-messaging-container</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Messaging Container</name>
   <description></description>
@@ -44,22 +44,10 @@
         <artifactId>gem-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>install-dependencies</id>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>initialize</goal>
-            </goals>
-            <configuration>
-              <gemHome>${project.build.directory}/rubygems</gemHome>
-              <gemPath>${project.build.directory}/rubygems</gemPath>
-              <fork>true</fork>
-            </configuration>
+            <id>default-package</id>
           </execution>
           <execution>
-            <id>default-package</id>
-            <configuration>
-              <includeDependencies>true</includeDependencies>
-            </configuration>
+            <id>default-install</id>
           </execution>
         </executions>
       </plugin>
@@ -69,10 +57,6 @@
         <executions>
           <execution>
             <id>run-specs</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>

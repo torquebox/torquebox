@@ -54,8 +54,8 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		
 		assertNotNull(poolOne);
 		assertEquals( "pool_one", poolOne.getName() );
-		assertEquals( 2, poolOne.getMinInstances() );
-		assertEquals( 200, poolOne.getMaxInstances() );
+		assertEquals( 2, poolOne.getMinimumInstances() );
+		assertEquals( 200, poolOne.getMaximumInstances() );
 		assertSame( runtimeFactory, poolOne.getRubyRuntimeFactory() );
 
 		undeploy(deploymentName);

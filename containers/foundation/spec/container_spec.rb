@@ -12,26 +12,19 @@ describe TorqueBox::Container::Foundation do
     container.start
   end
 
-  describe "managing deployers" do
+  describe "managing fundamental deployments" do
 
-    before :each do
+    before(:each) do
       @container = TorqueBox::Container::Foundation.new
-      @container.start
     end
-  
-    after :each do
-      @container.stop
-      @container = nil
+
+    it "should deploy and undeploy fundamental deployments" do
+      @container.fundamental_deployment_paths << File.join( File.dirname(__FILE__), "fund-1-jboss-beans.xml" )
+      @container.start()
+      deployer = @container['RubyRuntimeFactoryDeployer']
+      puts "deployer=#{deployer}"
+      @container.stop()
     end
-  
-    it "should provide access to deployer manipulation" do
-      @container.deployers.should_not be_nil
-    end
-  
-    it "should accept a deployer" do
-      @container.deployers << MockDeployer.new
-    end
-  
   end
 
 end
