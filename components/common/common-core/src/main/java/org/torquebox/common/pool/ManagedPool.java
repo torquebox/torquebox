@@ -38,8 +38,9 @@ public class ManagedPool<T> implements Pool<T> {
 		return this.poolManager.getInstanceFactory();
 	}
 
-	public void start() {
+	public void start() throws InterruptedException {
 		this.poolManager.start();
+		this.poolManager.waitForMinimumFill();
 	}
 
 	@Override

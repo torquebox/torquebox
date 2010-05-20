@@ -1,5 +1,7 @@
 package org.torquebox.interp.deployers;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -8,6 +10,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jruby.Ruby;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.torquebox.interp.core.DefaultRubyRuntimePool;
 import org.torquebox.interp.core.SharedRubyRuntimePool;
@@ -16,8 +19,6 @@ import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-
-import static org.junit.Assert.*;
 
 public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 
@@ -33,6 +34,7 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 
 	@Test
 	public void testMinMaxPool() throws Exception {
+		log.info( "testMinMaxPool()" );
 		
 		RubyRuntimeFactory runtimeFactory = deployRuntimeInstanceFactory();
 		
@@ -49,7 +51,9 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 
 		String beanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, "pool_one");
 
+		log.info( "A" );
 		processDeployments(true);
+		log.info( "B" );
 		DefaultRubyRuntimePool poolOne = (DefaultRubyRuntimePool) getBean( beanName );
 		
 		assertNotNull(poolOne);
@@ -57,13 +61,17 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		assertEquals( 2, poolOne.getMinimumInstances() );
 		assertEquals( 200, poolOne.getMaximumInstances() );
 		assertSame( runtimeFactory, poolOne.getRubyRuntimeFactory() );
-
+		
+		log.info( "testMinMaxPool() finished" );
 		undeploy(deploymentName);
+		log.info( "testMinMaxPool() undeployed test deployment" );
 		undeployRuntimeInstanceFactory();
+		log.info( "testMinMaxPool() undeployed" );
 	}
 	
 	@Test
 	public void testSharedPoolWithFactory() throws Exception {
+		log.info( "testSharedPoolWithFactory()" );
 		
 		RubyRuntimeFactory runtimeFactory = deployRuntimeInstanceFactory();
 		
@@ -86,8 +94,10 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		assertEquals( "pool_one", poolOne.getName() );
 		assertSame( runtimeFactory, poolOne.getRubyRuntimeFactory() );
 
+		log.info( "testSharedPoolWithFactory() finished" );
 		undeploy(deploymentName);
 		undeployRuntimeInstanceFactory();
+		log.info( "testSharedPoolWithFactory() undeployed" );
 	}
 	
 	@Test
@@ -135,7 +145,9 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 	}
 	
 	protected void undeployRuntimeInstanceFactory() throws DeploymentException {
+		log.info( "undeploying runtime instance factory" );
 		undeploy( this.runtimeInstanceFactoryDeploymentName );
+		log.info( "undeployed runtime instance factory" );
 	}
 	
 	protected Ruby deployRuntimeInstance() throws IOException, DeploymentException {

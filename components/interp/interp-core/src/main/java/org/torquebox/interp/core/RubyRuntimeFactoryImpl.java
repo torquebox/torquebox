@@ -33,6 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.jboss.beans.metadata.api.annotations.Create;
 import org.jboss.kernel.Kernel;
+import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -50,6 +51,8 @@ import org.torquebox.interp.spi.RuntimeInitializer;
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
 public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
+
+	private static final Logger log = Logger.getLogger(RubyRuntimeFactoryImpl.class);
 
 	/** MC Kernel. */
 	private Kernel kernel;
@@ -80,7 +83,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 	/** GEM_PATH. */
 	private String gemPath;
-	
+
 	/** Should environment $JRUBY_HOME be considered? */
 	private boolean useJRubyHomeEnvVar = true;
 
@@ -94,8 +97,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	/**
 	 * Construct with an initializer.
 	 * 
-	 * @param initializer The initializer (or null) to use for each created
-	 *        runtime.
+	 * @param initializer
+	 *            The initializer (or null) to use for each created runtime.
 	 */
 	public RubyRuntimeFactoryImpl(RuntimeInitializer initializer) {
 		this.initializer = initializer;
@@ -124,11 +127,11 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	public String getJRubyHome() {
 		return this.jrubyHome;
 	}
-	
+
 	public void setUseJRubyHomeEnvVar(boolean useJRubyEnvVar) {
 		this.useJRubyHomeEnvVar = useJRubyEnvVar;
 	}
-	
+
 	public boolean useJRubyHomeEnvVar() {
 		return this.useJRubyHomeEnvVar;
 	}
@@ -136,7 +139,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	/**
 	 * Inject the Microcontainer kernel.
 	 * 
-	 * @param kernel The microcontainer kernel.
+	 * @param kernel
+	 *            The microcontainer kernel.
 	 */
 	public void setKernel(Kernel kernel) {
 		this.kernel = kernel;
@@ -154,7 +158,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	/**
 	 * Set the interpreter classloader.
 	 * 
-	 * @param classLoader The classloader.
+	 * @param classLoader
+	 *            The classloader.
 	 */
 	public void setClassLoader(ClassLoader classLoader) {
 		this.classLoader = classLoader;
@@ -198,7 +203,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 			jrubyHome = System.getProperty("jruby.home");
 
-			if (jrubyHome == null && this.useJRubyHomeEnvVar ) {
+			if (jrubyHome == null && this.useJRubyHomeEnvVar) {
 				jrubyHome = System.getenv("JRUBY_HOME");
 			}
 
@@ -226,19 +231,30 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 				String extraPath = jrubyHome.substring(bangLoc + 1);
 
+				log.info("jarPath=" + jarPath);
+				log.info("extraPath=" + extraPath);
 				VirtualFile vfsJar = VFS.getChild(jarPath);
 
+				log.info("vfsJar=" + vfsJar);
+				log.info("vfsJar.exists=" + vfsJar.exists());
+				log.info("vfsJar.isDirectory=" + vfsJar.isDirectory());
+				log.info("CHILDREN: " + vfsJar.getChildren());
 				if (vfsJar.exists()) {
 					if (!vfsJar.isDirectory()) {
 						ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 						TempFileProvider tempFileProvider = TempFileProvider.create("jruby.home", executor);
+						log.info("mounting in-place: " + vfsJar);
 						VFS.mountZip(vfsJar, vfsJar, tempFileProvider);
+						log.info("mounted in-place: " + vfsJar);
 					}
 
 					if (vfsJar.isDirectory()) {
+						log.info("figuring vfsJrubyHome");
 						VirtualFile vfsJrubyHome = vfsJar.getChild(extraPath);
+						log.info("vfsJrubyHome.exists=" + vfsJrubyHome.exists());
 						if (vfsJrubyHome.exists()) {
 							jrubyHome = vfsJrubyHome.toURL().toExternalForm();
+							log.info("set jrubyHome=" + jrubyHome );
 						}
 					}
 				}
@@ -250,8 +266,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		}
 
 		// new Exception().printStackTrace();
-		
-		System.err.println( "JRUBY_HOME=" + jrubyHome );
+
+		log.info("JRUBY_HOME=" + jrubyHome);
 
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
@@ -311,7 +327,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	/**
 	 * Set the interpreter output stream.
 	 * 
-	 * @param outputStream The output stream.
+	 * @param outputStream
+	 *            The output stream.
 	 */
 	public void setOutput(PrintStream outputStream) {
 		this.outputStream = outputStream;
@@ -329,7 +346,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	/**
 	 * Set the interpreter error stream.
 	 * 
-	 * @param errorStream The error stream.
+	 * @param errorStream
+	 *            The error stream.
 	 */
 	public void setError(PrintStream errorStream) {
 		this.errorStream = errorStream;
@@ -351,7 +369,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	 * Load paths may be either real filesystem paths or VFS URLs
 	 * </p>
 	 * 
-	 * @param loadPaths The list of load paths.
+	 * @param loadPaths
+	 *            The list of load paths.
 	 */
 	public void setLoadPaths(List<String> loadPaths) {
 		this.loadPaths = loadPaths;
