@@ -70,27 +70,14 @@
                   </goals>
                   <configuration>
                     <useTransitiveDependencies>true</useTransitiveDependencies>
-                    <gemPath>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemPath>
-                    <gemHome>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemHome>
+                    <gemPath>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemPath>
+                    <gemHome>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemHome>
                   </configuration>
                 </execution>
               </executions>
             </plugin>
             <plugin>
               <artifactId>maven-dependency-plugin</artifactId>
-              <configuration>
-                <artifactItems>
-                  <artifactItem>
-                    <groupId>${project.groupId}</groupId>
-                    <artifactId>${project.artifactId}</artifactId>
-                    <classifier>deployer</classifier>
-                    <version>${project.version}</version>
-                    <type>jar</type>
-                    <outputDirectory>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/server/default/deployers/torquebox.deployer/</outputDirectory>
-                    <overWrite>true</overWrite>
-                  </artifactItem>
-                </artifactItems>
-              </configuration>
               <executions>
                 <execution>
                   <id>install-deployer</id>
@@ -99,6 +86,19 @@
                   <goals>
                     <goal>copy</goal>
                   </goals>
+                  <configuration>
+                    <artifactItems>
+                      <artifactItem>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <classifier>deployer</classifier>
+                        <version>${project.version}</version>
+                        <type>jar</type>
+                        <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/server/default/deployers/torquebox.deployer/</outputDirectory>
+                        <overWrite>true</overWrite>
+                      </artifactItem>
+                    </artifactItems>
+                  </configuration>
                 </execution>
               </executions>
             </plugin>

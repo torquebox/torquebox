@@ -34,6 +34,7 @@ public class BootstrapRubyRuntimeDeployer extends AbstractDeployer {
 	
 	@Override
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
+		log.info( "Bootstrapping deployment-time Ruby" );
 		
 		String rubyBeanName = AttachmentUtils.beanName(unit, Ruby.class, "bootstrap" );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( rubyBeanName, Ruby.class.getName() );
