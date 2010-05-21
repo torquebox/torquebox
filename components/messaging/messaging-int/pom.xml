@@ -37,6 +37,13 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-metadata-builder</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-int</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -64,6 +71,20 @@
       <groupId>org.jboss</groupId>
       <artifactId>jboss-common-core</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-ruby-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>vfs</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>

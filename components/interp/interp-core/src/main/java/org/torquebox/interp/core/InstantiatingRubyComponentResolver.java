@@ -6,9 +6,7 @@ import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.interp.spi.ComponentInitializer;
 
-public class InstantiatingRubyComponentResolver implements RubyComponentResolver {
-
-	private String componentName;
+public class InstantiatingRubyComponentResolver extends ManagedComponentResolver {
 
 	private String rubyClassName;
 	private String rubyRequirePath;
@@ -16,14 +14,6 @@ public class InstantiatingRubyComponentResolver implements RubyComponentResolver
 	private ComponentInitializer componentInitializer;
 
 	public InstantiatingRubyComponentResolver() {
-	}
-
-	public void setComponentName(String componentName) {
-		this.componentName = componentName;
-	}
-
-	public String getComponentName() {
-		return this.componentName;
 	}
 
 	public void setRubyClassName(String rubyClassName) {
@@ -48,22 +38,6 @@ public class InstantiatingRubyComponentResolver implements RubyComponentResolver
 
 	public ComponentInitializer getComponentInitializer() {
 		return this.componentInitializer;
-	}
-
-	@Override
-	public IRubyObject resolve(Ruby ruby) throws Exception {
-		synchronized (ruby) {
-			ruby.getLoadService().require("org/torquebox/interp/core/component_manager");
-			RubyClass managerClass = (RubyClass) ruby.getClassFromPath("TorqueBox::ComponentManager");
-			IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, managerClass, "lookup_component", new Object[] { this.componentName }, IRubyObject.class);
-
-			if (component == null || component.isNil()) {
-				component = createComponent(ruby);
-				JavaEmbedUtils.invokeMethod(ruby, managerClass, "register_component", new Object[] { this.componentName, component }, void.class);
-			}
-
-			return component;
-		}
 	}
 
 	protected IRubyObject createComponent(Ruby ruby) throws Exception {

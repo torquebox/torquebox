@@ -8,4 +8,6 @@
   <bean name="ManagedQueueDeployer" class="org.torquebox.messaging.deployers.ManagedQueueDeployer"/>
   <bean name="ManagedTopicDeployer" class="org.torquebox.messaging.deployers.ManagedTopicDeployer"/>
   
+  <bean name="MessagingRbParsingDeployer" class="org.torquebox.messaging.deployers.MessagingRbParsingDeployer"/>
+  
 </deployment>
