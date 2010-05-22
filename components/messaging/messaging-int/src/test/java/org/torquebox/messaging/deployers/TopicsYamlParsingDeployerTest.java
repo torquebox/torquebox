@@ -32,6 +32,8 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		Set<? extends TopicMetaData> allMetaData = unit.getAllMetaData( TopicMetaData.class );
 		
 		assertTrue( allMetaData.isEmpty() );
+		
+		undeploy( deploymentName );
 	}
 	
 	@Test
@@ -45,6 +47,8 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		Set<? extends TopicMetaData> allMetaData = unit.getAllMetaData( TopicMetaData.class );
 		
 		assertTrue( allMetaData.isEmpty() );
+		
+		undeploy( deploymentName );
 	}
 	
 	@Test
@@ -66,6 +70,8 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		
 		TopicMetaData topicBar = getMetaData( allMetaData, "/topics/bar" );
 		assertNotNull( topicBar );
+		
+		undeploy( deploymentName );
 	}
 
 	private TopicMetaData getMetaData(Set<? extends TopicMetaData> allMetaData, String name) {

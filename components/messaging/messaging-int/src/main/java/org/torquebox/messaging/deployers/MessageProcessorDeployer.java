@@ -15,12 +15,16 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.JndiRefMetaData;
 import org.torquebox.messaging.core.AbstractManagedDestination;
+import org.torquebox.messaging.core.ManagedQueue;
+import org.torquebox.messaging.core.ManagedTopic;
 import org.torquebox.messaging.core.RubyMessageProcessor;
 import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
+import org.torquebox.messaging.metadata.QueueMetaData;
 
 public class MessageProcessorDeployer extends AbstractDeployer {
 
@@ -51,7 +55,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 
 		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, RubyMessageProcessor.class.getName());
 
-		ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, "pool", "messaging") );
+		ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, "messaging") );
 
 		builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
 		builder.addPropertyMetaData("rubyClassName", metaData.getRubyClassName());
@@ -59,8 +63,10 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 		builder.addPropertyMetaData("messageSelector", metaData.getMessageSelector() );
 		builder.addPropertyMetaData("rubyConfig", metaData.getRubyConfig() );
 
-		if (demandDestination(unit, metaData.getDestinationName())) {
-			String destinationBeanName = AttachmentUtils.beanName(unit, AbstractManagedDestination.class, metaData.getDestinationName());
+		Class<? extends AbstractManagedDestination> demandClass = demandDestination(unit, metaData.getDestinationName());
+		
+		if (demandClass != null ) {
+			String destinationBeanName = AttachmentUtils.beanName(unit, demandClass, metaData.getDestinationName());
 			builder.addDemand(destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null);
 		}
 
@@ -77,16 +83,20 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class);
 	}
 
-	protected boolean demandDestination(DeploymentUnit unit, String destinationName) {
+	protected Class<? extends AbstractManagedDestination> demandDestination(DeploymentUnit unit, String destinationName) {
 		Set<? extends AbstractDestinationMetaData> destinations = unit.getAllMetaData( AbstractDestinationMetaData.class );
 
 		for ( AbstractDestinationMetaData each : destinations ) {
 			if ( each.getName().equals( destinationName ) ) { 
-				return true;
+				if ( each.getClass() == QueueMetaData.class ) {
+					return ManagedQueue.class;
+				} else {
+					return ManagedTopic.class;
+				}
 			}
 		}
 		
-		return false;
+		return null;
 	}
 
 }

@@ -11,7 +11,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
-import org.torquebox.test.ruby.TestRubyFactory;
 
 public class MessagingRbParsingDeployer extends AbstractVFSParsingDeployer<MessageProcessorMetaData> {
 
@@ -39,12 +38,7 @@ public class MessagingRbParsingDeployer extends AbstractVFSParsingDeployer<Messa
 			script.append("require %(org/torquebox/messaging/deployers/torquebox-gateway)\n");
 			script.append("require %(vfs)\n");
 			script.append("config_src = IO.read %(" + file.toURL() + ")\n");
-			script.append("begin\n");
-			script.append("  eval config_src\n");
-			script.append("rescue => e\n");
-			script.append("  puts e\n");
-			script.append("  raise e\n");
-			script.append("end\n");
+			script.append("eval config_src\n");
 			log.info("SCRIPT\n" + script);
 			IRubyObject result = ruby.evalScriptlet(script.toString());
 			if (result == null) {
@@ -67,6 +61,7 @@ public class MessagingRbParsingDeployer extends AbstractVFSParsingDeployer<Messa
 		} catch (RaiseException e) {
 			log.error("error reading messaging.rb", e);
 			log.info(e.getException());
+			throw e;
 		}
 
 		return null;

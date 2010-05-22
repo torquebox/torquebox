@@ -10,7 +10,7 @@ public class ManagedQueue extends AbstractManagedDestination {
 	public void start() throws Exception {
 		log.info( "start queue " + getName() );
 		
-		getServer().createQueue(false, getName(), "", false );
+		getServer().createQueue(false, getName(), "", false, getName() );
 	}
 	
 	public void destroy() throws Exception {

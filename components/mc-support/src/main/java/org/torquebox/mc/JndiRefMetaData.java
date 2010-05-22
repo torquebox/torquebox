@@ -16,6 +16,7 @@ public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 	private String name;
 
 	public JndiRefMetaData(Context context, String name) {
+		log.info( "construct JNDI ref for " + context + " -> " + name );
 		this.context = context;
 		this.name = name;
 	}
@@ -35,9 +36,11 @@ public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 
 	@Override
 	public Object getValue() {
+		log.info( "getValue() for " + this.name );
 		try {
 			return this.context.lookup(this.name);
 		} catch (NamingException e) {
+			log.info( "naming exception: " + e );
 			return null;
 		}
 	}

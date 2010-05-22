@@ -13,7 +13,7 @@ public class DeployersTest extends AbstractDeployerTestCase {
 	public void testJBossBeansXml() throws Exception {
 		File jbossBeansXml = new File( new File( new File( new File( new File( System.getProperty( "user.dir" ) , "src" ), "assembly" ), "resources" ), "META-INF" ), "jboss-beans.xml" );
 		
-		addDeployment( jbossBeansXml );
+		String deploymentName = addDeployment( jbossBeansXml );
 		
 		processDeployments( true );
 		
@@ -22,6 +22,10 @@ public class DeployersTest extends AbstractDeployerTestCase {
 		assertNotNull( getBean( "TopicsYamlParsingDeployer" ) );
 		assertNotNull( getBean( "QueuesYamlParsingDeployer" ) );
 		assertNotNull( getBean( "MessagingRbParsingDeployer" ) );
+		assertNotNull( getBean( "MessageProcessorDeployer" ) );
+		assertNotNull( getBean( "MessagingRuntimePoolDeployer" ) );
+		
+		undeploy( deploymentName );
 	}
 
 }

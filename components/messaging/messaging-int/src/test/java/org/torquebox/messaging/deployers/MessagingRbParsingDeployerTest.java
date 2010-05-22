@@ -40,6 +40,7 @@ public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
 		Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData( MessageProcessorMetaData.class );
 		
 		assertTrue( allMetaData.isEmpty() );
+		undeploy( deploymentName );
 	}
 	
 	@Test(expected=DeploymentException.class)
@@ -66,6 +67,7 @@ public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
 		Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData( MessageProcessorMetaData.class );
 		
 		assertTrue( allMetaData.isEmpty() );
+		undeploy( deploymentName );
 	}
 	
 	@Test
@@ -91,6 +93,8 @@ public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
 		assertEquals( "myfilter", metaData.getMessageSelector() );
 		String rubyConfig = metaData.getRubyConfig();
 		assertNotNull( rubyConfig );
+		
+		undeploy( deploymentName );
 	}
 	
 

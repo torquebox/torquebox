@@ -9,7 +9,7 @@ public class ManagedTopic extends AbstractManagedDestination {
 	public void start() throws Exception {
 		log.info( "start topic " + getName() );
 		
-		getServer().createTopic(false, getName() );
+		getServer().createTopic(false, getName(), getName() );
 	}
 	
 	public void destroy() throws Exception {
