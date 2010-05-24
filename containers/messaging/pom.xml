@@ -27,12 +27,7 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-int</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.yaml</groupId>
-      <artifactId>snakeyaml</artifactId>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>

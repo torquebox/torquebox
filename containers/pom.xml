@@ -20,7 +20,6 @@
   </build>
 
   <modules>
-    <module>container-parent</module>
     <module>foundation</module>
     <module>messaging</module>
   </modules>
