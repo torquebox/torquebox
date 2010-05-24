@@ -19,11 +19,13 @@ module TorqueBox
       end
   
       def start
+        puts "STARTING Foundation"
         @server.start
         fundamental_deployment_paths.each do |path|
           fundamental_deployments << deploy( path )
         end
         process_deployments( true )
+        puts "STARTED Foundation"
       end
   
       def stop
@@ -35,14 +37,11 @@ module TorqueBox
       end
   
       def deploy(path)
-        puts "deploying #{path}"
         virtual_file = Java::org.jboss.vfs::VFS.getChild( path )
-        puts "deploying VFS: #{virtual_file}"
+        puts "DEPLOY VFS: #{virtual_file}"
         deployment_factory = Java::org.jboss.deployers.vfs.spi.client::VFSDeploymentFactory.instance
         deployment = deployment_factory.createVFSDeployment(virtual_file)
-        puts "deployment #{deployment}"
         main_deployer.addDeployment(deployment)
-        puts "deployed #{deployment.name}"
         deployment
       end
 
@@ -51,7 +50,7 @@ module TorqueBox
       end
 
       def process_deployments(check_complete=false)
-        puts "processing deployments"
+        puts "PROCESS DEPLOYMENTS"
         main_deployer.process
         if ( check_complete )
           puts "checking completeness"

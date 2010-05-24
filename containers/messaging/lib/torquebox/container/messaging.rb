@@ -11,6 +11,7 @@ module TorqueBox
 
       def start
         super
+        Java::java.lang.System.setProperty( "torquebox.hornetq.configuration.url", "file://" + File.join( File.dirname(__FILE__), 'hornetq-configuration.xml' ) )
         beans_xml = File.join( File.dirname(__FILE__), 'messaging-jboss-beans.xml' )
         puts "beans_xml=#{beans_xml}"
         @core_deployers = deploy( beans_xml )
