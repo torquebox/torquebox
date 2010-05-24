@@ -6,8 +6,11 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>src/assembly/resources</directory>
-      <outputDirectory>/</outputDirectory>
+      <directory>src/main/resources</directory>
+      <outputDirectory>/META-INF</outputDirectory>
+      <includes>
+        <include>**/*-jboss-beans.xml</include>
+      </includes>
     </fileSet>
   </fileSets>
   <dependencySets>

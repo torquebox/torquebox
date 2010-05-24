@@ -24,6 +24,7 @@
     <module>parent</module>
     <module>build-support</module>
     <module>components</module>
+    <module>containers</module>
     <module>assemblage</module>
   </modules>
 
