@@ -1,8 +1,12 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-<!--
-  <bean name="NameServer" class="org.jnp.server.SingletonNamingServer"/>
--->
+  <bean name="LookupExecutor" class="java.util.concurrent.ThreadPoolExecutor">
+    <constructor factoryMethod="newFixedThreadPool" factoryClass="java.util.concurrent.Executors">
+      <parameter>2</parameter>
+    </constructor>
+    <stop method="shutdown"/>
+  </bean>
+
   <bean name="Naming" class="org.jnp.server.NamingBeanImpl"/>
 
   <bean name="JNDIServer" class="org.jnp.server.Main">
@@ -13,6 +17,9 @@
     <property name="bindAddress">${jnp.host:localhost}</property>
     <property name="rmiPort">${jnp.rmiPort:1098}</property>
     <property name="rmiBindAddress">${jnp.host:localhost}</property>
+    <property name="lookupExector">
+      <inject bean="LookupExecutor"/>
+    </property>
   </bean>
 
 </deployment>
