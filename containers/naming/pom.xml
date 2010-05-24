@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-messaging-container</artifactId>
+  <artifactId>torquebox-naming-container</artifactId>
   <packaging>java-gem</packaging>
-  <name>TorqueBox Messaging Container</name>
+  <name>TorqueBox Naming Container</name>
   <description></description>
 
   <dependencies>
@@ -23,39 +23,13 @@
       <classifier>java</classifier>
       <scope>compile</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-int</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.spec.javax.jms</groupId>
-      <artifactId>jboss-jms-api_1.1_spec</artifactId>
+      <groupId>org.jboss.naming</groupId>
+      <artifactId>jnpserver</artifactId>
       <scope>compile</scope>
     </dependency>
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-jms</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.netty</groupId>
-      <artifactId>netty</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
-      <version>${project.version}</version>
-      <type>gem</type>
-      <scope>provided</scope>
-    </dependency>
+
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>

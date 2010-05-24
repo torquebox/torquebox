@@ -1,0 +1,18 @@
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+<!--
+  <bean name="NameServer" class="org.jnp.server.SingletonNamingServer"/>
+-->
+  <bean name="Naming" class="org.jnp.server.NamingBeanImpl"/>
+
+  <bean name="JNDIServer" class="org.jnp.server.Main">
+    <property name="namingInfo">
+      <inject bean="Naming"/>
+    </property>
+    <property name="port">${jnp.port:1099}</property>
+    <property name="bindAddress">${jnp.host:localhost}</property>
+    <property name="rmiPort">${jnp.rmiPort:1098}</property>
+    <property name="rmiBindAddress">${jnp.host:localhost}</property>
+  </bean>
+
+</deployment>

@@ -29,11 +29,15 @@ module TorqueBox
       end
   
       def stop
+        puts "STOPPING MCServer"
+        puts "Undeploying fundamental deployers"
         fundamental_deployments.reverse.each do |deployment|
           undeploy( deployment.name )
         end
         process_deployments( true )
+        puts "Stopping core container"
         @server.stop
+        puts "core container stopped"
       end
   
       def deploy(path)
