@@ -30,6 +30,15 @@
       <scope>compile</scope>
     </dependency>
 
+
+<!--
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-jms</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+-->
+
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>

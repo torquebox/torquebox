@@ -42,6 +42,7 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 			pool = new PoolMetaData();
 			pool.setName("messaging");
 			pool.setShared();
+			log.info( "configured pool: " + pool );
 			AttachmentUtils.multipleAttach(unit, pool, "messaging");
 		}
 	}

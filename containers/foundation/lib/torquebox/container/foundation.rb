@@ -21,9 +21,14 @@ module TorqueBox
       def start
         puts "STARTING Foundation"
         @server.start
+
+        beans_xml = File.join( File.dirname(__FILE__), 'foundation-jboss-beans.xml' )
+        self.fundamental_deployment_paths << beans_xml
+
         fundamental_deployment_paths.each do |path|
           fundamental_deployments << deploy( path )
         end
+
         process_deployments( true )
         puts "STARTED Foundation"
       end

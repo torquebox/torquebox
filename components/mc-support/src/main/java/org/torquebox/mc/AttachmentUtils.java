@@ -14,6 +14,7 @@ public class AttachmentUtils {
 	}
 	
 	public static void multipleAttach(DeploymentUnit unit, Object metaData, String name) {
+		log.info( "multipleAttach: " + metaData.getClass().getName() + "\n" + name );
 		unit.addAttachment( metaData.getClass().getName() + '$' + name, metaData );
 	}
 	
