@@ -62,6 +62,7 @@
                 <gemHome>${project.parent.build.directory}/rubygems</gemHome>
                 <gemPath>${project.parent.build.directory}/rubygems</gemPath>
                 <fork>true</fork>
+                <verbose>true</verbose>
                 <systemProperties>
                   <property>
                     <name>log4j.configuration</name>

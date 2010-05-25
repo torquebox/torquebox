@@ -1,12 +1,12 @@
 
+require 'ostruct'
+require 'torquebox/container/foundation_enabler'
+
 module TorqueBox
   module Container
     class Foundation
 
       MC_MAIN_DEPLOYER_NAME = "MainDeployer"
-
-      attr_accessor :fundamental_deployment_paths
-      attr_accessor :fundamental_deployments
 
       def initialize()
         @server = Java::org.jboss.bootstrap.api.mc.server::MCServerFactory.createServer();
@@ -14,8 +14,20 @@ module TorqueBox
         descriptors = @server.configuration.bootstrap_descriptors
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.class_loading_descriptor
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.vdf_descriptor
-        @fundamental_deployment_paths = []
-        @fundamental_deployments= []
+        @enablers = []
+        enable( FoundationEnabler )
+      end
+
+      def enable(enabler_or_class,&block)
+        enabler = nil
+        if ( enabler_or_class.is_a?( Class ) ) 
+          enabler = enabler_or_class.new( &block )
+        else
+          enabler = enabler_or_class
+        end
+        
+        wrapper = OpenStruct.new( :enabler=>enabler, :deployments=>[] )
+        @enablers << wrapper
       end
   
       def start
@@ -23,22 +35,41 @@ module TorqueBox
         @server.start
 
         beans_xml = File.join( File.dirname(__FILE__), 'foundation-jboss-beans.xml' )
-        self.fundamental_deployment_paths << beans_xml
 
-        fundamental_deployment_paths.each do |path|
-          fundamental_deployments << deploy( path )
+        @enablers.each do |wrapper|
+          if ( wrapper.enabler.respond_to?( :before_start ) ) 
+            wrapper.enabler.send( :before_start, self )
+          end
+          wrapper.enabler.fundamental_deployment_paths.each do |path|
+            wrapper.deployments << deploy(path)
+          end
         end
 
         process_deployments( true )
+
+        @enablers.each do |wrapper|
+          if ( wrapper.enabler.respond_to?( :after_start ) )  
+            wrapper.enabler.send( :after_start, self )
+          end
+        end
+
+
+
         puts "STARTED Foundation"
       end
   
       def stop
         puts "STOPPING MCServer"
-        puts "Undeploying fundamental deployers"
-        fundamental_deployments.reverse.each do |deployment|
-          undeploy( deployment.name )
+        puts "Undeploying enablers"
+        @enablers.reverse.each do |wrapper|
+          wrapper.deployments.each do |deployment|
+            puts "undeploying #{deployment.inspect}"
+            name = Java::java.lang::String.new( deployment.name )
+            puts "name=#{name}"
+            undeploy( name )
+          end
         end
+     
         process_deployments( true )
         puts "Stopping core container"
         @server.stop

@@ -7,31 +7,24 @@ describe TorqueBox::Container::Foundation do
     container = TorqueBox::Container::Foundation.new
   end
 
-  it "should be startable" do
+  it "should be startable and stoppable" do
     container = TorqueBox::Container::Foundation.new
     container.start
+    container.stop
   end
 
-  describe "managing fundamental deployments" do
-
+  describe "foundational deployment" do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
+      @container.start
+    end
+    after(:each) do
+      @container.stop
     end
 
-    it "should deploy and undeploy fundamental deployments" do
-      @container.fundamental_deployment_paths << File.join( File.dirname(__FILE__), "fund-1-jboss-beans.xml" )
-      @container.start()
-      deployer = @container['RubyRuntimeFactoryDeployer']
-      puts "deployer=#{deployer}"
-      @container.stop()
+    it "should deploy a RuntimePoolDeployer" do
+      @container['RuntimePoolDeployer'].should_not be_nil
     end
   end
 
-end
-
-class MockDeployer < Java::org.jboss.deployers.spi.deployer.helpers::AbstractDeployer
-
-  def self.simple_name
-    "MockDeployer"
-  end
 end

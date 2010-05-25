@@ -62,12 +62,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>mongrel</artifactId>
-      <type>gem</type>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-naming-container</artifactId>
+      <version>${project.version}</version>
       <classifier>java</classifier>
-      <version>1.1.5</version>
-      <scope>runtime</scope>
+      <type>gem</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
