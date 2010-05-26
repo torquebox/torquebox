@@ -101,6 +101,14 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>test-resources</id>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 

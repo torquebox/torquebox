@@ -6,15 +6,6 @@ module TorqueBox
     class MessagingEnabler
 
       def initialize(&block)
-        t = Java::java.lang::Thread.currentThread
-        cl = t.getContextClassLoader()
-        puts "LOG4J=#{Java::java.lang::System.getProperty('log4j.configuration')}"
-        cp = Java::java.lang::System.getProperty('java.class.path').split(':')
-        cp.sort.each do |e|
-          puts e
-        end
-        ws_class = cl.loadClass( 'org.torquebox.containers.web.WebServer' )
-        puts "ws_class=#{ws_class}"
         instance_eval( &block ) if block
       end
 
