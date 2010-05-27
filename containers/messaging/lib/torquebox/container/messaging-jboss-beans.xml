@@ -12,8 +12,8 @@
   </bean>
 
    <bean name="RMIClassProvider" class="org.torquebox.containers.web.WebServer">
-     <property name="port">0</property>
      <property name="threadPool"><inject bean="RMIClassProviderExecutor"/></property>
+     <install method="setJavaRmiServerCodebase" state="Installed"/>
    </bean>
    <!-- 
               HornetQ 
@@ -53,13 +53,48 @@
       <stop ignored="true"/>   
    </bean>
    
+   <bean name="JMSConfiguration" class="org.hornetq.jms.server.config.impl.JMSConfigurationImpl">
+     <constructor>
+       <parameter>
+         <list>
+           <bean name="ConnectionFactoryConfiguration" class="org.hornetq.jms.server.config.impl.ConnectionFactoryConfigurationImpl">
+             <constructor>
+               <parameter>ConnectionFactory</parameter>
+               <parameter>ConnectionFactory</parameter>
+             </constructor>
+             <property name="connectorNames">
+               <list>
+                 <bean name="AnonPair" class="org.hornetq.api.core.Pair">
+                   <constructor>
+                     <parameter>netty</parameter>
+                     <parameter><null/></parameter>
+                   </constructor>
+                 </bean>
+               </list>
+             </property>
+           </bean>
+         </list>
+       </parameter>
+       <parameter>
+         <list/>
+       </parameter>
+       <parameter>
+         <list/>
+       </parameter>
+     </constructor>
+   </bean>
+
    <!-- The JMS server -->
    <bean name="JMSServerManager" class="org.hornetq.jms.server.impl.JMSServerManagerImpl">
       <constructor>         
          <parameter>
             <inject bean="HornetQServer"/>
          </parameter>         
+         <parameter>
+            <inject bean="JMSConfiguration"/>
+         </parameter>         
       </constructor>
+      <depends state="Started">RMIClassProvider</depends>
    </bean>
 
    <!-- 
@@ -75,6 +110,8 @@
   <bean name="MessagingRbParsingDeployer" class="org.torquebox.messaging.deployers.MessagingRbParsingDeployer"/>
   <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer"/>
   
-  <bean name="MessagingRuntimePoolDeployer" class="org.torquebox.messaging.deployers.MessagingRuntimePoolDeployer"/>
+  <bean name="MessagingRuntimePoolDeployer" class="org.torquebox.messaging.deployers.MessagingRuntimePoolDeployer">
+    <property name="instanceFactoryName">RubyRuntimeFactory</property>
+  </bean>
 
 </deployment>

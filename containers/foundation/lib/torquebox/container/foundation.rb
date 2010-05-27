@@ -9,11 +9,13 @@ module TorqueBox
       MC_MAIN_DEPLOYER_NAME = "MainDeployer"
 
       def initialize()
+        @logger = org.jboss.logging::Logger.getLogger( 'org.torquebox.containers.Foundation' )
         @server = Java::org.jboss.bootstrap.api.mc.server::MCServerFactory.createServer();
   
         descriptors = @server.configuration.bootstrap_descriptors
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.class_loading_descriptor
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.vdf_descriptor
+        descriptors << org.jboss.bootstrap.api.descriptor::FileBootstrapDescriptor.new( java.io::File.new( File.join( File.dirname(__FILE__), 'foundation-bootstrap-jboss-beans.xml' ) ) )
         @enablers = []
         enable( FoundationEnabler )
       end
@@ -82,6 +84,8 @@ module TorqueBox
         deployment_factory = Java::org.jboss.deployers.vfs.spi.client::VFSDeploymentFactory.instance
         deployment = deployment_factory.createVFSDeployment(virtual_file)
         main_deployer.addDeployment(deployment)
+        #deployment_unit = deployment_unit( deployment )
+        #deployment_unit.addAttachment( JRuby.runtime.java_class.to_java, JRuby.runtime )
         deployment
       end
 
@@ -94,8 +98,17 @@ module TorqueBox
         main_deployer.process
         if ( check_complete )
           puts "checking completeness"
-          main_deployer.checkComplete
+          begin
+            main_deployer.checkComplete
+          rescue => e
+            @logger.error( e.to_s, e.cause )
+            raise e
+          end
         end
+      end
+
+      def deployment_unit(name) 
+        main_deployer.getDeploymentUnit( name )
       end
 
       def kernel()

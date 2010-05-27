@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+  <bean name="JNDIKernelRegistryPlugin"               class="org.torquebox.mc.JNDIKernelRegistryPlugin">
+    <property name="environment">
+      <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="java.lang.String">
+        <entry>
+          <key>java.naming.provider.url</key>
+          <value>jnp://10.42.42.11:1099/</value>
+        </entry>
+        <entry>
+          <key>java.naming.factory.initial</key>
+          <value>org.jnp.interfaces.NamingContextFactory</value>
+        </entry>
+        <entry>
+          <key>java.naming.factory.url.pkgs</key>
+          <value>org.jboss.naming:org.jnp.interfaces</value>
+        </entry>
+      </map>
+    </property>
+  </bean>
+</deployment>
+

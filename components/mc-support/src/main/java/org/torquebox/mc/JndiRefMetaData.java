@@ -4,7 +4,9 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData;
+import org.jboss.beans.metadata.spi.MetaDataVisitor;
 import org.jboss.reflect.spi.TypeInfo;
+import org.jboss.util.JBossStringBuilder;
 
 public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 
@@ -17,6 +19,7 @@ public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 
 	public JndiRefMetaData(Context context, String name) {
 		log.info( "construct JNDI ref for " + context + " -> " + name );
+		System.err.println( "JndiRef Ctor" );
 		this.context = context;
 		this.name = name;
 	}
@@ -31,14 +34,18 @@ public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 
 	@Override
 	public Object getValue(TypeInfo info, ClassLoader cl) throws Throwable {
+		log.info( "getValue() for " + this.name );
 		return getValue();
 	}
 
 	@Override
 	public Object getValue() {
+		System.err.println( "GETVALUE" );
 		log.info( "getValue() for " + this.name );
 		try {
-			return this.context.lookup(this.name);
+			Object value = this.context.lookup(this.name);
+			log.info( "value(" + this.name + ")=" + value );
+			return value;
 		} catch (NamingException e) {
 			log.info( "naming exception: " + e );
 			return null;

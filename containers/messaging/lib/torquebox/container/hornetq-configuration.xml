@@ -16,6 +16,7 @@
                xsi:schemaLocation="urn:hornetq /schema/hornetq-configuration.xsd">
 
    <clustered>true</clustered>
+   <security-enabled>false</security-enabled>
    
 <!--
    <log-delegate-factory-class-name>org.hornetq.integration.logging.Log4jLogDelegateFactory</log-delegate-factory-class-name>

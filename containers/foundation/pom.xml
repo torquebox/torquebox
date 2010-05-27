@@ -37,6 +37,18 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.naming</groupId>
+      <artifactId>jnp-client</artifactId>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-int</artifactId>
       <version>${project.version}</version>

@@ -23,6 +23,10 @@
     <priority value="TRACE"/>
   </category>
 
+  <category name="org.jboss.kernel">
+    <priority value="DEBUG"/>
+  </category>
+
   <root>
     <priority value="ERROR"/>
     <appender-ref ref="CONSOLE"/>

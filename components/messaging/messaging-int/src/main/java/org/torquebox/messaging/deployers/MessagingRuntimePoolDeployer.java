@@ -12,10 +12,20 @@ import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 
 public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
+	private String instanceFactoryName;
+
 	public MessagingRuntimePoolDeployer() {
 		setStage(DeploymentStages.PRE_REAL);
 		addInput(PoolMetaData.class);
 		addOutput(PoolMetaData.class);
+	}
+	
+	public void setInstanceFactoryName(String instanceFactoryName) {
+		this.instanceFactoryName = instanceFactoryName;
+	}
+	
+	public String getInstanceFactoryName() {
+		return this.instanceFactoryName;
 	}
 
 	@Override
@@ -42,6 +52,7 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 			pool = new PoolMetaData();
 			pool.setName("messaging");
 			pool.setShared();
+			pool.setInstanceFactoryName( this.instanceFactoryName );
 			log.info( "configured pool: " + pool );
 			AttachmentUtils.multipleAttach(unit, pool, "messaging");
 		}

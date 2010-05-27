@@ -10,7 +10,20 @@
   <bean name="PoolingYamlParsingDeployer"             class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
 -->
 
+<!--
+  <bean name="JNDIKernelRegistryPlugin"               class="org.jboss.kernel.plugins.dependency.JNDIKernelRegistryPlugin"/>
+-->
   <bean name="RuntimePoolDeployer"                    class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
+
+  <bean name="Ruby" class="org.jruby.Ruby">
+    <constructor factoryClass="org.jruby.Ruby" factoryMethod="getGlobalRuntime"/>
+  </bean>
+
+  <bean name="RubyRuntimeFactory" class="org.torquebox.interp.core.SingletonRubyRuntimeFactory">
+    <property name="ruby">
+      <inject bean="Ruby"/>
+    </property>
+  </bean>
 
 <!--
   <bean name="BootstrapRubyRuntimeDeployer"           class="org.torquebox.interp.deployers.BootstrapRubyRuntimeDeployer"/>

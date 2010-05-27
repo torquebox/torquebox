@@ -26,16 +26,17 @@ module TorqueBox
 
       end
     
-      def after_start(container)
+      def not_after_start(container)
         rmi_class_provider = container['RMIClassProvider']
         server_socket = rmi_class_provider.server_socket
         puts "ServerSocket=#{server_socket}"
         port=server_socket.local_port
         puts "PORT: #{port}"
-        Java::java.lang::System.setProperty( 'java.rmi.server.codebase', "http://10.42.42.11:#{port}/" )
+        #Java::java.lang::System.setProperty( 'java.rmi.server.codebase', "http://10.42.42.11:#{port}/" )
         class_loader = Java::java.lang::Thread.currentThread().getContextClassLoader()
         codebase_url=rmi_class_provider.addClassLoader( class_loader )
         puts "codebase_url[#{codebase_url}]"
+        #Java::java.lang::System.setProperty( 'java.rmi.server.codebase', codebase_url.to_s )
       end
 
     end

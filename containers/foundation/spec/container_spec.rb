@@ -1,4 +1,5 @@
 
+require 'jruby'
 require 'torquebox/container/foundation'
 
 describe TorqueBox::Container::Foundation do
@@ -24,6 +25,19 @@ describe TorqueBox::Container::Foundation do
 
     it "should deploy a RuntimePoolDeployer" do
       @container['RuntimePoolDeployer'].should_not be_nil
+    end
+
+    it "should expose the current Ruby runtime as an MCBean" do
+      ruby = @container['Ruby']
+      ruby.should_not be_nil
+      ruby.should be( JRuby.runtime )
+    end
+
+    it "should expose a ruby runtime factory as an MCBean" do
+      factory = @container['RubyRuntimeFactory']
+      factory.should_not be_nil
+      ruby = factory.create
+      ruby.should be( JRuby.runtime )
     end
   end
 
