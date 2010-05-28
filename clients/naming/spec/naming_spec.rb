@@ -30,11 +30,10 @@ describe TorqueBox::Naming do
 
   end
 
+=begin
   describe "operations" do
     before(:each) do
-      TorqueBox::Naming.configure do |config|
-        config.host = '10.42.42.11'
-      end
+      TorqueBox::Naming.configure_local
     end
 
     it "should allow binding and retrieving of named objects" do
@@ -44,6 +43,7 @@ describe TorqueBox::Naming do
       fetched_obj.should eql( obj )
     end
   end
+=end
 
 
 end

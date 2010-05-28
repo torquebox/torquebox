@@ -35,6 +35,12 @@ module TorqueBox
         Java::java.lang::System.setProperty( 'jnp.rmiPort', self.rmi_port.to_s )
       end
 
+      def after_start(container)
+        naming = container['JNDIServer'].naming_instance
+        puts "naming is #{naming.inspect}"
+        org.jnp.interfaces::NamingContext.setLocal( naming.to_java )
+      end
+
 
     end
   end

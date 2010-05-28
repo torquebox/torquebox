@@ -27,6 +27,11 @@ module TorqueBox
       java.lang::System.setProperty( 'java.naming.factory.url.pkgs', FACTORY_URL_PKGS )
     end
 
+    def self.configure_local
+      java.lang::System.clearProperty( 'java.naming.provider.url' )
+      java.lang::System.setProperty( 'java.naming.factory.initial', FACTORY )
+    end
+
     def self.[](name)
       context = javax.naming::InitialContext.new
       context.lookup( name )
