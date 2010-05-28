@@ -33,7 +33,6 @@ module TorqueBox
       end
   
       def start
-        puts "STARTING Foundation"
         @server.start
 
         beans_xml = File.join( File.dirname(__FILE__), 'foundation-jboss-beans.xml' )
@@ -54,38 +53,25 @@ module TorqueBox
             wrapper.enabler.send( :after_start, self )
           end
         end
-
-
-
-        puts "STARTED Foundation"
       end
   
       def stop
-        puts "STOPPING MCServer"
-        puts "Undeploying enablers"
         @enablers.reverse.each do |wrapper|
           wrapper.deployments.each do |deployment|
-            puts "undeploying #{deployment.inspect}"
             name = Java::java.lang::String.new( deployment.name )
-            puts "name=#{name}"
             undeploy( name )
           end
         end
      
         process_deployments( true )
-        puts "Stopping core container"
         @server.stop
-        puts "core container stopped"
       end
   
       def deploy(path)
         virtual_file = Java::org.jboss.vfs::VFS.getChild( path )
-        puts "DEPLOY VFS: #{virtual_file}"
         deployment_factory = Java::org.jboss.deployers.vfs.spi.client::VFSDeploymentFactory.instance
         deployment = deployment_factory.createVFSDeployment(virtual_file)
         main_deployer.addDeployment(deployment)
-        #deployment_unit = deployment_unit( deployment )
-        #deployment_unit.addAttachment( JRuby.runtime.java_class.to_java, JRuby.runtime )
         deployment
       end
 
@@ -94,16 +80,9 @@ module TorqueBox
       end
 
       def process_deployments(check_complete=false)
-        puts "PROCESS DEPLOYMENTS"
         main_deployer.process
         if ( check_complete )
-          puts "checking completeness"
-          begin
-            main_deployer.checkComplete
-          rescue => e
-            @logger.error( e.to_s, e.cause )
-            raise e
-          end
+          main_deployer.checkComplete
         end
       end
 

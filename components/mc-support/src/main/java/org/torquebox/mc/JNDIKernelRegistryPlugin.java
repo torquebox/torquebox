@@ -61,16 +61,15 @@ public class JNDIKernelRegistryPlugin implements KernelRegistryPlugin
    
    public void create() throws NamingException
    {
-      log.debug("Creating JNDIKernelRegistryPlugin");
       //this.context = InitialContextFactory.getInitialContext(environment);
       this.context = new InitialContext(environment);
    }
    
    public void destroy() throws NamingException
    {
-      log.debug("Destroying JNDIKernelRegistryPlugin");
-      if(context != null)
+      if(context != null) {
          context.close();
+      }
       context = null;
    }
    
@@ -88,18 +87,10 @@ public class JNDIKernelRegistryPlugin implements KernelRegistryPlugin
       try
       {
          Object target = context.lookup(s.substring(JNDI_DEPENDENCY_PREFIX.length()));
-         if(log.isTraceEnabled())
+         if(log.isTraceEnabled()) {
             log.trace("found: " + target);
-         // target could be null, but if the entry exists continue.
+         }
          return new AbstractKernelRegistryEntry(name, target);
-//         NamingEnumeration<NameClassPair> e = context.list(s.substring(JNDI_DEPENDENCY_PREFIX.length()));
-//         if(e.hasMore())
-//         {
-//            Object target = e.next(); 
-//            // target could be null, but if the entry exists continue.
-//            return new AbstractKernelRegistryEntry(name, target);
-//         }
-//         return null;
       }
       catch(NameNotFoundException e)
       {
@@ -120,8 +111,9 @@ public class JNDIKernelRegistryPlugin implements KernelRegistryPlugin
 
    public void setEnvironment(Hashtable<?, ?> env)
    {
-      if(context != null)
+      if(context != null) {
          throw new IllegalStateException("context already initialized");
+      }
       this.environment = env;
    }
 }

@@ -32,7 +32,6 @@ public class MessagingRbParsingDeployer extends AbstractVFSParsingDeployer<Messa
 			unit.addAttachment(Ruby.class, ruby);
 		}
 
-		log.info("about to load consumers.rb - " + file.toURL());
 		try {
 			StringBuilder script = new StringBuilder();
 			script.append("require %(org/torquebox/messaging/deployers/torquebox-gateway)\n");
@@ -41,18 +40,12 @@ public class MessagingRbParsingDeployer extends AbstractVFSParsingDeployer<Messa
 			script.append("eval config_src\n");
 			log.info("SCRIPT\n" + script);
 			IRubyObject result = ruby.evalScriptlet(script.toString());
-			if (result == null) {
-				log.info("result is NULL");
-			} else {
-				log.info("result is " + result + ", " + result.getClass());
+			if (result != null) {
 				if (result instanceof RubyArray) {
-					log.info("walking array");
 					RubyArray array = (RubyArray) result;
 					for (Object each : array) {
-						log.info("each is " + each + ", " + each.getClass());
 						if (each instanceof MessageProcessorMetaData) {
 							MessageProcessorMetaData messageProcessorMetaData = (MessageProcessorMetaData) each;
-							log.info("attach " + messageProcessorMetaData);
 							AttachmentUtils.multipleAttach(unit, messageProcessorMetaData, messageProcessorMetaData.getName());
 						}
 					}

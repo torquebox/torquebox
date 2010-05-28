@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
-
-  <bean name="RubyRuntimeFactoryDeployer"             class="org.torquebox.interp.deployers.RubyRuntimeFactoryDeployer">
-    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
-  </bean>
-
-</deployment>

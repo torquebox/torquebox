@@ -27,18 +27,12 @@ module TorqueBox
       end
 
       def before_start(container)
-        puts "before_start(#{container}) for NamingEnabler"
         Java::java.lang::System.setProperty( 'java.naming.factory.initial',  'org.jnp.interfaces.NamingContextFactory' )
         Java::java.lang::System.setProperty( 'java.naming.factory.url.pkgs', 'org.jboss.naming:org.jnp.interfaces' )
         Java::java.lang::System.setProperty( 'jnp.host', self.host.to_s )
         Java::java.lang::System.setProperty( 'jnp.port', self.port.to_s )
         Java::java.lang::System.setProperty( 'jnp.rmiHost', self.rmi_host.to_s )
         Java::java.lang::System.setProperty( 'jnp.rmiPort', self.rmi_port.to_s )
-        puts "jnp.port=#{Java::java.lang::System.getProperty('jnp.port')}"
-        puts "jnp.host=#{Java::java.lang::System.getProperty('jnp.host')}"
-        puts "jnp.rmiHost=#{Java::java.lang::System.getProperty('jnp.rmiHost')}"
-        puts "jnp.rmiPort=#{Java::java.lang::System.getProperty('jnp.rmiPort')}"
-        puts "completed before_start(#{container}) for NamingEnabler"
       end
 
 

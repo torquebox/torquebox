@@ -13,7 +13,7 @@
     </layout>
   </appender>
 
-  <category name="org.jboss">
+  <category name="org.torquebox">
     <priority value="DEBUG"/>
   </category>
 
