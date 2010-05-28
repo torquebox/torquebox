@@ -14,15 +14,6 @@ module TorqueBox
       end
 
       def before_start(container)
-=begin
-        Java::java.lang::System.setProperty( 'java.naming.provider.url',
-                                             'jnp://10.42.42.11:1099/' )
-        Java::java.lang::System.setProperty( 'java.naming.factory.initial',
-                                             'org.jnp.interfaces.NamingContextFactory' )
-        Java::java.lang::System.setProperty( 'java.naming.factory.url.pkgs',
-                                             'org.jboss.naming:org.jnp.interfaces' )
-
-=end
         Java::java.lang::System.setProperty( "torquebox.hornetq.configuration.url", 
                                              "file://" + File.join( File.dirname(__FILE__), 'hornetq-configuration.xml' ) )
       end

@@ -2,6 +2,7 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
   <bean name="JNDIKernelRegistryPlugin"               class="org.torquebox.mc.JNDIKernelRegistryPlugin">
+<!--
     <property name="environment">
       <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="java.lang.String">
         <entry>
@@ -18,6 +19,7 @@
         </entry>
       </map>
     </property>
+-->
   </bean>
 </deployment>
 
