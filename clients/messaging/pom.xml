@@ -9,21 +9,39 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-naming-client</artifactId>
+  <artifactId>torquebox-messaging-client</artifactId>
   <packaging>java-gem</packaging>
-  <name>TorqueBox Naming Client</name>
+  <name>TorqueBox Messaging Client</name>
   <description></description>
 
   <dependencies>
     <dependency>
-      <groupId>org.jboss.naming</groupId>
-      <artifactId>jnp-client</artifactId>
+      <groupId>org.jboss.spec.javax.jms</groupId>
+      <artifactId>jboss-jms-api_1.1_spec</artifactId>
       <scope>compile</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.jboss.naming</groupId>
-      <artifactId>jnpserver</artifactId>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-jms-client</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-naming-client</artifactId>
+      <type>gem</type>
+      <classifier>java</classifier>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-container</artifactId>
+      <type>gem</type>
+      <classifier>java</classifier>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

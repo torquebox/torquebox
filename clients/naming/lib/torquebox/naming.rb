@@ -1,4 +1,5 @@
 
+require 'torquebox/naming/ext/javax_naming_context'
 module TorqueBox
   class Naming
 
@@ -34,12 +35,38 @@ module TorqueBox
 
     def self.[](name)
       context = javax.naming::InitialContext.new
-      context.lookup( name )
+      begin
+        return context[ name ]
+      ensure
+        context.close
+      end
     end
 
     def self.[]=(name, value)
       context = javax.naming::InitialContext.new
-      context.rebind( name, value )
+      begin
+        #context.rebind( name, value )
+        context[name] = value
+      ensure
+        context.close
+      end
+    end
+
+    def self.connect(host, port, &block)
+      props = java.util.Hashtable.new( {
+        'java.naming.provider.url'=>"jnp://#{host}:#{port}/",
+        'java.naming.factory.initial'=>FACTORY,
+      } )
+
+      context = javax.naming::InitialContext.new(props)
+
+      return context if ( block.nil? )
+
+      begin
+        block.call( context )
+      ensure
+        context.close
+      end
     end
 
   end

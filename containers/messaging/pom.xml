@@ -27,7 +27,7 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-int</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.naming</groupId>

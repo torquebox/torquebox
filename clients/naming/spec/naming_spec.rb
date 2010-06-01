@@ -30,10 +30,14 @@ describe TorqueBox::Naming do
 
   end
 
-=begin
   describe "operations" do
     before(:each) do
+      @naming = org.jnp.server::SingletonNamingServer.new
       TorqueBox::Naming.configure_local
+    end
+
+    after(:each) do
+      @naming.destroy
     end
 
     it "should allow binding and retrieving of named objects" do
@@ -43,7 +47,20 @@ describe TorqueBox::Naming do
       fetched_obj.should eql( obj )
     end
   end
-=end
+
+  describe "connection" do
+    before(:each) do
+      #@naming = org.jnp.server::SingletonNamingServer.new
+      #TorqueBox::Naming.configure_local
+    end
+
+    it "should allow use custom connection (and fail)" do
+      TorqueBox::Naming.connect( 'someotherhost.com', 12 ) do |context|
+        lambda{ TorqueBox::Naming['my_object']}.should raise_error
+      end
+    end
+
+  end
 
 
 end

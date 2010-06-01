@@ -2,21 +2,15 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-<!--
-  <bean name="RubyRuntimeFactoryDeployer"             class="org.torquebox.interp.deployers.RubyRuntimeFactoryDeployer">
-    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
-  </bean>
-
-  <bean name="PoolingYamlParsingDeployer"             class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
--->
-
-<!--
-  <bean name="JNDIKernelRegistryPlugin"               class="org.jboss.kernel.plugins.dependency.JNDIKernelRegistryPlugin"/>
--->
-  <bean name="RuntimePoolDeployer"                    class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
 
   <bean name="Ruby" class="org.jruby.Ruby">
     <constructor factoryClass="org.jruby.Ruby" factoryMethod="getGlobalRuntime"/>
+  </bean>
+
+  <bean name="JRubyClassLoader">
+    <constructor factoryMethod="getJRubyClassLoader">
+      <factory bean="Ruby"/>
+    </constructor>
   </bean>
 
   <bean name="RubyRuntimeFactory" class="org.torquebox.interp.core.SingletonRubyRuntimeFactory">
@@ -25,10 +19,7 @@
     </property>
   </bean>
 
-<!--
-  <bean name="BootstrapRubyRuntimeDeployer"           class="org.torquebox.interp.deployers.BootstrapRubyRuntimeDeployer"/>
+  <bean name="RuntimePoolDeployer"                    class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
 
-  <bean name="SubsystemLoadPathDescriber"             class="org.torquebox.interp.deployers.SubsystemLoadPathDescriber"/>
--->
 </deployment>
 
