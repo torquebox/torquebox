@@ -1,4 +1,5 @@
 require 'torquebox/naming'
+require 'torquebox/messaging/ext/javax_jms_session'
 
 module TorqueBox
   module Messaging
