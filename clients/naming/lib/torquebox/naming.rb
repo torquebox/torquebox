@@ -1,7 +1,7 @@
 
 require 'torquebox/naming/ext/javax_naming_context'
 module TorqueBox
-  class Naming
+  module Naming
 
     FACTORY = 'org.jnp.interfaces.NamingContextFactory'
     FACTORY_URL_PKGS = 'org.jboss.naming:org.jnp.interfaces'
