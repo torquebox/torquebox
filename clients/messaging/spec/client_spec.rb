@@ -49,32 +49,42 @@ describe TorqueBox::Messaging::Client do
       @container.stop
     end
 
-    it "should be able to send to a queue" do
+    it "should be able to send to a queue from two threads/two sessions" do
   
       received_message = nil
+
       consumer_thread = Thread.new {
+        sleep( 2 )
         TorqueBox::Messaging::Client.connect() do |session|
-          puts "about to receive"
           received_message = session.receive( '/queues/foo' )
-          puts "received #{received_message}"
-          puts "committing"
           session.commit
-          puts "committed"
         end
       }
 
       producer_thread = Thread.new {
-        sleep( 2 )
         TorqueBox::Messaging::Client.connect() do |session|
           session.publish( '/queues/foo', "howdy" )
-          puts "committing"
           session.commit
-          puts "committed"
         end
-        puts "end of producer session"
       }
 
       consumer_thread.join
+
+      received_message.should_not be_nil
+      received_message.should eql( "howdy" )
+    end
+
+
+    it "should be able to send to a queue from one thread/one session" do
+
+      received_message = nil
+
+      TorqueBox::Messaging::Client.connect() do |session|
+        session.publish( '/queues/foo', "howdy" )
+        session.commit
+        received_message = session.receive( '/queues/foo' )
+        session.commit
+      end
 
       received_message.should_not be_nil
       received_message.should eql( "howdy" )
