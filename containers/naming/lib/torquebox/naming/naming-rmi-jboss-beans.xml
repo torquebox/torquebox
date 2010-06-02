@@ -1,14 +1,5 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="LookupExecutor" class="java.util.concurrent.ThreadPoolExecutor">
-    <constructor factoryMethod="newFixedThreadPool" factoryClass="java.util.concurrent.Executors">
-      <parameter>2</parameter>
-    </constructor>
-    <stop method="shutdown"/>
-  </bean>
-
-  <bean name="Naming" class="org.jnp.server.NamingBeanImpl"/>
-
   <bean name="JNDIServer" class="org.jnp.server.Main">
     <property name="namingInfo">
       <inject bean="Naming"/>

@@ -2,11 +2,15 @@ require 'org.torquebox.torquebox-container-foundation'
 require 'torquebox/container/foundation'
 
 module TorqueBox
-  module Container
-    class NamingEnabler
+  module Naming
+    class NamingService
 
       def fundamental_deployment_paths
-        [ File.join( File.dirname(__FILE__), 'naming-jboss-beans.xml' ) ]
+        paths = [ File.join( File.dirname(__FILE__), 'naming-local-jboss-beans.xml' ) ]
+        if ( @export )
+          paths << File.join( File.dirname(__FILE__), 'naming-rmi-jboss-beans.xml' )
+        end
+        paths
       end
 
 
@@ -16,12 +20,16 @@ module TorqueBox
       attr_accessor :rmi_port
       attr_accessor :rmi_host
 
+      attr_accessor :export
+
       def initialize(&block)
         @host = 'localhost'
         @port = 1099
 
         @rmi_host = 'localhost'
         @rmi_port = 1098
+
+        @export = true
 
         instance_eval(&block) if block
       end
@@ -35,11 +43,11 @@ module TorqueBox
         Java::java.lang::System.setProperty( 'jnp.rmiPort', self.rmi_port.to_s )
       end
 
-      def after_start(container)
-        naming = container['JNDIServer'].naming_instance
-        puts "naming is #{naming.inspect}"
-        org.jnp.interfaces::NamingContext.setLocal( naming.to_java )
-      end
+      #def after_start(container)
+      #  naming = container['JNDIServer'].naming_instance
+      #  puts "naming is #{naming.inspect}"
+      #  org.jnp.interfaces::NamingContext.setLocal( naming.to_java )
+      #end
 
 
     end
