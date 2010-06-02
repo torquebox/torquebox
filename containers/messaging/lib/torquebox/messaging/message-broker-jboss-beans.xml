@@ -1,5 +1,6 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <classloader><inject bean="JRubyClassLoader"/></classloader>
 
    <!--
               Naming/RMI-related
@@ -13,7 +14,6 @@
   </bean>
 
    <bean name="RMIClassProvider" class="org.torquebox.containers.web.WebServer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
      <property name="threadPool"><inject bean="RMIClassProviderExecutor"/></property>
      <install method="setJavaRmiServerCodebase" state="Installed"/>
    </bean>
@@ -89,10 +89,10 @@
    <!-- The JMS server -->
    <bean name="JMSServerManager" class="org.hornetq.jms.server.impl.JMSServerManagerImpl">
       <constructor>         
-         <parameter>
+         <parameter class="org.hornetq.core.server.HornetQServer">
             <inject bean="HornetQServer"/>
          </parameter>         
-         <parameter>
+         <parameter class="org.hornetq.jms.server.config.JMSConfiguration">
             <inject bean="JMSConfiguration"/>
          </parameter>         
       </constructor>
@@ -103,31 +103,17 @@
               TorqueBox 
      -->
 
-  <bean name="QueuesYamlParsingDeployer" class="org.torquebox.messaging.deployers.QueuesYamlParsingDeployer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
-  </bean>
+  <bean name="QueuesYamlParsingDeployer" class="org.torquebox.messaging.deployers.QueuesYamlParsingDeployer"/>
+  <bean name="TopicsYamlParsingDeployer" class="org.torquebox.messaging.deployers.TopicsYamlParsingDeployer"/>
 
-  <bean name="TopicsYamlParsingDeployer" class="org.torquebox.messaging.deployers.TopicsYamlParsingDeployer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
-  </bean>
-
-  <bean name="ManagedQueueDeployer" class="org.torquebox.messaging.deployers.ManagedQueueDeployer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
-  </bean>
-  <bean name="ManagedTopicDeployer" class="org.torquebox.messaging.deployers.ManagedTopicDeployer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
-  </bean>
+  <bean name="ManagedQueueDeployer" class="org.torquebox.messaging.deployers.ManagedQueueDeployer"/>
+  <bean name="ManagedTopicDeployer" class="org.torquebox.messaging.deployers.ManagedTopicDeployer"/>
   
-  <bean name="MessagingRbParsingDeployer" class="org.torquebox.messaging.deployers.MessagingRbParsingDeployer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
-  </bean>
+  <bean name="MessagingRbParsingDeployer" class="org.torquebox.messaging.deployers.MessagingRbParsingDeployer"/>
 
-  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
-  </bean>
+  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer"/>
   
   <bean name="MessagingRuntimePoolDeployer" class="org.torquebox.messaging.deployers.MessagingRuntimePoolDeployer">
-     <classloader><inject bean="JRubyClassLoader"/></classloader>
     <property name="instanceFactoryName">RubyRuntimeFactory</property>
   </bean>
 

@@ -1,18 +1,17 @@
 
 require 'torquebox/container/foundation'
-require 'torquebox/container/messaging_enabler'
-require 'torquebox/container/naming_enabler'
+require 'torquebox/naming/naming_service'
+require 'torquebox/messaging/message_broker'
 require 'torquebox/naming'
 
-describe TorqueBox::Container::MessagingEnabler do
+describe TorqueBox::Messaging::MessageBroker do
 
   describe "basics" do
 
     before(:each) do
-      TorqueBox::Naming.configure_local
       @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Container::NamingEnabler )
-      @container.enable( TorqueBox::Container::MessagingEnabler ) 
+      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
+      @container.enable( TorqueBox::Messaging::MessageBroker ) 
       begin
         @container.start
       rescue => e
@@ -33,10 +32,10 @@ describe TorqueBox::Container::MessagingEnabler do
 
   describe "deployments" do
     before(:each) do
-      TorqueBox::Naming.configure_local
+      #TorqueBox::Naming.configure_local
       @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Container::NamingEnabler )
-      @container.enable( TorqueBox::Container::MessagingEnabler )
+      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
+      @container.enable( TorqueBox::Messaging::MessageBroker )
       begin
         @container.start
       rescue => e
