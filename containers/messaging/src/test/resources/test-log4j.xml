@@ -5,7 +5,7 @@
 
   <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
     <param name="Target"     value="System.err"/>
-    <param name="Threshold"  value="TRACE"/>
+    <param name="Threshold"  value="INFO"/>
 
     <layout class="org.apache.log4j.PatternLayout">
       <!-- The default pattern: Date Priority [Category] Message\n -->

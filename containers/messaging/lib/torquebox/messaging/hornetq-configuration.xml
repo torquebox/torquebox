@@ -18,9 +18,7 @@
    <clustered>true</clustered>
    <security-enabled>false</security-enabled>
    
-<!--
    <log-delegate-factory-class-name>org.hornetq.integration.logging.Log4jLogDelegateFactory</log-delegate-factory-class-name>
--->
 
    <bindings-directory>${jboss.server.data.dir}/hornetq/bindings</bindings-directory>
 

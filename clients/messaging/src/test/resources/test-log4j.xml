@@ -21,6 +21,10 @@
     <priority value="DEBUG"/>
   </category>
 
+  <category name="org.hornetq">
+    <priority value="DEBUG"/>
+  </category>
+
   <root>
     <priority value="ERROR"/>
     <appender-ref ref="CONSOLE"/>

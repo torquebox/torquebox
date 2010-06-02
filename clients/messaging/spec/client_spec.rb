@@ -12,6 +12,7 @@ require 'torquebox/messaging/client'
 
 describe TorqueBox::Messaging::Client do
 
+=begin
   describe "basics" do 
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
@@ -30,6 +31,7 @@ describe TorqueBox::Messaging::Client do
       end
     end
   end
+=end
 
   describe "sending and receiving" do
     before(:each) do
@@ -48,9 +50,34 @@ describe TorqueBox::Messaging::Client do
     end
 
     it "should be able to send to a queue" do
-      TorqueBox::Messaging::Client.connect do |session|
-        session.publish( '/queues/foo', "howdy" )
-      end
+  
+      received_message = nil
+      consumer_thread = Thread.new {
+        TorqueBox::Messaging::Client.connect() do |session|
+          puts "about to receive"
+          received_message = session.receive( '/queues/foo' )
+          puts "received #{received_message}"
+          puts "committing"
+          session.commit
+          puts "committed"
+        end
+      }
+
+      producer_thread = Thread.new {
+        sleep( 2 )
+        TorqueBox::Messaging::Client.connect() do |session|
+          session.publish( '/queues/foo', "howdy" )
+          puts "committing"
+          session.commit
+          puts "committed"
+        end
+        puts "end of producer session"
+      }
+
+      consumer_thread.join
+
+      received_message.should_not be_nil
+      received_message.should eql( "howdy" )
     end
   
   end

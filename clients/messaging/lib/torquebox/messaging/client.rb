@@ -30,6 +30,9 @@ module TorqueBox
           connection_factory = context['/ConnectionFactory']
           connection = connection_factory.createConnection
           session = connection.createSession( transacted, canonical_ack_mode( ack_mode ) )
+          connection.start
+          session.naming_context = context
+          session.connection = connection
           return session if ( block.nil? )
           begin
             block.call( session )
