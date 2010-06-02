@@ -53,12 +53,17 @@ module TorqueBox
     end
 
     def self.connect(host, port, &block)
-      props = java.util.Hashtable.new( {
-        'java.naming.provider.url'=>"jnp://#{host}:#{port}/",
-        'java.naming.factory.initial'=>FACTORY,
-      } )
+      context = nil
 
-      context = javax.naming::InitialContext.new(props)
+      if ( ! ( host.nil? || port.nil? ) ) 
+        props = java.util.Hashtable.new( {
+          'java.naming.provider.url'=>"jnp://#{host}:#{port}/",
+          'java.naming.factory.initial'=>FACTORY,
+        } )
+        context = javax.naming::InitialContext.new(props)
+      else
+        context = javax.naming::InitialContext.new
+      end
 
       return context if ( block.nil? )
 

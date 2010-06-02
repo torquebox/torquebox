@@ -5,8 +5,8 @@ require 'org.torquebox.torquebox-naming-container'
 require 'org.torquebox.torquebox-container-foundation'
 
 require 'torquebox/container/foundation'
-require 'torquebox/container/naming_enabler'
-require 'torquebox/container/messaging_enabler'
+require 'torquebox/naming/naming_service'
+require 'torquebox/messaging/message_broker'
 
 require 'torquebox/messaging/client'
 
@@ -15,8 +15,8 @@ describe TorqueBox::Messaging::Client do
   describe "basics" do 
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Container::NamingEnabler ) 
-      @container.enable( TorqueBox::Container::MessagingEnabler ) 
+      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
+      @container.enable( TorqueBox::Messaging::MessageBroker ) 
       @container.start
     end
   
@@ -34,8 +34,8 @@ describe TorqueBox::Messaging::Client do
   describe "sending and receiving" do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Container::NamingEnabler ) 
-      @container.enable( TorqueBox::Container::MessagingEnabler ) 
+      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
+      @container.enable( TorqueBox::Messaging::MessageBroker ) 
       @container.start
 
       @queues_yml = @container.deploy( File.join( File.dirname(__FILE__), 'queues.yml' ) )
