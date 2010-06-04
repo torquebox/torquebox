@@ -32,6 +32,12 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rake</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -110,6 +116,25 @@
                     <value>test-log4j.xml</value>
                   </property>
                 </systemProperties>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>jruby-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>prepare-test-data</id>
+              <phase>generate-test-resources</phase>
+              <goals>
+                <goal>jruby</goal>
+              </goals>
+              <configuration>
+                <gemHome>${project.build.directory}/rubygems</gemHome>
+                <gemPath>${project.build.directory}/rubygems</gemPath>
+                <fork>true</fork>
+                <args>-S rake test:data:prepare</args>
               </configuration>
             </execution>
           </executions>

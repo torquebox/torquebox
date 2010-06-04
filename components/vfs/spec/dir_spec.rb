@@ -4,7 +4,6 @@ require File.dirname(__FILE__) +  '/spec_helper.rb'
 describe "Dir extensions for VFS" do
 
   before(:each) do
-    puts "mount"
     @executor = java.util.concurrent::Executors.newScheduledThreadPool( 1 )
     @temp_file_provider = org.jboss.vfs::TempFileProvider.create( "vfs-test", @executor )
 
@@ -22,7 +21,6 @@ describe "Dir extensions for VFS" do
   end
 
   after(:each) do
-    puts "unmount"
     @archive2_handle.close
     @archive1_handle.close
   end
@@ -30,7 +28,6 @@ describe "Dir extensions for VFS" do
   describe "with vfs urls" do
     it "should allow globbing within archives with explicit vfs" do
       pattern = "vfs:#{@archive1_path}/*"
-      puts "pattern #{pattern}"
       items = Dir.glob( pattern )
       items.should_not be_empty
       items.should include File.join( "vfs:#{@archive1_path}", 'web.xml' )

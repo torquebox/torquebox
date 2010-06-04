@@ -84,7 +84,7 @@ class File
         virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
         virtual_file = virtual_file.get_child( child_path ) if child_path
   
-        return ( ( ! virtual_file.nil? ) && ( ! virtual_file.isLeaf() ) )
+        return ( ( ! virtual_file.nil? ) && ( virtual_file.isDirectory() ) )
       rescue Java::JavaIo::IOException => e
         return false
       end

@@ -22,10 +22,10 @@ class IO
     def read(name, length=nil, offset=nil)
       return read_without_vfs(name, length, offset) if ::File.exist_without_vfs?( name )
 
-      puts "IO#read(#{name})"
+      #puts "IO#read(#{name})"
       vfs_url, child_path = VFS.resolve_within_archive(name)
-      puts "vfs_url=#{vfs_url}"
-      puts "child_path=#{child_path}"
+      #puts "vfs_url=#{vfs_url}"
+      #puts "child_path=#{child_path}"
       raise ::Errno::ENOENT unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )

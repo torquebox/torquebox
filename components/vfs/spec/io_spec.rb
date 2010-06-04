@@ -5,7 +5,6 @@ describe "IO extensions for VFS" do
 
 
   before(:each) do
-    puts "mount"
     @executor = java.util.concurrent::Executors.newScheduledThreadPool( 1 )
     @temp_file_provider = org.jboss.vfs::TempFileProvider.create( "vfs-test", @executor )
 
@@ -21,7 +20,6 @@ describe "IO extensions for VFS" do
   end
 
   after(:each) do
-    puts "unmount"
     @archive2_handle.close
     @archive1_handle.close
   end

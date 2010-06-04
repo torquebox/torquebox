@@ -48,4 +48,3 @@ module VFS
   end
 end
 
-puts "Defined VFS::GlobFilter #{__FILE__}:#{__LINE__}"

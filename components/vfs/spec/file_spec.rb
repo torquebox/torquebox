@@ -4,7 +4,6 @@ require File.dirname(__FILE__) + '/spec_helper.rb'
 describe "File extensions for VFS" do
 
   before(:each) do
-    puts "mount"
     @executor = java.util.concurrent::Executors.newScheduledThreadPool( 1 )
     @temp_file_provider = org.jboss.vfs::TempFileProvider.create( "vfs-test", @executor )
 
@@ -22,7 +21,6 @@ describe "File extensions for VFS" do
   end
 
   after(:each) do
-    puts "unmount"
     @archive2_handle.close
     @archive1_handle.close
   end
@@ -83,6 +81,12 @@ describe "File extensions for VFS" do
       it "should test directoryness for files within an archive" do
         File.directory?( "#{prefix}/home/larry/archive1.jar/lib" ).should be_true
         File.directory?( "#{prefix}/home/larry/archive1.jar/web.xml" ).should be_false
+      end
+
+      it "should test directoryness for non-existant files" do
+        File.directory?( "#{prefix}/home/larry/archive1.jar/fib" ).should be_false
+        File.directory?( "#{prefix}/home/larry/archive1.jar/tacos" ).should be_false
+        File.directory?( "#{prefix}/tacos" ).should be_false
       end
 
       it "should test fileness for normal files" do
