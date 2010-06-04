@@ -47,7 +47,7 @@ module VFS
       end
 
       def directory?
-        ! @virtual_file.is_leaf 
+        @virtual_file.eixsts && ! @virtual_file.is_leaf 
       end
 
       def executable?
@@ -148,7 +148,12 @@ module VFS
       end
 
       def writable?
-        false
+        begin
+          physical_file = @virtual_file.physical_file
+          physical_file.canWrite
+        rescue => e
+          false
+        end
       end
 
       def writable_real?

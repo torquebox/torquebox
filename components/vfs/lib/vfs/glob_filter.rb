@@ -1,12 +1,11 @@
 
 
-puts "Defining VFS::GlobFilter #{__FILE__}:#{__LINE__}"
-puts "VFF=#{Java::org.jboss.vfs.VirtualFileFilter} #{__FILE__}:#{__LINE__}"
 module VFS
   class GlobFilter
     include Java::org.jboss.vfs.VirtualFileFilter
   
     def initialize(child_path, glob)
+      #puts "init #{child_path} #{glob}"
       @child_path = child_path
       glob_segments = glob.split( '/' )
       regexp_segments = []

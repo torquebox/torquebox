@@ -86,12 +86,6 @@ end
 
 task 'maven:package'=>[ :package ]
 
-spec = eval( File.read( "src/main/assembly/vfs.gemspec" ) )
-
-Rake::GemPackageTask.new(spec) do |pkg|
-    pkg.package_dir = 'target/gems'
-end
-
 task 'jruby:prepare'=>[ 'jruby:checkout' ] do
   Dir.chdir( JRUBY_DIR ) do
     run3( "ant jar" )

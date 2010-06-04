@@ -35,8 +35,11 @@ module ::VFS
 
   def self.resolve_path_url(path)
     prefix = "vfs:"
-    prefix += ::Dir.pwd unless ( path =~ /^\// )
-    base = "#{prefix}/#{path}"
+    prefix += "#{::Dir.pwd}/" unless ( path =~ /^\// )
+    puts "prefix #{prefix}"
+    base = "#{prefix}#{path}"
+    puts "resolve_path_url(#{path}) ==> #{base}"
+    base
   end
 
 end
