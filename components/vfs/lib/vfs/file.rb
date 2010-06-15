@@ -157,7 +157,7 @@ module VFS
       end
 
       def writable_real?
-        false
+        writable?
       end
 
       def zero?

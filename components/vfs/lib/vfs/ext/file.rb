@@ -11,28 +11,38 @@ class File
     alias_method :directory_without_vfs?,  :directory?
     alias_method :file_without_vfs?,       :file?
     alias_method :expand_path_without_vfs, :expand_path
+    alias_method :unlink_without_vfs,      :unlink
 
 
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
         return File.open_without_vfs( fname, mode_str, &block )
       end
-      unless ( (String === fname ) && ( fname =~ /^vfszip:/ || fname =~ /^vfsfile:/ ) )
+      unless ( fname.to_s =~ /^vfs:/ )
         return File.open_without_vfs(fname, mode_str, flags, &block )
       end
-      file = org.jboss.vfs.VFS.child( fd )
-      raise Errno::ENOENT unless file
-      stream = file.openStream()
-      io = stream.to_io
-      result = io
-      ( result = block.call( io ) ) if block
-      result
+      IO.vfs_open( fname.to_s, mode_str, &block )
     end
 
     def expand_path(*args)
       return args[0].to_s.dup if ( args[0] =~ /^(vfszip|vfsfile):/ )
       expand_path_without_vfs(*args) 
     end
+
+    def unlink(*file_names)
+      file_names.each do |file_name|
+        if ( file_name.to_s =~ /^vfs:/ )
+          virtual_file = org.jboss.vfs::VFS.child( file_name.to_s ) 
+          raise Errno::ENOENT.new unless virtual_file.exists()
+          virtual_file.delete 
+        else 
+          unlink_without_vfs( file_name )
+        end
+      end
+      file_names.size
+    end
+
+    alias_method :delete, :unlink
 
     def mtime(filename)
       return mtime_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
@@ -58,6 +68,10 @@ class File
       VFS::File::Stat.new( virtual_file )
     end
 
+    def exists?(filename)
+      exist?(filename)
+    end
+
     def exist?(filename)
       return true if exist_without_vfs?( filename )
 
@@ -72,6 +86,12 @@ class File
       rescue Java::JavaIo::IOException => e
         return false
       end
+    end
+
+    def writable?(filename)
+      stat = stat(filename)
+      return stat.writable? if stat
+      false
     end
 
     def directory?(filename)
