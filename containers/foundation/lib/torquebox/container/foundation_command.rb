@@ -59,6 +59,7 @@ module TorqueBox
 
       def parse!(args)
         @options_parser.parse!(args)
+        puts "parsed #{self.inspect}"
       end
 
     end

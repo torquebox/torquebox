@@ -111,6 +111,7 @@
                     <goal>install</goal>
                   </goals>
                   <configuration>
+                    <args>--bindir ${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/bin</args>
                     <gemPath>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemPath>
                     <gemHome>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemHome>
                   </configuration>
