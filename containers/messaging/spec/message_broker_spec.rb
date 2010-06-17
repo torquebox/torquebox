@@ -28,6 +28,10 @@ describe TorqueBox::Messaging::MessageBroker do
     it "should have an RMIClassProvider" do
       @container['RMIClassProvider'].should_not be_nil
     end
+
+    it "should have a QueuesYamlParsingDeployer" do
+      @container['QueuesYamlParsingDeployer'].should_not be_nil
+    end
   end
 
   describe "deployments" do

@@ -1,7 +1,7 @@
 
 module TorqueBox
   module Messaging
-    class Processor
+    class MessageProcessor
 
       attr_accessor :message
 

@@ -92,6 +92,13 @@
         <version>${version.jboss.reloaded}</version>
         <scope>test</scope>
       </dependency>
+
+      <dependency>
+        <groupId>org.jboss.logging</groupId>
+        <artifactId>jboss-logging-log4j</artifactId>
+        <version>2.1.1.GA</version>
+      </dependency>
+
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -179,8 +186,7 @@
 
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 
-    <!--<version.jruby>1.4.0</version.jruby>-->
-    <version.jruby>1.5.0</version.jruby>
+    <version.jruby>1.5.1</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
     <version.rack>1.0.1</version.rack>
     <version.rails>2.3.5</version.rails>
@@ -402,15 +408,6 @@
         </plugin>
         <plugin>
           <groupId>de.saumya.mojo</groupId>
-          <artifactId>rspec-maven-plugin</artifactId>
-          <version>${version.jruby-maven-plugins}</version>
-          <extensions>true</extensions>
-          <configuration>
-            <jrubyVersion>${version.jruby}</jrubyVersion>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>de.saumya.mojo</groupId>
           <artifactId>gem-maven-plugin</artifactId>
           <version>${version.jruby-maven-plugins}</version>
           <extensions>true</extensions>
@@ -426,6 +423,33 @@
           <configuration>
             <jrubyVersion>${version.jruby}</jrubyVersion>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>rspec-maven-plugin</artifactId>
+          <version>${version.jruby-maven-plugins}</version>
+          <executions>
+            <execution>
+              <id>run-specs</id>
+              <phase>test</phase>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <inherit>true</inherit>
+                <jrubyVersion>${version.jruby}</jrubyVersion>
+                <gemHome>${project.build.directory}/rubygems</gemHome>
+                <gemPath>${project.build.directory}/rubygems</gemPath>
+                <fork>true</fork>
+                <systemProperties>
+                  <property>
+                    <name>log4j.configuration</name>
+                    <value>test-log4j.xml</value>
+                  </property>
+                </systemProperties>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

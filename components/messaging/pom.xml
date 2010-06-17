@@ -20,8 +20,6 @@
     <module>messaging-core</module>
     <module>messaging-metadata</module>
     <module>messaging-int</module>
-    <module>gems/messaging-metadata-builder</module>
-    <module>gems/messaging-processor</module>
   </modules>
 
 

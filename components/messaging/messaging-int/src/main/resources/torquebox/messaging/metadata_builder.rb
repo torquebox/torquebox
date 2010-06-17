@@ -1,3 +1,4 @@
+puts "loading metadata_builder.rb from #{__FILE__}"
 
 module TorqueBox
   module Messaging
@@ -7,6 +8,17 @@ module TorqueBox
         def initialize(&block)
           @processors = []
           block.call( self ) if block
+        end
+        
+        def evaluate_file(file)
+          evaluate( File.read( file ), file ) 
+        end
+        
+        def evaluate(config,file="(eval)")
+          puts "evaluating!"
+          puts config
+          puts "evaluating!"
+          instance_eval( config, file )
         end
 
         def subscribe(processor, destination_name, opts={})
@@ -24,7 +36,7 @@ module TorqueBox
           metadata.destination_name = destination_name
           metadata.message_selector = opts[:filter]
           processor_config = Marshal.dump( opts[:config] || {} )
-          metadata.ruby_config = processor_config
+          metadata.ruby_config = processor_config.to_s.to_java
           @processors << metadata
         end
       end

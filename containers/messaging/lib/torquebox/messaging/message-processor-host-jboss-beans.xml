@@ -1,0 +1,18 @@
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <classloader><inject bean="JRubyClassLoader"/></classloader>
+
+   <!-- 
+              TorqueBox 
+     -->
+
+<!--
+  <bean name="MessagingRbParsingDeployer" class="org.torquebox.messaging.deployers.MessagingRbParsingDeployer"/>
+-->
+  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer"/>
+  
+  <bean name="MessagingRuntimePoolDeployer" class="org.torquebox.messaging.deployers.MessagingRuntimePoolDeployer">
+    <property name="instanceFactoryName">RubyRuntimeFactory</property>
+  </bean>
+
+</deployment>

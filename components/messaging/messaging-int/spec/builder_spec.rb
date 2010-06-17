@@ -1,6 +1,6 @@
 
 require 'java'
-require 'torquebox/messaging/metadata/builder'
+require 'torquebox/messaging/metadata_builder'
 
 describe TorqueBox::Messaging::MetaData::Builder do
 
@@ -89,6 +89,26 @@ describe TorqueBox::Messaging::MetaData::Builder do
     proc_1.should_not be_nil
     proc_1.ruby_class_name.should eql( "MockProcessor" )
     Marshal.load( proc_1.ruby_config ).should eql( config )
+  end
+
+  it "should allow implicit self evaluation from string" do
+    contents = File.read( File.join( File.dirname(__FILE__), 'messaging.tq' ) ) 
+    puts contents
+    @builder.evaluate( contents )
+    processors = @builder.processors
+    processors.size.should eql(1)
+    proc_1 = processors.first
+    proc_1.should_not be_nil
+    proc_1.ruby_class_name.should eql( "MyConsumer" )
+  end
+
+  it "should allow implicit self evaluation from file" do
+    @builder.evaluate_file( File.join( File.dirname(__FILE__), 'messaging.tq' ) )
+    processors = @builder.processors
+    processors.size.should eql(1)
+    proc_1 = processors.first
+    proc_1.should_not be_nil
+    proc_1.ruby_class_name.should eql( "MyConsumer" )
   end
 
 end

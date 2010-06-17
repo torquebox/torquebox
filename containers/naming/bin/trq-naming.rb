@@ -2,15 +2,21 @@
 
 require 'rubygems'
 
+require 'vfs'
+require 'org.torquebox.torquebox-container-foundation'
 require 'org.torquebox.torquebox-naming-container'
 
-require 'torquebox/container/naming'
+require 'torquebox/naming/naming_service'
 
-container = TorqueBox::Container::Naming.new
-
-puts "starting container"
-container.start()
-puts "started container"
+container = TorqueBox::Container::Foundation.new
+container.enable( TorqueBox::Naming::NamingService ) 
+begin
+  container.start
+rescue => e
+  puts e
+  puts e.backtrace
+  raise e
+end
 
 interrupted = false
 trap( "INT" ) do

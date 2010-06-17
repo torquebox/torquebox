@@ -108,13 +108,5 @@
 
   <bean name="ManagedQueueDeployer" class="org.torquebox.messaging.deployers.ManagedQueueDeployer"/>
   <bean name="ManagedTopicDeployer" class="org.torquebox.messaging.deployers.ManagedTopicDeployer"/>
-  
-  <bean name="MessagingRbParsingDeployer" class="org.torquebox.messaging.deployers.MessagingRbParsingDeployer"/>
-
-  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer"/>
-  
-  <bean name="MessagingRuntimePoolDeployer" class="org.torquebox.messaging.deployers.MessagingRuntimePoolDeployer">
-    <property name="instanceFactoryName">RubyRuntimeFactory</property>
-  </bean>
 
 </deployment>

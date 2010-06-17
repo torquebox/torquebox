@@ -1,6 +1,6 @@
-require 'torquebox-messaging-processor'
+require 'torquebox/messaging/message_processor'
 
-class TestMessageProcessor < TorqueBox::Messaging::Processor
+class TestMessageProcessor < TorqueBox::Messaging::MessageProcessor
   
   CONFIG_ONE = Marshal.dump( { :prop1=>"cheese", :prop2=>42 } )
   

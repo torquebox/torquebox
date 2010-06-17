@@ -35,6 +35,7 @@
       <artifactId>torquebox-messaging-metadata</artifactId>
       <version>${project.version}</version>
     </dependency>
+<!--
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-metadata-builder</artifactId>
@@ -42,6 +43,7 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+-->
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-int</artifactId>
@@ -87,6 +89,13 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -114,6 +123,15 @@
         <executions>
           <execution>
             <id>install-dependency-gems</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>run-specs-gems</id>
           </execution>
         </executions>
       </plugin>

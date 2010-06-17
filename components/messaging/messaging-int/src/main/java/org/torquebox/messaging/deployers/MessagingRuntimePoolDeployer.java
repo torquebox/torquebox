@@ -32,7 +32,6 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
 		log.info("Checking for deployment");
 		if (unit.getAllMetaData(MessageProcessorMetaData.class).isEmpty()) {
-			log.info("no pool required");
 			return;
 		}
 
@@ -48,12 +47,12 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 		}
 
 		if (pool == null) {
-			log.info("no pool configured yet");
+			log.debug("no pool configured yet");
 			pool = new PoolMetaData();
 			pool.setName("messaging");
 			pool.setShared();
 			pool.setInstanceFactoryName( this.instanceFactoryName );
-			log.info( "configured pool: " + pool );
+			log.debug( "configured pool: " + pool );
 			AttachmentUtils.multipleAttach(unit, pool, "messaging");
 		}
 	}

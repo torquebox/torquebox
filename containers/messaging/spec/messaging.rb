@@ -1,4 +1,5 @@
 
+FUCK FUCK FUCK{
 class MyConsumer
   def process!(msg)
     puts "processing #{msg.inspect}"

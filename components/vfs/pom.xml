@@ -37,6 +37,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
@@ -94,7 +99,7 @@
                   <overWriteReleases>false</overWriteReleases>
                   <overWriteSnapshots>false</overWriteSnapshots>
                   <overWriteIfNewer>true</overWriteIfNewer>
-                  <includeArtifactIds>jboss-vfs,jboss-logging,jboss-logmanager,jboss-logmanager-log4j</includeArtifactIds>
+                  <includeArtifactIds>jboss-vfs,jboss-logging,jboss-logmanager,jboss-logmanager-log4j,log4j</includeArtifactIds>
                 </configuration>
               </execution>
             </executions>

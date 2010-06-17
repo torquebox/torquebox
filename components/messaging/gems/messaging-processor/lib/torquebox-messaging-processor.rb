@@ -1,2 +1,0 @@
-
-require 'torquebox/messaging/processor'

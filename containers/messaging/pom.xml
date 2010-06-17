@@ -11,7 +11,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-messaging-container</artifactId>
   <packaging>java-gem</packaging>
-  <name>TorqueBox Messaging Container</name>
+  <name>TorqueBox Message Broker</name>
   <description></description>
 
   <dependencies>
@@ -55,6 +55,11 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.netty</groupId>
       <artifactId>netty</artifactId>
       <scope>runtime</scope>
@@ -80,6 +85,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-naming-client</artifactId>
+      <version>${project.version}</version>
+      <classifier>java</classifier>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
@@ -98,6 +111,10 @@
           </execution>
           <execution>
             <id>default-install</id>
+            <phase>install</phase>
+          </execution>
+          <execution>
+            <id>install-gem-into-assemblage</id>
             <phase>install</phase>
           </execution>
         </executions>

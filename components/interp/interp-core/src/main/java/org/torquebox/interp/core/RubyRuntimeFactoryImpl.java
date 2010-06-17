@@ -205,6 +205,11 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 			if (jrubyHome == null && this.useJRubyHomeEnvVar) {
 				jrubyHome = System.getenv("JRUBY_HOME");
+				if ( jrubyHome != null ) {
+					if ( ! new File( jrubyHome ).exists() ) {
+						jrubyHome = null;
+					}
+				}
 			}
 
 			if (jrubyHome == null) {
