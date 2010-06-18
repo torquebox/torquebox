@@ -260,6 +260,10 @@
                   <groupId>org.jboss.logging</groupId>
                   <artifactId>jboss-logging</artifactId>
                 </artifactItem>
+                <artifactItem>
+                  <groupId>log4j</groupId>
+                  <artifactId>log4j</artifactId>
+                </artifactItem>
               </artifactItems>
             </configuration>
           </execution>
@@ -346,6 +350,7 @@
               <goal>initialize</goal>
             </goals>
             <configuration>
+              <initializeArgs>--bindir ${stage.dir}/jruby/bin</initializeArgs>
               <gemPath>${stage.dir}/jruby/lib/ruby/gems/1.8</gemPath>
               <gemHome>${stage.dir}/jruby/lib/ruby/gems/1.8</gemHome>
               <useTransitiveDependencies>true</useTransitiveDependencies>

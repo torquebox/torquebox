@@ -12,7 +12,6 @@ module TorqueBox
       def initialize()
         @logger = org.jboss.logging::Logger.getLogger( 'org.torquebox.containers.Foundation' )
         @classloader = JRuby.runtime.jruby_class_loader
-        puts "Using classloader #{@classloader}"
         @server = Java::org.jboss.bootstrap.api.mc.server::MCServerFactory.createServer( @classloader )
   
         descriptors = @server.configuration.bootstrap_descriptors

@@ -1,7 +1,6 @@
 
 require 'optparse'
 
-require 'vfs'
 require 'torquebox/container/foundation'
 require 'torquebox/container/foundation_command'
 require 'torquebox/messaging/message_broker'
@@ -36,6 +35,7 @@ module TorqueBox
         end
 
         def after_start(container)
+          require 'vfs'
           @deploy_files.each do |file|
             puts "deploying #{file}"
             deployment = container.deploy( file )

@@ -1,18 +1,19 @@
 #!/usr/bin/env jruby
 
 
-dev_lib_dir = File.dirname(__FILE__) + '/../target/org.torquebox.torquebox-messaging-container/lib/'
-puts "dev_lib #{dev_lib_dir}"
+dev_lib_dir = File.dirname(__FILE__) + '/../target/org.torquebox.torquebox-naming-container/lib/'
+
+require 'rubygems'
 
 if ( File.exist?( dev_lib_dir ) )
+  $:.unshift File.join( File.dirname(__FILE__), '..', 'lib' )
   Dir[ "#{dev_lib_dir}/*.jar" ].each do |jar|
     require jar
   end
+else
+  require 'org.torquebox.torquebox-messaging-container'
 end
 
-$:.unshift File.join( File.dirname(__FILE__), '..', 'lib' )
-
-require 'rubygems'
 require 'org.torquebox.torquebox-container-foundation'
 require 'torquebox/messaging/commands/message_processor_host'
 
