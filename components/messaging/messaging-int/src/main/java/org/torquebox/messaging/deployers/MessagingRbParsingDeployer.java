@@ -34,11 +34,8 @@ public class MessagingRbParsingDeployer extends AbstractVFSParsingDeployer<Messa
 
 		try {
 			StringBuilder script = new StringBuilder();
-			script.append("require %(org/torquebox/messaging/deployers/torquebox-gateway)\n");
-			script.append("require %(vfs)\n");
-			script.append("config_src = IO.read %(" + file.toURL() + ")\n");
-			script.append("eval config_src\n");
-			log.info("SCRIPT\n" + script);
+			ruby.getLoadService().require( "torquebox/messaging/metadata_builder" );
+			script.append("TorqueBox::Messaging::MetaData::Builder.evaluate_file( %q(" + file.toURL() + ") )\n" );
 			IRubyObject result = ruby.evalScriptlet(script.toString());
 			if (result != null) {
 				if (result instanceof RubyArray) {

@@ -15,10 +15,13 @@ module TorqueBox
         end
         
         def evaluate(config,file="(eval)")
-          puts "evaluating!"
-          puts config
-          puts "evaluating!"
           instance_eval( config, file )
+        end
+
+        def self.evaluate_file(file)
+          builder = Builder.new()
+          builder.evaluate_file( file )
+          builder.processors
         end
 
         def subscribe(processor, destination_name, opts={})
@@ -35,8 +38,10 @@ module TorqueBox
           end 
           metadata.destination_name = destination_name
           metadata.message_selector = opts[:filter]
-          processor_config = Marshal.dump( opts[:config] || {} )
-          metadata.ruby_config = processor_config.to_s.to_java
+          config = opts[:config] || {}
+          processor_config = Marshal.dump( config )
+          config_bytes = processor_config.to_java_bytes
+          metadata.ruby_config = config_bytes
           @processors << metadata
         end
       end

@@ -55,22 +55,6 @@ public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
 	}
 	
 	@Test
-	public void testMinimalMessaingRb() throws Exception {
-		URL messagingRb = getClass().getResource( "minimal-messaging.rb" );
-		String deploymentName = addDeployment( messagingRb, "messaging.rb" );
-		
-		DeploymentUnit unit = getDeploymentUnit( deploymentName );
-		unit.addAttachment( Ruby.class, this.ruby );
-		
-		processDeployments( true );
-		
-		Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData( MessageProcessorMetaData.class );
-		
-		assertTrue( allMetaData.isEmpty() );
-		undeploy( deploymentName );
-	}
-	
-	@Test
 	public void testSingleMessagingRb() throws Exception {
 		URL messagingRb = getClass().getResource( "single-messaging.rb" );
 		String deploymentName = addDeployment( messagingRb, "messaging.rb" );
@@ -91,7 +75,7 @@ public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
 		assertEquals( "MyClass", metaData.getRubyClassName() );
 		assertEquals( "/topics/foo", metaData.getDestinationName() );
 		assertEquals( "myfilter", metaData.getMessageSelector() );
-		String rubyConfig = metaData.getRubyConfig();
+		byte[] rubyConfig = metaData.getRubyConfig();
 		assertNotNull( rubyConfig );
 		
 		undeploy( deploymentName );

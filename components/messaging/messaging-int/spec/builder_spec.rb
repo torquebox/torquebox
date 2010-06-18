@@ -88,7 +88,7 @@ describe TorqueBox::Messaging::MetaData::Builder do
     proc_1 = processors.first
     proc_1.should_not be_nil
     proc_1.ruby_class_name.should eql( "MockProcessor" )
-    Marshal.load( proc_1.ruby_config ).should eql( config )
+    Marshal.load( String.from_java_bytes( proc_1.ruby_config ) ).should eql( config )
   end
 
   it "should allow implicit self evaluation from string" do

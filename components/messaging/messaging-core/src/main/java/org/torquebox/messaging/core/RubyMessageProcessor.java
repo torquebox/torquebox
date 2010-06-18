@@ -13,6 +13,7 @@ import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyHash;
 import org.jruby.RubyModule;
+import org.jruby.RubyString;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
@@ -38,7 +39,7 @@ public class RubyMessageProcessor implements MessageListener {
 
 	private InstantiatingRubyComponentResolver componentResolver;
 
-	private String rubyConfig;
+	private byte[] rubyConfig;
 
 	private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 
@@ -82,11 +83,11 @@ public class RubyMessageProcessor implements MessageListener {
 		return this.messageSelector;
 	}
 
-	public void setRubyConfig(String rubyConfig) {
+	public void setRubyConfig(byte[] rubyConfig) {
 		this.rubyConfig = rubyConfig;
 	}
 
-	public String getRubyConfig() {
+	public byte[] getRubyConfig() {
 		return this.rubyConfig;
 	}
 
@@ -184,12 +185,16 @@ public class RubyMessageProcessor implements MessageListener {
 
 	protected void configureProcessor(IRubyObject processor) {
 		Ruby ruby = processor.getRuntime();
-
+		
 		Object config = null;
 
 		if (this.rubyConfig != null) {
+			//RubyModule string = ruby.getClassFromPath("String");
+			//RubyString configStr = (RubyString) JavaEmbedUtils.invokeMethod( ruby, string, "from_java_bytes", new Object[] { this.rubyConfig }, RubyString.class );
+			String configStr = RubyString.bytesToString( this.rubyConfig );
+			
 			RubyModule marshal = ruby.getClassFromPath("Marshal");
-			config = JavaEmbedUtils.invokeMethod(ruby, marshal, "load", new Object[] { this.rubyConfig }, Object.class);
+			config = JavaEmbedUtils.invokeMethod(ruby, marshal, "load", new Object[] { configStr }, Object.class);
 		}
 		
 		if (config == null) {

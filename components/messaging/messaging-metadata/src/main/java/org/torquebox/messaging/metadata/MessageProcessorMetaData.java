@@ -6,7 +6,7 @@ public class MessageProcessorMetaData {
 	private String rubyRequirePath;
 	private String destinationName;
 	private String messageSelector;
-	private String rubyConfig;
+	private byte[] rubyConfig;
 
 	public MessageProcessorMetaData() {
 	}
@@ -52,11 +52,11 @@ public class MessageProcessorMetaData {
 		return this.messageSelector;
 	}
 	
-	public void setRubyConfig(String rubyConfig) {
+	public void setRubyConfig(byte[] rubyConfig) {
 		this.rubyConfig = rubyConfig;
 	}
 	
-	public String getRubyConfig() {
+	public byte[] getRubyConfig() {
 		return this.rubyConfig;
 	}
 }

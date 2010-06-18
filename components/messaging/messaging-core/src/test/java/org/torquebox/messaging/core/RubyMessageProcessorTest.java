@@ -11,6 +11,7 @@ import javax.jms.Message;
 import javax.jms.TextMessage;
 
 import org.jruby.Ruby;
+import org.jruby.RubyString;
 import org.jruby.RubySymbol;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
@@ -51,8 +52,10 @@ public class RubyMessageProcessorTest extends AbstractRubyTestCase {
 	public void testConfigureProcessorWithConfiguration() throws Exception {
 		RubyMessageProcessor processor = new RubyMessageProcessor();
 		
-		IRubyObject rubyConfig = ruby.evalScriptlet( "TestMessageProcessor::CONFIG_ONE" );
-		processor.setRubyConfig( (String) rubyConfig.toJava( String.class ) );
+		RubyString rubyConfig = (RubyString) ruby.evalScriptlet( "TestMessageProcessor::CONFIG_ONE" );
+		//byte[] rubyConfigBytes = (byte[]) JavaEmbedUtils.invokeMethod( rubyConfig.getRuntime(), rubyConfig, "to_java_bytes", new Object[]{}, Object.class );
+		byte[] rubyConfigBytes = rubyConfig.getBytes();
+		processor.setRubyConfig( rubyConfigBytes );
 		
 		processor.configureProcessor( rubyProcessor );
 		
