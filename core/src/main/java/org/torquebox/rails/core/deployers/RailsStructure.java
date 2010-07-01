@@ -137,7 +137,7 @@ public class RailsStructure extends AbstractVFSStructureDeployer implements JarE
 
 	@Override
 	public String getJarExtension() {
-		return "rails";
+		return ".rails";
 	}
 
 }
