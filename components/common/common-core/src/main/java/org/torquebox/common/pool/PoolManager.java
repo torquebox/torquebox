@@ -64,8 +64,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 	private FillTask<T> fillTask;
 	private DrainTask<T> drainTask;
 
-	private AtomicBoolean inFlight;
-
 	public PoolManager(SimplePool<T> pool, InstanceFactory<T> factory, int minInstances, int maxInstances) {
 		this.pool = pool;
 		this.factory = factory;
@@ -75,11 +73,9 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
 		this.fillTask = new FillTask<T>(this);
 		this.drainTask = new DrainTask<T>(this);
-		this.inFlight = new AtomicBoolean(false);
 	}
 	
 	protected void taskCompleted() {
-		this.inFlight.set(false);
 	}
 
 	public void setMinimumInstances(int minInstances) {
@@ -119,12 +115,9 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 		if (totalInstances >= maxInstances) {
 			return;
 		}
-
-		if ((availableNow == 0) && (!this.inFlight.get()) && (this.instances.tryAcquire())) {
-			this.inFlight.set(true);
+		if ((availableNow == 0) && (this.instances.tryAcquire())) {
 			this.executor.execute(this.fillTask);
 		}
-
 	}
 
 	protected void fillInstance() throws Exception {
@@ -143,7 +136,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 		for ( int i = 0 ; i < this.minInstances ; ++i ) {
 			this.executor.execute( this.fillTask );
 		}
-		this.inFlight.set( true );
 	}
 	
 	public void stop() {
