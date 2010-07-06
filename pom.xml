@@ -124,7 +124,7 @@
     <version.jruby>1.5.1</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
 
-    <rails.version>2.3.4</rails.version>
+    <rails.version>2.3.8</rails.version>
 
     <version.jbossas>6.0.0.20100216-M2</version.jbossas>
     <version.jbossas.package>6.0.0.M2</version.jbossas.package>
