@@ -142,6 +142,17 @@
 
   <repositories>
     <repository>
+      <id>jboss-deprecated</id>
+      <name>JBoss Deprecated Repository</name>
+      <url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>repository.codehaus.org</id>
       <name>Codehaus Releases Repository</name>
       <url>http://repository.codehaus.org/</url>
