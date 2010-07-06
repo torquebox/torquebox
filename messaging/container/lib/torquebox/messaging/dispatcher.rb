@@ -4,6 +4,14 @@ module TorqueBox
   module Messaging
     module Dispatcher
       def self.dispatch(listener_class_name, session, message)
+        require_path = listener_class_name.underscore
+        begin
+          puts "requiring **** #{require_path}"
+          require require_path
+        rescue => e
+          puts e
+          puts e.backtrace
+        end
         listener_class = eval listener_class_name
         listener = listener_class.new
         listener.session = session if ( listener.respond_to?( "session=" ) )
