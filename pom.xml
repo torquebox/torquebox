@@ -120,7 +120,8 @@
 
   <properties>
 
-    <version.jruby>1.4.0</version.jruby>
+    <!--<version.jruby>1.4.0</version.jruby>-->
+    <version.jruby>1.5.1</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
 
     <rails.version>2.3.4</rails.version>

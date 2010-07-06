@@ -37,13 +37,13 @@ OTHER_GEMS = [
 
 JBOSS_VERSION         = ENV['jboss.as.version']         || '6.0.0.20100216-M2'
 JBOSS_PACKAGE_VERSION = ENV['jboss.as.package.version'] || '6.0.0.M2'
-JRUBY_PKG_VERSION     = ENV['jruby.version']            || '1.4.0'
+JRUBY_PKG_VERSION     = ENV['jruby.version']            || '1.5.1'
 HORNETQ_VERSION       = ENV['hornetq.version']          || '2.0.0.GA'
 RAILS_VERSION         = ENV['rails.version']            || '2.3.4'
 
 JBOSS_BASE_URL  = "http://voxel.dl.sourceforge.net/sourceforge/jboss/"
 HORNETQ_BASE_URL= "http://downloads.sourceforge.net/project/hornetq/"
-JRUBY_BASE_URL  = "http://jruby.kenai.com/downloads"
+JRUBY_BASE_URL  = "http://jruby.org.s3.amazonaws.com/downloads"
 
 namespace :maven do
   task 'compile'=>[ 'stage' ]
@@ -101,8 +101,9 @@ end
 
 file "#{CACHE_DIR}/jruby/jruby-bin-#{JRUBY_PKG_VERSION}.zip"=>[ "#{CACHE_DIR}/jruby" ] do
   Dir.chdir( "#{CACHE_DIR}/jruby" ) do 
-    puts "Downloading JRuby #{JRUBY_PKG_VERSION}"
     url = "#{JRUBY_BASE_URL}/#{JRUBY_PKG_VERSION}/jruby-bin-#{JRUBY_PKG_VERSION}.zip"
+    puts "Downloading JRuby #{JRUBY_PKG_VERSION}"
+    puts "  from #{url}"
     puts `wget --quiet #{url}`
   end
 end
