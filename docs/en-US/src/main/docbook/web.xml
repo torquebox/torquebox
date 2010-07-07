@@ -23,12 +23,16 @@
       <title>Applications with <filename>config.ru</filename></title>
 
       <para>TorqueBox current supports general
-      <filename>config.ru</filename>-based applications. In your application's
-      directory, your Rack application can be booted from a
-      <filename>config.ru</filename> (or other filename) you provide. The Ruby
-      runtime provided to your application is quite rudimentary. If you desire
-      to use RubyGems or other libraries, it is up to you to require the
-      necessary files (for instance, <code>require 'rubygems'</code>).</para>
+      <filename>config.ru</filename>-based applications. In your
+      application's directory, your Rack application can be booted
+      from a file named <filename>config.ru</filename> that you
+      provide. You may override this name using the
+      <emphasis>rackup</emphasis> parameter, <link
+      linkend="rackup">described below</link>. The Ruby runtime
+      provided to your application is quite rudimentary. If you desire
+      to use RubyGems or other libraries, it is up to you to require
+      the necessary files (for instance, <code>require
+      'rubygems'</code>).</para>
 
       <para><programlisting>app = lambda{|env| 
         [ 200, 
@@ -94,13 +98,35 @@
           Server, a single global environment variable to set
           <envar>RACK_ENV</envar> is nonsensical.</para>
 
-          <para><example>
+          <para>
+	    <example>
               <title>Application configuration in *-rack.yml</title>
 
               <para><programlisting>application:
   RACK_ROOT: /path/to/myapp
   RACK_ENV:  development</programlisting></para>
-            </example></para>
+            </example>
+	  </para>
+
+	  <section id="rackup">
+            <title>Rackup Config File</title>
+
+            <para>By default, the TorqueBox server will look for a
+            rackup config file named <filename>config.ru</filename>.
+            You can override the default name using the
+            <emphasis>rackup</emphasis> config parameter.</para>
+
+	    <para>
+	      <example>
+		<title>Application configuration in *-rack.yml</title>
+		
+              <para><programlisting>application:
+  RACK_ROOT: /path/to/myapp
+  RACK_ENV:  development
+  rackup:    your_app_name.ru</programlisting></para>
+	      </example>
+	    </para>
+          </section>
         </section>
 
         <section>
