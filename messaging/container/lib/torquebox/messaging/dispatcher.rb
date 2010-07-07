@@ -6,11 +6,9 @@ module TorqueBox
       def self.dispatch(listener_class_name, session, message)
         require_path = listener_class_name.underscore
         begin
-          puts "requiring **** #{require_path}"
           require require_path
         rescue => e
-          puts e
-          puts e.backtrace
+          # ignore
         end
         listener_class = eval listener_class_name
         listener = listener_class.new
