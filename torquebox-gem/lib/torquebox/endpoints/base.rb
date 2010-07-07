@@ -30,7 +30,7 @@ module TorqueBox
     module Base
 
       def self.included(into)
-        puts "enhancing #{into}"
+        # puts "enhancing #{into}"
         class << into
           def endpoint_configuration(&block)
             unless block.nil?

@@ -7,7 +7,7 @@ class Java::org.torquebox.messaging.client::Client
   def send(destination, opts)
     message = nil
     if ( ( ! opts[:task].nil? ) && ( ! opts[:payload].nil? ) )
-      puts "sending a TASK #{opts.inspect}"
+      # puts "sending a TASK #{opts.inspect}"
       message = session.create_text_message
       message.set_string_property( 'torqueboxMessageType', 'task' )
       message.set_string_property( 'torqueboxTask', opts[:task] )

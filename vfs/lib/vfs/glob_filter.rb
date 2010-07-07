@@ -1,7 +1,7 @@
 
 
-puts "Defining VFS::GlobFilter #{__FILE__}:#{__LINE__}"
-puts "VFF=#{Java::org.jboss.virtual.VirtualFileFilter} #{__FILE__}:#{__LINE__}"
+# puts "Defining VFS::GlobFilter #{__FILE__}:#{__LINE__}"
+# puts "VFF=#{Java::org.jboss.virtual.VirtualFileFilter} #{__FILE__}:#{__LINE__}"
 module VFS
   class GlobFilter
     include Java::org.jboss.virtual.VirtualFileFilter
@@ -49,4 +49,4 @@ module VFS
   end
 end
 
-puts "Defined VFS::GlobFilter #{__FILE__}:#{__LINE__}"
+# puts "Defined VFS::GlobFilter #{__FILE__}:#{__LINE__}"

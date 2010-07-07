@@ -46,7 +46,7 @@ module JBoss
     end
     
     def show_node(node, indent)
-      puts "#{indent}#{node.getPathName()}"
+      # puts "#{indent}#{node.getPathName()}"
       node.getChildren().each do |child|
         show_node( child, "  #{indent}") 
       end
