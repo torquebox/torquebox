@@ -1,6 +1,7 @@
 package org.torquebox.rails.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -73,5 +74,22 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		RubyModule bookModel = ruby.getClassFromPath("Book");
 		assertNotNil(bookModel);
 
+	}
+	@Test
+	public void testOpenSSL_HMAC_digest() throws Exception {
+		Class.forName(VFS.class.getName());
+		Ruby ruby = createRuby();
+		
+		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast-2.3.5";
+		VirtualFile railsRoot = VFS.getChild(railsRootStr);
+		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(railsRoot, "development", true);
+		
+		initializer.initialize(ruby);
+		
+		String script = "require 'openssl'\nOpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, 'mykey', 'hashme')";
+		Object result = ruby.evalScriptlet(script);
+		
+		System.err.println( "result=" + result );
+		
 	}
 }

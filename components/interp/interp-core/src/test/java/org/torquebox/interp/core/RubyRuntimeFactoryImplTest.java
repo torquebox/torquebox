@@ -47,6 +47,22 @@ public class RubyRuntimeFactoryImplTest {
 		assertSame( ruby, initializer.ruby );
 	}
 	
+	@Test
+	public void testOpenSSL_HMAC_digest() throws Exception {
+		MockRuntimeInitializer initializer = new MockRuntimeInitializer();
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( initializer );
+		factory.setUseJRubyHomeEnvVar( false );
+		
+		Ruby ruby = factory.create();
+		
+		
+		String script = "require 'openssl'\nOpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, 'mykey', 'hashme')";
+		Object result = ruby.evalScriptlet(script);
+		
+		assertNotNull( result );
+		
+	}
+	
 	static class MockRuntimeInitializer implements RuntimeInitializer {
 
 		public Ruby ruby;
