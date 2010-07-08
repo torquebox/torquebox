@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
-    <version>1.0.0.Beta19</version>
+    <version>1.0.0.Beta21</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,6 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-components</artifactId>
-  <version>1.0.0.Beta19</version>
   <packaging>pom</packaging>
   <name>TorqueBox Components</name>
   <url>http://www.torquebox.org/</url>
