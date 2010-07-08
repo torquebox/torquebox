@@ -20,7 +20,7 @@
 
 import javax.servlet.sip.SipServlet
 
-puts "about to load TorqueBox::Sip::Base"
+# puts "about to load TorqueBox::Sip::Base"
 
 module TorqueBox
   module Sip
