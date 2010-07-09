@@ -11,7 +11,7 @@ describe TorqueBox::Messaging::MessageBroker do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
       @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
-      @container.enable( TorqueBox::Messaging::MessageBroker ) 
+      @container.enable( TorqueBox::Messaging::MessageBroker ) {|config| config.data_dir = "#{Dir.pwd}/target"}
       begin
         @container.start
       rescue => e
@@ -39,7 +39,7 @@ describe TorqueBox::Messaging::MessageBroker do
       #TorqueBox::Naming.configure_local
       @container = TorqueBox::Container::Foundation.new
       @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
-      @container.enable( TorqueBox::Messaging::MessageBroker )
+      @container.enable( TorqueBox::Messaging::MessageBroker ) {|config| config.data_dir = "#{Dir.pwd}/target"}
       begin
         @container.start
       rescue => e
