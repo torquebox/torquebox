@@ -5,7 +5,7 @@ require 'rbconfig'
 module JBoss
   module RakeUtils
     def self.jboss_home
-      jboss_home = ENV['JBOSS_HOME'] || ENV['TOQUEBOX_HOME'] && ENV['TORQUEBOX_HOME'] + '/jboss'
+      jboss_home = ENV['JBOSS_HOME'] || ENV['TORQUEBOX_HOME'] && ENV['TORQUEBOX_HOME'] + '/jboss'
       raise "$JBOSS_HOME is not set" unless jboss_home
       return jboss_home
     end
