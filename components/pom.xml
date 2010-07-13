@@ -83,9 +83,7 @@
     <module>vfs</module>
 
     <module>torquebox-gem</module>
-<!--
-    <module>torquebox-rails</module>
--->
+    <module>rake-support</module>
     <module>torquebox-capistrano</module>
 
 

@@ -107,6 +107,13 @@
       <type>gem</type>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>rake-support</artifactId>
+      <classifier></classifier>
+      <type>gem</type>
+      <version>${project.version}</version>
+    </dependency>
 
 
 

@@ -3,7 +3,7 @@ require 'rubygems'
 
 Gem::Specification.new do |s|
     s.platform  =   Gem::Platform::RUBY
-    s.name      =   "torquebox-rails"
+    s.name      =   "torquebox-rake-support"
     s.version   =   "#{PROJECT_VERSION}"
     s.author    =   "The TorqueBox Project"
     s.email     =   "info@torquebox.org"

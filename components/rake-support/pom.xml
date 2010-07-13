@@ -9,7 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-rails</artifactId>
+  <artifactId>rake-support</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Rails Support</name>
   <description></description>
@@ -65,7 +65,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>target/gems/${project.artifactId}-1.0.0.gem</file>
+                  <file>target/gems/torquebox-${project.artifactId}-1.0.0.gem</file>
                   <type>gem</type>
                   <classifier></classifier>
                 </artifact>

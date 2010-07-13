@@ -1,6 +1,4 @@
 
-gem 'torquebox-gem'
-
 gem "activerecord-jdbc-adapter",
     :lib=>'jdbc_adapter'
 

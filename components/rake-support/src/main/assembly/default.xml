@@ -10,7 +10,7 @@
       <includes>
         <include>lib/**</include>
       </includes>
-      <outputDirectory>/torquebox-rails-${pom.version}</outputDirectory>
+      <outputDirectory>/torquebox-rake-support-${pom.version}</outputDirectory>
     </fileSet>
   </fileSets>
 </assembly>
