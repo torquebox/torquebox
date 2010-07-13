@@ -135,8 +135,8 @@
       </dependency>
       <dependency>
         <groupId>rubygems</groupId>
-        <artifactId>activerecord-jdbc-adapter</artifactId>
-        <version>0.9.4</version>
+        <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
+        <version>0.9.7</version>
         <classifier>java</classifier>
         <type>gem</type>
       </dependency>

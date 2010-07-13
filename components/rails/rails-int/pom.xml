@@ -89,7 +89,7 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>activerecord-jdbc-adapter</artifactId>
+      <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
       <classifier>java</classifier>
       <type>gem</type>
       <scope>compile</scope>
