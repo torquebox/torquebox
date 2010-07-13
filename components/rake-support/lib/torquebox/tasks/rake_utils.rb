@@ -32,7 +32,7 @@ module JBoss
         else
           cmd = "/bin/sh bin/run.sh"
         end
-        pid = Open3.popen3( "#{cmd} -c #{jboss_conf}" ) do |stdin, stdout, stderr|
+        pid = Open3.popen3( "#{cmd} -c #{jboss_conf} #{ENV['JBOSS_OPTS']}" ) do |stdin, stdout, stderr|
           #stdin.close
           threads = []
           threads << Thread.new(stdout) do |input_str|
