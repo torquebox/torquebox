@@ -110,8 +110,13 @@
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>rake-support</artifactId>
-      <classifier></classifier>
       <type>gem</type>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>rake-support</artifactId>
+      <type>template.rb</type>
       <version>${project.version}</version>
     </dependency>
 
@@ -246,6 +251,19 @@
             </configuration>
           </execution>
 
+          <execution>
+            <id>install-rails-template</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeTypes>template.rb</includeTypes>
+              <outputDirectory>${stage.dir}/share/rails</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
 
 
 
