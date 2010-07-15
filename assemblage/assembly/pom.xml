@@ -119,18 +119,6 @@
       <type>template.rb</type>
       <version>${project.version}</version>
     </dependency>
-
-
-
-
-
-<!--
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
--->
   </dependencies>
 
   <build>
@@ -253,7 +241,7 @@
 
           <execution>
             <id>install-rails-template</id>
-            <phase>package</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -264,8 +252,6 @@
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
-
-
 
           <execution>
             <id>install-jruby-vfs</id>
@@ -349,6 +335,18 @@
                     <include name="rdebug"/>
                   </fileset>
                 </chmod>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>rename-rails-template</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <move file="${stage.dir}/share/rails/rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb"/>
               </tasks>
             </configuration>
           </execution>
