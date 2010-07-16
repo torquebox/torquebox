@@ -21,18 +21,18 @@ module JBoss
     def self.deployers_dir
       "#{server_dir}/deployers"
     end
+    def self.command_line
+      cmd = Config::CONFIG['host_os'] =~ /mswin/ ? "bin\\run" : "/bin/sh bin/run.sh"
+      options = ENV['JBOSS_OPTS']
+      cmd += " -b 0.0.0.0" unless /((^|\s)-b\s|(^|\s)--host=)/ =~ options
+      "#{cmd} -c #{jboss_conf} #{options}"
+    end
     def self.run_server()
       Dir.chdir(jboss_home) do
         old_trap = trap("INT") do
           puts "caught SIGINT, shutting down"
         end
-        cmd = nil
-        if ( Config::CONFIG['host_os'] =~ /mswin/ ) 
-          cmd = "bin\\run"
-        else
-          cmd = "/bin/sh bin/run.sh"
-        end
-        pid = Open3.popen3( "#{cmd} -c #{jboss_conf} #{ENV['JBOSS_OPTS']}" ) do |stdin, stdout, stderr|
+        pid = Open3.popen3( command_line ) do |stdin, stdout, stderr|
           #stdin.close
           threads = []
           threads << Thread.new(stdout) do |input_str|
