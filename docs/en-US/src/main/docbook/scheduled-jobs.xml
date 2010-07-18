@@ -199,7 +199,7 @@ end</programlisting></para>
       <para><example>
           <title>Example <filename>jobs.yml</filename></title>
 
-          <para><programlisting>mail.notifier
+          <para><programlisting>mail.notifier:
   job:         Mail::Notifier
   cron:        0 */5 * * * ?
   description: Deliver queued mail notifications</programlisting></para>
