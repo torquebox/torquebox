@@ -70,6 +70,12 @@
       <classifier>deployer</classifier>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-int</artifactId>
+      <classifier>deployer</classifier>
+      <version>${project.version}</version>
+    </dependency>
 
 
     <dependency>

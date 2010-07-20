@@ -30,7 +30,6 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
 	@Override
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		log.info("Checking for deployment");
 		if (unit.getAllMetaData(MessageProcessorMetaData.class).isEmpty()) {
 			return;
 		}

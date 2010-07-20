@@ -28,7 +28,6 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueueM
 	
 	@Override
 	protected boolean accepts(VFSDeploymentUnit unit) throws DeploymentException {
-		System.err.println( "accepts(" + unit.getRoot() + ")" );
 		return super.accepts(unit);
 	}
 
