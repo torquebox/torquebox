@@ -15,7 +15,6 @@
     <url>http://redhat.com</url>
   </organization>
 
-
   <description>
     The TorqueBox Ruby Application Platform
   </description>
@@ -28,6 +27,5 @@
     <module>clients</module>
     <module>assemblage</module>
   </modules>
-
 
 </project>
