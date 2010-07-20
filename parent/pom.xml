@@ -188,8 +188,8 @@
 
     <version.jruby>1.5.1</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
-    <version.rack>1.0.1</version.rack>
-    <version.rails>2.3.5</version.rails>
+    <version.rack>1.1.0</version.rack>
+    <version.rails>2.3.8</version.rails>
     <version.rake>0.8.7</version.rake>
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>1.3.0</version.rspec>
