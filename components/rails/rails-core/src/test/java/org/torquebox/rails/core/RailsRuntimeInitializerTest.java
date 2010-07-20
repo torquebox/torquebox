@@ -20,7 +20,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		Class.forName(VFS.class.getName());
 		Ruby ruby = createRuby();
 
-		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast-2.3.5";
+		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast";
 		String vfsRailsRootStr = "vfs:" + railsRootStr;
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
 
@@ -48,7 +48,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		Class.forName(VFS.class.getName());
 		Ruby ruby = createRuby();
 
-		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast-2.3.5";
+		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast";
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
 
 		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(railsRoot, "development", true);
@@ -64,7 +64,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		Class.forName(VFS.class.getName());
 		Ruby ruby = createRuby();
 
-		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast-2.3.5";
+		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast";
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
 
 		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(railsRoot, "development", true);
@@ -80,7 +80,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		Class.forName(VFS.class.getName());
 		Ruby ruby = createRuby();
 		
-		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast-2.3.5";
+		String railsRootStr = System.getProperty("user.dir") + "/src/test/rails/ballast";
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
 		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(railsRoot, "development", true);
 		
