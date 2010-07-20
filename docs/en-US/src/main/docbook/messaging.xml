@@ -200,9 +200,9 @@
         <para><example>
             <title>topics.yml</title>
 
-            <para><programlisting>/queues/my_topic:
+            <para><programlisting>/topics/my_topic:
 
-/queues/my_other_topic:
+/topics/my_other_topic:
 
 </programlisting>The name of the queue will be used when registering the topic
             in the naming-service, and is used to discover the topic for
