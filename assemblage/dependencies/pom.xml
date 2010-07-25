@@ -19,6 +19,14 @@
     <jboss.bin.url>http://hudson.jboss.org/hudson/job/JBoss-AS-6.0.x/lastSuccessfulBuild/artifact/JBossAS_6_0/build/target/jboss-6.0.x.zip</jboss.bin.url>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rake</artifactId>
+      <type>gem</type>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins> 
       <plugin>
