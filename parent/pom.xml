@@ -178,7 +178,7 @@
   </dependencyManagement>
 
   <properties>
-    <version.jruby-maven-plugins>0.12.0-SNAPSHOT</version.jruby-maven-plugins>
+    <version.jruby-maven-plugins>0.20.0-SNAPSHOT</version.jruby-maven-plugins>
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
@@ -418,6 +418,15 @@
         <plugin>
           <groupId>de.saumya.mojo</groupId>
           <artifactId>jruby-maven-plugin</artifactId>
+          <version>${version.jruby-maven-plugins}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <jrubyVersion>${version.jruby}</jrubyVersion>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>rake-maven-plugin</artifactId>
           <version>${version.jruby-maven-plugins}</version>
           <extensions>true</extensions>
           <configuration>
