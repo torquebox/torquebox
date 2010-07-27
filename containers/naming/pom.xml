@@ -20,7 +20,6 @@
       <artifactId>torquebox-container-foundation</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
-      <!--<classifier>java</classifier>-->
       <scope>compile</scope>
     </dependency>
 
@@ -35,7 +34,6 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-naming-client</artifactId>
       <type>gem</type>
-      <!--<classifier>java</classifier>-->
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>

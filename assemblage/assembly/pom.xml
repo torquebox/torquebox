@@ -81,35 +81,30 @@
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-container-foundation</artifactId>
-      <classifier>java</classifier>
       <type>gem</type>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-naming-container</artifactId>
-      <classifier>java</classifier>
       <type>gem</type>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-container</artifactId>
-      <classifier>java</classifier>
       <type>gem</type>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-naming-client</artifactId>
-      <classifier>java</classifier>
       <type>gem</type>
       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-client</artifactId>
-      <classifier>java</classifier>
       <type>gem</type>
       <version>${project.version}</version>
     </dependency>
