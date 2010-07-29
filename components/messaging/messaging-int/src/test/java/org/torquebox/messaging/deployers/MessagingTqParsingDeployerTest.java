@@ -14,23 +14,23 @@ import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 import org.torquebox.test.ruby.TestRubyFactory;
 
-public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
+public class MessagingTqParsingDeployerTest extends AbstractDeployerTestCase {
 	
-	private MessagingRbParsingDeployer deployer;
+	private MessagingTqParsingDeployer deployer;
 	private Ruby ruby;
 
 	@Before
 	public void setUpDeployer() throws Throwable {
-		this.deployer = new MessagingRbParsingDeployer();
+		this.deployer = new MessagingTqParsingDeployer();
 		addDeployer( this.deployer );
 		this.ruby = TestRubyFactory.createRuby();
 		this.ruby.evalScriptlet( "require 'vfs'" );
 	}
 	
 	@Test
-	public void testEmptyMessagingRb() throws Exception {
-		URL messagingRb = getClass().getResource( "empty-messaging.rb" );
-		String deploymentName = addDeployment( messagingRb, "messaging.rb" );
+	public void testEmptyMessagingTq() throws Exception {
+		URL messagingTq = getClass().getResource( "empty-messaging.rb" );
+		String deploymentName = addDeployment( messagingTq, "messaging.tq" );
 		
 		DeploymentUnit unit = getDeploymentUnit( deploymentName );
 		unit.addAttachment( Ruby.class, this.ruby );
@@ -44,9 +44,9 @@ public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
 	}
 	
 	@Test(expected=DeploymentException.class)
-	public void testJunkMessagingRb() throws Exception {
-		URL messagingRb = getClass().getResource( "junk-messaging.rb" );
-		String deploymentName = addDeployment( messagingRb, "messaging.rb" );
+	public void testJunkMessagingTq() throws Exception {
+		URL messagingTq = getClass().getResource( "junk-messaging.rb" );
+		String deploymentName = addDeployment( messagingTq, "messaging.tq" );
 		
 		DeploymentUnit unit = getDeploymentUnit( deploymentName );
 		unit.addAttachment( Ruby.class, this.ruby );
@@ -55,9 +55,9 @@ public class MessagingRbParsingDeployerTest extends AbstractDeployerTestCase {
 	}
 	
 	@Test
-	public void testSingleMessagingRb() throws Exception {
-		URL messagingRb = getClass().getResource( "single-messaging.rb" );
-		String deploymentName = addDeployment( messagingRb, "messaging.rb" );
+	public void testSingleMessagingTq() throws Exception {
+		URL messagingTq = getClass().getResource( "single-messaging.rb" );
+		String deploymentName = addDeployment( messagingTq, "messaging.tq" );
 		
 		DeploymentUnit unit = getDeploymentUnit( deploymentName );
 		unit.addAttachment( Ruby.class, this.ruby );

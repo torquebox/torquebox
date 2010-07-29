@@ -21,7 +21,7 @@ public class DeployersTest extends AbstractDeployerTestCase {
 		assertNotNull( getBean( "ManagedQueueDeployer" ) );
 		assertNotNull( getBean( "TopicsYamlParsingDeployer" ) );
 		assertNotNull( getBean( "QueuesYamlParsingDeployer" ) );
-		assertNotNull( getBean( "MessagingRbParsingDeployer" ) );
+		assertNotNull( getBean( "MessagingTqParsingDeployer" ) );
 		assertNotNull( getBean( "MessageProcessorDeployer" ) );
 		assertNotNull( getBean( "MessagingRuntimePoolDeployer" ) );
 		

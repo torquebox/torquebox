@@ -12,11 +12,11 @@ import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 
-public class MessagingRbParsingDeployer extends AbstractVFSParsingDeployer<MessageProcessorMetaData> {
+public class MessagingTqParsingDeployer extends AbstractVFSParsingDeployer<MessageProcessorMetaData> {
 
-	public MessagingRbParsingDeployer() {
+	public MessagingTqParsingDeployer() {
 		super(MessageProcessorMetaData.class);
-		setName("messaging.rb");
+		setName("messaging.tq");
 		setStage(DeploymentStages.POST_CLASSLOADER);
 		addInput(Ruby.class);
 	}

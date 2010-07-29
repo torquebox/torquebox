@@ -7,7 +7,7 @@
      -->
 
 <!--
-  <bean name="MessagingRbParsingDeployer" class="org.torquebox.messaging.deployers.MessagingRbParsingDeployer"/>
+  <bean name="MessagingTqParsingDeployer" class="org.torquebox.messaging.deployers.MessagingTqParsingDeployer"/>
 -->
   <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer"/>
   
