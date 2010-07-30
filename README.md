@@ -1,7 +1,7 @@
 Requirements
 ------------
 * Maven 3
-* A special jruby-maven-plugins fork (http://github.com/torquebox/jruby-maven-plugins/tree/next), built and installed
+* A special jruby-maven-plugins fork (http://github.com/torquebox/jruby-maven-plugins/tree/next <-- note the 'next' branch!), built and installed
 * Configuration of the JBoss Maven repository in your settings.xml
 
 Building
