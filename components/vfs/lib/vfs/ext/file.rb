@@ -25,7 +25,10 @@ class File
     end
 
     def expand_path(*args)
-      return args[0].to_s.dup if ( args[0] =~ /^(vfszip|vfsfile):/ )
+      if ( args[1] && args[1].to_s =~ /^vfs:/ )
+        return "#{expand_path_without_vfs(args[0], args[1].to_s[4..-1])}" 
+      end
+      return args[0].to_s.dup if ( args[0] =~ /^vfs:/ )
       expand_path_without_vfs(*args) 
     end
 

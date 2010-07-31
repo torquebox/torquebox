@@ -38,6 +38,17 @@ describe "File extensions for VFS" do
     File.writable?( url ).should be_true
   end
 
+  it "should expand paths relative to VFS urls as absolute" do
+    absolute = File.expand_path("db/development.sqlite3", "vfs:/path/to/app")
+    absolute.should eql("/path/to/app/db/development.sqlite3")
+  end
+
+  it "should expand paths relative to VFS pathnames as absolute" do
+    require 'pathname'
+    absolute = File.expand_path("db/development.sqlite3", Pathname.new("vfs:/path/to/app"))
+    absolute.should eql("/path/to/app/db/development.sqlite3")
+  end
+
   [ :absolute, :relative, :vfs ].each do |style|
     describe "with #{style} paths" do
       case ( style )
