@@ -71,7 +71,7 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 		try {
 			VirtualFile scanRoot = unit.getRoot().getChild(this.path);
 
-			if (scanRoot == null) {
+			if (scanRoot == null || !scanRoot.exists()) {
 				return;
 			}
 			
