@@ -51,7 +51,7 @@
       <id>assemblage-present</id>
       <activation>
         <file>
-          <exists>./../../assemblage/assembly/target/stage/</exists>
+          <exists>./../../../assemblage/assembly/target/stage/</exists>
         </file>
       </activation>
       <build>
