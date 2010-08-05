@@ -49,7 +49,7 @@ public class MessagingTqParsingDeployer extends AbstractVFSParsingDeployer<Messa
 				}
 			}
 		} catch (RaiseException e) {
-			log.error("error reading messaging.rb", e);
+			log.error("error reading messaging.tq", e);
 			log.info(e.getException());
 			throw e;
 		}
