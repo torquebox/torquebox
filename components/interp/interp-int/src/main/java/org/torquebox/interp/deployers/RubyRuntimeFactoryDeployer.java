@@ -32,11 +32,12 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
+import org.jboss.kernel.spi.dependency.KernelController;
+import org.jruby.Ruby;
 import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
-import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.mc.AttachmentUtils;
 
 /**
@@ -62,7 +63,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 	public RubyRuntimeFactoryDeployer() {
 		super(RubyRuntimeMetaData.class);
 		setStage(DeploymentStages.CLASSLOADER);
-		addOutput(BeanMetaData.class);
+		addOutput(Ruby.class);
 	}
 
 	/**
@@ -98,7 +99,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		String beanName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyRuntimeFactoryImpl.class.getName() );
 		
-		builder.addConstructorParameter( RuntimeInitializer.class.getName(), metaData.getRuntimeInitializer() );
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( metaData.getRuntimeInitializer() );
 		
 		List<String> loadPaths = new ArrayList<String>();
 
@@ -106,26 +107,28 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 			loadPaths.add(loadPath.getURL().toExternalForm());
 		}
 		
-		builder.addPropertyMetaData( "loadPaths", loadPaths );
-		builder.addPropertyMetaData( "kernel", this.kernel );
-		builder.addPropertyMetaData( "applicationName", unit.getSimpleName() );
-		builder.addPropertyMetaData( "classLoader", unit.getClassLoader() );
-		builder.addPropertyMetaData( "useJRubyHomeEnvVar", this.useJRubyHomeEnvVar );
-
-		AttachmentUtils.attach(unit, builder.getBeanMetaData() );
-
-		/*
+		factory.setLoadPaths( loadPaths );
+		factory.setKernel( this.kernel );
+		factory.setApplicationName( unit.getSimpleName() );
+		factory.setClassLoader( unit.getClassLoader() );
+		factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
+		
+		System.err.println( "RIGHT HERE KERNEL IS: " + this.kernel );
+		KernelController controller = this.kernel.getController();
+		
 		try {
-			long startTime = System.currentTimeMillis();
-			Ruby ruby = factory.create();
-			long endTime = System.currentTimeMillis();
-			log.info("Ruby runtime initialization took " + ((endTime - startTime) / 1000) + "s");
-			unit.addAttachment(Ruby.class, ruby);
-		} catch (Exception e) {
-			throw new DeploymentException(e);
+			controller.install( builder.getBeanMetaData(), factory );
+		} catch (Throwable e) {
+			throw new DeploymentException(e );
 		}
-		*/
-
+		
+		try {
+			Ruby ruby = factory.create(); 
+			unit.addAttachment( Ruby.class, ruby );
+		} catch (Exception e) {
+			throw new DeploymentException( e );
+		}
+		
 	}
 
 }

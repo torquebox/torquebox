@@ -8,7 +8,6 @@ import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.exceptions.RaiseException;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 
@@ -18,20 +17,14 @@ public class MessagingTqParsingDeployer extends AbstractVFSParsingDeployer<Messa
 		super(MessageProcessorMetaData.class);
 		setName("messaging.tq");
 		setStage(DeploymentStages.POST_CLASSLOADER);
-		addInput(Ruby.class);
+		addRequiredInput( Ruby.class );
 	}
 
 	@Override
 	protected MessageProcessorMetaData parse(VFSDeploymentUnit unit, VirtualFile file, MessageProcessorMetaData root) throws Exception {
 
 		Ruby ruby = unit.getAttachment(Ruby.class);
-
-		if (ruby == null) {
-			RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
-			ruby = factory.create();
-			unit.addAttachment(Ruby.class, ruby);
-		}
-
+		
 		try {
 			StringBuilder script = new StringBuilder();
 			ruby.getLoadService().require( "torquebox/messaging/metadata_builder" );
