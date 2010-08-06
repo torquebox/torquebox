@@ -130,5 +130,11 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		}
 		
 	}
+	
+	public void undeploy(VFSDeploymentUnit unit, RubyRuntimeMetaData md) {
+	    String beanName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class );
+	    KernelController controller = this.kernel.getController();
+	    controller.uninstall( beanName );
+	}
 
 }

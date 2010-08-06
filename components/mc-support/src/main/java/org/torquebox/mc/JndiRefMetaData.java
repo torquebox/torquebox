@@ -12,7 +12,7 @@ public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final String DEPENDS_JNDI_PREFIX = "jndi:";
+	private static final String DEPENDS_JNDI_PREFIX = "naming:";
 
 	private Context context;
 	private String name;

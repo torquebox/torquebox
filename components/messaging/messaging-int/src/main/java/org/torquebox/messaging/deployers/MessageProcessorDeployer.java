@@ -73,11 +73,11 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 		Context context = new InitialContext();
 
 		//JndiRefMetaData destinationJndiRef = new JndiRefMetaData(context, metaData.getDestinationName());
-		ValueMetaData destinationJndiRef = builder.createInject("jndi:" + metaData.getDestinationName() );
+		ValueMetaData destinationJndiRef = builder.createInject("naming:" + metaData.getDestinationName() );
 		builder.addPropertyMetaData("destination", destinationJndiRef);
 		
 		//JndiRefMetaData connectionFactoryJndiRef = new JndiRefMetaData(context, "/ConnectionFactory");
-		ValueMetaData connectionFactoryJndiRef = builder.createInject("jndi:/ConnectionFactory");
+		ValueMetaData connectionFactoryJndiRef = builder.createInject("naming:/ConnectionFactory");
 		builder.addPropertyMetaData("connectionFactory", connectionFactoryJndiRef);
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
