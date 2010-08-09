@@ -48,7 +48,7 @@ public class TasksDeployer extends AbstractDeployer {
 		
 		MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
 		processorMetaData.setDestinationName( queue.getName() );
-		processorMetaData.setRubyClassName( task.getRubyClassName() );
+		processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
 		AttachmentUtils.multipleAttach(unit, processorMetaData, processorMetaData.getName() );
 	}
 
