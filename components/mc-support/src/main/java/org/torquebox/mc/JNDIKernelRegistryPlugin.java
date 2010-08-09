@@ -45,7 +45,7 @@ public class JNDIKernelRegistryPlugin implements KernelRegistryPlugin
 {
    private static final Logger log = Logger.getLogger(JNDIKernelRegistryPlugin.class);
    
-   public static final String JNDI_DEPENDENCY_PREFIX = "jndi:";
+   public static final String JNDI_DEPENDENCY_PREFIX = "naming:";
    
    private Context context;
    private Hashtable<?, ?> environment;
