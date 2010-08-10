@@ -15,7 +15,7 @@ import org.torquebox.messaging.metadata.TaskMetaData;
 public class TasksDeployer extends AbstractDeployer {
 
 	public TasksDeployer() {
-		setStage( DeploymentStages.REAL );
+	    setStage( DeploymentStages.DESCRIBE );
 		setAllInputs( true );
 		addInput( TaskMetaData.class );
 		addOutput( MessageProcessorMetaData.class );
