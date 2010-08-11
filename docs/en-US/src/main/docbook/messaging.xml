@@ -529,131 +529,76 @@ end</programlisting></para>
         </example></para>
     </section>
 
-    <section id="async-tasks">
-      <title>Tasks</title>
+  </section>
 
-      <para>A special case of message queues is to execute some task
-      asynchronously. In this case, the messaging aspect happens to just be an
-      implementation detail.</para>
+  <section id="async-tasks">
+    <title>Tasks</title>
 
-      <section>
-        <title>Task Classes</title>
+    <para>A special case of message queues is to execute some task
+    asynchronously, perhaps even remotely. Rails developers often want
+    to spawn a potentially long-running task in response to a user
+    request, without forcing the user to wait for its
+    completion. TorqueBox makes this easy.</para>
 
-        <para>Task classes simply implement one or more methods that take a
-        single object payload. It is often advisable to use a Ruby
-        <classname>Hash</classname> for the payload parameter.</para>
+    <section>
+      <title>Task Classes</title>
 
-        <para>The method will be called asynchronously by the server when an
-        object has been enqueued to it.</para>
+      <para>Task classes simply extend
+      <classname>TorqueBox::Messaging::Task</classname> and implement
+      one or more (usually long-running) methods that take a single
+      object payload, a Ruby <classname>Hash</classname>.</para>
 
-        <para><example>
-            <title>Example task class</title>
+      <para>In Rails applications, these tasks should be placed in the
+      <filename>app/tasks/</filename> directory, and be named with a
+      suffix of <filename>_task.rb</filename> on the file, and a
+      suffix of <classname>Task</classname> on the class name.</para>
 
-            <para><programlisting>class EmailerTask
+      <para>Any of the task's methods can be invoked asynchronously by
+      calling the task's class method, <function>async</function>.</para>
+
+      <para><example>
+	<title>Example task class</title>
+
+	<para><programlisting>class EmailerTask &lt; TorqueBox::Messaging::Task
   def send_welcome(payload)
-    address = payload[:address]
+    to = "#{payload[:name]} &lt;#{payload[:address]}&gt;"
     # send welcome email to the user
   end
 
   def send_password_reset(payload)
-    address = payload[:address]
+    email = payload[:address]
     # send password-reset email to the user
   end
 end</programlisting></para>
-          </example></para>
+      </example></para>
 
-        <para>In Rails applications, these tasks should be placed in the
-        <filename>app/tasks/</filename> directory, and be named with a suffix
-        of <filename>_task.rb</filename> on the file, and a suffix of
-        <classname>Task</classname> on the class name.</para>
-      </section>
-
-      <section>
-        <title>Task Queues</title>
-
-        <para>Each task discovered and deployed will also have a matching
-        queue deployed. This queue is not supposed to be directly accessed,
-        and is rather simply an implementation detail of the asynchronous task
-        system.</para>
-      </section>
-
-      <section>
-        <title>Enqueue a task</title>
-
-        <para>Tasks can be enqueued from within an application running inside
-        TorqueBox, or from external scripts.</para>
-      </section>
-
-      <section>
-        <title>Enqueuing from within TorqueBox</title>
-
-        <para>From code running within the TorqueBox server, simply calling
-        the class-level <function>enqueue(...)</function> method on
-        <classname>TorqueBox::Messaging::Tasks</classname> will result in
-        triggering the task consumer on the other end of the queue.</para>
-
-        <para><example>
-            <title>Enqueuing a task within TorqueBox</title>
-
-            <para><programlisting>TorqueBox::Messaging::Tasks.enqueue( 
-  'emailer#send_password_reset', 
-  { :time=&gt;Time.now, :user=&gt;22 } 
-)</programlisting>The <function>enqueue(...)</function> method takes two
-            parameters. The first is a string which specifies the task and the
-            method upon it to execute. The second parameter is the object
-            payload to hand to the task method.</para>
-          </example></para>
-      </section>
-
-      <section>
-        <title>Enqueuing from external scripts</title>
-
-        <para>From scripts running outside of the TorqueBox server, you may
-        still enqueue objects to the tasks running within it. In the case
-        where the external script is running on the same host as the TorqueBox
-        server, you may use the same simple invocation style as above.</para>
-
-        <para>You must include the
-        <package>torquebox-messaging-tasks</package> gem in your
-        script.</para>
-
-        <para><example>
-            <title>Enqueuing a task from external scripts, same host</title>
-
-            <para><programlisting>#!/usr/bin/env jruby
-
-require 'rubygems'
-require 'torquebox-messaging-tasks'
-
-TorqueBox::Messaging::Tasks.enqueue( 
-  'emailer#send_password_reset', 
-  { :time=&gt;Time.now, :user=&gt;22 } 
-)</programlisting></para>
-          </example>In the event you need to configure a tasks client to
-        communicate with another, external message broker, you may use the
-        <classname>TorqueBox::Messaging::Tasks::Client</classname> class, and
-        connect it similar to connecting a generic messaging client.</para>
-
-        <para><example>
-            <title>Enqueuing a task from external scripts, different
-            host</title>
-
-            <para><programlisting>
-#!/usr/bin/env jruby
-
-require 'rubygems'
-require 'torquebox-messaging-tasks'
-
-TorqueBox::Messaging::Tasks::Client.connect( 
-  :naming_provider_url=&gt;'jnp://some.other.host.com:1099/' ) do |client| 
-  
-  client.enqueue( 
-    'emailer#send_password_reset', 
-    { :time=&gt;Time.now, :user=&gt;22 }
-  )
-end</programlisting></para>
-          </example></para>
-      </section>
     </section>
+
+    <section>
+      <title>Invoke a task</title>
+
+      <para>Tasks can be invoked asynchronously from within any
+      application running inside TorqueBox, e.g. your Rails
+      app.</para>
+
+      <para><example>
+	<title>Spawning a task from a Rails controller</title>
+
+	<para><programlisting>class UserController &lt; ApplicationController
+  def register
+    user = User.new(params[:user])
+    ...
+    EmailerTask.async(:send_welcome, :address =&gt; user.email, :name =&gt; user.name)
+  end
+  def reset_password
+    ...
+    EmailerTask.async(:send_password, :address =&gt; params[:email])
+  end
+end</programlisting>The first parameter to the <function>async(...)</function> class
+method is a symbol indicating the method to execute asynchronously.
+Optional hash pairs comprising the payload of the message follow.</para>
+      </example></para>
+    </section>
+
   </section>
 </chapter>
