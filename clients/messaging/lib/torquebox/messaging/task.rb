@@ -10,10 +10,10 @@ module TorqueBox
         '/queues/torquebox/tasks/' + name[0...-4].downcase
       end
 
-      def self.async(method, payload)
-        TorqueBox::Messaging::Client.connect(true, :auto) do |session|
-          queue    = session.createQueue( queue_name )
-          producer = session.createProducer( queue )
+      def self.async(method, payload={})
+        TorqueBox::Messaging::Client.connect() do |session|
+          queue    = session.create_queue( queue_name )
+          producer = session.create_producer( queue )
 
           message = session.create_text_message
           message.set_string_property( 'method', method.to_s )
