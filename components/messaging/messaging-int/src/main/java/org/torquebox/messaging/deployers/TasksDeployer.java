@@ -14,42 +14,39 @@ import org.torquebox.messaging.metadata.TaskMetaData;
 
 public class TasksDeployer extends AbstractDeployer {
 
-	public TasksDeployer() {
-	    setStage( DeploymentStages.DESCRIBE );
-		setAllInputs( true );
-		addInput( TaskMetaData.class );
-		addOutput( MessageProcessorMetaData.class );
-		addOutput( QueueMetaData.class );
-	}
+    public TasksDeployer() {
+        setStage( DeploymentStages.DESCRIBE );
+        setAllInputs( true );
+        addInput( TaskMetaData.class );
+        addOutput( MessageProcessorMetaData.class );
+        addOutput( QueueMetaData.class );
+    }
 
-	@Override
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends TaskMetaData> allTasks = unit.getAllMetaData( TaskMetaData.class );
-		
-		for ( TaskMetaData each : allTasks ) {
-			deploy( unit, each );
-		}
-		
-	}
+    @Override
+        public void deploy(DeploymentUnit unit) throws DeploymentException {
+        Set<? extends TaskMetaData> allTasks = unit.getAllMetaData( TaskMetaData.class );
+                
+        for ( TaskMetaData each : allTasks ) {
+            deploy( unit, each );
+        }
+                
+    }
 
-	protected void deploy(DeploymentUnit unit, TaskMetaData task) throws DeploymentException {
-		String baseQueueName = task.getRubyClassName();
-		
-		if ( baseQueueName.endsWith( "Task" ) ) {
-			baseQueueName = baseQueueName.substring( 0, baseQueueName.length() - 4 );
-		}
-		
-		baseQueueName = StringUtils.underscore(baseQueueName);
-		
-		QueueMetaData queue = new QueueMetaData();
-		queue.setName( "/queues/torquebox/tasks/" + baseQueueName );
-		
-			AttachmentUtils.multipleAttach(unit, queue, queue.getName() );
-		
-		MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
-		processorMetaData.setDestinationName( queue.getName() );
-		processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
-		AttachmentUtils.multipleAttach(unit, processorMetaData, processorMetaData.getName() );
-	}
+    protected void deploy(DeploymentUnit unit, TaskMetaData task) throws DeploymentException {
+        String baseQueueName = task.getRubyClassName();
+        if ( baseQueueName.endsWith( "Task" ) ) {
+            baseQueueName = baseQueueName.substring( 0, baseQueueName.length() - 4 );
+        }
+        baseQueueName = StringUtils.underscore(baseQueueName);
+
+        QueueMetaData queue = new QueueMetaData();
+        queue.setName( "/queues/torquebox/tasks/" + baseQueueName );
+        AttachmentUtils.multipleAttach(unit, queue, queue.getName() );
+                
+        MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
+        processorMetaData.setDestinationName( queue.getName() );
+        processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
+        AttachmentUtils.multipleAttach(unit, processorMetaData, processorMetaData.getName() );
+    }
 
 }
