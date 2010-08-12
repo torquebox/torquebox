@@ -15,8 +15,8 @@ module TorqueBox
         @server = Java::org.jboss.bootstrap.api.mc.server::MCServerFactory.createServer( @classloader )
   
         descriptors = @server.configuration.bootstrap_descriptors
-        descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.class_loading_descriptor
-        descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.vdf_descriptor
+        # descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.class_loading_descriptor
+        # descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.vdf_descriptor
         descriptors << org.jboss.bootstrap.api.descriptor::FileBootstrapDescriptor.new( java.io::File.new( File.join( File.dirname(__FILE__), 'foundation-bootstrap-jboss-beans.xml' ) ) )
         @enablers = []
         enable( FoundationEnabler )
