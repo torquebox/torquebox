@@ -75,6 +75,13 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.jboss.scanning</groupId>
+      <artifactId>scanning-plugins</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

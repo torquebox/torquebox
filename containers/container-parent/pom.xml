@@ -14,6 +14,13 @@
   <name>TorqueBox Container Parent</name>
   <description></description>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.scanning</groupId>
+      <artifactId>scanning-plugins</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <build>
     <pluginManagement>
