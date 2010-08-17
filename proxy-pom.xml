@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.torquebox</groupId>
+  <artifactId>rubygems-proxy</artifactId>
+  <version>1.0.0.Beta21</version>
+  <packaging>pom</packaging>
+  <name>TorqueBox</name>
+  <url>http://www.torquebox.org/</url>
+  <inceptionYear>2008</inceptionYear>
+  <organization>
+    <name>Red Hat, Inc.</name>
+    <url>http://redhat.com</url>
+  </organization>
+
+  <description>
+    The TorqueBox Ruby Application Platform
+  </description>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>jetty-maven-plugin</artifactId>
+        <version>7.1.0.v20100505</version>
+        <configuration>
+          <reload>false</reload>
+          <webApp>/Users/bob/.m2/repository/de/saumya/mojo/gem-proxy/0.2-SNAPSHOT/gem-proxy-0.2-SNAPSHOT.war</webApp>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
