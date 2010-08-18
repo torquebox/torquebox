@@ -41,6 +41,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		assertNotNull(rubyRailsEnv);
 		assertNotNil(rubyRailsEnv);
 		assertEquals("development", rubyRailsEnv.toString());
+		ruby.tearDown(false);
 	}
 
 	@Test(expected = RaiseException.class)
@@ -57,6 +58,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
 		String script = "class Foo; def self.fetch(); NoSuchModel; end; end; Foo.fetch";
 		Object noSuchModel = ruby.evalScriptlet(script);
+		ruby.tearDown(false);
 	}
 
 	@Test
@@ -73,6 +75,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
 		RubyModule bookModel = ruby.getClassFromPath("Book");
 		assertNotNil(bookModel);
+		ruby.tearDown(false);
 
 	}
 	@Test
@@ -90,6 +93,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		Object result = ruby.evalScriptlet(script);
 		
 		System.err.println( "result=" + result );
+		ruby.tearDown(false);
 		
 	}
 }
