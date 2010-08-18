@@ -5,6 +5,7 @@ class Dir
 
     alias_method :open_before_vfs, :open
     alias_method :glob_before_vfs, :glob
+    alias_method :mkdir_before_vfs, :mkdir
 
     def open(str,&block)
       #if ( ::File.exist_without_vfs?( str.to_str ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( str.to_str ) )
@@ -103,6 +104,10 @@ class Dir
       end
     end
 
+    def mkdir(path, mode=0777)
+      real_path = path =~ /^vfs:/ ? path[4..-1] : path
+      mkdir_before_vfs( real_path, mode )
+    end
   end
 end 
 
