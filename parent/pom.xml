@@ -210,6 +210,7 @@
   </properties>
 
   <repositories>
+<!--
     <repository>
       <id>rubygems</id>
       <releases>
@@ -223,10 +224,11 @@
       <url>http://rubygems.org/gems/</url>
       <layout>gem</layout>
     </repository>
+-->
     <repository>
       <id>rubygems-proxy</id>
       <name>Rubygems Proxy</name>
-      <url>http://localhost:8080/releases</url>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
       <layout>default</layout>
       <releases>
         <enabled>true</enabled>
