@@ -18,7 +18,7 @@
   </category>
 
   <root>
-    <priority value="ERROR"/>
+    <priority value="TRACE"/>
     <appender-ref ref="TEST.CONSOLE"/>
   </root>
 

@@ -45,7 +45,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>jboss.web</groupId>
+      <groupId>org.jboss.web</groupId>
       <artifactId>jbossweb</artifactId>
       <scope>provided</scope>
     </dependency>
