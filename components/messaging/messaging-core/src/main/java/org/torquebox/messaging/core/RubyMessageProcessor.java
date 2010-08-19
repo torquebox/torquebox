@@ -29,7 +29,7 @@ public class RubyMessageProcessor implements MessageListener {
 	private ConnectionFactory connectionFactory;
 	private Session session;
 	private MessageConsumer consumer;
-
+	private boolean alwaysReload;
 	private String rubyClassName;
 	private RubyRuntimePool rubyRuntimePool;
 
@@ -75,6 +75,14 @@ public class RubyMessageProcessor implements MessageListener {
 		return this.destination;
 	}
 
+	public void setAlwaysReload(boolean alwaysReload) {
+		this.alwaysReload = alwaysReload;
+	}
+
+	public boolean isAlwaysReload() {
+		return this.alwaysReload;
+	}
+	
 	public void setMessageSelector(String messageSelector) {
 		this.messageSelector = messageSelector;
 	}
@@ -122,6 +130,7 @@ public class RubyMessageProcessor implements MessageListener {
 		this.componentResolver.setRubyClassName(this.rubyClassName);
 		this.componentResolver.setRubyRequirePath(this.rubyRequirePath);
 		this.componentResolver.setComponentName("message-processor." + this.rubyClassName);
+		this.componentResolver.setAlwaysReload(isAlwaysReload());
 
 		this.connection = this.connectionFactory.createConnection();
 

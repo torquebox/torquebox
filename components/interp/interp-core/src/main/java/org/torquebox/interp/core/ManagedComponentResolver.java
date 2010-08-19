@@ -8,7 +8,8 @@ import org.jruby.runtime.builtin.IRubyObject;
 public abstract class ManagedComponentResolver implements RubyComponentResolver {
 
 	private String componentName;
-
+	private boolean alwaysReload;
+	
 	public ManagedComponentResolver() {
 	}
 
@@ -20,6 +21,14 @@ public abstract class ManagedComponentResolver implements RubyComponentResolver 
 		return this.componentName;
 	}
 
+	public boolean isAlwaysReload() {
+		return alwaysReload;
+	}
+
+	public void setAlwaysReload(boolean alwaysReload) {
+		this.alwaysReload = alwaysReload;
+	}
+
 	@Override
 	public IRubyObject resolve(Ruby ruby) throws Exception {
 		synchronized (ruby) {
@@ -27,7 +36,7 @@ public abstract class ManagedComponentResolver implements RubyComponentResolver 
 			RubyClass managerClass = (RubyClass) ruby.getClassFromPath("TorqueBox::ComponentManager");
 			IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, managerClass, "lookup_component", new Object[] { this.componentName }, IRubyObject.class);
 
-			if (component == null || component.isNil()) {
+			if (isAlwaysReload() || component == null || component.isNil()) {
 				component = createComponent(ruby);
 				if (component != null) {
 					JavaEmbedUtils.invokeMethod(ruby, managerClass, "register_component", new Object[] { this.componentName, component }, void.class);
