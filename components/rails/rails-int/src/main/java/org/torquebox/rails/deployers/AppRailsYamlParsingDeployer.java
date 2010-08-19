@@ -43,6 +43,7 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
+import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rack.deployers.WebYamlParsingDeployer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
@@ -123,12 +124,12 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		if (rackMetaData != null) {
 			attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		}
-
-		/*
-		 * if (sipMetaData != null) {
-		 * attachments.addAttachment(SipApplicationMetaData.class, sipMetaData);
-		 * }
-		 */
+		
+		EnvironmentMetaData envMetaData = new EnvironmentMetaData();
+		envMetaData.setEnvironmentName( railsMetaData.getRailsEnv() );
+		envMetaData.setDevelopmentMode( railsMetaData.getRailsEnv().equals( "development" ) );
+		attachments.addAttachment(EnvironmentMetaData.class, envMetaData);
+		
 
 		return deployment;
 	}

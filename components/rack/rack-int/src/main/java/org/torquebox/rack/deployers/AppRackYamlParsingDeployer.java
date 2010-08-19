@@ -47,6 +47,7 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
+import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
@@ -109,6 +110,11 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 		attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		attachments.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
+		
+		EnvironmentMetaData envMetaData = new EnvironmentMetaData();
+		envMetaData.setEnvironmentName( rackMetaData.getRackEnv() );
+		envMetaData.setDevelopmentMode( rackMetaData.getRackEnv().equals( "development" ) );
+		attachments.addAttachment(EnvironmentMetaData.class, envMetaData);
 
 		return deployment;
 	}
