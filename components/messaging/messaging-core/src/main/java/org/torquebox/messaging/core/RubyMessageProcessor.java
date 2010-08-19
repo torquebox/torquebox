@@ -17,27 +17,24 @@ import org.jruby.RubyString;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
-import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
+import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyMessageProcessor implements MessageListener {
 
 	private static final Logger log = Logger.getLogger(RubyMessageProcessor.class);
 
+	private String name;
 	private Destination destination;
 	private String messageSelector;
 	private ConnectionFactory connectionFactory;
 	private Session session;
 	private MessageConsumer consumer;
-	private boolean alwaysReload;
-	private String rubyClassName;
 	private RubyRuntimePool rubyRuntimePool;
 
 	private Connection connection;
 
-	private String rubyRequirePath;
-
-	private InstantiatingRubyComponentResolver componentResolver;
+	private RubyComponentResolver componentResolver;
 
 	private byte[] rubyConfig;
 
@@ -48,25 +45,25 @@ public class RubyMessageProcessor implements MessageListener {
 	}
 
 	public String toString() {
-		return "[MessageDrivenConsumer: rubyClassName=" + this.rubyClassName + "]";
+		return "[MessageDrivenConsumer: " + getName() + "]";
 	}
 
-	public void setRubyClassName(String rubyClassName) {
-		this.rubyClassName = rubyClassName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public String getRubyClassName() {
-		return this.rubyClassName;
+	public String getName() {
+		return this.name;
 	}
 
-	public void setRubyRequirePath(String rubyRequirePath) {
-		this.rubyRequirePath = rubyRequirePath;
+	public void setComponentResolver(RubyComponentResolver resolver) {
+		this.componentResolver = resolver;
 	}
 
-	public String getRubyRequirePath() {
-		return this.rubyRequirePath;
+	public RubyComponentResolver getComponentResolver() {
+		return this.componentResolver;
 	}
-
+	
 	public void setDestination(Destination destination) {
 		this.destination = destination;
 	}
@@ -75,14 +72,6 @@ public class RubyMessageProcessor implements MessageListener {
 		return this.destination;
 	}
 
-	public void setAlwaysReload(boolean alwaysReload) {
-		this.alwaysReload = alwaysReload;
-	}
-
-	public boolean isAlwaysReload() {
-		return this.alwaysReload;
-	}
-	
 	public void setMessageSelector(String messageSelector) {
 		this.messageSelector = messageSelector;
 	}
@@ -125,12 +114,6 @@ public class RubyMessageProcessor implements MessageListener {
 
 	public void create() throws JMSException {
 		log.info("creating for " + getDestination());
-
-		this.componentResolver = new InstantiatingRubyComponentResolver();
-		this.componentResolver.setRubyClassName(this.rubyClassName);
-		this.componentResolver.setRubyRequirePath(this.rubyRequirePath);
-		this.componentResolver.setComponentName("message-processor." + this.rubyClassName);
-		this.componentResolver.setAlwaysReload(isAlwaysReload());
 
 		this.connection = this.connectionFactory.createConnection();
 
