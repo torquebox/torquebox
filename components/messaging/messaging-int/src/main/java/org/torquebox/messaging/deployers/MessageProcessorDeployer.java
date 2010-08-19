@@ -25,14 +25,14 @@ import org.torquebox.messaging.core.RubyMessageProcessor;
 import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
-import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.metadata.EnvironmentMetaData;
 
 public class MessageProcessorDeployer extends AbstractDeployer {
 
 	public MessageProcessorDeployer() {
 		setStage(DeploymentStages.REAL);
 		addInput(MessageProcessorMetaData.class);
-		addInput(RailsApplicationMetaData.class);
+		addInput(EnvironmentMetaData.class);
 		addOutput(BeanMetaData.class);
 		setRelativeOrder(1000);
 	}
@@ -82,10 +82,10 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 		ValueMetaData connectionFactoryJndiRef = builder.createInject("naming:/ConnectionFactory");
 		builder.addPropertyMetaData("connectionFactory", connectionFactoryJndiRef);
 
-		// Check for Rails development environment for class reloading
-		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-		if (railsMetaData != null) {
-			builder.addPropertyMetaData("alwaysReload", "development".equals(railsMetaData.getRailsEnv()));
+		// Check development environment for class reloading
+		EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+		if (envMetaData != null) {
+			builder.addPropertyMetaData("alwaysReload", envMetaData.isDevelopmentMode());
 		}
 
 		BeanMetaData beanMetaData = builder.getBeanMetaData();
