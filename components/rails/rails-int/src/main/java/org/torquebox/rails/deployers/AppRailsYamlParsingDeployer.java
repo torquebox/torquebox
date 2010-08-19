@@ -67,11 +67,11 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 	public AppRailsYamlParsingDeployer() {
 		super(RailsApplicationMetaData.class);
-		//addOutput(RackWebApplicationMetaData.class);
-		addOutput( BeanMetaData.class );
+		// addOutput(RackWebApplicationMetaData.class);
+		addOutput(BeanMetaData.class);
 		// addOutput(SipApplicationMetaData.class);
 		setSuffix("-rails.yml");
-		//setStage(DeploymentStages.REAL);
+		// setStage(DeploymentStages.REAL);
 		// setTopLevelOnly(true);
 	}
 
@@ -124,12 +124,14 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		if (rackMetaData != null) {
 			attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		}
-		
+
 		EnvironmentMetaData envMetaData = new EnvironmentMetaData();
-		envMetaData.setEnvironmentName( railsMetaData.getRailsEnv() );
-		envMetaData.setDevelopmentMode( railsMetaData.getRailsEnv().equals( "development" ) );
+		String railsEnv = railsMetaData.getRailsEnv();
+		if (railsEnv != null) {
+			envMetaData.setEnvironmentName(railsMetaData.getRailsEnv());
+			envMetaData.setDevelopmentMode(railsMetaData.getRailsEnv().equals("development"));
+		}
 		attachments.addAttachment(EnvironmentMetaData.class, envMetaData);
-		
 
 		return deployment;
 	}
@@ -155,10 +157,10 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 				String railsEnv = application.get(RAILS_ENV_KEY).toString();
 
 				VirtualFile railsRootFile = VFS.getChild(railsRoot);
-				
-				log.info( "RAILS_ROOT=" + railsRootFile );
-				log.info( "RAILS_ROOT.uri=" + railsRootFile.toURI() );
-				log.info( "RAILS_ROOT.url=" + railsRootFile.toURL() );
+
+				log.info("RAILS_ROOT=" + railsRootFile);
+				log.info("RAILS_ROOT.uri=" + railsRootFile.toURI());
+				log.info("RAILS_ROOT.url=" + railsRootFile.toURL());
 				// TODO close handle on undeploy
 				// VFS.mountReal(new File(railsRoot), railsRootFile );
 
@@ -169,8 +171,8 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 				poolBeanName = "torquebox." + railsRootFile.getName() + ".RackApplicationPool";
 			}
 
-			RackApplicationMetaData rackMetaData = WebYamlParsingDeployer.parse( unit, web, null );
-			
+			RackApplicationMetaData rackMetaData = WebYamlParsingDeployer.parse(unit, web, null);
+
 			/*
 			 * SipApplicationMetaData sipMetaData = null;
 			 * 

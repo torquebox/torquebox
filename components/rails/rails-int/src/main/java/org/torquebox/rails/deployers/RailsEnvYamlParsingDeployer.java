@@ -30,6 +30,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
@@ -57,6 +58,15 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 				RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
 				railsAppMetaData = parse(unit, file, railsAppMetaData);
 				unit.addAttachment(RailsApplicationMetaData.class, railsAppMetaData);
+				EnvironmentMetaData envMetaData = unit.getAttachment( EnvironmentMetaData.class );
+				if ( envMetaData == null ) {
+					envMetaData = new EnvironmentMetaData();
+					String railsEnv = railsAppMetaData.getRailsEnv();
+					if ( railsEnv != null ) {
+						envMetaData.setEnvironmentName( railsEnv );
+						envMetaData.setDevelopmentMode( railsEnv.equals( "development" ) );
+					}
+				}
 			} catch (Exception e) {
 				throw new DeploymentException(e);
 			}
