@@ -37,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rails-metadata</artifactId>
+      <artifactId>torquebox-base-metadata</artifactId>
       <version>${project.version}</version>
     </dependency>
 <!--
