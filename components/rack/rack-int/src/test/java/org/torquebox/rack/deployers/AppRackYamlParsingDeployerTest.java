@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
-import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
@@ -67,10 +66,5 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		assertNotNull( rubyRuntimeMetaData );
 		assertNotNull( rubyRuntimeMetaData.getRuntimeInitializer() );
 		assertTrue( rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
-		
-		EnvironmentMetaData envMetaData = attachments.getAttachment(EnvironmentMetaData.class );
-		assertNotNull( envMetaData );
-		assertFalse( envMetaData.isDevelopmentMode() );
-		assertEquals( "test", envMetaData.getEnvironmentName() );
 	}
 }

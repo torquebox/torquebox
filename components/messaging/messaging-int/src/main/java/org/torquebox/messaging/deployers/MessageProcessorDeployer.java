@@ -112,6 +112,9 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 		EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
 		if (envMetaData != null) {
 			result.setAlwaysReload(envMetaData.isDevelopmentMode());
+			log.info(metaData.getRubyClassName() + " alwaysReload=" + envMetaData.isDevelopmentMode());
+		} else {
+			log.warn("No EnvironmentMetaData found for " + metaData.getRubyClassName());
 		}
 		return result;
 	}		
