@@ -32,7 +32,6 @@ import org.jboss.deployers.spi.structure.ContextInfo;
 import org.jboss.deployers.vfs.spi.structure.StructureContext;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.vdf.AbstractRubyStructureDeployer;
-import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
 /**
@@ -104,12 +103,6 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 		MutableAttachments attachments = (MutableAttachments) context.getPredeterminedManagedObjects();
 		RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData(structureContext.getRoot() );
 		attachments.addAttachment(RailsApplicationMetaData.class, railsAppMetaData);
-		
-		EnvironmentMetaData envMetaData = new EnvironmentMetaData();
-		envMetaData.setEnvironmentName( railsAppMetaData.getRailsEnv() );
-		envMetaData.setDevelopmentMode( railsAppMetaData.getRailsEnv().equals( "development" ) );
-		attachments.addAttachment(EnvironmentMetaData.class, envMetaData);
-
 	}
 
 	@Override
