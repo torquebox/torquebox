@@ -99,4 +99,26 @@ public class InstantiatingRubyComponentResolverTest {
 		assertNotNull( componentTwo );
 		assertEquals( "ComponentClassTwo", componentTwo.getMetaClass().getName() );
 	}
+
+	/** Ensure that repeated resolutions resolve to different objects when always reloading. */
+	@Test
+	public void testAlwaysReload() throws Exception {
+		InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+		
+		this.ruby.evalScriptlet( "class ComponentClass; end" );
+		resolver.setComponentName( "component-foo" );
+		resolver.setRubyClassName( "ComponentClass" );
+		resolver.setAlwaysReload( true );
+		
+		IRubyObject component = resolver.resolve( this.ruby );
+		assertNotNull( component );
+		assertEquals( "ComponentClass", component.getMetaClass().getName() );
+		
+		IRubyObject componentToo = resolver.resolve( this.ruby );
+		assertNotNull( componentToo );
+		
+		assertNotSame( component, componentToo );
+	}
+	
+	
 }
