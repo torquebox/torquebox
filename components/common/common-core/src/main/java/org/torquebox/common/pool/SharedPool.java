@@ -108,11 +108,11 @@ public class SharedPool<T> implements Pool<T> {
 	}
 
 	/**
-	 * Start the pool.
+	 * Create the pool.
 	 * 
 	 * @throws Exception if an error occurs starting the pool.
 	 */
-	public void start() throws Exception {
+	public void create() throws Exception {
 		if (this.instance != null) {
 			return;
 		}
@@ -122,6 +122,18 @@ public class SharedPool<T> implements Pool<T> {
 		}
 
 		this.instance = factory.create();
+	}
+	
+	/** 
+	 * Destroy the pool.
+	 */
+	public void destroy() {
+		System.err.println( "BOB: DESTROY POOL" );
+		if ( this.factory != null && this.instance != null ) {
+			this.factory.dispose( this.instance );
+		}
+		this.instance = null;
+		this.factory = null;
 	}
 
 	@Override

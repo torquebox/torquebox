@@ -25,9 +25,10 @@ import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -86,6 +87,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 	/** Should environment $JRUBY_HOME be considered? */
 	private boolean useJRubyHomeEnvVar = true;
+	
+	private Set<Ruby> undisposed = new HashSet<Ruby>();
 
 	/**
 	 * Construct.
@@ -302,6 +305,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		runtime.getLoadService().require("rubygems");
 		return runtime;
 	}
+	
+	@Override
+	public synchronized void dispose(Ruby instance) {
+		if ( undisposed.remove( instance ) ) {
+			instance.tearDown( false );
+		}
+	}
 
 	private void setUpConstants(Ruby runtime, String applicationName) {
 		runtime.evalScriptlet("require %q(org/torquebox/interp/core/runtime_constants)\n");
@@ -389,4 +399,12 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	public List<String> getLoadPaths() {
 		return this.loadPaths;
 	}
+	
+	public synchronized void destroy() {
+		for ( Ruby ruby : undisposed ) {
+			dispose( ruby );
+		}
+	}
+
+
 }

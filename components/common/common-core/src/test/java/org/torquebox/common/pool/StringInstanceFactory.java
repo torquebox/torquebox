@@ -11,4 +11,9 @@ public class StringInstanceFactory implements InstanceFactory<String> {
 		return "Instance-" + (++counter);
 	}
 
+	@Override
+	public void dispose(String instance) {
+		// no-op
+	}
+
 }

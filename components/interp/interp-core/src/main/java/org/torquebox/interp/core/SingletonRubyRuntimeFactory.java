@@ -24,4 +24,10 @@ public class SingletonRubyRuntimeFactory implements RubyRuntimeFactory {
 		return getRuby();
 	}
 
+	@Override
+	public void dispose(Ruby instance) {
+		// no-op, we didn't create the ruby.
+	}
+	
+
 }

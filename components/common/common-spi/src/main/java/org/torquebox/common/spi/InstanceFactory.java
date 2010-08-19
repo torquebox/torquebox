@@ -19,5 +19,7 @@ public interface InstanceFactory<T> {
 	@Create(ignored=true)
 	T create() throws Exception;
 	
+	void dispose(T instance);
+	
 
 }
