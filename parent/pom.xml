@@ -210,21 +210,6 @@
   </properties>
 
   <repositories>
-<!--
-    <repository>
-      <id>rubygems</id>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>ignore</checksumPolicy>
-      </releases>
-      <snapshots>
-        <updatePolicy>never</updatePolicy>
-        <enabled>false</enabled>
-      </snapshots>
-      <url>http://rubygems.org/gems/</url>
-      <layout>gem</layout>
-    </repository>
--->
     <repository>
       <id>rubygems-proxy</id>
       <name>Rubygems Proxy</name>
@@ -242,6 +227,19 @@
 
   <!-- Plugin Repositories -->
   <pluginRepositories>
+    <pluginRepository>
+      <id>sonatype-snapshots</id>
+      <name>Sonatype Snapshots Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </pluginRepository>
   </pluginRepositories>
 
   <dependencies>

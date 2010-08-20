@@ -41,7 +41,6 @@
       <plugin>
         <groupId>org.jboss.maven.plugins</groupId>
         <artifactId>maven-jdocbook-plugin</artifactId>
-        <version>2.1.2</version>
         <extensions>true</extensions>
         <dependencies>
           <dependency>
