@@ -101,8 +101,8 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
       installation.</para>
 
       <para>You can also run TorqueBox using your own install of JRuby. You 
-      will need to ensure that the latest TorqueBox gems are installed under
-      your JRuby:<screen>cd $HOME/torquebox-current/gems
+      will need to ensure that the gems that are included with the bundled JRuby
+      installed under your JRuby:<screen>cd $HOME/torquebox-current/jruby/lib/ruby/gems/1.8/cache
 gem install *.gem</screen>You will also need to set $JRUBY_HOME to point to 
       your JRuby installation.</para>
 
