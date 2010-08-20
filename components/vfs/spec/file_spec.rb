@@ -49,6 +49,11 @@ describe "File extensions for VFS" do
     absolute.should eql("/path/to/app/db/development.sqlite3")
   end
 
+  it "should handle vfs urls as readable" do
+    File.readable?( __FILE__ ).should be_true
+    File.readable?( "vfs:#{__FILE__}" ).should be_true
+  end
+    
   [ :absolute, :relative, :vfs ].each do |style|
     describe "with #{style} paths" do
       case ( style )

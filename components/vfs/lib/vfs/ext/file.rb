@@ -12,7 +12,7 @@ class File
     alias_method :file_without_vfs?,       :file?
     alias_method :expand_path_without_vfs, :expand_path
     alias_method :unlink_without_vfs,      :unlink
-
+    alias_method :readable_without_vfs?,   :readable?
 
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
@@ -30,6 +30,10 @@ class File
       end
       return args[0].to_s.dup if ( args[0] =~ /^vfs:/ )
       expand_path_without_vfs(*args) 
+    end
+
+    def readable?(filename)
+      readable_without_vfs? filename =~ /^vfs:/ ? filename[4..-1] : filename
     end
 
     def unlink(*file_names)
