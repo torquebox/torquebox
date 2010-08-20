@@ -1,5 +1,4 @@
 
-require 'torquebox/container/foundation'
 require 'torquebox/messaging/message_processor_host'
 
 describe TorqueBox::Messaging::MessageProcessorHost do

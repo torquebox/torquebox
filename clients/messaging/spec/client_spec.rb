@@ -4,10 +4,6 @@ require 'org.torquebox.torquebox-messaging-container'
 require 'org.torquebox.torquebox-naming-container'
 require 'org.torquebox.torquebox-container-foundation'
 
-require 'torquebox/container/foundation'
-require 'torquebox/naming/naming_service'
-require 'torquebox/messaging/message_broker'
-
 require 'torquebox/messaging/client'
 
 describe TorqueBox::Messaging::Client do

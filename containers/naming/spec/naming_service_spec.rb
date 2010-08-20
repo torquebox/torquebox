@@ -1,10 +1,9 @@
 
-require 'torquebox/container/foundation'
+require 'org.torquebox.torquebox-naming-client'
+
 require 'torquebox/naming/naming_service'
-require 'torquebox/naming'
 
 require 'socket'
-
 
 describe TorqueBox::Naming::NamingService do
 

@@ -1,8 +1,8 @@
 
-require 'torquebox/container/foundation'
-require 'torquebox/naming/naming_service'
+require 'org.torquebox.torquebox-naming-container'
+require 'org.torquebox.torquebox-naming-client'
+
 require 'torquebox/messaging/message_broker'
-require 'torquebox/naming'
 
 describe TorqueBox::Messaging::MessageBroker do
 
