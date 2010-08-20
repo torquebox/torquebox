@@ -99,6 +99,22 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
       commands such as <command>rake</command>, <command>gem</command>, and
       <command>rails</command> will load from the TorqueBox-provided JRuby
       installation.</para>
+
+      <para>You can also run TorqueBox using your own install of JRuby. You 
+      will need to ensure that the latest TorqueBox gems are installed under
+      your JRuby:<screen>cd $HOME/torquebox-current/gems
+gem install *.gem</screen>You will also need to set $JRUBY_HOME to point to 
+      your JRuby installation.</para>
+
+      <para><command>Note:</command> if you are going to run a non-bundled 
+      JRuby with a beta build of TorqueBox, it is recommended that you either 
+      use a separate <ulink url="http://rvm.beginrescueend.com">rvm</ulink> 
+      <ulink url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink>
+      for each beta build, or be sure to reinstall the TorqueBox 
+      gems for the latest beta. Rubygems does not support the 
+      Beta<replaceable>X</replaceable> naming scheme, so sees all of the 
+      different betas of a version as equivalent.</para>
+
     </section>
   </section>
 </chapter>
