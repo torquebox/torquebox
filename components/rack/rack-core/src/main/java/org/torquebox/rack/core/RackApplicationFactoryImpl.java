@@ -49,6 +49,7 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
 
 	public RackApplication createRackApplication(Ruby ruby) {
 
+		System.err.println( "BOB: createRackApplication" );
 		IRubyObject rubyRackApp = null;
 		RackApplication rackApp = null;
 

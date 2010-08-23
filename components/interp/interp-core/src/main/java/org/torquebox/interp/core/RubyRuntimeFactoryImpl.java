@@ -239,30 +239,19 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 				String extraPath = jrubyHome.substring(bangLoc + 1);
 
-				log.info("jarPath=" + jarPath);
-				log.info("extraPath=" + extraPath);
 				VirtualFile vfsJar = VFS.getChild(jarPath);
 
-				log.info("vfsJar=" + vfsJar);
-				log.info("vfsJar.exists=" + vfsJar.exists());
-				log.info("vfsJar.isDirectory=" + vfsJar.isDirectory());
-				log.info("CHILDREN: " + vfsJar.getChildren());
 				if (vfsJar.exists()) {
 					if (!vfsJar.isDirectory()) {
 						ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 						TempFileProvider tempFileProvider = TempFileProvider.create("jruby.home", executor);
-						log.info("mounting in-place: " + vfsJar);
 						VFS.mountZip(vfsJar, vfsJar, tempFileProvider);
-						log.info("mounted in-place: " + vfsJar);
 					}
 
 					if (vfsJar.isDirectory()) {
-						log.info("figuring vfsJrubyHome");
 						VirtualFile vfsJrubyHome = vfsJar.getChild(extraPath);
-						log.info("vfsJrubyHome.exists=" + vfsJrubyHome.exists());
 						if (vfsJrubyHome.exists()) {
 							jrubyHome = vfsJrubyHome.toURL().toExternalForm();
-							log.info("set jrubyHome=" + jrubyHome );
 						}
 					}
 				}
@@ -273,10 +262,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			// jrubyHome = jrubyHome.replaceAll( "!/", "/" );
 		}
 
-		// new Exception().printStackTrace();
-
-		log.info("JRUBY_HOME=" + jrubyHome);
-
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
 		}
@@ -286,9 +271,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		config.setError(getError());
 
 		List<String> loadPath = new ArrayList<String>();
-		// loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/1.8");
-		// loadPath.add("META-INF/jruby.home/lib/ruby/site_ruby/shared");
-		// loadPath.add("META-INF/jruby.home/lib/ruby/1.8");
 		if (this.loadPaths != null) {
 			loadPath.addAll(this.loadPaths);
 		}

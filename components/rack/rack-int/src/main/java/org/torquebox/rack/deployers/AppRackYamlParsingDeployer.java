@@ -44,6 +44,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
@@ -101,7 +102,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 		AttachmentUtils.attach(unit, builder.getBeanMetaData());
 	}
 
-	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, RackApplicationMetaData rackMetaData)
+	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, PoolMetaData poolMetaData, RackApplicationMetaData rackMetaData)
 			throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackRoot);
 
@@ -109,6 +110,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 		attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		attachments.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
+		attachments.addAttachment(PoolMetaData.class, poolMetaData);
 		
 		return deployment;
 	}
@@ -166,7 +168,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 		
 		Map<String, Object> web = (Map<String, Object>) config.get(WEB_KEY);
 		WebYamlParsingDeployer.parse( unit, web, rackMetaData );
-
+		
 		return rackMetaData;
 
 	}
@@ -177,6 +179,13 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 		RackRuntimeInitializer initializer = new RackRuntimeInitializer(rackRoot, rackEnv);
 		runtimeMetaData.setRuntimeInitializer(initializer);
 		return runtimeMetaData;
+	}
+	
+	private PoolMetaData setUpPoolMetaData() {
+		PoolMetaData poolMetaData = new PoolMetaData();
+		poolMetaData.setName( "web" );
+		poolMetaData.setShared();
+		return poolMetaData;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -204,10 +213,10 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 		VirtualFile rackRootFile = getRackRoot(config);
 		RackApplicationMetaData rackMetaData = parseAndSetUpApplication(unit, rackRootFile, config);
-		//RackWebApplicationMetaData webMetaData = parseAndSetUpWeb(unit, rackRootFile, config);
 
 		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv());
+		PoolMetaData poolMetaData = setUpPoolMetaData();
 
-		return createDeployment(rackRootFile, runtimeMetaData, rackMetaData );
+		return createDeployment(rackRootFile, runtimeMetaData, poolMetaData, rackMetaData );
 	}
 }

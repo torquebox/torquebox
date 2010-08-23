@@ -53,8 +53,6 @@ public class RackFilter implements Filter {
 
 	@SuppressWarnings("deprecation")
 	public void init(FilterConfig filterConfig) throws ServletException {
-		log.info( "FILTER=" + filterConfig );
-		log.info( "INIT=" + filterConfig.getInitParameterNames() );
 		Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute(KERNEL_NAME);
 		String rackAppPoolName = filterConfig.getInitParameter(RACK_APP_POOL_INIT_PARAM);
 		KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppPoolName);
