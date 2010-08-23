@@ -19,40 +19,25 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
 	private String path;
 	private VirtualFileFilter filter;
-	private boolean addToLoadPath;
 
 	public AbstractRubyScanningDeployer() {
 		setStage( DeploymentStages.PARSE );
 	}
 
 	public void setPath(String path) {
-		setPath( path, true );
+		this.path = path;
 	}
 	
-	public void setPath(String path, boolean addToLoadPath) {
-		this.path = path;
-		this.addToLoadPath = addToLoadPath;
-	}
-
 	public String getPath() {
 		return this.path;
 	}
 	
-	public void setAddToLoadPath(boolean addToLoadPath) {
-		this.addToLoadPath = addToLoadPath;
-	}
-	
-	public boolean isAddToLoadPath() {
-		return this.addToLoadPath;
-	}
-
 	public void setFilter(VirtualFileFilter filter) {
 		this.filter = filter;
 	}
 	
 	public void setSuffixFilter(String suffix) {
 		this.filter =  new SuffixMatchFilter( suffix, VisitorAttributes.DEFAULT);
-		
 	}
 
 	public VirtualFileFilter getFilter() {
@@ -73,16 +58,6 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
 			if (scanRoot == null || !scanRoot.exists()) {
 				return;
-			}
-			
-			if ( this.isAddToLoadPath() ) {
-				RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
-				if ( runtimeMetaData == null ) {
-					runtimeMetaData = new RubyRuntimeMetaData();
-					unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
-				}
-				RubyLoadPathMetaData loadPath = new RubyLoadPathMetaData( scanRoot.toURL() );
-				runtimeMetaData.appendLoadPath( loadPath );
 			}
 			
 			List<VirtualFile> children = null;
