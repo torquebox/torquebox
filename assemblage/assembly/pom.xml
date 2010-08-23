@@ -378,6 +378,8 @@
               <gemPath>${stage.dir}/jruby/lib/ruby/gems/1.8</gemPath>
               <gemHome>${stage.dir}/jruby/lib/ruby/gems/1.8</gemHome>
               <useTransitiveDependencies>true</useTransitiveDependencies>
+              <installRDoc>true</installRDoc>
+              <installRI>true</installRI>
               <fork>true</fork>
             </configuration>
           </execution>
