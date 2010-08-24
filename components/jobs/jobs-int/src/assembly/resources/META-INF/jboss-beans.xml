@@ -7,10 +7,7 @@
   <bean name="RubyJobDeployer"         class="org.torquebox.jobs.deployers.RubyJobDeployer"/>
   <bean name="JobsRuntimePoolDeployer" class="org.torquebox.jobs.deployers.JobsRuntimePoolDeployer"/>
   
-  <bean name="RailsJobsSubsystemConfigurator" class="org.torquebox.subsystems.BasicSubsystemConfigurationDeployer">
-    <property name="subsystemName">jobs</property>
-    <property name="triggerAttachmentName">org.torquebox.rails.metadata.RailsApplicationMetaData</property>
-    <property name="configurationClassName">org.torquebox.jobs.metadata.JobsSubsystemConfiguration</property>
+  <bean name="JobsLoadPathConfigurator" class="org.torquebox.interp.deployers.LoadPathDeployer">
     <property name="loadPaths">
       <list elementClass="java.lang.String">
         <value>app/jobs</value>

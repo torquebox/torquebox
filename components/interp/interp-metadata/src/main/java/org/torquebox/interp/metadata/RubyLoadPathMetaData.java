@@ -20,7 +20,7 @@ public class RubyLoadPathMetaData {
 	private URL url;
 
 	/** whether classes in path should be auto-loaded */
-	private boolean autoload;
+	private boolean autoload = true;
 
 	/** Construct without a path.
 	 */

@@ -18,7 +18,6 @@
 
   <modules>
     <module>base-metadata</module>
-    <module>base-int</module>
   </modules>
 
 
