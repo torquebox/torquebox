@@ -25,9 +25,13 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
+import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.core.RackRuntimeInitializer;
@@ -38,6 +42,7 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 	private String railsEnv;
 	private boolean loadUsingGems;
 	private String versionSpec;
+	private List<String> autoloadPaths = new ArrayList<String>();
 
 	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems) {
 		this( railsRoot, railsEnv, loadUsingGems, null );
@@ -59,6 +64,14 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 		return this.railsEnv;
 	}
 
+	public void addAutoloadPath(String path) {
+		this.autoloadPaths.add(path);
+	}
+
+	public List<String> getAutoloadPaths() {
+		return this.autoloadPaths;
+	}
+	
 	public void initialize(Ruby ruby) throws Exception {
 		super.initialize(ruby);
 		Logger logger = Logger.getLogger(railsRoot.toURL().toExternalForm());
@@ -67,7 +80,7 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 		ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
 		
 		String scriptLocationBase = new URL( railsRoot.toURL(), "<torquebox-bootstrap>" ).toExternalForm();
-		
+		makeAutoloadPathsAvailable(ruby);
 		ruby.executeScript(createBoot(railsRoot), scriptLocationBase + "-boot.rb" );
 	}
 
@@ -77,6 +90,12 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 		"require %q(org/torquebox/rails/core/boot)\n";
 	}
 
+	protected void makeAutoloadPathsAvailable(Ruby ruby) {
+		RubyModule object = ruby.getClassFromPath("Object");
+		object.setConstant("TORQUEBOX_RAILS_AUTOLOAD_PATHS", JavaEmbedUtils.javaToRuby(ruby, getAutoloadPaths()));
+	}
+
+	// TODO: is this obsolete?
 	protected String railsGemVersionConfig() {
 		StringBuilder config = new StringBuilder();
 		

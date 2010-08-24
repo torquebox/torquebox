@@ -49,6 +49,7 @@ public class SubsystemLoadPathDescriber extends AbstractDeployer {
 							URL url = unit.getRoot().getChild(path).toURL();
 							log.info("  url: " + url );
 							RubyLoadPathMetaData loadPathMeta = new RubyLoadPathMetaData(url);
+							loadPathMeta.setAutoload(true);
 							runtimeMetaData.appendLoadPath(loadPathMeta);
 						} catch (MalformedURLException e) {
 							throw new DeploymentException(e);

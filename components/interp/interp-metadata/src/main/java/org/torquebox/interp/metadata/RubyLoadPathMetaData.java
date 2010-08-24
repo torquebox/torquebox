@@ -19,6 +19,9 @@ public class RubyLoadPathMetaData {
 	/** URL of the path. */
 	private URL url;
 
+	/** whether classes in path should be auto-loaded */
+	private boolean autoload;
+
 	/** Construct without a path.
 	 */
 	public RubyLoadPathMetaData() {
@@ -43,10 +46,30 @@ public class RubyLoadPathMetaData {
 	
 	/** Retrieve the URL.
 	 * 
-	 * @return The URL to add to the Ruby load path.
+n	 * @return The URL to add to the Ruby load path.
 	 */
 	public URL getURL() {
 		return this.url;
 	}
 
+	/**
+	 * Set the autoload preference.
+	 */
+	public void setAutoload(boolean autoload) {
+		this.autoload = autoload;
+	}
+	
+	/** 
+	 * Should classes beneath path be autoloaded?
+	 */
+	public boolean isAutoload() {
+		return this.autoload;
+	}
+
+	/**
+	 * Stringification
+	 */
+	public String toString() {
+		return this.url==null ? "" : this.url.toExternalForm();
+	}
 }

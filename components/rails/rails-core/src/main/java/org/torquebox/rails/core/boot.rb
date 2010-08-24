@@ -34,6 +34,15 @@ class Class
        	  end
         end
       end
+      if ( (self.to_s == 'Rails::Initializer') && ( method_name == :set_autoload_paths ) )
+        self.class_eval do
+          alias_method :set_autoload_paths_before_torquebox, :set_autoload_paths            
+          def set_autoload_paths
+            configuration.load_paths += TORQUEBOX_RAILS_AUTOLOAD_PATHS.to_a
+            set_autoload_paths_before_torquebox
+          end
+        end
+      end
       method_added_before_torquebox(method_name)
     end # unless ( recursing )
   end # method_added

@@ -1,7 +1,7 @@
 package org.torquebox.rails.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import java.util.*;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -10,6 +10,7 @@ import org.jruby.RubyClass;
 import org.jruby.RubyModule;
 import org.jruby.exceptions.RaiseException;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -105,4 +106,29 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		System.err.println("result=" + result);
 	}
 
+    @Test
+    public void testAutoloadPathsAvailableAsRubyConstant() throws Exception {
+        String path = System.getProperty("user.dir") + "/src/test/rails/ballast";
+        VirtualFile root = VFS.getChild(path);
+
+        RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(root, "development", true);
+        initializer.addAutoloadPath("path1");
+        initializer.addAutoloadPath("path2");
+
+        initializer.initialize(ruby);
+
+        RubyModule object = ruby.getClassFromPath("Object");
+
+        IRubyObject autoloadPaths = object.getConstant("TORQUEBOX_RAILS_AUTOLOAD_PATHS");
+        assertNotNull(autoloadPaths);
+
+        List<String> paths = (List<String>) JavaEmbedUtils.rubyToJava(autoloadPaths);
+        assertTrue(paths.size()==2);
+        assertTrue(paths.contains("path1"));
+        assertTrue(paths.contains("path2"));
+        
+        String load_paths = "" + ruby.evalScriptlet("ActiveSupport::Dependencies.load_paths.join(',')");
+        assertTrue(load_paths.endsWith(",path1,path2"));
+    }
+    
 }

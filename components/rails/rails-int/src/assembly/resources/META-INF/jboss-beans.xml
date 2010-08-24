@@ -8,5 +8,6 @@
   <bean name="AppRailsYamlParsingDeployer"          class="org.torquebox.rails.deployers.AppRailsYamlParsingDeployer"/>
   <bean name="RailsRubyRuntimeFactoryDescriber"     class="org.torquebox.rails.deployers.RailsRubyRuntimeFactoryDescriber"/>
   <bean name="RailsRackDeployer"                    class="org.torquebox.rails.deployers.RailsRackDeployer"/>
+  <bean name="RailsAutoloadPathDeployer"            class="org.torquebox.rails.deployers.RailsAutoloadPathDeployer"/>
 
 </deployment>
