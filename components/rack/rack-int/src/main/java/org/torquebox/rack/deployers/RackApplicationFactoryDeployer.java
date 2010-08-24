@@ -27,6 +27,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
@@ -37,19 +38,22 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 		super(RackApplicationMetaData.class);
 		addOutput(RackApplicationMetaData.class);
 		addOutput(BeanMetaData.class);
-		setStage( DeploymentStages.PRE_DESCRIBE );
-		setRelativeOrder( 500 );
+		setStage(DeploymentStages.PRE_DESCRIBE);
+		setRelativeOrder(500);
 	}
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
-		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class );
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
 		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
-		builder.addPropertyMetaData("rackUpScriptLocation", metaData.getRackUpScriptLocation() );
-		AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-		metaData.setRackApplicationFactoryName( beanName );
+		VirtualFile rackUpScriptLocation = metaData.getRackUpScriptLocation();
+		if (rackUpScriptLocation == null) {
+			rackUpScriptLocation = metaData.getRackRoot().getChild("config.ru");
+		}
+		builder.addPropertyMetaData("rackUpScriptLocation", rackUpScriptLocation);
+		AttachmentUtils.attach(unit, builder.getBeanMetaData());
+		metaData.setRackApplicationFactoryName(beanName);
 	}
-
 
 }
