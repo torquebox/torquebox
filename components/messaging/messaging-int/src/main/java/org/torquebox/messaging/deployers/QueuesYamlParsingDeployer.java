@@ -20,12 +20,6 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueueM
 	}
 
 	
-	public void start() {
-		System.err.println( "START QueuesYamlParsingDeployer" );
-	}
-	
-	
-	
 	@Override
 	protected boolean accepts(VFSDeploymentUnit unit) throws DeploymentException {
 		return super.accepts(unit);
@@ -35,7 +29,6 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueueM
 	@SuppressWarnings("unchecked")
 	@Override
 	protected QueueMetaData parse(VFSDeploymentUnit unit, VirtualFile file, QueueMetaData root) throws Exception {
-		System.err.println( "PARSE " + file );
 		InputStream in = null;
 
 		try {
@@ -45,7 +38,6 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueueM
 
 			if (data != null) {
 				for (String queueName : data.keySet()) {
-					System.err.println("Read configuration for queue [" + queueName + "]");
 					QueueMetaData queueMetaData = new QueueMetaData(queueName);
 					AttachmentUtils.multipleAttach(unit, queueMetaData, queueName );
 				}

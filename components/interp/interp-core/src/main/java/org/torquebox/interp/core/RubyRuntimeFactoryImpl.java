@@ -282,8 +282,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		}
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);
-		runtime.evalScriptlet("puts %Q(GEM_HOME=#{ENV['GEM_HOME']})");
-		runtime.evalScriptlet("puts %Q(GEM_PATH=#{ENV['GEM_PATH']})");
 		runtime.getLoadService().require("rubygems");
 		return runtime;
 	}

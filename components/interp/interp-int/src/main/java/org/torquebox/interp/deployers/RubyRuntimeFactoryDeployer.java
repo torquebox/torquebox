@@ -113,7 +113,6 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		factory.setClassLoader( unit.getClassLoader() );
 		factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
 		
-		System.err.println( "RIGHT HERE KERNEL IS: " + this.kernel );
 		KernelController controller = this.kernel.getController();
 		
 		try {
