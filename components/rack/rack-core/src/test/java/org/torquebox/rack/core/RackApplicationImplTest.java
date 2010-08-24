@@ -24,10 +24,10 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 	@Test
 	public void testConstruct() throws Exception {
 		Ruby ruby = createRuby();
-		ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
+		ruby.evalScriptlet("RACK_ROOT='/test/app'\n");
 
 		String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup, VFS.getChild( "/test/path/config.ru" ));
+		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup, VFS.getChild("/test/path/config.ru"));
 		IRubyObject rubyApp = rackApp.getRubyApplication();
 		assertNotNil(rubyApp);
 	}
@@ -36,9 +36,9 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 	@Test
 	public void testEnvironment() throws Exception {
 		Ruby ruby = createRuby();
-		ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
+		ruby.evalScriptlet("RACK_ROOT='/test/app'\n");
 		String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup, VFS.getChild("/test/path/config.ru"));
 
 		final ServletContext servletContext = mock(ServletContext.class);
 		final HttpServletRequest servletRequest = mock(HttpServletRequest.class);
@@ -54,6 +54,7 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 		when(servletRequest.getPathInfo()).thenReturn("the_path");
 		when(servletRequest.getQueryString()).thenReturn("cheese=cheddar&bob=mcwhirter");
 		when(servletRequest.getServerName()).thenReturn("torquebox.org");
+		when(servletRequest.getScheme()).thenReturn("https");
 		when(servletRequest.getServerPort()).thenReturn(8080);
 		when(servletRequest.getContentType()).thenReturn("text/html");
 		when(servletRequest.getContentLength()).thenReturn(0);
@@ -72,18 +73,19 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 		assertEquals("/myapp/the_path", javaEnv.get("REQUEST_URI"));
 		assertEquals("cheese=cheddar&bob=mcwhirter", javaEnv.get("QUERY_STRING"));
 		assertEquals("torquebox.org", javaEnv.get("SERVER_NAME"));
-		assertEquals( 8080L, javaEnv.get("SERVER_PORT"));
-		assertEquals( "text/html", javaEnv.get("CONTENT_TYPE"));
-		assertEquals( 0L, javaEnv.get("CONTENT_LENGTH"));
-		assertEquals( "10.42.42.42", javaEnv.get("REMOTE_ADDR"));
-		
-		assertEquals( "header_value1", javaEnv.get( "HTTP_HEADER1" ) );
-		assertEquals( "header_value2", javaEnv.get( "HTTP_HEADER2" ) );
-		
-		assertNotNull( javaEnv.get( "rack.input" ) );
-		assertNotNull( javaEnv.get( "rack.errors" ) );
-		assertSame( servletRequest, javaEnv.get( "servlet_request" ) );
-		assertSame( servletRequest, javaEnv.get( "java.servlet_request" ) );
+		assertEquals("https", javaEnv.get("rack.url_scheme"));
+		assertEquals(8080L, javaEnv.get("SERVER_PORT"));
+		assertEquals("text/html", javaEnv.get("CONTENT_TYPE"));
+		assertEquals(0L, javaEnv.get("CONTENT_LENGTH"));
+		assertEquals("10.42.42.42", javaEnv.get("REMOTE_ADDR"));
+
+		assertEquals("header_value1", javaEnv.get("HTTP_HEADER1"));
+		assertEquals("header_value2", javaEnv.get("HTTP_HEADER2"));
+
+		assertNotNull(javaEnv.get("rack.input"));
+		assertNotNull(javaEnv.get("rack.errors"));
+		assertSame(servletRequest, javaEnv.get("servlet_request"));
+		assertSame(servletRequest, javaEnv.get("java.servlet_request"));
 
 	}
 

@@ -37,7 +37,8 @@ module TorqueBox
         env['CONTENT_LENGTH']    = servlet_request.getContentLength()
         env['REQUEST_URI']       = "#{context_path}#{servlet_path}#{path_info}"
         env['REMOTE_ADDR']       = servlet_request.getRemoteAddr()
-        env['rack.version']      = [ 0, 1 ]
+        env['rack.version']      = [ 1, 1 ]
+        env['rack.url_scheme']   = servlet_request.getScheme()
         env['rack.multithread']  = true
         env['rack.multiprocess'] = true
         env['rack.run_once']     = false
