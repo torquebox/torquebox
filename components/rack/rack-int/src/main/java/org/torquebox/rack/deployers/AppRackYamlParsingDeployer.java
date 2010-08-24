@@ -174,9 +174,13 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 	}
 
-	private RubyRuntimeMetaData parseAndSetUpRuntime(VirtualFile rackRoot, String rackEnv) {
+	private RubyRuntimeMetaData parseAndSetUpRuntime(VirtualFile rackRoot, String rackEnv, Map<String, Object> config) {
 		RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
 		runtimeMetaData.setBaseDir(rackRoot);
+		
+		Map<String,String> env = (Map<String, String>) config.get( "environment" );
+		runtimeMetaData.setEnvironment( env );
+		
 		RackRuntimeInitializer initializer = new RackRuntimeInitializer(rackRoot, rackEnv);
 		runtimeMetaData.setRuntimeInitializer(initializer);
 		return runtimeMetaData;
@@ -215,7 +219,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 		VirtualFile rackRootFile = getRackRoot(config);
 		RackApplicationMetaData rackMetaData = parseAndSetUpApplication(unit, rackRootFile, config);
 
-		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv());
+		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv(), config);
 		PoolMetaData poolMetaData = setUpPoolMetaData();
 
 		return createDeployment(rackRootFile, runtimeMetaData, poolMetaData, rackMetaData );

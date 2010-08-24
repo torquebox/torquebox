@@ -88,6 +88,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	/** Should environment $JRUBY_HOME be considered? */
 	private boolean useJRubyHomeEnvVar = true;
 	
+	private Map<String,String> applicationEnvironment;
+	
 	private Set<Ruby> undisposed = new HashSet<Ruby>();
 
 	/**
@@ -186,6 +188,22 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 		return getClass().getClassLoader();
 	}
+	
+	/** Set the application-specific environment additions.
+	 * 
+	 * @param applicationEnvironment The environment.
+	 */
+	public void setApplicationEnvironment(Map<String,String> applicationEnvironment) {
+		this.applicationEnvironment = applicationEnvironment;
+	}
+	
+	/** Retrieve the application-specific environment additions.
+	 * 
+	 * @return The environment.
+	 */
+	public Map<String,String> getApplicationEnvironment() {
+		return this.applicationEnvironment;
+	}
 
 	/**
 	 * Create a new instance of a fully-initialized runtime.
@@ -266,7 +284,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			config.setJRubyHome(jrubyHome);
 		}
 
-		config.setEnvironment(getEnvironment());
+		config.setEnvironment(createEnvironment());
 		config.setOutput(getOutput());
 		config.setError(getError());
 
@@ -305,8 +323,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=", new Object[] { this.kernel }, void.class);
 	}
 
-	public Map<Object, Object> getEnvironment() {
-		Map<Object, Object> env = new HashMap<Object, Object>();
+	protected Map<String, String> createEnvironment() {
+		Map<String, String> env = new HashMap<String, String>();
 		env.putAll(System.getenv());
 		String path = (String) env.get("PATH");
 		if (path == null) {
@@ -315,6 +333,9 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		if (this.gemPath != null) {
 			env.put("GEM_PATH", this.gemPath);
 			env.put("GEM_HOME", this.gemPath);
+		}
+		if ( this.applicationEnvironment != null ) {
+			env.putAll( this.applicationEnvironment );
 		}
 		return env;
 	}

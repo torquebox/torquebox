@@ -1,13 +1,17 @@
 package org.torquebox.interp.core;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertEquals;
+
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jruby.Ruby;
 import org.junit.Test;
 import org.torquebox.interp.spi.RuntimeInitializer;
-
-import static org.junit.Assert.*;
 
 public class RubyRuntimeFactoryImplTest {
 	
@@ -60,7 +64,18 @@ public class RubyRuntimeFactoryImplTest {
 		Object result = ruby.evalScriptlet(script);
 		
 		assertNotNull( result );
-		
+	}
+	
+	@Test
+	public void testApplicationEnvironment() throws Exception {
+		MockRuntimeInitializer initializer = new MockRuntimeInitializer();
+		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( initializer );
+		Map<String,String> env = new HashMap<String,String>();
+		env.put( "CHEESE", "taco" );
+		factory.setApplicationEnvironment( env );
+		Map<String,String> env2 = factory.createEnvironment();
+		assertNotNull( env2.get( "CHEESE" ) );
+		assertEquals( env.get( "CHEESE"), env2.get("CHEESE" ) );
 	}
 	
 	static class MockRuntimeInitializer implements RuntimeInitializer {

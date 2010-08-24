@@ -23,9 +23,9 @@ package org.torquebox.interp.deployers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
-import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
@@ -107,11 +107,13 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 			loadPaths.add(loadPath.getURL().toExternalForm());
 		}
 		
+		
 		factory.setLoadPaths( loadPaths );
 		factory.setKernel( this.kernel );
 		factory.setApplicationName( unit.getSimpleName() );
 		factory.setClassLoader( unit.getClassLoader() );
 		factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
+		factory.setApplicationEnvironment( metaData.getEnvironment() );
 		
 		KernelController controller = this.kernel.getController();
 		

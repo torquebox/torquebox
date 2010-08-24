@@ -3,6 +3,7 @@ package org.torquebox.interp.metadata;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.spi.RuntimeInitializer;
@@ -30,6 +31,9 @@ public class RubyRuntimeMetaData {
 	
 	/** Ordered list of paths to add to the Ruby LOAD_PATH. */
 	private List<RubyLoadPathMetaData> loadPaths = new LinkedList<RubyLoadPathMetaData>();
+
+	/** Interpreter-specific environment variables. */
+	private Map<String, String> environment;
 
 	/** Construct.
 	 */
@@ -91,6 +95,22 @@ public class RubyRuntimeMetaData {
 	 */
 	public List<RubyLoadPathMetaData> getLoadPaths() {
 		return this.loadPaths;
+	}
+	
+	/** Set interpreter-specific environment variables.
+	 * 
+	 * @param environment The environment variables.
+	 */
+	public void setEnvironment(Map<String,String> environment) {
+		this.environment = environment; 
+	}
+
+	/** Retrieve the interpreter-specific environment variables.
+	 * 
+	 * @return The environment variables.
+	 */
+	public Map<String, String> getEnvironment() {
+		return this.environment;
 	}
 
 
