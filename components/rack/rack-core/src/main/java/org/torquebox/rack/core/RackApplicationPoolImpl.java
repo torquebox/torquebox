@@ -47,7 +47,7 @@ public class RackApplicationPoolImpl implements RackApplicationPool {
 		this.runtimePool.returnRuntime(rackApp.getRuby());
 	}
 
-	protected RackApplication getRackApplication(Ruby ruby) {
+	protected RackApplication getRackApplication(Ruby ruby) throws Exception {
 		RackApplication rackApp = this.rackFactory.createRackApplication(ruby);
 		return rackApp;
 	}

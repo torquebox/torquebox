@@ -47,8 +47,6 @@ public class RackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<R
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
-
-		log.info( "start with " + metaData );
 		
 		String beanName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationPoolImpl.class.getName());
@@ -74,9 +72,7 @@ public class RackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<R
 		builder.addConstructorParameter(RubyRuntimePool.class.getName(), runtimePoolInjection );
 		builder.addConstructorParameter(RackApplicationFactory.class.getName(), appFactoryInjection);
 
-		log.info( "BMD=" + builder.getBeanMetaData() );
 		AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-		log.info( "depart with " + metaData );
 	}
 
 }

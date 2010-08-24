@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
+import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Test;
@@ -23,9 +24,10 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 	@Test
 	public void testConstruct() throws Exception {
 		Ruby ruby = createRuby();
+		ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
 
 		String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup);
+		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup, VFS.getChild( "/test/path/config.ru" ));
 		IRubyObject rubyApp = rackApp.getRubyApplication();
 		assertNotNil(rubyApp);
 	}
@@ -34,8 +36,9 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 	@Test
 	public void testEnvironment() throws Exception {
 		Ruby ruby = createRuby();
+		ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
 		String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup);
+		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
 
 		final ServletContext servletContext = mock(ServletContext.class);
 		final HttpServletRequest servletRequest = mock(HttpServletRequest.class);

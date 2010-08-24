@@ -31,6 +31,7 @@ public class RackApplicationMetaData {
 	private String rackEnv;
 	private VirtualFile rackRoot;
 	private String rackUpScript;
+	private VirtualFile rackUpScriptLocation;
 	
 	private List<String> hosts = new ArrayList<String>();
 	private String contextPath;
@@ -66,6 +67,14 @@ public class RackApplicationMetaData {
 
 	public String getRackUpScript() {
 		return this.rackUpScript;
+	}
+	
+	public void setRackUpScriptLocation(VirtualFile rackUpScriptLocation) {
+		this.rackUpScriptLocation = rackUpScriptLocation;
+	}
+	
+	public VirtualFile getRackUpScriptLocation() {
+		return this.rackUpScriptLocation;
 	}
 	
 	public void addHost(String host) {

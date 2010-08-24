@@ -1,21 +1,20 @@
 /* Copyright 2009 Red Hat, Inc. */
 package org.torquebox.rack.core;
 
+import java.net.MalformedURLException;
+
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.sip.SipServlet;
-//import javax.servlet.sip.SipServletMessage;
-//import javax.servlet.sip.SipServletRequest;
 
 import org.jboss.logging.Logger;
+import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
-import org.jruby.RubyHash;
 import org.jruby.RubyIO;
 import org.jruby.RubyModule;
+import org.jruby.exceptions.RaiseException;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.common.util.StringUtils;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackResponse;
 
@@ -38,30 +37,34 @@ public class RackApplicationImpl implements RackApplication {
 	/**
 	 * Construct.
 	 * 
-	 * @param ruby The Ruby interpreter to use for this application.
-	 * @param rackUpScript The rackup script.
+	 * @param ruby
+	 *            The Ruby interpreter to use for this application.
+	 * @param rackUpScript
+	 *            The rackup script.
 	 */
-	public RackApplicationImpl(Ruby ruby, String rackUpScript) {
-		this.rubyApp = rackUp(ruby, rackUpScript);
+	public RackApplicationImpl(Ruby ruby, String rackUpScript, VirtualFile rackUpScriptLocation) throws Exception {
+		this.rubyApp = rackUp(ruby, rackUpScript, rackUpScriptLocation);
 	}
 
 	/**
 	 * Perform rackup.
 	 * 
-	 * @param script The rackup script.
+	 * @param script
+	 *            The rackup script.
 	 */
-	private IRubyObject rackUp(Ruby ruby, String script) {
-		String fullScript = "require %q(rack/builder)\n" 
-			//+ "require %q(org/torquebox/ruby/enterprise/web/rack/middleware/reloader)\n" 
-			+ "Rack::Builder.new{(\n" + script + "\n)}.to_app";
+	private IRubyObject rackUp(Ruby ruby, String script, VirtualFile rackUpScriptLocation) throws Exception {
+		String fullScript = "require %q(rubygems)\nrequire %q(vfs)\nrequire %q(rack)\nRack::Builder.new{(\n" + script + "\n)}.to_app";
 
-		return ruby.executeScript(fullScript, "RubyRackApplication/rackup.rb");
+		IRubyObject rackRoot = ruby.evalScriptlet("RACK_ROOT");
+
+		IRubyObject app = ruby.executeScript(fullScript, rackUpScriptLocation.toURL().toString());
+		return app;
 	}
-	
+
 	protected IRubyObject getRubyApplication() {
 		return this.rubyApp;
 	}
-	
+
 	public Ruby getRuby() {
 		return this.rubyApp.getRuntime();
 	}
@@ -69,8 +72,10 @@ public class RackApplicationImpl implements RackApplication {
 	/**
 	 * Create the request environment ({@code env}) for request handling.
 	 * 
-	 * @param context The servlet context.
-	 * @param request The servlet request.
+	 * @param context
+	 *            The servlet context.
+	 * @param request
+	 *            The servlet request.
 	 * 
 	 * @return The Ruby Rack request environment.
 	 */

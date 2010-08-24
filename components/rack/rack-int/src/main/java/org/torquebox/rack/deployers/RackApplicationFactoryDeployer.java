@@ -43,14 +43,12 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
-		log.info( "start with " + metaData );
 		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
 		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
-		log.info( "BMD=" + builder.getBeanMetaData() );
+		builder.addPropertyMetaData("rackUpScriptLocation", metaData.getRackUpScriptLocation() );
 		AttachmentUtils.attach( unit, builder.getBeanMetaData() );
 		metaData.setRackApplicationFactoryName( beanName );
-		log.info( "depart with " + metaData );
 	}
 
 

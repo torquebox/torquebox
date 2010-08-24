@@ -162,6 +162,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 				}
 
 				rackMetaData.setRackUpScript(rackupScript.toString());
+				rackMetaData.setRackUpScriptLocation( rackupFile );
 
 			}
 		}

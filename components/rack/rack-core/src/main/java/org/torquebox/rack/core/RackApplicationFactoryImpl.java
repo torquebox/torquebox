@@ -21,6 +21,7 @@
  */
 package org.torquebox.rack.core;
 
+import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -31,25 +32,36 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 public class RackApplicationFactoryImpl implements RackApplicationFactory {
 
 	private String rackUpScript;
+	
+	private VirtualFile rackUpScriptLocation;
 
 	public RackApplicationFactoryImpl() {
 	}
 
-	public RackApplicationFactoryImpl(String rackUpScript) {
+	public RackApplicationFactoryImpl(String rackUpScript, VirtualFile rackUpScriptLocation) {
 		this.rackUpScript = rackUpScript;
+		this.rackUpScriptLocation = rackUpScriptLocation;
 	}
 
 	public void setRackUpScript(String rackUpScript) {
 		this.rackUpScript = rackUpScript;
 	}
-
+	
 	public String getRackUpScript() {
 		return this.rackUpScript;
 	}
+	
+	public void setRackUpScriptLocation(VirtualFile rackUpScriptLocation)  {
+		this.rackUpScriptLocation = rackUpScriptLocation;
+	}
+	
+	public VirtualFile getRackUpScriptLocation() {
+		return this.rackUpScriptLocation;
+	}
+	
 
-	public RackApplication createRackApplication(Ruby ruby) {
+	public RackApplication createRackApplication(Ruby ruby) throws Exception {
 
-		System.err.println( "BOB: createRackApplication" );
 		IRubyObject rubyRackApp = null;
 		RackApplication rackApp = null;
 
@@ -59,7 +71,7 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
 		}
 
 		if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
-			rackApp = new RackApplicationImpl(ruby, rackUpScript);
+			rackApp = new RackApplicationImpl(ruby, rackUpScript, rackUpScriptLocation );
 			rubyRackApp = JavaEmbedUtils.javaToRuby(ruby, rackApp);
 			torqueboxModule.setConstant("TORQUEBOX_RACK_APP", rubyRackApp);
 		} else {

@@ -25,5 +25,5 @@ import org.jruby.Ruby;
 
 
 public interface RackApplicationFactory {
-	RackApplication createRackApplication(Ruby ruby);
+	RackApplication createRackApplication(Ruby ruby) throws Exception;
 }
