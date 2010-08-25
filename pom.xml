@@ -28,4 +28,17 @@
     <module>assemblage</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <id>dist</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>dist</module>
+        <module>docs</module>
+      </modules>
+    </profile>
+  </profiles>
+
 </project>

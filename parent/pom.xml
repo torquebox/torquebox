@@ -64,6 +64,12 @@
         </snapshotRepository>
       </distributionManagement>
     </profile>
+    <profile>
+      <id>dist</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+    </profile>
   </profiles>
     
   <dependencyManagement>
