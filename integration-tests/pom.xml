@@ -14,6 +14,11 @@
   <name>TorqueBox Integration Tests</name>
   <description></description>
 
+  <properties>
+    <version.arquillian>1.0.0.Alpha3</version.arquillian>
+    <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
@@ -28,11 +33,49 @@
     </dependency> 
 
     <dependency>
+      <groupId>org.jboss.arquillian</groupId>
+      <artifactId>arquillian-junit</artifactId>
+      <version>${version.arquillian}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>org.jboss.arquillian.container</groupId>
+       <artifactId>arquillian-jbossas-managed-6</artifactId>
+       <version>${version.arquillian}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>org.jboss.jbossas</groupId>
+       <artifactId>jboss-as-client</artifactId>
+       <version>${version.jbossas}</version>
+       <type>pom</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-server-manager</artifactId>
+      <version>${version.jboss-server-manager}</version>
+    </dependency>
+
+<!--
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <scope>provided</scope>
     </dependency>
+-->
 
   </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+  </build>
+
 
 </project>
