@@ -12,7 +12,7 @@
     <jboss:profileName>default</jboss:profileName>
     <jboss:bindAddress>127.0.0.1</jboss:bindAddress>
     <jboss:httpPort>8080</jboss:httpPort>
-    <jboss:jbossHome>./../assemblage/assembly/target/stage/torquebox-1.0.0.Beta21/jboss</jboss:jbossHome>
+    <jboss:jbossHome>./target/integ-dist/jboss</jboss:jbossHome>
   </jboss:container> 
 
 </arquillian>

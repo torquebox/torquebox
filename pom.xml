@@ -39,9 +39,6 @@
         <module>docs</module>
       </modules>
     </profile>
-  </profiles>
-
-  <profiles>
     <profile>
       <id>integ</id>
       <activation>

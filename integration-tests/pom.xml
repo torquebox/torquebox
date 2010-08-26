@@ -66,6 +66,12 @@
     </dependency>
 -->
 
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rake</artifactId>
+      <type>gem</type>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -75,6 +81,31 @@
         <filtering>true</filtering>
       </testResource>
     </testResources>
+
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rake-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-as</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>rake</goal>
+            </goals>
+            <configuration>
+              <script>
+                ASSEMBLY_DIR='${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}'
+                BUILD_DIR="${project.build.directory}"
+                ROOT_WAR="${project.basedir}/etc/ROOT.war"
+                load 'Rakefile'
+              </script>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
   </build>
 
 

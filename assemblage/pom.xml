@@ -11,7 +11,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-assemblage</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Distribution Assemblage</name>
+  <name>TorqueBox Assemblage</name>
   <description></description>
 
   <modules>

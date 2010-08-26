@@ -31,7 +31,7 @@ public class ExperimentalTest {
 	public static JavaArchive createDeployment() {
 		JavaArchive archive = ShrinkWrap.create( JavaArchive.class, "experimental.jar" );
 		ClassLoader classLoader = ExperimentalTest.class.getClassLoader();
-		URL appRailsYml = classLoader.getResource( "org/torquebox/integration/basic-rails.yml" );
+		URL appRailsYml = classLoader.getResource( "rails/2.3.8/basic-rails.yml" );
 		archive.addResource( appRailsYml, "/META-INF/basic-rails.yml" );
 		System.err.println( "DEPLOYING " + archive );
 		return archive;
