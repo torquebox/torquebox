@@ -14,25 +14,95 @@
   <name>TorqueBox Integration Tests</name>
   <description></description>
 
+  <properties>
+    <version.arquillian>1.0.0.Alpha3</version.arquillian>
+    <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium</artifactId>
-      <version>2.0a2</version>
+      <version>2.0a5</version>
+      <scope>test</scope>
     </dependency> 
 
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-htmlunit-driver</artifactId>
-      <version>2.0a2</version>
+      <version>2.0a5</version>
+      <scope>test</scope>
     </dependency> 
 
     <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <scope>provided</scope>
+      <groupId>org.jboss.arquillian</groupId>
+      <artifactId>arquillian-junit</artifactId>
+      <version>${version.arquillian}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>org.jboss.arquillian.container</groupId>
+       <artifactId>arquillian-jbossas-managed-6</artifactId>
+       <version>${version.arquillian}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>org.jboss.jbossas</groupId>
+       <artifactId>jboss-as-client</artifactId>
+       <version>${version.jbossas}</version>
+       <type>pom</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-server-manager</artifactId>
+      <version>${version.jboss-server-manager}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>1.5.6</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
+
+  <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>prepare-as</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <exec executable="sh">
+                  <arg value="setup-integ-dist.sh"/>
+                  <arg value="${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}"/>
+                  <arg value="${project.build.directory}/integ-dist"/>
+                  <arg value="${project.basedir}/etc/ROOT.war"/>
+                </exec>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+  </build>
+
 
 </project>

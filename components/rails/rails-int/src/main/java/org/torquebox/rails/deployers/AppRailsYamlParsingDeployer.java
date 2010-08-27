@@ -78,10 +78,12 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 	@Override
 	protected RailsApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RailsApplicationMetaData root) throws Exception {
 
+		/*
 		if (!file.equals(vfsUnit.getRoot())) {
 			log.debug("not deploying non-root: " + file);
 			return null;
 		}
+		*/
 
 		Deployment deployment = parseAndSetUp(vfsUnit, file);
 

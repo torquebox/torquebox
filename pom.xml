@@ -39,6 +39,15 @@
         <module>docs</module>
       </modules>
     </profile>
+    <profile>
+      <id>integ</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
+    </profile>
   </profiles>
 
 </project>

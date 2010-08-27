@@ -38,6 +38,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	
 	@Test
 	public void testValidAppRackYml() throws Exception {
+		System.err.println( "BEGIN testValidAppRackYaml" );
 		URL appRackYml = getClass().getResource( "valid-app-rack.yml" );
 		
 		String deploymentName = addDeployment( appRackYml, "app-rack.yml" );
@@ -54,7 +55,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	
 		VFSDeployment deployment = pojo.getDeployment();
 		
-		assertEquals( "vfs:///tmp/", deployment.getRoot().toURI().toString() );
+		assertEquals( "vfs:///tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString() );
 		
 		Attachments attachments = deployment.getPredeterminedManagedObjects();
 		
@@ -66,5 +67,6 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		assertNotNull( rubyRuntimeMetaData );
 		assertNotNull( rubyRuntimeMetaData.getRuntimeInitializer() );
 		assertTrue( rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
+		System.err.println( "END testValidAppRackYaml" );
 	}
 }

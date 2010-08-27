@@ -280,12 +280,6 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <extensions>true</extensions>
-<!--
-        <configuration>
-          <gemHome>${project.parent.basedir}/target/rubygems</gemHome>
-          <gemPath>${project.parent.basedir}/target/rubygems</gemPath>
-        </configuration>
--->
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
@@ -326,10 +320,35 @@
           <autoVersionSubmodules>true</autoVersionSubmodules>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <includes>
+              <include>org/torquebox/**/*.class</include>
+            </includes>
+          </instrumentation>
+          <formats>
+            <format>html</format>
+            <format>xml</format>
+          </formats>
+        </configuration>
+      </plugin>
     </plugins>
 
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.sonar</groupId>
+          <artifactId>sonar-maven3-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>

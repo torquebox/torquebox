@@ -19,41 +19,37 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-mc-support</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-core</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
-<!--
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-metadata-builder</artifactId>
-      <type>gem</type>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
--->
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-int</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.kernel</groupId>

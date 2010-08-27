@@ -11,7 +11,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-assembly</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Distribution Assembly</name>
+  <name>TorqueBox Assembly</name>
   <description></description>
 
   <properties>
@@ -351,16 +351,6 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <executions>
-          <execution>
-            <id>install-dependency-gems</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>initialize</goal>
-            </goals>
-            <configuration>
-              <useTransitiveDependencies>false</useTransitiveDependencies>
-            </configuration>
-          </execution>
           <execution>
             <id>install-jruby-home-gems</id>
             <phase>prepare-package</phase>

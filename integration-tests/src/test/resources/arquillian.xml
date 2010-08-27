@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<arquillian xmlns="http://jboss.com/arquillian"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:jboss="urn:arq:org.jboss.arquillian.container.jbossas.managed_6">
+
+  <engine>
+    <deploymentExportPath>/tmp</deploymentExportPath>
+  </engine>
+
+  <jboss:container>
+    <jboss:profileName>default</jboss:profileName>
+    <jboss:bindAddress>127.0.0.1</jboss:bindAddress>
+    <jboss:httpPort>8080</jboss:httpPort>
+    <jboss:jbossHome>./target/integ-dist/jboss</jboss:jbossHome>
+  </jboss:container> 
+
+</arquillian>
