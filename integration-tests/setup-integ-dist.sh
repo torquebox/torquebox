@@ -15,5 +15,7 @@ else
   find . | grep -v jruby/share/ri | grep -v jruby/lib/ruby/gems/1.8/doc | cpio -pmudL $output_dir
   cd $output_dir
   cp $root_war $output_dir/jboss/server/default/deploy/
+  JRUBY_HOME=$output_dir/jruby
+  $JRUBY_HOME/bin/jruby -S gem install sinatra -v 1.0
 fi
 
