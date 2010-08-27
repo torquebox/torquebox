@@ -18,6 +18,8 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackResponse;
 
+import java.io.*;
+
 /**
  * Concrete implementation of {@link RackApplication}.
  * 
@@ -82,18 +84,42 @@ public class RackApplicationImpl implements RackApplication {
 	public Object createEnvironment(ServletContext context, HttpServletRequest request) throws Exception {
 		Ruby ruby = rubyApp.getRuntime();
 
-		RubyIO input = new RubyIO(ruby, request.getInputStream());
-		RubyIO errors = new RubyIO(ruby, System.out);
+		RubyIO input = new RubyIO(ruby, proxy(request.getInputStream()));
+		RubyIO errors = new RubyIO(ruby, System.err);
 
 		ruby.evalScriptlet("require %q(org/torquebox/rack/core/environment_builder)");
 
 		RubyModule envBuilder = ruby.getClassFromPath("TorqueBox::Rack::EnvironmentBuilder");
+		Object environment = JavaEmbedUtils.invokeMethod(ruby, envBuilder, "build", new Object[] { context, request, input, errors }, Object.class);
 
-		return JavaEmbedUtils.invokeMethod(ruby, envBuilder, "build", new Object[] { context, request, input, errors }, Object.class);
+		return environment;
 	}
 
 	public RackResponse call(Object env) {
 		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.rubyApp.getRuntime(), this.rubyApp, "call", new Object[] { env }, RubyArray.class);
 		return new RackResponseImpl(response);
+	}
+
+	InputStream proxy(InputStream in) {
+		return new MyInputStream(in);
+	}
+	
+	class MyInputStream extends InputStream {
+		private InputStream target;
+
+		public MyInputStream(InputStream target) {
+			this.target = target;
+		}
+		public int read() throws IOException {
+			return target.read();
+		}
+		public void close() throws IOException {
+			// try {
+			// 	throw new Exception("wtf");
+			// } catch (Exception e) {
+			// 	log.error(e.getMessage(), e);
+			// }
+			target.close();
+		}
 	}
 }
