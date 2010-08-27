@@ -9,3 +9,12 @@ end
 get '/request-mapping' do
   haml :request_mapping
 end
+
+get '/poster' do
+  haml :poster
+  #erb :poster
+end
+
+post '/poster' do
+  haml :posted
+end
