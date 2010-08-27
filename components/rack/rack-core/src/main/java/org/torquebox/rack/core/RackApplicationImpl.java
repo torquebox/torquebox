@@ -84,7 +84,7 @@ public class RackApplicationImpl implements RackApplication {
 	public Object createEnvironment(ServletContext context, HttpServletRequest request) throws Exception {
 		Ruby ruby = rubyApp.getRuntime();
 
-		RubyIO input = new RubyIO(ruby, proxy(request.getInputStream()));
+		RubyIO input = new RubyIO(ruby, new NonClosingInputStream(request.getInputStream()));
 		RubyIO errors = new RubyIO(ruby, System.err);
 
 		ruby.evalScriptlet("require %q(org/torquebox/rack/core/environment_builder)");
@@ -100,26 +100,18 @@ public class RackApplicationImpl implements RackApplication {
 		return new RackResponseImpl(response);
 	}
 
-	InputStream proxy(InputStream in) {
-		return new MyInputStream(in);
-	}
-	
-	class MyInputStream extends InputStream {
+	class NonClosingInputStream extends InputStream {
 		private InputStream target;
 
-		public MyInputStream(InputStream target) {
+		public NonClosingInputStream(InputStream target) {
 			this.target = target;
 		}
 		public int read() throws IOException {
 			return target.read();
 		}
+		// TODO: Temporary hack
 		public void close() throws IOException {
-			// try {
-			// 	throw new Exception("wtf");
-			// } catch (Exception e) {
-			// 	log.error(e.getMessage(), e);
-			// }
-			target.close();
+			// Not closing to avoid reading a closed stream
 		}
 	}
 }
