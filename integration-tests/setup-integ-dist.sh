@@ -17,5 +17,6 @@ else
   cp $root_war $output_dir/jboss/server/default/deploy/
   JRUBY_HOME=$output_dir/jruby
   $JRUBY_HOME/bin/jruby -S gem install sinatra -v 1.0
+  $JRUBY_HOME/bin/jruby -S gem install haml -v 3.0.17
 fi
 

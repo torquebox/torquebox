@@ -20,10 +20,21 @@ public class BasicSinatra_1_0_Test extends AbstractIntegrationTest {
 	@Test
 	public void testHighlevel() {
         driver.get( "http://localhost:8080/basic-sinatra" );
-        System.err.println( "FETCH -->" + driver.getPageSource() + "<--" );
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
-        assertEquals( "basic-sinatra", element.getAttribute( "class" ) );
+        assertEquals( "sinatra-basic", element.getAttribute( "class" ) );
+	}
+	
+	@Test
+	public void testRequestMapping() {
+        driver.get( "http://localhost:8080/basic-sinatra/request-mapping" );
+        WebElement element = driver.findElementById( "success" );
+        assertNotNull( element );
+        
+        WebElement scheme = driver.findElementById( "scheme" );
+        assertNotNull( element );
+        assertEquals( "http", element.getText().trim() );
+		
 	}
 
 }

@@ -3,5 +3,9 @@ require 'rubygems'
 require 'sinatra'
 
 get '/' do
-  '<div id="success" class="basic-sinatra">it worked!</div>'
+  erb :index
+end
+
+get '/request-mapping' do
+  haml :request_mapping
 end
