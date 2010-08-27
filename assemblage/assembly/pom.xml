@@ -45,40 +45,42 @@
       <artifactId>torquebox-base-int</artifactId>
       <classifier>deployer</classifier>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-int</artifactId>
       <classifier>deployer</classifier>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rack-int</artifactId>
       <classifier>deployer</classifier>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rails-int</artifactId>
       <classifier>deployer</classifier>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-jobs-int</artifactId>
       <classifier>deployer</classifier>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-int</artifactId>
       <classifier>deployer</classifier>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
 
 
@@ -178,7 +180,7 @@
               <includeGroupIds>org.torquebox</includeGroupIds> 
               <includeTypes>jar</includeTypes>
               <includeClassifiers>deployer</includeClassifiers> 
-              <includeScope>runtime</includeScope>
+              <includeScope>provided</includeScope>
               <excludeTransitive>true</excludeTransitive>
               <outputDirectory>${stage.dir}/jboss/server/default/deployers/torquebox.deployer</outputDirectory>
               <stripVersion>true</stripVersion>
@@ -194,7 +196,7 @@
               <includeGroupIds>org.torquebox</includeGroupIds>
               <includeTypes>jar</includeTypes>
               <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>runtime</includeScope>
+              <includeScope>provided</includeScope>
               <excludeTransitive>true</excludeTransitive>
               <outputDirectory>${stage.dir}/jboss/server/standard/deployers/torquebox.deployer</outputDirectory>
               <stripVersion>true</stripVersion>
@@ -210,7 +212,7 @@
               <includeGroupIds>org.torquebox</includeGroupIds>
               <includeTypes>jar</includeTypes>
               <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>runtime</includeScope>
+              <includeScope>provided</includeScope>
               <excludeTransitive>true</excludeTransitive>
               <outputDirectory>${stage.dir}/jboss/server/all/deployers/torquebox.deployer</outputDirectory>
               <stripVersion>true</stripVersion>
@@ -226,7 +228,7 @@
               <includeGroupIds>org.torquebox</includeGroupIds>
               <includeTypes>jar</includeTypes>
               <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>runtime</includeScope>
+              <includeScope>provided</includeScope>
               <excludeTransitive>true</excludeTransitive>
               <outputDirectory>${stage.dir}/jboss/server/osgi/deployers/torquebox.deployer</outputDirectory>
               <stripVersion>true</stripVersion>
@@ -242,7 +244,7 @@
               <includeGroupIds>org.torquebox</includeGroupIds>
               <includeTypes>jar</includeTypes>
               <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>runtime</includeScope>
+              <includeScope>provided</includeScope>
               <excludeTransitive>true</excludeTransitive>
               <outputDirectory>${stage.dir}/jboss/server/jbossweb-standalone/deployers/torquebox.deployer</outputDirectory>
               <stripVersion>true</stripVersion>
