@@ -87,9 +87,9 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 	/** Should environment $JRUBY_HOME be considered? */
 	private boolean useJRubyHomeEnvVar = true;
-	
-	private Map<String,String> applicationEnvironment;
-	
+
+	private Map<String, String> applicationEnvironment;
+
 	private Set<Ruby> undisposed = new HashSet<Ruby>();
 
 	/**
@@ -188,20 +188,23 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 		return getClass().getClassLoader();
 	}
-	
-	/** Set the application-specific environment additions.
+
+	/**
+	 * Set the application-specific environment additions.
 	 * 
-	 * @param applicationEnvironment The environment.
+	 * @param applicationEnvironment
+	 *            The environment.
 	 */
-	public void setApplicationEnvironment(Map<String,String> applicationEnvironment) {
+	public void setApplicationEnvironment(Map<String, String> applicationEnvironment) {
 		this.applicationEnvironment = applicationEnvironment;
 	}
-	
-	/** Retrieve the application-specific environment additions.
+
+	/**
+	 * Retrieve the application-specific environment additions.
 	 * 
 	 * @return The environment.
 	 */
-	public Map<String,String> getApplicationEnvironment() {
+	public Map<String, String> getApplicationEnvironment() {
 		return this.applicationEnvironment;
 	}
 
@@ -224,10 +227,10 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 			jrubyHome = System.getProperty("jruby.home");
 
-			if (jrubyHome == null && this.useJRubyHomeEnvVar) {
+			if (jrubyHome == null && this.useJRubyHomeEnvVar && !"true".equals(System.getProperty("jruby_home.env.ignore"))) {
 				jrubyHome = System.getenv("JRUBY_HOME");
-				if ( jrubyHome != null ) {
-					if ( ! new File( jrubyHome ).exists() ) {
+				if (jrubyHome != null) {
+					if (!new File(jrubyHome).exists()) {
 						jrubyHome = null;
 					}
 				}
@@ -303,11 +306,11 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		runtime.getLoadService().require("rubygems");
 		return runtime;
 	}
-	
+
 	@Override
 	public synchronized void dispose(Ruby instance) {
-		if ( undisposed.remove( instance ) ) {
-			instance.tearDown( false );
+		if (undisposed.remove(instance)) {
+			instance.tearDown(false);
 		}
 	}
 
@@ -334,8 +337,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			env.put("GEM_PATH", this.gemPath);
 			env.put("GEM_HOME", this.gemPath);
 		}
-		if ( this.applicationEnvironment != null ) {
-			env.putAll( this.applicationEnvironment );
+		if (this.applicationEnvironment != null) {
+			env.putAll(this.applicationEnvironment);
 		}
 		return env;
 	}
@@ -400,12 +403,11 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	public List<String> getLoadPaths() {
 		return this.loadPaths;
 	}
-	
+
 	public synchronized void destroy() {
-		for ( Ruby ruby : undisposed ) {
-			dispose( ruby );
+		for (Ruby ruby : undisposed) {
+			dispose(ruby);
 		}
 	}
-
 
 }
