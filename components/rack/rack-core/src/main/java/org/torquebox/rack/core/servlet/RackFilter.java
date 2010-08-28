@@ -106,7 +106,7 @@ public class RackFilter implements Filter {
 		RackApplication rackApp = null;
 
 		Object rackEnv = null;
-		
+
 		try {
 			rackApp = borrowRackApplication();
 			rackEnv = rackApp.createEnvironment(servletContext, request);
@@ -115,9 +115,11 @@ public class RackFilter implements Filter {
 			log.error("Error invoking Rack filter", e);
 			throw new ServletException(e);
 		} finally {
-			if ( rackEnv != null ) {
+			if (rackEnv != null) {
 				RubyIO in = rackApp.getInputRubyIO(rackEnv);
-				in.close();
+				if (in != null && !in.isClosed()) {
+					in.close();
+				}
 			}
 			if (rackApp != null) {
 				releaseRackApplication(rackApp);
