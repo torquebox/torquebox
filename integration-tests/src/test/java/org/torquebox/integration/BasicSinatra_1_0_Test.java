@@ -35,7 +35,7 @@ public class BasicSinatra_1_0_Test extends AbstractIntegrationTest {
 
 		WebElement scheme = driver.findElementById("scheme");
 		assertNotNull(element);
-		assertEquals("http", element.getText().trim());
+		assertEquals("http", scheme.getText().trim());
 
 	}
 

@@ -35,8 +35,10 @@ if [ $? != 0 ] ; then
   $JRUBY_HOME/bin/jruby -S gem install $gem_install_opts sinatra -v 1.0
 fi
 
+$JRUBY_HOME/bin/jruby -S gem list | grep haml
+
 if [ $? != 0 ] ; then
   echo "*** Installing haml.gem"
-  $JRUBY_HOME/bin/jruby -S gem install gem_install_opts -v 3.0.17
+  $JRUBY_HOME/bin/jruby -S gem install $gem_install_opts haml -v 3.0.17
 fi
 
