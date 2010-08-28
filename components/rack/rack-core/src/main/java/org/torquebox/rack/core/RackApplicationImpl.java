@@ -1,7 +1,8 @@
 /* Copyright 2009 Red Hat, Inc. */
 package org.torquebox.rack.core;
 
-import java.net.MalformedURLException;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -10,15 +11,13 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
+import org.jruby.RubyHash;
 import org.jruby.RubyIO;
 import org.jruby.RubyModule;
-import org.jruby.exceptions.RaiseException;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackResponse;
-
-import java.io.*;
 
 /**
  * Concrete implementation of {@link RackApplication}.
@@ -84,7 +83,8 @@ public class RackApplicationImpl implements RackApplication {
 	public Object createEnvironment(ServletContext context, HttpServletRequest request) throws Exception {
 		Ruby ruby = rubyApp.getRuntime();
 
-		RubyIO input = new RubyIO(ruby, new NonClosingInputStream(request.getInputStream()));
+		//RubyIO input = new RubyIO(ruby, new NonClosingInputStream(request.getInputStream()));
+		RubyIO input = new RubyIO( ruby, request.getInputStream() );
 		RubyIO errors = new RubyIO(ruby, System.err);
 
 		ruby.evalScriptlet("require %q(org/torquebox/rack/core/environment_builder)");
@@ -98,6 +98,11 @@ public class RackApplicationImpl implements RackApplication {
 	public RackResponse call(Object env) {
 		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.rubyApp.getRuntime(), this.rubyApp, "call", new Object[] { env }, RubyArray.class);
 		return new RackResponseImpl(response);
+	}
+	
+	public RubyIO getInputRubyIO(Object env) {
+		RubyHash envHash = (RubyHash) env;
+		return (RubyIO) envHash.get( "rack.input" );
 	}
 
 	class NonClosingInputStream extends InputStream {

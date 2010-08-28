@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jboss.logging.Logger;
+import org.jruby.RubyIO;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationPool;
 
@@ -68,27 +69,25 @@ public class RackFilter implements Filter {
 	public void destroy() {
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
 			doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
 		}
 	}
 
-	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		
-		if ( request.getPathInfo().equals( "/" ) && ! ( request.getRequestURI().endsWith( "/" ) ) ) {
+	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
+
+		if (request.getPathInfo().equals("/") && !(request.getRequestURI().endsWith("/"))) {
 			String redirectUri = request.getRequestURI() + "/";
 			String queryString = request.getQueryString();
-			if ( queryString != null ) {
+			if (queryString != null) {
 				redirectUri = redirectUri + "?" + queryString;
 			}
-			redirectUri = response.encodeRedirectURL( redirectUri );
-			response.sendRedirect( redirectUri );
+			redirectUri = response.encodeRedirectURL(redirectUri);
+			response.sendRedirect(redirectUri);
 			return;
 		}
-		
+
 		HttpServletResponseCapture responseCapture = new HttpServletResponseCapture(response);
 		try {
 			chain.doFilter(request, responseCapture);
@@ -98,7 +97,7 @@ public class RackFilter implements Filter {
 				return;
 			}
 		} catch (ServletException e) {
-			log.error( "Error performing request", e );
+			log.error("Error performing request", e);
 		}
 		doRack(request, response);
 	}
@@ -106,14 +105,20 @@ public class RackFilter implements Filter {
 	protected void doRack(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		RackApplication rackApp = null;
 
+		Object rackEnv = null;
+		
 		try {
 			rackApp = borrowRackApplication();
-			Object rackEnv = rackApp.createEnvironment(servletContext, request);
+			rackEnv = rackApp.createEnvironment(servletContext, request);
 			rackApp.call(rackEnv).respond(response);
 		} catch (Exception e) {
-			log.error( "Error invoking Rack filter", e );
-			throw new ServletException( e );
+			log.error("Error invoking Rack filter", e);
+			throw new ServletException(e);
 		} finally {
+			if ( rackEnv != null ) {
+				RubyIO in = rackApp.getInputRubyIO(rackEnv);
+				in.close();
+			}
 			if (rackApp != null) {
 				releaseRackApplication(rackApp);
 				rackApp = null;

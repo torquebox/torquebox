@@ -40,7 +40,7 @@ public class BasicSinatra_1_0_Test extends AbstractIntegrationTest {
 	}
 
 	// ** Currently ignoring this known-failing test.
-	@Ignore
+	//@Ignore
 	@Test
 	public void testPostAlot() throws Exception {
 		int numIterations = 500;

@@ -23,22 +23,14 @@ package org.torquebox.rack.spi;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.sip.SipServletMessage;
 
 import org.jruby.Ruby;
+import org.jruby.RubyIO;
 
 
 
 public interface RackApplication extends RackMiddleware {
 	Ruby getRuby();
+	RubyIO getInputRubyIO(Object env);
 	Object createEnvironment(ServletContext servletContext, HttpServletRequest request) throws Exception;
-	/**
-	 * 
-	 * @param servletContext
-	 * @param request
-	 * @param sipRubyControllerName
-	 * @return
-	 * @throws Exception
-	 */
-	//Object createEnvironment(ServletContext servletContext, SipServletMessage message, String sipRubyControllerName) throws Exception;
 }
