@@ -14,7 +14,17 @@ elif [ -e $output_dir ] ; then
 else
   echo "*** Copying to integ-dist with hardlinks"
   cd $assembly_dir
-  find . | grep -v jruby/share/ri | grep -v jruby/lib/ruby/gems/1.8/doc | cpio -pmudL $output_dir
+  rsync -a . --delete --relative \
+	  --include jboss/server/default \
+	  --exclude "default/deploy/*.yml" \
+	  --exclude default/data \
+	  --exclude default/work \
+	  --exclude default/log \
+	  --exclude default/tmp \
+	  --exclude "jboss/server/*" \
+	  --exclude jruby/share/ri \
+	  --exclude jruby/lib/ruby/gems/1.8/doc \
+	  $output_dir
 fi
 
 
