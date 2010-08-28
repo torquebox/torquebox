@@ -17,6 +17,9 @@
   <properties>
     <version.arquillian>1.0.0.Alpha3</version.arquillian>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
+
+    <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
+    <integ.dist.dir>${project.build.directory}/integ-dist</integ.dist.dir>
   </properties>
 
   <dependencies>
@@ -59,15 +62,23 @@
       <artifactId>jboss-server-manager</artifactId>
       <version>${version.jboss-server-manager}</version>
     </dependency>
-
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
       <version>1.5.6</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>inplace</id>
+      <properties>
+        <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
+        <integ.dist.dir>${assembly.dir}</integ.dist.dir>
+      </properties>
+    </profile>
+  </profiles>
 
   <build>
     <testResources>
@@ -91,8 +102,8 @@
               <tasks>
                 <exec executable="sh">
                   <arg value="setup-integ-dist.sh"/>
-                  <arg value="${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}"/>
-                  <arg value="${project.build.directory}/integ-dist"/>
+                  <arg value="${assembly.dir}"/>
+                  <arg value="${integ.dist.dir}"/>
                   <arg value="${project.basedir}/etc/ROOT.war"/>
                 </exec>
               </tasks>

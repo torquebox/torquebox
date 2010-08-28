@@ -7,16 +7,36 @@ echo "assembly from... $assembly_dir"
 echo "output to....... $output_dir"
 echo "ROOT.war from... $root_war"
 
-if [ -e $output_dir ] ; then
+if [ $assembly_dir = $output_dir ] ; then
+  echo "*** Setting up integration tests against assembly, NOT A COPY."
+elif [ -e $output_dir ] ; then
   echo "*** integ-dist appears to be in place, not copying"
 else
-  echo "*** copying to integ-dist with hardlinks"
+  echo "*** Copying to integ-dist with hardlinks"
   cd $assembly_dir
   find . | grep -v jruby/share/ri | grep -v jruby/lib/ruby/gems/1.8/doc | cpio -pmudL $output_dir
-  cd $output_dir
+fi
+
+
+if [ ! -e "$output_dir/jboss/server/default/deploy/ROOT.war" ] ; then
+  echo "*** Installing ROOT.war"
   cp $root_war $output_dir/jboss/server/default/deploy/
-  JRUBY_HOME=$output_dir/jruby
-  $JRUBY_HOME/bin/jruby -S gem install sinatra -v 1.0
-  $JRUBY_HOME/bin/jruby -S gem install haml -v 3.0.17
+fi
+
+
+gem_install_opts="--no-ri --no-rdoc"
+
+JRUBY_HOME=$output_dir/jruby
+
+$JRUBY_HOME/bin/jruby -S gem list | grep sinatra
+
+if [ $? != 0 ] ; then 
+  echo "*** Installing sinatra.gem"
+  $JRUBY_HOME/bin/jruby -S gem install $gem_install_opts sinatra -v 1.0
+fi
+
+if [ $? != 0 ] ; then
+  echo "*** Installing haml.gem"
+  $JRUBY_HOME/bin/jruby -S gem install gem_install_opts -v 3.0.17
 fi
 
