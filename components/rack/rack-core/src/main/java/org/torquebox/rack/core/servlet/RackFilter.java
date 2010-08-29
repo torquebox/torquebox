@@ -37,6 +37,7 @@ import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jboss.logging.Logger;
 import org.jruby.RubyIO;
+import org.torquebox.rack.core.RackEnvironmentImpl;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationPool;
 
@@ -105,22 +106,21 @@ public class RackFilter implements Filter {
 	protected void doRack(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		RackApplication rackApp = null;
 
-		Object rackEnv = null;
+		RackEnvironmentImpl rackEnv = null;
 
 		try {
 			rackApp = borrowRackApplication();
-			rackEnv = rackApp.createEnvironment(servletContext, request);
+			//rackEnv = rackApp.createEnvironment(servletContext, request);
+			rackEnv = new RackEnvironmentImpl( rackApp.getRuby(), servletContext, request );
 			rackApp.call(rackEnv).respond(response);
 		} catch (Exception e) {
 			log.error("Error invoking Rack filter", e);
 			throw new ServletException(e);
 		} finally {
 			if (rackEnv != null) {
-				RubyIO in = rackApp.getInputRubyIO(rackEnv);
-				if (in != null && !in.isClosed()) {
-					in.close();
-				}
+				rackEnv.close();
 			}
+			
 			if (rackApp != null) {
 				releaseRackApplication(rackApp);
 				rackApp = null;

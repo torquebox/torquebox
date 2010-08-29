@@ -1,5 +1,11 @@
 package org.torquebox.rack.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.io.ByteArrayInputStream;
 import java.util.Enumeration;
 import java.util.Map;
@@ -11,28 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
-import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Test;
+import org.torquebox.rack.spi.RackEnvironment;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
 
-import static org.junit.Assert.*;
+public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 
-import static org.mockito.Mockito.*;
-
-public class RackApplicationImplTest extends AbstractRubyTestCase {
-
-	@Test
-	public void testConstruct() throws Exception {
-		Ruby ruby = createRuby();
-		ruby.evalScriptlet("RACK_ROOT='/test/app'\n");
-
-		String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-		RackApplicationImpl rackApp = new RackApplicationImpl(ruby, rackup, VFS.getChild("/test/path/config.ru"));
-		IRubyObject rubyApp = rackApp.getRubyApplication();
-		assertNotNil(rubyApp);
-	}
-
-	/*
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testEnvironment() throws Exception {
@@ -64,32 +54,33 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 		when(servletRequest.getHeader("header1")).thenReturn("header_value1");
 		when(servletRequest.getHeader("header2")).thenReturn("header_value2");
 
-		IRubyObject rubyEnv = (IRubyObject) rackApp.createEnvironment(servletContext, servletRequest);
-		assertNotNull(rubyEnv);
+		//IRubyObject rubyEnv = (IRubyObject) rackApp.createEnvironment(servletContext, servletRequest);
+		//assertNotNull(rubyEnv);
 
-		Map<String, Object> javaEnv = (Map<String, Object>) rubyEnv.toJava(Map.class);
-		assertNotNull(javaEnv);
+		//Map<String, Object> javaEnv = (Map<String, Object>) rubyEnv.toJava(Map.class);
+		RackEnvironment env = new RackEnvironmentImpl( ruby, servletContext, servletRequest );
+		Map<String, Object> envMap = env.getEnv();
+		assertNotNull(envMap);
 
-		assertEquals("GET", javaEnv.get("REQUEST_METHOD"));
-		assertEquals("/myapp/the_path", javaEnv.get("REQUEST_URI"));
-		assertEquals("cheese=cheddar&bob=mcwhirter", javaEnv.get("QUERY_STRING"));
-		assertEquals("torquebox.org", javaEnv.get("SERVER_NAME"));
-		assertEquals("https", javaEnv.get("rack.url_scheme"));
-		assertEquals(8080L, javaEnv.get("SERVER_PORT"));
-		assertEquals("text/html", javaEnv.get("CONTENT_TYPE"));
-		assertEquals(0L, javaEnv.get("CONTENT_LENGTH"));
-		assertEquals("10.42.42.42", javaEnv.get("REMOTE_ADDR"));
+		assertEquals("GET", envMap.get("REQUEST_METHOD"));
+		assertEquals("/myapp/the_path", envMap.get("REQUEST_URI"));
+		assertEquals("cheese=cheddar&bob=mcwhirter", envMap.get("QUERY_STRING"));
+		assertEquals("torquebox.org", envMap.get("SERVER_NAME"));
+		assertEquals("https", envMap.get("rack.url_scheme"));
+		assertEquals(8080, envMap.get("SERVER_PORT"));
+		assertEquals("text/html", envMap.get("CONTENT_TYPE"));
+		assertEquals(0, envMap.get("CONTENT_LENGTH"));
+		assertEquals("10.42.42.42", envMap.get("REMOTE_ADDR"));
 
-		assertEquals("header_value1", javaEnv.get("HTTP_HEADER1"));
-		assertEquals("header_value2", javaEnv.get("HTTP_HEADER2"));
+		assertEquals("header_value1", envMap.get("HTTP_HEADER1"));
+		assertEquals("header_value2", envMap.get("HTTP_HEADER2"));
 
-		assertNotNull(javaEnv.get("rack.input"));
-		assertNotNull(javaEnv.get("rack.errors"));
-		assertSame(servletRequest, javaEnv.get("servlet_request"));
-		assertSame(servletRequest, javaEnv.get("java.servlet_request"));
+		assertNotNull(envMap.get("rack.input"));
+		assertNotNull(envMap.get("rack.errors"));
+		assertSame(servletRequest, envMap.get("servlet_request"));
+		assertSame(servletRequest, envMap.get("java.servlet_request"));
 
 	}
-	*/
 
 	@SuppressWarnings("unchecked")
 	protected Enumeration enumeration(Object... values) {

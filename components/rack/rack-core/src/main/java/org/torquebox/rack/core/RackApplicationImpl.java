@@ -4,19 +4,16 @@ package org.torquebox.rack.core;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
 import org.jruby.RubyHash;
 import org.jruby.RubyIO;
-import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.spi.RackApplication;
+import org.torquebox.rack.spi.RackEnvironment;
 import org.torquebox.rack.spi.RackResponse;
 
 /**
@@ -80,7 +77,20 @@ public class RackApplicationImpl implements RackApplication {
 	 * 
 	 * @return The Ruby Rack request environment.
 	 */
-	public Object createEnvironment(ServletContext context, HttpServletRequest request) throws Exception {
+	/*
+	public Object createEnvironment(Ruby ruby, ServletContext context, HttpServletRequest request) throws Exception {
+		Map<String,Object> env = new HashMap<String,Object>();
+		
+		RubyIO input = new RubyIO( ruby, request.getInputStream() );
+		env.put( "rack.input", input );
+		
+		RubyIO errors = new RubyIO(ruby, System.err);
+		env.put( "rack.errors", )
+		
+		return env;
+	}
+	
+	public Object createEnvironmentViaRuby(ServletContext context, HttpServletRequest request) throws Exception {
 		Ruby ruby = rubyApp.getRuntime();
 
 		//RubyIO input = new RubyIO(ruby, new NonClosingInputStream(request.getInputStream()));
@@ -94,9 +104,10 @@ public class RackApplicationImpl implements RackApplication {
 
 		return environment;
 	}
+	*/
 
-	public RackResponse call(Object env) {
-		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.rubyApp.getRuntime(), this.rubyApp, "call", new Object[] { env }, RubyArray.class);
+	public RackResponse call(RackEnvironment env) {
+		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.rubyApp.getRuntime(), this.rubyApp, "call", new Object[] { env.getEnv() }, RubyArray.class);
 		return new RackResponseImpl(response);
 	}
 	

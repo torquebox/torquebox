@@ -21,16 +21,10 @@
  */
 package org.torquebox.rack.spi;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.jruby.Ruby;
-import org.jruby.RubyIO;
 
 
 
 public interface RackApplication extends RackMiddleware {
 	Ruby getRuby();
-	RubyIO getInputRubyIO(Object env);
-	Object createEnvironment(ServletContext servletContext, HttpServletRequest request) throws Exception;
 }
