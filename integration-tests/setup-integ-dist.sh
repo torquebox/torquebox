@@ -9,12 +9,10 @@ echo "ROOT.war from... $root_war"
 
 if [ $assembly_dir = $output_dir ] ; then
   echo "*** Setting up integration tests against assembly, NOT A COPY."
-elif [ -e $output_dir ] ; then
-  echo "*** integ-dist appears to be in place, not copying"
 else
-  echo "*** Copying to integ-dist with hardlinks"
+  echo "*** Syncing to integ-dist with hardlinks"
   cd $assembly_dir
-  rsync -a . --delete --relative \
+  rsync -a . --relative \
 	  --include jboss/server/default \
 	  --exclude "default/deploy/*.yml" \
 	  --exclude default/data \
