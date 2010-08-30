@@ -67,67 +67,9 @@ public class RackApplicationImpl implements RackApplication {
 		return this.rubyApp.getRuntime();
 	}
 
-	/**
-	 * Create the request environment ({@code env}) for request handling.
-	 * 
-	 * @param context
-	 *            The servlet context.
-	 * @param request
-	 *            The servlet request.
-	 * 
-	 * @return The Ruby Rack request environment.
-	 */
-	/*
-	public Object createEnvironment(Ruby ruby, ServletContext context, HttpServletRequest request) throws Exception {
-		Map<String,Object> env = new HashMap<String,Object>();
-		
-		RubyIO input = new RubyIO( ruby, request.getInputStream() );
-		env.put( "rack.input", input );
-		
-		RubyIO errors = new RubyIO(ruby, System.err);
-		env.put( "rack.errors", )
-		
-		return env;
-	}
-	
-	public Object createEnvironmentViaRuby(ServletContext context, HttpServletRequest request) throws Exception {
-		Ruby ruby = rubyApp.getRuntime();
-
-		//RubyIO input = new RubyIO(ruby, new NonClosingInputStream(request.getInputStream()));
-		RubyIO input = new RubyIO( ruby, request.getInputStream() );
-		RubyIO errors = new RubyIO(ruby, System.err);
-
-		ruby.evalScriptlet("require %q(org/torquebox/rack/core/environment_builder)");
-
-		RubyModule envBuilder = ruby.getClassFromPath("TorqueBox::Rack::EnvironmentBuilder");
-		Object environment = JavaEmbedUtils.invokeMethod(ruby, envBuilder, "build", new Object[] { context, request, input, errors }, Object.class);
-
-		return environment;
-	}
-	*/
-
 	public RackResponse call(RackEnvironment env) {
 		IRubyObject response = (RubyArray) JavaEmbedUtils.invokeMethod(this.rubyApp.getRuntime(), this.rubyApp, "call", new Object[] { env.getEnv() }, RubyArray.class);
 		return new RackResponseImpl(response);
 	}
 	
-	public RubyIO getInputRubyIO(Object env) {
-		RubyHash envHash = (RubyHash) env;
-		return (RubyIO) envHash.get( "rack.input" );
-	}
-
-	class NonClosingInputStream extends InputStream {
-		private InputStream target;
-
-		public NonClosingInputStream(InputStream target) {
-			this.target = target;
-		}
-		public int read() throws IOException {
-			return target.read();
-		}
-		// TODO: Temporary hack
-		public void close() throws IOException {
-			// Not closing to avoid reading a closed stream
-		}
-	}
 }
