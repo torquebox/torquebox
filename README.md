@@ -47,7 +47,7 @@ Development Tips
 If you're actively developing portions of the TorqueBox codebase,
 it's useful to define $TORQUEBOX_HOME around the directory
 
-    ./assemblage/assembly/stage/torquebox-${VERSION}
+    ./assemblage/assembly/target/stage/torquebox-${VERSION}
 
 And then define JBOSS_HOME and JRUBY_HOME per usual
 
