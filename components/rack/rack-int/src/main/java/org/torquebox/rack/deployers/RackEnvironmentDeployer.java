@@ -32,27 +32,25 @@ public class RackEnvironmentDeployer extends AbstractDeployer {
     
     public RackEnvironmentDeployer() {
         setStage(DeploymentStages.POST_PARSE);
-        addInput(RackApplicationMetaData.class);
+        setInput(RackApplicationMetaData.class);
         addOutput(EnvironmentMetaData.class);
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-		RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
-		if (rackAppMetaData != null) {
-			EnvironmentMetaData envMetaData = unit.getAttachment( EnvironmentMetaData.class );
-			if ( envMetaData == null ) {
-				envMetaData = new EnvironmentMetaData();
-			} else {
-				log.warn("EnvironmentMetaData found, overwriting");
-			}
-			String rackEnv = rackAppMetaData.getRackEnv();
-			if ( rackEnv != null ) {
-				envMetaData.setEnvironmentName( rackEnv );
-				envMetaData.setDevelopmentMode( rackEnv.equals( "development" ) );
-			} else {
-				log.warn("The RACK_ENV is null, check deployer config");
-			}
-			unit.addAttachment(EnvironmentMetaData.class, envMetaData);
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        EnvironmentMetaData envMetaData = unit.getAttachment( EnvironmentMetaData.class );
+        if ( envMetaData == null ) {
+            envMetaData = new EnvironmentMetaData();
+        } else {
+            log.warn("EnvironmentMetaData found, overwriting");
         }
+        String rackEnv = rackAppMetaData.getRackEnv();
+        if ( rackEnv != null ) {
+            envMetaData.setEnvironmentName( rackEnv );
+            envMetaData.setDevelopmentMode( rackEnv.equals( "development" ) );
+        } else {
+            log.warn("The RACK_ENV is null, check deployer config");
+        }
+        unit.addAttachment(EnvironmentMetaData.class, envMetaData);
     }
 }
