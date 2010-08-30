@@ -11,7 +11,7 @@ describe TorqueBox::Naming::NamingService do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
       @service = TorqueBox::Naming::NamingService.new do |config|
-        config.port, config.rmi_port = available_port(2)
+        config.port = config.rmi_port = 0
       end
       @container.enable( @service )
       @container.start
@@ -55,7 +55,7 @@ describe TorqueBox::Naming::NamingService do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
       @service = TorqueBox::Naming::NamingService.new do |config|
-        config.port, config.rmi_port = available_port(2)
+        config.port = config.rmi_port = 0
         config.export = false
       end
       @container.enable( @service )
@@ -89,11 +89,4 @@ describe TorqueBox::Naming::NamingService do
  
   end
 
-end
-
-def available_port count=1
-  servers = (0...count).map{ TCPServer.new('127.0.0.1', 0)} 
-  ports = servers.map {|s| s.addr[1]}
-  servers.each {|s| s.close}
-  count==1 ? ports.first : ports
 end
