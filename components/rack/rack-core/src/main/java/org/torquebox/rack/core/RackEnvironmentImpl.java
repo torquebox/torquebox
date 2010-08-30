@@ -14,7 +14,10 @@ import org.jruby.RubyFixnum;
 import org.jruby.RubyHash;
 import org.jruby.RubyIO;
 import org.jruby.RubyString;
+import org.jruby.util.io.STDIO;
+
 import org.torquebox.rack.spi.RackEnvironment;
+
 
 public class RackEnvironmentImpl implements RackEnvironment {
 
@@ -31,10 +34,10 @@ public class RackEnvironmentImpl implements RackEnvironment {
 	private void initializeEnv(Ruby ruby, ServletContext servletContext, HttpServletRequest request) throws IOException {
 		this.env = new RubyHash(ruby);
 
-		this.input = new RubyIO(ruby, new ProtectedInputStream(request.getInputStream()));
+		this.input = new RubyIO(ruby, request.getInputStream());
 		env.put( RubyString.newString( ruby, "rack.input" ), input);
 
-		this.errors = new RubyIO(ruby, new ProtectedOutputStream(System.err));
+		this.errors = new RubyIO(ruby, STDIO.ERR);
 		env.put( RubyString.newString( ruby, "rack.errors" ), errors);
 
 		RubyArray rackVersion = RubyArray.newArray(ruby);
@@ -87,37 +90,6 @@ public class RackEnvironmentImpl implements RackEnvironment {
 				this.errors.close();
 			}
 		}
-	}
-
-	class ProtectedInputStream extends InputStream {
-		private InputStream target;
-
-		public ProtectedInputStream(InputStream target) {
-			this.target = target;
-		}
-
-		public int read() throws IOException {
-			return target.read();
-		}
-
-		public void close() throws IOException {
-			// Not closing to avoid reading a closed stream
-		}
-	}
-
-	class ProtectedOutputStream extends OutputStream {
-
-		private OutputStream target;
-
-		public ProtectedOutputStream(OutputStream target) {
-			this.target = target;
-		}
-
-		@Override
-		public void write(int b) throws IOException {
-			this.target.write(b);
-		}
-
 	}
 
 }

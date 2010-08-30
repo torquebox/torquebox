@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jboss.logging.Logger;
-import org.jruby.RubyIO;
 import org.torquebox.rack.core.RackEnvironmentImpl;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationPool;

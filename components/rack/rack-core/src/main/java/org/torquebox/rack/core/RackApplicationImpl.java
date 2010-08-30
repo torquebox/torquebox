@@ -8,8 +8,6 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyArray;
-import org.jruby.RubyHash;
-import org.jruby.RubyIO;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.spi.RackApplication;
