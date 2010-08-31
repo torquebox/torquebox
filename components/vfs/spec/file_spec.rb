@@ -53,7 +53,14 @@ describe "File extensions for VFS" do
     File.readable?( __FILE__ ).should be_true
     File.readable?( "vfs:#{__FILE__}" ).should be_true
   end
-    
+
+  it "should handle #'s in filenames properly" do
+    prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
+    File.file?( "#{prefix}/#bad-uri#" ).should be_true
+    File.file?( "vfs:#{prefix}/#bad-uri#" ).should be_true
+    File.file?( "vfs:#{prefix}/#missing#" ).should be_false
+  end
+
   [ :absolute, :relative, :vfs ].each do |style|
     describe "with #{style} paths" do
       case ( style )
