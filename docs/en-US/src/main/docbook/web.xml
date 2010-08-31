@@ -66,14 +66,14 @@
         <filename>-rack.yml</filename>. The prefix is arbitrary, but is
         usually some form of your application's name.</para>
 
-        <para><filename>$JBOSS_HOME/server/default/deploy/<emphasis
-        role="bold">myapp-rack.yml</emphasis></filename></para>
+        <para><emphasis><filename>$JBOSS_HOME/server/default/deploy/
+        role="bold">myapp-rack.yml</filename></emphasis></para>
       </section>
 
       <section>
         <title>Contents of the descriptor</title>
 
-        <para>The descriptor has 2 main sections:</para>
+        <para>The descriptor has 3 main sections:</para>
 
         <orderedlist>
           <listitem>
@@ -82,6 +82,10 @@
 
           <listitem>
             <para>Web-specific configuration</para>
+          </listitem>
+
+          <listitem>
+            <para>Environment variables</para>
           </listitem>
         </orderedlist>
 
@@ -99,16 +103,16 @@
           <envar>RACK_ENV</envar> is nonsensical.</para>
 
           <para>
-	    <example>
+            <example>
               <title>Application configuration in *-rack.yml</title>
 
               <para><programlisting>application:
   RACK_ROOT: /path/to/myapp
   RACK_ENV:  development</programlisting></para>
             </example>
-	  </para>
+          </para>
 
-	  <section id="rackup">
+          <section id="rackup">
             <title>Rackup Config File</title>
 
             <para>By default, the TorqueBox server will look for a
@@ -116,16 +120,16 @@
             You can override the default name using the
             <emphasis>rackup</emphasis> config parameter.</para>
 
-	    <para>
-	      <example>
-		<title>Application configuration in *-rack.yml</title>
-		
+            <para>
+              <example>
+                <title>Overriding the rackup config file</title>
+        
               <para><programlisting>application:
   RACK_ROOT: /path/to/myapp
   RACK_ENV:  development
   rackup:    your_app_name.ru</programlisting></para>
-	      </example>
-	    </para>
+              </example>
+            </para>
           </section>
         </section>
 
@@ -144,18 +148,20 @@
             <title>Virtual Hosts</title>
 
             <para>Virtual hosts allow one application to respond to
-            <emphasis>www.host-one.com</emphasis>, while another running
-            within the same JBoss AS to respond to
-            <emphasis>www.host-two.com</emphasis>. If no host is specified,
-            then the application will respond to all requests directed at the
-            TorqueBox Server.</para>
+            <emphasis>www.host-one.com</emphasis>, while another
+            running within the same JBoss AS to respond to
+            <emphasis>www.host-two.com</emphasis>. If no host is
+            specified, then the application will respond to all
+            requests directed at the TorqueBox Server.</para>
 
-            <para><example>
+            <para>
+              <example>
                 <title>Virtual host configuration in *-rack.yml</title>
 
                 <para><programlisting>web:
   host: www.host-one.com</programlisting></para>
-              </example></para>
+              </example>
+            </para>
           </section>
 
           <section>
@@ -194,6 +200,34 @@
               </example></para>
           </section>
         </section>
+
+        <section>
+          <title>Environment variables</title>
+
+          <para>
+            Each Rack application may have its own unique set of
+            environment variables, no matter how many different Rack
+            apps are deployed under a single TorqueBox instance
+          </para>
+
+          <para>
+            <example>
+              <title>Environment variables set in *-rack.yml</title>
+
+              <para><programlisting>environment:
+  MAIL_HOST: mail.yourhost.com
+  REPLY_TO: you@yourhost.com</programlisting></para>
+            </example>
+          </para>
+
+          <para>
+            Any variable set in the environment section of *-rack.yml
+            is accessible from within the Rack app using the ENV hash,
+            e.g. ENV['MAIL_HOST']=='mail.yourhost.com'
+          </para>
+            
+        </section>
+      
       </section>
     </section>
   </section>
@@ -449,14 +483,14 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
           <filename>-rails.yml</filename>. The prefix is arbitrary, but is
           usually some form of your application's name.</para>
 
-          <para><screen><filename>$JBOSS_HOME/server/default/deploy/<emphasis
-                  role="bold">myapp-rails.yml</emphasis></filename></screen></para>
+          <para><screen><emphasis><filename>$JBOSS_HOME/server/default/deploy/
+                  role="bold">myapp-rails.yml</filename></emphasis></screen></para>
         </section>
 
         <section>
           <title>Contents of the descriptor</title>
 
-          <para>The descriptor has 2 main sections:</para>
+          <para>The descriptor has 4 main sections:</para>
 
           <orderedlist>
             <listitem>
@@ -465,6 +499,10 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
 
             <listitem>
               <para>Web-specific configuration</para>
+            </listitem>
+
+            <listitem>
+              <para>Environment Variables</para>
             </listitem>
 
             <listitem>
@@ -559,6 +597,34 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
   context: /app-one</screen></para>
                 </example></para>
             </section>
+          </section>
+
+          <section>
+            <title>Environment variables</title>
+
+            <para>
+              Each Rails application may have its own unique set of
+              environment variables, no matter how many other
+              different apps are deployed under a single TorqueBox
+              instance.
+            </para>
+
+            <para>
+              <example>
+                <title>Environment variables set in *-rails.yml</title>
+
+              <para><programlisting>environment:
+  MAIL_HOST: mail.yourhost.com
+  REPLY_TO: you@yourhost.com</programlisting></para>
+              </example>
+            </para>
+
+            <para>
+              Any variable set in the environment section of
+              *-rails.yml is accessible from within the Rails app
+              using the ENV hash, e.g. ENV['MAIL_HOST']=='mail.yourhost.com'
+            </para>
+            
           </section>
 
           <section>
