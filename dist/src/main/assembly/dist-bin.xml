@@ -10,4 +10,19 @@
       <outputDirectory>/</outputDirectory>
     </fileSet>
   </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/docs</outputDirectory>
+      <includes>
+        <include>org.torquebox:torquebox-docs-en_US:*:pdf</include>
+      </includes>
+    </dependencySet>
+    <dependencySet>
+      <outputDirectory>/docs/html</outputDirectory>
+      <unpack>true</unpack>
+      <includes>
+        <include>org.torquebox:torquebox-docs-en_US:zip:html</include>
+      </includes>
+    </dependencySet>
+  </dependencySets>
 </assembly>

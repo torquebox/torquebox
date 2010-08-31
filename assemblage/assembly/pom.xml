@@ -15,6 +15,7 @@
   <description></description>
 
   <properties>
+    <install.docs>false</install.docs>
     <stage.dir>${project.build.directory}/stage/torquebox-${project.version}</stage.dir>
   </properties>
 
@@ -128,6 +129,15 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>dist</id>
+      <properties>
+        <install.docs>true</install.docs>
+      </properties>
+    </profile>
+  </profiles>
+
   <build>
     <plugins> 
       <plugin>
@@ -169,7 +179,6 @@
               <outputDirectory>${stage.dir}</outputDirectory>
             </configuration>
           </execution>
-
           <execution>
             <id>install-deployers-default-profile</id>
             <phase>package</phase>
@@ -379,8 +388,8 @@
               <gemPath>${stage.dir}/jruby/lib/ruby/gems/1.8</gemPath>
               <gemHome>${stage.dir}/jruby/lib/ruby/gems/1.8</gemHome>
               <useTransitiveDependencies>true</useTransitiveDependencies>
-              <installRDoc>true</installRDoc>
-              <installRI>true</installRI>
+              <installRDoc>${install.docs}</installRDoc>
+              <installRI>${install.docs}</installRI>
               <fork>true</fork>
             </configuration>
           </execution>

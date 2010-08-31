@@ -15,6 +15,29 @@
   <description></description>
 
 
+  <dependencies>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-assembly</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency> 
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-docs-en_US</artifactId>
+      <version>${project.version}</version>
+      <type>pdf</type>
+    </dependency> 
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-docs-en_US</artifactId>
+      <version>${project.version}</version>
+      <classifier>html</classifier>
+      <type>zip</type>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
