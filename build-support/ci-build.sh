@@ -8,7 +8,7 @@ echo "Removing $HOME/.m2/repository/rubygems"
 rm -rf $HOME/.m2/repository/rubygems
 
 echo "Peforming cleaning"
-mvn clean -Pinteg -Pdist
+$MAVEN_HOME/bin/mvn clean -Pinteg -Pdist
 
 echo "*** Start Build ***"
 
