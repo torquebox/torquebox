@@ -160,12 +160,13 @@
     <section>
       <title>Deployment Descriptors</title>
 
-      <para>Deploying queues and topics is as easy as creating simple YAML
-      files, and placing them either in your application's config/ directory,
-      or in the application server's deploy/ directory, depending on which
-      deployment style you've chosen. Both methods may be combined.
-      Server-deployed destinations and application-deployed destinations are
-      indistinguishable once deployed.</para>
+      <para>Deploying queues and topics is as easy as creating simple
+      YAML files, and placing them either in your application's
+      <filename>config/</filename> directory, or in the application
+      server's <filename>deploy/</filename> directory, depending on
+      which deployment style you've chosen. Both methods may be
+      combined.  Server-deployed destinations and application-deployed
+      destinations are indistinguishable once deployed.</para>
 
       <section>
         <title><filename>queues.yml</filename></title>
@@ -226,7 +227,7 @@
       <title>Low-level message consumption</title>
 
       <para>For the lowest-level implementation of a Ruby consumer, the class
-      must simply implement <function>on_message(msg)</function> which
+      must simply implement <function>process!(msg)</function> which
       receives a <classname>javax.jms.Message</classname> as its parameter.
       Admittedly, this gets quite a lot of Java in your Ruby, but it's
       available if needed.</para>
@@ -235,7 +236,7 @@
           <title>Low-level message consumer</title>
 
           <para><programlisting>class MyLowConsumer
-  def on_message(msg)
+  def process!(msg)
     # manipulate the javax.jms.Message here
   end
 end</programlisting></para>
@@ -243,79 +244,26 @@ end</programlisting></para>
     </section>
 
     <section>
-      <title>Higher-level message consumption</title>
+      <title>Syntactic sugar for Text-based messages</title>
 
-      <para>If you know the producers of messages will be using the TorqueBox
-      client API (or following the correct conventions, at least), you may
-      wish to take advantage of higher-level messaging semantics, and easier
-      APIs.</para>
+      <para>
+        For simple text-based messages, a consumer may extend
+        <classname>TorqueBox::Messaging::MessageProcessor</classname>
+        and implement an <function>on_message(text)</function> method
+        which will receive a string payload of the message.
+      </para>
 
-      <para>For instance, message consumers may be triggered with either
-      simple text, or a complex Ruby object graph as the message payload,
-      instead of having to directly manipulate an instance of
-      <classname>javax.jms.Message</classname>.</para>
+      <para>
+        <example>
+          <title>Text-based message consumer</title>
 
-      <para>Using higher-level messaging semantics requires the cooperation of
-      both the producer and consumer of messages.</para>
-
-      <section>
-        <title>Text-based messages</title>
-
-        <para>For simple text-based messages, a consumer may instead implement
-        an <function>on_text(text)</function> method which will receive a
-        string payload of the message.</para>
-
-        <para><example>
-            <title>Text-based message consumer</title>
-
-            <para><programlisting>class MyTextConsumer
-  def on_text(text)
+          <para><programlisting>class MyTextConsumer &lt; TorqueBox::Messaging::MessageProcessor
+  def on_message(text)
     # process the string `text` payload
   end
 end</programlisting></para>
-          </example></para>
-      </section>
-
-      <section>
-        <title>Object-based message</title>
-
-        <para>Consumers may also easily treat the message payload as a
-        marshalled Ruby object graph. By implementing on_object(obj) method,
-        the consumer will receive the unmarshalled Ruby object without
-        additional work.</para>
-
-        <para><example>
-            <title>Object-based message consumer</title>
-
-            <para><programlisting>class MyObjectConsumer
-  def on_object(obj)
-    # work with Ruby object `obj` payload
-  end
-end</programlisting></para>
-          </example></para>
-      </section>
-
-      <section>
-        <title>Mixed consumption</title>
-
-        <para>In the event you want the best of both worlds, both
-        <function>on_text(...)</function> and
-        <function>on_object(...)</function> may take a second parameter,
-        through which the original <classname>javax.jms.Message</classname>
-        will be passed. This can be useful if your consumer needs to generate
-        a response back to a temporary reply-to destination.</para>
-
-        <para><example>
-            <title>Mixed consumption</title>
-
-            <para><programlisting>class MyMixedConsumer
-  def on_object(obj, message)
-    # work with Ruby object `obj` payload
-    # AND have access to the `message` javax.jms.Message object
-  end
-end</programlisting></para>
-          </example></para>
-      </section>
+        </example>
+      </para>
     </section>
 
     <section>
@@ -329,88 +277,80 @@ end</programlisting></para>
       <section>
         <title>Connecting consumers within TorqueBox</title>
 
-        <para>To connect consumers within a TorqueBox-deployed application,
-        you typically need to create a <filename>consumers.rb</filename> file,
-        such as <filename>config/consumers.rb</filename> for Rails
+        <para>To connect consumers within a TorqueBox-deployed
+        application, you need to create a
+        <filename>messaging.tq</filename> file, such as
+        <filename>config/messaging.tq</filename> for Rails
         applications.</para>
 
-        <para>This file should evaluate to a container configuration object. A
-        simple, no-op consumers.rb configuration looks like</para>
+        <para>
+          This file will contain the mappings from your destinations
+          (topics and queues) to your consumers.  Each mapping is
+          defined using the <function>subscribe</function> command,
+          which expects two required parameters: the
+          <parameter>consumer</parameter> class, and the name of the
+          <parameter>destination</parameter>.  The name of the
+          destination should correspond to one of the entries in
+          either <filename>queues.yml</filename> or
+          <filename>topics.yml</filename>. 
+        </para>
 
-        <para><programlisting>TorqueBox::Messaging::Container::Config.create {
-
-}</programlisting></para>
-
-        <para>Within the block, you may configure general connection
-        information, such as the naming-service URL.</para>
-
-        <para><example>
-            <title>Configuring naming-service within
-            <filename>consumers.rb</filename></title>
-
-            <para><programlisting>TorqueBox::Messaging::Container::Config.create {
-
-  naming_provider_url 'jnp://some.other.host.com:1099/'
-
-}</programlisting></para>
-          </example>Additionally, you may create a
-        <function>consumers</function> sub-block, then use the
-        <function>map</function> method to link destinations with
-        consumers.</para>
-
-        <para><example>
-            <title>Mapping destinations to consumers</title>
-
-            <para><programlisting>TorqueBox::Messaging::Container::Config.create {
-
-  consumers {
-    map '/queues/my_queue', 'MyConsumer'
-  }
-}</programlisting>Note that the consumer name should be a string and not a
-            constant in this configuration file, due to load-time
-            constraints.</para>
-          </example></para>
+        <example>
+          <title>messaging.tq</title>
+          <para>
+            <programlisting>subscribe MyFooHandler, '/queues/foo'
+subscribe MyBazHandler, '/topics/baz'</programlisting>
+          </para>
+          <para>
+            The classes MyFooHandler and MyBazHandler would correspond
+            to files available on the load path: my_foo_handler.rb and
+            my_baz_handler.rb, respectively.  In a Rails app, these
+            files would typically reside beneath
+            <filename>lib/</filename> or
+            <filename>app/models/</filename>.
+          </para>
+        </example>
 
         <section>
           <title>Connecting Consumers outside of TorqueBox</title>
 
-          <para>You may also connect consumers outside of TorqueBox. The
-          configuration is very similar, but your script must also launch the
-          container that manages the consumers and their lifecycle.</para>
+          <para>
+            To support messaging outside of TorqueBox, i.e. outside of
+            the JBoss Application Server (AS), two command-line
+            utilities are provided: one that can deploy your
+            <filename>queues.yml</filename> (or
+            <filename>topics.yml</filename>) and one that can deploy
+            your <filename>messaging.tq</filename> config file.
+          </para>
 
-          <para>Assuming you have the full array of required Ruby gems, any
-          script can host consumers.</para>
+          <para>
+            <example>
+              <title>Deploying your Consumers outside of the App Server</title>
+              
+              <para><programlisting>$ trq-message-processor-host --deploy messaging.tq
+              </programlisting></para>
+              <para>Optionally, you can pass <code>-N
+              your.naming.host</code> if there's not a naming server
+              running locally</para>
+            </example>
+          </para>
 
-          <para><example>
-              <title>Consumer hosting outside of TorqueBox</title>
+          <para>
+            Firing up the consumers doesn't do much good without the actual destinations, though...
+          </para>
 
-              <para><programlisting>#!/usr/bin/env jruby
+          <para>
+            <example>
+              <title>Deploying your Destinations outside of the App Server</title>
+              
+              <para><programlisting>$ trq-message-broker -s --deploy queues.yml
+              </programlisting></para>
+              <para>The <code>-s</code> option tells the broker to
+              fire up its own naming service.  Otherwise, it attempts
+              to use a local one.</para>
+            </example>
+          </para>
 
-require 'rubygems'
-require 'torquebox-messaging-container'
-
-class MyConsumer
-  attr_accessor :session
-
-  def on_message(msg)
-    puts "Received: #{msg.text}"
-  end
-end
-
-container = TorqueBox::Messaging::Container.new {
-
-  naming_provider_url 'jnp://localhost:1099/'
-
-  consumers {
-    map '/queues/foo', MyConsumer
-  }
-}
-
-container.start
-container.wait_until( 'INT' )
-</programlisting>Notice that the consumer may be specified with a constant in
-              this case, since the constant is definitely in-scope.</para>
-            </example></para>
         </section>
       </section>
     </section>
@@ -418,117 +358,8 @@ container.wait_until( 'INT' )
 
   <section>
     <title>Ruby Producers</title>
-
-    <para>While consuming messages is easy with Ruby objects, producing them
-    is just as simple.</para>
-
-    <para>The client library, usable outside of the core TorqueBox server
-    even, is available as a Ruby gem named
-    <package>torquebox-messaging-client</package>. A client is created, and
-    can then be used to send either bare javax.jms.Message objects, or
-    higher-level text and Ruby object graph messages.</para>
-
-    <section>
-      <title>Create a client</title>
-
-      <para>A client represents a configured connection capable of locating
-      and using destinations managed by the message broker. To accomplish
-      this, it needs to be able to connect to the naming-service where the
-      queues and topics are registered. By default, this is
-      <uri>jnp://localhost:1099/</uri>, which indicates it should connect
-      through the Java Naming Protocol to the server running on port 1099 of
-      the current host.</para>
-
-      <para>This is the default case for when you are running the TorqueBox
-      server, as it provides a naming-service used by the components. If, by
-      chance, you have bound the server to a non-localhost port, or are
-      attempting to reach it from an external machine, you will need to adjust
-      this connection parameter.</para>
-
-      <section>
-        <title>Create a client within TorqueBox</title>
-
-        <para>Within an application running inside TorqueBox, you may simply
-        create a client with the simple no-argument version of connect(), and
-        begin using it to communicate with the message broker.</para>
-
-        <para><example>
-            <title>Client within TorqueBox</title>
-
-            <para><programlisting>TorqueBox::Messaging::Client.connect do |client|
-  # use `client` here
-end</programlisting></para>
-          </example></para>
-      </section>
-
-      <section>
-        <title>Create a client in external scripts</title>
-
-        <para>You may connect a client from any external script also, provided
-        you have all the appropriate gems and JRuby installed. This is easy if
-        you use the JRuby distribution that ships with TorqueBox.</para>
-
-        <para>Simply require <package>rubygems</package>, and
-        <package>torquebox-message-client</package>, then optionally provide
-        additional configuration information to the
-        <function>connect(...)</function> method.</para>
-
-        <para><example>
-            <title>Client from external script</title>
-
-            <para><programlisting>#!/usr/bin/env jruby
-
-require 'rubygems'
-require 'torquebox-messaging-client'
-
-
-Torquebox::Messaging::Client.connect(
-  :naming_provider_url=&gt;'jnp://some.other.host.com:1099/' ) do |client|
-  # use `client` here
-end</programlisting></para>
-          </example></para>
-      </section>
-    </section>
-
-    <section>
-      <title>Using the client</title>
-
-      <para>Within the client block, your code can perform the role of a
-      producer by sending messages to destinations using the
-      <function>send(...)</function> method.</para>
-    </section>
-
-    <section>
-      <title>Sending a text message</title>
-
-      <para>To send a high-level text message, which a consumer may receive
-      using <function>on_text(text)</function>, the <option>:text</option>
-      option may be used.</para>
-
-      <para><example>
-          <title>Sending a text message</title>
-
-          <para><programlisting>client.send( '/queues/my_queue', 
-             :text=&gt;'PING' )</programlisting></para>
-        </example></para>
-    </section>
-
-    <section>
-      <title>Sending an object message</title>
-
-      <para>To send a high-level object message, which a consumer may receive
-      using <function>on_object(obj)</function>, the <option>:object</option>
-      option may be used.</para>
-
-      <para><example>
-          <title>Sending an object message</title>
-
-          <para><programlisting>client.send( '/queues/my_queue', 
-             :object=&gt;{ :time=&gt;Time.now, 
-                        :crazy=&gt;:legs } )</programlisting></para>
-        </example></para>
-    </section>
-
+    
+    <para>To Be Determined</para>
   </section>
 
   <section id="async-tasks">
@@ -557,9 +388,9 @@ end</programlisting></para>
       calling the task's class method, <function>async</function>.</para>
 
       <para><example>
-	<title>Example task class</title>
+    <title>Example task class</title>
 
-	<para><programlisting>class EmailerTask &lt; TorqueBox::Messaging::Task
+    <para><programlisting>class EmailerTask &lt; TorqueBox::Messaging::Task
   def send_welcome(payload)
     to = "#{payload[:name]} &lt;#{payload[:address]}&gt;"
     # send welcome email to the user
@@ -582,9 +413,9 @@ end</programlisting></para>
       app.</para>
 
       <para><example>
-	<title>Spawning a task from a Rails controller</title>
+    <title>Spawning a task from a Rails controller</title>
 
-	<para><programlisting>class UserController &lt; ApplicationController
+    <para><programlisting>class UserController &lt; ApplicationController
   def register
     user = User.new(params[:user])
     ...
