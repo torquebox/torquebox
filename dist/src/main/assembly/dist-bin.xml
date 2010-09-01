@@ -13,6 +13,7 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>/docs</outputDirectory>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
       <includes>
         <include>org.torquebox:torquebox-docs-en_US:*:pdf</include>
       </includes>
