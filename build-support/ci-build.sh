@@ -15,7 +15,3 @@ echo "*** Start Build ***"
 echo "Peforming build"
 $MAVEN_HOME/bin/mvn -U -s settings.xml install -Pinteg -Pdist
 
-echo "*** Start Postflight ***"
-
-echo "Removing $HOME/.m2/repository/org/torquebox/"
-rm -rf $HOME/.m2/repository/org/torquebox
