@@ -97,6 +97,10 @@
             <id>default-install</id>
             <phase>install</phase>
           </execution>
+          <execution>
+            <id>install-gem-into-assemblage</id>
+            <phase>install</phase>
+          </execution>
         </executions>
       </plugin>
       <plugin>

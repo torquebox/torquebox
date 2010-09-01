@@ -114,13 +114,12 @@
                 <execution>
                   <id>install-gem-into-assemblage</id>
                   <phase>install</phase>
-                  <inherited>true</inherited>
-<!--
                   <goals>
                     <goal>install</goal>
                   </goals>
--->
+                  <inherited>true</inherited>
                   <configuration>
+                    <installArgs>-f --bindir ${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/bin</installArgs>
                     <gemPath>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemPath>
                     <gemHome>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemHome>
                   </configuration>
