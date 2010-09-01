@@ -67,8 +67,18 @@ module TorqueBox
 
       return context if ( block.nil? )
 
+      attempts = 0
       begin
+        attempts += 1
         block.call( context )
+      rescue
+        if attempts > 1
+          raise
+        else
+          configure
+          context = javax.naming::InitialContext.new
+          retry
+        end
       ensure
         context.close
       end
