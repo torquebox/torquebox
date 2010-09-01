@@ -26,6 +26,16 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.scanning</groupId>
+      <artifactId>scanning-spi</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.scanning</groupId>
+      <artifactId>scanning-plugins</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.reloaded</groupId>
       <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
       <scope>compile</scope>
