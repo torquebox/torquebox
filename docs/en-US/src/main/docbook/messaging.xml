@@ -250,7 +250,7 @@ end</programlisting></para>
         For simple text-based messages, a consumer may extend
         <classname>TorqueBox::Messaging::MessageProcessor</classname>
         and implement an <function>on_message(text)</function> method
-        which will receive a string payload of the message.
+        which will receive the text payload of the message.
       </para>
 
       <para>
@@ -260,8 +260,17 @@ end</programlisting></para>
           <para><programlisting>class MyTextConsumer &lt; TorqueBox::Messaging::MessageProcessor
   def on_message(text)
     # process the string `text` payload
+    # the JMS message is available as a member variable called <function>message()</function>
   end
-end</programlisting></para>
+end</programlisting>
+          </para>
+          <para>
+            There is an accessor for the actual JMS message that is
+            set by TorqueBox prior to invoking
+            <function>on_message</function>, so it's there if you need
+            it.
+          </para>
+
         </example>
       </para>
     </section>
@@ -308,6 +317,25 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
             files would typically reside beneath
             <filename>lib/</filename> or
             <filename>app/models/</filename>.
+          </para>
+        </example>
+
+        <para>
+          The <function>subscribe</function> command accepts two
+          additional parameters, <parameter>:config</parameter> and
+          <parameter>:filter</parameter>.  The
+          <parameter>:config</parameter> parameter should contain a
+          hash of data which will be passed to your consumer's
+          <function>configure(hash)</function> prior to invoking
+          <function>process!</function>.  The
+          <parameter>:filter</parameter> parameter may be used to
+          filter the messages dispatched to your consumer.
+        </para>
+
+        <example>
+          <title>messaging.tq with :config and :filter options set</title>
+          <para>
+            <programlisting>subscribe MyFooHandler, '/queues/foo', :filter=>'cost &gt; 30', :config=>{ :type=>"premium", :season=>"fall" }</programlisting>
           </para>
         </example>
 
@@ -359,7 +387,39 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
   <section>
     <title>Ruby Producers</title>
     
-    <para>To Be Determined</para>
+    <para>
+      The TorqueBox messaging client is evolving rapidly, and we're
+      focused on better encapsulation of the more obtuse aspects of
+      JMS.  But for the time being, direct manipulation of JMS classes
+      via JRuby is the best way to put a message on a queue or topic.
+    </para>
+
+    <example>
+      <title>A simple script that queues a text message</title>
+      
+      <para><programlisting>#!/usr/bin/env jruby
+
+require 'rubygems'
+require 'org.torquebox.torquebox-messaging-client'
+
+TorqueBox::Messaging::Client.connect do |session|
+  queue    = session.createQueue( '/queues/foo' )
+  producer = session.createProducer( queue )
+  message  = session.createTextMessage( "The time is #{Time.now}" )
+  producer.send( message )
+  session.commit
+ end</programlisting>
+      </para>
+
+      <para>
+        The session passed to the block is the actual
+        <classname>javax.jms.Session</classname> instance.  Although
+        it's possible to run the above code in say, a Rails controller
+        action, TorqueBox <emphasis>tasks</emphasis> are a much better
+        alternative.
+      </para>
+    </example>
+
   </section>
 
   <section id="async-tasks">
