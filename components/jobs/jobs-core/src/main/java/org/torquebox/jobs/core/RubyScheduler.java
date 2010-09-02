@@ -37,7 +37,8 @@ public class RubyScheduler {
 	private String name;
 	private Scheduler scheduler;
 	private RubyRuntimePool runtimePool;
-	
+	private boolean alwaysReload;
+
 	public RubyScheduler() {
 		
 	}
@@ -57,7 +58,15 @@ public class RubyScheduler {
 	public RubyRuntimePool getRubyRuntimePool() {
 		return this.runtimePool;
 	}
-	
+
+    public void setAlwaysReload(boolean alwaysReload) {
+        this.alwaysReload = alwaysReload;
+    }
+
+    public boolean isAlwaysReload() {
+        return this.alwaysReload;
+    }
+
 	public Scheduler getScheduler() {
 		return this.scheduler;
 	}
@@ -68,7 +77,7 @@ public class RubyScheduler {
 		props.load(this.getClass().getResourceAsStream("scheduler.properties"));
 		props.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName());
 		
-		RubyJobFactory jobFactory = new RubyJobFactory();
+		RubyJobFactory jobFactory = new RubyJobFactory(isAlwaysReload());
 		jobFactory.setRubyRuntimePool( this.runtimePool );
 		
 		StdSchedulerFactory factory = new StdSchedulerFactory(props);

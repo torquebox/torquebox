@@ -13,6 +13,8 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.metadata.EnvironmentMetaData;
+
 
 public class RubySchedulerDeployer extends AbstractDeployer {
 	
@@ -20,6 +22,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 
 	public RubySchedulerDeployer() {
 		setAllInputs( true );
+		addInput(EnvironmentMetaData.class);
 		setStage( DeploymentStages.PRE_REAL );
 	}
 	
@@ -42,7 +45,13 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyScheduler.class.getName() );
 		
 		builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
-		
+		EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+		if (envMetaData != null) {
+            builder.addPropertyMetaData("alwaysReload", envMetaData.isDevelopmentMode());
+		} else {
+			log.warn("No EnvironmentMetaData found for " + unit.getSimpleName());
+		}
+
 		String runtimePoolBeanName = this.runtimePoolName;
 		
 		if ( runtimePoolBeanName == null ) {

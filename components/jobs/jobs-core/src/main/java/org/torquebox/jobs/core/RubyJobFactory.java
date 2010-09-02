@@ -18,9 +18,11 @@ public class RubyJobFactory implements JobFactory {
 
 	private RubyRuntimePool runtimePool;
 	private JobComponentInitializer componentInitializer;
+    private boolean alwaysReload;
 
-	public RubyJobFactory() {
+	public RubyJobFactory(boolean reload) {
 		this.componentInitializer = new JobComponentInitializer();
+        this.alwaysReload = reload;
 	}
 
 	public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
@@ -39,6 +41,7 @@ public class RubyJobFactory implements JobFactory {
 		JobDataMap jobDataMap = jobDetail.getJobDataMap();
 
 		InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+        resolver.setAlwaysReload(this.alwaysReload);
 		resolver.setComponentInitializer(this.componentInitializer);
 		resolver.setComponentName("jobs." + jobDetail.getFullName());
 		resolver.setRubyClassName(jobDataMap.getString(RUBY_CLASS_NAME_KEY));
