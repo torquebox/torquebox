@@ -28,10 +28,10 @@
       at a command-line, attempt to run the <command>java</command> command
       with the <option>-version</option> argument.</para>
 
-      <para><screen><prompt>$</prompt> <command>java -version</command>
+      <screen format=""><prompt>$</prompt> <command>java -version</command>
 java version "1.6.0_07"
 Java(TM) SE Runtime Environment (build 1.6.0_07-b06-153)
-Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></para>
+Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
 
       <para>If the version is at least 1.6, you version of Java is
       sufficient.</para>
@@ -58,7 +58,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></
       ${project.version}.</para>
 
       <para><ulink
-      url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-bin/${project.version}/torquebox-bin-${project.version}.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-bin/${project.version}/torquebox-bin-${project.version}.zip</ulink></para>
+      url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</ulink></para>
     </section>
 
     <section>
@@ -66,7 +66,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></
 
       <para>We'll install TorqueBox under your user's $HOME directory.</para>
 
-      <para><screen><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
+      <para><screen format=""><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
 <prompt>$</prompt> <command>cd torquebox-${project.version}</command>
 </screen></para>
 
@@ -75,7 +75,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></
       your environment, it is useful to create a symlink to the versioned
       directory produced when you unpackaged the distribution.</para>
 
-      <para><screen><prompt>$</prompt> <command>ln -s torquebox-bin-${project.version} torquebox-current</command></screen></para>
+      <para><screen format=""><prompt>$</prompt> <command>ln -s torquebox-bin-${project.version} torquebox-current</command></screen></para>
 
       <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar>
       and <envar>$JRUBY_HOME</envar> need to be set, and adjusting your
@@ -87,7 +87,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen></
       <envar>$<replaceable>X</replaceable>_HOME</envar> variables are set so
       that each subsystem can find its supporting files.</para>
 
-      <para><screen>export TORQUEBOX_HOME=$HOME/torquebox-current
+      <para><screen format="">export TORQUEBOX_HOME=$HOME/torquebox-current
 export JBOSS_HOME=$TORQUEBOX_HOME/jboss
 export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 
@@ -95,15 +95,19 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
       executable <envar>$PATH</envar>, before any previously-installed Ruby
       packages.</para>
 
-      <para><screen>export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing this,
+      <para><screen format="">export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing this,
       commands such as <command>rake</command>, <command>gem</command>, and
       <command>rails</command> will load from the TorqueBox-provided JRuby
       installation.</para>
 
       <para>You can also run TorqueBox using your own install of JRuby. You 
       will need to ensure that the gems that are included with the bundled JRuby
-      installed under your JRuby:<screen>cd $HOME/torquebox-current/jruby/lib/ruby/gems/1.8/cache
-gem install *.gem</screen>You will also need to set $JRUBY_HOME to point to 
+      installed under your JRuby:
+
+      <screen format="">cd $TORQUEBOX_HOME/jruby/lib/ruby/gems/1.8/cache
+gem install *.gem</screen>
+
+      You will also need to set $JRUBY_HOME to point to 
       your JRuby installation.</para>
 
       <para><command>Note:</command> if you are going to run a non-bundled 

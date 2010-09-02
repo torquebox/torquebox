@@ -34,12 +34,11 @@
       the necessary files (for instance, <code>require
       'rubygems'</code>).</para>
 
-      <para><programlisting>app = lambda{|env| 
-        [ 200, 
-            { 'Content-Type' =&gt; 'text/html' }, 
+      <para><programlisting>app = lambda{|env| [ 
+          200, 
+          { 'Content-Type' =&gt; 'text/html' }, 
           'Hello World'
-          ] 
-        }
+        ] }
     run app</programlisting></para>
     </section>
 
@@ -66,8 +65,7 @@
         <filename>-rack.yml</filename>. The prefix is arbitrary, but is
         usually some form of your application's name.</para>
 
-        <para><emphasis><filename>$JBOSS_HOME/server/default/deploy/
-        role="bold">myapp-rack.yml</filename></emphasis></para>
+        <para><filename>$JBOSS_HOME/server/default/deploy/<emphasis role="bold">myapp-rack.yml</emphasis></filename></para>
       </section>
 
       <section>
@@ -130,6 +128,10 @@
   rackup:    your_app_name.ru</programlisting></para>
               </example>
             </para>
+
+            <para>The <emphasis>rackup</emphasis> parameter should
+            specify a filename relative to the <envar>RACK_ROOT</envar>
+            for the application.</para>
           </section>
         </section>
 
@@ -363,8 +365,7 @@ end</programlisting></para>
             <para>Invoking <command>rake -T</command> will show the tasks now
             available within your project.</para>
 
-            <para><screen>rake torquebox:rails:check_frozen         # Check for that Rails has been f...
-rake torquebox:rails:deploy               # Deploy the Rails app
+            <para><screen>rake torquebox:rails:deploy               # Deploy the Rails app
 rake torquebox:rails:undeploy             # Undeploy the Rails app
 rake torquebox:server:check               # Check your installation of the ...
 rake torquebox:server:run                 # Run TorqueBox server</screen></para>
@@ -376,8 +377,8 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
 
           <para>"Native" gems that rely upon machine-specific compiled code do
           not function with JRuby and TorqueBox. You must replaced these gems
-          with pure-Ruby or pure-Java implementations. In the future, native
-          gems using the FFI facilities will be usable.</para>
+          with pure-Ruby or pure-Java implementations. Some native gems using
+          FFI are usable within TorqueBox.</para>
         </section>
       </section>
     </section>
@@ -505,9 +506,6 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
               <para>Environment Variables</para>
             </listitem>
 
-            <listitem>
-              <para>Sip-specific configuration</para>
-            </listitem>
           </orderedlist>
 
           <section>
@@ -627,21 +625,6 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
             
           </section>
 
-          <section>
-            <title>SIP-specific configuration</title>
-
-            <para>The sip configuration section allows you to define the
-            appname (application name) of the SIP Servlets application
-            (mandatory) and the name of the class that will handle the SIP
-            messages :</para>
-
-            <para><example>
-                <title>SIP configuration in *-rails.yml</title>
-
-                <para><screen>sip:  
-  rubycontroller: SipHandler</screen></para>
-              </example></para>
-          </section>
         </section>
 
         <section>
@@ -652,9 +635,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
   RAILS_ENV:   development
 web:
   host:    www.mycorp.com
-  context: /app-one
-sip:   
-  rubycontroller: SipHandler</screen></para>
+  context: /app-one</screen></para>
         </section>
       </section>
 
