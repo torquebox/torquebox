@@ -34,7 +34,7 @@
       the necessary files (for instance, <code>require
       'rubygems'</code>).</para>
 
-      <para><programlisting>app = lambda{|env| [ 
+      <para><programlisting format="">app = lambda{|env| [ 
           200, 
           { 'Content-Type' =&gt; 'text/html' }, 
           'Hello World'
@@ -104,7 +104,7 @@
             <example>
               <title>Application configuration in *-rack.yml</title>
 
-              <para><programlisting>application:
+              <para><programlisting format="">application:
   RACK_ROOT: /path/to/myapp
   RACK_ENV:  development</programlisting></para>
             </example>
@@ -122,7 +122,7 @@
               <example>
                 <title>Overriding the rackup config file</title>
         
-              <para><programlisting>application:
+              <para><programlisting format="">application:
   RACK_ROOT: /path/to/myapp
   RACK_ENV:  development
   rackup:    your_app_name.ru</programlisting></para>
@@ -160,7 +160,7 @@
               <example>
                 <title>Virtual host configuration in *-rack.yml</title>
 
-                <para><programlisting>web:
+                <para><programlisting format="">web:
   host: www.host-one.com</programlisting></para>
               </example>
             </para>
@@ -185,7 +185,7 @@
             <para><example>
                 <title>Context path configuration in *-rack.yml</title>
 
-                <para><programlisting>web:
+                <para><programlisting format="">web:
   context: /app-one</programlisting></para>
               </example></para>
 
@@ -196,7 +196,7 @@
                 <title>Virtual host with context path configuration in
                 *-rack.ymls</title>
 
-                <para><programlisting>web:
+                <para><programlisting format="">web:
   host: www.mycorp.com
   context: /app-one</programlisting></para>
               </example></para>
@@ -216,7 +216,7 @@
             <example>
               <title>Environment variables set in *-rack.yml</title>
 
-              <para><programlisting>environment:
+              <para><programlisting format="">environment:
   MAIL_HOST: mail.yourhost.com
   REPLY_TO: you@yourhost.com</programlisting></para>
             </example>
@@ -281,7 +281,7 @@
           use the <parameter>-m</parameter> parameter when you execute the
           <command>rails</command> command.</para>
 
-          <para><screen><prompt>$</prompt> <command>rails</command> <parameter>-m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen>This
+          <para><screen format=""><prompt>$</prompt> <command>rails</command> <parameter>-m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen>This
           will perform the necessary setup to quickly get started with
           TorqueBox.</para>
         </section>
@@ -292,7 +292,7 @@
           <para>To apply the template to an existing application, simply use
           the <command>rails:template</command> rake task.</para>
 
-          <para><screen><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
+          <para><screen format=""><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
         </section>
       </section>
 
@@ -314,7 +314,7 @@
           <filename>environment.rb</filename> within the
           <code>Rails::Initializer.run</code> block.</para>
 
-          <para><programlisting>Rails::Initializer.run do |config|
+          <para><programlisting format="">Rails::Initializer.run do |config|
 
   config.gem "activerecord-jdbc-adapter",
              :lib=&gt;'jdbc_adapter'
@@ -335,7 +335,7 @@ end</programlisting></para>
           <para>In order to gain access to the advanced features of TorqueBox,
           you must include the TorqueBox packages into your project. The
           TorqueBox gems are also included into your application through
-          <filename>config/environment.rb</filename>.<programlisting>Rails::Initializer.run do |config|
+          <filename>config/environment.rb</filename>.<programlisting format="">Rails::Initializer.run do |config|
   
   config.gem "torquebox-gem"
   config.gem "torquebox-rails"
@@ -360,12 +360,12 @@ end</programlisting></para>
             need to add a <command>require</command> statement to the Rakefile
             at the top of your application.</para>
 
-            <para><programlisting>require 'torquebox/tasks'</programlisting></para>
+            <para><programlisting format="">require 'torquebox/tasks'</programlisting></para>
 
             <para>Invoking <command>rake -T</command> will show the tasks now
             available within your project.</para>
 
-            <para><screen>rake torquebox:rails:deploy               # Deploy the Rails app
+            <para><screen format="">rake torquebox:rails:deploy               # Deploy the Rails app
 rake torquebox:rails:undeploy             # Undeploy the Rails app
 rake torquebox:server:check               # Check your installation of the ...
 rake torquebox:server:run                 # Run TorqueBox server</screen></para>
@@ -401,24 +401,24 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
         the path of the top of your JBoss installation as described in <xref
         linkend="installation" /></para>
 
-        <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
+        <para><screen format=""><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
 
         <para>If you're using any configuration other than
         <classname>default</classname>, you must also set
         <envar>$JBOSS_CONF</envar>.</para>
 
-        <para><screen><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></para>
+        <para><screen format=""><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></para>
 
         <para>Once these variables are set, you may perform a default
         deployment using the <command>jboss:rails:deploy</command>
         task.</para>
 
-        <para><screen><prompt>$</prompt> <command>rake torquebox:rails:deploy</command></screen></para>
+        <para><screen format=""><prompt>$</prompt> <command>rake torquebox:rails:deploy</command></screen></para>
 
         <para>To undeploy your application, the jboss:rails:undeploy task is
         available</para>
 
-        <para><screen><prompt>$</prompt> <command>rake torquebox:rails:undeploy</command></screen></para>
+        <para><screen format=""><prompt>$</prompt> <command>rake torquebox:rails:undeploy</command></screen></para>
 
         <para>The TorqueBox Server does not need to be running for these
         commands to work.</para>
@@ -456,7 +456,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
           rather deploy to a non-root context, you may provide it as an
           argument to the task invocation.</para>
 
-          <para><screen><prompt>$</prompt> <command>rake torquebox:rails:deploy['/my-application']</command></screen>The
+          <para><screen format=""><prompt>$</prompt> <command>rake torquebox:rails:deploy['/my-application']</command></screen>The
           root of your application would then be accessible at
           <uri>http://localhost:8080/my-application</uri>.</para>
         </section>
@@ -478,13 +478,13 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
           deploy/ directory of the AS configuration in use. If you are using
           the default configuration, the path would be:</para>
 
-          <para><screen><filename>$JBOSS_HOME/server/default/deploy/</filename></screen></para>
+          <para><screen format=""><filename>$JBOSS_HOME/server/default/deploy/</filename></screen></para>
 
           <para>The descriptor is a YAML file, and must end with the suffix of
           <filename>-rails.yml</filename>. The prefix is arbitrary, but is
           usually some form of your application's name.</para>
 
-          <para><screen><emphasis><filename>$JBOSS_HOME/server/default/deploy/
+          <para><screen format=""><emphasis><filename>$JBOSS_HOME/server/default/deploy/
                   role="bold">myapp-rails.yml</filename></emphasis></screen></para>
         </section>
 
@@ -525,7 +525,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
             <para><example>
                 <title>Application configuration in *-rails.yml</title>
 
-                <para><screen>application:
+                <para><screen format="">application:
   RAILS_ROOT: /path/to/myapp
   RAILS_ENV:  development</screen></para>
               </example></para>
@@ -555,7 +555,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
               <para><example>
                   <title>Virtual host configuration in *-rails.yml</title>
 
-                  <para><screen>web:
+                  <para><screen format="">web:
   host: www.host-one.com</screen></para>
                 </example></para>
             </section>
@@ -579,7 +579,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
               <para><example>
                   <title>Context path configuration in *-rails.yml</title>
 
-                  <para><screen>web:
+                  <para><screen format="">web:
   context: /app-one</screen></para>
                 </example></para>
 
@@ -590,7 +590,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
                   <title>Virtual host with context path configuration in
                   *-rails.ymls</title>
 
-                  <para><screen>web:
+                  <para><screen format="">web:
   host: www.mycorp.com
   context: /app-one</screen></para>
                 </example></para>
@@ -611,7 +611,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
               <example>
                 <title>Environment variables set in *-rails.yml</title>
 
-              <para><programlisting>environment:
+              <para><programlisting format="">environment:
   MAIL_HOST: mail.yourhost.com
   REPLY_TO: you@yourhost.com</programlisting></para>
               </example>
@@ -630,7 +630,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
         <section>
           <title>Complete *-rails.yml Deployment Descriptor Example</title>
 
-          <para><screen>application:
+          <para><screen format="">application:
   RAILS_ROOT:  /path/to/myappp
   RAILS_ENV:   development
 web:
@@ -676,7 +676,7 @@ web:
           <para><example>
               <title><filename>config/web.yml</filename></title>
 
-              <para><screen>host: torquebox.org
+              <para><screen format="">host: torquebox.org
 context: /</screen></para>
             </example></para>
         </section>
@@ -693,7 +693,7 @@ context: /</screen></para>
           <para><example>
               <title>Example <filename>config/rails-env.yml</filename></title>
 
-              <para><screen>RAILS_ENV: production</screen></para>
+              <para><screen format="">RAILS_ENV: production</screen></para>
             </example></para>
 
           <para>Similar to config/web.yml, usage of config/rails-env.yml can
@@ -721,14 +721,14 @@ context: /</screen></para>
           <filename>tmp/</filename> and <filename>log/</filename>
           directories.</para>
 
-          <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:bundle</command></screen>The
+          <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:bundle</command></screen>The
           resulting bundle will be placed at the root of the application, as a
           file named
           <filename><replaceable>myapp</replaceable>.rails</filename>. To
           inspect the contents, you may use the <command>jar</command>
           tool.</para>
 
-          <para><screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails
+          <para><screen format=""><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails
 <computeroutput>META-INF/
 META-INF/MANIFEST.MF
 app/
@@ -745,11 +745,11 @@ app/controllers/application_controller.rb
           <command>torquebox:rails:deploy:bundle</command> rake task may be
           used to both create and deploy a bundle.</para>
 
-          <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:deploy:bundle</command></screen>If
+          <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:deploy:bundle</command></screen>If
           you wish to deploy manually, a command similar to the following may
           be used</para>
 
-          <para><screen>$ <command>rake</command> <command>torquebox:rails:bundle</command>
+          <para><screen format="">$ <command>rake</command> <command>torquebox:rails:bundle</command>
 $ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filename> <filename><envar>$JBOSS_HOME</envar>/server/default/deploy/</filename></screen>If
           you redeploy a bundle, the server will remove the previous version,
           and hot-redeploy the bundle just copied.</para>
@@ -768,7 +768,7 @@ $ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filena
       the Rake task <command>torquebox:server:run</command> is
       provided.</para>
 
-      <para><screen><prompt>$</prompt> <command>rake torquebox:server:run</command>
+      <para><screen format=""><prompt>$</prompt> <command>rake torquebox:server:run</command>
 TorqueBox Server OK: /Users/bob/oddthesis/jboss/jdk1.6/current/server/default
 =========================================================================
 

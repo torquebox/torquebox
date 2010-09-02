@@ -25,7 +25,7 @@
     <para><example>
         <title>Example <filename>crypto.yml</filename></title>
 
-        <para><screen>truststore:
+        <para><screen format="">truststore:
   store: truststore.jks
   password: foobar
 
@@ -58,7 +58,7 @@ keystore:
       specified in the store parameter are relative to the directory
       <filename><envar>$RAILS_ROOT</envar>/auth/</filename>.</para>
 
-      <para><screen>RAILS_ROOT/
+      <para><screen format="">RAILS_ROOT/
   config/
     crypto.yml
   auth/
@@ -81,13 +81,13 @@ keystore:
       will be created as needed. The path to the key store is specified using
       the <option>-keystore</option> option.</para>
 
-      <para><screen>$ keytool <emphasis>-keystore auth/keystore.jks</emphasis></screen>
+      <para><screen format="">$ keytool <emphasis>-keystore auth/keystore.jks</emphasis></screen>
       When a key store is first created while importing or generating a new
       key, you will be prompted to provide and verify the password to protect
       the entire keystore. This is the same password you provide through
       <filename>crypto.yml</filename>.</para>
 
-      <para><screen>$ keytool -keystore auth/keystore.jks
+      <para><screen format="">$ keytool -keystore auth/keystore.jks
 <emphasis>Enter keystore password: 
 Re-enter new password:</emphasis> </screen></para>
     </section>
@@ -103,7 +103,7 @@ Re-enter new password:</emphasis> </screen></para>
       <option>-alias</option> option may be used to provide a different alias
       to register the key.</para>
 
-      <para><screen>$ keytool -keystore truststore.jks <emphasis>-genkey -alias bobmcwhirter</emphasis> 
+      <para><screen format="">$ keytool -keystore truststore.jks <emphasis>-genkey -alias bobmcwhirter</emphasis> 
 Enter keystore password:  
 What is your first and last name?
   [Unknown]:  Bob McWhirter
@@ -132,7 +132,7 @@ $</screen></para>
       <para>The -list option may be used to list the contents of a key
       store.</para>
 
-      <para><screen>$ keytool -keystore truststore.jks -list                      
+      <para><screen format="">$ keytool -keystore truststore.jks -list                      
 Enter keystore password:  
 
 Keystore type: JKS

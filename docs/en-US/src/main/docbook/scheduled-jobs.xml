@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="scheduled-jobs">
   <title>Scheduled Jobs</title>
 
@@ -52,7 +52,7 @@
         <title>Skeleton scheduled job class
         (<filename>mail/notifier.rb</filename>)</title>
 
-        <para><programlisting>module Mail
+        <para><programlisting format="">module Mail
   class Notifier
 
     # implementation goes here
@@ -67,7 +67,7 @@ end</programlisting></para>
         <title>Scheduled job implementation
         (<filename>mail/notifier.rb</filename>)</title>
 
-        <para><programlisting>module Mail
+        <para><programlisting format="">module Mail
   class Notifier
 
     def run()
@@ -96,7 +96,7 @@ end</programlisting></para>
         <title>Using <classname>TorqueBox::Jobs::Base</classname>
         module</title>
 
-        <para><programlisting><emphasis>require 'torquebox/jobs/base'</emphasis>
+        <para><programlisting format=""><emphasis>require 'torquebox/jobs/base'</emphasis>
 
 module Mail
   class Notifier
@@ -167,7 +167,7 @@ end</programlisting></para>
       <para>The log messages will be logged in the normal
       <filename>server.log</filename>.</para>
 
-      <para><screen>10:02:35,074 INFO  [Notifier] Executing the job
+      <para><screen format="">10:02:35,074 INFO  [Notifier] Executing the job
 10:02:40,074 INFO  [Notifier] Executing the job</screen></para>
     </section>
   </section>
@@ -199,7 +199,7 @@ end</programlisting></para>
       <para><example>
           <title>Example <filename>jobs.yml</filename></title>
 
-          <para><programlisting>mail.notifier:
+          <para><programlisting format="">mail.notifier:
   job:         Mail::Notifier
   cron:        0 */5 * * * ?
   description: Deliver queued mail notifications</programlisting></para>
