@@ -13,6 +13,7 @@ class File
     alias_method :expand_path_without_vfs, :expand_path
     alias_method :unlink_without_vfs,      :unlink
     alias_method :readable_without_vfs?,   :readable?
+    alias_method :chmod_without_vfs,       :chmod
 
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
@@ -132,7 +133,12 @@ class File
         return false
       end
     end
-
+    
+    def chmod(mode_int, *files)
+      files.each do |name|
+        chmod_without_vfs( mode_int, name.start_with?("vfs:") ? name[4..-1] : name )
+      end
+    end
   end
 
 end

@@ -61,6 +61,20 @@ describe "File extensions for VFS" do
     File.file?( "vfs:#{prefix}/#missing#" ).should be_false
   end
 
+  it "should be able to chmod real files with vfs urls" do
+    path = File.expand_path("foo")
+    begin
+      f = File.new(path, "w")
+      FileUtils.chmod( 666, "vfs:#{path}")
+      m1 = f.stat.mode
+      FileUtils.chmod( 644, "vfs:#{path}")
+      m2 = f.stat.mode
+      m1.should_not eql(m2)
+    ensure
+      File.delete(path) rescue nil
+    end
+  end
+
   [ :absolute, :relative, :vfs ].each do |style|
     describe "with #{style} paths" do
       case ( style )
