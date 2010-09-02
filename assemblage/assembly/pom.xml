@@ -384,7 +384,7 @@
               <goal>initialize</goal>
             </goals>
             <configuration>
-              <initializeArgs>--bindir ${stage.dir}/jruby/bin</initializeArgs>
+              <gemInitializeArgs>-f --bindir ${stage.dir}/jruby/bin</gemInitializeArgs>
               <gemPath>${stage.dir}/jruby/lib/ruby/gems/1.8</gemPath>
               <gemHome>${stage.dir}/jruby/lib/ruby/gems/1.8</gemHome>
               <useTransitiveDependencies>true</useTransitiveDependencies>
