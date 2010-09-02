@@ -113,7 +113,7 @@
               <executions>
                 <execution>
                   <id>install-gem-into-assemblage</id>
-                  <phase>install</phase>
+                  <!--<phase>install</phase>-->
                   <goals>
                     <goal>install</goal>
                   </goals>
