@@ -34,7 +34,7 @@
     <para>Either way, two settings in the your application's deploy.rb are
     required to be able to deploy to a remove TorqueBox server.</para>
 
-    <para><screen>set :jboss_home,       "/opt/torquebox-server/jboss"
+    <para><screen format="">set :jboss_home,       "/opt/torquebox-server/jboss"
 set :jboss_config,     :default</screen>These should point to the same
     location as <envar>$JBOSS_HOME</envar> on the server. The
     <varname>:jboss_config</varname> matches the <envar>$JBOSS_CONF</envar>,

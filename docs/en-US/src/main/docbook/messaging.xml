@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="messaging">
   <title>Messaging</title>
 
@@ -178,7 +178,7 @@
         <para><example>
             <title>queues.yml</title>
 
-            <para><programlisting>/queues/my_queue:
+            <para><programlisting format="">/queues/my_queue:
 
 /queues/my_other_queue:
 
@@ -201,7 +201,7 @@
         <para><example>
             <title>topics.yml</title>
 
-            <para><programlisting>/topics/my_topic:
+            <para><programlisting format="">/topics/my_topic:
 
 /topics/my_other_topic:
 
@@ -235,7 +235,7 @@
       <para><example>
           <title>Low-level message consumer</title>
 
-          <para><programlisting>class MyLowConsumer
+          <para><programlisting format="">class MyLowConsumer
   def process!(msg)
     # manipulate the javax.jms.Message here
   end
@@ -257,7 +257,7 @@ end</programlisting></para>
         <example>
           <title>Text-based message consumer</title>
 
-          <para><programlisting>class MyTextConsumer &lt; TorqueBox::Messaging::MessageProcessor
+          <para><programlisting format="">class MyTextConsumer &lt; TorqueBox::Messaging::MessageProcessor
   def on_message(text)
     # process the string `text` payload
     # the JMS message is available as a member variable called <function>message()</function>
@@ -307,7 +307,7 @@ end</programlisting>
         <example>
           <title>messaging.tq</title>
           <para>
-            <programlisting>subscribe MyFooHandler, '/queues/foo'
+            <programlisting format="">subscribe MyFooHandler, '/queues/foo'
 subscribe MyBazHandler, '/topics/baz'</programlisting>
           </para>
           <para>
@@ -335,7 +335,7 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
         <example>
           <title>messaging.tq with :config and :filter options set</title>
           <para>
-            <programlisting>subscribe MyFooHandler, '/queues/foo', :filter=>'cost &gt; 30', :config=>{ :type=>"premium", :season=>"fall" }</programlisting>
+            <programlisting format="">subscribe MyFooHandler, '/queues/foo', :filter=>'cost &gt; 30', :config=>{ :type=>"premium", :season=>"fall" }</programlisting>
           </para>
         </example>
 
@@ -355,7 +355,7 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
             <example>
               <title>Deploying your Consumers outside of the App Server</title>
               
-              <para><programlisting>$ trq-message-processor-host --deploy messaging.tq
+              <para><programlisting format="">$ trq-message-processor-host --deploy messaging.tq
               </programlisting></para>
               <para>Optionally, you can pass <code>-N
               your.naming.host</code> if there's not a naming server
@@ -371,7 +371,7 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
             <example>
               <title>Deploying your Destinations outside of the App Server</title>
               
-              <para><programlisting>$ trq-message-broker -s --deploy queues.yml
+              <para><programlisting format="">$ trq-message-broker -s --deploy queues.yml
               </programlisting></para>
               <para>The <code>-s</code> option tells the broker to
               fire up its own naming service.  Otherwise, it attempts
@@ -397,7 +397,7 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
     <example>
       <title>A simple script that queues a text message</title>
       
-      <para><programlisting>#!/usr/bin/env jruby
+      <para><programlisting format="">#!/usr/bin/env jruby
 
 require 'rubygems'
 require 'org.torquebox.torquebox-messaging-client'
@@ -450,7 +450,7 @@ TorqueBox::Messaging::Client.connect do |session|
       <para><example>
     <title>Example task class</title>
 
-    <para><programlisting>class EmailerTask &lt; TorqueBox::Messaging::Task
+    <para><programlisting format="">class EmailerTask &lt; TorqueBox::Messaging::Task
   def send_welcome(payload)
     to = "#{payload[:name]} &lt;#{payload[:address]}&gt;"
     # send welcome email to the user
@@ -475,7 +475,7 @@ end</programlisting></para>
       <para><example>
     <title>Spawning a task from a Rails controller</title>
 
-    <para><programlisting>class UserController &lt; ApplicationController
+    <para><programlisting format="">class UserController &lt; ApplicationController
   def register
     user = User.new(params[:user])
     ...

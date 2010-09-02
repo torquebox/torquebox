@@ -16,6 +16,7 @@
   
   <properties>
     <translation>en_US</translation>
+    <translation.dash>en-US</translation.dash>
   </properties>
 
   <build>
@@ -50,7 +51,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>target/docbook/publish/en-US/pdf/${project.artifactId}.pdf</file>
+                  <file>target/docbook/publish/en-US/pdf/${artifactId}.pdf</file>
                   <type>pdf</type>
                   <classifier></classifier>
                 </artifact>

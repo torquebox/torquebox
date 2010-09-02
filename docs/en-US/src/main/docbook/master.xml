@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
-"http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd">
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <!--
 Id
 Generate html using:   mvn docbkx:generate-html
@@ -44,12 +44,6 @@ Generate html using:   mvn docbkx:generate-html
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="crypto.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-  <xi:include href="soap-endpoints.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-  <xi:include href="telco.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="capistrano-support.xml"
