@@ -13,7 +13,7 @@ class Class
       if ( (self.to_s == 'Rails::Configuration') && ( method_name == :set_root_path! ) )
         self.class_eval do
           def set_root_path!
-            puts "set_root_path! to #{RAILS_ROOT}"
+            #puts "set_root_path! to #{RAILS_ROOT}"
             @root_path = RAILS_ROOT
           end 
         end

@@ -128,7 +128,6 @@ public class SharedPool<T> implements Pool<T> {
 	 * Destroy the pool.
 	 */
 	public void destroy() {
-		System.err.println( "BOB: DESTROY POOL" );
 		if ( this.factory != null && this.instance != null ) {
 			this.factory.dispose( this.instance );
 		}
