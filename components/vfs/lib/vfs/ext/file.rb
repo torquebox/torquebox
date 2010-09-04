@@ -30,7 +30,7 @@ class File
         return expand_path_without_vfs(args[0], args[1].to_s[4..-1])
       end
       return args[0].to_s.dup if ( args[0] =~ /^vfs:/ )
-      expand_path_without_vfs(*args) 
+      expand_path_without_vfs(*args)
     end
 
     def readable?(filename)
@@ -40,10 +40,10 @@ class File
     def unlink(*file_names)
       file_names.each do |file_name|
         if ( file_name.to_s =~ /^vfs:/ )
-          virtual_file = org.jboss.vfs::VFS.child( file_name.to_s ) 
+          virtual_file = org.jboss.vfs::VFS.child( file_name.to_s )
           raise Errno::ENOENT.new unless virtual_file.exists()
-          virtual_file.delete 
-        else 
+          virtual_file.delete
+        else
           unlink_without_vfs( file_name )
         end
       end
@@ -89,7 +89,7 @@ class File
       begin
         virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
         virtual_file = virtual_file.get_child( child_path ) if child_path
-  
+
         return ( ( ! virtual_file.nil? ) && virtual_file.exists() )
       rescue Java::JavaIo::IOException => e
         return false
@@ -104,14 +104,14 @@ class File
 
     def directory?(filename)
       return true if directory_without_vfs?( filename )
- 
+
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       return false unless vfs_url
 
       begin
         virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
         virtual_file = virtual_file.get_child( child_path ) if child_path
-  
+
         return ( ( ! virtual_file.nil? ) && ( virtual_file.isDirectory() ) )
       rescue Java::JavaIo::IOException => e
         return false
@@ -133,7 +133,7 @@ class File
         return false
       end
     end
-    
+
     def chmod(mode_int, *files)
       files.each do |name|
         chmod_without_vfs( mode_int, name.start_with?("vfs:") ? name[4..-1] : name )

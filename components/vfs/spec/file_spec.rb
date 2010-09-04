@@ -32,7 +32,7 @@ describe "File extensions for VFS" do
 
   it "should report writable-ness for VFS urls" do
     prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
-    url = "vfs:#{prefix}/home/larry/file1.txt" 
+    url = "vfs:#{prefix}/home/larry/file1.txt"
     File.exists?( url ).should be_true
     File.exist?( url ).should be_true
     File.writable?( url ).should be_true
@@ -119,7 +119,7 @@ describe "File extensions for VFS" do
       end
 
       it "should allow stat for normal files" do
-        file = "#{prefix}/home/larry/file1.txt" 
+        file = "#{prefix}/home/larry/file1.txt"
         stat = File.stat( file )
         stat.should_not be_nil
         stat.mtime.should eql( File.mtime( file ) )
@@ -136,21 +136,21 @@ describe "File extensions for VFS" do
         stat.should_not be_nil
         stat.mtime.should eql( File.mtime( file ) )
       end
-    
+
       it "should provide mtime for files in a nested archive" do
         mtime = File.mtime( "#{prefix}/home/larry/archive1.jar/lib/archive2.jar/manifest.txt" )
         mtime.should_not be_nil
       end
-    
+
       it "should test existance of normal files" do
         File.exist?( "#{prefix}/home/larry/file1.txt" ).should be_true
         File.exist?( "#{prefix}/home/larry/file42.txt" ).should be_false
       end
-    
+
       it "should test existance of files in an archive" do
         File.exist?( "#{prefix}/home/larry/archive1.jar/web.xml" ).should be_true
       end
-    
+
       it "should test directoryness for normal files" do
         File.directory?( "#{prefix}/home/larry" ).should be_true
         File.directory?( "#{prefix}/home/larry/file1.txt" ).should be_false
