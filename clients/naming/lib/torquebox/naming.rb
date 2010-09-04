@@ -51,36 +51,44 @@ module TorqueBox
         context.close
       end
     end
-
-    def self.connect(host, port, &block)
-      context = nil
-
+    
+    def self.context(host=nil, port=nil)
       if ( ! ( host.nil? || port.nil? ) ) 
         props = java.util.Hashtable.new( {
           'java.naming.provider.url'=>"jnp://#{host}:#{port}/",
           'java.naming.factory.initial'=>FACTORY,
         } )
-        context = javax.naming::InitialContext.new(props)
+        javax.naming::InitialContext.new(props)
       else
-        context = javax.naming::InitialContext.new
+        javax.naming::InitialContext.new
       end
+    end
 
+    def self.connect(host, port, &block)
       return context if ( block.nil? )
 
+      reconfigure_on_error do
+        ctx = context
+        begin
+          block.call( ctx )
+        ensure
+          ctx.close
+        end
+      end
+    end
+
+    def self.reconfigure_on_error( max_retries = 1 )
       attempts = 0
       begin
         attempts += 1
-        block.call( context )
+        yield
       rescue
-        if attempts > 1
+        if attempts > max_retries
           raise
         else
           configure
-          context = javax.naming::InitialContext.new
           retry
         end
-      ensure
-        context.close
       end
     end
 
