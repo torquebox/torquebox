@@ -14,6 +14,7 @@ class File
     alias_method :unlink_without_vfs,      :unlink
     alias_method :readable_without_vfs?,   :readable?
     alias_method :chmod_without_vfs,       :chmod
+    alias_method :new_without_vfs,         :new
 
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
@@ -138,6 +139,17 @@ class File
       files.each do |name|
         chmod_without_vfs( mode_int, name.start_with?("vfs:") ? name[4..-1] : name )
       end
+    end
+
+    def new(fname, mode_str='r', flags=nil, &block)
+      if ( Fixnum === fname )
+        return File.new_without_vfs( fname, mode_str, &block )
+      end
+      unless ( fname.to_s =~ /^vfs:/ )
+        return File.new_without_vfs( fname, mode_str, flags, &block )
+      end
+      # File.new doesn't pass a block through to the opened file
+      IO.vfs_open( fname.to_s, mode_str )
     end
   end
 

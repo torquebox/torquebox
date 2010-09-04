@@ -75,6 +75,12 @@ describe "File extensions for VFS" do
     end
   end
 
+  it "should be able to initialize paths with vfs urls" do
+    lambda {
+      path = File.new("vfs:#{__FILE__}", 'r')
+    }.should_not raise_error
+  end
+
   [ :absolute, :relative, :vfs ].each do |style|
     describe "with #{style} paths" do
       case ( style )
