@@ -401,6 +401,7 @@
           <extensions>true</extensions>
           <configuration>
             <jrubyVersion>${version.jruby}</jrubyVersion>
+            <jrubyArgs>-Xmx768m</jrubyArgs>
           </configuration>
         </plugin>
         <plugin>
@@ -410,6 +411,7 @@
           <extensions>true</extensions>
           <configuration>
             <jrubyVersion>${version.jruby}</jrubyVersion>
+            <jrubyArgs>-Xmx768m</jrubyArgs>
           </configuration>
         </plugin>
         <plugin>

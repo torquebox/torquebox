@@ -31,23 +31,25 @@
     <plugins> 
       <plugin>
         <groupId>de.saumya.mojo</groupId>
-        <artifactId>rake-maven-plugin</artifactId>
+        <artifactId>jruby-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>install-dependencies</id>
             <phase>install</phase>
             <goals>
-              <goal>rake</goal>
+              <goal>jruby</goal>
             </goals>
             <configuration>
               <script>
                 BUILD_DIR="${project.build.directory}"
                 LOCAL_REPO_DIR="${settings.localRepository}"
 
+                require 'rubygems'
+                require 'rake'
                 load 'Rakefile'
 
                 install_dependency( "${jruby.bin.url}", 'org.jruby', 'jruby-bin', '${version.jruby}', 'zip' )
-                #install_dependency( "${jboss.bin.url}", 'org.jboss.jbossas', 'jboss-as-distribution', '${version.jbossas}', 'zip' )
+                Rake::Task[:default].invoke()
               </script>
             </configuration>
           </execution>

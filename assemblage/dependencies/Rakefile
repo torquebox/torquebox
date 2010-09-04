@@ -24,18 +24,20 @@ def install_dependency(url, group_id, artifact_id, version, type )
 
 
   file artifact_path do
+    FileUtils.mkdir_p( artifact_dir )
     puts "installing #{artifact_path}"
     Rake::Task[fetch_path].invoke()
-    FileUtils.mkdir_p( artifact_dir )
     FileUtils.cp( fetch_path, artifact_path )
   end
   
   task :default=>artifact_path
+
 end
 
 def fetch_to(url_path, destination)
   puts "Fetching #{url_path}"
   url = URI.parse(url_path)
+  FileUtils.mkdir_p( File.dirname( destination ) )
   Net::HTTP.start(url.host, url.port) do |http|
     File.open( destination, 'w' ) do |f|
       http.get( url.path ) do |segment|
