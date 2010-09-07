@@ -8,7 +8,6 @@
 
   <bean name="PoolingYamlParsingDeployer"             class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
   <bean name="RuntimePoolDeployer"                    class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
-  <!-- <bean name="BootstrapRubyRuntimeDeployer"           class="org.torquebox.interp.deployers.BootstrapRubyRuntimeDeployer"/> -->
   <bean name="TorqueboxJNDIKernelRegistryPlugin"               class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
 
 </deployment>
