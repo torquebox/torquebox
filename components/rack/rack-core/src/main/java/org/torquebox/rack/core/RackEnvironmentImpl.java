@@ -1,8 +1,6 @@
 package org.torquebox.rack.core;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
@@ -15,7 +13,6 @@ import org.jruby.RubyHash;
 import org.jruby.RubyIO;
 import org.jruby.RubyString;
 import org.jruby.util.io.STDIO;
-
 import org.torquebox.rack.spi.RackEnvironment;
 
 
@@ -54,11 +51,15 @@ public class RackEnvironmentImpl implements RackEnvironment {
 		env.put( "CONTENT_LENGTH" , request.getContentLength());
 		env.put( "REQUEST_URI" , request.getContextPath() + request.getServletPath() + request.getPathInfo());
 		env.put( "REMOTE_ADDR" , request.getRemoteAddr());
-		env.put( "rack.url_scheme" ,  request.getScheme()) ;
+		env.put( "rack.url_scheme" ,  request.getScheme()); 
 		env.put( "rack.version" , rackVersion);
 		env.put( "rack.multithread" , true  );
 		env.put( "rack.multiprocess" , true  );
 		env.put( "rack.run_once" , false );
+		
+		if ( "https".equals( request.getScheme() ) ) {
+			env.put( "HTTPS", "on" );
+		}
 
 		for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements();) {
 			String headerName = headerNames.nextElement();

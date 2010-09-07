@@ -76,6 +76,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		assertEquals("cheese=cheddar&bob=mcwhirter", envHash.get("QUERY_STRING"));
 		assertEquals("torquebox.org", envHash.get("SERVER_NAME"));
 		assertEquals("https", envHash.get("rack.url_scheme"));
+		assertEquals( "on", envHash.get( "HTTPS" ) );
 		assertEquals(8080L, envHash.get("SERVER_PORT"));
 		assertEquals("text/html", envHash.get("CONTENT_TYPE"));
 		assertEquals(0L, envHash.get("CONTENT_LENGTH"));
@@ -111,7 +112,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		when(servletRequest.getPathInfo()).thenReturn("the_path");
 		when(servletRequest.getQueryString()).thenReturn("cheese=cheddar&bob=mcwhirter");
 		when(servletRequest.getServerName()).thenReturn("torquebox.org");
-		when(servletRequest.getScheme()).thenReturn("https");
+		when(servletRequest.getScheme()).thenReturn("http");
 		when(servletRequest.getServerPort()).thenReturn(8080);
 		when(servletRequest.getContentType()).thenReturn( null );
 		when(servletRequest.getContentLength()).thenReturn(0);
@@ -133,7 +134,8 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		assertEquals("/myapp/the_path", envHash.get("REQUEST_URI"));
 		assertEquals("cheese=cheddar&bob=mcwhirter", envHash.get("QUERY_STRING"));
 		assertEquals("torquebox.org", envHash.get("SERVER_NAME"));
-		assertEquals("https", envHash.get("rack.url_scheme"));
+		assertEquals("http", envHash.get("rack.url_scheme"));
+		assertNull( envHash.get( "HTTPS" ) );
 		assertEquals(8080L, envHash.get("SERVER_PORT"));
 		assertNull( envHash.get("CONTENT_TYPE") );
 		assertEquals(0L, envHash.get("CONTENT_LENGTH"));
