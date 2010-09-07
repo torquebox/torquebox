@@ -27,7 +27,8 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
 
 	protected void deploy(DeploymentUnit unit, PoolMetaData poolMetaData) throws DeploymentException {
 
-		//String beanName = AttachmentUtils.beanName(unit, "pool", poolMetaData.getName());
+		// String beanName = AttachmentUtils.beanName(unit, "pool",
+		// poolMetaData.getName());
 		String beanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, poolMetaData.getName());
 
 		BeanMetaData poolBean = null;
@@ -38,8 +39,12 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
 
 			String instanceName = poolMetaData.getInstanceName();
 			if (instanceName == null) {
-				Ruby runtime = unit.getAttachment(Ruby.class);
-				builder.addConstructorParameter(Ruby.class.getName(), runtime);
+				try {
+					Ruby runtime = unit.getAttachment(DeployerRuby.class).getRuby();
+					builder.addConstructorParameter(Ruby.class.getName(), runtime);
+				} catch (Exception e) {
+					throw new DeploymentException(e);
+				}
 			} else {
 				ValueMetaData runtimeInjection = builder.createInject(instanceName);
 				builder.addConstructorParameter(Ruby.class.getName(), runtimeInjection);
@@ -71,7 +76,8 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
 
 		AttachmentUtils.attach(unit, poolBean);
 
-		//unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, poolBean, BeanMetaData.class);
+		// unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName,
+		// poolBean, BeanMetaData.class);
 	}
 
 }
