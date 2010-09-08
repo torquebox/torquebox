@@ -193,16 +193,11 @@ public class RubyMessageProcessor implements MessageListener {
 			config = RubyHash.newHash( ruby );
 		}
 		
-		System.err.println( "SETTING CONFIG: " + config );
-		
 		ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { config });
 	}
 
 	protected void processMessage(IRubyObject processor, Message message) {
 		Ruby ruby = processor.getRuntime();
-		System.err.println( "before invoke >>>" );
-		System.err.println( "processor=" + processor );
 		JavaEmbedUtils.invokeMethod(ruby, processor, "process!", new Object[] { message }, void.class);
-		System.err.println( "<<<< after invoke" );
 	}
 }
