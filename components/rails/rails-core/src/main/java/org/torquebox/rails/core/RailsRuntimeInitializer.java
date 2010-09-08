@@ -75,7 +75,6 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 	public void initialize(Ruby ruby) throws Exception {
 		super.initialize(ruby);
 		Logger logger = Logger.getLogger(railsRoot.toURL().toExternalForm());
-		logger.info( "Initializing runtime for Rails" );
 		IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
 		ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
 		
