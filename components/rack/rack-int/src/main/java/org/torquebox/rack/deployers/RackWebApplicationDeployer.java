@@ -54,7 +54,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		addOutput(WebMetaData.class);
 		addOutput(JBossWebMetaData.class);
 		setStage(DeploymentStages.DESCRIBE);
-		setRelativeOrder( 1000 );
+		setRelativeOrder(1000);
 	}
 
 	@Override
@@ -101,8 +101,12 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 		filterMappings.add(filterMapping);
 
+		ServletsMetaData servlets = webMetaData.getServlets();
+		if ( servlets == null ) {
+			servlets = new ServletsMetaData();
+		}
+		
 		if (metaData.getStaticPathPrefix() != null) {
-			ServletsMetaData servlets = new ServletsMetaData();
 			ServletMetaData staticServlet = new ServletMetaData();
 			staticServlet.setServletClass(STATIC_RESOURCE_SERVLET_CLASS_NAME);
 			staticServlet.setServletName(SERVLET_NAME);
@@ -136,16 +140,16 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 		jbossWebMetaData.setContextRoot(metaData.getContextPath());
 
-		if (! metaData.getHosts().isEmpty() ) {
+		if (!metaData.getHosts().isEmpty()) {
 			jbossWebMetaData.setVirtualHosts(metaData.getHosts());
 		}
-		
+
 		List<String> depends = jbossWebMetaData.getDepends();
-		
-		if ( depends == null ) {
+
+		if (depends == null) {
 			depends = new ArrayList<String>();
 			jbossWebMetaData.setDepends(depends);
 		}
-		depends.add( metaData.getRackApplicationPoolName() );
+		depends.add(metaData.getRackApplicationPoolName());
 	}
 }
