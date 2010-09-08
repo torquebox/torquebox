@@ -141,15 +141,16 @@ class File
       end
     end
 
-    def new(fname, mode_str='r', flags=nil, &block)
+    def new(*args, &block)
+      fname = args.size > 0 ? args[0] : nil
       if ( Fixnum === fname )
-        return File.new_without_vfs( fname, mode_str, &block )
+        return self.new_without_vfs( *args, &block )
       end
       unless ( fname.to_s =~ /^vfs:/ )
-        return File.new_without_vfs( fname, mode_str, flags, &block )
+        return self.new_without_vfs( *args, &block )
       end
       # File.new doesn't pass a block through to the opened file
-      IO.vfs_open( fname.to_s, mode_str )
+      IO.vfs_open( *args )
     end
   end
 

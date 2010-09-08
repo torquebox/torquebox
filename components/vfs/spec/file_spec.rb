@@ -1,5 +1,6 @@
 
 require File.dirname(__FILE__) + '/spec_helper.rb'
+require 'tempfile'
 
 describe "File extensions for VFS" do
 
@@ -75,9 +76,15 @@ describe "File extensions for VFS" do
     end
   end
 
-  it "should be able to initialize paths with vfs urls" do
+  it "should be able to create new files with vfs urls" do
     lambda {
-      path = File.new("vfs:#{__FILE__}", 'r')
+      File.new("vfs:#{__FILE__}", 'r')
+    }.should_not raise_error
+  end
+
+  it "should be able to create new tempfiles" do
+    lambda {
+      Tempfile.new("temp_file_test")
     }.should_not raise_error
   end
 
