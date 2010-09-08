@@ -88,6 +88,27 @@ describe "File extensions for VFS" do
     }.should_not raise_error
   end
 
+  describe "open" do
+    it "should return File when called on File with VFS url" do
+      puts @archive1_path
+      File.open("vfs:#{@archive1_path}", 'r').should be_an_instance_of(File)
+    end
+
+    it "should return File when called on File without VFS url" do
+      File.open(@archive1_path, 'r').should be_an_instance_of(File)
+    end
+  end
+
+  describe "new" do
+    it "should return File when called on File with VFS url" do
+      File.new("vfs:#{@archive1_path}", 'r').should be_an_instance_of(File)
+    end
+
+    it "should return File when called on File without VFS url" do
+      File.new(@archive1_path, 'r').should be_an_instance_of(File)
+    end
+  end
+
   [ :absolute, :relative, :vfs ].each do |style|
     describe "with #{style} paths" do
       case ( style )
