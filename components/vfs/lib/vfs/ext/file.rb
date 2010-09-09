@@ -23,19 +23,22 @@ class File
       unless ( fname.to_s =~ /^vfs:/ )
         return File.open_without_vfs(fname, mode_str, flags, &block )
       end
-      IO.vfs_open( fname.to_s, mode_str, &block )
+      if ( File.exist_without_vfs?( name_without_vfs(fname) ) )
+        return File.open_without_vfs( name_without_vfs(fname), mode_str, flags, &block )
+      end
+      self.vfs_open( fname.to_s, mode_str, &block )
     end
 
     def expand_path(*args)
       if ( args[1] && args[1].to_s =~ /^vfs:/ )
-        return expand_path_without_vfs(args[0], args[1].to_s[4..-1])
+        return expand_path_without_vfs(args[0], name_without_vfs(args[1].to_s))
       end
       return args[0].to_s.dup if ( args[0] =~ /^vfs:/ )
       expand_path_without_vfs(*args)
     end
 
     def readable?(filename)
-      readable_without_vfs? filename =~ /^vfs:/ ? filename[4..-1] : filename
+      readable_without_vfs? name_without_vfs(filename)
     end
 
     def unlink(*file_names)
@@ -137,19 +140,28 @@ class File
 
     def chmod(mode_int, *files)
       files.each do |name|
-        chmod_without_vfs( mode_int, name.start_with?("vfs:") ? name[4..-1] : name )
+        chmod_without_vfs( mode_int, name_without_vfs(name) )
       end
     end
 
-    def new(fname, mode_str='r', flags=nil, &block)
+    def new(*args, &block)
+      fname = args.size > 0 ? args[0] : nil
       if ( Fixnum === fname )
-        return File.new_without_vfs( fname, mode_str, &block )
+        return self.new_without_vfs( *args, &block )
       end
       unless ( fname.to_s =~ /^vfs:/ )
-        return File.new_without_vfs( fname, mode_str, flags, &block )
+        return self.new_without_vfs( *args, &block )
+      end
+      if ( File.exist_without_vfs?( name_without_vfs(fname) ) )
+        args[0] = name_without_vfs(fname)
+        return File.new_without_vfs( *args, &block )
       end
       # File.new doesn't pass a block through to the opened file
-      IO.vfs_open( fname.to_s, mode_str )
+      IO.vfs_open( *args )
+    end
+
+    def name_without_vfs(filename)
+      filename =~ /^vfs:/ ? filename[4..-1] : filename
     end
   end
 
