@@ -82,43 +82,38 @@ end</programlisting></para>
 
     <para>From within the class's <methodname>run()</methodname> method, the
     full application environment is available.</para>
-  </section>
 
-  <section>
-    <title><classname>TorqueBox::Jobs::Base</classname> module</title>
+    <section>
+      <title>Logging</title>
 
-    <para>The optional <classname>TorqueBox::Jobs::Base</classname> module
-    provides access to helpful functionality. It is not required to be
-    included in your Ruby job class. By including it, though, extra
-    functionality is introduced into your classes.</para>
+      <para>
+        To gain access to a logging device from your job, simply add a
+        <methodname>:log</methodname> attribute to your class and
+        TorqueBox will set it for you.
+      </para>
 
-    <para><example>
-        <title>Using <classname>TorqueBox::Jobs::Base</classname>
-        module</title>
+      <para>
+        <example>
+          <title>Accessing a logger</title>
 
-        <para><programlisting format=""><emphasis>require 'torquebox/jobs/base'</emphasis>
-
-module Mail
+        <para><programlisting format="">module Mail
   class Notifier
-    <emphasis>include TorqueBox::Jobs::Base
-</emphasis>
+    <emphasis>attr_accessor :log</emphasis>
     def run()
 
-      # Use the logger provided by TorqueBox::Jobs::Base
-      log.info( "Executing the job" )
+      # Use the logger set for you by TorqueBox
+      <emphasis>log.info</emphasis>( "Executing the job" )
 
       # perform work here
     end
   end
 end</programlisting></para>
-      </example></para>
-
-    <section>
-      <title>Logging</title>
-
-      <para>To gain access to a logging device, the
-      <methodname>log()</methodname> method is available. Messages of various
-      level can be logged.</para>
+        </example>
+      </para>
+      
+      <para>
+        Messages of various level can be logged.
+      </para>
 
       <informaltable>
         <tgroup cols="2">
@@ -164,14 +159,18 @@ end</programlisting></para>
         </tgroup>
       </informaltable>
 
-      <para>The log messages will be logged in the normal
-      <filename>server.log</filename>.</para>
+      <para>
+        The log messages will be logged in the normal
+        <filename>server.log</filename>.
 
-      <para><screen format="">10:02:35,074 INFO  [Notifier] Executing the job
-10:02:40,074 INFO  [Notifier] Executing the job</screen></para>
+        <screen format="">10:02:35,074 INFO  [Notifier] Executing the job
+10:02:40,074 INFO  [Notifier] Executing the job</screen>
+      </para>
+
     </section>
   </section>
 
+  
   <section>
     <title>Scheduling Jobs</title>
 
