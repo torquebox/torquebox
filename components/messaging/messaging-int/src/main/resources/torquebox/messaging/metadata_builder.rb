@@ -1,4 +1,3 @@
-puts "loading metadata_builder.rb from #{__FILE__}"
 
 module TorqueBox
   module Messaging
