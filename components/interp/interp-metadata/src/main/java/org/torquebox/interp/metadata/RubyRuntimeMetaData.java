@@ -23,6 +23,11 @@ import org.torquebox.interp.spi.RuntimeInitializer;
  */
 public class RubyRuntimeMetaData {
 	
+	public enum Version {
+		V1_8,
+		V1_9
+	}
+	
 	/** Base working directory. */
 	private VirtualFile baseDir;
 	
@@ -34,6 +39,9 @@ public class RubyRuntimeMetaData {
 
 	/** Interpreter-specific environment variables. */
 	private Map<String, String> environment;
+	
+	/** Version of Ruby to use. */
+	private Version version = Version.V1_8;
 
 	/** Construct.
 	 */
@@ -111,6 +119,22 @@ public class RubyRuntimeMetaData {
 	 */
 	public Map<String, String> getEnvironment() {
 		return this.environment;
+	}
+	
+	/** Set the version of the Ruby interpreter.
+	 * 
+	 * @param version The version.
+	 */
+	public void setVersion(Version version) {
+		this.version = version;
+	}
+	
+	/** Retrieve the version of the Ruby interpreter.
+	 * 
+	 * @return The version.
+	 */
+	public Version getVersion() {
+		return this.version;
 	}
 
 
