@@ -41,7 +41,7 @@ public class RubyRuntimeMetaData {
 	private Map<String, String> environment;
 	
 	/** Version of Ruby to use. */
-	private Version version = Version.V1_8;
+	private Version version;
 
 	/** Construct.
 	 */

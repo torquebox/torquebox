@@ -33,6 +33,7 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.dependency.KernelController;
+import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
@@ -114,6 +115,12 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		factory.setClassLoader( unit.getClassLoader() );
 		factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
 		factory.setApplicationEnvironment( metaData.getEnvironment() );
+		
+		if ( metaData.getVersion() ==  RubyRuntimeMetaData.Version.V1_9) {
+			factory.setRubyVersion( CompatVersion.RUBY1_9 );
+		} else {
+			factory.setRubyVersion( CompatVersion.RUBY1_8 );
+		}
 		
 		KernelController controller = this.kernel.getController();
 		

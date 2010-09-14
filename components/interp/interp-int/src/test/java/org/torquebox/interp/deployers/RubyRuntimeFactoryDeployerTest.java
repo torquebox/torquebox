@@ -1,11 +1,10 @@
 package org.torquebox.interp.deployers;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +46,27 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeployerTestCase {
 		RubyRuntimeFactory factory = (RubyRuntimeFactory) getBean( AttachmentUtils.beanName( unit, RubyRuntimeFactory.class ) );
 		
 		assertNotNull(factory);
+		assertEquals( CompatVersion.RUBY1_8, factory.getRubyVersion() );
+		
+		undeploy( deploymentName );
+	}
+	
+	@Test
+	public void testDeploymentWithNonDefaultRubyCompatibilityVersion() throws Exception {
+		String deploymentName = createDeployment("runtimeFactory");
+		
+		RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
+		metaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
+		
+		DeploymentUnit unit = getDeploymentUnit( deploymentName );
+		unit.addAttachment( RubyRuntimeMetaData.class, metaData );
+		
+		processDeployments(true);
+		
+		RubyRuntimeFactory factory = (RubyRuntimeFactory) getBean( AttachmentUtils.beanName( unit, RubyRuntimeFactory.class ) );
+		
+		assertNotNull(factory);
+		assertEquals( CompatVersion.RUBY1_9, factory.getRubyVersion() );
 		
 		undeploy( deploymentName );
 	}

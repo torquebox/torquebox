@@ -38,6 +38,7 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyModule;
@@ -88,9 +89,14 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 	/** Should environment $JRUBY_HOME be considered? */
 	private boolean useJRubyHomeEnvVar = true;
 
+	/** Additional application environment variables. */
 	private Map<String, String> applicationEnvironment;
 
+	/** Undisposed runtimes created by this factory. */
 	private Set<Ruby> undisposed = new HashSet<Ruby>();
+
+	/** Ruby compatibility version. */
+	private CompatVersion rubyVersion;
 
 	/**
 	 * Construct.
@@ -189,6 +195,23 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		return getClass().getClassLoader();
 	}
 
+	
+	/** Set the Ruby compatibility version.
+	 * 
+	 * @param rubyVersion The version.
+	 */
+	public void setRubyVersion(CompatVersion rubyVersion) {
+		this.rubyVersion = rubyVersion;
+	}
+	
+	/** Retrieve the Ruby compatibility version.
+	 * 
+	 * @return The version.
+	 */
+	public CompatVersion getRubyVersion() {
+		return this.rubyVersion;
+	}
+	
 	/**
 	 * Set the application-specific environment additions.
 	 * 
@@ -220,6 +243,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		}
 		config.setClassCache(classCache);
 		config.setLoadServiceCreator(new VFSLoadServiceCreator());
+		config.setCompatVersion( this.rubyVersion );
 
 		String jrubyHome = this.jrubyHome;
 
@@ -282,6 +306,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			// jrubyHome = jrubyHome.replaceAll( "^file:", "vfs:" );
 			// jrubyHome = jrubyHome.replaceAll( "!/", "/" );
 		}
+		
+		System.err.println( "JRUBY_HOME=>[" + jrubyHome + "]" );
 
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
@@ -340,6 +366,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		if (this.applicationEnvironment != null) {
 			env.putAll(this.applicationEnvironment);
 		}
+		System.err.println( "environment=>" + env );
 		return env;
 	}
 

@@ -21,6 +21,7 @@
  */
 package org.torquebox.interp.spi;
 
+import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.torquebox.common.spi.InstanceFactory;
 
@@ -29,5 +30,7 @@ import org.torquebox.common.spi.InstanceFactory;
  * @author Bob McWhirter
  */
 public interface RubyRuntimeFactory extends InstanceFactory<Ruby> {
+	
+	CompatVersion getRubyVersion();
 
 }
