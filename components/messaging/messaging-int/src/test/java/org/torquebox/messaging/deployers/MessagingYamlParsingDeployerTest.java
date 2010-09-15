@@ -6,11 +6,15 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 import java.util.Set;
+import java.util.Map;
 import java.io.File;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jruby.Ruby;
+import org.jruby.RubyModule;
+import org.jruby.RubyString;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.interp.deployers.DeployerRuby;
@@ -79,10 +83,15 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals("MyClass", metaData.getRubyClassName());
         assertEquals("/topics/foo", metaData.getDestinationName());
         assertEquals("myfilter", metaData.getMessageSelector());
-        byte[] rubyConfig = metaData.getRubyConfig();
-        assertNotNull(rubyConfig);
+        assertEquals("toast", loadConfig(metaData.getRubyConfig()).get("a"));
 
         undeploy(deploymentName);
     }
 
+    private Map loadConfig(byte[] bytes) {
+        String configStr = RubyString.bytesToString( bytes );
+        RubyModule marshal = ruby.getClassFromPath("Marshal");
+        return (Map) JavaEmbedUtils.invokeMethod(ruby, marshal, "load", new Object[] { configStr }, Map.class);
+    }
+        
 }
