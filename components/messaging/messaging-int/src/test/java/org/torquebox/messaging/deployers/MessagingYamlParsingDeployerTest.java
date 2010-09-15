@@ -16,6 +16,7 @@ import org.jruby.RubyModule;
 import org.jruby.RubyString;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 import org.torquebox.interp.deployers.DeployerRuby;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
@@ -26,6 +27,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
     private MessagingYamlParsingDeployer deployer;
     private Ruby ruby;
+    private String deploymentName;
 
     @Before
     public void setUpDeployer() throws Throwable {
@@ -35,57 +37,42 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         this.ruby.evalScriptlet("require 'vfs'");
     }
 
+    @After
+    public void tearDownDeployer() throws Throwable {
+        undeploy(this.deploymentName);
+    }
+
     @Test
     public void testEmptyMessagingConfig() throws Exception {
-        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/empty-messaging.yml" );
-        String deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
-
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
-
-        processDeployments(true);
-
-        Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData(MessageProcessorMetaData.class);
-
+        Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/empty-messaging.yml" );
         assertTrue(allMetaData.isEmpty());
-        undeploy(deploymentName);
     }
 
     @Test(expected = DeploymentException.class)
     public void testJunkMessagingConfig() throws Exception {
-        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/junk-messaging.yml" );
-        String deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
-
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
-
-        processDeployments(true);
+        getMetaData( "src/test/resources/junk-messaging.yml" );
     }
 
     @Test
     public void testSingleMessagingConfig() throws Exception {
-        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/single-messaging.yml" );
-        String deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
-
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
-
-        processDeployments(true);
-
-        Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData(MessageProcessorMetaData.class);
-
+        Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/single-messaging.yml" );
         assertEquals(1, allMetaData.size());
 
         MessageProcessorMetaData metaData = allMetaData.iterator().next();
-
         assertNotNull(metaData);
-
         assertEquals("MyClass", metaData.getRubyClassName());
         assertEquals("/topics/foo", metaData.getDestinationName());
         assertEquals("myfilter", metaData.getMessageSelector());
         assertEquals("toast", loadConfig(metaData.getRubyConfig()).get("a"));
+    }
 
-        undeploy(deploymentName);
+    private Set<? extends MessageProcessorMetaData> getMetaData(String filename) throws Exception {
+        File config = new File( System.getProperty( "user.dir" ), filename );
+        this.deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
+        DeploymentUnit unit = getDeploymentUnit(deploymentName);
+        unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
+        processDeployments(true);
+        return unit.getAllMetaData(MessageProcessorMetaData.class);
     }
 
     private Map loadConfig(byte[] bytes) {

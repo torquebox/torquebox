@@ -93,7 +93,6 @@ describe TorqueBox::Messaging::MetaData::Builder do
 
   it "should allow implicit self evaluation from string" do
     contents = File.read( File.join( File.dirname(__FILE__), 'messaging.yml' ) ) 
-    puts contents
     @builder.evaluate( contents )
     processors = @builder.processors
     processors.size.should eql(1)

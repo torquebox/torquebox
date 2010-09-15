@@ -14,10 +14,10 @@
   </appender>
 
   <category name="org.jboss">
-    <priority value="INFO"/>
+    <priority value="FATAL"/>
   </category>
   <category name="org.torquebox">
-    <priority value="DEBUG"/>
+    <priority value="INFO"/>
   </category>
 
   <root>

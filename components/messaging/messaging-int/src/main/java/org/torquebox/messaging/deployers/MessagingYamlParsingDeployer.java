@@ -22,30 +22,24 @@ public class MessagingYamlParsingDeployer extends AbstractVFSParsingDeployer<Mes
     }
 
     @Override
-    protected MessageProcessorMetaData parse(VFSDeploymentUnit unit, VirtualFile file, MessageProcessorMetaData root) throws Exception {
+        protected MessageProcessorMetaData parse(VFSDeploymentUnit unit, VirtualFile file, MessageProcessorMetaData root) throws Exception {
 
         Ruby ruby = unit.getAttachment(DeployerRuby.class).getRuby();
         
-        try {
-            StringBuilder script = new StringBuilder();
-            ruby.getLoadService().require( "torquebox/messaging/metadata_builder" );
-            script.append("TorqueBox::Messaging::MetaData::Builder.evaluate_file( %q(" + file.toURL() + ") )\n" );
-            IRubyObject result = ruby.evalScriptlet(script.toString());
-            if (result != null) {
-                if (result instanceof RubyArray) {
-                    RubyArray array = (RubyArray) result;
-                    for (Object each : array) {
-                        if (each instanceof MessageProcessorMetaData) {
-                            MessageProcessorMetaData messageProcessorMetaData = (MessageProcessorMetaData) each;
-                            AttachmentUtils.multipleAttach(unit, messageProcessorMetaData, messageProcessorMetaData.getName());
-                        }
+        StringBuilder script = new StringBuilder();
+        ruby.getLoadService().require( "torquebox/messaging/metadata_builder" );
+        script.append("TorqueBox::Messaging::MetaData::Builder.evaluate_file( %q(" + file.toURL() + ") )\n" );
+        IRubyObject result = ruby.evalScriptlet(script.toString());
+        if (result != null) {
+            if (result instanceof RubyArray) {
+                RubyArray array = (RubyArray) result;
+                for (Object each : array) {
+                    if (each instanceof MessageProcessorMetaData) {
+                        MessageProcessorMetaData messageProcessorMetaData = (MessageProcessorMetaData) each;
+                        AttachmentUtils.multipleAttach(unit, messageProcessorMetaData, messageProcessorMetaData.getName());
                     }
                 }
             }
-        } catch (RaiseException e) {
-            log.error("error reading messaging.yml", e);
-            log.info(e.getException());
-            throw e;
         }
 
         return null;
