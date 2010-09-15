@@ -12,11 +12,11 @@ import org.torquebox.interp.deployers.DeployerRuby;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 
-public class MessagingTqParsingDeployer extends AbstractVFSParsingDeployer<MessageProcessorMetaData> {
+public class MessagingYamlParsingDeployer extends AbstractVFSParsingDeployer<MessageProcessorMetaData> {
 
-	public MessagingTqParsingDeployer() {
+	public MessagingYamlParsingDeployer() {
 		super(MessageProcessorMetaData.class);
-		setName("messaging.tq");
+		setName("messaging.yml");
 		setStage(DeploymentStages.POST_CLASSLOADER);
 		addRequiredInput( DeployerRuby.class );
 	}
@@ -43,7 +43,7 @@ public class MessagingTqParsingDeployer extends AbstractVFSParsingDeployer<Messa
 				}
 			}
 		} catch (RaiseException e) {
-			log.error("error reading messaging.tq", e);
+			log.error("error reading messaging.yml", e);
 			log.info(e.getException());
 			throw e;
 		}

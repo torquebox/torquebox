@@ -92,7 +92,7 @@ describe TorqueBox::Messaging::MetaData::Builder do
   end
 
   it "should allow implicit self evaluation from string" do
-    contents = File.read( File.join( File.dirname(__FILE__), 'messaging.tq' ) ) 
+    contents = File.read( File.join( File.dirname(__FILE__), 'messaging.yml' ) ) 
     puts contents
     @builder.evaluate( contents )
     processors = @builder.processors
@@ -103,7 +103,7 @@ describe TorqueBox::Messaging::MetaData::Builder do
   end
 
   it "should allow implicit self evaluation from file" do
-    @builder.evaluate_file( File.join( File.dirname(__FILE__), 'messaging.tq' ) )
+    @builder.evaluate_file( File.join( File.dirname(__FILE__), 'messaging.yml' ) )
     processors = @builder.processors
     processors.size.should eql(1)
     proc_1 = processors.first

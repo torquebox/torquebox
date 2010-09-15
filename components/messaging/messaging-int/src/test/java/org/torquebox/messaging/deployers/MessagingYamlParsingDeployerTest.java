@@ -18,23 +18,23 @@ import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 import org.torquebox.test.ruby.TestRubyFactory;
 
-public class MessagingTqParsingDeployerTest extends AbstractDeployerTestCase {
+public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
-	private MessagingTqParsingDeployer deployer;
+	private MessagingYamlParsingDeployer deployer;
 	private Ruby ruby;
 
 	@Before
 	public void setUpDeployer() throws Throwable {
-		this.deployer = new MessagingTqParsingDeployer();
+		this.deployer = new MessagingYamlParsingDeployer();
 		addDeployer(this.deployer);
 		this.ruby = TestRubyFactory.createRuby();
 		this.ruby.evalScriptlet("require 'vfs'");
 	}
 
 	@Test
-	public void testEmptyMessagingTq() throws Exception {
+	public void testEmptyMessagingConfig() throws Exception {
         File config = new File( System.getProperty( "user.dir" ), "src/test/resources/empty-messaging.yml" );
-		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.tq");
+		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
@@ -48,9 +48,9 @@ public class MessagingTqParsingDeployerTest extends AbstractDeployerTestCase {
 	}
 
 	@Test(expected = DeploymentException.class)
-	public void testJunkMessagingTq() throws Exception {
+	public void testJunkMessagingConfig() throws Exception {
         File config = new File( System.getProperty( "user.dir" ), "src/test/resources/junk-messaging.yml" );
-		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.tq");
+		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
@@ -59,9 +59,9 @@ public class MessagingTqParsingDeployerTest extends AbstractDeployerTestCase {
 	}
 
 	@Test
-	public void testSingleMessagingTq() throws Exception {
+	public void testSingleMessagingConfig() throws Exception {
         File config = new File( System.getProperty( "user.dir" ), "src/test/resources/single-messaging.yml" );
-		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.tq");
+		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
