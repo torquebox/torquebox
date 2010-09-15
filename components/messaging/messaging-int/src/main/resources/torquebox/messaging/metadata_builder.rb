@@ -49,7 +49,8 @@ module TorqueBox
           builder.processors
         end
 
-        def subscribe(processor, destination_name, opts={})
+        def subscribe(processor, destination_name, opts=nil)
+          opts ||= {}
           metadata = Java::org.torquebox.messaging.metadata::MessageProcessorMetaData.new()
           case ( processor )
             when Class
