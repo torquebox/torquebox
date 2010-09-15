@@ -288,27 +288,24 @@ end</programlisting>
 
         <para>To connect consumers within a TorqueBox-deployed
         application, you need to create a
-        <filename>messaging.tq</filename> file, such as
-        <filename>config/messaging.tq</filename> for Rails
+        <filename>messaging.yml</filename> file, such as
+        <filename>config/messaging.yml</filename> for Rails
         applications.</para>
 
         <para>
           This file will contain the mappings from your destinations
-          (topics and queues) to your consumers.  Each mapping is
-          defined using the <function>subscribe</function> command,
-          which expects two required parameters: the
-          <parameter>consumer</parameter> class, and the name of the
-          <parameter>destination</parameter>.  The name of the
-          destination should correspond to one of the entries in
-          either <filename>queues.yml</filename> or
-          <filename>topics.yml</filename>. 
+          (topics and queues) to your consumers.  The configuration
+          file is a YAML hash, the keys of which are your destination
+          names, which should correspond to the entries in either
+          <filename>queues.yml</filename> or
+          <filename>topics.yml</filename>.
         </para>
 
         <example>
-          <title>messaging.tq</title>
+          <title>messaging.yml</title>
           <para>
-            <programlisting format="">subscribe MyFooHandler, '/queues/foo'
-subscribe MyBazHandler, '/topics/baz'</programlisting>
+            <programlisting format="">/queues/foo: MyFooHandler
+/topics/baz: MyBazHandler</programlisting>
           </para>
           <para>
             The classes MyFooHandler and MyBazHandler would correspond
@@ -321,21 +318,33 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
         </example>
 
         <para>
-          The <function>subscribe</function> command accepts two
-          additional parameters, <parameter>:config</parameter> and
-          <parameter>:filter</parameter>.  The
-          <parameter>:config</parameter> parameter should contain a
+          The above example shows the simplest possible configuration,
+          but it's possible to specify filtering criteria and
+          special-purpose configuration of your handlers as well using
+          the keys <parameter>filter</parameter> and
+          <parameter>config</parameter>, respectively.  The
+          <parameter>filter</parameter> parameter may be used to
+          filter the messages dispatched to your consumer.  The
+          <parameter>config</parameter> parameter should contain a
           hash of data which will be passed to your consumer's
           <function>configure(hash)</function> prior to invoking
-          <function>process!</function>.  The
-          <parameter>:filter</parameter> parameter may be used to
-          filter the messages dispatched to your consumer.
+          <function>process!</function>.
         </para>
 
         <example>
-          <title>messaging.tq with :config and :filter options set</title>
+          <title>messaging.yml with config and filter options set</title>
           <para>
-            <programlisting format="">subscribe MyFooHandler, '/queues/foo', :filter=>'cost &gt; 30', :config=>{ :type=>"premium", :season=>"fall" }</programlisting>
+            <programlisting format="">/queues/foo:
+  MyFooHandler:
+    filter: "cost &gt; 30"
+    config:
+      type: "premium"
+      season: "fall"</programlisting>
+          </para>
+          <para>
+            Because the structure of the file is <ulink
+            url="http://www.yaml.org">YAML</ulink>, proper indentation
+            is required.
           </para>
         </example>
 
@@ -348,14 +357,14 @@ subscribe MyBazHandler, '/topics/baz'</programlisting>
             utilities are provided: one that can deploy your
             <filename>queues.yml</filename> (or
             <filename>topics.yml</filename>) and one that can deploy
-            your <filename>messaging.tq</filename> config file.
+            your <filename>messaging.yml</filename> config file.
           </para>
 
           <para>
             <example>
               <title>Deploying your Consumers outside of the App Server</title>
               
-              <para><programlisting format="">$ trq-message-processor-host --deploy messaging.tq
+              <para><programlisting format="">$ trq-message-processor-host --deploy messaging.yml
               </programlisting></para>
               <para>Optionally, you can pass <code>-N
               your.naming.host</code> if there's not a naming server
