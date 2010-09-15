@@ -1,3 +1,2 @@
-require 'my_consumer'
 
-subscribe MyConsumer, '/queues/foo'
+/queues/foo: MyConsumer

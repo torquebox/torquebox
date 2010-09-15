@@ -1,2 +1,6 @@
 
-subscribe 'MyClass', '/topics/foo', :filter=>'myfilter', :config=>{ :a=>"toast" }
+/topics/foo:
+  MyClass:
+    filter: myfilter
+    config:
+      a: "toast"

@@ -55,7 +55,7 @@ describe TorqueBox::Messaging::MetaData::Builder do
   end
 
   it "should allow setting of a filter" do
-    @builder.subscribe( "mock_processor", "/topics/bar", :filter=>'cost > 200' )
+    @builder.subscribe( "mock_processor", "/topics/bar", 'filter'=>'cost > 200' )
 
     processors = @builder.processors
     processors.size.should eql(1)
@@ -80,7 +80,7 @@ describe TorqueBox::Messaging::MetaData::Builder do
 
   it "should handle processor config" do
     config = { :prop1=>"something" }
-    @builder.subscribe( "mock_processor", "/topic/what", :config=>config )
+    @builder.subscribe( "mock_processor", "/topic/what", 'config'=>config )
     
     processors = @builder.processors
     processors.size.should eql(1)
