@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.net.URL;
 import java.util.Set;
+import java.io.File;
 
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
@@ -23,8 +24,8 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	
 	@Test
 	public void testEmptyYaml() throws Exception {
-		URL topicsYml = getClass().getResource( "empty-topics.yml" );
-		String deploymentName = addDeployment( topicsYml, "topics.yml" );
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/empty-topics.yml" );
+		String deploymentName = addDeployment(config.toURI().toURL(), "topics.yml");
 		
 		processDeployments( true );
 		
@@ -38,8 +39,8 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	
 	@Test
 	public void testJunkYaml() throws Exception {
-		URL topicsYml = getClass().getResource( "junk-topics.yml" );
-		String deploymentName = addDeployment( topicsYml, "topics.yml" );
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/junk-topics.yml" );
+		String deploymentName = addDeployment(config.toURI().toURL(), "topics.yml");
 		
 		processDeployments( true );
 		
@@ -53,8 +54,8 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	
 	@Test
 	public void testValidYaml() throws Exception {
-		URL topicsYml = getClass().getResource( "valid-topics.yml" );
-		String deploymentName = addDeployment( topicsYml, "topics.yml" );
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/valid-topics.yml" );
+		String deploymentName = addDeployment(config.toURI().toURL(), "topics.yml");
 		
 		processDeployments( true );
 		

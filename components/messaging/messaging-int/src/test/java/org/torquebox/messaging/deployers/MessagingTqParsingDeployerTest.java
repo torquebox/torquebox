@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 import java.util.Set;
+import java.io.File;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
@@ -32,8 +33,8 @@ public class MessagingTqParsingDeployerTest extends AbstractDeployerTestCase {
 
 	@Test
 	public void testEmptyMessagingTq() throws Exception {
-		URL messagingTq = getClass().getResource("empty-messaging.rb");
-		String deploymentName = addDeployment(messagingTq, "messaging.tq");
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/empty-messaging.yml" );
+		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.tq");
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
@@ -48,8 +49,8 @@ public class MessagingTqParsingDeployerTest extends AbstractDeployerTestCase {
 
 	@Test(expected = DeploymentException.class)
 	public void testJunkMessagingTq() throws Exception {
-		URL messagingTq = getClass().getResource("junk-messaging.rb");
-		String deploymentName = addDeployment(messagingTq, "messaging.tq");
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/junk-messaging.yml" );
+		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.tq");
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
@@ -59,8 +60,8 @@ public class MessagingTqParsingDeployerTest extends AbstractDeployerTestCase {
 
 	@Test
 	public void testSingleMessagingTq() throws Exception {
-		URL messagingTq = getClass().getResource("single-messaging.rb");
-		String deploymentName = addDeployment(messagingTq, "messaging.tq");
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/single-messaging.yml" );
+		String deploymentName = addDeployment(config.toURI().toURL(), "messaging.tq");
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
 		unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
