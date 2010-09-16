@@ -56,7 +56,7 @@ public class MessageProcessorMetaData {
 	}
 	
 	public void setRubyConfig(Map rubyConfig) {
-		this.rubyConfig = rubyConfig;
+		if (rubyConfig != null) this.rubyConfig = rubyConfig;
 	}
 	
 	public Map getRubyConfig() {
