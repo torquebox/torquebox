@@ -1,8 +1,6 @@
 package org.torquebox.messaging.deployers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.net.URL;
 import java.io.File;
@@ -82,6 +80,29 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
     }
 
     @Test
+    public void testConfigOptionsForArray() throws Exception {
+        Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
+        MessageProcessorMetaData metadata = find( allMetaData, "/array", "Two" );
+        assertEquals( "x > 18", metadata.getMessageSelector() );
+        Map config = loadConfig(metadata.getRubyConfig());
+        assertEquals( "ex", config.get("x") );
+        assertEquals( "why", config.get("y") );
+        assertTrue( isUnconfigured( find( allMetaData, "/array", "One" ) ) );
+        assertTrue( isUnconfigured( find( allMetaData, "/array", "Three" ) ) );
+    }
+
+    @Test
+    public void testConfigOptionsForHash() throws Exception {
+        Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
+        MessageProcessorMetaData metadata = find( allMetaData, "/hash", "B" );
+        assertEquals( "y < 18", metadata.getMessageSelector() );
+        Map config = loadConfig(metadata.getRubyConfig());
+        assertEquals( "ache", config.get("h") );
+        assertEquals( "eye", config.get("i") );
+        assertTrue( isUnconfigured( find( allMetaData, "/hash", "A" ) ) );
+    }
+
+    @Test
     public void testMergedMap() throws Exception {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "Two" );
@@ -125,4 +146,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         return (Map) JavaEmbedUtils.invokeMethod(ruby, marshal, "load", new Object[] { configStr }, Map.class);
     }
 
+    private boolean isUnconfigured(MessageProcessorMetaData metadata) {
+        return null == metadata.getMessageSelector() && loadConfig( metadata.getRubyConfig() ).isEmpty();
+    }
 }
