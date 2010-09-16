@@ -93,6 +93,7 @@
       <artifactId>snakeyaml</artifactId>
       <scope>provided</scope>
     </dependency>
+<!--
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
@@ -100,6 +101,7 @@
       <type>gem</type>
       <scope>compile</scope>
     </dependency>
+-->
   </dependencies>
 
   <build> 

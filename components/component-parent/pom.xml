@@ -42,12 +42,13 @@
         <artifactId>gem-maven-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <gemHome>${project.build.directory}/rubygems</gemHome>
-          <gemPath>${project.build.directory}/rubygems</gemPath>
+          <gemHome>${project.basedir}/../target/rubygems</gemHome>
+          <gemPath>${project.basedir}/../target/rubygems</gemPath>
           <fork>true</fork>
         </configuration>
         <executions>
           <execution>
+            <id>install-component-rubygem-dependencies</id>
             <phase>process-test-classes</phase>
             <goals>
               <goal>initialize</goal>

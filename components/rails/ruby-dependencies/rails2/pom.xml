@@ -3,25 +3,25 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-parent</artifactId>
+    <artifactId>torquebox-rails-ruby-dependencies</artifactId>
     <version>1.0.0.Beta22-SNAPSHOT</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-rails</artifactId>
+  <artifactId>torquebox-rails-ruby-dependencies-rails2</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Rails Components</name>
+  <name>TorqueBox Rails 2.x Dependencies</name>
   <description></description>
 
-  <modules>
-    <module>ruby-dependencies</module>
-    <module>rails-core</module>
-    <module>rails-metadata</module>
-    <module>rails-int</module>
-  </modules>
-
+  <dependencies>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rails</artifactId>
+      <version>2.3.8</version>
+      <type>gem</type>
+    </dependency>
+  </dependencies>
 
 </project>

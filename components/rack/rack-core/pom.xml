@@ -4,7 +4,7 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-component-parent</artifactId>
     <version>1.0.0.Beta22-SNAPSHOT</version>
-    <relativePath>../../component-parent/pom.xml</relativePath>
+    <relativePath>../../component-parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -82,12 +82,14 @@
       <scope>provided</scope>
     </dependency>
 
+<!--
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rack</artifactId>
       <type>gem</type>
       <scope>compile</scope>
     </dependency>
+-->
 
     <dependency>
       <groupId>org.torquebox</groupId>
@@ -127,16 +129,11 @@
         <directory>src/test/resources</directory>
       </testResource>
     </testResources>
+
     <plugins> 
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <gemHome>${project.build.directory}/rubygems</gemHome>
-          <gemPath>${project.build.directory}/rubygems</gemPath>
-          <fork>true</fork>
-        </configuration>
         <executions>
           <execution>
             <phase>process-test-classes</phase>
@@ -154,6 +151,10 @@
             <property>
               <name>log4j.configuration</name>
               <value>test-log4j.xml</value>
+            </property>
+            <property>
+              <name>gem.path</name>
+              <value>${project.basedir}/../target/rubygems</value>
             </property>
           </systemProperties>
         </configuration>

@@ -127,6 +127,7 @@
         <version>${version.hamcrest}</version>
       </dependency>
 
+<!--
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>rack</artifactId>
@@ -152,6 +153,7 @@
         <classifier>java</classifier>
         <type>gem</type>
       </dependency>
+-->
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>rspec</artifactId>

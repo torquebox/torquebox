@@ -62,12 +62,14 @@
       <scope>provided</scope>
     </dependency>
 
+<!--
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rails</artifactId>
       <type>gem</type>
       <scope>compile</scope>
     </dependency>
+-->
 
     <dependency>
       <groupId>org.torquebox</groupId>
@@ -117,18 +119,16 @@
               <name>log4j.configuration</name>
               <value>test-log4j.xml</value>
             </property>
+            <property>
+              <name>gem.path</name>
+              <value>${project.basedir}/../target/rubygems</value>
+            </property>
           </systemProperties>
         </configuration>
       </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <gemHome>${project.build.directory}/rubygems</gemHome>
-          <gemPath>${project.build.directory}/rubygems</gemPath>
-          <fork>true</fork>
-        </configuration>
         <executions>
           <execution>
             <phase>process-test-classes</phase>
