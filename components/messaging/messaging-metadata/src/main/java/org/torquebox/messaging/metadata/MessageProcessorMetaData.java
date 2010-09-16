@@ -1,12 +1,15 @@
 package org.torquebox.messaging.metadata;
 
+import java.util.Map;
+import java.util.Collections;
+
 public class MessageProcessorMetaData {
 	
 	private String rubyClassName;
 	private String rubyRequirePath;
 	private String destinationName;
 	private String messageSelector;
-	private byte[] rubyConfig;
+	private Map rubyConfig = Collections.EMPTY_MAP;
 
 	public MessageProcessorMetaData() {
 	}
@@ -52,11 +55,11 @@ public class MessageProcessorMetaData {
 		return this.messageSelector;
 	}
 	
-	public void setRubyConfig(byte[] rubyConfig) {
+	public void setRubyConfig(Map rubyConfig) {
 		this.rubyConfig = rubyConfig;
 	}
 	
-	public byte[] getRubyConfig() {
+	public Map getRubyConfig() {
 		return this.rubyConfig;
 	}
 }

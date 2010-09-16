@@ -21,24 +21,24 @@ module TorqueBox
           parse yaml
         end
 
-        def parse(map)
-          destinations = map.keys
+        def parse(data)
+          destinations = data.keys
           destinations.each do |destination|
-            case map[destination]
+            case data[destination]
             when Hash
-              map[destination].keys.each do |handler|
-                subscribe handler, destination, map[destination][handler]
+              data[destination].keys.each do |handler|
+                subscribe handler, destination, data[destination][handler]
               end
             when Array
-              map[destination].each do |handler|
+              data[destination].each do |handler|
                 if handler.is_a? String
                   subscribe handler, destination
-                else # it's a Hash
+                else # it's a Hash with one pair
                   subscribe handler.keys.first, destination, handler.values.first
                 end
               end
             else # it's a String
-              subscribe map[destination], destination
+              subscribe data[destination], destination
             end
           end
         end
@@ -65,9 +65,7 @@ module TorqueBox
           metadata.destination_name = destination_name
           metadata.message_selector = opts['filter']
           config = opts['config'] || {}
-          processor_config = Marshal.dump( config )
-          config_bytes = processor_config.to_java_bytes
-          metadata.ruby_config = config_bytes
+          metadata.ruby_config = config
           @processors << metadata
         end
       end

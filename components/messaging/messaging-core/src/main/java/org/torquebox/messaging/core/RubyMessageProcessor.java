@@ -1,5 +1,8 @@
 package org.torquebox.messaging.core;
 
+import java.util.Map;
+import java.util.Collections;
+
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -36,7 +39,7 @@ public class RubyMessageProcessor implements MessageListener {
 
 	private RubyComponentResolver componentResolver;
 
-	private byte[] rubyConfig;
+	private Map rubyConfig = Collections.EMPTY_MAP;
 
 	private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 
@@ -80,11 +83,11 @@ public class RubyMessageProcessor implements MessageListener {
 		return this.messageSelector;
 	}
 
-	public void setRubyConfig(byte[] rubyConfig) {
+	public void setRubyConfig(Map rubyConfig) {
 		this.rubyConfig = rubyConfig;
 	}
 
-	public byte[] getRubyConfig() {
+	public Map getRubyConfig() {
 		return this.rubyConfig;
 	}
 
@@ -177,23 +180,7 @@ public class RubyMessageProcessor implements MessageListener {
 
 	protected void configureProcessor(IRubyObject processor) {
 		Ruby ruby = processor.getRuntime();
-		
-		Object config = null;
-
-		if (this.rubyConfig != null) {
-			//RubyModule string = ruby.getClassFromPath("String");
-			//RubyString configStr = (RubyString) JavaEmbedUtils.invokeMethod( ruby, string, "from_java_bytes", new Object[] { this.rubyConfig }, RubyString.class );
-			String configStr = RubyString.bytesToString( this.rubyConfig );
-			
-			RubyModule marshal = ruby.getClassFromPath("Marshal");
-			config = JavaEmbedUtils.invokeMethod(ruby, marshal, "load", new Object[] { configStr }, Object.class);
-		}
-		
-		if (config == null) {
-			config = RubyHash.newHash( ruby );
-		}
-		
-		ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { config });
+		ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { getRubyConfig() });
 	}
 
 	protected void processMessage(IRubyObject processor, Message message) {

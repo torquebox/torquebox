@@ -2,7 +2,7 @@ require 'torquebox/messaging/message_processor'
 
 class TestMessageProcessor < TorqueBox::Messaging::MessageProcessor
   
-  CONFIG_ONE = Marshal.dump( { :prop1=>"cheese", :prop2=>42 } )
+  CONFIG_ONE = { :prop1=>"cheese", :prop2=>42 } 
   
   attr_accessor :opts
   attr_accessor :messages

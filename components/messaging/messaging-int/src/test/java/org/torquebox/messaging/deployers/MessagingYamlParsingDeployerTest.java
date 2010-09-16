@@ -60,7 +60,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals("MyClass", metaData.getRubyClassName());
         assertEquals("/topics/foo", metaData.getDestinationName());
         assertEquals("myfilter", metaData.getMessageSelector());
-        assertEquals("toast", loadConfig(metaData.getRubyConfig()).get("a"));
+        assertEquals("toast", metaData.getRubyConfig().get("a"));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/array", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
-        Map config = loadConfig(metadata.getRubyConfig());
+        Map config = metadata.getRubyConfig();
         assertEquals( "ex", config.get("x") );
         assertEquals( "why", config.get("y") );
         assertTrue( isUnconfigured( find( allMetaData, "/array", "One" ) ) );
@@ -96,7 +96,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "B" );
         assertEquals( "y < 18", metadata.getMessageSelector() );
-        Map config = loadConfig(metadata.getRubyConfig());
+        Map config = metadata.getRubyConfig();
         assertEquals( "ache", config.get("h") );
         assertEquals( "eye", config.get("i") );
         assertTrue( isUnconfigured( find( allMetaData, "/hash", "A" ) ) );
@@ -107,7 +107,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
-        Map config = loadConfig(metadata.getRubyConfig());
+        Map config = metadata.getRubyConfig();
         assertEquals( "ex", config.get("x") );
         assertEquals( "why", config.get("y") );
     }
@@ -140,13 +140,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         return null;
     }
 
-    private Map loadConfig(byte[] bytes) {
-        String configStr = RubyString.bytesToString( bytes );
-        RubyModule marshal = ruby.getClassFromPath("Marshal");
-        return (Map) JavaEmbedUtils.invokeMethod(ruby, marshal, "load", new Object[] { configStr }, Map.class);
-    }
-
     private boolean isUnconfigured(MessageProcessorMetaData metadata) {
-        return null == metadata.getMessageSelector() && loadConfig( metadata.getRubyConfig() ).isEmpty();
+        return null == metadata.getMessageSelector() && metadata.getRubyConfig().isEmpty();
     }
 }
