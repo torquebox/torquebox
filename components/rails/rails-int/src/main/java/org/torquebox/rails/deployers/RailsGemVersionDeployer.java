@@ -58,40 +58,79 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
 		RailsGemVersionMetaData railsVersionMetaData = determineRailsGemVersion(railsRoot);
 
+		log.info("deploying Rails version: " + railsVersionMetaData);
 		unit.addAttachment(RailsGemVersionMetaData.class, railsVersionMetaData);
-		log.debug("deploying Rails version: " + railsVersionMetaData);
 	}
 
 	protected RailsGemVersionMetaData determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
-		VirtualFile configEnvironmentFile = null;
+	    RailsGemVersionMetaData versionMetaData = determineVersionTryRails2( railsRoot );
+	    if ( versionMetaData == null ) {
+	        versionMetaData = deteremineVersionTryRails3( railsRoot );
+	    }
+	    
+	    return versionMetaData;
+	}
+	
+	protected RailsGemVersionMetaData determineVersionTryRails2(VirtualFile railsRoot) throws DeploymentException {
+	       VirtualFile configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
+	        
+	        log.info( "config/environment.rb = " + configEnvironmentFile );
+	        
+	        if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
+	            return null;
+	        }
 
-		configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
-		
-		log.info( "config/environment.rb = " + configEnvironmentFile );
-		
-		if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
-			return null;
-		}
+	        Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
 
-		Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
+	        BufferedReader in = null;
 
-		BufferedReader in = null;
+	        try {
+	            InputStream inStream = configEnvironmentFile.openStream();
+	            InputStreamReader inReader = new InputStreamReader(inStream);
+	            in = new BufferedReader(inReader);
+	            String line = null;
+	            while ((line = in.readLine()) != null) {
+	                Matcher matcher = pattern.matcher(line);
+	                if (matcher.matches()) {
+	                    String versionSpec = matcher.group(1).trim();
+	                    return new RailsGemVersionMetaData(versionSpec);
+	                }
+	            }
+	        } catch (IOException e) {
+	            throw new DeploymentException(e);
+	        }
+	        return null;
+	}
+	
+	protected RailsGemVersionMetaData deteremineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
+        VirtualFile gemfile = railsRoot.getChild("Gemfile");
+        
+        log.info( "Gemfile = " + gemfile );
+        
+        if (gemfile == null || !gemfile.exists()) {
+            return null;
+        }
 
-		try {
-			InputStream inStream = configEnvironmentFile.openStream();
-			InputStreamReader inReader = new InputStreamReader(inStream);
-			in = new BufferedReader(inReader);
-			String line = null;
-			while ((line = in.readLine()) != null) {
-				Matcher matcher = pattern.matcher(line);
-				if (matcher.matches()) {
-					String versionSpec = matcher.group(1).trim();
-					return new RailsGemVersionMetaData(versionSpec);
-				}
-			}
-		} catch (IOException e) {
-			throw new DeploymentException(e);
-		}
-		return new RailsGemVersionMetaData(null);
+        Pattern pattern = Pattern.compile("^[^#]*gem\\s*['\"]rails['\"]\\s*,\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
+
+        BufferedReader in = null;
+
+        try {
+            InputStream inStream = gemfile.openStream();
+            InputStreamReader inReader = new InputStreamReader(inStream);
+            in = new BufferedReader(inReader);
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                System.err.println( "try [" + line + "]" );
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.matches()) {
+                    String versionSpec = matcher.group(1).trim();
+                    return new RailsGemVersionMetaData(versionSpec);
+                }
+            }
+        } catch (IOException e) {
+            throw new DeploymentException(e);
+        }
+        return null;
 	}
 }

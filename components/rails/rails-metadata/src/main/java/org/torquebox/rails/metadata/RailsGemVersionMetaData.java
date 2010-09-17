@@ -21,6 +21,8 @@
  */
 package org.torquebox.rails.metadata;
 
+import java.util.regex.Pattern;
+
 public class RailsGemVersionMetaData {
 
 	private String versionSpec;
@@ -31,6 +33,14 @@ public class RailsGemVersionMetaData {
 	
 	public String getVersionSpec() {
 		return this.versionSpec;
+	}
+	
+	public boolean isRails2() {
+        return Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", this.versionSpec );
+	}
+	
+	public boolean isRails3() {
+        return Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", this.versionSpec );
 	}
 	
 	public String toString() {
