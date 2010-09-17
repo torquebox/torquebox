@@ -9,6 +9,7 @@ class File
     alias_method :stat_without_vfs,        :stat
     alias_method :exist_without_vfs?,      :exist?
     alias_method :directory_without_vfs?,  :directory?
+    alias_method :dirname_without_vfs,     :dirname
     alias_method :file_without_vfs?,       :file?
     alias_method :expand_path_without_vfs, :expand_path
     alias_method :unlink_without_vfs,      :unlink
@@ -160,8 +161,17 @@ class File
       IO.vfs_open( *args )
     end
 
+    def dirname(filename)
+      dirname = dirname_without_vfs(name_without_vfs(filename))
+      vfs_path?(filename) ? "vfs:#{dirname}" : dirname
+    end
+
     def name_without_vfs(filename)
-      filename =~ /^vfs:/ ? filename[4..-1] : filename
+      vfs_path?(filename) ? filename[4..-1] : filename
+    end
+
+    def vfs_path?(path)
+      path =~ /^vfs:/
     end
   end
 
