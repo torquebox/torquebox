@@ -17,6 +17,7 @@ require 'vfs/ext/kernel'
 module ::VFS
   def self.resolve_within_archive(path)
     return path if ( path =~ %r(^vfs:) )
+    path = path.to_s
     cur = path
     while ( cur != '.' && cur != '/' )
       if ( ::File.exist_without_vfs?( cur ) )
