@@ -348,6 +348,57 @@ end</programlisting>
           </para>
         </example>
 
+        <para>
+          Actually, YAML enables the configuration to get fairly
+          sophisticated, allowing you to, for example, map a single
+          destination to multiple processors or re-use configuration
+          options in multiple processors.  You may never have a need
+          for this much flexibility, but it's available if you do.
+        </para>
+
+        <example>
+          <title>Advanced configuration in messaging.yml</title>
+          <para>
+            <programlisting format="">/topics/simple: SimpleHandler
+
+/topics/popular:
+  - Handler
+  - Observer: &amp;defaults
+      filter: "x &gt; 18"
+      config:
+        x: ex
+        y: why
+  - Processor
+
+/queues/students:
+  VerySimpleAnalyzer:
+  YouthMonitor:
+    filter: "y &lt; 18"
+    config:
+      h: ache
+      i: eye
+  LookAndFeel:
+    &lt;&lt;: *defaults</programlisting>
+          </para>
+          <para>
+            Here we have <code>/topics/simple</code> mapped to a
+            single processor of type <code>SimpleHandler</code> using
+            a YAML <emphasis>string</emphasis>,
+            <code>/topics/popular</code> mapped to three processors
+            (<code>Handler</code>, <code>Observer</code>,
+            <code>Processor</code>) using a YAML
+            <emphasis>list</emphasis>, and
+            <code>/queues/students</code> mapped to three more
+            processors (<code>VerySimpleAnalyzer</code>,
+            <code>YouthMonitor</code>, <code>LookAndFeel</code>) using
+            a YAML <emphasis>hash</emphasis> where each key in the
+            hash corresponds to the processor type.  This example also
+            takes advantage of YAML's ability to merge hash's: the
+            <code>Observer</code> and <code>LookAndFeel</code>
+            processors are configured identically.
+          </para>
+        </example>
+
         <section>
           <title>Connecting Consumers outside of TorqueBox</title>
 
