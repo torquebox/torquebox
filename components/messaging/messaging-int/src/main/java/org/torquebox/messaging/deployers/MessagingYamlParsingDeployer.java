@@ -28,58 +28,77 @@ public class MessagingYamlParsingDeployer extends AbstractVFSParsingDeployer<Mes
 
     @Override
     protected MessageProcessorMetaData parse(VFSDeploymentUnit unit, VirtualFile file, MessageProcessorMetaData root) throws Exception {
-        for (MessageProcessorMetaData metadata: parser.parse(file.openStream())) {
+        for (MessageProcessorMetaData metadata: Parser.parse(file.openStream())) {
             AttachmentUtils.multipleAttach(unit, metadata, metadata.getName());
         }
         return null;
     }
 
 
-    private Parser parser = new Parser();
+    public static class Parser {
 
-    static class Parser {
-        
-        List<MessageProcessorMetaData> parse (InputStream in) throws Exception {
+        public static List<MessageProcessorMetaData> parse (InputStream in) throws Exception {
+            Parser parser = new Parser();
+            Yaml yaml = new Yaml();
             try {
-                Yaml yaml = new Yaml();
-                Object data = yaml.load(in);
-                if (data instanceof String) {
-                    String s = (String) data;
-                    if (s.trim().length() == 0) {
-                        return Collections.EMPTY_LIST;
-                    } else {
-                        throw new RuntimeException("Invalid configuration");
-                    }
-                }
-                return parse ((Map<String,Object>) data);
+                return parser.parseYaml(yaml.load(in));
             } finally {
                 in.close();
             }
         }
+        
+        public static List<MessageProcessorMetaData> parse (String input) throws Exception {
+            Parser parser = new Parser();
+            Yaml yaml = new Yaml();
+            return parser.parseYaml(yaml.load(input));
+        }
 
-        List<MessageProcessorMetaData> parse (Map<String,Object> data)  {
+        List<MessageProcessorMetaData> parseYaml (Object data) throws Exception {
+            if (data instanceof String) {
+                String s = (String) data;
+                if (s.trim().length() == 0) {
+                    return Collections.EMPTY_LIST;
+                } else {
+                    throw new RuntimeException("Invalid configuration");
+                }
+            }
+            return parseDestinations ((Map<String,Object>) data);
+        }
+
+        List<MessageProcessorMetaData> parseDestinations (Map<String,Object> data)  {
             List<MessageProcessorMetaData> result = new ArrayList<MessageProcessorMetaData>();
             for (String destination: data.keySet()) {
                 Object value = data.get(destination);
                 if (value instanceof Map) {
-                    Map<String,Map> handlers = (Map<String,Map>) value;
-                    for (String handler: handlers.keySet()) {
-                        result.add( subscribe( handler, destination, handlers.get(handler) ) );
-                    }
+                    result.addAll( parseHandlers( destination, (Map<String,Map>) value ) );
                 } else if (value instanceof List) {
-                    List handlers = (List) value;
-                    for (Object v: handlers) {
-                        if (v instanceof String) {
-                            String handler = (String) v;
-                            result.add( subscribe( handler, destination, Collections.EMPTY_MAP ) );
-                        } else { // it's a Map with one entry
-                            Map.Entry<String,Map> handler = ((Map<String,Map>) v).entrySet().iterator().next();
-                            result.add( subscribe( handler.getKey(), destination, handler.getValue() ) );
-                        }
-                    }
-                } else { // it's a String
-                    String handler = (String) value;
-                    result.add( subscribe( handler, destination, Collections.EMPTY_MAP ) );
+                    result.addAll( parseHandlers( destination, (List) value ) );
+                } else { 
+                    result.add( parseHandler( destination, (String) value ) );
+                }
+            }
+            return result;
+        }
+
+        MessageProcessorMetaData parseHandler (String destination, String handler) {
+            return subscribe( handler, destination, Collections.EMPTY_MAP );
+        }
+
+        List<MessageProcessorMetaData> parseHandlers (String destination, Map<String,Map> handlers) {
+            List<MessageProcessorMetaData> result = new ArrayList<MessageProcessorMetaData>();
+            for (String handler: handlers.keySet()) {
+                result.add( subscribe( handler, destination, handlers.get(handler) ) );
+            }
+            return result;
+        }
+
+        List<MessageProcessorMetaData> parseHandlers (String destination, List handlers) {
+            List<MessageProcessorMetaData> result = new ArrayList<MessageProcessorMetaData>();
+            for (Object v: handlers) {
+                if (v instanceof String) {
+                    result.add( parseHandler( destination, (String) v ) );
+                } else {
+                    result.addAll( parseHandlers( destination, (Map<String,Map>) v ) );
                 }
             }
             return result;
