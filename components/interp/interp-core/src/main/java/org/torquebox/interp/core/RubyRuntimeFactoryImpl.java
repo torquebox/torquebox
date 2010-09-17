@@ -307,7 +307,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			// jrubyHome = jrubyHome.replaceAll( "!/", "/" );
 		}
 		
-		System.err.println( "JRUBY_HOME=>[" + jrubyHome + "]" );
+		// System.err.println( "JRUBY_HOME=>[" + jrubyHome + "]" );
 
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
@@ -366,7 +366,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		if (this.applicationEnvironment != null) {
 			env.putAll(this.applicationEnvironment);
 		}
-		System.err.println( "environment=>" + env );
+		// System.err.println( "environment=>" + env );
 		return env;
 	}
 
