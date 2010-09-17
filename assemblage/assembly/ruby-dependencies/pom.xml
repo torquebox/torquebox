@@ -10,14 +10,20 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-rack-ruby-dependencies</artifactId>
+  <artifactId>torquebox-assembly-ruby-dependencies</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Rack Ruby Dependencies</name>
+  <name>TorqueBox Assembly Ruby Dependencies</name>
   <description></description>
 
   <modules>
     <module>rack</module>
+    <module>rails2</module>
+    <module>rails3</module>
   </modules>
+
+  <properties>
+    <stage.dir>${project.basedir}/../../target/stage/torquebox-${project.version}</stage.dir>
+  </properties>
 
   <build>
     <pluginManagement>
@@ -27,16 +33,21 @@
           <artifactId>gem-maven-plugin</artifactId>
           <executions>
             <execution>
-              <id>install-gem-dependencies</id>
-              <phase>compile</phase>
+              <id>install-assembly-gem-dependencies</id>
+              <phase>none</phase>
               <goals>
                 <goal>initialize</goal>
               </goals>
               <configuration>
-                <gemHome>${project.basedir}/../../target/rubygems</gemHome>
-                <gemPath>${project.basedir}/../../target/rubygems</gemPath>
+                <gemPath>${stage.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                <gemHome>${stage.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                 <fork>true</fork>
                 <inherit>true</inherit>
+                <gemInitializeArgs>-f --bindir ${stage.dir}/jruby/bin</gemInitializeArgs>
+                <useTransitiveDependencies>true</useTransitiveDependencies>
+                <installRDoc>${install.docs}</installRDoc>
+                <installRI>${install.docs}</installRI>
+                <fork>true</fork>
               </configuration>
             </execution>
           </executions>

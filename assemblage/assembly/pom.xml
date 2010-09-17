@@ -4,7 +4,7 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
     <version>1.0.0.Beta22-SNAPSHOT</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../../parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -127,6 +127,50 @@
       <type>template.rb</type>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activerecord-jdbc-adapter</artifactId>
+      <classifier>java</classifier>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activerecord-jdbcmysql-adapter</artifactId>
+      <classifier>java</classifier>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activerecord-jdbcpostgresql-adapter</artifactId>
+      <classifier>java</classifier>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
+      <classifier>java</classifier>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>jdbc-mysql</artifactId>
+      <classifier>java</classifier>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>jdbc-postgres</artifactId>
+      <classifier>java</classifier>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>jdbc-sqlite3</artifactId>
+      <classifier>java</classifier>
+      <type>gem</type>
+    </dependency>
+
   </dependencies>
 
   <profiles>
@@ -397,5 +441,9 @@
       </plugin>
     </plugins>
   </build>
+
+  <modules>
+    <module>ruby-dependencies</module>
+  </modules>
 
 </project>

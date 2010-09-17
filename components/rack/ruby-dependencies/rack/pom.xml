@@ -19,9 +19,24 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rack</artifactId>
-      <version>1.1.0</version>
+      <version>${version.rack}</version>
       <type>gem</type>
     </dependency>
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-gem-dependencies</id>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

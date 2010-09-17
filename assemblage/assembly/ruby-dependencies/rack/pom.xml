@@ -3,23 +3,23 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-rails-ruby-dependencies</artifactId>
+    <artifactId>torquebox-assembly-ruby-dependencies</artifactId>
     <version>1.0.0.Beta22-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-rails-ruby-dependencies-rails2</artifactId>
+  <artifactId>torquebox-assembly-ruby-dependencies-rack</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Rails 2.x Dependencies</name>
+  <name>TorqueBox Rack Dependencies</name>
   <description></description>
 
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>rails</artifactId>
-      <version>${version.rails2}</version>
+      <artifactId>rack</artifactId>
+      <version>1.1.0</version>
       <type>gem</type>
     </dependency>
   </dependencies>
@@ -31,12 +31,11 @@
         <artifactId>gem-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>install-gem-dependencies</id>
+            <id>install-assembly-gem-dependencies</id>
             <phase>compile</phase>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
 </project>

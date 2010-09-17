@@ -5,7 +5,7 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
     <version>1.0.0.Beta22-SNAPSHOT</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../../parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>

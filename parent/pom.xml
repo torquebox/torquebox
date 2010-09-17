@@ -127,33 +127,58 @@
         <version>${version.hamcrest}</version>
       </dependency>
 
-<!--
+
       <dependency>
         <groupId>rubygems</groupId>
-        <artifactId>rack</artifactId>
-        <version>${version.rack}</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>activesupport</artifactId>
-        <version>${version.rails}</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>rails</artifactId>
-        <version>${version.rails}</version>
-        <type>gem</type>
-      </dependency>
-      <dependency>
-        <groupId>rubygems</groupId>
-        <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
-        <version>0.9.7</version>
+        <artifactId>activerecord-jdbc-adapter</artifactId>
+        <version>${version.ar.jdbc}</version>
         <classifier>java</classifier>
         <type>gem</type>
       </dependency>
--->
+
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
+        <version>${version.ar.sqlite3}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbcpostgresql-adapter</artifactId>
+        <version>${version.ar.postgresql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbcmysql-adapter</artifactId>
+        <version>${version.ar.mysql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>jdbc-sqlite3</artifactId>
+        <version>${version.jdbc.sqlite3}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>jdbc-postgres</artifactId>
+        <version>${version.jdbc.postgresql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>jdbc-mysql</artifactId>
+        <version>${version.jdbc.mysql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+
       <dependency>
         <groupId>rubygems</groupId>
         <artifactId>rspec</artifactId>
@@ -203,7 +228,19 @@
     <version.jruby>1.5.2</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
     <version.rack>1.1.0</version.rack>
-    <version.rails>2.3.8</version.rails>
+
+    <version.rails2>2.3.8</version.rails2>
+    <version.rails3>3.0.0</version.rails3>
+
+    <version.ar.jdbc>0.9.7</version.ar.jdbc>
+    <version.ar.sqlite3>0.9.7</version.ar.sqlite3>
+    <version.ar.mysql>0.9.7</version.ar.mysql>
+    <version.ar.postgresql>0.9.7</version.ar.postgresql>
+
+    <version.jdbc.sqlite3>3.6.3.054</version.jdbc.sqlite3>
+    <version.jdbc.mysql>5.0.4</version.jdbc.mysql>
+    <version.jdbc.postgresql>8.4.701</version.jdbc.postgresql>
+
     <version.rake>0.8.7</version.rake>
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>1.3.0</version.rspec>
