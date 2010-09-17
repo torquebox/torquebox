@@ -212,4 +212,18 @@ describe "File extensions for VFS" do
       end
     end
   end
+
+  describe 'dirname' do
+    it "should properly handle non-vfs paths" do
+      File.dirname('/').should == '/'
+      File.dirname('/a').should == '/'
+      File.dirname('/a/b').should == '/a'
+    end
+
+    it "should return vfs paths when given a vfs path" do
+      File.dirname('vfs:/').should == 'vfs:/'
+      File.dirname('vfs:/a').should == 'vfs:/'
+      File.dirname('vfs:/a/b').should == 'vfs:/a'
+    end
+  end
 end
