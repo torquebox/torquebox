@@ -8,7 +8,7 @@ Building
 
 Install the project using the provided settings.xml:
 
-    mvn -s settings.xml install
+    mvn -s build-support/settings.xml install
 
 
 If you will be building the project often, you'll want to
@@ -33,10 +33,20 @@ Layout
 * `build-support/` Contains code related to building TorqueBox, but not 
   involved at runtime.
 
-* `components/` Includes all code required at runtime.
+* `components/` Includes all code required at runtime within the AS (Java-centric).
+
+* `containers/` Includes outside-of-the-AS container code (Ruby-centric).
+
+* `clients/` Includes client API gems (Ruby-centric).
 
 * `assemblage/` Contains instructions for building the assembled final
   deliverables and distributions.
+
+* `integration-tests/` Contains a series of Arquillian-based tests
+  against the packaged distribution.
+
+* `dist/` Contains the instructions for creating the final binary
+ distributable in .zip format.
 
 Development Tips
 ----------------
