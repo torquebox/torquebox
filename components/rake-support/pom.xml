@@ -11,48 +11,12 @@
   <groupId>org.torquebox</groupId>
   <artifactId>rake-support</artifactId>
   <packaging>gem</packaging>
-  <name>TorqueBox Rails Support</name>
+  <name>TorqueBox Rake Support</name>
   <description></description>
 
 
   <build>
     <plugins>
-<!--
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/default.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <exec executable="rake">
-                  <arg value="maven:package"></arg>
-                  <env key="project.version" value="${project.version}"></env>
-                </exec>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -66,11 +30,6 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>target/gems/torquebox-${project.artifactId}-1.0.0.gem</file>
-                  <type>gem</type>
-                  <classifier></classifier>
-                </artifact>
-                <artifact>
                   <file>share/rails-template.rb</file>
                   <type>template.rb</type>
                   <classifier></classifier>
@@ -80,7 +39,6 @@
           </execution>
         </executions>
       </plugin>
--->
     </plugins>
   </build>
 
