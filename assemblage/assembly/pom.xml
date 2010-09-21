@@ -22,7 +22,7 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-assemblage-dependencies</artifactId>
+      <artifactId>torquebox-assemblage-pre-assembly</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
     </dependency>
