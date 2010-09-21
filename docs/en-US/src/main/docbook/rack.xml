@@ -25,4 +25,145 @@
 
   <para>To deploy your application, please see <xref linkend="deployment" />
   and <xref linkend="rack-deployment-descriptors" />.</para>
+
+  <para></para>
+
+  <section>
+    <title>Rack Compliance</title>
+
+    <table>
+      <title>Rack environment</title>
+
+      <tgroup cols="2">
+        <colspec align="left" />
+
+        <thead>
+          <row>
+            <entry>Variable</entry>
+
+            <entry>Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><varname>REQUEST_METHOD</varname></entry>
+
+            <entry>The HTTP request method, such as “GET” or “POST”. This
+            cannot ever be an empty string, and so is always required.</entry>
+          </row>
+
+          <row>
+            <entry><varname>SCRIPT_NAME</varname></entry>
+
+            <entry>The initial portion of the request URL’s “path” that
+            corresponds to the application object, so that the application
+            knows its virtual “location”. This may be an empty string, if the
+            application corresponds to the “root” of the server.</entry>
+          </row>
+
+          <row>
+            <entry><varname>PATH_INFO</varname></entry>
+
+            <entry>The remainder of the request URL’s “path”, designating the
+            virtual “location” of the request’s target within the application.
+            This may be an empty string, if the request URL targets the
+            application root and does not have a trailing slash. This value
+            may be percent-encoded when I originating from a URL.</entry>
+          </row>
+
+          <row>
+            <entry><varname>QUERY_STRING</varname></entry>
+
+            <entry>The portion of the request URL that follows the ?, if
+            any.</entry>
+          </row>
+
+          <row>
+            <entry><varname>SERVER_NAME</varname></entry>
+
+            <entry></entry>
+          </row>
+
+          <row>
+            <entry><varname>SERVER_PORT</varname></entry>
+
+            <entry></entry>
+          </row>
+
+          <row>
+            <entry><varname>HTTP_</varname> variables</entry>
+
+            <entry>Variables corresponding to the client-supplied HTTP request
+            headers (i.e., variables whose names begin with HTTP_). The
+            presence or absence of these variables should correspond with the
+            presence or absence of the appropriate HTTP header in the request.
+            </entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.version</varname></entry>
+
+            <entry>The Array [m, n], representing this version of Rack.
+            </entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.url_scheme</varname></entry>
+
+            <entry>http or https, depending on the request URL.</entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.input</varname></entry>
+
+            <entry>Input stream</entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.errors</varname></entry>
+
+            <entry>Error output stream</entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.multithread</varname></entry>
+
+            <entry>Always true</entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.multiprocess</varname></entry>
+
+            <entry>Always true</entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.run_once</varname></entry>
+
+            <entry>Always false</entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.session</varname></entry>
+
+            <entry></entry>
+          </row>
+
+          <row>
+            <entry><varname>rack.logger</varname></entry>
+
+            <entry><emphasis>Not implemented</emphasis></entry>
+          </row>
+
+          <row>
+            <entry><varname>java.servlet_request</varname></entry>
+
+            <entry>Underlying Java
+            <classname>HTTPServletRequest</classname></entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
 </chapter>
