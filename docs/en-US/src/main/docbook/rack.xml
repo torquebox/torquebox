@@ -26,10 +26,21 @@
   <para>To deploy your application, please see <xref linkend="deployment" />
   and <xref linkend="rack-deployment-descriptors" />.</para>
 
-  <para></para>
+  <para>The directory containing the <filename>config.ru</filename> is
+  considered the current working directory, and is included in the load
+  path.</para>
 
   <section>
-    <title>Rack Compliance</title>
+    <title>Rack API</title>
+
+    <para>TorqueBox aims to provide complete Ruby Rack compatibility. Please
+    refer to the Rack specification at <ulink
+    url="http://rack.rubyforge.org/doc/SPEC.html"><uri>http://rack.rubyforge.org/doc/SPEC.html</uri></ulink>
+    for more information.</para>
+
+    <para>Applications implemented by the user must simply provide an object
+    implementing a single-argument method in the form of
+    <code><methodname>call</methodname>(<parameter>env</parameter>)</code>.</para>
 
     <table>
       <title>Rack environment</title>
@@ -49,8 +60,10 @@
           <row>
             <entry><varname>REQUEST_METHOD</varname></entry>
 
-            <entry>The HTTP request method, such as “GET” or “POST”. This
-            cannot ever be an empty string, and so is always required.</entry>
+            <entry>The HTTP request method, such as
+            “<parameter>GET</parameter>” or “<parameter>POST</parameter>”.
+            This cannot ever be an empty string, and so is always
+            required.</entry>
           </row>
 
           <row>
@@ -75,8 +88,8 @@
           <row>
             <entry><varname>QUERY_STRING</varname></entry>
 
-            <entry>The portion of the request URL that follows the ?, if
-            any.</entry>
+            <entry>The portion of the request URL that follows the
+            <code>?</code>, if any.</entry>
           </row>
 
           <row>
@@ -111,7 +124,9 @@
           <row>
             <entry><varname>rack.url_scheme</varname></entry>
 
-            <entry>http or https, depending on the request URL.</entry>
+            <entry><parameter>http</parameter> or
+            <parameter>https</parameter>, depending on the request
+            URL.</entry>
           </row>
 
           <row>
@@ -129,19 +144,19 @@
           <row>
             <entry><varname>rack.multithread</varname></entry>
 
-            <entry>Always true</entry>
+            <entry>Always <code>true</code></entry>
           </row>
 
           <row>
             <entry><varname>rack.multiprocess</varname></entry>
 
-            <entry>Always true</entry>
+            <entry>Always <code>true</code></entry>
           </row>
 
           <row>
             <entry><varname>rack.run_once</varname></entry>
 
-            <entry>Always false</entry>
+            <entry>Always <code>false</code></entry>
           </row>
 
           <row>
@@ -159,7 +174,7 @@
           <row>
             <entry><varname>java.servlet_request</varname></entry>
 
-            <entry>Underlying Java
+            <entry>The underlying Java
             <classname>HTTPServletRequest</classname></entry>
           </row>
         </tbody>
