@@ -3,7 +3,7 @@ if ( rails?( Dir.pwd ) )
 
     desc "Create a self-contained application archive"
     task :archive do 
-      puts "Bundling #{RAILS_ROOT}"
+      puts "Creating archive of #{RAILS_ROOT}"
       bundle_name = File.basename( RAILS_ROOT ) + '.rails'
       FileUtils.rm_rf( bundle_name )
     
@@ -19,7 +19,7 @@ if ( rails?( Dir.pwd ) )
         end
       end
     
-      puts "building bundle #{bundle_name}"
+      puts "Creating archive: #{bundle_name}"
     
       Dir.chdir( RAILS_ROOT ) do
         cmd = "jar cf #{bundle_name} #{include_files.join(' ')}"
@@ -40,6 +40,7 @@ if ( rails?( Dir.pwd ) )
           stderr_thr.join
         end
       end
+      puts "Created archive: #{bundle_name}"
     end
   end
 

@@ -76,6 +76,25 @@ namespace :torquebox do
     JBoss::RakeUtils.undeploy( deployment_name( app_name, Dir.pwd ) )
     puts "Undeployed #{deployment_name}"
   end
+
+  if ( rails?( Dir.pwd ) )
+    desc "Create (if needed) and deploy as application archive"
+    namespace :deploy do
+      task :archive=>[ 'torquebox:archive' ] do
+        archive_name = File.basename( Dir.pwd ) + '.rails'
+        src = "#{Dir.pwd}/#{archive_name}"
+        FileUtils.cp( src, JBoss::RakeUtils.deploy_dir )
+        puts "Deployed #{archive_name}"
+      end
+    end
+    namespace :undeploy do
+      task :archive do
+        archive_name = File.basename( Dir.pwd ) + '.rails'
+        FileUtils.rm_f( File.join( JBoss::RakeUtils.deploy_dir, archive_name ) )
+        puts "Undeployed #{archive_name}"
+      end
+    end
+  end
  
 end
 
