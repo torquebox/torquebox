@@ -50,24 +50,15 @@ module JBoss
         trap("INT", old_trap )
       end
     end
-    def self.deploy(app_name, rails_root, context_path = '/')
-      deployment_descriptor = {
-        'application' => {
-          'RAILS_ROOT'=>rails_root,
-          'RAILS_ENV'=>RAILS_ENV,
-        },
-        'web' => {
-          'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
-        }
-      }
-
-      deployment = "#{deploy_dir}/#{app_name}-rails.yml"
+    def self.deploy_yaml(deployment_name, deployment_descriptor)
+      deployment = File.join( deploy_dir, deployment_name )
       File.open( deployment, 'w' ) do |file|
         YAML.dump( deployment_descriptor, file )
       end
     end
-    def self.undeploy(app_name)
-       deployment = "#{deploy_dir}/#{app_name}-rails.yml"
+
+    def self.undeploy(deployment_name)
+       deployment = "#{deploy_dir}/#{deployment_name}"
        FileUtils.rm_rf( deployment )
     end
   end
