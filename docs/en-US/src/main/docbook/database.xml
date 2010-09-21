@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="database">
+  <title>Database Connectivity</title>
+
+  <para>Typical applications require the use of databases. Within the Rails
+  community, ActiveRecord is one of the more popular database connectivity
+  libraries. With traditional Ruby-based applications, you needed to require
+  the correct ActiveRecord adapter for the database you were connecting to.
+  Each adapter managed the communication between the client and the end
+  database, directly mediating the connection.</para>
+
+  <para><mediaobject>
+      <imageobject role="html">
+        <imagedata align="center" fileref="images/database-traditional.png"
+                   format="PNG" scale="70" />
+      </imageobject>
+
+      <imageobject role="fo">
+        <imagedata align="center" fileref="images/database-traditional.svg"
+                   format="SVG" scale="70" />
+      </imageobject>
+    </mediaobject></para>
+
+  <para>Since TorqueBox is based on the JBoss Java environment, it has the
+  capability to use enterprise-grade JDBC (Java Database Connectivity API)
+  drivers. Rails applications can take advantage of these drivers by using the
+  generic ActiveRecord JDBC adapter. The adapter will locate and activate the
+  correct underlying Java JDBC adapter for the target database.</para>
+
+  <para><mediaobject>
+      <imageobject role="html">
+        <imagedata align="center" fileref="images/database-jdbc.png"
+                   format="PNG" scale="70" />
+      </imageobject>
+
+      <imageobject role="fo">
+        <imagedata align="center" fileref="images/database-jdbc.svg"
+                   format="SVG" scale="70" />
+      </imageobject>
+    </mediaobject></para>
+
+  <para>The most visible change required of applications using the JDBC-based
+  ActiveRecord adapter involves the gems your application must rely on.
+  Primarily you must rely on the <code>activerecord-jdbc-adapter</code>. This
+  adapter is adjusts ActiveRecord configuration to use the JDBC version of any
+  specified driver.</para>
+
+  <para>Additional gems need to be available to your system, depending on your
+  target database.</para>
+
+  <itemizedlist>
+    <listitem>
+      <para><filename>jdbc-postgres</filename></para>
+    </listitem>
+
+    <listitem>
+      <para><filename>jdbc-mysql</filename></para>
+    </listitem>
+
+    <listitem>
+      <para><filename>jdbc-sqlite3</filename></para>
+    </listitem>
+  </itemizedlist>
+
+  <para>These gems simply embody the Java JAR holding the actual underlying
+  JDBC driver.</para>
+
+  <para>No changes to your application's database configuration is required.
+  You still specify the correct driver name for the database, such as
+  <code>postgresql</code> or <code>sqlite3</code>.</para>
+</chapter>

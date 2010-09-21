@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="rails2">
+  <title>Rails 2 Support</title>
+
+  <section id="rails-support">
+    <title><productname>Ruby-on-Rails</productname> Applications</title>
+
+    <para>TorqueBox provides an enterprise-grade environment that not only
+    provides complete Ruby-on-Rails compatibility, but also goes beyond the
+    functionality offered in traditional Rails environments.</para>
+
+    <para>Ruby-on-Rails (also referred to as "RoR" or "Rails") is one of the
+    most popular Model-View-Controller (MVC) frameworks for the Ruby language.
+    It was originally created by David Heinemeier Hansson at <ulink
+    url="http://37signals.com/">37signals</ulink> during the course of
+    building many actual Ruby applications for their consulting
+    business.</para>
+
+    <para>Rails has straight-forward components representing models, views,
+    and controllers. The framework as a whole values convention over
+    configuration. It has been described as "opinionated software" in that
+    many decisions have been taken away from the end-user.</para>
+
+    <para>It is exactly the opinionated nature of Rails that allows it to be
+    considered a simple and agile framework for quickly building web-based
+    applications. Additionally, since Ruby is an interpreted language instead
+    of compiled, the assets of an application can be edited quickly, with the
+    results being immediately available. In most cases, the application does
+    not need to be restarted to see changes in models, views or controllers
+    reflected.</para>
+
+    <section id="preparing-your-rails-application">
+      <title>Preparing your Rails application</title>
+
+      <para>While TorqueBox is 100% compatible with Ruby-on-Rails, there are a
+      few steps that must be taken to ensure success.</para>
+
+      <section>
+        <title>Using the application template</title>
+
+        <para>You can use the included application template to setup a new
+        Rails application or modify an existing one to work with
+        TorqueBox.</para>
+
+        <section>
+          <title>Creating a new Rails application</title>
+
+          <para>To create a new Rails application using the template, simply
+          use the <parameter>-m</parameter> parameter when you execute the
+          <command>rails</command> command.</para>
+
+          <para><screen format=""><prompt>$</prompt> <command>rails</command> <parameter>-m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen>This
+          will perform the necessary setup to quickly get started with
+          TorqueBox.</para>
+        </section>
+
+        <section>
+          <title>Applying template to an existing application</title>
+
+          <para>To apply the template to an existing application, simply use
+          the <command>rails:template</command> rake task.</para>
+
+          <para><screen format=""><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
+        </section>
+      </section>
+
+      <section>
+        <title>Manually configuring an application</title>
+
+        <section>
+          <title>Include the JDBC Gems for Database Connectivity</title>
+
+          <para>ActiveRecord applications deployed on TorqueBox benefit from
+          using the Java-based JDBC database drivers. These drivers are
+          provided as a handful of gems which you may include into your
+          application through
+          <filename>config/environment.rb</filename>.</para>
+
+          <para>JDBC gems for many popular databases is pre-installed with the
+          TorqueBox server. You simply must reference the
+          activerecord-jdbc-adapter from your
+          <filename>environment.rb</filename> within the
+          <code>Rails::Initializer.run</code> block.</para>
+
+          <para><programlisting format="">Rails::Initializer.run do |config|
+
+  config.gem "activerecord-jdbc-adapter",
+             :lib=&gt;'jdbc_adapter'
+
+end</programlisting></para>
+
+          <para>All databases will require inclusion of the
+          <filename>activerecord-jdbc-adapter</filename>. No other gems need
+          to be required or loaded, since ActiveRecord will perform further
+          discovery on its own. Database gems supporting Derby, H2, HSQLDB,
+          MySQL, PostgreSQL, and SQLite3 are supplied in the TorqueBox binary
+          distribution.</para>
+        </section>
+
+        <section>
+          <title>Include the TorqueBox Ruby packages</title>
+
+          <para>In order to gain access to the advanced features of TorqueBox,
+          you must include the TorqueBox packages into your project. The
+          TorqueBox gems are also included into your application through
+          <filename>config/environment.rb</filename>.<programlisting
+          format="">Rails::Initializer.run do |config|
+  
+  config.gem "torquebox-gem"
+  config.gem "torquebox-rails"
+
+end</programlisting></para>
+        </section>
+
+        <section>
+          <title>Eliminate or replace "native" Gems</title>
+
+          <para>"Native" gems that rely upon machine-specific compiled code do
+          not function with JRuby and TorqueBox. You must replaced these gems
+          with pure-Ruby or pure-Java implementations. Some native gems using
+          FFI are usable within TorqueBox.</para>
+        </section>
+      </section>
+    </section>
+  </section>
+</chapter>

@@ -36,4 +36,43 @@
     download the binaries or the source-code, modify it if you desire, and use
     it, even for profit, without any licensing costs.</para>
   </section>
+
+  <section>
+    <title>The "application platform" concept</title>
+
+    <para>Traditionally, Ruby applications were resposible for their services
+    from the ground-up. You literally ran the application. It would import
+    support libraries to handle HTTP listening, for example.</para>
+
+    <para><mediaobject>
+        <imageobject role="html">
+          <imagedata align="center"
+                     fileref="images/differences-traditional.png" format="PNG" />
+        </imageobject>
+
+        <imageobject role="fo">
+          <imagedata align="center"
+                     fileref="images/differences-traditional.svg" format="SVG"
+                     scale="80" />
+        </imageobject>
+      </mediaobject></para>
+
+    <para>An application platform provides the foundations for any and all
+    application functionality. The deliverable application itself does not
+    need to handle the networking layers, the messaging facilities or the
+    clustering logic. This is provided to the application "for free".</para>
+
+    <para><mediaobject>
+        <imageobject role="html">
+          <imagedata align="center" fileref="images/differences-torquebox.png"
+                     format="PNG" />
+        </imageobject>
+
+        <imageobject role="fo">
+          <imagedata align="center" fileref="images/differences-torquebox.svg"
+                     format="SVG" scale="80" />
+        </imageobject>
+      </mediaobject></para>
+  </section>
+
 </chapter>

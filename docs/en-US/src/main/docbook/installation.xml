@@ -17,108 +17,107 @@
       <listitem>
         <para>A complete JRuby installation</para>
       </listitem>
+
+      <listitem>
+        <para>Additional RubyGems for use in other contexts</para>
+      </listitem>
     </itemizedlist>
+  </section>
 
-    <section>
-      <title>Ensure you have Java 6</title>
+  <section>
+    <title>Ensure you have Java 6</title>
 
-      <para>TorqueBox requires Java JDK 6.</para>
+    <para>TorqueBox requires Java JDK 6.</para>
 
-      <para>To determine which version, if any, is installed on your system,
-      at a command-line, attempt to run the <command>java</command> command
-      with the <option>-version</option> argument.</para>
+    <para>To determine which version, if any, is installed on your system, at
+    a command-line, attempt to run the <command>java</command> command with
+    the <option>-version</option> argument.</para>
 
-      <screen format=""><prompt>$</prompt> <command>java -version</command>
+    <screen format=""><prompt>$</prompt> <command>java -version</command>
 java version "1.6.0_07"
 Java(TM) SE Runtime Environment (build 1.6.0_07-b06-153)
 Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
 
-      <para>If the version is at least 1.6, your version of Java is
-      sufficient.</para>
+    <para>If the version is at least 1.6, your version of Java is
+    sufficient.</para>
 
-      <para>If you have no Java installed, or a version less than 1.6, you'll
-      need to install a Java Development Kit. For many systems, it is easy to
-      install the open-source OpenJDK.</para>
+    <para>If you have no Java installed, or a version less than 1.6, you'll
+    need to install a Java Development Kit. For many systems, it is easy to
+    install the open-source OpenJDK.</para>
 
-      <para>For installation on Ubuntu, Fedora, OpenSuse, or Debian, please
-      refer to the <ulink url="http://openjdk.java.net/install/">installation
-      instructions provided</ulink> by the OpenJDK project. If you find a
-      <command>java</command> on your system, ensure that it is not actually
-      <command>gcj</command>. The <command>gcj</command> is insufficient for
-      running the TorqueBox server.</para>
+    <para>For installation on Ubuntu, Fedora, OpenSuse, or Debian, please
+    refer to the <ulink url="http://openjdk.java.net/install/">installation
+    instructions provided</ulink> by the OpenJDK project. If you find a
+    <command>java</command> on your system, ensure that it is not actually
+    <command>gcj</command>. The <command>gcj</command> is insufficient for
+    running the TorqueBox server.</para>
 
-      <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
-    </section>
+    <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
+  </section>
 
-    <section>
-      <title>Get the latest version of TorqueBox binary package</title>
+  <section>
+    <title>Get the latest version of TorqueBox binary package</title>
 
-      <para>You can obtain the latest version of TorqueBox from the TorqueBox
-      repository. As of this writing, the latest version is
-      ${project.version}.</para>
+    <para>You can obtain the latest version of TorqueBox from the TorqueBox
+    repository. As of this writing, the latest version is
+    ${project.version}.</para>
 
-      <para><ulink
-      url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</ulink></para>
-    </section>
+    <para><ulink
+    url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</ulink></para>
+  </section>
 
-    <section>
-      <title>Unzip it somewhere handy</title>
+  <section>
+    <title>Unzip it somewhere handy</title>
 
-      <para>We'll install TorqueBox under your user's $HOME directory.</para>
+    <para>We'll install TorqueBox under your user's $HOME directory.</para>
 
-      <para><screen format=""><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
+    <para><screen format=""><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
 <prompt>$</prompt> <command>cd torquebox-${project.version}</command>
 </screen></para>
 
-      <para>Before using the TorqueBox server, you must set up your
-      environment. To make it easier to upgrade without having to reconfigure
-      your environment, it is useful to create a symlink to the versioned
-      directory produced when you unpackaged the distribution.</para>
+    <para>Before using the TorqueBox server, you must set up your environment.
+    To make it easier to upgrade without having to reconfigure your
+    environment, it is useful to create a symlink to the versioned directory
+    produced when you unpackaged the distribution.</para>
 
-      <para><screen format=""><prompt>$</prompt> <command>ln -s torquebox-bin-${project.version} torquebox-current</command></screen></para>
+    <para><screen format=""><prompt>$</prompt> <command>ln -s torquebox-bin-${project.version} torquebox-current</command></screen></para>
 
-      <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar>
-      and <envar>$JRUBY_HOME</envar> need to be set, and adjusting your
-      <envar>$PATH</envar> will make working with the package easier. You can
-      either run the following commands each time on the command-line, or add
-      them to your <filename>.bash_profile</filename>.</para>
+    <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar> and
+    <envar>$JRUBY_HOME</envar> need to be set, and adjusting your
+    <envar>$PATH</envar> will make working with the package easier. You can
+    either run the following commands each time on the command-line, or add
+    them to your <filename>.bash_profile</filename>.</para>
 
-      <para>First, the various
-      <envar>$<replaceable>X</replaceable>_HOME</envar> variables are set so
-      that each subsystem can find its supporting files.</para>
+    <para>First, the various <envar>$<replaceable>X</replaceable>_HOME</envar>
+    variables are set so that each subsystem can find its supporting
+    files.</para>
 
-      <para><screen format="">export TORQUEBOX_HOME=$HOME/torquebox-current
+    <para><screen format="">export TORQUEBOX_HOME=$HOME/torquebox-current
 export JBOSS_HOME=$TORQUEBOX_HOME/jboss
 export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 
-      <para>Next, we make sure that JRuby's binaries are first in our
-      executable <envar>$PATH</envar>, before any previously-installed Ruby
-      packages.</para>
+    <para>Next, we make sure that JRuby's binaries are first in our executable
+    <envar>$PATH</envar>, before any previously-installed Ruby
+    packages.</para>
 
-      <para><screen format="">export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing this,
-      commands such as <command>rake</command>, <command>gem</command>, and
-      <command>rails</command> will load from the TorqueBox-provided JRuby
-      installation.</para>
+    <para><screen format="">export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing
+    this, commands such as <command>rake</command>, <command>gem</command>,
+    and <command>rails</command> will load from the TorqueBox-provided JRuby
+    installation.</para>
 
-      <para>You can also run TorqueBox using your own install of JRuby. You 
-      will need to ensure that the gems that are included with the bundled JRuby
-      installed under your JRuby:
+    <para>You can also run TorqueBox using your own install of JRuby. You will
+    need to ensure that the gems that are included with the bundled JRuby
+    installed under your JRuby: <screen format="">cd $TORQUEBOX_HOME/jruby/lib/ruby/gems/1.8/cache
+gem install *.gem</screen> You will also need to set $JRUBY_HOME to point to
+    your JRuby installation.</para>
 
-      <screen format="">cd $TORQUEBOX_HOME/jruby/lib/ruby/gems/1.8/cache
-gem install *.gem</screen>
-
-      You will also need to set $JRUBY_HOME to point to 
-      your JRuby installation.</para>
-
-      <para><command>Note:</command> if you are going to run a non-bundled 
-      JRuby with a beta build of TorqueBox, it is recommended that you either 
-      use a separate <ulink url="http://rvm.beginrescueend.com">rvm</ulink> 
-      <ulink url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink>
-      for each beta build, or be sure to reinstall the TorqueBox 
-      gems for the latest beta. Rubygems does not support the 
-      Beta<replaceable>X</replaceable> naming scheme, so sees all of the 
-      different betas of a version as equivalent.</para>
-
-    </section>
+    <para><command>Note:</command> if you are going to run a non-bundled JRuby
+    with a beta build of TorqueBox, it is recommended that you either use a
+    separate <ulink url="http://rvm.beginrescueend.com">rvm</ulink> <ulink
+    url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink> for each beta
+    build, or be sure to reinstall the TorqueBox gems for the latest beta.
+    Rubygems does not support the Beta<replaceable>X</replaceable> naming
+    scheme, so sees all of the different betas of a version as
+    equivalent.</para>
   </section>
 </chapter>

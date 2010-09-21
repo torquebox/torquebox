@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="rails3">
+  <title>Rails 3 Support</title>
+
+  <para>TorqueBox provides support for several popular Ruby web application
+  frameworks. Generally speaking, TorqueBox integrates with web applications
+  at the level of the Rack specification.</para>
+
+  <para>Each application ends up running within TorqueBox in the same fashion
+  that any typical Java web-application does. The Java-based server bridges to
+  Ruby/Rack-based applications through the Java Servlet facility.</para>
+</chapter>

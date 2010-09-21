@@ -22,16 +22,31 @@ Generate html using:   mvn docbkx:generate-html
 
   <toc></toc>
 
-  <xi:include href="what-is.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-  <xi:include href="differences.xml"
+  <xi:include href="overview.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="installation.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="web.xml"
+  <xi:include href="deployment.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="database.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="rack.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="rack-deployment-descriptors.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="rails2.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="rails3.xml"
+              xmlns:xi="http://www.w3.org/2001/XInclude" />
+
+  <xi:include href="rails-deployment-descriptors.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="scheduled-jobs.xml"
@@ -41,9 +56,6 @@ Generate html using:   mvn docbkx:generate-html
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="pooling.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-  <xi:include href="crypto.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="capistrano-support.xml"

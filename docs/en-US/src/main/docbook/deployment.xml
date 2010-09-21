@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="deployment">
+  <title>Application Deployment</title>
+
+  <section>
+    <title>Deployment in TorqueBox</title>
+
+    <para>The TorqueBox Application Server is capable of serving many
+    applications simultaneously. To add your application to the server, you
+    must <emphasis>deploy</emphasis> it. To deploy an application, you put
+    some artifact in to the deploy/ (or farm/) directory of the TorqueBox AS.
+    When the AS is running, it will detect that artifact and activate the
+    associated application.</para>
+
+    <section id="deploy-using-rake" revision="1">
+      <title id="rake-tasks">Rake tasks</title>
+
+      <para>TorqueBox includes a support package which includes Rake tasks
+      which assist in the deployment to and undeployment from an instance of
+      the TorqueBox Server.</para>
+
+      <para>First, the variable <envar>$JBOSS_HOME</envar> must be set to the
+      path of the top of your JBoss installation as described in <xref
+      linkend="installation" /></para>
+
+      <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
+
+      <para>If you're using any configuration other than
+      <classname>default</classname>, you must also set
+      <envar>$JBOSS_CONF</envar>.</para>
+
+      <para><screen><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></para>
+
+      <para>You need to include these tasks into your
+      <filename>Rakefile</filename> using a <methodname>single</methodname>
+      require statement.</para>
+
+      <para><screen>require 'torquebox/tasks'</screen></para>
+
+      <para>Once these variables are set, you may perform a default deployment
+      using the <command>jboss:deploy</command> task to deploy either
+      Ruby-on-Rails applications or plain Ruby Rack applications.</para>
+
+      <para><screen><prompt>$</prompt> <command>rake torquebox:deploy</command></screen></para>
+
+      <para>To undeploy your application, the jboss:rails:undeploy task is
+      available</para>
+
+      <para><screen><prompt>$</prompt> <command>rake torquebox:undeploy</command></screen></para>
+
+      <para>The TorqueBox Server does not need to be running for these
+      commands to work.</para>
+
+      <para>By default, these tasks deploy your application to root of your
+      TorqueBox Server's web space, without any virtual host configuration. To
+      access the application once deployed, you should use your browser to
+      access <uri>http://localhost:8080/</uri>.</para>
+
+      <para>When the application is deployed, a deployment descriptor is
+      written to the
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename> directory
+      with a filename based upon the directory name of your current
+      directory.</para>
+
+      <para>For instance, if your application was deployed from
+      /Users/bob/myapp/, the deployment descriptor would be named
+      <filename>myapp-rails.yml</filename> or
+      <filename>myapp-rack.yml</filename>, depending on the type of
+      application you are working on.</para>
+
+      <para>Rewriting or simply updating the last-modified time (using a
+      command such as <command>touch</command>) of this descriptor will cause
+      the TorqueBox server to redeploy the application. The
+      <command>torquebox:deploy</command> task simply emits this file.</para>
+
+      <para>Removing the descriptor will cause the TorqueBox server to
+      undeploy the application. This is what the
+      <command>torquebox:undeploy</command> task does.</para>
+
+      <section>
+        <title>Deploying a non-root context</title>
+
+        <para>By default, the <command>torquebox:deploy</command> task will
+        attach your application to the root context. If you would rather
+        deploy to a non-root context, you may provide it as an argument to the
+        task invocation.</para>
+
+        <para><screen><prompt>$</prompt> <command>rake torquebox:deploy['/my-application']</command></screen>The
+        root of your application would then be accessible at
+        <uri>http://localhost:8080/my-application</uri>.</para>
+      </section>
+
+      <section>
+        <title>Deploying to a non-development environment</title>
+
+        <para>By default, if otherwise unspecified, the variables
+        <envar>RAILS_ENV</envar> and/or <envar>RACK_ENV</envar> are assumed to
+        have the value of <code>development</code>, and are set appropriately
+        when deploying an application. To alter these values, simply set the
+        variable when executing the rake tasks.</para>
+
+        <para><screen>$ <command>RAILS_ENV=production torquebox:deploy</command></screen></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Deploy using a descriptor</title>
+
+      <para>To customize some of the aspects of deployment, instead of using
+      the Rake tasks, you may manually create a <emphasis>deployment
+      descriptor</emphasis>. A deployment descriptor is a small text file that
+      is placed in the <filename>deploy/</filename> directory of the server in
+      order to have the application deployed.</para>
+
+      <para>The tasks described above are simply utilties that emit simple
+      top-level deployment descriptors. You may desire to hand-craft these
+      descriptors or provide additional finer-grained descriptors within your
+      application.</para>
+
+      <para>Please see the following chapters describing the various options
+      for authoring deployment descriptors:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><xref linkend="rack-deployment-descriptors" /></para>
+        </listitem>
+
+        <listitem>
+          <para><xref linkend="rails-deployment-descriptors" /></para>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section>
+      <title>Deployment using a self-contained archive</title>
+
+      <para>Rails applications may be deployed as atomic
+      <emphasis>self-contained archives</emphasis>. An archive is simply a
+      packaging of the application's directory. The TorqueBox server deploys
+      bundles created with the Java <command>jar</command> tool. Rake tasks
+      are provided to assist with the creation and deployment of
+      bundles.</para>
+
+      <para><note>
+          <para>Currently only Rails applications are supported through
+          archive deployment.</para>
+        </note></para>
+
+      <section>
+        <title>Creating an archive</title>
+
+        <para>The <command>torquebox:archive</command> rake task may be used
+        to create a bundle of the application. The task invokes the Java
+        <command>jar</command> commandline tool to bundle up the project
+        directory, <emphasis>excluding</emphasis> <filename>tmp/</filename>
+        and <filename>log/</filename> directories.</para>
+
+        <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>The
+        resulting archive will be placed at the root of the application, as a
+        file named
+        <filename><replaceable>myapp</replaceable>.rails</filename>. To
+        inspect the contents, you may use the <command>jar</command>
+        tool.</para>
+
+        <para><screen format=""><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails</filename>
+META-INF/
+META-INF/MANIFEST.MF
+app/
+app/controllers/
+app/controllers/application_controller.rb
+...</screen></para>
+      </section>
+
+      <section>
+        <title>Deploying an archive</title>
+
+        <para>To deploy an archive, simply copy it to the
+        <filename>deploy/</filename> directory of the server. The
+        <command>torquebox:deploy:archive</command> rake task may be used to
+        both create and deploy an archive.</para>
+
+        <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive</command></screen>If
+        you wish to deploy manually, a command similar to the following may be
+        used</para>
+
+        <para><screen format="">$ <command>rake</command> <command>torquebox:archive</command>
+$ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filename> <filename><envar>$JBOSS_HOME</envar>/server/$JBOSS_CONF/deploy/</filename></screen>If
+        you redeploy an archive, the server will remove the previous version,
+        and hot-redeploy the new versions just copied.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Deployment using a partial descriptor</title>
+
+      <para>In the event your application is packaged as a fully-described
+      self-contained archive, you can still externally override portions of
+      the internal descriptors using external YAML descriptors.</para>
+    </section>
+  </section>
+</chapter>

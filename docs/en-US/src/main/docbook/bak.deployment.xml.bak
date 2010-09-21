@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="deployment">
+  <title>Application Deployment</title>
+
+  <section>
+    <title>Deployment in TorqueBox</title>
+
+    <para>The TorqueBox Application Server is capable of serving many
+    applications simultaneously. To add your application to the server, you
+    must <emphasis>deploy</emphasis> it. To deploy an application, you put
+    some artifact in to the deploy/ (or farm/) directory of the TorqueBox AS.
+    When the AS is running, it will detect that artifact and activate the
+    associated application.</para>
+
+    <section id="deploy-using-rake" revision="1">
+      <title>Rake tasks</title>
+
+      <para>TorqueBox includes a support package which includes Rake tasks
+      which assist in the deployment to and undeployment from an instance of
+      the TorqueBox Server.</para>
+
+      <para>First, the variable <envar>$JBOSS_HOME</envar> must be set to the
+      path of the top of your JBoss installation as described in <xref
+      linkend="installation" /></para>
+
+      <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
+
+      <para>If you're using any configuration other than
+      <classname>default</classname>, you must also set
+      <envar>$JBOSS_CONF</envar>.</para>
+
+      <para><screen><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></para>
+
+      <para>Once these variables are set, you may perform a default deployment
+      using the <command>jboss:deploy</command> task to deploy either
+      Ruby-on-Rails applications or plain Ruby Rack applications.</para>
+
+      <para><screen><prompt>$</prompt> <command>rake torquebox:deploy</command></screen></para>
+
+      <para>To undeploy your application, the jboss:rails:undeploy task is
+      available</para>
+
+      <para><screen><prompt>$</prompt> <command>rake torquebox:undeploy</command></screen></para>
+
+      <para>The TorqueBox Server does not need to be running for these
+      commands to work.</para>
+
+      <para>By default, these tasks deploy your application to root of your
+      TorqueBox Server's web space, without any virtual host configuration. To
+      access the application once deployed, you should use your browser to
+      access <uri>http://localhost:8080/</uri>.</para>
+
+      <para>When the application is deployed, a deployment descriptor is
+      written to the
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename> directory
+      with a filename based upon the directory name of your
+      <filename>$RAILS_ROOT</filename>.</para>
+
+      <para>For instance, if your application was deployed from
+      /Users/bob/myapp/, the deployment descriptor would be named
+      <filename>myapp-rails.yml</filename>.</para>
+
+      <para>Rewriting or simply updating the last-modified time (using a
+      command such as <command>touch</command>) of this descriptor will cause
+      the TorqueBox server to redeploy the application. The
+      <command>torquebox:deploy</command> task simply emits this file.</para>
+
+      <para>Removing the descriptor will cause the TorqueBox server to
+      undeploy the application. This is what the
+      <command>torquebox:undeploy</command> task does.</para>
+
+      <section>
+        <title>Deploying a non-root context</title>
+
+        <para>By default, the <command>torquebox:deploy</command> task will
+        attach your application to the root context. If you would rather
+        deploy to a non-root context, you may provide it as an argument to the
+        task invocation.</para>
+
+        <para><screen><prompt>$</prompt> <command>rake torquebox:deploy['/my-application']</command></screen>The
+        root of your application would then be accessible at
+        <uri>http://localhost:8080/my-application</uri>.</para>
+      </section>
+
+      <section>
+        <title>Deploying to a non-development environment</title>
+
+        <para>By default, if otherwise unspecified, the variables
+        <envar>RAILS_ENV</envar> and/or <envar>RACK_ENV</envar> are assumed to
+        have the value of <code>development</code>, and are set appropriately
+        when deploying an application. To alter these values, simply set the
+        variable when executing the rake tasks.</para>
+
+        <para><screen>$ <command>RAILS_ENV=production torquebox:deploy</command></screen></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Deploy using a descriptor</title>
+
+      <para>To customize some of the aspects of deployment, instead of using
+      the Rake tasks, you may manually create a <emphasis>deployment
+      descriptor</emphasis>. A deployment descriptor is a small text file that
+      is placed in the <filename>deploy/</filename> directory of the server in
+      order to have the application deployed.</para>
+
+      <section>
+        <title>Location &amp; Naming</title>
+
+        <para>The deployment descriptor needs to be placed within the deploy/
+        directory of the AS configuration in use. If you are using the default
+        configuration, the path would be:</para>
+
+        <para><screen><filename>$JBOSS_HOME/server/default/deploy/</filename></screen></para>
+
+        <para>The descriptor is a YAML file, and must end with the suffix of
+        <filename>-rails.yml</filename>. The prefix is arbitrary, but is
+        usually some form of your application's name.</para>
+
+        <para><screen><emphasis><filename>$JBOSS_HOME/server/default/deploy/
+                  role="bold"&gt;myapp-rails.yml</filename></emphasis></screen></para>
+      </section>
+
+      <section>
+        <title>Contents of the descriptor</title>
+
+        <para>The descriptor has 4 main sections:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>General application configuration</para>
+          </listitem>
+
+          <listitem>
+            <para>Web-specific configuration</para>
+          </listitem>
+
+          <listitem>
+            <para>Environment Variables</para>
+          </listitem>
+        </orderedlist>
+
+        <section>
+          <title>General Application Configuration</title>
+
+          <para>The application section describes the
+          <envar>RAILS_ROOT</envar> and <envar>RAILS_ENV</envar> for the
+          deployed application. Under traditional (mongrel, lighttpd)
+          deployments, this information is picked up through the current
+          working directory or environment variables. Since the TorqueBox
+          Server runs from a different location, the current working directory
+          has no meaning. Likewise, as multiple applications may be deployed
+          within a single TorqueBox Server, a single global environment
+          variable to set <envar>$RAILS_ENV</envar> is nonsensical.</para>
+
+          <para><example>
+              <title>Application configuration in *-rails.yml</title>
+
+              <para><screen format="">application:
+  RAILS_ROOT: /path/to/myapp
+  RAILS_ENV:  development</screen></para>
+            </example></para>
+        </section>
+
+        <section>
+          <title>Web-specific configuration</title>
+
+          <para>Traditional Rails applications are deployed individually,
+          without respect to hostnames or context-path. Running under
+          TorqueBox, you may host several apps under a single host, or
+          multiple apps under different hostnames.</para>
+
+          <para>Both the virtual-host and context-path configuration are
+          nested under the <emphasis>web</emphasis> section.</para>
+
+          <section>
+            <title>Virtual Hosts</title>
+
+            <para>Virtual hosts allow one application to respond to
+            <emphasis>www.host-one.com</emphasis>, while another running
+            within the same JBoss AS to respond to
+            <emphasis>www.host-two.com</emphasis>. If no host is specified,
+            then the application will respond to all requests directed at the
+            TorqueBox Server.</para>
+
+            <para><example>
+                <title>Virtual host configuration in *-rails.yml</title>
+
+                <para><screen format="">web:
+  host: www.host-one.com</screen></para>
+              </example></para>
+          </section>
+
+          <section>
+            <title>Context paths</title>
+
+            <para>In addition to virtual hosts, applications within a single
+            TorqueBox Server may be separated purely by a <emphasis>context
+            path</emphasis>. For a given host, the context path is the prefix
+            used to access the application. Traditional Rails apps respond
+            from the top of a site. By using a context path, you can mount
+            applications at a location under the root.</para>
+
+            <para>For example, <emphasis
+            role="bold">http://www.host-one.com/app-one/</emphasis> could
+            point to one application, while <emphasis
+            role="bold">http://www.host-one.com/app-two/</emphasis> could
+            point to another separate application.</para>
+
+            <para><example>
+                <title>Context path configuration in *-rails.yml</title>
+
+                <para><screen format="">web:
+  context: /app-one</screen></para>
+              </example></para>
+
+            <para>The context path and virtual host configurations can be used
+            at the same time, if desired.</para>
+
+            <para><example>
+                <title>Virtual host with context path configuration in
+                *-rails.ymls</title>
+
+                <para><screen format="">web:
+  host: www.mycorp.com
+  context: /app-one</screen></para>
+              </example></para>
+          </section>
+        </section>
+
+        <section>
+          <title>Environment variables</title>
+
+          <para>Each Rails application may have its own unique set of
+          environment variables, no matter how many other different apps are
+          deployed under a single TorqueBox instance.</para>
+
+          <para><example>
+              <title>Environment variables set in *-rails.yml</title>
+
+              <para><programlisting format="">environment:
+  MAIL_HOST: mail.yourhost.com
+  REPLY_TO: you@yourhost.com</programlisting></para>
+            </example></para>
+
+          <para>Any variable set in the environment section of *-rails.yml is
+          accessible from within the Rails app using the ENV hash, e.g.
+          ENV['MAIL_HOST']=='mail.yourhost.com'</para>
+        </section>
+      </section>
+
+      <section>
+        <title>Complete *-rails.yml Deployment Descriptor Example</title>
+
+        <para><screen format="">application:
+  RAILS_ROOT:  /path/to/myappp
+  RAILS_ENV:   development
+web:
+  host:    www.mycorp.com
+  context: /app-one</screen></para>
+      </section>
+    </section>
+
+    <section>
+      <title>Deployment using a partial descriptor</title>
+
+      <para>While the
+      <filename><replaceable>myapp</replaceable>-rails.yml</filename>
+      descriptor may contain all the abovementioned information, you may also
+      deploy using a combination of descriptor and additional files in your
+      <filename>config/</filename> directory. The bare minimum required in the
+      descriptor is the <varname>RAILS_ROOT</varname> setting for the
+      <code>application:</code> block.</para>
+
+      <para>The primary purpose is to allow an application to be fully
+      self-contained, specifying all vital production information within the
+      same codebase as the rest of the application. This is useful for
+      Capistrano-based deployments.</para>
+
+      <section>
+        <title><filename>config/web.yml</filename></title>
+
+        <para>The entire <code>web:</code> section of
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename> may be
+        supplied from within the application's own
+        <filename>config/web.yml</filename> file, if present. If both
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename> and
+        <filename>config/web.yml</filename> exist, the
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename>
+        configuration values take precedent.</para>
+
+        <para>This allows for typical values to be placed in
+        <filename>config/web.yml</filename> for production deployment, while
+        allowing developers to override them through
+        <filename><replaceable>myapp</replaceable>-rails.yml</filename> during
+        development deployments.</para>
+
+        <para><example>
+            <title><filename>config/web.yml</filename></title>
+
+            <para><screen format="">host: torquebox.org
+context: /</screen></para>
+          </example></para>
+      </section>
+
+      <section>
+        <title><filename>config/rails-env.yml</filename></title>
+
+        <para>If present in your application, config/rails-env.yml can specify
+        the default value for <varname>RAILS_ENV</varname>. A value specified
+        in myapp-rails.yml deployment descriptor may still override the value
+        provided by the application's own
+        <filename>config/rails-env.yml</filename>.</para>
+
+        <para><example>
+            <title>Example <filename>config/rails-env.yml</filename></title>
+
+            <para><screen format="">RAILS_ENV: production</screen></para>
+          </example></para>
+
+        <para>Similar to config/web.yml, usage of config/rails-env.yml can
+        simplify production deployment by providing the correct value from
+        within the app.</para>
+      </section>
+    </section>
+
+    <section>
+      <title>Deployment using a bundle</title>
+
+      <para>Rails applications may be deployed as atomic
+      <emphasis>bundles</emphasis>. A bundle is simply an archive of the
+      application's directory. The TorqueBox server deploys bundles created
+      with the Java <command>jar</command> tool. Rake tasks are provided to
+      assist with the creation and deployment of bundles.</para>
+
+      <section>
+        <title>Creating a bundle</title>
+
+        <para>The <command>torquebox:rails:bundle</command> rake task may be
+        used to create a bundle of the application. The task invokes the Java
+        <command>jar</command> commandline tool to bundle up the project
+        directory, <emphasis>excluding</emphasis> <filename>tmp/</filename>
+        and <filename>log/</filename> directories.</para>
+
+        <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:bundle</command></screen>The
+        resulting bundle will be placed at the root of the application, as a
+        file named
+        <filename><replaceable>myapp</replaceable>.rails</filename>. To
+        inspect the contents, you may use the <command>jar</command>
+        tool.</para>
+
+        <para><screen format=""><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails
+<computeroutput>META-INF/
+META-INF/MANIFEST.MF
+app/
+app/controllers/
+app/controllers/application_controller.rb
+...</computeroutput></filename></screen></para>
+      </section>
+
+      <section>
+        <title>Deploying a bundle</title>
+
+        <para>To deploy a bundle, simply copy it to the
+        <filename>deploy/</filename> directory of the server. The
+        <command>torquebox:rails:deploy:bundle</command> rake task may be used
+        to both create and deploy a bundle.</para>
+
+        <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:rails:deploy:bundle</command></screen>If
+        you wish to deploy manually, a command similar to the following may be
+        used</para>
+
+        <para><screen format="">$ <command>rake</command> <command>torquebox:rails:bundle</command>
+$ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filename> <filename><envar>$JBOSS_HOME</envar>/server/default/deploy/</filename></screen>If
+        you redeploy a bundle, the server will remove the previous version,
+        and hot-redeploy the bundle just copied.</para>
+      </section>
+    </section>
+  </section>
+</chapter>
