@@ -56,6 +56,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <fontsDirectory>${basedir}/../src/main/fonts</fontsDirectory>
           <sourceDirectory>${basedir}/target/docbook-src/</sourceDirectory>
           <sourceDocumentName>master.xml</sourceDocumentName>
           <imageResource>
