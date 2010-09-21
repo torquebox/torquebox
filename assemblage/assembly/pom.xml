@@ -442,8 +442,4 @@
     </plugins>
   </build>
 
-  <modules>
-    <module>ruby-dependencies</module>
-  </modules>
-
 </project>

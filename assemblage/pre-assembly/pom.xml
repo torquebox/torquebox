@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-assemblage-dependencies</artifactId>
+  <artifactId>torquebox-assemblage-pre-assembly</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Assemblage Dependencies</name>
+  <name>TorqueBox Assemblage Pre-Assembly</name>
   <description></description>
 
   <properties>

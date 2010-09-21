@@ -5,14 +5,14 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
     <version>1.0.0.Beta22-SNAPSHOT</version>
-    <relativePath>../../../parent/</relativePath>
+    <relativePath>../../parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-assembly-ruby-dependencies</artifactId>
+  <artifactId>torquebox-assemblage-post-assembly</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Assembly Ruby Dependencies</name>
+  <name>TorqueBox Assembly Post-Assembly</name>
   <description></description>
 
   <modules>
@@ -22,7 +22,7 @@
   </modules>
 
   <properties>
-    <stage.dir>${project.basedir}/../../target/stage/torquebox-${project.version}</stage.dir>
+    <stage.dir>${project.basedir}/../../assembly/target/stage/torquebox-${project.version}</stage.dir>
   </properties>
 
   <build>

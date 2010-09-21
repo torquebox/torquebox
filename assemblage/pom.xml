@@ -15,7 +15,8 @@
   <description></description>
 
   <modules>
-    <module>dependencies</module>
+    <module>pre-assembly</module>
     <module>assembly</module>
+    <module>post-assembly</module>
   </modules>
 </project>
