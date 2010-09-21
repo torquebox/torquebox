@@ -1,6 +1,10 @@
 
-JBoss Rails is licensed under the LGPL.  
+TorqueBox itself is licensed under the LGPL.  
 - Please see LICENSE-LGPL.txt.
 
 ActiveRecord-JDBC-Adapter is licensed under the MIT license.  
 - Please see LICENSE-MIT.txt.
+
+Fedora Liberation fonts are licensed under the GPL.
+- Please see LICENSE-GPL.txt.
+- https://fedorahosted.org/liberation-fonts/
