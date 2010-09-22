@@ -1,6 +1,6 @@
 
 gem "activerecord-jdbc-adapter",
-    :lib=>'jdbc_adapter'
+    :require=>'jdbc_adapter'
 
 rakefile( 'torquebox.rake' ) do
   <<-TASK
