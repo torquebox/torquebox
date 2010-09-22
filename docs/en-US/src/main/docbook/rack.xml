@@ -19,7 +19,7 @@
     other libraries, it is up to you to require the necessary files (for
     instance, <code>require 'rubygems'</code>).</para>
 
-    <para><programlisting format="">app = lambda{|env| [ 
+    <para><programlisting>app = lambda{|env| [ 
           200, 
           { 'Content-Type' =&gt; 'text/html' }, 
           'Hello World'

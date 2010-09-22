@@ -52,7 +52,7 @@
         <title>Skeleton scheduled job class
         (<filename>mail/notifier.rb</filename>)</title>
 
-        <para><programlisting format="">module Mail
+        <para><programlisting>module Mail
   class Notifier
 
     # implementation goes here
@@ -67,7 +67,7 @@ end</programlisting></para>
         <title>Scheduled job implementation
         (<filename>mail/notifier.rb</filename>)</title>
 
-        <para><programlisting format="">module Mail
+        <para><programlisting>module Mail
   class Notifier
 
     def run()
@@ -96,7 +96,7 @@ end</programlisting></para>
         <example>
           <title>Accessing a logger</title>
 
-        <para><programlisting format="">module Mail
+        <para><programlisting>module Mail
   class Notifier
     <emphasis>attr_accessor :log</emphasis>
     def run()
@@ -163,7 +163,7 @@ end</programlisting></para>
         The log messages will be logged in the normal
         <filename>server.log</filename>.
 
-        <screen format="">10:02:35,074 INFO  [Notifier] Executing the job
+        <screen>10:02:35,074 INFO  [Notifier] Executing the job
 10:02:40,074 INFO  [Notifier] Executing the job</screen>
       </para>
 
@@ -198,7 +198,7 @@ end</programlisting></para>
       <para><example>
           <title>Example <filename>jobs.yml</filename></title>
 
-          <para><programlisting format="">mail.notifier:
+          <para><programlisting>mail.notifier:
   job:         Mail::Notifier
   cron:        0 */5 * * * ?
   description: Deliver queued mail notifications</programlisting></para>

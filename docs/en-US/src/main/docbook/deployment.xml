@@ -152,13 +152,13 @@
       directory, <emphasis>excluding</emphasis> <filename>tmp/</filename> and
       <filename>log/</filename> directories.</para>
 
-      <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>The
+      <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>The
       resulting archive will be placed at the root of the application, as a
       file named <filename><replaceable>myapp</replaceable>.rails</filename>.
       To inspect the contents, you may use the <command>jar</command>
       tool.</para>
 
-      <para><screen format=""><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails</filename>
+      <para><screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails</filename>
 META-INF/
 META-INF/MANIFEST.MF
 app/
@@ -175,11 +175,11 @@ app/controllers/application_controller.rb
       <command>torquebox:deploy:archive</command> rake task may be used to
       both create and deploy an archive.</para>
 
-      <para><screen format=""><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive</command></screen>If
+      <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive</command></screen>If
       you wish to deploy manually, a command similar to the following may be
       used</para>
 
-      <para><screen format="">$ <command>rake</command> <command>torquebox:archive</command>
+      <para><screen>$ <command>rake</command> <command>torquebox:archive</command>
 $ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filename> <filename><envar>$JBOSS_HOME</envar>/server/$JBOSS_CONF/deploy/</filename></screen>If
       you redeploy an archive, the server will remove the previous version,
       and hot-redeploy the new versions just copied.</para>
