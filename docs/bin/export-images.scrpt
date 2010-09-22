@@ -40,7 +40,7 @@ on process_file(input_file, output_dir)
     --Setup export options
     set current export settings's area type to selected graphics
     set current export settings's draws background to false
-    set current export settings's export scale to 1
+    set current export settings's export scale to 1.0
     set current export settings's include border to false
     set current export settings's resolution to 1.0
 
