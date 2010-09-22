@@ -13,48 +13,48 @@ import org.torquebox.metadata.EnvironmentMetaData;
 
 public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
-	private String instanceFactoryName;
+    private String instanceFactoryName;
 
-	public MessagingRuntimePoolDeployer() {
-		setStage(DeploymentStages.PRE_REAL);
-		addInput( EnvironmentMetaData.class );
-		addInput(PoolMetaData.class);
-		addOutput(PoolMetaData.class);
-	}
-	
-	public void setInstanceFactoryName(String instanceFactoryName) {
-		this.instanceFactoryName = instanceFactoryName;
-	}
-	
-	public String getInstanceFactoryName() {
-		return this.instanceFactoryName;
-	}
+    public MessagingRuntimePoolDeployer() {
+        setStage(DeploymentStages.PRE_REAL);
+        addInput( EnvironmentMetaData.class );
+        addInput(PoolMetaData.class);
+        addOutput(PoolMetaData.class);
+    }
+    
+    public void setInstanceFactoryName(String instanceFactoryName) {
+        this.instanceFactoryName = instanceFactoryName;
+    }
+    
+    public String getInstanceFactoryName() {
+        return this.instanceFactoryName;
+    }
 
-	@Override
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if (unit.getAllMetaData(MessageProcessorMetaData.class).isEmpty()) {
-			return;
-		}
+    @Override
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        if (unit.getAllMetaData(MessageProcessorMetaData.class).isEmpty()) {
+            return;
+        }
 
-		Set<? extends PoolMetaData> allPools = unit.getAllMetaData(PoolMetaData.class);
+        Set<? extends PoolMetaData> allPools = unit.getAllMetaData(PoolMetaData.class);
 
-		PoolMetaData pool = null;
+        PoolMetaData pool = null;
 
-		for (PoolMetaData each : allPools) {
-			if (each.getName().equals("messaging")) {
-				pool = each;
-				break;
-			}
-		}
+        for (PoolMetaData each : allPools) {
+            if (each.getName().equals("messaging")) {
+                pool = each;
+                break;
+            }
+        }
 
-		if (pool == null) {
+        if (pool == null) {
             EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
-			pool = devMode ? new PoolMetaData("messaging", 1, 2) : new PoolMetaData("messaging");
-			pool.setInstanceFactoryName( this.instanceFactoryName );
+            pool = devMode ? new PoolMetaData("messaging", 1, 2) : new PoolMetaData("messaging");
+            pool.setInstanceFactoryName( this.instanceFactoryName );
             log.info("Configured Ruby runtime pool for messaging: " + pool);
-			AttachmentUtils.multipleAttach(unit, pool, "messaging");
-		}
-	}
+            AttachmentUtils.multipleAttach(unit, pool, "messaging");
+        }
+    }
 
 }
