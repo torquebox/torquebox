@@ -15,32 +15,9 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 /**
- * Parsing deployer for {@code pooling.yml}.
- * 
- * <p>
- * This deployer looks for metadata files named exactly {@code pooling.yml},
- * which is expected to be a YAML file describing the configuration of various
- * Ruby runtime interpreter pools.
- * </p>
- * 
- * <p>
- * The top-level of the YAML file should be a hash, with the pool identifier as
- * the key. The value of each map may be the strings {@code global} or {@code
- * shared}, or another hash specifying {@code min} and {@code max} values for
- * the pool size.
- * </p>
- * 
- * <pre>
- *   pool_one: global
- *   pool_two: shared
- *   pool_three:
- *     min: 5
- *     max: 25
- * </pre>
+ * Parsing deployer for {@code ruby.yml} to specify ruby 1.8 -vs- 1.9, at least.
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
- * 
- * @see PoolMetaData
  */
 public class RubyYamlParsingDeployer extends AbstractDeployer {
 
