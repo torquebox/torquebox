@@ -41,6 +41,9 @@ public abstract class ManagedComponentResolver implements RubyComponentResolver 
 				if (component != null) {
 					JavaEmbedUtils.invokeMethod(ruby, managerClass, "register_component", new Object[] { this.componentName, component }, void.class);
 				}
+                if (isAlwaysReload()) {
+                    ruby.evalScriptlet("Dispatcher.cleanup_application if defined?(Dispatcher)");
+                }
 			}
 
 			return component;

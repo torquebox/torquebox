@@ -9,6 +9,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
+import org.torquebox.metadata.EnvironmentMetaData;
 
 public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
@@ -16,6 +17,7 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
 	public MessagingRuntimePoolDeployer() {
 		setStage(DeploymentStages.PRE_REAL);
+		addInput( EnvironmentMetaData.class );
 		addInput(PoolMetaData.class);
 		addOutput(PoolMetaData.class);
 	}
@@ -46,12 +48,11 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 		}
 
 		if (pool == null) {
-			log.debug("no pool configured yet");
-			pool = new PoolMetaData();
-			pool.setName("messaging");
-			pool.setShared();
+            EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+            boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
+			pool = devMode ? new PoolMetaData("messaging", 1, 2) : new PoolMetaData("messaging");
 			pool.setInstanceFactoryName( this.instanceFactoryName );
-			log.debug( "configured pool: " + pool );
+            log.info("Configured Ruby runtime pool for messaging: " + pool);
 			AttachmentUtils.multipleAttach(unit, pool, "messaging");
 		}
 	}

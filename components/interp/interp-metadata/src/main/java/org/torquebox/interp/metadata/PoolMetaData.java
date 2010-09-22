@@ -50,19 +50,36 @@ public class PoolMetaData {
 
     private String instanceName;
     
-    /** Construct. 
+    /** Named SHARED
      */
-    public PoolMetaData() {
-        this.poolType = PoolType.NON_SHARED;
+    public PoolMetaData(String name) {
+        this( name, PoolType.SHARED );
     }
-    
-    /** Convenient
+
+    /** Named NON_SHARED 
      */
     public PoolMetaData(String name, int min, int max) {
         this.name = name;
-        this.minimumSize = min;
-        this.maximumSize = max;
-        this.poolType = PoolType.NON_SHARED;
+        setMinimumSize( min );
+        setMaximumSize( max );
+    }
+    
+    /** Un-named NON_SHARED
+     */
+    public PoolMetaData() {
+        this( "", PoolType.NON_SHARED );
+    }
+
+    /** Named specific type
+     */
+    public PoolMetaData(String name, PoolType type) {
+        this.name = name;
+        switch (type) {
+        case SHARED: setShared(); break;
+        case GLOBAL: setGlobal(); break;
+        default: 
+            this.poolType = PoolType.NON_SHARED;
+        }
     }
     
     /** Set the name of the pool.
@@ -182,7 +199,11 @@ public class PoolMetaData {
     }
     
     public String toString() {
-        return "[PoolMetaData: name=" + this.name + "; min=" + this.minimumSize + "; max=" + this.maximumSize + "]";
+        if (this.poolType == PoolType.NON_SHARED) {
+            return "[PoolMetaData: name=" + this.name + " min=" + this.minimumSize + " max=" + this.maximumSize + "]";
+        } else {
+            return "[PoolMetaData: name=" + this.name + " type=" + this.poolType + "]";
+        }
     }
 
 }

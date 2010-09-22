@@ -9,11 +9,13 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.metadata.EnvironmentMetaData;
 
 public class JobsRuntimePoolDeployer extends AbstractDeployer {
 	
 	public JobsRuntimePoolDeployer() {
 		setStage( DeploymentStages.DESCRIBE );
+		addInput( EnvironmentMetaData.class );
 		addInput( PoolMetaData.class );
 		addOutput( PoolMetaData.class );
 	}
@@ -36,7 +38,10 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
 		}
 		
 		if ( jobsPool == null ) {
-			jobsPool = new PoolMetaData("jobs", 1, 2);
+            EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+            boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
+			jobsPool = devMode ? new PoolMetaData("jobs", 1, 2) : new PoolMetaData("jobs");
+            log.info("Configured Ruby runtime pool for jobs: " + jobsPool);
 			AttachmentUtils.multipleAttach(unit, jobsPool, "jobs");
 		}
 	}

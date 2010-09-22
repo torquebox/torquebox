@@ -81,7 +81,7 @@ public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<PoolM
                             poolMetaData.setGlobal();
                         }
                     }
-
+                    log.info("Configured Ruby runtime pool: "+poolMetaData);
                     unit.addAttachment(PoolMetaData.class.getName() + "$" + name, poolMetaData, PoolMetaData.class);
                 }
             }
