@@ -41,55 +41,55 @@ import org.yaml.snakeyaml.error.YAMLException;
  */
 public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<PoolMetaData> {
 
-	/**
-	 * Construct.
-	 */
-	public PoolingYamlParsingDeployer() {
-		super(PoolMetaData.class);
-		setName("pooling.yml");
-	}
+    /**
+     * Construct.
+     */
+    public PoolingYamlParsingDeployer() {
+        super(PoolMetaData.class);
+        setName("pooling.yml");
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	protected PoolMetaData parse(VFSDeploymentUnit unit, VirtualFile file, PoolMetaData root) throws Exception {
-		Yaml yaml = new Yaml();
-		try {
-			Map<String, Object> pooling = (Map<String, Object>) yaml.load(file.openStream());
+    @SuppressWarnings("unchecked")
+    @Override
+    protected PoolMetaData parse(VFSDeploymentUnit unit, VirtualFile file, PoolMetaData root) throws Exception {
+        Yaml yaml = new Yaml();
+        try {
+            Map<String, Object> pooling = (Map<String, Object>) yaml.load(file.openStream());
 
-			if (pooling != null) {
-				for (String name : pooling.keySet()) {
+            if (pooling != null) {
+                for (String name : pooling.keySet()) {
 
-					Object pool = pooling.get(name);
+                    Object pool = pooling.get(name);
 
-					PoolMetaData poolMetaData = new PoolMetaData();
-					poolMetaData.setName(name.toString());
+                    PoolMetaData poolMetaData = new PoolMetaData();
+                    poolMetaData.setName(name.toString());
 
-					if (pool instanceof Map) {
-						Map<String, Object> poolMap = (Map<String, Object>) pool;
+                    if (pool instanceof Map) {
+                        Map<String, Object> poolMap = (Map<String, Object>) pool;
 
-						if (poolMap.get("min") != null) {
-							poolMetaData.setMinimumSize(((Number) poolMap.get("min")).intValue());
-						}
+                        if (poolMap.get("min") != null) {
+                            poolMetaData.setMinimumSize(((Number) poolMap.get("min")).intValue());
+                        }
 
-						if (poolMap.get("max") != null) {
-							poolMetaData.setMaximumSize(((Number) poolMap.get("max")).intValue());
-						}
-					} else if (pool instanceof String) {
-						if (pool.toString().equals("shared")) {
-							poolMetaData.setShared();
-						} else if (pool.toString().equals("global")) {
-							poolMetaData.setGlobal();
-						}
-					}
+                        if (poolMap.get("max") != null) {
+                            poolMetaData.setMaximumSize(((Number) poolMap.get("max")).intValue());
+                        }
+                    } else if (pool instanceof String) {
+                        if (pool.toString().equals("shared")) {
+                            poolMetaData.setShared();
+                        } else if (pool.toString().equals("global")) {
+                            poolMetaData.setGlobal();
+                        }
+                    }
 
-					unit.addAttachment(PoolMetaData.class.getName() + "$" + name, poolMetaData, PoolMetaData.class);
-				}
-			}
-		} catch (YAMLException e) {
-			log.error("Error parsing pooling.yml: " + e.getMessage() );
-		}
+                    unit.addAttachment(PoolMetaData.class.getName() + "$" + name, poolMetaData, PoolMetaData.class);
+                }
+            }
+        } catch (YAMLException e) {
+            log.error("Error parsing pooling.yml: " + e.getMessage() );
+        }
 
-		return null;
-	}
+        return null;
+    }
 
 }
