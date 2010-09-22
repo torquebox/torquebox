@@ -1,0 +1,94 @@
+--Copyright 2009, Sunny Fugate
+--Creative Commons Attribution-Share Alike 3.0
+--http://creativecommons.org/licenses/by-sa/3.0/us/
+--
+
+on run argv
+    --Retrieve the desired output export path
+    set input_dir to POSIX path of item 1 of argv
+    set output_dir to POSIX path of item 2 of argv
+
+    set pwd to system attribute "PWD"
+
+    --set fq_input_dir to POSIX file of ( pwd & "/" & item 1 of argv )
+    tell me to POSIX file ( pwd & "/" & input_dir )
+    set fq_input_dir to result as alias
+
+    tell me to POSIX file ( pwd & "/" & output_dir )
+    set fq_output_dir to result as alias
+
+    tell application "Finder"
+      set input_files to ( files in fq_input_dir whose name extension is "graffle" )
+      repeat with input_file in input_files
+        -- set input_file_path to POSIX path of input_file
+        my process_file( input_file, fq_output_dir )
+      end repeat
+    end tell
+
+    
+    --my process_file( input_file, output_dir )
+end run
+
+on process_file(input_file, output_dir)
+
+  set {dir, base, ext} to my parse_file( input_file )
+
+  set output_base to ( output_dir & base )
+
+  tell application "OmniGraffle Professional 5"
+
+    --Setup export options
+    set current export settings's area type to selected graphics
+    set current export settings's draws background to false
+    set current export settings's export scale to 1
+    set current export settings's include border to false
+    set current export settings's resolution to 1.0
+
+    --open file_path
+    open input_file
+
+    set currentDocument to document of front window
+
+    set theCanvases to every canvas of currentDocument
+
+    repeat with aCanvas in theCanvases
+      set canvas of front window to aCanvas
+      set selection of front window to graphics of aCanvas
+
+      if ( the length of theCanvases is 1 )
+        set full_name to output_base as string
+      else
+        set full_name to output_base & "-" & ( name of aCanvas ) as string
+      end if
+
+      save currentDocument in file ( full_name & ".svg" )
+      save currentDocument in file ( full_name & ".png" )
+    end repeat
+    close currentDocument
+  end tell
+end process_file
+
+on parse_file(this_file)
+  set default_delimiters to AppleScript's text item delimiters
+  -- if given file is a folder then strip terminal ":" so as to return
+  -- folder name as file name and true parent directory
+  if last item of (this_file as string) = ":" then
+    set AppleScript's text item delimiters to ""
+    set this_file to (items 1 through -2 of (this_file as string)) as string
+  end if
+
+  set AppleScript's text item delimiters to ":"
+  set this_parent_dir to (text items 1 through -2 of (this_file as string)) as string
+  set this_name to (text item -1 of (this_file as string)) as string
+  
+  -- default or no extension is empty string
+  set this_extension to ""
+  
+  if this_name contains "." then
+    set AppleScript's text item delimiters to "."
+    set this_extension to the last text item of this_name
+    set this_name to (text items 1 through -2 of this_name) as string
+  end if
+  set AppleScript's text item delimiters to default_delimiters
+  return {this_parent_dir, this_name, this_extension}
+end parse_file
