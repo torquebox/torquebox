@@ -2,33 +2,45 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="rack">
-  <title>Rack Support</title>
+  <title>Rack</title>
 
-  <para>Rack is a specification which describes how web server engines can
-  integrate with additional logic written in Ruby. Rack is a akin to CGI or
-  the Java Servlets Spec in terms of goals and functionality.</para>
+  <section>
+    <title>Rack Applications</title>
 
-  <para>TorqueBox current supports general
-  <filename>config.ru</filename>-based applications. In your application's
-  directory, your Rack application can be booted from a file named
-  <filename>config.ru</filename> that you provide. The Ruby runtime provided
-  to your application is quite rudimentary. If you desire to use RubyGems or
-  other libraries, it is up to you to require the necessary files (for
-  instance, <code>require 'rubygems'</code>).</para>
+    <para>Rack is a specification which describes how web server engines can
+    integrate with additional logic written in Ruby. Rack is a akin to CGI or
+    the Java Servlets Spec in terms of goals and functionality.</para>
 
-  <para><programlisting format="">app = lambda{|env| [ 
+    <para>TorqueBox current supports general
+    <filename>config.ru</filename>-based applications. In your application's
+    directory, your Rack application can be booted from a file named
+    <filename>config.ru</filename> that you provide. The Ruby runtime provided
+    to your application is quite rudimentary. If you desire to use RubyGems or
+    other libraries, it is up to you to require the necessary files (for
+    instance, <code>require 'rubygems'</code>).</para>
+
+    <para><programlisting format="">app = lambda{|env| [ 
           200, 
           { 'Content-Type' =&gt; 'text/html' }, 
           'Hello World'
         ] }
     run app</programlisting></para>
 
-  <para>To deploy your application, please see <xref linkend="deployment" />
-  and <xref linkend="rack-deployment-descriptors" />.</para>
+    <para>To deploy your application, please see <xref linkend="deployment" />
+    and <xref linkend="rack-deployment-descriptors" />.</para>
 
-  <para>The directory containing the <filename>config.ru</filename> is
-  considered the current working directory, and is included in the load
-  path.</para>
+    <para>The directory containing the <filename>config.ru</filename> is
+    considered the current working directory, and is included in the load
+    path.</para>
+  </section>
+
+  <section>
+    <title>Rack Frameworks</title>
+
+    <para>Many Rack-compatible frameworks and components work right out of the
+    box. Various Rack "middleware" may be used, and frameworks such as Sinatra
+    run without surprise or modification.</para>
+  </section>
 
   <section>
     <title>Rack API</title>
@@ -110,15 +122,15 @@
             <entry>Variables corresponding to the client-supplied HTTP request
             headers (i.e., variables whose names begin with HTTP_). The
             presence or absence of these variables should correspond with the
-            presence or absence of the appropriate HTTP header in the request.
-            </entry>
+            presence or absence of the appropriate HTTP header in the
+            request.</entry>
           </row>
 
           <row>
             <entry><varname>rack.version</varname></entry>
 
-            <entry>The Array [m, n], representing this version of Rack.
-            </entry>
+            <entry>The Array [m, n], representing this version of
+            Rack.</entry>
           </row>
 
           <row>
