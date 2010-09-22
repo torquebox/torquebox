@@ -61,8 +61,7 @@ public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<PoolM
 
                     Object pool = pooling.get(name);
 
-                    PoolMetaData poolMetaData = new PoolMetaData();
-                    poolMetaData.setName(name.toString());
+                    PoolMetaData poolMetaData = new PoolMetaData(name);
 
                     if (pool instanceof Map) {
                         Map<String, Object> poolMap = (Map<String, Object>) pool;

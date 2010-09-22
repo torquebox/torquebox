@@ -83,8 +83,7 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 			throw new DeploymentException(e);
 		}
 
-		PoolMetaData poolMetaData = new PoolMetaData();
-		poolMetaData.setName( "web" );
+		PoolMetaData poolMetaData = new PoolMetaData( "web" );
 		poolMetaData.setShared();
 		
 		AttachmentUtils.multipleAttach(unit, poolMetaData, "web");

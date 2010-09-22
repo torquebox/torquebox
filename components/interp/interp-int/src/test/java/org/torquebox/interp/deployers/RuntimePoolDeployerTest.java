@@ -40,9 +40,8 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		
 		String deploymentName = createDeployment("minMax");
 
-		PoolMetaData poolMetaData = new PoolMetaData();
+		PoolMetaData poolMetaData = new PoolMetaData("pool_one");
 		poolMetaData.setInstanceFactoryName("instance_factory");
-		poolMetaData.setName("pool_one");
 		poolMetaData.setMinimumSize(2);
 		poolMetaData.setMaximumSize(200);
 
@@ -77,9 +76,8 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		
 		String deploymentName = createDeployment("shared");
 
-		PoolMetaData poolMetaData = new PoolMetaData();
+		PoolMetaData poolMetaData = new PoolMetaData("pool_one");
 		poolMetaData.setInstanceFactoryName("instance_factory");
-		poolMetaData.setName("pool_one");
 		poolMetaData.setShared();
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
@@ -108,9 +106,8 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 		
 		String deploymentName = createDeployment("global");
 
-		PoolMetaData poolMetaData = new PoolMetaData();
+		PoolMetaData poolMetaData = new PoolMetaData("pool_one");
 		poolMetaData.setInstanceName("runtime_instance");
-		poolMetaData.setName("pool_one");
 		poolMetaData.setGlobal();
 
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);

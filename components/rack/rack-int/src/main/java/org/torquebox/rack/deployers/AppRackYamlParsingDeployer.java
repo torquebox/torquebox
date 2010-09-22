@@ -189,8 +189,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 	}
 	
 	private PoolMetaData setUpPoolMetaData() {
-		PoolMetaData poolMetaData = new PoolMetaData();
-		poolMetaData.setName( "web" );
+		PoolMetaData poolMetaData = new PoolMetaData("web");
 		poolMetaData.setShared();
 		return poolMetaData;
 	}

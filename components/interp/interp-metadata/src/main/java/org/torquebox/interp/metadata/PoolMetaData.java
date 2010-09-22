@@ -64,12 +64,6 @@ public class PoolMetaData {
         setMaximumSize( max );
     }
     
-    /** Un-named NON_SHARED
-     */
-    public PoolMetaData() {
-        this( "", PoolType.NON_SHARED );
-    }
-
     /** Named specific type
      */
     public PoolMetaData(String name, PoolType type) {
@@ -80,14 +74,6 @@ public class PoolMetaData {
         default: 
             this.poolType = PoolType.NON_SHARED;
         }
-    }
-    
-    /** Set the name of the pool.
-     * 
-     * @param name The name of the pool.
-     */
-    public void setName(String name) {
-        this.name = name;
     }
     
     /** Retrieve the name of the pool.
