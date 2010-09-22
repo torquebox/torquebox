@@ -14,37 +14,27 @@ Generate html using:   mvn docbkx:generate-html
     <releaseinfo>${project.version}</releaseinfo>
 
     <authorgroup>
-      <corpauthor>
-        JBoss by Red Hat
-      </corpauthor>
+      <corpauthor>The TorqueBox Project</corpauthor>
     </authorgroup>
   </bookinfo>
 
   <toc></toc>
 
-  <xi:include href="overview.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="overview.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="installation.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="deployment.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="deployment.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="database.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="database.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="rack.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="rack.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="rack-deployment-descriptors.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="rails2.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-  <xi:include href="rails3.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="rails.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="rails-deployment-descriptors.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
@@ -52,22 +42,18 @@ Generate html using:   mvn docbkx:generate-html
   <xi:include href="scheduled-jobs.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="messaging.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="messaging.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="pooling.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="pooling.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="capistrano-support.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="lgpl-3.0.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="lgpl-3.0.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="mit.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="mit.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-<!--
+  <!--
   <xi:include href="cc-sa.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
   <part>

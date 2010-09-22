@@ -80,15 +80,19 @@
       <section>
         <title>General Application Configuration</title>
 
-        <para>The application section describes the <envar>RACK_ROOT</envar>
-        and <envar>RACK_ENV</envar> for the deployed application. Under
-        traditional (mongrel, lighttpd) deployments, this information is
-        picked up through the current working directory or environment
-        variables. Since the TorqueBox Server runs from a different location,
-        the current working directory has no meaning. Likewise, as multiple
-        applications may be deployed within a single TorqueBox Server, a
-        single global environment variable to set <envar>RACK_ENV</envar> is
-        nonsensical.</para>
+        <formalpara>
+          <title>Location &amp; Environment</title>
+
+          <para>The application section describes the <envar>RACK_ROOT</envar>
+          and <envar>RACK_ENV</envar> for the deployed application. Under
+          traditional (mongrel, lighttpd) deployments, this information is
+          picked up through the current working directory or environment
+          variables. Since the TorqueBox Server runs from a different
+          location, the current working directory has no meaning. Likewise, as
+          multiple applications may be deployed within a single TorqueBox
+          Server, a single global environment variable to set
+          <envar>RACK_ENV</envar> is nonsensical.</para>
+        </formalpara>
 
         <para><informalexample>
             <para><programlisting>application:
@@ -96,25 +100,25 @@
   RACK_ENV: development</programlisting></para>
           </informalexample></para>
 
-        <section id="rackup">
+        <formalpara id="rackup">
           <title>Rackup Config File</title>
 
           <para>By default, the TorqueBox server will look for a rackup config
           file named <filename>config.ru</filename>. You can override the
           default name using the <emphasis>rackup</emphasis> config
           parameter.</para>
+        </formalpara>
 
-          <para><informalexample>
-              <para><programlisting>application:
+        <para><informalexample>
+            <para><programlisting>application:
   RACK_ROOT: /path/to/myapp
   RACK_ENV: development
   rackup: relative/path/to/your_custom_config.ru</programlisting></para>
-            </informalexample></para>
+          </informalexample></para>
 
-          <para>The <emphasis>rackup</emphasis> parameter should specify a
-          filename relative to the <envar>RACK_ROOT</envar> for the
-          application.</para>
-        </section>
+        <para>The <emphasis>rackup</emphasis> parameter should specify a
+        filename relative to the <envar>RACK_ROOT</envar> for the
+        application.</para>
       </section>
 
       <section>
@@ -139,10 +143,10 @@
           TorqueBox Server.</para>
         </formalpara>
 
-          <para><informalexample>
-              <para><programlisting>web:
+        <para><informalexample>
+            <para><programlisting>web:
   host: www.host-one.com</programlisting></para>
-            </informalexample></para>
+          </informalexample></para>
 
         <formalpara>
           <title>Context paths</title>
@@ -155,33 +159,33 @@
           applications at a location under the root.</para>
         </formalpara>
 
-          <para>For example, <emphasis
-          role="bold">http://www.host-one.com/app-one/</emphasis> could point
-          to one application, while <emphasis
-          role="bold">http://www.host-one.com/app-two/</emphasis> could point
-          to another separate application.</para>
+        <para>For example, <emphasis
+        role="bold">http://www.host-one.com/app-one/</emphasis> could point to
+        one application, while <emphasis
+        role="bold">http://www.host-one.com/app-two/</emphasis> could point to
+        another separate application.</para>
 
-          <para><informalexample>
-              <para><programlisting>web:
+        <para><informalexample>
+            <para><programlisting>web:
   context: /app-one</programlisting></para>
-            </informalexample></para>
+          </informalexample></para>
 
-          <para>The context path and virtual host configurations can be used
-          at the same time, if desired.</para>
+        <para>The context path and virtual host configurations can be used at
+        the same time, if desired.</para>
 
-          <para><informalexample>
-              <para><programlisting>web:
+        <para><informalexample>
+            <para><programlisting>web:
   host: www.mycorp.com
   context: /app-one</programlisting></para>
-            </informalexample></para>
+          </informalexample></para>
 
-      <formalpara>
-        <title>Environment variables</title>
+        <formalpara>
+          <title>Environment variables</title>
 
-        <para>Each Rack application may have its own unique set of environment
-        variables, no matter how many different Rack apps are deployed under a
-        single TorqueBox instance</para>
-      </formalpara> 
+          <para>Each Rack application may have its own unique set of
+          environment variables, no matter how many different Rack apps are
+          deployed under a single TorqueBox instance</para>
+        </formalpara>
 
         <para><informalexample>
             <para><programlisting>environment:
@@ -203,17 +207,11 @@
 
       <para>Each descriptor assumes that the directory
       <filename>/home/bob/myapp</filename> contains the Rack application we
-      wish to deploy, and has the following contents:</para>
+      wish to deploy, and has the following structure:</para>
 
-      <itemizedlist>
-        <listitem>
-          <para>config.ru</para>
-        </listitem>
-
-        <listitem>
-          <para>alternatives/magic-config.ru</para>
-        </listitem>
-      </itemizedlist>
+      <para><screen>/home/bob/myapp/
+  config.ru
+  alternatives/magic-config.ru</screen></para>
 
       <para>Each example descriptor is assumed to be named
       <filename>myapp-rack.yml</filename> and placed within the
@@ -297,6 +295,43 @@ environment:
       <para><informalexample>
           <para><screen>ENV['DELTACLOUD_DRIVER'] =&gt; "ec2"</screen></para>
         </informalexample></para>
+    </section>
+
+    <section>
+      <title>Using an alternate rackup file</title>
+
+      <para><informalexample>
+          <para><screen>application:
+  RACK_ROOT: /home/bob/myapp
+  RACK_ENV: development
+  rackup: alternatives/magic-config.ru
+web:
+  context: /</screen></para>
+        </informalexample>Given a need to use a <filename>config.ru</filename>
+      style file with an atypical name or location, the
+      <parameter>rackup:</parameter> configuration may be used to point to the
+      correct file. It should be specified as a path relative to the
+      application's root directory.</para>
+
+      <formalpara>
+        <title>Sinatra</title>
+
+        <para>Some frameworks, such as Sinatra, provide a method for
+        indicating where the application's root lives. By default, they
+        consider the directory containing the rackup file to be the
+        application root. If you deploy using a rackup file in a subdirectory,
+        you may need to add explicit configuration to your rackup script. You
+        may reference other variables in your environment, including
+        <envar>RACK_ROOT</envar>.</para>
+      </formalpara>
+
+      <para><informalexample>
+          <para><screen>set :root, ENV['RACK_ROOT']</screen></para>
+        </informalexample></para>
+
+      <para></para>
+
+      <para></para>
     </section>
   </section>
 </chapter>

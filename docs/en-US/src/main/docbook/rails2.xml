@@ -51,7 +51,7 @@
           use the <parameter>-m</parameter> parameter when you execute the
           <command>rails</command> command.</para>
 
-          <para><screen format=""><prompt>$</prompt> <command>rails</command> <parameter>-m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen>This
+          <para><screen><prompt>$</prompt> <command>rails</command> <parameter>-m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen>This
           will perform the necessary setup to quickly get started with
           TorqueBox.</para>
         </section>
@@ -62,7 +62,7 @@
           <para>To apply the template to an existing application, simply use
           the <command>rails:template</command> rake task.</para>
 
-          <para><screen format=""><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
+          <para><screen><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
         </section>
       </section>
 
@@ -84,7 +84,7 @@
           <filename>environment.rb</filename> within the
           <code>Rails::Initializer.run</code> block.</para>
 
-          <para><programlisting format="">Rails::Initializer.run do |config|
+          <para><programlisting>Rails::Initializer.run do |config|
 
   config.gem "activerecord-jdbc-adapter",
              :lib=&gt;'jdbc_adapter'
@@ -105,8 +105,7 @@ end</programlisting></para>
           <para>In order to gain access to the advanced features of TorqueBox,
           you must include the TorqueBox packages into your project. The
           TorqueBox gems are also included into your application through
-          <filename>config/environment.rb</filename>.<programlisting
-          format="">Rails::Initializer.run do |config|
+          <filename>config/environment.rb</filename>.<programlisting>Rails::Initializer.run do |config|
   
   config.gem "torquebox-gem"
   config.gem "torquebox-rails"
