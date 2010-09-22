@@ -56,6 +56,15 @@ public class PoolMetaData {
 		this.poolType = PoolType.NON_SHARED;
 	}
 	
+    /** Convenient
+     */
+	public PoolMetaData(String name, int min, int max) {
+        this.name = name;
+        this.minimumSize = min;
+        this.maximumSize = max;
+		this.poolType = PoolType.NON_SHARED;
+	}
+	
 	/** Set the name of the pool.
 	 * 
 	 * @param name The name of the pool.

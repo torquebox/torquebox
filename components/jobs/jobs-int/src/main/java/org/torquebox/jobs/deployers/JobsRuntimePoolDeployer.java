@@ -36,9 +36,7 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
 		}
 		
 		if ( jobsPool == null ) {
-			jobsPool = new PoolMetaData();
-			jobsPool.setName( "jobs" );
-			jobsPool.setShared();
+			jobsPool = new PoolMetaData("jobs", 1, 2);
 			AttachmentUtils.multipleAttach(unit, jobsPool, "jobs");
 		}
 	}
