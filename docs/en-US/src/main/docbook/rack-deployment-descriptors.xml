@@ -124,9 +124,9 @@
       <section>
         <title>Web-specific configuration</title>
 
-        <para>Traditional Rails applications are deployed individually,
-        without respect to hostnames or context-path. Running under TorqueBox,
-        you may host several apps under a single host, or multiple apps under
+        <para>Traditional Rack applications are deployed individually, without
+        respect to hostnames or context-path. Running under TorqueBox, you may
+        host several apps under a single host, or multiple apps under
         different hostnames.</para>
 
         <para>Both the virtual-host and context-path configuration are nested
@@ -202,8 +202,9 @@
     <section>
       <title>Examples</title>
 
-      <para>Below are several examples of using a *-rack.yml descriptor to
-      deploy a Rack-based application.</para>
+      <para>Below are several examples of using a
+      <filename>*-rack.yml</filename> descriptor to deploy a Rack-based
+      application.</para>
 
       <para>Each descriptor assumes that the directory
       <filename>/home/bob/myapp</filename> contains the Rack application we
@@ -288,12 +289,14 @@ environment:
       accomodate this, the environment of the entire application server may be
       overriden through the environment: section.</para>
 
-      <para>This deployment sets the DELTACLOUD_DRIVER environment variable to
-      ec2 for only this application's point-of-view. The application may
-      access it as it would any other environment variable.</para>
+      <para>This deployment sets the <envar>DELTACLOUD_DRIVER</envar>
+      environment variable to <parameter>ec2</parameter> for only this
+      application's point-of-view. The application may access it as it would
+      any other environment variable.</para>
 
       <para><informalexample>
-          <para><screen>ENV['DELTACLOUD_DRIVER'] =&gt; "ec2"</screen></para>
+          <para><screen>ENV['DELTACLOUD_DRIVER'] 
+=&gt; "ec2"</screen></para>
         </informalexample></para>
     </section>
 
