@@ -29,9 +29,9 @@
 
     <para>
       Both shared and non-shared pools present tradeoffs that vary
-      accross applications.  In general, shared pools use fewer
+      across applications.  In general, shared pools use fewer
       resources and should be more performant, but require your
-      application to be threadsafe.
+      application to be thread-safe.
     </para>
       
     <para>
@@ -47,7 +47,7 @@
 
     <para>
       Since TorqueBox supports Rails versions 2.2 and above, all of
-      which are threadsafe, the default mode of operation for web
+      which are thread-safe, the default mode of operation for web
       requests is to share a single Ruby runtime across threads,
       irrespective of development mode.
     </para>
@@ -58,12 +58,12 @@
     <title>Control thread concurrency using <filename>pooling.yml</filename></title>
 
     <para>
-      If your application is not designed to be threadsafe, you can
+      If your application is not designed to be thread-safe, you can
       instead pool the interpreters resulting in a single-threaded
       model. You can do this for jobs, messaging, and/or web requests.
       Typically, if your application creates and uses global variables
       to manage state for a single web request, you may have problems
-      with the default multithreaded behavior.
+      with the default multi-threaded behavior.
     </para>
 
     <para>
