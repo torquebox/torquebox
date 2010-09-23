@@ -313,8 +313,9 @@ environment:
     <para>Beyond providing similar functionality as a
     <filename>*-rails.yml</filename>, internal descriptors also include
     extended functionality such as messaging and scheduling integrations.
-    Please see <xref linkend="messaging" /> and <xref linkend="jobs" /> for
-    further information on these additional descriptors.</para>
+    Please see <xref linkend="messaging" /> and <xref
+    linkend="scheduled-jobs" /> for further information on these additional
+    descriptors.</para>
 
     <para>Other internal descriptors may affect the runtime environment more
     generally. Please see <xref linkend="pooling" /> for an example of
