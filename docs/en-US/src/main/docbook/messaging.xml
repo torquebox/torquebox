@@ -5,6 +5,84 @@
   <title>Messaging</title>
 
   <section>
+    <title>Introduction</title>
+
+    <para>The term "messaging" encompasses a large area of functionality.
+    Messaging solutions are used to achieve loosely-coupled, asynchronous
+    systems. The primary actors in a messaging-based system are messages,
+    destinations, consumers, and producers. From an implementation
+    perspective, a broker mediates the relationships between the other
+    actors.</para>
+
+    <mediaobject>
+      <imageobject role="html">
+        <imagedata align="center" fileref="images/messaging-overview.png"
+                   format="PNG" contentwidth="4in"/>
+      </imageobject>
+
+      <imageobject role="fo">
+        <imagedata align="center" fileref="images/messaging-overview.svg"
+                   format="SVG" contentwidth="4in"/>
+      </imageobject>
+    </mediaobject>
+
+    <formalpara>
+      <title>Messages</title>
+
+      <para>The unit of communication within a messaging system is a message.
+      A message may either be simply a blob of octets, or it might have some
+      higher-order, application-defined semantics. All messages include a set
+      of headers, similar to email.</para>
+    </formalpara>
+
+    <formalpara>
+      <title>Destinations</title>
+
+      <para>A destination represents a rendezvous where messages are
+      exchanged. A message message may be sent to a destination by one actor,
+      and received from the destination by another.</para>
+    </formalpara>
+
+    <para>There are two main types of destinations:
+    <emphasis>queues</emphasis> and <emphasis>topics</emphasis>. All
+    destinations allow multiple actors to place messages with them. The type
+    of destination affects what happens to the message once given to the
+    destination. A queue delivers to the message to a single recipient
+    (possibly one of many candidate recipients). A topic delivers the message
+    to multiple interested recipients.</para>
+
+    <para>In the image below, the green lines represent the flow of a single
+    message from a producer to one-or-more consumers through a topic and a
+    queue.</para>
+
+    <mediaobject>
+      <imageobject role="html">
+        <imagedata align="center"
+                   fileref="images/messaging-queues-vs-topics.png"
+                   format="PNG" contentwidth="4in"/>
+      </imageobject>
+
+      <imageobject role="fo">
+        <imagedata align="center"
+                   fileref="images/messaging-queues-vs-topics.svg"
+                   format="SVG" contentwidth="4in"/>
+      </imageobject>
+    </mediaobject>
+
+    <formalpara>
+      <title>Producers</title>
+
+      <para>A producer</para>
+    </formalpara>
+
+    <formalpara>
+      <title>Consumers</title>
+
+      <para>A consumer</para>
+    </formalpara>
+  </section>
+
+  <section>
     <title>Message Broker</title>
 
     <section>
@@ -32,23 +110,23 @@
       rightly play multiple roles, consuming and producing messages in the act
       of performing its actions.</para>
 
-      <section>
+      <formalpara>
         <title>Producers</title>
 
         <para>Any component or client code that creates messages and gives
         them to the message broker for delivery is considered a
         <glossterm>producer</glossterm>. Generally speaking, the producer does
         not know the details of the destination.</para>
-      </section>
+      </formalpara>
 
-      <section>
+      <formalpara>
         <title>Consumers</title>
 
         <para>Any component that waits for messages to be delivered to it by
         the message broker is consider a <glossterm>consumer</glossterm>. A
         consumer is unaware of the producer and any other consumers,
         potentially.</para>
-      </section>
+      </formalpara>
     </section>
 
     <section>
@@ -160,13 +238,13 @@
     <section>
       <title>Deployment Descriptors</title>
 
-      <para>Deploying queues and topics is as easy as creating simple
-      YAML files, and placing them either in your application's
-      <filename>config/</filename> directory, or in the application
-      server's <filename>deploy/</filename> directory, depending on
-      which deployment style you've chosen. Both methods may be
-      combined.  Server-deployed destinations and application-deployed
-      destinations are indistinguishable once deployed.</para>
+      <para>Deploying queues and topics is as easy as creating simple YAML
+      files, and placing them either in your application's
+      <filename>config/</filename> directory, or in the application server's
+      <filename>deploy/</filename> directory, depending on which deployment
+      style you've chosen. Both methods may be combined. Server-deployed
+      destinations and application-deployed destinations are indistinguishable
+      once deployed.</para>
 
       <section>
         <title><filename>queues.yml</filename></title>
@@ -227,10 +305,10 @@
       <title>Low-level message consumption</title>
 
       <para>For the lowest-level implementation of a Ruby consumer, the class
-      must simply implement <function>process!(msg)</function> which
-      receives a <classname>javax.jms.Message</classname> as its parameter.
-      Admittedly, this gets quite a lot of Java in your Ruby, but it's
-      available if needed.</para>
+      must simply implement <function>process!(msg)</function> which receives
+      a <classname>javax.jms.Message</classname> as its parameter. Admittedly,
+      this gets quite a lot of Java in your Ruby, but it's available if
+      needed.</para>
 
       <para><example>
           <title>Low-level message consumer</title>
@@ -246,15 +324,12 @@ end</programlisting></para>
     <section>
       <title>Syntactic sugar for Text-based messages</title>
 
-      <para>
-        For simple text-based messages, a consumer may extend
-        <classname>TorqueBox::Messaging::MessageProcessor</classname>
-        and implement an <function>on_message(text)</function> method
-        which will receive the text payload of the message.
-      </para>
+      <para>For simple text-based messages, a consumer may extend
+      <classname>TorqueBox::Messaging::MessageProcessor</classname> and
+      implement an <function>on_message(text)</function> method which will
+      receive the text payload of the message.</para>
 
-      <para>
-        <example>
+      <para><example>
           <title>Text-based message consumer</title>
 
           <para><programlisting>class MyTextConsumer &lt; TorqueBox::Messaging::MessageProcessor
@@ -262,17 +337,12 @@ end</programlisting></para>
     # process the string `text` payload
     # the JMS message is available as a member variable called <function>message()</function>
   end
-end</programlisting>
-          </para>
-          <para>
-            There is an accessor for the actual JMS message that is
-            set by TorqueBox prior to invoking
-            <function>on_message</function>, so it's there if you need
-            it.
-          </para>
+end</programlisting></para>
 
-        </example>
-      </para>
+          <para>There is an accessor for the actual JMS message that is set by
+          TorqueBox prior to invoking <function>on_message</function>, so it's
+          there if you need it.</para>
+        </example></para>
     </section>
 
     <section>
@@ -286,80 +356,66 @@ end</programlisting>
       <section>
         <title>Connecting consumers within TorqueBox</title>
 
-        <para>To connect consumers within a TorqueBox-deployed
-        application, you need to create a
-        <filename>messaging.yml</filename> file, such as
+        <para>To connect consumers within a TorqueBox-deployed application,
+        you need to create a <filename>messaging.yml</filename> file, such as
         <filename>config/messaging.yml</filename> for Rails
         applications.</para>
 
-        <para>
-          This file will contain the mappings from your destinations
-          (topics and queues) to your consumers.  The configuration
-          file is a YAML hash, the keys of which are your destination
-          names, which should correspond to the entries in either
-          <filename>queues.yml</filename> or
-          <filename>topics.yml</filename>.
-        </para>
+        <para>This file will contain the mappings from your destinations
+        (topics and queues) to your consumers. The configuration file is a
+        YAML hash, the keys of which are your destination names, which should
+        correspond to the entries in either <filename>queues.yml</filename> or
+        <filename>topics.yml</filename>.</para>
 
         <example>
           <title>messaging.yml</title>
-          <para>
-            <programlisting>/queues/foo: MyFooHandler
-/topics/baz: MyBazHandler</programlisting>
-          </para>
-          <para>
-            The classes MyFooHandler and MyBazHandler would correspond
-            to files available on the load path: my_foo_handler.rb and
-            my_baz_handler.rb, respectively.  In a Rails app, these
-            files would typically reside beneath
-            <filename>lib/</filename> or
-            <filename>app/models/</filename>.
-          </para>
+
+          <para><programlisting>/queues/foo: MyFooHandler
+/topics/baz: MyBazHandler</programlisting></para>
+
+          <para>The classes MyFooHandler and MyBazHandler would correspond to
+          files available on the load path: my_foo_handler.rb and
+          my_baz_handler.rb, respectively. In a Rails app, these files would
+          typically reside beneath <filename>lib/</filename> or
+          <filename>app/models/</filename>.</para>
         </example>
 
-        <para>
-          The above example shows the simplest possible configuration,
-          but it's possible to specify filtering criteria and
-          special-purpose configuration of your handlers as well using
-          the keys <parameter>filter</parameter> and
-          <parameter>config</parameter>, respectively.  The
-          <parameter>filter</parameter> parameter may be used to
-          filter the messages dispatched to your consumer.  The
-          <parameter>config</parameter> parameter should contain a
-          hash of data which will be passed to your consumer's
-          <function>configure(hash)</function> prior to invoking
-          <function>process!</function>.
-        </para>
+        <para>The above example shows the simplest possible configuration, but
+        it's possible to specify filtering criteria and special-purpose
+        configuration of your handlers as well using the keys
+        <parameter>filter</parameter> and <parameter>config</parameter>,
+        respectively. The <parameter>filter</parameter> parameter may be used
+        to filter the messages dispatched to your consumer. The
+        <parameter>config</parameter> parameter should contain a hash of data
+        which will be passed to your consumer's
+        <function>configure(hash)</function> prior to invoking
+        <function>process!</function>.</para>
 
         <example>
           <title>messaging.yml with config and filter options set</title>
-          <para>
-            <programlisting>/queues/foo:
+
+          <para><programlisting>/queues/foo:
   MyFooHandler:
     filter: "cost &gt; 30"
     config:
       type: "premium"
-      season: "fall"</programlisting>
-          </para>
-          <para>
-            Because the structure of the file is <ulink
-            url="http://www.yaml.org">YAML</ulink>, proper indentation
-            is required.
-          </para>
+      season: "fall"</programlisting></para>
+
+          <para>Because the structure of the file is <ulink
+          url="http://www.yaml.org">YAML</ulink>, proper indentation is
+          required.</para>
         </example>
 
-        <para>
-          Actually, YAML enables the configuration to get fairly
-          sophisticated, allowing you to, for example, map a single
-          destination to multiple processors or re-use configuration
-          options in multiple processors.  You may never have a need
-          for this much flexibility, but it's available if you do.
-        </para>
+        <para>Actually, YAML enables the configuration to get fairly
+        sophisticated, allowing you to, for example, map a single destination
+        to multiple processors or re-use configuration options in multiple
+        processors. You may never have a need for this much flexibility, but
+        it's available if you do.</para>
 
         <example>
           <title>Advanced configuration in messaging.yml</title>
-          <para>
-            <programlisting>/topics/simple: SimpleHandler
+
+          <para><programlisting>/topics/simple: SimpleHandler
 
 /topics/popular:
   - Handler
@@ -378,67 +434,56 @@ end</programlisting>
       h: ache
       i: eye
   LookAndFeel:
-    &lt;&lt;: *defaults</programlisting>
-          </para>
-          <para>
-            Here we have <code>/topics/simple</code> mapped to a
-            single processor of type <code>SimpleHandler</code> using
-            a YAML <emphasis>string</emphasis>,
-            <code>/topics/popular</code> mapped to three processors
-            (<code>Handler</code>, <code>Observer</code>,
-            <code>Processor</code>) using a YAML
-            <emphasis>list</emphasis>, and
-            <code>/queues/students</code> mapped to three more
-            processors (<code>VerySimpleAnalyzer</code>,
-            <code>YouthMonitor</code>, <code>LookAndFeel</code>) using
-            a YAML <emphasis>hash</emphasis> where each key in the
-            hash corresponds to the processor type.  This example also
-            takes advantage of YAML's ability to merge hash's: the
-            <code>Observer</code> and <code>LookAndFeel</code>
-            processors are configured identically.
-          </para>
+    &lt;&lt;: *defaults</programlisting></para>
+
+          <para>Here we have <code>/topics/simple</code> mapped to a single
+          processor of type <code>SimpleHandler</code> using a YAML
+          <emphasis>string</emphasis>, <code>/topics/popular</code> mapped to
+          three processors (<code>Handler</code>, <code>Observer</code>,
+          <code>Processor</code>) using a YAML <emphasis>list</emphasis>, and
+          <code>/queues/students</code> mapped to three more processors
+          (<code>VerySimpleAnalyzer</code>, <code>YouthMonitor</code>,
+          <code>LookAndFeel</code>) using a YAML <emphasis>hash</emphasis>
+          where each key in the hash corresponds to the processor type. This
+          example also takes advantage of YAML's ability to merge hash's: the
+          <code>Observer</code> and <code>LookAndFeel</code> processors are
+          configured identically.</para>
         </example>
 
         <section>
           <title>Connecting Consumers outside of TorqueBox</title>
 
-          <para>
-            To support messaging outside of TorqueBox, i.e. outside of
-            the JBoss Application Server (AS), two command-line
-            utilities are provided: one that can deploy your
-            <filename>queues.yml</filename> (or
-            <filename>topics.yml</filename>) and one that can deploy
-            your <filename>messaging.yml</filename> config file.
-          </para>
+          <para>To support messaging outside of TorqueBox, i.e. outside of the
+          JBoss Application Server (AS), two command-line utilities are
+          provided: one that can deploy your <filename>queues.yml</filename>
+          (or <filename>topics.yml</filename>) and one that can deploy your
+          <filename>messaging.yml</filename> config file.</para>
 
-          <para>
-            <example>
-              <title>Deploying your Consumers outside of the App Server</title>
-              
+          <para><example>
+              <title>Deploying your Consumers outside of the App
+              Server</title>
+
               <para><programlisting>$ trq-message-processor-host --deploy messaging.yml
               </programlisting></para>
-              <para>Optionally, you can pass <code>-N
-              your.naming.host</code> if there's not a naming server
-              running locally</para>
-            </example>
-          </para>
 
-          <para>
-            Firing up the consumers doesn't do much good without the actual destinations, though...
-          </para>
+              <para>Optionally, you can pass <code>-N your.naming.host</code>
+              if there's not a naming server running locally</para>
+            </example></para>
 
-          <para>
-            <example>
-              <title>Deploying your Destinations outside of the App Server</title>
-              
+          <para>Firing up the consumers doesn't do much good without the
+          actual destinations, though...</para>
+
+          <para><example>
+              <title>Deploying your Destinations outside of the App
+              Server</title>
+
               <para><programlisting>$ trq-message-broker -s --deploy queues.yml
               </programlisting></para>
-              <para>The <code>-s</code> option tells the broker to
-              fire up its own naming service.  Otherwise, it attempts
-              to use a local one.</para>
-            </example>
-          </para>
 
+              <para>The <code>-s</code> option tells the broker to fire up its
+              own naming service. Otherwise, it attempts to use a local
+              one.</para>
+            </example></para>
         </section>
       </section>
     </section>
@@ -446,17 +491,15 @@ end</programlisting>
 
   <section>
     <title>Ruby Producers</title>
-    
-    <para>
-      The TorqueBox messaging client is evolving rapidly, and we're
-      focused on better encapsulation of the more obtuse aspects of
-      JMS.  But for the time being, direct manipulation of JMS classes
-      via JRuby is the best way to put a message on a queue or topic.
-    </para>
+
+    <para>The TorqueBox messaging client is evolving rapidly, and we're
+    focused on better encapsulation of the more obtuse aspects of JMS. But for
+    the time being, direct manipulation of JMS classes via JRuby is the best
+    way to put a message on a queue or topic.</para>
 
     <example>
       <title>A simple script that queues a text message</title>
-      
+
       <para><programlisting>#!/usr/bin/env jruby
 
 require 'rubygems'
@@ -468,49 +511,45 @@ TorqueBox::Messaging::Client.connect do |session|
   message  = session.createTextMessage( "The time is #{Time.now}" )
   producer.send( message )
   session.commit
- end</programlisting>
-      </para>
+ end</programlisting></para>
 
-      <para>
-        The session passed to the block is the actual
-        <classname>javax.jms.Session</classname> instance.  Although
-        it's possible to run the above code in say, a Rails controller
-        action, TorqueBox <emphasis>tasks</emphasis> are a much better
-        alternative.
-      </para>
+      <para>The session passed to the block is the actual
+      <classname>javax.jms.Session</classname> instance. Although it's
+      possible to run the above code in say, a Rails controller action,
+      TorqueBox <emphasis>tasks</emphasis> are a much better
+      alternative.</para>
     </example>
-
   </section>
 
   <section id="async-tasks">
     <title>Tasks</title>
 
     <para>A special case of message queues is to execute some task
-    asynchronously, perhaps even remotely. Rails developers often want
-    to spawn a potentially long-running task in response to a user
-    request, without forcing the user to wait for its
-    completion. TorqueBox makes this easy.</para>
+    asynchronously, perhaps even remotely. Rails developers often want to
+    spawn a potentially long-running task in response to a user request,
+    without forcing the user to wait for its completion. TorqueBox makes this
+    easy.</para>
 
     <section>
       <title>Task Classes</title>
 
       <para>Task classes simply extend
-      <classname>TorqueBox::Messaging::Task</classname> and implement
-      one or more (usually long-running) methods that take a single
-      object payload, a Ruby <classname>Hash</classname>.</para>
+      <classname>TorqueBox::Messaging::Task</classname> and implement one or
+      more (usually long-running) methods that take a single object payload, a
+      Ruby <classname>Hash</classname>.</para>
 
       <para>In Rails applications, these tasks should be placed in the
-      <filename>app/tasks/</filename> directory, and be named with a
-      suffix of <filename>_task.rb</filename> on the file, and a
-      suffix of <classname>Task</classname> on the class name.</para>
+      <filename>app/tasks/</filename> directory, and be named with a suffix of
+      <filename>_task.rb</filename> on the file, and a suffix of
+      <classname>Task</classname> on the class name.</para>
 
-      <para>Any of the task's methods can be invoked asynchronously by
-      calling the task's class method, <function>async</function>.</para>
+      <para>Any of the task's methods can be invoked asynchronously by calling
+      the task's class method, <function>async</function>.</para>
 
       <para><example>
-    <title>Example task class</title>
+          <title>Example task class</title>
 
-    <para><programlisting>class EmailerTask &lt; TorqueBox::Messaging::Task
+          <para><programlisting>class EmailerTask &lt; TorqueBox::Messaging::Task
   def send_welcome(payload)
     to = "#{payload[:name]} &lt;#{payload[:address]}&gt;"
     # send welcome email to the user
@@ -521,21 +560,19 @@ TorqueBox::Messaging::Client.connect do |session|
     # send password-reset email to the user
   end
 end</programlisting></para>
-      </example></para>
-
+        </example></para>
     </section>
 
     <section>
       <title>Invoke a task</title>
 
-      <para>Tasks can be invoked asynchronously from within any
-      application running inside TorqueBox, e.g. your Rails
-      app.</para>
+      <para>Tasks can be invoked asynchronously from within any application
+      running inside TorqueBox, e.g. your Rails app.</para>
 
       <para><example>
-    <title>Spawning a task from a Rails controller</title>
+          <title>Spawning a task from a Rails controller</title>
 
-    <para><programlisting>class UserController &lt; ApplicationController
+          <para><programlisting>class UserController &lt; ApplicationController
   def register
     user = User.new(params[:user])
     ...
@@ -545,11 +582,11 @@ end</programlisting></para>
     ...
     EmailerTask.async(:send_password, :address =&gt; params[:email])
   end
-end</programlisting>The first parameter to the <function>async(...)</function> class
-method is a symbol indicating the method to execute asynchronously.
-Optional hash pairs comprising the payload of the message follow.</para>
-      </example></para>
+end</programlisting>The first parameter to the <function>async(...)</function>
+          class method is a symbol indicating the method to execute
+          asynchronously. Optional hash pairs comprising the payload of the
+          message follow.</para>
+        </example></para>
     </section>
-
   </section>
 </chapter>
