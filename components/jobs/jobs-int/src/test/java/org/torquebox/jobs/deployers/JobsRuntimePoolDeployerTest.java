@@ -25,9 +25,8 @@ public class JobsRuntimePoolDeployerTest extends AbstractDeployerTestCase {
 	/** Ensure an existing pool definition is accepted as-is. */
 	@Test
 	public void testPoolDefinedAlready() throws Exception {
-		PoolMetaData jobsPoolMetaData = new PoolMetaData();
+		PoolMetaData jobsPoolMetaData = new PoolMetaData( "jobs" );
 		jobsPoolMetaData.setShared();
-		jobsPoolMetaData.setName( "jobs" );
 		
 		String deploymentName = createDeployment( "pool-defined" );
 		DeploymentUnit unit = getDeploymentUnit( deploymentName );
@@ -47,9 +46,8 @@ public class JobsRuntimePoolDeployerTest extends AbstractDeployerTestCase {
 	/** Ensure an existing pool definition is accepted as-is even if jobs signal requirement. */
 	@Test
 	public void testPoolDefinedAlreadyWithJobs() throws Exception {
-		PoolMetaData jobsPoolMetaData = new PoolMetaData();
+		PoolMetaData jobsPoolMetaData = new PoolMetaData( "jobs" );
 		jobsPoolMetaData.setShared();
-		jobsPoolMetaData.setName( "jobs" );
 		
 		String deploymentName = createDeployment( "pool-defined" );
 		DeploymentUnit unit = getDeploymentUnit( deploymentName );
