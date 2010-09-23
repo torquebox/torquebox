@@ -5,49 +5,99 @@
   <title>Ruby Runtime Pooling</title>
 
   <section>
-    <title>Control thread concurrency using
-    <filename>pooling.yml</filename></title>
+    <title>Default Ruby Interpreter Configuration</title>
+    
+    <para>
+      To run Ruby code inside a Java application server, the TorqueBox
+      platform requires a Ruby interpreter, provided by <ulink
+      url="http://www.jruby.org">JRuby</ulink>.  TorqueBox provides a
+      simple but flexible means of mapping the app server's threads of
+      execution to one or more Ruby interpreters, giving you complete
+      concurrency control, but the defaults should be reasonable.
+    </para>
 
-    <para>Since the TorqueBox platform supports Rails 2.2+, which are
-    threadsafe, the default mode of operation is to share a single Ruby
-    runtime across threads.</para>
+    <para>
+      TorqueBox defines three types of "pools" from which a Ruby interpreter may be obtained:
+    </para>
 
-    <para>If your application is not designed to be threadsafe, you can
-    instead pool the runtimes allowing a single-theaded model. Typically, if
-    your application creates and uses global variables to manage state for a
-    single request, you may have problems with the default multithreaded
-    behavior.</para>
+    <itemizedlist>
+      <listitem><para><emphasis>GLOBAL</emphasis> - all global pools return the same global interpreter</para></listitem>
+      <listitem><para><emphasis>SHARED</emphasis> - a shared pool has its own dedicated interpreter, shared by each of its clients</para></listitem>
+      <listitem><para><emphasis>NON_SHARED</emphasis> - a non-shared pool is configured with a minimum and maximum number of interpreters, each exclusively accessible to
+      exactly one client at a time, blocking until one is available</para></listitem>
+    </itemizedlist>
 
-    <para>To enable pooling-mode instead of shared multithreading you need to
-    add a YAML file at
-    <filename><envar>$RAILS_ROOT</envar>/config/pooling.yml</filename>. This
-    file is optional, and only required if you wish to enable pooling.</para>
+    <para>
+      Both shared and non-shared pools present tradeoffs that vary
+      accross applications.  In general, shared pools use fewer
+      resources and should be more performant, but require your
+      application to be threadsafe.
+    </para>
+      
+    <para>
+      TorqueBox creates three separate interpreter pools at runtime:
+      one for web requests, one for scheduled jobs, and one for
+      messaging.  By default, these are all SHARED pools.  For
+      Rails/Rack applications running in development mode, however,
+      NON_SHARED pools are used for jobs and messaging.  This is to
+      support the convenience of auto-reloading modified classes
+      without introducing a race condition between multiple jobs or
+      message processors.
+    </para>
 
-    <section>
-      <title>Pooling for web requests</title>
+    <para>
+      Since TorqueBox supports Rails versions 2.2 and above, all of
+      which are threadsafe, the default mode of operation for web
+      requests is to share a single Ruby runtime across threads,
+      irrespective of development mode.
+    </para>
 
-      <para>A section named web defines the pooling configuration for all
-      regular web requests. This does not include SOAP endpoints. SIP requests
-      do participate in the web pool, though.</para>
+  </section>
 
-      <para>Web pooling is defined by creating a section named
-      <classname>web</classname>, and specifying <parameter>min</parameter>
-      and <parameter>max</parameter> parameters for the pool. The minimum
-      number of runtimes will be created before your application starts. As
-      the available items in the pool are exhausted, new ones will be
-      asynchronously created, up to the maximum specified.</para>
+  <section>
+    <title>Control thread concurrency using <filename>pooling.yml</filename></title>
 
-      <para>Currently there is no reaping performed on the pool reduce its
-      size.</para>
+    <para>
+      If your application is not designed to be threadsafe, you can
+      instead pool the interpreters resulting in a single-threaded
+      model. You can do this for jobs, messaging, and/or web requests.
+      Typically, if your application creates and uses global variables
+      to manage state for a single web request, you may have problems
+      with the default multithreaded behavior.
+    </para>
 
-      <para><example>
-          <title>Example config/pooling.yml</title>
+    <para>
+      To modify the default interpreter pool configuration, you can
+      add a YAML file at
+      <filename><envar>$RAILS_ROOT</envar>/config/pooling.yml</filename>. This
+      file is optional, and only required if you wish to modify the
+      defaults.
+    </para>
 
-          <para><screen>web:
-  min: 2
-  max: 30</screen></para>
-        </example></para>
-    </section>
+    <para><example>
+      <title>Example <filename>pooling.yml</filename> showing development mode defaults</title>
+
+          <para><screen>jobs: 
+  min: 1
+  max: 2
+
+messaging:
+  min: 1
+  max: 2
+
+web: shared
+          </screen></para>
+          <para>
+            Note the keys for each pool: <emphasis>jobs</emphasis>,
+            <emphasis>messaging</emphasis>, and
+            <emphasis>web</emphasis>.  For non-shared pools,
+            <emphasis>min</emphasis> and <emphasis>max</emphasis> are
+            required.  Otherwise, use the keywords
+            <emphasis>shared</emphasis> or <emphasis>global</emphasis>
+            to specify SHARED and GLOBAL pools, respectively.
+          </para>
+    </example></para>
+
   </section>
 
 </chapter>
