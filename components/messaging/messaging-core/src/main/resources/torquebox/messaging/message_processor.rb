@@ -1,3 +1,4 @@
+require 'torquebox/messaging/javax_jms_text_message'
 
 module TorqueBox
   module Messaging
@@ -21,7 +22,7 @@ module TorqueBox
       def process!(message)
         @message = message
         begin
-          on_message( message.text )
+          on_message( message.decode )
         rescue => e
           on_error( e ) 
         end 

@@ -1,4 +1,4 @@
-require 'torquebox/messaging/ext/javax_jms_text_message'
+require 'torquebox/messaging/javax_jms_text_message'
 
 module javax.jms::Session
 
