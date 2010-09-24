@@ -1,3 +1,4 @@
+require 'torquebox/messaging/ext/javax_jms_text_message'
 
 module javax.jms::Session
 
@@ -7,16 +8,20 @@ module javax.jms::Session
   def publish(destination_name, message)
     destination = lookup_destination( destination_name )
     producer = createProducer( destination )
-    jms_message = createTextMessage( message )
+    jms_message = create_text_message
+    jms_message.encode message
     producer.send( jms_message )
     producer.close
   end
 
-  def receive(destination_name)
+  # Returns decoded message, by default.  Pass :decode=>false to
+  # return the original JMS TextMessage
+  def receive(destination_name, options={})
+    decode = options.fetch(:decode, true)
     destination = lookup_destination( destination_name )
     consumer = createConsumer( destination )
     jms_message = consumer.receive
-    jms_message.text
+    decode ? jms_message.decode : jms_message
   end
 
   def lookup_destination(destination_name)
@@ -24,3 +29,4 @@ module javax.jms::Session
   end
 
 end
+

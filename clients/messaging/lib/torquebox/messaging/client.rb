@@ -24,7 +24,11 @@ module TorqueBox
         end
       end
 
-      def self.connect(transacted=true, ack_mode=AUTO_ACK, naming_host=nil, naming_port=nil, &block)
+      def self.connect(options={}, &block)
+        transacted = options.fetch(:transacted, true)
+        ack_mode = options.fetch(:ack_mode, AUTO_ACK)
+        naming_host = options[:naming_host]
+        naming_port = options[:naming_port]
         connection_factory = nil
         TorqueBox::Naming.connect( naming_host, naming_port ) do |context|
           connection_factory = context['/ConnectionFactory']

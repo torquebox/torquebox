@@ -1,5 +1,4 @@
-require 'torquebox/messaging/client'
-require 'base64'
+require 'torquebox/messaging/destination'
 
 module TorqueBox
   module Messaging
@@ -11,27 +10,13 @@ module TorqueBox
       end
 
       def self.async(method, payload={})
-        TorqueBox::Messaging::Client.connect() do |session|
-          queue    = session.create_queue( queue_name )
-          producer = session.create_producer( queue )
-
-          message = session.create_text_message
-          message.set_string_property( 'method', method.to_s )
-          marshalled = Marshal.dump( payload )
-          encoded = Base64.encode64( marshalled )
-          message.text = encoded
-
-          producer.send( message )
-          session.commit
-        end
+        message = {:method => method, :payload => payload}
+        Queue.new(queue_name).publish message
       end
 
       def process!(message)
-        encoded = message.text
-        serialized = Base64.decode64( encoded )
-        payload = Marshal.restore( serialized )
-        method = message.get_string_property( 'method' )
-        self.send method.to_sym, payload
+        hash = message.decode
+        self.send hash[:method].to_sym, hash[:payload]
       end
 
     end

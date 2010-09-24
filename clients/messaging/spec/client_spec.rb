@@ -8,27 +8,6 @@ require 'torquebox/messaging/client'
 
 describe TorqueBox::Messaging::Client do
 
-=begin
-  describe "basics" do 
-    before(:each) do
-      @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
-      @container.enable( TorqueBox::Messaging::MessageBroker ) 
-      @container.start
-    end
-  
-    after(:each) do
-      @container.stop
-    end
-  
-    it "should be connectable" do
-      TorqueBox::Messaging::Client.connect do |session|
-        session.should_not be_nil
-      end
-    end
-  end
-=end
-
   describe "sending and receiving" do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
@@ -84,6 +63,53 @@ describe TorqueBox::Messaging::Client do
 
       received_message.should_not be_nil
       received_message.should eql( "howdy" )
+    end
+
+    it "should be able to send and receive a non-String message" do
+      message = {:string => "a string", :symbol => :a_symbol, :hash => {}, :array => []}
+      received_message = nil
+
+      TorqueBox::Messaging::Client.connect() do |session|
+        session.publish( '/queues/foo', message )
+        session.commit
+        received_message = session.receive( '/queues/foo' )
+        session.commit
+      end
+
+      received_message.should_not be_nil
+      received_message.should eql( message )
+    end
+
+    it "should identify a non-String message with a text property" do
+      received_message = nil
+      TorqueBox::Messaging::Client.connect() do |session|
+        session.publish( '/queues/foo', [] )
+        session.commit
+        received_message = session.receive( '/queues/foo', :decode => false )
+        session.commit
+      end
+      received_message.decode.should eql( [] )
+      received_message.get_string_property( 'torquebox_encoding' ).should eql( 'base64' )
+    end
+
+    it "should not identify a String message with a text property" do
+      received_message = nil
+      TorqueBox::Messaging::Client.connect() do |session|
+        session.publish( '/queues/foo', "foo" )
+        session.commit
+        received_message = session.receive( '/queues/foo', :decode => false )
+        session.commit
+      end
+      received_message.text.should eql( "foo" )
+      received_message.decode.should eql( "foo" )
+      received_message.get_string_property( 'torquebox_encoding' ).should be_nil
+    end
+
+    it "should be able to get a reference to JMSServerManager" do
+      @container["JMSServerManager"].should_not be_nil
+      require 'org/torquebox/interp/core/kernel'
+      TorqueBox::Kernel.kernel = @container.kernel
+      TorqueBox::Kernel.lookup("JMSServerManager").should_not be_nil
     end
   
   end

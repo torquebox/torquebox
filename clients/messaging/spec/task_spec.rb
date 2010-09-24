@@ -7,55 +7,34 @@ end
 
 describe TorqueBox::Messaging::Task do
 
-  it "should marshal payloads correctly" do
-    TorqueBox::Messaging::Client.should_receive(:connect).and_yield(mock_session)
+  it "should send payload correctly" do
+    expectation = {:method => :payload=, :payload => {:foo => 'bar'}}
+    queue = mock("queue")
+    queue.should_receive(:publish).with(expectation) 
+    TorqueBox::Messaging::Queue.should_receive(:new).with(MyTestTask.queue_name).and_return(queue)
+
     MyTestTask.async(:payload=, :foo => 'bar')
+  end
+
+  it "should process payload correctly" do
+    expectation = {:method => :payload=, :payload => {:foo => 'bar'}}
+    message = mock("message")
+    message.should_receive(:decode).and_return(expectation)
+
     task = MyTestTask.new
-    task.process! @message
+    task.process! message
     task.payload[:foo].should == 'bar'
   end
 
   it "should handle nil payload as empty hash" do
-    TorqueBox::Messaging::Client.should_receive(:connect).and_yield(mock_session)
+    queue = mock("queue")
+    queue.should_receive(:publish).with(hash_including(:payload => {})) 
+    TorqueBox::Messaging::Queue.should_receive(:new).with(MyTestTask.queue_name).and_return(queue)
     MyTestTask.async(:payload=)
-    task = MyTestTask.new
-    task.process! @message
-    task.payload.should be_empty
   end
 
   it "should derive the queue name from the class name" do
     MyTestTask.queue_name.should == "/queues/torquebox/tasks/mytest"
   end
 
-
-  before(:each) do
-    @message = Message.new
-  end
-  
-  # Kinda hate that all this knowledge of JMS impl is required, but...
-  def mock_session
-    session = mock("session")
-    producer = mock("producer")
-    session.should_receive(:create_queue)
-    session.should_receive(:create_producer).and_return(producer)
-    session.should_receive(:create_text_message).and_return(@message)
-    producer.should_receive(:send).with(@message)
-    session.should_receive(:commit)
-    session
-  end
-
-  class Message
-    attr_accessor :text
-    def initialize
-      @property = {}
-    end
-    def set_string_property k, v
-      raise "String required" unless k.kind_of? String and v.kind_of? String
-      @property[k] = v
-    end
-    def get_string_property k
-      @property[k]
-    end
-  end
-      
 end

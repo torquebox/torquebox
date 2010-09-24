@@ -1,19 +1,26 @@
 require 'org/torquebox/interp/core/kernel'
+require 'torquebox/messaging/client'
 
 module TorqueBox
   module Messaging
 
     module Destination
+      attr_reader :name
+
       def initialize name
-        destination.name = name
+        @name = name
       end
       
-      def name
-        destination.name
+      def publish message, options={}
+        Client.connect(options) do |session|
+          session.publish name, message
+          session.commit if session.transacted?
+        end
       end
 
       def start
         TorqueBox::Kernel.lookup("JMSServerManager") do |server|
+          destination.name = name
           destination.server = server
           destination.start
         end
@@ -21,6 +28,7 @@ module TorqueBox
 
       def destroy
         TorqueBox::Kernel.lookup("JMSServerManager") do |server|
+          destination.name = name
           destination.server = server
           destination.destroy
         end
