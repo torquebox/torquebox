@@ -26,12 +26,15 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/docbook-src/${translation.dash}</outputDirectory>
+              <outputDirectory>${basedir}/target/docbook/staging/docbook/${translation.dash}</outputDirectory>
               <encoding>UTF-8</encoding>
               <resources>
                 <resource>
                   <directory>${basedir}/src/main/docbook</directory>
                   <filtering>true</filtering>
+                  <includes>
+                    <include>**/*.xml</include>
+                  </includes>
                 </resource>
               </resources>
             </configuration>
@@ -57,7 +60,7 @@
         </dependencies>
         <configuration>
           <fontsDirectory>${basedir}/../src/main/fonts</fontsDirectory>
-          <sourceDirectory>${basedir}/target/docbook-src/</sourceDirectory>
+          <sourceDirectory>${basedir}/target/docbook/staging/docbook/</sourceDirectory>
           <sourceDocumentName>master.xml</sourceDocumentName>
           <imageResource>
             <directory>${basedir}/src/main/docbook/</directory>
@@ -73,20 +76,29 @@
               <finalName>${pom.artifactId}.pdf</finalName>
             </format>
             <format>
-              <formatName>html</formatName>
+              <formatName>xhtml</formatName>
               <stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
               <finalName>index.html</finalName>
             </format>
+<!--
             <format>
               <formatName>html_single</formatName>
               <stylesheetResource>classpath:/xslt/org/jboss/xhtml-single.xsl</stylesheetResource>
               <finalName>${pom.artifactId}.html</finalName>
             </format>
+-->
           </formats>
           <options>
             <xincludeSupported>true</xincludeSupported>
             <docbookVersion>1.72.0</docbookVersion>
+            <xincludeSupported>true</xincludeSupported>
+            <useRelativeImageUris>true</useRelativeImageUris>
+            <xmlTransformerType>saxon</xmlTransformerType>
             <transformerParameters>
+              <property>
+                <name>keep.relative.image.uris</name>
+                <value>1</value>
+              </property>
               <property>
                 <name>ignore.image.scaling</name>
                 <value>0</value>

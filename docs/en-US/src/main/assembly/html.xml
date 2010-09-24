@@ -7,7 +7,7 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>target/docbook/publish/en-US/html</directory>
+      <directory>target/docbook/publish/en-US/xhtml</directory>
       <outputDirectory>/</outputDirectory>
       <includes>
         <include>**/*</include>
