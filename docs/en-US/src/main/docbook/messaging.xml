@@ -7,6 +7,16 @@
   <section>
     <title>Introduction</title>
 
+    <formalpara>
+      <title>HornetQ</title>
+
+      <para>TorqueBox integrates the JBoss HornetQ message broker technology.
+      It is automatically available to you, with no additional configuration
+      required to start the messaging service. HornetQ supports clustered
+      messaging, to allow for load-balancing, failover, and other advanced
+      deployments.</para>
+    </formalpara>
+
     <para>The term "messaging" encompasses a large area of functionality.
     Messaging solutions are used to achieve loosely-coupled, asynchronous
     systems. The primary actors in a messaging-based system are messages,
@@ -16,13 +26,13 @@
 
     <mediaobject>
       <imageobject role="html">
-        <imagedata align="center" fileref="images/messaging-overview.png"
-                   format="PNG" contentwidth="4in"/>
+        <imagedata align="center" contentwidth="4in"
+                   fileref="images/messaging-overview.png" format="PNG" />
       </imageobject>
 
       <imageobject role="fo">
-        <imagedata align="center" fileref="images/messaging-overview.svg"
-                   format="SVG" contentwidth="4in"/>
+        <imagedata align="center" contentwidth="4in"
+                   fileref="images/messaging-overview.svg" format="SVG" />
       </imageobject>
     </mediaobject>
 
@@ -57,134 +67,34 @@
 
     <mediaobject>
       <imageobject role="html">
-        <imagedata align="center"
+        <imagedata align="center" contentwidth="4in"
                    fileref="images/messaging-queues-vs-topics.png"
-                   format="PNG" contentwidth="4in"/>
+                   format="PNG" />
       </imageobject>
 
       <imageobject role="fo">
-        <imagedata align="center"
+        <imagedata align="center" contentwidth="4in"
                    fileref="images/messaging-queues-vs-topics.svg"
-                   format="SVG" contentwidth="4in"/>
+                   format="SVG" />
       </imageobject>
     </mediaobject>
 
     <formalpara>
       <title>Producers</title>
 
-      <para>A producer</para>
+      <para>Any component or client code that creates messages and gives them
+      to the message broker for delivery is considered a
+      <glossterm>producer</glossterm>. Generally speaking, the producer does
+      not know the details of the destination.</para>
     </formalpara>
 
     <formalpara>
       <title>Consumers</title>
 
-      <para>A consumer</para>
+      <para>Any component that waits for messages to be delivered to it by the
+      message broker is consider a <glossterm>consumer</glossterm>. A consumer
+      is unaware of the producer and any other consumers, potentially.</para>
     </formalpara>
-  </section>
-
-  <section>
-    <title>Message Broker</title>
-
-    <section>
-      <title>Basics</title>
-
-      <para>A message broker is simply a service that facilitates asynchronous
-      message-passing between application components.</para>
-    </section>
-
-    <section>
-      <title>HornetQ</title>
-
-      <para>TorqueBox integrates the JBoss HornetQ message broker technology.
-      It is automatically available to you, with no additional configuration
-      required to start the messaging service. HornetQ supports clustered
-      messaging, to allow for load-balancing, failover, and other advanced
-      deployments.</para>
-    </section>
-
-    <section>
-      <title>Producers and Consumers</title>
-
-      <para>While some components may be purely a producer, or purely a
-      consumer, the roles are not mutually exclusive. Many components may
-      rightly play multiple roles, consuming and producing messages in the act
-      of performing its actions.</para>
-
-      <formalpara>
-        <title>Producers</title>
-
-        <para>Any component or client code that creates messages and gives
-        them to the message broker for delivery is considered a
-        <glossterm>producer</glossterm>. Generally speaking, the producer does
-        not know the details of the destination.</para>
-      </formalpara>
-
-      <formalpara>
-        <title>Consumers</title>
-
-        <para>Any component that waits for messages to be delivered to it by
-        the message broker is consider a <glossterm>consumer</glossterm>. A
-        consumer is unaware of the producer and any other consumers,
-        potentially.</para>
-      </formalpara>
-    </section>
-
-    <section>
-      <title>Queues and Topics</title>
-
-      <para>The message broker supports two different delivery semantics,
-      referred to as <glossterm>queues</glossterm> and
-      <glossterm>topics</glossterm>, which are specialization of the generic
-      idea of <glossterm>destinations</glossterm>.</para>
-
-      <section>
-        <title>Destinations</title>
-
-        <para>A destination represents a place a message producer sends
-        messages. From the producer's point-of-view, every destination,
-        whether a queue or a topic, is simply a place to deposit messages.
-        From the consumer's point-of-view, every destination, whether a queue
-        or a topic, is simply a place to pick up messages.</para>
-
-        <para>The specific semantics of a destination, while important in the
-        design of application components, does not necessary affect how
-        individual producers or consumers are created. The topology of how
-        messages flow between them is defined outside of the scope of any
-        individual producer or consumer.</para>
-
-        <para>In all cases, a destination may be fed messages from multiple
-        producers.</para>
-      </section>
-
-      <section>
-        <title>Queues</title>
-
-        <para>A queue is a destination that allows multiple consumers to
-        withdraw messages from it, but each message is delivered to exactly
-        one consumer. Imagine a bank with multiple customer service windows,
-        but a single line. As each bank teller becomes available, the next
-        person in line goes to the next open window. In this scenario, the
-        window tellers are the consumers, and the line of customers waiting
-        service represent the queue of messages.</para>
-
-        <para>While a single consumer is allowed to consume each message,
-        multiple producers may be responsible for placing messages into the
-        queue.</para>
-      </section>
-
-      <section>
-        <title>Topics</title>
-
-        <para>A topic is a destination that sends a copy of a message to all
-        interested consumers. Presentations at conferences may be thought of
-        as topics. Each audience member has expressed interest in a particular
-        topic, and the message producers are the presenters at the front of
-        the hall.</para>
-
-        <para>Multiple consumers receive the same message, and multiple
-        producers may be adding messages to the topic.</para>
-      </section>
-    </section>
   </section>
 
   <section>
