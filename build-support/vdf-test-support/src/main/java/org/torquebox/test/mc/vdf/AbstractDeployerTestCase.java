@@ -192,7 +192,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 	}
 
 	protected JavaArchive createJar(String name) {
-		return ShrinkWrap.create(name, JavaArchive.class);
+		return ShrinkWrap.create(JavaArchive.class, name);
 	}
 
 	protected File createJarFile(JavaArchive archive) throws IOException {
