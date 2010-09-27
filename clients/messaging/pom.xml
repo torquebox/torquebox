@@ -77,6 +77,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
