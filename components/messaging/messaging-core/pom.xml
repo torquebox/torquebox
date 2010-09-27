@@ -48,6 +48,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-core</artifactId>
       <scope>provided</scope>
@@ -87,28 +93,17 @@
 
   <build>
     <plugins>
-<!--
+
       <plugin>
         <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
+        <artifactId>rspec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>install-dependency-gems</id>
-          </execution>
-          <execution>
-            <id>default-cli</id>
-            <goals>
-              <goal>gemify</goal>
-            </goals>
-            <configuration>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>${project.artifactId}</artifactId>
-              <version>${project.version}</version>
-            </configuration>
+            <id>run-specs</id>
           </execution>
         </executions>
       </plugin>
--->
+
     </plugins> 
   </build> 
 
