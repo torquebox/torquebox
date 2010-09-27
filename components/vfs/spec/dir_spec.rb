@@ -42,7 +42,8 @@ describe "Dir extensions for VFS" do
     end
   end
   
-  [ :absolute, :relative ].each do |style|
+  #[ :absolute, :relative ].each do |style|
+  [ :relative ].each do |style|
     describe "with #{style} paths" do
 
       case ( style )
@@ -95,7 +96,7 @@ describe "Dir extensions for VFS" do
         items.should include( "#{prefix}/home/larry/file2.txt" )
         items.should include( "#{prefix}/home/larry/archive1.jar" )
       end
-  
+
       it "should determine if VFS is needed for archives" do
         items = Dir.glob( "#{@archive1_path}/*" )
         items.should_not be_empty
@@ -133,6 +134,16 @@ describe "Dir extensions for VFS" do
         items.should_not include( "#{prefix}/home/larry/archive1.jar/lib/archive4.txt" )
       end
 
+      it "should allow alternation globbing wiht trailing comma" do
+        items = Dir.glob( "#{prefix}/home/todd/index{.en,}{.html,}{.erb,.haml,}" )
+        items.should_not be_empty
+        items.size.should eql 4
+        items.should     include( "#{prefix}/home/todd/index.html.erb" )
+        items.should     include( "#{prefix}/home/todd/index.en.html.erb" )
+        items.should     include( "#{prefix}/home/todd/index.html.haml" )
+        items.should     include( "#{prefix}/home/todd/index.en.html.haml" )
+      end
+
       it "should allow for double-star globbing within archives" do
         #items = Dir.glob( "#{prefix}#{TEST_DATA_DIR}/home/larry/**/*{.zip,.jar,.ear}" )
         items = Dir.glob( "#{prefix}/home/larry/archive1.jar/**/*.jar" )
@@ -142,6 +153,7 @@ describe "Dir extensions for VFS" do
         items.should     include( "#{prefix}/home/larry/archive1.jar/other_lib/subdir/archive6.jar" )
         items.should_not include( "#{prefix}/home/larry/archive1.jar/lib/archive4.txt" )
       end
+
     end
   end
 

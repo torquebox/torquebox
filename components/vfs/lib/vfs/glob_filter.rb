@@ -17,7 +17,7 @@ module VFS
           gs.gsub!( /\*/, '[^\/]*')
           gs.gsub!( /\?/, '.')
           gs.gsub!( /\{[^\}]+\}/ ) do |m|
-            options = m[1..-2].split(',')
+            options = m[1..-2].split(',', -1)
             options = options.collect{|e| "(#{e})"}
             "(#{options.join('|')})"
           end
@@ -29,7 +29,7 @@ module VFS
       end
       
       regexp_str = regexp_segments.join
-      ##puts "regexp_str(1) [#{regexp_str}]"
+      #puts "regexp_str(1) [#{regexp_str}]"
       if ( @child_path && @child_path != '' )
         regexp_str = ::File.join( "^#{@child_path}", "#{regexp_str}$" )
       else
