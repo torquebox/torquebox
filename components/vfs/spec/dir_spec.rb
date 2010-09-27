@@ -42,8 +42,7 @@ describe "Dir extensions for VFS" do
     end
   end
   
-  #[ :absolute, :relative ].each do |style|
-  [ :relative ].each do |style|
+  [ :absolute, :relative ].each do |style|
     describe "with #{style} paths" do
 
       case ( style )
