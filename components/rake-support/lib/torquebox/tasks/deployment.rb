@@ -73,7 +73,8 @@ namespace :torquebox do
   desc "Undeploy the app in the current directory"
   task :undeploy=>['torquebox:check'] do
     app_name = File.basename( Dir.pwd )
-    JBoss::RakeUtils.undeploy( deployment_name( app_name, Dir.pwd ) )
+    deployment_name = deployment_name( app_name, Dir.pwd )
+    JBoss::RakeUtils.undeploy( deployment_name )
     puts "Undeployed #{deployment_name}"
   end
 
