@@ -1,8 +1,11 @@
 <!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN" "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<appendix id="lgpl">
+<appendix id="license-jboss">
   <title>
     <acronym>GNU</acronym> Lesser General Public License version 3
   </title>
+  <subtitle>
+    JBoss AS and TorqueBox License
+  </subtitle>
   <para>
     Version 3, 29 June 2007
   </para>

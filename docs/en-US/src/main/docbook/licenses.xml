@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE appendix PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<appendix id="licenses">
+  <title>Licensing</title>
+
+  <para>A variety of third-party components are used in the construction of
+  TorqueBox. </para>
+
+  <para></para>
+
+  <formalpara>
+    <title>JBoss AS &amp; TorqueBox</title>
+
+    <para>JBoss AS and TorqueBox are licensed under the LGPL (see <xref
+    linkend="license-jboss" />). The TorqueBox documentation is licensed under
+    a Creative-Commons license (see <xref
+    linkend="license-cc-by-sa" />).</para>
+  </formalpara>
+
+  <formalpara>
+    <title>JRuby and JRuby-Rack</title>
+
+    <para>Portions of code have been borrowed from JRuby (see <xref
+    linkend="license-jruby" />) and JRuby-Rack (see <xref
+    linkend="license-jruby-rack" />).</para>
+  </formalpara>
+</appendix>

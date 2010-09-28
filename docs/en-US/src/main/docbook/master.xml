@@ -47,43 +47,12 @@
   <xi:include href="capistrano-support.xml"
               xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="lgpl-3.0.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <xi:include href="mit.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="license-jboss.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="license-jruby.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="license-jruby-rack.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="license-liberation-fonts.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="cc-by-sa.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
-  <!--
-  <xi:include href="cc-sa.xml"
-              xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <part>
-    <title>Basics</title>
-
-    <xi:include href="basics/deployer-installation.xml"
-                xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-    <xi:include href="basics/preparing-your-rails-app.xml"
-                xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-    <xi:include href="basics/deploying.xml"
-                xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-    <xi:include href="basics/managing-jboss-as.xml"
-                xmlns:xi="http://www.w3.org/2001/XInclude" />
-  </part>
-
-  <part>
-    <title>Beyond</title>
-
-    <xi:include href="beyond/task-queues.xml"
-                xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-    <xi:include href="beyond/scheduled-jobs.xml"
-                xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-    <xi:include href="beyond/soap-endpoints.xml"
-                xmlns:xi="http://www.w3.org/2001/XInclude" />
-
-    <xi:include href="beyond/telco-support.xml"
-		xmlns:xi="http://www.w3.org/2001/XInclude" />	
-  </part>
--->
 </book>
