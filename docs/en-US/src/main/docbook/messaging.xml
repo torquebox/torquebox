@@ -205,6 +205,137 @@
   </section>
 
   <section>
+    <title>TorqueBox Ruby Classes</title>
+
+    <para>
+      All classes in the <classname>TorqueBox::Messaging</classname>
+      module reside in the Ruby gem,
+      <filename>org.torquebox.torquebox-messaging-client</filename>,
+      so to use them in your Rails app, add this to your
+      <filename>config/environment.rb</filename>:
+    </para>
+    <example>
+      <title>To use <classname>TorqueBox::Messaging</classname> in a Rails app</title>
+      <para>
+        <programlisting>Rails::Initializer.run do |config|
+  ...
+  config.gem 'org.torquebox.torquebox-messaging-client'
+  ...</programlisting>
+      </para>
+    </example>
+    <para>
+      And to use them in any other JRuby script, you would do something
+      like this:
+    </para>
+    <example>
+      <title>To use <classname>TorqueBox::Messaging</classname> in a shell script</title>
+      <para>
+        <programlisting>#!/usr/bin/env jruby
+
+require 'rubygems'
+require 'org.torquebox.torquebox-messaging-client'
+        </programlisting>
+      </para>
+    </example>
+  </section>
+
+  <section id="producers">
+    <title>Ruby Producers</title>
+
+    <para>
+      It's trivial to publish a message to a JMS
+      <classname>Queue</classname> or <classname>Topic</classname>
+      with TorqueBox.  And if all of your message consumers are Ruby
+      clients, the contents of the messages can be any serializable
+      Ruby or Java object.  You just need to ensure that the type of
+      content you produce resides in the runtime environments of both
+      the producer and the consumer.
+    </para>
+
+    <para>
+      To send a message, simply construct either a
+      <classname>Topic</classname> or a <classname>Queue</classname>
+      instance with its name, and then call its publish method.  The
+      API's of both Topics and Queues are identical; they each simply
+      represent a destination for your messages.
+    </para>
+
+    <example>
+      <title>Publish text messages</title>
+
+      <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+queue.publish "A text message"
+
+topic = TorqueBox::Messaging::Topic.new('/topics/foo')
+topic.publish "A text message"
+      </programlisting></para>
+    </example>
+
+    <example>
+      <title>Publish a Ruby Hash</title>
+
+      <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+queue.publish {:key => 'value', :list => %w{one two three}}
+      </programlisting></para>
+      <para>This is enormously convenient, as any serializable object
+      is permitted, but it only makes sense if your queue consumers
+      are also written in Ruby.</para>
+    </example>
+
+    <para>
+      The <methodname>publish</methodname> method accepts an optional
+      hash of arguments that affect its behavior.
+    </para>
+
+    <table>
+      <title>Message sending options</title>
+
+      <tgroup cols="3">
+        <colspec align="left" />
+
+        <thead>
+          <row>
+            <entry>Option</entry>
+            <entry>Default</entry>
+            <entry>Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><varname>:naming_host</varname></entry>
+            <entry>localhost</entry>
+            <entry>Should be the hostname or ip address of the JNDI naming server containing the destination names.</entry>
+          </row>
+          <row>
+            <entry><varname>:naming_port</varname></entry>
+            <entry>1099</entry>
+            <entry>The port of the JNDI naming server.</entry>
+          </row>
+          <row>
+            <entry><varname>:ack_mode</varname></entry>
+            <entry><varname>:auto</varname></entry>
+            <entry>Corresponds to one of the three <classname>javax.jms.Session</classname> modes for message delivery acknowledgement: <varname>:auto</varname>, <varname>:client</varname> and <varname>:dups_ok</varname>.</entry>
+          </row>
+          <row>
+            <entry><varname>:transacted</varname></entry>
+            <entry>true</entry>
+            <entry>Indicates whether the underlying session is in <emphasis>transacted</emphasis> mode.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <example>
+      <title>Send message using a remote JNDI server</title>
+
+      <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+queue.publish "Some message", :naming_host =&gt; 'jndi.jboss.org', :naming_port =&gt; 1099 </programlisting></para>
+    </example>
+
+  </section>
+
+  <section>
     <title>Ruby Consumers</title>
 
     <para>Message consumers may be implemented in Ruby and easily attached to
@@ -232,20 +363,20 @@ end</programlisting></para>
     </section>
 
     <section>
-      <title>Syntactic sugar for Text-based messages</title>
+      <title>Syntactic sugar for message consumers</title>
 
-      <para>For simple text-based messages, a consumer may extend
-      <classname>TorqueBox::Messaging::MessageProcessor</classname> and
-      implement an <function>on_message(text)</function> method which will
-      receive the text payload of the message.</para>
+      <para>Message consumers may extend
+      <classname>TorqueBox::Messaging::MessageProcessor</classname>
+      and implement an <function>on_message(body)</function> method
+      which will receive the body of the JMS message.</para>
 
       <para><example>
-          <title>Text-based message consumer</title>
+          <title>MessageProcessor subclass</title>
 
-          <para><programlisting>class MyTextConsumer &lt; TorqueBox::Messaging::MessageProcessor
-  def on_message(text)
-    # process the string `text` payload
-    # the JMS message is available as a member variable called <function>message()</function>
+          <para><programlisting>class MyConsumer &lt; TorqueBox::Messaging::MessageProcessor
+  def on_message(body)
+    # The body will be of whatever type was <link linkend="producers">published by the Producer</link>
+    # the entire JMS message is available as a member variable called <function>message()</function>
   end
 end</programlisting></para>
 
@@ -397,38 +528,6 @@ end</programlisting></para>
         </section>
       </section>
     </section>
-  </section>
-
-  <section>
-    <title>Ruby Producers</title>
-
-    <para>The TorqueBox messaging client is evolving rapidly, and we're
-    focused on better encapsulation of the more obtuse aspects of JMS. But for
-    the time being, direct manipulation of JMS classes via JRuby is the best
-    way to put a message on a queue or topic.</para>
-
-    <example>
-      <title>A simple script that queues a text message</title>
-
-      <para><programlisting>#!/usr/bin/env jruby
-
-require 'rubygems'
-require 'org.torquebox.torquebox-messaging-client'
-
-TorqueBox::Messaging::Client.connect do |session|
-  queue    = session.createQueue( '/queues/foo' )
-  producer = session.createProducer( queue )
-  message  = session.createTextMessage( "The time is #{Time.now}" )
-  producer.send( message )
-  session.commit
- end</programlisting></para>
-
-      <para>The session passed to the block is the actual
-      <classname>javax.jms.Session</classname> instance. Although it's
-      possible to run the above code in say, a Rails controller action,
-      TorqueBox <emphasis>tasks</emphasis> are a much better
-      alternative.</para>
-    </example>
   </section>
 
   <section id="async-tasks">
