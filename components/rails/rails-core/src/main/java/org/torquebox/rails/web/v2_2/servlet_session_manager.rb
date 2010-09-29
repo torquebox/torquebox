@@ -20,7 +20,7 @@
 
 require 'org/torquebox/rails/web/v2_2/servlet_session'
 
-module JBoss
+module TorqueBox
   module Rails
     class ServletSessionManager
       RAILS_SESSION_KEY = "__current_rails_session"

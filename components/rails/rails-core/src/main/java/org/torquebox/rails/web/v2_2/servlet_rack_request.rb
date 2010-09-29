@@ -21,7 +21,7 @@
 require 'action_controller/rack_process'
 require 'org/torquebox/rails/web/v2_2/servlet_session_manager'
 
-module JBoss
+module TorqueBox
   module Rails
     module Rack
       class ServletRackRequest < ActionController::RackRequest
@@ -44,14 +44,14 @@ module JBoss
                     @session = new_session
                   when false
                     begin
-                      @session = JBoss::Rails::ServletSession.new(@cgi, session_options_with_string_keys)
+                      @session = TorqueBox::Rails::ServletSession.new(@cgi, session_options_with_string_keys)
                     # CGI::Session raises ArgumentError if 'new_session' == false
                     # and no session cookie or query param is present.
                     rescue ArgumentError
                       @session = Hash.new
                     end
                   when nil
-                    @session = JBoss::Rails::ServletSession.new(@cgi, session_options_with_string_keys)
+                    @session = TorqueBox::Rails::ServletSession.new(@cgi, session_options_with_string_keys)
                   else
                     raise ArgumentError, "Invalid new_session option: #{value}"
                 end
@@ -64,7 +64,7 @@ module JBoss
         
         def session_options_with_string_keys
           opts = super
-          opts['database_manager'] = JBoss::Rails::ServletSessionManager
+          opts['database_manager'] = TorqueBox::Rails::ServletSessionManager
           opts['servlet_request']  = @servlet_request
           opts['no_cookies'] = true
           opts

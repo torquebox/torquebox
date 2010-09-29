@@ -20,7 +20,7 @@
 
 require 'cgi/session'
 
-module JBoss
+module TorqueBox
   module Rails
     class ServletSession < CGI::Session
       

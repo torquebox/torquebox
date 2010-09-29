@@ -2,7 +2,7 @@ require 'open3'
 require 'tmpdir'
 require 'rbconfig'
 
-module JBoss
+module TorqueBox
   module RakeUtils
     def self.jboss_home
       jboss_home = ENV['JBOSS_HOME'] || ENV['TORQUEBOX_HOME'] && ENV['TORQUEBOX_HOME'] + '/jboss'

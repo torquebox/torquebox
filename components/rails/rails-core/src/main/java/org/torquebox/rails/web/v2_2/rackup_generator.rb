@@ -8,7 +8,7 @@ module TorqueBox
         module Generator
           def self.generate(context)
             ::Rack::Builder.new {
-              run JBoss::Rails::Rack::Dispatcher.new(context)
+              run TorqueBox::Rails::Rack::Dispatcher.new(context)
             }.to_app      
           end
         end

@@ -29,7 +29,7 @@ class Class
             end
             if ( ActionController::SessionManagement::ClassMethods.raw_session_store.nil? )
               require 'org/torquebox/rails/web/v2_3/servlet_session'
-              ActionController::Base.session_store = JBoss::Session::Servlet
+              ActionController::Base.session_store = TorqueBox::Session::Servlet
             end
        	  end
         end

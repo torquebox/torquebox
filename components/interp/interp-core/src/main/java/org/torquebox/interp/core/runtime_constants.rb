@@ -40,7 +40,7 @@ module JBoss
   end
   
   def self.setup_constants(application_name)
-    @version          = Version.new( 6, 0, 0, 'M1' )
+    @version          = Version.new( 6, 0, 0, 'M5' )
     @application_name = application_name
   end
   

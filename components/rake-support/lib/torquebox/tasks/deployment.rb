@@ -66,7 +66,7 @@ namespace :torquebox do
     args.with_defaults(:context_path => '/')
     app_name = File.basename( Dir.pwd )
     deployment_name, deployment_descriptor = deployment( app_name, Dir.pwd, args[:context_path] )
-    JBoss::RakeUtils.deploy_yaml( deployment_name, deployment_descriptor )
+    TorqueBox::RakeUtils.deploy_yaml( deployment_name, deployment_descriptor )
     puts "Deployed #{deployment_name}"
   end
 
@@ -74,7 +74,7 @@ namespace :torquebox do
   task :undeploy=>['torquebox:check'] do
     app_name = File.basename( Dir.pwd )
     deployment_name = deployment_name( app_name, Dir.pwd )
-    JBoss::RakeUtils.undeploy( deployment_name )
+    TorqueBox::RakeUtils.undeploy( deployment_name )
     puts "Undeployed #{deployment_name}"
   end
 
@@ -84,14 +84,14 @@ namespace :torquebox do
       task :archive=>[ 'torquebox:archive' ] do
         archive_name = File.basename( Dir.pwd ) + '.rails'
         src = "#{Dir.pwd}/#{archive_name}"
-        FileUtils.cp( src, JBoss::RakeUtils.deploy_dir )
+        FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
         puts "Deployed #{archive_name}"
       end
     end
     namespace :undeploy do
       task :archive do
         archive_name = File.basename( Dir.pwd ) + '.rails'
-        FileUtils.rm_f( File.join( JBoss::RakeUtils.deploy_dir, archive_name ) )
+        FileUtils.rm_f( File.join( TorqueBox::RakeUtils.deploy_dir, archive_name ) )
         puts "Undeployed #{archive_name}"
       end
     end

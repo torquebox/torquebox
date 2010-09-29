@@ -20,7 +20,7 @@
 
 require 'org/torquebox/rails/web/v2_2/servlet_rack_request'
 
-module JBoss
+module TorqueBox
   module Rails
     module Rack
       class Dispatcher < ActionController::Dispatcher
@@ -29,7 +29,7 @@ module JBoss
         end
         def call(env)
           ActionController::Base.relative_url_root = @relative_url_root
-          @request  = JBoss::Rails::Rack::ServletRackRequest.new(env)
+          @request  = TorqueBox::Rails::Rack::ServletRackRequest.new(env)
           @response = ActionController::RackResponse.new(@request)
           dispatch
         end
