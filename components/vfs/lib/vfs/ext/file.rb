@@ -21,7 +21,7 @@ class File
       if ( Fixnum === fname )
         return File.open_without_vfs( fname, mode_str, &block )
       end
-      unless ( fname.to_s =~ /^vfs:/ )
+      unless ( vfs_path?(fname) )
         return File.open_without_vfs(fname, mode_str, flags, &block )
       end
       if ( File.exist_without_vfs?( name_without_vfs(fname) ) )
@@ -31,11 +31,10 @@ class File
     end
 
     def expand_path(*args)
-      if ( args[1] && args[1].to_s =~ /^vfs:/ )
+      if ( vfs_path?(args[1]) )
         return expand_path_without_vfs(args[0], name_without_vfs(args[1].to_s))
       end
-      path = args[0].to_s
-      return path.dup if ( path =~ /^vfs:/ )
+      return args[0].to_s.dup if ( vfs_path?(args[0]) )
       expand_path_without_vfs(*args)
     end
 
@@ -45,7 +44,7 @@ class File
 
     def unlink(*file_names)
       file_names.each do |file_name|
-        if ( file_name.to_s =~ /^vfs:/ )
+        if ( vfs_path?(file_name) )
           virtual_file = org.jboss.vfs::VFS.child( file_name.to_s )
           raise Errno::ENOENT.new unless virtual_file.exists()
           virtual_file.delete
@@ -151,7 +150,7 @@ class File
       if ( Fixnum === fname )
         return self.new_without_vfs( *args, &block )
       end
-      unless ( fname.to_s =~ /^vfs:/ )
+      unless ( vfs_path?(fname) )
         return self.new_without_vfs( *args, &block )
       end
       if ( File.exist_without_vfs?( name_without_vfs(fname) ) )
@@ -172,7 +171,7 @@ class File
     end
 
     def vfs_path?(path)
-      path =~ /^vfs:/
+      path.to_s =~ /^vfs:/
     end
   end
 
