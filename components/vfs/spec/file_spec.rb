@@ -1,6 +1,7 @@
 
 require File.dirname(__FILE__) + '/spec_helper.rb'
 require 'tempfile'
+require 'pathname'
 
 describe "File extensions for VFS" do
 
@@ -45,9 +46,13 @@ describe "File extensions for VFS" do
   end
 
   it "should expand paths relative to VFS pathnames as absolute" do
-    require 'pathname'
     absolute = File.expand_path("db/development.sqlite3", Pathname.new("vfs:/path/to/app"))
     absolute.should eql("/path/to/app/db/development.sqlite3")
+  end
+
+  it "should expand absolute Pathname objects correctly" do
+    File.expand_path("vfs:/foo").should eql("vfs:/foo")
+    File.expand_path(Pathname.new("vfs:/foo")).should eql("vfs:/foo")
   end
 
   it "should handle vfs urls as readable" do
