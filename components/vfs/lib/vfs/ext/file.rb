@@ -34,7 +34,8 @@ class File
       if ( args[1] && args[1].to_s =~ /^vfs:/ )
         return expand_path_without_vfs(args[0], name_without_vfs(args[1].to_s))
       end
-      return args[0].to_s.dup if ( args[0] =~ /^vfs:/ )
+      path = args[0].to_s
+      return path.dup if ( path =~ /^vfs:/ )
       expand_path_without_vfs(*args)
     end
 
