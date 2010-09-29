@@ -53,6 +53,14 @@
   <xi:include href="license-jruby.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="license-jruby-rack.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="license-liberation-fonts.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/gpl-2.0.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/gpl-3.0.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/lgpl-2.1.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/asl-1.1.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/asl-2.0.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/cpl-1.0.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/bsd.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="licenses/mit.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="cc-by-sa.xml" xmlns:xi="http://www.w3.org/2001/XInclude" />
 
 </book>
