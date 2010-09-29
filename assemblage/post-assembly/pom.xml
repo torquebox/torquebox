@@ -39,11 +39,12 @@
                 <goal>initialize</goal>
               </goals>
               <configuration>
+                <gemArgs>-f</gemArgs>
                 <gemPath>${stage.dir}/jruby/lib/ruby/gems/1.8</gemPath>
                 <gemHome>${stage.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                 <fork>true</fork>
                 <inherit>true</inherit>
-                <gemInitializeArgs>-f --bindir ${stage.dir}/jruby/bin</gemInitializeArgs>
+                <binDirectory>${stage.dir}/jruby/bin</binDirectory>
                 <useTransitiveDependencies>true</useTransitiveDependencies>
                 <installRDoc>${install.docs}</installRDoc>
                 <installRI>${install.docs}</installRI>
