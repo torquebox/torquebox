@@ -1,0 +1,63 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-assemblage-pre-assembly</artifactId>
+    <version>1.0.0.Beta22-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
+
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jruby</groupId>
+  <artifactId>jruby-bin</artifactId>
+  <version>${version.jruby}</version>
+  <packaging>pom</packaging>
+  <name>JRuby Binary Distribution Dependency</name>
+  <description></description>
+
+  <build>
+    <plugins> 
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>download-jruby-bin</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks> 
+                <mkdir dir="${project.build.directory}"/>
+                <get src="${jruby.bin.url}" dest="${project.build.directory}/jruby-bin.zip" usetimestamp="true"/>
+              </tasks> 
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-install-plugin</artifactId> 
+        <executions>
+          <execution>
+            <id>install-jruby-bin</id>
+            <phase>install</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${project.build.directory}/jruby-bin.zip</file>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>${project.artifactId}</artifactId>
+              <version>${project.version}</version>
+              <packaging>zip</packaging>
+              <generatePom>true</generatePom>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
