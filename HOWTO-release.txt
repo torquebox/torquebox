@@ -1,8 +1,12 @@
-We build releases on the Contegix server.  
+We build releases on the Contegix server as the 'torquebox-build' user.
 
-Due to space issues on that server, your M2_REPO cannot be located
-under $HOME.  I currently uses /opt2/bob-maven-repo.  We should create
-a build user with his own repo that we can share.
+	ssh torquebox-build@torquebox.org
+
+Ensure you're using a JDK6:
+
+	echo $JAVA_HOME
+	which java
+	java -version
 
 When building, skipping tests is fine, assuming your local and CI builds
 both pass.
