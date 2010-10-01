@@ -18,6 +18,15 @@ module TorqueBox
         end
       end
 
+      def receive options={}
+        result = nil
+        Client.connect(options) do |session|
+          result = session.receive( name, options )
+          session.commit if session.transacted?
+        end
+        result
+      end
+
       def start
         TorqueBox::Kernel.lookup("JMSServerManager") do |server|
           destination.name = name
