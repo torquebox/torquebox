@@ -15,13 +15,17 @@ module javax.jms::Session
   end
 
   # Returns decoded message, by default.  Pass :decode=>false to
-  # return the original JMS TextMessage
+  # return the original JMS TextMessage.  Pass :timeout to give up
+  # after a number of milliseconds
   def receive(destination_name, options={})
     decode = options.fetch(:decode, true)
+    timeout = options.fetch(:timeout, 0)
     destination = lookup_destination( destination_name )
     consumer = createConsumer( destination )
-    jms_message = consumer.receive
-    decode ? jms_message.decode : jms_message
+    jms_message = consumer.receive( timeout )
+    if jms_message
+      decode ? jms_message.decode : jms_message
+    end
   end
 
   def lookup_destination(destination_name)

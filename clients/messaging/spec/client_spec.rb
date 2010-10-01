@@ -104,6 +104,14 @@ describe TorqueBox::Messaging::Client do
       received_message.get_string_property( 'torquebox_encoding' ).should be_nil
     end
 
+    it "should timeout if asked" do
+      received_message = nil
+      TorqueBox::Messaging::Client.connect() do |session|
+        received_message = session.receive( '/queues/foo', :timeout => 1 )
+      end
+      received_message.should be_nil
+    end
+    
     it "should be able to get a reference to JMSServerManager" do
       @container["JMSServerManager"].should_not be_nil
       require 'org/torquebox/interp/core/kernel'
