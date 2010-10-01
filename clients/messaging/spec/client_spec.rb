@@ -29,7 +29,6 @@ describe TorqueBox::Messaging::Client do
       received_message = nil
 
       consumer_thread = Thread.new {
-        sleep( 2 )
         TorqueBox::Messaging::Client.connect() do |session|
           received_message = session.receive( '/queues/foo' )
           session.commit
