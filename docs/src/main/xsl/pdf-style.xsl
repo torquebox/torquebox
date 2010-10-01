@@ -10,7 +10,7 @@
   <xsl:param name="double.sided">0</xsl:param>
 
   <xsl:param name="section.label.includes.component.label" select="0"/>
-  <xsl:param name="body.font.master" select="11"/>
+  <xsl:param name="body.font.master" select="10"/>
 
   <xsl:param name="body.font.family" select="'Liberation Sans'"/>
   <xsl:param name="monospace.font.family" select="'Liberation Mono'"/>
