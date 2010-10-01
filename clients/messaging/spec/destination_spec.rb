@@ -60,19 +60,16 @@ describe TorqueBox::Messaging::Destination do
     it "should publish to multiple topic consumers" do
       topic = TorqueBox::Messaging::Topic.new "/topics/foo"
       topic.start
-      threads, done, count = [], false, 10
+      threads, count = [], 10
 
       # Use a threadsafe "array"
       msgs = java.util.Collections.synchronizedList( [] )
 
       # Ensure all clients are blocking on the receipt of a message
       count.times { threads << Thread.new { msgs << topic.receive } }
-      reaper = Thread.new { threads.each {|t| t.join}; done = true }
-
-      # Keep broadcasting until the reaper has claimed all consumers
-      until done
-        topic.publish "howdy"
-      end
+      sleep(1)
+      topic.publish "howdy"
+      threads.each {|t| t.join}
 
       topic.destroy
       msgs.to_a.should eql( ["howdy"] * count )
