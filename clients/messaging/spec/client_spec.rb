@@ -112,13 +112,6 @@ describe TorqueBox::Messaging::Client do
       received_message.should be_nil
     end
     
-    it "should be able to get a reference to JMSServerManager" do
-      @container["JMSServerManager"].should_not be_nil
-      require 'org/torquebox/interp/core/kernel'
-      TorqueBox::Kernel.kernel = @container.kernel
-      TorqueBox::Kernel.lookup("JMSServerManager").should_not be_nil
-    end
-  
   end
 
 end

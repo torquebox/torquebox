@@ -1,5 +1,6 @@
 
 require 'ostruct'
+require 'org/torquebox/interp/core/kernel'
 require 'torquebox/container/foundation_enabler'
 require 'jruby'
 
@@ -13,7 +14,7 @@ module TorqueBox
         @logger = org.jboss.logging::Logger.getLogger( 'org.torquebox.containers.Foundation' )
         @classloader = JRuby.runtime.jruby_class_loader
         @server = Java::org.jboss.bootstrap.api.mc.server::MCServerFactory.createServer( @classloader )
-  
+
         descriptors = @server.configuration.bootstrap_descriptors
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.class_loading_descriptor
         descriptors << Java::org.jboss.reloaded.api::ReloadedDescriptors.vdf_descriptor
@@ -36,6 +37,7 @@ module TorqueBox
   
       def start
         @server.start
+        TorqueBox::Kernel.kernel = kernel
 
         beans_xml = File.join( File.dirname(__FILE__), 'foundation-jboss-beans.xml' )
 
