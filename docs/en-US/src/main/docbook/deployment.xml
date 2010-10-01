@@ -118,7 +118,7 @@
     <para>Please see the following chapters describing the various options for
     authoring deployment descriptors:</para>
 
-    <itemizedlist>
+    <itemizedlist spacing="compact">
       <listitem>
         <para><xref linkend="rack-deployment-descriptors" /></para>
       </listitem>

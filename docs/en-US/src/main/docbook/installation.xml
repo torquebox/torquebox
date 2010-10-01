@@ -9,7 +9,7 @@
 
     <para>The latest Complete Binary Distribution contains:</para>
 
-    <itemizedlist>
+    <itemizedlist spacing="compact">
       <listitem>
         <para>The TorqueBox server, ready-to-run</para>
       </listitem>

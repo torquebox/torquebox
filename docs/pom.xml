@@ -60,6 +60,7 @@
         </dependencies>
         <configuration>
           <fontsDirectory>${basedir}/../src/main/fonts</fontsDirectory>
+          <fontConfig>${basedir}/target/docbook/staging/docbook/${translation.dash}/fonts.xml</fontConfig>
           <sourceDirectory>${basedir}/target/docbook/staging/docbook/</sourceDirectory>
           <sourceDocumentName>master.xml</sourceDocumentName>
           <imageResource>
@@ -72,7 +73,10 @@
           <formats>
             <format>
               <formatName>pdf</formatName>
+              <stylesheetResource>file:${project.parent.basedir}/src/main/xsl/pdf-style.xsl</stylesheetResource>
+<!--
               <stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
+-->
               <finalName>${pom.artifactId}.pdf</finalName>
             </format>
             <format>
@@ -80,13 +84,6 @@
               <stylesheetResource>classpath:/xslt/org/jboss/xhtml.xsl</stylesheetResource>
               <finalName>index.html</finalName>
             </format>
-<!--
-            <format>
-              <formatName>html_single</formatName>
-              <stylesheetResource>classpath:/xslt/org/jboss/xhtml-single.xsl</stylesheetResource>
-              <finalName>${pom.artifactId}.html</finalName>
-            </format>
--->
           </formats>
           <options>
             <xincludeSupported>true</xincludeSupported>
