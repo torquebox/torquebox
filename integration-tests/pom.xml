@@ -136,6 +136,10 @@
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
+        <configuration>
+          <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</gemPath>
+          <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</gemHome>
+        </configuration>
         <executions>
           <execution>
             <id>run-specs</id>
