@@ -36,15 +36,7 @@ public class RSpecArchiveGenerator implements ApplicationArchiveGenerator {
     
     public Archive<?> generateApplicationArchive(TestClass testCase) {
         Validate.notNull(testCase, "TestCase must be specified");
-        if (testCase.getJavaClass() == RubyObject.class) {
-            Ruby runtime = Ruby.getGlobalRuntime();
-            RubyClass testClass = (RubyClass) JavaEmbedUtils.rubyToJava(runtime, IRubyObject.class.cast(testCase.getJavaClass()), RubyClass.class);
-            String name = (String) JavaEmbedUtils.invokeMethod(testClass.getRuntime(), testClass, "deployment", new Object[]{}, String.class );
-            System.out.println("JC: deploying "+name);
-            return createDeployment( name );
-        } else {
-            return delegate.generateApplicationArchive(testCase);
-        }
+        return createDeployment("rack/1.1.0/basic-rack.yml");
     }
 
 	public JavaArchive createDeployment(String name) {
