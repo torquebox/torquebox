@@ -76,6 +76,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>${version.jruby}</version>
+    </dependency>
+
   </dependencies>
 
   <profiles>
