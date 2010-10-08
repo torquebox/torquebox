@@ -68,6 +68,13 @@
       <version>1.5.6</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <version>${version.jruby}</version>
+    </dependency>
+
   </dependencies>
 
   <profiles>
