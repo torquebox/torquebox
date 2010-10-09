@@ -75,6 +75,25 @@
       <version>${version.jruby}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-ruby-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-core</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <profiles>
@@ -130,6 +149,22 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>test-log4j.xml</value>
+            </property>
+            <property>
+              <name>gem.path</name>
+              <value>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</value>
+            </property>
+          </systemProperties>
+        </configuration>
       </plugin>
     </plugins>
 
