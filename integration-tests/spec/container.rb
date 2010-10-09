@@ -51,7 +51,7 @@ Spec::Runner.configure do |config|
   end
 
   config.after(:all) do
-    Thread.current[:test_runner_adaptor]..afterClass(@real_java_class)
+    Thread.current[:test_runner_adaptor].afterClass(@real_java_class)
   end
 
   config.after(:suite) do
