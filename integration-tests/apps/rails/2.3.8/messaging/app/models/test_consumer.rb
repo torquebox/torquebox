@@ -1,3 +1,5 @@
+require 'torquebox/messaging/message_processor'
+
 class TestConsumer < TorqueBox::Messaging::MessageProcessor
   
   def on_message(body)
