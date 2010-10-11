@@ -94,6 +94,24 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-jms-client</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <profiles>
@@ -111,6 +129,13 @@
       <testResource>
         <directory>src/test/resources</directory>
         <filtering>true</filtering>
+      </testResource>
+      <testResource>
+        <directory>src/test/java</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>**/*.rb</include>
+        </includes>
       </testResource>
     </testResources>
 
@@ -162,14 +187,6 @@
             <property>
               <name>jruby.home</name>
               <value>${integ.dist.dir}/jruby</value>
-            </property>
-            <property>
-              <name>java.security.policy</name>
-              <value>${project.basedir}/src/test/resources/policy.all</value>
-            </property>
-            <property>
-              <name>java.rmi.server.codebase</name>
-              <value>http://localhost:8083/</value>
             </property>
           </systemProperties>
         </configuration>
