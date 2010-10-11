@@ -57,18 +57,24 @@ module TorqueBox
         props = java.util.Hashtable.new( {
           'java.naming.provider.url'=>"jnp://#{host}:#{port}/",
           'java.naming.factory.initial'=>FACTORY,
+          'java.naming.factory.url.pkgs'=>'org.jboss.naming:org.jnp.interfaces'
         } )
+        puts "grabbing context with #{props.to_a.inspect}"
         javax.naming::InitialContext.new(props)
       else
+        puts "grabbing default context"
         javax.naming::InitialContext.new
       end
     end
 
     def self.connect(host, port, &block)
-      return context if ( block.nil? )
+      puts "connect(#{host}, #{port}, ...)"
+      puts "is block nil? #{block.nil?}"
+      return context(host, port) if ( block.nil? )
 
       reconfigure_on_error do
-        ctx = context
+        ctx = context(host, port)
+        puts "ctx=#{ctx}"
         begin
           block.call( ctx )
         ensure
@@ -82,10 +88,12 @@ module TorqueBox
       begin
         attempts += 1
         yield
-      rescue
+      rescue=>e
+        puts e
         if attempts > max_retries
           raise
         else
+          puts "about to reconfigure and retry"
           configure
           retry
         end

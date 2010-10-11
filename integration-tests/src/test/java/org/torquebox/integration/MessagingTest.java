@@ -24,9 +24,12 @@ public class MessagingTest extends AbstractIntegrationTest {
 	@Test
 	public void testQueueMessageProcessor() throws Exception {
         driver.get( "http://localhost:8080/messaging-rails/message/queue?text=ham%20biscuit" );
-        Ruby runtime = TestRubyFactory.createRuby();
-        runtime.evalScriptlet("puts %Q(GEM_HOME=#{ENV['GEM_HOME']} GEM_PATH=#{ENV['GEM_PATH']})");
-        RubyString result = (RubyString) runtime.evalScriptlet("require 'rubygems'\nrequire 'org.torquebox.torquebox-messaging-client'\nTorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 2000)");
+        Ruby runtime = IntegrationTestRubyFactory.createRuby();
+        
+        RubyString result = (RubyString) runtime.evalScriptlet( slurpResource( "org/torquebox/integration/messaging_test.rb" ) );
+        
+        //RubyString result = (RubyString) runtime.evalScriptlet("require 'rubygems'\nrequire 'org.torquebox.torquebox-messaging-client'\nTorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 2000)");
+        
         assertEquals( "result=ham biscuit", result.toString() );
 	}
 

@@ -160,8 +160,8 @@
               <value>test-log4j.xml</value>
             </property>
             <property>
-              <name>gem.path</name>
-              <value>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</value>
+              <name>jruby.home</name>
+              <value>${integ.dist.dir}/jruby</value>
             </property>
           </systemProperties>
         </configuration>
