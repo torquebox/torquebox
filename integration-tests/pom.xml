@@ -163,6 +163,14 @@
               <name>jruby.home</name>
               <value>${integ.dist.dir}/jruby</value>
             </property>
+            <property>
+              <name>java.security.policy</name>
+              <value>${project.basedir}/src/test/resources/policy.all</value>
+            </property>
+            <property>
+              <name>java.rmi.server.codebase</name>
+              <value>http://localhost:8083/</value>
+            </property>
           </systemProperties>
         </configuration>
       </plugin>

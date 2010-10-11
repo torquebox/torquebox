@@ -90,6 +90,8 @@ module TorqueBox
         yield
       rescue=>e
         puts e
+        je = e.cause
+        puts je.cause
         if attempts > max_retries
           raise
         else

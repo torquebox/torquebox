@@ -1,20 +1,28 @@
 package org.torquebox.integration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.rmi.RMISecurityManager;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
-import org.openqa.selenium.WebElement;
 import org.jruby.Ruby;
 import org.jruby.RubyString;
-import org.torquebox.test.ruby.TestRubyFactory;
+import org.junit.Before;
+import org.junit.Test;
 
 
 @Run(RunModeType.AS_CLIENT)
 public class MessagingTest extends AbstractIntegrationTest {
+    
+    @Before
+    public void setUpSecurityManager() {
+        if(System.getSecurityManager() == null) {
+            System.setSecurityManager(new RMISecurityManager());
+        }
+    }
 
 	@Deployment
 	public static JavaArchive createDeployment() {
@@ -27,8 +35,6 @@ public class MessagingTest extends AbstractIntegrationTest {
         Ruby runtime = IntegrationTestRubyFactory.createRuby();
         
         RubyString result = (RubyString) runtime.evalScriptlet( slurpResource( "org/torquebox/integration/messaging_test.rb" ) );
-        
-        //RubyString result = (RubyString) runtime.evalScriptlet("require 'rubygems'\nrequire 'org.torquebox.torquebox-messaging-client'\nTorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 2000)");
         
         assertEquals( "result=ham biscuit", result.toString() );
 	}
