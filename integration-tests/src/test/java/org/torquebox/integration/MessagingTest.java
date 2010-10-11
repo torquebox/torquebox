@@ -23,7 +23,7 @@ public class MessagingTest extends AbstractIntegrationTest {
         Ruby runtime = IntegrationTestRubyFactory.createRuby();
         runtime.evalScriptlet(" require 'org.torquebox.torquebox-messaging-client'\n" );
         
-        driver.get( "http://localhost:8080/messaging-rails/message/queue?text=ham%20biscuit" );
+        driver.get( "http://localhost:8080/messaging-rails/message/queue?text=ham+biscuit" );
         
         Object result = runtime.evalScriptlet( slurpResource( "org/torquebox/integration/messaging_test.rb" ) );
         System.err.println(" result=" + result );
