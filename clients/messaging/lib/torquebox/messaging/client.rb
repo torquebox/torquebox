@@ -30,7 +30,6 @@ module TorqueBox
         naming_host = options[:naming_host]
         naming_port = options[:naming_port]
         connection_factory = nil
-        puts "connecting to JNDI on #{naming_host} #{naming_port}"
         TorqueBox::Naming.connect( naming_host, naming_port ) do |context|
           connection_factory = context['/ConnectionFactory']
           connection = connection_factory.createConnection
