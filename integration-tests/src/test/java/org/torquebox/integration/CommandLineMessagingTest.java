@@ -47,14 +47,14 @@ public class CommandLineMessagingTest {
             this.input = input;
         }
     
-        synchronized boolean search(long timeout) throws InterruptedException {
+        boolean search(long timeout) throws InterruptedException {
             Thread t = new Thread(this);
             t.start();
-            wait(timeout);
+            t.join(timeout);
             return this.found;
         }
 
-        synchronized public void run() {
+        public void run() {
             BufferedReader in = new BufferedReader(new InputStreamReader(input));
             try {
                 String line;
@@ -62,7 +62,6 @@ public class CommandLineMessagingTest {
                     System.out.println(line);
                     if (line.contains(target)) {
                         this.found = true;
-                        notify();
                         break;
                     }
                 }
