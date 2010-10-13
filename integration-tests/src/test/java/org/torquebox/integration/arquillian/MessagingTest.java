@@ -1,4 +1,4 @@
-package org.torquebox.integration;
+package org.torquebox.integration.arquillian;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,6 +8,7 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jruby.Ruby;
 import org.junit.Test;
+import org.torquebox.integration.IntegrationTestRubyFactory;
 
 
 @Run(RunModeType.AS_CLIENT)

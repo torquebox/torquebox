@@ -1,4 +1,4 @@
-package org.torquebox.integration;
+package org.torquebox.integration.arquillian;
 
 import static org.junit.Assert.*;
 
@@ -10,19 +10,19 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails_2_3_8_Test extends AbstractIntegrationTest {
+public class BasicRack_1_1_0_Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "rails/2.3.8/basic-rails.yml" );
+		return createDeployment( "rack/1.1.0/basic-rack.yml" );
 	}
 
 	@Test
-	public void testHighLevel() {
-        driver.get( "http://localhost:8080/basic-rails" );
+	public void testHighlevel() {
+        driver.get( "http://localhost:8080/basic-rack" );
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
-        assertEquals( "basic-rails", element.getAttribute( "class" ) );
+        assertEquals( "basic-rack", element.getAttribute( "class" ) );
 	}
 
 }

@@ -179,6 +179,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <excludes>
+            <exclude>**/arquillian/**</exclude>
+          </excludes>>
           <systemProperties>
             <property>
               <name>log4j.configuration</name>
@@ -190,6 +193,25 @@
             </property>
           </systemProperties>
         </configuration>
+
+        <executions>
+          <execution>
+            <id>arquillian</id>
+            <phase>test</phase>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration> 
+              <excludes>
+                <exclude>nothing</exclude> <!-- required to override excludes inherited from default -->
+              </excludes>
+              <includes>
+                <include>**/arquillian/*Test.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+
       </plugin>
     </plugins>
 
