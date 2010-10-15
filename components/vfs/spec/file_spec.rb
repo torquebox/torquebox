@@ -69,7 +69,6 @@ describe "File extensions for VFS" do
 
   it "should handle backslashes in filenames even though there's no good reason to use them regardless of platform" do
     filename = __FILE__.gsub("/","\\")
-    puts "JC: #{filename}"
     File.readable?( filename ).should be_true
     File.readable?( "vfs:#{filename}" ).should be_true
   end
