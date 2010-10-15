@@ -278,7 +278,7 @@ environment:
     </section>
   </section>
 
-  <section>
+  <section id="rails-internal-deployment-descriptors">
     <title>Internal Deployment Descriptors</title>
 
     <para>A variety of deployment descriptors may exist within an
@@ -325,11 +325,13 @@ environment:
     <section>
       <title>config/rails-env.yml</title>
 
-      <para>To set a default value for <envar>RAILS_ENV</envar> within your
-      application, you may include a file named
+      <para>To set a default value for <envar>RAILS_ENV</envar> within
+      your application, you may include a file named
       <filename>rails-env.yml</filename> within the application's
-      <filename>config/</filename> directory. This file should only include a
-      single key/value pair setting RAILS_ENV.</para>
+      <filename>config/</filename> directory. This file should only
+      include a single key/value pair setting RAILS_ENV.  The
+      <command>torquebox:archive</command> rake task will create this
+      file for you automatically.</para>
 
       <para><informalexample>
           <para><programlisting>RAILS_ENV: production</programlisting></para>
