@@ -1,4 +1,4 @@
-package org.torquebox.integration;
+package org.torquebox.integration.arquillian;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

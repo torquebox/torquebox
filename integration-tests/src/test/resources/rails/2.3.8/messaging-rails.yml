@@ -1,0 +1,6 @@
+---
+application:
+  RAILS_ROOT: ${basedir}/apps/rails/2.3.8/messaging
+  RAILS_ENV: development
+web:
+  context: /messaging-rails

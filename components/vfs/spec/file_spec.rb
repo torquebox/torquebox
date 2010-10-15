@@ -67,6 +67,19 @@ describe "File extensions for VFS" do
     File.file?( "vfs:#{prefix}/#missing#" ).should be_false
   end
 
+  it "should handle spaces in filenames properly" do
+    prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
+    File.file?( "#{prefix}/sound of music/flibbity jibbit" ).should be_true
+    File.file?( "vfs:#{prefix}/sound of music/flibbity jibbit" ).should be_true
+    File.file?( "vfs:#{prefix}/sound of music/flibberty gibbet" ).should be_false
+  end
+
+  it "should handle backslashes in filenames even though there's no good reason to use them regardless of platform" do
+    filename = __FILE__.gsub("/","\\")
+    File.readable?( filename ).should be_true
+    File.readable?( "vfs:#{filename}" ).should be_true
+  end
+
   it "should be able to chmod real files with vfs urls" do
     path = File.expand_path("foo")
     begin

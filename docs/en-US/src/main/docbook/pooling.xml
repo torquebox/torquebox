@@ -17,7 +17,7 @@
     <para>TorqueBox defines three types of pools from which a Ruby interpreter
     may be obtained:</para>
 
-    <itemizedlist>
+    <itemizedlist spacing="compact">
       <listitem>
         <para>Bounded</para>
       </listitem>

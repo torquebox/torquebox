@@ -113,7 +113,7 @@
           <code>Rails::Initializer.run</code> block.</para>
         </formalpara>
 
-        <para><programlisting>Rails::Initializer.run do |config|
+        <para><programlisting language="ruby">Rails::Initializer.run do |config|
 
 <emphasis>  config.gem "activerecord-jdbc-adapter",
              :require=&gt;'jdbc_adapter'

@@ -15,7 +15,7 @@
 
     <para>The deployment descriptor serves two main purposes:</para>
 
-    <orderedlist>
+    <orderedlist spacing="compact">
       <listitem>
         <para>Point to the actual location of the application's code to
         activate</para>
@@ -25,7 +25,7 @@
         <para>Provide additional application-specific deployment-time
         configuration, such as</para>
 
-        <itemizedlist>
+        <itemizedlist spacing="compact">
           <listitem>
             <para>Virtual host names</para>
           </listitem>
@@ -63,7 +63,7 @@
 
       <para>The descriptor has 3 main sections:</para>
 
-      <orderedlist>
+      <orderedlist spacing="compact">
         <listitem>
           <para>General application configuration</para>
         </listitem>

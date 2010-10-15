@@ -118,7 +118,7 @@
     <para>Please see the following chapters describing the various options for
     authoring deployment descriptors:</para>
 
-    <itemizedlist>
+    <itemizedlist spacing="compact">
       <listitem>
         <para><xref linkend="rack-deployment-descriptors" /></para>
       </listitem>
@@ -138,19 +138,62 @@
     bundles created with the Java <command>jar</command> tool. Rake tasks are
     provided to assist with the creation and deployment of bundles.</para>
 
-    <para><note>
+    <para>
+      <note>
         <para>Currently only Rails applications are supported through archive
         deployment.</para>
-      </note></para>
+      </note>
+    </para>
 
+    <section>
+      <title>Configuring an archive</title>
+
+      <para>
+        Typically, a Rails application is <link
+        linkend="rails-deployment-descriptors">configured using a
+        deployment descriptor suffixed by
+        <filename>-rails.yml</filename></link> and placed in
+        <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>.
+        We refer to this file as an <emphasis>external</emphasis>
+        descriptor, because it resides outside of the app's
+        <filename>config/</filename> directory.
+      </para>
+
+      <para>
+        An application archive may be configured using
+        <emphasis>internal</emphasis> descriptors as well.  These are
+        contained within the archive's <filename>config/</filename>
+        directory.  This is described in <xref
+        linkend="rails-internal-deployment-descriptors" />.
+      </para>
+
+      <para>
+        When your application is packaged as a fully-described
+        self-contained archive, you may override portions of the
+        internal descriptors using an external descriptor.  If you do,
+        make sure that only the external descriptor resides beneath
+        <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>.
+        The archive containing the (possibly overridden) internal
+        descriptors should reside elsewhere on the filesystem, its
+        path referenced in the external descriptor.  Having both the
+        archive and the external descriptor beneath
+        <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>
+        will result in errors stemming from two separate deployments
+        of the same app.
+      </para>
+
+  </section>
+    
     <section>
       <title>Creating an archive</title>
 
-      <para>The <command>torquebox:archive</command> rake task may be used to
-      create a bundle of the application. The task invokes the Java
-      <command>jar</command> commandline tool to bundle up the project
-      directory, <emphasis>excluding</emphasis> <filename>tmp/</filename> and
-      <filename>log/</filename> directories.</para>
+      <para>After you've created any necessary internal descriptors
+      (possibly none), the <command>torquebox:archive</command> rake
+      task may be used to create a bundle of the application. The task
+      invokes the Java <command>jar</command> commandline tool to
+      bundle up the project directory, <emphasis>excluding</emphasis>
+      <filename>tmp/</filename> and <filename>log/</filename>
+      directories.</para>
 
       <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>The
       resulting archive will be placed at the root of the application, as a
@@ -186,11 +229,4 @@ $ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filena
     </section>
   </section>
 
-  <section>
-    <title>Deployment using a partial descriptor</title>
-
-    <para>In the event your application is packaged as a fully-described
-    self-contained archive, you can still externally override portions of the
-    internal descriptors using external YAML descriptors.</para>
-  </section>
 </chapter>

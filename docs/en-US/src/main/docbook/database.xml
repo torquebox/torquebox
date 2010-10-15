@@ -50,7 +50,7 @@
   <para>Additional gems need to be available to your system, depending on your
   target database.</para>
 
-  <itemizedlist>
+  <itemizedlist spacing="compact">
     <listitem>
       <para><filename>jdbc-postgres</filename></para>
     </listitem>

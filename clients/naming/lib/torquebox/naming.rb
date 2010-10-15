@@ -57,6 +57,7 @@ module TorqueBox
         props = java.util.Hashtable.new( {
           'java.naming.provider.url'=>"jnp://#{host}:#{port}/",
           'java.naming.factory.initial'=>FACTORY,
+          'java.naming.factory.url.pkgs'=>'org.jboss.naming:org.jnp.interfaces'
         } )
         javax.naming::InitialContext.new(props)
       else
@@ -65,10 +66,10 @@ module TorqueBox
     end
 
     def self.connect(host, port, &block)
-      return context if ( block.nil? )
+      return context(host, port) if ( block.nil? )
 
       reconfigure_on_error do
-        ctx = context
+        ctx = context(host, port)
         begin
           block.call( ctx )
         ensure

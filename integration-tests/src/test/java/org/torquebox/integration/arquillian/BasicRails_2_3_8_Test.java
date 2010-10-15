@@ -1,4 +1,4 @@
-package org.torquebox.integration;
+package org.torquebox.integration.arquillian;
 
 import static org.junit.Assert.*;
 
@@ -10,11 +10,11 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails_3_0_0_Test extends AbstractIntegrationTest {
+public class BasicRails_2_3_8_Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "rails/3.0.0/basic-rails.yml" );
+		return createDeployment( "rails/2.3.8/basic-rails.yml" );
 	}
 
 	@Test

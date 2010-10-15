@@ -73,7 +73,7 @@
 
         <para>The descriptor has 3 main sections:</para>
 
-        <orderedlist>
+        <orderedlist spacing="compact">
           <listitem>
             <para>General application configuration</para>
           </listitem>
@@ -493,7 +493,7 @@ rake torquebox:server:run                 # Run TorqueBox server</screen></para>
 
           <para>The descriptor has 4 main sections:</para>
 
-          <orderedlist>
+          <orderedlist spacing="compact">
             <listitem>
               <para>General application configuration</para>
             </listitem>
