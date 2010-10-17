@@ -10,6 +10,7 @@ require 'vfs/glob_filter'
 require 'vfs/ext/vfs'
 require 'vfs/ext/io'
 require 'vfs/ext/file'
+require 'vfs/ext/file_test'
 require 'vfs/ext/dir'
 require 'vfs/ext/kernel'
 
@@ -21,7 +22,7 @@ module ::VFS
     cur = path
     while ( cur != '.' && cur != '/' )
       if ( ::File.exist_without_vfs?( cur ) )
-         
+
         child_path = path[cur.length..-1]
 
         if ( cur[-1,1] == '/' )
@@ -35,7 +36,7 @@ module ::VFS
   end
 
   def self.resolve_path_url(path)
-    prefix = case 
+    prefix = case
              when path =~ /^\//            # unix absolute
                "vfs:"
              when path =~ /^[[:alpha:]]:/  # windows absolute
