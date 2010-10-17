@@ -108,7 +108,6 @@ describe "File extensions for VFS" do
 
   describe "open" do
     it "should return File when called on File with VFS url" do
-      puts @archive1_path
       File.open("vfs:#{@archive1_path}", 'r').should be_an_instance_of(File)
     end
 
