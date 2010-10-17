@@ -83,9 +83,9 @@ class IO
         java_out = java.io::FileOutputStream.new( physical_file, append )
         ruby_io = java_out.to_io
       elsif ( read && write )
-        raise Error.new( "Random-access on VFS not supported" ) 
+        raise Error.new( "Random-access on VFS not supported" )
       end
-     
+
       if ( block )
         begin
           block.call( ruby_io )
@@ -101,7 +101,7 @@ class IO
     def read(name, length=nil, offset=nil)
       return read_without_vfs(name, length, offset) if ::File.exist_without_vfs?( name )
 
-      if ( name =~ /^\// || name =~ /^vfs:\// ) 
+      if ( name =~ /^\// || name =~ /^vfs:\// )
         full_path = name
       else
         full_path = File.join( Dir.pwd, name )
@@ -110,7 +110,7 @@ class IO
       raise ::Errno::ENOENT.new( "#{name} (#{virtual_file})" ) unless virtual_file.exists()
 
       stream = virtual_file.openStream()
-      io = stream.to_io 
+      io = stream.to_io
       begin
         s = io.read
       ensure
