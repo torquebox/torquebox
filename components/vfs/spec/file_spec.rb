@@ -126,6 +126,12 @@ describe "File extensions for VFS" do
         File.open("vfs:#{@archive1_path}/web.xml", 'r')
       }.should_not raise_error
     end
+
+    it "should find files by pathnames" do
+      lambda {
+        File.open(Pathname.new(@archive1_path), 'r')
+      }.should_not raise_error
+    end
   end
 
   describe "new" do

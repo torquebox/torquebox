@@ -164,7 +164,7 @@ class File
     end
 
     def name_without_vfs(filename)
-      name = filename.gsub("\\", "/")
+      name = filename.to_s.gsub("\\", "/")
       vfs_path?(name) ? name[4..-1] : name
     end
 
