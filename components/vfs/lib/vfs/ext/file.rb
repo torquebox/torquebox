@@ -21,9 +21,6 @@ class File
       if ( Fixnum === fname )
         return File.open_without_vfs( fname, mode_str, &block )
       end
-      unless ( vfs_path?(fname) )
-        return File.open_without_vfs(fname, mode_str, flags, &block )
-      end
       if ( File.exist_without_vfs?( name_without_vfs(fname) ) )
         return File.open_without_vfs( name_without_vfs(fname), mode_str, flags, &block )
       end

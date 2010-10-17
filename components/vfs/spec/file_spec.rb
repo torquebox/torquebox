@@ -115,6 +115,18 @@ describe "File extensions for VFS" do
     it "should return File when called on File without VFS url" do
       File.open(@archive1_path, 'r').should be_an_instance_of(File)
     end
+
+    it "should find files inside archive without vfs: prefix" do
+      lambda {
+        File.open("#{@archive1_path}/web.xml", 'r')
+      }.should_not raise_error
+    end
+
+    it "should find files inside archive with vfs: prefix" do
+      lambda {
+        File.open("vfs:#{@archive1_path}/web.xml", 'r')
+      }.should_not raise_error
+    end
   end
 
   describe "new" do
