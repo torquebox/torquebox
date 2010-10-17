@@ -181,6 +181,14 @@ describe "File extensions for VFS" do
         fs_contents.should eql( "This is file 1\nhowdy\n" )
       end
 
+      it "should allow writing new files via File.open" do
+        File.open( "#{prefix}/home/larry/new_file.txt", 'w' ) do |file|
+          file.puts "howdy"
+        end
+        contents = File.read( "#{prefix}/home/larry/new_file.txt" )
+        contents.should eql( "howdy\n")
+      end
+
       it "should allow stat for normal files" do
         file = "#{prefix}/home/larry/file1.txt"
         stat = File.stat( file )

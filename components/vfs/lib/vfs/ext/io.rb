@@ -69,6 +69,9 @@ class IO
           end
       end
 
+      # VFS doesn't correctly handle relative paths when
+      # retrieving the physical file so expand it
+      fd = File.expand_path( fd )
       virtual_file = org.jboss.vfs.VFS.child( fd )
 
       if ( ! create && ! virtual_file.exists )
