@@ -33,15 +33,21 @@ describe "Dir extensions for VFS" do
       items.should include File.join( "vfs:#{@archive1_path}", 'web.xml' )
       items.should include File.join( "vfs:#{@archive1_path}", 'lib' )
     end
- 
+
     it "should allow globbing within nested archives with explicit vfs" do
       pattern = "vfs:#{@archive2_path}/*"
       items = Dir.glob( pattern )
       items.should_not be_empty
       items.should include "vfs:#{@archive2_path}/manifest.txt"
     end
+
+    it "should create new Dirs" do
+      lambda {
+        Dir.new("vfs:#{@archive2_path}")
+      }.should_not raise_error
+    end
   end
-  
+
   [ :absolute, :relative ].each do |style|
     describe "with #{style} paths" do
 
@@ -57,7 +63,7 @@ describe "Dir extensions for VFS" do
         items.should_not be_empty
         items.should include( "#{prefix}/home/larry" )
       end
-      
+
       it "should allow globbing without any special globbing characters on a single normal file" do
         items = Dir.glob( "#{prefix}/home/larry/file1.txt" )
         items.should_not be_empty
@@ -91,7 +97,7 @@ describe "Dir extensions for VFS" do
       it "should allow appropriate globbing of normal files" do
         items = Dir.glob( "#{prefix}/home/larry/*" )
         items.should_not be_empty
-        items.should include( "#{prefix}/home/larry/file1.txt" ) 
+        items.should include( "#{prefix}/home/larry/file1.txt" )
         items.should include( "#{prefix}/home/larry/file2.txt" )
         items.should include( "#{prefix}/home/larry/archive1.jar" )
       end
@@ -100,14 +106,14 @@ describe "Dir extensions for VFS" do
         items = Dir.glob( "#{@archive1_path}/*" )
         items.should_not be_empty
       end
-  
+
       it "should determine if VFS is needed for nested archives" do
         base = "#{prefix}/home/larry/archive1.jar/lib/archive2.jar"
         items = Dir.glob( "#{base}/*" )
         items.should_not be_empty
         items.should include( "#{base}/manifest.txt" )
       end
-  
+
       it "should determine if VFS is needed with relative paths" do
         base = "#{prefix}/home/larry/archive1.jar/lib/archive2.jar"
         items = Dir.glob( "#{base}/*" )
@@ -151,6 +157,12 @@ describe "Dir extensions for VFS" do
         items.should     include( "#{prefix}/home/larry/archive1.jar/lib/archive2.jar" )
         items.should     include( "#{prefix}/home/larry/archive1.jar/other_lib/subdir/archive6.jar" )
         items.should_not include( "#{prefix}/home/larry/archive1.jar/lib/archive4.txt" )
+      end
+
+      it "should create new Dirs" do
+        lambda {
+          Dir.new(prefix)
+        }.should_not raise_error
       end
 
     end

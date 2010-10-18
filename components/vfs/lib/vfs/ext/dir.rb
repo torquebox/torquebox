@@ -6,6 +6,7 @@ class Dir
     alias_method :open_before_vfs, :open
     alias_method :glob_before_vfs, :glob
     alias_method :mkdir_before_vfs, :mkdir
+    alias_method :new_before_vfs, :new
 
     def open(str,&block)
       #if ( ::File.exist_without_vfs?( str.to_str ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( str.to_str ) )
@@ -19,7 +20,7 @@ class Dir
         begin
           result = block.call(dir)
         ensure
-          dir.close 
+          dir.close
         end
       end
       #puts "open(#{str}) return #{result}"
@@ -58,7 +59,7 @@ class Dir
       #end
 
       #puts "base= #{base}"
-      
+
       vfs_url, child_path = VFS.resolve_within_archive( base )
       #puts "vfs_url=#{vfs_url}"
       #puts "child_path=#{child_path}"
@@ -88,7 +89,7 @@ class Dir
         #puts "base=#{base}"
         filter = VFS::GlobFilter.new( child_path, matcher )
         #puts "filter is #{filter}"
-        paths = starting_point.getChildrenRecursively( filter ).collect{|e| 
+        paths = starting_point.getChildrenRecursively( filter ).collect{|e|
           #path_name = e.path_name
           path_name = e.getPathNameRelativeTo( starting_point )
           #puts "(collect) path_name=#{path_name}"
@@ -108,6 +109,13 @@ class Dir
       real_path = path =~ /^vfs:/ ? path[4..-1] : path
       mkdir_before_vfs( real_path, mode )
     end
+
+    def new(string)
+      if ( ::File.exist_without_vfs?( string.to_s ) )
+        return new_before_vfs( string )
+      end
+      VFS::Dir.new( string.to_s )
+    end
   end
-end 
+end
 
