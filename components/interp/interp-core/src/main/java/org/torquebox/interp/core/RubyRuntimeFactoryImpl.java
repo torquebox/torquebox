@@ -312,6 +312,10 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
 		}
+        
+        if (this.gemPath == null) {
+            setGemPath( System.getProperty( "gem.path" ) );
+        }
 
 		config.setEnvironment(createEnvironment());
 		config.setOutput(getOutput());
