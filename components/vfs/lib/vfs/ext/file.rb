@@ -43,7 +43,8 @@ class File
       return true if readable_without_vfs?( name_without_vfs( filename ) )
 
       virtual_file = virtual_file( filename )
-      !virtual_file.nil?
+      # VirtualFile has no readable? so assume we can read it if it exists
+      !virtual_file.nil? && virtual_file.exists?
     end
 
     def unlink(*file_names)

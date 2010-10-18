@@ -74,9 +74,14 @@ describe "File extensions for VFS" do
     File.readable?( "vfs:#{__FILE__}" ).should be_true
   end
 
-  it "should report reabable-ness for files inside vfs archives" do
+  it "should report readable-ness for files inside vfs archives" do
     path = "vfs:#{@archive1_path}/web.xml"
     File.readable?( path ).should be_true
+  end
+
+  it "should report readable-ness for non-existent files inside vfs archives" do
+    path = "vfs:#{@archive1_path}/file_that_does_not_exist.txt"
+    File.readable?( path ).should be_false
   end
 
   it "should handle #'s in filenames properly" do
