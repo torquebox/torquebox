@@ -57,13 +57,11 @@ public class RailsLogFileDeployer extends AbstractDeployer {
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
         VirtualFile logDir = unit.getRoot().getChild( "log" );
         try {
-            if ( ! ( logDir.exists() && logDir.getPhysicalFile().canWrite() ) ) {
-                File writeableLogDir = new File( System.getProperty( "jboss.server.log.dir" ) + "/" + unit.getSimpleName() );
-                writeableLogDir.mkdirs();
-                Closeable mount = VFS.mountReal(writeableLogDir, logDir);
-                log.warn("Set Rails log directory to "+writeableLogDir.getCanonicalPath());
-                unit.addAttachment( ATTACHMENT_NAME, mount, Closeable.class );
-            }
+            File writeableLogDir = new File( System.getProperty( "jboss.server.log.dir" ) + "/" + unit.getSimpleName() );
+            writeableLogDir.mkdirs();
+            Closeable mount = VFS.mountReal(writeableLogDir, logDir);
+            log.warn("Set Rails log directory to "+writeableLogDir.getCanonicalPath());
+            unit.addAttachment( ATTACHMENT_NAME, mount, Closeable.class );
         } catch (Exception e) {
             throw new DeploymentException( e );
         }
