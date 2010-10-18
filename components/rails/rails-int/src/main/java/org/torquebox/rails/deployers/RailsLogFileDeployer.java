@@ -42,6 +42,8 @@ import org.jboss.vfs.VFS;
  */
 public class RailsLogFileDeployer extends AbstractDeployer {
     
+    static final String ATTACHMENT_NAME = "open log dir handle";
+
     public RailsLogFileDeployer() {
         setStage(DeploymentStages.PARSE );
     }
@@ -60,7 +62,7 @@ public class RailsLogFileDeployer extends AbstractDeployer {
                 writeableLogDir.mkdirs();
                 Closeable mount = VFS.mountReal(writeableLogDir, logDir);
                 log.warn("Set Rails log directory to "+writeableLogDir.getCanonicalPath());
-                unit.addAttachment( Closeable.class, mount );
+                unit.addAttachment( ATTACHMENT_NAME, mount, Closeable.class );
             }
         } catch (Exception e) {
             throw new DeploymentException( e );
@@ -69,7 +71,7 @@ public class RailsLogFileDeployer extends AbstractDeployer {
 
     public void undeploy(DeploymentUnit unit) {
         if ( unit.getName().endsWith( ".rails" )) {
-            Closeable mount = unit.getAttachment(Closeable.class);
+            Closeable mount = unit.getAttachment(ATTACHMENT_NAME, Closeable.class);
             if (mount != null) {
                 log.info("Closing virtual log directory for "+unit.getSimpleName() );
                 try { mount.close(); } catch (IOException ignored) {}
