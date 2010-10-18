@@ -10,7 +10,7 @@ module VFS
       @path         = path
       begin
         @virtual_file = org.jboss.vfs.VFS.child( path )
-      rescue Java::JavaLang::NullPointerException 
+      rescue Java::JavaLang::NullPointerException
         raise Errno::ENOENT.new
       end
       @pos          = 0
@@ -38,7 +38,7 @@ module VFS
       @pos += 1
       child.name
     end
-    
+
     def seek(i)
       @pos = i
       self
@@ -48,7 +48,11 @@ module VFS
       @pos = i
     end
 
+    def entries
+      @virtual_file.children.map(&:name)
+    end
+
   end
 
-end 
+end
 
