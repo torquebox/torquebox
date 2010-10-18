@@ -74,6 +74,11 @@ describe "File extensions for VFS" do
     File.readable?( "vfs:#{__FILE__}" ).should be_true
   end
 
+  it "should report reabable-ness for files inside vfs archives" do
+    path = "vfs:#{@archive1_path}/web.xml"
+    File.readable?( path ).should be_true
+  end
+
   it "should handle #'s in filenames properly" do
     prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
     File.file?( "#{prefix}/#bad-uri#" ).should be_true
