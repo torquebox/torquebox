@@ -31,10 +31,11 @@ class File
     end
 
     def expand_path(*args)
-      if ( vfs_path?(args[1]) )
-        return expand_path_without_vfs(args[0], name_without_vfs(args[1].to_s))
-      end
       return args[0].to_s.dup if ( vfs_path?(args[0]) )
+      if ( vfs_path?(args[1]) )
+        expanded = expand_path_without_vfs(args[0], name_without_vfs(args[1].to_s))
+        return "vfs:#{expanded}"
+      end
       expand_path_without_vfs(*args)
     end
 

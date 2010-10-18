@@ -40,19 +40,33 @@ describe "File extensions for VFS" do
     File.writable?( url ).should be_true
   end
 
-  it "should expand paths relative to VFS urls as absolute" do
-    absolute = File.expand_path("db/development.sqlite3", "vfs:/path/to/app")
-    absolute.should eql("/path/to/app/db/development.sqlite3")
-  end
+  describe "expand_path" do
+    it "should handle relative non-vfs path" do
+      File.expand_path("../foo", "/tmp/bar").should == "/tmp/foo"
+    end
 
-  it "should expand paths relative to VFS pathnames as absolute" do
-    absolute = File.expand_path("db/development.sqlite3", Pathname.new("vfs:/path/to/app"))
-    absolute.should eql("/path/to/app/db/development.sqlite3")
-  end
+    it "should handle relative to vfs path" do
+      File.expand_path("../foo", "vfs:/tmp/bar").should == "vfs:/tmp/foo"
+    end
 
-  it "should expand absolute Pathname objects correctly" do
-    File.expand_path("vfs:/foo").should eql("vfs:/foo")
-    File.expand_path(Pathname.new("vfs:/foo")).should eql("vfs:/foo")
+    it "should expand paths relative to VFS urls as VFS" do
+      absolute = File.expand_path("db/development.sqlite3", "vfs:/path/to/app")
+      absolute.should eql("vfs:/path/to/app/db/development.sqlite3")
+    end
+
+    it "should expand paths relative to VFS pathnames as VFS" do
+      absolute = File.expand_path("db/development.sqlite3", Pathname.new("vfs:/path/to/app"))
+      absolute.should eql("vfs:/path/to/app/db/development.sqlite3")
+    end
+
+    it "should expand absolute Pathname objects correctly" do
+      File.expand_path("vfs:/foo").should eql("vfs:/foo")
+      File.expand_path(Pathname.new("vfs:/foo")).should eql("vfs:/foo")
+    end
+
+    it "should return first path when given two vfs paths" do
+      File.expand_path("vfs:/tmp/foo", "vfs:/tmp/bar").should == "vfs:/tmp/foo"
+    end
   end
 
   it "should handle vfs urls as readable" do
