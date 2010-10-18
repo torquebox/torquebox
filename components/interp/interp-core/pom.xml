@@ -74,6 +74,14 @@
     </dependency>
 
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>vfs</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>gem</type>
+    </dependency>
+
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
@@ -133,6 +141,10 @@
             <property>
               <name>log4j.configuration</name>
               <value>test-log4j.xml</value>
+            </property>
+            <property>
+              <name>gem.path</name>
+              <value>${project.build.directory}/rubygems</value>
             </property>
           </systemProperties>
         </configuration>
