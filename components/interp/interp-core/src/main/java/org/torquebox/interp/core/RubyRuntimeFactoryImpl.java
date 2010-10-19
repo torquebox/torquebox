@@ -312,10 +312,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
 		}
-        
-        if (this.gemPath == null) {
-            setGemPath( System.getProperty( "gem.path" ) );
-        }
 
 		config.setEnvironment(createEnvironment());
 		config.setOutput(getOutput());
@@ -334,7 +330,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);
 		runtime.getLoadService().require("rubygems");
-		runtime.evalScriptlet("require 'vfs'");
 		return runtime;
 	}
 

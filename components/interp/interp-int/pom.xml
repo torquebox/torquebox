@@ -95,15 +95,6 @@
       <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-      <type>gem</type>
-    </dependency>
-
   </dependencies>
 
   <build> 
@@ -136,36 +127,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <systemProperties>
-            <property>
-              <name>gem.path</name>
-              <value>${project.build.directory}/rubygems</value>
-            </property>
-          </systemProperties>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>initialize</goal>
-            </goals>
-            <configuration>
-              <gemHome>${project.build.directory}/rubygems</gemHome>
-              <gemPath>${project.build.directory}/rubygems</gemPath>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
     </plugins> 
   </build> 
 
