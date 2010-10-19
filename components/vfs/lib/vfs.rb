@@ -12,6 +12,7 @@ require 'vfs/ext/io'
 require 'vfs/ext/file'
 require 'vfs/ext/file_test'
 require 'vfs/ext/dir'
+require 'vfs/ext/pathname'
 require 'vfs/ext/kernel'
 require 'vfs/ext/jdbc'
 
