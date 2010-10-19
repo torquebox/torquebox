@@ -330,6 +330,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);
 		runtime.getLoadService().require("rubygems");
+        runtime.evalScriptlet("begin; require 'vfs'; puts 'Loaded VFS'; rescue Exception; puts 'Failed to load VFS'; end");
 		return runtime;
 	}
 
