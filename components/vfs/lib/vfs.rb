@@ -13,6 +13,7 @@ require 'vfs/ext/file'
 require 'vfs/ext/file_test'
 require 'vfs/ext/dir'
 require 'vfs/ext/kernel'
+require 'vfs/ext/jdbc'
 
 
 module ::VFS
