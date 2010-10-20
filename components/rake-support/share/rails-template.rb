@@ -8,9 +8,10 @@ inside('app') {
 }
 
 # We need the jdbc adapter
-gem "activerecord-jdbc-adapter", :require=>'arjdbc'
+gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
+gem "jdbc-sqlite3"
 # We need the torquebox rake tasks 
-gem "org.torquebox.rake-support"
+gem "org.torquebox.rake-support", :lib => 'torquebox-rails'
 
 # We need the app to find the rake tasks
 rakefile( 'torquebox.rake' ) do
