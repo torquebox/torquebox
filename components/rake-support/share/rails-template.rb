@@ -1,17 +1,20 @@
 
-# Comment out the MRI sqlite3 gem requiring native extensions
-run %q[sed -i '' -e 's/^\(gem.*sqlite3\)/# \1/' Gemfile]
+if Rails::VERSION::STRING.start_with?( "2" )
+  # Rails 2.x.x
+  gem "activerecord-jdbc-adapter", :lib => "jdbc_adapter"
+  gem "org.torquebox.rake-support", :lib => 'torquebox-rails'
+else
+  # Rails 3.x.x (or higher)
+  run %q[sed -i '' -e 's/^\(gem.*sqlite3\)/# \1/' Gemfile]
+  gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
+  gem "jdbc-sqlite3"
+  gem "org.torquebox.rake-support", :require => 'torquebox-rails'
+end
 
 # Create app/tasks and app/jobs, just for fun
 inside('app') {
   FileUtils.mkdir %w( tasks jobs )
 }
-
-# We need the jdbc adapter
-gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
-gem "jdbc-sqlite3"
-# We need the torquebox rake tasks 
-gem "org.torquebox.rake-support", :lib => 'torquebox-rails'
 
 # We need the app to find the rake tasks
 rakefile( 'torquebox.rake' ) do
