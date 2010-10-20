@@ -11,7 +11,7 @@ def rails_deployment(app_name, root, context_path)
   deployment_descriptor = {
     'application' => {
       'RAILS_ROOT'=>root,
-      'RAILS_ENV'=>( defined?( RAILS_ENV ) ? RAILS_ENV : 'development' ),
+      'RAILS_ENV'=>( defined?( RAILS_ENV ) ? RAILS_ENV : 'development' ).to_s,
     },
     'web' => {
       'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
@@ -25,7 +25,7 @@ def rack_deployment(app_name, root, context_path)
   deployment_descriptor = { 
     'application' => {
       'RACK_ROOT'=>root,
-      'RACK_ENV'=>( defined?( RACK_ENV ) ? RACK_ENV : 'development' ),
+      'RACK_ENV'=>( defined?( RACK_ENV ) ? RACK_ENV : 'development' ).to_s,
     },
     'web' => {
       'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
