@@ -22,6 +22,11 @@ if ( rails?( Dir.pwd ) )
       puts "Creating archive: #{bundle_name}"
     
       Dir.chdir( RAILS_ROOT ) do
+        unless File.exist? "config/rails-env.yml"
+          File.open( "config/rails-env.yml", "w" ) do |out|
+            YAML.dump( { "RAILS_ENV" => "production" }, out )
+          end
+        end
         cmd = "jar cf #{bundle_name} #{include_files.join(' ')}"
         Open3.popen3( cmd ) do |stdin, stdout, stderr|
           stdin.close
