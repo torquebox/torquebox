@@ -9,6 +9,10 @@ import org.torquebox.mc.vdf.AbstractRubyStructureDeployer;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.rack.core.RackRuntimeInitializer;
+import org.torquebox.interp.metadata.PoolMetaData;
+
 
 public class RackStructure extends AbstractRubyStructureDeployer {
 
@@ -21,13 +25,11 @@ public class RackStructure extends AbstractRubyStructureDeployer {
     @Override
     protected boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
         VirtualFile file = structureContext.getFile();
-        if ( ! hasValidName( file ) ) {
-            return false;
-        }
         ContextInfo context = null;
         try {
             VirtualFile rackup = file.getChild("config.ru");
             if (rackup != null && rackup.exists()) {
+                log.info("Identified as Rack app: "+file);
                 context = createContext(structureContext, new String[] { "config" });
                 addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
                 addRackApplicationMetaData( structureContext, context );
@@ -44,7 +46,19 @@ public class RackStructure extends AbstractRubyStructureDeployer {
         MutableAttachments attachments = (MutableAttachments) context.getPredeterminedManagedObjects();
         RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
         rackAppMetaData.setRackRoot( structureContext.getRoot() );
+        rackAppMetaData.setRackEnv( "development" );
+        rackAppMetaData.setContextPath( "/" );
         attachments.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        runtimeMetaData.setBaseDir( rackAppMetaData.getRackRoot() );
+		RackRuntimeInitializer initializer = new RackRuntimeInitializer( rackAppMetaData.getRackRoot(), rackAppMetaData.getRackEnv() );
+		runtimeMetaData.setRuntimeInitializer(initializer);
+        attachments.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData);
+
+		PoolMetaData poolMetaData = new PoolMetaData("web");
+		poolMetaData.setShared();
+		attachments.addAttachment(PoolMetaData.class, poolMetaData);
     }
 
     @Override

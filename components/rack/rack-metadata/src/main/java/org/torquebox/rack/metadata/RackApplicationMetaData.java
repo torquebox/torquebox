@@ -126,7 +126,7 @@ public class RackApplicationMetaData {
 	}
 	
 	public String toString() {
-		return "[RackApplicationMetaData: runtimePool=" + this.rubyRuntimePoolName + "; appFactory=" + this.rackApplicationFactoryName + "; appPool=" + this.rackApplicationPoolName + "]";
+		return "\n[RackApplicationMetaData:\n  rackEnv=" + this.rackEnv + "\n  rackRoot=" + this.rackRoot + "\n  rackUpScript=" + this.rackUpScript + "\n  rackUpScriptLocation=" + this.rackUpScriptLocation + "\n  contextPath=" + this.contextPath + "\n  staticPathPrefix=" + this.staticPathPrefix + "\n  runtimePool=" + this.rubyRuntimePoolName + "\n  appFactory=" + this.rackApplicationFactoryName + "\n  appPool=" + this.rackApplicationPoolName + "]";
 	}
 	
 }

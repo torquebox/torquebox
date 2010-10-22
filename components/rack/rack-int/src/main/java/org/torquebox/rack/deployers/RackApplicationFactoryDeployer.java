@@ -44,6 +44,7 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
+        log.info("JC: metaData="+metaData);
 		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
 		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
