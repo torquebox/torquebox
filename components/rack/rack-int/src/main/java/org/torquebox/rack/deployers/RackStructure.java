@@ -25,6 +25,9 @@ public class RackStructure extends AbstractRubyStructureDeployer {
     @Override
     protected boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
         VirtualFile file = structureContext.getFile();
+        if ( ! hasValidName( file ) ) {
+            return false;
+        }
         ContextInfo context = null;
         try {
             VirtualFile rackup = file.getChild("config.ru");
@@ -33,6 +36,7 @@ public class RackStructure extends AbstractRubyStructureDeployer {
                 context = createContext(structureContext, new String[] { "config" });
                 addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
                 addRackApplicationMetaData( structureContext, context );
+                log.info("Metadata attached");
                 return true;
             }
         } catch (IOException e) {
@@ -52,13 +56,13 @@ public class RackStructure extends AbstractRubyStructureDeployer {
 
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
         runtimeMetaData.setBaseDir( rackAppMetaData.getRackRoot() );
-		RackRuntimeInitializer initializer = new RackRuntimeInitializer( rackAppMetaData.getRackRoot(), rackAppMetaData.getRackEnv() );
-		runtimeMetaData.setRuntimeInitializer(initializer);
+        RackRuntimeInitializer initializer = new RackRuntimeInitializer( rackAppMetaData.getRackRoot(), rackAppMetaData.getRackEnv() );
+        runtimeMetaData.setRuntimeInitializer(initializer);
         attachments.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData);
 
-		PoolMetaData poolMetaData = new PoolMetaData("web");
-		poolMetaData.setShared();
-		attachments.addAttachment(PoolMetaData.class, poolMetaData);
+        PoolMetaData poolMetaData = new PoolMetaData("web");
+        poolMetaData.setShared();
+        attachments.addAttachment(PoolMetaData.class, poolMetaData);
     }
 
     @Override
