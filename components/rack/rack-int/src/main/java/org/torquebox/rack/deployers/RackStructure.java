@@ -21,6 +21,9 @@ public class RackStructure extends AbstractRubyStructureDeployer {
     @Override
     protected boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
         VirtualFile file = structureContext.getFile();
+        if ( ! hasValidName( file ) ) {
+            return false;
+        }
         ContextInfo context = null;
         try {
             VirtualFile rackup = file.getChild("config.ru");
