@@ -24,13 +24,17 @@ public class RackStructure extends AbstractRubyStructureDeployer {
 
     @Override
     protected boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
+        System.err.println( "doDetermineStructure(" + structureContext + ")" );
         VirtualFile file = structureContext.getFile();
+        System.err.println( "File is: " + file );
         if ( ! hasValidName( file ) ) {
+            System.err.println( "invalid" );
             return false;
         }
         ContextInfo context = null;
         try {
             VirtualFile rackup = file.getChild("config.ru");
+            System.err.println( "rackup: " + rackup + " == " + rackup.exists() );
             if (rackup != null && rackup.exists()) {
                 log.info("Identified as Rack app: "+file);
                 context = createContext(structureContext, new String[] { "config" });
