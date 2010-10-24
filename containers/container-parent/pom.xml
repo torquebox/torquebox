@@ -48,6 +48,7 @@
               <goals>
                 <goal>install</goal>
               </goals>
+              <phase>none</phase>
               <configuration>
                 <installArgs>-f</installArgs>
                 <gemHome>${project.parent.build.directory}/rubygems</gemHome>

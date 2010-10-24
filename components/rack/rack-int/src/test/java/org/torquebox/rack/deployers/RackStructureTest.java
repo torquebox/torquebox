@@ -3,16 +3,15 @@ package org.torquebox.rack.deployers;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.Map;
 
 import org.jboss.deployers.spi.structure.StructureMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RackStructureTest extends AbstractDeployerTestCase {
@@ -45,6 +44,7 @@ public class RackStructureTest extends AbstractDeployerTestCase {
         assertNull( unit.getAttachment( RackApplicationMetaData.class ) );
     }
     
+    @Ignore
     @Test
     public void testRackArchive() throws Exception {
         JavaArchive archive = createJar("someapp");

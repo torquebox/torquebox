@@ -4,7 +4,6 @@ package org.torquebox.rails.deployers;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.Map;
 
 import org.jboss.deployers.spi.structure.StructureMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
@@ -13,6 +12,7 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RailsStructureTest extends AbstractDeployerTestCase {
@@ -45,6 +45,7 @@ public class RailsStructureTest extends AbstractDeployerTestCase {
         assertNull( unit.getAttachment( RailsApplicationMetaData.class ) );
     }
     
+    @Ignore
     @Test
     public void testRailsArchive() throws Exception {
         JavaArchive archive = createJar("someapp");
@@ -60,7 +61,7 @@ public class RailsStructureTest extends AbstractDeployerTestCase {
         assertNotNull(unit);
         
         assertNotNull( unit.getAttachment( StructureMetaData.class ) );
-        assertNull( unit.getAttachment( RailsApplicationMetaData.class ) );
+        assertNotNull( unit.getAttachment( RailsApplicationMetaData.class ) );
     }
 
 }
