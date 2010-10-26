@@ -7,11 +7,6 @@ import org.jboss.deployers.spi.structure.ContextInfo;
 import org.jboss.deployers.vfs.spi.structure.StructureContext;
 import org.torquebox.mc.vdf.AbstractRubyStructureDeployer;
 import org.jboss.vfs.VirtualFile;
-import org.jboss.deployers.spi.attachments.MutableAttachments;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
-import org.torquebox.rack.core.RackRuntimeInitializer;
-import org.torquebox.interp.metadata.PoolMetaData;
 
 
 public class RackStructure extends AbstractRubyStructureDeployer {
@@ -42,25 +37,6 @@ public class RackStructure extends AbstractRubyStructureDeployer {
             throw new DeploymentException(e);
         }
         return false;
-    }
-
-    protected void addRackApplicationMetaData(StructureContext structureContext, ContextInfo context) throws IOException {
-        MutableAttachments attachments = (MutableAttachments) context.getPredeterminedManagedObjects();
-        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
-        rackAppMetaData.setRackRoot( structureContext.getRoot() );
-        rackAppMetaData.setRackEnv( "development" );
-        rackAppMetaData.setContextPath( "/" );
-        attachments.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
-
-        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
-        runtimeMetaData.setBaseDir( rackAppMetaData.getRackRoot() );
-        RackRuntimeInitializer initializer = new RackRuntimeInitializer( rackAppMetaData.getRackRoot(), rackAppMetaData.getRackEnv() );
-        runtimeMetaData.setRuntimeInitializer(initializer);
-        attachments.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData);
-
-        PoolMetaData poolMetaData = new PoolMetaData("web");
-        poolMetaData.setShared();
-        attachments.addAttachment(PoolMetaData.class, poolMetaData);
     }
 
     @Override

@@ -24,6 +24,7 @@ package org.torquebox.rack.deployers;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
@@ -37,6 +38,11 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackAppli
 		super(RackApplicationMetaData.class);
 		setName("web.yml");
 	}
+
+    protected boolean allowsReparse()
+    {
+        return true;
+    }
 
 	@SuppressWarnings("unchecked")
 	protected RackApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackApplicationMetaData root) throws Exception {

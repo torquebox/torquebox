@@ -72,6 +72,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 	@Override
 	protected RackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RackApplicationMetaData root) throws Exception {
+        log.info("JC: parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RackApplicationMetaData root)");
 
 		/*
 		if (!file.equals(vfsUnit.getRoot())) {
@@ -143,30 +144,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 				rackMetaData.setRackEnv("development");
 			}
 
-			VirtualFile rackupFile = rackRootFile.getChild(rackupScriptPath);
-
-			if (rackupFile != null && rackupFile.exists()) {
-				StringBuilder rackupScript = new StringBuilder();
-				BufferedReader in = null;
-				try {
-					in = new BufferedReader(new InputStreamReader(rackupFile.openStream()));
-					String line = null;
-
-					while ((line = in.readLine()) != null) {
-						rackupScript.append(line);
-						rackupScript.append("\n");
-					}
-				} finally {
-					// rackupFile.closeStreams();
-					if (in != null) {
-						in.close();
-					}
-				}
-
-				rackMetaData.setRackUpScript(rackupScript.toString());
-				rackMetaData.setRackUpScriptLocation( rackupFile );
-
-			}
+			rackMetaData.setRackUpScript( rackRootFile.getChild(rackupScriptPath) );
 		}
 		
 		Map<String, Object> web = (Map<String, Object>) config.get(WEB_KEY);

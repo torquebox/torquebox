@@ -50,38 +50,35 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
-
+        log.info("JC: deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData)");
         log.info("deploy(" + unit + ")");
-        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        try {
+            RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
 
-        if (rackMetaData == null) {
-            rackMetaData = new RackApplicationMetaData();
-            rackMetaData.setContextPath("/");
-            unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
-        }
-
-        rackMetaData.setStaticPathPrefix("/public");
-        rackMetaData.setRackRoot(railsAppMetaData.getRailsRoot());
-        rackMetaData.setRackEnv(railsAppMetaData.getRailsEnv());
-
-        RailsGemVersionMetaData railsVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
-
-        String rackUpScript = null;
-
-        if (railsVersionMetaData.isRails3()) {
-            VirtualFile configRu = railsAppMetaData.getRailsRoot().getChild("config.ru");
-            rackMetaData.setRackUpScriptLocation(configRu);
-            try {
-                rackUpScript = read(configRu);
-            } catch (IOException e) {
-                throw new DeploymentException( e );
+            if (rackMetaData == null) {
+                rackMetaData = new RackApplicationMetaData();
+                rackMetaData.setContextPath("/");
+                unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
             }
-        } else {
-            rackUpScript = getRackUpScript(rackMetaData.getContextPath());
-        }
-        rackMetaData.setRackUpScript(rackUpScript);
 
-        unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
+            rackMetaData.setStaticPathPrefix("/public");
+            rackMetaData.setRackRoot(railsAppMetaData.getRailsRoot());
+            rackMetaData.setRackEnv(railsAppMetaData.getRailsEnv());
+
+            RailsGemVersionMetaData railsVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
+
+            String rackUpScript = null;
+
+            if (railsVersionMetaData.isRails3()) {
+                rackMetaData.setRackUpScript( railsAppMetaData.getRailsRoot().getChild("config.ru") );
+            } else {
+                rackMetaData.setRackUpScript(getRackUpScript(rackMetaData.getContextPath()));
+            }
+
+            unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        }
     }
 
     protected String getRackUpScript(String context) {
@@ -90,24 +87,6 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
         }
         return "TORQUEBOX_RACKUP_CONTEXT=%q(" + context + ")\n" + "require %q(org/torquebox/rails/deployers/rackup)\n" + "run TorqueBox::Rails.app\n";
 
-    }
-
-    private String read(VirtualFile file) throws IOException {
-        StringBuilder contents = new StringBuilder();
-        InputStream in = file.openStream();
-        Reader reader = new InputStreamReader(in);
-
-        try {
-            char[] buf = new char[1024];
-
-            while (reader.read(buf) >= 0 ) {
-                contents.append(buf);
-            }
-
-            return contents.toString();
-        } finally {
-            reader.close();
-        }
     }
 
 }

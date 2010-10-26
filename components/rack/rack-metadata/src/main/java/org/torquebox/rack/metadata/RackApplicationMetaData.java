@@ -21,6 +21,10 @@
  */
 package org.torquebox.rack.metadata;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +81,25 @@ public class RackApplicationMetaData {
 		return this.rackUpScriptLocation;
 	}
 	
+    public void setRackUpScript(VirtualFile file) throws IOException {
+        if (file != null && file.exists()) {
+            StringBuilder script = new StringBuilder();
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(new InputStreamReader(file.openStream()));
+                String line = null;
+                while ((line = in.readLine()) != null) {
+                    script.append(line);
+                    script.append("\n");
+                }
+            } finally {
+                if (in != null) in.close();
+            }
+            setRackUpScript( script.toString() );
+            setRackUpScriptLocation( file );
+        }
+    }
+
 	public void addHost(String host) {
 		this.hosts.add( host );
 	}
@@ -124,7 +147,7 @@ public class RackApplicationMetaData {
 	public String getRackApplicationPoolName() {
 		return this.rackApplicationPoolName;
 	}
-	
+
 	public String toString() {
 		return "\n[RackApplicationMetaData:\n  rackEnv=" + this.rackEnv + "\n  rackRoot=" + this.rackRoot + "\n  rackUpScript=" + this.rackUpScript + "\n  rackUpScriptLocation=" + this.rackUpScriptLocation + "\n  contextPath=" + this.contextPath + "\n  staticPathPrefix=" + this.staticPathPrefix + "\n  runtimePool=" + this.rubyRuntimePoolName + "\n  appFactory=" + this.rackApplicationFactoryName + "\n  appPool=" + this.rackApplicationPoolName + "]";
 	}
