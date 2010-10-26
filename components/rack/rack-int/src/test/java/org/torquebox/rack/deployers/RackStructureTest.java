@@ -6,6 +6,7 @@ import java.io.File;
 
 import org.jboss.deployers.spi.structure.StructureMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
@@ -44,23 +45,25 @@ public class RackStructureTest extends AbstractDeployerTestCase {
         assertNull( unit.getAttachment( RackApplicationMetaData.class ) );
     }
     
-    @Ignore
     @Test
     public void testRackArchive() throws Exception {
         JavaArchive archive = createJar("someapp");
         
         archive.addResource(getClass().getResource("config.ru"), "/config.ru");
+        archive.addResource(getClass().getResource("rack-env.yml"), "/config/rack-env.yml");
+        archive.addResource(getClass().getResource("web.yml"), "/web.yml");
         
         File archiveFile = createJarFile(archive, ".rack" );
         String deploymentName = addDeployment( archiveFile );
         processDeployments(true);
         
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        VFSDeploymentUnit unit = (VFSDeploymentUnit) getDeploymentUnit( deploymentName );
         
         assertNotNull(unit);
         
         assertNotNull( unit.getAttachment( StructureMetaData.class ) );
-        assertNotNull( unit.getAttachment( RackApplicationMetaData.class ) );
+        assertNotNull( unit.getMetaDataFile( "rack-env.yml" ) );
+        assertNotNull( unit.getMetaDataFile( "web.yml" ) );
     }
 
 }
