@@ -9,6 +9,7 @@ import org.jboss.vfs.VFS;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
@@ -42,12 +43,12 @@ public class RackApplicationFactoryDeployerTest extends AbstractDeployerTestCase
 		
 		processDeployments(true);
 
-		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
 		
 		BeanMetaData bmd = getBeanMetaData(unit, beanName);
 		assertNotNull( bmd );
 		
-		RackApplicationFactoryImpl factory = (RackApplicationFactoryImpl) getBean(beanName);
+		RackApplicationFactory factory = (RackApplicationFactory) getBean(beanName);
 		assertNotNull( factory );
 		
 		undeploy( deploymentName );
@@ -70,7 +71,7 @@ public class RackApplicationFactoryDeployerTest extends AbstractDeployerTestCase
 		
 		processDeployments(true);
 
-		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
 		
 		BeanMetaData bmd = getBeanMetaData(unit, beanName);
 		assertNotNull( bmd );
@@ -101,7 +102,7 @@ public class RackApplicationFactoryDeployerTest extends AbstractDeployerTestCase
 		
 		processDeployments(true);
 
-		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
 		
 		BeanMetaData bmd = getBeanMetaData(unit, beanName);
 		assertNotNull( bmd );

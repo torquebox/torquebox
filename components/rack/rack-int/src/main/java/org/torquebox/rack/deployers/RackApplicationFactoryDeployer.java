@@ -29,6 +29,7 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
@@ -44,8 +45,7 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
-        log.info("JC: metaData="+metaData);
-		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
+		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
 		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
 		VirtualFile rackUpScriptLocation = metaData.getRackUpScriptLocation();
