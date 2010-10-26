@@ -7,10 +7,10 @@ import java.io.File;
 
 import org.jboss.deployers.spi.structure.StructureMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -45,7 +45,6 @@ public class RailsStructureTest extends AbstractDeployerTestCase {
         assertNull( unit.getAttachment( RailsApplicationMetaData.class ) );
     }
     
-    @Ignore
     @Test
     public void testRailsArchive() throws Exception {
         JavaArchive archive = createJar("someapp");
@@ -56,12 +55,12 @@ public class RailsStructureTest extends AbstractDeployerTestCase {
         String deploymentName = addDeployment( archiveFile );
         processDeployments(true);
         
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        VFSDeploymentUnit unit = (VFSDeploymentUnit) getDeploymentUnit( deploymentName );
         
         assertNotNull(unit);
         
         assertNotNull( unit.getAttachment( StructureMetaData.class ) );
-        assertNotNull( unit.getAttachment( RailsApplicationMetaData.class ) );
+        assertNotNull( unit.getMetaDataFile( "environment.rb" ) );
     }
 
 }

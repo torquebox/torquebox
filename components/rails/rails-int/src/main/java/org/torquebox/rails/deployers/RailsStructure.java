@@ -59,9 +59,9 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 			if (config != null) {
 				VirtualFile environment = config.getChild("environment.rb");
 				if (environment.exists() ) {
+                    log.info("Identified as Rails app: "+file);
 					context = createContext(structureContext, new String[] { "config" });
 
-					addRailsApplicationMetaData(structureContext, context);
 					addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
 					addPluginJars(structureContext, context);
 
@@ -73,10 +73,6 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 				structureContext.removeChild(context);
 			}
 			throw new DeploymentException(e);
-		} catch (URISyntaxException e) {
-			if ( context != null ) {
-				structureContext.removeChild(context);
-			}
 		}
 
 		return recognized;
@@ -97,12 +93,6 @@ public class RailsStructure extends AbstractRubyStructureDeployer {
 				}
 			}
 		}
-	}
-
-	protected void addRailsApplicationMetaData(StructureContext structureContext, ContextInfo context) throws MalformedURLException, URISyntaxException {
-		MutableAttachments attachments = (MutableAttachments) context.getPredeterminedManagedObjects();
-		RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData(structureContext.getRoot() );
-		attachments.addAttachment(RailsApplicationMetaData.class, railsAppMetaData);
 	}
 
 	@Override
