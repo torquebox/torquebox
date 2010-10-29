@@ -4,8 +4,8 @@ if Rails::VERSION::STRING.start_with?( "2" )
   gem "activerecord-jdbc-adapter", :lib => "jdbc_adapter"
   gem "org.torquebox.rake-support", :lib => 'torquebox-rails'
 else
-  # Rails 3.x.x (or higher)
-  run %q[sed -i '' -e 's/^\(gem.*sqlite3\)/# \1/' Gemfile]
+  text = File.read 'Gemfile'
+  File.open('Gemfile', 'w') {|f| f << text.gsub(/^(gem 'sqlite3)/, '# \1') }
   gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
   gem "jdbc-sqlite3"
   gem "org.torquebox.rake-support", :require => 'torquebox-rails'
