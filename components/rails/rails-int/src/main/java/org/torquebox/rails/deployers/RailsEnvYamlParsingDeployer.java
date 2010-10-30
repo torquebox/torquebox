@@ -33,6 +33,15 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: RailsApplicationMetaData
+ *   Out: RailsApplicationMetaData
+ * </pre>
+ *
+ * Sets RAILS_ENV from rails-env.xml *iff* it hasn't already been set.
+ */
 public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 	
 	public static final String RAILS_ENV_KEY = "RAILS_ENV";

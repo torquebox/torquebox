@@ -41,6 +41,17 @@ import org.jboss.metadata.web.spec.WebMetaData;
 import org.torquebox.rack.core.servlet.RackFilter;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
+
+/**
+ * <pre>
+ * Stage: DESCRIBE
+ *    In: RackApplicationMetaData, WebMetaData, JBossWebMetaData
+ *   Out: WebMetaData, JBossWebMetaData
+ * </pre>
+ *
+ * Makes the JBossWebMetaData depend on the RackApplicationPool, and
+ * sets up Java servlet filters to delegate to the Rack application
+ */
 public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
 	public static final String FILTER_NAME = "torquebox.rack";

@@ -11,6 +11,15 @@ import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.metadata.EnvironmentMetaData;
 
+/**
+ * <pre>
+ * Stage: DESCRIBE
+ *    In: EnvironmentMetaData, PoolMetaData
+ *   Out: PoolMetaData
+ * </pre>
+ *
+ * Ensures that pool metadata for jobs is available
+ */
 public class JobsRuntimePoolDeployer extends AbstractDeployer {
     
     public JobsRuntimePoolDeployer() {

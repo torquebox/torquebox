@@ -42,13 +42,17 @@ import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.mc.AttachmentUtils;
 
 /**
+ * <pre>
+ * Stage: CLASSLOADER
+ *    In: RubyRuntimeMetaData
+ *   Out: DeployerRuby
+ * </pre>
+ *
  * Deployer which actually creates a RubyRuntimeFactory and attaches it to the
  * unit.
  * 
- * <p>
- * This CLASSLOADER-stage deployer actually creates an instance of
- * RubyRuntimeFactory and attaches it to the unit.
- * </p>
+ * <p> This deployer actually creates an instance of
+ * RubyRuntimeFactory and attaches it to the unit.  </p>
  * 
  * @author Bob McWhirter
  */

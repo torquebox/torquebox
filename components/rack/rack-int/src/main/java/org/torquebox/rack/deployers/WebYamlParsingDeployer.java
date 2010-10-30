@@ -32,6 +32,17 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: web.yml
+ *   Out: RackApplicationMetaData
+ * </pre>
+ *
+ * Internal deployment descriptor for setting vhosts, web context, and
+ * static content dir
+ */
 public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackApplicationMetaData> {
 
 	public WebYamlParsingDeployer() {

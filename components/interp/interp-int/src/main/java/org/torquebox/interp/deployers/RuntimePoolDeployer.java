@@ -17,6 +17,16 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.AbstractMultipleMetaDataDeployer;
 
+
+/**
+ * <pre>
+ * Stage: REAL
+ *    In: PoolMetaData, DeployerRuby
+ *   Out: BeanMetaData
+ * </pre>
+ *
+ * Creates the proper RubyRuntimePool as specified by the PoolMetaData
+ */
 public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData> {
 
     public RuntimePoolDeployer() {

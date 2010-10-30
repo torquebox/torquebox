@@ -14,6 +14,15 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.core.ManagedQueue;
 import org.torquebox.messaging.metadata.QueueMetaData;
 
+
+/**
+ * <pre>
+ * Stage: REAL
+ *    In: QueueMetaData
+ *   Out: ManagedQueue
+ * </pre>
+ *
+ */
 public class ManagedQueueDeployer extends AbstractDeployer {
 	
 	public ManagedQueueDeployer() {

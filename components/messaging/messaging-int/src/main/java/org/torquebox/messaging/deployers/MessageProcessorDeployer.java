@@ -29,6 +29,15 @@ import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.metadata.EnvironmentMetaData;
 
+
+/**
+ * <pre>
+ * Stage: REAL
+ *    In: MessageProcessorMetaData, EnvironmentMetaData
+ *   Out: RubyMessageProcessor
+ * </pre>
+ *
+ */
 public class MessageProcessorDeployer extends AbstractDeployer {
 
 	public MessageProcessorDeployer() {

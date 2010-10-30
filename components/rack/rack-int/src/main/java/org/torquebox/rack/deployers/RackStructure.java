@@ -9,6 +9,15 @@ import org.torquebox.mc.vdf.AbstractRubyStructureDeployer;
 import org.jboss.vfs.VirtualFile;
 
 
+/**
+ * <pre>
+ * Stage: structure
+ *    In: 
+ *   Out: classpath entries and metadata locations
+ * </pre>
+ *
+ * Determine structure for Rack apps
+ */
 public class RackStructure extends AbstractRubyStructureDeployer {
 
     public RackStructure() {

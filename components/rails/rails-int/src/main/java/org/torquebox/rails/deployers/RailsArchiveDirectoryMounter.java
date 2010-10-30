@@ -35,6 +35,12 @@ import org.jboss.vfs.VFS;
 
 
 /**
+ * <pre>
+ * Stage: PARSE
+ *    In: 
+ *   Out: mounted virtual directories
+ * </pre>
+ *
  * Ensure that directories requiring writability by rails packaged
  * deployments end up somewhere reasonable,
  * 

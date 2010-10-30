@@ -16,6 +16,15 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.metadata.EnvironmentMetaData;
 
 
+/**
+ * <pre>
+ * Stage: PRE_REAL
+ *    In: EnvironmentMetaData
+ *   Out: RubyScheduler
+ * </pre>
+ *
+ * Creates a RubyScheduler bean if there are any job meta data
+ */
 public class RubySchedulerDeployer extends AbstractDeployer {
 	
 	private String runtimePoolName;

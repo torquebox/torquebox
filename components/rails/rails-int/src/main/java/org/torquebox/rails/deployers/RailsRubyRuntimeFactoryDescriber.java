@@ -39,6 +39,15 @@ import org.torquebox.rails.core.RailsRuntimeInitializer;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 
+/**
+ * <pre>
+ * Stage: PRE_DESCRIBE
+ *    In: RailsApplicationMetaData, RailsGemVersionMetaData
+ *   Out: RubyRuntimeMetaData, PoolMetaData
+ * </pre>
+ *
+ * Create the Rails runtime initializer and set the extra load paths
+ */
 public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 
 	public RailsRubyRuntimeFactoryDescriber() {

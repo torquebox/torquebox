@@ -35,6 +35,17 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 
+
+/**
+ * <pre>
+ * Stage: POST_PARSE
+ *    In: RailsApplicationMetaData, RackApplicationMetaData, RailsGemVersionMetaData
+ *   Out: RackApplicationMetaData
+ * </pre>
+ *
+ * All Rails apps are essentially Rack apps, so from a Rails app we
+ * construct Rack metadata to hand off to the Rack deployers.
+ */
 public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplicationMetaData> {
 
     // private static final Logger log =
@@ -50,8 +61,6 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
-        log.info("JC: deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData)");
-        log.info("deploy(" + unit + ")");
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
 

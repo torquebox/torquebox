@@ -14,6 +14,14 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.core.ManagedTopic;
 import org.torquebox.messaging.metadata.TopicMetaData;
 
+/**
+ * <pre>
+ * Stage: REAL
+ *    In: TopicMetaData
+ *   Out: ManagedTopic
+ * </pre>
+ *
+ */
 public class ManagedTopicDeployer extends AbstractDeployer {
 	
 	public ManagedTopicDeployer() {

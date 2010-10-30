@@ -52,6 +52,16 @@ import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: *-rack.yml
+ *   Out: RackApplicationMetaData, RubyRuntimeMetaData, PoolMetaData
+ * </pre>
+ *
+ * Creates a rack deployment from an external descriptor
+ */
 public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackApplicationMetaData> {
 
 	private Logger log = Logger.getLogger(AppRackYamlParsingDeployer.class);

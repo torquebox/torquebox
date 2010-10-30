@@ -12,6 +12,16 @@ import org.torquebox.messaging.metadata.QueueMetaData;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: queues.yml
+ *   Out: QueueMetaData
+ * </pre>
+ *
+ * Creates QueueMetaData instances from queues.yml
+ */
 public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueueMetaData> {
 
 	public QueuesYamlParsingDeployer() {

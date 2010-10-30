@@ -14,6 +14,17 @@ import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 
 
+/**
+ * <pre>
+ * Stage: DESCRIBE
+ *    In: RubyRuntimeMetaData
+ *   Out: RubyRuntimeMetaData
+ * </pre>
+ *
+ * Adds its configured loadPaths (via jboss-beans.xml) to the runtime.
+ * Used to add app/tasks and app/jobs to rails runtime load path for
+ * jobs-int and messaging-int.
+ */
 public class LoadPathDeployer extends AbstractDeployer {
 
     private List<String> loadPaths = Collections.EMPTY_LIST;

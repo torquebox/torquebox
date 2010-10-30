@@ -11,6 +11,16 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.metadata.EnvironmentMetaData;
 
+
+/**
+ * <pre>
+ * Stage: PRE_REAL
+ *    In: EnvironmentMetaData, PoolMetaData
+ *   Out: PoolMetaData
+ * </pre>
+ *
+ * Ensures that pool metadata for messaging is available
+ */
 public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
     private String instanceFactoryName;

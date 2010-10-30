@@ -35,6 +35,15 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.spi.RackApplicationPool;
 
+
+/**
+ * <pre>
+ * Stage: PRE_DESCRIBE
+ *    In: RackApplicationMetaData
+ *   Out: RackApplicationMetaData, RackApplicationPool
+ * </pre>
+ *
+ */
 public class RackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
 	public RackApplicationPoolDeployer() {
@@ -47,7 +56,6 @@ public class RackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<R
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
-		log.info("JC: metaData="+metaData);
 		String beanName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationPoolImpl.class.getName());
 		

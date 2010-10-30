@@ -35,6 +35,12 @@ import org.torquebox.mc.vdf.AbstractRubyStructureDeployer;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
 /**
+ * <pre>
+ * Stage: structure
+ *    In: 
+ *   Out: classpath entries and metadata locations
+ * </pre>
+ *
  * StructureDeployer to identify Ruby-on-Rails applications.
  * 
  * @author Bob McWhirter

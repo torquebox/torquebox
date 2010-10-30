@@ -12,6 +12,12 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 /**
+ * <pre>
+ * Stage: PARSE
+ *    In: pooling.yml
+ *   Out: PoolMetaData
+ * </pre>
+ *
  * Parsing deployer for {@code pooling.yml}.
  * 
  * <p>

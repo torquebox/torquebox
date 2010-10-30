@@ -17,6 +17,16 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.yaml.snakeyaml.Yaml;
 
+
+/**
+ * <pre>
+ * Stage: POST_CLASSLOADER
+ *    In: messaging.yml, DeployerRuby
+ *   Out: MessageProcessorMetaData
+ * </pre>
+ *
+ * Creates MessageProcessorMetaData instances from messaging.yml
+ */
 public class MessagingYamlParsingDeployer extends AbstractVFSParsingDeployer<MessageProcessorMetaData> {
 
     public MessagingYamlParsingDeployer() {

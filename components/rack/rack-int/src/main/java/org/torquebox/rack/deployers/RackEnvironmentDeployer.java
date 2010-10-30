@@ -28,6 +28,18 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
+
+/**
+ * <pre>
+ * Stage: POST_PARSE
+ *    In: RackApplicationMetaData
+ *   Out: EnvironmentMetaData
+ * </pre>
+ *
+ * The environment metadata links the Rails mode to the Jobs and
+ * Messaging components, allowing their classes to be automatically
+ * reloaded in development mode, for example.
+ */
 public class RackEnvironmentDeployer extends AbstractDeployer {
     
     public RackEnvironmentDeployer() {

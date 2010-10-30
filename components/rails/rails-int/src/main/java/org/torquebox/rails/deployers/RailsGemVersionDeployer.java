@@ -36,6 +36,16 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: RailsApplicationMetaData
+ *   Out: RailsGemVersionMetaData
+ * </pre>
+ *
+ * Determine which rails version the deployment requires
+ */
 public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
 	//private static final Logger log = Logger.getLogger(RailsGemVersionDeployer.class);
@@ -65,7 +75,7 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 	protected RailsGemVersionMetaData determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
 	    RailsGemVersionMetaData versionMetaData = determineVersionTryRails2( railsRoot );
 	    if ( versionMetaData == null ) {
-	        versionMetaData = deteremineVersionTryRails3( railsRoot );
+	        versionMetaData = determineVersionTryRails3( railsRoot );
 	    }
 	    
 	    return versionMetaData;
@@ -102,7 +112,7 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 	        return null;
 	}
 	
-	protected RailsGemVersionMetaData deteremineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
+	protected RailsGemVersionMetaData determineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
         VirtualFile gemfile = railsRoot.getChild("Gemfile");
         
         log.info( "Gemfile = " + gemfile );

@@ -32,6 +32,17 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
+
+/**
+ * <pre>
+ * Stage: NOT_INSTALLED
+ *    In: 
+ *   Out: RailsApplicationMetaData
+ * </pre>
+ *
+ * Creates metadata if it recognizes a deployment as a Rails
+ * application.  
+ */
 public class RailsRootRecognizingDeployer extends AbstractDeployer {
 	
 	public RailsRootRecognizingDeployer() {

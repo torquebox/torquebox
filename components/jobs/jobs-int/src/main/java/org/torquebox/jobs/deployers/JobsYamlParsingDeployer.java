@@ -35,6 +35,16 @@ import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.yaml.snakeyaml.Yaml;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: jobs.yml
+ *   Out: ScheduledJobMetaData
+ * </pre>
+ *
+ * Creates ScheduledJobMetaData instances from jobs.yml
+ */
 public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
 
 	public JobsYamlParsingDeployer() {

@@ -35,6 +35,16 @@ import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.interp.metadata.PoolMetaData;
 
 
+/**
+ * <pre>
+ * Stage: NOT_INSTALLED
+ *    In: 
+ *   Out: RackApplicationMetaData
+ * </pre>
+ *
+ * Creates metadata if it recognizes a deployment as a Rack
+ * application
+ */
 public class RackRecognizingDeployer extends AbstractDeployer {
 	
 	public RackRecognizingDeployer() {

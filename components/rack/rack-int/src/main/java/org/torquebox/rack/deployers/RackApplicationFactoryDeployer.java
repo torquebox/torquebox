@@ -33,6 +33,15 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
+
+/**
+ * <pre>
+ * Stage: PRE_DESCRIBE
+ *    In: RackApplicationMetaData
+ *   Out: RackApplicationMetaData, RackApplicationFactory
+ * </pre>
+ *
+ */
 public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
 	public RackApplicationFactoryDeployer() {
