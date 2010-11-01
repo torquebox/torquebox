@@ -22,7 +22,7 @@ import org.torquebox.mc.vdf.AbstractMultipleMetaDataDeployer;
  * <pre>
  * Stage: REAL
  *    In: PoolMetaData, DeployerRuby
- *   Out: BeanMetaData
+ *   Out: RubyRuntimePool
  * </pre>
  *
  * Creates the proper RubyRuntimePool as specified by the PoolMetaData

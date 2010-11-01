@@ -19,7 +19,7 @@ import org.torquebox.metadata.EnvironmentMetaData;
 /**
  * <pre>
  * Stage: PRE_REAL
- *    In: EnvironmentMetaData
+ *    In: EnvironmentMetaData, ScheduledJobMetaData
  *   Out: RubyScheduler
  * </pre>
  *
