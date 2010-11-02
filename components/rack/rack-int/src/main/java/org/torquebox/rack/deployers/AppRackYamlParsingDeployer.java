@@ -44,7 +44,6 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
@@ -57,7 +56,7 @@ import org.yaml.snakeyaml.Yaml;
  * <pre>
  * Stage: PARSE
  *    In: *-rack.yml
- *   Out: RackApplicationMetaData, RubyRuntimeMetaData, PoolMetaData
+ *   Out: RackApplicationMetaData, RubyRuntimeMetaData
  * </pre>
  *
  * Creates a rack deployment from an external descriptor
@@ -114,7 +113,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 		AttachmentUtils.attach(unit, builder.getBeanMetaData());
 	}
 
-	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, PoolMetaData poolMetaData, RackApplicationMetaData rackMetaData)
+	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, RackApplicationMetaData rackMetaData)
 			throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackRoot);
 
@@ -122,7 +121,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 		attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		attachments.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
-		attachments.addAttachment(PoolMetaData.class, poolMetaData);
 		
 		return deployment;
 	}
@@ -175,12 +173,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 		return runtimeMetaData;
 	}
 	
-	private PoolMetaData setUpPoolMetaData() {
-		PoolMetaData poolMetaData = new PoolMetaData("web");
-		poolMetaData.setShared();
-		return poolMetaData;
-	}
-
 	@SuppressWarnings("unchecked")
 	private VirtualFile getRackRoot(Map<String, Object> config) throws IOException {
 
@@ -206,10 +198,8 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 		VirtualFile rackRootFile = getRackRoot(config);
 		RackApplicationMetaData rackMetaData = parseAndSetUpApplication(unit, rackRootFile, config);
-
 		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv(), config);
-		PoolMetaData poolMetaData = setUpPoolMetaData();
 
-		return createDeployment(rackRootFile, runtimeMetaData, poolMetaData, rackMetaData );
+		return createDeployment(rackRootFile, runtimeMetaData, rackMetaData );
 	}
 }

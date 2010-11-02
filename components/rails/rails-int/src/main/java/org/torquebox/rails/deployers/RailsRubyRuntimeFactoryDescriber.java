@@ -31,7 +31,6 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
@@ -43,7 +42,7 @@ import org.torquebox.rails.metadata.RailsGemVersionMetaData;
  * <pre>
  * Stage: PRE_DESCRIBE
  *    In: RailsApplicationMetaData, RailsGemVersionMetaData
- *   Out: RubyRuntimeMetaData, PoolMetaData
+ *   Out: RubyRuntimeMetaData
  * </pre>
  *
  * Create the Rails runtime initializer and set the extra load paths
@@ -55,7 +54,6 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 		setInput(RailsApplicationMetaData.class);
 		addInput(RailsGemVersionMetaData.class);
 		addOutput(RubyRuntimeMetaData.class);
-		addOutput(PoolMetaData.class);
 	}
 
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
@@ -91,12 +89,6 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 		} catch (IOException e) {
 			throw new DeploymentException(e);
 		}
-
-		PoolMetaData poolMetaData = new PoolMetaData( "web" );
-		poolMetaData.setShared();
-		
-		AttachmentUtils.multipleAttach(unit, poolMetaData, "web");
-		
 	}
 
 	protected void addRuntimeInitializer(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData,

@@ -13,8 +13,12 @@ public class AttachmentUtils {
 	}
 	
 	public static void multipleAttach(DeploymentUnit unit, Object metaData, String name) {
-		unit.addAttachment( metaData.getClass().getName() + '$' + name, metaData );
+        unit.addAttachment( metaData.getClass().getName() + '$' + name, metaData );
 	}
+    
+    public static <T> T getAttachment(DeploymentUnit unit, String name, Class<T> expectedType) {
+        return unit.getAttachment( expectedType.getName() + '$' + name, expectedType );
+    }
 	
 	public static String beanName(DeploymentUnit unit, Class<?> beanClass) {
 		return beanName(unit, beanClass, null );

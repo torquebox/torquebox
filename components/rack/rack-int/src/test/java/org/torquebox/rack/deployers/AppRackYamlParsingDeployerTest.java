@@ -10,6 +10,7 @@ import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
 import org.torquebox.rack.core.RackRuntimeInitializer;
@@ -38,7 +39,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	
 	@Test
 	public void testValidAppRackYml() throws Exception {
-		System.err.println( "BEGIN testValidAppRackYaml" );
+		log.info( "BEGIN testValidAppRackYaml" );
 		URL appRackYml = getClass().getResource( "valid-app-rack.yml" );
 		
 		String deploymentName = addDeployment( appRackYml, "app-rack.yml" );
@@ -67,6 +68,9 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		assertNotNull( rubyRuntimeMetaData );
 		assertNotNull( rubyRuntimeMetaData.getRuntimeInitializer() );
 		assertTrue( rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
-		System.err.println( "END testValidAppRackYaml" );
+
+        assertNull( attachments.getAttachment( PoolMetaData.class ) );
+		log.info( "END testValidAppRackYaml" );
 	}
+
 }

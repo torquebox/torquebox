@@ -36,6 +36,7 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
     }
 
     protected void deploy(DeploymentUnit unit, PoolMetaData poolMetaData) throws DeploymentException {
+        log.info("Deploying runtime pool: "+poolMetaData);
 
         // String beanName = AttachmentUtils.beanName(unit, "pool",
         // poolMetaData.getName());
