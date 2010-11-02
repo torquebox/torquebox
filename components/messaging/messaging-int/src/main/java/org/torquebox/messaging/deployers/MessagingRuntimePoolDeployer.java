@@ -46,17 +46,7 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
             return;
         }
 
-        Set<? extends PoolMetaData> allPools = unit.getAllMetaData(PoolMetaData.class);
-
-        PoolMetaData pool = null;
-
-        for (PoolMetaData each : allPools) {
-            if (each.getName().equals("messaging")) {
-                pool = each;
-                break;
-            }
-        }
-
+        PoolMetaData pool = AttachmentUtils.getAttachment( unit, "messaging", PoolMetaData.class );
         if (pool == null) {
             EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();

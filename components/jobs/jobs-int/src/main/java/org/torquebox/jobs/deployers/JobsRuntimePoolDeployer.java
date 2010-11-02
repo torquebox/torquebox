@@ -35,17 +35,7 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
             return;
         }
         
-        Set<? extends PoolMetaData> allPools = unit.getAllMetaData( PoolMetaData.class );
-        
-        PoolMetaData jobsPool = null;
-        
-        for ( PoolMetaData each : allPools ) {
-            if ( each.getName().equals( "jobs" ) ) {
-                jobsPool = each;
-                break;
-            }
-        }
-        
+        PoolMetaData jobsPool = AttachmentUtils.getAttachment( unit, "jobs", PoolMetaData.class );;
         if ( jobsPool == null ) {
             EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
