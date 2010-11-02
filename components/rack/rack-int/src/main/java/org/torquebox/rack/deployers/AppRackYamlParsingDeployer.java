@@ -82,7 +82,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
 	@Override
 	protected RackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RackApplicationMetaData root) throws Exception {
-        log.info("JC: parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RackApplicationMetaData root)");
 
 		/*
 		if (!file.equals(vfsUnit.getRoot())) {
