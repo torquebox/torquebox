@@ -41,7 +41,6 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
 import org.torquebox.rack.deployers.WebYamlParsingDeployer;
@@ -54,7 +53,7 @@ import org.yaml.snakeyaml.Yaml;
  * <pre>
  * Stage: PARSE
  *    In: *-rails.yml
- *   Out: RailsApplicationMetaData, RubyRuntimeMetaData
+ *   Out: RailsApplicationMetaData, RackApplicationMetaData
  * </pre>
  *
  * Creates a rails deployment from an external descriptor
@@ -126,14 +125,12 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 	// railsMetaData, RackWebApplicationMetaData webMetaData,
 	// SipApplicationMetaData sipMetaData) throws MalformedURLException,
 	// IOException {
-	private Deployment createDeployment(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData, RackApplicationMetaData rackMetaData) throws MalformedURLException, IOException {
+	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackApplicationMetaData rackMetaData) throws MalformedURLException, IOException {
 		AbstractVFSDeployment deployment = new AbstractVFSDeployment(railsMetaData.getRailsRoot());
 
 		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
 
-		attachments.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
 		attachments.addAttachment(RailsApplicationMetaData.class, railsMetaData);
-
 		if (rackMetaData != null) {
 			attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		}
@@ -154,35 +151,20 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			Map<String, String> env = (Map<String, String>) results.get("environment");
 
 			RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData();
-			RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
-
-			String poolBeanName = null;
-
 			if (application != null) {
 				String railsRoot = application.get(RAILS_ROOT_KEY).toString();
 				String railsEnv = application.get(RAILS_ENV_KEY).toString();
 
 				VirtualFile railsRootFile = VFS.getChild(railsRoot);
 
-				log.info("RAILS_ROOT=" + railsRootFile);
-				log.info("RAILS_ROOT.uri=" + railsRootFile.toURI());
-				log.info("RAILS_ROOT.url=" + railsRootFile.toURL());
-				// TODO close handle on undeploy
-				// VFS.mountReal(new File(railsRoot), railsRootFile );
-
 				railsMetaData.setRailsRoot(railsRootFile);
-				if (railsEnv != null) {
-					railsMetaData.setRailsEnv(railsEnv.toString());
-				}
-				poolBeanName = "torquebox." + railsRootFile.getName() + ".RackApplicationPool";
-
-				runtimeMetaData.setBaseDir(railsRootFile);
-				runtimeMetaData.setEnvironment( env );
+                railsMetaData.setRailsEnv(railsEnv);
 			}
 
 			RackApplicationMetaData rackMetaData = WebYamlParsingDeployer.parse(unit, web, null);
+            rackMetaData.setEnvironmentVariables( env );
 
-			return createDeployment(runtimeMetaData, railsMetaData, rackMetaData);
+			return createDeployment(railsMetaData, rackMetaData);
 
 		} finally {
 			if (in != null) {

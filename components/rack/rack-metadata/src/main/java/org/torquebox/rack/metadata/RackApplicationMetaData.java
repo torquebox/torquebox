@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.vfs.VirtualFile;
 
@@ -44,6 +45,7 @@ public class RackApplicationMetaData {
 	private String rubyRuntimePoolName;
 	private String rackApplicationFactoryName;
 	private String rackApplicationPoolName;
+	private Map<String, String> environment;
 
 	public RackApplicationMetaData() {
 		
@@ -148,6 +150,14 @@ public class RackApplicationMetaData {
 		return this.rackApplicationPoolName;
 	}
 
+	public void setEnvironmentVariables(Map<String,String> environment) {
+		this.environment = environment; 
+	}
+
+	public Map<String, String> getEnvironmentVariables() {
+		return this.environment;
+	}
+	
 	public String toString() {
 		return "\n[RackApplicationMetaData:\n  rackEnv=" + this.rackEnv + "\n  rackRoot=" + this.rackRoot + "\n  rackUpScript=" + this.rackUpScript + "\n  rackUpScriptLocation=" + this.rackUpScriptLocation + "\n  contextPath=" + this.contextPath + "\n  staticPathPrefix=" + this.staticPathPrefix + "\n  runtimePool=" + this.rubyRuntimePoolName + "\n  appFactory=" + this.rackApplicationFactoryName + "\n  appPool=" + this.rackApplicationPoolName + "]";
 	}
