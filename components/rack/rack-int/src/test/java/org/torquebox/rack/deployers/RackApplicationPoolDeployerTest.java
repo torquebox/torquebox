@@ -86,11 +86,11 @@ public class RackApplicationPoolDeployerTest extends AbstractDeployerTestCase {
         assertEquals( 4, poolMetaData.getMaximumSize() );
 	}
 
-	// @Test
+	@Test
 	public void testPoolingYamlOverride() throws Throwable {
         addDeployer( new PoolingYamlParsingDeployer() );
 		JavaArchive archive = createJar( "test" );
-		archive.addResource(getClass().getResource("pooling.yml"), "pooling.yml");
+		archive.addResource(getClass().getResource("pooling.yml"), "/META-INF/pooling.yml");
 		File archiveFile = createJarFile( archive );
 		
 		String deploymentName = addDeployment( archiveFile );
