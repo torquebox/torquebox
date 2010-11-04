@@ -16,7 +16,7 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 
 /**
  * <pre>
- * Stage: DESCRIBE
+ * Stage: PRE_DESCRIBE
  *    In: RubyRuntimeMetaData
  *   Out: RubyRuntimeMetaData
  * </pre>
@@ -30,7 +30,7 @@ public class LoadPathDeployer extends AbstractDeployer {
     private List<String> loadPaths = Collections.EMPTY_LIST;
 
     public LoadPathDeployer() {
-        setStage(DeploymentStages.DESCRIBE);
+        setStage(DeploymentStages.PRE_DESCRIBE);
         setInput(RubyRuntimeMetaData.class);
         addOutput(RubyRuntimeMetaData.class);
     }
