@@ -18,7 +18,7 @@ import org.torquebox.metadata.EnvironmentMetaData;
 
 /**
  * <pre>
- * Stage: PRE_REAL
+ * Stage: REAL
  *    In: EnvironmentMetaData, ScheduledJobMetaData
  *   Out: RubyScheduler
  * </pre>
@@ -32,7 +32,8 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 	public RubySchedulerDeployer() {
 		setAllInputs( true );
 		addInput(EnvironmentMetaData.class);
-		setStage( DeploymentStages.PRE_REAL );
+		addOutput(BeanMetaData.class);
+		setStage( DeploymentStages.REAL );
 	}
 	
 	public void setRubyRuntimePoolName(String runtimePoolName) {
