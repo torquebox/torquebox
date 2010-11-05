@@ -33,7 +33,7 @@ public class TasksDeployer extends AbstractDeployer {
     }
 
     @Override
-        public void deploy(DeploymentUnit unit) throws DeploymentException {
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
         Set<? extends TaskMetaData> allTasks = unit.getAllMetaData( TaskMetaData.class );
                 
         for ( TaskMetaData each : allTasks ) {
