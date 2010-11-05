@@ -14,8 +14,8 @@ import org.torquebox.metadata.EnvironmentMetaData;
 
 /**
  * <pre>
- * Stage: PRE_REAL
- *    In: EnvironmentMetaData, PoolMetaData
+ * Stage: DESCRIBE
+ *    In: EnvironmentMetaData, PoolMetaData, MessageProcessorMetaData
  *   Out: PoolMetaData
  * </pre>
  *
@@ -25,11 +25,18 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
     private String instanceFactoryName;
 
+    /**
+     * I'd rather use setInput(MessageProcessorMetaData) and omit the
+     * getAllMetaData short circuit in deploy(), but that requires
+     * attachers to pass an ExpectedType, and I don't think we can
+     * assume that.
+     */
     public MessagingRuntimePoolDeployer() {
-        setStage(DeploymentStages.PRE_REAL);
+        setStage(DeploymentStages.DESCRIBE);
+        addInput( MessageProcessorMetaData.class );
         addInput( EnvironmentMetaData.class );
-        addInput(PoolMetaData.class);
-        addOutput(PoolMetaData.class);
+        addInput( PoolMetaData.class );
+        addOutput( PoolMetaData.class );
     }
     
     public void setInstanceFactoryName(String instanceFactoryName) {
@@ -45,7 +52,6 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
         if (unit.getAllMetaData(MessageProcessorMetaData.class).isEmpty()) {
             return;
         }
-
         PoolMetaData pool = AttachmentUtils.getAttachment( unit, "messaging", PoolMetaData.class );
         if (pool == null) {
             EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);

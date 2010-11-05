@@ -14,7 +14,7 @@ import org.torquebox.metadata.EnvironmentMetaData;
 /**
  * <pre>
  * Stage: DESCRIBE
- *    In: EnvironmentMetaData, PoolMetaData
+ *    In: EnvironmentMetaData, PoolMetaData, ScheduledJobMetaData
  *   Out: PoolMetaData
  * </pre>
  *
@@ -22,8 +22,15 @@ import org.torquebox.metadata.EnvironmentMetaData;
  */
 public class JobsRuntimePoolDeployer extends AbstractDeployer {
     
+    /**
+     * I'd rather use setInput(ScheduledJobMetaData) and omit the
+     * getAllMetaData short circuit in deploy(), but that requires
+     * attachers to pass an ExpectedType, and I don't think we can
+     * assume that.
+     */
     public JobsRuntimePoolDeployer() {
         setStage( DeploymentStages.DESCRIBE );
+        addInput( ScheduledJobMetaData.class );
         addInput( EnvironmentMetaData.class );
         addInput( PoolMetaData.class );
         addOutput( PoolMetaData.class );
@@ -34,7 +41,6 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
         if ( unit.getAllMetaData( ScheduledJobMetaData.class ).isEmpty() ) {
             return;
         }
-        
         PoolMetaData jobsPool = AttachmentUtils.getAttachment( unit, "jobs", PoolMetaData.class );;
         if ( jobsPool == null ) {
             EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
