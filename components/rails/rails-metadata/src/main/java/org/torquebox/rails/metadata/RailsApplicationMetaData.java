@@ -25,6 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
+
 
 public class RailsApplicationMetaData {
 
@@ -70,6 +72,18 @@ public class RailsApplicationMetaData {
 		return this.railsEnv;
 	}
 	
+    public RackApplicationMetaData createRackMetaData() {
+        RackApplicationMetaData rackMetaData = new RackApplicationMetaData();
+        set(rackMetaData);
+        return rackMetaData;
+    }
+
+    public void set(RackApplicationMetaData rackMetaData) {
+        rackMetaData.setStaticPathPrefix("/public");
+        rackMetaData.setRackRoot(getRailsRoot());
+        rackMetaData.setRackEnv(getRailsEnv());
+    }
+
 	public String toString() {
 		return "[RailsApplicationMetaData: railsRoot=" + railsRoot + "; railsEnv=" + railsEnv + "]";
 	}

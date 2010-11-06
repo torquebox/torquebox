@@ -63,25 +63,22 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
     public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
-
             if (rackMetaData == null) {
-                rackMetaData = new RackApplicationMetaData();
+                rackMetaData = railsAppMetaData.createRackMetaData();
                 rackMetaData.setContextPath("/");
                 unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
+            } else {
+                railsAppMetaData.set(rackMetaData);
             }
-
-            rackMetaData.setStaticPathPrefix("/public");
-            rackMetaData.setRackRoot(railsAppMetaData.getRailsRoot());
-            rackMetaData.setRackEnv(railsAppMetaData.getRailsEnv());
-
             RailsGemVersionMetaData railsVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
 
             String rackUpScript = null;
 
+            // TODO: Move this to RailsApplicationMetaData, after moving version in there, too.
             if (railsVersionMetaData.isRails3()) {
                 rackMetaData.setRackUpScript( railsAppMetaData.getRailsRoot().getChild("config.ru") );
             } else {
-                rackMetaData.setRackUpScript(getRackUpScript(rackMetaData.getContextPath()));
+                rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
             }
 
             unit.addAttachment(RackApplicationMetaData.class, rackMetaData);

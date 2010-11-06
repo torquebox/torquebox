@@ -86,13 +86,7 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
 	@Override
 	protected RailsApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RailsApplicationMetaData root) throws Exception {
-
-		/*
-		if (!file.equals(vfsUnit.getRoot())) {
-			log.debug("not deploying non-root: " + file);
-			return null;
-		}
-		*/
+        log.info("Parsing external rails descriptor: "+file);
 
 		Deployment deployment = parseAndSetUp(vfsUnit, file);
 
@@ -161,7 +155,7 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
                 railsMetaData.setRailsEnv(railsEnv);
 			}
 
-			RackApplicationMetaData rackMetaData = WebYamlParsingDeployer.parse(unit, web, null);
+			RackApplicationMetaData rackMetaData = WebYamlParsingDeployer.parse(unit, web, railsMetaData.createRackMetaData());
             rackMetaData.setEnvironmentVariables( env );
 
 			return createDeployment(railsMetaData, rackMetaData);
