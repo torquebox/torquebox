@@ -98,8 +98,8 @@ public class RackApplicationMetaData {
                 if (in != null) in.close();
             }
             setRackUpScript( script.toString() );
-            setRackUpScriptLocation( file );
         }
+        setRackUpScriptLocation( file );
     }
 
 	public void addHost(String host) {
