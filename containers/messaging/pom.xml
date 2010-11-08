@@ -109,6 +109,9 @@
           <execution>
             <id>default-install</id>
             <phase>install</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
           </execution>
           <execution>
             <id>install-gem-into-assemblage</id>
