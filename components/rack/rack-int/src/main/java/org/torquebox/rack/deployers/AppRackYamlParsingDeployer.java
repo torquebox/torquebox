@@ -150,15 +150,12 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
             VirtualFile rackUp = null;
 
-            System.err.println(" SCRIPT: " + rackupScriptPath);
-
-            if (rackupScriptPath.startsWith("/")) {
+            if (rackupScriptPath.startsWith("/") || rackupScriptPath.matches( "^[A-Za-z]:.*") ) {
                 rackUp = VFS.getChild(rackupScriptPath);
             } else {
                 rackUp = rackRootFile.getChild(rackupScriptPath);
             }
 
-            System.err.println("VFS: " + rackUp);
             rackMetaData.setRackUpScript(rackUp);
         }
 

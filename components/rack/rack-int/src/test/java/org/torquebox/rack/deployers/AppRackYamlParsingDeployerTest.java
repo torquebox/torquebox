@@ -111,6 +111,43 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
     }
     
     @Test
+    public void testValidAppRackYmlWithDriveLetterAbsolutePathToRackup() throws Exception {
+        log.info("BEGIN testValidAppRackYaml");
+        URL appRackYml = getClass().getResource("valid-drive-letter-absolute-rackup-app-rack.yml");
+
+        String deploymentName = addDeployment(appRackYml, "app-rack.yml");
+        processDeployments(true);
+
+        DeploymentUnit unit = getDeploymentUnit(deploymentName);
+
+        String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, "app-rack.yml");
+        BeanMetaData bmd = getBeanMetaData(unit, beanName);
+        assertNotNull(bmd);
+
+        PojoDeployment pojo = (PojoDeployment) getBean(beanName);
+        assertNotNull(pojo);
+
+        VFSDeployment deployment = pojo.getDeployment();
+
+        assertEquals("vfs:///tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString());
+
+        Attachments attachments = deployment.getPredeterminedManagedObjects();
+
+        RackApplicationMetaData rackAppMetaData = attachments.getAttachment(RackApplicationMetaData.class);
+        assertNotNull(rackAppMetaData);
+        assertEquals("test", rackAppMetaData.getRackEnv());
+
+        assertEquals("/E:/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
+
+        RubyRuntimeMetaData rubyRuntimeMetaData = attachments.getAttachment(RubyRuntimeMetaData.class);
+        assertNotNull(rubyRuntimeMetaData);
+        assertNotNull(rubyRuntimeMetaData.getRuntimeInitializer());
+        assertTrue(rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer);
+
+        assertNull(attachments.getAttachment(PoolMetaData.class));
+    }
+    
+    @Test
     public void testValidAppRackYmlWithRelativePathToRackup() throws Exception {
         log.info("BEGIN testValidAppRackYaml");
         URL appRackYml = getClass().getResource("valid-relative-rackup-app-rack.yml");
