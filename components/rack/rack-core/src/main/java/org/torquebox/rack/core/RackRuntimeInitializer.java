@@ -34,6 +34,8 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 	@Override
 	public void initialize(Ruby ruby) throws Exception {
 		ruby.evalScriptlet(getInitializerScript());
+        // ruby.setCurrentDirectory(this.rackRoot.toURL().toString());
+        // System.out.println("JC: set current dir to "+ruby.getCurrentDirectory());
 	}
 
 	/** Create the initializer script.
