@@ -73,19 +73,6 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 		RailsGemVersionMetaData railsGemVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
 
 		addRuntimeInitializer(runtimeMetaData, railsMetaData, railsGemVersionMetaData);
-
-		try {
-			addRailsRootLoadPath(runtimeMetaData, railsMetaData);
-			addRailtiesLibLoadPath(runtimeMetaData, railsMetaData);
-			VirtualFile baseDir = unit.getRoot();
-			unit.addAttachment(VirtualFile.class.getName() + "$ruby.baseDir", baseDir);
-		} catch (MalformedURLException e) {
-			throw new DeploymentException(e);
-		} catch (URISyntaxException e) {
-			throw new DeploymentException(e);
-		} catch (IOException e) {
-			throw new DeploymentException(e);
-		}
 	}
 
     protected RubyRuntimeMetaData createRuntimeMetaData(DeploymentUnit unit) {
@@ -105,25 +92,7 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 		runtimeMetaData.setRuntimeInitializer(initializer);
 	}
 
-	protected void addRailsRootLoadPath(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData)
-			throws MalformedURLException, URISyntaxException {
-		RubyLoadPathMetaData railsRootPath = new RubyLoadPathMetaData();
-		railsRootPath.setURL(railsMetaData.getRailsRoot().toURL());
-		runtimeMetaData.appendLoadPath(railsRootPath);
-	}
-
-	protected void addRailtiesLibLoadPath(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData)
-			throws IOException, URISyntaxException {
-		VirtualFile railtiesLib = railsMetaData.getRailsRoot().getChild("vendor/rails/railties/lib");
-		if (railtiesLib != null) {
-			RubyLoadPathMetaData railtiesPath = new RubyLoadPathMetaData();
-			railtiesPath.setURL(railtiesLib.toURL());
-			runtimeMetaData.appendLoadPath(railtiesPath);
-		}
-	}
-
-	public RailsRuntimeInitializer createRuntimeInitializer(VirtualFile railsRoot, String railsEnv,
-			RailsGemVersionMetaData railsGemVersionMetaData) {
+	public RailsRuntimeInitializer createRuntimeInitializer(VirtualFile railsRoot, String railsEnv, RailsGemVersionMetaData railsGemVersionMetaData) {
 		boolean loadUsingGems = false;
 		String versionSpec = null;
 
