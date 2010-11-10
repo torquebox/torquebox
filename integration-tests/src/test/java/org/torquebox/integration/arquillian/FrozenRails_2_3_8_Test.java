@@ -1,11 +1,13 @@
 package org.torquebox.integration.arquillian;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -18,6 +20,7 @@ public class FrozenRails_2_3_8_Test extends AbstractIntegrationTest {
 	}
 
 	@Test
+	@Ignore
 	public void testHighLevel() {
         driver.get( "http://localhost:8080/frozen-rails" );
         System.err.println( "RESULT: " );
