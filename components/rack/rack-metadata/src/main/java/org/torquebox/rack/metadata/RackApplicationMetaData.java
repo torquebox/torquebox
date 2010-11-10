@@ -103,7 +103,7 @@ public class RackApplicationMetaData {
     }
 
 	public void addHost(String host) {
-		this.hosts.add( host );
+		if ( ! this.hosts.contains(host) ) this.hosts.add( host );
 	}
 	
 	public List<String> getHosts() {

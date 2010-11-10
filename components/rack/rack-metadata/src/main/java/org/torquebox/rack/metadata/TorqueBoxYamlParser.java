@@ -58,9 +58,6 @@ public class TorqueBoxYamlParser {
         return this.metaData;
     }
 
-    /**
-     * TODO: This should be in a util class, if not already in JBoss VFS somewhere
-     */
     protected VirtualFile getAbsoluteOrRelativeFile(String path) {
         return (path.startsWith("/") || path.matches( "^[A-Za-z]:.*") ) ? VFS.getChild(path) : getMetaData().getRackRoot().getChild(path);
     }
