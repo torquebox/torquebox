@@ -69,58 +69,41 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
     }
 
     protected String determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
-        String version = determineVersionTryRails2( railsRoot );
-        if ( version == null ) {
-            version = determineVersionTryRails3( railsRoot );
+        try {
+            String version = determineVersionTryRails2( railsRoot );
+            if ( version == null ) {
+                version = determineVersionTryRails3( railsRoot );
+            }
+            return version;
+        } catch (IOException e) {
+            throw new DeploymentException(e);
         }
-        return version;
     }
     
-    protected String determineVersionTryRails2(VirtualFile railsRoot) throws DeploymentException {
+    protected String determineVersionTryRails2(VirtualFile railsRoot) throws IOException {
         VirtualFile configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
-            
-        log.info( "config/environment.rb = " + configEnvironmentFile );
-            
         if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
             return null;
         }
-
+        log.info( "config/environment.rb = " + configEnvironmentFile );
         Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
-
-        BufferedReader in = null;
-
-        try {
-            InputStream inStream = configEnvironmentFile.openStream();
-            InputStreamReader inReader = new InputStreamReader(inStream);
-            in = new BufferedReader(inReader);
-            String line = null;
-            while ((line = in.readLine()) != null) {
-                Matcher matcher = pattern.matcher(line);
-                if (matcher.matches()) {
-                    return matcher.group(1).trim();
-                }
-            }
-        } catch (IOException e) {
-            throw new DeploymentException(e);
-        }
-        return null;
+        return find(configEnvironmentFile, pattern);
     }
     
-    protected String determineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
+    protected String determineVersionTryRails3(VirtualFile railsRoot) throws IOException {
         VirtualFile gemfile = railsRoot.getChild("Gemfile");
-        
-        log.info( "Gemfile = " + gemfile );
-        
         if (gemfile == null || !gemfile.exists()) {
             return null;
         }
-
+        log.info( "Gemfile = " + gemfile );
         Pattern pattern = Pattern.compile("^[^#]*gem\\s*['\"]rails['\"]\\s*,\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
+        return find(gemfile, pattern);
+    }
 
+    protected String find(VirtualFile file, Pattern pattern) throws IOException {
         BufferedReader in = null;
-
         try {
-            InputStream inStream = gemfile.openStream();
+            InputStream inStream = file.openStream();
             InputStreamReader inReader = new InputStreamReader(inStream);
             in = new BufferedReader(inReader);
             String line = null;
@@ -130,9 +113,10 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
                     return matcher.group(1).trim();
                 }
             }
-        } catch (IOException e) {
-            throw new DeploymentException(e);
+        } finally {
+            if (in != null) in.close();
         }
         return null;
+
     }
 }
