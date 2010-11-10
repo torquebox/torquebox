@@ -20,6 +20,11 @@
       <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.yaml</groupId>
+      <artifactId>snakeyaml</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
 
