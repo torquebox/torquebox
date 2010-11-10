@@ -77,33 +77,33 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 	}
 	
 	protected String determineVersionTryRails2(VirtualFile railsRoot) throws DeploymentException {
-	       VirtualFile configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
+        VirtualFile configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
 	        
-	        log.info( "config/environment.rb = " + configEnvironmentFile );
+        log.info( "config/environment.rb = " + configEnvironmentFile );
 	        
-	        if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
-	            return null;
-	        }
+        if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
+            return null;
+        }
 
-	        Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
+        Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
 
-	        BufferedReader in = null;
+        BufferedReader in = null;
 
-	        try {
-	            InputStream inStream = configEnvironmentFile.openStream();
-	            InputStreamReader inReader = new InputStreamReader(inStream);
-	            in = new BufferedReader(inReader);
-	            String line = null;
-	            while ((line = in.readLine()) != null) {
-	                Matcher matcher = pattern.matcher(line);
-	                if (matcher.matches()) {
-	                    return matcher.group(1).trim();
-	                }
-	            }
-	        } catch (IOException e) {
-	            throw new DeploymentException(e);
-	        }
-	        return null;
+        try {
+            InputStream inStream = configEnvironmentFile.openStream();
+            InputStreamReader inReader = new InputStreamReader(inStream);
+            in = new BufferedReader(inReader);
+            String line = null;
+            while ((line = in.readLine()) != null) {
+                Matcher matcher = pattern.matcher(line);
+                if (matcher.matches()) {
+                    return matcher.group(1).trim();
+                }
+            }
+        } catch (IOException e) {
+            throw new DeploymentException(e);
+        }
+        return null;
 	}
 	
 	protected String determineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
