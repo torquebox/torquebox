@@ -36,14 +36,13 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rails.core.RailsRuntimeInitializer;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 
 /**
  * <pre>
  * Stage: PRE_DESCRIBE
- *    In: RailsApplicationMetaData, RailsGemVersionMetaData, RackApplicationMetaData
+ *    In: RailsApplicationMetaData, RackApplicationMetaData
  *   Out: RubyRuntimeMetaData
  * </pre>
  *
@@ -54,7 +53,6 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 	public RailsRubyRuntimeFactoryDescriber() {
 		setStage(DeploymentStages.PRE_DESCRIBE);
 		setInput(RailsApplicationMetaData.class);
-		addInput(RailsGemVersionMetaData.class);
         addInput(RackApplicationMetaData.class);
 		addOutput(RubyRuntimeMetaData.class);
 	}
@@ -68,11 +66,8 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
 		log.info( "deploying " + unit );
 		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-
 		RubyRuntimeMetaData runtimeMetaData = createRuntimeMetaData(unit);
-		RailsGemVersionMetaData railsGemVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
-
-		addRuntimeInitializer(runtimeMetaData, railsMetaData, railsGemVersionMetaData);
+		addRuntimeInitializer(runtimeMetaData, railsMetaData);
 	}
 
     protected RubyRuntimeMetaData createRuntimeMetaData(DeploymentUnit unit) {
@@ -87,20 +82,13 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
         return runtimeMetaData;
     }
 
-	protected void addRuntimeInitializer(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData, RailsGemVersionMetaData railsGemVersionMetaData) {
-		RailsRuntimeInitializer initializer = createRuntimeInitializer(railsMetaData.getRailsRoot(), railsMetaData.getRailsEnv(), railsGemVersionMetaData);
+	protected void addRuntimeInitializer(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData) {
+        
+		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(railsMetaData.getRailsRoot(), 
+                                                                          railsMetaData.getRailsEnv(), 
+                                                                          !railsMetaData.isFrozen(),
+                                                                          railsMetaData.getVersionSpec());
 		runtimeMetaData.setRuntimeInitializer(initializer);
-	}
-
-	public RailsRuntimeInitializer createRuntimeInitializer(VirtualFile railsRoot, String railsEnv, RailsGemVersionMetaData railsGemVersionMetaData) {
-		boolean loadUsingGems = false;
-		String versionSpec = null;
-
-		if (railsGemVersionMetaData != null) {
-			loadUsingGems = true;
-			versionSpec = railsGemVersionMetaData.getVersionSpec();
-		}
-		return new RailsRuntimeInitializer(railsRoot, railsEnv, loadUsingGems, versionSpec);
 	}
 
 }

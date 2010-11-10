@@ -34,14 +34,13 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 
 
 /**
  * <pre>
  * Stage: PARSE
  *    In: RailsApplicationMetaData
- *   Out: RailsGemVersionMetaData
+ *   Out: RailsApplicationMetaData
  * </pre>
  *
  * Determine which rails version the deployment requires
@@ -52,7 +51,7 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
 	public RailsGemVersionDeployer() {
 		setInput(RailsApplicationMetaData.class);
-		setOutput(RailsGemVersionMetaData.class);
+		setOutput(RailsApplicationMetaData.class);
 	}
 
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
@@ -63,25 +62,21 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
 		VirtualFile vendorRails = railsRoot.getChild("vendor/rails");
 		if (vendorRails != null && vendorRails.exists()) {
-			return;
-		}
-
-		RailsGemVersionMetaData railsVersionMetaData = determineRailsGemVersion(railsRoot);
-
-		log.info("deploying Rails version: " + railsVersionMetaData);
-		unit.addAttachment(RailsGemVersionMetaData.class, railsVersionMetaData);
+			railsMetaData.setFrozen(true);
+		} else {
+            railsMetaData.setVersionSpec( determineRailsGemVersion(railsRoot) );
+        }
 	}
 
-	protected RailsGemVersionMetaData determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
-	    RailsGemVersionMetaData versionMetaData = determineVersionTryRails2( railsRoot );
-	    if ( versionMetaData == null ) {
-	        versionMetaData = determineVersionTryRails3( railsRoot );
+	protected String determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
+	    String version = determineVersionTryRails2( railsRoot );
+	    if ( version == null ) {
+	        version = determineVersionTryRails3( railsRoot );
 	    }
-	    
-	    return versionMetaData;
+	    return version;
 	}
 	
-	protected RailsGemVersionMetaData determineVersionTryRails2(VirtualFile railsRoot) throws DeploymentException {
+	protected String determineVersionTryRails2(VirtualFile railsRoot) throws DeploymentException {
 	       VirtualFile configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
 	        
 	        log.info( "config/environment.rb = " + configEnvironmentFile );
@@ -102,8 +97,7 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 	            while ((line = in.readLine()) != null) {
 	                Matcher matcher = pattern.matcher(line);
 	                if (matcher.matches()) {
-	                    String versionSpec = matcher.group(1).trim();
-	                    return new RailsGemVersionMetaData(versionSpec);
+	                    return matcher.group(1).trim();
 	                }
 	            }
 	        } catch (IOException e) {
@@ -112,7 +106,7 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 	        return null;
 	}
 	
-	protected RailsGemVersionMetaData determineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
+	protected String determineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
         VirtualFile gemfile = railsRoot.getChild("Gemfile");
         
         log.info( "Gemfile = " + gemfile );
@@ -131,11 +125,9 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
             in = new BufferedReader(inReader);
             String line = null;
             while ((line = in.readLine()) != null) {
-                System.err.println( "try [" + line + "]" );
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.matches()) {
-                    String versionSpec = matcher.group(1).trim();
-                    return new RailsGemVersionMetaData(versionSpec);
+                    return matcher.group(1).trim();
                 }
             }
         } catch (IOException e) {

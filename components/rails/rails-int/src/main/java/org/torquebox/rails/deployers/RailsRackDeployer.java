@@ -33,13 +33,12 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 
 
 /**
  * <pre>
  * Stage: POST_PARSE
- *    In: RailsApplicationMetaData, RackApplicationMetaData, RailsGemVersionMetaData
+ *    In: RailsApplicationMetaData, RackApplicationMetaData
  *   Out: RackApplicationMetaData
  * </pre>
  *
@@ -54,7 +53,6 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
     public RailsRackDeployer() {
         super(RailsApplicationMetaData.class);
         addInput(RackApplicationMetaData.class);
-        addInput(RailsGemVersionMetaData.class);
         addOutput(RackApplicationMetaData.class);
         setStage(DeploymentStages.POST_PARSE);
     }
@@ -70,12 +68,11 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
             } else {
                 railsAppMetaData.set(rackMetaData);
             }
-            RailsGemVersionMetaData railsVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
 
             String rackUpScript = null;
 
             // TODO: Move this to RailsApplicationMetaData, after moving version in there, too.
-            if (railsVersionMetaData.isRails3()) {
+            if (railsAppMetaData.isRails3()) {
                 rackMetaData.setRackUpScript( railsAppMetaData.getRailsRoot().getChild("config.ru") );
             } else {
                 rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );

@@ -23,16 +23,13 @@ package org.torquebox.rails.metadata;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 
 public class RailsApplicationMetaData {
-
-	private VirtualFile railsRoot;
-	private String railsRootPath;
-	private String railsEnv;
 
 	public RailsApplicationMetaData() {
 		
@@ -71,6 +68,30 @@ public class RailsApplicationMetaData {
 	public String getRailsEnv() {
 		return this.railsEnv;
 	}
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public boolean isFrozen() {
+        return this.frozen;
+    }
+
+    public void setVersionSpec(String versionSpec) {
+        this.versionSpec = versionSpec;
+    }
+
+	public String getVersionSpec() {
+		return this.versionSpec;
+	}
+	
+	public boolean isRails2() {
+        return Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", this.versionSpec );
+	}
+	
+	public boolean isRails3() {
+        return Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", this.versionSpec );
+	}
 	
     public RackApplicationMetaData createRackMetaData() {
         RackApplicationMetaData rackMetaData = new RackApplicationMetaData();
@@ -88,4 +109,9 @@ public class RailsApplicationMetaData {
 		return "[RailsApplicationMetaData: railsRoot=" + railsRoot + "; railsEnv=" + railsEnv + "]";
 	}
 	
+	private VirtualFile railsRoot;
+	private String railsRootPath;
+	private String railsEnv;
+    private String versionSpec;
+    private boolean frozen;
 }
