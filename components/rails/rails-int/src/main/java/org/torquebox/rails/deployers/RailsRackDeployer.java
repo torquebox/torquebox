@@ -72,7 +72,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
             String rackUpScript = null;
 
             // TODO: Move this to RailsApplicationMetaData, after moving version in there, too.
-            if (railsAppMetaData.isRails3()) {
+            if (!railsAppMetaData.isFrozen() && railsAppMetaData.isRails3()) {
                 rackMetaData.setRackUpScript( railsAppMetaData.getRailsRoot().getChild("config.ru") );
             } else {
                 rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
