@@ -43,6 +43,22 @@ class Class
           end
         end
       end
+      if ( (self.to_s == 'Rails::Initializer') && ( method_name == :load_gems ) )
+        self.class_eval do
+          alias_method :load_gems_before_torquebox, :load_gems            
+          def load_gems
+            # For frozen Rails 2 applications using ar-jdbc-adapter,
+            # it attempts to load rails/railtie.  If this happens to 
+            # be available from Rails3 gems, it'll load and then
+            # all sorts of nuttiness will occur.  So, let's just hide it.
+            if ( Rails::VERSION::MAJOR == 2 )
+              unless ( $".include?( 'rails/railtie' ) )
+                $" << 'rails/railtie'
+              end
+            end
+          end
+        end
+      end
       method_added_before_torquebox(method_name)
     end # unless ( recursing )
   end # method_added
