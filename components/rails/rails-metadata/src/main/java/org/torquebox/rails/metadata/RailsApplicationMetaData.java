@@ -77,6 +77,10 @@ public class RailsApplicationMetaData {
         return this.frozen;
     }
 
+    public boolean needsGems() {
+        return ! isFrozen();
+    }
+
     public void setVersionSpec(String versionSpec) {
         this.versionSpec = versionSpec;
     }
@@ -86,11 +90,11 @@ public class RailsApplicationMetaData {
 	}
 	
 	public boolean isRails2() {
-        return Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", this.versionSpec );
+        return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
 	}
 	
 	public boolean isRails3() {
-        return Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", this.versionSpec );
+        return getVersionSpec() != null && Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
 	}
 	
     public RackApplicationMetaData createRackMetaData() {

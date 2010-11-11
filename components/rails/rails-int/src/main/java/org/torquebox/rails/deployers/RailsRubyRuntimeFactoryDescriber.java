@@ -33,27 +33,25 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rails.core.RailsRuntimeInitializer;
-import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-
 
 /**
  * <pre>
  * Stage: PRE_DESCRIBE
- *    In: RailsApplicationMetaData, RackApplicationMetaData
+ *    In: RackApplicationMetaData
  *   Out: RubyRuntimeMetaData
  * </pre>
  *
- * Create the Rails runtime initializer and set the extra load paths
+ * Create the ruby runtime metadata from the rack metadata
  */
 public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 
 	public RailsRubyRuntimeFactoryDescriber() {
 		setStage(DeploymentStages.PRE_DESCRIBE);
-		setInput(RailsApplicationMetaData.class);
-        addInput(RackApplicationMetaData.class);
+		setInput(RackApplicationMetaData.class);
 		addOutput(RubyRuntimeMetaData.class);
 	}
 
@@ -64,31 +62,16 @@ public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
 	}
 
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-		log.info( "deploying " + unit );
-		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-		RubyRuntimeMetaData runtimeMetaData = createRuntimeMetaData(unit);
-		addRuntimeInitializer(runtimeMetaData, railsMetaData);
-	}
-
-    protected RubyRuntimeMetaData createRuntimeMetaData(DeploymentUnit unit) {
-		RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(RubyRuntimeMetaData.class);
-        assert runtimeMetaData==null : "Not expecting upstream deployer to attach RubyRuntimeMetaData";
+        if (unit.isAttachmentPresent(RubyRuntimeMetaData.class)) {
+            throw new DeploymentException("Not expecting upstream deployer to attach RubyRuntimeMetaData");
+        }
         RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
-        assert rackMetaData!=null : "Upstream deployer should've attached RackApplicationMetaData";
-        runtimeMetaData = new RubyRuntimeMetaData();
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
         runtimeMetaData.setBaseDir(rackMetaData.getRackRoot());
         runtimeMetaData.setEnvironment(rackMetaData.getEnvironmentVariables());
+        RuntimeInitializer initializer = rackMetaData.getRuntimeInitializer();
+        if (initializer==null) initializer = new RackRuntimeInitializer(rackMetaData.getRackRoot(), rackMetaData.getRackEnv());
+        runtimeMetaData.setRuntimeInitializer(initializer);
         unit.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
-        return runtimeMetaData;
-    }
-
-	protected void addRuntimeInitializer(RubyRuntimeMetaData runtimeMetaData, RailsApplicationMetaData railsMetaData) {
-        
-		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(railsMetaData.getRailsRoot(), 
-                                                                          railsMetaData.getRailsEnv(), 
-                                                                          !railsMetaData.isFrozen(),
-                                                                          railsMetaData.getVersionSpec());
-		runtimeMetaData.setRuntimeInitializer(initializer);
 	}
-
 }

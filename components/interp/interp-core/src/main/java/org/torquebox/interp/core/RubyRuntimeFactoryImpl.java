@@ -326,7 +326,9 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 		if (this.initializer != null) {
 			this.initializer.initialize(runtime);
-		}
+		} else {
+            log.warn("No initializer set for runtime");
+        }
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);
 		runtime.getLoadService().require("rubygems");

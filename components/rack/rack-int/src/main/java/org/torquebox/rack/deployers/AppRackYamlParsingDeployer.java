@@ -110,15 +110,10 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
         AttachmentUtils.attach(unit, builder.getBeanMetaData());
     }
 
-    private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, RackApplicationMetaData rackMetaData) throws MalformedURLException,
-            IOException {
+    private Deployment createDeployment(VirtualFile rackRoot, RackApplicationMetaData rackMetaData) throws MalformedURLException, IOException {
         AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackRoot);
-
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
-
         attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
-        attachments.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
-
         return deployment;
     }
 
@@ -166,18 +161,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
     }
 
-    private RubyRuntimeMetaData parseAndSetUpRuntime(VirtualFile rackRoot, String rackEnv, Map<String, Object> config) {
-        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
-        runtimeMetaData.setBaseDir(rackRoot);
-
-        Map<String, String> env = (Map<String, String>) config.get("environment");
-        runtimeMetaData.setEnvironment(env);
-
-        RackRuntimeInitializer initializer = new RackRuntimeInitializer(rackRoot, rackEnv);
-        runtimeMetaData.setRuntimeInitializer(initializer);
-        return runtimeMetaData;
-    }
-
     @SuppressWarnings("unchecked")
     private VirtualFile getRackRoot(Map<String, Object> config) throws IOException {
 
@@ -203,8 +186,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
 
         VirtualFile rackRootFile = getRackRoot(config);
         RackApplicationMetaData rackMetaData = parseAndSetUpApplication(unit, rackRootFile, config);
-        RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv(), config);
 
-        return createDeployment(rackRootFile, runtimeMetaData, rackMetaData);
+        return createDeployment(rackRootFile, rackMetaData);
     }
 }

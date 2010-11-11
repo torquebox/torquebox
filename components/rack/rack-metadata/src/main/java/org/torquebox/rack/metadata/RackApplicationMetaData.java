@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.interp.spi.RuntimeInitializer;
+
 
 public class RackApplicationMetaData {
 	
@@ -46,6 +48,7 @@ public class RackApplicationMetaData {
 	private String rackApplicationFactoryName;
 	private String rackApplicationPoolName;
 	private Map<String, String> environment;
+    private RuntimeInitializer runtimeInitializer;
 
 	public RackApplicationMetaData() {
 		
@@ -157,7 +160,15 @@ public class RackApplicationMetaData {
 	public Map<String, String> getEnvironmentVariables() {
 		return this.environment;
 	}
-	
+
+    public void setRuntimeInitializer(RuntimeInitializer initializer) {
+        this.runtimeInitializer = initializer;
+    }
+
+    public RuntimeInitializer getRuntimeInitializer() {
+        return this.runtimeInitializer;
+    }
+
 	public String toString() {
 		return "\n[RackApplicationMetaData:\n  rackEnv=" + this.rackEnv + "\n  rackRoot=" + this.rackRoot + "\n  rackUpScript=" + this.rackUpScript + "\n  rackUpScriptLocation=" + this.rackUpScriptLocation + "\n  contextPath=" + this.contextPath + "\n  staticPathPrefix=" + this.staticPathPrefix + "\n  runtimePool=" + this.rubyRuntimePoolName + "\n  appFactory=" + this.rackApplicationFactoryName + "\n  appPool=" + this.rackApplicationPoolName + "]";
 	}

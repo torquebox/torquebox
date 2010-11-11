@@ -64,12 +64,9 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		assertNotNull( rackAppMetaData );
 		assertEquals( "test", rackAppMetaData.getRackEnv() );
 		
-		RubyRuntimeMetaData rubyRuntimeMetaData = attachments.getAttachment( RubyRuntimeMetaData.class );
-		assertNotNull( rubyRuntimeMetaData );
-		assertNotNull( rubyRuntimeMetaData.getRuntimeInitializer() );
-		assertTrue( rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
-
+        assertNull( attachments.getAttachment( RubyRuntimeMetaData.class ) );
         assertNull( attachments.getAttachment( PoolMetaData.class ) );
+
 		log.info( "END testValidAppRackYaml" );
 	}
 	
@@ -102,11 +99,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertEquals("/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
 
-        RubyRuntimeMetaData rubyRuntimeMetaData = attachments.getAttachment(RubyRuntimeMetaData.class);
-        assertNotNull(rubyRuntimeMetaData);
-        assertNotNull(rubyRuntimeMetaData.getRuntimeInitializer());
-        assertTrue(rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer);
-
+        assertNull(attachments.getAttachment(RubyRuntimeMetaData.class));
         assertNull(attachments.getAttachment(PoolMetaData.class));
     }
     
@@ -139,11 +132,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertEquals("/E:/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
 
-        RubyRuntimeMetaData rubyRuntimeMetaData = attachments.getAttachment(RubyRuntimeMetaData.class);
-        assertNotNull(rubyRuntimeMetaData);
-        assertNotNull(rubyRuntimeMetaData.getRuntimeInitializer());
-        assertTrue(rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer);
-
+        assertNull(attachments.getAttachment(RubyRuntimeMetaData.class));
         assertNull(attachments.getAttachment(PoolMetaData.class));
     }
     
@@ -176,11 +165,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertEquals("/tmp/nonexistantpathfortorqueboxtest/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
 
-        RubyRuntimeMetaData rubyRuntimeMetaData = attachments.getAttachment(RubyRuntimeMetaData.class);
-        assertNotNull(rubyRuntimeMetaData);
-        assertNotNull(rubyRuntimeMetaData.getRuntimeInitializer());
-        assertTrue(rubyRuntimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer);
-
+        assertNull(attachments.getAttachment(RubyRuntimeMetaData.class));
         assertNull(attachments.getAttachment(PoolMetaData.class));
     }
 

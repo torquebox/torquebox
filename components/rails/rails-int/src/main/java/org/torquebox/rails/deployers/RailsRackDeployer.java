@@ -33,6 +33,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.rails.core.RailsRuntimeInitializer;
 
 
 /**
@@ -59,26 +60,27 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
+        log.info("Creating Rack metadata from " + railsAppMetaData);
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
             if (rackMetaData == null) {
                 rackMetaData = railsAppMetaData.createRackMetaData();
-                rackMetaData.setContextPath("/");
+                rackMetaData.setContextPath("/"); // TODO: leave this to the DefaultValueDeployer
                 unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
             } else {
                 railsAppMetaData.set(rackMetaData);
             }
 
-            String rackUpScript = null;
-
-            // TODO: Move this to RailsApplicationMetaData, after moving version in there, too.
-            if (!railsAppMetaData.isFrozen() && railsAppMetaData.isRails3()) {
+            if (railsAppMetaData.isRails3()) {
                 rackMetaData.setRackUpScript( railsAppMetaData.getRailsRoot().getChild("config.ru") );
             } else {
                 rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
             }
 
-            unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
+            rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer(railsAppMetaData.getRailsRoot(), 
+                                                                            railsAppMetaData.getRailsEnv(), 
+                                                                            railsAppMetaData.needsGems(),
+                                                                            railsAppMetaData.getVersionSpec()) );
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
