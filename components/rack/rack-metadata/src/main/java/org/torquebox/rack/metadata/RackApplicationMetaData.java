@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.spi.RuntimeInitializer;
 
@@ -103,6 +104,12 @@ public class RackApplicationMetaData {
             setRackUpScript( script.toString() );
         }
         setRackUpScriptLocation( file );
+    }
+
+    public void setRackUpScriptPath(String path) throws IOException {
+        if (path != null) {
+            setRackUpScript( (path.startsWith("/") || path.matches("^[A-Za-z]:.*")) ? VFS.getChild(path) : getRackRoot().getChild(path) );
+        }
     }
 
 	public void addHost(String host) {

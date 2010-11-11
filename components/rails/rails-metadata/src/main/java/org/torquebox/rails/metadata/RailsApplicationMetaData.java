@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
 
 
 public class RailsApplicationMetaData {
@@ -98,7 +99,7 @@ public class RailsApplicationMetaData {
 	}
 	
     public RackApplicationMetaData createRackMetaData() {
-        RackApplicationMetaData rackMetaData = new RackApplicationMetaData();
+        RackApplicationMetaData rackMetaData = new WriteOnceRackApplicationMetaData();
         set(rackMetaData);
         return rackMetaData;
     }

@@ -22,7 +22,7 @@ public class TorqueBoxYamlParser {
     public RackApplicationMetaData parse(VirtualFile file) throws IOException {
         Yaml yaml = new Yaml();
         Map<String, Object> config = (Map<String, Object>) yaml.load(file.openStream());
-        return parse(config);
+        return config==null ? null : parse(config);
     }
 
     public RackApplicationMetaData parse(Map<String,Object> config) throws IOException {
@@ -35,19 +35,23 @@ public class TorqueBoxYamlParser {
     public RackApplicationMetaData parseApplication(Map<String,String> application) throws IOException {
         getMetaData().setRackRoot( VFS.getChild( application.get( "RACK_ROOT" ) ) );
         getMetaData().setRackEnv( application.get( "RACK_ENV" ) );
-        getMetaData().setRackUpScript( getAbsoluteOrRelativeFile( application.get( "rackup" ) ) );
+        getMetaData().setRackUpScriptPath( application.get( "rackup" ) );
         return getMetaData();
     }
 
     public RackApplicationMetaData parseWeb(Map<String,Object> web) {
-        getMetaData().setContextPath( (String) web.get( "context" ) );
-        getMetaData().setStaticPathPrefix( (String) web.get( "static" ) );
-        parseHosts( web.get( "host" ) );
+        if (web != null) {
+            getMetaData().setContextPath( (String) web.get( "context" ) );
+            getMetaData().setStaticPathPrefix( (String) web.get( "static" ) );
+            parseHosts( web.get( "host" ) );
+        }
         return getMetaData();
     }
 
     public RackApplicationMetaData parseEnvironment(Map<String,String> environment) {
-        getMetaData().setEnvironmentVariables( environment );
+        if (environment != null) {
+            getMetaData().setEnvironmentVariables( environment );
+        }
         return getMetaData();
     }
 
@@ -56,10 +60,6 @@ public class TorqueBoxYamlParser {
             this.metaData = new RackApplicationMetaData();
         }
         return this.metaData;
-    }
-
-    protected VirtualFile getAbsoluteOrRelativeFile(String path) {
-        return (path.startsWith("/") || path.matches( "^[A-Za-z]:.*") ) ? VFS.getChild(path) : getMetaData().getRackRoot().getChild(path);
     }
 
     protected RackApplicationMetaData parseHosts(Object hosts) {

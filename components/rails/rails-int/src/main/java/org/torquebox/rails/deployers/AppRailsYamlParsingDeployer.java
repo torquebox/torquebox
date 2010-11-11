@@ -45,6 +45,7 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
 import org.torquebox.rack.deployers.WebYamlParsingDeployer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rack.metadata.TorqueBoxYamlParser;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
@@ -141,8 +142,6 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 			Map<String, Object> results = (Map<String, Object>) yaml.load(in);
 
 			Map<String, Object> application = (Map<String, Object>) results.get("application");
-			Map<String, Object> web = (Map<String, Object>) results.get("web");
-			Map<String, String> env = (Map<String, String>) results.get("environment");
 
 			RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData();
 			if (application != null) {
@@ -154,9 +153,8 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 				railsMetaData.setRailsRoot(railsRootFile);
                 railsMetaData.setRailsEnv(railsEnv);
 			}
-
-			RackApplicationMetaData rackMetaData = WebYamlParsingDeployer.parse(unit, web, railsMetaData.createRackMetaData());
-            rackMetaData.setEnvironmentVariables( env );
+            TorqueBoxYamlParser parser = new TorqueBoxYamlParser(railsMetaData.createRackMetaData());
+			RackApplicationMetaData rackMetaData = parser.parse(results);
 
 			return createDeployment(railsMetaData, rackMetaData);
 

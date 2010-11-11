@@ -30,6 +30,7 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rack.metadata.TorqueBoxYamlParser;
 import org.yaml.snakeyaml.Yaml;
 
 
@@ -59,63 +60,11 @@ public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackAppli
 	protected RackApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackApplicationMetaData root) throws Exception {
 		Yaml yaml = new Yaml();
 		Map<String, Object> web = (Map<String, Object>) yaml.load(file.openStream());
-
 		if (web == null) {
 			throw new DeploymentException("unable to parse: " + file);
 		}
-
-		return parse(unit, web, root);
-	}
-
-	@SuppressWarnings("unchecked")
-	public static RackApplicationMetaData parse(VFSDeploymentUnit unit, Map<String, Object> web, RackApplicationMetaData rackMetaData) {
-
-		if (web == null) {
-			return null;
-		}
-
-		if (rackMetaData == null) {
-			rackMetaData = new RackApplicationMetaData();
-		}
-
-		if (rackMetaData.getHosts().isEmpty()) {
-			Object hosts = web.get("host");
-
-			if (hosts != null) {
-				if (hosts instanceof List) {
-					List<String> hostList = (List<String>) hosts;
-					for (String each : hostList) {
-						rackMetaData.addHost(each);
-					}
-				} else {
-					rackMetaData.addHost(hosts.toString());
-				}
-			} else {
-				rackMetaData.addHost( "localhost" );
-			}
-		}
-
-		if (rackMetaData.getContextPath() == null) {
-			String context = (String) web.get("context");
-
-			if (context == null) {
-				context = "/";
-			} else {
-				context = context.trim();
-			}
-
-			rackMetaData.setContextPath(context);
-		}
-
-		if (rackMetaData.getStaticPathPrefix() == null) {
-			String staticPathPrefix = (String) web.get("static");
-			if (staticPathPrefix == null) {
-				staticPathPrefix = "/public";
-			}
-			rackMetaData.setStaticPathPrefix(staticPathPrefix);
-		}
-
-		return rackMetaData;
+        TorqueBoxYamlParser parser = new TorqueBoxYamlParser(root);
+		return parser.parseWeb(web);
 	}
 
 }
