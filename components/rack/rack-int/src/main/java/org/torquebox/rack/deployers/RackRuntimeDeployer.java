@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.torquebox.rails.deployers;
+package org.torquebox.rack.deployers;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -47,9 +47,9 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
  *
  * Create the ruby runtime metadata from the rack metadata
  */
-public class RailsRubyRuntimeFactoryDescriber extends AbstractDeployer {
+public class RackRuntimeDeployer extends AbstractDeployer {
 
-	public RailsRubyRuntimeFactoryDescriber() {
+	public RackRuntimeDeployer() {
 		setStage(DeploymentStages.PRE_DESCRIBE);
 		setInput(RackApplicationMetaData.class);
 		addOutput(RubyRuntimeMetaData.class);
