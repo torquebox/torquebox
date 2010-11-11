@@ -48,7 +48,7 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 	
 	public RailsEnvYamlParsingDeployer() {
 		setStage(DeploymentStages.PARSE);
-		addInput(RailsApplicationMetaData.class);
+		setInput(RailsApplicationMetaData.class);
 		addOutput(RailsApplicationMetaData.class);
 	}
 
@@ -92,14 +92,10 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 			}
 
 			RailsApplicationMetaData railsMetaData = root;
-
-			if (railsMetaData == null) {
-				railsMetaData = new RailsApplicationMetaData(unit.getRoot(), railsEnv);
-			} else {
-				if (railsMetaData.getRailsEnv() == null) {
-					railsMetaData.setRailsEnv(railsEnv);
-				}
-			}
+            if (railsMetaData == null) throw new NullPointerException("An upstream deployer should've already created RailsApplicationMetaData");
+            if (railsMetaData.getRailsEnv() == null) {
+                railsMetaData.setRailsEnv(railsEnv);
+            }
 			return railsMetaData;
 		} finally {
 			if ( in != null ) {

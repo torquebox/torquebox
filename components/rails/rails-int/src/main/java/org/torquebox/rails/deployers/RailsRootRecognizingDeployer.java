@@ -66,7 +66,7 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
 		
 		try {
 			if ( root.getChild( "config/environment.rb" ).exists() ) {
-				log.debug( "attaching: " + unit );
+                log.info("Recognized as Rails app: "+root);
 				RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData( root );
 				unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
 			}

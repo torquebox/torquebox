@@ -66,7 +66,7 @@ public class RackRecognizingDeployer extends AbstractDeployer {
 		VirtualFile root = unit.getRoot();
 		try {
 			if ( root.getName().endsWith(".rack") && root.getChild( "config.ru" ).exists() ) {
-				log.debug( "Attaching Rack archive: " + unit );
+                log.info("Recognized as Rack app: "+root);
                 attachRackApplicationMetaData(unit, root);
 			}
 		} catch (Exception e) {
