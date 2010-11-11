@@ -94,22 +94,4 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 		object.setConstant("TORQUEBOX_RAILS_AUTOLOAD_PATHS", JavaEmbedUtils.javaToRuby(ruby, getAutoloadPaths()));
 	}
 
-	// TODO: is this obsolete?
-	protected String railsGemVersionConfig() {
-		StringBuilder config = new StringBuilder();
-		
-		if ( loadUsingGems ) {
-			config.append( "TORQUEBOX_RAILS_LOAD_STYLE=:gems\n" );
-			if ( versionSpec == null ) {
-				config.append( "TORQUEBOX_RAILS_GEM_VERSION=nil\n" );
-			} else {
-				config.append( "TORQUEBOX_RAILS_GEM_VERSION=%q(" + versionSpec + ")\n" );
-			}
-		} else {
-			config.append( "TORQUEBOX_RAILS_LOAD_STYLE=:vendor\n" );
-		}
-		
-		return config.toString();
-	}
-
 }
