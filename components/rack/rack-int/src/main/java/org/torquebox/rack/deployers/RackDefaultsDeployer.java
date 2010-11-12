@@ -25,7 +25,6 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 
@@ -33,37 +32,32 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
  * <pre>
  * Stage: POST_PARSE
  *    In: RackApplicationMetaData
- *   Out: EnvironmentMetaData
+ *   Out: RackApplicationMetaData, "ALL FIELDS SET"
  * </pre>
  *
- * The environment metadata links the Rails mode to the Jobs and
- * Messaging components, allowing their classes to be automatically
- * reloaded in development mode, for example.
  */
-public class RackEnvironmentDeployer extends AbstractDeployer {
+public class RackDefaultsDeployer extends AbstractDeployer {
     
-    public RackEnvironmentDeployer() {
+    public static final String COMPLETE = "ALL FIELDS SET";
+
+    public RackDefaultsDeployer() {
         setStage(DeploymentStages.POST_PARSE);
         setInput(RackApplicationMetaData.class);
-        addInput(RackDefaultsDeployer.COMPLETE);
-        addOutput(EnvironmentMetaData.class);
+        addOutput(RackApplicationMetaData.class);
+        addOutput(COMPLETE);
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
-        EnvironmentMetaData envMetaData = unit.getAttachment( EnvironmentMetaData.class );
-        if ( envMetaData == null ) {
-            envMetaData = new EnvironmentMetaData();
-        } else {
-            log.warn("EnvironmentMetaData found, overwriting");
+        try {
+            RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
+            metadata.setRackEnv(           "development" );
+            metadata.setRackUpScriptPath(  "config.ru" );
+            metadata.addHost(              "localhost" );
+            metadata.setContextPath(       "/" );
+            metadata.setStaticPathPrefix(  "/public" );
+            log.info(metadata); 
+        } catch (Exception e) {
+            throw new DeploymentException(e);
         }
-        String rackEnv = rackAppMetaData.getRackEnv();
-        if ( rackEnv != null ) {
-            envMetaData.setEnvironmentName( rackEnv );
-            envMetaData.setDevelopmentMode( rackEnv.equals( "development" ) );
-        } else {
-            log.warn("The RACK_ENV is null, check deployer config");
-        }
-        unit.addAttachment(EnvironmentMetaData.class, envMetaData);
     }
 }

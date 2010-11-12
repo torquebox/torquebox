@@ -11,5 +11,6 @@
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>
   <bean name="RackEnvironmentDeployer"                class="org.torquebox.rack.deployers.RackEnvironmentDeployer"/>
   <bean name="RackRuntimeDeployer"                    class="org.torquebox.rack.deployers.RackRuntimeDeployer"/>
+  <bean name="RackDefaultsDeployer"                   class="org.torquebox.rack.deployers.RackDefaultsDeployer"/>
 
 </deployment>

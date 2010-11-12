@@ -34,6 +34,7 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.rails.core.RailsRuntimeInitializer;
+import org.torquebox.rack.deployers.RackDefaultsDeployer;
 
 
 /**
@@ -48,19 +49,17 @@ import org.torquebox.rails.core.RailsRuntimeInitializer;
  */
 public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplicationMetaData> {
 
-    // private static final Logger log =
-    // Logger.getLogger(RailsRackDeployer.class);
-
     public RailsRackDeployer() {
         super(RailsApplicationMetaData.class);
         addInput(RackApplicationMetaData.class);
+        addInput(RackDefaultsDeployer.COMPLETE);
         addOutput(RackApplicationMetaData.class);
         setStage(DeploymentStages.POST_PARSE);
     }
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
-        log.info("Creating Rack metadata from " + railsAppMetaData);
+        log.info(railsAppMetaData);
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
             if (rackMetaData == null) {
@@ -81,6 +80,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
                                                                             railsAppMetaData.getRailsEnv(), 
                                                                             railsAppMetaData.needsGems(),
                                                                             railsAppMetaData.getVersionSpec()) );
+            log.info(rackMetaData);
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
