@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.List;
 
-import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.yaml.snakeyaml.Yaml;
 
@@ -33,9 +32,11 @@ public class TorqueBoxYamlParser {
     }
 
     public RackApplicationMetaData parseApplication(Map<String,String> application) throws IOException {
-        getMetaData().setRackRoot( VFS.getChild( application.get( "RACK_ROOT" ) ) );
-        getMetaData().setRackEnv( application.get( "RACK_ENV" ) );
-        getMetaData().setRackUpScriptPath( application.get( "rackup" ) );
+        if (application != null) {
+            getMetaData().setRackRoot( application.get( "RACK_ROOT" ) );
+            getMetaData().setRackEnv( application.get( "RACK_ENV" ) );
+            getMetaData().setRackUpScriptPath( application.get( "rackup" ) );
+        }
         return getMetaData();
     }
 

@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -58,7 +59,11 @@ public class RackApplicationMetaData {
 	public void setRackRoot(VirtualFile rackRoot) {
 		this.rackRoot = rackRoot;
 	}
-	
+
+    public void setRackRoot(String path) {
+        if (path != null) setRackRoot( VFS.getChild( path ) );
+    }
+
 	public VirtualFile getRackRoot() {
 		return this.rackRoot;
 	}
@@ -161,7 +166,7 @@ public class RackApplicationMetaData {
 	}
 
 	public void setEnvironmentVariables(Map<String,String> environment) {
-		this.environment = environment; 
+		this.environment = new HashMap<String,String>(environment);
 	}
 
 	public Map<String, String> getEnvironmentVariables() {
