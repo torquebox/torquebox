@@ -52,16 +52,24 @@ class Class
             # be available from Rails3 gems, it'll load and then
             # all sorts of nuttiness will occur.  So, let's just hide it.
             if ( Rails::VERSION::MAJOR == 2 )
-              unless ( $".include?( 'rails/railtie' ) )
-                $" << 'rails/railtie'
+              unless ( JRuby.runtime.load_service.featureAlreadyLoaded( 'jdbc_adapter/railtie.rb' ) )
+                #$" << 'rails/railtie'
+                puts "Preloading railtie for Rails 2.x"
+                JRuby.runtime.load_service.addLoadedFeature( 'jdbc_adapter/railtie.rb' )
               end
             end
+            load_gems_before_torquebox()
           end
         end
       end
       method_added_before_torquebox(method_name)
     end # unless ( recursing )
   end # method_added
+end
+
+module Rails
+  class Railtie
+  end
 end
 
 begin
