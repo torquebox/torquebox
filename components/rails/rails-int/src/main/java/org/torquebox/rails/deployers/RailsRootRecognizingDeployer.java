@@ -31,13 +31,14 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 
 /**
  * <pre>
  * Stage: NOT_INSTALLED
  *    In: 
- *   Out: RailsApplicationMetaData
+ *   Out: RailsApplicationMetaData, RackApplicationMetaData
  * </pre>
  *
  * Creates metadata if it recognizes a deployment as a Rails
@@ -69,6 +70,7 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
                 log.info("Recognized as Rails app: "+root);
 				RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData( root );
 				unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
+                unit.addAttachment( RackApplicationMetaData.class, railsAppMetaData.createRackMetaData() );
 			}
 		} catch (IOException e) {
 			throw new DeploymentException( e );

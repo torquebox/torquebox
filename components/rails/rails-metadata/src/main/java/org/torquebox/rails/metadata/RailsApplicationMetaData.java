@@ -100,14 +100,10 @@ public class RailsApplicationMetaData {
 	
     public RackApplicationMetaData createRackMetaData() {
         RackApplicationMetaData rackMetaData = new WriteOnceRackApplicationMetaData();
-        set(rackMetaData);
-        return rackMetaData;
-    }
-
-    public void set(RackApplicationMetaData rackMetaData) {
         rackMetaData.setStaticPathPrefix("/public");
         rackMetaData.setRackRoot(getRailsRoot());
         rackMetaData.setRackEnv(getRailsEnv());
+        return rackMetaData;
     }
 
 	public String toString() {

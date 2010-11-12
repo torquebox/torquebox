@@ -45,7 +45,9 @@ import org.torquebox.rack.deployers.RackDefaultsDeployer;
  * </pre>
  *
  * All Rails apps are essentially Rack apps, so from a Rails app we
- * construct Rack metadata to hand off to the Rack deployers.
+ * construct Rack metadata to hand off to the Rack deployers.  We
+ * assume that any deployer that attached a RailsApplicationMetaData
+ * also attached a corresponding RackApplicationMetaData.
  */
 public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplicationMetaData> {
 
@@ -62,20 +64,11 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
         log.info(railsAppMetaData);
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
-            if (rackMetaData == null) {
-                rackMetaData = railsAppMetaData.createRackMetaData();
-                rackMetaData.setContextPath("/"); // TODO: leave this to the DefaultValueDeployer
-                unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
-            } else {
-                railsAppMetaData.set(rackMetaData);
-            }
-
             if (railsAppMetaData.isRails3()) {
                 rackMetaData.setRackUpScript( railsAppMetaData.getRailsRoot().getChild("config.ru") );
             } else {
                 rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
             }
-
             rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer(railsAppMetaData.getRailsRoot(), 
                                                                             railsAppMetaData.getRailsEnv(), 
                                                                             railsAppMetaData.needsGems(),
