@@ -111,7 +111,7 @@ public class RailsApplicationMetaData {
     }
 
 	public String toString() {
-		return "[RailsApplicationMetaData: railsRoot=" + railsRoot + "; railsEnv=" + railsEnv + "]";
+		return "RailsApplicationMetaData:\n  root=" + railsRoot + "\n  env=" + railsEnv;
 	}
 	
 	private VirtualFile railsRoot;

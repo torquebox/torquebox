@@ -118,7 +118,7 @@ public class RackApplicationMetaData {
     }
 
 	public void addHost(String host) {
-		if ( ! this.hosts.contains(host) ) this.hosts.add( host );
+		if ( host != null && !this.hosts.contains(host) ) this.hosts.add( host );
 	}
 	
 	public List<String> getHosts() {
@@ -182,7 +182,7 @@ public class RackApplicationMetaData {
     }
 
 	public String toString() {
-		return "\n[RackApplicationMetaData:\n  rackEnv=" + this.rackEnv + "\n  rackRoot=" + this.rackRoot + "\n  rackUpScript=" + this.rackUpScript + "\n  rackUpScriptLocation=" + this.rackUpScriptLocation + "\n  contextPath=" + this.contextPath + "\n  staticPathPrefix=" + this.staticPathPrefix + "\n  runtimePool=" + this.rubyRuntimePoolName + "\n  appFactory=" + this.rackApplicationFactoryName + "\n  appPool=" + this.rackApplicationPoolName + "]";
+		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + this.rackUpScript + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix + "\n  pool=" + this.rubyRuntimePoolName;
 	}
 	
 }

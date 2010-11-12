@@ -31,6 +31,8 @@ public class TorqueBoxYamlParserTest {
     @Test
     public void testEmptyWeb() throws Exception {
         assertEquals( metadata, parser.parseWeb(null) );
+        parser.parseWeb(objects);
+        assertEquals( Collections.EMPTY_LIST, metadata.getHosts() );
     }
         
     @Test
