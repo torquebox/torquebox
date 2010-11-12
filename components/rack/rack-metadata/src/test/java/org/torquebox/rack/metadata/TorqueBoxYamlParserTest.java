@@ -15,7 +15,7 @@ public class TorqueBoxYamlParserTest {
     private Map<String,Object> objects;
 
     @Before
-    public void setUp() throws Throwable {
+    public void setUp() throws Exception {
         metadata = new RackApplicationMetaData();
         parser = new TorqueBoxYamlParser(metadata);
         strings = new HashMap<String,String>();
@@ -61,4 +61,41 @@ public class TorqueBoxYamlParserTest {
         assertEquals("success!\n", metadata.getRackUpScript());
     }
 
+    @Test 
+    public void testLenientRootKeys() throws Exception {
+        String root = "/test";
+        strings.put("RACK_ROOT", root);
+        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        setUp(); strings.put("RAILS_ROOT", root);
+        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        setUp(); strings.put("rack_root", root);
+        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        setUp(); strings.put("rails_root", root);
+        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        setUp(); strings.put("root", root);
+        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        setUp(); strings.put("ROOT", root);
+        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        setUp(); strings.put("RaCk_RoOt", root);
+        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+    }
+
+    @Test 
+    public void testLenientEnvKeys() throws Exception {
+        String env = "development";
+        strings.put("RACK_ENV", env);
+        assertEquals( env, parser.parseApplication(strings).getRackEnv() );
+        setUp(); strings.put("RAILS_ENV", env);
+        assertEquals( env, parser.parseApplication(strings).getRackEnv() );
+        setUp(); strings.put("rack_env", env);
+        assertEquals( env, parser.parseApplication(strings).getRackEnv() );
+        setUp(); strings.put("rails_env", env);
+        assertEquals( env, parser.parseApplication(strings).getRackEnv() );
+        setUp(); strings.put("env", env);
+        assertEquals( env, parser.parseApplication(strings).getRackEnv() );
+        setUp(); strings.put("ENV", env);
+        assertEquals( env, parser.parseApplication(strings).getRackEnv() );
+        setUp(); strings.put("RaCk_EnV", env);
+        assertEquals( env, parser.parseApplication(strings).getRackEnv() );
+    }
 }

@@ -33,19 +33,24 @@ import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
 public class RailsApplicationMetaData {
 
 	public RailsApplicationMetaData() {
-		
 	}
 	
-	public RailsApplicationMetaData(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
+	public RailsApplicationMetaData(VirtualFile railsRoot) throws MalformedURLException {
 		this( railsRoot, null );
 	}
 	
-	public RailsApplicationMetaData(VirtualFile railsRoot, String railsEnv) throws MalformedURLException, URISyntaxException {
+	public RailsApplicationMetaData(VirtualFile railsRoot, String railsEnv) throws MalformedURLException {
 		setRailsRoot( railsRoot );
 		setRailsEnv( railsEnv );
 	}
 	
-	public void setRailsRoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
+	public RailsApplicationMetaData(RackApplicationMetaData rackMetaData) throws MalformedURLException {
+		setRailsRoot(rackMetaData.getRackRoot());
+        setRailsEnv(rackMetaData.getRackEnv());
+        rackMetaData.setStaticPathPrefix("/public");
+	}
+	
+	public void setRailsRoot(VirtualFile railsRoot) throws MalformedURLException {
 		this.railsRoot = railsRoot;
 		String path = railsRoot.toURL().getFile();
 		if ( path.endsWith( "/" ) ) {

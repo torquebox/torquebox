@@ -33,8 +33,8 @@ public class TorqueBoxYamlParser {
 
     public RackApplicationMetaData parseApplication(Map<String,String> application) throws IOException {
         if (application != null) {
-            getMetaData().setRackRoot( application.get( "RACK_ROOT" ) );
-            getMetaData().setRackEnv( application.get( "RACK_ENV" ) );
+            getMetaData().setRackRoot( getOneOf( application, "RACK_ROOT", "RAILS_ROOT", "root" ) );
+            getMetaData().setRackEnv( getOneOf( application, "RACK_ENV", "RAILS_ENV", "env" ) );
             getMetaData().setRackUpScriptPath( application.get( "rackup" ) );
         }
         return getMetaData();
@@ -73,6 +73,17 @@ public class TorqueBoxYamlParser {
             getMetaData().addHost( (String) hosts );
         }
         return getMetaData();
+    }
+
+    protected String getOneOf(Map<String,String> map, String... keys) {
+        for (String each: keys) {
+            for (String key: map.keySet()) {
+                if (each.equalsIgnoreCase(key)) {
+                    return map.get(key);
+                }
+            }
+        }
+        return null;
     }
 
     private RackApplicationMetaData metaData;

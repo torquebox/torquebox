@@ -72,9 +72,7 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
 				unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
                 unit.addAttachment( RackApplicationMetaData.class, railsAppMetaData.createRackMetaData() );
 			}
-		} catch (IOException e) {
-			throw new DeploymentException( e );
-		} catch (URISyntaxException e) {
+		} catch (Exception e) {
 			throw new DeploymentException( e );
 		}
 	}
