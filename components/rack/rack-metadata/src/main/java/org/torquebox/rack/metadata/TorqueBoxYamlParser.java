@@ -58,7 +58,7 @@ public class TorqueBoxYamlParser {
 
     public RackApplicationMetaData getMetaData() {
         if (this.metaData == null) {
-            this.metaData = new RackApplicationMetaData();
+            this.metaData = new WriteOnceRackApplicationMetaData();
         }
         return this.metaData;
     }
