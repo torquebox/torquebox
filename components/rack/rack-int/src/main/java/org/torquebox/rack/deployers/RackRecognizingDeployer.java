@@ -30,6 +30,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.interp.metadata.PoolMetaData;
@@ -67,30 +68,13 @@ public class RackRecognizingDeployer extends AbstractDeployer {
 		try {
 			if ( root.getName().endsWith(".rack") && root.getChild( "config.ru" ).exists() ) {
                 log.info("Recognized as Rack app: "+root);
-                attachRackApplicationMetaData(unit, root);
+                RackApplicationMetaData rackAppMetaData = new WriteOnceRackApplicationMetaData();
+                rackAppMetaData.setRackRoot( root );
+                unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
 			}
 		} catch (Exception e) {
 			throw new DeploymentException( e );
 		}
 	}
-
-    protected void attachRackApplicationMetaData(VFSDeploymentUnit unit, VirtualFile root) throws IOException {
-        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
-        rackAppMetaData.setRackRoot( root );
-        rackAppMetaData.setRackEnv( "development" );
-        rackAppMetaData.setContextPath( "/" );
-        rackAppMetaData.setRackUpScript( root.getChild("config.ru") );
-        unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
-
-        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
-        runtimeMetaData.setBaseDir( rackAppMetaData.getRackRoot() );
-        RackRuntimeInitializer initializer = new RackRuntimeInitializer( rackAppMetaData.getRackRoot(), rackAppMetaData.getRackEnv() );
-        runtimeMetaData.setRuntimeInitializer(initializer);
-        unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData);
-
-        PoolMetaData poolMetaData = new PoolMetaData("web");
-        poolMetaData.setShared();
-        unit.addAttachment(PoolMetaData.class, poolMetaData);
-    }
 
 }
