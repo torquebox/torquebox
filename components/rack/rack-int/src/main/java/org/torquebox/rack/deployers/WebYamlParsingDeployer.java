@@ -43,8 +43,10 @@ import org.yaml.snakeyaml.Yaml;
  *
  * Internal deployment descriptor for setting vhosts, web context, and
  * static content dir
+ *
+ * @deprecated Use torquebox.yml instead
  */
-public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackApplicationMetaData> {
+@Deprecated public class WebYamlParsingDeployer extends AbstractVFSParsingDeployer<RackApplicationMetaData> {
 
 	public WebYamlParsingDeployer() {
 		super(RackApplicationMetaData.class);

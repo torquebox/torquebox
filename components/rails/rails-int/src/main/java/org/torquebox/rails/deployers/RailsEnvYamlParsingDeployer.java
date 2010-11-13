@@ -41,8 +41,10 @@ import org.yaml.snakeyaml.Yaml;
  * </pre>
  *
  * Sets RAILS_ENV from rails-env.xml *iff* it hasn't already been set.
+ *
+ * @deprecated Use torquebox.yml instead
  */
-public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
+@Deprecated public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 	
 	public static final String RAILS_ENV_KEY = "RAILS_ENV";
 	
