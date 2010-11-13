@@ -18,6 +18,11 @@ public class TorqueBoxYamlParser {
         this.metaData = metaData;
     }
 
+    public TorqueBoxYamlParser(RackApplicationMetaData metaData, VirtualFile root) {
+        this.metaData = metaData;
+        getMetaData().setRackRoot( root );
+    }
+
     public RackApplicationMetaData parse(VirtualFile file) throws IOException {
         Yaml yaml = new Yaml();
         Map<String, Object> config = (Map<String, Object>) yaml.load(file.openStream());

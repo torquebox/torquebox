@@ -34,18 +34,14 @@ public class RackStructure extends AbstractRubyStructureDeployer {
         }
         ContextInfo context = null;
         try {
-            VirtualFile rackup = file.getChild("config.ru");
-            if (rackup != null && rackup.exists()) {
-                log.info("Identified as Rack app: "+file);
-                context = createContext(structureContext, new String[] { "", "config" });
-                addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
-                return true;
-            }
+            log.info("Identified as Rack app: "+file);
+            context = createContext(structureContext, new String[] { "", "config" });
+            addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
+            return true;
         } catch (IOException e) {
             if (context != null) structureContext.removeChild(context);
             throw new DeploymentException(e);
         }
-        return false;
     }
 
     @Override

@@ -182,7 +182,7 @@ public class RackApplicationMetaData {
     }
 
 	public String toString() {
-		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + this.rackUpScript + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix + "\n  pool=" + this.rubyRuntimePoolName;
+		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + this.rackUpScript + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
 	}
 	
 }
