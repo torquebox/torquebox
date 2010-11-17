@@ -25,28 +25,8 @@ else
 	  $output_dir
 fi
 
-
+# Necessary for Arquillian...
 if [ ! -e "$output_dir/jboss/server/default/deploy/ROOT.war" ] ; then
   echo "*** Installing ROOT.war"
   cp $root_war $output_dir/jboss/server/default/deploy/
 fi
-
-
-gem_install_opts="--no-ri --no-rdoc"
-
-JRUBY_HOME=$output_dir/jruby
-
-$JRUBY_HOME/bin/jruby -S gem list | grep sinatra
-
-if [ $? != 0 ] ; then 
-  echo "*** Installing sinatra.gem"
-  $JRUBY_HOME/bin/jruby -S gem install $gem_install_opts sinatra -v 1.0
-fi
-
-$JRUBY_HOME/bin/jruby -S gem list | grep haml
-
-if [ $? != 0 ] ; then
-  echo "*** Installing haml.gem"
-  $JRUBY_HOME/bin/jruby -S gem install $gem_install_opts haml -v 3.0.17
-fi
-

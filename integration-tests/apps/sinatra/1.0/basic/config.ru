@@ -1,6 +1,6 @@
 require 'rubygems'
-require 'sinatra'
+require 'bundler/setup'
 
-require 'basic.rb'
+require 'basic'
 
 run Sinatra::Application
