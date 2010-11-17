@@ -66,6 +66,7 @@ public class RackRecognizingDeployer extends AbstractDeployer {
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
 		VirtualFile root = unit.getRoot();
 		try {
+            // TODO: This condition is wrong
 			if ( root.getName().endsWith(".rack") && root.getChild( "config.ru" ).exists() ) {
                 log.info("Recognized as Rack app: "+root);
                 RackApplicationMetaData rackAppMetaData = new WriteOnceRackApplicationMetaData();

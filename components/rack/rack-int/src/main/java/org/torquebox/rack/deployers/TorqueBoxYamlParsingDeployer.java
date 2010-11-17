@@ -49,7 +49,16 @@ public class TorqueBoxYamlParsingDeployer extends AbstractVFSParsingDeployer<Rac
 		setName("torquebox.yml");
 	}
 
+    // Without this, the torquebox.yml won't be considered metadata
+    // for a parent unit, and no, I'm not entirely sure what that
+    // means.
+    protected boolean allowsReparse()
+    {
+        return true;
+    }
+
 	protected RackApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackApplicationMetaData root) throws Exception {
+        log.info("Parsing metadata: " + file);
         TorqueBoxYamlParser parser = new TorqueBoxYamlParser(root, unit.getRoot());
         RackApplicationMetaData result = parser.parse(file);
 		if (result == null) {

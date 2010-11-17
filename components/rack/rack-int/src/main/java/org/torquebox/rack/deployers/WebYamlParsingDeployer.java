@@ -60,6 +60,7 @@ import org.yaml.snakeyaml.Yaml;
 
 	@SuppressWarnings("unchecked")
 	protected RackApplicationMetaData parse(VFSDeploymentUnit unit, VirtualFile file, RackApplicationMetaData root) throws Exception {
+        log.warn("Deprecated! Use torquebox.yml instead of " + file);
 		Yaml yaml = new Yaml();
 		Map<String, Object> web = (Map<String, Object>) yaml.load(file.openStream());
 		if (web == null) {

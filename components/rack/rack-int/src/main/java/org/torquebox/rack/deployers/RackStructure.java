@@ -28,30 +28,38 @@ public class RackStructure extends AbstractRubyStructureDeployer {
 
     @Override
     protected boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
-        VirtualFile file = structureContext.getFile();
-        if ( ! hasValidName( file ) ) {
-            return false;
-        }
+        VirtualFile root = structureContext.getFile();
         ContextInfo context = null;
         try {
-            log.info("Identified as Rack app: "+file);
-            context = createContext(structureContext, new String[] { "", "config" });
-            addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
-            return true;
+            if (hasConfigRu(root) || hasTorqueboxYml(root)) {
+                log.info("Identified as Rack app: " + root);
+                context = createContext(structureContext, new String[] { "", "config" });
+                addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
+                return true;
+            }
         } catch (IOException e) {
             if (context != null) structureContext.removeChild(context);
             throw new DeploymentException(e);
         }
+        return false;
     }
 
-    @Override
-    protected boolean hasValidSuffix(String name) {
-        return name.endsWith(".rack");
+    private boolean hasConfigRu(VirtualFile root) {
+        return root.getChild("config.ru").exists();
     }
 
-    @Override
-    protected boolean hasValidName(VirtualFile file) {
-        return hasValidSuffix( file.getName() );
+    private boolean hasTorqueboxYml(VirtualFile root) {
+        return root.getChild("torquebox.yml").exists();
     }
+
+	@Override
+	protected boolean hasValidName(VirtualFile file) {
+		return file.getName().endsWith( ".rack" );
+	}
+
+	@Override
+	protected boolean hasValidSuffix(String name) {
+		return true;
+	}
 
 }
