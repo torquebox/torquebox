@@ -36,7 +36,7 @@ file TEST_DATA_OUT do
   FileUtils.rm_rf( TEST_DATA_OUT )
   FileUtils.mkdir_p( TEST_DATA_OUT )
 
-  paths = Dir[ TEST_DATA_IN + '/**/*' ]
+  paths = Dir[ TEST_DATA_IN + '/**/*' ] + Dir[ TEST_DATA_IN + '/**/.*' ]
   paths.sort!{|l,r| r.length <=> l.length}
   #paths = paths.collect{|e| e[ TEST_DATA_IN.length..-1] }
 

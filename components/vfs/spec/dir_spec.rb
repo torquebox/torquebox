@@ -48,7 +48,8 @@ describe "Dir extensions for VFS" do
     end
   end
 
-  [ :absolute, :relative ].each do |style|
+  [ :absolute, :relative, :vfs ].each do |style|
+  #[ :relative ].each do |style|
     describe "with #{style} paths" do
 
       case ( style )
@@ -56,6 +57,25 @@ describe "Dir extensions for VFS" do
           prefix = "./#{TEST_DATA_BASE}"
         when :absolute
           prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+        when :vfs
+          prefix = "vfs:" + File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+      end
+
+      it "should ignore dotfiles by default" do
+        items = Dir.glob( "#{prefix}/dotfiles/*" )
+        items.should_not be_empty
+        items.size.should eql(3)
+        items.should include( "#{prefix}/dotfiles/one" )
+        items.should include( "#{prefix}/dotfiles/three" )
+        items.should include( "#{prefix}/dotfiles/foo.txt" )
+      end
+
+      it "should match dotfiles if explicitly asked" do
+        items = Dir.glob( "#{prefix}/dotfiles/.*" )
+        items.should_not be_empty
+        items.size.should eql(2)
+        items.should include( "#{prefix}/dotfiles/.two" )
+        items.should include( "#{prefix}/dotfiles/.four" )
       end
 
       it "should allow globbing without any special globbing characters on normal files" do
