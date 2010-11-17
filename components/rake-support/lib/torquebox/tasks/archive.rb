@@ -18,6 +18,10 @@ if ( rails?( Dir.pwd ) )
           include_files << entry
         end
       end
+
+      if ( File.exists?( "#{RAILS_ROOT}/.bundle/config" ) ) 
+        include_files << ".bundle/config"
+      end
     
       puts "Creating archive: #{bundle_name}"
     
