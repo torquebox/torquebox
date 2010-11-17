@@ -112,7 +112,7 @@ public class RailsApplicationMetaData {
     }
 
 	public String toString() {
-		return "RailsApplicationMetaData:\n  root=" + railsRoot + "\n  env=" + railsEnv;
+		return "RailsApplicationMetaData:\n  root=" + railsRoot + "\n  env=" + railsEnv + "\n  version=" + versionSpec + "\n  frozen=" + isFrozen();
 	}
 	
 	private VirtualFile railsRoot;
