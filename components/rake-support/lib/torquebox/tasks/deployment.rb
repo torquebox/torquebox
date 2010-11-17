@@ -40,7 +40,7 @@ def rails?(root)
 end
 
 def rack?(root)
-  File.exist?( File.join( root, 'config.ru' ) )
+  not rails?(root)
 end
 
 def deployment(app_name, root, context_path)
