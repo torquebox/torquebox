@@ -4,6 +4,7 @@ package org.torquebox.rack.core;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
+import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.interp.spi.RuntimeInitializer;
@@ -15,11 +16,14 @@ import org.torquebox.interp.spi.RuntimeInitializer;
  */
 public class RackRuntimeInitializer implements RuntimeInitializer {
 
+    private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
+
 	/** RACK_ROOT. */
 	private VirtualFile rackRoot;
 
 	/** RACK_ENV */
 	private String rackEnv;
+
 
 	/** Construct.
 	 * 
@@ -34,8 +38,8 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 	@Override
 	public void initialize(Ruby ruby) throws Exception {
 		ruby.evalScriptlet(getInitializerScript());
-        // ruby.setCurrentDirectory(this.rackRoot.toURL().toString());
-        // System.out.println("JC: set current dir to "+ruby.getCurrentDirectory());
+        ruby.setCurrentDirectory(this.rackRoot.getPhysicalFile().getCanonicalPath());
+        log.info("Current directory: "+ruby.getCurrentDirectory());
 	}
 
 	/** Create the initializer script.
