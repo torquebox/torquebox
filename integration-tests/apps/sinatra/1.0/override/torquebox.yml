@@ -1,0 +1,10 @@
+application:
+  root: "should be ignored"
+  env: production
+  rackup: internal.ru
+web:
+  static: internal.static
+  context: /override-internal
+environment:
+  foo: "internal foo"
+  bar: "internal bar"
