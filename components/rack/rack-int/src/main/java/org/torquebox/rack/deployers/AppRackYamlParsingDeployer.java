@@ -91,6 +91,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
     private Deployment parseAndSetUp(VirtualFile file) throws IOException {
         TorqueBoxYamlParser parser = new TorqueBoxYamlParser();
         RackApplicationMetaData rackMetaData = parser.parse(file);
+        log.info(rackMetaData);
         return rackMetaData==null ? null : createDeployment(rackMetaData);
     }
 }

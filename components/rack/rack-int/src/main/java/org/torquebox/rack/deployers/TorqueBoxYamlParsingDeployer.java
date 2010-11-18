@@ -64,6 +64,7 @@ public class TorqueBoxYamlParsingDeployer extends AbstractVFSParsingDeployer<Rac
 		if (result == null) {
 			throw new DeploymentException("Unable to parse: " + file);
 		}
+        log.info(result);
 		return result;
 	}
 
