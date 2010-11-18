@@ -39,7 +39,7 @@ public class BasicRails_2_3_8_Test extends AbstractIntegrationTest {
         driver.get( "http://localhost:8080/basic-rails/sendfile" );
         String content = driver.getPageSource();
         assertNotNull( content );
-        assertEquals( "this is the contents of the file", content );
+        assertEquals( "this is the contents of the file", content.trim() );
 	    
 	}
 
