@@ -80,7 +80,25 @@ public class RackApplicationMetaData {
 		this.rackUpScript = rackUpScript;
 	}
 
-	public String getRackUpScript() {
+	public String getRackUpScript() throws IOException {
+        if (this.rackUpScript == null) {
+            VirtualFile file = getRackUpScriptLocation();
+            if (file != null && file.exists()) {
+                StringBuilder script = new StringBuilder();
+                BufferedReader in = null;
+                try {
+                    in = new BufferedReader(new InputStreamReader(file.openStream()));
+                    String line = null;
+                    while ((line = in.readLine()) != null) {
+                        script.append(line);
+                        script.append("\n");
+                    }
+                } finally {
+                    if (in != null) in.close();
+                }
+                this.rackUpScript = script.toString();
+            }
+        }
 		return this.rackUpScript;
 	}
 	
@@ -88,35 +106,16 @@ public class RackApplicationMetaData {
 		this.rackUpScriptLocation = rackUpScriptLocation;
 	}
 	
+    public void setRackUpScriptLocation(String path) throws IOException {
+        if (path != null) {
+            setRackUpScriptLocation( (path.startsWith("/") || path.matches("^[A-Za-z]:.*")) ? VFS.getChild(path) : getRackRoot().getChild(path) );
+        }
+    }
+
 	public VirtualFile getRackUpScriptLocation() {
 		return this.rackUpScriptLocation;
 	}
 	
-    public void setRackUpScript(VirtualFile file) throws IOException {
-        if (file != null && file.exists()) {
-            StringBuilder script = new StringBuilder();
-            BufferedReader in = null;
-            try {
-                in = new BufferedReader(new InputStreamReader(file.openStream()));
-                String line = null;
-                while ((line = in.readLine()) != null) {
-                    script.append(line);
-                    script.append("\n");
-                }
-            } finally {
-                if (in != null) in.close();
-            }
-            setRackUpScript( script.toString() );
-        }
-        setRackUpScriptLocation( file );
-    }
-
-    public void setRackUpScriptPath(String path) throws IOException {
-        if (path != null) {
-            setRackUpScript( (path.startsWith("/") || path.matches("^[A-Za-z]:.*")) ? VFS.getChild(path) : getRackRoot().getChild(path) );
-        }
-    }
-
 	public void addHost(String host) {
 		if ( host != null && !this.hosts.contains(host) ) this.hosts.add( host );
 	}
@@ -182,14 +181,19 @@ public class RackApplicationMetaData {
     }
 
     public String getAbbreviatedRackUpScript() {
-        String result = this.rackUpScript;
-        if (result != null) {
-            result = result.replace("\n","\\n");
-            if (result.length() > 40) {
-                result = result.substring(0,40) + " ...";
+        try {
+            String result = getRackUpScript();
+            if (result != null) {
+                result = result.replace("\n","\\n");
+                int max = 100;
+                if (result.length() > max) {
+                    result = result.substring(0,max) + " ...";
+                }
             }
+            return result;
+        } catch (IOException e) {
+            return null;
         }
-        return result;
     }
 
 	public String toString() {

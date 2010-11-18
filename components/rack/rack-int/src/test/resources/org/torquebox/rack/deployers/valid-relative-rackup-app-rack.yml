@@ -1,4 +1,4 @@
 application:
-  RACK_ROOT: ${project.build.directory}/test-classes/org/torquebox/rack/deployers
+  RACK_ROOT: /tmp/nonexistantpathfortorqueboxtest
   RACK_ENV: test
-  rackup: config.ru
+  rackup: path/to/config.ru

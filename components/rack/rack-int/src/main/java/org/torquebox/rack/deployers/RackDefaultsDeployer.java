@@ -50,11 +50,11 @@ public class RackDefaultsDeployer extends AbstractDeployer {
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         try {
             RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
-            metadata.setRackEnv(           "development" );
-            metadata.setRackUpScriptPath(  "config.ru" );
-            metadata.addHost(              "localhost" );
-            metadata.setContextPath(       "/" );
-            metadata.setStaticPathPrefix(  "/public" );
+            metadata.setRackEnv(               "development" );
+            metadata.setRackUpScriptLocation(  "config.ru" );
+            metadata.addHost(                  "localhost" );
+            metadata.setContextPath(           "/" );
+            metadata.setStaticPathPrefix(      "/public" );
             log.info(metadata); 
         } catch (Exception e) {
             throw new DeploymentException(e);

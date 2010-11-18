@@ -40,7 +40,7 @@ public class TorqueBoxYamlParser {
         if (application != null) {
             getMetaData().setRackRoot( getOneOf( application, "RACK_ROOT", "RAILS_ROOT", "root" ) );
             getMetaData().setRackEnv( getOneOf( application, "RACK_ENV", "RAILS_ENV", "env" ) );
-            getMetaData().setRackUpScriptPath( application.get( "rackup" ) );
+            getMetaData().setRackUpScriptLocation( application.get( "rackup" ) );
         }
         return getMetaData();
     }

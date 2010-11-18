@@ -26,7 +26,9 @@ public class WriteOnceRackApplicationMetaData extends RackApplicationMetaData {
     }
     
     public void setRackUpScript(String rackUpScript) {
-        if (null == getRackUpScript()) super.setRackUpScript( rackUpScript );
+        try {
+            if (null == getRackUpScript()) super.setRackUpScript( rackUpScript );
+        } catch (Exception ignored) {}
     }
 
     public void setRackUpScriptLocation(VirtualFile rackUpScriptLocation) {

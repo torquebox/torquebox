@@ -65,7 +65,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
             if (railsAppMetaData.isRails3()) {
-                rackMetaData.setRackUpScript( railsAppMetaData.getRailsRoot().getChild("config.ru") );
+                rackMetaData.setRackUpScriptLocation( railsAppMetaData.getRailsRoot().getChild("config.ru") );
             } else {
                 rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
             }
