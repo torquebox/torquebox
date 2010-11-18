@@ -181,8 +181,19 @@ public class RackApplicationMetaData {
         return this.runtimeInitializer;
     }
 
+    public String getAbbreviatedRackUpScript() {
+        String result = this.rackUpScript;
+        if (result != null) {
+            result = result.replace("\n","\\n");
+            if (result.length() > 40) {
+                result = result.substring(0,40) + " ...";
+            }
+        }
+        return result;
+    }
+
 	public String toString() {
-		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + this.rackUpScript.replace("\n","\\n") + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
+		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + getAbbreviatedRackUpScript() + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
 	}
 	
 }
