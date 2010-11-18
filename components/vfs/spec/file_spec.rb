@@ -167,6 +167,31 @@ describe "File extensions for VFS" do
           prefix = "vfs:#{File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )}"
       end
 
+      it "should provide size for normal files" do
+        s = File.size( "#{prefix}/home/larry/file1.txt" )
+        s.should_not be_nil
+        s.should be > 0
+      end
+
+      it "should throw NOENT for size of non-existant files" do
+        lambda {
+          File.size( "#{prefix}/home/larry/NOT_REALLY_file1.txt" )
+        }.should raise_error
+      end
+
+      it "should provide size? for normal files" do
+        s = File.size?( "#{prefix}/home/larry/file1.txt" )
+        s.should_not be_nil
+        s.should be > 0
+      end
+
+      it "should not throw NOENT for size? of non-existant files" do
+        lambda {
+          s = File.size?( "#{prefix}/home/larry/NOT_REALLY_file1.txt" )
+          s.should be_nil
+        }.should_not raise_error
+      end
+
       it "should provide mtime for normal files" do
         mtime = File.mtime( "#{prefix}/home/larry/file1.txt" )
         mtime.should_not be_nil
@@ -194,7 +219,6 @@ describe "File extensions for VFS" do
         contents.should eql( "This is file 1\nhowdy\n" )
 
         fs_file = File.join( File.dirname(__FILE__), '..', TEST_COPY_BASE, 'home/larry/file1.txt' )
-        puts "confirm from #{fs_file}"
         fs_contents = File.read( fs_file )
         fs_contents.should eql( "This is file 1\nhowdy\n" )
       end

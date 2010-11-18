@@ -6,6 +6,8 @@ class File
 
     alias_method :open_without_vfs,        :open
     alias_method :mtime_without_vfs,       :mtime
+    alias_method :size_without_vfs,        :size
+    alias_method :size_without_vfs?,       :size?
     alias_method :stat_without_vfs,        :stat
     alias_method :exist_without_vfs?,      :exist?
     alias_method :directory_without_vfs?,  :directory?
@@ -73,6 +75,35 @@ class File
 
       Time.at( virtual_file.getLastModified() / 1000 )
     end
+
+    def size(filename)
+      return size_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
+
+      vfs_url, child_path = VFS.resolve_within_archive(filename)
+      raise Errno::ENOENT.new unless vfs_url
+
+      virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
+      virtual_file = virtual_file.get_child( child_path ) if child_path
+
+      raise Errno::ENOENT.new unless virtual_file.exists
+
+      virtual_file.size
+    end
+
+    def size?(filename)
+      return size_without_vfs?(filename) if ( File.exist_without_vfs?( filename ) )
+
+      vfs_url, child_path = VFS.resolve_within_archive(filename)
+      return nil unless vfs_url
+
+      virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
+      virtual_file = virtual_file.get_child( child_path ) if child_path
+
+      return nil unless virtual_file.exists
+
+      virtual_file.size
+    end
+
 
     def stat(filename)
       return stat_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
