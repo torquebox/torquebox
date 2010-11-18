@@ -24,5 +24,24 @@ public class BasicRails_2_3_8_Test extends AbstractIntegrationTest {
         assertNotNull( element );
         assertEquals( "basic-rails", element.getAttribute( "class" ) );
 	}
+	
+	@Test
+	public void testSendData() {
+        driver.get( "http://localhost:8080/basic-rails/senddata" );
+        String content = driver.getPageSource();
+        assertNotNull( content );
+        assertEquals( "this is the content", content );
+	    
+	}
+	
+	@Test
+	public void testSendFile() {
+        driver.get( "http://localhost:8080/basic-rails/sendfile" );
+        String content = driver.getPageSource();
+        assertNotNull( content );
+        assertEquals( "this is the contents of the file", content );
+	    
+	}
+
 
 }
