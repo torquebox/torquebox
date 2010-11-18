@@ -145,7 +145,7 @@
                     <exclude>nothing</exclude> <!-- required to override excludes inherited from default -->
                   </excludes>
                   <includes>
-                    <include>**/arquillian/*Test.java</include>
+                    <include>**/arquillian/**/*Test.java</include>
                   </includes>
                 </configuration>
               </execution>

@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 
-APP='internal'
+ENV['APP'] = 'internal'
 require 'app'
 
 run Sinatra::Application

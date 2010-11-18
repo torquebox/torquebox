@@ -1,0 +1,10 @@
+application:
+  root: ${basedir}/apps/sinatra/1.0/override
+  env: development
+  rackup: external.ru
+web:
+  static: external.static
+  context: /override-external
+environment:
+  foot: stink
+  bar:  maid
