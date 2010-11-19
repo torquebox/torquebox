@@ -35,11 +35,11 @@ def rack_deployment(app_name, root, context_path)
   [ rack_deployment_name( app_name ), deployment_descriptor ]
 end
 
-def rails?(root)
+def rails?(root = Dir.pwd)
   File.exist?( File.join( root, 'config', 'environment.rb' ) )
 end
 
-def rack?(root)
+def rack?(root = Dir.pwd)
   not rails?(root)
 end
 
@@ -78,22 +78,20 @@ namespace :torquebox do
     puts "Undeployed #{deployment_name}"
   end
 
-  if ( rails?( Dir.pwd ) )
-    desc "Create (if needed) and deploy as application archive"
-    namespace :deploy do
-      task :archive=>[ 'torquebox:archive' ] do
-        archive_name = File.basename( Dir.pwd ) + '.rails'
-        src = "#{Dir.pwd}/#{archive_name}"
-        FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
-        puts "Deployed #{archive_name}"
-      end
+  desc "Create (if needed) and deploy as application archive"
+  namespace :deploy do
+    task :archive=>[ 'torquebox:archive' ] do
+      archive_name = get_archive_name
+      src = "#{Dir.pwd}/#{archive_name}"
+      FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
+      puts "Deployed #{archive_name}"
     end
-    namespace :undeploy do
-      task :archive do
-        archive_name = File.basename( Dir.pwd ) + '.rails'
-        FileUtils.rm_f( File.join( TorqueBox::RakeUtils.deploy_dir, archive_name ) )
-        puts "Undeployed #{archive_name}"
-      end
+  end
+  namespace :undeploy do
+    task :archive do
+      archive_name = get_archive_name
+      FileUtils.rm_f( File.join( TorqueBox::RakeUtils.deploy_dir, archive_name ) )
+      puts "Undeployed #{archive_name}"
     end
   end
  
