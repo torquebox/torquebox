@@ -8,7 +8,7 @@ receiver = TorqueBox::Messaging::Queue.new '/queues/responses'
 
 get '/:word' do
   publisher.publish params[:word]
-  receiver.receive(:timeout => 2000)
+  receiver.receive(:timeout => 10000)
 end
 
 run Sinatra::Application
