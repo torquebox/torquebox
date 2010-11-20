@@ -1,12 +1,12 @@
 package org.torquebox.integration.arquillian;
 
 import static org.junit.Assert.*;
+import org.junit.*;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 @Run(RunModeType.AS_CLIENT)
@@ -18,6 +18,7 @@ public class SinatraQueuesTest extends AbstractIntegrationTest {
 	}
 
 	@Test
+    @Ignore
 	public void testTobyCrawley() {
         driver.get( "http://localhost:8080/uppercaser/toby+crawley" );
         WebElement body = driver.findElementByTagName("body");
