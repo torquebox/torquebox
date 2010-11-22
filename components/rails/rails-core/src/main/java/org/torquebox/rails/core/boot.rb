@@ -67,11 +67,6 @@ class Class
   end # method_added
 end
 
-module Rails
-  class Railtie
-  end
-end
-
 begin
   load RAILS_ROOT + '/config/environment.rb'
 rescue => e
