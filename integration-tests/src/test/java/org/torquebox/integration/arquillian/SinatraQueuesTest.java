@@ -18,8 +18,8 @@ public class SinatraQueuesTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-    @Ignore
-	public void testTobyCrawley() {
+	public void testTobyCrawley() throws Exception {
+        Thread.sleep(1000);
         driver.get( "http://localhost:8080/uppercaser/toby+crawley" );
         WebElement body = driver.findElementByTagName("body");
         assertEquals( "TOBY CRAWLEY", body.getText().trim());
