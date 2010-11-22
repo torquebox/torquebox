@@ -155,10 +155,12 @@ public class RubyMessageProcessor implements MessageListener {
 		Ruby ruby = null;
 
 		try {
+            log.debug("Received message: "+message);
 			ruby = getRubyRuntimePool().borrowRuntime();
 			IRubyObject processor = instantiateProcessor(ruby);
 			configureProcessor(processor);
 			processMessage(processor, message);
+            log.debug("Message processed");
 		} catch (Exception e) {
 			log.error("unable to dispatch", e);
 			e.printStackTrace();
