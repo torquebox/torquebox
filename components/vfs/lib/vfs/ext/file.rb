@@ -36,7 +36,7 @@ class File
       return args[0].to_s.dup if ( vfs_path?(args[0]) )
       if ( vfs_path?(args[1]) )
         expanded = expand_path_without_vfs(args[0], name_without_vfs(args[1].to_s))
-        return "vfs:#{expanded}"
+        return VFS.resolve_path_url(expanded)
       end
       expand_path_without_vfs(*args)
     end
@@ -172,7 +172,7 @@ class File
 
     def dirname(filename)
       dirname = dirname_without_vfs(name_without_vfs(filename))
-      vfs_path?(filename) ? "vfs:#{dirname}" : dirname
+      vfs_path?(filename) ? VFS.resolve_path_url(dirname) : dirname
     end
 
     def name_without_vfs(filename)
