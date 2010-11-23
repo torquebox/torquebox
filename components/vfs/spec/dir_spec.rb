@@ -185,12 +185,6 @@ describe "Dir extensions for VFS" do
         }.should_not raise_error
       end
 
-      it "should mkdir" do
-        lambda {
-          Dir.mkdir("#{prefix}/should_mkdir_#{style}")
-        }.should_not raise_error
-      end
-
     end
   end
 
