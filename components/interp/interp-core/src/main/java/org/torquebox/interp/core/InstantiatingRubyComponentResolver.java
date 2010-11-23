@@ -5,11 +5,14 @@ import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.interp.spi.ComponentInitializer;
+import org.jboss.logging.Logger;
+
 
 public class InstantiatingRubyComponentResolver extends ManagedComponentResolver {
 
 	private String rubyClassName;
 	private String rubyRequirePath;
+	private static final Logger log = Logger.getLogger(InstantiatingRubyComponentResolver.class);
 
 	private ComponentInitializer componentInitializer;
 
@@ -41,20 +44,23 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
 	}
 
 	protected IRubyObject createComponent(Ruby ruby) throws Exception {
+        log.debug("createComponent("+ruby+")");
 		if (this.rubyRequirePath != null) {
 			ruby.getLoadService().load(this.rubyRequirePath + ".rb", false);
+            log.debug("Loaded source file: "+this.rubyRequirePath+".rb");
 		}
 
 		RubyClass componentClass = (RubyClass) ruby.getClassFromPath(this.rubyClassName);
-
+        log.debug("Got componentClass: "+componentClass);
 		if (componentClass == null || componentClass.isNil()) {
 			return null;
 		}
 
 		IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, componentClass, "new", new Object[] {}, IRubyObject.class);
-
+        log.debug("Got component: "+component);
 		if (this.componentInitializer != null) {
 			this.componentInitializer.initialize(component);
+            log.debug("Initialized component");
 		}
 
 		return component;
