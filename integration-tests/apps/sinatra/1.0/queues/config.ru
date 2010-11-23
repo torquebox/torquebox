@@ -11,7 +11,7 @@ get '/:word' do
   publisher.publish params[:word]
   puts "JC: published #{params[:word]}"
   puts "JC: receiving..."
-  result = receiver.receive(:timeout => 5000)
+  result = receiver.receive(:timeout => 25000)
   puts "JC: received #{result}"
   result
 end
