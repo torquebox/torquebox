@@ -3,6 +3,8 @@ require 'rubygems'
 require 'vfs'
 require 'pp'
 
+require 'org/torquebox/rails/web/v3/servlet_store'
+
 class Class
   
   alias_method :method_added_before_torquebox, :method_added
@@ -19,17 +21,22 @@ class Class
         end
       end
       if ( (self.to_s == 'Rails::Initializer') && ( method_name == :load_application_initializers ) )
-     	  self.class_eval do
+        self.class_eval do
           alias_method :load_application_initializers_before_torquebox, :load_application_initializers      	    
           def load_application_initializers()
+            puts "load_application_initializers()"
+            
             load_application_initializers_before_torquebox()              
-            def (ActionController::SessionManagement::ClassMethods).raw_session_store()
-              return class_variable_get( :@@session_store ) if class_variable_defined?( :@@session_store )
-              nil
-            end
-            if ( ActionController::SessionManagement::ClassMethods.raw_session_store.nil? )
-              require 'org/torquebox/rails/web/v2_3/servlet_session'
-              ActionController::Base.session_store = TorqueBox::Session::Servlet
+            
+            if ( Rails::VERSION::MAJOR == 2 )
+              def (ActionController::SessionManagement::ClassMethods).raw_session_store()
+                return class_variable_get( :@@session_store ) if class_variable_defined?( :@@session_store )
+                nil
+              end
+              if ( ActionController::SessionManagement::ClassMethods.raw_session_store.nil? )
+                require 'org/torquebox/rails/web/v2_3/servlet_session'
+                ActionController::Base.session_store = TorqueBox::Session::Servlet
+              end
             end
        	  end
         end
