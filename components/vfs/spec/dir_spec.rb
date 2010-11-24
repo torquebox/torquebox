@@ -1,4 +1,5 @@
 
+require 'fileutils'
 require File.dirname(__FILE__) +  '/spec_helper.rb'
 
 describe "Dir extensions for VFS" do
@@ -189,10 +190,21 @@ describe "Dir extensions for VFS" do
   end
 
   describe "mkdir" do
-    xit "should mkdir inside vfs archive" do
-      lambda {
-        Dir.mkdir("#{@archive1_path}/should_mkdir_inside_vfs_archive")
-      }.should_not raise_error
+    it "should mkdir inside vfs archive when directory mounted on filesystem" do
+      FileUtils.rm_rf "target/mnt"
+      archive = org.jboss.vfs::VFS.child( @archive1_path )
+      logical = archive.getChild( "lib" )
+      physical = java.io::File.new( "target/mnt" )
+      physical.mkdirs
+      mount = org.jboss.vfs::VFS.mountReal( physical, logical )
+      begin
+        lambda {
+          Dir.mkdir("#{@archive1_path}/lib/should_mkdir_inside_vfs_archive")
+          File.directory?("target/mnt/should_mkdir_inside_vfs_archive").should be_true
+        }.should_not raise_error
+      ensure
+        mount.close
+      end
     end
   end
 

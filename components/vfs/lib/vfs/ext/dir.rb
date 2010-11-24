@@ -106,6 +106,9 @@ class Dir
     end
 
     def mkdir(path, mode=0777)
+      virtual = org.jboss.vfs::VFS.child( path )
+      raise "failure" unless virtual.physical_file.mkdir
+    rescue Exception
       real_path = path =~ /^vfs:/ ? path[4..-1] : path
       mkdir_before_vfs( real_path, mode )
     end
