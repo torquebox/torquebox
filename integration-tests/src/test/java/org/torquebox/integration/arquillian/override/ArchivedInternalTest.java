@@ -10,7 +10,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 public class ArchivedInternalTest extends ExplodedInternalTest {
 
 	@Deployment
-	public static JavaArchive createDeployment() {
+	public static JavaArchive createDeployment() throws Exception {
 		return createDeployment("sinatra/1.0/archived-internal-rack.yml");
 	}
 
