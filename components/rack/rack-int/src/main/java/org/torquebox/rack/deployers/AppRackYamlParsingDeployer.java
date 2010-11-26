@@ -101,6 +101,7 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
         List<String> metaDataPaths = new ArrayList<String>();
         metaDataPaths.add("");
         metaDataPaths.add("config");
+        // TODO: Add classpath entry for java libraries
         ContextInfo context = StructureMetaDataFactory.createContextInfo("", metaDataPaths, null);
         result.addContext(context);
         return result;
