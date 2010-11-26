@@ -36,9 +36,9 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
  *   Out: EnvironmentMetaData
  * </pre>
  *
- * The environment metadata links the Rails mode to the Jobs and
- * Messaging components, allowing their classes to be automatically
- * reloaded in development mode, for example.
+ * The environment metadata links the Rack/Rails environment to the
+ * Jobs and Messaging components, allowing their classes to be
+ * automatically reloaded in development mode, for example.
  */
 public class RackEnvironmentDeployer extends AbstractDeployer {
     
@@ -51,12 +51,8 @@ public class RackEnvironmentDeployer extends AbstractDeployer {
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
-        EnvironmentMetaData envMetaData = unit.getAttachment( EnvironmentMetaData.class );
-        if ( envMetaData == null ) {
-            envMetaData = new EnvironmentMetaData();
-        } else {
-            log.warn("EnvironmentMetaData found, overwriting");
-        }
+        log.info("RACK_ENV="+rackAppMetaData.getRackEnv());
+        EnvironmentMetaData envMetaData = new EnvironmentMetaData();
         String rackEnv = rackAppMetaData.getRackEnv();
         if ( rackEnv != null ) {
             envMetaData.setEnvironmentName( rackEnv );
