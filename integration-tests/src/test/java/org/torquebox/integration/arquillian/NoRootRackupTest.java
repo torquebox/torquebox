@@ -18,7 +18,6 @@ public class NoRootRackupTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-    @Ignore
 	public void testHappiness() {
         driver.get( "http://localhost:8080/norootrackup" );
         WebElement body = driver.findElementByTagName("body");

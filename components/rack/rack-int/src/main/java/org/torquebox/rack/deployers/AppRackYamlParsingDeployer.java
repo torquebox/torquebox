@@ -22,6 +22,7 @@
 package org.torquebox.rack.deployers;
 
 import java.io.IOException;
+import java.util.*;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -31,6 +32,9 @@ import org.jboss.deployers.client.spi.DeployerClient;
 import org.jboss.deployers.client.spi.Deployment;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
+import org.jboss.deployers.spi.structure.StructureMetaData;
+import org.jboss.deployers.spi.structure.StructureMetaDataFactory;
+import org.jboss.deployers.spi.structure.ContextInfo;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
@@ -85,7 +89,21 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
         AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackMetaData.getRackRoot());
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
         attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
+        if ( rackMetaData.getRackRoot().isDirectory() ) {
+            // TODO: Figure out why doing this breaks non-directory (archive) deployments.
+            attachments.addAttachment(StructureMetaData.class, createStructureMetaData());
+        }
         return deployment;
+    }
+
+    private StructureMetaData createStructureMetaData() {
+        StructureMetaData result = StructureMetaDataFactory.createStructureMetaData();
+        List<String> metaDataPaths = new ArrayList<String>();
+        metaDataPaths.add("");
+        metaDataPaths.add("config");
+        ContextInfo context = StructureMetaDataFactory.createContextInfo("", metaDataPaths, null);
+        result.addContext(context);
+        return result;
     }
 
     private Deployment parseAndSetUp(VirtualFile file) throws IOException {
