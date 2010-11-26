@@ -1,0 +1,8 @@
+
+<div id="data"><%= @data %></div>
+
+<% form_tag "#{url_for}#{session.url_suffix}", {:id=>'the-upload-form', :multipart=>true}  do %>
+  <%= hidden_field_tag '_method', 'PUT' %>
+  <%= file_field_tag 'upload_file', :id=>'the-file' %>
+  <%= submit_tag %>
+<% end %>
