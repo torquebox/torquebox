@@ -17,5 +17,5 @@ cache
 *~
 package-cache
 release.properties
-
-/TAGS
+TAGS
+Gemfile.lock
