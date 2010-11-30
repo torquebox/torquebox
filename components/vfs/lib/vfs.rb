@@ -49,4 +49,31 @@ module ::VFS
     "#{prefix}#{path}"
   end
 
+  def self.virtual_file(filename)
+    vfs_url, child_path = VFS.resolve_within_archive( filename )
+    return nil unless vfs_url
+
+    begin
+      virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
+      virtual_file = virtual_file.get_child( child_path ) if child_path
+      virtual_file
+    rescue Java::JavaIo::IOException => e
+      nil
+    end
+  end
+
+  def self.writable_path_or_error(path, e)
+    virtual_file = VFS.virtual_file( path )
+    raise e if virtual_file.nil?
+    mount = Java::org.jboss.vfs::VFS.get_mount(virtual_file)
+    # TODO: Replace with a better error stating the issue, which is
+    # the user is trying to write to a filesystem inside an archive
+    # that is mounted as readonly
+    #
+    # HACK: For some reason mount.file_system doesn't work inside TB
+    # but does in tests
+    # raise e if mount.file_system.read_only?
+    virtual_file.physical_file.path
+  end
+
 end

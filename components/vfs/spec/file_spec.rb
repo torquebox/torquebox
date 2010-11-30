@@ -108,13 +108,35 @@ describe "File extensions for VFS" do
     path = File.expand_path("foo")
     begin
       f = File.new(path, "w")
-      FileUtils.chmod( 666, "vfs:#{path}")
+      FileUtils.chmod( 0666, "vfs:#{path}")
       m1 = f.stat.mode
-      FileUtils.chmod( 644, "vfs:#{path}")
+      FileUtils.chmod( 0644, "vfs:#{path}")
       m2 = f.stat.mode
       m1.should_not eql(m2)
     ensure
       File.delete(path) rescue nil
+    end
+  end
+
+  it "should chmod inside vfs archive when directory mounted on filesystem" do
+    FileUtils.rm_rf "target/mnt"
+    archive = org.jboss.vfs::VFS.child( @archive1_path )
+    logical = archive.getChild( "lib" )
+    physical = java.io::File.new( "target/mnt" )
+    physical.mkdirs
+    mount = org.jboss.vfs::VFS.mountReal( physical, logical )
+    path = "#{@archive1_path}/lib/chmod_test"
+    begin
+      lambda {
+        f = File.new ("target/mnt/chmod_test", "w" )
+        FileUtils.chmod( 0666, path )
+        m1 = f.stat.mode
+        FileUtils.chmod( 0755, path )
+        m2 = f.stat.mode
+        m1.should_not eql(m2)
+      }.should_not raise_error
+    ensure
+      mount.close
     end
   end
 
