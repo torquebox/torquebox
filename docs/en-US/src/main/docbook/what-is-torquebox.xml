@@ -39,7 +39,7 @@
   <section>
     <title>The "application platform" concept</title>
 
-    <para>Traditionally, Ruby applications were resposible for their services
+    <para>Traditionally, Ruby applications were responsible for their services
     from the ground-up. You literally ran the application. It would import
     support libraries to handle HTTP listening, for example.</para>
 
