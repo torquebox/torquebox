@@ -70,4 +70,36 @@ public class SessionRails3Test extends AbstractIntegrationTest {
         assertEquals( "", element.getText().trim() );
 	}
 
+	@Test
+	public void testResetSession() {
+        WebElement element = null;
+	    
+        // should have no value to begin with
+        driver.get( "http://localhost:8080/basic-rails/sessioning/get_value" );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "", element.getText().trim() );
+        
+        // set a value in the session
+        driver.get( "http://localhost:8080/basic-rails/sessioning/set_value" );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "the value", element.getText().trim() );
+        
+        // get value from session
+        driver.get( "http://localhost:8080/basic-rails/sessioning/get_value" );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "the value", element.getText().trim() );
+
+        // logout to reset the session
+        driver.get( "http://localhost:8080/basic-rails/sessioning/logout" );
+        
+        // should have no value after resetting session
+        driver.get( "http://localhost:8080/basic-rails/sessioning/get_value" );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "", element.getText().trim() );
+	}
+
 }

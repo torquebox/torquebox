@@ -15,4 +15,8 @@ class SessioningController < ApplicationController
     render :action=>:get_value
   end
 
+  def logout
+    reset_session
+    render :nothing => true
+  end
 end

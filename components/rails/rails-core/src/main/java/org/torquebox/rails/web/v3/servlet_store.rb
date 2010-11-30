@@ -59,9 +59,13 @@ module ActionDispatch
           end
         end
         session_data[:session_id] = session.getId()
-        def session_data.url_suffix()
-          ";jsessionid=#{self[:session_id]}" 
+        metaclass = class << session_data
+          def url_suffix
+            ";jsessionid=#{self[:session_id]}"
+          end
+          self
         end
+        metaclass.send(:define_method, :destroy) { session.invalidate }
         session_data
       end
       
