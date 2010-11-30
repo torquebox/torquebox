@@ -26,7 +26,7 @@ namespace :db do
   task :load_config => :rails_env do
     require 'active_record'
     require 'activerecord-jdbc-adapter'
-    ActiveRecord::Base.configurations = Rails::Configuration.new.database_configuration
+    ActiveRecord::Base.configurations = Rails::Application.config.database_configuration
   end
 end
 
