@@ -176,6 +176,11 @@ describe "File extensions for VFS" do
     it "should return File when called on File without VFS url" do
       File.new(@archive1_path, 'r').should be_an_instance_of(File)
     end
+
+    xit "should create objects that respond to lstat for files in an archive" do
+      file = File.new( "vfs:#{@archive1_path}/web.xml")
+      file.lstat.should_not be_nil
+    end
   end
 
   [ :absolute, :relative, :vfs ].each do |style|
