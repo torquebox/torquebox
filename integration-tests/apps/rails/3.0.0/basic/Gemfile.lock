@@ -42,6 +42,7 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.16)
+    org.torquebox.rake-support (1.0.0.Beta23)
     polyglot (0.3.1)
     rack (1.2.1)
     rack-mount (0.6.13)
@@ -75,4 +76,5 @@ DEPENDENCIES
   activerecord-jdbc-adapter
   haml
   jdbc-sqlite3
+  org.torquebox.rake-support
   rails (= 3.0.3)

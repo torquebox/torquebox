@@ -30,3 +30,4 @@ gem 'haml'
 # group :development, :test do
 #   gem 'webrat'
 # end
+gem "org.torquebox.rake-support", :require => "torquebox-rails"
