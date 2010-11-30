@@ -26,8 +26,8 @@ public class FrozenRails_2_3_8_Test extends AbstractIntegrationTest {
     @Test
     public void testHighLevel() {
         driver.get("http://localhost:8080/frozen-rails");
-        System.err.println("RESULT: ");
-        System.err.println(driver.getPageSource());
+        // System.err.println("RESULT: ");
+        // System.err.println(driver.getPageSource());
         WebElement element = driver.findElementById("success");
         assertNotNull(element);
         assertEquals("frozen-rails", element.getAttribute("class"));
