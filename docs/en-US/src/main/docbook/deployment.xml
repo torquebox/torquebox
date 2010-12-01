@@ -37,13 +37,13 @@
     <para><screen>require 'torquebox/tasks'</screen></para>
 
     <para>Once these variables are set, you may perform a default deployment
-    using the <command>jboss:deploy</command> task to deploy either
+    using the <command>torquebox:deploy</command> task to deploy either
     Ruby-on-Rails applications or plain Ruby Rack applications.</para>
 
     <para><screen><prompt>$</prompt> <command>rake torquebox:deploy</command></screen></para>
 
-    <para>To undeploy your application, the jboss:rails:undeploy task is
-    available</para>
+    <para>To undeploy your application, the
+    <command>torquebox:undeploy</command> task is available</para>
 
     <para><screen><prompt>$</prompt> <command>rake torquebox:undeploy</command></screen></para>
 
@@ -193,7 +193,7 @@
       directories.</para>
 
       <para>
-        <screen><prompt>$</prompt> <command>rake</command><command>torquebox:archive</command></screen>
+        <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>
         
         The resulting archive will be placed at the root of the
         application, with a suffix of either
