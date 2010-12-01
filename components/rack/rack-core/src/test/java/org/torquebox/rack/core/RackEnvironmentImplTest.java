@@ -77,7 +77,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		assertEquals("torquebox.org", envHash.get("SERVER_NAME"));
 		assertEquals("https", envHash.get("rack.url_scheme"));
 		assertEquals( "on", envHash.get( "HTTPS" ) );
-		assertEquals(8080L, envHash.get("SERVER_PORT"));
+		assertEquals("8080", envHash.get("SERVER_PORT"));
 		assertEquals("text/html", envHash.get("CONTENT_TYPE"));
 		assertEquals(0L, envHash.get("CONTENT_LENGTH"));
 		assertEquals("10.42.42.42", envHash.get("REMOTE_ADDR"));
@@ -136,7 +136,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		assertEquals("torquebox.org", envHash.get("SERVER_NAME"));
 		assertEquals("http", envHash.get("rack.url_scheme"));
 		assertNull( envHash.get( "HTTPS" ) );
-		assertEquals(8080L, envHash.get("SERVER_PORT"));
+		assertEquals("8080", envHash.get("SERVER_PORT"));
 		assertNull( envHash.get("CONTENT_TYPE") );
 		assertEquals(0L, envHash.get("CONTENT_LENGTH"));
 		assertEquals("10.42.42.42", envHash.get("REMOTE_ADDR"));

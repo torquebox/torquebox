@@ -46,7 +46,7 @@ public class RackEnvironmentImpl implements RackEnvironment {
 		env.put( "PATH_INFO" , request.getPathInfo());
 		env.put( "QUERY_STRING" ,request.getQueryString() == null ? "" : request.getQueryString());
 		env.put( "SERVER_NAME" , request.getServerName());
-		env.put( "SERVER_PORT" , request.getServerPort());
+		env.put( "SERVER_PORT" , request.getServerPort()+"");
 		env.put( "CONTENT_TYPE" , request.getContentType() );
 		env.put( "CONTENT_LENGTH" , request.getContentLength());
 		env.put( "REQUEST_URI" , request.getContextPath() + request.getServletPath() + request.getPathInfo());

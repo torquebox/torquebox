@@ -75,7 +75,7 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
 		assertEquals("cheese=cheddar&bob=mcwhirter", javaEnv.get("QUERY_STRING"));
 		assertEquals("torquebox.org", javaEnv.get("SERVER_NAME"));
 		assertEquals("https", javaEnv.get("rack.url_scheme"));
-		assertEquals(8080L, javaEnv.get("SERVER_PORT"));
+		assertEquals("8080", javaEnv.get("SERVER_PORT"));
 		assertEquals("text/html", javaEnv.get("CONTENT_TYPE"));
 		assertEquals(0L, javaEnv.get("CONTENT_LENGTH"));
 		assertEquals("10.42.42.42", javaEnv.get("REMOTE_ADDR"));
