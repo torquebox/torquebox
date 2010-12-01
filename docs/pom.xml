@@ -49,7 +49,7 @@
           <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jbossorg-docbook-xslt</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>1.1.1</version>
           </dependency>
           <dependency>
             <groupId>org.jboss</groupId>
