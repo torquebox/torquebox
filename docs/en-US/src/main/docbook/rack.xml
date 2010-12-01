@@ -27,7 +27,7 @@
     run app</programlisting></para>
 
     <para>To deploy your application, please see <xref linkend="deployment" />
-    and <xref linkend="rack-deployment-descriptors" />.</para>
+    and <xref linkend="deployment-descriptors" />.</para>
 
     <para>The directory containing the <filename>config.ru</filename> is
     considered the current working directory, and is included in the load
