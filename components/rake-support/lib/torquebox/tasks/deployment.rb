@@ -22,10 +22,11 @@ def rails_deployment(app_name, root, context_path)
 end
 
 def rack_deployment(app_name, root, context_path)
+  env = defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
   deployment_descriptor = { 
     'application' => {
       'RACK_ROOT'=>root,
-      'RACK_ENV'=>( defined?( RACK_ENV ) ? RACK_ENV : 'development' ).to_s,
+      'RACK_ENV'=>( env || 'development' ).to_s,
     },
     'web' => {
       'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
