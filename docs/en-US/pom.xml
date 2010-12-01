@@ -26,9 +26,7 @@
         <configuration>
           <descriptors>
             <descriptor>src/main/assembly/html.xml</descriptor>
-<!--
             <descriptor>src/main/assembly/html-single.xml</descriptor>
--->
           </descriptors>
         </configuration>
         <executions>
