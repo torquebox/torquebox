@@ -24,7 +24,7 @@ public class CommandLineMessagingTest {
 	}
 
     private boolean lookFor(final String target, final InputStream input) throws Exception {
-        return new ProcessOutputSearcher(target, input).search(25000);
+        return new ProcessOutputSearcher(target, input).search(40000);
     }
 
     private String jrubyBin(String script) throws Exception {
