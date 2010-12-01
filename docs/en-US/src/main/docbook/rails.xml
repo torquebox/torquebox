@@ -26,6 +26,9 @@
     results being immediately available. In most cases, the application does
     not need to be restarted to see changes in models, views or controllers
     reflected.</para>
+
+    <para>To deploy your application, please see <xref linkend="deployment" />
+    and <xref linkend="deployment-descriptors" />.</para>
   </section>
 
   <section>
