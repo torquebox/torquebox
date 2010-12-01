@@ -97,7 +97,8 @@
       when deploying an application. To alter these values, simply set the
       variable when executing the rake tasks.</para>
 
-      <para><screen>$ <command>RAILS_ENV=production torquebox:deploy</command></screen></para>
+      <para>For example: <screen>$ <command>RAILS_ENV=production rake torquebox:deploy</command></screen></para>
+      <para>or <screen>$ <command>RACK_ENV=staging rake torquebox:deploy</command></screen></para>
     </section>
   </section>
 
