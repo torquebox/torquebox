@@ -3,7 +3,7 @@ require 'rubygems'
 require 'vfs'
 require 'pp'
 
-require 'org/torquebox/rails/web/v3/servlet_store'
+require 'org/torquebox/rails/web/servlet_store'
 
 class Class
   
@@ -15,7 +15,6 @@ class Class
       if ( (self.to_s == 'Rails::Configuration') && ( method_name == :set_root_path! ) )
         self.class_eval do
           def set_root_path!
-            #puts "set_root_path! to #{RAILS_ROOT}"
             @root_path = RAILS_ROOT
           end 
         end
@@ -24,7 +23,6 @@ class Class
         self.class_eval do
           alias_method :load_application_initializers_before_torquebox, :load_application_initializers      	    
           def load_application_initializers()
-            puts "load_application_initializers()"
             
             load_application_initializers_before_torquebox()              
             
@@ -34,8 +32,7 @@ class Class
                 nil
               end
               if ( ActionController::SessionManagement::ClassMethods.raw_session_store.nil? )
-                require 'org/torquebox/rails/web/v2_3/servlet_session'
-                ActionController::Base.session_store = TorqueBox::Session::Servlet
+                ActionController::Base.session_store = TorqueBox::Session::ServletStore
               end
             end
        	  end
@@ -60,8 +57,6 @@ class Class
             # all sorts of nuttiness will occur.  So, let's just hide it.
             if ( Rails::VERSION::MAJOR == 2 )
               unless ( JRuby.runtime.load_service.featureAlreadyLoaded( 'jdbc_adapter/railtie.rb' ) )
-                #$" << 'rails/railtie'
-                puts "Preloading railtie for Rails 2.x"
                 JRuby.runtime.load_service.addLoadedFeature( 'jdbc_adapter/railtie.rb' )
               end
             end

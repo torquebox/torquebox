@@ -101,5 +101,48 @@ public class SessionRails3Test extends AbstractIntegrationTest {
         assertNotNull( element );
         assertEquals( "", element.getText().trim() );
 	}
+	
+	@Test
+	public void testSessionViaMatrixUrl() {
+
+        WebElement element = null;
+	    Options options = driver.manage();
+        
+        // should have no value to begin with
+        driver.get( "http://localhost:8080/basic-rails/sessioning/get_value" );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "", element.getText().trim() );
+        
+        // set a value in the session
+        driver.get( "http://localhost:8080/basic-rails/sessioning/set_value" );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "the value", element.getText().trim() );
+        
+        // get value from session
+        driver.get( "http://localhost:8080/basic-rails/sessioning/get_value" );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "the value", element.getText().trim() );
+        
+        String cookieValue = options.getCookieNamed("JSESSIONID" ).getValue();
+        
+        assertNotNull(cookieValue);
+        assertFalse( "".equals( cookieValue ) );
+        
+        options.deleteAllCookies();
+        
+        driver.get( "http://localhost:8080/basic-rails/sessioning/get_value;jsessionid=" + cookieValue );
+        element = driver.findElementById( "success" );
+        assertNotNull( element );
+        assertEquals( "the value", element.getText().trim() );
+        
+        element = driver.findElementById( "session_id" );
+        assertNotNull( element );
+        assertEquals( cookieValue, element.getText().trim() );
+        
+        assertEquals( 0, options.getCookies().size() );
+	}
 
 }

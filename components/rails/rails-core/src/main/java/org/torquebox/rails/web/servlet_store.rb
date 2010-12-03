@@ -18,7 +18,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module ActionDispatch
+module TorqueBox
   module Session
     class ServletStore 
       
@@ -54,25 +54,35 @@ module ActionDispatch
               data = Marshal.load( String.from_java_bytes( marshalled_bytes ) )
               session_data.update( data ) if Hash === data
             end
+          elsif ( key == :servlet_session )
+            # skip
           else
             session_data[key] = session.getAttribute(key)
           end
         end
         session_data[:session_id] = session.getId()
+        session_data[:servlet_session] = session
         metaclass = class << session_data
           def url_suffix
             ";jsessionid=#{self[:session_id]}"
           end
+          def destroy
+            puts "invalidate servlet session"
+            self[:servlet_session].invalidate
+            puts "invalidated servlet session"
+          end
           self
         end
-        metaclass.send(:define_method, :destroy) { session.invalidate }
+        #metaclass.send(:define_method, :destroy) { session.invalidate }
         session_data
       end
       
       def store_session_data(session, session_data)
         hash = session_data.dup
         hash.delete_if do |key,value|
-          if ( String === key )
+          if ( key == :servlet_session )
+            true
+          elsif ( String === key )
             case value
               when String, Numeric, true, false, nil
                 session.setAttribute( key, value )
