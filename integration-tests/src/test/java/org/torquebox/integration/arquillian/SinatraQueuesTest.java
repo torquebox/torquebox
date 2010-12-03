@@ -19,10 +19,16 @@ public class SinatraQueuesTest extends AbstractIntegrationTest {
 
 	@Test
 	public void testTobyCrawley() throws Exception {
-        Thread.sleep(1000);
-        driver.get( "http://localhost:8080/uppercaser/toby+crawley" );
+        driver.get( "http://localhost:8080/uppercaser/up/toby+crawley" );
         WebElement body = driver.findElementByTagName("body");
         assertEquals( "TOBY CRAWLEY", body.getText().trim());
+	}
+
+	@Test
+	public void testEmployment() throws Exception {
+        driver.get( "http://localhost:8080/uppercaser/job" );
+        WebElement body = driver.findElementByTagName("body");
+        assertEquals( "employment!", body.getText().trim());
 	}
 
 }
