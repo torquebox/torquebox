@@ -13,7 +13,6 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 
-
 /**
  * <pre>
  * Stage: PRE_DESCRIBE
@@ -55,7 +54,7 @@ public class LoadPathDeployer extends AbstractDeployer {
         for (String path : getLoadPaths()) {
             try {
                 URL url = unit.getRoot().getChild(path).toURL();
-                log.info("Adding to load path: " + url );
+                log.debug("Adding to load path: " + url );
                 RubyLoadPathMetaData loadPathMeta = new RubyLoadPathMetaData(url);
                 runtimeMetaData.appendLoadPath(loadPathMeta);
             } catch (MalformedURLException e) {
