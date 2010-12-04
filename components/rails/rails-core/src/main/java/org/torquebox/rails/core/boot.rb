@@ -79,3 +79,11 @@ rescue => e
   puts ""
   raise e
 end
+
+class ActionController::Request
+  def reset_session
+    session.destroy if session
+    self.session = {}
+    @env['action_dispatch.request.flash_hash'] = nil
+  end
+end
