@@ -19,25 +19,6 @@ class Class
           end 
         end
       end
-      if ( (self.to_s == 'Rails::Initializer') && ( method_name == :load_application_initializers ) )
-        self.class_eval do
-          alias_method :load_application_initializers_before_torquebox, :load_application_initializers      	    
-          def load_application_initializers()
-            
-            load_application_initializers_before_torquebox()              
-            
-            if ( Rails::VERSION::MAJOR == 2 )
-              def (ActionController::SessionManagement::ClassMethods).raw_session_store()
-                return class_variable_get( :@@session_store ) if class_variable_defined?( :@@session_store )
-                nil
-              end
-              if ( ActionController::SessionManagement::ClassMethods.raw_session_store.nil? )
-                ActionController::Base.session_store = TorqueBox::Session::ServletStore
-              end
-            end
-       	  end
-        end
-      end
       if ( (self.to_s == 'Rails::Initializer') && ( method_name == :set_autoload_paths ) )
         self.class_eval do
           alias_method :set_autoload_paths_before_torquebox, :set_autoload_paths            
@@ -80,10 +61,13 @@ rescue => e
   raise e
 end
 
-class ActionController::Request
-  def reset_session
-    session.destroy if session
-    self.session = {}
-    @env['action_dispatch.request.flash_hash'] = nil
+if ( Rails::VERSION::MAJOR == 2 )
+  class ActionController::Request
+    def reset_session
+      session.destroy if session
+      self.session = {}
+      @env['action_dispatch.request.flash_hash'] = nil
+    end
   end
 end
+  
