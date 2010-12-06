@@ -62,11 +62,13 @@ rescue => e
 end
 
 if ( Rails::VERSION::MAJOR == 2 )
-  class ActionController::Request
-    def reset_session
-      session.destroy if session
-      self.session = {}
-      @env['action_dispatch.request.flash_hash'] = nil
+  if ( ActionController::Base.session_store == TorqueBox::Session::ServletStore )
+    class ActionController::Request
+      def reset_session
+        session.destroy if session
+        self.session = {}
+        @env['action_dispatch.request.flash_hash'] = nil
+      end
     end
   end
 end
