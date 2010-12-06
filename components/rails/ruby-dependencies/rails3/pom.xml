@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-rails-ruby-dependencies</artifactId>
-    <version>1.0.0.Beta23-SNAPSHOT</version>
+    <version>1.0.0.Beta23</version>
     <relativePath>../</relativePath>
   </parent>
 
