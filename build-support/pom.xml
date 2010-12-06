@@ -17,6 +17,7 @@
 
   <modules>
     <module>javadoc-support</module>
+    <module>docbook-support</module>
     <module>deployer-support</module>
 
     <module>vdf-test-support</module>

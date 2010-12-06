@@ -126,7 +126,7 @@ end</programlisting></para>
         <para>All databases will require inclusion of the
         <filename>activerecord-jdbc-adapter</filename>. No other gems need to
         be required or loaded, since ActiveRecord will perform further
-        discovery on its own. </para>
+        discovery on its own.</para>
 
         <formalpara>
           <title>Rails 3.x</title>
@@ -146,13 +146,51 @@ gem 'jdbc-sqlite3'</programlisting></para>
       </section>
 
       <section>
-        <title>Eliminate or replace "native" Gems</title>
+        <title>Configure Sessions</title>
 
-        <para>"Native" gems that rely upon machine-specific compiled code do
-        not function with JRuby and TorqueBox. You must replaced these gems
-        with pure-Ruby or pure-Java implementations. Some native gems using
-        FFI are usable within TorqueBox.</para>
+        <para>By default, both Rails 2 and Rails 3 use the simple cookie-based
+        session store, which requires no support from the server. TorqueBox
+        can leverage the cluster-compatible sessions provided by the
+        application server to keep session state on the server. The TorqueBox
+        session store requires specific configuration of a database or other
+        technology. To use the TorqueBox session store, you must adjust
+        <filename>config/initializers/session_store.rb</filename>. The
+        contents vary depending on the version of Rails your application
+        uses.</para>
+
+        <para>When using the TorqueBox Rails application template, described
+        above, these modifications are made for your.</para>
+
+        <formalpara>
+          <title>Rails 2</title>
+
+          <para>To use the application-server's session storage mechanism,
+          your application's config/initializers/session_store.rb should
+          contain only the following:</para>
+        </formalpara>
+
+        <screen>( ActionController::Base.session_store = TorqueBox::Session::ServletStore ) if defined?(TorqueBox::Session::ServletStore)</screen>
+
+        <formalpara>
+          <title>Rails 3</title>
+
+          <para>To use the application-server's session storage mechanism,
+          your application's config/initializers/session_store.rb should
+          contain a variation of the following, adjusted for your
+          application's name:</para>
+        </formalpara>
+
+        <screen><replaceable>MyApp</replaceable>::Application.config.session_store TorqueBox::Session::ServletStore if defined?(TorqueBox::Session::ServletStore)</screen>
       </section>
+    </section>
+
+    <section>
+      <title>Eliminate or replace "native" Gems</title>
+
+      <para>"Native" gems that rely upon machine-specific compiled code do not
+      function with JRuby and TorqueBox. You must replaced these gems with
+      pure-Ruby or pure-Java implementations. Some native gems using FFI are
+      usable within TorqueBox.</para>
     </section>
   </section>
 </chapter>
