@@ -152,14 +152,14 @@ gem 'jdbc-sqlite3'</programlisting></para>
         session store, which requires no support from the server. TorqueBox
         can leverage the cluster-compatible sessions provided by the
         application server to keep session state on the server. The TorqueBox
-        session store requires specific configuration of a database or other
+        session store requires no specific configuration of a database or other
         technology. To use the TorqueBox session store, you must adjust
         <filename>config/initializers/session_store.rb</filename>. The
         contents vary depending on the version of Rails your application
         uses.</para>
 
         <para>When using the TorqueBox Rails application template, described
-        above, these modifications are made for your.</para>
+        above, these modifications are made for you.</para>
 
         <formalpara>
           <title>Rails 2</title>
