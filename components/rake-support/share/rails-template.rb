@@ -1,6 +1,5 @@
 
-if Rails::VERSION::STRING.start_with?( "2" )
-  # Rails 2.x.x
+if ( Rails::VERSION::MAJOR == 2 )
   gem "activerecord-jdbc-adapter", :lib => "jdbc_adapter"
   gem "org.torquebox.rake-support", :lib => 'torquebox-rails'
 else
@@ -9,6 +8,25 @@ else
   gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
   gem "jdbc-sqlite3"
   gem "org.torquebox.rake-support", :require => 'torquebox-rails'
+end
+
+if ( Rails::VERSION::MAJOR == 2 )
+  initializer("session_store.rb") do
+    <<-INIT
+# Configure the TorqueBox Servlet-based session store.
+# Provides for server-based, in-memory, cluster-compatible sessions.
+( ActionController::Base.session_store = TorqueBox::Session::ServletStore ) if defined?(TorqueBox::Session::ServletStore)
+    INIT
+  end
+else
+  remove_file( 'config/initializers/session_store.rb' )
+  initializer("session_store.rb") do
+    <<-INIT
+# Configure the TorqueBox Servlet-based session store.
+# Provides for server-based, in-memory, cluster-compatible sessions.
+#{app_const}.config.session_store TorqueBox::Session::ServletStore if defined?(TorqueBox::Session::ServletStore)
+    INIT
+  end
 end
 
 # Create app/tasks and app/jobs, just for fun
