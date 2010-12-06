@@ -242,11 +242,11 @@
       <title>Environment variables</title>
 
       <para>
-        Each Rack application may have its own unique set of
-        environment variables, no matter how many different Rack apps
-        are deployed under a single TorqueBox instance.  Variables
-        from internal and external descriptors are merged, with the
-        external variables overriding any internal matching keys.
+        Each application may have its own unique set of environment
+        variables, no matter how many different apps are deployed
+        under a single TorqueBox instance.  Variables from internal
+        and external descriptors are merged, with the external
+        variables overriding any internal matching keys.
       </para>
 
       <para>For example: <informalexample>
@@ -310,8 +310,7 @@ web:
       distinct contexts, nested under each other.</para>
 
       <para>Additionally, multiple applications may be deployed at the same
-      context path if they are differentiated by virtual host name. See the
-      example below for virtual host configuration.</para>
+      context path if they are differentiated by virtual host name.</para>
     </section>
 
     <section>
@@ -367,6 +366,32 @@ environment:
 =&gt; "/path/to/my/key.pem"</screen></para>
         </informalexample></para>
     </section>
+
+    <section>
+      <title>Using an internal descriptor</title>
+
+      <para>Let's add an internal descriptor that will provide a
+      reasonable default value for our web context, in case the
+      external descriptor fails to set it.  Because our app is a Rails
+      app, we'll put the descriptor in
+      <filename>config/</filename>:</para>
+
+      <para><screen>/home/bob/myapp/
+  config/
+    <emphasis>torquebox.yml</emphasis>
+    environment.rb
+    database.yml</screen></para>
+
+      <para>And the contents of torquebox.yml:<informalexample>
+        <para><screen>web:
+  context: /bob</screen></para>
+      </informalexample></para>
+
+      <para>Unless an external descriptor overrides it, this app will
+      be deployed beneath a context called
+      <emphasis>/bob</emphasis></para>
+    </section>
+
   </section>
 
   <section>
@@ -506,6 +531,30 @@ web:
       </informalexample></para>
       
     </section>
+
+    <section>
+      <title>Using an internal descriptor</title>
+
+      <para>For whatever reason, let's remove our config.ru and create
+      an internal descriptor to set our alternative rackup file.
+      Because we have a Rack app, we'll put the descriptor in the root
+      of our application's directory:</para>
+
+      <para><screen>/home/bob/myapp/
+  <emphasis>torquebox.yml</emphasis>
+  alternatives/magic-config.ru</screen></para>
+
+      <para>And the contents of torquebox.yml:<informalexample>
+        <para><screen>application:
+  rackup: alternatives/magic-config.ru</screen></para>
+      </informalexample></para>
+
+      <para>In this case, we wouldn't expect an external descriptor to
+      override this value, since there are no alternative rackup files
+      in the app.  TorqueBox does allow rackup files with absolute
+      paths, however, so it is conceivable.</para>
+    </section>
+
   </section>
 
   <section>
