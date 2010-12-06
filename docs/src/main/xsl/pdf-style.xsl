@@ -4,7 +4,7 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   >
 
-  <xsl:import href="classpath:/xslt/org/jboss/pdf.xsl"/>
+  <xsl:import href="file:../../../target/jbossorg-xslt/xslt/org/jboss/pdf.xsl"/>
 
   <xsl:param name="paper.type" select="'Letter'"/>
   <xsl:param name="double.sided">0</xsl:param>
