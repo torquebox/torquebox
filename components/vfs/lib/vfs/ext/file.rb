@@ -19,6 +19,8 @@ class File
     alias_method :chmod_without_vfs,       :chmod
     alias_method :chown_without_vfs,       :chown
     alias_method :utime_without_vfs,       :utime
+    alias_method :atime_without_vfs,       :atime
+    alias_method :mtime_without_vfs,       :mtime
     alias_method :new_without_vfs,         :new
     alias_method :rename_without_vfs,      :rename
 
@@ -178,6 +180,14 @@ class File
       IO.vfs_open( *args )
     end
 
+    def atime(filename)
+      atime_without_vfs(name_without_vfs(filename))
+    end
+
+    def mtime(filename)
+      mtime_without_vfs(name_without_vfs(filename))
+    end
+
     def chmod(mode_int, *files)
       writable_operation(*files) do |filename| 
         chmod_without_vfs( mode_int, filename )
@@ -195,7 +205,7 @@ class File
         utime_without_vfs( accesstime, modtime, filename )
       end
     end
-
+    
     def writable_operation(*files)
       files.each do |name|
         begin

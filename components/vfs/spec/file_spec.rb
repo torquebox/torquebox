@@ -118,6 +118,20 @@ describe "File extensions for VFS" do
     end
   end
 
+  it "should be able to read file after chmod from a stat" do
+    # Similar to what Rails' File.atomic_write does (TORQUE-174)
+    p1 = "vfs:" + File.expand_path("p1")
+    p2 = "vfs:" + File.expand_path("p2")
+    begin
+      File.open(p1, "w") { }
+      File.open(p2, "w") { }
+      File.chmod(File.stat(p1).mode, p2)
+      File.read(p2)
+    ensure
+      File.unlink(p1, p2) rescue nil
+    end
+  end
+
   it "should chmod inside vfs archive when directory mounted on filesystem" do
     FileUtils.rm_rf "target/mnt"
     archive = org.jboss.vfs::VFS.child( @archive1_path )
@@ -265,6 +279,15 @@ describe "File extensions for VFS" do
         stat.mtime.should eql( File.mtime( file ) )
       end
 
+      it "should not return a stat for missing files" do
+        lambda {
+          stat = File.stat( "missing file" )
+        }.should raise_error(Errno::ENOENT)
+        lambda {
+          stat = File.stat( "vfs:/missing/file" )
+        }.should raise_error(Errno::ENOENT)
+      end
+        
       it "should provide mtime for files in an archive" do
         mtime = File.mtime( "#{prefix}/home/larry/archive1.jar/web.xml" )
         mtime.should_not be_nil
@@ -332,4 +355,24 @@ describe "File extensions for VFS" do
       File.dirname('vfs:/a/b').should == 'vfs:/a'
     end
   end
+  
+  describe 'chown' do
+    it "should handle vfs paths" do
+      path = "vfs:#{@archive1_path}"
+      stat = File.stat(path)
+      File.chown( stat.uid, stat.gid, path )
+    end
+  end
+
+  describe 'utime' do
+    it "should handle vfs paths" do
+      path = "vfs:#{@archive1_path}"
+      atime = File.atime(path)
+      mtime = File.mtime(path)
+      File.utime( Time.now, Time.now, path )
+      atime.should be < File.atime(path)
+      mtime.should be < File.mtime(path)
+    end
+  end
+
 end
