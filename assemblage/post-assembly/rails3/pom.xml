@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-assemblage-post-assembly</artifactId>
-    <version>1.0.0.Beta23</version>
+    <version>1.0.0.RC1-SNAPSHOT</version>
     <relativePath>../</relativePath>
   </parent>
 
