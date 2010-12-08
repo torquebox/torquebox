@@ -366,12 +366,16 @@ describe "File extensions for VFS" do
 
   describe 'utime' do
     it "should handle vfs paths" do
-      path = "vfs:#{@archive1_path}"
-      atime = File.atime(path)
-      mtime = File.mtime(path)
-      File.utime( Time.now, Time.now, path )
-      atime.should be < File.atime(path)
-      mtime.should be < File.mtime(path)
+      path = File.expand_path("foo")
+      begin
+        File.new(path, "w")
+        vpath = "vfs:#{path}"
+        mtime = File.mtime(vpath)
+        File.utime( Time.now, mtime+1, vpath )
+        mtime.should be < File.mtime(vpath)
+      ensure
+        File.delete(path) rescue nil
+      end
     end
   end
 

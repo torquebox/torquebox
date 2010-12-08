@@ -19,8 +19,6 @@ class File
     alias_method :chmod_without_vfs,       :chmod
     alias_method :chown_without_vfs,       :chown
     alias_method :utime_without_vfs,       :utime
-    alias_method :atime_without_vfs,       :atime
-    alias_method :mtime_without_vfs,       :mtime
     alias_method :new_without_vfs,         :new
     alias_method :rename_without_vfs,      :rename
 
@@ -178,14 +176,6 @@ class File
       end
       # File.new doesn't pass a block through to the opened file
       IO.vfs_open( *args )
-    end
-
-    def atime(filename)
-      atime_without_vfs(name_without_vfs(filename))
-    end
-
-    def mtime(filename)
-      mtime_without_vfs(name_without_vfs(filename))
     end
 
     def chmod(mode_int, *files)
