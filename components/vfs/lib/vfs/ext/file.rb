@@ -17,7 +17,10 @@ class File
     alias_method :unlink_without_vfs,      :unlink
     alias_method :readable_without_vfs?,   :readable?
     alias_method :chmod_without_vfs,       :chmod
+    alias_method :chown_without_vfs,       :chown
+    alias_method :utime_without_vfs,       :utime
     alias_method :new_without_vfs,         :new
+    alias_method :rename_without_vfs,      :rename
 
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
@@ -106,15 +109,21 @@ class File
 
 
     def stat(filename)
-      return stat_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
+      name = name_without_vfs(filename)
+      return stat_without_vfs(name) if ( File.exist_without_vfs?( name ) )
 
       vfs_url, child_path = VFS.resolve_within_archive(filename)
       raise Errno::ENOENT.new nil unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
       virtual_file = virtual_file.get_child( child_path ) if child_path
+      raise Errno::ENOENT.new nil unless virtual_file.exists?
 
       VFS::File::Stat.new( virtual_file )
+    end
+
+    def rename(oldname, newname) 
+      rename_without_vfs( name_without_vfs(oldname), name_without_vfs(newname) )
     end
 
     def exists?(filename)
@@ -148,15 +157,9 @@ class File
       !virtual_file.nil? && virtual_file.is_leaf?
     end
 
-    def chmod(mode_int, *files)
-      files.each do |name|
-        begin
-          chmod_without_vfs( mode_int, name_without_vfs(name) )
-        rescue Errno::ENOENT => e
-          name = VFS.writable_path_or_error( name, e )
-          chmod_without_vfs( mode_int, name )
-        end
-      end
+    def dirname(filename)
+      dirname = dirname_without_vfs(name_without_vfs(filename))
+      vfs_path?(filename) ? VFS.resolve_path_url(dirname) : dirname
     end
 
     def new(*args, &block)
@@ -175,9 +178,33 @@ class File
       IO.vfs_open( *args )
     end
 
-    def dirname(filename)
-      dirname = dirname_without_vfs(name_without_vfs(filename))
-      vfs_path?(filename) ? VFS.resolve_path_url(dirname) : dirname
+    def chmod(mode_int, *files)
+      writable_operation(*files) do |filename| 
+        chmod_without_vfs( mode_int, filename )
+      end
+    end
+
+    def chown(owner, group, *files)
+      writable_operation(*files) do |filename|
+        chown_without_vfs( owner, group, filename )
+      end
+    end
+
+    def utime(accesstime, modtime, *files)
+      writable_operation(*files) do |filename|
+        utime_without_vfs( accesstime, modtime, filename )
+      end
+    end
+
+    def writable_operation(*files)
+      files.each do |name|
+        begin
+          yield name_without_vfs(name)
+        rescue Errno::ENOENT => e
+          yield VFS.writable_path_or_error( name, e )
+        end
+      end
+      files.size
     end
 
     def name_without_vfs(filename)
