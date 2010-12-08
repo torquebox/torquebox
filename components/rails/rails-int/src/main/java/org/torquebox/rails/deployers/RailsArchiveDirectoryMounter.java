@@ -32,7 +32,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VFS;
-
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 /**
  * <pre>
@@ -40,60 +40,64 @@ import org.jboss.vfs.VFS;
  *    In: 
  *   Out: mounted virtual directories
  * </pre>
- *
- * Ensure that directories requiring writability by rails packaged
- * deployments end up somewhere reasonable,
+ * 
+ * Ensure that directories requiring writability by rails packaged deployments
+ * end up somewhere reasonable,
  * 
  * JBOSS_HOME/server/default/log/app.rails/ for logs
  * JBOSS_HOME/server/default/tmp/rails/app.rails/ for tmp files
  * 
  */
 public class RailsArchiveDirectoryMounter extends AbstractDeployer {
-    
+
     public RailsArchiveDirectoryMounter() {
-        setStage(DeploymentStages.PARSE );
+        setStage(DeploymentStages.PRE_REAL);
+        setInput(RackApplicationMetaData.class);
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        if ( unit instanceof VFSDeploymentUnit && unit.getName().endsWith( ".rails" )) {
-            deploy( (VFSDeploymentUnit) unit );
-        }
-    }
-    
-    public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        try {
-            mountRailsDir( unit, "log", System.getProperty( "jboss.server.log.dir" ) + "/" + unit.getSimpleName() );
-            mountRailsDir( unit, "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/rails/" + unit.getSimpleName() );
-        } catch (Exception e) {
-            throw new DeploymentException( e );
+        RackApplicationMetaData metaData = unit.getAttachment(RackApplicationMetaData.class);
+
+        if (metaData.isArchive()) {
+            try {
+                mountRailsDir(unit, metaData.getRackRoot(), "log", System.getProperty("jboss.server.log.dir") + "/" + unit.getSimpleName());
+                mountRailsDir(unit, metaData.getRackRoot(), "tmp", System.getProperty("jboss.server.temp.dir") + "/rails/" + unit.getSimpleName());
+            } catch (Exception e) {
+                throw new DeploymentException(e);
+            }
         }
     }
 
     public void undeploy(DeploymentUnit unit) {
-        if ( unit.getName().endsWith( ".rails" )) {
-            close( unit, "tmp" );
-            close( unit, "log" );
+        RackApplicationMetaData metaData = unit.getAttachment(RackApplicationMetaData.class);
+        
+        if ( metaData.isArchive() ) {
+            close(unit, "tmp");
+            close(unit, "log");
         }
     }
 
-    protected void mountRailsDir (VFSDeploymentUnit unit, String name, String path) throws IOException {
-        VirtualFile logical = unit.getRoot().getChild( name );
-        File physical = new File( path );
+    protected void mountRailsDir(DeploymentUnit unit, VirtualFile root, String name, String path) throws IOException {
+        VirtualFile logical = root.getChild(name);
+        File physical = new File(path);
         physical.mkdirs();
         Closeable mount = VFS.mountReal(physical, logical);
-        log.warn("Set Rails "+name+" directory to "+physical.getCanonicalPath());
-        unit.addAttachment( attachmentName(name), mount, Closeable.class );
+        log.warn("Set Rails " + name + " directory to " + physical.getCanonicalPath());
+        unit.addAttachment(attachmentName(name), mount, Closeable.class);
     }
 
-    protected void close (DeploymentUnit unit, String name) {
+    protected void close(DeploymentUnit unit, String name) {
         Closeable mount = unit.getAttachment(attachmentName(name), Closeable.class);
         if (mount != null) {
-            log.info("Closing virtual "+name+" directory for "+unit.getSimpleName() );
-            try { mount.close(); } catch (IOException ignored) {}
+            log.info("Closing virtual " + name + " directory for " + unit.getSimpleName());
+            try {
+                mount.close();
+            } catch (IOException ignored) {
+            }
         }
     }
 
-    protected String attachmentName (String name) {
+    protected String attachmentName(String name) {
         return name + " dir handle";
     }
 }

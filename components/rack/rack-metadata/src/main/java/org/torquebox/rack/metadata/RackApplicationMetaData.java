@@ -37,20 +37,6 @@ import org.torquebox.interp.spi.RuntimeInitializer;
 
 public class RackApplicationMetaData {
 	
-	private String rackEnv;
-	private VirtualFile rackRoot;
-	private String rackUpScript;
-	private VirtualFile rackUpScriptLocation;
-	
-	private List<String> hosts = new ArrayList<String>();
-	private String contextPath;
-	private String staticPathPrefix;
-	
-	private String rubyRuntimePoolName;
-	private String rackApplicationFactoryName;
-	private String rackApplicationPoolName;
-	private Map<String, String> environment;
-    private RuntimeInitializer runtimeInitializer;
 
 	public RackApplicationMetaData() {
 		
@@ -199,5 +185,28 @@ public class RackApplicationMetaData {
 	public String toString() {
 		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + getAbbreviatedRackUpScript() + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
 	}
+
+    public void setArchive(boolean archive) {
+        this.archive = archive;
+    }
+    
+    public boolean isArchive() {
+        return this.archive;
+    }
 	
+	private String rackEnv;
+	private VirtualFile rackRoot;
+	private String rackUpScript;
+	private VirtualFile rackUpScriptLocation;
+	
+	private List<String> hosts = new ArrayList<String>();
+	private String contextPath;
+	private String staticPathPrefix;
+	
+	private String rubyRuntimePoolName;
+	private String rackApplicationFactoryName;
+	private String rackApplicationPoolName;
+	private Map<String, String> environment;
+    private RuntimeInitializer runtimeInitializer;
+    private boolean archive;
 }

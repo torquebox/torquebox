@@ -12,6 +12,7 @@
   <bean name="RackRuntimeDeployer"                    class="org.torquebox.rack.deployers.RackRuntimeDeployer"/>
   <bean name="RackDefaultsDeployer"                   class="org.torquebox.rack.deployers.RackDefaultsDeployer"/>
   <bean name="TorqueBoxYamlParsingDeployer"           class="org.torquebox.rack.deployers.TorqueBoxYamlParsingDeployer"/>
+  <bean name="RackApplicationExploder"                class="org.torquebox.rack.deployers.RackApplicationExploder"/>
 
   <!-- deprecated -->
   <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>

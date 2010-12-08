@@ -40,6 +40,9 @@ class Class
               unless ( JRuby.runtime.load_service.featureAlreadyLoaded( 'jdbc_adapter/railtie.rb' ) )
                 JRuby.runtime.load_service.addLoadedFeature( 'jdbc_adapter/railtie.rb' )
               end
+              unless ( JRuby.runtime.load_service.featureAlreadyLoaded( 'arjdbc/jdbc/railtie.rb' ) )
+                JRuby.runtime.load_service.addLoadedFeature( 'arjdbc/jdbc/railtie.rb' )
+              end
             end
             load_gems_before_torquebox()
           end

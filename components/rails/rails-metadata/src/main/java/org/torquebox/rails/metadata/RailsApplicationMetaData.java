@@ -52,19 +52,10 @@ public class RailsApplicationMetaData {
 	
 	public void setRailsRoot(VirtualFile railsRoot) throws MalformedURLException {
 		this.railsRoot = railsRoot;
-		String path = railsRoot.toURL().getFile();
-		if ( path.endsWith( "/" ) ) {
-			path = path.substring( 0, path.length() - 1 );
-		}
-		this.railsRootPath = path;
 	}
 	
 	public VirtualFile getRailsRoot() {
 		return this.railsRoot;
-	}
-	
-	public String getRailsRootPath() {
-		return this.railsRootPath;
 	}
 	
 	public void setRailsEnv(String railsEnv) {
@@ -116,7 +107,6 @@ public class RailsApplicationMetaData {
 	}
 	
 	private VirtualFile railsRoot;
-	private String railsRootPath;
 	private String railsEnv;
     private String versionSpec;
     private boolean frozen;

@@ -49,6 +49,8 @@ public class RackApplicationImpl implements RackApplication {
 	 *            The rackup script.
 	 */
 	private IRubyObject rackUp(Ruby ruby, String script, VirtualFile rackUpScriptLocation) throws Exception {
+	    System.err.println( "script=" + script );
+	    System.err.println( "rackUpScriptLocation=" + rackUpScriptLocation );
 		String fullScript = "require %q(rubygems)\nrequire %q(vfs)\nrequire %q(rack)\nRack::Builder.new{(\n" + script + "\n)}.to_app";
 
 		IRubyObject rackRoot = ruby.evalScriptlet("RACK_ROOT");
