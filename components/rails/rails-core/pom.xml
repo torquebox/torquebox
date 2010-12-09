@@ -41,6 +41,12 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rails-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>vfs</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>

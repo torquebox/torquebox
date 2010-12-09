@@ -34,7 +34,11 @@ public class RailsApplicationMetaData {
     public RailsApplicationMetaData(RackApplicationMetaData rackMetaData) {
         this.rackMetaData = rackMetaData;
     }
-    
+
+    public RackApplicationMetaData getRackMetaData() {
+        return this.rackMetaData;
+    }
+
     public VirtualFile getRailsRoot() {
         return this.rackMetaData.getRackRoot();
     }

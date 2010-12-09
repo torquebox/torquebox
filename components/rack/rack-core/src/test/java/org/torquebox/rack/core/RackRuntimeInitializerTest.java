@@ -4,6 +4,7 @@ import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.junit.Test;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 import static org.junit.Assert.*;
 
@@ -11,7 +12,11 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 
 	@Test
 	public void testInitializer() throws Exception {
-		RackRuntimeInitializer initializer = new RackRuntimeInitializer(VFS.getChild( "/myapp" ), "test" );
+        RackApplicationMetaData metadata = new RackApplicationMetaData();
+        metadata.setRackRoot( VFS.getChild( "/myapp" ) );
+        metadata.setRackEnv( "test" );
+        metadata.setContextPath( "/mycontext" );
+		RackRuntimeInitializer initializer = new RackRuntimeInitializer(metadata);
 		
 		Ruby ruby = createRuby();
 		initializer.initialize( ruby );
@@ -24,5 +29,8 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 
         String pwd = (String) ruby.evalScriptlet( "Dir.pwd" ).toJava(String.class);
         assertEquals( "/myapp", pwd );
+
+        String baseUri = (String) ruby.evalScriptlet( "ENV['RACK_BASE_URI']" ).toJava(String.class);
+        assertEquals( "/mycontext", baseUri );
 	}
 }

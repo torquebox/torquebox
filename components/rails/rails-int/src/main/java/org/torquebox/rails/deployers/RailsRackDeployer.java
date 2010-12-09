@@ -69,9 +69,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
             } else {
                 rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
             }
-            rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer(rackMetaData.getRackRoot(), 
-                                                                            rackMetaData.getRackEnv(), 
-                                                                            railsAppMetaData.needsGems() ) );
+            rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer( railsAppMetaData ) );
             log.info(rackMetaData);
         } catch (Exception e) {
             throw new DeploymentException(e);

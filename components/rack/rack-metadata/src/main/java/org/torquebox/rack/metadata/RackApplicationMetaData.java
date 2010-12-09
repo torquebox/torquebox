@@ -48,7 +48,15 @@ public class RackApplicationMetaData {
 	public VirtualFile getRackRoot() {
 		return this.rackRoot;
 	}
-	
+
+    public String getRackRootPath() {
+        try {
+            return getRackRoot().toURL().toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 	public void setRackEnv(String rackEnv) {
 		this.rackEnv = rackEnv;
 	}
