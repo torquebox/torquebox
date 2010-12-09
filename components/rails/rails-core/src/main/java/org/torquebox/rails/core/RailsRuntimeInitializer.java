@@ -41,19 +41,13 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 	private VirtualFile railsRoot;
 	private String railsEnv;
 	private boolean loadUsingGems;
-	private String versionSpec;
 	private List<String> autoloadPaths = new ArrayList<String>();
 
 	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems) {
-		this( railsRoot, railsEnv, loadUsingGems, null );
-	}
-	
-	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems, String versionSpec) {
 		super( railsRoot, railsEnv );
 		this.railsRoot = railsRoot;
 		this.railsEnv = railsEnv;
 		this.loadUsingGems = loadUsingGems;
-		this.versionSpec = versionSpec;
 	}
 
 	public VirtualFile getRailsRoot() {

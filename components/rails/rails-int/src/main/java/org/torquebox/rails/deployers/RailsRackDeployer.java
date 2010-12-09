@@ -71,8 +71,7 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
             }
             rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer(rackMetaData.getRackRoot(), 
                                                                             rackMetaData.getRackEnv(), 
-                                                                            railsAppMetaData.needsGems(),
-                                                                            railsAppMetaData.getVersionSpec()) );
+                                                                            railsAppMetaData.needsGems() ) );
             log.info(rackMetaData);
         } catch (Exception e) {
             throw new DeploymentException(e);
