@@ -142,7 +142,7 @@ describe "File extensions for VFS" do
     path = "#{@archive1_path}/lib/chmod_test"
     begin
       lambda {
-        f = File.new ("target/mnt/chmod_test", "w" )
+        f = File.new("target/mnt/chmod_test", "w" )
         FileUtils.chmod( 0666, path )
         m1 = f.stat.mode
         FileUtils.chmod( 0755, path )
@@ -191,7 +191,7 @@ describe "File extensions for VFS" do
       File.new(@archive1_path, 'r').should be_an_instance_of(File)
     end
 
-    xit "should create objects that respond to lstat for files in an archive" do
+    it "should create objects that respond to lstat for files in an archive" do
       file = File.new( "vfs:#{@archive1_path}/web.xml")
       file.lstat.should_not be_nil
     end

@@ -1,4 +1,6 @@
 
+require 'vfs/ext/virtual_file'
+
 class IO
 
   class << self
@@ -89,14 +91,16 @@ class IO
         raise Error.new( "Random-access on VFS not supported" )
       end
 
+      file_io = VFS::Ext::VirtualFile.new( ruby_io, fd )
+
       if ( block )
         begin
-          block.call( ruby_io )
+          block.call( file_io )
         ensure
-          ruby_io.close
+          file_io.close
         end
       else
-        return ruby_io
+        return file_io
       end
 
     end

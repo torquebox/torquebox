@@ -1,5 +1,4 @@
 
-
 class File
 
   class << self
@@ -106,7 +105,6 @@ class File
 
       virtual_file.size
     end
-
 
     def stat(filename)
       name = name_without_vfs(filename)
