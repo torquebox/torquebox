@@ -37,11 +37,6 @@ import org.torquebox.interp.spi.RuntimeInitializer;
 
 public class RackApplicationMetaData {
 	
-
-	public RackApplicationMetaData() {
-		
-	}
-	
 	public void setRackRoot(VirtualFile rackRoot) {
 		this.rackRoot = rackRoot;
 	}
@@ -186,8 +181,9 @@ public class RackApplicationMetaData {
 		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + getAbbreviatedRackUpScript() + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
 	}
 
-    public void setArchive(boolean archive) {
-        this.archive = archive;
+    public void explode(VirtualFile root) {
+        this.rackRoot = root;
+        this.archive = true;
     }
     
     public boolean isArchive() {

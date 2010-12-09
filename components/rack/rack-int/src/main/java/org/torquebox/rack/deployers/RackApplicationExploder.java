@@ -29,10 +29,8 @@ public class RackApplicationExploder extends AbstractDeployer {
 
         try {
             VirtualFile explodedRackRoot = getExplodedApplication(rackRoot);
-
             if (!rackRoot.equals(explodedRackRoot)) {
-                metaData.setRackRoot(explodedRackRoot);
-                metaData.setArchive(true);
+                metaData.explode(explodedRackRoot);
             }
         } catch (IOException e) {
             throw new DeploymentException(e);
