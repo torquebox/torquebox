@@ -14,7 +14,7 @@ public class BasicRails_2_3_8_Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "rails/2.3.8/basic-rails.yml" );
+		return createDeployment( "rails/2.x/basic-rails.yml" );
 	}
 
 	@Test

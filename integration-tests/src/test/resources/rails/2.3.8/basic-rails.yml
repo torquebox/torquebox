@@ -1,6 +1,0 @@
----
-application:
-  RAILS_ROOT: ${basedir}/apps/rails/2.3.8/basic
-  RAILS_ENV: development
-web:
-  context: /basic-rails

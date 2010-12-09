@@ -16,7 +16,7 @@ public class MessagingTest extends AbstractIntegrationTest {
     
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "rails/2.3.8/messaging-rails.yml" );
+		return createDeployment( "rails/2.x/messaging-rails.yml" );
 	}
 
 	@Test

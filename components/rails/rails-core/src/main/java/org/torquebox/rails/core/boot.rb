@@ -23,7 +23,7 @@ class Class
         self.class_eval do
           alias_method :set_autoload_paths_before_torquebox, :set_autoload_paths            
           def set_autoload_paths
-            configuration.load_paths += TORQUEBOX_RAILS_AUTOLOAD_PATHS.to_a
+            configuration.autoload_paths += TORQUEBOX_RAILS_AUTOLOAD_PATHS.to_a
             set_autoload_paths_before_torquebox
           end
         end
@@ -52,6 +52,9 @@ class Class
     end # unless ( recursing )
   end # method_added
 end
+
+puts "RAILS_ROOT = #{RAILS_ROOT}"
+puts "RAILS_ENV = #{RAILS_ENV}"
 
 begin
   load RAILS_ROOT + '/config/environment.rb'

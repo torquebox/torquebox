@@ -10,7 +10,7 @@ public class SessionRails2Test extends AbstractSessionRailsTest {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment("rails/2.3.8/basic-rails.yml");
+        return createDeployment("rails/2.x/basic-rails.yml");
     }
 
 }
