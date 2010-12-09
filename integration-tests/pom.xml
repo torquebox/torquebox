@@ -178,7 +178,7 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>${project.basedir}/apps/rails/</directory>
+              <directory>${project.basedir}/apps</directory>
               <includes>
                 <include>**/Gemfile.lock</include>
               </includes>

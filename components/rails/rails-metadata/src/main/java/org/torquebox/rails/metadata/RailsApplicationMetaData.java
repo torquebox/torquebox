@@ -78,7 +78,7 @@ public class RailsApplicationMetaData {
     public String toString() {
         return "RailsApplicationMetaData:\n  version=" + versionSpec + "\n  frozen=" + isFrozen();
     }
-    
+
     private String versionSpec;
     private boolean frozen;
     private RackApplicationMetaData rackMetaData;
