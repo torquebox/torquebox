@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails_2_3_8_Test extends AbstractIntegrationTest {
+public class BasicRails2Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {

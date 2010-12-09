@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebElement;
 
-public abstract class AbstractSessionRailsTest extends AbstractIntegrationTest {
+public abstract class CommonSessionRailsTest extends AbstractIntegrationTest {
 
 	@Test
 	public void testHighLevel() {

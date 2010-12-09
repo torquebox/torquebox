@@ -17,15 +17,10 @@ import org.openqa.selenium.WebElement;
 
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRailsArchive_2_3_8_Test extends AbstractIntegrationTest {
+public class BasicRailsArchive2Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() throws Exception {
-        //ZipFile app = new ZipFile( System.getProperty("user.dir") + "/apps/rails/2.x/basic.rails" );
-        //return ShrinkWrap.create(ZipImporter.class, "archive.rails")
-            //.importZip(app)
-            //.as(JavaArchive.class);
-	    
 	    JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "archive.rails" );
 	    
 	    File railsApp = new File( System.getProperty ("user.dir" ) + "/apps/rails/2.x/basic" );

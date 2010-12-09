@@ -6,7 +6,7 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 @Run(RunModeType.AS_CLIENT)
-public class SessionRails2Test extends AbstractSessionRailsTest {
+public class SessionRails2Test extends CommonSessionRailsTest {
 
     @Deployment
     public static JavaArchive createDeployment() {

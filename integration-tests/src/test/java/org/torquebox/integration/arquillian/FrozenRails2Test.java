@@ -14,7 +14,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 @Run(RunModeType.AS_CLIENT)
-public class FrozenRails_2_3_8_Test extends AbstractIntegrationTest {
+public class FrozenRails2Test extends AbstractIntegrationTest {
 
     private static final String[] GEM_NAMES = { "railties", "activesupport", "actionpack", "activerecord", "actionmailer", "activeresource", };
 
