@@ -1,3 +1,4 @@
+require 'delegate'
 
 module VFS
   module Ext
