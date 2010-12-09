@@ -1,12 +1,10 @@
 package org.torquebox.integration.arquillian.override;
 
-import static org.junit.Assert.*;
-import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.jboss.arquillian.api.Deployment;
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
-import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTest;
 
@@ -27,6 +25,7 @@ public abstract class AbstractOverrideTest extends AbstractIntegrationTest {
 	}
 
 	@Test
+	@Ignore
 	public void testRackRoot() {
         assertEquals("vfs:" + System.getProperty("basedir") + home, getEnvironmentVariable("RACK_ROOT"));
 	}
