@@ -90,13 +90,13 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 		AttachmentUtils.attach(unit, builder.getBeanMetaData());
 	}
 
-	private Deployment createDeployment(RailsApplicationMetaData railsMetaData, RackApplicationMetaData rackMetaData) throws IOException {
-		AbstractVFSDeployment deployment = new AbstractVFSDeployment(railsMetaData.getRailsRoot());
+	private Deployment createDeployment(RackApplicationMetaData rackMetaData) throws IOException {
+		AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackMetaData.getRackRoot());
 
 		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
 
-		attachments.addAttachment(RailsApplicationMetaData.class, railsMetaData);
         attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
+		attachments.addAttachment(RailsApplicationMetaData.class, new RailsApplicationMetaData( rackMetaData ));
 
 		return deployment;
 	}
@@ -106,7 +106,7 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
         TorqueBoxYamlParser parser = new TorqueBoxYamlParser();
         RackApplicationMetaData rackMetaData = parser.parse(file);
         log.info(rackMetaData);
-        return rackMetaData==null ? null : createDeployment(new RailsApplicationMetaData(rackMetaData), rackMetaData);
+        return rackMetaData==null ? null : createDeployment(rackMetaData);
 	}
 
 }

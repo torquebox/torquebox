@@ -65,12 +65,12 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
             if (railsAppMetaData.isRails3()) {
-                rackMetaData.setRackUpScriptLocation( railsAppMetaData.getRailsRoot().getChild("config.ru") );
+                rackMetaData.setRackUpScriptLocation( rackMetaData.getRackRoot().getChild("config.ru") );
             } else {
                 rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
             }
-            rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer(railsAppMetaData.getRailsRoot(), 
-                                                                            railsAppMetaData.getRailsEnv(), 
+            rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer(rackMetaData.getRackRoot(), 
+                                                                            rackMetaData.getRackEnv(), 
                                                                             railsAppMetaData.needsGems(),
                                                                             railsAppMetaData.getVersionSpec()) );
             log.info(rackMetaData);

@@ -32,7 +32,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-
+import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
 
 /**
  * <pre>
@@ -68,9 +68,13 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
 		try {
 			if ( root.getChild( "config/environment.rb" ).exists() ) {
                 log.info("Recognized as Rails app: "+root);
-				RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData( root );
-				unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
-                unit.addAttachment( RackApplicationMetaData.class, railsAppMetaData.createRackMetaData() );
+                RackApplicationMetaData rackMetaData = new WriteOnceRackApplicationMetaData();
+                rackMetaData.setRackRoot( root );
+                if ( root.getChild( "public" ).exists() ) {
+                    rackMetaData.setStaticPathPrefix( "/public" );
+                }
+                unit.addAttachment( RackApplicationMetaData.class, rackMetaData );
+				unit.addAttachment( RailsApplicationMetaData.class, new RailsApplicationMetaData( rackMetaData ) );
 			}
 		} catch (Exception e) {
 			throw new DeploymentException( e );

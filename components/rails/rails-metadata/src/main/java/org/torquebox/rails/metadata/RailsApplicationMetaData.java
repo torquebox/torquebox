@@ -27,54 +27,26 @@ import java.util.regex.Pattern;
 
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
 
 
 public class RailsApplicationMetaData {
 
-	public RailsApplicationMetaData() {
-	}
-	
-	public RailsApplicationMetaData(VirtualFile railsRoot) throws MalformedURLException {
-		this( railsRoot, null );
-	}
-	
-	public RailsApplicationMetaData(VirtualFile railsRoot, String railsEnv) throws MalformedURLException {
-		setRailsRoot( railsRoot );
-		setRailsEnv( railsEnv );
-	}
-	
-	public RailsApplicationMetaData(RackApplicationMetaData rackMetaData) throws MalformedURLException {
-		setRailsRoot(rackMetaData.getRackRoot());
-        setRailsEnv(rackMetaData.getRackEnv());
-        rackMetaData.setStaticPathPrefix("/public");
-	}
-	
-	public void setRailsRoot(VirtualFile railsRoot) throws MalformedURLException {
-		this.railsRoot = railsRoot;
-		String path = railsRoot.toURL().getFile();
-		if ( path.endsWith( "/" ) ) {
-			path = path.substring( 0, path.length() - 1 );
-		}
-		this.railsRootPath = path;
-	}
-	
-	public VirtualFile getRailsRoot() {
-		return this.railsRoot;
-	}
-	
-	public String getRailsRootPath() {
-		return this.railsRootPath;
-	}
-	
-	public void setRailsEnv(String railsEnv) {
-		this.railsEnv = railsEnv;
-	}
-	
-	public String getRailsEnv() {
-		return this.railsEnv;
-	}
-
+    public RailsApplicationMetaData(RackApplicationMetaData rackMetaData) {
+        this.rackMetaData = rackMetaData;
+    }
+    
+    public VirtualFile getRailsRoot() {
+        return this.rackMetaData.getRackRoot();
+    }
+    
+    public String getRailsEnv() {
+        return this.rackMetaData.getRackEnv();
+    }
+    
+    public void setRailsEnv(String railsEnv) {
+        this.rackMetaData.setRackEnv( railsEnv );
+    }
+    
     public void setFrozen(boolean frozen) {
         this.frozen = frozen;
     }
@@ -91,33 +63,23 @@ public class RailsApplicationMetaData {
         this.versionSpec = versionSpec;
     }
 
-	public String getVersionSpec() {
-		return this.versionSpec;
-	}
-	
-	public boolean isRails2() {
-        return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
-	}
-	
-	public boolean isRails3() {
-        return getVersionSpec() != null && Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
-	}
-	
-    public RackApplicationMetaData createRackMetaData() {
-        RackApplicationMetaData rackMetaData = new WriteOnceRackApplicationMetaData();
-        rackMetaData.setStaticPathPrefix("/public");
-        rackMetaData.setRackRoot(getRailsRoot());
-        rackMetaData.setRackEnv(getRailsEnv());
-        return rackMetaData;
+    public String getVersionSpec() {
+        return this.versionSpec;
     }
-
-	public String toString() {
-		return "RailsApplicationMetaData:\n  root=" + railsRoot + "\n  env=" + railsEnv + "\n  version=" + versionSpec + "\n  frozen=" + isFrozen();
-	}
-	
-	private VirtualFile railsRoot;
-	private String railsRootPath;
-	private String railsEnv;
+    
+    public boolean isRails2() {
+        return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
+    }
+    
+    public boolean isRails3() {
+        return getVersionSpec() != null && Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
+    }
+    
+    public String toString() {
+        return "RailsApplicationMetaData:\n  version=" + versionSpec + "\n  frozen=" + isFrozen();
+    }
+    
     private String versionSpec;
     private boolean frozen;
+    private RackApplicationMetaData rackMetaData;
 }
