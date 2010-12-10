@@ -9,7 +9,6 @@ target
 dep.tree
 log
 tmp
-cache
 .loadpath
 .classpath
 .settings
