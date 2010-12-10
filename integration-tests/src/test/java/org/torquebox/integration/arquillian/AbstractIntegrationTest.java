@@ -13,15 +13,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.torquebox.integration.FancyHtmlUnitDriver;
 
 @RunWith(Arquillian.class)
 public abstract class AbstractIntegrationTest {
 
-    protected HtmlUnitDriver driver;
+    protected FancyHtmlUnitDriver driver;
 
     @Before
     public void setUp() {
-        this.driver = new HtmlUnitDriver();
+        this.driver = new FancyHtmlUnitDriver();
     }
 
     @After

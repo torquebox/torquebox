@@ -24,5 +24,5 @@ public class BasicRack_1_1_0_Test extends AbstractIntegrationTest {
         assertNotNull( element );
         assertEquals( "basic-rack", element.getAttribute( "class" ) );
 	}
-
+	
 }
