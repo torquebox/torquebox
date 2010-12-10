@@ -47,7 +47,7 @@ module VFS
       end
 
       def directory?
-        @virtual_file.eixsts && ! @virtual_file.is_leaf 
+        @virtual_file.exists && ! @virtual_file.is_leaf 
       end
 
       def executable?

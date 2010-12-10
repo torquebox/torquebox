@@ -326,10 +326,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
 		if (this.initializer != null) {
 			this.initializer.initialize(runtime);
-		}
+		} else {
+            log.warn("No initializer set for runtime");
+        }
 		injectKernel(runtime);
 		setUpConstants(runtime, this.applicationName);
 		runtime.getLoadService().require("rubygems");
+        runtime.evalScriptlet("begin; require 'vfs'; puts 'Loaded VFS'; rescue Exception; puts 'Failed to load VFS'; end");
 		return runtime;
 	}
 

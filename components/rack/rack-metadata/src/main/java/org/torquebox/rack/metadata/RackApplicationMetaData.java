@@ -21,38 +21,42 @@
  */
 package org.torquebox.rack.metadata;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
+import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.interp.spi.RuntimeInitializer;
+
 
 public class RackApplicationMetaData {
-	
-	private String rackEnv;
-	private VirtualFile rackRoot;
-	private String rackUpScript;
-	private VirtualFile rackUpScriptLocation;
-	
-	private List<String> hosts = new ArrayList<String>();
-	private String contextPath;
-	private String staticPathPrefix;
-	
-	private String rubyRuntimePoolName;
-	private String rackApplicationFactoryName;
-	private String rackApplicationPoolName;
-
-	public RackApplicationMetaData() {
-		
-	}
 	
 	public void setRackRoot(VirtualFile rackRoot) {
 		this.rackRoot = rackRoot;
 	}
-	
+
+    public void setRackRoot(String path) {
+        if (path != null) setRackRoot( VFS.getChild( path ) );
+    }
+
 	public VirtualFile getRackRoot() {
 		return this.rackRoot;
 	}
-	
+
+    public String getRackRootPath() {
+        try {
+            return getRackRoot().toURL().toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
 	public void setRackEnv(String rackEnv) {
 		this.rackEnv = rackEnv;
 	}
@@ -65,7 +69,25 @@ public class RackApplicationMetaData {
 		this.rackUpScript = rackUpScript;
 	}
 
-	public String getRackUpScript() {
+	public String getRackUpScript() throws IOException {
+        if (this.rackUpScript == null) {
+            VirtualFile file = getRackUpScriptLocation();
+            if (file != null && file.exists()) {
+                StringBuilder script = new StringBuilder();
+                BufferedReader in = null;
+                try {
+                    in = new BufferedReader(new InputStreamReader(file.openStream()));
+                    String line = null;
+                    while ((line = in.readLine()) != null) {
+                        script.append(line);
+                        script.append("\n");
+                    }
+                } finally {
+                    if (in != null) in.close();
+                }
+                this.rackUpScript = script.toString();
+            }
+        }
 		return this.rackUpScript;
 	}
 	
@@ -73,12 +95,18 @@ public class RackApplicationMetaData {
 		this.rackUpScriptLocation = rackUpScriptLocation;
 	}
 	
+    public void setRackUpScriptLocation(String path) throws IOException {
+        if (path != null) {
+            setRackUpScriptLocation( (path.startsWith("/") || path.matches("^[A-Za-z]:.*")) ? VFS.getChild(path) : getRackRoot().getChild(path) );
+        }
+    }
+
 	public VirtualFile getRackUpScriptLocation() {
 		return this.rackUpScriptLocation;
 	}
 	
 	public void addHost(String host) {
-		this.hosts.add( host );
+		if ( host != null && !this.hosts.contains(host) ) this.hosts.add( host );
 	}
 	
 	public List<String> getHosts() {
@@ -124,9 +152,65 @@ public class RackApplicationMetaData {
 	public String getRackApplicationPoolName() {
 		return this.rackApplicationPoolName;
 	}
-	
-	public String toString() {
-		return "[RackApplicationMetaData: runtimePool=" + this.rubyRuntimePoolName + "; appFactory=" + this.rackApplicationFactoryName + "; appPool=" + this.rackApplicationPoolName + "]";
+
+	public void setEnvironmentVariables(Map<String,String> environment) {
+		this.environment = new HashMap<String,String>(environment);
 	}
+
+	public Map<String, String> getEnvironmentVariables() {
+		return this.environment;
+	}
+
+    public void setRuntimeInitializer(RuntimeInitializer initializer) {
+        this.runtimeInitializer = initializer;
+    }
+
+    public RuntimeInitializer getRuntimeInitializer() {
+        return this.runtimeInitializer;
+    }
+
+    public String getAbbreviatedRackUpScript() {
+        try {
+            String result = getRackUpScript();
+            if (result != null) {
+                result = result.replace("\n","\\n");
+                int max = 100;
+                if (result.length() > max) {
+                    result = result.substring(0,max) + " ...";
+                }
+            }
+            return result;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+	public String toString() {
+		return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + getAbbreviatedRackUpScript() + "\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
+	}
+
+    public void explode(VirtualFile root) {
+        this.rackRoot = root;
+        this.archive = true;
+    }
+    
+    public boolean isArchive() {
+        return this.archive;
+    }
 	
+	private String rackEnv;
+	private VirtualFile rackRoot;
+	private String rackUpScript;
+	private VirtualFile rackUpScriptLocation;
+	
+	private List<String> hosts = new ArrayList<String>();
+	private String contextPath;
+	private String staticPathPrefix;
+	
+	private String rubyRuntimePoolName;
+	private String rackApplicationFactoryName;
+	private String rackApplicationPoolName;
+	private Map<String, String> environment;
+    private RuntimeInitializer runtimeInitializer;
+    private boolean archive;
 }

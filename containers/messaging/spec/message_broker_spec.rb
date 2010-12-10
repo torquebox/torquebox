@@ -62,10 +62,8 @@ describe TorqueBox::Messaging::MessageBroker do
       @container.process_deployments(true)
     end
 
-    it "should be able to deploy a messaging.rb" do
-      @deployments << @container.deploy( File.join( File.dirname(__FILE__), 'queues.yml' ) )
-      @container.process_deployments(true)
-      @deployments << @container.deploy( File.join( File.dirname(__FILE__), 'messaging.rb' ) )
+    it "should be able to deploy a messaging.yml" do
+      @deployments << @container.deploy( File.join( File.dirname(__FILE__), 'messaging.yml' ) )
       @container.process_deployments(true)
     end
 

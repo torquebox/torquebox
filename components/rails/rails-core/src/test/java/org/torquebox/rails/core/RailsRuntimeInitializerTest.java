@@ -15,6 +15,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
+
 
 public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 	
@@ -42,8 +45,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
 		System.err.println("railsRoot=" + railsRoot);
 
-		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(
-				railsRoot, "development", true);
+		RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
 		initializer.initialize(ruby);
 
@@ -66,8 +68,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 				+ "/src/test/rails/ballast";
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
 
-		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(
-				railsRoot, "development", true);
+		RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
 		initializer.initialize(ruby);
 
@@ -81,8 +82,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 				+ "/src/test/rails/ballast";
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
 
-		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(
-				railsRoot, "development", true);
+		RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
 		initializer.initialize(ruby);
 
@@ -95,8 +95,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		String railsRootStr = System.getProperty("user.dir")
 				+ "/src/test/rails/ballast";
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
-		RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(
-				railsRoot, "development", true);
+		RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
 		initializer.initialize(ruby);
 
@@ -111,7 +110,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         String path = System.getProperty("user.dir") + "/src/test/rails/ballast";
         VirtualFile root = VFS.getChild(path);
 
-        RailsRuntimeInitializer initializer = new RailsRuntimeInitializer(root, "development", true);
+        RailsRuntimeInitializer initializer = create( root, "development" );
         initializer.addAutoloadPath("path1");
         initializer.addAutoloadPath("path2");
 
@@ -130,5 +129,12 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         String load_paths = "" + ruby.evalScriptlet("ActiveSupport::Dependencies.load_paths.join(',')");
         assertTrue(load_paths.endsWith(",path1,path2"));
     }
-    
+
+    private RailsRuntimeInitializer create(VirtualFile root, String env) {
+        RackApplicationMetaData rackMetaData = new RackApplicationMetaData();
+        rackMetaData.setRackRoot(root);
+        rackMetaData.setRackEnv(env);
+        RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData( rackMetaData );
+        return new RailsRuntimeInitializer( railsMetaData );
+    }
 }

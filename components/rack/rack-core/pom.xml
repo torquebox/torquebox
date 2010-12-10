@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-component-parent</artifactId>
-    <version>1.0.0.Beta23-SNAPSHOT</version>
+    <version>1.0.0.RC1-SNAPSHOT</version>
     <relativePath>../../component-parent/</relativePath>
   </parent>
 
@@ -23,15 +23,15 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-spi</artifactId>
+      <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-core</artifactId>
+      <artifactId>torquebox-rack-metadata</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.spec.javax.servlet</groupId>

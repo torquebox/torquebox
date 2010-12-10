@@ -1,0 +1,3 @@
+publisher:
+  job: JobQueuePublisher
+  cron: '*/1 * * * * ?'

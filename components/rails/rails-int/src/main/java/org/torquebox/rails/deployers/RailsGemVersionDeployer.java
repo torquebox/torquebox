@@ -34,103 +34,89 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.rails.metadata.RailsGemVersionMetaData;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: RailsApplicationMetaData
+ *   Out: RailsApplicationMetaData
+ * </pre>
+ *
+ * Determine which rails version the deployment requires
+ */
 public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
-	//private static final Logger log = Logger.getLogger(RailsGemVersionDeployer.class);
+    //private static final Logger log = Logger.getLogger(RailsGemVersionDeployer.class);
 
-	public RailsGemVersionDeployer() {
-		setInput(RailsApplicationMetaData.class);
-		setOutput(RailsGemVersionMetaData.class);
-	}
+    public RailsGemVersionDeployer() {
+        setInput(RailsApplicationMetaData.class);
+        setOutput(RailsApplicationMetaData.class);
+    }
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-		VirtualFile railsRoot = railsMetaData.getRailsRoot();
-		
-		log.info( "Rails Root = " + railsRoot );
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
+        VirtualFile railsRoot = railsMetaData.getRailsRoot();
+        
+        log.info( "Rails Root = " + railsRoot );
 
-		VirtualFile vendorRails = railsRoot.getChild("vendor/rails");
-		if (vendorRails != null && vendorRails.exists()) {
-			return;
-		}
+        VirtualFile vendorRails = railsRoot.getChild("vendor/rails");
+        if (vendorRails != null && vendorRails.exists()) {
+            railsMetaData.setFrozen(true);
+        } else {
+            railsMetaData.setVersionSpec( determineRailsGemVersion(railsRoot) );
+        }
+    }
 
-		RailsGemVersionMetaData railsVersionMetaData = determineRailsGemVersion(railsRoot);
-
-		log.info("deploying Rails version: " + railsVersionMetaData);
-		unit.addAttachment(RailsGemVersionMetaData.class, railsVersionMetaData);
-	}
-
-	protected RailsGemVersionMetaData determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
-	    RailsGemVersionMetaData versionMetaData = determineVersionTryRails2( railsRoot );
-	    if ( versionMetaData == null ) {
-	        versionMetaData = deteremineVersionTryRails3( railsRoot );
-	    }
-	    
-	    return versionMetaData;
-	}
-	
-	protected RailsGemVersionMetaData determineVersionTryRails2(VirtualFile railsRoot) throws DeploymentException {
-	       VirtualFile configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
-	        
-	        log.info( "config/environment.rb = " + configEnvironmentFile );
-	        
-	        if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
-	            return null;
-	        }
-
-	        Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
-
-	        BufferedReader in = null;
-
-	        try {
-	            InputStream inStream = configEnvironmentFile.openStream();
-	            InputStreamReader inReader = new InputStreamReader(inStream);
-	            in = new BufferedReader(inReader);
-	            String line = null;
-	            while ((line = in.readLine()) != null) {
-	                Matcher matcher = pattern.matcher(line);
-	                if (matcher.matches()) {
-	                    String versionSpec = matcher.group(1).trim();
-	                    return new RailsGemVersionMetaData(versionSpec);
-	                }
-	            }
-	        } catch (IOException e) {
-	            throw new DeploymentException(e);
-	        }
-	        return null;
-	}
-	
-	protected RailsGemVersionMetaData deteremineVersionTryRails3(VirtualFile railsRoot) throws DeploymentException {
+    protected String determineRailsGemVersion(VirtualFile railsRoot) throws DeploymentException {
+        try {
+            String version = determineVersionTryRails2( railsRoot );
+            if ( version == null ) {
+                version = determineVersionTryRails3( railsRoot );
+            }
+            return version;
+        } catch (IOException e) {
+            throw new DeploymentException(e);
+        }
+    }
+    
+    protected String determineVersionTryRails2(VirtualFile railsRoot) throws IOException {
+        VirtualFile configEnvironmentFile = railsRoot.getChild("/config/environment.rb");
+        if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
+            return null;
+        }
+        log.info( "config/environment.rb = " + configEnvironmentFile );
+        Pattern pattern = Pattern.compile("^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
+        return find(configEnvironmentFile, pattern);
+    }
+    
+    protected String determineVersionTryRails3(VirtualFile railsRoot) throws IOException {
         VirtualFile gemfile = railsRoot.getChild("Gemfile");
-        
-        log.info( "Gemfile = " + gemfile );
-        
         if (gemfile == null || !gemfile.exists()) {
             return null;
         }
-
+        log.info( "Gemfile = " + gemfile );
         Pattern pattern = Pattern.compile("^[^#]*gem\\s*['\"]rails['\"]\\s*,\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*");
+        return find(gemfile, pattern);
+    }
 
+    protected String find(VirtualFile file, Pattern pattern) throws IOException {
         BufferedReader in = null;
-
         try {
-            InputStream inStream = gemfile.openStream();
+            InputStream inStream = file.openStream();
             InputStreamReader inReader = new InputStreamReader(inStream);
             in = new BufferedReader(inReader);
             String line = null;
             while ((line = in.readLine()) != null) {
-                System.err.println( "try [" + line + "]" );
                 Matcher matcher = pattern.matcher(line);
                 if (matcher.matches()) {
-                    String versionSpec = matcher.group(1).trim();
-                    return new RailsGemVersionMetaData(versionSpec);
+                    return matcher.group(1).trim();
                 }
             }
-        } catch (IOException e) {
-            throw new DeploymentException(e);
+        } finally {
+            if (in != null) in.close();
         }
         return null;
-	}
+
+    }
 }

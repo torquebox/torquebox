@@ -7,13 +7,15 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.interp.deployers.PoolingYamlParsingDeployer;
+import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.RackApplicationPoolImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationPool;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-
 import static org.junit.Assert.*;
+
 
 public class RackApplicationPoolDeployerTest extends AbstractDeployerTestCase {
 
@@ -62,4 +64,44 @@ public class RackApplicationPoolDeployerTest extends AbstractDeployerTestCase {
 
 	}
 
+	@Test
+	public void testPoolMetaDataAttaching() throws Throwable {
+		String deploymentName = createDeployment("test");
+		DeploymentUnit unit = getDeploymentUnit(deploymentName);
+		unit.addAttachment( RackApplicationMetaData.class, new RackApplicationMetaData() );
+
+		processDeployments(false);
+
+        PoolMetaData poolMetaData = AttachmentUtils.getAttachment( unit, "web", PoolMetaData.class );
+        assertNotNull( poolMetaData );
+        assertTrue( poolMetaData.isShared() );
+
+        AttachmentUtils.multipleAttach(unit, new PoolMetaData("web", 2, 4), "web");
+        processDeployments(false);
+
+        poolMetaData = AttachmentUtils.getAttachment( unit, "web", PoolMetaData.class );
+        assertNotNull( poolMetaData );
+        assertFalse( poolMetaData.isShared() );
+        assertEquals( 2, poolMetaData.getMinimumSize() );
+        assertEquals( 4, poolMetaData.getMaximumSize() );
+	}
+
+	@Test
+	public void testPoolingYamlOverride() throws Throwable {
+        addDeployer( new PoolingYamlParsingDeployer() );
+		JavaArchive archive = createJar( "test" );
+		archive.addResource(getClass().getResource("pooling.yml"), "/META-INF/pooling.yml");
+		File archiveFile = createJarFile( archive );
+		
+		String deploymentName = addDeployment( archiveFile );
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+		unit.addAttachment( RackApplicationMetaData.class, new RackApplicationMetaData() );
+		processDeployments(false);
+
+        PoolMetaData poolMetaData = AttachmentUtils.getAttachment( unit, "web", PoolMetaData.class );
+        assertNotNull( poolMetaData );
+        assertFalse( poolMetaData.isShared() );
+        assertEquals( 2, poolMetaData.getMinimumSize() );
+        assertEquals( 4, poolMetaData.getMaximumSize() );
+	}
 }

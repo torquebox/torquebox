@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-int-parent</artifactId>
-    <version>1.0.0.Beta23-SNAPSHOT</version>
+    <version>1.0.0.RC1-SNAPSHOT</version>
     <relativePath>../../int-parent/</relativePath>
   </parent>
 
@@ -54,12 +54,6 @@
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-interp-metadata</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-metadata</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

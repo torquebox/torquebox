@@ -7,23 +7,26 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
-import org.jruby.Ruby;
-import org.jruby.RubyArray;
-import org.jruby.exceptions.RaiseException;
-import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.interp.deployers.DeployerRuby;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.yaml.snakeyaml.Yaml;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: messaging.yml
+ *   Out: MessageProcessorMetaData
+ * </pre>
+ *
+ * Creates MessageProcessorMetaData instances from messaging.yml
+ */
 public class MessagingYamlParsingDeployer extends AbstractVFSParsingDeployer<MessageProcessorMetaData> {
 
     public MessagingYamlParsingDeployer() {
         super(MessageProcessorMetaData.class);
         setName("messaging.yml");
-        setStage(DeploymentStages.POST_CLASSLOADER);
-        addRequiredInput( DeployerRuby.class );
     }
 
     @Override

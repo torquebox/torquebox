@@ -1,4 +1,5 @@
 
+require 'fileutils'
 require File.dirname(__FILE__) +  '/spec_helper.rb'
 
 describe "Dir extensions for VFS" do
@@ -33,16 +34,23 @@ describe "Dir extensions for VFS" do
       items.should include File.join( "vfs:#{@archive1_path}", 'web.xml' )
       items.should include File.join( "vfs:#{@archive1_path}", 'lib' )
     end
- 
+
     it "should allow globbing within nested archives with explicit vfs" do
       pattern = "vfs:#{@archive2_path}/*"
       items = Dir.glob( pattern )
       items.should_not be_empty
       items.should include "vfs:#{@archive2_path}/manifest.txt"
     end
+
+    it "should create new Dirs" do
+      lambda {
+        Dir.new("vfs:#{@archive2_path}")
+      }.should_not raise_error
+    end
   end
-  
-  [ :absolute, :relative ].each do |style|
+
+  [ :absolute, :relative, :vfs ].each do |style|
+  #[ :relative ].each do |style|
     describe "with #{style} paths" do
 
       case ( style )
@@ -50,6 +58,25 @@ describe "Dir extensions for VFS" do
           prefix = "./#{TEST_DATA_BASE}"
         when :absolute
           prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+        when :vfs
+          prefix = "vfs:" + File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+      end
+
+      it "should ignore dotfiles by default" do
+        items = Dir.glob( "#{prefix}/dotfiles/*" )
+        items.should_not be_empty
+        items.size.should eql(3)
+        items.should include( "#{prefix}/dotfiles/one" )
+        items.should include( "#{prefix}/dotfiles/three" )
+        items.should include( "#{prefix}/dotfiles/foo.txt" )
+      end
+
+      it "should match dotfiles if explicitly asked" do
+        items = Dir.glob( "#{prefix}/dotfiles/.*" )
+        items.should_not be_empty
+        items.size.should eql(2)
+        items.should include( "#{prefix}/dotfiles/.two" )
+        items.should include( "#{prefix}/dotfiles/.four" )
       end
 
       it "should allow globbing without any special globbing characters on normal files" do
@@ -57,7 +84,7 @@ describe "Dir extensions for VFS" do
         items.should_not be_empty
         items.should include( "#{prefix}/home/larry" )
       end
-      
+
       it "should allow globbing without any special globbing characters on a single normal file" do
         items = Dir.glob( "#{prefix}/home/larry/file1.txt" )
         items.should_not be_empty
@@ -91,7 +118,7 @@ describe "Dir extensions for VFS" do
       it "should allow appropriate globbing of normal files" do
         items = Dir.glob( "#{prefix}/home/larry/*" )
         items.should_not be_empty
-        items.should include( "#{prefix}/home/larry/file1.txt" ) 
+        items.should include( "#{prefix}/home/larry/file1.txt" )
         items.should include( "#{prefix}/home/larry/file2.txt" )
         items.should include( "#{prefix}/home/larry/archive1.jar" )
       end
@@ -100,14 +127,14 @@ describe "Dir extensions for VFS" do
         items = Dir.glob( "#{@archive1_path}/*" )
         items.should_not be_empty
       end
-  
+
       it "should determine if VFS is needed for nested archives" do
         base = "#{prefix}/home/larry/archive1.jar/lib/archive2.jar"
         items = Dir.glob( "#{base}/*" )
         items.should_not be_empty
         items.should include( "#{base}/manifest.txt" )
       end
-  
+
       it "should determine if VFS is needed with relative paths" do
         base = "#{prefix}/home/larry/archive1.jar/lib/archive2.jar"
         items = Dir.glob( "#{base}/*" )
@@ -153,6 +180,31 @@ describe "Dir extensions for VFS" do
         items.should_not include( "#{prefix}/home/larry/archive1.jar/lib/archive4.txt" )
       end
 
+      it "should create new Dirs" do
+        lambda {
+          Dir.new(prefix)
+        }.should_not raise_error
+      end
+
+    end
+  end
+
+  describe "mkdir" do
+    it "should mkdir inside vfs archive when directory mounted on filesystem" do
+      FileUtils.rm_rf "target/mnt"
+      archive = org.jboss.vfs::VFS.child( @archive1_path )
+      logical = archive.getChild( "lib" )
+      physical = java.io::File.new( "target/mnt" )
+      physical.mkdirs
+      mount = org.jboss.vfs::VFS.mountReal( physical, logical )
+      begin
+        lambda {
+          Dir.mkdir("#{@archive1_path}/lib/should_mkdir_inside_vfs_archive")
+          File.directory?("target/mnt/should_mkdir_inside_vfs_archive").should be_true
+        }.should_not raise_error
+      ensure
+        mount.close
+      end
     end
   end
 

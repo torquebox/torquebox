@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
-    <version>1.0.0.Beta23-SNAPSHOT</version>
+    <version>1.0.0.RC1-SNAPSHOT</version>
     <relativePath>../parent/</relativePath>
   </parent>
 
@@ -17,6 +17,7 @@
 
   <modules>
     <module>javadoc-support</module>
+    <module>docbook-support</module>
     <module>deployer-support</module>
 
     <module>vdf-test-support</module>

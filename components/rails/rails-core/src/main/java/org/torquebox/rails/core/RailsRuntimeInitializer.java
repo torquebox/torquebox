@@ -35,34 +35,26 @@ import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.rack.core.RackRuntimeInitializer;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
+
 
 public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
-	private VirtualFile railsRoot;
-	private String railsEnv;
-	private boolean loadUsingGems;
-	private String versionSpec;
 	private List<String> autoloadPaths = new ArrayList<String>();
+    private RailsApplicationMetaData railsMetaData;
 
-	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems) {
-		this( railsRoot, railsEnv, loadUsingGems, null );
-	}
-	
-	public RailsRuntimeInitializer(VirtualFile railsRoot, String railsEnv, boolean loadUsingGems, String versionSpec) {
-		super( railsRoot, railsEnv );
-		this.railsRoot = railsRoot;
-		this.railsEnv = railsEnv;
-		this.loadUsingGems = loadUsingGems;
-		this.versionSpec = versionSpec;
+	public RailsRuntimeInitializer(RailsApplicationMetaData railsMetaData) {
+		super( railsMetaData.getRackMetaData() );
+        this.railsMetaData = railsMetaData;
 	}
 
 	public VirtualFile getRailsRoot() {
-		return this.railsRoot;
+		return this.railsMetaData.getRailsRoot();
 	}
 
-	public String getRailsEnv() {
-		return this.railsEnv;
-	}
+	// public String getRailsEnv() {
+	// 	return this.railsEnv;
+	// }
 
 	public void addAutoloadPath(String path) {
 		this.autoloadPaths.add(path);
@@ -74,13 +66,13 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 	
 	public void initialize(Ruby ruby) throws Exception {
 		super.initialize(ruby);
-		Logger logger = Logger.getLogger(railsRoot.toURL().toExternalForm());
+		Logger logger = Logger.getLogger(getRailsRoot().toURL().toExternalForm());
 		IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
 		ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
 		
-		String scriptLocationBase = new URL( railsRoot.toURL(), "<torquebox-bootstrap>" ).toExternalForm();
+		String scriptLocationBase = new URL( getRailsRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
 		makeAutoloadPathsAvailable(ruby);
-		ruby.executeScript(createBoot(railsRoot), scriptLocationBase + "-boot.rb" );
+		ruby.executeScript(createBoot(getRailsRoot()), scriptLocationBase + "-boot.rb" );
 	}
 
 	protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
@@ -92,24 +84,6 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 	protected void makeAutoloadPathsAvailable(Ruby ruby) {
 		RubyModule object = ruby.getClassFromPath("Object");
 		object.setConstant("TORQUEBOX_RAILS_AUTOLOAD_PATHS", JavaEmbedUtils.javaToRuby(ruby, getAutoloadPaths()));
-	}
-
-	// TODO: is this obsolete?
-	protected String railsGemVersionConfig() {
-		StringBuilder config = new StringBuilder();
-		
-		if ( loadUsingGems ) {
-			config.append( "TORQUEBOX_RAILS_LOAD_STYLE=:gems\n" );
-			if ( versionSpec == null ) {
-				config.append( "TORQUEBOX_RAILS_GEM_VERSION=nil\n" );
-			} else {
-				config.append( "TORQUEBOX_RAILS_GEM_VERSION=%q(" + versionSpec + ")\n" );
-			}
-		} else {
-			config.append( "TORQUEBOX_RAILS_LOAD_STYLE=:vendor\n" );
-		}
-		
-		return config.toString();
 	}
 
 }

@@ -1,12 +1,12 @@
 /* Copyright 2010 Red Hat, Inc. */
 package org.torquebox.rack.core;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
+import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.interp.spi.RuntimeInitializer;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
+
 
 /**
  * {@link RuntimeInitializer} for Ruby Rack applications.
@@ -15,36 +15,29 @@ import org.torquebox.interp.spi.RuntimeInitializer;
  */
 public class RackRuntimeInitializer implements RuntimeInitializer {
 
-	/** RACK_ROOT. */
-	private VirtualFile rackRoot;
+    private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
 
-	/** RACK_ENV */
-	private String rackEnv;
-
-	/** Construct.
-	 * 
-	 * @param rackRoot The application's {@code RACK_ROOT}.
-	 * @param rackEnv The application's {@code RACK_ENV}.
-	 */
-	public RackRuntimeInitializer(VirtualFile rackRoot, String rackEnv) {
-		this.rackRoot = rackRoot;
-		this.rackEnv = rackEnv;
+	public RackRuntimeInitializer(RackApplicationMetaData rackMetaData) {
+		this.rackMetaData = rackMetaData;
 	}
 
 	@Override
 	public void initialize(Ruby ruby) throws Exception {
 		ruby.evalScriptlet(getInitializerScript());
+        ruby.setCurrentDirectory(this.rackMetaData.getRackRoot().getPhysicalFile().getCanonicalPath());
+        log.info("Current directory: "+ruby.getCurrentDirectory());
 	}
 
 	/** Create the initializer script.
 	 * 
 	 * @return The initializer script.
-	 * @throws MalformedURLException
-	 * @throws URISyntaxException
 	 */
-	protected String getInitializerScript() throws MalformedURLException, URISyntaxException {
+	protected String getInitializerScript() {
 		StringBuilder script = new StringBuilder();
-		String rackRootPath = this.rackRoot.toURL().toString();
+		String rackRootPath = this.rackMetaData.getRackRootPath();
+        String rackEnv = this.rackMetaData.getRackEnv();
+        String contextPath = this.rackMetaData.getContextPath();
+
 		if (rackRootPath.endsWith("/")) {
 			rackRootPath = rackRootPath.substring(0, rackRootPath.length() - 1);
 		}
@@ -56,10 +49,18 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 		}
 		
 		script.append("RACK_ROOT=%q(" + rackRootPath + ")\n");
-		script.append("RACK_ENV=%q(" + this.rackEnv + ")\n");
+		script.append("RACK_ENV=%q(" + rackEnv + ")\n");
 		script.append("ENV['RACK_ROOT']=%q(" + rackRootPath + ")\n");
-		script.append("ENV['RACK_ENV']=%q(" + this.rackEnv + ")\n");
+		script.append("ENV['RACK_ENV']=%q(" + rackEnv + ")\n");
+
+        if ( contextPath != null && contextPath.length() > 1 ) { // only set if not root context
+            script.append("ENV['RAILS_RELATIVE_URL_ROOT']=%q(" + contextPath + ")\n");
+            script.append("ENV['RACK_BASE_URI']=%q(" + contextPath + ")\n");
+        }
+
 		return script.toString();
 	}
+
+    private RackApplicationMetaData rackMetaData;
 
 }

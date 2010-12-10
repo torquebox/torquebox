@@ -7,14 +7,13 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Iterator;
-import java.util.List;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyFile;
+import org.jruby.RubyString;
 import org.jruby.exceptions.RaiseException;
-import org.jruby.runtime.Constants;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.runtime.load.Library;
 import org.jruby.runtime.load.LoadService;
@@ -299,4 +298,19 @@ public class VFSLoadService extends LoadService {
         }
     }
 
+    /*
+    @Override
+    protected void addLoadedFeature(RubyString loadNameRubyString) {
+        System.err.println( "addLoadedFeature(" + loadNameRubyString + ")" );
+        super.addLoadedFeature(loadNameRubyString);
+    }
+
+    @Override
+    protected boolean featureAlreadyLoaded(RubyString loadNameRubyString) {
+        boolean result = super.featureAlreadyLoaded(loadNameRubyString);
+        System.err.println( "featureAlreadyLoaded(" + loadNameRubyString + ") " + result );
+        return result;
+    }
+    */
+    
 }

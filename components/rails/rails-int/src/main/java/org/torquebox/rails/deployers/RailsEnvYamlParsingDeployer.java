@@ -33,13 +33,24 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.yaml.snakeyaml.Yaml;
 
-public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: RailsApplicationMetaData
+ *   Out: RailsApplicationMetaData
+ * </pre>
+ *
+ * Sets RAILS_ENV from rails-env.xml *iff* it hasn't already been set.
+ *
+ * @deprecated Use torquebox.yml instead
+ */
+@Deprecated public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 	
 	public static final String RAILS_ENV_KEY = "RAILS_ENV";
 	
 	public RailsEnvYamlParsingDeployer() {
 		setStage(DeploymentStages.PARSE);
-		addInput(RailsApplicationMetaData.class);
+		setInput(RailsApplicationMetaData.class);
 		addOutput(RailsApplicationMetaData.class);
 	}
 
@@ -83,14 +94,10 @@ public class RailsEnvYamlParsingDeployer extends AbstractDeployer {
 			}
 
 			RailsApplicationMetaData railsMetaData = root;
-
-			if (railsMetaData == null) {
-				railsMetaData = new RailsApplicationMetaData(unit.getRoot(), railsEnv);
-			} else {
-				if (railsMetaData.getRailsEnv() == null) {
-					railsMetaData.setRailsEnv(railsEnv);
-				}
-			}
+            if (railsMetaData == null) throw new NullPointerException("An upstream deployer should've already created RailsApplicationMetaData");
+            if (railsMetaData.getRailsEnv() == null) {
+                railsMetaData.setRailsEnv(railsEnv);
+            }
 			return railsMetaData;
 		} finally {
 			if ( in != null ) {

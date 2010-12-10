@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-component-parent</artifactId>
-    <version>1.0.0.Beta23-SNAPSHOT</version>
+    <version>1.0.0.RC1-SNAPSHOT</version>
     <relativePath>../../component-parent/pom.xml</relativePath>
   </parent>
 
@@ -38,6 +38,12 @@
       <artifactId>torquebox-common-spi</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rails-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>

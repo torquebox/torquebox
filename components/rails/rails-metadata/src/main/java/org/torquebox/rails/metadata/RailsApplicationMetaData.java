@@ -23,55 +23,67 @@ package org.torquebox.rails.metadata;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
+
 
 public class RailsApplicationMetaData {
 
-	private VirtualFile railsRoot;
-	private String railsRootPath;
-	private String railsEnv;
+    public RailsApplicationMetaData(RackApplicationMetaData rackMetaData) {
+        this.rackMetaData = rackMetaData;
+    }
 
-	public RailsApplicationMetaData() {
-		
-	}
-	
-	public RailsApplicationMetaData(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
-		this( railsRoot, null );
-	}
-	
-	public RailsApplicationMetaData(VirtualFile railsRoot, String railsEnv) throws MalformedURLException, URISyntaxException {
-		setRailsRoot( railsRoot );
-		setRailsEnv( railsEnv );
-	}
-	
-	public void setRailsRoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
-		this.railsRoot = railsRoot;
-		String path = railsRoot.toURL().getFile();
-		if ( path.endsWith( "/" ) ) {
-			path = path.substring( 0, path.length() - 1 );
-		}
-		this.railsRootPath = path;
-	}
-	
-	public VirtualFile getRailsRoot() {
-		return this.railsRoot;
-	}
-	
-	public String getRailsRootPath() {
-		return this.railsRootPath;
-	}
-	
-	public void setRailsEnv(String railsEnv) {
-		this.railsEnv = railsEnv;
-	}
-	
-	public String getRailsEnv() {
-		return this.railsEnv;
-	}
-	
-	public String toString() {
-		return "[RailsApplicationMetaData: railsRoot=" + railsRoot + "; railsEnv=" + railsEnv + "]";
-	}
-	
+    public RackApplicationMetaData getRackMetaData() {
+        return this.rackMetaData;
+    }
+
+    public VirtualFile getRailsRoot() {
+        return this.rackMetaData.getRackRoot();
+    }
+    
+    public String getRailsEnv() {
+        return this.rackMetaData.getRackEnv();
+    }
+    
+    public void setRailsEnv(String railsEnv) {
+        this.rackMetaData.setRackEnv( railsEnv );
+    }
+    
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public boolean isFrozen() {
+        return this.frozen;
+    }
+
+    public boolean needsGems() {
+        return ! isFrozen();
+    }
+
+    public void setVersionSpec(String versionSpec) {
+        this.versionSpec = versionSpec;
+    }
+
+    public String getVersionSpec() {
+        return this.versionSpec;
+    }
+    
+    public boolean isRails2() {
+        return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
+    }
+    
+    public boolean isRails3() {
+        return getVersionSpec() != null && Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
+    }
+    
+    public String toString() {
+        return "RailsApplicationMetaData:\n  version=" + versionSpec + "\n  frozen=" + isFrozen();
+    }
+
+    private String versionSpec;
+    private boolean frozen;
+    private RackApplicationMetaData rackMetaData;
 }

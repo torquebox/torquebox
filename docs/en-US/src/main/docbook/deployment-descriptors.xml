@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="deployment-descriptors">
+  <title>Application Deployment Descriptors</title>
+
+  <para>
+    For the purposes of this document, an
+    <emphasis>application</emphasis> is any Rack-based app, including
+    those built using the popular Rails, Sinatra, and Camping
+    frameworks, among others.  This document describes the descriptors
+    used to configure and deploy these applications.  Other TorqueBox
+    deployment descriptors for configuration of messaging, scheduling,
+    and runtime pooling are described elsewhere: <xref
+    linkend="messaging" />, <xref linkend="scheduled-jobs" />, and
+    <xref linkend="pooling"/>.
+  </para>
+
+  <section>
+    <title>External and Internal descriptors</title>
+
+    <para>
+      Deployment descriptors are small, YAML-formatted text files.
+      They may be "external", residing outside the application, or
+      "internal", residing within it.
+    </para>
+
+    <para>
+      An <emphasis>external</emphasis> descriptor references an
+      application somewhere on your filesystem.  To deploy the
+      application, the descriptor is placed in the
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>
+      directory of the TorqueBox server.  The external descriptor's
+      name should have a suffix of either
+      <filename>-rails.yml</filename> or
+      <filename>-rack.yml</filename>.
+    </para>
+
+    <para>
+      An <emphasis>internal</emphasis> descriptor should be named
+      <filename>torquebox.yml</filename> and reside inside the
+      application's <filename>config/</filename> directory, if
+      present, otherwise at the root.  Internal descriptors allow you
+      to override the TorqueBox defaults but only for a single app.
+      As such, they are not required.  Values in the external
+      descriptor override those in the internal descriptor which, in
+      turn, override the TorqueBox defaults.  The syntax for all
+      application deployment descriptor files is identical,
+      i.e. <filename>torquebox.yml</filename>,
+      <filename>*-rails.yml</filename>, and
+      <filename>*-rack.yml</filename>.
+    </para>
+  </section>
+
+  <section>
+    <title>Contents of the descriptor</title>
+
+    <para>The descriptor has 3 main sections, represented as top-level keys in a YAML associative array.</para>
+
+    <orderedlist spacing="compact">
+      <listitem>
+        <para><emphasis>application:</emphasis> General application configuration</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>web:</emphasis> Web-specific configuration</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>environment:</emphasis> Environment variables</para>
+      </listitem>
+    </orderedlist>
+
+    <section>
+      <title>General Application Configuration</title>
+
+      <formalpara>
+        <title>Location &amp; Environment</title>
+
+        <para>
+          The application section describes the location and
+          environment for the app itself, in Rails terms:
+          <envar>RAILS_ROOT</envar> and
+          <envar>RAILS_ENV</envar>. Under traditional (mongrel,
+          lighttpd) deployments, this information is picked up through
+          the current working directory or environment
+          variables. Since the TorqueBox Server runs from a different
+          location, the current working directory has no
+          meaning. Likewise, as multiple applications may be deployed
+          within a single TorqueBox Server, a single global
+          environment variable to set <envar>RAILS_ENV</envar> is
+          nonsensical.</para>
+      </formalpara>
+
+      <table>
+        <title>application</title>
+
+        <tgroup cols="3">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Variable</entry>
+              <entry>Description</entry>
+              <entry>Default</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><varname>root</varname>|<varname>RAILS_ROOT</varname>|<varname>RACK_ROOT</varname></entry>
+
+              <entry>
+                Indicates the location of your application.  It may
+                refer to either an "exploded" application (a
+                directory) or the path to a zipped archive.  It is
+                required for external descriptors and ignored in an
+                internal descriptor.  Regardless of which alias you
+                use, RAILS_ROOT will be set in the ENV hash for Rails
+                apps and RACK_ROOT will be set for Rack apps.
+              </entry>
+              
+              <entry></entry>
+            </row>
+
+            <row>
+              <entry><varname>env</varname>|<varname>RAILS_ENV</varname>|<varname>RACK_ENV</varname></entry>
+
+              <entry>
+                Defines the environment under which the app and its
+                framework will run, e.g. production, development,
+                test, etc.
+              </entry>
+
+              <entry>development</entry>
+            </row>
+
+            <row>
+              <entry><varname>rackup</varname></entry>
+
+              <entry>
+                The "rackup" script containing the complete logic for initializing your application.
+              </entry>
+
+              <entry>config.ru</entry>
+            </row>
+
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>For example: <informalexample>
+        <para><programlisting>application:
+  root: /path/to/myapp
+  env: development
+  rackup: config.ru</programlisting></para>
+      </informalexample></para>
+
+    </section>
+
+    <section>
+      <title>Web-specific configuration</title>
+
+      <para>
+        Ruby web apps are often deployed individually, without respect
+        to hostnames or context-path. Running under TorqueBox,
+        however, you may host several apps under a single host, or
+        multiple apps under different hostnames.
+      </para>
+
+      <table>
+        <title>web</title>
+
+        <tgroup cols="3">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Variable</entry>
+              <entry>Description</entry>
+              <entry>Default</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><varname>host</varname></entry>
+
+              <entry>
+                Virtual hosts allow one application to respond to
+                <emphasis>www.host-one.com</emphasis>, while another
+                running within the same JBoss AS to respond to
+                <emphasis>www.host-two.com</emphasis>.  This value can
+                be either a single hostname or a YAML list of
+                hostnames.
+              </entry>
+              
+              <entry>localhost</entry>
+            </row>
+
+            <row>
+              <entry><varname>context</varname></entry>
+
+              <entry>
+                Applications within a single TorqueBox Server may be
+                separated purely by a <emphasis>context
+                path</emphasis>. For a given host, the context path is
+                the prefix used to access the application,
+                e.g. http://some.host.com/context. Traditional Ruby
+                web apps respond from the top of a site, i.e. the root
+                context. By using a context path, you can mount
+                applications at a location beneath the root.
+              </entry>
+
+              <entry>/</entry>
+            </row>
+
+            <row>
+              <entry><varname>static</varname></entry>
+
+              <entry>
+                Any static web content provided by your app should reside beneath this directory.
+              </entry>
+
+              <entry>public</entry>
+            </row>
+
+          </tbody>
+        </tgroup>
+      </table>
+      
+      <para>For example: <informalexample>
+        <para><programlisting>web:
+  context: /app-one
+  static: public
+  host: www.host-one.com</programlisting></para>
+      </informalexample></para>
+
+    </section>
+
+    <section>
+      <title>Environment variables</title>
+
+      <para>
+        Each application may have its own unique set of environment
+        variables, no matter how many different apps are deployed
+        under a single TorqueBox instance.  Variables from internal
+        and external descriptors are merged, with the external
+        variables overriding any internal matching keys.
+      </para>
+
+      <para>For example: <informalexample>
+        <para><programlisting>environment:
+  MAIL_HOST: mail.yourhost.com
+  REPLY_TO: you@yourhost.com</programlisting></para>
+      </informalexample></para>
+
+      <para>
+        Any variable set in the environment section is accessible from
+        within the Rack app using the ENV hash, e.g.
+        ENV['MAIL_HOST']=='mail.yourhost.com'
+      </para>
+    </section>
+  </section>
+
+  <section>
+    <title>Rails Examples</title>
+
+    <para>Below are several examples of using a
+    <filename>*-rails.yml</filename> descriptor to deploy a Rails-based
+    application.</para>
+
+    <para>Each descriptor assumes that the directory
+    <filename>/home/bob/myapp</filename> contains the Rails application we
+    wish to deploy, and has the following structure:</para>
+
+    <para><screen>/home/bob/myapp/
+  config/
+    environment.rb
+    database.yml</screen></para>
+
+    <para>
+      Each example descriptor is assumed to be named
+      <filename>myapp-rails.yml</filename> and placed within the
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>
+      directory.  While the TorqueBox AS does not need to be running
+      to copy files into the <filename>deploy/</filename> directory,
+      no actual deployment will occur until the AS is started.
+    </para>
+
+    <section>
+      <title>Basic myapp-rails.yml</title>
+
+      <para><informalexample>
+        <para><screen>application:
+  RAILS_ROOT: /home/bob/myapp
+  RIAILS_ENV: development
+web:
+  context: /</screen></para>
+      </informalexample></para>
+
+      <para>This deployment descriptor points to the application under
+      <filename>/home/bob/myapp</filename>. The application is deployed
+      without consideration of any virtual-host configuration, and bound to
+      the root level of the AS. Under normal circumstances, you would be able
+      to reach your application at <uri>http://localhost:8080/</uri>.</para>
+
+      <para>Only a single application can be deployed against a given context
+      at any given point in time. Multiple applications may overlap at
+      distinct contexts, nested under each other.</para>
+
+      <para>Additionally, multiple applications may be deployed at the same
+      context path if they are differentiated by virtual host name.</para>
+    </section>
+
+    <section>
+      <title>Using a virtual host</title>
+
+      <para><informalexample>
+        <para><screen>application:
+  RAILS_ROOT: /home/bob/myapp
+  RAILS_ENV: development
+web:
+  context: /
+  host: mystartup.com</screen></para>
+      </informalexample></para>
+
+      <para>This deployment descriptor works as the basic one above, but
+      specifically binds this application to the hostname of
+      <code>mystartup.com</code>. Another application may also be bound to the
+      root context of <filename>/</filename>, as long as it has a distinct
+      <parameter>host:</parameter> value.</para>
+    </section>
+
+    <section>
+      <title>Using environment variables</title>
+
+      <para><informalexample>
+        <para><screen>application:
+  RAILS_ROOT: /home/bob/myapp
+  RAILS_ENV: development
+web:
+  context: /
+environment:
+  AWS_PRIVATE_KEY: /path/to/my/key.pem</screen></para>
+        </informalexample>
+        Some applications expect various configuration and parameters
+        to be passed through Unix-style environment variables. In a
+        shared-server environment, such as TorqueBox AS, different
+        applications may wish to receive different values for the same
+        variables. To accomodate this, the environment of the entire
+        application server may be overriden through the environment:
+        section.
+      </para>
+
+      <para>
+        This deployment sets the <envar>AWS_PRIVATE_KEY</envar>
+        environment variable to
+        <filename>/path/to/my/key.pem</filename> for only this
+        application's point-of-view. The application may access it as
+        it would any other environment variable.
+      </para>
+
+      <para><informalexample>
+        <para><screen>ENV['AWS_PRIVATE_KEY'] 
+=&gt; "/path/to/my/key.pem"</screen></para>
+        </informalexample></para>
+    </section>
+
+    <section>
+      <title>Using an internal descriptor</title>
+
+      <para>Let's add an internal descriptor that will provide a
+      reasonable default value for our web context, in case the
+      external descriptor fails to set it.  Because our app is a Rails
+      app, we'll put the descriptor in
+      <filename>config/</filename>:</para>
+
+      <para><screen>/home/bob/myapp/
+  config/
+    <emphasis>torquebox.yml</emphasis>
+    environment.rb
+    database.yml</screen></para>
+
+      <para>And the contents of torquebox.yml:<informalexample>
+        <para><screen>web:
+  context: /bob</screen></para>
+      </informalexample></para>
+
+      <para>Unless an external descriptor overrides it, this app will
+      be deployed beneath a context called
+      <emphasis>/bob</emphasis></para>
+    </section>
+
+  </section>
+
+  <section>
+    <title>Rack Examples</title>
+
+    <para>
+      Below are several examples of using a
+      <filename>*-rack.yml</filename> descriptor to deploy a
+      Rack-based application.
+    </para>
+
+    <para>
+      Each descriptor assumes that the directory
+      <filename>/home/bob/myapp</filename> contains the Rack
+      application we wish to deploy, and has the following
+      structure:
+    </para>
+
+    <para><screen>/home/bob/myapp/
+  config.ru
+  alternatives/magic-config.ru</screen></para>
+
+    <para>
+      Each example descriptor is assumed to be named
+      <filename>myapp-rack.yml</filename> and placed within the
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>
+      directory.  While the TorqueBox AS does not need to be running
+      to copy files into the <filename>deploy/</filename> directory,
+      no actual deployment will occur until the AS is start.
+    </para>
+
+    <section>
+      <title>Basic myapp-rack.yml</title>
+
+      <para><informalexample>
+          <para><screen>application:
+  RACK_ROOT: /home/bob/myapp
+  RACK_ENV: development
+web:
+  context: /</screen></para>
+        </informalexample></para>
+
+      <para>This deployment descriptor points to the application under
+      <filename>/home/bob/myapp</filename>, and assumes the default
+      <filename>config.ru</filename> rackup script to be located at
+      <filename>/home/bob/myapp/config.ru</filename>.</para>
+
+      <para>The application is deployed without consideration of any
+      virtual-host configuration, and bound to the root level of the AS. Under
+      normal circumstances, you would be able to reach your application at
+      <uri>http://localhost:8080/</uri>.</para>
+
+      <para>Only a single application can be deployed against a given context
+      at any given point in time. Multiple applications may overlap at
+      distinct contexts, nested under each other.</para>
+
+      <para>Additionally, multiple applications may be deployed at the same
+      context path if they are differentiated by virtual host name. See the
+      example below for virtual host configuration.</para>
+    </section>
+
+    <section>
+      <title>Using a virtual host</title>
+
+      <para><informalexample>
+          <para><screen>application:
+  RACK_ROOT: /home/bob/myapp
+  RACK_ENV: development
+web:
+  context: /
+  host: mystartup.com</screen></para>
+        </informalexample></para>
+
+      <para>This deployment descriptor works as the basic one above, but
+      specifically binds this application to the hostname of
+      <code>mystartup.com</code>. Another application may also be bound to the
+      root context of <filename>/</filename>, as long as it has a distinct
+      <parameter>host:</parameter> value.</para>
+    </section>
+
+    <section>
+      <title>Using environment variables</title>
+
+      <para><informalexample>
+          <para><screen>application:
+  RACK_ROOT: /home/bob/myapp
+  RACK_ENV: development
+web:
+  context: /
+environment:
+  DELTACLOUD_DRIVER: ec2</screen></para>
+        </informalexample>Some applications expect various configuration and
+      parameters to be passed through Unix-style environment variables. In a
+      shared-server environment, such as TorqueBox AS, different applications
+      may wish to receive different values for the same variables. To
+      accomodate this, the environment of the entire application server may be
+      overriden through the environment: section.</para>
+
+      <para>This deployment sets the <envar>DELTACLOUD_DRIVER</envar>
+      environment variable to <parameter>ec2</parameter> for only this
+      application's point-of-view. The application may access it as it would
+      any other environment variable.</para>
+
+      <para><informalexample>
+          <para><screen>ENV['DELTACLOUD_DRIVER'] 
+=&gt; "ec2"</screen></para>
+        </informalexample></para>
+    </section>
+
+    <section>
+      <title>Using an alternate rackup file</title>
+
+      <para><informalexample>
+          <para><screen>application:
+  RACK_ROOT: /home/bob/myapp
+  RACK_ENV: development
+  rackup: alternatives/magic-config.ru
+web:
+  context: /</screen></para>
+        </informalexample>Given a need to use a <filename>config.ru</filename>
+      style file with an atypical name or location, the
+      <parameter>rackup:</parameter> configuration may be used to point to the
+      correct file. It should be specified as a path relative to the
+      application's root directory.</para>
+
+      <para>
+        Some frameworks, such as Sinatra, provide a method for
+        indicating where the application's root lives. By default,
+        they consider the directory containing the rackup file to be
+        the application root. If you deploy using a rackup file in a
+        subdirectory, you may need to add explicit configuration to
+        your rackup script. You may reference other variables in your
+        environment, including <envar>RACK_ROOT</envar>.
+      </para>
+      <para><informalexample>
+        <para><screen>set :root, ENV['RACK_ROOT']</screen></para>
+      </informalexample></para>
+      
+    </section>
+
+    <section>
+      <title>Using an internal descriptor</title>
+
+      <para>For whatever reason, let's remove our config.ru and create
+      an internal descriptor to set our alternative rackup file.
+      Because we have a Rack app, we'll put the descriptor in the root
+      of our application's directory:</para>
+
+      <para><screen>/home/bob/myapp/
+  <emphasis>torquebox.yml</emphasis>
+  alternatives/magic-config.ru</screen></para>
+
+      <para>And the contents of torquebox.yml:<informalexample>
+        <para><screen>application:
+  rackup: alternatives/magic-config.ru</screen></para>
+      </informalexample></para>
+
+      <para>In this case, we wouldn't expect an external descriptor to
+      override this value, since there are no alternative rackup files
+      in the app.  TorqueBox does allow rackup files with absolute
+      paths, however, so it is conceivable.</para>
+    </section>
+
+  </section>
+
+  <section>
+    <title>Java Deployment Descriptors</title>
+
+    <para>In addition to Ruby, Rails and TorqueBox-specific descriptors,
+    your application may also include any traditional JavaEE or
+    JBoss-specific descriptors within its <filename>config/</filename>
+    directory.</para>
+
+    <section>
+      <title>config/web.xml</title>
+
+      <para>A JavaEE <filename>web.xml</filename> deployment descriptor may
+      be included in your application's <filename>config/</filename>
+      directory. Additional Java Servlets, Filters or other configuration
+      may be performed within this file. Its contents will be mixed with
+      other information when your application is deployed. If desired, your
+      <filename>web.xml</filename> may reference the components that
+      TorqueBox implicitly adds.</para>
+
+      <formalpara>
+        <title>Rack Filter</title>
+
+        <para>TorqueBox provides a <productname>Java Servlet</productname>
+        <classname>Filter</classname> named
+        <parameter>torquebox.rack</parameter>. This filter is responsible
+        for delegating requests to Rack-based applications.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Static Resource Servlet</title>
+
+        <para>In order to serve files from the <filename>public/</filename>
+        directory of your application, TorqueBox installs a
+        <classname>Servlet</classname> named
+        <parameter>torquebox.static</parameter>.</para>
+      </formalpara>
+    </section>
+  </section>
+</chapter>

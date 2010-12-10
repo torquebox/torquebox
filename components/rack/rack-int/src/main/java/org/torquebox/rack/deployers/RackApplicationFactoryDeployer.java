@@ -29,9 +29,19 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
+
+/**
+ * <pre>
+ * Stage: PRE_DESCRIBE
+ *    In: RackApplicationMetaData
+ *   Out: RackApplicationMetaData, RackApplicationFactory
+ * </pre>
+ *
+ */
 public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
 	public RackApplicationFactoryDeployer() {
@@ -44,16 +54,20 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
 	@Override
 	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
-		String beanName = AttachmentUtils.beanName(unit, RackApplicationFactoryImpl.class);
-		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
-		builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
-		VirtualFile rackUpScriptLocation = metaData.getRackUpScriptLocation();
-		if (rackUpScriptLocation == null) {
-			rackUpScriptLocation = metaData.getRackRoot().getChild("config.ru");
-		}
-		builder.addPropertyMetaData("rackUpScriptLocation", rackUpScriptLocation);
-		AttachmentUtils.attach(unit, builder.getBeanMetaData());
-		metaData.setRackApplicationFactoryName(beanName);
+        try {
+            String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
+            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
+            builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
+            VirtualFile rackUpScriptLocation = metaData.getRackUpScriptLocation();
+            if (rackUpScriptLocation == null) {
+                rackUpScriptLocation = metaData.getRackRoot().getChild("config.ru");
+            }
+            builder.addPropertyMetaData("rackUpScriptLocation", rackUpScriptLocation);
+            AttachmentUtils.attach(unit, builder.getBeanMetaData());
+            metaData.setRackApplicationFactoryName(beanName);
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        }
 	}
 
 }

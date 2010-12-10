@@ -9,7 +9,7 @@
 
     <para>The latest Complete Binary Distribution contains:</para>
 
-    <itemizedlist>
+    <itemizedlist spacing="compact">
       <listitem>
         <para>The TorqueBox server, ready-to-run</para>
       </listitem>
@@ -71,8 +71,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
 
     <para>We'll install TorqueBox under your user's $HOME directory.</para>
 
-    <para><screen><prompt>$</prompt> <command>unzip torquebox-bin-${project.version}.zip</command>
-<prompt>$</prompt> <command>cd torquebox-${project.version}</command>
+    <para><screen><prompt>$</prompt> <command>unzip -q torquebox-dist-${project.version}-bin.zip</command>
 </screen></para>
 
     <para>Before using the TorqueBox server, you must set up your environment.
@@ -80,7 +79,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
     environment, it is useful to create a symlink to the versioned directory
     produced when you unpackaged the distribution.</para>
 
-    <para><screen><prompt>$</prompt> <command>ln -s torquebox-bin-${project.version} torquebox-current</command></screen></para>
+    <para><screen><prompt>$</prompt> <command>ln -s torquebox-${project.version} torquebox-current</command></screen></para>
 
     <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar> and
     <envar>$JRUBY_HOME</envar> need to be set, and adjusting your

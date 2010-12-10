@@ -1,0 +1,4 @@
+application:
+  root: ${basedir}/apps/sinatra/1.0/queues
+web:
+  context: /uppercaser

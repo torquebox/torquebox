@@ -46,9 +46,8 @@ public class RackEnvironmentImpl implements RackEnvironment {
 		env.put( "PATH_INFO" , request.getPathInfo());
 		env.put( "QUERY_STRING" ,request.getQueryString() == null ? "" : request.getQueryString());
 		env.put( "SERVER_NAME" , request.getServerName());
-		env.put( "SERVER_PORT" , request.getServerPort());
+		env.put( "SERVER_PORT" , request.getServerPort()+"");
 		env.put( "CONTENT_TYPE" , request.getContentType() );
-		env.put( "CONTENT_LENGTH" , request.getContentLength());
 		env.put( "REQUEST_URI" , request.getContextPath() + request.getServletPath() + request.getPathInfo());
 		env.put( "REMOTE_ADDR" , request.getRemoteAddr());
 		env.put( "rack.url_scheme" ,  request.getScheme()); 
@@ -56,19 +55,25 @@ public class RackEnvironmentImpl implements RackEnvironment {
 		env.put( "rack.multithread" , true  );
 		env.put( "rack.multiprocess" , true  );
 		env.put( "rack.run_once" , false );
+        
+		if (request.getContentLength() >= 0) {
+            env.put( "CONTENT_LENGTH" , request.getContentLength());
+        }
 		
 		if ( "https".equals( request.getScheme() ) ) {
 			env.put( "HTTPS", "on" );
 		}
 
-		for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements();) {
-			String headerName = headerNames.nextElement();
-			String envName = "HTTP_" + headerName.toUpperCase().replace('-', '_');
-
-			String value = request.getHeader(headerName);
-
-			env.put( RubyString.newString( ruby, envName) , value );
-		}
+        if (request.getHeaderNames() != null) {
+            for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements();) {
+                String headerName = headerNames.nextElement();
+                String envName = "HTTP_" + headerName.toUpperCase().replace('-', '_');
+                
+                String value = request.getHeader(headerName);
+                
+                env.put( RubyString.newString( ruby, envName) , value );
+            }
+        }
 
 		env.put("servlet_request", request);
 		env.put("java.servlet_request", request);

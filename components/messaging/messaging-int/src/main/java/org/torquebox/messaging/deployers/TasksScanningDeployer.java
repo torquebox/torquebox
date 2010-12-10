@@ -7,6 +7,14 @@ import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.deployers.AbstractRubyScanningDeployer;
 import org.torquebox.messaging.metadata.TaskMetaData;
 
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: suffix and path from jboss-beans.xml
+ *   Out: TaskMetaData
+ * </pre>
+ *
+ */
 public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
 
 	public TasksScanningDeployer() {

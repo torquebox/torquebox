@@ -11,7 +11,7 @@ def rails_deployment(app_name, root, context_path)
   deployment_descriptor = {
     'application' => {
       'RAILS_ROOT'=>root,
-      'RAILS_ENV'=>( defined?( RAILS_ENV ) ? RAILS_ENV : 'development' ),
+      'RAILS_ENV'=>( defined?( RAILS_ENV ) ? RAILS_ENV : 'development' ).to_s,
     },
     'web' => {
       'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
@@ -22,10 +22,11 @@ def rails_deployment(app_name, root, context_path)
 end
 
 def rack_deployment(app_name, root, context_path)
+  env = defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
   deployment_descriptor = { 
     'application' => {
       'RACK_ROOT'=>root,
-      'RACK_ENV'=>( defined?( RACK_ENV ) ? RACK_ENV : 'development' ),
+      'RACK_ENV'=>( env || 'development' ).to_s,
     },
     'web' => {
       'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
@@ -35,12 +36,12 @@ def rack_deployment(app_name, root, context_path)
   [ rack_deployment_name( app_name ), deployment_descriptor ]
 end
 
-def rails?(root)
+def rails?(root = Dir.pwd)
   File.exist?( File.join( root, 'config', 'environment.rb' ) )
 end
 
-def rack?(root)
-  File.exist?( File.join( root, 'config.ru' ) )
+def rack?(root = Dir.pwd)
+  not rails?(root)
 end
 
 def deployment(app_name, root, context_path)
@@ -78,22 +79,20 @@ namespace :torquebox do
     puts "Undeployed #{deployment_name}"
   end
 
-  if ( rails?( Dir.pwd ) )
-    desc "Create (if needed) and deploy as application archive"
-    namespace :deploy do
-      task :archive=>[ 'torquebox:archive' ] do
-        archive_name = File.basename( Dir.pwd ) + '.rails'
-        src = "#{Dir.pwd}/#{archive_name}"
-        FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
-        puts "Deployed #{archive_name}"
-      end
+  desc "Create (if needed) and deploy as application archive"
+  namespace :deploy do
+    task :archive=>[ 'torquebox:archive' ] do
+      archive_name = get_archive_name
+      src = "#{Dir.pwd}/#{archive_name}"
+      FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
+      puts "Deployed #{archive_name}"
     end
-    namespace :undeploy do
-      task :archive do
-        archive_name = File.basename( Dir.pwd ) + '.rails'
-        FileUtils.rm_f( File.join( TorqueBox::RakeUtils.deploy_dir, archive_name ) )
-        puts "Undeployed #{archive_name}"
-      end
+  end
+  namespace :undeploy do
+    task :archive do
+      archive_name = get_archive_name
+      FileUtils.rm_f( File.join( TorqueBox::RakeUtils.deploy_dir, archive_name ) )
+      puts "Undeployed #{archive_name}"
     end
   end
  

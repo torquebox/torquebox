@@ -12,6 +12,16 @@ import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.messaging.metadata.TaskMetaData;
 
+
+/**
+ * <pre>
+ * Stage: DESCRIBE
+ *    In: TaskMetaData
+ *   Out: QueueMetaData, MessageProcessorMetaData
+ * </pre>
+ *
+ * Tasks are really sugar-frosted queues
+ */
 public class TasksDeployer extends AbstractDeployer {
 
     public TasksDeployer() {
@@ -23,7 +33,7 @@ public class TasksDeployer extends AbstractDeployer {
     }
 
     @Override
-        public void deploy(DeploymentUnit unit) throws DeploymentException {
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
         Set<? extends TaskMetaData> allTasks = unit.getAllMetaData( TaskMetaData.class );
                 
         for ( TaskMetaData each : allTasks ) {

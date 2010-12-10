@@ -28,22 +28,31 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.metadata.EnvironmentMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
+
+/**
+ * <pre>
+ * Stage: POST_PARSE
+ *    In: RackApplicationMetaData
+ *   Out: EnvironmentMetaData
+ * </pre>
+ *
+ * The environment metadata links the Rack/Rails environment to the
+ * Jobs and Messaging components, allowing their classes to be
+ * automatically reloaded in development mode, for example.
+ */
 public class RackEnvironmentDeployer extends AbstractDeployer {
     
     public RackEnvironmentDeployer() {
         setStage(DeploymentStages.POST_PARSE);
         setInput(RackApplicationMetaData.class);
+        addInput(RackDefaultsDeployer.COMPLETE);
         addOutput(EnvironmentMetaData.class);
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
-        EnvironmentMetaData envMetaData = unit.getAttachment( EnvironmentMetaData.class );
-        if ( envMetaData == null ) {
-            envMetaData = new EnvironmentMetaData();
-        } else {
-            log.warn("EnvironmentMetaData found, overwriting");
-        }
+        log.info("RACK_ENV="+rackAppMetaData.getRackEnv());
+        EnvironmentMetaData envMetaData = new EnvironmentMetaData();
         String rackEnv = rackAppMetaData.getRackEnv();
         if ( rackEnv != null ) {
             envMetaData.setEnvironmentName( rackEnv );

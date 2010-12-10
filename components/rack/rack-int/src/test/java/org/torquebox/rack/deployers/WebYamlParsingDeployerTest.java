@@ -45,7 +45,7 @@ public class WebYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals( "/tacos", rackMetaData.getContextPath() );
         assertEquals( 1, rackMetaData.getHosts().size() );
         assertEquals( "foobar.com", rackMetaData.getHosts().get(0) );
-        assertEquals( "/public", rackMetaData.getStaticPathPrefix() );
+        assertNull( rackMetaData.getStaticPathPrefix() );
 	}
 	
 	@Test

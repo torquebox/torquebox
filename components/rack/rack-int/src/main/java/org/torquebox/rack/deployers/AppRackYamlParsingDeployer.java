@@ -21,12 +21,8 @@
  */
 package org.torquebox.rack.deployers;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.Map;
+import java.util.*;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -36,193 +32,85 @@ import org.jboss.deployers.client.spi.DeployerClient;
 import org.jboss.deployers.client.spi.Deployment;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
+import org.jboss.deployers.spi.structure.StructureMetaData;
+import org.jboss.deployers.spi.structure.StructureMetaDataFactory;
+import org.jboss.deployers.spi.structure.ContextInfo;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.logging.Logger;
-import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.interp.metadata.PoolMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
-import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.yaml.snakeyaml.Yaml;
+import org.torquebox.rack.metadata.TorqueBoxYamlParser;
 
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: *-rack.yml
+ *   Out: RackApplicationMetaData
+ * </pre>
+ * 
+ * Creates a rack deployment from an external descriptor
+ */
 public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackApplicationMetaData> {
 
-	private Logger log = Logger.getLogger(AppRackYamlParsingDeployer.class);
+    public AppRackYamlParsingDeployer() {
+        super(RackApplicationMetaData.class);
+        addOutput(BeanMetaData.class);
+        setSuffix("-rack.yml");
+        setStage(DeploymentStages.PARSE);
+    }
 
-	private static final String APPLICATION_KEY = "application";
-	private static final String WEB_KEY = "web";
+    @Override
+    protected RackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RackApplicationMetaData root) throws Exception {
+        Deployment deployment = parseAndSetUp(file);
+        if (deployment == null) {
+            throw new DeploymentException("Unable to parse: " + file);
+        }
+        attachPojoDeploymentBeanMetaData(vfsUnit, deployment);
+        return null;
+    }
 
-	private static final String RACK_ROOT_KEY = "RACK_ROOT";
-	private static final String RACK_ENV_KEY = "RACK_ENV";
-	private static final String RACKUP_KEY = "rackup";
+    protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
+        String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, unit.getSimpleName());
 
-	public AppRackYamlParsingDeployer() {
-		super(RackApplicationMetaData.class);
-		addOutput(BeanMetaData.class);
-		setSuffix("-rack.yml");
-		setStage(DeploymentStages.PARSE);
-	}
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, PojoDeployment.class.getName());
+        ValueMetaData deployerInject = builder.createInject("MainDeployer");
+        builder.addConstructorParameter(DeployerClient.class.getName(), deployerInject);
+        builder.addConstructorParameter(VFSDeployment.class.getName(), deployment);
 
-	@Override
-	protected RackApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RackApplicationMetaData root) throws Exception {
+        AttachmentUtils.attach(unit, builder.getBeanMetaData());
+    }
 
-		/*
-		if (!file.equals(vfsUnit.getRoot())) {
-			log.debug("not deploying non-root: " + file);
-			return null;
-		}
-		*/
+    private Deployment createDeployment(RackApplicationMetaData rackMetaData) throws IOException {
+        AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackMetaData.getRackRoot());
+        MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
+        attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
+        if ( rackMetaData.getRackRoot().isDirectory() ) {
+            // TODO: Figure out why doing this breaks non-directory (archive) deployments.
+            attachments.addAttachment(StructureMetaData.class, createStructureMetaData());
+        }
+        return deployment;
+    }
 
-		Deployment deployment = parseAndSetUp(vfsUnit, file);
+    private StructureMetaData createStructureMetaData() {
+        StructureMetaData result = StructureMetaDataFactory.createStructureMetaData();
+        List<String> metaDataPaths = new ArrayList<String>();
+        metaDataPaths.add("");
+        metaDataPaths.add("config");
+        // TODO: Add classpath entry for java libraries
+        ContextInfo context = StructureMetaDataFactory.createContextInfo("", metaDataPaths, null);
+        result.addContext(context);
+        return result;
+    }
 
-		if (deployment == null) {
-			throw new DeploymentException("Unable to parse: " + file);
-		}
-
-		attachPojoDeploymentBeanMetaData(vfsUnit, deployment);
-		return null;
-
-	}
-
-	protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
-		String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, unit.getSimpleName());
-
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, PojoDeployment.class.getName());
-
-		ValueMetaData deployerInject = builder.createInject("MainDeployer");
-
-		builder.addConstructorParameter(DeployerClient.class.getName(), deployerInject);
-		builder.addConstructorParameter(VFSDeployment.class.getName(), deployment);
-
-		AttachmentUtils.attach(unit, builder.getBeanMetaData());
-	}
-
-	private Deployment createDeployment(VirtualFile rackRoot, RubyRuntimeMetaData runtimeMetaData, PoolMetaData poolMetaData, RackApplicationMetaData rackMetaData)
-			throws MalformedURLException, IOException {
-		AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackRoot);
-
-		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
-
-		attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
-		attachments.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
-		attachments.addAttachment(PoolMetaData.class, poolMetaData);
-		
-		return deployment;
-	}
-
-	@SuppressWarnings("unchecked")
-	private RackApplicationMetaData parseAndSetUpApplication(VFSDeploymentUnit unit, VirtualFile rackRootFile, Map<String, Object> config) throws IOException {
-		Map<String, Object> application = (Map<String, Object>) config.get(APPLICATION_KEY);
-		RackApplicationMetaData rackMetaData = new RackApplicationMetaData();
-
-		rackMetaData.setRackRoot(rackRootFile);
-
-		if (application != null) {
-
-			String rackup = (String) application.get(RACKUP_KEY);
-
-			String rackupScriptPath = null;
-			if (rackup != null) {
-				rackupScriptPath = rackup;
-			} else {
-				rackupScriptPath = "config.ru";
-			}
-
-			String rackEnv = (String) application.get(RACK_ENV_KEY);
-
-			if (rackEnv != null) {
-				rackMetaData.setRackEnv(rackEnv.toString());
-			} else {
-				rackMetaData.setRackEnv("development");
-			}
-
-			VirtualFile rackupFile = rackRootFile.getChild(rackupScriptPath);
-
-			if (rackupFile != null && rackupFile.exists()) {
-				StringBuilder rackupScript = new StringBuilder();
-				BufferedReader in = null;
-				try {
-					in = new BufferedReader(new InputStreamReader(rackupFile.openStream()));
-					String line = null;
-
-					while ((line = in.readLine()) != null) {
-						rackupScript.append(line);
-						rackupScript.append("\n");
-					}
-				} finally {
-					// rackupFile.closeStreams();
-					if (in != null) {
-						in.close();
-					}
-				}
-
-				rackMetaData.setRackUpScript(rackupScript.toString());
-				rackMetaData.setRackUpScriptLocation( rackupFile );
-
-			}
-		}
-		
-		Map<String, Object> web = (Map<String, Object>) config.get(WEB_KEY);
-		WebYamlParsingDeployer.parse( unit, web, rackMetaData );
-		
-		return rackMetaData;
-
-	}
-
-	private RubyRuntimeMetaData parseAndSetUpRuntime(VirtualFile rackRoot, String rackEnv, Map<String, Object> config) {
-		RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
-		runtimeMetaData.setBaseDir(rackRoot);
-		
-		Map<String,String> env = (Map<String, String>) config.get( "environment" );
-		runtimeMetaData.setEnvironment( env );
-		
-		RackRuntimeInitializer initializer = new RackRuntimeInitializer(rackRoot, rackEnv);
-		runtimeMetaData.setRuntimeInitializer(initializer);
-		return runtimeMetaData;
-	}
-	
-	private PoolMetaData setUpPoolMetaData() {
-		PoolMetaData poolMetaData = new PoolMetaData("web");
-		poolMetaData.setShared();
-		return poolMetaData;
-	}
-
-	@SuppressWarnings("unchecked")
-	private VirtualFile getRackRoot(Map<String, Object> config) throws IOException {
-
-		Map<String, Object> application = (Map<String, Object>) config.get(APPLICATION_KEY);
-		String rackRoot = application.get(RACK_ROOT_KEY).toString();
-
-		VirtualFile rackRootFile = VFS.getChild(rackRoot);
-		// TODO close handle on undeploy
-		// VFS.mountReal(new File(rackRoot), rackRootFile);
-
-		return rackRootFile;
-	}
-
-	@SuppressWarnings("unchecked")
-	private Deployment parseAndSetUp(VFSDeploymentUnit unit, VirtualFile file) throws URISyntaxException, IOException {
-		Yaml yaml = new Yaml();
-
-		Map<String, Object> config = (Map<String, Object>) yaml.load(file.openStream());
-
-		if (config == null) {
-			return null;
-		}
-
-		VirtualFile rackRootFile = getRackRoot(config);
-		RackApplicationMetaData rackMetaData = parseAndSetUpApplication(unit, rackRootFile, config);
-
-		RubyRuntimeMetaData runtimeMetaData = parseAndSetUpRuntime(rackRootFile, rackMetaData.getRackEnv(), config);
-		PoolMetaData poolMetaData = setUpPoolMetaData();
-
-		return createDeployment(rackRootFile, runtimeMetaData, poolMetaData, rackMetaData );
-	}
+    private Deployment parseAndSetUp(VirtualFile file) throws IOException {
+        TorqueBoxYamlParser parser = new TorqueBoxYamlParser();
+        RackApplicationMetaData rackMetaData = parser.parse(file);
+        log.info(rackMetaData);
+        return rackMetaData==null ? null : createDeployment(rackMetaData);
+    }
 }

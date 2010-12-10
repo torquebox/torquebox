@@ -5,7 +5,6 @@ module VFS
     include Java::org.jboss.vfs.VirtualFileFilter
   
     def initialize(child_path, glob)
-      #puts "init #{child_path} #{glob}"
       @child_path = child_path
       glob_segments = glob.split( '/' )
       regexp_segments = []
@@ -14,7 +13,14 @@ module VFS
         if ( gs == '**' )
           regexp_segments << '(.*)'
         else
-          gs.gsub!( /\*/, '[^\/]*')
+          gs.gsub!( /\./, '\.')
+          gs.gsub!( /\*/ ) do |m|
+            if ( $` == '' )
+              '([^\/\.][^\/]*)?'
+            else
+              '[^\/]*'
+            end
+          end
           gs.gsub!( /\?/, '.')
           gs.gsub!( /\{[^\}]+\}/ ) do |m|
             options = m[1..-2].split(',', -1)
@@ -29,20 +35,21 @@ module VFS
       end
       
       regexp_str = regexp_segments.join
-      #puts "regexp_str(1) [#{regexp_str}]"
       if ( @child_path && @child_path != '' )
-        regexp_str = ::File.join( "^#{@child_path}", "#{regexp_str}$" )
+        #regexp_str = ::File.join( "^#{@child_path}", "#{regexp_str}$" )
+        if ( @child_path[-1,1] == '/' )
+          regexp_str = "^#{@child_path}#{regexp_str}$"
+        else
+          regexp_str = "^#{@child_path}/#{regexp_str}$"
+        end
       else
         regexp_str = "^#{regexp_str}$"
       end
-      #puts "regexp_str(2) [#{regexp_str}]"
       @regexp = Regexp.new( regexp_str )
     end
   
     def accepts(file)
-      #puts "accepts(#{file.path_name}) vs #{@regexp}"
       acceptable = ( !!( file.path_name =~ @regexp ) )
-      #puts "   -> #{acceptable}"
       !!( file.path_name =~ @regexp )
     end
   end

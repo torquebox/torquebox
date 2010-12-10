@@ -6,8 +6,9 @@
   <bean name="RailsRootRecognizingDeployer"         class="org.torquebox.rails.deployers.RailsRootRecognizingDeployer"/>
   <bean name="RailsGemVersionDeployer"              class="org.torquebox.rails.deployers.RailsGemVersionDeployer"/>
   <bean name="AppRailsYamlParsingDeployer"          class="org.torquebox.rails.deployers.AppRailsYamlParsingDeployer"/>
-  <bean name="RailsRubyRuntimeFactoryDescriber"     class="org.torquebox.rails.deployers.RailsRubyRuntimeFactoryDescriber"/>
   <bean name="RailsRackDeployer"                    class="org.torquebox.rails.deployers.RailsRackDeployer"/>
   <bean name="RailsAutoloadPathDeployer"            class="org.torquebox.rails.deployers.RailsAutoloadPathDeployer"/>
+  <bean name="RailsEnvYamlParsingDeployer"          class="org.torquebox.rails.deployers.RailsEnvYamlParsingDeployer"/>
+  <bean name="RailsArchiveDirectoryMounter"         class="org.torquebox.rails.deployers.RailsArchiveDirectoryMounter"/>
 
 </deployment>

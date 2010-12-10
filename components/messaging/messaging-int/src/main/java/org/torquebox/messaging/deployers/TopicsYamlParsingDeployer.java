@@ -11,6 +11,16 @@ import org.torquebox.messaging.metadata.TopicMetaData;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
+
+/**
+ * <pre>
+ * Stage: PARSE
+ *    In: topics.yml
+ *   Out: TopicMetaData
+ * </pre>
+ *
+ * Creates TopicMetaData instances from topics.yml
+ */
 public class TopicsYamlParsingDeployer extends AbstractVFSParsingDeployer<TopicMetaData> {
 
 	public TopicsYamlParsingDeployer() {

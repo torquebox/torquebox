@@ -33,6 +33,18 @@ import org.torquebox.rails.core.RailsRuntimeInitializer;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 
+
+/**
+ * <pre>
+ * Stage: DESCRIBE
+ *    In: RubyRuntimeMetaData
+ *   Out: RubyRuntimeMetaData
+ * </pre>
+ *
+ * I'm not entirely sure this can justify its existence.  I'd rather
+ * merge this behavior into RailsRubyRuntimeFactoryDescriber, it needs
+ * to deploy in a later stage than LoadPathDeployer.
+ */
 public class RailsAutoloadPathDeployer extends AbstractDeployer {
 	
 	public RailsAutoloadPathDeployer() {

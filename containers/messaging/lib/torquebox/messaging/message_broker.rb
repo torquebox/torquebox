@@ -1,3 +1,4 @@
+require 'org.torquebox.torquebox-container-foundation'
 require 'torquebox/container/foundation'
 require 'tmpdir'
 

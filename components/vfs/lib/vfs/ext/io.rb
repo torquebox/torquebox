@@ -1,4 +1,6 @@
 
+require 'vfs/ext/virtual_file'
+
 class IO
 
   class << self
@@ -69,6 +71,9 @@ class IO
           end
       end
 
+      # VFS doesn't correctly handle relative paths when
+      # retrieving the physical file so expand it
+      fd = File.expand_path( fd )
       virtual_file = org.jboss.vfs.VFS.child( fd )
 
       if ( ! create && ! virtual_file.exists )
@@ -83,17 +88,19 @@ class IO
         java_out = java.io::FileOutputStream.new( physical_file, append )
         ruby_io = java_out.to_io
       elsif ( read && write )
-        raise Error.new( "Random-access on VFS not supported" ) 
+        raise Error.new( "Random-access on VFS not supported" )
       end
-     
+
+      file_io = VFS::Ext::VirtualFile.new( ruby_io, fd )
+
       if ( block )
         begin
-          block.call( ruby_io )
+          block.call( file_io )
         ensure
-          ruby_io.close
+          file_io.close
         end
       else
-        return ruby_io
+        return file_io
       end
 
     end
@@ -101,7 +108,7 @@ class IO
     def read(name, length=nil, offset=nil)
       return read_without_vfs(name, length, offset) if ::File.exist_without_vfs?( name )
 
-      if ( name =~ /^\// || name =~ /^vfs:\// ) 
+      if ( name =~ /^\// || name =~ /^vfs:\// )
         full_path = name
       else
         full_path = File.join( Dir.pwd, name )
@@ -110,7 +117,7 @@ class IO
       raise ::Errno::ENOENT.new( "#{name} (#{virtual_file})" ) unless virtual_file.exists()
 
       stream = virtual_file.openStream()
-      io = stream.to_io 
+      io = stream.to_io
       begin
         s = io.read
       ensure

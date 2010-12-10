@@ -68,7 +68,6 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		//Map<String, Object> javaEnv = (Map<String, Object>) rubyEnv.toJava(Map.class);
 		RackEnvironment env = new RackEnvironmentImpl( ruby, servletContext, servletRequest );
 		RubyHash envHash = env.getEnv();
-		System.err.println( envHash.get( "REQUEST_METHOD" ) );
 		assertNotNull(envHash);
 
 		assertEquals("GET", envHash.get("REQUEST_METHOD"));
@@ -77,7 +76,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		assertEquals("torquebox.org", envHash.get("SERVER_NAME"));
 		assertEquals("https", envHash.get("rack.url_scheme"));
 		assertEquals( "on", envHash.get( "HTTPS" ) );
-		assertEquals(8080L, envHash.get("SERVER_PORT"));
+		assertEquals("8080", envHash.get("SERVER_PORT"));
 		assertEquals("text/html", envHash.get("CONTENT_TYPE"));
 		assertEquals(0L, envHash.get("CONTENT_LENGTH"));
 		assertEquals("10.42.42.42", envHash.get("REMOTE_ADDR"));
@@ -127,7 +126,6 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		//Map<String, Object> javaEnv = (Map<String, Object>) rubyEnv.toJava(Map.class);
 		RackEnvironment env = new RackEnvironmentImpl( ruby, servletContext, servletRequest );
 		RubyHash envHash = env.getEnv();
-		System.err.println( envHash.get( "REQUEST_METHOD" ) );
 		assertNotNull(envHash);
 
 		assertEquals("GET", envHash.get("REQUEST_METHOD"));
@@ -136,7 +134,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		assertEquals("torquebox.org", envHash.get("SERVER_NAME"));
 		assertEquals("http", envHash.get("rack.url_scheme"));
 		assertNull( envHash.get( "HTTPS" ) );
-		assertEquals(8080L, envHash.get("SERVER_PORT"));
+		assertEquals("8080", envHash.get("SERVER_PORT"));
 		assertNull( envHash.get("CONTENT_TYPE") );
 		assertEquals(0L, envHash.get("CONTENT_LENGTH"));
 		assertEquals("10.42.42.42", envHash.get("REMOTE_ADDR"));
@@ -148,6 +146,22 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 		assertNotNull(envHash.get("rack.errors"));
 		assertSame(servletRequest, envHash.get("servlet_request"));
 		assertSame(servletRequest, envHash.get("java.servlet_request"));
+	}
+	
+	@Test
+	public void testMissingContentLength() throws Exception {
+
+		final ServletContext servletContext = mock(ServletContext.class);
+		final HttpServletRequest servletRequest = mock(HttpServletRequest.class);
+		final ServletInputStream inputStream = new MockServletInputStream(new ByteArrayInputStream("".getBytes()));
+
+		when(servletRequest.getInputStream()).thenReturn(inputStream);
+		when(servletRequest.getContentLength()).thenReturn(-1);
+
+		RackEnvironment env = new RackEnvironmentImpl( ruby, servletContext, servletRequest );
+		RubyHash envHash = env.getEnv();
+		assertNotNull(envHash);
+		assertNull(envHash.get("CONTENT_LENGTH"));
 	}
 	
 	@SuppressWarnings("unchecked")

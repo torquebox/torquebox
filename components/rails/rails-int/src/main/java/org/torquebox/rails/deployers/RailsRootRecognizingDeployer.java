@@ -31,7 +31,19 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
 
+/**
+ * <pre>
+ * Stage: NOT_INSTALLED
+ *    In: 
+ *   Out: RailsApplicationMetaData, RackApplicationMetaData
+ * </pre>
+ *
+ * Creates metadata if it recognizes a deployment as a Rails
+ * application.  
+ */
 public class RailsRootRecognizingDeployer extends AbstractDeployer {
 	
 	public RailsRootRecognizingDeployer() {
@@ -55,13 +67,16 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
 		
 		try {
 			if ( root.getChild( "config/environment.rb" ).exists() ) {
-				log.debug( "attaching: " + unit );
-				RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData( root );
-				unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
+                log.info("Recognized as Rails app: "+root);
+                RackApplicationMetaData rackMetaData = new WriteOnceRackApplicationMetaData();
+                rackMetaData.setRackRoot( root );
+                if ( root.getChild( "public" ).exists() ) {
+                    rackMetaData.setStaticPathPrefix( "/public" );
+                }
+                unit.addAttachment( RackApplicationMetaData.class, rackMetaData );
+				unit.addAttachment( RailsApplicationMetaData.class, new RailsApplicationMetaData( rackMetaData ) );
 			}
-		} catch (IOException e) {
-			throw new DeploymentException( e );
-		} catch (URISyntaxException e) {
+		} catch (Exception e) {
 			throw new DeploymentException( e );
 		}
 	}

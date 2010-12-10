@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-client-parent</artifactId>
-    <version>1.0.0.Beta23-SNAPSHOT</version>
+    <version>1.0.0.RC1-SNAPSHOT</version>
     <relativePath>../client-parent/pom.xml</relativePath>
   </parent>
 
@@ -42,6 +42,12 @@
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-logging</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.naming</groupId>
+      <artifactId>jnp-client</artifactId>
       <scope>runtime</scope>
     </dependency>
 

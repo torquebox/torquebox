@@ -2,13 +2,19 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <bean name="RackStructure"                          class="org.torquebox.rack.deployers.RackStructure"/>
+  <bean name="RackRecognizingDeployer"                class="org.torquebox.rack.deployers.RackRecognizingDeployer"/>
   <bean name="AppRackYamlParsingDeployer"             class="org.torquebox.rack.deployers.AppRackYamlParsingDeployer"/>
-
-  <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>
-
   <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer"/>
   <bean name="RackApplicationPoolDeployer"            class="org.torquebox.rack.deployers.RackApplicationPoolDeployer"/>
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>
   <bean name="RackEnvironmentDeployer"                class="org.torquebox.rack.deployers.RackEnvironmentDeployer"/>
+  <bean name="RackRuntimeDeployer"                    class="org.torquebox.rack.deployers.RackRuntimeDeployer"/>
+  <bean name="RackDefaultsDeployer"                   class="org.torquebox.rack.deployers.RackDefaultsDeployer"/>
+  <bean name="TorqueBoxYamlParsingDeployer"           class="org.torquebox.rack.deployers.TorqueBoxYamlParsingDeployer"/>
+  <bean name="RackApplicationExploder"                class="org.torquebox.rack.deployers.RackApplicationExploder"/>
+
+  <!-- deprecated -->
+  <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>
 
 </deployment>

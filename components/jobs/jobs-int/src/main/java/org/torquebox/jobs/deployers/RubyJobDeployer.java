@@ -36,6 +36,16 @@ import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
+
+/**
+ * <pre>
+ * Stage: REAL
+ *    In: ScheduledJobMetaData
+ *   Out: ScheduledJob
+ * </pre>
+ *
+ * Creates objects from metadata
+ */
 public class RubyJobDeployer extends AbstractDeployer {
 
 	public RubyJobDeployer() {

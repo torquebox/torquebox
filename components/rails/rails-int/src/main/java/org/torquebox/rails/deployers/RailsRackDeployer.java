@@ -33,55 +33,47 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.rails.metadata.RailsGemVersionMetaData;
+import org.torquebox.rails.core.RailsRuntimeInitializer;
+import org.torquebox.rack.deployers.RackDefaultsDeployer;
 
+
+/**
+ * <pre>
+ * Stage: POST_PARSE
+ *    In: RailsApplicationMetaData, RackApplicationMetaData
+ *   Out: RackApplicationMetaData
+ * </pre>
+ *
+ * All Rails apps are essentially Rack apps, so from a Rails app we
+ * construct Rack metadata to hand off to the Rack deployers.  We
+ * assume that any deployer that attached a RailsApplicationMetaData
+ * also attached a corresponding RackApplicationMetaData.
+ */
 public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplicationMetaData> {
-
-    // private static final Logger log =
-    // Logger.getLogger(RailsRackDeployer.class);
 
     public RailsRackDeployer() {
         super(RailsApplicationMetaData.class);
         addInput(RackApplicationMetaData.class);
-        addInput(RailsGemVersionMetaData.class);
+        addInput(RackDefaultsDeployer.COMPLETE);
         addOutput(RackApplicationMetaData.class);
         setStage(DeploymentStages.POST_PARSE);
     }
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RailsApplicationMetaData railsAppMetaData) throws DeploymentException {
-
-        log.info("deploy(" + unit + ")");
-        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
-
-        if (rackMetaData == null) {
-            rackMetaData = new RackApplicationMetaData();
-            rackMetaData.setContextPath("/");
-            unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
-        }
-
-        rackMetaData.setStaticPathPrefix("/public");
-        rackMetaData.setRackRoot(railsAppMetaData.getRailsRoot());
-        rackMetaData.setRackEnv(railsAppMetaData.getRailsEnv());
-
-        RailsGemVersionMetaData railsVersionMetaData = unit.getAttachment(RailsGemVersionMetaData.class);
-
-        String rackUpScript = null;
-
-        if (railsVersionMetaData.isRails3()) {
-            VirtualFile configRu = railsAppMetaData.getRailsRoot().getChild("config.ru");
-            rackMetaData.setRackUpScriptLocation(configRu);
-            try {
-                rackUpScript = read(configRu);
-            } catch (IOException e) {
-                throw new DeploymentException( e );
+        log.info(railsAppMetaData);
+        try {
+            RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
+            if (railsAppMetaData.isRails3()) {
+                rackMetaData.setRackUpScriptLocation( rackMetaData.getRackRoot().getChild("config.ru") );
+            } else {
+                rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
             }
-        } else {
-            rackUpScript = getRackUpScript(rackMetaData.getContextPath());
+            rackMetaData.setRuntimeInitializer( new RailsRuntimeInitializer( railsAppMetaData ) );
+            log.info(rackMetaData);
+        } catch (Exception e) {
+            throw new DeploymentException(e);
         }
-        rackMetaData.setRackUpScript(rackUpScript);
-
-        unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
     }
 
     protected String getRackUpScript(String context) {
@@ -90,24 +82,6 @@ public class RailsRackDeployer extends AbstractSimpleVFSRealDeployer<RailsApplic
         }
         return "TORQUEBOX_RACKUP_CONTEXT=%q(" + context + ")\n" + "require %q(org/torquebox/rails/deployers/rackup)\n" + "run TorqueBox::Rails.app\n";
 
-    }
-
-    private String read(VirtualFile file) throws IOException {
-        StringBuilder contents = new StringBuilder();
-        InputStream in = file.openStream();
-        Reader reader = new InputStreamReader(in);
-
-        try {
-            char[] buf = new char[1024];
-
-            while (reader.read(buf) >= 0 ) {
-                contents.append(buf);
-            }
-
-            return contents.toString();
-        } finally {
-            reader.close();
-        }
     }
 
 }

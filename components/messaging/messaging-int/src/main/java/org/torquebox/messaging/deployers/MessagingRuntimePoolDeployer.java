@@ -11,15 +11,32 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.metadata.EnvironmentMetaData;
 
+
+/**
+ * <pre>
+ * Stage: DESCRIBE
+ *    In: EnvironmentMetaData, PoolMetaData, MessageProcessorMetaData
+ *   Out: PoolMetaData
+ * </pre>
+ *
+ * Ensures that pool metadata for messaging is available
+ */
 public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
     private String instanceFactoryName;
 
+    /**
+     * I'd rather use setInput(MessageProcessorMetaData) and omit the
+     * getAllMetaData short circuit in deploy(), but that requires
+     * attachers to pass an ExpectedType, and I don't think we can
+     * assume that.
+     */
     public MessagingRuntimePoolDeployer() {
-        setStage(DeploymentStages.PRE_REAL);
+        setStage(DeploymentStages.DESCRIBE);
+        addInput( MessageProcessorMetaData.class );
         addInput( EnvironmentMetaData.class );
-        addInput(PoolMetaData.class);
-        addOutput(PoolMetaData.class);
+        addInput( PoolMetaData.class );
+        addOutput( PoolMetaData.class );
     }
     
     public void setInstanceFactoryName(String instanceFactoryName) {
@@ -35,18 +52,7 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
         if (unit.getAllMetaData(MessageProcessorMetaData.class).isEmpty()) {
             return;
         }
-
-        Set<? extends PoolMetaData> allPools = unit.getAllMetaData(PoolMetaData.class);
-
-        PoolMetaData pool = null;
-
-        for (PoolMetaData each : allPools) {
-            if (each.getName().equals("messaging")) {
-                pool = each;
-                break;
-            }
-        }
-
+        PoolMetaData pool = AttachmentUtils.getAttachment( unit, "messaging", PoolMetaData.class );
         if (pool == null) {
             EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();

@@ -9,7 +9,6 @@ target
 dep.tree
 log
 tmp
-cache
 .loadpath
 .classpath
 .settings
@@ -17,5 +16,5 @@ cache
 *~
 package-cache
 release.properties
-
-/TAGS
+TAGS
+Gemfile.lock

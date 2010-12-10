@@ -8,10 +8,17 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.metadata.PoolMetaData;
+import org.torquebox.mc.AttachmentUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 /**
+ * <pre>
+ * Stage: PARSE
+ *    In: pooling.yml
+ *   Out: PoolMetaData
+ * </pre>
+ *
  * Parsing deployer for {@code pooling.yml}.
  * 
  * <p>
@@ -81,7 +88,7 @@ public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<PoolM
                         }
                     }
                     log.info("Configured Ruby runtime pool: "+poolMetaData);
-                    unit.addAttachment(PoolMetaData.class.getName() + "$" + name, poolMetaData, PoolMetaData.class);
+                    AttachmentUtils.multipleAttach( unit, poolMetaData, name );
                 }
             }
         } catch (YAMLException e) {

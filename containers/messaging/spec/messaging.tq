@@ -1,5 +1,0 @@
-
-/queues/foo:
-  MyConsumer:
-    config:
-      nothing: here

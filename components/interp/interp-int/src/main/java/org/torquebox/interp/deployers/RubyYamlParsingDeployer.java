@@ -15,6 +15,12 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 /**
+ * <pre>
+ * Stage: REAL
+ *    In: RubyRuntimeMetaData
+ *   Out: RubyRuntimeMetaData
+ * </pre>
+ *
  * Parsing deployer for {@code ruby.yml} to specify ruby 1.8 -vs- 1.9, at least.
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
