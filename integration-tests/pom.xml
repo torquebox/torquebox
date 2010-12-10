@@ -167,6 +167,7 @@
         </plugins>
       </build>
     </profile>
+
   </profiles>
 
   <build>
@@ -220,7 +221,6 @@
           </execution>
         </executions>
       </plugin>
-
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
