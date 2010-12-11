@@ -36,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jboss.logging.Logger;
+import org.jruby.exceptions.RaiseException;
 import org.torquebox.rack.core.RackEnvironmentImpl;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationPool;
@@ -112,6 +113,10 @@ public class RackFilter implements Filter {
 			//rackEnv = rackApp.createEnvironment(servletContext, request);
 			rackEnv = new RackEnvironmentImpl( rackApp.getRuby(), servletContext, request );
 			rackApp.call(rackEnv).respond(response);
+		} catch (RaiseException e) {
+			log.error("Error invoking Rack filter", e);
+			log.error("Underlying Ruby exception", e.getCause() );
+			throw new ServletException(e);
 		} catch (Exception e) {
 			log.error("Error invoking Rack filter", e);
 			throw new ServletException(e);

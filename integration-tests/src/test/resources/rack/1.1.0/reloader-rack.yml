@@ -1,0 +1,6 @@
+---
+application:
+  RACK_ROOT: ${basedir}/target/apps/rack/1.x/reloader
+  RACK_ENV: development
+web:
+  context: /reloader-rack

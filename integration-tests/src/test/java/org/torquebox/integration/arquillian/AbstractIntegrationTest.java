@@ -1,5 +1,6 @@
 package org.torquebox.integration.arquillian;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,9 +49,9 @@ public abstract class AbstractIntegrationTest {
     }
 
     protected String slurpResource(String path) throws IOException {
-        System.err.println( "attempting to slurp: " + path );
+        System.err.println("attempting to slurp: " + path);
         InputStream in = getClass().getClassLoader().getResourceAsStream(path);
-        System.err.println("  in=" + in );
+        System.err.println("  in=" + in);
         try {
             return slurp(in);
         } finally {
@@ -72,6 +73,20 @@ public abstract class AbstractIntegrationTest {
         }
 
         return builder.toString();
+    }
+
+    protected void rm(File file) throws IOException {
+        if (file.exists()) {
+            if (file.isDirectory()) {
+                for (File child : file.listFiles()) {
+                    rm(child);
+                }
+            }
+            if (!file.delete()) {
+                throw new IOException("Unable to delete: " + file.getAbsolutePath());
+            }
+        }
+
     }
 
 }

@@ -28,19 +28,10 @@ public class BasicProductionRails2Test extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testCaching() {
+    public void testCaching() throws Exception {
         File cacheDir = new File("apps/rails/2.x/basic/tmp/cache/views");
-
-        if (cacheDir.exists()) {
-            System.err.println("deleting cache dir");
-            if (cacheDir.delete()) {
-                System.err.println("removed: " + cacheDir.getAbsolutePath());
-            } else {
-                System.err.println("error removing: " + cacheDir.getAbsolutePath());
-            }
-        } else {
-            System.err.println("no dir: " + cacheDir.getAbsolutePath());
-        }
+        
+        rm( cacheDir );
 
         WebElement element = null;
 
