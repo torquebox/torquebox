@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
-<chapter id="rails2">
+<chapter id="rails">
   <title>Ruby on Rails</title>
 
   <section id="rails-support">
@@ -152,8 +152,8 @@ gem 'jdbc-sqlite3'</programlisting></para>
         session store, which requires no support from the server. TorqueBox
         can leverage the cluster-compatible sessions provided by the
         application server to keep session state on the server. The TorqueBox
-        session store requires no specific configuration of a database or other
-        technology. To use the TorqueBox session store, you must adjust
+        session store requires no specific configuration of a database or
+        other technology. To use the TorqueBox session store, you must adjust
         <filename>config/initializers/session_store.rb</filename>. The
         contents vary depending on the version of Rails your application
         uses.</para>
@@ -192,5 +192,29 @@ gem 'jdbc-sqlite3'</programlisting></para>
       pure-Ruby or pure-Java implementations. Some native gems using FFI are
       usable within TorqueBox.</para>
     </section>
+  </section>
+
+  <section>
+    <title>Using Application-Server Sessions</title>
+
+    <para>By using the TorqueBox application-server-based session store, your
+    application gets the benefits of clusterable sessions without having to
+    setup and maintain a database.</para>
+
+    <para>Additionally, by using the TorqueBox session store, your application
+    can communicate between both the Java and Ruby sides through the HTTP
+    session. Where possible, elemental scalar attribtues of the Ruby session
+    are synchronized to similar attribtues in the Java session, and
+    vice-versa.</para>
+
+    <para>For complex objects, they are retained in a Ruby hash, and
+    serialized as a blob into a single attribute of the Java session.</para>
+
+    <para>When copying between the Ruby and Java sessions, attribtues will be
+    retained under symbol keys in the ruby session, and string keys in the
+    Java session.</para>
+
+    <para>The supported scalar types are <type>numerics</type>,
+    <type>strings</type>, <type>booleans</type> and <type>nil</type>.</para>
   </section>
 </chapter>

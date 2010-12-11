@@ -1,0 +1,29 @@
+<div id="success">
+  <div>
+    <%= session.inspect %>
+  </div>
+  <div id="a_fixnum">
+    <div id="a_fixnum_ruby">
+      <%= session[:a_fixnum] %>
+    </div>
+    <div id="a_fixnum_java">
+      <%= @java_session.getAttribute('a_fixnum') %>
+    </div>
+  </div>
+  <div id="a_string">
+    <div id="a_string_ruby">
+      <%= session[:a_string] %>
+    </div>
+    <div id="a_string_java">
+      <%= @java_session.getAttribute('a_string') %>
+    </div>
+  </div>
+  <div id="a_boolean">
+    <div id="a_boolean_ruby">
+      <%= session[:a_boolean] %>
+    </div>
+    <div id="a_boolean_java">
+      <%= @java_session.getAttribute('a_boolean') %>
+    </div>
+  </div>
+</div>

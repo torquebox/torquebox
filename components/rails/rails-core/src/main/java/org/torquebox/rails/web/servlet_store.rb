@@ -55,9 +55,10 @@ module TorqueBox
               session_data.update( data ) if Hash === data
             end
           else
-            session_data[key] = session.getAttribute(key)
+            session_data[key.to_sym] = session.getAttribute(key)
           end
         end
+        initial_keys = session_data.keys
         session_data[:session_id] = session.getId()
         metaclass = class << session_data
           def url_suffix
@@ -66,20 +67,24 @@ module TorqueBox
           self
         end
         metaclass.send(:define_method, :destroy) { session.invalidate }
+        session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
         session_data
       end
       
       def store_session_data(session, session_data)
         hash = session_data.dup
+        initial_keys = hash[:TORQUEBOX_INITIAL_KEYS] || []
+        removed_keys = initial_keys - hash.keys 
+        hash.delete(:TORQUEBOX_INITIAL_KEYS)
         hash.delete_if do |key,value|
-          if ( String === key )
+          if ( String === key || Symbol === key )
             case value
               when String, Numeric, true, false, nil
-                session.setAttribute( key, value )
+                session.setAttribute( key.to_s, value )
                 true
             else
               if value.respond_to?(:java_object)
-                session.setAttribute( key, value )
+                session.setAttribute( key.to_s, value )
                 true
               else
                 false
@@ -91,6 +96,9 @@ module TorqueBox
           marshalled_string = Marshal.dump(hash)
           marshalled_bytes = marshalled_string.to_java_bytes
           session.setAttribute(RAILS_SESSION_KEY, marshalled_bytes)
+        end
+        removed_keys.each do |k|
+          session.removeAttribute( k.to_s )
         end
       end
     end
