@@ -27,17 +27,16 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-
 /**
  * <pre>
  * Stage: POST_PARSE
  *    In: RackApplicationMetaData
  *   Out: RackApplicationMetaData, "ALL FIELDS SET"
  * </pre>
- *
+ * 
  */
 public class RackDefaultsDeployer extends AbstractDeployer {
-    
+
     public static final String COMPLETE = "ALL FIELDS SET";
 
     public RackDefaultsDeployer() {
@@ -50,12 +49,14 @@ public class RackDefaultsDeployer extends AbstractDeployer {
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         try {
             RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
-            metadata.setRackEnv(               "development" );
-            metadata.setRackUpScriptLocation(  "config.ru" );
-            metadata.addHost(                  "localhost" );
-            metadata.setContextPath(           "/" );
-            metadata.setStaticPathPrefix(      "/public" );
-            log.info(metadata); 
+            metadata.setRackEnv("development");
+            metadata.setRackUpScriptLocation("config.ru");
+            if (metadata.getHosts().isEmpty()) {
+                metadata.addHost("localhost");
+            }
+            metadata.setContextPath("/");
+            metadata.setStaticPathPrefix("/public");
+            log.info(metadata);
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
