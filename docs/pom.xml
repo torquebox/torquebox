@@ -14,14 +14,6 @@
   <name>TorqueBox Documentation</name>
   <description>Documentation for TorqueBox</description>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-docbook-support</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -50,44 +42,15 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>prepare-xslt</id>
-            <phase>generate-sources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.torquebox</groupId>
-                  <artifactId>torquebox-docbook-support</artifactId>
-                  <version>${project.version}</version>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.directory}/jbossorg-xslt/</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.jboss.maven.plugins</groupId>
         <artifactId>maven-jdocbook-plugin</artifactId>
         <extensions>true</extensions>
         <dependencies>
-<!--
           <dependency>
-            <groupId>org.jboss</groupId>
-            <artifactId>jbossorg-docbook-xslt</artifactId>
+            <groupId>org.jboss.pressgang</groupId>
+            <artifactId>pressgang-xslt</artifactId>
             <version>1.2.0</version>
           </dependency>
-          <dependency>
-            <groupId>org.torquebox</groupId>
-            <artifactId>torquebox-docbook-support</artifactId>
-            <version>${project.version}</version>
-          </dependency>
--->
           <dependency>
             <groupId>net.sf.docbook</groupId>
             <artifactId>docbook</artifactId>
@@ -121,9 +84,6 @@
             <format>
               <formatName>pdf</formatName>
               <stylesheetResource>file:${project.parent.basedir}/src/main/xsl/pdf-style.xsl</stylesheetResource>
-<!--
-              <stylesheetResource>classpath:/xslt/org/jboss/pdf.xsl</stylesheetResource>
--->
               <finalName>${pom.artifactId}.pdf</finalName>
             </format>
             <format>
