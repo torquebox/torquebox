@@ -15,7 +15,7 @@
   <description></description>
 
   <properties>
-    <version.arquillian>1.0.0.Alpha3</version.arquillian>
+    <version.arquillian>1.0.0.Alpha4</version.arquillian>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
 
     <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
@@ -67,6 +67,12 @@
       <artifactId>slf4j-nop</artifactId>
       <version>1.5.6</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
     </dependency>
 
     <dependency>
@@ -155,6 +161,7 @@
         </plugins>
       </build>
     </profile>
+
   </profiles>
 
   <build>
@@ -231,12 +238,26 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <configuration>
+          <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</gemPath>
+          <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</gemHome>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-specs</id>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <excludes>
             <exclude>**/arquillian/**</exclude>
-          </excludes>>
+          </excludes>
           <systemProperties>
             <property>
               <name>log4j.configuration</name>

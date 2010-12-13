@@ -307,7 +307,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 			// jrubyHome = jrubyHome.replaceAll( "!/", "/" );
 		}
 		
-		// System.err.println( "JRUBY_HOME=>[" + jrubyHome + "]" );
+		System.err.println( "JRUBY_HOME=>[" + jrubyHome + "]" );
 
 		if (jrubyHome != null) {
 			config.setJRubyHome(jrubyHome);
@@ -334,6 +334,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		
 		performRuntimeInitialization(runtime);
 		runtime.getLoadService().require("rubygems");
+		runtime.evalScriptlet( "puts Gem.path.inspect" );
         runtime.evalScriptlet("begin; require 'vfs'; puts 'Loaded VFS'; rescue Exception; puts 'Failed to load VFS'; end");
 		return runtime;
 	}
@@ -375,9 +376,16 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		if (path == null) {
 			env.put("PATH", "");
 		}
-		if (this.gemPath != null) {
-			env.put("GEM_PATH", this.gemPath);
-			env.put("GEM_HOME", this.gemPath);
+		
+		String gemPath = System.getProperty( "gem.path" );
+		
+		if ( gemPath == null ) {
+		    gemPath = this.gemPath;
+		}
+		
+		if (gemPath != null) {
+			env.put("GEM_PATH", gemPath);
+			env.put("GEM_HOME", gemPath);
 		}
 		if (this.applicationEnvironment != null) {
 			env.putAll(this.applicationEnvironment);

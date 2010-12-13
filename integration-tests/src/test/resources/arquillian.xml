@@ -14,7 +14,7 @@
     <jboss:httpPort>8080</jboss:httpPort>
     <!--<jboss:jbossHome>./target/integ-dist/jboss</jboss:jbossHome>-->
     <jboss:jbossHome>${integ.dist.dir}/jboss</jboss:jbossHome>
-    <jboss:javaVmArguments>-Xmx512m -XX:MaxPermSize=128m -Djruby_home.env.ignore=true</jboss:javaVmArguments>
+    <jboss:javaVmArguments>-Xmx512m -XX:MaxPermSize=128m -Djruby_home.env.ignore=true -Dgem.path=${integ.dist.dir}/jruby/lib/ruby/gems/1.8</jboss:javaVmArguments>
   </jboss:container> 
 
 </arquillian>
