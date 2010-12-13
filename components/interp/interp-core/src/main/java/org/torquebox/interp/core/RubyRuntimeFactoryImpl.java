@@ -329,8 +329,10 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		} else {
             log.warn("No initializer set for runtime");
         }
+		
 		injectKernel(runtime);
-		setUpConstants(runtime, this.applicationName);
+		
+		performRuntimeInitialization(runtime);
 		runtime.getLoadService().require("rubygems");
         runtime.evalScriptlet("begin; require 'vfs'; puts 'Loaded VFS'; rescue Exception; puts 'Failed to load VFS'; end");
 		return runtime;
@@ -343,16 +345,27 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		}
 	}
 
-	private void setUpConstants(Ruby runtime, String applicationName) {
-		runtime.evalScriptlet("require %q(org/torquebox/interp/core/runtime_constants)\n");
-		RubyModule jbossModule = runtime.getClassFromPath("JBoss");
-		JavaEmbedUtils.invokeMethod(runtime, jbossModule, "setup_constants", new Object[] { applicationName }, void.class);
+	private void performRuntimeInitialization(Ruby runtime) {
+		runtime.evalScriptlet("require %q(org/torquebox/interp/core/runtime_initialization)\n");
+		defineVersions(runtime);
+		setApplicationName(runtime );
+	    
+	}
+	private void defineVersions(Ruby runtime) {
+		RubyModule torqueBoxModule = runtime.getClassFromPath("TorqueBox");
+		JavaEmbedUtils.invokeMethod(runtime, torqueBoxModule, "define_versions", new Object[] { log }, void.class);
+	}
+	
+	private void setApplicationName(Ruby runtime) {
+		RubyModule torqueBoxModule = runtime.getClassFromPath("TorqueBox");
+		JavaEmbedUtils.invokeMethod(runtime, torqueBoxModule, "application_name=", new Object[] { applicationName }, void.class);
+	    
 	}
 
 	private void injectKernel(Ruby runtime) {
 		runtime.evalScriptlet("require %q(org/torquebox/interp/core/kernel)");
-		RubyModule jbossKernel = runtime.getClassFromPath("TorqueBox::Kernel");
-		JavaEmbedUtils.invokeMethod(runtime, jbossKernel, "kernel=", new Object[] { this.kernel }, void.class);
+		RubyModule torqueBoxKernelModule = runtime.getClassFromPath("TorqueBox::Kernel");
+		JavaEmbedUtils.invokeMethod(runtime, torqueBoxKernelModule, "kernel=", new Object[] { this.kernel }, void.class);
 	}
 
 	protected Map<String, String> createEnvironment() {
@@ -369,7 +382,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		if (this.applicationEnvironment != null) {
 			env.putAll(this.applicationEnvironment);
 		}
-		// System.err.println( "environment=>" + env );
 		return env;
 	}
 

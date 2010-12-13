@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.torquebox.interp.spi.RuntimeInitializer;
@@ -109,6 +110,25 @@ public class RubyRuntimeFactoryImplTest {
         Map<String, String> env2 = factory.createEnvironment();
         assertNotNull(env2.get("CHEESE"));
         assertEquals(env.get("CHEESE"), env2.get("CHEESE"));
+    }
+    
+    @Test
+    public void testVersionsDefined() throws Exception {
+        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
+        Ruby ruby = factory.create();
+        
+        IRubyObject torqueboxVersion = ruby.evalScriptlet( "TorqueBox.version" );
+        assertNotNull( torqueboxVersion );
+        assertEquals( System.getProperty( "test.version.torquebox"), torqueboxVersion.toString() );
+        
+        IRubyObject jbossasVersion = ruby.evalScriptlet( "TorqueBox.versions[:jbossas]" );
+        assertNotNull( jbossasVersion );
+        assertEquals( System.getProperty( "test.version.jbossas"), jbossasVersion.toString() );
+        
+        IRubyObject jrubyVersion = ruby.evalScriptlet( "TorqueBox.versions[:jruby]" );
+        assertNotNull( jrubyVersion );
+        assertEquals( System.getProperty( "test.version.jruby"), jrubyVersion.toString() );
+        
     }
 
     static class MockRuntimeInitializer implements RuntimeInitializer {

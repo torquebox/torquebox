@@ -89,6 +89,7 @@
       </resource> 
       <resource> 
         <directory>src/main/java</directory> 
+        <filtering>true</filtering>
         <includes>
           <include>**/*.rb</include>
           <include>**/*.properties</include>
@@ -133,6 +134,18 @@
             <property>
               <name>log4j.configuration</name>
               <value>test-log4j.xml</value>
+            </property>
+            <property>
+              <name>test.version.torquebox</name>
+              <value>${project.version}</value>
+            </property>
+            <property>
+              <name>test.version.jbossas</name>
+              <value>${version.jbossas}</value>
+            </property>
+            <property>
+              <name>test.version.jruby</name>
+              <value>${version.jruby}</value>
             </property>
           </systemProperties>
         </configuration>
