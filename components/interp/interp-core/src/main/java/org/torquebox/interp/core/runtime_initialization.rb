@@ -30,8 +30,8 @@ module TorqueBox
     self.versions[:jruby]     = VersionSpec.new( "${version.jruby}" )
 
     unless ( logger.nil? )
-      logger.info( "TorqueBox...#{self.versions[:jbossas]}" )
-      logger.info( "JBossAS.....#{self.versions[:torquebox]}" )
+      logger.info( "TorqueBox...#{self.versions[:torquebox]}" )
+      logger.info( "JBossAS.....#{self.versions[:jbossas]}" )
       logger.info( "JRuby.......#{self.versions[:jruby]}" )
     end
   end
