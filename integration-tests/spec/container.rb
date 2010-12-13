@@ -4,10 +4,12 @@ module Spec
   module Example
     module ExampleGroupMethods
 
-      def deploy path, options = {}
+=begin
+      def deploy( path, options = {} )
         @run_mode = options.fetch(:run_mode, :client)
         @deployment = path
       end
+
       attr_reader :deployment
       
       def run_mode
@@ -29,6 +31,7 @@ module Spec
         archive.addResource( deploymentDescriptorUrl, "/META-INF/#{tail}" )
         archive
       end
+=end
 
     end
   end
@@ -45,15 +48,7 @@ Spec::Runner.configure do |config|
     
   config.before(:all) do
     puts "JC: before(:all)"
-    self.class.add_class_annotation( org.jboss.arquillian.api.Run => { "value" => self.class.run_mode } )
-
-    # I wouldn't think I'd need to do this...
-    self.class.add_method_signature("create_deployment", [org.jboss.shrinkwrap.api.spec.JavaArchive])
-    # This should be enough...
-    self.class.add_method_annotation( "create_deployment", org.jboss.arquillian.api.Deployment => {} )
-
-    @real_java_class = self.class.become_java!
-    puts "JC: methods", @real_java_class.getMethods.to_a
+    @real_java_class = self.class.become_java!('.')
     Thread.current[:test_runner_adaptor].beforeClass(@real_java_class)
   end
 
@@ -64,7 +59,7 @@ Spec::Runner.configure do |config|
 
   config.after(:suite) do
     puts "JC: after(:suite)"
-    Thread.current[:test_runner_adaptor].afterSuite
+    Thread.current[:test_runner_adaptor].afterSuite if Thread.current[:test_runner_adapter].respond_to?( :afterSuite )
   end
 
 end
