@@ -15,7 +15,7 @@
   <description></description>
 
   <properties>
-    <version.arquillian>1.0.0.Alpha3</version.arquillian>
+    <version.arquillian>1.0.0.Alpha4</version.arquillian>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
 
     <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
@@ -98,12 +98,6 @@
       <artifactId>torquebox-common-core</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <version>${version.jruby}</version>
     </dependency>
 
     <dependency>
@@ -241,7 +235,7 @@
         <configuration>
           <excludes>
             <exclude>**/arquillian/**</exclude>
-          </excludes>>
+          </excludes>
           <systemProperties>
             <property>
               <name>log4j.configuration</name>

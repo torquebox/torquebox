@@ -37,24 +37,33 @@ end
 Spec::Runner.configure do |config|
 
   config.before(:suite) do
+    puts "JC: before(:suite)"
     configuration = org.jboss.arquillian.impl.XmlConfigurationBuilder.new.build()
     Thread.current[:test_runner_adaptor] = org.jboss.arquillian.impl.DeployableTestBuilder.build(configuration)
     Thread.current[:test_runner_adaptor].beforeSuite
   end
     
   config.before(:all) do
+    puts "JC: before(:all)"
     self.class.add_class_annotation( org.jboss.arquillian.api.Run => { "value" => self.class.run_mode } )
-    # TODO: As of JRuby 1.5.3, class methods are ignored by become_java! so this won't work:
+
+    # I wouldn't think I'd need to do this...
+    self.class.add_method_signature("create_deployment", [org.jboss.shrinkwrap.api.spec.JavaArchive])
+    # This should be enough...
     self.class.add_method_annotation( "create_deployment", org.jboss.arquillian.api.Deployment => {} )
+
     @real_java_class = self.class.become_java!
+    puts "JC: methods", @real_java_class.getMethods.to_a
     Thread.current[:test_runner_adaptor].beforeClass(@real_java_class)
   end
 
   config.after(:all) do
+    puts "JC: after(:all)"
     Thread.current[:test_runner_adaptor].afterClass(@real_java_class)
   end
 
   config.after(:suite) do
+    puts "JC: after(:suite)"
     Thread.current[:test_runner_adaptor].afterSuite
   end
 

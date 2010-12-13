@@ -31,15 +31,19 @@ import org.jruby.RubyClass;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.javasupport.JavaEmbedUtils;
 
-
+/**
+ * Use this class by naming it in src/test/resources/META-INF/services/org.jboss.arquillian.spi.ApplicationArchiveGenerator 
+ */
 public class RSpecArchiveGenerator implements ApplicationArchiveGenerator {
     
     public Archive<?> generateApplicationArchive(TestClass testCase) {
+        System.out.println("JC: generateApplicationArchive for "+testCase.getName());
         Validate.notNull(testCase, "TestCase must be specified");
         return createDeployment("rack/1.1.0/basic-rack.yml");
     }
 
 	public JavaArchive createDeployment(String name) {
+        System.out.println("JC: createDeployment");
 		String tail = name.substring( name.lastIndexOf( '/' ) + 1 );
 		String base = tail.substring(0, tail.lastIndexOf( '.' ) );
 		
