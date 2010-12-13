@@ -24,8 +24,10 @@ describe "basic rack test" do
     add_method_annotation( "create_deployment", org.jboss.arquillian.api.Deployment => {} )
   end
 
+  add_class_annotation( org.jboss.arquillian.api.Run => { "value" => org.jboss.arquillian.api.RunModeType::AS_CLIENT } )
+
   it "should not get a 500 server error" do
-    #result = open("http://localhost:8080/basic-rack").read
+    result = open("http://localhost:8080/basic-rack").read
   end
 
 end

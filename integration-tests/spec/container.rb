@@ -59,7 +59,7 @@ Spec::Runner.configure do |config|
 
   config.after(:suite) do
     puts "JC: after(:suite)"
-    Thread.current[:test_runner_adaptor].afterSuite if Thread.current[:test_runner_adapter].respond_to?( :afterSuite )
+    Thread.current[:test_runner_adaptor].afterSuite 
   end
 
 end
