@@ -80,6 +80,7 @@
 
     <module>jobs</module>
     <module>messaging/</module>
+    <module>soap</module>
     <module>vfs</module>
 
     <module>rake-support</module>
@@ -88,5 +89,13 @@
 
   </modules>
 
+  <profiles>
+    <profile> 
+      <id>expirmental</id>
+      <modules>
+        <module>soap</module>
+      </modules>
+    </profile> 
+  </profiles>
 
 </project>

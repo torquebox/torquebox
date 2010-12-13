@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-int-parent</artifactId>
+    <version>1.0.0.RC1-SNAPSHOT</version>
+    <relativePath>../../int-parent/pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-soap-int</artifactId>
+  <packaging>jar</packaging>
+  <name>TorqueBox SOAP Integration</name>
+  <description></description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-common-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-soap-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-soap-metadata</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.metadata</groupId>
+      <artifactId>jboss-metadata-war</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build> 
+  </build> 
+
+
+</project>
