@@ -4,8 +4,13 @@ module Spec
   module Example
     module ExampleGroupMethods
 
-      def deploy path, options = {}
+      # Either a :path option or a block is required.  If :path is
+      # non-nil, it will be packaged as a META-INF resource in a
+      # JavaArchive.  Otherwise, the archive is assumed to be returned
+      # from the block.
+      def deploy options = {}, &block
         @run_mode = options.fetch(:run_mode, :client)
+        path = options[:path]
         add_class_annotation( org.jboss.arquillian.api.Run => { "value" => run_mode } )
         metaclass = class << self
                       add_method_signature( "create_deployment", [org.jboss.shrinkwrap.api.spec.JavaArchive] )
@@ -13,15 +18,19 @@ module Spec
                       self
                     end
         metaclass.send(:define_method, :create_deployment) do
-          tail = path.split('/')[-1]
-          base = /(.*)\./.match(tail)[1]
-          archive = org.jboss.shrinkwrap.api.ShrinkWrap.create( org.jboss.shrinkwrap.api.spec.JavaArchive.java_class, "#{base}.jar" )
-          deploymentDescriptorUrl = JRuby.runtime.jruby_class_loader.getResource( path )
-          archive.addResource( deploymentDescriptorUrl, "/META-INF/#{tail}" )
-          archive
+          path ? create_archive_for_resource(path) : block.call
         end
       end
 
+      def create_archive_for_resource path
+        tail = path.split('/')[-1]
+        base = /(.*)\./.match(tail)[1]
+        archive = org.jboss.shrinkwrap.api.ShrinkWrap.create( org.jboss.shrinkwrap.api.spec.JavaArchive.java_class, "#{base}.jar" )
+        deploymentDescriptorUrl = JRuby.runtime.jruby_class_loader.getResource( path )
+        archive.addResource( deploymentDescriptorUrl, "/META-INF/#{tail}" )
+        archive
+      end
+      
       def run_mode
         case @run_mode
         when :client
