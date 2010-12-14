@@ -23,7 +23,11 @@ class Class
         self.class_eval do
           alias_method :set_autoload_paths_before_torquebox, :set_autoload_paths            
           def set_autoload_paths
-            configuration.autoload_paths += TORQUEBOX_RAILS_AUTOLOAD_PATHS.to_a
+            if ( Rails::VERSION::MAJOR == 2 && Rails::VERSION::MINOR == 3 && Rails::VERSION::TINY < 10)
+              configuration.load_paths += TORQUEBOX_RAILS_AUTOLOAD_PATHS.to_a
+            else
+              configuration.autoload_paths += TORQUEBOX_RAILS_AUTOLOAD_PATHS.to_a
+            end
             set_autoload_paths_before_torquebox
           end
         end
