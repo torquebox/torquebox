@@ -21,6 +21,8 @@
  */
 package org.torquebox.soap.deployers;
 
+import java.util.Set;
+
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
@@ -28,23 +30,27 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.soap.core.cxf.RubyCXFBus;
-import org.torquebox.soap.metadata.RubyEndpointsMetaData;
+import org.torquebox.soap.metadata.SOAPServiceMetaData;
 
-/** REAL deployer to provision a CXF bus if a RubyWebServiceMetaData is present.
+/** REAL deployer to provision a CXF bus if a SOAPServiceMetaData is present.
  * 
  * @author Bob McWhirter
  */
 public class CXFBusDeployer extends AbstractDeployer {
 	
-	public static final String PREFIX = "jboss.jruby.webservices.cxf.bus";
+	public static final String PREFIX = "torquebox.cxf.bus";
 	
 	public CXFBusDeployer() {
-		setInput(RubyEndpointsMetaData.class);
+		addInput(SOAPServiceMetaData.class);
 		addOutput( BeanMetaData.class );
 		setStage( DeploymentStages.POST_CLASSLOADER );
 	}
 
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
+	    
+	    if ( unit.getAllMetaData( SOAPServiceMetaData.class).isEmpty() ) {
+	        return;
+	    }
 		
 		String beanName = getBusName( unit.getSimpleName() );
 		BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder( beanName, RubyCXFBus.class.getName() );

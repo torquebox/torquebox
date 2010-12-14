@@ -51,9 +51,9 @@ import org.torquebox.soap.core.databinding.RubyTypeSpace;
  * 
  * @author Bob McWhirter
  */
-public class RubyEndpoint {
+public class RubySOAPService {
 
-	private static final Logger log = Logger.getLogger(RubyEndpoint.class);
+	private static final Logger log = Logger.getLogger(RubySOAPService.class);
 
 	private RubyRuntimePool runtimePool;
 	private RubyTypeSpace typeSpace;
@@ -77,7 +77,7 @@ public class RubyEndpoint {
 	private String trustStoreFile;
 	private String trustStorePassword;
 
-	public RubyEndpoint() {
+	public RubySOAPService() {
 
 	}
 
@@ -210,10 +210,10 @@ public class RubyEndpoint {
 
 		serviceFactory.setDataBinding(dataBinding);
 
-		RubyEndpointHandler serviceBean = createServiceBean();
+		RubySOAPServiceHandler serviceBean = createServiceBean();
 		serverFactory.setServiceName(new QName(getTargetNamespace(), getPortName()));
 		serverFactory.setEndpointName(new QName(getTargetNamespace(), getPortName() + "Port"));
-		serverFactory.setServiceClass(RubyEndpointHandler.class);
+		serverFactory.setServiceClass(RubySOAPServiceHandler.class);
 		serverFactory.setInvoker(createInvoker(serviceBean));
 
 		serverFactory.setAddress(getAddress());
@@ -265,11 +265,11 @@ public class RubyEndpoint {
 		    return props;
 		  }
 
-	private RubyEndpointHandler createServiceBean() {
-		return new RubyEndpointHandler(this.runtimePool, this.classLocation, this.endpointClassName, this.typeSpace);
+	private RubySOAPServiceHandler createServiceBean() {
+		return new RubySOAPServiceHandler(this.runtimePool, this.classLocation, this.endpointClassName, this.typeSpace);
 	}
 
-	private Invoker createInvoker(RubyEndpointHandler handler) {
+	private Invoker createInvoker(RubySOAPServiceHandler handler) {
 		return new RubyEndpointInvoker(handler);
 	}
 

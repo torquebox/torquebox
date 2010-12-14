@@ -21,19 +21,20 @@
  */
 package org.torquebox.soap.deployers;
 
+import java.util.Set;
+
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
+import org.jboss.deployers.spi.deployer.DeploymentStages;
+import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.logging.Logger;
-import org.torquebox.soap.core.RubyEndpoint;
-import org.torquebox.soap.metadata.InboundSecurityMetaData;
-import org.torquebox.soap.metadata.RubyEndpointMetaData;
-import org.torquebox.soap.metadata.RubyEndpointsMetaData;
-import org.torquebox.soap.metadata.SecurityMetaData;
+import org.torquebox.interp.spi.RubyRuntimePool;
+import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.soap.core.RubySOAPService;
+import org.torquebox.soap.metadata.SOAPServiceMetaData;
 
 /**
  * REAL stage deployer to deploy all <code>RubyEndpointMetaData</code> in a
@@ -47,44 +48,51 @@ import org.torquebox.soap.metadata.SecurityMetaData;
  * 
  * @author Bob McWhirter
  */
-public class RubyEndpointsDeployer extends AbstractSimpleVFSRealDeployer<RubyEndpointsMetaData> {
+public class SOAPServicesDeployer extends AbstractDeployer {
 
 	private static final String BEAN_PREFIX = "jboss.ruby.enterprise.webservices";
 
-	private static final Logger log = Logger.getLogger(RubyEndpointsDeployer.class);
+	private static final Logger log = Logger.getLogger(SOAPServicesDeployer.class);
 
-	public RubyEndpointsDeployer() {
-		super( RubyEndpointsMetaData.class );
-		addInput(CryptoMetaData.class);
+	public SOAPServicesDeployer() {
+	    setStage(DeploymentStages.REAL);
+	    addInput(SOAPServiceMetaData.class);
 		setOutput(BeanMetaData.class);
 	}
 
-	@Override
-	public void deploy(VFSDeploymentUnit unit, RubyEndpointsMetaData metaData) throws DeploymentException {
-		
+	public void deploy(DeploymentUnit unit) throws DeploymentException {
+	    
+	    Set<? extends SOAPServiceMetaData> allMetaData = unit.getAllMetaData( SOAPServiceMetaData.class );
+	    
+	    if ( allMetaData.isEmpty() ) {
+	        return;
+	    }
+	    
 		BeanMetaData busBean = unit.getAttachment(BeanMetaData.class + "$cxf.bus", BeanMetaData.class);
+		
 		if (busBean == null) {
 			throw new DeploymentException("No CXF Bus available");
 		}
 		
-		for ( RubyEndpointMetaData each : metaData.getEndpoints() ) {
+	    for ( SOAPServiceMetaData each : allMetaData ) {
 			deployWebService( unit, busBean, each );
-		}
+	    }
 	}
 
-	public void deployWebService(DeploymentUnit unit, BeanMetaData busBean, RubyEndpointMetaData metaData) throws DeploymentException {
+	public void deployWebService(DeploymentUnit unit, BeanMetaData busBean, SOAPServiceMetaData metaData) throws DeploymentException {
 		log.debug("Deploying webservices for : " + metaData);
 
 		String beanName = BEAN_PREFIX + "." + unit.getSimpleName() + "." + metaData.getName();
 
-		BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder(beanName, RubyEndpoint.class.getName());
+		BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder(beanName, RubySOAPService.class.getName());
 
-		String runtimePoolName = PoolingDeployer.getBeanName( unit, "endpoints" );
+		String runtimePoolName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, "soap" );
+		
 		ValueMetaData poolInjection = beanBuilder.createInject(runtimePoolName);
 		beanBuilder.addPropertyMetaData("rubyRuntimePool", poolInjection);
 		beanBuilder.addPropertyMetaData("name", metaData.getName());
 		beanBuilder.addPropertyMetaData("classLocation", metaData.getClassLocation());
-		beanBuilder.addPropertyMetaData("endpointClassName", metaData.getEndpointClassName());
+		beanBuilder.addPropertyMetaData("rubyClassName", metaData.getEndpointClassName());
 		beanBuilder.addPropertyMetaData("wsdlLocation", metaData.getWsdlLocation());
 		beanBuilder.addPropertyMetaData("targetNamespace", metaData.getTargetNamespace());
 		beanBuilder.addPropertyMetaData("portName", metaData.getPortName());
@@ -92,40 +100,6 @@ public class RubyEndpointsDeployer extends AbstractSimpleVFSRealDeployer<RubyEnd
 
 		ValueMetaData typeSpaceInjection = beanBuilder.createInject(RubyTypeSpaceDeployer.getBeanName(unit, metaData.getName()));
 		beanBuilder.addPropertyMetaData("rubyTypeSpace", typeSpaceInjection);
-
-		SecurityMetaData securityMetaData = metaData.getSecurityMetaData();
-
-		if (securityMetaData != null) {
-
-			InboundSecurityMetaData inboundSecurity = securityMetaData.getInboundSecurityMetaData();
-
-			if (inboundSecurity != null) {
-				beanBuilder.addPropertyMetaData("verifyTimestamp", inboundSecurity.isVerifyTimestamp());
-				beanBuilder.addPropertyMetaData("verifySignature", inboundSecurity.isVerifySignature());
-
-				if (inboundSecurity.isVerifySignature()) {
-					CryptoMetaData crypto = unit.getAttachment(CryptoMetaData.class);
-
-					if (crypto != null) {
-						String storeName = metaData.getSecurityMetaData().getInboundSecurityMetaData().getTrustStore();
-						if (storeName == null) {
-							storeName = "truststore";
-						}
-
-						CryptoStoreMetaData storeMetaData = crypto.getCryptoStore(storeName);
-
-						if (storeMetaData != null) {
-							beanBuilder.addPropertyMetaData("trustStoreFile", storeMetaData.getStore());
-							beanBuilder.addPropertyMetaData("trustStorePassword", storeMetaData.getPassword());
-						} else {
-							throw new DeploymentException( "no such crypto store: " + storeName );
-						}
-					} else {
-						throw new DeploymentException( "No cryptographic stores have been configured.  Please double-check 'crypto.yml'." );
-					}
-				}
-			}
-		}
 
 		ValueMetaData busInjection = beanBuilder.createInject(busBean.getName());
 		beanBuilder.addPropertyMetaData("bus", busInjection);

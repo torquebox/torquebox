@@ -24,20 +24,19 @@ package org.torquebox.soap.metadata;
 import java.net.URL;
 
 
-public class RubyEndpointMetaData {
+public class SOAPServiceMetaData {
 	
 	private String name;
 	
 	private URL wsdlLocation;
 	private String classLocation;
-	private String endpointClassName;
+	private String rubyClassName;
 	
 	private String portName;
 	private String targetNamespace;
 	
-	private SecurityMetaData securityMetaData;
 
-	public RubyEndpointMetaData() {
+	public SOAPServiceMetaData() {
 	}
 	
 	public void setName(String name) {
@@ -65,11 +64,11 @@ public class RubyEndpointMetaData {
 	}
 	
 	public void setEndpointClassName(String endpointClassName) {
-		this.endpointClassName = endpointClassName;
+		this.rubyClassName = endpointClassName;
 	}
 	
 	public String getEndpointClassName() {
-		return this.endpointClassName;
+		return this.rubyClassName;
 	}
 	
 	public void setTargetNamespace(String targetNamespace) {
@@ -88,16 +87,8 @@ public class RubyEndpointMetaData {
 		return this.portName;
 	}
 	
-	public void setSecurityMetaData(SecurityMetaData securityMetaData) {
-		this.securityMetaData = securityMetaData;
-	}
-	
-	public SecurityMetaData getSecurityMetaData() {
-		return this.securityMetaData;
-	}
-	
 	public String toString() {
-		return "[RubyWebServiceMetaData: name=" + this.name + "; wsdlLocation=" + this.wsdlLocation + "; endpointClassName=" + this.endpointClassName + "]";
+		return "[SOAPServiceMetaData: name=" + this.name + "; wsdlLocation=" + this.wsdlLocation + "; rubyClassName=" + this.rubyClassName + "]";
 	}
 
 }

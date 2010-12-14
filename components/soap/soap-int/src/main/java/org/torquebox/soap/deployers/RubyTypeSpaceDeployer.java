@@ -21,35 +21,42 @@
  */
 package org.torquebox.soap.deployers;
 
+import java.util.Set;
+
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
+import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.soap.core.databinding.RubyTypeSpace;
-import org.torquebox.soap.metadata.RubyEndpointMetaData;
-import org.torquebox.soap.metadata.RubyEndpointsMetaData;
+import org.torquebox.soap.metadata.SOAPServiceMetaData;
 
-public class RubyTypeSpaceDeployer extends AbstractSimpleVFSRealDeployer<RubyEndpointsMetaData> {
+public class RubyTypeSpaceDeployer extends AbstractDeployer {
 
 	private static final String PREFIX = "jboss.ruby.databinding.";
 
 	public RubyTypeSpaceDeployer() {
-		super( RubyEndpointsMetaData.class );
+	    addInput(SOAPServiceMetaData.class);
 		setStage(DeploymentStages.POST_CLASSLOADER);
 		addOutput(BeanMetaData.class);
 	}
 
 	@Override
-	public void deploy(VFSDeploymentUnit unit, RubyEndpointsMetaData metaData) throws DeploymentException {
+	public void deploy(DeploymentUnit unit) throws DeploymentException {
 		log.debug("deploying for: " + unit);
+		
+		Set<? extends SOAPServiceMetaData> allMetaData = unit.getAllMetaData(SOAPServiceMetaData.class );
+		
+	    if ( allMetaData.isEmpty() ) {
+	        return;
+	    }
 
 		BeanMetaData busMetaData = unit.getAttachment(BeanMetaData.class + "$cxf.bus", BeanMetaData.class);
 
-		for (RubyEndpointMetaData endpointMetaData : metaData.getEndpoints() ) {
+		
+		for (SOAPServiceMetaData endpointMetaData : allMetaData ) {
 			String beanName = getBeanName(unit, endpointMetaData.getName());
 			BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyTypeSpace.class.getName());
 

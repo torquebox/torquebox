@@ -33,17 +33,17 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
-import org.torquebox.soap.core.RubyEndpointHandler;
+import org.torquebox.soap.core.RubySOAPServiceHandler;
 
 public class RubyEndpointInvoker implements Invoker {
 
-	private RubyEndpointHandler handler;
+	private RubySOAPServiceHandler handler;
 
-	public RubyEndpointInvoker(RubyEndpointHandler handler) {
+	public RubyEndpointInvoker(RubySOAPServiceHandler handler) {
 		this.handler = handler;
 	}
 
-	public RubyEndpointHandler getHandler() {
+	public RubySOAPServiceHandler getHandler() {
 		return this.handler;
 	}
 

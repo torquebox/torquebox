@@ -41,9 +41,9 @@ import org.torquebox.soap.core.databinding.RubyTypeSpace;
  * 
  * @author Bob McWhirter
  */
-public class RubyEndpointHandler {
+public class RubySOAPServiceHandler {
 
-	private static final Logger log = Logger.getLogger(RubyEndpointHandler.class);
+	private static final Logger log = Logger.getLogger(RubySOAPServiceHandler.class);
 
 	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
@@ -56,7 +56,7 @@ public class RubyEndpointHandler {
 
 	private RubyTypeSpace typeSpace;
 
-	public RubyEndpointHandler(RubyRuntimePool runtimePool, String classLocation, String endpointClassName, RubyTypeSpace typeSpace) {
+	public RubySOAPServiceHandler(RubyRuntimePool runtimePool, String classLocation, String endpointClassName, RubyTypeSpace typeSpace) {
 		this.endpointLogger = Logger.getLogger( "torquebox.endpoints." + endpointClassName );
 		this.runtimePool = runtimePool;
 		this.classLocation = classLocation;

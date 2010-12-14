@@ -37,7 +37,7 @@ import org.jboss.metadata.web.jboss.JBossWebMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.torquebox.soap.core.cxf.RubyCXFServlet;
 import org.torquebox.soap.core.cxf.util.JBossLoggerBridge;
-import org.torquebox.soap.metadata.RubyEndpointsMetaData;
+import org.torquebox.soap.metadata.SOAPServiceMetaData;
 
 public class CXFServletDeployer extends AbstractDeployer {
 	static {
@@ -47,7 +47,7 @@ public class CXFServletDeployer extends AbstractDeployer {
 	public static final String SERVLET_NAME = "ruby-cxf-servlet";
 	
 	public CXFServletDeployer() {
-		setInput( RubyEndpointsMetaData.class );
+		addInput( SOAPServiceMetaData.class );
 		addInput( JBossWebMetaData.class );
 		addOutput( JBossWebMetaData.class );
 		setStage( DeploymentStages.PRE_REAL );
@@ -55,6 +55,10 @@ public class CXFServletDeployer extends AbstractDeployer {
 	}
 	
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
+	    
+	    if ( unit.getAllMetaData( SOAPServiceMetaData.class).isEmpty() ) {
+	        return;
+	    }
 		
 		log.debug( "Deploy CXF servlet for " + unit );
 		JBossWebMetaData webMetaData = unit.getAttachment(JBossWebMetaData.class );
