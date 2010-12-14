@@ -22,6 +22,12 @@
     <integ.dist.dir>${project.build.directory}/integ-dist</integ.dist.dir>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+    </dependencies>
+  </dependencyManagement>
+
+
   <dependencies>
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
@@ -73,6 +79,28 @@
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>capybara</artifactId>
+      <version>0.4.0</version>
+      <type>gem</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>ffi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>ffi</artifactId>
+      <version>0.6.3</version>
+      <type>gem</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -240,10 +268,6 @@
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
-        <configuration>
-          <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</gemPath>
-          <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8/gems</gemHome>
-        </configuration>
         <executions>
           <execution>
             <id>run-specs</id>
