@@ -20,28 +20,6 @@ public class BasicSinatra_1_0_Test extends AbstractIntegrationTest {
 	}
 
 	@Test
-	public void testHighlevel() {
-		driver.get("http://localhost:8080/basic-sinatra");
-		WebElement element = driver.findElementById("success");
-		assertNotNull(element);
-		assertEquals("sinatra-basic", element.getAttribute("class"));
-	}
-
-	@Test
-	public void testRequestMapping() {
-		driver.get("http://localhost:8080/basic-sinatra/request-mapping");
-		WebElement element = driver.findElementById("success");
-		assertNotNull(element);
-
-		WebElement scheme = driver.findElementById("scheme");
-		assertNotNull(element);
-		assertEquals("http", scheme.getText().trim());
-
-	}
-
-	// ** Currently ignoring this known-failing test.
-	//@Ignore
-	@Test
 	public void testPostAlot() throws Exception {
 		int numIterations = 500;
 		for (int i = 0; i < numIterations; ++i) {
@@ -64,7 +42,7 @@ public class BasicSinatra_1_0_Test extends AbstractIntegrationTest {
 		submit.click();
 		WebElement success = driver.findElementById("success");
 		assertNotNull(success);
-		assertEquals("posted!", success.getText());
+		assertEquals("you posted nothing", success.getText());
 	}
 
 }

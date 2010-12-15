@@ -12,7 +12,6 @@ end
 
 get '/poster' do
   haml :poster
-  #erb :poster
 end
 
 post '/poster' do
