@@ -7,6 +7,8 @@ class Dir
     alias_method :glob_before_vfs, :glob
     alias_method :mkdir_before_vfs, :mkdir
     alias_method :new_before_vfs, :new
+    alias_method :entries_before_vfs, :entries
+    alias_method :foreach_before_vfs, :foreach
 
     def open(str,&block)
       #if ( ::File.exist_without_vfs?( str.to_str ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( str.to_str ) )
@@ -119,6 +121,19 @@ class Dir
       end
       VFS::Dir.new( string.to_s )
     end
+
+    def entries(path)
+      if ( ::File.exist_without_vfs?( path.to_str ) )
+        return entries_before_vfs(path.to_str)
+      end
+      vfs_dir = org.jboss.vfs::VFS.child( path )
+      [ '.', '..' ] + vfs_dir.children.collect{|e| e.name }
+    end
+
+    def foreach(path,&block)
+      entries(path).each{|e| yield e}
+    end 
+
   end
 end
 

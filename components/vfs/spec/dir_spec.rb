@@ -115,6 +115,32 @@ describe "Dir extensions for VFS" do
         items.should include( "#{prefix}/home/larry/archive1.jar/lib/archive2.jar/manifest.txt" )
       end
 
+      it "should provide access to entries" do
+        items = Dir.entries( "#{prefix}/home/larry" )
+        items.should_not be_empty
+        items.size.should eql( 5 )
+        items.should include( "." )
+        items.should include( ".." )
+        items.should include( "file1.txt" )
+        items.should include( "file2.txt" )
+        items.should include( "archive1.jar" )
+      end
+
+      it "should provide iteration over its entries" do
+        items = []
+        Dir.foreach( "#{prefix}/home/larry" ) do |e|
+          items << e
+        end
+
+        items.should_not be_empty
+        items.size.should eql( 5 )
+        items.should include( "." )
+        items.should include( ".." )
+        items.should include( "file1.txt" )
+        items.should include( "file2.txt" )
+        items.should include( "archive1.jar" )
+      end
+
       it "should allow appropriate globbing of normal files" do
         items = Dir.glob( "#{prefix}/home/larry/*" )
         items.should_not be_empty
