@@ -104,6 +104,13 @@
     </dependency>
 
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-client</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <version>${version.jruby}</version>
