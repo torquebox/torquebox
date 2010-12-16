@@ -294,7 +294,7 @@
       <para><informalexample>
         <para><screen>application:
   RAILS_ROOT: /home/bob/myapp
-  RIAILS_ENV: development
+  RAILS_ENV: development
 web:
   context: /</screen></para>
       </informalexample></para>
