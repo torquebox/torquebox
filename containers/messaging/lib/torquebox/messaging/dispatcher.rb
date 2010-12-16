@@ -1,4 +1,5 @@
 require 'torquebox/container/foundation'
+require 'org.torquebox.torquebox-container-foundation'
 
 module TorqueBox
   module Messaging
