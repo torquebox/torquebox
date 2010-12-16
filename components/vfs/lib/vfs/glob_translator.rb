@@ -13,7 +13,9 @@ module VFS
   
     def self.translate(glob_str)
       translator = GlobTranslator.new( glob_str )
-      translator.glob()
+      regexp_str = translator.glob()
+      #puts "#{glob_str} ==> #{regexp_str}"
+      regexp_str
     end
 
     def self.to_regexp(glob_str)
@@ -62,13 +64,10 @@ module VFS
 
     def double_splat()
       #puts "enter double_splat()"
-      if ( cur() == 0 || lb() == '/' )
-        result = '([^.].*)'
-      else
-        result = '(.*)'
-      end
+      result = '(.*)'
       consume('*')
       consume('*')
+      consume('/') if ( la() == '/' )
       #puts "exit double_splat()"
       result
     end

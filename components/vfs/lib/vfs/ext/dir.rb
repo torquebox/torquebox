@@ -36,6 +36,7 @@ class Dir
     def glob(pattern,flags=0, &block)
       is_absolute_vfs = false
 
+      #str_pattern = "#{pattern}"
       str_pattern = pattern.to_str
       #puts "glob(#{str_pattern})"
 
