@@ -186,7 +186,7 @@ describe "Dir extensions for VFS" do
         items.should_not include( "#{prefix}/home/larry/archive1.jar/lib/archive4.txt" )
       end
 
-      it "should allow alternation globbing wiht trailing comma" do
+      it "should allow alternation globbing with trailing comma" do
         items = Dir.glob( "#{prefix}/home/todd/index{.en,}{.html,}{.erb,.haml,}" )
         items.should_not be_empty
         items.size.should eql 4
@@ -196,8 +196,17 @@ describe "Dir extensions for VFS" do
         items.should     include( "#{prefix}/home/todd/index.en.html.haml" )
       end
 
+      it "should allow alternation globbing with internal globs" do
+        items = Dir.glob( "#{prefix}/home/{todd/*,larry/*}{.haml,.txt,.jar}" )
+        items.should_not be_empty
+        items.should     include( "#{prefix}/home/todd/index.html.haml" )
+        items.should     include( "#{prefix}/home/todd/index.en.html.haml" )
+        items.should     include( "#{prefix}/home/larry/file1.txt" )
+        items.should     include( "#{prefix}/home/larry/file2.txt" )
+        items.should     include( "#{prefix}/home/larry/archive1.jar" )
+      end
+
       it "should allow for double-star globbing within archives" do
-        #items = Dir.glob( "#{prefix}#{TEST_DATA_DIR}/home/larry/**/*{.zip,.jar,.ear}" )
         items = Dir.glob( "#{prefix}/home/larry/archive1.jar/**/*.jar" )
         items.should_not be_empty
         #items.size.should eql 1
