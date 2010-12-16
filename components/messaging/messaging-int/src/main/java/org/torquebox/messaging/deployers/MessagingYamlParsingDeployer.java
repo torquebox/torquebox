@@ -107,7 +107,7 @@ public class MessagingYamlParsingDeployer extends AbstractVFSParsingDeployer<Mes
             return result;
         }
 
-        MessageProcessorMetaData subscribe (String handler, String destination, Map options) {
+        public static MessageProcessorMetaData subscribe (String handler, String destination, Map options) {
             if (options==null) options = Collections.EMPTY_MAP;
             MessageProcessorMetaData result = new MessageProcessorMetaData();
             result.setRubyClassName( StringUtils.camelize( handler ) );

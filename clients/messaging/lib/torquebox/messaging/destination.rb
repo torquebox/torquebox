@@ -42,6 +42,10 @@ module TorqueBox
           destination.destroy
         end
       end
+      
+      def to_s
+        name
+      end
     end
 
     class Queue

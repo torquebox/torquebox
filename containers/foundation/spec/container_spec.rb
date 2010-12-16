@@ -39,6 +39,12 @@ describe TorqueBox::Container::Foundation do
       ruby = factory.create
       ruby.should be( JRuby.runtime )
     end
+    
+    it "should be able to deploy a non-existent deployment" do
+      deployment = @container.deploy(object_id.to_s)
+      unit = @container.deployment_unit( deployment.name )
+      unit.should_not be_nil
+    end
   end
 
 end

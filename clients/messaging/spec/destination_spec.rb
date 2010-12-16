@@ -6,10 +6,15 @@ require 'torquebox/messaging/destination'
 
 describe TorqueBox::Messaging::Destination do
 
-  before(:each) do
-
+  it "should return its name for to_s" do
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo")
+    queue.name.should == "/queues/foo"
+    queue.to_s.should == queue.name
+    topic = TorqueBox::Messaging::Topic.new("/topics/bar")
+    topic.name.should == "/topics/bar"
+    topic.to_s.should == topic.name
   end
-  
+
   it "should create a queue when started" do
     server = mock("server")
     server.should_receive(:createQueue)
