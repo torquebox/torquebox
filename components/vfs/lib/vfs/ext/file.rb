@@ -20,6 +20,7 @@ class File
     alias_method :utime_without_vfs,       :utime
     alias_method :new_without_vfs,         :new
     alias_method :rename_without_vfs,      :rename
+    alias_method :join_without_vfs,        :join
 
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
@@ -158,6 +159,11 @@ class File
     def dirname(filename)
       dirname = dirname_without_vfs(name_without_vfs(filename))
       vfs_path?(filename) ? VFS.resolve_path_url(dirname) : dirname
+    end
+
+    def join(*args) 
+      prefix = vfs_path?(args[0]) ? "vfs:" : ""
+      prefix + join_without_vfs(*args.map{|x|name_without_vfs(x)})
     end
 
     def new(*args, &block)

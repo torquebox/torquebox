@@ -339,6 +339,33 @@ describe "File extensions for VFS" do
         File.file?( "#{prefix}/home/larry/archive1.jar/lib" ).should be_false
         File.file?( "#{prefix}/home/larry/archive1.jar/web.xml" ).should be_true
       end
+
+    end
+  end
+
+  describe 'path joinage' do
+    it "should work for relative paths" do
+      File.join("",       "./foo").should == "/./foo"
+      File.join("/",      "./foo").should == "/./foo"
+      File.join("vfs:",   "./foo").should == "vfs:/./foo"
+      File.join("vfs:/",  "./foo").should == "vfs:/./foo"
+    end
+    it "should work for absolute paths" do
+      File.join("",       "/foo").should == "/foo"
+      File.join("/",      "/foo").should == "/foo"
+      File.join("vfs:",   "/foo").should == "vfs:/foo"
+      File.join("vfs:/",  "/foo").should == "vfs:/foo"
+    end
+    it "should work for vfs paths" do
+      File.join("",       "vfs:/foo").should == "/foo"
+      File.join("/",      "vfs:/foo").should == "/foo"
+      File.join("vfs:",   "vfs:/foo").should == "vfs:/foo"
+      File.join("vfs:/",  "vfs:/foo").should == "vfs:/foo"
+    end
+    it "should handle a subset of vfs params" do
+      File.join('a', 'b', 'c', 'vfs:/d', 'e').should      == 'a/b/c/d/e'
+      File.join('vfs:a', 'b', 'c', 'vfs:/d', 'e').should  == 'vfs:a/b/c/d/e'
+      File.join('vfs:/a', 'b', 'c', 'vfs:/d', 'e').should == 'vfs:/a/b/c/d/e'
     end
   end
 
