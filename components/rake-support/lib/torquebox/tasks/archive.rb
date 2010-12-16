@@ -5,7 +5,7 @@ end
 
 namespace :torquebox do
 
-  desc "Create a self-contained application archive"
+  desc "Create a nice self-contained application archive"
   task :archive do 
     skip_files = %w{ ^log$ ^tmp$ \.rails$ \.rack$ }
 
@@ -37,6 +37,18 @@ namespace :torquebox do
       stderr_thr.join
     end
     puts "Created archive: #{Dir.pwd}/#{archive_name}"
+  end
+
+  if ( File.exist?( 'Gemfile' ) )
+    desc "Freeze application gems"
+    task :freeze do
+      require 'bundler/cli'
+
+      cli = Bundler::CLI.new( :deployment=>true, :path=>'vendor/bundle' )
+      cli.config
+      cli.install
+
+    end
   end
 
 end
