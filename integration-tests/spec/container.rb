@@ -55,12 +55,14 @@ Spec::Runner.configure do |config|
   end
     
   config.before(:all) do
-    @real_java_class = self.class.become_java!  # ('.') 
-    Thread.current[:test_runner_adaptor].beforeClass(@real_java_class)
+    if (self.class.respond_to? :create_deployment)
+      @real_java_class = self.class.become_java!  # ('.') 
+      Thread.current[:test_runner_adaptor].beforeClass(@real_java_class)
+    end
   end
 
   config.after(:all) do
-    Thread.current[:test_runner_adaptor].afterClass(@real_java_class)
+    Thread.current[:test_runner_adaptor].afterClass(@real_java_class) if @real_java_class
   end
 
   config.after(:suite) do
