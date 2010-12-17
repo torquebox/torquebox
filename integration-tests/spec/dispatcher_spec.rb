@@ -14,7 +14,7 @@ describe "dispatcher test" do
 
   deploy :path => 'messaging/queues.yml'
 
-  it "should create dynamic queues and consumers" do
+  it "should associate a processor with a queue" do
     dispatcher = TorqueBox::Messaging::Dispatcher.new do
       map Upcaser, QUEUE_QUESTIONS
     end

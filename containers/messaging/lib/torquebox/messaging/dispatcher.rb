@@ -10,8 +10,6 @@ module TorqueBox
     class Dispatcher
 
       def initialize &block
-        @container = TorqueBox::Container::Foundation.new
-        @container.enable( MessageProcessorHost )
         instance_eval &block if block_given?
       end
 
@@ -24,22 +22,33 @@ module TorqueBox
       end
 
       def start
-        @container.start
-        @deployment = @container.deploy( object_id.to_s )
-        unit = @container.deployment_unit( @deployment.name )
+        container.start
+        @deployment = container.deploy( object_id.to_s )
+        unit = container.deployment_unit( @deployment.name )
         processors.each do |processor|
           org.torquebox.mc::AttachmentUtils.multipleAttach( unit, processor, processor.name )
         end
-        @container.process_deployments(false)
+        container.process_deployments(true)
       end
 
       def stop
-        @container.undeploy( @deployment )
-        @container.stop
+        container.undeploy( @deployment )
+        container.stop
       end
 
       def processors
         @processors ||= []
+      end
+
+      private
+      
+      def container
+        unless @container
+          TorqueBox::Naming.configure
+          @container = TorqueBox::Container::Foundation.new
+          @container.enable( MessageProcessorHost )
+        end
+        @container
       end
 
     end
