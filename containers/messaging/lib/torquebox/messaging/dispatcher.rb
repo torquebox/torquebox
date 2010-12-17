@@ -1,11 +1,6 @@
 require 'org.torquebox.torquebox-container-foundation'
 require 'torquebox/container/foundation'
-
-require 'org.torquebox.torquebox-naming-container'
-require 'torquebox/naming/naming_service'
-
 require 'torquebox/messaging/message_processor_host'
-require 'torquebox/messaging/message_broker'
 
 module TorqueBox
   module Messaging
@@ -16,9 +11,7 @@ module TorqueBox
 
       def initialize &block
         @container = TorqueBox::Container::Foundation.new
-        @container.enable( TorqueBox::Naming::NamingService )
         @container.enable( MessageProcessorHost )
-        @container.enable( MessageBroker )
         instance_eval &block if block_given?
       end
 
