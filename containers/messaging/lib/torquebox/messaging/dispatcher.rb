@@ -1,5 +1,11 @@
-require 'torquebox/container/foundation'
 require 'org.torquebox.torquebox-container-foundation'
+require 'torquebox/container/foundation'
+
+require 'org.torquebox.torquebox-naming-container'
+require 'torquebox/naming/naming_service'
+
+require 'torquebox/messaging/message_processor_host'
+require 'torquebox/messaging/message_broker'
 
 module TorqueBox
   module Messaging
@@ -10,7 +16,9 @@ module TorqueBox
 
       def initialize &block
         @container = TorqueBox::Container::Foundation.new
-        @container.enable( TorqueBox::Messaging::MessageProcessorHost )
+        @container.enable( TorqueBox::Naming::NamingService )
+        @container.enable( MessageProcessorHost )
+        @container.enable( MessageBroker )
         instance_eval &block if block_given?
       end
 
@@ -29,7 +37,7 @@ module TorqueBox
         processors.each do |processor|
           org.torquebox.mc::AttachmentUtils.multipleAttach( unit, processor, processor.name )
         end
-        @container.process_deployments(true)
+        @container.process_deployments(false)
       end
 
       def stop

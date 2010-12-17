@@ -9,9 +9,7 @@ module TorqueBox
       end
 
       def fundamental_deployment_paths()
-        paths = [ File.join( File.dirname(__FILE__), 'message-processor-host-jboss-beans.xml' ) ]
-        puts "fundamental paths #{paths.inspect}"
-        paths
+        [ File.join( File.dirname(__FILE__), 'message-processor-host-jboss-beans.xml' ) ]
       end
 
 =begin

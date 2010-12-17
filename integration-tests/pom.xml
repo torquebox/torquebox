@@ -108,6 +108,23 @@
       <artifactId>torquebox-messaging-client</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-container</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-naming-container</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
