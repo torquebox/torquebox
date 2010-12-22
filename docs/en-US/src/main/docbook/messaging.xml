@@ -237,6 +237,75 @@ require 'org.torquebox.torquebox-messaging-client'
         </programlisting>
       </para>
     </example>
+
+    <para>
+      There are two main messaging destination abstractions:
+      <classname>TorqueBox::Messaging::Queue</classname> and
+      <classname>TorqueBox::Messaging::Topic</classname>.  Each has a
+      <methodname>publish</methodname> and a
+      <methodname>receive</methodname> method, and each must be
+      constructed with a <parameter>name</parameter> and an optional
+      hash of options, the keys of which are as follows:
+    </para>
+
+    <table>
+      <title>Message destination options</title>
+
+      <tgroup cols="3">
+        <colspec align="left" />
+
+        <thead>
+          <row>
+            <entry>Option</entry>
+            <entry>Default</entry>
+            <entry>Description</entry>
+          </row>
+        </thead>
+
+        <tbody>
+          <row>
+            <entry><parameter>:naming_host</parameter></entry>
+            <entry>localhost</entry>
+            <entry>Should be the hostname or ip address of the JNDI naming server containing the destination names.</entry>
+          </row>
+          <row>
+            <entry><parameter>:naming_port</parameter></entry>
+            <entry>1099</entry>
+            <entry>The port of the JNDI naming server.</entry>
+          </row>
+          <row>
+            <entry><parameter>:timeout</parameter></entry>
+            <entry>0 (never)</entry>
+            <entry>The amount of time to wait before giving up, in milliseconds.</entry>
+          </row>
+          <row>
+            <entry><parameter>:ack_mode</parameter></entry>
+            <entry><varname>:auto</varname></entry>
+            <entry>Corresponds to one of the three <classname>javax.jms.Session</classname> modes for message delivery acknowledgement: <varname>:auto</varname>, <varname>:client</varname> and <varname>:dups_ok</varname>.</entry>
+          </row>
+          <row>
+            <entry><parameter>:transacted</parameter></entry>
+            <entry>true</entry>
+            <entry>Indicates whether the underlying session is in <emphasis>transacted</emphasis> mode.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <para>
+      Any options you pass to either <methodname>publish</methodname>
+      or <methodname>receive</methodname> override those you passed in
+      the constructor.
+    </para>
+
+    <para>
+      Though sometimes convenient, these methods are fairly low-level
+      and higher-level abstractions such as <link
+      linkend="consumers">MessageProcessors</link> and <link
+      linkend="async-tasks">Tasks</link> are often better-suited to
+      the task.
+    </para>
+
   </section>
 
   <section id="producers">
@@ -282,60 +351,16 @@ queue.publish {:key => 'value', :list => %w{one two three}}
       are also written in Ruby.</para>
     </example>
 
-    <para>
-      The <methodname>publish</methodname> method accepts an optional
-      hash of arguments that affect its behavior.
-    </para>
-
-    <table>
-      <title>Message sending options</title>
-
-      <tgroup cols="3">
-        <colspec align="left" />
-
-        <thead>
-          <row>
-            <entry>Option</entry>
-            <entry>Default</entry>
-            <entry>Description</entry>
-          </row>
-        </thead>
-
-        <tbody>
-          <row>
-            <entry><varname>:naming_host</varname></entry>
-            <entry>localhost</entry>
-            <entry>Should be the hostname or ip address of the JNDI naming server containing the destination names.</entry>
-          </row>
-          <row>
-            <entry><varname>:naming_port</varname></entry>
-            <entry>1099</entry>
-            <entry>The port of the JNDI naming server.</entry>
-          </row>
-          <row>
-            <entry><varname>:ack_mode</varname></entry>
-            <entry><varname>:auto</varname></entry>
-            <entry>Corresponds to one of the three <classname>javax.jms.Session</classname> modes for message delivery acknowledgement: <varname>:auto</varname>, <varname>:client</varname> and <varname>:dups_ok</varname>.</entry>
-          </row>
-          <row>
-            <entry><varname>:transacted</varname></entry>
-            <entry>true</entry>
-            <entry>Indicates whether the underlying session is in <emphasis>transacted</emphasis> mode.</entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
-
     <example>
       <title>Send message using a remote JNDI server</title>
 
-      <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
-queue.publish "Some message", :naming_host =&gt; 'jndi.jboss.org', :naming_port =&gt; 1099 </programlisting></para>
+      <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo', :naming_host =&gt; 'jndi.jboss.org', :naming_port =&gt; 1099 )
+queue.publish "Some message"</programlisting></para>
     </example>
 
   </section>
 
-  <section>
+  <section id="consumers">
     <title>Ruby Consumers</title>
 
     <para>Message consumers may be implemented in Ruby and easily attached to

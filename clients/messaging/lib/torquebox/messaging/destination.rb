@@ -7,12 +7,13 @@ module TorqueBox
     module Destination
       attr_reader :name
 
-      def initialize name
+      def initialize name, options={}
         @name = name
+        @options = options
       end
       
       def publish message, options={}
-        Client.connect(options) do |session|
+        Client.connect(@options.merge(options)) do |session|
           session.publish name, message
           session.commit if session.transacted?
         end
@@ -20,7 +21,7 @@ module TorqueBox
 
       def receive options={}
         result = nil
-        Client.connect(options) do |session|
+        Client.connect(@options.merge(options)) do |session|
           result = session.receive( name, options )
           session.commit if session.transacted?
         end
