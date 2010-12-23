@@ -2,6 +2,7 @@
 package org.torquebox.rack.metadata;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.List;
 
@@ -24,9 +25,14 @@ public class TorqueBoxYamlParser {
     }
 
     public RackApplicationMetaData parse(VirtualFile file) throws IOException {
-        Yaml yaml = new Yaml();
-        Map<String, Object> config = (Map<String, Object>) yaml.load(file.openStream());
-        return config==null ? null : parse(config);
+        InputStream in = file.openStream();
+        try {
+            Yaml yaml = new Yaml();
+            Map<String, Object> config = (Map<String, Object>) yaml.load(file.openStream());
+            return config==null ? null : parse(config);
+        } finally {
+            in.close();
+        }
     }
 
     public RackApplicationMetaData parse(Map<String,Object> config) throws IOException {
