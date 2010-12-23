@@ -16,23 +16,18 @@ import org.torquebox.common.reflect.ReflectionHelper;
 
 public class RubyServiceProxyTest extends AbstractRubyTestCase {
 
-	private Ruby ruby;
-    private SharedRubyRuntimePool pool;
+    private Ruby ruby;
     private InstantiatingRubyComponentResolver resolver;
     private RubyServiceProxy proxy;
 
-	@Before
-	public void setUp() throws Exception {
-		this.ruby = createRuby();
-        this.pool = new SharedRubyRuntimePool(this.ruby);
-        this.proxy = new RubyServiceProxy();
-        this.proxy.setRubyRuntimePool(this.pool);
-	}
+    @Before
+    public void setUp() throws Exception {
+        this.ruby = createRuby();
+        this.resolver = new InstantiatingRubyComponentResolver();
+        this.proxy = new RubyServiceProxy( resolver, new SharedRubyRuntimePool(this.ruby) );
+    }
 
     @Test public void testServiceStartStop() throws Exception {
-        resolver = new InstantiatingRubyComponentResolver();
-        proxy.setRubyComponentResolver( resolver );
-
         resolver.setRubyClassName( "TestService" );
         resolver.setRubyRequirePath( "org/torquebox/jobs/core/test_service" );
         
@@ -46,9 +41,6 @@ public class RubyServiceProxyTest extends AbstractRubyTestCase {
     }
 
     @Test public void testInitialization() throws Exception {
-        resolver = new InstantiatingRubyComponentResolver();
-        proxy.setRubyComponentResolver( resolver );
-
         resolver.setRubyClassName( "TestService" );
         resolver.setRubyRequirePath( "org/torquebox/jobs/core/test_service" );
         resolver.setInitializeParams( ruby.evalScriptlet("{'foo'=>42}").convertToHash() );

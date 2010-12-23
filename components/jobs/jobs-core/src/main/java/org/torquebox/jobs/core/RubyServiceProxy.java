@@ -11,10 +11,15 @@ import org.torquebox.interp.core.RubyComponentResolver;
 
 public class RubyServiceProxy {
 
-	public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
-		this.runtimePool = runtimePool;
-	}
-	
+    public RubyServiceProxy( RubyComponentResolver resolver, RubyRuntimePool pool ) {
+        setRubyComponentResolver( resolver );
+        setRubyRuntimePool( pool );
+    }
+
+    public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
+        this.runtimePool = runtimePool;
+    }
+    
     public void setRubyComponentResolver(RubyComponentResolver resolver) {
         this.resolver = resolver;
     }
@@ -39,7 +44,7 @@ public class RubyServiceProxy {
         return this.service;
     }
 
-	private RubyRuntimePool runtimePool;
+    private RubyRuntimePool runtimePool;
     private Ruby ruby;
     private IRubyObject service;
     private RubyComponentResolver resolver;
