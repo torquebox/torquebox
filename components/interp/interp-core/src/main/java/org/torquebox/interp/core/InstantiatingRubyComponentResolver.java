@@ -1,5 +1,7 @@
 package org.torquebox.interp.core;
 
+import java.util.Collection;
+import java.util.Map;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -12,6 +14,8 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
 
 	private String rubyClassName;
 	private String rubyRequirePath;
+    private Object[] initializeParams = new Object[] {};
+
 	private static final Logger log = Logger.getLogger(InstantiatingRubyComponentResolver.class);
 
 	private ComponentInitializer componentInitializer;
@@ -35,6 +39,20 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
 		return this.rubyRequirePath;
 	}
 
+    public void setInitializeParams(Object[] initializeParams) {
+        this.initializeParams = initializeParams;
+    }
+    public void setInitializeParams(Collection params) {
+        setInitializeParams( params.toArray() );
+    }
+    public void setInitializeParams(Map params) {
+        setInitializeParams( new Object[] { params } );
+    }
+
+    public Object[] getInitializeParams() {
+        return this.initializeParams;
+    }
+
 	public void setComponentInitializer(ComponentInitializer componentInitializer) {
 		this.componentInitializer = componentInitializer;
 	}
@@ -56,7 +74,7 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
 			return null;
 		}
 
-		IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, componentClass, "new", new Object[] {}, IRubyObject.class);
+		IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod(ruby, componentClass, "new", getInitializeParams(), IRubyObject.class);
         log.debug("Got component: "+component);
 		if (this.componentInitializer != null) {
 			this.componentInitializer.initialize(component);

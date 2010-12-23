@@ -1,7 +1,6 @@
 package org.torquebox.interp.core;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -75,6 +74,23 @@ public class InstantiatingRubyComponentResolverTest {
 		assertNotNull( componentToo );
 		
 		assertSame( component, componentToo );
+	}
+	
+	/** Ensure that constructors may take arguments. */
+	@Test
+	public void testResolveWithContructorArguments() throws Exception {
+		InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+		
+		resolver.setComponentName( "optional-component" );
+		resolver.setRubyClassName( "OptionalComponent" );
+		resolver.setRubyRequirePath( "org/torquebox/interp/core/optional_component" );
+        Map options = ruby.evalScriptlet("{ :a => '1', 'b' => '2' }").convertToHash();
+        resolver.setInitializeParams( options );
+
+		IRubyObject component = resolver.resolve( this.ruby );
+		assertNotNull( component );
+        assertEquals( "1", JavaEmbedUtils.invokeMethod(this.ruby, component, "[]", new Object[] { ruby.evalScriptlet(":a") }, String.class) );
+        assertEquals( "2", JavaEmbedUtils.invokeMethod(this.ruby, component, "[]", new Object[] { "b" }, String.class) );
 	}
 	
 	/** Ensure that multiple resolvers keep their components distinct within an interpreter. */
