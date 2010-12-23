@@ -30,7 +30,6 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
