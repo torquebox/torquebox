@@ -2,10 +2,11 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="JobsYamlParsingDeployer" class="org.torquebox.jobs.deployers.JobsYamlParsingDeployer"/>
-  <bean name="RubySchedulerDeployer"   class="org.torquebox.jobs.deployers.RubySchedulerDeployer"/>
-  <bean name="RubyJobDeployer"         class="org.torquebox.jobs.deployers.RubyJobDeployer"/>
-  <bean name="JobsRuntimePoolDeployer" class="org.torquebox.jobs.deployers.JobsRuntimePoolDeployer"/>
+  <bean name="JobsYamlParsingDeployer"     class="org.torquebox.jobs.deployers.JobsYamlParsingDeployer"/>
+  <bean name="RubySchedulerDeployer"       class="org.torquebox.jobs.deployers.RubySchedulerDeployer"/>
+  <bean name="RubyJobDeployer"             class="org.torquebox.jobs.deployers.RubyJobDeployer"/>
+  <bean name="JobsRuntimePoolDeployer"     class="org.torquebox.jobs.deployers.JobsRuntimePoolDeployer"/>
+  <bean name="ServicesYamlParsingDeployer" class="org.torquebox.jobs.deployers.ServicesYamlParsingDeployer"/>
   
   <bean name="JobsLoadPathConfigurator" class="org.torquebox.interp.deployers.LoadPathDeployer">
     <property name="loadPaths">

@@ -14,7 +14,7 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
 
 	private String rubyClassName;
 	private String rubyRequirePath;
-    private Object[] initializeParams = new Object[] {};
+    private Object[] initializeParams;
 
 	private static final Logger log = Logger.getLogger(InstantiatingRubyComponentResolver.class);
 
@@ -43,10 +43,10 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
         this.initializeParams = initializeParams;
     }
     public void setInitializeParams(Collection params) {
-        setInitializeParams( params.toArray() );
+        if (params != null) setInitializeParams( params.toArray() );
     }
     public void setInitializeParams(Map params) {
-        setInitializeParams( new Object[] { params } );
+        if (params != null) setInitializeParams( new Object[] { params } );
     }
 
     public Object[] getInitializeParams() {

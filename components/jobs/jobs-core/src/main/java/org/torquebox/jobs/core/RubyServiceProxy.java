@@ -11,6 +11,10 @@ import org.torquebox.interp.core.RubyComponentResolver;
 
 public class RubyServiceProxy {
 
+    public RubyServiceProxy() {
+        // MicroContainer seems to want this declared
+    }
+
     public RubyServiceProxy( RubyComponentResolver resolver, RubyRuntimePool pool ) {
         setRubyComponentResolver( resolver );
         setRubyRuntimePool( pool );
