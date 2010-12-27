@@ -25,7 +25,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	/** Ensure that an empty jobs.yml causes no problems. */
 	@Test
 	public void testEmptyJobsYml() throws Exception {
-        URL jobsYml = getClass().getResource("empty-jobs.yml");
+        URL jobsYml = getClass().getResource("empty.yml");
         
         String deploymentName = addDeployment(jobsYml, "jobs.yml");
         processDeployments(true);

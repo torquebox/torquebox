@@ -90,15 +90,7 @@ public class ServicesYamlParsingDeployer extends AbstractParsingDeployer {
                 result = results.size();
 				for (String service : results.keySet()) {
 					Map<String, String> params = results.get(service);
-
-                    String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, service );
-                    BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
-
-                    ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, POOL_NAME) );
-                    builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
-                    builder.addPropertyMetaData("rubyComponentResolver", createComponentResolver( service, params ));
-
-                    AttachmentUtils.attach(unit, builder.getBeanMetaData());
+                    createServiceProxyBean( unit, service, params );
 				}
 			}
 		} finally {
@@ -106,6 +98,17 @@ public class ServicesYamlParsingDeployer extends AbstractParsingDeployer {
 		}
         return result;
 	}
+
+    protected void createServiceProxyBean(DeploymentUnit unit, String service, Map params) {
+        String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, service );
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
+
+        ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, POOL_NAME) );
+        builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
+        builder.addPropertyMetaData("rubyComponentResolver", createComponentResolver( service, params ));
+
+        AttachmentUtils.attach(unit, builder.getBeanMetaData());
+    }
 
 	protected RubyComponentResolver createComponentResolver(String service, Map params) {
 		InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
