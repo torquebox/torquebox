@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-component-parent</artifactId>
-    <version>1.0.0.RC1-SNAPSHOT</version>
+    <version>1.0.0.CR1-SNAPSHOT</version>
     <relativePath>../component-parent/pom.xml</relativePath>
   </parent>
 
