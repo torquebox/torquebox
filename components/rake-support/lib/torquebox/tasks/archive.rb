@@ -8,7 +8,7 @@ end
 namespace :torquebox do
 
   desc "Create a nice self-contained application archive"
-  task :archive=>[:freeze] do 
+  task :archive do
     skip_files = %w{ ^log$ ^tmp$ \.rails$ \.rack$ vendor }
 
     include_files = []
@@ -51,10 +51,6 @@ namespace :torquebox do
       jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
       exec_cmd( "#{jruby} -S bundle package" )
       exec_cmd( "#{jruby} -S bundle install --local --path vendor/bundle" )
-    end
-  else
-    task :freeze do
-      # nothing
     end
   end
 
