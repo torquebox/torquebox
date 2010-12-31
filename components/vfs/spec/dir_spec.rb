@@ -168,6 +168,14 @@ describe "Dir extensions for VFS" do
         items.should include( "#{base}/manifest.txt" )
       end
 
+      it "should allow character-class matching" do
+        items = Dir.glob( "#{prefix}/home/{larry}/file[12].{txt}" )
+        items.should_not be_empty
+        items.size.should eql 2
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+        items.should include( "#{prefix}/home/larry/file2.txt" )
+      end
+
       it "should allow alternation globbing on normal files" do
         items = Dir.glob( "#{prefix}/home/{larry}/file{,1,2}.{txt}" )
         items.should_not be_empty

@@ -35,6 +35,8 @@ module VFS
             result += question()
           when '{':
             result += alternation()
+          when '[':
+            result += char_class()
           else
             if ( la_is_char? )
               result += char();
@@ -111,6 +113,19 @@ module VFS
       consume( '}' )
       @alternation_depth -= 1
       #puts "exit alternation()"
+      result
+    end
+
+    def char_class()
+      consume( '[' )
+      result = '['
+
+      while( la() != ']' )
+        result += consume();
+      end
+
+      consume( ']' )
+      result += ']'
       result
     end
   
