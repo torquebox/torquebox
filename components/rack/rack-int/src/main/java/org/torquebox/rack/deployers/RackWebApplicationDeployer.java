@@ -79,8 +79,9 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
 		if (webMetaData == null) {
 			webMetaData = new WebMetaData();
+            webMetaData.setDistributable( new EmptyMetaData() );
 			unit.addAttachment(WebMetaData.class, webMetaData);
-		}
+        }
 
 		FilterMetaData rackFilter = new FilterMetaData();
 		rackFilter.setId(FILTER_NAME);
@@ -152,14 +153,14 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 		if (jbossWebMetaData == null) {
 			jbossWebMetaData = new JBossWebMetaData();
 			unit.addAttachment(JBossWebMetaData.class, jbossWebMetaData);
+            if (webMetaData.getDistributable() != null) {
+                jbossWebMetaData.setDistributable( webMetaData.getDistributable() );
+                ReplicationConfig repCfg = new ReplicationConfig();
+                repCfg.setReplicationGranularity(ReplicationGranularity.SESSION);
+                repCfg.setReplicationTrigger(ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET);
+                jbossWebMetaData.setReplicationConfig(repCfg);
+            }
 		}
-
-        jbossWebMetaData.setDistributable( new EmptyMetaData() );
-        ReplicationConfig repCfg = new ReplicationConfig();
-        repCfg.setReplicationGranularity(ReplicationGranularity.SESSION);
-        repCfg.setReplicationTrigger(ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET);
-        // repCfg.setUseJK(useJK);
-        jbossWebMetaData.setReplicationConfig(repCfg);
 
 		jbossWebMetaData.setContextRoot(metaData.getContextPath());
 
