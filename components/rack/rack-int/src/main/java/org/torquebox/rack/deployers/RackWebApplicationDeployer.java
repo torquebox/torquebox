@@ -41,6 +41,11 @@ import org.jboss.metadata.web.spec.WebMetaData;
 import org.torquebox.rack.core.servlet.RackFilter;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
+import org.jboss.metadata.javaee.spec.EmptyMetaData;
+import org.jboss.metadata.web.jboss.ReplicationConfig;
+import org.jboss.metadata.web.jboss.ReplicationGranularity;
+import org.jboss.metadata.web.jboss.ReplicationTrigger;
+
 
 /**
  * <pre>
@@ -148,6 +153,13 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 			jbossWebMetaData = new JBossWebMetaData();
 			unit.addAttachment(JBossWebMetaData.class, jbossWebMetaData);
 		}
+
+        jbossWebMetaData.setDistributable( new EmptyMetaData() );
+        ReplicationConfig repCfg = new ReplicationConfig();
+        repCfg.setReplicationGranularity(ReplicationGranularity.SESSION);
+        repCfg.setReplicationTrigger(ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET);
+        // repCfg.setUseJK(useJK);
+        jbossWebMetaData.setReplicationConfig(repCfg);
 
 		jbossWebMetaData.setContextRoot(metaData.getContextPath());
 

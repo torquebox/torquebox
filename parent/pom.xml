@@ -251,7 +251,7 @@
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.3.0</version.rspec>
 
-    <version.jbossas>6.0.0.20101110-CR1</version.jbossas>
+    <version.jbossas>6.0.0.Final</version.jbossas>
     <version.jbossas.package>6.0.x</version.jbossas.package>
     <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
 
