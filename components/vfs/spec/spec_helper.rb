@@ -10,16 +10,21 @@ TEST_COPY_BASE = File.join( File.dirname( TEST_DATA_BASE ), 'test-copy' )
 module PathHelper
   def self.extended(cls)
     cls.class_eval do
+
       def pwd()
+        self.class.pwd
+      end
+
+      def self.pwd()
         ::Dir.pwd
       end
 
       def archive1_vfs_path()
-        "vfs:#{@archive1_path}"
+        vfs_path( @archive1_path )
       end
  
       def archive2_vfs_path()
-        "vfs:#{@archive2_path}"
+        vfs_path( @archive2_path )
       end
 
       def archive1_path()
@@ -31,6 +36,10 @@ module PathHelper
       end
   
       def vfs_path(path)
+        self.class.vfs_path( path )
+      end
+
+      def self.vfs_path(path)
         return path                   if ( path[0,4] == 'vfs:' )
         return "vfs:#{path}"          if ( path[0,1] == '/' )
         return "vfs:#{path}"          if ( path[0,1] == '\\' )
@@ -50,7 +59,7 @@ module PathHelper
           when :absolute
             path = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
           when :vfs
-            path = "vfs:" + File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+            path = vfs_path( test_data_base_path( :absolute ) )
         end
         path
       end
@@ -102,24 +111,6 @@ module TestDataHelper
     cls.after(:each) do
       @archive2_handle.close
       @archive1_handle.close
-    end
-
-    cls.class_eval do
-      def archive1_vfs_path()
-        "vfs:#{@archive1_path}"
-      end
-
-      def archive2_vfs_path()
-        "vfs:#{@archive2_path}"
-      end
-
-      def archive1_path()
-        @archive1_path
-      end
-
-      def archive2_path()
-        @archive2_path
-      end
     end
 
   end

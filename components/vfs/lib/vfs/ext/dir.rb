@@ -114,6 +114,9 @@ class Dir
     rescue Errno::ENOTDIR => e
       path = VFS.writable_path_or_error( path, e )
       mkdir_before_vfs( path, mode )
+    rescue Errno::ENOENT => e
+      path = VFS.writable_path_or_error( path, e )
+      mkdir_before_vfs( path, mode )
     end
 
     def new(string)

@@ -11,6 +11,7 @@ describe "Dir extensions for VFS" do
   describe "with vfs urls" do
     it "should allow globbing within archives with explicit vfs" do
       pattern = "#{archive1_vfs_path}/*"
+      puts "PATTERN: #{pattern}"
       items = Dir.glob( pattern )
       items.should_not be_empty
       items.should include File.join( "#{archive1_vfs_path}", 'web.xml' )
@@ -98,7 +99,9 @@ describe "Dir extensions for VFS" do
       end
 
       it "should provide access to entries" do
-        items = Dir.entries( "#{prefix}/home/larry" )
+        path = "#{prefix}/home/larry" 
+	puts "ENTRIES: #{path}"
+        items = Dir.entries( path )
         items.should_not be_empty
         items.size.should eql( 5 )
         items.should include( "." )
