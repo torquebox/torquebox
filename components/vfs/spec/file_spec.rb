@@ -5,11 +5,12 @@ require 'pathname'
 
 describe "File extensions for VFS" do
 
+  extend PathHelper
   extend TestDataCopyHelper
 
   it "should report writable-ness for VFS urls" do
-    prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
-    url = "vfs:#{prefix}/home/larry/file1.txt"
+    prefix = test_copy_base_path( :relative )
+    url = vfs_path( "#{prefix}/home/larry/file1.txt" )
     File.exists?( url ).should be_true
     File.exist?( url ).should be_true
     File.writable?( url ).should be_true
@@ -21,71 +22,71 @@ describe "File extensions for VFS" do
     end
 
     it "should handle relative to vfs path" do
-      File.expand_path("../foo", "vfs:/tmp/bar").should == "vfs:/tmp/foo"
+      File.expand_path("../foo", vfs_path("/tmp/bar") ).should == vfs_path("/tmp/foo")
     end
 
     it "should expand paths relative to VFS urls as VFS" do
-      absolute = File.expand_path("db/development.sqlite3", "vfs:/path/to/app")
-      absolute.should eql("vfs:/path/to/app/db/development.sqlite3")
+      absolute = File.expand_path("db/development.sqlite3", vfs_path("/path/to/app") )
+      absolute.should eql( vfs_path("/path/to/app/db/development.sqlite3") )
     end
 
     it "should expand paths relative to VFS pathnames as VFS" do
-      absolute = File.expand_path("db/development.sqlite3", Pathname.new("vfs:/path/to/app"))
-      absolute.should eql("vfs:/path/to/app/db/development.sqlite3")
+      absolute = File.expand_path("db/development.sqlite3", Pathname.new( vfs_path( "/path/to/app" ) ) )
+      absolute.should eql( vfs_path("/path/to/app/db/development.sqlite3") )
     end
 
     it "should expand absolute Pathname objects correctly" do
-      File.expand_path("vfs:/foo").should eql("vfs:/foo")
-      File.expand_path(Pathname.new("vfs:/foo")).should eql("vfs:/foo")
+      File.expand_path( vfs_path("/foo") ).should eql( vfs_path("/foo") )
+      File.expand_path(Pathname.new( vfs_path("/foo"))).should eql( vfs_path("/foo") )
     end
 
     it "should return first path when given two vfs paths" do
-      File.expand_path("vfs:/tmp/foo", "vfs:/tmp/bar").should == "vfs:/tmp/foo"
+      File.expand_path( vfs_path("/tmp/foo"), vfs_path("/tmp/bar")).should == vfs_path("/tmp/foo")
     end
   end
 
   it "should handle vfs urls as readable" do
     File.readable?( __FILE__ ).should be_true
-    File.readable?( "vfs:#{__FILE__}" ).should be_true
+    File.readable?( vfs_path(__FILE__) ).should be_true
   end
 
   it "should report readable-ness for files inside vfs archives" do
-    path = "vfs:#{@archive1_path}/web.xml"
+    path = "#{archive1_vfs_path}/web.xml"
     File.readable?( path ).should be_true
   end
 
   it "should report readable-ness for non-existent files inside vfs archives" do
-    path = "vfs:#{@archive1_path}/file_that_does_not_exist.txt"
+    path = "#{archive1_vfs_path}/file_that_does_not_exist.txt"
     File.readable?( path ).should be_false
   end
 
   it "should handle #'s in filenames properly" do
-    prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
+    prefix = test_copy_base_path( :absolute )
     File.file?( "#{prefix}/#bad-uri#" ).should be_true
-    File.file?( "vfs:#{prefix}/#bad-uri#" ).should be_true
-    File.file?( "vfs:#{prefix}/#missing#" ).should be_false
+    File.file?( vfs_path( "#{prefix}/#bad-uri#" ) ).should be_true
+    File.file?( vfs_path( "#{prefix}/#missing#" ) ).should be_false
   end
 
   it "should handle spaces in filenames properly" do
-    prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
+    prefix = test_copy_base_path( :absolute )
     File.file?( "#{prefix}/sound of music/flibbity jibbit" ).should be_true
-    File.file?( "vfs:#{prefix}/sound of music/flibbity jibbit" ).should be_true
-    File.file?( "vfs:#{prefix}/sound of music/flibberty gibbet" ).should be_false
+    File.file?( vfs_path("#{prefix}/sound of music/flibbity jibbit" ) ).should be_true
+    File.file?( vfs_path("#{prefix}/sound of music/flibberty gibbet" ) ).should be_false
   end
 
   it "should handle backslashes in filenames even though there's no good reason to use them regardless of platform" do
     filename = __FILE__.gsub("/","\\")
     File.readable?( filename ).should be_true
-    File.readable?( "vfs:#{filename}" ).should be_true
+    File.readable?( vfs_path( filename ) ).should be_true
   end
 
   it "should be able to chmod real files with vfs urls" do
     path = File.expand_path("foo")
     begin
       f = File.new(path, "w")
-      FileUtils.chmod( 0666, "vfs:#{path}")
+      FileUtils.chmod( 0666, vfs_path( path ) )
       m1 = f.stat.mode
-      FileUtils.chmod( 0644, "vfs:#{path}")
+      FileUtils.chmod( 0644, vfs_path( path ) )
       m2 = f.stat.mode
       m1.should_not eql(m2)
     ensure
@@ -95,8 +96,8 @@ describe "File extensions for VFS" do
 
   it "should be able to read file after chmod from a stat" do
     # Similar to what Rails' File.atomic_write does (TORQUE-174)
-    p1 = "vfs:" + File.expand_path("p1")
-    p2 = "vfs:" + File.expand_path("p2")
+    p1 = vfs_path( File.expand_path("p1") )
+    p2 = vfs_path( File.expand_path("p2") )
     begin
       File.open(p1, "w") { }
       File.open(p2, "w") { }
@@ -131,7 +132,7 @@ describe "File extensions for VFS" do
 
   it "should be able to create new files with vfs urls" do
     lambda {
-      File.new("vfs:#{__FILE__}", 'r')
+      File.new( vfs_path( __FILE__ ), 'r')
     }.should_not raise_error
   end
 
@@ -143,31 +144,31 @@ describe "File extensions for VFS" do
 
   describe "open" do
     it "should return File when called on File with VFS url" do
-      File.open("vfs:#{@archive1_path}", 'r').should be_an_instance_of(File)
+      File.open( archive1_vfs_path, 'r').should be_an_instance_of(File)
     end
 
     it "should return File when called on File without VFS url" do
-      File.open(@archive1_path, 'r').should be_an_instance_of(File)
+      File.open(archive1_path, 'r').should be_an_instance_of(File)
     end
 
     it "should find files by pathnames" do
       lambda {
-        File.open(Pathname.new(@archive1_path), 'r')
+        File.open(Pathname.new(archive1_path), 'r')
       }.should_not raise_error
     end
   end
 
   describe "new" do
     it "should return File when called on File with VFS url" do
-      File.new("vfs:#{@archive1_path}", 'r').should be_an_instance_of(File)
+      File.new( archive1_vfs_path, 'r').should be_an_instance_of(File)
     end
 
     it "should return File when called on File without VFS url" do
-      File.new(@archive1_path, 'r').should be_an_instance_of(File)
+      File.new( archive1_path, 'r').should be_an_instance_of(File)
     end
 
     it "should create objects that respond to lstat for files in an archive" do
-      file = File.new( "vfs:#{@archive1_path}/web.xml")
+      file = File.new( "#{archive1_vfs_path}/web.xml")
       file.lstat.should_not be_nil
     end
   end
@@ -176,11 +177,11 @@ describe "File extensions for VFS" do
     describe "with #{style} paths" do
       case ( style )
         when :relative
-          prefix = "./#{TEST_COPY_BASE}"
+          prefix = test_copy_base_path( :relative )
         when :absolute
-          prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
+          prefix = test_copy_base_path( :absolute )
         when :vfs
-          prefix = "vfs:#{File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )}"
+          prefix = test_copy_base_path( :vfs )
       end
 
       it "should provide size for normal files" do
@@ -234,7 +235,7 @@ describe "File extensions for VFS" do
         contents = File.read( "#{prefix}/home/larry/file1.txt" )
         contents.should eql( "This is file 1\nhowdy\n" )
 
-        fs_file = File.join( File.dirname(__FILE__), '..', TEST_COPY_BASE, 'home/larry/file1.txt' )
+        fs_file = File.join( "#{test_copy_base_path(:relative)}/home/larry/file1.txt" )
         fs_contents = File.read( fs_file )
         fs_contents.should eql( "This is file 1\nhowdy\n" )
       end
@@ -259,7 +260,7 @@ describe "File extensions for VFS" do
           stat = File.stat( "missing file" )
         }.should raise_error(Errno::ENOENT)
         lambda {
-          stat = File.stat( "vfs:/missing/file" )
+          stat = File.stat( vfs_path("/missing/file") )
         }.should raise_error(Errno::ENOENT)
       end
         
@@ -360,7 +361,7 @@ describe "File extensions for VFS" do
   
   describe 'chown' do
     it "should handle vfs paths" do
-      path = "vfs:#{@archive1_path}"
+      path = archive1_vfs_path
       stat = File.stat(path)
       File.chown( stat.uid, stat.gid, path )
     end
@@ -371,7 +372,7 @@ describe "File extensions for VFS" do
       path = File.expand_path("foo")
       begin
         File.new(path, "w")
-        vpath = "vfs:#{path}"
+        vpath = vfs_path( path )
         mtime = File.mtime(vpath)
         File.utime( Time.now, mtime+1, vpath )
         mtime.should be < File.mtime(vpath)

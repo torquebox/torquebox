@@ -5,42 +5,42 @@ require File.dirname(__FILE__) +  '/spec_helper.rb'
 
 describe "Dir extensions for VFS" do
 
+  extend PathHelper
   extend TestDataHelper
 
   describe "with vfs urls" do
     it "should allow globbing within archives with explicit vfs" do
-      pattern = "vfs:#{@archive1_path}/*"
+      pattern = "#{archive1_vfs_path}/*"
       items = Dir.glob( pattern )
       items.should_not be_empty
-      items.should include File.join( "vfs:#{@archive1_path}", 'web.xml' )
-      items.should include File.join( "vfs:#{@archive1_path}", 'lib' )
+      items.should include File.join( "#{archive1_vfs_path}", 'web.xml' )
+      items.should include File.join( "#{archive1_vfs_path}", 'lib' )
     end
 
     it "should allow globbing within nested archives with explicit vfs" do
-      pattern = "vfs:#{@archive2_path}/*"
+      pattern = "#{archive2_vfs_path}/*"
       items = Dir.glob( pattern )
       items.should_not be_empty
-      items.should include "vfs:#{@archive2_path}/manifest.txt"
+      items.should include "#{archive2_vfs_path}/manifest.txt"
     end
 
     it "should create new Dirs" do
       lambda {
-        Dir.new("vfs:#{@archive2_path}")
+        Dir.new("#{archive2_vfs_path}")
       }.should_not raise_error
     end
   end
 
   [ :absolute, :relative, :vfs ].each do |style|
-  #[ :relative ].each do |style|
     describe "with #{style} paths" do
 
       case ( style )
         when :relative
-          prefix = "./#{TEST_DATA_BASE}"
+          prefix = test_data_base_path( :relative )
         when :absolute
-          prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+          prefix = test_data_base_path( :absolute )
         when :vfs
-          prefix = "vfs:" + File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+          prefix = test_data_base_path( :vfs )
       end
 
       it "should ignore dotfiles by default" do
