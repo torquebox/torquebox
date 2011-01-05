@@ -1,30 +1,11 @@
 
 require 'fileutils'
+
 require File.dirname(__FILE__) +  '/spec_helper.rb'
 
 describe "Dir extensions for VFS" do
 
-  before(:each) do
-    @executor = java.util.concurrent::Executors.newScheduledThreadPool( 1 )
-    @temp_file_provider = org.jboss.vfs::TempFileProvider.create( "vfs-test", @executor )
-
-    @archive1_path = File.expand_path( "#{TEST_DATA_DIR}/home/larry/archive1.jar" )
-    @archive1_file = org.jboss.vfs::VFS.child( @archive1_path )
-    @archive1_mount_point = org.jboss.vfs::VFS.child( @archive1_path )
-    @archive1_handle = org.jboss.vfs::VFS.mountZip( @archive1_file, @archive1_mount_point, @temp_file_provider )
-
-    @archive2_path = "#{@archive1_path}/lib/archive2.jar"
-    @archive2_file = org.jboss.vfs::VFS.child( @archive2_path )
-    @archive2_mount_point = org.jboss.vfs::VFS.child( @archive2_path )
-    @archive2_handle = org.jboss.vfs::VFS.mountZip( @archive2_file, @archive2_mount_point, @temp_file_provider )
-
-
-  end
-
-  after(:each) do
-    @archive2_handle.close
-    @archive1_handle.close
-  end
+  extend TestDataHelper
 
   describe "with vfs urls" do
     it "should allow globbing within archives with explicit vfs" do
@@ -63,7 +44,9 @@ describe "Dir extensions for VFS" do
       end
 
       it "should ignore dotfiles by default" do
-        items = Dir.glob( "#{prefix}/dotfiles/*" )
+        glob_pattern = "#{prefix}/dotfiles/*"
+        puts "glob_pattern=#{glob_pattern}"
+        items = Dir.glob( glob_pattern )
         items.should_not be_empty
         items.size.should eql(3)
         items.should include( "#{prefix}/dotfiles/one" )
