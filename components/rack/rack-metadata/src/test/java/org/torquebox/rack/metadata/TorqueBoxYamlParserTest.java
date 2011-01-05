@@ -69,21 +69,37 @@ public class TorqueBoxYamlParserTest extends AbstractTorqueBoxTestCase {
 
     @Test 
     public void testLenientRootKeys() throws Exception {
-        String root = "/test";
+        String root = null;
+        String expectedRoot = null;
+        
+        if ( isWindows() ) {
+        	root = "C:/test";
+        	expectedRoot = "/" + root;
+        } else {
+        	root = "/test";
+        	expectedRoot = root;
+        }
+        
         strings.put("RACK_ROOT", root);
-        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        assertEquals( expectedRoot, parser.parseApplication(strings).getRackRoot().getPathName() );
+        
         setUp(); strings.put("RAILS_ROOT", root);
-        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        assertEquals( expectedRoot, parser.parseApplication(strings).getRackRoot().getPathName() );
+        
         setUp(); strings.put("rack_root", root);
-        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        assertEquals( expectedRoot, parser.parseApplication(strings).getRackRoot().getPathName() );
+        
         setUp(); strings.put("rails_root", root);
-        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        assertEquals( expectedRoot, parser.parseApplication(strings).getRackRoot().getPathName() );
+        
         setUp(); strings.put("root", root);
-        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        assertEquals( expectedRoot, parser.parseApplication(strings).getRackRoot().getPathName() );
+        
         setUp(); strings.put("ROOT", root);
-        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        assertEquals( expectedRoot, parser.parseApplication(strings).getRackRoot().getPathName() );
+        
         setUp(); strings.put("RaCk_RoOt", root);
-        assertEquals( root, parser.parseApplication(strings).getRackRoot().getPathName() );
+        assertEquals( expectedRoot, parser.parseApplication(strings).getRackRoot().getPathName() );
     }
 
     @Test 
