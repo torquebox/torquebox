@@ -45,7 +45,6 @@ describe "Dir extensions for VFS" do
 
       it "should ignore dotfiles by default" do
         glob_pattern = "#{prefix}/dotfiles/*"
-        puts "glob_pattern=#{glob_pattern}"
         items = Dir.glob( glob_pattern )
         items.should_not be_empty
         items.size.should eql(3)

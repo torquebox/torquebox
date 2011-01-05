@@ -44,7 +44,7 @@ module ::VFS
              when path =~ /^[[:alpha:]]:/  # windows absolute
                "vfs:/"
              else
-               resolve_path_url( ::Dir.pwd )
+               "#{resolve_path_url( ::Dir.pwd )}/"
              end
     "#{prefix}#{path}"
   end
