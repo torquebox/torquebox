@@ -198,6 +198,7 @@ describe "File extensions for VFS" do
         }.should raise_error
       end
 
+  
       unless TESTING_ON_WINDOWS && ( style == :absolute ) # WTF?
         it "should provide size? for normal files" do
           s = File.size?( "#{prefix}/home/larry/file1.txt" )

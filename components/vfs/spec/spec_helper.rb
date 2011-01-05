@@ -72,6 +72,9 @@ module PathHelper
           when :vfs
             path = vfs_path( test_data_base_path( :absolute ) )
         end
+	if ( path =~ /^[a-z]:/ )
+	  path = path[0,1].upcase + path[1..-1]
+	end
         path
       end
 
@@ -89,6 +92,9 @@ module PathHelper
           when :vfs
             path = vfs_path( test_copy_base_path( :absolute ) )
         end
+	if ( path =~ /^[a-z]:/ )
+	  path = path[0,1].upcase + path[1..-1]
+	end
         path
       end
 
@@ -108,15 +114,15 @@ module TestDataHelper
       @executor = java.util.concurrent::Executors.newScheduledThreadPool( 1 )
       @temp_file_provider = org.jboss.vfs::TempFileProvider.create( "vfs-test", @executor )
   
-      @archive1_path = File.expand_path( "#{test_data_base_path(:absolute)}/home/larry/archive1.jar" )
-      @archive1_file = org.jboss.vfs::VFS.child( @archive1_path )
+      @archive1_path        = File.expand_path( "#{test_data_base_path(:absolute)}/home/larry/archive1.jar" )
+      @archive1_file        = org.jboss.vfs::VFS.child( @archive1_path )
       @archive1_mount_point = org.jboss.vfs::VFS.child( @archive1_path )
-      @archive1_handle = org.jboss.vfs::VFS.mountZip( @archive1_file, @archive1_mount_point, @temp_file_provider )
+      @archive1_handle      = org.jboss.vfs::VFS.mountZip( @archive1_file, @archive1_mount_point, @temp_file_provider )
   
-      @archive2_path = "#{@archive1_path}/lib/archive2.jar"
-      @archive2_file = org.jboss.vfs::VFS.child( @archive2_path )
+      @archive2_path        = "#{@archive1_path}/lib/archive2.jar"
+      @archive2_file        = org.jboss.vfs::VFS.child( @archive2_path )
       @archive2_mount_point = org.jboss.vfs::VFS.child( @archive2_path )
-      @archive2_handle = org.jboss.vfs::VFS.mountZip( @archive2_file, @archive2_mount_point, @temp_file_provider )
+      @archive2_handle      = org.jboss.vfs::VFS.mountZip( @archive2_file, @archive2_mount_point, @temp_file_provider )
     end
 
     cls.after(:each) do
