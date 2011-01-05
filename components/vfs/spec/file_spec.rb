@@ -5,7 +5,6 @@ require 'pathname'
 
 describe "File extensions for VFS" do
 
-  extend PathHelper
   extend TestDataCopyHelper
 
   it "should report writable-ness for VFS urls" do

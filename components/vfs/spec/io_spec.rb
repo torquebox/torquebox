@@ -6,7 +6,9 @@ describe "IO extensions for VFS" do
   extend TestDataHelper
 
   it "should allow reading of full VFS URLs" do
-    content = IO.read( "vfs:#{TEST_DATA_DIR}/home/larry/archive1.jar/lib/archive2.jar/manifest.txt" ).chomp
+    path = vfs_path( "#{test_data_base_path( :relative )}/home/larry/archive1.jar/lib/archive2.jar/manifest.txt" )
+    puts "path #{path}"
+    content = IO.read( path ).chomp
     content.should_not be_nil
     content.should_not be_empty
     content.should eql( "This is manifest.txt" )
@@ -17,9 +19,9 @@ describe "IO extensions for VFS" do
 
       case ( style )
         when :relative
-          prefix = "./#{TEST_DATA_BASE}"
+          prefix = test_data_base_path( :relative )
         when :absolute
-          prefix = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_DATA_BASE ) )
+          prefix = test_data_base_path( :absolute )
       end
 
       it "should allow reading of regular files" do
