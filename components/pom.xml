@@ -83,8 +83,6 @@
     <module>vfs</module>
 
     <module>rake-support</module>
-    <module>torquebox-capistrano</module>
-
 
   </modules>
 
