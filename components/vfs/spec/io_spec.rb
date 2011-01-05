@@ -7,7 +7,6 @@ describe "IO extensions for VFS" do
 
   it "should allow reading of full VFS URLs" do
     path = vfs_path( "#{test_data_base_path( :relative )}/home/larry/archive1.jar/lib/archive2.jar/manifest.txt" )
-    puts "path #{path}"
     content = IO.read( path ).chomp
     content.should_not be_nil
     content.should_not be_empty

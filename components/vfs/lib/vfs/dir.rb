@@ -49,7 +49,7 @@ module VFS
     end
 
     def entries
-      @virtual_file.children.map(&:name)
+      [ '.', '..' ] + @virtual_file.children.map(&:name)
     end
 
   end

@@ -1,4 +1,6 @@
 
+require 'vfs/debug_filter'
+
 class File
 
   class << self
@@ -56,7 +58,7 @@ class File
       file_names.each do |file_name|
         if ( vfs_path?(file_name) )
           virtual_file = org.jboss.vfs::VFS.child( file_name.to_s )
-          raise Errno::ENOENT.new unless virtual_file.exists()
+          raise Errno::ENOENT.new(file_name) unless virtual_file.exists()
           virtual_file.delete
         else
           unlink_without_vfs( file_name )
@@ -71,7 +73,7 @@ class File
       return mtime_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
 
       vfs_url, child_path = VFS.resolve_within_archive(filename)
-      raise Errno::ENOENT.new unless vfs_url
+      raise Errno::ENOENT.new(filename) unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
       virtual_file = virtual_file.get_child( child_path ) if child_path
@@ -82,13 +84,16 @@ class File
     def size(filename)
       return size_without_vfs(filename) if ( File.exist_without_vfs?( filename ) )
 
+
       vfs_url, child_path = VFS.resolve_within_archive(filename)
-      raise Errno::ENOENT.new unless vfs_url
+      raise Errno::ENOENT.new(filename) unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
-      virtual_file = virtual_file.get_child( child_path ) if child_path
 
-      raise Errno::ENOENT.new unless virtual_file.exists
+      raise Errno::ENOENT.new(filename) unless virtual_file.exists
+
+      virtual_file = virtual_file.get_child( child_path ) if child_path
+      raise Errno::ENOENT.new(filename) unless virtual_file.exists
 
       virtual_file.size
     end
@@ -112,11 +117,11 @@ class File
       return stat_without_vfs(name) if ( File.exist_without_vfs?( name ) )
 
       vfs_url, child_path = VFS.resolve_within_archive(filename)
-      raise Errno::ENOENT.new nil unless vfs_url
+      raise Errno::ENOENT.new(filename) unless vfs_url
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
       virtual_file = virtual_file.get_child( child_path ) if child_path
-      raise Errno::ENOENT.new nil unless virtual_file.exists?
+      raise Errno::ENOENT.new(filename) unless virtual_file.exists?
 
       VFS::File::Stat.new( virtual_file )
     end

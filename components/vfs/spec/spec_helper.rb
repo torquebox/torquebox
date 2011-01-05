@@ -7,6 +7,8 @@ require 'vfs'
 TEST_DATA_BASE = 'target/test-data'
 TEST_COPY_BASE = File.join( File.dirname( TEST_DATA_BASE ), 'test-copy' )
 
+TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
+
 module PathHelper
   def self.extended(cls)
     cls.class_eval do
@@ -33,6 +35,15 @@ module PathHelper
 
       def archive2_path()
         @archive2_path
+      end
+
+      def absolute_prefix
+        self.class.absolute_prefix
+      end
+
+      def self.absolute_prefix
+        return '' unless ( TESTING_ON_WINDOWS )
+        'C:'
       end
   
       def vfs_path(path)
@@ -76,7 +87,7 @@ module PathHelper
           when :absolute
             path = File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
           when :vfs
-            path = "vfs:" + File.expand_path( File.join( File.dirname( __FILE__ ), '..', TEST_COPY_BASE ) )
+            path = vfs_path( test_copy_base_path( :absolute ) )
         end
         path
       end

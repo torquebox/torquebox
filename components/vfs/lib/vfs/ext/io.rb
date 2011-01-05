@@ -108,11 +108,8 @@ class IO
     def read(name, length=nil, offset=nil)
       return read_without_vfs(name, length, offset) if ::File.exist_without_vfs?( name )
 
-      if ( name =~ /^\// || name =~ /^vfs:\// )
-        full_path = name
-      else
-        full_path = File.join( Dir.pwd, name )
-      end
+      full_path = File.expand_path( name )
+
       virtual_file = org.jboss.vfs.VFS.child( full_path )
       raise ::Errno::ENOENT.new( "#{name} (#{virtual_file})" ) unless virtual_file.exists()
 

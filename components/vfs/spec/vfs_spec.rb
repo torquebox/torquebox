@@ -1,6 +1,11 @@
+require File.dirname(__FILE__) + '/spec_helper.rb'
+
+
 require 'pathname'
 
 describe "VFS path resolution" do
+
+  extend PathHelper
 
   describe "resolve_within_archive" do
     it "should return pathnames with vfs: prefix unmodified" do
@@ -14,7 +19,7 @@ describe "VFS path resolution" do
     it "should prefix relative paths with the current dir" do
       cwd = Dir.pwd
       path = VFS.resolve_path_url( "foo/bar" )
-      path.should match /^vfs:#{cwd}\/foo\/bar$/
+      path.should match /^#{vfs_path(cwd)}\/foo\/bar$/
     end
 
     it "should not prefix absolute paths with the current dir" do
