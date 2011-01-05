@@ -19,6 +19,7 @@
     <module>javadoc-support</module>
     <module>deployer-support</module>
 
+    <module>test-support</module>
     <module>vdf-test-support</module>
     <module>ruby-test-support</module>
   </modules>

@@ -1,13 +1,19 @@
 package org.torquebox.rack.metadata;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.vfs.VFS;
+import org.junit.Before;
+import org.junit.Test;
+import org.torquebox.test.AbstractTorqueBoxTestCase;
 
 
-public class TorqueBoxYamlParserTest {
+public class TorqueBoxYamlParserTest extends AbstractTorqueBoxTestCase {
     
     private TorqueBoxYamlParser parser;
     private RackApplicationMetaData metadata;
@@ -48,14 +54,14 @@ public class TorqueBoxYamlParserTest {
 
     @Test 
     public void testAbsoluteRackUpScript() throws Exception {
-        strings.put("rackup", System.getProperty("user.dir") + "/src/test/resources/config.ru");
+        strings.put("rackup", pwd() +  "/src/test/resources/config.ru");
         metadata = parser.parseApplication(strings);
         assertEquals("success!\n", metadata.getRackUpScript());
     }
 
     @Test 
     public void testRelativeRackUpScript() throws Exception {
-        strings.put("RACK_ROOT", System.getProperty("user.dir"));
+        strings.put("RACK_ROOT", pwd() );
         strings.put("rackup", "src/test/resources/config.ru");
         metadata = parser.parseApplication(strings);
         assertEquals("success!\n", metadata.getRackUpScript());
