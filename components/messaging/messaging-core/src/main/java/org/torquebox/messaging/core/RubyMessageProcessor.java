@@ -25,79 +25,79 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyMessageProcessor {
 
-	private static final Logger log = Logger.getLogger(RubyMessageProcessor.class);
+    private static final Logger log = Logger.getLogger(RubyMessageProcessor.class);
 
-	public RubyMessageProcessor() {
+    public RubyMessageProcessor() {
 
-	}
+    }
 
-	public String toString() {
-		return "[MessageDrivenConsumer: " + getName() + "]";
-	}
+    public String toString() {
+        return "[MessageDrivenConsumer: " + getName() + "]";
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public void setComponentResolver(RubyComponentResolver resolver) {
-		this.componentResolver = resolver;
-	}
+    public void setComponentResolver(RubyComponentResolver resolver) {
+        this.componentResolver = resolver;
+    }
 
-	public RubyComponentResolver getComponentResolver() {
-		return this.componentResolver;
-	}
-	
-	public void setDestination(Destination destination) {
-		this.destination = destination;
-	}
+    public RubyComponentResolver getComponentResolver() {
+        return this.componentResolver;
+    }
+    
+    public void setDestination(Destination destination) {
+        this.destination = destination;
+    }
 
-	public Destination getDestination() {
-		return this.destination;
-	}
+    public Destination getDestination() {
+        return this.destination;
+    }
 
-	public void setMessageSelector(String messageSelector) {
-		this.messageSelector = messageSelector;
-	}
+    public void setMessageSelector(String messageSelector) {
+        this.messageSelector = messageSelector;
+    }
 
-	public String getMessageSelector() {
-		return this.messageSelector;
-	}
+    public String getMessageSelector() {
+        return this.messageSelector;
+    }
 
-	public void setRubyConfig(Map rubyConfig) {
-		if (rubyConfig != null) this.rubyConfig = rubyConfig;
-	}
+    public void setRubyConfig(Map rubyConfig) {
+        if (rubyConfig != null) this.rubyConfig = rubyConfig;
+    }
 
-	public Map getRubyConfig() {
-		return this.rubyConfig;
-	}
+    public Map getRubyConfig() {
+        return this.rubyConfig;
+    }
 
-	public void setAcknowledgeMode(int acknowledgeMode) {
-		this.acknowledgeMode = acknowledgeMode;
-	}
+    public void setAcknowledgeMode(int acknowledgeMode) {
+        this.acknowledgeMode = acknowledgeMode;
+    }
 
-	public int getAcknowledgeMode() {
-		return this.acknowledgeMode;
-	}
+    public int getAcknowledgeMode() {
+        return this.acknowledgeMode;
+    }
 
-	public void setConnectionFactory(ConnectionFactory connectionFactory) {
-		this.connectionFactory = connectionFactory;
-	}
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
 
-	public ConnectionFactory getConnectionFactory() {
-		return this.connectionFactory;
-	}
+    public ConnectionFactory getConnectionFactory() {
+        return this.connectionFactory;
+    }
 
-	public void setRubyRuntimePool(RubyRuntimePool rubyRuntimePool) {
-		this.rubyRuntimePool = rubyRuntimePool;
-	}
+    public void setRubyRuntimePool(RubyRuntimePool rubyRuntimePool) {
+        this.rubyRuntimePool = rubyRuntimePool;
+    }
 
-	public RubyRuntimePool getRubyRuntimePool() {
-		return this.rubyRuntimePool;
-	}
+    public RubyRuntimePool getRubyRuntimePool() {
+        return this.rubyRuntimePool;
+    }
     
     public void setConcurrency(int concurrency) {
         this.concurrency = concurrency;
@@ -107,51 +107,51 @@ public class RubyMessageProcessor {
         return this.concurrency;
     }
 
-	public void create() throws JMSException {
-		log.info("creating for " + getDestination());
-		this.connection = this.connectionFactory.createConnection();
+    public void create() throws JMSException {
+        log.info("creating for " + getDestination());
+        this.connection = this.connectionFactory.createConnection();
         for (int i=0; i<getConcurrency(); i++) {
             new Handler( this.connection.createSession(true, this.acknowledgeMode) );
         }
-	}
+    }
 
-	public void start() throws JMSException {
-		log.info("starting for " + getDestination());
-		if (connection != null) {
-			connection.start();
-		}
-	}
+    public void start() throws JMSException {
+        log.info("starting for " + getDestination());
+        if (connection != null) {
+            connection.start();
+        }
+    }
 
-	public void stop() throws JMSException {
-		log.info("stopping for " + getDestination());
-		if (this.connection != null) {
-			log.info("stopping connection for " + getDestination());
-			this.connection.stop();
-		}
-	}
+    public void stop() throws JMSException {
+        log.info("stopping for " + getDestination());
+        if (this.connection != null) {
+            log.info("stopping connection for " + getDestination());
+            this.connection.stop();
+        }
+    }
 
-	public void destroy() throws JMSException {
-		log.info("destroying for " + getDestination());
-		if (this.connection != null) {
-			log.info("destroying connection for " + getDestination());
-			this.connection.close();
-			this.connection = null;
-		}
-	}
+    public void destroy() throws JMSException {
+        log.info("destroying for " + getDestination());
+        if (this.connection != null) {
+            log.info("destroying connection for " + getDestination());
+            this.connection.close();
+            this.connection = null;
+        }
+    }
 
-	protected IRubyObject instantiateProcessor(Ruby ruby) throws Exception {
-		return this.componentResolver.resolve(ruby);
-	}
+    protected IRubyObject instantiateProcessor(Ruby ruby) throws Exception {
+        return this.componentResolver.resolve(ruby);
+    }
 
-	protected void configureProcessor(IRubyObject processor) {
-		Ruby ruby = processor.getRuntime();
-		ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { getRubyConfig() });
-	}
+    protected void configureProcessor(IRubyObject processor) {
+        Ruby ruby = processor.getRuntime();
+        ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { getRubyConfig() });
+    }
 
-	protected void processMessage(IRubyObject processor, Message message) {
-		Ruby ruby = processor.getRuntime();
-		JavaEmbedUtils.invokeMethod(ruby, processor, "process!", new Object[] { message }, void.class);
-	}
+    protected void processMessage(IRubyObject processor, Message message) {
+        Ruby ruby = processor.getRuntime();
+        JavaEmbedUtils.invokeMethod(ruby, processor, "process!", new Object[] { message }, void.class);
+    }
 
     class Handler implements MessageListener {
         
@@ -192,16 +192,16 @@ public class RubyMessageProcessor {
         private Session session;
     }
 
-	private String name;
-	private Destination destination;
-	private String messageSelector;
-	private ConnectionFactory connectionFactory;
-	private RubyRuntimePool rubyRuntimePool;
-	private Connection connection;
-	private RubyComponentResolver componentResolver;
+    private String name;
+    private Destination destination;
+    private String messageSelector;
+    private ConnectionFactory connectionFactory;
+    private RubyRuntimePool rubyRuntimePool;
+    private Connection connection;
+    private RubyComponentResolver componentResolver;
     private int concurrency = 1;
-	private Map rubyConfig = Collections.EMPTY_MAP;
+    private Map rubyConfig = Collections.EMPTY_MAP;
 
-	private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
+    private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 
 }
