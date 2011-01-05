@@ -16,6 +16,7 @@
     config:
       h: ache
       i: eye
+    concurrency: 3
   Two:
     <<: *foo
 

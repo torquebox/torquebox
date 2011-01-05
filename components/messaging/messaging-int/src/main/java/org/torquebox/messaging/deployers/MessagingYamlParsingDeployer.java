@@ -115,6 +115,7 @@ public class MessagingYamlParsingDeployer extends AbstractVFSParsingDeployer<Mes
             result.setDestinationName( destination );
             result.setMessageSelector( (String) options.get( "filter" ) );
             result.setRubyConfig( (Map) options.get( "config" ) );
+            result.setConcurrency( (Integer) options.get( "concurrency" ) );
             return result;
         }
 

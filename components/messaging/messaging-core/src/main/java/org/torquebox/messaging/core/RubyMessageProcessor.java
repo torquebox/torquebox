@@ -23,25 +23,9 @@ import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class RubyMessageProcessor implements MessageListener {
+public class RubyMessageProcessor {
 
 	private static final Logger log = Logger.getLogger(RubyMessageProcessor.class);
-
-	private String name;
-	private Destination destination;
-	private String messageSelector;
-	private ConnectionFactory connectionFactory;
-	private Session session;
-	private MessageConsumer consumer;
-	private RubyRuntimePool rubyRuntimePool;
-
-	private Connection connection;
-
-	private RubyComponentResolver componentResolver;
-
-	private Map rubyConfig = Collections.EMPTY_MAP;
-
-	private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 
 	public RubyMessageProcessor() {
 
@@ -114,16 +98,21 @@ public class RubyMessageProcessor implements MessageListener {
 	public RubyRuntimePool getRubyRuntimePool() {
 		return this.rubyRuntimePool;
 	}
+    
+    public void setConcurrency(int concurrency) {
+        this.concurrency = concurrency;
+    }
+
+    public int getConcurrency() {
+        return this.concurrency;
+    }
 
 	public void create() throws JMSException {
 		log.info("creating for " + getDestination());
-
 		this.connection = this.connectionFactory.createConnection();
-
-		this.session = this.connection.createSession(true, this.acknowledgeMode);
-
-		this.consumer = session.createConsumer(getDestination(), getMessageSelector());
-		this.consumer.setMessageListener(this);
+        for (int i=0; i<getConcurrency(); i++) {
+            new Handler( this.connection.createSession(true, this.acknowledgeMode) );
+        }
 	}
 
 	public void start() throws JMSException {
@@ -150,35 +139,6 @@ public class RubyMessageProcessor implements MessageListener {
 		}
 	}
 
-	@Override
-	public void onMessage(Message message) {
-		Ruby ruby = null;
-
-		try {
-            log.debug("Received message: "+message);
-			ruby = getRubyRuntimePool().borrowRuntime();
-            log.debug("Got runtime: "+ruby);
-			IRubyObject processor = instantiateProcessor(ruby);
-            log.debug("Got processor: "+processor);
-			configureProcessor(processor);
-            log.debug("Configured processor: "+processor);
-			processMessage(processor, message);
-            log.debug("Message processed");
-		} catch (Exception e) {
-			log.error("unable to dispatch", e);
-			e.printStackTrace();
-		} finally {
-			if (ruby != null) {
-				getRubyRuntimePool().returnRuntime(ruby);
-			}
-			try {
-				this.session.commit();
-			} catch (JMSException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	protected IRubyObject instantiateProcessor(Ruby ruby) throws Exception {
 		return this.componentResolver.resolve(ruby);
 	}
@@ -192,4 +152,56 @@ public class RubyMessageProcessor implements MessageListener {
 		Ruby ruby = processor.getRuntime();
 		JavaEmbedUtils.invokeMethod(ruby, processor, "process!", new Object[] { message }, void.class);
 	}
+
+    class Handler implements MessageListener {
+        
+        Handler (Session session) throws JMSException {
+            log.info("creating session handler for " + getDestination());
+            MessageConsumer consumer = session.createConsumer(getDestination(), getMessageSelector());
+            consumer.setMessageListener(this);
+            this.session = session;
+        }
+
+        public void onMessage(Message message) {
+            Ruby ruby = null;
+
+            try {
+                log.debug("Received message: "+message);
+                ruby = getRubyRuntimePool().borrowRuntime();
+                log.debug("Got runtime: "+ruby);
+                IRubyObject processor = instantiateProcessor(ruby);
+                log.debug("Got processor: "+processor);
+                configureProcessor(processor);
+                log.debug("Configured processor: "+processor);
+                processMessage(processor, message);
+                log.debug("Message processed");
+            } catch (Exception e) {
+                log.error("unable to dispatch", e);
+                e.printStackTrace();
+            } finally {
+                if (ruby != null) {
+                    getRubyRuntimePool().returnRuntime(ruby);
+                }
+                try {
+                    this.session.commit();
+                } catch (JMSException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        private Session session;
+    }
+
+	private String name;
+	private Destination destination;
+	private String messageSelector;
+	private ConnectionFactory connectionFactory;
+	private RubyRuntimePool rubyRuntimePool;
+	private Connection connection;
+	private RubyComponentResolver componentResolver;
+    private int concurrency = 1;
+	private Map rubyConfig = Collections.EMPTY_MAP;
+
+	private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
+
 }
