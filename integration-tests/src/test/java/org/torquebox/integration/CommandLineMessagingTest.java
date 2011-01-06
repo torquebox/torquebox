@@ -43,7 +43,7 @@ public class CommandLineMessagingTest extends AbstractTorqueBoxTestCase {
     	String jruby = jrubyBin( "jruby" );
     	
     	if ( isWindows() ) {
-    		jruby = jruby + ".bat";
+    		jruby = jruby + ".exe";
     	}
     	
     	return jruby;

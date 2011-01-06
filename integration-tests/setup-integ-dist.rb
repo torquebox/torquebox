@@ -1,9 +1,9 @@
 require 'java'
 require 'fileutils'
 
-assembly_dir = ARGV[0]
-output_dir   = ARGV[1]
-root_war     = ARGV[2]
+assembly_dir = File.expand_path( ARGV[0] )
+output_dir   = File.expand_path( ARGV[1] )
+root_war     = File.expand_path( ARGV[2] )
 
 puts "assembly from... #{assembly_dir}"
 puts "output to....... #{output_dir}"
