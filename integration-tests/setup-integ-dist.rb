@@ -14,8 +14,7 @@ if ( assembly_dir == output_dir )
 else
   puts "*** Syncing to integ-dist with hardlinks"
   Dir.chdir( assembly_dir ) do
-    if ( true || java.lang::System.getProperty( 'os.name' ) =~ /.*windows.*/i )
-      puts "need to cp -R on windows, not-yet-implemented."
+    if ( java.lang::System.getProperty( 'os.name' ) =~ /.*windows.*/i )
       FileUtils.cp_r( '.', output_dir )
     else
       cmd = [ 'rsync -a . --relative',
