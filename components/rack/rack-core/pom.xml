@@ -67,12 +67,6 @@
       <type>gem</type>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
@@ -88,15 +82,12 @@
       <scope>provided</scope>
     </dependency>
 
-<!--
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rack</artifactId>
-      <type>gem</type>
-      <scope>compile</scope>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
--->
-
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-ruby-test-support</artifactId>
