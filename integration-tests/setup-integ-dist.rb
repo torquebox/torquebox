@@ -15,8 +15,12 @@ else
   Dir.chdir( assembly_dir ) do
     if ( java.lang::System.getProperty( 'os.name' ) =~ /.*windows.*/i )
       puts "*** Syncing to integ-dist by copy"
-      FileUtils.rm_rf( output_dir )
-      FileUtils.cp_r( '.', output_dir )
+      if ( File.exists?( output_dir ) )
+        puts "*** Skipping, exists, and I'm lazy."
+      else
+        FileUtils.rm_rf( output_dir )
+        FileUtils.cp_r( '.', output_dir )
+      end
     else
       puts "*** Syncing to integ-dist by rsync"
       cmd = [ 'rsync -a . --relative',

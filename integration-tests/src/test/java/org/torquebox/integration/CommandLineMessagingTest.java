@@ -1,21 +1,27 @@
 package org.torquebox.integration;
 
-import static org.junit.Assert.*;
-import java.io.*;
+import static org.junit.Assert.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import org.junit.Test;
+import org.torquebox.test.AbstractTorqueBoxTestCase;
 
 
-public class CommandLineMessagingTest {
+public class CommandLineMessagingTest extends AbstractTorqueBoxTestCase {
 
 	@Test
     public void testQueuing() throws Exception {
         Process broker=null, hoster=null;
         try {
-            broker = start( jrubyBin("jruby"), jrubyBin("trq-message-broker"), "-s", "-d", "queues.yml");
+            broker = start( jruby(), jrubyBin("trq-message-broker"), "-s", "-d", "queues.yml");
             assertTrue( "Broker failed to start", lookFor( "deployed queues.yml", broker.getInputStream() ) );
-            hoster = start( jrubyBin("jruby"), jrubyBin("trq-message-processor-host"), "-d", "messaging.yml");
+            hoster = start( jruby(), jrubyBin("trq-message-processor-host"), "-d", "messaging.yml");
             assertTrue( "Processor host failed to start", lookFor( "starting for", hoster.getInputStream() ) );
-            start( jrubyBin("jruby"), "messenger.rb", "/queues/foo", "did it work?" );
+            start( jruby(), "messenger.rb", "/queues/foo", "did it work?" );
             assertTrue( "Didn't receive expected message", lookFor( "received: did it work?", hoster.getInputStream() ) );
         } finally {
             if (hoster != null) hoster.destroy();
@@ -31,6 +37,16 @@ public class CommandLineMessagingTest {
         String home = System.getProperty("jruby.home");
         if (home==null) throw new RuntimeException("You must set system property, jruby.home");
         return new File(new File(home, "bin"), script).getCanonicalPath();
+    }
+    
+    private String jruby() throws Exception {
+    	String jruby = jrubyBin( "jruby" );
+    	
+    	if ( isWindows() ) {
+    		jruby = jruby + ".bat";
+    	}
+    	
+    	return jruby;
     }
 
     private Process start(String... args) throws Exception {
