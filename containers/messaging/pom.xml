@@ -11,7 +11,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-messaging-container</artifactId>
   <packaging>java-gem</packaging>
-  <name>TorqueBox Message Broker</name>
+  <name>TorqueBox Messaging Container</name>
   <description></description>
 
   <dependencies>
