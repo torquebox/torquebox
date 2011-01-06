@@ -41,6 +41,12 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>

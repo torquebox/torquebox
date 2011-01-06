@@ -38,9 +38,11 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
 	@Test
 	public void testInitializeWithGems() throws Exception {
-		String railsRootStr = System.getProperty("user.dir")
-				+ "/src/test/rails/ballast";
-		String vfsRailsRootStr = "vfs:" + railsRootStr;
+		String railsRootStr = pwd() + "/src/test/rails/ballast";
+		
+		railsRootStr = railsRootStr.replaceAll( "\\\\", "/" );
+		String vfsRailsRootStr = toVfsPath( railsRootStr );
+		
 		VirtualFile railsRoot = VFS.getChild(railsRootStr);
 
 		System.err.println("railsRoot=" + railsRoot);
@@ -54,6 +56,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 		IRubyObject rubyRailsRoot = objectClass.getConstant("RAILS_ROOT");
 		assertNotNull(rubyRailsRoot);
 		assertNotNil(rubyRailsRoot);
+		
 		assertEquals(vfsRailsRootStr, rubyRailsRoot.toString());
 
 		IRubyObject rubyRailsEnv = objectClass.getConstant("RAILS_ENV");

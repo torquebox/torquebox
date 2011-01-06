@@ -22,13 +22,13 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 		initializer.initialize( ruby );
 		
 		String rackRoot = (String) ruby.evalScriptlet( "RACK_ROOT" ).toJava(String.class);
-		assertEquals( "vfs:/myapp", rackRoot );
+		assertEquals( "vfs:" + vfsAbsolutePrefix() + "/myapp", rackRoot );
 		
 		String rackEnv = (String) ruby.evalScriptlet( "RACK_ENV" ).toJava(String.class);
 		assertEquals( "test", rackEnv );
 
         String pwd = (String) ruby.evalScriptlet( "Dir.pwd" ).toJava(String.class);
-        assertEquals( "/myapp", pwd );
+        assertEquals( absolutePrefix() + "/myapp", pwd );
 
         String baseUri = (String) ruby.evalScriptlet( "ENV['RACK_BASE_URI']" ).toJava(String.class);
         assertEquals( "/mycontext", baseUri );

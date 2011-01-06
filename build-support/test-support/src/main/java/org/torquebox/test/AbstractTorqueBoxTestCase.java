@@ -8,6 +8,22 @@ public class AbstractTorqueBoxTestCase {
         return System.getProperty( "os.name" ).toLowerCase().matches( ".*windows.*" );
     }
     
+    public String vfsAbsolutePrefix() {
+    	if ( isWindows() ) {
+    		return "/C:";
+    	}
+    	
+    	return "";
+    }
+    
+    public String absolutePrefix() {
+    	if ( isWindows() ) {
+    		return "C:";
+    	}
+    	
+    	return "";
+    }
+    
     public String toVfsPath(String path) {
         if ( path.startsWith( "vfs:" ) ) {
             return path;

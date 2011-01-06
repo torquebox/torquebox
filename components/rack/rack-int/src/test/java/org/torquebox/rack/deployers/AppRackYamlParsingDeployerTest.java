@@ -56,7 +56,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	
 		VFSDeployment deployment = pojo.getDeployment();
 		
-		assertEquals( "vfs:///tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString() );
+		assertEquals( "vfs://" + vfsAbsolutePrefix() + "/tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString() );
 		
 		Attachments attachments = deployment.getPredeterminedManagedObjects();
 		
@@ -89,7 +89,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         VFSDeployment deployment = pojo.getDeployment();
 
-        assertEquals("vfs:///tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString());
+        assertEquals("vfs://" + vfsAbsolutePrefix()+ "/tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString());
 
         Attachments attachments = deployment.getPredeterminedManagedObjects();
 
@@ -97,7 +97,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertNotNull(rackAppMetaData);
         assertEquals("test", rackAppMetaData.getRackEnv());
 
-        assertEquals("/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
+        assertEquals(vfsAbsolutePrefix() + "/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
 
         assertNull(attachments.getAttachment(RubyRuntimeMetaData.class));
         assertNull(attachments.getAttachment(PoolMetaData.class));
@@ -122,7 +122,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         VFSDeployment deployment = pojo.getDeployment();
 
-        assertEquals("vfs:///tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString());
+        assertEquals("vfs://" + vfsAbsolutePrefix() + "/tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString());
 
         Attachments attachments = deployment.getPredeterminedManagedObjects();
 
@@ -155,7 +155,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         VFSDeployment deployment = pojo.getDeployment();
 
-        assertEquals("vfs:///tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString());
+        assertEquals("vfs://" + vfsAbsolutePrefix() + "/tmp/nonexistantpathfortorqueboxtest", deployment.getRoot().toURI().toString());
 
         Attachments attachments = deployment.getPredeterminedManagedObjects();
 
@@ -163,7 +163,7 @@ public class AppRackYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertNotNull(rackAppMetaData);
         assertEquals("test", rackAppMetaData.getRackEnv());
 
-        assertEquals("/tmp/nonexistantpathfortorqueboxtest/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
+        assertEquals( vfsAbsolutePrefix() + "/tmp/nonexistantpathfortorqueboxtest/path/to/config.ru", rackAppMetaData.getRackUpScriptLocation().getPathName());
 
         assertNull(attachments.getAttachment(RubyRuntimeMetaData.class));
         assertNull(attachments.getAttachment(PoolMetaData.class));

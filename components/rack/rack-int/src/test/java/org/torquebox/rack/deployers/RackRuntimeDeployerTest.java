@@ -38,7 +38,7 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
 
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
         assertNotNull( runtimeMetaData );
-        assertEquals( "/foo", runtimeMetaData.getBaseDir().getPathName() );
+        assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
         assertTrue( runtimeMetaData.getEnvironment().containsKey("SOME_VAR") );
         assertTrue( runtimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
 	}
