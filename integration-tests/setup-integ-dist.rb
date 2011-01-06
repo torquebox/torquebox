@@ -12,11 +12,13 @@ puts "ROOT.war from... #{root_war}"
 if ( assembly_dir == output_dir )
   puts "*** Setting up integration tests against assembly, NOT A COPY."
 else
-  puts "*** Syncing to integ-dist with hardlinks"
   Dir.chdir( assembly_dir ) do
     if ( java.lang::System.getProperty( 'os.name' ) =~ /.*windows.*/i )
+      puts "*** Syncing to integ-dist by copy"
+      FileUtils.rm_rf( output_dir )
       FileUtils.cp_r( '.', output_dir )
     else
+      puts "*** Syncing to integ-dist by rsync"
       cmd = [ 'rsync -a . --relative',
 	      '--include jboss/server/default',
 	      '--exclude "default/deploy/*.yml',

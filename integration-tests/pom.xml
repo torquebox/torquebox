@@ -281,6 +281,7 @@
               <goal>jruby</goal>
             </goals>
             <configuration>
+              <jrubyFork>false</jrubyFork>
               <file>setup-integ-dist.rb</file>
               <args>${assembly.dir} ${integ.dist.dir} ${project.basedir}/etc/ROOT.war</args>
             </configuration>
