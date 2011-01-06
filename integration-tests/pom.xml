@@ -271,23 +271,18 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>prepare-as</id>
             <phase>test-compile</phase>
             <goals>
-              <goal>run</goal>
+              <goal>jruby</goal>
             </goals>
             <configuration>
-              <tasks>
-                <exec executable="sh">
-                  <arg value="setup-integ-dist.sh"/>
-                  <arg value="${assembly.dir}"/>
-                  <arg value="${integ.dist.dir}"/>
-                  <arg value="${project.basedir}/etc/ROOT.war"/>
-                </exec>
-              </tasks>
+              <file>setup-integ-dist.rb</file>
+              <args>${assembly.dir} ${integ.dist.dir} ${project.basedir}/etc/ROOT.war</args>
             </configuration>
           </execution>
         </executions>
