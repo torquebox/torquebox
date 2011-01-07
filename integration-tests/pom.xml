@@ -173,47 +173,55 @@
       </properties>
     </profile>
     <profile>
-      <id>1</id>
+      <id>fork you, windows</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <os>
+          <family>Windows</family>
+        </os>
       </activation>
       <build>
         <plugins>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-
-            <executions>
-              <execution>
-                <id>arquillian</id>
-                <phase>test</phase>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <configuration> 
-                  <excludes>
-                    <exclude>nothing</exclude> <!-- required to override excludes inherited from default -->
-                  </excludes>
-                  <includes>
-                    <include>**/arquillian/**/*Test.java</include>
-                  </includes>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <groupId>de.saumya.mojo</groupId>
             <artifactId>rspec-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>run-specs</id>
-                <configuration>
-                  <classpathElements></classpathElements>
-                </configuration>
-              </execution>
-            </executions>
+            <configuration>
+	      <jrubyFork>false</jrubyFork>
+            </configuration>
           </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>surgical testing</id>
+      <activation>
+        <property>
+          <name>test</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+	  <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+	    <executions>
+	      <execution>
+	        <id>arquillian-test</id>
+		<configuration>
+		  <skip>true</skip>
+		</configuration>
+	      </execution>
+	    </executions>
+	  </plugin>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>rspec-maven-plugin</artifactId>
+	    <executions>
+	      <execution>
+	        <id>run-specs</id>
+		<phase>none</phase>
+	      </execution>
+	    </executions>
+	  </plugin>
         </plugins>
       </build>
     </profile>
@@ -293,10 +301,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <exclude>**/arquillian/**</exclude>
-          </excludes>
+        <configuration>	
           <systemProperties>
             <property>
               <name>log4j.configuration</name>
@@ -307,7 +312,33 @@
               <value>${integ.dist.dir}/jruby</value>
             </property>
           </systemProperties>
-        </configuration>
+        </configuration>	
+	<executions>
+	  <execution>
+	    <id>default-test</id>
+	    <goals>
+	      <goal>test</goal>
+	    </goals>
+	    <phase>test</phase>
+	    <configuration>
+              <excludes>
+                <exclude>**/arquillian/**</exclude>
+              </excludes>
+	    </configuration>
+	  </execution>
+	  <execution>
+	    <id>arquillian-test</id>
+	    <goals>
+	      <goal>test</goal>
+	    </goals>
+	    <phase>test</phase>
+	    <configuration>
+              <includes>
+                <include>**/arquillian/**Test*</include>
+              </includes>
+	    </configuration>
+	  </execution>
+	</executions>
       </plugin>
     </plugins>
 
