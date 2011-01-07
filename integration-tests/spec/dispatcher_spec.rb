@@ -19,7 +19,7 @@ describe "dispatcher test" do
   unless TESTING_ON_WINDOWS
     it "should associate a processor with a queue" do
       dispatcher = TorqueBox::Messaging::Dispatcher.new do
-        map ::Upcaser, QUEUE_QUESTIONS
+        map Upcaser, QUEUE_QUESTIONS
       end
       dispatcher.start
       QUEUE_QUESTIONS.publish "lkjsdf"
