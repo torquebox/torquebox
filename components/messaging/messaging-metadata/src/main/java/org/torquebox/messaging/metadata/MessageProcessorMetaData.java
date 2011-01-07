@@ -9,6 +9,7 @@ public class MessageProcessorMetaData {
 	private String rubyRequirePath;
 	private String destinationName;
 	private String messageSelector;
+    private int concurrency = 1;
 	private Map rubyConfig = Collections.EMPTY_MAP;
 
 	public MessageProcessorMetaData() {
@@ -62,4 +63,12 @@ public class MessageProcessorMetaData {
 	public Map getRubyConfig() {
 		return this.rubyConfig;
 	}
+
+    public void setConcurrency(Integer concurrency) {
+        if (concurrency != null && concurrency > 0) this.concurrency = concurrency;
+    }
+
+    public Integer getConcurrency() {
+        return this.concurrency;
+    }
 }

@@ -412,7 +412,7 @@ end</programlisting></para>
     </section>
 
     <section>
-      <title>Connecting Consumers to Destinations</title>
+      <title>Connecting Consumers to Destinations (messaging.yml)</title>
 
       <para>You can connect consumers hosted within a TorqueBox-based
       application, or in external scripts. The method for each environment is
@@ -446,26 +446,67 @@ end</programlisting></para>
           <filename>app/models/</filename>.</para>
         </example>
 
-        <para>The above example shows the simplest possible configuration, but
-        it's possible to specify filtering criteria and special-purpose
-        configuration of your handlers as well using the keys
-        <parameter>filter</parameter> and <parameter>config</parameter>,
-        respectively. The <parameter>filter</parameter> parameter may be used
-        to filter the messages dispatched to your consumer. The
-        <parameter>config</parameter> parameter should contain a hash of data
-        which will be passed to your consumer's
-        <function>configure(hash)</function> prior to invoking
-        <function>process!</function>.</para>
+        <para>
+          The above example shows the simplest possible configuration,
+          but it's possible to alter the behavior of your message
+          processor using the following options:
+        </para>
+
+        <table>
+          <title>Message processor options</title>
+
+          <tgroup cols="3">
+            <colspec align="left" />
+
+            <thead>
+              <row>
+                <entry>Option</entry>
+                <entry>Default</entry>
+                <entry>Description</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry><parameter>concurrency</parameter></entry>
+                <entry>1</entry>
+                <entry>
+                  May be used to throttle the throughput of your
+                  processor.  Processors are single-threaded, by
+                  default, but you can increase this value to match
+                  the number of concurrent messages you expect to
+                  receive.
+               </entry>
+              </row>
+              <row>
+                <entry><parameter>filter</parameter></entry>
+                <entry></entry>
+                <entry>May be used to filter the messages dispatched to your consumer.</entry>
+              </row>
+              <row>
+                <entry><parameter>config</parameter></entry>
+                <entry></entry>
+                <entry>
+                  Should contain a hash of data which will be passed
+                  to your consumer's
+                  <function>configure(hash)</function> method prior to
+                  invoking <function>process!</function>.
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
         <example>
-          <title>messaging.yml with config and filter options set</title>
+          <title><filename>messaging.yml</filename> with options set</title>
 
           <para><programlisting>/queues/foo:
   MyFooHandler:
     filter: "cost &gt; 30"
     config:
       type: "premium"
-      season: "fall"</programlisting></para>
+      season: "fall"
+    concurrency: 2</programlisting></para>
 
           <para>Because the structure of the file is <ulink
           url="http://www.yaml.org">YAML</ulink>, proper indentation is
@@ -485,6 +526,7 @@ end</programlisting></para>
 
 /topics/popular:
   - Handler
+      concurrency: 5
   - Observer: &amp;defaults
       filter: "x &gt; 18"
       config:

@@ -61,6 +61,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals("/topics/foo", metaData.getDestinationName());
         assertEquals("myfilter", metaData.getMessageSelector());
         assertEquals("toast", metaData.getRubyConfig().get("a"));
+        assertEquals(new Integer(2), metaData.getConcurrency());
     }
 
     @Test
@@ -99,6 +100,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Map config = metadata.getRubyConfig();
         assertEquals( "ache", config.get("h") );
         assertEquals( "eye", config.get("i") );
+        assertEquals( new Integer(3), metadata.getConcurrency() );
         assertTrue( isUnconfigured( find( allMetaData, "/hash", "A" ) ) );
     }
 
@@ -110,6 +112,13 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Map config = metadata.getRubyConfig();
         assertEquals( "ex", config.get("x") );
         assertEquals( "why", config.get("y") );
+    }
+
+    @Test
+    public void testDefaultConcurrency() throws Exception {
+        Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
+        MessageProcessorMetaData metadata = find( allMetaData, "/hash", "A" );
+        assertEquals( new Integer(1), metadata.getConcurrency() );
     }
 
     private Set<? extends MessageProcessorMetaData> getMetaData(String filename) throws Exception {
