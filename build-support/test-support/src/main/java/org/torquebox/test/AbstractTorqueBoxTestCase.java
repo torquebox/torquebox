@@ -33,7 +33,7 @@ public class AbstractTorqueBoxTestCase {
             return "vfs:" + path;
         }
         
-        if ( path.matches( "^[A-Z]:.*" ) ) {
+        if ( path.matches( "^[A-Za-z]:.*" ) ) {
             return "vfs:/" + path;
         }
         
