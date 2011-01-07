@@ -16,7 +16,10 @@ else
     if ( java.lang::System.getProperty( 'os.name' ) =~ /.*windows.*/i )
       puts "*** Syncing to integ-dist by copy"
       if ( File.exists?( output_dir ) )
-        puts "*** Skipping, exists, and I'm lazy."
+        puts "*** Only copying deployers into default profile"
+	deployer_path = 'jboss/server/default/deployers/torquebox.deployer' 
+	FileUtils.rm_rf( "#{output_dir}/#{deployer_path}" )
+        FileUtils.cp_r( "./#{deployer_path}", "#{output_dir}/#{deployer_path}" )
       else
         FileUtils.rm_rf( output_dir )
         FileUtils.cp_r( '.', output_dir )
@@ -38,6 +41,8 @@ else
     end
   end
 end
+
+FileUtils.rm_rf( Dir["#{output_dir}/jboss/server/default/log/*"] )
 
 # Necessary for Arquillian...
 if ( ! File.exists?( "#{output_dir}/jboss/server/default/deploy/ROOT.war" ) ) 

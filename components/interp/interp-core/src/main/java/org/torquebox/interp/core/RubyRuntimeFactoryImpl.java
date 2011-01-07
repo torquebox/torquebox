@@ -383,6 +383,12 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 		    gemPath = this.gemPath;
 		}
 		
+		if ( "default".equals( gemPath ) ) {
+			env.remove( "GEM_PATH" );
+			env.remove( "GEM_HOME" );
+			gemPath = null;
+		}
+		
 		if (gemPath != null) {
 			env.put("GEM_PATH", gemPath);
 			env.put("GEM_HOME", gemPath);

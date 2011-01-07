@@ -202,22 +202,18 @@
               </execution>
             </executions>
           </plugin>
-
-<!--
           <plugin>
             <groupId>de.saumya.mojo</groupId>
             <artifactId>rspec-maven-plugin</artifactId>
+            <configuration>
+              <jrubyFork>false</jrubyFork>
+            </configuration>
             <executions>
               <execution>
                 <id>run-specs</id>
-                <configuration>
-                  <jrubyFork>false</jrubyFork>
-                </configuration>
               </execution>
             </executions>
           </plugin>
-	  -->
-
         </plugins>
       </build>
     </profile>

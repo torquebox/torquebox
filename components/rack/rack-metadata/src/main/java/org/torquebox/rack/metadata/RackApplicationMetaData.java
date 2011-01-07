@@ -38,11 +38,20 @@ import org.torquebox.interp.spi.RuntimeInitializer;
 public class RackApplicationMetaData {
 	
 	public void setRackRoot(VirtualFile rackRoot) {
+		System.err.println( "BOB: setRackRoot(VirtualFile " + rackRoot + ")" );
 		this.rackRoot = rackRoot;
 	}
 
     public void setRackRoot(String path) {
-        if (path != null) setRackRoot( VFS.getChild( path ) );
+    	System.err.println( "BOB: setRackRoot(String " + path + ")" );
+        if (path != null) {
+        	String sanitizedPath = path.replaceAll( "\\\\\\\\", "/" );
+        	sanitizedPath = sanitizedPath.replaceAll( "\\\\", "" );
+        	System.err.println( "BOB: sanitizedPath=" + sanitizedPath );
+        	VirtualFile rackRoot = VFS.getChild( sanitizedPath );
+        	System.err.println( "BOB: rackRoot=" + sanitizedPath );
+        	setRackRoot( rackRoot );
+        }
     }
 
 	public VirtualFile getRackRoot() {
