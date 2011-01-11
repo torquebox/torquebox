@@ -175,17 +175,13 @@ public class RubyMessageProcessor {
                 log.debug("Configured processor: "+processor);
                 processMessage(processor, message);
                 log.debug("Message processed");
+                if ( session.getTransacted() ) session.commit();
             } catch (Exception e) {
                 log.error("unable to dispatch", e);
-                e.printStackTrace();
+                try { if ( session.getTransacted() ) session.rollback(); } catch (JMSException ignored) {}
             } finally {
                 if (ruby != null) {
                     getRubyRuntimePool().returnRuntime(ruby);
-                }
-                try {
-                    this.session.commit();
-                } catch (JMSException e) {
-                    e.printStackTrace();
                 }
             }
         }
