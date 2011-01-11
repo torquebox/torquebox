@@ -297,6 +297,35 @@ public class VFSLoadService extends LoadService {
             throw runtime.newLoadError("IO error -- " + file);
         }
     }
+    
+    protected LoadServiceResource tryResourceFromCWD(SearchState state, String baseName,SuffixType suffixType) throws RaiseException {
+        LoadServiceResource foundResource = null;
+        
+        for (String suffix : suffixType.getSuffixes()) {
+            String namePlusSuffix = baseName + suffix;
+            // check current directory; if file exists, retrieve URL and return resource
+            try {
+                JRubyFile file = JRubyFile.create(runtime.getCurrentDirectory(), RubyFile.expandUserPath(runtime.getCurrentContext(), namePlusSuffix));
+                debugLogTry("resourceFromCWD", file.toString());
+                if (file.isFile() && file.isAbsolute() && file.canRead()) {
+                    boolean absolute = true;
+                    String s = namePlusSuffix;
+                    if(!namePlusSuffix.startsWith("./")) {
+                        s = "./" + s;
+                    }
+                    foundResource = new LoadServiceResource(file.toURI().toURL(), s, absolute);
+                    debugLogFound(foundResource);
+                    state.loadName = resolveLoadName(foundResource, namePlusSuffix);
+                    break;
+                }
+            } catch (IllegalArgumentException illArgEx) {
+            } catch (SecurityException secEx) {
+            } catch (IOException ioEx) {
+            }
+        }
+        
+        return foundResource;
+    }
 
     /*
     @Override
