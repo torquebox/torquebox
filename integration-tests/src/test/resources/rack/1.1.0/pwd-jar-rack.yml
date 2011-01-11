@@ -1,0 +1,6 @@
+---
+application:
+  RACK_ROOT: ${basedir}/apps/rack/1.1.0/pwd-jar
+  RACK_ENV: development
+web:
+  context: /pwd-jar

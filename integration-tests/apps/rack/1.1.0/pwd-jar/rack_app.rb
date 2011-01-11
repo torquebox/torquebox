@@ -20,14 +20,13 @@ class RackApp
   
   def call(env) 
     request = Rack::Request.new(env) 
-   
 
     h = {:adapter => 'RackApp', 
-         :uuid => '6ffb022a-214a-4084-a929-3bd1ae730e04'} 
+         :uuid => @uuid }
 
     @log.info "Sending JMS message:" 
     @topic.publish(h) 
 
-    [200, {'Content-Type' => 'text/plain'}, "published JMS event"] 
+    [200, {'Content-Type' => 'text/plain'}, @uuid.to_s ]
   end 
 end 
