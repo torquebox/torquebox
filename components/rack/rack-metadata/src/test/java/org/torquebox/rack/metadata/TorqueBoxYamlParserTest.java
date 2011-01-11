@@ -64,6 +64,7 @@ public class TorqueBoxYamlParserTest extends AbstractTorqueBoxTestCase {
         strings.put("RACK_ROOT", pwd() );
         strings.put("rackup", "src/test/resources/config.ru");
         metadata = parser.parseApplication(strings);
+        System.err.println( metadata );
         assertEquals("success!\n", metadata.getRackUpScript());
     }
 

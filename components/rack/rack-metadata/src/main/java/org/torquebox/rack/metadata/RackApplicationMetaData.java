@@ -46,7 +46,7 @@ public class RackApplicationMetaData {
     	System.err.println( "BOB: setRackRoot(String " + path + ")" );
         if (path != null) {
         	String sanitizedPath = path.replaceAll( "\\\\\\\\", "/" );
-        	sanitizedPath = sanitizedPath.replaceAll( "\\\\", "" );
+        	sanitizedPath = sanitizedPath.replaceAll( "\\\\", "/" );
         	System.err.println( "BOB: sanitizedPath=" + sanitizedPath );
         	VirtualFile rackRoot = VFS.getChild( sanitizedPath );
         	System.err.println( "BOB: rackRoot=" + sanitizedPath );
