@@ -34,7 +34,9 @@ public class RackStructure extends AbstractRubyStructureDeployer {
             if (hasConfigRu(root) || hasTorqueboxYml(root)) {
                 log.info("Identified as Rack app: " + root);
                 context = createContext(structureContext, new String[] { "", "config" });
-                addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
+                log.info("Adding lib/ to classpath" );
+                addDirectoryOfJarsToClasspath(structureContext, context, "lib");
+                addDirectoryOfJarsToClasspath(structureContext, context, "vendor/jars");
                 return true;
             }
         } catch (IOException e) {
