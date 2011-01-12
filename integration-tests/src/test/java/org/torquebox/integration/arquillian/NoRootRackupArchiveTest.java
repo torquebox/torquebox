@@ -23,7 +23,9 @@ public class NoRootRackupArchiveTest extends AbstractIntegrationTest {
         WebElement body = driver.findElementByTagName("body");
         String text = body.getText().trim();
         
-        assertTrue( text.matches( "RACK_ROOT=" + toVfsPath( pwd() ) + ".*/norootrackup.rack.*" ) );
+        String pwd = pwd().replaceAll( "\\\\", "/" );
+        
+        assertTrue( text.matches( "RACK_ROOT=" + toVfsPath( pwd ) + ".*/norootrackup.rack.*" ) );
 	}
 
 }
