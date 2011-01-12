@@ -87,6 +87,12 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>vfs</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-container-foundation</artifactId>
       <type>gem</type>
       <version>${project.version}</version>

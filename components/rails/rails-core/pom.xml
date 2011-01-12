@@ -49,7 +49,7 @@
       <groupId>org.torquebox</groupId>
       <artifactId>vfs</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
       <type>gem</type>
     </dependency>
     <dependency>
