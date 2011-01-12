@@ -30,6 +30,9 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.client.spi.DeployerClient;
 import org.jboss.deployers.client.spi.Deployment;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
+import org.jboss.deployers.spi.structure.ContextInfo;
+import org.jboss.deployers.spi.structure.StructureMetaData;
+import org.jboss.deployers.spi.structure.StructureMetaDataFactory;
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
@@ -37,6 +40,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.PojoDeployment;
+import org.torquebox.rack.deployers.RackStructure;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.metadata.TorqueBoxYamlParser;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
@@ -97,9 +101,22 @@ public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<Rail
 
         attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
 		attachments.addAttachment(RailsApplicationMetaData.class, new RailsApplicationMetaData( rackMetaData ));
+		
+        if ( rackMetaData.getRackRoot().isDirectory() ) {
+            // TODO: Figure out why doing this breaks non-directory (archive) deployments.
+            attachments.addAttachment(StructureMetaData.class, createStructureMetaData(rackMetaData.getRackRoot()));
+        }
 
 		return deployment;
 	}
+	
+    private StructureMetaData createStructureMetaData(VirtualFile rackRoot) throws IOException {
+        StructureMetaData structureMetaData = StructureMetaDataFactory.createStructureMetaData();
+        ContextInfo context = RackStructure.createRackContextInfo(rackRoot, structureMetaData );
+        structureMetaData.addContext(context);
+        return structureMetaData;
+    }
+
 
 	@SuppressWarnings("unchecked")
 	private Deployment parseAndSetUp(VFSDeploymentUnit unit, VirtualFile file) throws IOException {

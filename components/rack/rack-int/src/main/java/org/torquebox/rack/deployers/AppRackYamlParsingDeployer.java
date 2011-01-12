@@ -100,17 +100,10 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
     }
 
     private StructureMetaData createStructureMetaData(VirtualFile rackRoot) throws IOException {
-        StructureMetaData result = StructureMetaDataFactory.createStructureMetaData();
-        List<String> metaDataPaths = new ArrayList<String>();
-        metaDataPaths.add("");
-        metaDataPaths.add("config");
-        
-        List<ClassPathEntry> classPaths = AbstractRubyStructureDeployer.getClassPathEntries( rackRoot.getChild( "lib" ), rackRoot );
-        classPaths.addAll( AbstractRubyStructureDeployer.getClassPathEntries( rackRoot.getChild( "vendor/jars" ), rackRoot ) );
-        
-        ContextInfo context = StructureMetaDataFactory.createContextInfo("", metaDataPaths, classPaths);
-        result.addContext(context);
-        return result;
+        StructureMetaData structureMetaData = StructureMetaDataFactory.createStructureMetaData();
+        ContextInfo context = RackStructure.createRackContextInfo(rackRoot, structureMetaData );
+        structureMetaData.addContext(context);
+        return structureMetaData;
     }
 
     private Deployment parseAndSetUp(VirtualFile file) throws IOException {
