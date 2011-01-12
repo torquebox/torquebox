@@ -108,7 +108,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
         List<ClassPathEntry> classPaths = AbstractRubyStructureDeployer.getClassPathEntries( rackRoot.getChild( "lib" ), rackRoot );
         classPaths.addAll( AbstractRubyStructureDeployer.getClassPathEntries( rackRoot.getChild( "vendor/jars" ), rackRoot ) );
         
-        // TODO: Add classpath entry for java libraries
         ContextInfo context = StructureMetaDataFactory.createContextInfo("", metaDataPaths, classPaths);
         result.addContext(context);
         return result;
