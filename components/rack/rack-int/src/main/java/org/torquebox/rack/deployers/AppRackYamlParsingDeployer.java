@@ -92,16 +92,13 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
         AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackMetaData.getRackRoot());
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
         attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
-        if ( rackMetaData.getRackRoot().isDirectory() ) {
-            // TODO: Figure out why doing this breaks non-directory (archive) deployments.
-            attachments.addAttachment(StructureMetaData.class, createStructureMetaData(rackMetaData.getRackRoot()));
-        }
+        attachments.addAttachment(StructureMetaData.class, createStructureMetaData(rackMetaData.getRackRoot()));
         return deployment;
     }
 
     private StructureMetaData createStructureMetaData(VirtualFile rackRoot) throws IOException {
         StructureMetaData structureMetaData = StructureMetaDataFactory.createStructureMetaData();
-        ContextInfo context = RackStructure.createRackContextInfo(rackRoot, structureMetaData );
+        ContextInfo context = RackStructure.createRackContextInfo(rackRoot, structureMetaData);
         structureMetaData.addContext(context);
         return structureMetaData;
     }
@@ -110,6 +107,6 @@ public class AppRackYamlParsingDeployer extends AbstractVFSParsingDeployer<RackA
         TorqueBoxYamlParser parser = new TorqueBoxYamlParser();
         RackApplicationMetaData rackMetaData = parser.parse(file);
         log.info(rackMetaData);
-        return rackMetaData==null ? null : createDeployment(rackMetaData);
+        return rackMetaData == null ? null : createDeployment(rackMetaData);
     }
 }

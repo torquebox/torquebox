@@ -21,6 +21,8 @@
  */
 package org.torquebox.rack.deployers;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +31,12 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.metadata.javaee.spec.EmptyMetaData;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
+import org.jboss.metadata.web.jboss.ReplicationConfig;
+import org.jboss.metadata.web.jboss.ReplicationGranularity;
+import org.jboss.metadata.web.jboss.ReplicationTrigger;
 import org.jboss.metadata.web.spec.FilterMappingMetaData;
 import org.jboss.metadata.web.spec.FilterMetaData;
 import org.jboss.metadata.web.spec.FiltersMetaData;
@@ -38,13 +44,9 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.core.servlet.RackFilter;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-
-import org.jboss.metadata.javaee.spec.EmptyMetaData;
-import org.jboss.metadata.web.jboss.ReplicationConfig;
-import org.jboss.metadata.web.jboss.ReplicationGranularity;
-import org.jboss.metadata.web.jboss.ReplicationTrigger;
 
 
 /**
@@ -175,5 +177,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 			jbossWebMetaData.setDepends(depends);
 		}
 		depends.add(metaData.getRackApplicationPoolName());
+		
 	}
 }

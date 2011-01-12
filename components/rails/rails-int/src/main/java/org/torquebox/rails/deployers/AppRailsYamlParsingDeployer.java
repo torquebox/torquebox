@@ -45,85 +45,80 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.metadata.TorqueBoxYamlParser;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
-
 /**
  * <pre>
  * Stage: PARSE
  *    In: *-rails.yml
  *   Out: RailsApplicationMetaData, RackApplicationMetaData
  * </pre>
- *
+ * 
  * Creates a rails deployment from an external descriptor
  */
 public class AppRailsYamlParsingDeployer extends AbstractVFSParsingDeployer<RailsApplicationMetaData> {
 
-	public AppRailsYamlParsingDeployer() {
-		super(RailsApplicationMetaData.class);
-		addOutput(BeanMetaData.class);
-		setSuffix("-rails.yml");
-	}
+    public AppRailsYamlParsingDeployer() {
+        super(RailsApplicationMetaData.class);
+        addOutput(BeanMetaData.class);
+        setSuffix("-rails.yml");
+    }
 
-	@Override
-	protected RailsApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RailsApplicationMetaData root) throws Exception {
-        log.info("Parsing external rails descriptor: "+file);
+    @Override
+    protected RailsApplicationMetaData parse(VFSDeploymentUnit vfsUnit, VirtualFile file, RailsApplicationMetaData root) throws Exception {
+        log.info("Parsing external rails descriptor: " + file);
 
-		Deployment deployment = parseAndSetUp(vfsUnit, file);
+        Deployment deployment = parseAndSetUp(vfsUnit, file);
 
-		if (deployment != null) {
-			attachPojoDeploymentBeanMetaData(vfsUnit, deployment);
-		}
-
-		// Returning null since the RailsMetaData is actually
-		// attached as a predetermined managed object on the
-		// sub-deployment, and not directly applicable
-		// to *this* deployment unit.
-		return null;
-
-	}
-
-	protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
-		String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, unit.getSimpleName());
-
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, PojoDeployment.class.getName());
-
-		ValueMetaData deployerInject = builder.createInject("MainDeployer");
-
-		builder.addConstructorParameter(DeployerClient.class.getName(), deployerInject);
-		builder.addConstructorParameter(VFSDeployment.class.getName(), deployment);
-
-		AttachmentUtils.attach(unit, builder.getBeanMetaData());
-	}
-
-	private Deployment createDeployment(RackApplicationMetaData rackMetaData) throws IOException {
-		AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackMetaData.getRackRoot());
-
-		MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
-
-        attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
-		attachments.addAttachment(RailsApplicationMetaData.class, new RailsApplicationMetaData( rackMetaData ));
-		
-        if ( rackMetaData.getRackRoot().isDirectory() ) {
-            // TODO: Figure out why doing this breaks non-directory (archive) deployments.
-            attachments.addAttachment(StructureMetaData.class, createStructureMetaData(rackMetaData.getRackRoot()));
+        if (deployment != null) {
+            attachPojoDeploymentBeanMetaData(vfsUnit, deployment);
         }
 
-		return deployment;
-	}
-	
+        // Returning null since the RailsMetaData is actually
+        // attached as a predetermined managed object on the
+        // sub-deployment, and not directly applicable
+        // to *this* deployment unit.
+        return null;
+
+    }
+
+    protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
+        String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, unit.getSimpleName());
+
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, PojoDeployment.class.getName());
+
+        ValueMetaData deployerInject = builder.createInject("MainDeployer");
+
+        builder.addConstructorParameter(DeployerClient.class.getName(), deployerInject);
+        builder.addConstructorParameter(VFSDeployment.class.getName(), deployment);
+
+        AttachmentUtils.attach(unit, builder.getBeanMetaData());
+    }
+
+    private Deployment createDeployment(RackApplicationMetaData rackMetaData) throws IOException {
+        AbstractVFSDeployment deployment = new AbstractVFSDeployment(rackMetaData.getRackRoot());
+
+        MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
+
+        attachments.addAttachment(RackApplicationMetaData.class, rackMetaData);
+        attachments.addAttachment(RailsApplicationMetaData.class, new RailsApplicationMetaData(rackMetaData));
+
+        attachments.addAttachment(StructureMetaData.class, createStructureMetaData(rackMetaData.getRackRoot()));
+
+        return deployment;
+    }
+
     private StructureMetaData createStructureMetaData(VirtualFile rackRoot) throws IOException {
         StructureMetaData structureMetaData = StructureMetaDataFactory.createStructureMetaData();
-        ContextInfo context = RackStructure.createRackContextInfo(rackRoot, structureMetaData );
+        ContextInfo context = RackStructure.createRackContextInfo(rackRoot, structureMetaData);
         structureMetaData.addContext(context);
         return structureMetaData;
     }
 
-
-	@SuppressWarnings("unchecked")
-	private Deployment parseAndSetUp(VFSDeploymentUnit unit, VirtualFile file) throws IOException {
+    @SuppressWarnings("unchecked")
+    private Deployment parseAndSetUp(VFSDeploymentUnit unit, VirtualFile file) throws IOException {
         TorqueBoxYamlParser parser = new TorqueBoxYamlParser();
         RackApplicationMetaData rackMetaData = parser.parse(file);
         log.info(rackMetaData);
-        return rackMetaData==null ? null : createDeployment(rackMetaData);
-	}
+        return rackMetaData == null ? null : createDeployment(rackMetaData);
+    }
 
 }

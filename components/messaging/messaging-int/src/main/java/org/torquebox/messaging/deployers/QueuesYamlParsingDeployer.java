@@ -1,5 +1,6 @@
 package org.torquebox.messaging.deployers;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -30,12 +31,6 @@ public class QueuesYamlParsingDeployer extends AbstractVFSParsingDeployer<QueueM
 	}
 
 	
-	@Override
-	protected boolean accepts(VFSDeploymentUnit unit) throws DeploymentException {
-		return super.accepts(unit);
-	}
-
-
 	@SuppressWarnings("unchecked")
 	@Override
 	protected QueueMetaData parse(VFSDeploymentUnit unit, VirtualFile file, QueueMetaData root) throws Exception {

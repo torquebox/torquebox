@@ -18,11 +18,12 @@ public class NoRootRackupArchiveTest extends AbstractIntegrationTest {
 	}
 
 	@Test
-    @Ignore
 	public void testHappiness() {
         driver.get( "http://localhost:8080/norootrackuparchive" );
         WebElement body = driver.findElementByTagName("body");
-        assertEquals("RACK_ROOT=vfs:"+System.getProperty("basedir")+"/apps/rack/1.1.0/norootrackup.rack", body.getText().trim());
+        String text = body.getText().trim();
+        
+        assertTrue( text.matches( "RACK_ROOT=" + toVfsPath( pwd() ) + ".*/norootrackup.rack.*" ) );
 	}
 
 }
