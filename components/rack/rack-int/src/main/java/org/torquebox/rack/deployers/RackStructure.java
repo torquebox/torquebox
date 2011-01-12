@@ -51,6 +51,7 @@ public class RackStructure extends AbstractRubyStructureDeployer {
                 StructureMetaData structureMetaData = structureContext.getMetaData();
                 ContextInfo context = createRackContextInfo(root, structureMetaData);
                 structureMetaData.addContext( context );
+                return true;
             }
         } catch (IOException e) {
             throw new DeploymentException(e);

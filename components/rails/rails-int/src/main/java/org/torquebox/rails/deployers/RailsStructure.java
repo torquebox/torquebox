@@ -22,17 +22,15 @@
 package org.torquebox.rails.deployers;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.List;
 
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.attachments.MutableAttachments;
 import org.jboss.deployers.spi.structure.ContextInfo;
+import org.jboss.deployers.spi.structure.StructureMetaData;
 import org.jboss.deployers.vfs.spi.structure.StructureContext;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.mc.vdf.AbstractRubyStructureDeployer;
-import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.rack.deployers.RackStructure;
 
 /**
  * <pre>
@@ -40,75 +38,64 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
  *    In: 
  *   Out: classpath entries and metadata locations
  * </pre>
- *
+ * 
  * StructureDeployer to identify Ruby-on-Rails applications.
  * 
  * @author Bob McWhirter
  */
 public class RailsStructure extends AbstractRubyStructureDeployer {
 
-	/**
-	 * Construct.
-	 */
-	public RailsStructure() {
-		setRelativeOrder( -1000 );
-	}
+    /**
+     * Construct.
+     */
+    public RailsStructure() {
+        setRelativeOrder(-1000);
+    }
 
-	public boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
-		boolean recognized = false;
-		VirtualFile file = structureContext.getFile();
+    public boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
+        VirtualFile root = structureContext.getFile();
 
-		ContextInfo context = null;
+        try {
+            VirtualFile environment = root.getChild("config/environment.rb");
+            if (environment.exists()) {
+                StructureMetaData structureMetaData = structureContext.getMetaData();
+                ContextInfo context = RackStructure.createRackContextInfo(root, structureMetaData);
+                addPluginJars( structureContext, context );
+                structureMetaData.addContext(context);
+                return true;
+            }
+        } catch (IOException e) {
+            throw new DeploymentException(e);
+        }
 
-		try {
-			VirtualFile config = file.getChild("config");
-			if (config != null) {
-				VirtualFile environment = config.getChild("environment.rb");
-				if (environment.exists() ) {
-                    log.info("Identified as Rails app: "+file);
-					context = createContext(structureContext, new String[] { "config" });
+        return false;
+    }
 
-					addDirectoryOfJarsToClasspath(structureContext, context, "lib/java");
-					addPluginJars(structureContext, context);
+    protected void addPluginJars(StructureContext structureContext, ContextInfo context) throws IOException {
+        VirtualFile root = structureContext.getRoot();
+        VirtualFile vendorPlugins = root.getChild("vendor/plugins");
+        if (vendorPlugins != null) {
+            List<VirtualFile> plugins = vendorPlugins.getChildren();
 
-					recognized = true;
-				}
-			}
-		} catch (IOException e) {
-			if (context != null) {
-				structureContext.removeChild(context);
-			}
-			throw new DeploymentException(e);
-		}
+            for (VirtualFile plugin : plugins) {
+                VirtualFile pluginLibJava = plugin.getChild("lib");
+                addDirectoryOfJarsToClasspath(structureContext, context, pluginLibJava.getPathNameRelativeTo(root));
+                List<VirtualFile> jars = vendorPlugins.getChildrenRecursively(JAR_FILTER);
+                for (VirtualFile jar : jars) {
+                    addClassPath(structureContext, jar, true, true, context);
+                }
+            }
+        }
+    }
 
-		return recognized;
-	}
+    @Override
+    protected boolean hasValidName(VirtualFile file) {
+        return file.getName().endsWith(".rails") || file.getChild("config/environment.rb").exists();
+    }
 
-	protected void addPluginJars(StructureContext structureContext, ContextInfo context) throws IOException {
-		VirtualFile root = structureContext.getRoot();
-		VirtualFile vendorPlugins = root.getChild("vendor/plugins");
-		if (vendorPlugins != null) {
-			List<VirtualFile> plugins = vendorPlugins.getChildren();
-
-			for (VirtualFile plugin : plugins) {
-				VirtualFile pluginLibJava = plugin.getChild("lib/java");
-				addDirectoryOfJarsToClasspath(structureContext, context, pluginLibJava.getPathNameRelativeTo(root));
-				List<VirtualFile> jars = vendorPlugins.getChildrenRecursively(JAR_FILTER);
-				for (VirtualFile jar : jars) {
-					addClassPath(structureContext, jar, true, true, context);
-				}
-			}
-		}
-	}
-
-	@Override
-	protected boolean hasValidName(VirtualFile file) {
-		return file.getName().endsWith( ".rails" ) || file.getChild( "config/environment.rb" ).exists();
-	}
-
-	@Override
-	protected boolean hasValidSuffix(String name) {
-		return true;
-	}
+    @Override
+    protected boolean hasValidSuffix(String name) {
+        return true;
+    }
 
 }

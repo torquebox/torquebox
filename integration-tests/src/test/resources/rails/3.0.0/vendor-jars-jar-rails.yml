@@ -1,0 +1,6 @@
+---
+application:
+  RAILS_ROOT: ${basedir}/apps/rails/3.0.0/vendor-jars-jar
+  RAILS_ENV: development
+web:
+  context: /vendor-jars-jar

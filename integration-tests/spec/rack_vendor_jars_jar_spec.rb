@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "rack lib/-based jar loading" do
+describe "rack vendor/jars/-based jar loading" do
 
   deploy :path => "rack/1.1.0/vendor-jars-jar-rack.yml"
 
