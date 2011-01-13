@@ -26,6 +26,7 @@
     <module>containers</module>
     <module>clients</module>
     <module>assemblage</module>
+    <module>system</module>
   </modules>
 
   <profiles>

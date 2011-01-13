@@ -1,3 +1,0 @@
-
-require 'torquebox-capistrano'
-

@@ -1,4 +1,4 @@
 
-# nothing
 
+require 'torquebox/capistrano/recipes'
 

@@ -93,6 +93,12 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-capistrano</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-container-foundation</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
