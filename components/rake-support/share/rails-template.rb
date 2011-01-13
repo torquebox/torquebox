@@ -7,6 +7,7 @@ else
   File.open('Gemfile', 'w') {|f| f << text.gsub(/^(gem 'sqlite3)/, '# \1') }
   gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
   gem "jdbc-sqlite3"
+  gem "jruby-openssl"
   gem "org.torquebox.rake-support", :require => 'torquebox-rails'
 end
 
