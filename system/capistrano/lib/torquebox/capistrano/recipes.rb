@@ -2,57 +2,37 @@
 require 'capistrano'
 
 Capistrano::Configuration.instance.load do 
-  _cset( :jboss_daemon_manager, :daemontools )
-  _cset( :jboss_service_directory ) { "/service/#{application}" }
-  _cset( :jboss_service_name, :jboss )
-  _cset( :rails_env, 'production' )
-  
+  _cset( :jboss_home,         '/opt/jboss' )
+  _cset( :jboss_config,       'default'    )
+  _cset( :jboss_service_name, 'jbossas'    )
   
   namespace :deploy do
   
     desc "Perform a deployment"
+
     task :default do
       update
     end
   
     desc "Start TorqueBox Server"
     task :start do
-      case ( jboss_daemon_manager )
-        when :daemontools
-          puts "starting server via #{jboss_daemon_manager}"
-          run "svc -u #{jboss_service_directory}"
-        when :initd
-          puts "starting server via #{jboss_daemon_manager}"
-          run "/etc/init.d/#{jboss_service_name} start"
-      end
+      puts "starting server via #{jboss_daemon_manager}"
+      run "/etc/init.d/#{jboss_service_name} start"
     end
   
     desc "Stop TorqueBox Server"
     task :stop do
-      case ( jboss_daemon_manager )
-        when :daemontools
-          puts "stopping server via #{jboss_daemon_manager}"
-          run "svc -d #{jboss_service_directory}"
-        when :initd
-          puts "stopping server via #{jboss_daemon_manager}"
-          run "/etc/init.d/#{jboss_service_name} stop"
-      end
+      puts "stopping server via #{jboss_daemon_manager}"
+      run "/etc/init.d/#{jboss_service_name} stop"
     end
   
     desc "Restart TorqueBox Server"
     task :restart do
-      case ( jboss_daemon_manager )
-        when :daemontools
-          puts "restarting server via #{jboss_daemon_manager}"
-          puts "svc -tu #{jboss_service_directory}"
-        when :initd
-          puts "restarting server via #{jboss_daemon_manager}"
-          puts "/etc/initd/#{jboss_service_name} restart"
-      end
+      puts "restarting server via #{jboss_daemon_manager}"
+      puts "/etc/initd/#{jboss_service_name} restart"
     end
   
     task :after_symlink do
-      #deployment_symlink
       deployment_descriptor
     end
 
@@ -66,7 +46,6 @@ Capistrano::Configuration.instance.load do
       run cmd
     end
   
-    #desc "Emit #{application}-rails.yml"
     task :deployment_descriptor do
       puts "creating deployment descriptor"
   
