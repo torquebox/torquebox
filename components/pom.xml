@@ -82,8 +82,6 @@
     <module>messaging/</module>
     <module>vfs</module>
 
-    <module>rake-support</module>
-
   </modules>
 
   <profiles>

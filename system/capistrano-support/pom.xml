@@ -9,7 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-capistrano</artifactId>
+  <artifactId>capistrano-support</artifactId>
   <packaging>gem</packaging>
   <name>TorqueBox Capistrano Support</name>
   <description></description>
