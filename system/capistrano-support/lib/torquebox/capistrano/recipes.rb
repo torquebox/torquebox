@@ -40,10 +40,10 @@ Capistrano::Configuration.instance.load do
     namespace :torquebox do
 
       task :check do
-        run "test -x #{jboss_init_script}"
-        run "test -d #{jboss_home}"
-        run "test -d #{jboss_home}/server/#{jboss_config}"
-        run "test -w #{jboss_home}/server/#{jboss_config}/deploy"
+        run "test -x #{jboss_init_script}",                        :roles=>[ :app ]
+        run "test -d #{jboss_home}",                               :roles=>[ :app ]
+        run "test -d #{jboss_home}/server/#{jboss_config}",        :roles=>[ :app ]
+        run "test -w #{jboss_home}/server/#{jboss_config}/deploy", :roles=>[ :app ]
       end
 
       task :deployment_descriptor do
