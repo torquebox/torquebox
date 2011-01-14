@@ -1,0 +1,21 @@
+Install capistrano:
+
+  jruby -S gem install capistrano
+
+Then:
+
+  jruby -S capify .
+
+See the tasks:
+
+  jruby -S bundle exec cap -T
+
+Edit your config/deploy.rb.
+
+Set up the server for capistrano:
+
+  jruby -S bundle exec cap deploy:setup
+
+Check the server is configured for capistrano:
+
+  jruby -S bundle exec cap deploy:setup
