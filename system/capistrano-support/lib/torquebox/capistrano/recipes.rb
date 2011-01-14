@@ -32,45 +32,45 @@ Capistrano::Configuration.instance.load do
       puts "/etc/initd/#{jboss_service_name} restart"
     end
   
-    task :after_symlink do
-      deployment_descriptor
-    end
+    namespace :torquebox do
 
-    #desc "Emit the deployment symlink"
-    task :deployment_symlink do
-      symlink_path = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}.rails"
-      cmd = "if [ -h #{symlink_path} ] ; then "
-      cmd += "rm #{symlink_path} "
-      cmd += ";fi "
-      cmd += "&& ln -s #{latest_release} #{symlink_path}"
-      run cmd
-    end
-  
-    task :deployment_descriptor do
-      puts "creating deployment descriptor"
-  
-      dd = {
-        'application'=>{
-          'RAILS_ROOT'=>"#{latest_release}",
-        },
-      }
-  
-      dd_str = YAML.dump_stream( dd )
-  
-      dd_file = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}-rails.yml"
-      dd_tmp_file = "#{dd_file}.tmp"
-      
-      cmd =  "cat /dev/null > #{dd_tmp_file}"
-  
-      dd_str.each_line do |line|
-        cmd += " && echo \"#{line}\" >> #{dd_tmp_file}"
+      task :check do
+        run "test -x /etc/init.d/#{jboss_service_name}"
+        run "test -d #{jboss_home}"
+        run "test -d #{jboss_home}/server/#{jboss_config}"
+        run "test -w #{jboss_home}/server/#{jboss_config}/deploy"
       end
-  
-      cmd += " && mv #{dd_tmp_file} #{dd_file}"
-  
-      run cmd
+
+      task :deployment_descriptor do
+        puts "creating deployment descriptor"
+    
+        dd = {
+          'application'=>{
+            'RAILS_ROOT'=>"#{latest_release}",
+          },
+        }
+    
+        dd_str = YAML.dump_stream( dd )
+    
+        dd_file = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}-rails.yml"
+        dd_tmp_file = "#{dd_file}.tmp"
+        
+        cmd =  "cat /dev/null > #{dd_tmp_file}"
+    
+        dd_str.each_line do |line|
+          cmd += " && echo \"#{line}\" >> #{dd_tmp_file}"
+        end
+    
+        cmd += " && mv #{dd_tmp_file} #{dd_file}"
+    
+        run cmd
+      end
     end
   
   end
+
+  before 'deploy:check',   'deploy:torquebox:check'
+  after  'deploy:symlink', 'deploy:torquebox:deployment_descriptor'
+
 end
 

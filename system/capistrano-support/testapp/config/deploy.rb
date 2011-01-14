@@ -1,4 +1,4 @@
-require 'torquebox-capistrano'
+require 'org.torquebox.capistrano-support'
 
 set :application, "testapp"
 set :repository,  "."
@@ -6,6 +6,9 @@ set :user,        "bob"
 set :deploy_to,   "/home/bob/apps/testapp"
 set :deploy_via,  :copy
 set :use_sudo,    false
+
+set :jboss_home,    '/home/bob/torquebox-dist/jboss'
+set :jboss_config,  :default
 
 set :scm, :none
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
