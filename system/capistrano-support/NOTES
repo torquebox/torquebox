@@ -8,14 +8,18 @@ Then:
 
 See the tasks:
 
-  jruby -S bundle exec cap -T
+  jruby -S cap -T
 
 Edit your config/deploy.rb.
 
 Set up the server for capistrano:
 
-  jruby -S bundle exec cap deploy:setup
+  jruby -S cap deploy:setup
 
 Check the server is configured for capistrano:
 
-  jruby -S bundle exec cap deploy:setup
+  jruby -S cap deploy:setup
+
+Check that you can get your application code to the server:
+
+  jruby -S cap deploy:update_code
