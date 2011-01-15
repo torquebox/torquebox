@@ -1,6 +1,8 @@
-Install capistrano:
+Install capistrano and stuff it needs
 
   jruby -S gem install capistrano
+  jruby -S gem install ffi-ncurses
+  jruby -S gem install jruby-openssl
 
 Then:
 

@@ -1,4 +1,5 @@
 require 'org.torquebox.capistrano-support'
+require 'bundler/capistrano'
 
 set :application, "testapp"
 set :repository,  "."
@@ -7,8 +8,13 @@ set :deploy_to,   "/home/bob/apps/testapp"
 set :deploy_via,  :copy
 set :use_sudo,    false
 
-set :jboss_home,    '/home/bob/torquebox-dist/jboss'
-set :jboss_config,  :default
+set :torquebox_home,    '/home/bob/torquebox-current'
+set :jboss_config,      :default
+
+set :jboss_control_style, :binscripts
+
+#set :jboss_init_script, "#{jboss_home}/bin/jboss_init_redhat.sh"
+#set :jboss_user,        :self
 
 set :scm, :none
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`

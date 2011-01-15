@@ -1,0 +1,4 @@
+application:
+  RAILS_ENV: development
+web:
+  context: /
