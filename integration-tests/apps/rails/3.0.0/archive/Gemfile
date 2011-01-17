@@ -1,8 +1,11 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.0.0'
-
-gem 'activerecord-jdbc-adapter'
-gem 'jdbc-sqlite3'
 gem 'haml'
+
+group :provided do 
+  gem 'rails', '3.0.0'
+  gem 'activerecord-jdbc-adapter'
+  gem 'jdbc-sqlite3'
+end
+
 

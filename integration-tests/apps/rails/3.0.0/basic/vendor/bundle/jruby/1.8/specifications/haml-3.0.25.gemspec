@@ -21,14 +21,15 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://haml-lang.com/}
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{haml}
-  s.rubygems_version = %q{1.4.2}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{An elegant, structured XHTML/XML templating engine. Comes with Sass, a similar CSS templating engine.}
   s.test_files = ["test/sass/plugin_test.rb", "test/sass/script_conversion_test.rb", "test/sass/functions_test.rb", "test/sass/less_conversion_test.rb", "test/sass/scss/css_test.rb", "test/sass/scss/rx_test.rb", "test/sass/scss/scss_test.rb", "test/sass/script_test.rb", "test/sass/conversion_test.rb", "test/sass/extend_test.rb", "test/sass/engine_test.rb", "test/sass/css2sass_test.rb", "test/sass/callbacks_test.rb", "test/haml/util/subset_map_test.rb", "test/haml/template_test.rb", "test/haml/html2haml_test.rb", "test/haml/spec_test.rb", "test/haml/helper_test.rb", "test/haml/util_test.rb", "test/haml/engine_test.rb", "test/haml/spec/ruby_haml_test.rb"]
 
   if s.respond_to? :specification_version then
+    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
-    if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
+    if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_development_dependency(%q<yard>, [">= 0.5.3"])
       s.add_development_dependency(%q<maruku>, [">= 0.5.9"])
     else
