@@ -1,4 +1,5 @@
 source 'http://rubygems.org'
+#source 'file:///Users/bob/torquebox-current/jruby/lib/ruby/gems/1.8/repo'
 
 gem 'rails', '3.0.3'
 
@@ -32,5 +33,5 @@ gem 'haml'
 # end
 
 group :torquebox do
-  gem "org.torquebox.rake-support", '~>1.0.0', :require => "torquebox-rails"
+  gem "org.torquebox.rake-support", '1.0.0.CR1', :require => "torquebox-rails"
 end
