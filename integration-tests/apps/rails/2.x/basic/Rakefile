@@ -9,4 +9,4 @@ require 'rake/rdoctask'
 
 require 'tasks/rails'
 
-require 'torquebox/tasks'
+require 'torquebox/rake/tasks'
