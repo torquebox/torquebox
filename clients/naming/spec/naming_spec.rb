@@ -42,9 +42,11 @@ describe TorqueBox::Naming do
 
     it "should allow binding and retrieving of named objects" do
       obj = "Howdy"
+      TorqueBox::Naming.names.should be_empty
       TorqueBox::Naming['my_object'] = obj
       fetched_obj = TorqueBox::Naming['my_object']
       fetched_obj.should eql( obj )
+      TorqueBox::Naming.names.size.should eql(1)
     end
   end
 

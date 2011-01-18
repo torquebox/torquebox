@@ -34,22 +34,15 @@ module TorqueBox
     end
 
     def self.[](name)
-      context = javax.naming::InitialContext.new
-      begin
-        return context[ name ]
-      ensure
-        context.close
-      end
+      connect { |context| context[name] }
     end
 
     def self.[]=(name, value)
-      context = javax.naming::InitialContext.new
-      begin
-        #context.rebind( name, value )
-        context[name] = value
-      ensure
-        context.close
-      end
+      connect { |context| context[name] = value }
+    end
+    
+    def self.names
+      connect { |context| context.to_a }
     end
     
     def self.context(host=nil, port=nil)
@@ -65,7 +58,7 @@ module TorqueBox
       end
     end
 
-    def self.connect(host, port, &block)
+    def self.connect(host=nil, port=nil, &block)
       return context(host, port) if ( block.nil? )
 
       reconfigure_on_error do
