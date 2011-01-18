@@ -1,5 +1,6 @@
 
 require 'rbconfig'
+require 'rake'
 
 def get_archive_name root=Dir.pwd
   File.basename(root) + (rails?(root) ? '.rails' : '.rack')

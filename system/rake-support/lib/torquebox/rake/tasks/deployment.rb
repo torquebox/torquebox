@@ -1,4 +1,6 @@
 
+require 'rake'
+
 def rails_deployment_name( app_name )
   "#{app_name}-rails.yml"
 end

@@ -1,3 +1,4 @@
+require 'rake'
 
 namespace :torquebox do
   desc "Check your installation of the TorqueBox server"

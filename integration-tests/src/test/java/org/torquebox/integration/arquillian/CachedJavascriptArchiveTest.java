@@ -1,26 +1,30 @@
 package org.torquebox.integration.arquillian;
 
-import org.junit.*;
-import static org.junit.Assert.*;
-import org.openqa.selenium.WebElement;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.File;
+import java.util.zip.ZipFile;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.importer.ZipImporter;
-import java.util.zip.ZipFile;
+import org.junit.Test;
+import org.openqa.selenium.WebElement;
 
 @Run(RunModeType.AS_CLIENT)
-public class CachedJavascriptArchiveTest extends AbstractIntegrationTest {
+public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() throws Exception {
-        ZipFile app = new ZipFile( System.getProperty("user.dir") + "/apps/rails/3.0.0/torque-174.rails" );
-        return ShrinkWrap.create(ZipImporter.class, "torque-174.rails")
-            .importZip(app)
-            .as(JavaArchive.class);
+        //ZipFile app = new ZipFile( System.getProperty("user.dir") + "/apps/rails/3.0.0/torque-174.rails" );
+        //return ShrinkWrap.create(ZipImporter.class, "torque-174.rails")
+            //.importZip(app)
+            //.as(JavaArchive.class);
+        File exploded = new File( System.getProperty("user.dir") + "/apps/rails/3.0.0/torque-174.rails" );
+        
+	    return archive( exploded );
 	}
 
     public void setUp() {

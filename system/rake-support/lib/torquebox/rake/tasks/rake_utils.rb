@@ -2,6 +2,8 @@ require 'open3'
 require 'tmpdir'
 require 'rbconfig'
 require 'yaml'
+require 'rake'
+
 
 module TorqueBox
   module RakeUtils

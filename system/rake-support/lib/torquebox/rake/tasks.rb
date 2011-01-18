@@ -1,5 +1,5 @@
 
-require 'torquebox/tasks/rake_utils'
-require 'torquebox/tasks/server'
-require 'torquebox/tasks/deployment'
-require 'torquebox/tasks/archive'
+require 'torquebox/rake/tasks/rake_utils'
+require 'torquebox/rake/tasks/server'
+require 'torquebox/rake/tasks/deployment'
+require 'torquebox/rake/tasks/archive'
