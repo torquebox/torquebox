@@ -135,6 +135,16 @@ describe "File extensions for VFS" do
     }.should_not raise_error
   end
 
+  it "should allow rm_rf and mkdir_p of vfs path" do
+    parent = "vfs:#{Dir.tmpdir}/a"
+    child = parent + "/b/c"
+    FileUtils.rm_rf parent
+    File.exist?(child).should be_false
+    FileUtils.mkdir_p (child)
+    File.exist?(child).should be_true
+    FileUtils.rm_rf parent
+  end
+
   describe "Tempfiles" do
     it "should be created in default dir" do
       lambda {

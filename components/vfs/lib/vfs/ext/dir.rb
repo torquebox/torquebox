@@ -6,6 +6,7 @@ class Dir
     alias_method :open_before_vfs, :open
     alias_method :glob_before_vfs, :glob
     alias_method :mkdir_before_vfs, :mkdir
+    alias_method :rmdir_before_vfs, :rmdir
     alias_method :new_before_vfs, :new
     alias_method :entries_before_vfs, :entries
     alias_method :foreach_before_vfs, :foreach
@@ -106,6 +107,11 @@ class Dir
       rescue Java::JavaIo::IOException => e
         return []
       end
+    end
+
+    def rmdir(path) 
+      name = File.name_without_vfs(path)
+      rmdir_before_vfs(name) if ( File.exist_without_vfs?( name ) )
     end
 
     def mkdir(path, mode=0777)

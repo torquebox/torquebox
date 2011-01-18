@@ -10,6 +10,7 @@ class File
     alias_method :size_without_vfs,        :size
     alias_method :size_without_vfs?,       :size?
     alias_method :stat_without_vfs,        :stat
+    alias_method :lstat_without_vfs,       :lstat
     alias_method :exist_without_vfs?,      :exist?
     alias_method :directory_without_vfs?,  :directory?
     alias_method :dirname_without_vfs,     :dirname
@@ -124,6 +125,12 @@ class File
       raise Errno::ENOENT.new(filename) unless virtual_file.exists?
 
       VFS::File::Stat.new( virtual_file )
+    end
+
+    def lstat(filename)
+      name = name_without_vfs(filename)
+      return lstat_without_vfs(name) if ( File.exist_without_vfs?( name ) )
+      stat(filename)
     end
 
     def rename(oldname, newname) 
