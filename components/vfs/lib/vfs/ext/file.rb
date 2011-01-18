@@ -1,4 +1,5 @@
 require 'vfs/debug_filter'
+require 'vfs/ext/tempfile'
 
 class File
 

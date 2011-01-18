@@ -9,7 +9,6 @@ require 'vfs/dir'
 require 'vfs/glob_filter'
 require 'vfs/ext/vfs'
 require 'vfs/ext/io'
-require 'vfs/ext/tempfile'      # must be required before file.rb!
 require 'vfs/ext/file'
 require 'vfs/ext/file_test'
 require 'vfs/ext/dir'
