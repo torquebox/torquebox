@@ -1,0 +1,7 @@
+source 'http://rubygems.org'
+
+gem 'rails'
+
+gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
+gem "jdbc-sqlite3"
+gem "org.torquebox.rake-support"

@@ -1,0 +1,27 @@
+Install capistrano and stuff it needs
+
+  jruby -S gem install capistrano
+  jruby -S gem install ffi-ncurses
+  jruby -S gem install jruby-openssl
+
+Then:
+
+  jruby -S capify .
+
+See the tasks:
+
+  jruby -S cap -T
+
+Edit your config/deploy.rb.
+
+Set up the server for capistrano:
+
+  jruby -S cap deploy:setup
+
+Check the server is configured for capistrano:
+
+  jruby -S cap deploy:setup
+
+Check that you can get your application code to the server:
+
+  jruby -S cap deploy:update_code

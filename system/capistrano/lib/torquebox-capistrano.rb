@@ -1,4 +1,0 @@
-
-
-require 'torquebox/capistrano/recipes'
-
