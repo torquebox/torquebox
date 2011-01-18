@@ -135,10 +135,27 @@ describe "File extensions for VFS" do
     }.should_not raise_error
   end
 
-  it "should be able to create new tempfiles" do
-    lambda {
-      Tempfile.new("temp_file_test")
-    }.should_not raise_error
+  describe "Tempfiles" do
+    it "should be created in default dir" do
+      lambda {
+        t = Tempfile.new("temp_file_test")
+        File.exist?(t.path).should be_true
+      }.should_not raise_error
+    end
+
+    it "should be created in a non-vfs directory" do
+      lambda {
+        t = Tempfile.new("temp_file_test", Dir.tmpdir)
+        File.exist?(t.path).should be_true
+      }.should_not raise_error
+    end
+
+    it "should be created in a vfs directory" do
+      lambda {
+        t = Tempfile.new("temp_file_test", "vfs:#{Dir.tmpdir}")
+        File.exist?(t.path).should be_true
+      }.should_not raise_error
+    end
   end
 
   describe "open" do
