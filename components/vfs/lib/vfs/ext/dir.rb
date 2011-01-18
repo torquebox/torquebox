@@ -109,8 +109,7 @@ class Dir
     end
 
     def mkdir(path, mode=0777)
-      real_path = path =~ /^vfs:/ ? path[4..-1] : path
-      mkdir_before_vfs( real_path, mode )
+      mkdir_before_vfs( File.name_without_vfs(path), mode )
     rescue Errno::ENOTDIR => e
       path = VFS.writable_path_or_error( path, e )
       mkdir_before_vfs( path, mode )

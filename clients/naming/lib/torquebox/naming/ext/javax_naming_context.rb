@@ -9,4 +9,8 @@ module javax.naming::Context
     rebind(name, value)
   end
 
+  def to_a
+    list("").to_a.map {|i| i.name }
+  end
+
 end

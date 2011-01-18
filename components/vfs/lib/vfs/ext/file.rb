@@ -1,5 +1,5 @@
-
 require 'vfs/debug_filter'
+require 'vfs/ext/tempfile'
 
 class File
 
@@ -174,14 +174,14 @@ class File
     def new(*args, &block)
       fname = args.size > 0 ? args[0] : nil
       if ( Fixnum === fname )
-        return self.new_without_vfs( *args, &block )
+        return new_without_vfs( *args, &block )
       end
       unless ( vfs_path?(fname) )
-        return self.new_without_vfs( *args, &block )
+        return new_without_vfs( *args, &block )
       end
       if ( File.exist_without_vfs?( name_without_vfs(fname) ) )
         args[0] = name_without_vfs(fname)
-        return File.new_without_vfs( *args, &block )
+        return new_without_vfs( *args, &block )
       end
       # File.new doesn't pass a block through to the opened file
       IO.vfs_open( *args )
@@ -218,7 +218,12 @@ class File
 
     def name_without_vfs(filename)
       name = filename.to_s.gsub("\\", "/")
-      vfs_path?(name) ? name[4..-1] : name
+      if vfs_path?(name) 
+        result = name[4..-1]
+        result.size==0 ? "/" : result
+      else
+        name
+      end
     end
 
     def vfs_path?(path)
