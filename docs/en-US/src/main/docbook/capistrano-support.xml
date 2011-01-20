@@ -5,45 +5,166 @@
   <title>Capistrano Support</title>
 
   <section>
-    <title id="capistrano-support.title">Capistrano</title>
+    <title id="capistrano-support.title">What is Capistrano?</title>
 
     <para>Capistrano is a deployment tool to assist in moving code from a
-    repository to a production server.</para>
+    repository to a production server. It's a set of tools used from one
+    machine (the deployer), to get an application running on a remote machine
+    (the server).</para>
+
+    <para>In many cases, the deployer is a developer working from his or her
+    laptop. Capistrano is installed here. The deployer invokes the tooling
+    locally on his laptop, and Capistrano reaches across the network to set up
+    the right version of the application and activate it within
+    TorqueBox.</para>
   </section>
 
   <section>
-    <title>App-Server separate from App</title>
+    <title>Installing Capistrano</title>
 
-    <para>The TorqueBox server in production is a separate entity from the
-    applications being deployed upon it. When deploying with mongrel or other
-    traditional Ruby solutions, part of the deployment normally includes
-    restarting the server. TorqueBox does not need to be restarted nearly as
-    often.</para>
+    <para>The TorqueBox distribution includes support for Capistrano, but does
+    not include Capistrano itself. Capistrano requires a few other gems in
+    order to function effectively. It is easy to install everything.</para>
 
-    <para>Generally the TorqueBox server is installed in a system-wide
-    location since it may support multiple applications simultaneously. For
-    install, you may simply unpackage and install it under
-    <filename>/opt/torquebox-server</filename>.</para>
+    <para><screen><prompt>$</prompt> <command>jruby</command> <option>-S</option> <command>gem</command> <command>install</command> jruby-openssl ffi-ncurses capistrano</screen></para>
+  </section>
 
-    <para>The TorqueBox server can be managed through a normal
-    <filename>init.d/</filename> script, or through Daniel Bernstein's
-    <command>daemontools</command>. The Capistrano support provided by
-    TorqueBox can work with either process for manaing the server, when
-    necessary.</para>
+  <section>
+    <title>Capify your Application</title>
 
-    <para>Either way, two settings in the your application's deploy.rb are
-    required to be able to deploy to a remove TorqueBox server.</para>
+    <para>You can skip this section if you're already using Capistrano with
+    your application. Otherwise, you'll need to <command>capify</command> your
+    application to set it up for use with Capistrano.</para>
 
-    <para><screen>set :jboss_home,       "/opt/torquebox-server/jboss"
-set :jboss_config,     :default</screen>These should point to the same
-    location as <envar>$JBOSS_HOME</envar> on the server. The
-    <varname>:jboss_config</varname> matches the <envar>$JBOSS_CONF</envar>,
-    and is only required if a configuration other than default is
-    desired.</para>
+    <para>Ensure that you are in the root of your application's source tree,
+    and run the <command>capify</command> command.</para>
 
-    <para><note>
-        <para>Capistrano support is still evolving and will be fully
-        documented once it settles.</para>
-      </note></para>
+    <para><screen><prompt>$</prompt> <command>jruby</command> <option>-S</option> <command>capify</command> <filename>.</filename></screen>This
+    creates a Capfile in the root of your application, which delegates to
+    another file it created: <filename>config/deploy.rb</filename>. The
+    deploy.rb file is the primary location for configuring your deployment
+    strategy.</para>
+
+    <section>
+      <title>Basic deploy.rb configuration</title>
+
+      <para>All applications, whether using TorqueBox or another server,
+      require some common settings to be used with Capistrano. The default
+      deploy.rb indicates some typical variables you should customize for your
+      deployment.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>TorqueBox-specific deploy.rb configuration</title>
+
+    <para>Within your deploy.rb, there are a few additional steps and
+    variables you may configure in order to deploy to a remote TorqueBox
+    server.</para>
+
+    <section>
+      <title>Include TorqueBox recipes</title>
+
+      <para>First, you should include the Capistrano recipes which support
+      TorqueBox deployments. If you use Bundler, you should also include the
+      Bunlder recipes at this point.</para>
+
+      <para><screen>require 'org.torquebox.capistrano-support'
+require 'bundler/capistrano'</screen></para>
+    </section>
+
+    <section>
+      <title>Set up <varname>home</varname> variable(s)</title>
+
+      <para>Capistrano needs to know some details about how TorqueBox is
+      installed on the remote server. Primarily, it needs to be able to locate
+      JBoss and JRuby.</para>
+
+      <para>If you've installed TorqueBox by unzipping the distribution, you
+      only need to set <varname>:torquebox_home</varname> in your
+      <filename>deploy.rb</filename>.</para>
+
+      <para><screen>set :torquebox_home,    '/opt/torquebox/current'</screen></para>
+
+      <para>If you have a non-standard installation of the TorqueBox
+      components, you may instead set <varname>:jboss_home</varname> and
+      <varname>:jruby_home</varname> individually.</para>
+
+      <para><screen>set :jboss_home,        '/opt/jboss-as6'
+set :jruby_home,        '/usr/local/jruby'</screen></para>
+
+      <para>Capistrano uses these values in order to control the TorqueBox AS
+      process, deploy applications to the correct location, and execute
+      Bundler on the remote server if required.</para>
+    </section>
+
+    <section>
+      <title>Configure server control style</title>
+
+      <para>The TorqueBox AS can be controlled in two different ways. By
+      default, the init.d method is used, but using the bin/ scripts that ship
+      with JBoss is also supported.</para>
+
+      <formalpara>
+        <title>init.d</title>
+
+        <para>Using a /etc/init.d script, the TorqueBox AS can be integrated
+        into the server's normal service boot sequence and controlled using
+        standard tools and methods enjoyed by sysadmins. By default,
+        Capistrano support assumes the init.d script is located at
+        <filename>/etc/init.d/jbossas</filename>. If you use a
+        differently-named script, simply specify it using the
+        <varname>:jboss_init_script</varname> variable.</para>
+      </formalpara>
+
+      <para><screen>set :jboss_init_script,    '/etc/init.d/jboss-as6m3'</screen></para>
+
+      <para>When using an <filename>init.d</filename> script, it is assumed
+      that other details, such as bind IP address, server configuration
+      selection, and other details are set through
+      <filename>/etc/sysconfig</filename> files.</para>
+
+      <formalpara>
+        <title>bin/ scripts</title>
+
+        <para>If you do not have access to modify scripts under
+        <filename>/etc/init.d</filename>, you may desire to simply use the
+        <filename>run.sh</filename> and <filename>shutdown.sh</filename>
+        scripts under <filename>$JBOSS_HOME/bin</filename> to control the
+        server process. To enable this method of server control, you must set
+        the <varname>:jboss_control_style</varname> variable.</para>
+      </formalpara>
+
+      <para><screen>set :jboss_control_style,    :binscripts</screen>When
+      using <filename>bin/</filename> scripts, you may control additional
+      server properties through your <filename>deploy.rb</filename>
+      file.</para>
+
+      <table>
+        <title>Variables affecting bin/ script server control</title>
+
+        <tgroup cols="3">
+          <tbody>
+            <row>
+              <entry><varname>:jboss_config</varname></entry>
+
+              <entry><code>default</code></entry>
+
+              <entry>The server profile to use when launching the AS.</entry>
+            </row>
+
+            <row>
+              <entry><varname>:jboss_bind_address</varname></entry>
+
+              <entry><code>0.0.0.0</code></entry>
+
+              <entry>The IP address to bind when launching the AS.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para></para>
+    </section>
   </section>
 </chapter>
