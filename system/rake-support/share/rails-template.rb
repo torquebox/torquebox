@@ -1,14 +1,14 @@
 
 if ( Rails::VERSION::MAJOR == 2 )
   gem "activerecord-jdbc-adapter", :lib => "jdbc_adapter"
-  gem "org.torquebox.rake-support", :lib => 'torquebox-rails'
+  gem "org.torquebox.rake-support"
 else
   text = File.read 'Gemfile'
   File.open('Gemfile', 'w') {|f| f << text.gsub(/^(gem 'sqlite3)/, '# \1') }
   gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
   gem "jdbc-sqlite3"
   gem "jruby-openssl"
-  gem "org.torquebox.rake-support", :require => 'torquebox-rails'
+  gem "org.torquebox.rake-support"
 end
 
 if ( Rails::VERSION::MAJOR == 2 )
@@ -38,7 +38,6 @@ inside('app') {
 # We need the app to find the rake tasks
 rakefile( 'torquebox.rake' ) do
   <<-TASK
-require 'torquebox/tasks'
 
 # Patch db:load_config to make sure activerecord-jdbc-adapter gets loaded
 namespace :db do
