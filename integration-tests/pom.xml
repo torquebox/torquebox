@@ -297,6 +297,36 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-rails2</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+            <configuration>
+              <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+              <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+              <installArgs>rails -v ${version.rails2} --no-rdoc --no-ri</installArgs>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-rails3</id>
+            <phase>test-compile</phase>
+            <goals>
+              <goal>install</goal>
+            </goals>
+            <configuration>
+              <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+              <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+              <installArgs>rails -v ${version.rails3} --no-rdoc --no-ri</installArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
