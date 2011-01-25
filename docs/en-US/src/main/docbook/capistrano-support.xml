@@ -166,5 +166,61 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
 
       <para></para>
     </section>
+
+    <section>
+      <title>Perform deployments</title>
+
+      <para>Once your application is setup and configured, and your deployment
+      server is prepared, you can begin performing deployments as you normally
+      would.</para>
+
+      <formalpara>
+        <title>Disable the AS</title>
+
+        <para>TorqueBox AS can work behind another webserver such as Apache
+        httpd. Capistrano supports placing a
+        <filename>maintenance.html</filename> page to be served by Apache when
+        you desire to take down the app server.</para>
+      </formalpara>
+
+      <para><screen>$ jruby -S cap deploy:web:disable</screen>Capistrano will
+      provide instructions for setting up Apache to stop directing requests to
+      the AS when the maintanence page is in-place. When using TorqueBox
+      behind Apache, these rules normally should live in the
+      &lt;VirtualHost&gt; section of your httpd.conf, instead of within an
+      .htaccess.</para>
+
+      <para><screen>ErrorDocument 503 /system/maintenance.html
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !.(css|gif|jpg|png)$
+RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+RewriteRule ^.*$  -  [redirect=503,last]</screen></para>
+
+      <formalpara>
+        <title>Deploy the application</title>
+
+        <para>The Capistrano deployment workflow can occur even if the
+        TorqueBox AS is not currently running. Deployment will not
+        automatically start the AS if it is not running. Deployment will also
+        never restart the server, as new application deployments are
+        automatically recognized by the running AS.</para>
+      </formalpara>
+
+      <para><screen>$ jruby -S cap deploy</screen></para>
+
+      <formalpara>
+        <title>Control the TorqueBox AS</title>
+
+        <para>You can start and stop the TorqueBox AS independent of
+        deployment activities. When started, all applications that were
+        running when last shutdown will be redeployed.</para>
+      </formalpara>
+
+      <para><screen>$ jruby -S cap deploy:stop</screen>To start the TorqueBox
+      AS and re-deploy all previously-running applications:</para>
+
+      <para><screen>$ jruby -S cap deploy:start</screen></para>
+    </section>
   </section>
 </chapter>
