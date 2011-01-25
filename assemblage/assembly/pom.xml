@@ -252,22 +252,6 @@
             </configuration>
           </execution>
           <execution>
-            <id>install-deployers-standard-profile</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
-              <includeTypes>jar</includeTypes>
-              <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>provided</includeScope>
-              <excludeTransitive>true</excludeTransitive>
-              <outputDirectory>${stage.dir}/jboss/server/standard/deployers/torquebox.deployer</outputDirectory>
-              <stripVersion>true</stripVersion>
-            </configuration>
-          </execution>
-          <execution>
             <id>install-deployers-all-profile</id>
             <phase>package</phase>
             <goals>
@@ -280,38 +264,6 @@
               <includeScope>provided</includeScope>
               <excludeTransitive>true</excludeTransitive>
               <outputDirectory>${stage.dir}/jboss/server/all/deployers/torquebox.deployer</outputDirectory>
-              <stripVersion>true</stripVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-deployers-osgi-profile</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
-              <includeTypes>jar</includeTypes>
-              <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>provided</includeScope>
-              <excludeTransitive>true</excludeTransitive>
-              <outputDirectory>${stage.dir}/jboss/server/osgi/deployers/torquebox.deployer</outputDirectory>
-              <stripVersion>true</stripVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-deployers-jbossweb-standalone-profile</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
-              <includeTypes>jar</includeTypes>
-              <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>provided</includeScope>
-              <excludeTransitive>true</excludeTransitive>
-              <outputDirectory>${stage.dir}/jboss/server/jbossweb-standalone/deployers/torquebox.deployer</outputDirectory>
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
@@ -374,6 +326,20 @@
             </configuration>
           </execution>
           <execution>
+            <id>remove-gratuitous-JBOSS_CONFs</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete dir="${stage.dir}/jboss/server/minimal/" failonerror="false"/>
+                <delete dir="${stage.dir}/jboss/server/standard/" failonerror="false"/>
+                <delete dir="${stage.dir}/jboss/server/jbossweb-standalone/" failonerror="false"/>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
             <id>remove-jboss-ROOT.war</id>
             <phase>prepare-package</phase>
             <goals>
@@ -382,10 +348,7 @@
             <configuration>
               <tasks>
                 <delete dir="${stage.dir}/jboss/server/default/deploy/ROOT.war" failonerror="false"/>
-                <delete dir="${stage.dir}/jboss/server/standard/deploy/ROOT.war" failonerror="false"/>
                 <delete dir="${stage.dir}/jboss/server/all/deploy/ROOT.war" failonerror="false"/>
-                <delete dir="${stage.dir}/jboss/server/osgi/deploy/ROOT.war" failonerror="false"/>
-                <delete dir="${stage.dir}/jboss/server/jbossweb-standalone/deploy/ROOT.war" failonerror="false"/>
               </tasks>
             </configuration>
           </execution>
