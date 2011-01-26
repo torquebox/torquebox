@@ -36,11 +36,13 @@
       <artifactId>jboss-as-distribution</artifactId>
       <type>zip</type>
     </dependency>
+<!--
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rubyzip</artifactId>
       <type>gem</type>
     </dependency>
+-->
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-int</artifactId>
@@ -140,6 +142,7 @@
       <version>${project.version}</version>
     </dependency>
 
+<!--
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>activerecord-jdbc-adapter</artifactId>
@@ -182,6 +185,7 @@
       <classifier>java</classifier>
       <type>gem</type>
     </dependency>
+-->
 
   </dependencies>
 
