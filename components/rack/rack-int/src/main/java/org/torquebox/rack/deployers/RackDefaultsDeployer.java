@@ -51,6 +51,7 @@ public class RackDefaultsDeployer extends AbstractDeployer {
             RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
             metadata.setRackEnv("development");
             metadata.setRackUpScriptLocation("config.ru");
+            metadata.setRackApplicationName( unit.getSimpleName() );
             if (metadata.getHosts().isEmpty()) {
                 metadata.addHost("localhost");
             }

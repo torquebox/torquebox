@@ -169,6 +169,14 @@ public class RackApplicationMetaData {
         return this.rackApplicationPoolName;
     }
 
+    public void setRackApplicationName(String rackApplicationName) {
+        this.rackApplicationName = rackApplicationName;
+    }
+
+    public String getRackApplicationName() {
+        return this.rackApplicationName;
+    }
+
     public void setEnvironmentVariables(Map<String, String> environment) {
         this.environment = new HashMap<String, String>(environment);
     }
@@ -227,6 +235,7 @@ public class RackApplicationMetaData {
     private String rubyRuntimePoolName;
     private String rackApplicationFactoryName;
     private String rackApplicationPoolName;
+    private String rackApplicationName;
     private Map<String, String> environment;
     private RuntimeInitializer runtimeInitializer;
     private boolean archive;

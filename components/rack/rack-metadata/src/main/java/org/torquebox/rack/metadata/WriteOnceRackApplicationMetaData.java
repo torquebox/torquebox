@@ -54,6 +54,10 @@ public class WriteOnceRackApplicationMetaData extends RackApplicationMetaData {
     public void setRackApplicationPoolName(String rackApplicationPoolName) {
         if (null == getRackApplicationPoolName()) super.setRackApplicationPoolName( rackApplicationPoolName );
     }
+
+    public void setRackApplicationName(String rackApplicationName) {
+        if (null == getRackApplicationName()) super.setRackApplicationName( rackApplicationName );
+    }
     
     public void setEnvironmentVariables(Map<String,String> environment) {
         if (null == getEnvironmentVariables()) { 

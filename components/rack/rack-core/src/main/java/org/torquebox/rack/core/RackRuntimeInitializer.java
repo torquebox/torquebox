@@ -37,6 +37,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         StringBuilder script = new StringBuilder();
         String rackRootPath = this.rackMetaData.getRackRootPath();
         String rackEnv = this.rackMetaData.getRackEnv();
+        String appName = this.rackMetaData.getRackApplicationName();
         String contextPath = this.rackMetaData.getContextPath();
 
         if (rackRootPath.endsWith("/")) {
@@ -51,8 +52,10 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 
         script.append("RACK_ROOT=%q(" + rackRootPath + ")\n");
         script.append("RACK_ENV=%q(" + rackEnv + ")\n");
+        script.append("TORQUEBOX_APP_NAME=%q(" + appName + ")\n");
         script.append("ENV['RACK_ROOT']=%q(" + rackRootPath + ")\n");
         script.append("ENV['RACK_ENV']=%q(" + rackEnv + ")\n");
+        script.append("ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n");
 
         if ( contextPath != null && contextPath.length() > 1 ) { // only set if not root context
             script.append("ENV['RAILS_RELATIVE_URL_ROOT']=%q(" + contextPath + ")\n");
