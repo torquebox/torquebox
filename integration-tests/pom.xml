@@ -225,7 +225,83 @@
         </plugins>
       </build>
     </profile>
-
+    <profile>
+      <activation>
+        <file>
+          <missing>./target/integ-dist/jruby/lib/ruby/gems/1.8/bin/rails</missing>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>gem-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install-rails2</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>rails -v ${version.rails2} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-rails3</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>rails -v ${version.rails3} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-ar-jdbc</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>activerecord-jdbc-adapter -v ${version.ar.jdbc} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-jdbc-sqlite3</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>jdbc-sqlite3 --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-mail-wtf</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>mail -v 2.2.14 --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
   </profiles>
 
   <build>
@@ -297,73 +373,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install-rails2</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
-            <configuration>
-              <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
-              <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-              <installArgs>rails -v ${version.rails2} --no-rdoc --no-ri</installArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-rails3</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
-            <configuration>
-              <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
-              <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-              <installArgs>rails -v ${version.rails3} --no-rdoc --no-ri</installArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-ar-jdbc</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
-            <configuration>
-              <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
-              <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-              <installArgs>activerecord-jdbc-adapter -v ${version.ar.jdbc} --no-rdoc --no-ri</installArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-jdbc-sqlite3</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
-            <configuration>
-              <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
-              <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-              <installArgs>jdbc-sqlite3 --no-rdoc --no-ri</installArgs>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-mail-wtf</id>
-            <phase>test-compile</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
-            <configuration>
-              <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
-              <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-              <installArgs>mail -v 2.2.14 --no-rdoc --no-ri</installArgs>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
