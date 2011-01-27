@@ -383,6 +383,32 @@
             </configuration>
           </execution>
           <execution>
+            <id>remove-jruby-share</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete dir="${stage.dir}/jruby/share/" failonerror="false"/>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>remove-gem-cache</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete>
+                  <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="**.gem"/>
+                </delete>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
             <id>rename-rails-template</id>
             <phase>package</phase>
             <goals>
