@@ -19,43 +19,43 @@
     <profile>
       <activation>
         <file>
-          <missing>./../target/rubygems/bin/rails</missing>
+          <missing>./../target/rubygems/bin/rackup</missing>
         </file>
       </activation>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>jruby-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install-rails2</id>
-            <goals>
-              <goal>jruby</goal>
-            </goals>
-            <phase>install</phase>
-            <configuration>
-              <args>-S gem install rails -v ${version.rails2} --no-rdoc --no-ri</args>
-              <gemHome>./../target/rubygems</gemHome>
-              <gemPath>./../target/rubygems</gemPath>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-rails3</id>
-            <goals>
-              <goal>jruby</goal>
-            </goals>
-            <phase>install</phase>
-            <configuration>
-              <args>-S gem install rails -v ${version.rails3} --no-rdoc --no-ri</args>
-              <gemHome>./../target/rubygems</gemHome>
-              <gemPath>./../target/rubygems</gemPath>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>jruby-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install-rails2</id>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <args>-S gem install rails -v ${version.rails2} --no-rdoc --no-ri</args>
+                  <gemHome>./../target/rubygems</gemHome>
+                  <gemPath>./../target/rubygems</gemPath>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-rails3</id>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <args>-S gem install rails -v ${version.rails3} --no-rdoc --no-ri</args>
+                  <gemHome>./../target/rubygems</gemHome>
+                  <gemPath>./../target/rubygems</gemPath>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 
