@@ -39,7 +39,7 @@ import org.torquebox.interp.metadata.PoolMetaData;
 /**
  * <pre>
  * Stage: NOT_INSTALLED
- *    In: 
+ *    In:
  *   Out: RackApplicationMetaData
  * </pre>
  *
@@ -47,35 +47,35 @@ import org.torquebox.interp.metadata.PoolMetaData;
  * application
  */
 public class RackRecognizingDeployer extends AbstractDeployer {
-	
-	public RackRecognizingDeployer() {
-		setAllInputs( true );
-		addOutput( RackApplicationMetaData.class );
-		setStage(DeploymentStages.NOT_INSTALLED );
-	}
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if ( unit.getAttachment( RackApplicationMetaData.class ) != null ) {
-			return;
-		}
-		if ( unit instanceof VFSDeploymentUnit ) {
-			deploy( (VFSDeploymentUnit) unit );
-		}
-	}
-	
-	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-		VirtualFile root = unit.getRoot();
-		try {
+    public RackRecognizingDeployer() {
+        setAllInputs( true );
+        addOutput( RackApplicationMetaData.class );
+        setStage(DeploymentStages.NOT_INSTALLED );
+    }
+
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        if ( unit.getAttachment( RackApplicationMetaData.class ) != null ) {
+            return;
+        }
+        if ( unit instanceof VFSDeploymentUnit ) {
+            deploy( (VFSDeploymentUnit) unit );
+        }
+    }
+
+    public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        VirtualFile root = unit.getRoot();
+        try {
             // TODO: This condition is wrong
-			if ( root.getName().endsWith(".rack") && root.getChild( "config.ru" ).exists() ) {
+            if ( root.getName().endsWith(".rack") && root.getChild( "config.ru" ).exists() ) {
                 log.info("Recognized as Rack app: "+root);
                 RackApplicationMetaData rackAppMetaData = new WriteOnceRackApplicationMetaData();
                 rackAppMetaData.setRackRoot( root );
                 unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
-			}
-		} catch (Exception e) {
-			throw new DeploymentException( e );
-		}
-	}
+            }
+        } catch (Exception e) {
+            throw new DeploymentException( e );
+        }
+    }
 
 }
