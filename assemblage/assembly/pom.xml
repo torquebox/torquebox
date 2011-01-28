@@ -17,6 +17,7 @@
   <properties>
     <install.docs>false</install.docs>
     <stage.dir>${project.build.directory}/stage/torquebox-${project.version}</stage.dir>
+    <repo.stage.dir>${project.build.directory}/stage/gem-repo</repo.stage.dir>
   </properties>
 
   <dependencies>
@@ -36,13 +37,6 @@
       <artifactId>jboss-as-distribution</artifactId>
       <type>zip</type>
     </dependency>
-<!--
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rubyzip</artifactId>
-      <type>gem</type>
-    </dependency>
--->
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-int</artifactId>
@@ -142,50 +136,12 @@
       <version>${project.version}</version>
     </dependency>
 
-<!--
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>activerecord-jdbc-adapter</artifactId>
-      <classifier>java</classifier>
+      <groupId>rubygem</groupId>
+      <artifactId>builder</artifactId>
+      <version>3.0.0</version>
       <type>gem</type>
     </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>activerecord-jdbcmysql-adapter</artifactId>
-      <classifier>java</classifier>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>activerecord-jdbcpostgresql-adapter</artifactId>
-      <classifier>java</classifier>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
-      <classifier>java</classifier>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>jdbc-mysql</artifactId>
-      <classifier>java</classifier>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>jdbc-postgres</artifactId>
-      <classifier>java</classifier>
-      <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>jdbc-sqlite3</artifactId>
-      <classifier>java</classifier>
-      <type>gem</type>
-    </dependency>
--->
 
   </dependencies>
 
@@ -205,7 +161,7 @@
         <executions>
           <execution>
             <id>stage-jboss</id>
-            <phase>prepare-package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -223,7 +179,7 @@
           </execution>
           <execution>
             <id>stage-jruby</id>
-            <phase>prepare-package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -274,7 +230,7 @@
 
           <execution>
             <id>install-rails-template</id>
-            <phase>prepare-package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -288,7 +244,7 @@
 
           <execution>
             <id>install-jruby-vfs</id>
-            <phase>package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>copy</goal>
             </goals>
@@ -318,7 +274,7 @@
         <executions>
           <execution>
             <id>rename-packages</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -331,7 +287,7 @@
           </execution>
           <execution>
             <id>remove-gratuitous-JBOSS_CONFs</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -345,7 +301,7 @@
           </execution>
           <execution>
             <id>remove-jboss-ROOT.war</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -358,7 +314,7 @@
           </execution>
           <execution>
             <id>chmod-bin</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -384,7 +340,7 @@
           </execution>
           <execution>
             <id>remove-jruby-share</id>
-            <phase>prepare-package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -395,16 +351,19 @@
             </configuration>
           </execution>
           <execution>
-            <id>remove-gem-cache</id>
-            <phase>package</phase>
+            <id>build-gem-repository</id>
+            <phase>prepare-package</phase>
             <goals>
               <goal>run</goal>
             </goals>
             <configuration>
               <tasks>
-                <delete>
+                <mkdir dir="${repo.stage.dir}"/>
+                <mkdir dir="${repo.stage.dir}/gems"/>
+
+                <move todir="${repo.stage.dir}/gems">
                   <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="**.gem"/>
-                </delete>
+                </move>
               </tasks>
             </configuration>
           </execution>
@@ -428,7 +387,7 @@
         <executions>
           <execution>
             <id>install-jruby-home-gems</id>
-            <phase>prepare-package</phase>
+            <phase>generate-resources</phase>
             <goals>
               <goal>initialize</goal>
             </goals>
@@ -440,6 +399,36 @@
               <installRDoc>${install.docs}</installRDoc>
               <installRI>${install.docs}</installRI>
               <fork>true</fork>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-builder</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <args>-S gem install builder --no-ri --no-rdoc</args>
+              <gemHome>./target/rubygems</gemHome>
+              <gemPath>./target/rubygems</gemPath>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-repo-index</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <args>-S gem generate_index -d ${repo.stage.dir}</args>
+              <gemHome>./target/rubygems</gemHome>
+              <gemPath>./target/rubygems</gemPath>
             </configuration>
           </execution>
         </executions>
