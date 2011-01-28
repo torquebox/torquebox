@@ -35,7 +35,8 @@ module TorqueBox
           destination.start
         end
       end
-
+      alias_method :create, :start
+      
       def destroy
         TorqueBox::Kernel.lookup("JMSServerManager") do |server|
           destination.name = name

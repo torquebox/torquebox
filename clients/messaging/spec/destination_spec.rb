@@ -15,30 +15,34 @@ describe TorqueBox::Messaging::Destination do
     topic.to_s.should == topic.name
   end
 
-  it "should create a queue when started" do
-    server = mock("server")
-    server.should_receive(:createQueue)
-    server.should_receive(:destroyQueue).with("my_queue")
-    TorqueBox::Kernel.stub!(:lookup).with("JMSServerManager").and_yield(server)
+  %w{ create start }.each do |method|
 
-    queue = TorqueBox::Messaging::Queue.new("my_queue")
-    queue.name.should eql("my_queue")
-    queue.start
-    queue.destroy
+    it "should create a queue on #{method}" do
+      server = mock("server")
+      server.should_receive(:createQueue)
+      server.should_receive(:destroyQueue).with("my_queue")
+      TorqueBox::Kernel.stub!(:lookup).with("JMSServerManager").and_yield(server)
+
+      queue = TorqueBox::Messaging::Queue.new("my_queue")
+      queue.name.should eql("my_queue")
+      queue.send method
+      queue.destroy
+    end
+
+    it "should create a topic on #{method}" do
+      server = mock("server")
+      server.should_receive(:createTopic)
+      server.should_receive(:destroyTopic).with("my_topic")
+      TorqueBox::Kernel.stub!(:lookup).with("JMSServerManager").and_yield(server)
+      
+      topic = TorqueBox::Messaging::Topic.new("my_topic")
+      topic.name.should eql("my_topic")
+      topic.send method
+      topic.destroy
+    end
+    
   end
-
-  it "should create a topic when started" do
-    server = mock("server")
-    server.should_receive(:createTopic)
-    server.should_receive(:destroyTopic).with("my_topic")
-    TorqueBox::Kernel.stub!(:lookup).with("JMSServerManager").and_yield(server)
-
-    topic = TorqueBox::Messaging::Topic.new("my_topic")
-    topic.name.should eql("my_topic")
-    topic.start
-    topic.destroy
-  end
-
+  
   describe "sending and receiving" do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
