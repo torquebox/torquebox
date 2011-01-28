@@ -362,8 +362,11 @@
                 <mkdir dir="${repo.stage.dir}/gems"/>
 
                 <move todir="${repo.stage.dir}/gems">
-                  <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="**.gem"/>
+                  <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="org.torquebox*.gem"/>
                 </move>
+
+                <delete dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" failonerror="false"/>
+                
               </tasks>
             </configuration>
           </execution>
