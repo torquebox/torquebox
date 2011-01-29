@@ -51,7 +51,6 @@ public class RackApplicationExploder extends AbstractDeployer {
                 public void visit(VirtualFile vf) {
                     try {
                         File physicalFile = vf.getPhysicalFile();
-                        log.info(" " + vf + " => " + physicalFile);
                     } catch (IOException e) {
                         throw new RuntimeException("Failed to force explosion of VirtualFile: " + vf, e);
                     }
