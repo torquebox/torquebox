@@ -1,7 +1,4 @@
 require 'torquebox/messaging/destination'
-require 'org.torquebox.torquebox-messaging-client'
-require 'org.torquebox.torquebox-messaging-container'
-require 'torquebox/messaging/message_processor'
 
 module TorqueBox
   module Messaging
