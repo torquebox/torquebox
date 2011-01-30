@@ -7,6 +7,7 @@ class Dir
     alias_method :glob_before_vfs, :glob
     alias_method :mkdir_before_vfs, :mkdir
     alias_method :rmdir_before_vfs, :rmdir
+    alias_method :chdir_before_vfs, :chdir
     alias_method :new_before_vfs, :new
     alias_method :entries_before_vfs, :entries
     alias_method :foreach_before_vfs, :foreach
@@ -107,6 +108,11 @@ class Dir
       rescue Java::JavaIo::IOException => e
         return []
       end
+    end
+
+    def chdir(*args, &block)
+      raise "You shouldn't use chdir, but if you must, pass a block!" unless block_given?
+      chdir_before_vfs( *args.map{ |x| File.name_without_vfs(x) }, &block )
     end
 
     def rmdir(path) 

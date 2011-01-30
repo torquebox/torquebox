@@ -234,4 +234,24 @@ describe "Dir extensions for VFS" do
     end
   end
 
+  describe "chdir" do
+    it "should require a block be passed" do
+      lambda {
+        Dir.chdir("/tmp")
+      }.should raise_error
+    end
+    it "should work for vfs paths" do
+      pwd = Dir.pwd
+      dir = Dir.chdir( test_data_base_path(:vfs) ) { Dir.pwd }
+      dir.should == test_data_base_path(:absolute)
+      pwd.should == Dir.pwd
+    end
+    it "should work for home dirs" do
+      pwd = Dir.pwd
+      dir = Dir.chdir { Dir.pwd }
+      dir.should == ENV['HOME']
+      pwd.should == Dir.pwd
+    end
+  end
+
 end
