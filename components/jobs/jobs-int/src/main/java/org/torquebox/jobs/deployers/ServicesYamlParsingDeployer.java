@@ -56,48 +56,48 @@ public class ServicesYamlParsingDeployer extends AbstractParsingDeployer {
 
     public static final String POOL_NAME = "services";
 
-	public ServicesYamlParsingDeployer() {
+    public ServicesYamlParsingDeployer() {
         addInput(PoolMetaData.class);
-		addOutput(BeanMetaData.class);
+        addOutput(BeanMetaData.class);
         addOutput(PoolMetaData.class);
-	}
+    }
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if (unit instanceof VFSDeploymentUnit) {
-			deploy((VFSDeploymentUnit) unit);
-		}
-	}
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        if (unit instanceof VFSDeploymentUnit) {
+            deploy((VFSDeploymentUnit) unit);
+        }
+    }
 
-	protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-		VirtualFile metaData = unit.getMetaDataFile("services.yml");
-		if (metaData != null) {
+    protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        VirtualFile metaData = unit.getMetaDataFile("services.yml");
+        if (metaData != null) {
             try {
                 int count = parse(unit, metaData);
                 createRuntimePool(unit, count);
             } catch (IOException e) {
                 throw new DeploymentException(e);
             }
-		}
-	}
+        }
+    }
 
-	protected int parse(VFSDeploymentUnit unit, VirtualFile file) throws IOException {
+    protected int parse(VFSDeploymentUnit unit, VirtualFile file) throws IOException {
         int result = 0;
-		InputStream in = file.openStream();
-		try {
-			Yaml yaml = new Yaml();
-			Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) yaml.load(in);
-			if (results != null) {
+        InputStream in = file.openStream();
+        try {
+            Yaml yaml = new Yaml();
+            Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) yaml.load(in);
+            if (results != null) {
                 result = results.size();
-				for (String service : results.keySet()) {
-					Map<String, String> params = results.get(service);
+                for (String service : results.keySet()) {
+                    Map<String, String> params = results.get(service);
                     createServiceProxyBean( unit, service, params );
-				}
-			}
-		} finally {
+                }
+            }
+        } finally {
             in.close();
-		}
+        }
         return result;
-	}
+    }
 
     protected void createServiceProxyBean(DeploymentUnit unit, String service, Map params) {
         String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, service );
@@ -110,14 +110,14 @@ public class ServicesYamlParsingDeployer extends AbstractParsingDeployer {
         AttachmentUtils.attach(unit, builder.getBeanMetaData());
     }
 
-	protected RubyComponentResolver createComponentResolver(String service, Map params) {
-		InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
-		result.setRubyClassName( StringUtils.camelize( service ) );
-		result.setRubyRequirePath( StringUtils.underscore( service ) );
+    protected RubyComponentResolver createComponentResolver(String service, Map params) {
+        InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
+        result.setRubyClassName( StringUtils.camelize( service ) );
+        result.setRubyRequirePath( StringUtils.underscore( service ) );
         result.setInitializeParams( params );
-		result.setComponentName("service." + service);
-		return result;
-	}
+        result.setComponentName("service." + service);
+        return result;
+    }
 
     protected PoolMetaData createRuntimePool(DeploymentUnit unit, int max) {
         PoolMetaData pool = AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class );;
