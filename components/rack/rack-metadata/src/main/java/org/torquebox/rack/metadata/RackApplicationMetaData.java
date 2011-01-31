@@ -37,24 +37,20 @@ import org.torquebox.interp.spi.RuntimeInitializer;
 public class RackApplicationMetaData {
 
     public void setRackRoot(VirtualFile rackRoot) {
-        System.err.println("BOB: setRackRoot(VirtualFile " + rackRoot + ")");
         this.rackRoot = rackRoot;
     }
 
     public void setRackRoot(String path) {
-        System.err.println("BOB: setRackRoot(String " + path + ")");
         if (path != null) {
             String sanitizedPath = null;
 
             if (path.indexOf("\\\\") >= 0) {
-                sanitizedPath = path.replaceAll("\\\\\\\\", "/");
+                sanitizedPath = path.replaceAll("\\\\\\\\", "/"); // is that really 8 backslashes?
                 sanitizedPath = sanitizedPath.replaceAll("\\\\", "");
             } else {
                 sanitizedPath = path.replaceAll("\\\\", "/");
             }
-            System.err.println("BOB: sanitizedPath=" + sanitizedPath);
             VirtualFile rackRoot = VFS.getChild(sanitizedPath);
-            System.err.println("BOB: rackRoot=" + sanitizedPath);
             setRackRoot(rackRoot);
         }
     }
