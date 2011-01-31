@@ -12,11 +12,16 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.metadata.TorqueBoxMetaData;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
-/** Abstract deployer base-class supporting <code>torquebox.yml</code> sectional parsing.
+/**
+ * Abstract deployer base-class supporting <code>torquebox.yml</code> sectional
+ * parsing.
  * 
- * <p>For a given subsystem 'foo', a torquebox.yml section named 'foo:' can configure it
- * or optionally (deprecated) a file named foo.yml.</p>
+ * <p>
+ * For a given subsystem 'foo', a torquebox.yml section named 'foo:' can
+ * configure it or optionally (deprecated) a file named foo.yml.
+ * </p>
  * 
  * @author Bob McWhirter
  */
@@ -24,7 +29,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
 
     /** Name of the section within torquebox.yml. */
     private String sectionName;
-    
+
     /** Opotional fine-name for NAME.yml parsing separate from torquebox.yml. */
     private String fileName;
 
@@ -62,6 +67,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
         deploy((VFSDeploymentUnit) unit);
     }
 
+    @SuppressWarnings("unchecked")
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
         TorqueBoxMetaData globalMetaData = unit.getAttachment(TorqueBoxMetaData.class);
 
@@ -79,27 +85,36 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
                     in = metaDataFile.openStream();
                     Yaml yaml = new Yaml();
                     data = (Map<String, ?>) yaml.load(in);
+                } catch (YAMLException e) {
+                    log.warn( "Error parsing: " + metaDataFile );
+                    data = null;
                 } catch (IOException e) {
-                    throw new DeploymentException( e );
+                    throw new DeploymentException(e);
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
                         } catch (IOException e) {
-                            throw new DeploymentException( e );
+                            throw new DeploymentException(e);
                         }
                     }
                 }
             }
         }
-        
-        if ( data == null ) {
+
+        if (data == null) {
             return;
         }
-        
-        parse( unit, data );
+
+        try {
+            parse(unit, data);
+        } catch (DeploymentException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        }
     }
-    
-    public abstract void parse(VFSDeploymentUnit unit, Map<String,?> data) throws DeploymentException;
+
+    public abstract void parse(VFSDeploymentUnit unit, Map<String, ?> data) throws Exception;
 
 }
