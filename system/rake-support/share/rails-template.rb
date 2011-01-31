@@ -35,10 +35,15 @@ end
 
 initializer("active_record_handle_async.rb") do
   <<-INIT
-# Enable embedded tasks for ActiveRecord classes (provides handle_async :a_method)
+# Enable embedded tasks for ActiveRecord classes. Provides:
+# class AModel < ActiveRecord::Base
+#   always_background :a_method
+# end
+# 
+# a_model_instance.background.another_method
 if defined?(TorqueBox::Messaging)
   require 'torquebox/messaging/embedded_tasks'
-  ActiveRecord::Base.extend( TorqueBox::Messaging::EmbeddedTasks )
+  ActiveRecord::Base.send(:include, TorqueBox::Messaging::EmbeddedTasks )
 end
   INIT
 end
