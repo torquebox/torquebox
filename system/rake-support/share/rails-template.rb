@@ -1,15 +1,18 @@
 
 if ( Rails::VERSION::MAJOR == 2 )
   gem "activerecord-jdbc-adapter", :lib => "jdbc_adapter"
-  gem "org.torquebox.rake-support"
 else
   text = File.read 'Gemfile'
   File.open('Gemfile', 'w') {|f| f << text.gsub(/^(gem 'sqlite3)/, '# \1') }
   gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
   gem "jdbc-sqlite3"
   gem "jruby-openssl"
-  gem "org.torquebox.rake-support"
 end
+
+# gems defs common to v2 and v3
+gem "org.torquebox.rake-support"
+gem 'org.torquebox.torquebox-messaging-client'
+
 
 if ( Rails::VERSION::MAJOR == 2 )
   initializer("session_store.rb") do
@@ -28,6 +31,16 @@ else
 #{app_const}.config.session_store TorqueBox::Session::ServletStore if defined?(TorqueBox::Session::ServletStore)
     INIT
   end
+end
+
+initializer("active_record_handle_async.rb") do
+  <<-INIT
+# Enable embedded tasks for ActiveRecord classes (provides handle_async :a_method)
+if defined?(TorqueBox::Messaging)
+  require 'torquebox/messaging/embedded_tasks'
+  ActiveRecord::Base.extend( TorqueBox::Messaging::EmbeddedTasks )
+end
+  INIT
 end
 
 # Create app/tasks and app/jobs, just for fun
