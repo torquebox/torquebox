@@ -15,6 +15,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.base.metadata.EnvironmentMetaData;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
@@ -27,7 +28,6 @@ import org.torquebox.messaging.core.RubyMessageProcessor;
 import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
-import org.torquebox.metadata.EnvironmentMetaData;
 
 
 /**

@@ -1,4 +1,4 @@
-package org.torquebox.metadata;
+package org.torquebox.base.metadata;
 
 public class EnvironmentMetaData {
 	

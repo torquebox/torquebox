@@ -59,6 +59,27 @@
       <artifactId>jboss-deployers-spi</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-vfs-spi</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-vdf-test-support</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.reloaded</groupId>
+      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build> 
