@@ -1,4 +1,3 @@
-require 'org.torquebox.torquebox-messaging-container'
 require 'torquebox/messaging/message_processor'
 
 module TorqueBox
