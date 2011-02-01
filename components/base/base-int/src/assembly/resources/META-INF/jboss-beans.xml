@@ -2,8 +2,6 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-<!--
-  <bean name="TheRealTorqueBoxYamlParsingDeployer"                       class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
--->
+  <bean name="TorqueBoxYamlParsingDeployer"                       class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
 
 </deployment>

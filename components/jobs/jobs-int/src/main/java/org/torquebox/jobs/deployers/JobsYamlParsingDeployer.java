@@ -21,20 +21,14 @@
  */
 package org.torquebox.jobs.deployers;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
-import org.yaml.snakeyaml.Yaml;
 
 /**
  * <pre>

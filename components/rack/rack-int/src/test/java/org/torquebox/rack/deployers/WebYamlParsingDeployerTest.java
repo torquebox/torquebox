@@ -21,7 +21,7 @@ public class WebYamlParsingDeployerTest extends AbstractDeployerTestCase {
 		addDeployer( this.deployer );
 	}
 	
-	@Test(expected=DeploymentException.class)
+	@Test()
 	public void testEmptyWebYml() throws Exception {
         URL appRackYml = getClass().getResource("empty-web.yml");
         

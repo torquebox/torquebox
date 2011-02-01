@@ -41,7 +41,7 @@ module TorqueBox
             deployment = container.deploy( file )
             unit = container.deployment_unit( deployment.name )
             virtual_file = org.jboss.vfs::VFS.child( File.join( Dir.pwd, file ) )
-            unit.addAttachment( 'org.torquebox.messaging.metadata.QueueMetaData.altDD', virtual_file )
+            unit.addAttachment( 'queues.yml.altDD', virtual_file )
             container.process_deployments(true)
             puts "deployed #{file}"
             puts "deployment #{deployment.inspect}"

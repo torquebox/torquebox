@@ -83,7 +83,17 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
         }
 
         if (data == null) {
-            VirtualFile metaDataFile = unit.getMetaDataFile(getFileName());
+            System.err.println("BOB: Checking altDD of " + getFileName() + ".altDD");
+            VirtualFile metaDataFile = unit.getAttachment(getFileName() + ".altDD", VirtualFile.class );
+
+            System.err.println("ALTDD->" + metaDataFile);
+
+            if (metaDataFile == null) {
+                System.err.println("Checking real file " + getFileName());
+                metaDataFile = unit.getMetaDataFile(getFileName());
+                System.err.println("Real->" + metaDataFile);
+            }
+
             if ((metaDataFile != null) && metaDataFile.exists()) {
                 InputStream in = null;
                 try {
