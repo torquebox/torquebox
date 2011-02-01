@@ -23,15 +23,12 @@ import org.torquebox.test.ruby.TestRubyFactory;
 public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
     private MessagingYamlParsingDeployer deployer;
-    private Ruby ruby;
     private String deploymentName;
 
     @Before
     public void setUpDeployer() throws Throwable {
         this.deployer = new MessagingYamlParsingDeployer();
         addDeployer(this.deployer);
-        this.ruby = TestRubyFactory.createRuby();
-        this.ruby.evalScriptlet("require 'vfs'");
     }
 
     @After
@@ -125,7 +122,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         File config = new File( System.getProperty( "user.dir" ), filename );
         this.deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
         DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
+        //unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
         processDeployments(true);
         return unit.getAllMetaData(MessageProcessorMetaData.class);
     }
