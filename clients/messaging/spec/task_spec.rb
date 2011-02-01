@@ -34,7 +34,11 @@ describe TorqueBox::Messaging::Task do
   end
 
   it "should derive the queue name from the class name" do
-    MyTestTask.queue_name.should == "/queues/torquebox/tasks/mytest"
+    MyTestTask.queue_name.should =~ %r{/mytest$}
   end
 
+  it "should include the app name in the queue name" do
+    ENV['TORQUEBOX_APP_NAME'] = 'app_name'
+    MyTestTask.queue_name.should =~ %r{/app_name/}
+  end
 end

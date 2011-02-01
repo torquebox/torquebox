@@ -11,7 +11,7 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.messaging.metadata.TaskMetaData;
-
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 /**
  * <pre>
@@ -43,6 +43,7 @@ public class TasksDeployer extends AbstractDeployer {
     }
 
     protected void deploy(DeploymentUnit unit, TaskMetaData task) throws DeploymentException {
+        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
         String baseQueueName = task.getRubyClassName();
         if ( baseQueueName.endsWith( "Task" ) ) {
             baseQueueName = baseQueueName.substring( 0, baseQueueName.length() - 4 );
@@ -50,7 +51,7 @@ public class TasksDeployer extends AbstractDeployer {
         baseQueueName = StringUtils.underscore(baseQueueName);
 
         QueueMetaData queue = new QueueMetaData();
-        queue.setName( "/queues/torquebox/tasks/" + baseQueueName );
+        queue.setName( "/queues/torquebox/" + rackMetaData.getRackApplicationName() + "/tasks/" + baseQueueName );
         AttachmentUtils.multipleAttach(unit, queue, queue.getName() );
                 
         MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();

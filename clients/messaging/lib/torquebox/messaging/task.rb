@@ -6,7 +6,7 @@ module TorqueBox
     class Task
 
       def self.queue_name
-        '/queues/torquebox/tasks/' + name[0...-4].downcase
+        "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/tasks/#{name[0...-4].downcase}"
       end
 
       def self.async(method, payload={})
