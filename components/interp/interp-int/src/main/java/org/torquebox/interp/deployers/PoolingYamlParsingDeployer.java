@@ -7,6 +7,7 @@ import java.util.Map;
 import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.yaml.snakeyaml.Yaml;
@@ -18,7 +19,7 @@ import org.yaml.snakeyaml.error.YAMLException;
  *    In: pooling.yml
  *   Out: PoolMetaData
  * </pre>
- *
+ * 
  * Parsing deployer for {@code pooling.yml}.
  * 
  * <p>
@@ -29,9 +30,9 @@ import org.yaml.snakeyaml.error.YAMLException;
  * 
  * <p>
  * The top-level of the YAML file should be a hash, with the pool identifier as
- * the key. The value of each map may be the strings {@code global} or {@code
- * shared}, or another hash specifying {@code min} and {@code max} values for the
- * pool size.
+ * the key. The value of each map may be the strings {@code global} or
+ * {@code shared}, or another hash specifying {@code min} and {@code max} values
+ * for the pool size.
  * </p>
  * 
  * <pre>
@@ -46,56 +47,49 @@ import org.yaml.snakeyaml.error.YAMLException;
  * 
  * @see PoolMetaData
  */
-public class PoolingYamlParsingDeployer extends AbstractVFSParsingDeployer<PoolMetaData> {
+public class PoolingYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     /**
      * Construct.
      */
     public PoolingYamlParsingDeployer() {
-        super(PoolMetaData.class);
-        setName("pooling.yml");
+        setSectionName("pooling");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected PoolMetaData parse(VFSDeploymentUnit unit, VirtualFile file, PoolMetaData root) throws Exception {
-        Yaml yaml = new Yaml();
-        try {
-            Map<String, Object> pooling = (Map<String, Object>) yaml.load(file.openStream());
+    public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
+        Map<String, Object> pooling = (Map<String, Object>) dataObj;
 
-            if (pooling != null) {
-                for (String name : pooling.keySet()) {
+        if (pooling != null) {
+            for (String name : pooling.keySet()) {
 
-                    Object pool = pooling.get(name);
+                Object pool = pooling.get(name);
 
-                    PoolMetaData poolMetaData = new PoolMetaData(name);
+                PoolMetaData poolMetaData = new PoolMetaData(name);
 
-                    if (pool instanceof Map) {
-                        Map<String, Object> poolMap = (Map<String, Object>) pool;
+                if (pool instanceof Map) {
+                    Map<String, Object> poolMap = (Map<String, Object>) pool;
 
-                        if (poolMap.get("min") != null) {
-                            poolMetaData.setMinimumSize(((Number) poolMap.get("min")).intValue());
-                        }
-
-                        if (poolMap.get("max") != null) {
-                            poolMetaData.setMaximumSize(((Number) poolMap.get("max")).intValue());
-                        }
-                    } else if (pool instanceof String) {
-                        if (pool.toString().equals("shared")) {
-                            poolMetaData.setShared();
-                        } else if (pool.toString().equals("global")) {
-                            poolMetaData.setGlobal();
-                        }
+                    if (poolMap.get("min") != null) {
+                        poolMetaData.setMinimumSize(((Number) poolMap.get("min")).intValue());
                     }
-                    log.info("Configured Ruby runtime pool: "+poolMetaData);
-                    AttachmentUtils.multipleAttach( unit, poolMetaData, name );
+
+                    if (poolMap.get("max") != null) {
+                        poolMetaData.setMaximumSize(((Number) poolMap.get("max")).intValue());
+                    }
+                } else if (pool instanceof String) {
+                    if (pool.toString().equals("shared")) {
+                        poolMetaData.setShared();
+                    } else if (pool.toString().equals("global")) {
+                        poolMetaData.setGlobal();
+                    }
                 }
+                log.info("Configured Ruby runtime pool: " + poolMetaData);
+                AttachmentUtils.multipleAttach(unit, poolMetaData, name);
             }
-        } catch (YAMLException e) {
-            log.error("Error parsing pooling.yml: " + e.getMessage() );
         }
 
-        return null;
     }
 
 }
