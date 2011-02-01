@@ -64,7 +64,12 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
             throw new DeploymentException("Only supports VFS deployments");
         }
 
-        deploy((VFSDeploymentUnit) unit);
+        try {
+            deploy((VFSDeploymentUnit) unit);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new DeploymentException(e);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -75,20 +80,18 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
 
         if (globalMetaData != null) {
             data = globalMetaData.getSection(getSectionName());
-            System.err.println( "section: " + getSectionName() );
-            System.err.println( "section.data: " + data );
         }
 
         if (data == null) {
             VirtualFile metaDataFile = unit.getMetaDataFile(getFileName());
-            if (metaDataFile.exists()) {
+            if ((metaDataFile != null) && metaDataFile.exists()) {
                 InputStream in = null;
                 try {
                     in = metaDataFile.openStream();
                     Yaml yaml = new Yaml();
                     data = (Map<String, ?>) yaml.load(in);
                 } catch (YAMLException e) {
-                    log.warn( "Error parsing: " + metaDataFile + ": " + e.getMessage() );
+                    log.warn("Error parsing: " + metaDataFile + ": " + e.getMessage());
                     data = null;
                 } catch (IOException e) {
                     throw new DeploymentException(e);
