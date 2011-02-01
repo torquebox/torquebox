@@ -2,7 +2,7 @@ require 'torquebox/messaging/message_processor'
 
 module TorqueBox
   module Messaging
-    class EmbeddedTasksProcessor < MessageProcessor
+    class BackgroundableProcessor < MessageProcessor
       def on_message(hash)
         hash[:receiver].send(hash[:method], *hash[:args])
       end

@@ -1,7 +1,7 @@
-require 'torquebox/messaging/embedded_tasks'
+require 'torquebox/messaging/backgroundable'
 
 class MyTestModel
-  include TorqueBox::Messaging::EmbeddedTasks
+  include TorqueBox::Messaging::Backgroundable
 
   def an_async_action(arg1, arg2)
     a_sync_action
@@ -13,7 +13,7 @@ class MyTestModel
   def bar;  end
 end
 
-describe TorqueBox::Messaging::EmbeddedTasks do
+describe TorqueBox::Messaging::Backgroundable do
 
   describe "always_background" do
     it "should be able to handle mutliple methods" do

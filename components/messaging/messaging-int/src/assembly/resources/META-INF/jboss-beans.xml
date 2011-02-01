@@ -20,7 +20,7 @@
     <property name="path">app/tasks/</property>
   </bean>
 
-  <bean name="EmbeddedTasksDeployer" class="org.torquebox.messaging.deployers.EmbeddedTasksDeployer"/>
+  <bean name="BackgroundableDeployer" class="org.torquebox.messaging.deployers.BackgroundableDeployer"/>
 
   <!-- TODO: Not crazy about referring to app/tasks in two places. Would prefer to have the TasksScanningDeployer do it, I think -->
   <bean name="TasksLoadPathConfigurator" class="org.torquebox.interp.deployers.LoadPathDeployer">

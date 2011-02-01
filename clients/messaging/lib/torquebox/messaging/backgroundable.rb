@@ -2,7 +2,7 @@ require 'torquebox/messaging/destination'
 
 module TorqueBox
   module Messaging
-    module EmbeddedTasks
+    module Backgroundable
       def self.included(base)
         base.extend(ClassMethods)
       end
@@ -38,7 +38,7 @@ module TorqueBox
       end
       
       module Util
-        QUEUE_NAME = "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/embedded-tasks"
+        QUEUE_NAME = "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/backgroundable"
 
         class << self
           def publish_message(receiver, method, args)
