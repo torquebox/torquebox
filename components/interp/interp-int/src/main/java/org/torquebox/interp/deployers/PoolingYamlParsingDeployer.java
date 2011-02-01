@@ -54,6 +54,7 @@ public class PoolingYamlParsingDeployer extends AbstractSplitYamlParsingDeployer
      */
     public PoolingYamlParsingDeployer() {
         setSectionName("pooling");
+        addOutput(PoolMetaData.class);
     }
 
     @SuppressWarnings("unchecked")
