@@ -20,6 +20,7 @@ public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
     public TopicsYamlParsingDeployer() {
         setSectionName("topics");
+        addOutput( TopicMetaData.class );
     }
 
     @SuppressWarnings("unchecked")

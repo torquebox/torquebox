@@ -20,6 +20,7 @@ public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
     public QueuesYamlParsingDeployer() {
         setSectionName("queues");
+        addOutput( QueueMetaData.class );
     }
 
     @SuppressWarnings("unchecked")
