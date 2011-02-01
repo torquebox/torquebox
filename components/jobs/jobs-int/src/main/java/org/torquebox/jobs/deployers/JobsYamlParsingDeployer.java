@@ -49,6 +49,7 @@ public class JobsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public JobsYamlParsingDeployer() {
         setSectionName("jobs");
+        addOutput(ScheduledJobMetaData.class);
     }
 
     @SuppressWarnings("unchecked")
