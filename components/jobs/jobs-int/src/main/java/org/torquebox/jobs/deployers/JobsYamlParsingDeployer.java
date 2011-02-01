@@ -30,11 +30,11 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.yaml.snakeyaml.Yaml;
-
 
 /**
  * <pre>
@@ -42,75 +42,47 @@ import org.yaml.snakeyaml.Yaml;
  *    In: jobs.yml
  *   Out: ScheduledJobMetaData
  * </pre>
- *
+ * 
  * Creates ScheduledJobMetaData instances from jobs.yml
  */
-public class JobsYamlParsingDeployer extends AbstractParsingDeployer {
+public class JobsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
-	public JobsYamlParsingDeployer() {
-		addOutput(ScheduledJobMetaData.class);
-	}
+    public JobsYamlParsingDeployer() {
+        setSectionName("jobs");
+    }
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if (unit instanceof VFSDeploymentUnit) {
-			deploy((VFSDeploymentUnit) unit);
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public void parse(VFSDeploymentUnit unit, Object dataObject) throws DeploymentException {
+        Map<String, Map<String, String>> data = (Map<String, Map<String, String>>) dataObject;
 
-	protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-		VirtualFile metaData = unit.getMetaDataFile("jobs.yml");
-		if (metaData != null) {
-			parse(unit, metaData);
-		}
-	}
+        if (data != null) {
 
-	@SuppressWarnings("unchecked")
-	protected void parse(VFSDeploymentUnit unit, VirtualFile file) throws DeploymentException {
-		InputStream in = null;
-		try {
-			in = file.openStream();
-			Yaml yaml = new Yaml();
-			Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) yaml.load(in);
+            for (String jobName : data.keySet()) {
+                Map<String, String> jobSpec = data.get(jobName);
+                String description = jobSpec.get("description");
+                String job = jobSpec.get("job");
+                String cron = jobSpec.get("cron");
 
-			if (results != null) {
+                if (job == null) {
+                    throw new DeploymentException("Attribute 'job' must be specified");
+                }
 
-				for (String jobName : results.keySet()) {
-					Map<String, String> jobSpec = results.get(jobName);
-					String description = jobSpec.get("description");
-					String job = jobSpec.get("job");
-					String cron = jobSpec.get("cron");
+                if (cron == null) {
+                    throw new DeploymentException("Attribute 'cron' must be specified");
+                }
 
-					if (job == null) {
-						throw new DeploymentException("Attribute 'job' must be specified");
-					}
+                ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
 
-					if (cron == null) {
-						throw new DeploymentException("Attribute 'cron' must be specified");
-					}
-
-					ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
-
-					jobMetaData.setName(jobName.toString());
-					jobMetaData.setGroup(unit.getName());
-					if (description != null) {
-						jobMetaData.setDescription(description.toString());
-					}
-					jobMetaData.setRubyClassName(job.trim());
-					jobMetaData.setCronExpression(cron.trim());
-					jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
-					AttachmentUtils.multipleAttach(unit, jobMetaData, jobName);
-				}
-			}
-		} catch (IOException e) {
-			throw new DeploymentException(e);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					throw new DeploymentException(e);
-				}
-			}
-		}
-	}
+                jobMetaData.setName(jobName.toString());
+                jobMetaData.setGroup(unit.getName());
+                if (description != null) {
+                    jobMetaData.setDescription(description.toString());
+                }
+                jobMetaData.setRubyClassName(job.trim());
+                jobMetaData.setCronExpression(cron.trim());
+                jobMetaData.setRubyRequirePath(StringUtils.underscore(job.trim()));
+                AttachmentUtils.multipleAttach(unit, jobMetaData, jobName);
+            }
+        }
+    }
 }
