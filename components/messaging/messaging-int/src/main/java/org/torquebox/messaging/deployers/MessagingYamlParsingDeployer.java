@@ -10,6 +10,7 @@ import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * <pre>
@@ -36,12 +37,14 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
     public static class Parser {
 
         static List<MessageProcessorMetaData> parse(Object data) throws Exception {
+            System.err.println( "parsing: " + data + " // " + data.getClass() );
             if (data instanceof String) {
                 String s = (String) data;
                 if (s.trim().length() == 0) {
                     return Collections.EMPTY_LIST;
                 } else {
-                    throw new RuntimeException("Invalid configuration");
+                    //throw new RuntimeException("Invalid configuration");
+                    return parse( new Yaml().load( (String) data ) );
                 }
             }
             return parseDestinations((Map<String, Object>) data);
