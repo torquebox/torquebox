@@ -33,6 +33,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
@@ -42,70 +43,45 @@ import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.jobs.core.RubyServiceProxy;
 import org.yaml.snakeyaml.Yaml;
 
-
 /**
  * <pre>
  * Stage: PARSE
  *    In: services.yml, PoolMetaData
  *   Out: BeanMetaData, PoolMetaData
  * </pre>
- *
+ * 
  * Creates BeanMetaData instances from services.yml
  */
-public class ServicesYamlParsingDeployer extends AbstractParsingDeployer {
+public class ServicesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public static final String POOL_NAME = "services";
 
     public ServicesYamlParsingDeployer() {
+        setSectionName("services");
         addInput(PoolMetaData.class);
         addOutput(BeanMetaData.class);
         addOutput(PoolMetaData.class);
     }
 
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        if (unit instanceof VFSDeploymentUnit) {
-            deploy((VFSDeploymentUnit) unit);
-        }
-    }
-
-    protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        VirtualFile metaData = unit.getMetaDataFile("services.yml");
-        if (metaData != null) {
-            try {
-                int count = parse(unit, metaData);
-                createRuntimePool(unit, count);
-            } catch (IOException e) {
-                throw new DeploymentException(e);
+    @SuppressWarnings("unchecked")
+    public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
+        Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) dataObj;
+        if (results != null) {
+            for (String service : results.keySet()) {
+                Map<String, String> params = results.get(service);
+                createServiceProxyBean(unit, service, params);
             }
         }
-    }
-
-    protected int parse(VFSDeploymentUnit unit, VirtualFile file) throws IOException {
-        int result = 0;
-        InputStream in = file.openStream();
-        try {
-            Yaml yaml = new Yaml();
-            Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) yaml.load(in);
-            if (results != null) {
-                result = results.size();
-                for (String service : results.keySet()) {
-                    Map<String, String> params = results.get(service);
-                    createServiceProxyBean( unit, service, params );
-                }
-            }
-        } finally {
-            in.close();
-        }
-        return result;
+        createRuntimePool(unit, results.size());
     }
 
     protected void createServiceProxyBean(DeploymentUnit unit, String service, Map params) {
-        String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, service );
-        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
+        String beanName = AttachmentUtils.beanName(unit, RubyServiceProxy.class, service);
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyServiceProxy.class.getName());
 
-        ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, POOL_NAME) );
+        ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, POOL_NAME));
         builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
-        builder.addPropertyMetaData("rubyComponentResolver", createComponentResolver( service, params ));
+        builder.addPropertyMetaData("rubyComponentResolver", createComponentResolver(service, params));
 
         if (requiresSingleton(params)) {
             builder.addDependency("jboss.ha:service=HASingletonDeployer,type=Barrier");
@@ -116,16 +92,17 @@ public class ServicesYamlParsingDeployer extends AbstractParsingDeployer {
 
     protected RubyComponentResolver createComponentResolver(String service, Map params) {
         InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
-        result.setRubyClassName( StringUtils.camelize( service ) );
-        result.setRubyRequirePath( StringUtils.underscore( service ) );
-        result.setInitializeParams( params );
+        result.setRubyClassName(StringUtils.camelize(service));
+        result.setRubyRequirePath(StringUtils.underscore(service));
+        result.setInitializeParams(params);
         result.setComponentName("service." + service);
         return result;
     }
 
     protected PoolMetaData createRuntimePool(DeploymentUnit unit, int max) {
-        PoolMetaData pool = AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class );;
-        if ( pool == null && max > 0 ) {
+        PoolMetaData pool = AttachmentUtils.getAttachment(unit, POOL_NAME, PoolMetaData.class);
+        ;
+        if (pool == null && max > 0) {
             pool = new PoolMetaData(POOL_NAME, 1, max);
             log.info("Configured Ruby runtime pool for services: " + pool);
             AttachmentUtils.multipleAttach(unit, pool, POOL_NAME);
