@@ -27,7 +27,7 @@ else
   initializer("session_store.rb") do
     <<-INIT
 # Configure the TorqueBox Servlet-based session store.
-# Provides for server-based, in-memory, cluster-compatible sessions.
+# Provides for server-based, in-memory, cluster-compatible sessions
 #{app_const}.config.session_store TorqueBox::Session::ServletStore if defined?(TorqueBox::Session::ServletStore)
     INIT
   end
@@ -41,7 +41,7 @@ initializer("active_record_handle_async.rb") do
 # end
 # 
 # a_model_instance.background.another_method
-if defined?(TorqueBox::Messaging)
+if defined?(TorqueBox::Messaging) && defined?(ActiveRecord::Base)
   require 'torquebox/messaging/embedded_tasks'
   ActiveRecord::Base.send(:include, TorqueBox::Messaging::EmbeddedTasks )
 end
