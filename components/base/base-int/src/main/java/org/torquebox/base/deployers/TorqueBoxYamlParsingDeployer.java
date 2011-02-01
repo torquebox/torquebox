@@ -25,9 +25,9 @@ public class TorqueBoxYamlParsingDeployer extends AbstractVFSParsingDeployer<Tor
         InputStream in = null;
         try {
             in = file.openStream();
-            Map<String, Map<String, ?>> data = (Map<String, Map<String, ?>>) yaml.load(in);
+            Map<String, Object> data = (Map<String, Object>) yaml.load(in);
             if ( data == null ) {
-                data = new HashMap<String, Map<String, ?>>();
+                data = new HashMap<String, Object>();
             }
             TorqueBoxMetaData metaData = new TorqueBoxMetaData(data);
             unit.addAttachment(TorqueBoxMetaData.class, metaData);

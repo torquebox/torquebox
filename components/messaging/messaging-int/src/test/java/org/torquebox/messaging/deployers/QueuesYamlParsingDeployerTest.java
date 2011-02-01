@@ -6,19 +6,24 @@ import java.io.File;
 import java.util.Set;
 
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class QueuesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
-    private QueuesYamlParsingDeployer deployer;
+    private TorqueBoxYamlParsingDeployer globalDeployer;
+    private QueuesYamlParsingDeployer queuesDeployer;
 
     @Before
     public void setUpDeployer() throws Throwable {
-        this.deployer = new QueuesYamlParsingDeployer();
-        addDeployer(this.deployer);
+        this.queuesDeployer = new QueuesYamlParsingDeployer();
+        addDeployer(this.queuesDeployer);
+        this.globalDeployer = new TorqueBoxYamlParsingDeployer();
+        addDeployer(this.globalDeployer);
     }
 
     @Test
@@ -69,6 +74,54 @@ public class QueuesYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertNotNull(queueFoo);
 
         QueueMetaData queueBar = getMetaData(allMetaData, "/queues/bar");
+        assertNotNull(queueBar);
+
+        undeploy(deploymentName);
+    }
+    
+    @Test
+    public void testTorqueBoxYml() throws Exception {
+        String deploymentName = addDeployment( getClass().getResource( "/valid-torquebox.yml"), "torquebox.yml");
+
+        processDeployments(true);
+
+        DeploymentUnit unit = getDeploymentUnit(deploymentName);
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(QueueMetaData.class);
+
+        assertFalse(allMetaData.isEmpty());
+
+        assertEquals(2, allMetaData.size());
+
+        QueueMetaData queueFoo = getMetaData(allMetaData, "/queues/tbyaml/foo");
+        assertNotNull(queueFoo);
+
+        QueueMetaData queueBar = getMetaData(allMetaData, "/queues/tbyaml/bar");
+        assertNotNull(queueBar);
+
+        undeploy(deploymentName);
+    }
+    
+    @Test
+    public void testTorqueBoxYmlWins() throws Exception {
+        JavaArchive jar = createJar( "mystuff.jar" );
+        jar.addResource( getClass().getResource( "/valid-queues.yml" ), "/META-INF/queues.yml" );
+        jar.addResource( getClass().getResource( "/valid-torquebox.yml" ), "/META-INF/torquebox.yml" );
+        String deploymentName = addDeployment( createJarFile( jar ) );
+
+        processDeployments(true);
+
+        DeploymentUnit unit = getDeploymentUnit(deploymentName);
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(QueueMetaData.class);
+
+        assertFalse(allMetaData.isEmpty());
+
+        assertEquals(2, allMetaData.size());
+
+        System.err.println( allMetaData );
+        QueueMetaData queueFoo = getMetaData(allMetaData, "/queues/tbyaml/foo");
+        assertNotNull(queueFoo);
+
+        QueueMetaData queueBar = getMetaData(allMetaData, "/queues/tbyaml/bar");
         assertNotNull(queueBar);
 
         undeploy(deploymentName);

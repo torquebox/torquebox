@@ -4,15 +4,14 @@ import java.util.Map;
 
 public class TorqueBoxMetaData {
     
-    private Map<String,Map<String,?>> data;
+    private Map<String,Object> data;
     
-    public TorqueBoxMetaData(Map<String,Map<String,?>> data) {
+    public TorqueBoxMetaData(Map<String,Object> data) {
         this.data = data;
     }
     
-    public Map<String,?> getSection(String name) {
-        Map<String,?> section = this.data.get( name );
-        return section;
+    public Object getSection(String name) {
+        return this.data.get( name );
     }
 
 }

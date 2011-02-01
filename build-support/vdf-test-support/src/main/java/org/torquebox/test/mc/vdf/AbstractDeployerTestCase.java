@@ -110,7 +110,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
         tmpRoot.deleteOnExit();
 
         VirtualFileAssembly assembly = new VirtualFileAssembly();
-        assembly.add(name, VFS.getChild(url));
+        assembly.add(name, VFS.getChild(url.toURI()));
 
         VirtualFile mountPoint = VFS.getChild(tmpRoot.getAbsolutePath());
         this.mount = VFS.mountAssembly(assembly, mountPoint);
@@ -124,7 +124,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
     }
 
     protected String addDeployment(URL url) throws DeploymentException, URISyntaxException {
-        VirtualFile file = VFS.getChild(url);
+        VirtualFile file = VFS.getChild(url.toURI());
         return addDeployment(file);
     }
 

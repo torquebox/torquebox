@@ -23,11 +23,10 @@ public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
     }
 
     @SuppressWarnings("unchecked")
-    public void parse(VFSDeploymentUnit unit, Map<String, ?> baseData) throws Exception {
+    public void parse(VFSDeploymentUnit unit, Object baseData) throws Exception {
         Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) baseData;
 
         for (String queueName : data.keySet()) {
-            System.err.println( "QUEUE: " + queueName );
             QueueMetaData queueMetaData = new QueueMetaData(queueName);
             AttachmentUtils.multipleAttach(unit, queueMetaData, queueName);
         }

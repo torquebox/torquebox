@@ -71,10 +71,12 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
         TorqueBoxMetaData globalMetaData = unit.getAttachment(TorqueBoxMetaData.class);
 
-        Map<String, ?> data = null;
+        Object data = null;
 
         if (globalMetaData != null) {
             data = globalMetaData.getSection(getSectionName());
+            System.err.println( "section: " + getSectionName() );
+            System.err.println( "section.data: " + data );
         }
 
         if (data == null) {
@@ -86,7 +88,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
                     Yaml yaml = new Yaml();
                     data = (Map<String, ?>) yaml.load(in);
                 } catch (YAMLException e) {
-                    log.warn( "Error parsing: " + metaDataFile );
+                    log.warn( "Error parsing: " + metaDataFile + ": " + e.getMessage() );
                     data = null;
                 } catch (IOException e) {
                     throw new DeploymentException(e);
@@ -115,6 +117,6 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
         }
     }
 
-    public abstract void parse(VFSDeploymentUnit unit, Map<String, ?> data) throws Exception;
+    public abstract void parse(VFSDeploymentUnit unit, Object data) throws Exception;
 
 }
