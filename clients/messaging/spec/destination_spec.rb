@@ -34,23 +34,80 @@ describe TorqueBox::Messaging::Destination do
       server.should_receive(:createTopic)
       server.should_receive(:destroyTopic).with("my_topic")
       TorqueBox::Kernel.stub!(:lookup).with("JMSServerManager").and_yield(server)
-      
+
       topic = TorqueBox::Messaging::Topic.new("my_topic")
       topic.name.should eql("my_topic")
       topic.send method
       topic.destroy
     end
-    
+
   end
-  
+
+  describe "publish" do
+    before(:each) do
+      @session = mock('session')
+      @session.stub(:transacted?).and_return(false)
+      TorqueBox::Messaging::Client.stub(:connect).and_yield(@session)
+      @queue = TorqueBox::Messaging::Queue.new('foo')
+    end
+
+    context "normalizing options" do
+      context "priority" do
+        {
+          :low => 1,
+          :normal => 4,
+          :high => 7,
+          :critical => 9
+        }.each do |symbol, level|
+          it "should normalize :#{symbol} to #{level}" do
+            @session.should_receive(:publish).with(anything, anything, { :priority => level })
+            @queue.publish('message', { :priority => symbol })
+          end
+        end
+
+        it "should pass through valid integer priorities" do
+          @session.should_receive(:publish).with(anything, anything, { :priority => 5 })
+          @queue.publish('message', { :priority => 5 })
+        end
+
+        it "should pass through valid integer-as-string priorities" do
+          @session.should_receive(:publish).with(anything, anything, { :priority => 5 })
+          @queue.publish('message', { :priority => "5" })
+        end
+
+        it "should raise on an invalid integer" do
+          lambda { 
+            @queue.publish('message', { :priority => -1 })
+          }.should raise_error(ArgumentError)
+        end
+      end
+      
+
+      it "should convert ttl to milliseconds" do
+        @session.should_receive(:publish).with(anything, anything, { :ttl => 5000 })
+        @queue.publish('message', { :ttl => 5 })
+      end
+      
+      it "should handle persistence = true" do
+        @session.should_receive(:publish).with(anything, anything, { :delivery_mode => javax.jms::DeliveryMode.PERSISTENT })
+        @queue.publish('message', { :persistent => true })
+      end
+
+      it "should handle persistence = false" do
+        @session.should_receive(:publish).with(anything, anything, { :delivery_mode => javax.jms::DeliveryMode.NON_PERSISTENT })
+        @queue.publish('message', { :persistent => false })
+      end
+    end
+  end
+
   describe "sending and receiving" do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new
       @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
-      @container.enable( TorqueBox::Messaging::MessageBroker ) 
+      @container.enable( TorqueBox::Messaging::MessageBroker )
       @container.start
     end
-  
+
     after(:each) do
       @container.stop
     end

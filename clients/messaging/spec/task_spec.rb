@@ -8,9 +8,9 @@ end
 describe TorqueBox::Messaging::Task do
 
   it "should send payload correctly" do
-    expectation = {:method => :payload=, :payload => {:foo => 'bar'}}
+    expectation = [{:method => :payload=, :payload => {:foo => 'bar'}}, { }]
     queue = mock("queue")
-    queue.should_receive(:publish).with(expectation) 
+    queue.should_receive(:publish).with(*expectation) 
     TorqueBox::Messaging::Queue.should_receive(:new).with(MyTestTask.queue_name).and_return(queue)
 
     MyTestTask.async(:payload=, :foo => 'bar')
@@ -28,7 +28,7 @@ describe TorqueBox::Messaging::Task do
 
   it "should handle nil payload as empty hash" do
     queue = mock("queue")
-    queue.should_receive(:publish).with(hash_including(:payload => {})) 
+    queue.should_receive(:publish).with(hash_including(:payload => {}), {}) 
     TorqueBox::Messaging::Queue.should_receive(:new).with(MyTestTask.queue_name).and_return(queue)
     MyTestTask.async(:payload=)
   end

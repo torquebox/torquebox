@@ -5,12 +5,15 @@ module javax.jms::Session
   attr_accessor :connection
   attr_accessor :naming_context
 
-  def publish(destination, message)
+  def publish(destination, message, options = {})
     destination = lookup_destination( destination ) unless destination.is_a?( Java::javax.jms.Destination )
     producer = createProducer( destination )
     jms_message = create_text_message
     jms_message.encode message
-    producer.send( jms_message )
+    producer.send( jms_message,
+                   options.fetch(:delivery_mode, producer.delivery_mode),
+                   options.fetch(:priority, producer.priority),
+                   options.fetch(:ttl, producer.time_to_live) )
     producer.close
   end
 

@@ -9,9 +9,9 @@ module TorqueBox
         "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/tasks/#{name[0...-4].downcase}"
       end
 
-      def self.async(method, payload={})
+      def self.async(method, payload = {}, options = {})
         message = {:method => method, :payload => payload}
-        Queue.new(queue_name).publish message
+        Queue.new(queue_name).publish message, options
       end
 
       def process!(message)

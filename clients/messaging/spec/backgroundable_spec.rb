@@ -11,6 +11,7 @@ class MyTestModel
   def a_sync_action;  end
   def foo;  end
   def bar;  end
+  def optioned; end
 end
 
 describe TorqueBox::Messaging::Backgroundable do
@@ -61,14 +62,20 @@ describe TorqueBox::Messaging::Backgroundable do
 
     it "should include the receiver, sync method, and args" do
       object = MyTestModel.new
-      @queue.should_receive(:publish).with(:receiver => object, :method => '__sync_an_async_action', :args => [:a, :b])
-      object.an_async_action(:a, :b)
+      @queue.should_receive(:publish).with({:receiver => object, :method => '__sync_an_async_action', :args => [:a, :b]}, { })
+      object.an_async_action(:a, :b) 
     end
     
     it "should not call the action immediately" do
       object = MyTestModel.new
       object.should_not_receive(:a_sync_action)
       object.an_async_action(nil, nil)
+    end
+
+    it "should pass through the options" do
+      MyTestModel.always_background :optioned, :priority => :low
+      @queue.should_receive(:publish).with(anything, :priority => :low)
+      MyTestModel.new.optioned
     end
 
   end
@@ -82,24 +89,24 @@ describe TorqueBox::Messaging::Backgroundable do
     end
 
     it "should queue any method called on it" do
-      @queue.should_receive(:publish).with(:receiver => anything,
+      @queue.should_receive(:publish).with({:receiver => anything,
                                            :method => :foo,
-                                           :args => anything)
-      @object.background.foo
+                                             :args => anything}, { })
+      @object.background.foo 
     end
 
     it "should queue the receiver" do
-      @queue.should_receive(:publish).with(:receiver => @object,
+      @queue.should_receive(:publish).with({:receiver => @object,
                                            :method => anything,
-                                           :args => anything)
-      @object.background.foo
+                                             :args => anything}, { })
+      @object.background.foo 
     end
 
     it "should queue the args" do
-      @queue.should_receive(:publish).with(:receiver => anything,
+      @queue.should_receive(:publish).with({:receiver => anything,
                                            :method => anything,
-                                           :args => [1,2])
-      @object.background.foo(1,2)
+                                             :args => [1,2]}, {})
+      @object.background.foo(1,2) 
     end
 
     it "should raise when given a block" do
@@ -112,7 +119,14 @@ describe TorqueBox::Messaging::Backgroundable do
       @object.should_receive(:method_missing)
       @object.background.no_method
     end
-    
+
+    it "should pass through any options" do
+      @queue.should_receive(:publish).with({:receiver => anything,
+                                           :method => anything,
+                                             :args => anything},
+                                           {:ttl => 1})
+      @object.background(:ttl => 1).foo
+    end
   end
   
 end
