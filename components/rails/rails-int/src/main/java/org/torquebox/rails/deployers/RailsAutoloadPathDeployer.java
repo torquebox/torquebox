@@ -62,12 +62,10 @@ public class RailsAutoloadPathDeployer extends AbstractDeployer {
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
 		RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(RubyRuntimeMetaData.class);
 		if (runtimeMetaData != null && runtimeMetaData.getRuntimeInitializer() instanceof RailsRuntimeInitializer) {
-			log.info("Checking for autoload paths");
 			RailsRuntimeInitializer initializer = (RailsRuntimeInitializer) runtimeMetaData.getRuntimeInitializer();
 			for (RubyLoadPathMetaData path: runtimeMetaData.getLoadPaths()) {
 				if (path.isAutoload()) {
 					initializer.addAutoloadPath(path.toString());
-					log.info("Autoloading classes from "+path);
 				}
 			}
 		}
