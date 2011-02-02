@@ -1,15 +1,19 @@
 package org.torquebox.rack.deployers;
 
-import org.junit.*;
 import static org.junit.Assert.*;
-import java.util.*;
 
-import org.jboss.vfs.VFS;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.rack.core.RackRuntimeInitializer;
-import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
+import org.jboss.vfs.VFS;
+import org.junit.Before;
+import org.junit.Test;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.rack.core.RackRuntimeInitializer;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 
 public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
@@ -26,13 +30,17 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
 	@Test
 	public void testHappy() throws Exception {
         environment.put("SOME_VAR", "gassy");
-        RackApplicationMetaData metadata = new RackApplicationMetaData();
-        metadata.setRackRoot(VFS.getChild("/foo"));
-        metadata.setEnvironmentVariables(environment);
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
+        
+        rubyAppMetaData.setRoot(VFS.getChild("/foo"));
+        rackAppMetaData.setEnvironmentVariables(environment);
 
 		String deploymentName = createDeployment("test");
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);
-		unit.addAttachment( RackApplicationMetaData.class, metadata );
+		
+		unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+		unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
 
 		processDeployments(true);
 

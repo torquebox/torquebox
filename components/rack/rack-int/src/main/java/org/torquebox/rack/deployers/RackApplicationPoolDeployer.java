@@ -28,13 +28,13 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.RackApplicationPoolImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.spi.RackApplicationPool;
-import org.torquebox.interp.metadata.PoolMetaData;
 
 
 /**

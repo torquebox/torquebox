@@ -21,20 +21,14 @@
  */
 package org.torquebox.rack.deployers;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
-import org.torquebox.interp.metadata.RubyLoadPathMetaData;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RuntimeInitializer;
-import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
@@ -51,8 +45,11 @@ public class RackRuntimeDeployer extends AbstractDeployer {
 
 	public RackRuntimeDeployer() {
 		setStage(DeploymentStages.PRE_DESCRIBE);
-		setInput(RackApplicationMetaData.class);
+		setInput(RackApplicationMetaData.class); 
+		addRequiredInput(RubyApplicationMetaData.class);
 		addOutput(RubyRuntimeMetaData.class);
+		
+		setRelativeOrder( 1000 );
 	}
 
 	public void deploy(DeploymentUnit unit) throws DeploymentException {
@@ -63,15 +60,22 @@ public class RackRuntimeDeployer extends AbstractDeployer {
 
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
         if (unit.isAttachmentPresent(RubyRuntimeMetaData.class)) {
-            throw new DeploymentException("Not expecting upstream deployer to attach RubyRuntimeMetaData");
+            //throw new DeploymentException("Not expecting upstream deployer to attach RubyRuntimeMetaData");
+            return;
         }
-        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
-        runtimeMetaData.setBaseDir(rackMetaData.getRackRoot());
-        runtimeMetaData.setEnvironment(rackMetaData.getEnvironmentVariables());
-        RuntimeInitializer initializer = rackMetaData.getRuntimeInitializer();
-        if (initializer==null) initializer = new RackRuntimeInitializer(rackMetaData);
+        
+        runtimeMetaData.setBaseDir(rubyAppMetaData.getRoot());
+        runtimeMetaData.setEnvironment(rackAppMetaData.getEnvironmentVariables());
+        
+        RuntimeInitializer initializer = new RackRuntimeInitializer(rubyAppMetaData, rackAppMetaData);
         runtimeMetaData.setRuntimeInitializer(initializer);
+        
         unit.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
 	}
+	
 }

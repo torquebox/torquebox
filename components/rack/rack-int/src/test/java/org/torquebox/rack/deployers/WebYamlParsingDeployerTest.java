@@ -1,15 +1,14 @@
 package org.torquebox.rack.deployers;
 
+import static org.junit.Assert.*;
+
 import java.net.URL;
 
-import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-
-import static org.junit.Assert.*;
 
 public class WebYamlParsingDeployerTest extends AbstractDeployerTestCase {
 	

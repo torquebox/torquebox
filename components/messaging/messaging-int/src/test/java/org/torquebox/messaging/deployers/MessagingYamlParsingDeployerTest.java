@@ -2,23 +2,19 @@ package org.torquebox.messaging.deployers;
 
 import static org.junit.Assert.*;
 
-import java.net.URL;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jruby.Ruby;
-import org.jruby.RubyModule;
-import org.jruby.RubyString;
-import org.jruby.javasupport.JavaEmbedUtils;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.interp.deployers.DeployerRuby;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-import org.torquebox.test.ruby.TestRubyFactory;
 
 public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
 

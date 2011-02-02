@@ -24,14 +24,9 @@ package org.torquebox.rack.deployers;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.rack.metadata.TorqueBoxYamlParser;
-import org.yaml.snakeyaml.Yaml;
 
 
 /**

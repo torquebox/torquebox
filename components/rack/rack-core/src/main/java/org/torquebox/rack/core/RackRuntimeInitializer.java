@@ -4,6 +4,7 @@ package org.torquebox.rack.core;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
@@ -17,16 +18,24 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 
     private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
 
-    public RackRuntimeInitializer(RackApplicationMetaData rackMetaData) {
-        this.rackMetaData = rackMetaData;
+    public RackRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackMetaData) {
+        this.rubyAppMetaData = rubyAppMetaData;
+        this.rackAppMetaData = rackMetaData;
+    }
+    
+    public VirtualFile getRackRoot() {
+        return this.rubyAppMetaData.getRoot();
+    }
+    
+    public String getRackEnv() {
+        return this.rubyAppMetaData.getEnvironmentName();
     }
 
     @Override
     public void initialize(Ruby ruby) throws Exception {
         ruby.evalScriptlet(getInitializerScript());
-        ruby.setCurrentDirectory(this.rackMetaData.getRackRoot().getPhysicalFile().getCanonicalPath());
+        ruby.setCurrentDirectory(this.rubyAppMetaData.getRoot().getPhysicalFile().getCanonicalPath());
         log.info("Current directory: "+ruby.getCurrentDirectory());
-
     }
 
     /** Create the initializer script.
@@ -35,10 +44,10 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
      */
     protected String getInitializerScript() {
         StringBuilder script = new StringBuilder();
-        String rackRootPath = this.rackMetaData.getRackRootPath();
-        String rackEnv = this.rackMetaData.getRackEnv();
-        String appName = this.rackMetaData.getRackApplicationName();
-        String contextPath = this.rackMetaData.getContextPath();
+        String rackRootPath = this.rubyAppMetaData.getRootPath();
+        String rackEnv = this.rubyAppMetaData.getEnvironmentName();
+        String appName = this.rackAppMetaData.getRackApplicationName();
+        String contextPath = this.rackAppMetaData.getContextPath();
 
         if (rackRootPath.endsWith("/")) {
             rackRootPath = rackRootPath.substring(0, rackRootPath.length() - 1);
@@ -65,6 +74,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         return script.toString();
     }
 
-    private RackApplicationMetaData rackMetaData;
+    protected RubyApplicationMetaData rubyAppMetaData;
+    protected RackApplicationMetaData rackAppMetaData;
 
 }

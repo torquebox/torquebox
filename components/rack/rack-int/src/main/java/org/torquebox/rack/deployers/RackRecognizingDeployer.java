@@ -21,19 +21,12 @@
  */
 package org.torquebox.rack.deployers;
 
-import java.io.IOException;
-
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
-import org.torquebox.rack.core.RackRuntimeInitializer;
-import org.torquebox.interp.metadata.PoolMetaData;
 
 
 /**
@@ -64,6 +57,7 @@ public class RackRecognizingDeployer extends AbstractDeployer {
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        /*
         VirtualFile root = unit.getRoot();
         try {
             // TODO: This condition is wrong
@@ -76,6 +70,7 @@ public class RackRecognizingDeployer extends AbstractDeployer {
         } catch (Exception e) {
             throw new DeploymentException( e );
         }
+        */
     }
 
 }

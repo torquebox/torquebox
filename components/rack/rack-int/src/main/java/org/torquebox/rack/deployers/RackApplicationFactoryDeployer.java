@@ -28,10 +28,11 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rack.spi.RackApplicationFactory;
 
 
 /**
@@ -46,6 +47,7 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
 	public RackApplicationFactoryDeployer() {
 		super(RackApplicationMetaData.class);
+		addRequiredInput(RubyApplicationMetaData.class);
 		addOutput(RackApplicationMetaData.class);
 		addOutput(BeanMetaData.class);
 		setStage(DeploymentStages.PRE_DESCRIBE);
@@ -53,19 +55,24 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 	}
 
 	@Override
-	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
+	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
+	    RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         try {
             String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
+            
             BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
-            builder.addPropertyMetaData("rackUpScript", metaData.getRackUpScript());
-            VirtualFile rackUpScriptLocation = metaData.getRackUpScriptLocation();
-            if (rackUpScriptLocation == null) {
-                rackUpScriptLocation = metaData.getRackRoot().getChild("config.ru");
-            }
-            builder.addPropertyMetaData("rackUpScriptLocation", rackUpScriptLocation);
+            builder.addPropertyMetaData("rackUpScript", rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ));
+            
+            VirtualFile rackUpScriptLocation = rackAppMetaData.getRackUpScriptFile( rubyAppMetaData.getRoot() );
+            
+            builder.addPropertyMetaData("rackUpFile", rackUpScriptLocation);
+            
             AttachmentUtils.attach(unit, builder.getBeanMetaData());
-            metaData.setRackApplicationFactoryName(beanName);
+            
+            rackAppMetaData.setRackApplicationFactoryName(beanName);
+            
         } catch (Exception e) {
+            e.printStackTrace();
             throw new DeploymentException(e);
         }
 	}

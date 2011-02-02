@@ -33,14 +33,14 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
 
 	private String rackUpScript;
 	
-	private VirtualFile rackUpScriptLocation;
+	private VirtualFile rackUpFile;
 
 	public RackApplicationFactoryImpl() {
 	}
 
 	public RackApplicationFactoryImpl(String rackUpScript, VirtualFile rackUpScriptLocation) {
 		this.rackUpScript = rackUpScript;
-		this.rackUpScriptLocation = rackUpScriptLocation;
+		this.rackUpFile = rackUpScriptLocation;
 	}
 
 	public void setRackUpScript(String rackUpScript) {
@@ -51,12 +51,12 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
 		return this.rackUpScript;
 	}
 	
-	public void setRackUpScriptLocation(VirtualFile rackUpScriptLocation)  {
-		this.rackUpScriptLocation = rackUpScriptLocation;
+	public void setRackUpFile(VirtualFile rackUpScriptLocation)  {
+		this.rackUpFile = rackUpScriptLocation;
 	}
 	
-	public VirtualFile getRackUpScriptLocation() {
-		return this.rackUpScriptLocation;
+	public VirtualFile getRackUpFile() {
+		return this.rackUpFile;
 	}
 	
 
@@ -71,7 +71,7 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
 		}
 
 		if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
-			rackApp = new RackApplicationImpl(ruby, rackUpScript, rackUpScriptLocation );
+			rackApp = new RackApplicationImpl(ruby, rackUpScript, rackUpFile );
 			rubyRackApp = JavaEmbedUtils.javaToRuby(ruby, rackApp);
 			torqueboxModule.setConstant("TORQUEBOX_RACK_APP", rubyRackApp);
 		} else {

@@ -35,6 +35,7 @@ public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTest {
     @Test
     public void testCachedJavascript() throws Exception {
         driver.get( "http://localhost:8080/torque-174/top" );
+        System.err.println( "RESULT: " + driver.getPageSource() );
         WebElement element = driver.findElementById( "answer" );
         assertNotNull( element );
         assertEquals( "SUCCESS", element.getText().trim() );

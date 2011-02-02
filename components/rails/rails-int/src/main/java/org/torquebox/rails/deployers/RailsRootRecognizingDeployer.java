@@ -21,18 +21,12 @@
  */
 package org.torquebox.rails.deployers;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.rack.metadata.WriteOnceRackApplicationMetaData;
 
 /**
  * <pre>
@@ -63,6 +57,7 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
 	}
 	
 	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+	    /*
 		VirtualFile root = unit.getRoot();
 		
 		try {
@@ -79,6 +74,7 @@ public class RailsRootRecognizingDeployer extends AbstractDeployer {
 		} catch (Exception e) {
 			throw new DeploymentException( e );
 		}
+		*/
 	}
 
 }

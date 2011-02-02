@@ -1,5 +1,8 @@
 package org.torquebox.rack.core;
 
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,10 +18,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
-
-import static org.junit.Assert.*;
-
-import static org.mockito.Mockito.*;
 
 public class RubyRackResponseTest extends AbstractRubyTestCase {
 

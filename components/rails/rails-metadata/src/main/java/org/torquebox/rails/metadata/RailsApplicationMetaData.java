@@ -31,26 +31,9 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 public class RailsApplicationMetaData {
 
-    public RailsApplicationMetaData(RackApplicationMetaData rackMetaData) {
-        this.rackMetaData = rackMetaData;
+    public RailsApplicationMetaData() {
     }
 
-    public RackApplicationMetaData getRackMetaData() {
-        return this.rackMetaData;
-    }
-
-    public VirtualFile getRailsRoot() {
-        return this.rackMetaData.getRackRoot();
-    }
-    
-    public String getRailsEnv() {
-        return this.rackMetaData.getRackEnv();
-    }
-    
-    public void setRailsEnv(String railsEnv) {
-        this.rackMetaData.setRackEnv( railsEnv );
-    }
-    
     public void setFrozen(boolean frozen) {
         this.frozen = frozen;
     }

@@ -25,61 +25,59 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rails.core.RailsRuntimeInitializer;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-
 
 /**
  * <pre>
- * Stage: POST_PARSE
- *    In: RailsApplicationMetaData, RackApplicationMetaData
- *   Out: RackApplicationMetaData
+ * Stage: PRE_DESCRIBE
+ *    In: RackApplicationMetaData
+ *   Out: RubyRuntimeMetaData
  * </pre>
- *
- * All Rails apps are essentially Rack apps, so from a Rails app we
- * construct Rack metadata to hand off to the Rack deployers.  We
- * assume that any deployer that attached a RailsApplicationMetaData
- * also attached a corresponding RackApplicationMetaData.
+ * 
+ * Create the ruby runtime metadata from the rack metadata
  */
-public class RailsRackDeployer extends AbstractDeployer {
+public class RailsRuntimeDeployer extends AbstractDeployer {
 
-    public RailsRackDeployer() {
+    public RailsRuntimeDeployer() {
+        setStage(DeploymentStages.PRE_DESCRIBE);
         setInput(RailsApplicationMetaData.class);
-        addRequiredInput(RubyApplicationMetaData.class);
         addRequiredInput(RackApplicationMetaData.class);
-        
-        addOutput(RackApplicationMetaData.class);
-        setStage(DeploymentStages.POST_PARSE);
-        
-        //addInput(RackApplicationMetaData.class);
-        //addInput(RackDefaultsDeployer.COMPLETE);
+        addRequiredInput(RubyApplicationMetaData.class);
+        addOutput(RubyRuntimeMetaData.class);
+
+        setRelativeOrder(500);
     }
 
-    @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-        
-        log.info(railsAppMetaData);
-        try {
-            RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
-            if (railsAppMetaData.isRails3()) {
-                rackMetaData.setRackUpScriptLocation( "config.ru" );
-            } else {
-                rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
-            }
-            log.info(rackMetaData);
-        } catch (Exception e) {
-            throw new DeploymentException(e);
+        if (unit instanceof VFSDeploymentUnit) {
+            deploy((VFSDeploymentUnit) unit);
         }
     }
 
-    protected String getRackUpScript(String context) {
-        if (context.endsWith("/")) {
-            context = context.substring(0, context.length() - 1);
+    public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        if (unit.isAttachmentPresent(RubyRuntimeMetaData.class)) {
+            return;
         }
-        return "TORQUEBOX_RACKUP_CONTEXT=%q(" + context + ")\n" + "require %q(org/torquebox/rails/deployers/rackup)\n" + "run TorqueBox::Rails.app\n";
 
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+
+        runtimeMetaData.setBaseDir(rubyAppMetaData.getRoot());
+        runtimeMetaData.setEnvironment(rackAppMetaData.getEnvironmentVariables());
+
+        RuntimeInitializer initializer = new RailsRuntimeInitializer(rubyAppMetaData, rackAppMetaData, railsAppMetaData);
+        runtimeMetaData.setRuntimeInitializer(initializer);
+
+        unit.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
     }
 
 }

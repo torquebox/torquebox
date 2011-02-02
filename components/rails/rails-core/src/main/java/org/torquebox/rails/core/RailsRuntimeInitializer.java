@@ -24,9 +24,8 @@ package org.torquebox.rails.core;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
@@ -34,56 +33,56 @@ import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.rack.core.RackRuntimeInitializer;
+import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
-
 
 public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
-	private List<String> autoloadPaths = new ArrayList<String>();
-    private RailsApplicationMetaData railsMetaData;
+    private List<String> autoloadPaths = new ArrayList<String>();
+    private RailsApplicationMetaData railsAppMetaData;
 
-	public RailsRuntimeInitializer(RailsApplicationMetaData railsMetaData) {
-		super( railsMetaData.getRackMetaData() );
-        this.railsMetaData = railsMetaData;
-	}
+    public RailsRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackAppMetaData, RailsApplicationMetaData railsAppMetaData) {
+        super(rubyAppMetaData, rackAppMetaData);
+        this.railsAppMetaData = railsAppMetaData;
+    }
 
-	public VirtualFile getRailsRoot() {
-		return this.railsMetaData.getRailsRoot();
-	}
+    public VirtualFile getRailsRoot() {
+        return getRackRoot();
+    }
 
-	// public String getRailsEnv() {
-	// 	return this.railsEnv;
-	// }
+    public String getRailsEnv() {
+        return getRackEnv();
+    }
 
-	public void addAutoloadPath(String path) {
-		this.autoloadPaths.add(path);
-	}
+    public void addAutoloadPath(String path) {
+        this.autoloadPaths.add(path);
+    }
 
-	public List<String> getAutoloadPaths() {
-		return this.autoloadPaths;
-	}
-	
-	public void initialize(Ruby ruby) throws Exception {
-		super.initialize(ruby);
-		Logger logger = Logger.getLogger(getRailsRoot().toURL().toExternalForm());
-		IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
-		ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
-		
-		String scriptLocationBase = new URL( getRailsRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
-		makeAutoloadPathsAvailable(ruby);
-		ruby.executeScript(createBoot(getRailsRoot()), scriptLocationBase + "-boot.rb" );
-	}
+    public List<String> getAutoloadPaths() {
+        return this.autoloadPaths;
+    }
 
-	protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
-		return "RAILS_ROOT=RACK_ROOT\n" +
-		 "RAILS_ENV=RACK_ENV\n" +
-		"require %q(org/torquebox/rails/core/boot)\n";
-	}
+    public void initialize(Ruby ruby) throws Exception {
+        super.initialize(ruby);
+        Logger logger = Logger.getLogger(getRailsRoot().toURL().toExternalForm());
+        IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
+        ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
 
-	protected void makeAutoloadPathsAvailable(Ruby ruby) {
-		RubyModule object = ruby.getClassFromPath("Object");
-		object.setConstant("TORQUEBOX_RAILS_AUTOLOAD_PATHS", JavaEmbedUtils.javaToRuby(ruby, getAutoloadPaths()));
-	}
+        String scriptLocationBase = new URL(getRailsRoot().toURL(), "<torquebox-bootstrap>").toExternalForm();
+        makeAutoloadPathsAvailable(ruby);
+        ruby.executeScript(createBoot(getRailsRoot()), scriptLocationBase + "-boot.rb");
+    }
+
+    protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
+        return // "RAILS_ROOT=RACK_ROOT\n" + "RAILS_ENV=RACK_ENV\n" + 
+          "require %q(org/torquebox/rails/core/boot)\n";
+    }
+
+    protected void makeAutoloadPathsAvailable(Ruby ruby) {
+        RubyModule object = ruby.getClassFromPath("Object");
+        object.setConstant("TORQUEBOX_RAILS_AUTOLOAD_PATHS", JavaEmbedUtils.javaToRuby(ruby, getAutoloadPaths()));
+    }
 
 }

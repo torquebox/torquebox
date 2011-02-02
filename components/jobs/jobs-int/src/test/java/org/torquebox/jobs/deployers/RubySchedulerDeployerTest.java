@@ -1,5 +1,7 @@
 package org.torquebox.jobs.deployers;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -11,8 +13,6 @@ import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-
-import static org.junit.Assert.*;
 
 public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
 	

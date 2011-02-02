@@ -1,12 +1,10 @@
 package org.torquebox.jobs.deployers;
 
-import java.util.Set;
-
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.EnvironmentMetaData;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
@@ -31,7 +29,7 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
     public JobsRuntimePoolDeployer() {
         setStage( DeploymentStages.DESCRIBE );
         addInput( ScheduledJobMetaData.class );
-        addInput( EnvironmentMetaData.class );
+        addInput( RubyApplicationMetaData.class );
         addInput( PoolMetaData.class );
         addOutput( PoolMetaData.class );
     }
@@ -43,7 +41,7 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
         }
         PoolMetaData jobsPool = AttachmentUtils.getAttachment( unit, "jobs", PoolMetaData.class );;
         if ( jobsPool == null ) {
-            EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+            RubyApplicationMetaData envMetaData = unit.getAttachment(RubyApplicationMetaData.class);
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
             jobsPool = devMode ? new PoolMetaData("jobs", 1, 2) : new PoolMetaData("jobs");
             log.info("Configured Ruby runtime pool for jobs: " + jobsPool);

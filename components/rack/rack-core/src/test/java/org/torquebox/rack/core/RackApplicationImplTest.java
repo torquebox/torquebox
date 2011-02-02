@@ -1,23 +1,13 @@
 package org.torquebox.rack.core;
 
-import java.io.ByteArrayInputStream;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Vector;
-
-import javax.servlet.ServletContext;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
 
 import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Test;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
-
-import static org.junit.Assert.*;
-
-import static org.mockito.Mockito.*;
 
 public class RackApplicationImplTest extends AbstractRubyTestCase {
 

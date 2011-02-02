@@ -1,12 +1,12 @@
 package org.torquebox.rack.core;
 
+import static org.junit.Assert.*;
+
 import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.junit.Test;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
-
-import static org.junit.Assert.*;
 
 public class RackApplicationFactoryImplTest extends AbstractRubyTestCase {
 

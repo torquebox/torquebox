@@ -9,7 +9,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.EnvironmentMetaData;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
@@ -31,7 +31,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 
 	public RubySchedulerDeployer() {
 		setAllInputs( true );
-		addInput(EnvironmentMetaData.class);
+		addInput(RubyApplicationMetaData.class);
 		addOutput(BeanMetaData.class);
 		setStage( DeploymentStages.REAL );
 	}
@@ -55,7 +55,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyScheduler.class.getName() );
 		
 		builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
-		EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+		RubyApplicationMetaData envMetaData = unit.getAttachment(RubyApplicationMetaData.class);
 		if (envMetaData != null) {
             builder.addPropertyMetaData("alwaysReload", envMetaData.isDevelopmentMode());
 		} else {

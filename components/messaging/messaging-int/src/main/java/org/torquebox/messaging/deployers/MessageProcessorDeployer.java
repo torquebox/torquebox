@@ -15,12 +15,11 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.EnvironmentMetaData;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.mc.JndiRefMetaData;
 import org.torquebox.messaging.core.AbstractManagedDestination;
 import org.torquebox.messaging.core.ManagedQueue;
 import org.torquebox.messaging.core.ManagedTopic;
@@ -43,7 +42,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 	public MessageProcessorDeployer() {
 		setStage(DeploymentStages.REAL);
 		addInput(MessageProcessorMetaData.class);
-		addInput(EnvironmentMetaData.class);
+		addInput(RubyApplicationMetaData.class);
 		addOutput(BeanMetaData.class);
 		setRelativeOrder(1000);
 	}
@@ -119,7 +118,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 		result.setRubyClassName(metaData.getRubyClassName());
 		result.setRubyRequirePath(metaData.getRubyRequirePath());
 		result.setComponentName("message-processor." + metaData.getRubyClassName());
-		EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+		RubyApplicationMetaData envMetaData = unit.getAttachment(RubyApplicationMetaData.class);
 		if (envMetaData != null) {
 			result.setAlwaysReload(envMetaData.isDevelopmentMode());
 			log.info(metaData.getRubyClassName() + " alwaysReload=" + envMetaData.isDevelopmentMode());

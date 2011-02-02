@@ -1,24 +1,26 @@
 package org.torquebox.rack.core;
 
+import static org.junit.Assert.*;
+
 import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.junit.Test;
-import org.torquebox.test.ruby.AbstractRubyTestCase;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-
-import static org.junit.Assert.*;
+import org.torquebox.test.ruby.AbstractRubyTestCase;
 
 public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 
     @Test
     public void testInitializer() throws Exception {
-        RackApplicationMetaData metadata = new RackApplicationMetaData();
-        metadata.setRackRoot( VFS.getChild( "/myapp" ) );
-        metadata.setRackEnv( "test" );
-        metadata.setContextPath( "/mycontext" );
-        metadata.setRackApplicationName( "app_name" );
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
+        rubyAppMetaData.setRoot( VFS.getChild( "/myapp" ) );
+        rubyAppMetaData.setEnvironmentName( "test" );
+        rackAppMetaData.setContextPath( "/mycontext" );
+        rackAppMetaData.setRackApplicationName( "app_name" );
 
-        RackRuntimeInitializer initializer = new RackRuntimeInitializer(metadata);
+        RackRuntimeInitializer initializer = new RackRuntimeInitializer(rubyAppMetaData, rackAppMetaData);
 
         Ruby ruby = createRuby();
         initializer.initialize( ruby );

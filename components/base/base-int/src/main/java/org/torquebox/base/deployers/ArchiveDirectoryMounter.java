@@ -19,49 +19,48 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.torquebox.rails.deployers;
+package org.torquebox.base.deployers;
 
-import java.io.IOException;
-import java.io.File;
 import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VFS;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.jboss.vfs.VirtualFile;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 
 /**
  * <pre>
- * Stage: PARSE
+ * Stage: PRE_REAL
  *    In: 
  *   Out: mounted virtual directories
  * </pre>
  * 
- * Ensure that directories requiring writability by rails packaged deployments
+ * Ensure that directories requiring writability by packaged deployments
  * end up somewhere reasonable,
  * 
  * JBOSS_HOME/server/default/log/app.rails/ for logs
  * JBOSS_HOME/server/default/tmp/rails/app.rails/ for tmp files
  * 
  */
-public class RailsArchiveDirectoryMounter extends AbstractDeployer {
-
-    public RailsArchiveDirectoryMounter() {
+public class ArchiveDirectoryMounter extends AbstractDeployer {
+    
+    public ArchiveDirectoryMounter() {
         setStage(DeploymentStages.PRE_REAL);
-        setInput(RackApplicationMetaData.class);
+        setInput(RubyApplicationMetaData.class);
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RackApplicationMetaData metaData = unit.getAttachment(RackApplicationMetaData.class);
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class );
 
-        if (metaData.isArchive()) {
+        if (rubyAppMetaData.isArchive()) {
             try {
-                mountRailsDir(unit, metaData.getRackRoot(), "log", System.getProperty("jboss.server.log.dir") + "/" + unit.getSimpleName());
-                mountRailsDir(unit, metaData.getRackRoot(), "tmp", System.getProperty("jboss.server.temp.dir") + "/rails/" + unit.getSimpleName());
+                mountDir(unit, rubyAppMetaData.getRoot(), "log", System.getProperty("jboss.server.log.dir") + "/" + unit.getSimpleName());
+                mountDir(unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty("jboss.server.temp.dir") + "/rails/" + unit.getSimpleName());
             } catch (Exception e) {
                 throw new DeploymentException(e);
             }
@@ -69,15 +68,15 @@ public class RailsArchiveDirectoryMounter extends AbstractDeployer {
     }
 
     public void undeploy(DeploymentUnit unit) {
-        RackApplicationMetaData metaData = unit.getAttachment(RackApplicationMetaData.class);
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
         
-        if ( metaData.isArchive() ) {
+        if ( rubyAppMetaData.isArchive() ) {
             close(unit, "tmp");
             close(unit, "log");
         }
     }
 
-    protected void mountRailsDir(DeploymentUnit unit, VirtualFile root, String name, String path) throws IOException {
+    protected void mountDir(DeploymentUnit unit, VirtualFile root, String name, String path) throws IOException {
         VirtualFile logical = root.getChild(name);
         File physical = new File(path);
         physical.mkdirs();
@@ -100,4 +99,5 @@ public class RailsArchiveDirectoryMounter extends AbstractDeployer {
     protected String attachmentName(String name) {
         return name + " dir handle";
     }
+    
 }

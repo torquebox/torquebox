@@ -1,5 +1,7 @@
 package org.torquebox.jobs.deployers;
 
+import static org.junit.Assert.*;
+
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -7,11 +9,9 @@ import java.util.Set;
 
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Test;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-
-import static org.junit.Assert.*;
 
 public class ServicesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 

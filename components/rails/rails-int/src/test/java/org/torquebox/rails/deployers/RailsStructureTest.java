@@ -9,11 +9,10 @@ import org.jboss.deployers.spi.structure.StructureMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Before;
+import org.junit.Test;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class RailsStructureTest extends AbstractDeployerTestCase {
 

@@ -1,5 +1,7 @@
 package org.torquebox.rack.deployers;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -14,7 +16,6 @@ import org.torquebox.rack.core.RackApplicationPoolImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationPool;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
-import static org.junit.Assert.*;
 
 
 public class RackApplicationPoolDeployerTest extends AbstractDeployerTestCase {

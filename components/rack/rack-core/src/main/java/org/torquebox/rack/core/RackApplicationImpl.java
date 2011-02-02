@@ -1,9 +1,6 @@
 /* Copyright 2009 Red Hat, Inc. */
 package org.torquebox.rack.core;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;

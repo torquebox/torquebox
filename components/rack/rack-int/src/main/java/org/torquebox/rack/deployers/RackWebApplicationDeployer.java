@@ -21,8 +21,6 @@
  */
 package org.torquebox.rack.deployers;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +42,6 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.rack.core.servlet.RackFilter;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 

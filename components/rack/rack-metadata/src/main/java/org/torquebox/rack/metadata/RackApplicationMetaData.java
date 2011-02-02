@@ -22,17 +22,15 @@
 package org.torquebox.rack.metadata;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
-
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.interp.spi.RuntimeInitializer;
 
 public class RackApplicationMetaData {
 
@@ -79,9 +77,9 @@ public class RackApplicationMetaData {
         this.rackUpScript = rackUpScript;
     }
 
-    public String getRackUpScript() throws IOException {
+    public String getRackUpScript(VirtualFile root) throws IOException {
         if (this.rackUpScript == null) {
-            VirtualFile file = getRackUpScriptLocation();
+            VirtualFile file = getRackUpScriptFile(root);
             if (file != null && file.exists()) {
                 StringBuilder script = new StringBuilder();
                 BufferedReader in = null;
@@ -102,18 +100,27 @@ public class RackApplicationMetaData {
         return this.rackUpScript;
     }
 
-    public void setRackUpScriptLocation(VirtualFile rackUpScriptLocation) {
+    public void setRackUpScriptLocation(String rackUpScriptLocation) {
         this.rackUpScriptLocation = rackUpScriptLocation;
     }
 
-    public void setRackUpScriptLocation(String path) throws IOException {
-        if (path != null) {
-            setRackUpScriptLocation((path.startsWith("/") || path.matches("^[A-Za-z]:.*")) ? VFS.getChild(path) : getRackRoot().getChild(path));
-        }
+    /*
+     * public void setRackUpScriptLocation(String path) throws IOException { if
+     * (path != null) { setRackUpScriptLocation((path.startsWith("/") ||
+     * path.matches("^[A-Za-z]:.*")) ? VFS.getChild(path) :
+     * getRackRoot().getChild(path)); } }
+     */
+
+    public String getRackUpScriptLocation() {
+        return this.rackUpScriptLocation;
     }
 
-    public VirtualFile getRackUpScriptLocation() {
-        return this.rackUpScriptLocation;
+    public VirtualFile getRackUpScriptFile(VirtualFile root) {
+        if (this.rackUpScriptLocation.startsWith("/") || rackUpScriptLocation.matches("^[A-Za-z]:.*") ) {
+           return VFS.getChild(rackUpScriptLocation);
+        } else {
+            return root.getChild(rackUpScriptLocation);
+        }
     }
 
     public void addHost(String host) {
@@ -181,48 +188,13 @@ public class RackApplicationMetaData {
         return this.environment;
     }
 
-    public void setRuntimeInitializer(RuntimeInitializer initializer) {
-        this.runtimeInitializer = initializer;
-    }
-
-    public RuntimeInitializer getRuntimeInitializer() {
-        return this.runtimeInitializer;
-    }
-
-    public String getAbbreviatedRackUpScript() {
-        try {
-            String result = getRackUpScript();
-            if (result != null) {
-                result = result.replace("\n", "\\n");
-                int max = 100;
-                if (result.length() > max) {
-                    result = result.substring(0, max) + " ...";
-                }
-            }
-            return result;
-        } catch (IOException e) {
-            return null;
-        }
-    }
-
     public String toString() {
-        return "RackApplicationMetaData:\n  root=" + this.rackRoot + "\n  env=" + this.rackEnv + "\n  script=" + getAbbreviatedRackUpScript() + "\n  rackup="
-                + this.rackUpScriptLocation + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
+        return "RackApplicationMetaData:\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts
+                + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
     }
 
-    public void explode(VirtualFile root) {
-        this.rackRoot = root;
-        this.archive = true;
-    }
-
-    public boolean isArchive() {
-        return this.archive;
-    }
-
-    private String rackEnv;
-    private VirtualFile rackRoot;
     private String rackUpScript;
-    private VirtualFile rackUpScriptLocation;
+    private String rackUpScriptLocation = "config.ru";
 
     private List<String> hosts = new ArrayList<String>();
     private String contextPath;
@@ -233,6 +205,4 @@ public class RackApplicationMetaData {
     private String rackApplicationPoolName;
     private String rackApplicationName;
     private Map<String, String> environment;
-    private RuntimeInitializer runtimeInitializer;
-    private boolean archive;
 }

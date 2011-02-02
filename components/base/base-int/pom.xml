@@ -61,6 +61,11 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-vfs</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>
       <scope>provided</scope>
     </dependency>

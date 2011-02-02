@@ -31,8 +31,8 @@ import java.util.regex.Pattern;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractParsingDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
 
@@ -51,12 +51,14 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
     public RailsGemVersionDeployer() {
         setInput(RailsApplicationMetaData.class);
+        addRequiredInput(RubyApplicationMetaData.class);
         setOutput(RailsApplicationMetaData.class);
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
         RailsApplicationMetaData railsMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-        VirtualFile railsRoot = railsMetaData.getRailsRoot();
+        VirtualFile railsRoot = rubyAppMetaData.getRoot();
         
         log.info( "Rails Root = " + railsRoot );
 

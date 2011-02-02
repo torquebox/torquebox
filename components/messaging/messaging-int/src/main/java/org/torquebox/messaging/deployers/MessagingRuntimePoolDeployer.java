@@ -1,12 +1,10 @@
 package org.torquebox.messaging.deployers;
 
-import java.util.Set;
-
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.EnvironmentMetaData;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
@@ -34,7 +32,7 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
     public MessagingRuntimePoolDeployer() {
         setStage(DeploymentStages.DESCRIBE);
         addInput( MessageProcessorMetaData.class );
-        addInput( EnvironmentMetaData.class );
+        addInput( RubyApplicationMetaData.class );
         addInput( PoolMetaData.class );
         addOutput( PoolMetaData.class );
     }
@@ -54,7 +52,7 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
         }
         PoolMetaData pool = AttachmentUtils.getAttachment( unit, "messaging", PoolMetaData.class );
         if (pool == null) {
-            EnvironmentMetaData envMetaData = unit.getAttachment(EnvironmentMetaData.class);
+            RubyApplicationMetaData envMetaData = unit.getAttachment(RubyApplicationMetaData.class);
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
             pool = devMode ? new PoolMetaData("messaging", 1, 2) : new PoolMetaData("messaging");
             pool.setInstanceFactoryName( this.instanceFactoryName );

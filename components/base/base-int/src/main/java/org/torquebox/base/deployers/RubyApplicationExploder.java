@@ -1,4 +1,4 @@
-package org.torquebox.rack.deployers;
+package org.torquebox.base.deployers;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,32 +6,30 @@ import java.io.IOException;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.spi.structure.StructureMetaData;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileVisitor;
 import org.jboss.vfs.VisitorAttributes;
-import org.jboss.vfs.util.automount.Automounter;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 
-public class RackApplicationExploder extends AbstractDeployer {
+public class RubyApplicationExploder extends AbstractDeployer {
 
-    public RackApplicationExploder() {
+    public RubyApplicationExploder() {
         setStage(DeploymentStages.POST_PARSE);
-        setInput(RackApplicationMetaData.class);
-        addOutput(RackApplicationMetaData.class);
+        setInput(RubyApplicationMetaData.class);
+        addOutput(RubyApplicationMetaData.class);
         setRelativeOrder(-1000);
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RackApplicationMetaData metaData = unit.getAttachment(RackApplicationMetaData.class);
-        VirtualFile rackRoot = metaData.getRackRoot();
+        RubyApplicationMetaData metaData = unit.getAttachment(RubyApplicationMetaData.class);
+        VirtualFile root = metaData.getRoot();
         
         try {
-            VirtualFile explodedRackRoot = getExplodedApplication(rackRoot);
-            if (!rackRoot.equals(explodedRackRoot)) {
+            VirtualFile explodedRackRoot = getExplodedApplication(root);
+            if (!root.equals(explodedRackRoot)) {
                 metaData.explode(explodedRackRoot);
             }
         } catch (IOException e) {

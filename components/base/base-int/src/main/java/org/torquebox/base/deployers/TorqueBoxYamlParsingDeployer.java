@@ -1,5 +1,6 @@
 package org.torquebox.base.deployers;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,29 +15,31 @@ public class TorqueBoxYamlParsingDeployer extends AbstractVFSParsingDeployer<Tor
 
     public TorqueBoxYamlParsingDeployer() {
         super(TorqueBoxMetaData.class);
-        setName( "torquebox.yml" );
+        setName("torquebox.yml");
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected TorqueBoxMetaData parse(VFSDeploymentUnit unit, VirtualFile file, TorqueBoxMetaData root) throws Exception {
+        return parse(file);
+    }
+
+    @SuppressWarnings("unchecked")
+    static TorqueBoxMetaData parse(VirtualFile file) throws IOException {
 
         Yaml yaml = new Yaml();
         InputStream in = null;
         try {
             in = file.openStream();
             Map<String, Object> data = (Map<String, Object>) yaml.load(in);
-            if ( data == null ) {
+            if (data == null) {
                 data = new HashMap<String, Object>();
             }
-            TorqueBoxMetaData metaData = new TorqueBoxMetaData(data);
-            unit.addAttachment(TorqueBoxMetaData.class, metaData);
+            return new TorqueBoxMetaData(data);
         } finally {
             if (in != null) {
                 in.close();
             }
         }
-        return null;
     }
 
 }

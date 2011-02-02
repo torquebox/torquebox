@@ -47,6 +47,7 @@ public class RackDefaultsDeployer extends AbstractDeployer {
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
+        /*
         try {
             RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
             metadata.setRackEnv("development");
@@ -61,5 +62,6 @@ public class RackDefaultsDeployer extends AbstractDeployer {
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
+        */
     }
 }

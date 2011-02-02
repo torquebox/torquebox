@@ -32,6 +32,9 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
 
     /** Opotional fine-name for NAME.yml parsing separate from torquebox.yml. */
     private String fileName;
+    
+    /** Does this deployer support a standalone *.yml descriptor? */
+    private boolean supportsStandalone = true;
 
     public AbstractSplitYamlParsingDeployer() {
         addInput(TorqueBoxMetaData.class);
@@ -40,6 +43,14 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
 
     public String getSectionName() {
         return this.sectionName;
+    }
+    
+    public void setSupportsStandalone(boolean supports) {
+        this.supportsStandalone = supports;
+    }
+    
+    public boolean isSupportsStandalone() {
+        return this.supportsStandalone;
     }
 
     public void setSectionName(String sectionName) {
@@ -82,9 +93,9 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
             data = globalMetaData.getSection(getSectionName());
         }
 
-        if (data == null) {
+        if (data == null && isSupportsStandalone() ) {
             System.err.println("BOB: Checking altDD of " + getFileName() + ".altDD");
-            VirtualFile metaDataFile = unit.getAttachment(getFileName() + ".altDD", VirtualFile.class );
+            VirtualFile metaDataFile = unit.getAttachment(getFileName() + ".altDD", VirtualFile.class);
 
             System.err.println("ALTDD->" + metaDataFile);
 
@@ -128,6 +139,17 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
+    }
+
+    protected String getOneOf(Map<String, String> map, String... keys) {
+        for (String each : keys) {
+            for (String key : map.keySet()) {
+                if (each.equalsIgnoreCase(key)) {
+                    return map.get(key);
+                }
+            }
+        }
+        return null;
     }
 
     public abstract void parse(VFSDeploymentUnit unit, Object data) throws Exception;

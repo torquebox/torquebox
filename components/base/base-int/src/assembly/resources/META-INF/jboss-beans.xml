@@ -2,6 +2,11 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="TorqueBoxYamlParsingDeployer"                       class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
+  <bean name="KnobStructure"                   class="org.torquebox.base.deployers.KnobStructure"/>
+  
+  <bean name="TorqueBoxYamlParsingDeployer"    class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
+  <bean name="ApplicationYamlParsingDeployer"  class="org.torquebox.base.deployers.ApplicationYamlParsingDeployer"/>
+  <bean name="RubyApplicationExploder"         class="org.torquebox.base.deployers.RubyApplicationExploder"/>
+  <bean name="ArchiveDirectoryMounter"         class="org.torquebox.base.deployers.RubyApplicationExploder"/>
 
 </deployment>
