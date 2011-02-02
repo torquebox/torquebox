@@ -107,6 +107,11 @@ public class ServicesYamlParsingDeployer extends AbstractParsingDeployer {
         builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
         builder.addPropertyMetaData("rubyComponentResolver", createComponentResolver( service, params ));
 
+        Boolean singleton = (Boolean) params.remove("singleton");
+        if (singleton != null && singleton.booleanValue()) {
+            builder.addDependency("jboss.ha:service=HASingletonDeployer,type=Barrier");
+        }
+
         AttachmentUtils.attach(unit, builder.getBeanMetaData());
     }
 
