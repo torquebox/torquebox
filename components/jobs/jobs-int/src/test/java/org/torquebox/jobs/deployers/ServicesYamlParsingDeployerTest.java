@@ -1,6 +1,8 @@
 package org.torquebox.jobs.deployers;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.deployers.structure.spi.DeploymentUnit;
@@ -49,6 +51,32 @@ public class ServicesYamlParsingDeployerTest extends AbstractDeployerTestCase {
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
 
         assertNotNull( unit );
+    }
+
+    @Test
+    public void testRequiresSingletonHandlesNullParams() throws Exception {
+        assertFalse( this.deployer.requiresSingleton( null ) );
+    }
+
+    @Test
+    public void testRequiresSingletonReturnsFalseWhenNoSingletonKey() throws Exception {
+        Map<String, String>  params = new HashMap<String, String>();
+        params.put("key_other_than_singleton", "value");
+        assertFalse( this.deployer.requiresSingleton( params ) );
+    }
+
+    @Test
+    public void testRequiresSingletonReturnsFalseWhenSingletonKeyIsFalse() throws Exception {
+        Map<String, Object>  params = new HashMap<String, Object>();
+        params.put("singleton", false);
+        assertFalse( this.deployer.requiresSingleton( params ) );
+    }
+
+    @Test
+    public void testRequiresSingletonReturnsTrueWhenSingletonKeyIsTrue() throws Exception {
+        Map<String, Object>  params = new HashMap<String, Object>();
+        params.put("singleton", true);
+        assertTrue( this.deployer.requiresSingleton( params ) );
     }
 
 }
