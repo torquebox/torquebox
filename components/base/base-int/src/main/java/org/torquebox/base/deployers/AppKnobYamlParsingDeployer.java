@@ -22,6 +22,7 @@
 package org.torquebox.base.deployers;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -33,9 +34,6 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.attachments.MutableAttachments;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.spi.structure.ContextInfo;
-import org.jboss.deployers.spi.structure.StructureMetaData;
-import org.jboss.deployers.spi.structure.StructureMetaDataFactory;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.plugins.client.AbstractVFSDeployment;
 import org.jboss.deployers.vfs.spi.client.VFSDeployment;
@@ -69,14 +67,20 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        String name = unit.getRoot().getName();
-
-        if (!name.endsWith("-knob.yml")) {
-            return;
+        List<VirtualFile> matches = unit.getMetaDataFiles(null, "-knob.yml" );
+        
+        if ( matches.isEmpty() ) {
+            return; 
         }
+        
+        if ( matches.size() != 1 ) {
+            throw new DeploymentException( "Too many *-knob.yml files" );
+        }
+        
+        VirtualFile appKnobYml = matches.get(0);
 
         try {
-            TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse(unit.getRoot());
+            TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse( appKnobYml );
             VirtualFile root = metaData.getApplicationRootFile();
 
             if (root == null) {
@@ -94,7 +98,7 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
     private Deployment createDeployment(TorqueBoxMetaData metaData) throws IOException {
         AbstractVFSDeployment deployment = new AbstractVFSDeployment(metaData.getApplicationRootFile());
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
-        attachments.addAttachment(TorqueBoxMetaData.class.getName() + "$external", metaData, TorqueBoxMetaData.class );
+        attachments.addAttachment(TorqueBoxMetaData.EXTERNAL, metaData, TorqueBoxMetaData.class );
         return deployment;
     }
     

@@ -2,11 +2,13 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="RackStructure"                          class="org.torquebox.rack.deployers.RackStructure"/>
   <!--
-  <bean name="RackRecognizingDeployer"                class="org.torquebox.rack.deployers.RackRecognizingDeployer"/>
-  -->
+  <bean name="RackStructure"                          class="org.torquebox.rack.deployers.RackStructure"/>
   <bean name="AppRackYamlParsingDeployer"             class="org.torquebox.rack.deployers.AppRackYamlParsingDeployer"/>
+  -->
+  
+  <bean name="RackApplicationRecognizer"              class="org.torquebox.rack.deployers.RackApplicationRecognizer"/>
+  
   <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer"/>
   <bean name="RackApplicationPoolDeployer"            class="org.torquebox.rack.deployers.RackApplicationPoolDeployer"/>
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>

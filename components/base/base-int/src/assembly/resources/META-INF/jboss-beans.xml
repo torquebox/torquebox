@@ -4,6 +4,10 @@
 
   <bean name="KnobStructure"                   class="org.torquebox.base.deployers.KnobStructure"/>
   
+  <bean name="AppKnobYamlParsingDeployer"      class="org.torquebox.base.deployers.AppKnobYamlParsingDeployer"/>
+  
+  <bean name="RubyApplicationRecognizer"       class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>
+  
   <bean name="TorqueBoxYamlParsingDeployer"    class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
   <bean name="ApplicationYamlParsingDeployer"  class="org.torquebox.base.deployers.ApplicationYamlParsingDeployer"/>
   <bean name="RubyApplicationExploder"         class="org.torquebox.base.deployers.RubyApplicationExploder"/>

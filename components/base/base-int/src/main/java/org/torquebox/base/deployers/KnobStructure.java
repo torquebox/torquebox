@@ -60,8 +60,11 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
     public boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
         VirtualFile root = structureContext.getFile();
 
+        log.debug("Determine structure for: " + root);
+
         try {
-            if (isKnob( root ) ) {
+            if (RubyApplicationRecognizer.isRubyApplication(root)) {
+                log.debug("is knob");
                 StructureMetaData structureMetaData = structureContext.getMetaData();
                 ContextInfo context = createBaseContextInfo(root, structureMetaData);
                 structureMetaData.addContext(context);
@@ -71,6 +74,7 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
             throw new DeploymentException(e);
         }
 
+        log.debug("is NOT knob");
         return false;
     }
 
@@ -88,14 +92,14 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
         ContextInfo context = StructureMetaDataFactory.createContextInfo("", metaDataPaths, classPaths);
         return context;
     }
-    
+
     public void addDirectoryOfJarsToClasspath(StructureContext structureContext, ContextInfo context, String dirPath) throws IOException {
         log.info("Add dir to CLASSPATH: " + dirPath);
 
         VirtualFile dir = structureContext.getFile().getChild(dirPath);
 
         if (dir.exists() && dir.isDirectory()) {
-            List<VirtualFile> children = getClassPathEntries( dir );
+            List<VirtualFile> children = getClassPathEntries(dir);
 
             for (VirtualFile jar : children) {
                 log.info("..." + jar);
@@ -107,50 +111,31 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
     public List<VirtualFile> getClassPathEntries(VirtualFile dir) throws IOException {
         return dir.getChildrenRecursively(JAR_FILTER);
     }
-    
+
     public List<ClassPathEntry> getClassPathEntries(VirtualFile dir, VirtualFile relativeTo) throws IOException {
         List<ClassPathEntry> entries = new ArrayList<ClassPathEntry>();
-        
+
         List<VirtualFile> files = getClassPathEntries(dir);
-        
-        for (VirtualFile file : files ) {
-            entries.add( StructureMetaDataFactory.createClassPathEntry( getRelativePath( relativeTo, file ) ) );
+
+        for (VirtualFile file : files) {
+            entries.add(StructureMetaDataFactory.createClassPathEntry(getRelativePath(relativeTo, file)));
         }
-        
+
         return entries;
     }
 
     @Override
     protected boolean hasValidName(VirtualFile file) {
-        return isKnob(file);
-    }
-    
-    protected boolean isKnob(VirtualFile file) {
-        return file.getName().endsWith(".knob" ) || 
-            hasAnyOf( file, 
-                      "torquebox.yml", 
-                      "config/torquebox.yml", 
-                      "config.ru",
-                      "config/environment.rb",
-                      "Rakefile",
-                      ".bundle/config" );
+        return RubyApplicationRecognizer.isRubyApplication(file);
     }
 
-    protected boolean hasAnyOf(VirtualFile root, String... paths) {
-        for (String path : paths) {
-            if (root.getChild(path).exists()) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     @Override
     protected boolean hasValidSuffix(String name) {
         return true;
     }
-    
-    public static final VirtualFileFilter JAR_FILTER = new SuffixMatchFilter(".jar", VisitorAttributes.DEFAULT);
 
+    public static final VirtualFileFilter JAR_FILTER = new SuffixMatchFilter(".jar", VisitorAttributes.DEFAULT);
 
 }

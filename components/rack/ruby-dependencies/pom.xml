@@ -20,7 +20,7 @@
     <profile>
       <activation>
         <file>
-          <missing>./../target/rubygems/bin/rails</missing>
+          <missing>./../target/rubygems/bin/rackup</missing>
         </file>
       </activation>
       <build>

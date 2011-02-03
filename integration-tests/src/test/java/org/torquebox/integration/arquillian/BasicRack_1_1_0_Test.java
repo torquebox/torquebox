@@ -14,12 +14,13 @@ public class BasicRack_1_1_0_Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "rack/1.1.0/basic-rack.yml" );
+		return createDeployment( "rack/1.1.0/basic-knob.yml" );
 	}
 
 	@Test
 	public void testHighlevel() {
         driver.get( "http://localhost:8080/basic-rack" );
+        System.err.println( driver.getPageSource() );
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "basic-rack", element.getAttribute( "class" ) );

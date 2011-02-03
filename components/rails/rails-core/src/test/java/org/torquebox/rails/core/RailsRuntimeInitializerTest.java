@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
@@ -134,10 +135,13 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
     }
 
     private RailsRuntimeInitializer create(VirtualFile root, String env) {
-        RackApplicationMetaData rackMetaData = new RackApplicationMetaData();
-        rackMetaData.setRackRoot(root);
-        rackMetaData.setRackEnv(env);
-        RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData( rackMetaData );
-        return new RailsRuntimeInitializer( railsMetaData );
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setRoot( root );
+        rubyAppMetaData.setEnvironmentName(env);
+        
+        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
+        RailsApplicationMetaData railsMetaData = new RailsApplicationMetaData();
+        
+        return new RailsRuntimeInitializer( rubyAppMetaData, rackAppMetaData, railsMetaData );
     }
 }

@@ -76,7 +76,7 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
     }
 
     protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
-        return // "RAILS_ROOT=RACK_ROOT\n" + "RAILS_ENV=RACK_ENV\n" + 
+        return  "RAILS_ROOT=RACK_ROOT\n" + "RAILS_ENV=RACK_ENV\n" + 
           "require %q(org/torquebox/rails/core/boot)\n";
     }
 

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
@@ -25,7 +24,7 @@ import org.yaml.snakeyaml.error.YAMLException;
  * 
  * @author Bob McWhirter
  */
-public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer {
+public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDeployer {
 
     /** Name of the section within torquebox.yml. */
     private String sectionName;
@@ -94,16 +93,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractDeployer 
         }
 
         if (data == null && isSupportsStandalone() ) {
-            System.err.println("BOB: Checking altDD of " + getFileName() + ".altDD");
-            VirtualFile metaDataFile = unit.getAttachment(getFileName() + ".altDD", VirtualFile.class);
-
-            System.err.println("ALTDD->" + metaDataFile);
-
-            if (metaDataFile == null) {
-                System.err.println("Checking real file " + getFileName());
-                metaDataFile = unit.getMetaDataFile(getFileName());
-                System.err.println("Real->" + metaDataFile);
-            }
+            VirtualFile metaDataFile = getMetaDataFile( unit, getFileName() );
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
                 InputStream in = null;

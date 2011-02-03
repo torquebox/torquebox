@@ -42,7 +42,9 @@ public class PojoDeployment {
         }
 
         this.deployer.addDeployment(this.deployment);
+        log.info( "Deploying: " + this.deployment.getRoot() );
         this.deployer.process();
+        log.info( "Fully deployed: " + this.deployment.getRoot() );
     }
 
     public void stop() throws DeploymentException {

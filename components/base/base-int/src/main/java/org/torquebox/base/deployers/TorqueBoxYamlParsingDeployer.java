@@ -5,22 +5,45 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
+import org.jboss.deployers.spi.DeploymentException;
+import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.metadata.TorqueBoxMetaData;
 import org.yaml.snakeyaml.Yaml;
 
-public class TorqueBoxYamlParsingDeployer extends AbstractVFSParsingDeployer<TorqueBoxMetaData> {
+public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
 
     public TorqueBoxYamlParsingDeployer() {
-        super(TorqueBoxMetaData.class);
-        setName("torquebox.yml");
+        addOutput(TorqueBoxMetaData.class);
+        setStage(DeploymentStages.PARSE);
     }
 
     @Override
-    protected TorqueBoxMetaData parse(VFSDeploymentUnit unit, VirtualFile file, TorqueBoxMetaData root) throws Exception {
-        return parse(file);
+    protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        VirtualFile file = getMetaDataFile(unit, "torquebox.yml");
+
+        if (file == null) {
+            return;
+        }
+
+        try {
+            TorqueBoxMetaData metaData = parse(unit, file);
+            unit.addAttachment(TorqueBoxMetaData.class, metaData);
+        } catch (Exception e) {
+            throw new DeploymentException(e);
+        }
+    }
+
+    protected TorqueBoxMetaData parse(VFSDeploymentUnit unit, VirtualFile file) throws Exception {
+        TorqueBoxMetaData externalMetaData = unit.getAttachment(TorqueBoxMetaData.EXTERNAL, TorqueBoxMetaData.class);
+        TorqueBoxMetaData internalMetaData = parse(file);
+
+        if (externalMetaData == null) {
+            return internalMetaData;
+        }
+
+        return externalMetaData.overlayOnto(internalMetaData);
     }
 
     @SuppressWarnings("unchecked")

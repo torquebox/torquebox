@@ -1,6 +1,0 @@
----
-application:
-  RACK_ROOT: ${basedir}/apps/rack/1.1.0/basic
-  RACK_ENV: development
-web:
-  context: /basic-rack
