@@ -14,7 +14,7 @@ public class SinatraQueuesTest extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "sinatra/1.0/queues-rack.yml" );
+		return createDeployment( "sinatra/1.0/queues-knob.yml" );
 	}
 
 	@Test
