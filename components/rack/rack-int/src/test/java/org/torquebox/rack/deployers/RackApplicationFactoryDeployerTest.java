@@ -122,7 +122,7 @@ public class RackApplicationFactoryDeployerTest extends AbstractDeployerTestCase
 		RackApplicationFactoryImpl factory = (RackApplicationFactoryImpl) getBean(beanName);
 		assertNotNull( factory );
 		assertNotNull( factory.getRackUpFile() );
-		assertEquals( VFS.getChild( "/sample/app/config.ru"), factory.getRackUpFile() );
+		assertEquals( VFS.getChild( "/sample/app/" + RackApplicationFactoryDeployer.SYNTHETIC_CONFIG_RU_NAME), factory.getRackUpFile() );
 		
 		undeploy( deploymentName );
 		undeploy( this.runtimeInstanceFactoryDeploymentName );

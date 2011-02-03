@@ -45,7 +45,7 @@ import org.torquebox.rack.spi.RackApplicationFactory;
  */
 public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
-	private static final String SYNTHETIC_CONFIG_RU_NAME = "torquebox-synthetic-config.ru";
+	public static final String SYNTHETIC_CONFIG_RU_NAME = "torquebox-synthetic-config.ru";
 
     public RackApplicationFactoryDeployer() {
 		super(RackApplicationMetaData.class);

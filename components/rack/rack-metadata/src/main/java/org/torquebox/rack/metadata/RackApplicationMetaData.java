@@ -34,45 +34,6 @@ import org.jboss.vfs.VirtualFile;
 
 public class RackApplicationMetaData {
 
-    public void setRackRoot(VirtualFile rackRoot) {
-        this.rackRoot = rackRoot;
-    }
-
-    public void setRackRoot(String path) {
-        if (path != null) {
-            String sanitizedPath = null;
-
-            if (path.indexOf("\\\\") >= 0) {
-                sanitizedPath = path.replaceAll("\\\\\\\\", "/"); // is that really 8 backslashes?
-                sanitizedPath = sanitizedPath.replaceAll("\\\\", "");
-            } else {
-                sanitizedPath = path.replaceAll("\\\\", "/");
-            }
-            VirtualFile rackRoot = VFS.getChild(sanitizedPath);
-            setRackRoot(rackRoot);
-        }
-    }
-
-    public VirtualFile getRackRoot() {
-        return this.rackRoot;
-    }
-
-    public String getRackRootPath() {
-        try {
-            return getRackRoot().toURL().toString();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public void setRackEnv(String rackEnv) {
-        this.rackEnv = rackEnv;
-    }
-
-    public String getRackEnv() {
-        return this.rackEnv;
-    }
-
     public void setRackUpScript(String rackUpScript) {
         this.rackUpScript = rackUpScript;
     }

@@ -114,7 +114,6 @@ public class RackFilter implements Filter {
 
 		try {
 			rackApp = borrowRackApplication();
-			//rackEnv = rackApp.createEnvironment(servletContext, request);
 			rackEnv = new RackEnvironmentImpl( rackApp.getRuby(), servletContext, request );
 			rackApp.call(rackEnv).respond(response);
 		} catch (RaiseException e) {
