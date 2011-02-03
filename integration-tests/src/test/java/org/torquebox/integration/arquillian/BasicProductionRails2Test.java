@@ -16,7 +16,7 @@ public class BasicProductionRails2Test extends AbstractIntegrationTest {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment("rails/2.x/basic-production-rails.yml");
+        return createDeployment("rails/2.x/basic-production-knob.yml");
     }
 
     @Test

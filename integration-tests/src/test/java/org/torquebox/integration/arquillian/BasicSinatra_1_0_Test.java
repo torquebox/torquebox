@@ -1,13 +1,11 @@
 package org.torquebox.integration.arquillian;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -16,7 +14,7 @@ public class BasicSinatra_1_0_Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment("sinatra/1.0/basic-sinatra-rack.yml");
+		return createDeployment("sinatra/1.0/basic-sinatra-knob.yml");
 	}
 
 	@Test

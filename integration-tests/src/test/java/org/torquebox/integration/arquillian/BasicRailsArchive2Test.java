@@ -21,7 +21,7 @@ public class BasicRailsArchive2Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() throws Exception {
-	    JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "archive.rails" );
+	    JavaArchive archive = ShrinkWrap.create(JavaArchive.class, "archive.knob" );
 	    
 	    File railsApp = new File( System.getProperty ("user.dir" ) + "/apps/rails/2.x/basic" );
 	    
