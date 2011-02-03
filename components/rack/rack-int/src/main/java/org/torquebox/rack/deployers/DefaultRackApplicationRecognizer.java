@@ -5,12 +5,18 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.base.deployers.AbstractRecognizer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-public class RackApplicationRecognizer extends AbstractRecognizer {
+public class DefaultRackApplicationRecognizer extends AbstractRecognizer {
+    
+    public static final String DEFAULT_RACKUP_PATH = "config.ru";
+    
+    public DefaultRackApplicationRecognizer() {
+        addOutput(RackApplicationMetaData.class);
+        setRelativeOrder( 5000 );
+    }
 
     @Override
     protected boolean isRecognized(VFSDeploymentUnit unit) {
-        return hasAnyOf(unit.getRoot(), "torquebox.yml", "config/torquebox.yml", "config.ru", "Rakefile", ".bundle/config");
-
+        return hasAnyOf(unit.getRoot(), DEFAULT_RACKUP_PATH );
     }
 
     @Override
@@ -21,6 +27,7 @@ public class RackApplicationRecognizer extends AbstractRecognizer {
         if (rackAppMetaData == null) {
             log.info("Initializing rack application: " + unit);
             rackAppMetaData = new RackApplicationMetaData();
+            rackAppMetaData.setRackUpScriptLocation( DEFAULT_RACKUP_PATH );
             unit.addAttachment(RackApplicationMetaData.class, rackAppMetaData);
         }
     }

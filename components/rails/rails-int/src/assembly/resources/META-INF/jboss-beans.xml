@@ -8,6 +8,11 @@
   <bean name="RailsEnvYamlParsingDeployer"          class="org.torquebox.rails.deployers.RailsEnvYamlParsingDeployer"/>
   <bean name="AppRailsYamlParsingDeployer"          class="org.torquebox.rails.deployers.AppRailsYamlParsingDeployer"/>
   -->
+  
+  <bean name="RailsApplicationRecognizer"           class="org.torquebox.rails.deployers.RailsApplicationRecognizer"/>
+  
+  <bean name="RailsRuntimeDeployer"                 class="org.torquebox.rails.deployers.RailsRuntimeDeployer"/>
+  
   <bean name="RailsGemVersionDeployer"              class="org.torquebox.rails.deployers.RailsGemVersionDeployer"/>
   <bean name="RailsRackDeployer"                    class="org.torquebox.rails.deployers.RailsRackDeployer"/>
   <bean name="RailsAutoloadPathDeployer"            class="org.torquebox.rails.deployers.RailsAutoloadPathDeployer"/>

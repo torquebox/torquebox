@@ -17,6 +17,7 @@ public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
     public TorqueBoxYamlParsingDeployer() {
         addOutput(TorqueBoxMetaData.class);
         setStage(DeploymentStages.PARSE);
+        setRelativeOrder( -5000 );
     }
 
     @Override
@@ -26,25 +27,17 @@ public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
         if (file == null) {
             return;
         }
+        log.info( "Parsing: " + unit );
 
         try {
-            TorqueBoxMetaData metaData = parse(unit, file);
+            TorqueBoxMetaData metaData = parse(file);
+            log.info( "Parsed: " + metaData );
             unit.addAttachment(TorqueBoxMetaData.class, metaData);
         } catch (Exception e) {
             throw new DeploymentException(e);
         }
     }
 
-    protected TorqueBoxMetaData parse(VFSDeploymentUnit unit, VirtualFile file) throws Exception {
-        TorqueBoxMetaData externalMetaData = unit.getAttachment(TorqueBoxMetaData.EXTERNAL, TorqueBoxMetaData.class);
-        TorqueBoxMetaData internalMetaData = parse(file);
-
-        if (externalMetaData == null) {
-            return internalMetaData;
-        }
-
-        return externalMetaData.overlayOnto(internalMetaData);
-    }
 
     @SuppressWarnings("unchecked")
     static TorqueBoxMetaData parse(VirtualFile file) throws IOException {

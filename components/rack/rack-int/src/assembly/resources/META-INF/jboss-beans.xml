@@ -7,7 +7,7 @@
   <bean name="AppRackYamlParsingDeployer"             class="org.torquebox.rack.deployers.AppRackYamlParsingDeployer"/>
   -->
   
-  <bean name="RackApplicationRecognizer"              class="org.torquebox.rack.deployers.RackApplicationRecognizer"/>
+  <bean name="DefaultRackApplicationRecognizer"       class="org.torquebox.rack.deployers.DefaultRackApplicationRecognizer"/>
   
   <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer"/>
   <bean name="RackApplicationPoolDeployer"            class="org.torquebox.rack.deployers.RackApplicationPoolDeployer"/>
@@ -15,7 +15,6 @@
   <bean name="RackRuntimeDeployer"                    class="org.torquebox.rack.deployers.RackRuntimeDeployer"/>
   <bean name="RackDefaultsDeployer"                   class="org.torquebox.rack.deployers.RackDefaultsDeployer"/>
 
-  <!-- deprecated -->
   <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>
 
 </deployment>

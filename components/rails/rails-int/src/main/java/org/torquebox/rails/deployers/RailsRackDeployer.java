@@ -29,18 +29,17 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
-
 /**
  * <pre>
  * Stage: POST_PARSE
  *    In: RailsApplicationMetaData, RackApplicationMetaData
  *   Out: RackApplicationMetaData
  * </pre>
- *
- * All Rails apps are essentially Rack apps, so from a Rails app we
- * construct Rack metadata to hand off to the Rack deployers.  We
- * assume that any deployer that attached a RailsApplicationMetaData
- * also attached a corresponding RackApplicationMetaData.
+ * 
+ * All Rails apps are essentially Rack apps, so from a Rails app we construct
+ * Rack metadata to hand off to the Rack deployers. We assume that any deployer
+ * that attached a RailsApplicationMetaData also attached a corresponding
+ * RackApplicationMetaData.
  */
 public class RailsRackDeployer extends AbstractDeployer {
 
@@ -48,27 +47,32 @@ public class RailsRackDeployer extends AbstractDeployer {
         setInput(RailsApplicationMetaData.class);
         addRequiredInput(RubyApplicationMetaData.class);
         addRequiredInput(RackApplicationMetaData.class);
-        
+
         addOutput(RackApplicationMetaData.class);
         setStage(DeploymentStages.POST_PARSE);
-        
-        //addInput(RackApplicationMetaData.class);
-        //addInput(RackDefaultsDeployer.COMPLETE);
+
+        // addInput(RackApplicationMetaData.class);
+        // addInput(RackDefaultsDeployer.COMPLETE);
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
+        log.debug("Deploying rails app as rack: " + unit);
         RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
-        
-        log.info(railsAppMetaData);
+
         try {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
-            if (railsAppMetaData.isRails3()) {
-                rackMetaData.setRackUpScriptLocation( "config.ru" );
-            } else {
-                rackMetaData.setRackUpScript( getRackUpScript(rackMetaData.getContextPath()) );
-            }
+
             log.info(rackMetaData);
+
+            if (railsAppMetaData.isRails3()) {
+                log.debug( "Configuring up a rails 3 application: " + unit );
+                rackMetaData.setRackUpScriptLocation("config.ru");
+            } else {
+                log.debug( "Configuring up a rails 2 application: " + unit );
+                rackMetaData.setRackUpScript(getRackUpScript(rackMetaData.getContextPath()));
+            }
+            log.debug("Configured rack deployment: " + unit + "\n" + rackMetaData);
         } catch (Exception e) {
             throw new DeploymentException(e);
         }

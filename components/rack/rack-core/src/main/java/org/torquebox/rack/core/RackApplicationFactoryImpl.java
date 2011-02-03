@@ -32,7 +32,6 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 public class RackApplicationFactoryImpl implements RackApplicationFactory {
 
 	private String rackUpScript;
-	
 	private VirtualFile rackUpFile;
 
 	public RackApplicationFactoryImpl() {

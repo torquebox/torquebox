@@ -119,4 +119,8 @@ public class TorqueBoxMetaData {
         return new TorqueBoxMetaData(mergedData);
     }
 
+    
+    public String toString() {
+        return "[TorqueBoxMetaData: data=" + this.data + "]";
+    }
 }

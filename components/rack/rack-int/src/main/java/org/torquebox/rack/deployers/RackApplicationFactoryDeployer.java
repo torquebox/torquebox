@@ -45,7 +45,9 @@ import org.torquebox.rack.spi.RackApplicationFactory;
  */
 public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
-	public RackApplicationFactoryDeployer() {
+	private static final String SYNTHETIC_CONFIG_RU_NAME = "torquebox-synthetic-config.ru";
+
+    public RackApplicationFactoryDeployer() {
 		super(RackApplicationMetaData.class);
 		addRequiredInput(RubyApplicationMetaData.class);
 		addOutput(RackApplicationMetaData.class);
@@ -62,10 +64,15 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
             String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
             
             BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
+            
+            log.info( "factory rackup: " + rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
             builder.addPropertyMetaData("rackUpScript", rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ));
             
             VirtualFile rackUpScriptLocation = rackAppMetaData.getRackUpScriptFile( rubyAppMetaData.getRoot() );
             
+            if ( rackUpScriptLocation == null ) {
+                rackUpScriptLocation = rubyAppMetaData.getRoot().getChild( SYNTHETIC_CONFIG_RU_NAME );
+            }
             builder.addPropertyMetaData("rackUpFile", rackUpScriptLocation);
             
             AttachmentUtils.attach(unit, builder.getBeanMetaData());

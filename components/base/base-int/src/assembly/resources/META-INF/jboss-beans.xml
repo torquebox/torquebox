@@ -3,12 +3,12 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
   <bean name="KnobStructure"                   class="org.torquebox.base.deployers.KnobStructure"/>
-  
-  <bean name="AppKnobYamlParsingDeployer"      class="org.torquebox.base.deployers.AppKnobYamlParsingDeployer"/>
-  
   <bean name="RubyApplicationRecognizer"       class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>
   
+  <bean name="AppKnobYamlParsingDeployer"      class="org.torquebox.base.deployers.AppKnobYamlParsingDeployer"/>
   <bean name="TorqueBoxYamlParsingDeployer"    class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
+  <bean name="MergedTorqueBoxMetaDataDeployer" class="org.torquebox.base.deployers.MergedTorqueBoxMetaDataDeployer"/>
+  
   <bean name="ApplicationYamlParsingDeployer"  class="org.torquebox.base.deployers.ApplicationYamlParsingDeployer"/>
   <bean name="RubyApplicationExploder"         class="org.torquebox.base.deployers.RubyApplicationExploder"/>
   <bean name="ArchiveDirectoryMounter"         class="org.torquebox.base.deployers.RubyApplicationExploder"/>

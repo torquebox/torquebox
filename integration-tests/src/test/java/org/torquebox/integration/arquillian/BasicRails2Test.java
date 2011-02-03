@@ -6,6 +6,7 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -14,12 +15,13 @@ public class BasicRails2Test extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "rails/2.x/basic-rails.yml" );
+		return createDeployment( "rails/2.x/basic-knob.yml" );
 	}
 
 	@Test
 	public void testHighLevel() {
         driver.get( "http://localhost:8080/basic-rails" );
+        System.err.println( driver.getPageSource() );
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "basic-rails", element.getAttribute( "class" ) );

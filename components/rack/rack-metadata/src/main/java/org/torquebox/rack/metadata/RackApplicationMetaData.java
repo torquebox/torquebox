@@ -116,6 +116,10 @@ public class RackApplicationMetaData {
     }
 
     public VirtualFile getRackUpScriptFile(VirtualFile root) {
+        if ( this.rackUpScriptLocation == null ) {
+            return null;
+        }
+        
         if (this.rackUpScriptLocation.startsWith("/") || rackUpScriptLocation.matches("^[A-Za-z]:.*") ) {
            return VFS.getChild(rackUpScriptLocation);
         } else {
@@ -189,12 +193,12 @@ public class RackApplicationMetaData {
     }
 
     public String toString() {
-        return "RackApplicationMetaData:\n  rackup=" + this.rackUpScriptLocation + "\n  host=" + this.hosts
+        return "RackApplicationMetaData:\n  rackupScriptLocation=" + this.rackUpScriptLocation + "\n  rackUpScript=" + this.rackUpScript + "\n  host=" + this.hosts
                 + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix;
     }
 
     private String rackUpScript;
-    private String rackUpScriptLocation = "config.ru";
+    private String rackUpScriptLocation;
 
     private List<String> hosts = new ArrayList<String>();
     private String contextPath;

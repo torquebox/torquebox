@@ -28,51 +28,58 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-
 /**
  * <pre>
  * Stage: PARSE
  *    In: web.yml
  *   Out: RackApplicationMetaData
  * </pre>
- *
- * Internal deployment descriptor for setting vhosts, web context, and
- * static content dir
- *
+ * 
+ * Internal deployment descriptor for setting vhosts, web context, and static
+ * content dir
+ * 
  */
 public class WebYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
-	public WebYamlParsingDeployer() {
-		setSectionName("web");
-		addInput(RackApplicationMetaData.class);
-		addOutput(RackApplicationMetaData.class);
-	}
+    public WebYamlParsingDeployer() {
+        setSectionName("web");
+        addInput(RackApplicationMetaData.class);
+        addOutput(RackApplicationMetaData.class);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-		
-		RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
-		
-		if ( rackMetaData == null ) {
-		    rackMetaData = new RackApplicationMetaData();
-		    unit.addAttachment( RackApplicationMetaData.class, rackMetaData);
-		}
-		
-		Map<String, Object> web = (Map<String, Object>) dataObj;
-		
-		rackMetaData.setContextPath( (String) web.get( "context" ));
-		rackMetaData.setStaticPathPrefix( (String) web.get( "static" ));
-		
-		Object hosts = web.get( "host" );
-		
+    @SuppressWarnings("unchecked")
+    public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
+
+        log.debug("Deploying web configuration: " + unit);
+        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
+
+        if (rackMetaData == null) {
+            log.debug("Initializing web configuration: " + unit);
+            rackMetaData = new RackApplicationMetaData();
+            unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
+        }
+
+        Map<String, Object> web = (Map<String, Object>) dataObj;
+
+        rackMetaData.setContextPath((String) web.get("context"));
+        rackMetaData.setStaticPathPrefix((String) web.get("static"));
+
+        if (web.get("rackup") != null) {
+            rackMetaData.setRackUpScriptLocation((String) web.get("rackup"));
+        }
+
+        Object hosts = web.get("host");
+
         if (hosts instanceof List) {
             List<String> list = (List<String>) hosts;
-            for (String each: list) {
+            for (String each : list) {
                 rackMetaData.addHost(each);
             }
         } else {
-            rackMetaData.addHost( (String) hosts );
+            rackMetaData.addHost((String) hosts);
         }
-	}
+
+        log.debug("Configured as: " + rackMetaData);
+    }
 
 }
