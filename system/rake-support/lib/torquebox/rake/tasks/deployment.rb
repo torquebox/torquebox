@@ -1,65 +1,23 @@
 
 require 'rake'
 
-def rails_deployment_name( app_name )
-  "#{app_name}-rails.yml"
-end
+def deployment(app_name, root, context_path)
+  env = defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
+  if ( env.nil? ) 
+    env = defined?(RAILS_ENV) ? RAILS_ENV : ENV['RAILS_ENV']
+  end
 
-def rack_deployment_name( app_name )
-  "#{app_name}-rack.yml"
-end
-
-def rails_deployment(app_name, root, context_path)
   deployment_descriptor = {
     'application' => {
-      'RAILS_ROOT'=>root,
-      'RAILS_ENV'=>( defined?( RAILS_ENV ) ? RAILS_ENV : 'development' ).to_s,
+      'root'=>root,
+      'env'=>( env || 'development' ).to_s,
     },
     'web' => {
       'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
     }
   }
 
-  [ rails_deployment_name( app_name ), deployment_descriptor ]
-end
-
-def rack_deployment(app_name, root, context_path)
-  env = defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
-  deployment_descriptor = { 
-    'application' => {
-      'RACK_ROOT'=>root,
-      'RACK_ENV'=>( env || 'development' ).to_s,
-    },
-    'web' => {
-      'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
-    }
-  }
-
-  [ rack_deployment_name( app_name ), deployment_descriptor ]
-end
-
-def rails?(root = Dir.pwd)
-  File.exist?( File.join( root, 'config', 'environment.rb' ) )
-end
-
-def rack?(root = Dir.pwd)
-  not rails?(root)
-end
-
-def deployment(app_name, root, context_path)
-  if ( rails?( root ) )
-    return rails_deployment( app_name, root, context_path )
-  elsif ( rack?( root ) )
-    return rack_deployment( app_name, root, context_path )
-  end
-end
-
-def deployment_name(app_name, root )
-  if ( rails?( root ) )
-    return rails_deployment_name( app_name )
-  elsif ( rack?( root ) )
-    return rack_deployment_name( app_name )
-  end
+  [ "#{app_name}-knob.yml", deployment_descriptor ]
 end
 
 namespace :torquebox do
@@ -76,7 +34,7 @@ namespace :torquebox do
   desc "Undeploy the app in the current directory"
   task :undeploy=>['torquebox:check'] do
     app_name = File.basename( Dir.pwd )
-    deployment_name = deployment_name( app_name, Dir.pwd )
+    deployment_name = "#{app_name}-knob.yml"
     TorqueBox::RakeUtils.undeploy( deployment_name )
     puts "Undeployed #{deployment_name}"
   end

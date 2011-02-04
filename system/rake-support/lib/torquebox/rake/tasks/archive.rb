@@ -3,14 +3,14 @@ require 'rbconfig'
 require 'rake'
 
 def get_archive_name root=Dir.pwd
-  File.basename(root) + (rails?(root) ? '.rails' : '.rack')
+  File.basename(root) + '.knob'
 end
 
 namespace :torquebox do
 
   desc "Create a nice self-contained application archive"
   task :archive do
-    skip_files = %w{ ^log$ ^tmp$ \.rails$ \.rack$ vendor }
+    skip_files = %w{ ^log$ ^tmp$ \.knob$ vendor }
 
     include_files = []
     Dir[ "*", ".bundle" ].each do |entry|
@@ -24,7 +24,8 @@ namespace :torquebox do
       include_files << entry unless ( entry == 'vendor/cache' )
     end
 
-    archive_name = get_archive_name
+    app_name = File.basename( Dir.pwd )
+    archive_name = "#{app_name}.knob"
     puts "Creating archive: #{archive_name}"
     cmd = "jar cvf #{archive_name} #{include_files.join(' ')}"
     Open3.popen3( cmd ) do |stdin, stdout, stderr|
