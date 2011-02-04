@@ -26,13 +26,13 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-metadata</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-int</artifactId>
       <version>${project.version}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>

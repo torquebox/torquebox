@@ -34,6 +34,10 @@ import org.jboss.vfs.VirtualFile;
 
 public class RackApplicationMetaData {
 
+    public RackApplicationMetaData() {
+        
+    }
+    
     public void setRackUpScript(String rackUpScript) {
         this.rackUpScript = rackUpScript;
     }

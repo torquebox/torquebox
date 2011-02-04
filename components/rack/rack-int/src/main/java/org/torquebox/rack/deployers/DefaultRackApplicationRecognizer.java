@@ -10,6 +10,7 @@ public class DefaultRackApplicationRecognizer extends AbstractRecognizer {
     public static final String DEFAULT_RACKUP_PATH = "config.ru";
     
     public DefaultRackApplicationRecognizer() {
+        addInput(RackApplicationMetaData.class);
         addOutput(RackApplicationMetaData.class);
         setRelativeOrder( 5000 );
     }
