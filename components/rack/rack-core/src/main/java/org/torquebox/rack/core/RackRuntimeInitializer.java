@@ -7,6 +7,7 @@ import org.jruby.Ruby;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rack.spi.RackMiddleware;
 
 
 /**
@@ -36,6 +37,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         ruby.evalScriptlet(getInitializerScript());
         ruby.setCurrentDirectory(this.rubyAppMetaData.getRoot().getPhysicalFile().getCanonicalPath());
         log.info("Current directory: "+ruby.getCurrentDirectory());
+        log.info("Initialize with: \n  " + rubyAppMetaData + "\n  " + rackAppMetaData );
     }
 
     /** Create the initializer script.

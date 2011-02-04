@@ -64,6 +64,7 @@ public class RailsRackDeployer extends AbstractDeployer {
             RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
 
             log.info(rackMetaData);
+            log.info(railsAppMetaData);
 
             if (railsAppMetaData.isRails3()) {
                 log.debug( "Configuring up a rails 3 application: " + unit );

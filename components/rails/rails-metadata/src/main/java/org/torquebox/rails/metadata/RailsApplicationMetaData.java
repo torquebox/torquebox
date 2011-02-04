@@ -21,29 +21,12 @@
  */
 package org.torquebox.rails.metadata;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.regex.Pattern;
-
-import org.jboss.vfs.VirtualFile;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 
 public class RailsApplicationMetaData {
 
     public RailsApplicationMetaData() {
-    }
-
-    public void setFrozen(boolean frozen) {
-        this.frozen = frozen;
-    }
-
-    public boolean isFrozen() {
-        return this.frozen;
-    }
-
-    public boolean needsGems() {
-        return ! isFrozen();
     }
 
     public void setVersionSpec(String versionSpec) {
@@ -55,18 +38,16 @@ public class RailsApplicationMetaData {
     }
     
     public boolean isRails2() {
-        return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
+        return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]+\\.[0-9]+\\.*", getVersionSpec() );
     }
     
     public boolean isRails3() {
-        return getVersionSpec() != null && Pattern.matches( ".*3\\.[0-9]\\.[0-9]\\.*", getVersionSpec() );
+        return  ! isRails2();
     }
     
     public String toString() {
-        return "RailsApplicationMetaData:\n  version=" + versionSpec + "\n  frozen=" + isFrozen();
+        return "[RailsApplicationMetaData:\n  version=" + versionSpec + "]";
     }
 
     private String versionSpec;
-    private boolean frozen;
-    private RackApplicationMetaData rackMetaData;
 }

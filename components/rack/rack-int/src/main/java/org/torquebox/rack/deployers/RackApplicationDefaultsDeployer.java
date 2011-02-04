@@ -27,41 +27,25 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-/**
- * <pre>
- * Stage: POST_PARSE
- *    In: RackApplicationMetaData
- *   Out: RackApplicationMetaData, "ALL FIELDS SET"
- * </pre>
- * 
- */
-public class RackDefaultsDeployer extends AbstractDeployer {
+public class RackApplicationDefaultsDeployer extends AbstractDeployer {
 
-    public static final String COMPLETE = "ALL FIELDS SET";
+    public static final String DEFAULT_HOST = "localhost";
+    public static final String DEFAULT_CONTEXT_PATH = "/";
 
-    public RackDefaultsDeployer() {
-        setStage(DeploymentStages.POST_PARSE);
+    public RackApplicationDefaultsDeployer() {
+        setStage(DeploymentStages.PRE_REAL);
         setInput(RackApplicationMetaData.class);
         addOutput(RackApplicationMetaData.class);
-        addOutput(COMPLETE);
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        /*
-        try {
-            RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
-            metadata.setRackEnv("development");
-            metadata.setRackUpScriptLocation("config.ru");
-            metadata.setRackApplicationName( unit.getSimpleName() );
-            if (metadata.getHosts().isEmpty()) {
-                metadata.addHost("localhost");
-            }
-            metadata.setContextPath("/");
-            metadata.setStaticPathPrefix("/public");
-            log.info(metadata);
-        } catch (Exception e) {
-            throw new DeploymentException(e);
+        RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
+        if (metadata.getHosts().isEmpty()) {
+            metadata.addHost(DEFAULT_HOST);
         }
-        */
+
+        if (metadata.getContextPath() == null == metadata.getContextPath().trim().equals("")) {
+            metadata.setContextPath(DEFAULT_CONTEXT_PATH);
+        }
     }
 }

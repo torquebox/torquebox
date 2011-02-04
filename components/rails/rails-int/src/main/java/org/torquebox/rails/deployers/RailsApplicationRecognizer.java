@@ -6,15 +6,16 @@ import org.torquebox.base.deployers.AbstractRecognizer;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
 
 public class RailsApplicationRecognizer extends AbstractRecognizer {
-    
+
     public RailsApplicationRecognizer() {
-        addOutput( RailsApplicationMetaData.class );
-        setRelativeOrder( 1000 );
+        addInput(RailsApplicationMetaData.class);
+        addOutput(RailsApplicationMetaData.class);
+        setRelativeOrder(1000);
     }
 
     @Override
     protected boolean isRecognized(VFSDeploymentUnit unit) {
-        return hasAnyOf(unit.getRoot(), "config/boot.rb" );
+        return hasAnyOf(unit.getRoot(), "config/boot.rb");
     }
 
     @Override

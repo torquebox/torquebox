@@ -6,8 +6,8 @@ import org.jboss.vfs.VirtualFile;
 public class RubyApplicationMetaData {
 	
     private VirtualFile root;
-	private String environmentName = "development";
-	private boolean developmentMode = true;
+	private String environmentName;
+	private boolean developmentMode = false;
 	private boolean archive = false;
 	
 	public RubyApplicationMetaData() {
@@ -69,5 +69,8 @@ public class RubyApplicationMetaData {
 		return this.environmentName;
 	}
 	
+	public String toString() {
+	    return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "]";
+	}
 
 }

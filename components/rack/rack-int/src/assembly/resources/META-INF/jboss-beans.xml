@@ -9,11 +9,12 @@
   
   <bean name="DefaultRackApplicationRecognizer"       class="org.torquebox.rack.deployers.DefaultRackApplicationRecognizer"/>
   
+  <bean name="RackApplicationDefaultsDeployer"        class="org.torquebox.rack.deployers.RackApplicationDefaultsDeployer"/>
+  
   <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer"/>
   <bean name="RackApplicationPoolDeployer"            class="org.torquebox.rack.deployers.RackApplicationPoolDeployer"/>
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>
   <bean name="RackRuntimeDeployer"                    class="org.torquebox.rack.deployers.RackRuntimeDeployer"/>
-  <bean name="RackDefaultsDeployer"                   class="org.torquebox.rack.deployers.RackDefaultsDeployer"/>
 
   <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>
 

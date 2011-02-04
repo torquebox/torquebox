@@ -8,6 +8,7 @@ import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
@@ -20,6 +21,7 @@ public class BasicProductionRails2Test extends AbstractIntegrationTest {
     }
 
     @Test
+    @Ignore
     public void testHighLevel() {
         driver.get("http://localhost:8080/basic-production-rails");
         WebElement element = driver.findElementById("success");

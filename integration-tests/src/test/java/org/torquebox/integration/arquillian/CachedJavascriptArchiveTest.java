@@ -1,10 +1,8 @@
 package org.torquebox.integration.arquillian;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.io.File;
-import java.util.zip.ZipFile;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
@@ -18,11 +16,7 @@ public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() throws Exception {
-        //ZipFile app = new ZipFile( System.getProperty("user.dir") + "/apps/rails/3.0.0/torque-174.rails" );
-        //return ShrinkWrap.create(ZipImporter.class, "torque-174.rails")
-            //.importZip(app)
-            //.as(JavaArchive.class);
-        File exploded = new File( System.getProperty("user.dir") + "/apps/rails/3.0.0/torque-174.rails" );
+        File exploded = new File( System.getProperty("user.dir") + "/apps/rails/3.0.0/torque-174.knob" );
         
 	    return archive( exploded );
 	}
