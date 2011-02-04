@@ -5,11 +5,11 @@
   <title>Application Deployment</title>
 
   <para>The TorqueBox Application Server is capable of serving many
-  applications simultaneously. To add your application to the server,
-  you must <emphasis>deploy</emphasis> it. To deploy an application,
-  you put some artifact in the deploy/ directory (or farm/ if
-  clustering) of the TorqueBox AS. When the AS is running, it will
-  detect that artifact and activate the associated application.</para>
+  applications simultaneously. To add your application to the server, you must
+  <emphasis>deploy</emphasis> it. To deploy an application, you put some
+  artifact in the deploy/ directory (or farm/ if clustering) of the TorqueBox
+  AS. When the AS is running, it will detect that artifact and activate the
+  associated application.</para>
 
   <section id="deploy-using-rake" revision="1">
     <title id="rake-tasks">Rake tasks</title>
@@ -98,6 +98,7 @@
       variable when executing the rake tasks.</para>
 
       <para>For example: <screen>$ <command>RAILS_ENV=production rake torquebox:deploy</command></screen></para>
+
       <para>or <screen>$ <command>RACK_ENV=staging rake torquebox:deploy</command></screen></para>
     </section>
   </section>
@@ -105,104 +106,78 @@
   <section>
     <title>Deploy using a descriptor</title>
 
-    <para>
-      To customize some of the aspects of deployment, instead of using
-      the Rake tasks, you may manually create a <emphasis>deployment
-      descriptor</emphasis>. 
-    </para>
+    <para>To customize some of the aspects of deployment, instead of using the
+    Rake tasks, you may manually create a <emphasis>deployment
+    descriptor</emphasis>.</para>
 
-    <para>
-      A deployment descriptor is a small text file that is placed in
-      the <filename>deploy/</filename> directory of the TorqueBox
-      server.  This directory is constantly monitored for changes.  To
-      deploy an app, add a descriptor with a suffix of either
-      <filename>-rails.yml</filename> for a Rails app, or
-      <filename>-rack.yml</filename> for any other.  To redeploy or
-      "bounce" the app, edit or <command>touch</command> the
-      descriptor.  To undeploy it, remove the descriptor.  This is
-      precisely what the <command>torquebox:deploy</command> and
-      <command>torquebox:undeploy</command> rake tasks do.
-    </para>
+    <para>A deployment descriptor is a small text file that is placed in the
+    <filename>deploy/</filename> directory of the TorqueBox server. This
+    directory is constantly monitored for changes. To deploy an app, add a
+    descriptor with a suffix of either <filename>-rails.yml</filename> for a
+    Rails app, or <filename>-rack.yml</filename> for any other. To redeploy or
+    "bounce" the app, edit or <command>touch</command> the descriptor. To
+    undeploy it, remove the descriptor. This is precisely what the
+    <command>torquebox:deploy</command> and
+    <command>torquebox:undeploy</command> rake tasks do.</para>
 
-    <para>
-      For details on the various options for authoring deployment
-      descriptors, see <xref linkend="deployment-descriptors"/>.
-    </para>
-
+    <para>For details on the various options for authoring deployment
+    descriptors, see <xref linkend="deployment-descriptors" />.</para>
   </section>
 
   <section>
     <title>Deployment using a self-contained archive</title>
 
     <para>Ruby web applications may be deployed as atomic
-    <emphasis>self-contained archives</emphasis>. An archive is simply
-    a packaging of the application's directory. The TorqueBox server
-    deploys bundles created with the Java <command>jar</command>
-    tool. Rake tasks are provided to assist with the creation and
-    deployment of bundles.</para>
+    <emphasis>self-contained archives</emphasis>. An archive is simply a
+    packaging of the application's directory. The TorqueBox server deploys
+    bundles created with the Java <command>jar</command> tool. Rake tasks are
+    provided to assist with the creation and deployment of bundles.</para>
 
     <section>
       <title>Configuring an archive</title>
 
-      <para>
-        Typically, an application is <link
-        linkend="deployment-descriptors">configured using a deployment
-        descriptor suffixed by either <filename>-rails.yml</filename>
-        or <filename>-rack.yml</filename></link> and placed in
-        <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>.
-        We refer to this file as an <emphasis>external</emphasis>
-        descriptor, because it resides outside of the app's root
-        directory.
-      </para>
+      <para>Typically, an application is <link
+      linkend="deployment-descriptors">configured using a deployment
+      descriptor suffixed by <filename>-knob.yml</filename></link> and placed
+      in <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>. We refer
+      to this file as an <emphasis>external</emphasis> descriptor, because it
+      resides outside of the app's root directory.</para>
 
-      <para>
-        An application archive may be configured using an
-        <emphasis>internal</emphasis> descriptor as well.  This
-        descriptor should be named <filename>torquebox.yml</filename>
-        and contained within the archive's
-        <filename>config/</filename> directory for a Rails app or the
-        root directory of a Rack app. This is described in more detail
-        in <xref linkend="deployment-descriptors" />.
-      </para>
+      <para>An application archive may be configured using an
+      <emphasis>internal</emphasis> descriptor as well. This descriptor should
+      be named <filename>torquebox.yml</filename> and contained within the
+      archive's <filename>config/</filename> directory for a Rails app or the
+      root directory of a Rack app. This is described in more detail in <xref
+      linkend="deployment-descriptors" />.</para>
 
-      <para>
-        When your application is packaged as a fully-described
-        self-contained archive, you may override portions of the
-        internal descriptor using an external descriptor.  If you do,
-        make sure that only the external descriptor resides beneath
-        <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>.
-        The archive containing the (possibly overridden) internal
-        descriptors should reside elsewhere on the filesystem, its
-        path referenced in the external descriptor.  Having both the
-        archive and the external descriptor beneath
-        <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>
-        will result in errors stemming from two separate deployments
-        of the same app.
-      </para>
+      <para>When your application is packaged as a fully-described
+      self-contained archive, you may override portions of the internal
+      descriptor using an external descriptor. If you do, make sure that only
+      the external descriptor resides beneath
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>. The archive
+      containing the (possibly overridden) internal descriptors should reside
+      elsewhere on the filesystem, its path referenced in the external
+      descriptor. Having both the archive and the external descriptor beneath
+      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename> will result
+      in errors stemming from two separate deployments of the same app.</para>
+    </section>
 
-  </section>
-    
     <section>
       <title>Creating an archive</title>
 
-      <para>After creating <filename>torquebox.yml</filename>, if
-      necessary, the <command>torquebox:archive</command> rake task
-      may be used to create a bundle of the application. The task
-      invokes the Java <command>jar</command> commandline tool to
-      bundle up the project directory, <emphasis>excluding</emphasis>
-      <filename>tmp/</filename> and <filename>log/</filename>
-      directories.</para>
+      <para>After creating <filename>torquebox.yml</filename>, if necessary,
+      the <command>torquebox:archive</command> rake task may be used to create
+      a bundle of the application. The task invokes the Java
+      <command>jar</command> commandline tool to bundle up the project
+      directory, <emphasis>excluding</emphasis> <filename>tmp/</filename> and
+      <filename>log/</filename> directories.</para>
 
-      <para>
-        <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>
-        
-        The resulting archive will be placed at the root of the
-        application, with a suffix of either
-        <filename>.rails</filename> or <filename>.rack</filename>.  To
-        inspect the contents, you may use the <command>jar</command>
-        tool.</para>
+      <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>
+      The resulting archive will be placed at the root of the application,
+      with a suffix of <filename>.knob</filename>. To inspect the contents,
+      you may use the <command>jar</command> tool.</para>
 
-      <para><screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.rails</filename>
+      <para><screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.knob</filename>
 META-INF/
 META-INF/MANIFEST.MF
 app/
@@ -229,5 +204,4 @@ $ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filena
       and hot-redeploy the new versions just copied.</para>
     </section>
   </section>
-
 </chapter>
