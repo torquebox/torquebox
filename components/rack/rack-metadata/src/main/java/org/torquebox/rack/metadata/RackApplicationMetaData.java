@@ -154,7 +154,7 @@ public class RackApplicationMetaData {
     }
 
     public String toString() {
-        return "[RackApplicationMetaData:\n  rackupScriptLocation=" + this.rackUpScriptLocation + "\n  rackUpScript=" + this.rackUpScript + "\n  host=" + this.hosts
+        return "[RackApplicationMetaData:" + System.identityHashCode( this ) + "\n  rackupScriptLocation=" + this.rackUpScriptLocation + "\n  rackUpScript=" + this.rackUpScript + "\n  host=" + this.hosts
                 + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix + "]";
     }
 

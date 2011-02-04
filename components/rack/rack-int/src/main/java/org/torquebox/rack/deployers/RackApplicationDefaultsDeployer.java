@@ -44,7 +44,7 @@ public class RackApplicationDefaultsDeployer extends AbstractDeployer {
             metadata.addHost(DEFAULT_HOST);
         }
 
-        if (metadata.getContextPath() == null == metadata.getContextPath().trim().equals("")) {
+        if ( (metadata.getContextPath() == null) || (metadata.getContextPath().trim().equals("")) ) {
             metadata.setContextPath(DEFAULT_CONTEXT_PATH);
         }
     }

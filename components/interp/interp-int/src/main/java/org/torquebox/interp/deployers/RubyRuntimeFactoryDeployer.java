@@ -104,6 +104,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		String beanName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class );
 		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyRuntimeFactoryImpl.class.getName() );
 		
+		log.info( "Using initializer: " + metaData.getRuntimeInitializer() );
 		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( metaData.getRuntimeInitializer() );
 		
 		List<String> loadPaths = new ArrayList<String>();
@@ -133,15 +134,6 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
 		} catch (Throwable e) {
 			throw new DeploymentException(e );
 		}
-		
-		/*
-		try {
-			Ruby ruby = factory.create(); 
-			unit.addAttachment( Ruby.class, ruby );
-		} catch (Exception e) {
-			throw new DeploymentException( e );
-		}
-		*/
 		
 		unit.addAttachment( DeployerRuby.class, new DeployerRuby( factory ) );
 		

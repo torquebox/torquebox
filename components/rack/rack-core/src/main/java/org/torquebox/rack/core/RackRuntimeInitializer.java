@@ -7,7 +7,6 @@ import org.jruby.Ruby;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.rack.spi.RackMiddleware;
 
 
 /**
@@ -64,6 +63,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         script.append("RACK_ROOT=%q(" + rackRootPath + ")\n");
         script.append("RACK_ENV=%q(" + rackEnv + ")\n");
         script.append("TORQUEBOX_APP_NAME=%q(" + appName + ")\n");
+        script.append("TORQUEBOX_RACKUP_CONTEXT=%q(" + contextPath + ")\n");
         script.append("ENV['RACK_ROOT']=%q(" + rackRootPath + ")\n");
         script.append("ENV['RACK_ENV']=%q(" + rackEnv + ")\n");
         script.append("ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n");
@@ -72,6 +72,8 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
             script.append("ENV['RAILS_RELATIVE_URL_ROOT']=%q(" + contextPath + ")\n");
             script.append("ENV['RACK_BASE_URI']=%q(" + contextPath + ")\n");
         }
+        
+        script.append( "puts \"CONTEXT: #{ENV['RAILS_RELATIVE_URL_ROOT']}\"\n" );
 
         return script.toString();
     }

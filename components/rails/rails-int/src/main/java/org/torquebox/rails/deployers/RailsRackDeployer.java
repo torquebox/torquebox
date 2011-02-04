@@ -43,6 +43,8 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
  */
 public class RailsRackDeployer extends AbstractDeployer {
 
+    public static final String STATIC_PATH_PREFIX = "public";
+
     public RailsRackDeployer() {
         setInput(RailsApplicationMetaData.class);
         addRequiredInput(RubyApplicationMetaData.class);
@@ -73,6 +75,8 @@ public class RailsRackDeployer extends AbstractDeployer {
                 log.debug( "Configuring up a rails 2 application: " + unit );
                 rackMetaData.setRackUpScript(getRackUpScript(rackMetaData.getContextPath()));
             }
+            
+            rackMetaData.setStaticPathPrefix( STATIC_PATH_PREFIX );
             log.debug("Configured rack deployment: " + unit + "\n" + rackMetaData);
         } catch (Exception e) {
             throw new DeploymentException(e);
@@ -83,7 +87,7 @@ public class RailsRackDeployer extends AbstractDeployer {
         if (context.endsWith("/")) {
             context = context.substring(0, context.length() - 1);
         }
-        return "TORQUEBOX_RACKUP_CONTEXT=%q(" + context + ")\n" + "require %q(org/torquebox/rails/deployers/rackup)\n" + "run TorqueBox::Rails.app\n";
+        return  "require %q(org/torquebox/rails/deployers/rackup)\n" + "run TorqueBox::Rails.app\n";
 
     }
 
