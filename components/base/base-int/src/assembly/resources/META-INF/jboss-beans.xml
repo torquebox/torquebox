@@ -5,14 +5,17 @@
   <bean name="KnobStructure"                   class="org.torquebox.base.deployers.KnobStructure"/>
   <bean name="RubyApplicationRecognizer"       class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>
   
-  <bean name="RubyApplicationDefaultsDeployer" class="org.torquebox.base.deployers.RubyApplicationDefaultsDeployer"/>
   
   <bean name="AppKnobYamlParsingDeployer"      class="org.torquebox.base.deployers.AppKnobYamlParsingDeployer"/>
   <bean name="TorqueBoxYamlParsingDeployer"    class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
   <bean name="MergedTorqueBoxMetaDataDeployer" class="org.torquebox.base.deployers.MergedTorqueBoxMetaDataDeployer"/>
   
   <bean name="ApplicationYamlParsingDeployer"  class="org.torquebox.base.deployers.ApplicationYamlParsingDeployer"/>
+  <bean name="EnvironmentYamlParsingDeployer"  class="org.torquebox.base.deployers.EnvironmentYamlParsingDeployer"/>
+  
   <bean name="RubyApplicationExploder"         class="org.torquebox.base.deployers.RubyApplicationExploder"/>
   <bean name="ArchiveDirectoryMounter"         class="org.torquebox.base.deployers.ArchiveDirectoryMounter"/>
+  
+  <bean name="RubyApplicationDefaultsDeployer" class="org.torquebox.base.deployers.RubyApplicationDefaultsDeployer"/>
 
 </deployment>

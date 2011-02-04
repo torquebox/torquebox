@@ -1,5 +1,8 @@
 package org.torquebox.base.metadata;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 
@@ -8,6 +11,7 @@ public class RubyApplicationMetaData {
     private VirtualFile root;
 	private String environmentName;
 	private boolean developmentMode = false;
+    private Map<String, String> environment;
 	private boolean archive = false;
 	
 	public RubyApplicationMetaData() {
@@ -68,6 +72,14 @@ public class RubyApplicationMetaData {
 	public String getEnvironmentName() {
 		return this.environmentName;
 	}
+	
+    public void setEnvironmentVariables(Map<String, String> environment) {
+        this.environment = new HashMap<String, String>(environment);
+    }
+
+    public Map<String, String> getEnvironmentVariables() {
+        return this.environment;
+    }
 	
 	public String toString() {
 	    return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "]";

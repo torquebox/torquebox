@@ -34,7 +34,7 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
         RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
         
         rubyAppMetaData.setRoot(VFS.getChild("/foo"));
-        rackAppMetaData.setEnvironmentVariables(environment);
+        rubyAppMetaData.setEnvironmentVariables(environment);
 
 		String deploymentName = createDeployment("test");
 		DeploymentUnit unit = getDeploymentUnit(deploymentName);

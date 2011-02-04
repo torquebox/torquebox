@@ -71,7 +71,7 @@ public class RackRuntimeDeployer extends AbstractDeployer {
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
 
         runtimeMetaData.setBaseDir(rubyAppMetaData.getRoot());
-        runtimeMetaData.setEnvironment(rackAppMetaData.getEnvironmentVariables());
+        runtimeMetaData.setEnvironment(rubyAppMetaData.getEnvironmentVariables());
 
         RuntimeInitializer initializer = new RackRuntimeInitializer(rubyAppMetaData, rackAppMetaData);
         runtimeMetaData.setRuntimeInitializer(initializer);

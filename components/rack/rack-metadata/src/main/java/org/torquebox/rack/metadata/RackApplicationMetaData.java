@@ -149,13 +149,6 @@ public class RackApplicationMetaData {
         return this.rackApplicationName;
     }
 
-    public void setEnvironmentVariables(Map<String, String> environment) {
-        this.environment = new HashMap<String, String>(environment);
-    }
-
-    public Map<String, String> getEnvironmentVariables() {
-        return this.environment;
-    }
 
     public String toString() {
         return "[RackApplicationMetaData:" + System.identityHashCode( this ) + "\n  rackupScriptLocation=" + this.rackUpScriptLocation + "\n  rackUpScript=" + this.rackUpScript + "\n  host=" + this.hosts
@@ -173,5 +166,4 @@ public class RackApplicationMetaData {
     private String rackApplicationFactoryName;
     private String rackApplicationPoolName;
     private String rackApplicationName;
-    private Map<String, String> environment;
 }
