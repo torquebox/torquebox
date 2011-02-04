@@ -67,41 +67,65 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        List<VirtualFile> matches = unit.getMetaDataFiles(null, "-knob.yml" );
+        VirtualFile appKnobYml = getFile(unit);
         
-        if ( matches.isEmpty() ) {
-            return; 
+        if ( appKnobYml == null ) {
+            return;
         }
-        
-        if ( matches.size() != 1 ) {
-            throw new DeploymentException( "Too many *-knob.yml files" );
-        }
-        
-        VirtualFile appKnobYml = matches.get(0);
 
         try {
-            TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse( appKnobYml );
+            TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse(appKnobYml);
             VirtualFile root = metaData.getApplicationRootFile();
 
             if (root == null) {
                 throw new DeploymentException("No application root specified");
             }
-            
-            Deployment deployment = createDeployment( metaData );
+
+            Deployment deployment = createDeployment(metaData);
             attachPojoDeploymentBeanMetaData(unit, deployment);
-            
+
         } catch (IOException e) {
             throw new DeploymentException(e);
         }
     }
 
+    protected VirtualFile getFile(VFSDeploymentUnit unit) throws DeploymentException {
+        List<VirtualFile> matches = unit.getMetaDataFiles(null, "-knob.yml");
+
+        if (matches.isEmpty()) {
+            matches = unit.getMetaDataFiles(null, "-rails.yml");
+
+            if (!matches.isEmpty()) {
+                log.warn("Using *-rails.yml is deprecated.  Please use *-knob.yml instead.");
+            } else {
+                matches = unit.getMetaDataFiles(null, "-rack.yml");
+
+                if (!matches.isEmpty()) {
+                    log.warn("Using *-rack.yml is deprecated.  Please use *-knob.yml instead.");
+                }
+            }
+        }
+        
+        if ( matches.isEmpty() ) {
+            return null;
+        }
+
+        if (matches.size() != 1) {
+            throw new DeploymentException("Too many *-knob.yml files: " + matches);
+        }
+
+        VirtualFile appKnobYml = matches.get(0);
+
+        return appKnobYml;
+    }
+
     private Deployment createDeployment(TorqueBoxMetaData metaData) throws IOException {
         AbstractVFSDeployment deployment = new AbstractVFSDeployment(metaData.getApplicationRootFile());
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
-        attachments.addAttachment(TorqueBoxMetaData.EXTERNAL, metaData, TorqueBoxMetaData.class );
+        attachments.addAttachment(TorqueBoxMetaData.EXTERNAL, metaData, TorqueBoxMetaData.class);
         return deployment;
     }
-    
+
     protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
         String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, unit.getSimpleName());
 

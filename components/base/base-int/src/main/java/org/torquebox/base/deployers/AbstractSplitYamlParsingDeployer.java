@@ -96,6 +96,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
             VirtualFile metaDataFile = getMetaDataFile( unit, getFileName() );
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
+                log.warn( "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
                 InputStream in = null;
                 try {
                     in = metaDataFile.openStream();

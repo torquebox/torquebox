@@ -17,5 +17,7 @@
   <bean name="ArchiveDirectoryMounter"         class="org.torquebox.base.deployers.ArchiveDirectoryMounter"/>
   
   <bean name="RubyApplicationDefaultsDeployer" class="org.torquebox.base.deployers.RubyApplicationDefaultsDeployer"/>
+  
+  <bean name="DeploymentNotifier"              class="org.torquebox.base.deployers.DeploymentNotifier"/>
 
 </deployment>

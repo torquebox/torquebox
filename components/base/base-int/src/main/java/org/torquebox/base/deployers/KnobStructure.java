@@ -77,6 +77,12 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
         log.debug("is NOT knob");
         return false;
     }
+    
+    public static boolean isKnob(VirtualFile root) {
+        String name = root.getName();
+        
+        return ( name.endsWith( ".knob" ) || name.endsWith( ".rails" ) || name.endsWith(".rack" ) );
+    }
 
     public ContextInfo createBaseContextInfo(VirtualFile rackRoot, StructureMetaData structureMetaData) throws IOException {
         List<String> metaDataPaths = new ArrayList<String>();

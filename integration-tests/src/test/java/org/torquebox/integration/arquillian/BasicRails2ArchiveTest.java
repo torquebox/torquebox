@@ -17,7 +17,7 @@ import org.openqa.selenium.WebElement;
 
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRailsArchive2Test extends AbstractIntegrationTest {
+public class BasicRails2ArchiveTest extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() throws Exception {

@@ -36,10 +36,17 @@ public class RubyApplicationRecognizer extends AbstractRecognizer {
             log.debug("Ruby application already initialized: " + unit);
         }
     }
-
+    
     static boolean isRubyApplication(VirtualFile file) {
-        return file.getName().endsWith(".knob")
-                || hasAnyOf(file, "torquebox.yml", "config/torquebox.yml", "config.ru", "config/environment.rb", "Rakefile", ".bundle/config");
+        return  KnobStructure.isKnob( file ) || hasAnyOf(file, 
+                  "torquebox.yml", 
+                  "config/torquebox.yml", 
+                  "config.ru", 
+                  "config/environment.rb", 
+                  "Rakefile", 
+                  "Gemfile", 
+                  ".bundle/config",
+                  "vendor/rails" );
     }
 
     protected boolean isRecognized(VFSDeploymentUnit unit) {

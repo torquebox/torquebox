@@ -10,11 +10,11 @@ import org.junit.Test;
 import org.openqa.selenium.WebElement;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails2Test extends AbstractIntegrationTest {
+public class BasicRails2BackwardsCompatTest extends AbstractIntegrationTest {
 
 	@Deployment
 	public static JavaArchive createDeployment() {
-		return createDeployment( "rails/2.x/basic-knob.yml" );
+		return createDeployment( "rails/2.x/basic-rails.yml" );
 	}
 
 	@Test
