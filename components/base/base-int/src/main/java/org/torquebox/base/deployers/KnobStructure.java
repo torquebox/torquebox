@@ -63,7 +63,7 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
         log.debug("Determine structure for: " + root);
 
         try {
-            if (RubyApplicationRecognizer.isRubyApplication(root)) {
+            if (isKnob( root ) || RubyApplicationRecognizer.isRubyApplication(root)) {
                 log.debug("is knob");
                 StructureMetaData structureMetaData = structureContext.getMetaData();
                 ContextInfo context = createBaseContextInfo(root, structureMetaData);
@@ -74,7 +74,6 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
             throw new DeploymentException(e);
         }
 
-        log.debug("is NOT knob");
         return false;
     }
     
@@ -132,7 +131,7 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
 
     @Override
     protected boolean hasValidName(VirtualFile file) {
-        return RubyApplicationRecognizer.isRubyApplication(file);
+        return isKnob( file );
     }
 
 

@@ -38,7 +38,7 @@ public class RubyApplicationRecognizer extends AbstractRecognizer {
     }
     
     static boolean isRubyApplication(VirtualFile file) {
-        return  KnobStructure.isKnob( file ) || hasAnyOf(file, 
+        return  hasAnyOf(file, 
                   "torquebox.yml", 
                   "config/torquebox.yml", 
                   "config.ru", 
