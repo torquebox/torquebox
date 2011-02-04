@@ -23,6 +23,7 @@
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
+<!--
     <dependency> 
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-docs-en_US</artifactId>
@@ -36,6 +37,7 @@
       <classifier>html</classifier>
       <type>zip</type>
     </dependency>
+-->
   </dependencies>
 
   <build>

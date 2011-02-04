@@ -11,6 +11,7 @@
     </fileSet>
   </fileSets>
   <dependencySets>
+<!--
     <dependencySet>
       <outputDirectory>/docs</outputDirectory>
       <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
@@ -25,5 +26,6 @@
         <include>org.torquebox:torquebox-docs-en_US:zip:html</include>
       </includes>
     </dependencySet>
+-->
   </dependencySets>
 </assembly>
