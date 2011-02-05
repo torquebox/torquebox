@@ -4,14 +4,10 @@ package org.torquebox.interp.deployers;
 
 import java.util.Map;
 
-import org.jboss.deployers.vfs.spi.deployer.AbstractVFSParsingDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
 
 /**
  * <pre>
