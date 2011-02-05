@@ -148,20 +148,30 @@
     <section>
       <title>Deployment Descriptors</title>
 
-      <para>Deploying queues and topics is as easy as creating simple YAML
-      files, and placing them either in your application's
-      <filename>config/</filename> directory, or in the application server's
-      <filename>deploy/</filename> directory, depending on which deployment
-      style you've chosen. Both methods may be combined. Server-deployed
-      destinations and application-deployed destinations are indistinguishable
-      once deployed.</para>
+      <para>You have several options when deploying queues and topics, based
+      on the lifecycle that suits your systems best.</para>
 
       <section>
-        <title><filename>queues.yml</filename></title>
+        <title><filename>Long-lived queues and topics</filename></title>
 
-        <para>To deploy queues, a simple YAML file is required, simply naming
-        the queue, and providing additional configuration parameters.
-        Currently, no additional configuration parameters are allowed.</para>
+        <para>If your queues and topics have a lifecycel that extends beyond
+        the deployment of any single app, you may want long-lived queues and
+        topics. Long-lived destinations are first-order components, and may be
+        deployed on their own. In this way, many applications can come and go
+        over time, publishing and consuming from the same queues. </para>
+
+        <para>When using long-lived destinations, the corresponding deployment
+        descriptors are placed directly into the <filename>deploy/</filename>
+        directory of the TorqueBox AS configuration you are using.</para>
+
+        <formalpara>
+          <title>Queues</title>
+
+          <para>To deploy queues, a simple YAML file is required, simply
+          naming the queue, and providing additional configuration parameters.
+          Currently, no additional configuration parameters are
+          allowed.</para>
+        </formalpara>
 
         <para><example>
             <title>queues.yml</title>
@@ -177,14 +187,15 @@
             <para>By convention, queues are named with the prefix of
             <filename>/queues</filename>.</para>
           </example></para>
-      </section>
 
-      <section>
-        <title><filename>topics.yml</filename></title>
+        <formalpara>
+          <title>Topics</title>
 
-        <para>To deploy topics, a simple YAML file is required, simply naming
-        the topic, and providing additional configuration parameters.
-        Currently, no additional configuration parameters are allowed.</para>
+          <para>To deploy topics, a simple YAML file is required, simply
+          naming the topic, and providing additional configuration parameters.
+          Currently, no additional configuration parameters are
+          allowed.</para>
+        </formalpara>
 
         <para><example>
             <title>topics.yml</title>
@@ -201,52 +212,80 @@
             <filename>/topics</filename>.</para>
           </example></para>
       </section>
+
+      <section>
+        <title>Application-linked queues and topics</title>
+
+        <para>Some destinations are intimately tied to the lifecycle of some
+        particular application. For example, internally in the asynchornous
+        tasks implementation, an application-link queue is used. </para>
+
+        <para>Destinations deployed with your application also undeploy when
+        your application is undeployed. These destinations are configuration
+        through either your application's internal
+        <filename>torquebox.yml</filename> descriptor, or through an external
+        <filename><replaceable>*</replaceable>-knob.yml</filename>
+        descriptor.</para>
+
+        <para>Within either of these files, you may use a
+        <parameter>queues:</parameter> section to define queues and a
+        <parameter>topics:</parameter> section to define topics. </para>
+
+        <para><example>
+            <title>Defining topics and queues in
+            <filename>torquebox.yml</filename></title>
+
+            <para><screen>application:
+  ..
+queues:
+  /queues/my_app_queue:
+
+topics:
+  /queues/my_app_topic:</screen></para>
+          </example></para>
+      </section>
     </section>
   </section>
 
   <section>
     <title>TorqueBox Ruby Classes</title>
 
-    <para>
-      All classes in the <classname>TorqueBox::Messaging</classname>
-      module reside in the Ruby gem,
-      <filename>org.torquebox.torquebox-messaging-client</filename>,
-      so to use them in your Rails app, add this to your
-      <filename>config/environment.rb</filename>:
-    </para>
+    <para>All classes in the <classname>TorqueBox::Messaging</classname>
+    module reside in the Ruby gem,
+    <filename>org.torquebox.torquebox-messaging-client</filename>, so to use
+    them in your Rails app, add this to your
+    <filename>config/environment.rb</filename>:</para>
+
     <example>
-      <title>To use <classname>TorqueBox::Messaging</classname> in a Rails app</title>
-      <para>
-        <programlisting>Rails::Initializer.run do |config|
+      <title>To use <classname>TorqueBox::Messaging</classname> in a Rails
+      app</title>
+
+      <para><programlisting>Rails::Initializer.run do |config|
   ...
   config.gem 'org.torquebox.torquebox-messaging-client'
-  ...</programlisting>
-      </para>
+  ...</programlisting></para>
     </example>
-    <para>
-      And to use them in any other JRuby script, you would do something
-      like this:
-    </para>
+
+    <para>And to use them in any other JRuby script, you would do something
+    like this:</para>
+
     <example>
-      <title>To use <classname>TorqueBox::Messaging</classname> in a shell script</title>
-      <para>
-        <programlisting>#!/usr/bin/env jruby
+      <title>To use <classname>TorqueBox::Messaging</classname> in a shell
+      script</title>
+
+      <para><programlisting>#!/usr/bin/env jruby
 
 require 'rubygems'
 require 'org.torquebox.torquebox-messaging-client'
-        </programlisting>
-      </para>
+        </programlisting></para>
     </example>
 
-    <para>
-      There are two main messaging destination abstractions:
-      <classname>TorqueBox::Messaging::Queue</classname> and
-      <classname>TorqueBox::Messaging::Topic</classname>.  Each has a
-      <methodname>publish</methodname> and a
-      <methodname>receive</methodname> method, and each must be
-      constructed with a <parameter>name</parameter> and an optional
-      hash of options, the keys of which are as follows:
-    </para>
+    <para>There are two main messaging destination abstractions:
+    <classname>TorqueBox::Messaging::Queue</classname> and
+    <classname>TorqueBox::Messaging::Topic</classname>. Each has a
+    <methodname>publish</methodname> and a <methodname>receive</methodname>
+    method, and each must be constructed with a <parameter>name</parameter>
+    and an optional hash of options, the keys of which are as follows:</para>
 
     <table>
       <title>Message destination options</title>
@@ -257,7 +296,9 @@ require 'org.torquebox.torquebox-messaging-client'
         <thead>
           <row>
             <entry>Option</entry>
+
             <entry>Default</entry>
+
             <entry>Description</entry>
           </row>
         </thead>
@@ -265,69 +306,80 @@ require 'org.torquebox.torquebox-messaging-client'
         <tbody>
           <row>
             <entry><parameter>:naming_host</parameter></entry>
+
             <entry>localhost</entry>
-            <entry>Should be the hostname or ip address of the JNDI naming server containing the destination names.</entry>
+
+            <entry>Should be the hostname or ip address of the JNDI naming
+            server containing the destination names.</entry>
           </row>
+
           <row>
             <entry><parameter>:naming_port</parameter></entry>
+
             <entry>1099</entry>
+
             <entry>The port of the JNDI naming server.</entry>
           </row>
+
           <row>
             <entry><parameter>:timeout</parameter></entry>
+
             <entry>0 (never)</entry>
-            <entry>The amount of time to wait before giving up, in milliseconds.</entry>
+
+            <entry>The amount of time to wait before giving up, in
+            milliseconds.</entry>
           </row>
+
           <row>
             <entry><parameter>:ack_mode</parameter></entry>
+
             <entry><varname>:auto</varname></entry>
-            <entry>Corresponds to one of the three <classname>javax.jms.Session</classname> modes for message delivery acknowledgement: <varname>:auto</varname>, <varname>:client</varname> and <varname>:dups_ok</varname>.</entry>
+
+            <entry>Corresponds to one of the three
+            <classname>javax.jms.Session</classname> modes for message
+            delivery acknowledgement: <varname>:auto</varname>,
+            <varname>:client</varname> and
+            <varname>:dups_ok</varname>.</entry>
           </row>
+
           <row>
             <entry><parameter>:transacted</parameter></entry>
+
             <entry>true</entry>
-            <entry>Indicates whether the underlying session is in <emphasis>transacted</emphasis> mode.</entry>
+
+            <entry>Indicates whether the underlying session is in
+            <emphasis>transacted</emphasis> mode.</entry>
           </row>
         </tbody>
       </tgroup>
     </table>
 
-    <para>
-      Any options you pass to either <methodname>publish</methodname>
-      or <methodname>receive</methodname> override those you passed in
-      the constructor.
-    </para>
+    <para>Any options you pass to either <methodname>publish</methodname> or
+    <methodname>receive</methodname> override those you passed in the
+    constructor.</para>
 
-    <para>
-      Though sometimes convenient, these methods are fairly low-level
-      and higher-level abstractions such as <link
-      linkend="consumers">MessageProcessors</link> and <link
-      linkend="async-tasks">Tasks</link> are often better-suited to
-      the task.
-    </para>
-
+    <para>Though sometimes convenient, these methods are fairly low-level and
+    higher-level abstractions such as <link
+    linkend="consumers">MessageProcessors</link> and <link
+    linkend="async-tasks">Tasks</link> are often better-suited to the
+    task.</para>
   </section>
 
   <section id="producers">
     <title>Ruby Producers</title>
 
-    <para>
-      It's trivial to publish a message to a JMS
-      <classname>Queue</classname> or <classname>Topic</classname>
-      with TorqueBox.  And if all of your message consumers are Ruby
-      clients, the contents of the messages can be any serializable
-      Ruby or Java object.  You just need to ensure that the type of
-      content you produce resides in the runtime environments of both
-      the producer and the consumer.
-    </para>
+    <para>It's trivial to publish a message to a JMS
+    <classname>Queue</classname> or <classname>Topic</classname> with
+    TorqueBox. And if all of your message consumers are Ruby clients, the
+    contents of the messages can be any serializable Ruby or Java object. You
+    just need to ensure that the type of content you produce resides in the
+    runtime environments of both the producer and the consumer.</para>
 
-    <para>
-      To send a message, simply construct either a
-      <classname>Topic</classname> or a <classname>Queue</classname>
-      instance with its name, and then call its publish method.  The
-      API's of both Topics and Queues are identical; they each simply
-      represent a destination for your messages.
-    </para>
+    <para>To send a message, simply construct either a
+    <classname>Topic</classname> or a <classname>Queue</classname> instance
+    with its name, and then call its publish method. The API's of both Topics
+    and Queues are identical; they each simply represent a destination for
+    your messages.</para>
 
     <example>
       <title>Publish text messages</title>
@@ -344,11 +396,12 @@ topic.publish "A text message"
       <title>Publish a Ruby Hash</title>
 
       <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
-queue.publish {:key => 'value', :list => %w{one two three}}
+queue.publish {:key =&gt; 'value', :list =&gt; %w{one two three}}
       </programlisting></para>
-      <para>This is enormously convenient, as any serializable object
-      is permitted, but it only makes sense if your queue consumers
-      are also written in Ruby.</para>
+
+      <para>This is enormously convenient, as any serializable object is
+      permitted, but it only makes sense if your queue consumers are also
+      written in Ruby.</para>
     </example>
 
     <example>
@@ -357,7 +410,6 @@ queue.publish {:key => 'value', :list => %w{one two three}}
       <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo', :naming_host =&gt; 'jndi.jboss.org', :naming_port =&gt; 1099 )
 queue.publish "Some message"</programlisting></para>
     </example>
-
   </section>
 
   <section id="consumers">
@@ -391,9 +443,9 @@ end</programlisting></para>
       <title>Syntactic sugar for message consumers</title>
 
       <para>Message consumers may extend
-      <classname>TorqueBox::Messaging::MessageProcessor</classname>
-      and implement an <function>on_message(body)</function> method
-      which will receive the body of the JMS message.</para>
+      <classname>TorqueBox::Messaging::MessageProcessor</classname> and
+      implement an <function>on_message(body)</function> method which will
+      receive the body of the JMS message.</para>
 
       <para><example>
           <title>MessageProcessor subclass</title>
@@ -412,7 +464,7 @@ end</programlisting></para>
     </section>
 
     <section>
-      <title>Connecting Consumers to Destinations (messaging.yml)</title>
+      <title>Connecting Consumers to Destinations</title>
 
       <para>You can connect consumers hosted within a TorqueBox-based
       application, or in external scripts. The method for each environment is
@@ -423,34 +475,47 @@ end</programlisting></para>
         <title>Connecting consumers within TorqueBox</title>
 
         <para>To connect consumers within a TorqueBox-deployed application,
-        you need to create a <filename>messaging.yml</filename> file, such as
-        <filename>config/messaging.yml</filename> for Rails
-        applications.</para>
+        you need to add a messaging: section to your
+        <filename><filename>torquebox.yml</filename></filename> (or external
+        *-knob.yml descriptor).</para>
 
-        <para>This file will contain the mappings from your destinations
-        (topics and queues) to your consumers. The configuration file is a
-        YAML hash, the keys of which are your destination names, which should
-        correspond to the entries in either <filename>queues.yml</filename> or
-        <filename>topics.yml</filename>.</para>
+        <warning>
+          <para>While previous versions of TorqueBox supported a messaging.yml
+          file, this usage is now deprecated and will be removed before the
+          file release.</para>
+        </warning>
+
+        <para>This section will contain the mappings from your destinations
+        (topics and queues) to your consumers. The section is a YAML hash, the
+        keys of which are your destination names, which should correspond to
+        existing queues and topics. These destinations may be deployed through
+        the same <filename>torquebox.yml</filename> or as long-lived
+        destinations.</para>
 
         <example>
-          <title>messaging.yml</title>
+          <title>Messaging handlers in torquebox.yml</title>
 
-          <para><programlisting>/queues/foo: MyFooHandler
-/topics/baz: MyBazHandler</programlisting></para>
+          <para><programlisting>application:
+  ..
+queues:
+  /queues/my_app_queue:
+
+messaging:
+  /queues/my_app_queue:     MyFooHandler
+  /topics/long_lived_topic: MyBazHandler</programlisting></para>
 
           <para>The classes MyFooHandler and MyBazHandler would correspond to
-          files available on the load path: my_foo_handler.rb and
-          my_baz_handler.rb, respectively. In a Rails app, these files would
-          typically reside beneath <filename>lib/</filename> or
+          files available on the load path:
+          <filename>my_foo_handler.rb</filename> and
+          <filename>my_baz_handler.rb</filename>, respectively. In a Rails
+          app, these files would typically reside beneath
+          <filename>lib/</filename> or
           <filename>app/models/</filename>.</para>
         </example>
 
-        <para>
-          The above example shows the simplest possible configuration,
-          but it's possible to alter the behavior of your message
-          processor using the following options:
-        </para>
+        <para>The above example shows the simplest possible configuration, but
+        it's possible to alter the behavior of your message processor using
+        the following options:</para>
 
         <table>
           <title>Message processor options</title>
@@ -461,7 +526,9 @@ end</programlisting></para>
             <thead>
               <row>
                 <entry>Option</entry>
+
                 <entry>Default</entry>
+
                 <entry>Description</entry>
               </row>
             </thead>
@@ -469,44 +536,51 @@ end</programlisting></para>
             <tbody>
               <row>
                 <entry><parameter>concurrency</parameter></entry>
+
                 <entry>1</entry>
-                <entry>
-                  May be used to throttle the throughput of your
-                  processor.  Processors are single-threaded, by
-                  default, but you can increase this value to match
-                  the number of concurrent messages you expect to
-                  receive.
-               </entry>
+
+                <entry>May be used to throttle the throughput of your
+                processor. Processors are single-threaded, by default, but you
+                can increase this value to match the number of concurrent
+                messages you expect to receive.</entry>
               </row>
+
               <row>
                 <entry><parameter>filter</parameter></entry>
+
                 <entry></entry>
-                <entry>May be used to filter the messages dispatched to your consumer.</entry>
+
+                <entry>May be used to filter the messages dispatched to your
+                consumer.</entry>
               </row>
+
               <row>
                 <entry><parameter>config</parameter></entry>
+
                 <entry></entry>
-                <entry>
-                  Should contain a hash of data which will be passed
-                  to your consumer's
-                  <function>configure(hash)</function> method prior to
-                  invoking <function>process!</function>.
-                </entry>
+
+                <entry>Should contain a hash of data which will be passed to
+                your consumer's <function>configure(hash)</function> method
+                prior to invoking <function>process!</function>.</entry>
               </row>
             </tbody>
           </tgroup>
         </table>
 
         <example>
-          <title><filename>messaging.yml</filename> with options set</title>
+          <title>Messaging configuration in <filename>torquebox.yml</filename>
+          with options set</title>
 
-          <para><programlisting>/queues/foo:
-  MyFooHandler:
-    filter: "cost &gt; 30"
-    config:
-      type: "premium"
-      season: "fall"
-    concurrency: 2</programlisting></para>
+          <para><programlisting>application:
+  ...
+messaging:
+  /queues/foo:
+    MyFooHandler:
+      filter: "cost &gt; 30"
+      config:
+        type: "premium"
+        season: "fall"
+      concurrency: 2</programlisting></para>
 
           <para>Because the structure of the file is <ulink
           url="http://www.yaml.org">YAML</ulink>, proper indentation is
@@ -520,29 +594,34 @@ end</programlisting></para>
         it's available if you do.</para>
 
         <example>
-          <title>Advanced configuration in messaging.yml</title>
+          <title>Advanced messaging configuration in
+          <filename>torquebox.yml</filename></title>
 
-          <para><programlisting>/topics/simple: SimpleHandler
+          <para><programlisting>application:
+  ...
 
-/topics/popular:
-  - Handler
-      concurrency: 5
-  - Observer: &amp;defaults
-      filter: "x &gt; 18"
-      config:
-        x: ex
-        y: why
-  - Processor
+messaging:
+  /topics/simple: SimpleHandler
+
+  /topics/popular:
+    - Handler
+        concurrency: 5
+    - Observer: &amp;defaults
+        filter: "x &gt; 18"
+        config:
+          x: ex
+          y: why
+    - Processor
 
 /queues/students:
-  VerySimpleAnalyzer:
-  YouthMonitor:
-    filter: "y &lt; 18"
-    config:
-      h: ache
-      i: eye
-  LookAndFeel:
-    &lt;&lt;: *defaults</programlisting></para>
+    VerySimpleAnalyzer:
+    YouthMonitor:
+      filter: "y &lt; 18"
+      config:
+        h: ache
+        i: eye
+    LookAndFeel:
+      &lt;&lt;: *defaults</programlisting></para>
 
           <para>Here we have <code>/topics/simple</code> mapped to a single
           processor of type <code>SimpleHandler</code> using a YAML

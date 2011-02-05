@@ -19,8 +19,8 @@
     <title>Ruby Job Classes</title>
 
     <para>Each scheduled job maps to exactly one Ruby class. The path and
-    filename should match the class name of the job contained in the file.
-    </para>
+    filename should match the class name of the job contained in the
+    file.</para>
 
     <informaltable>
       <tgroup cols="2">
@@ -86,17 +86,14 @@ end</programlisting></para>
     <section>
       <title>Logging</title>
 
-      <para>
-        To gain access to a logging device from your job, simply add a
-        <methodname>:log</methodname> attribute to your class and
-        TorqueBox will set it for you.
-      </para>
+      <para>To gain access to a logging device from your job, simply add a
+      <methodname>:log</methodname> attribute to your class and TorqueBox will
+      set it for you.</para>
 
-      <para>
-        <example>
+      <para><example>
           <title>Accessing a logger</title>
 
-        <para><programlisting>module Mail
+          <para><programlisting>module Mail
   class Notifier
     <emphasis>attr_accessor :log</emphasis>
     def run()
@@ -108,12 +105,9 @@ end</programlisting></para>
     end
   end
 end</programlisting></para>
-        </example>
-      </para>
-      
-      <para>
-        Messages of various level can be logged.
-      </para>
+        </example></para>
+
+      <para>Messages of various level can be logged.</para>
 
       <informaltable>
         <tgroup cols="2">
@@ -159,18 +153,12 @@ end</programlisting></para>
         </tgroup>
       </informaltable>
 
-      <para>
-        The log messages will be logged in the normal
-        <filename>server.log</filename>.
-
-        <screen>10:02:35,074 INFO  [Notifier] Executing the job
-10:02:40,074 INFO  [Notifier] Executing the job</screen>
-      </para>
-
+      <para>The log messages will be logged in the normal
+      <filename>server.log</filename>. <screen>10:02:35,074 INFO  [Notifier] Executing the job
+10:02:40,074 INFO  [Notifier] Executing the job</screen></para>
     </section>
   </section>
 
-  
   <section>
     <title>Scheduling Jobs</title>
 
@@ -188,20 +176,33 @@ end</programlisting></para>
     </section>
 
     <section>
-      <title><filename>jobs.yml</filename> Format</title>
+      <title>YAML Configuration Format</title>
 
-      <para>Within <filename>jobs.yml</filename>, a block of information is
+      <para>Within the global torquebox.yml descriptor (or through an external
+      *-knob.yml descriptor), scheduled jobs are configured using the a
+      <parameter>jobs:</parameter> section.</para>
+
+      <para><warning>
+          <para>While previous versions of TorqueBox supported jobs.yml
+          configuration file, this usage is now deprecated and will be removed
+          before the final 1.0 release</para>
+        </warning></para>
+
+      <para>Within the <parameter>jobs</parameter>, a block of information is
       provided for each job. The block starts with arbitrary name for the job.
       Each block must also define the job class and the schedule
       specification. Optionally a description may be provided.</para>
 
       <para><example>
-          <title>Example <filename>jobs.yml</filename></title>
+          <title>Example <filename>torquebox.yml</filename></title>
 
-          <para><programlisting>mail.notifier:
-  job:         Mail::Notifier
-  cron:        0 */5 * * * ?
-  description: Deliver queued mail notifications</programlisting></para>
+          <para><programlisting>application:
+  ..
+jobs:
+  mail.notifier:
+    job:         Mail::Notifier
+    cron:        0 */5 * * * ?
+    description: Deliver queued mail notifications</programlisting></para>
         </example></para>
 
       <para>The cron attribute should contain a typical crontab-like entry. It
@@ -250,11 +251,11 @@ end</programlisting></para>
       <para>For several fields, you may denote subdivision by using the
       forward-slash (<code>/</code>) character. To execute a task every 5
       minutes, <code>*/5</code> in the minutes field would specify this
-      condition. </para>
+      condition.</para>
 
       <para>Spans may be indicated using the dash (<code>-</code>) character.
       To execute a task Monday through Friday, <code>MON-FRI</code> should be
-      used in the day-of-week field. </para>
+      used in the day-of-week field.</para>
 
       <para>Multiple values may be separated using the comma (<code>,</code>)
       characeter. The specification of <code>1,15</code> in the day-of-month
@@ -262,8 +263,7 @@ end</programlisting></para>
       month.</para>
 
       <para>Either day-of-month or day-of-week must be specified using the
-      <code>?</code> character, since specifying both is contradictory.
-      </para>
+      <code>?</code> character, since specifying both is contradictory.</para>
     </section>
   </section>
 </chapter>

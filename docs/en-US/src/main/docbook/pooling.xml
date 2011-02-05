@@ -120,7 +120,7 @@
   </section>
 
   <section>
-    <title>pooling.yml</title>
+    <title>YAML Configuration</title>
 
     <para>If your application is not designed to be thread-safe, you can
     instead pool the interpreters resulting in a single-threaded model. You
@@ -129,18 +129,18 @@
     web request, you may have problems with the default multi-threaded
     behavior.</para>
 
-    <para>To modify the default interpreter pool configuration, you can add a
-    <filename>pooling.yml</filename> to your application's internal deployment
-    descriptors. This file is always optional, and only required if you wish
+    <para>To modify the default interpreter pool configuration, you can add
+    pooling: section to either your application's internal
+    <filename>torquebox.yml</filename> deployment descriptor, or through an
+    external <filename><replaceable>*</replaceable>-knob.yml</filename>
+    descriptor. This section is always optional, and only required if you wish
     to modify the defaults.</para>
 
-    <formalpara>
-      <title>Rails and pooling.yml</title>
-
-      <para>For Rails applications, place the <filename>pooling.yml</filename>
-      file within your application's <filename>config/</filename>
-      directory.</para>
-    </formalpara>
+    <para><warning>
+        <para>While previous versions of TorqueBox supported a
+        <filename>pooling.yml</filename> file, this usage is now deprecated
+        and will be removed before the final release.</para>
+      </warning></para>
 
     <section>
       <title>Syntax</title>
@@ -180,6 +180,12 @@
 
               <entry><code>messaging</code></entry>
             </row>
+
+            <row>
+              <entry>Services</entry>
+
+              <entry>services</entry>
+            </row>
           </tbody>
         </tgroup>
       </informaltable>
@@ -197,9 +203,10 @@
       </formalpara>
 
       <informalexample>
-        <para><screen>web:
-  min: 3
-  max: 10</screen></para>
+        <para><screen>pooling:
+  web:
+    min: 3
+    max: 10</screen></para>
       </informalexample>
 
       <formalpara>
@@ -210,7 +217,8 @@
       </formalpara>
 
       <informalexample>
-        <para><screen>web: shared</screen></para>
+        <para><screen>pooling:
+  web: shared</screen></para>
       </informalexample>
 
       <formalpara>
@@ -221,7 +229,8 @@
       </formalpara>
 
       <para><informalexample>
-          <para><screen>web: global</screen></para>
+          <para><screen>pooling:
+  web: global</screen></para>
         </informalexample></para>
     </section>
 
@@ -235,15 +244,17 @@
         application deployed in <code>development</code> mode.</para>
 
         <para><informalexample>
-            <para><screen>jobs: 
-  min: 1
-  max: 2
+            <para><screen>application:
+  <replaceable>...</replaceable>
 
-messaging:
-  min: 1
-  max: 2
-
-web: shared</screen></para>
+pooling:
+  jobs: 
+    min: 1
+    max: 2
+  messaging:
+    min: 1
+    max: 2
+  web: shared</screen></para>
           </informalexample></para>
       </section>
 
@@ -255,11 +266,13 @@ web: shared</screen></para>
         <code>development</code>.</para>
 
         <para><informalexample>
-            <para><screen>jobs: shared
+            <para><screen>application:
+  ...
 
-messaging: shared
-
-web: shared</screen></para>
+pooling:
+  jobs: shared
+  messaging: shared
+  web: shared</screen></para>
           </informalexample></para>
       </section>
     </section>
