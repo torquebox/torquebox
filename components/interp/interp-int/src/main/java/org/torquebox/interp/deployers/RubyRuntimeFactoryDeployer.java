@@ -23,7 +23,6 @@ package org.torquebox.interp.deployers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;

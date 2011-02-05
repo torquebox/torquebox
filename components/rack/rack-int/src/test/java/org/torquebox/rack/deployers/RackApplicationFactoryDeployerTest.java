@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.vfs.VFS;

@@ -2,12 +2,13 @@ package org.torquebox.interp.core;
 
 import java.util.Collection;
 import java.util.Map;
+
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.interp.spi.ComponentInitializer;
-import org.jboss.logging.Logger;
 
 public class InstantiatingRubyComponentResolver extends ManagedComponentResolver {
 

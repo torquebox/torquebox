@@ -1,8 +1,8 @@
 package org.torquebox.common.util;
 
-import org.junit.Test;
-
 import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 public class StringUtilsTest {
 

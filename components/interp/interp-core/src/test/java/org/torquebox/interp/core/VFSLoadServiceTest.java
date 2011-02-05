@@ -1,10 +1,10 @@
 package org.torquebox.interp.core;
 
+import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.test.mc.vfs.AbstractVFSTestCase;
-
-import static org.junit.Assert.*;
 
 public class VFSLoadServiceTest extends AbstractVFSTestCase {
 

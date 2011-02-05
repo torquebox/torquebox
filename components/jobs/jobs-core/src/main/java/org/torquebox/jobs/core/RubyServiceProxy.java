@@ -1,12 +1,10 @@
 package org.torquebox.jobs.core;
 
 import org.jruby.Ruby;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-
 import org.torquebox.common.reflect.ReflectionHelper;
-import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.interp.core.RubyComponentResolver;
+import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyServiceProxy {
 

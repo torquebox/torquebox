@@ -1,11 +1,7 @@
 package org.torquebox.integration.arquillian;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
-import org.jboss.arquillian.api.Run;
-import org.jboss.arquillian.api.RunModeType;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebElement;

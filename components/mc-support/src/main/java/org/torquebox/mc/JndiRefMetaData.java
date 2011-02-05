@@ -4,9 +4,7 @@ import javax.naming.Context;
 import javax.naming.NamingException;
 
 import org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData;
-import org.jboss.beans.metadata.spi.MetaDataVisitor;
 import org.jboss.reflect.spi.TypeInfo;
-import org.jboss.util.JBossStringBuilder;
 
 public class JndiRefMetaData extends AbstractDependencyValueMetaData {
 

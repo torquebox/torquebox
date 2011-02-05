@@ -1,10 +1,10 @@
 package org.torquebox.interp.core;
 
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.jboss.logging.Logger;
 
 public abstract class ManagedComponentResolver implements RubyComponentResolver {
 

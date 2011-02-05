@@ -1,9 +1,9 @@
 package org.torquebox.common.pool;
 
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 import org.torquebox.common.spi.InstanceFactory;
-
-import static org.junit.Assert.*;
 
 public class SharedPoolTest {
 

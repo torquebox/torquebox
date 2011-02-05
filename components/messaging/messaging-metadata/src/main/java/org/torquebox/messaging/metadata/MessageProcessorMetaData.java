@@ -1,7 +1,7 @@
 package org.torquebox.messaging.metadata;
 
-import java.util.Map;
 import java.util.Collections;
+import java.util.Map;
 
 public class MessageProcessorMetaData {
 

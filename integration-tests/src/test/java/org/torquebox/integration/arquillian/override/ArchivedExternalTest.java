@@ -1,8 +1,5 @@
 package org.torquebox.integration.arquillian.override;
 
-import static org.junit.Assert.*;
-import org.junit.*;
-
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;

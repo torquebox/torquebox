@@ -1,18 +1,15 @@
 package org.torquebox.jobs.core;
 
-import org.junit.*;
-import java.net.*;
-import java.util.*;
 import static org.junit.Assert.*;
 
 import org.jruby.Ruby;
-import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.javasupport.JavaEmbedUtils;
-
-import org.torquebox.interp.core.SharedRubyRuntimePool;
-import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
-import org.torquebox.test.ruby.AbstractRubyTestCase;
+import org.junit.Before;
+import org.junit.Test;
 import org.torquebox.common.reflect.ReflectionHelper;
+import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
+import org.torquebox.interp.core.SharedRubyRuntimePool;
+import org.torquebox.test.ruby.AbstractRubyTestCase;
 
 public class RubyServiceProxyTest extends AbstractRubyTestCase {
 

@@ -3,7 +3,6 @@ package org.torquebox.common.pool;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.torquebox.common.spi.InstanceFactory;
 

@@ -1,13 +1,9 @@
 package org.torquebox.integration.arquillian;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.validation.constraints.AssertTrue;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;

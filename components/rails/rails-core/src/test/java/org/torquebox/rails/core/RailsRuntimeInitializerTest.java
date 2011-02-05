@@ -1,7 +1,8 @@
 package org.torquebox.rails.core;
 
 import static org.junit.Assert.*;
-import java.util.*;
+
+import java.util.List;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -9,15 +10,15 @@ import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.RubyModule;
 import org.jruby.exceptions.RaiseException;
-import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.test.ruby.AbstractRubyTestCase;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rails.metadata.RailsApplicationMetaData;
+import org.torquebox.test.ruby.AbstractRubyTestCase;
 
 public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 

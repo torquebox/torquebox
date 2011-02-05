@@ -1,7 +1,7 @@
 package org.torquebox.messaging.core;
 
-import java.util.Map;
 import java.util.Collections;
+import java.util.Map;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
@@ -14,9 +14,6 @@ import javax.jms.Session;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.jruby.RubyHash;
-import org.jruby.RubyModule;
-import org.jruby.RubyString;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;

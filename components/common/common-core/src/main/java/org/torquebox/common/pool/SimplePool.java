@@ -1,11 +1,10 @@
 package org.torquebox.common.pool;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashSet;
 
 import org.torquebox.common.spi.ManageablePool;
-import org.torquebox.common.spi.Pool;
 import org.torquebox.common.spi.PoolListener;
 
 public class SimplePool<T> implements ManageablePool<T> {

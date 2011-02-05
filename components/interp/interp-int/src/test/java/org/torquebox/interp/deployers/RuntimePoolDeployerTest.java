@@ -10,7 +10,6 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jruby.Ruby;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.torquebox.interp.core.DefaultRubyRuntimePool;
 import org.torquebox.interp.core.SharedRubyRuntimePool;

@@ -12,8 +12,6 @@ import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
 import org.jboss.vfs.VisitorAttributes;
 import org.jboss.vfs.util.SuffixMatchFilter;
-import org.torquebox.interp.metadata.RubyLoadPathMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 
 public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
