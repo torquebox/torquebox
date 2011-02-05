@@ -8,7 +8,8 @@ require 'rake'
 module TorqueBox
   module RakeUtils
     def self.jboss_home
-      jboss_home = ENV['JBOSS_HOME'] || ENV['TORQUEBOX_HOME'] && ENV['TORQUEBOX_HOME'] + '/jboss'
+      jboss_home = File.expand_path(ENV['JBOSS_HOME']) if ENV['JBOSS_HOME']
+      jboss_home ||= File.join(File.expand_path(ENV['TORQUEBOX_HOME']), "jboss") if ENV['TORQUEBOX_HOME']
       raise "$JBOSS_HOME is not set" unless jboss_home
       return jboss_home
     end
@@ -16,13 +17,13 @@ module TorqueBox
       ENV['TORQUEBOX_CONF'] || ENV['JBOSS_CONF'] || 'default'
     end
     def self.server_dir
-      "#{jboss_home}/server/#{jboss_conf}"
+      File.join("#{jboss_home}","server", "#{jboss_conf}" )
     end
     def self.deploy_dir
-      "#{server_dir}/deploy"
+      File.join("#{server_dir}","deploy")
     end
     def self.deployers_dir
-      "#{server_dir}/deployers"
+      File.join("#{server_dir}","deployers")
     end
     def self.command_line
       cmd = Config::CONFIG['host_os'] =~ /mswin/ ? "bin\\run" : "/bin/sh bin/run.sh"
@@ -61,7 +62,7 @@ module TorqueBox
     end
 
     def self.undeploy(deployment_name)
-       deployment = "#{deploy_dir}/#{deployment_name}"
+       deployment = File.join( deploy_dir, deployment_name )
        FileUtils.rm_rf( deployment )
     end
   end
