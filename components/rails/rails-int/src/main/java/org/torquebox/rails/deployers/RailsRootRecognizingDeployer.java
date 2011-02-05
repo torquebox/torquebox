@@ -34,47 +34,41 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
  *    In: 
  *   Out: RailsApplicationMetaData, RackApplicationMetaData
  * </pre>
- *
- * Creates metadata if it recognizes a deployment as a Rails
- * application.  
+ * 
+ * Creates metadata if it recognizes a deployment as a Rails application.
  */
 public class RailsRootRecognizingDeployer extends AbstractDeployer {
-	
-	public RailsRootRecognizingDeployer() {
-		setAllInputs( true );
-		addOutput( RailsApplicationMetaData.class );
-		setStage(DeploymentStages.NOT_INSTALLED );
-	}
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if ( unit.getAttachment( RailsApplicationMetaData.class ) != null ) {
-			return;
-		}
-		
-		if ( unit instanceof VFSDeploymentUnit ) {
-			deploy( (VFSDeploymentUnit) unit );
-		}
-	}
-	
-	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-	    /*
-		VirtualFile root = unit.getRoot();
-		
-		try {
-			if ( root.getChild( "config/environment.rb" ).exists() ) {
-                log.info("Recognized as Rails app: "+root);
-                RackApplicationMetaData rackMetaData = new WriteOnceRackApplicationMetaData();
-                rackMetaData.setRackRoot( root );
-                if ( root.getChild( "public" ).exists() ) {
-                    rackMetaData.setStaticPathPrefix( "/public" );
-                }
-                unit.addAttachment( RackApplicationMetaData.class, rackMetaData );
-				unit.addAttachment( RailsApplicationMetaData.class, new RailsApplicationMetaData( rackMetaData ) );
-			}
-		} catch (Exception e) {
-			throw new DeploymentException( e );
-		}
-		*/
-	}
+    public RailsRootRecognizingDeployer() {
+        setAllInputs( true );
+        addOutput( RailsApplicationMetaData.class );
+        setStage( DeploymentStages.NOT_INSTALLED );
+    }
+
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        if (unit.getAttachment( RailsApplicationMetaData.class ) != null) {
+            return;
+        }
+
+        if (unit instanceof VFSDeploymentUnit) {
+            deploy( (VFSDeploymentUnit) unit );
+        }
+    }
+
+    public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        /*
+         * VirtualFile root = unit.getRoot();
+         * 
+         * try { if ( root.getChild( "config/environment.rb" ).exists() ) {
+         * log.info("Recognized as Rails app: "+root); RackApplicationMetaData
+         * rackMetaData = new WriteOnceRackApplicationMetaData();
+         * rackMetaData.setRackRoot( root ); if ( root.getChild( "public"
+         * ).exists() ) { rackMetaData.setStaticPathPrefix( "/public" ); }
+         * unit.addAttachment( RackApplicationMetaData.class, rackMetaData );
+         * unit.addAttachment( RailsApplicationMetaData.class, new
+         * RailsApplicationMetaData( rackMetaData ) ); } } catch (Exception e) {
+         * throw new DeploymentException( e ); }
+         */
+    }
 
 }

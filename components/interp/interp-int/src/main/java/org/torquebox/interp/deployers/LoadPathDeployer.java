@@ -19,25 +19,25 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
  *    In: RubyRuntimeMetaData
  *   Out: RubyRuntimeMetaData
  * </pre>
- *
- * Adds its configured loadPaths (via jboss-beans.xml) to the runtime.
- * Used to add app/tasks and app/jobs to rails runtime load path for
- * jobs-int and messaging-int.
+ * 
+ * Adds its configured loadPaths (via jboss-beans.xml) to the runtime. Used to
+ * add app/tasks and app/jobs to rails runtime load path for jobs-int and
+ * messaging-int.
  */
 public class LoadPathDeployer extends AbstractDeployer {
 
     private List<String> loadPaths = Collections.EMPTY_LIST;
 
     public LoadPathDeployer() {
-        setStage(DeploymentStages.PRE_DESCRIBE);
-        setInput(RubyRuntimeMetaData.class);
-        addOutput(RubyRuntimeMetaData.class);
+        setStage( DeploymentStages.PRE_DESCRIBE );
+        setInput( RubyRuntimeMetaData.class );
+        addOutput( RubyRuntimeMetaData.class );
     }
 
     public void setLoadPaths(List<String> loadPaths) {
         this.loadPaths = loadPaths;
     }
-    
+
     public List<String> getLoadPaths() {
         return this.loadPaths;
     }
@@ -45,20 +45,20 @@ public class LoadPathDeployer extends AbstractDeployer {
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
-            deploy((VFSDeploymentUnit) unit);
+            deploy( (VFSDeploymentUnit) unit );
         }
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(RubyRuntimeMetaData.class);
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
         for (String path : getLoadPaths()) {
             try {
-                URL url = unit.getRoot().getChild(path).toURL();
-                log.debug("Adding to load path: " + url );
-                RubyLoadPathMetaData loadPathMeta = new RubyLoadPathMetaData(url);
-                runtimeMetaData.appendLoadPath(loadPathMeta);
+                URL url = unit.getRoot().getChild( path ).toURL();
+                log.debug( "Adding to load path: " + url );
+                RubyLoadPathMetaData loadPathMeta = new RubyLoadPathMetaData( url );
+                runtimeMetaData.appendLoadPath( loadPathMeta );
             } catch (MalformedURLException e) {
-                throw new DeploymentException(e);
+                throw new DeploymentException( e );
             }
         }
     }

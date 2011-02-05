@@ -15,14 +15,14 @@ import org.yaml.snakeyaml.Yaml;
 public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
 
     public TorqueBoxYamlParsingDeployer() {
-        addOutput(TorqueBoxMetaData.class);
-        setStage(DeploymentStages.PARSE);
+        addOutput( TorqueBoxMetaData.class );
+        setStage( DeploymentStages.PARSE );
         setRelativeOrder( -5000 );
     }
 
     @Override
     protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        VirtualFile file = getMetaDataFile(unit, "torquebox.yml");
+        VirtualFile file = getMetaDataFile( unit, "torquebox.yml" );
 
         if (file == null) {
             return;
@@ -30,14 +30,13 @@ public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
         log.info( "Parsing: " + unit );
 
         try {
-            TorqueBoxMetaData metaData = parse(file);
+            TorqueBoxMetaData metaData = parse( file );
             log.info( "Parsed: " + metaData );
-            unit.addAttachment(TorqueBoxMetaData.class, metaData);
+            unit.addAttachment( TorqueBoxMetaData.class, metaData );
         } catch (Exception e) {
-            throw new DeploymentException(e);
+            throw new DeploymentException( e );
         }
     }
-
 
     @SuppressWarnings("unchecked")
     static TorqueBoxMetaData parse(VirtualFile file) throws IOException {
@@ -46,11 +45,11 @@ public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
         InputStream in = null;
         try {
             in = file.openStream();
-            Map<String, Object> data = (Map<String, Object>) yaml.load(in);
+            Map<String, Object> data = (Map<String, Object>) yaml.load( in );
             if (data == null) {
                 data = new HashMap<String, Object>();
             }
-            return new TorqueBoxMetaData(data);
+            return new TorqueBoxMetaData( data );
         } finally {
             if (in != null) {
                 in.close();

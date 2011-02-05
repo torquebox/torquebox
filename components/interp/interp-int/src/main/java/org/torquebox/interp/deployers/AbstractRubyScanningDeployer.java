@@ -17,69 +17,69 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 
 public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
-	private String path;
-	private VirtualFileFilter filter;
+    private String path;
+    private VirtualFileFilter filter;
 
-	public AbstractRubyScanningDeployer() {
-		setStage( DeploymentStages.PARSE );
-	}
+    public AbstractRubyScanningDeployer() {
+        setStage( DeploymentStages.PARSE );
+    }
 
-	public void setPath(String path) {
-		this.path = path;
-	}
-	
-	public String getPath() {
-		return this.path;
-	}
-	
-	public void setFilter(VirtualFileFilter filter) {
-		this.filter = filter;
-	}
-	
-	public void setSuffixFilter(String suffix) {
-		this.filter =  new SuffixMatchFilter( suffix, VisitorAttributes.DEFAULT);
-	}
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-	public VirtualFileFilter getFilter() {
-		return this.filter;
-	}
+    public String getPath() {
+        return this.path;
+    }
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if (!(unit instanceof VFSDeploymentUnit)) {
-			throw new DeploymentException("Deployment unit must be a VFSDeploymentUnit");
-		}
+    public void setFilter(VirtualFileFilter filter) {
+        this.filter = filter;
+    }
 
-		deploy((VFSDeploymentUnit) unit);
-	}
+    public void setSuffixFilter(String suffix) {
+        this.filter = new SuffixMatchFilter( suffix, VisitorAttributes.DEFAULT );
+    }
 
-	protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-		try {
-			VirtualFile scanRoot = unit.getRoot().getChild(this.path);
+    public VirtualFileFilter getFilter() {
+        return this.filter;
+    }
 
-			if (scanRoot == null || !scanRoot.exists()) {
-				return;
-			}
-			
-			List<VirtualFile> children = null;
-			
-			if ( this.filter != null ) {
-				children = scanRoot.getChildrenRecursively( this.filter );
-			} else {
-				children = scanRoot.getChildrenRecursively();
-			}
-			
-			int prefixLength = scanRoot.getPathName().length();
-			
-			for ( VirtualFile child : children ) {
-				String relativePath = child.getPathName().substring( prefixLength );
-				deploy( unit, child, relativePath.substring(1) );
-			}
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        if (!(unit instanceof VFSDeploymentUnit)) {
+            throw new DeploymentException( "Deployment unit must be a VFSDeploymentUnit" );
+        }
 
-		} catch (IOException e) {
-			throw new DeploymentException(e);
-		}
-	}
-	
-	protected abstract void deploy(VFSDeploymentUnit unit, VirtualFile file, String relativePath) throws DeploymentException;
+        deploy( (VFSDeploymentUnit) unit );
+    }
+
+    protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        try {
+            VirtualFile scanRoot = unit.getRoot().getChild( this.path );
+
+            if (scanRoot == null || !scanRoot.exists()) {
+                return;
+            }
+
+            List<VirtualFile> children = null;
+
+            if (this.filter != null) {
+                children = scanRoot.getChildrenRecursively( this.filter );
+            } else {
+                children = scanRoot.getChildrenRecursively();
+            }
+
+            int prefixLength = scanRoot.getPathName().length();
+
+            for (VirtualFile child : children) {
+                String relativePath = child.getPathName().substring( prefixLength );
+                deploy( unit, child, relativePath.substring( 1 ) );
+            }
+
+        } catch (IOException e) {
+            throw new DeploymentException( e );
+        }
+    }
+
+    protected abstract void deploy(VFSDeploymentUnit unit, VirtualFile file, String relativePath) throws DeploymentException;
 
 }

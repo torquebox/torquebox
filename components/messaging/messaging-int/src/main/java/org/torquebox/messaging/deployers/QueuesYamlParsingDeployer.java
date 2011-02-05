@@ -19,7 +19,7 @@ import org.torquebox.messaging.metadata.QueueMetaData;
 public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public QueuesYamlParsingDeployer() {
-        setSectionName("queues");
+        setSectionName( "queues" );
         addOutput( QueueMetaData.class );
     }
 
@@ -28,8 +28,8 @@ public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
         Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) baseData;
 
         for (String queueName : data.keySet()) {
-            QueueMetaData queueMetaData = new QueueMetaData(queueName);
-            AttachmentUtils.multipleAttach(unit, queueMetaData, queueName);
+            QueueMetaData queueMetaData = new QueueMetaData( queueName );
+            AttachmentUtils.multipleAttach( unit, queueMetaData, queueName );
         }
     }
 

@@ -9,144 +9,144 @@ import org.torquebox.common.spi.InstanceFactory;
 
 public class PoolManager<T> extends DefaultPoolListener<T> {
 
-	private static abstract class PoolTask<T> implements Runnable {
-		protected PoolManager<T> poolManager;
+    private static abstract class PoolTask<T> implements Runnable {
+        protected PoolManager<T> poolManager;
 
-		public PoolTask(PoolManager<T> poolManager) {
-			this.poolManager = poolManager;
-		}
+        public PoolTask(PoolManager<T> poolManager) {
+            this.poolManager = poolManager;
+        }
 
-		public final void run() {
-			try {
-				perform();
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				this.poolManager.taskCompleted();
-			}
-		}
+        public final void run() {
+            try {
+                perform();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                this.poolManager.taskCompleted();
+            }
+        }
 
-		protected abstract void perform() throws Exception;
+        protected abstract void perform() throws Exception;
 
-	}
+    }
 
-	private static class FillTask<T> extends PoolTask<T> {
-		public FillTask(PoolManager<T> poolManager) {
-			super(poolManager);
-		}
+    private static class FillTask<T> extends PoolTask<T> {
+        public FillTask(PoolManager<T> poolManager) {
+            super( poolManager );
+        }
 
-		@Override
-		public void perform() throws Exception {
-			this.poolManager.fillInstance();
-		}
-	}
+        @Override
+        public void perform() throws Exception {
+            this.poolManager.fillInstance();
+        }
+    }
 
-	private static class DrainTask<T> extends PoolTask<T> {
-		public DrainTask(PoolManager<T> poolManager) {
-			super(poolManager);
-		}
+    private static class DrainTask<T> extends PoolTask<T> {
+        public DrainTask(PoolManager<T> poolManager) {
+            super( poolManager );
+        }
 
-		@Override
-		public void perform() throws Exception {
-			this.poolManager.drainInstance();
-		}
-	}
+        @Override
+        public void perform() throws Exception {
+            this.poolManager.drainInstance();
+        }
+    }
 
-	private SimplePool<T> pool;
-	private InstanceFactory<T> factory;
+    private SimplePool<T> pool;
+    private InstanceFactory<T> factory;
 
-	private int minInstances;
-	private int maxInstances;
+    private int minInstances;
+    private int maxInstances;
 
-	private Semaphore instances;
+    private Semaphore instances;
 
-	private Executor executor;
-	private FillTask<T> fillTask;
-	private DrainTask<T> drainTask;
+    private Executor executor;
+    private FillTask<T> fillTask;
+    private DrainTask<T> drainTask;
 
-	public PoolManager(SimplePool<T> pool, InstanceFactory<T> factory, int minInstances, int maxInstances) {
-		this.pool = pool;
-		this.factory = factory;
-		this.minInstances = minInstances;
-		this.maxInstances = maxInstances;
-		this.instances = new Semaphore(maxInstances, true);
+    public PoolManager(SimplePool<T> pool, InstanceFactory<T> factory, int minInstances, int maxInstances) {
+        this.pool = pool;
+        this.factory = factory;
+        this.minInstances = minInstances;
+        this.maxInstances = maxInstances;
+        this.instances = new Semaphore( maxInstances, true );
 
-		this.fillTask = new FillTask<T>(this);
-		this.drainTask = new DrainTask<T>(this);
-	}
-	
-	protected void taskCompleted() {
-	}
+        this.fillTask = new FillTask<T>( this );
+        this.drainTask = new DrainTask<T>( this );
+    }
 
-	public void setMinimumInstances(int minInstances) {
-		this.minInstances = minInstances;
-	}
-	
-	public int getMininmumInstances() {
-		return this.minInstances;
-	}
-	
-	public void setMaximumInstances(int maxInstances) {
-		this.maxInstances = maxInstances;
-	}
+    protected void taskCompleted() {
+    }
 
-	public int getMaximumInstances() {
-		return this.maxInstances;
-	}
+    public void setMinimumInstances(int minInstances) {
+        this.minInstances = minInstances;
+    }
 
-	public void setInstanceFactory(InstanceFactory<T> factory) {
-		this.factory = factory;
-	}
+    public int getMininmumInstances() {
+        return this.minInstances;
+    }
 
-	public InstanceFactory<T> getInstanceFactory() {
-		return this.factory;
-	}
+    public void setMaximumInstances(int maxInstances) {
+        this.maxInstances = maxInstances;
+    }
 
-	public void setExecutor(Executor executor) {
-		this.executor = executor;
-	}
+    public int getMaximumInstances() {
+        return this.maxInstances;
+    }
 
-	public Executor getExecutor() {
-		return this.executor;
-	}
+    public void setInstanceFactory(InstanceFactory<T> factory) {
+        this.factory = factory;
+    }
 
-	@Override
-	public void instanceRequested(int totalInstances, int availableNow) {
-		if (totalInstances >= maxInstances) {
-			return;
-		}
-		if ((availableNow == 0) && (this.instances.tryAcquire())) {
-			this.executor.execute(this.fillTask);
-		}
-	}
+    public InstanceFactory<T> getInstanceFactory() {
+        return this.factory;
+    }
 
-	protected void fillInstance() throws Exception {
-		T instance = this.factory.create();
-		this.pool.fillInstance(instance);
-	}
+    public void setExecutor(Executor executor) {
+        this.executor = executor;
+    }
 
-	protected void drainInstance() throws Exception {
-		this.pool.drainInstance();
-	}
+    public Executor getExecutor() {
+        return this.executor;
+    }
 
-	public void start() {
-		if ( this.executor == null ) {
-			this.executor = Executors.newSingleThreadExecutor();
-		}
-		for ( int i = 0 ; i < this.minInstances ; ++i ) {
-			this.executor.execute( this.fillTask );
-		}
-	}
-	
-	public void stop() {
-		
-	}
+    @Override
+    public void instanceRequested(int totalInstances, int availableNow) {
+        if (totalInstances >= maxInstances) {
+            return;
+        }
+        if ((availableNow == 0) && (this.instances.tryAcquire())) {
+            this.executor.execute( this.fillTask );
+        }
+    }
 
-	public void waitForMinimumFill() throws InterruptedException {
-		while ( this.pool.size() < this.minInstances ) {
-			Thread.sleep( 50 );
-		}
-		
-	}
+    protected void fillInstance() throws Exception {
+        T instance = this.factory.create();
+        this.pool.fillInstance( instance );
+    }
+
+    protected void drainInstance() throws Exception {
+        this.pool.drainInstance();
+    }
+
+    public void start() {
+        if (this.executor == null) {
+            this.executor = Executors.newSingleThreadExecutor();
+        }
+        for (int i = 0; i < this.minInstances; ++i) {
+            this.executor.execute( this.fillTask );
+        }
+    }
+
+    public void stop() {
+
+    }
+
+    public void waitForMinimumFill() throws InterruptedException {
+        while (this.pool.size() < this.minInstances) {
+            Thread.sleep( 50 );
+        }
+
+    }
 
 }

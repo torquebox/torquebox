@@ -41,45 +41,45 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public ApplicationYamlParsingDeployer() {
-        setSectionName("application");
-        setSupportsStandalone(false);
-        addInput(RubyApplicationMetaData.class);
-        addOutput(RubyApplicationMetaData.class);
+        setSectionName( "application" );
+        setSupportsStandalone( false );
+        addInput( RubyApplicationMetaData.class );
+        addOutput( RubyApplicationMetaData.class );
     }
 
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-        log.debug("Deploying ruby application: " + unit);
+        log.debug( "Deploying ruby application: " + unit );
 
-        RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (appMetaData == null) {
-            log.debug("Configuring ruby application: " + unit);
+            log.debug( "Configuring ruby application: " + unit );
             appMetaData = new RubyApplicationMetaData();
-            unit.addAttachment(RubyApplicationMetaData.class, appMetaData);
+            unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
         } else {
-            log.debug("Configuring pre-existing ruby application: " + unit + "\n  " + appMetaData);
+            log.debug( "Configuring pre-existing ruby application: " + unit + "\n  " + appMetaData );
         }
 
         Map<String, String> app = (Map<String, String>) dataObj;
 
         if (appMetaData.getRoot() == null) {
-            String root = getOneOf(app, "root", "RAILS_ROOT", "RACK_ROOT");
+            String root = getOneOf( app, "root", "RAILS_ROOT", "RACK_ROOT" );
 
-            if (root != null && !root.trim().equals("")) {
-                appMetaData.setRoot(VFS.getChild(root.trim()));
+            if (root != null && !root.trim().equals( "" )) {
+                appMetaData.setRoot( VFS.getChild( root.trim() ) );
             }
         }
 
         if (appMetaData.getEnvironmentName() == null) {
-            String env = getOneOf(app, "env", "RAILS_ENV", "RACK_ENV");
+            String env = getOneOf( app, "env", "RAILS_ENV", "RACK_ENV" );
 
-            if (env != null && !env.trim().equals("")) {
-                appMetaData.setEnvironmentName(env.trim());
+            if (env != null && !env.trim().equals( "" )) {
+                appMetaData.setEnvironmentName( env.trim() );
             }
 
         }
-        log.debug("Configured ruby application: " + unit + "\n  " + appMetaData);
+        log.debug( "Configured ruby application: " + unit + "\n  " + appMetaData );
 
     }
 }

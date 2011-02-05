@@ -28,103 +28,104 @@ import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
 
-
 /**
  * <pre>
  * Stage: REAL
  *    In: MessageProcessorMetaData, EnvironmentMetaData
  *   Out: RubyMessageProcessor
  * </pre>
- *
+ * 
  */
 public class MessageProcessorDeployer extends AbstractDeployer {
 
-	public MessageProcessorDeployer() {
-		setStage(DeploymentStages.REAL);
-		addInput(MessageProcessorMetaData.class);
-		addInput(RubyApplicationMetaData.class);
-		addOutput(BeanMetaData.class);
-		setRelativeOrder(1000);
-	}
+    public MessageProcessorDeployer() {
+        setStage( DeploymentStages.REAL );
+        addInput( MessageProcessorMetaData.class );
+        addInput( RubyApplicationMetaData.class );
+        addOutput( BeanMetaData.class );
+        setRelativeOrder( 1000 );
+    }
 
-	@Override
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData(MessageProcessorMetaData.class);
+    @Override
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData( MessageProcessorMetaData.class );
 
-		for (MessageProcessorMetaData each : allMetaData) {
-			try {
-				deploy(unit, each);
-			} catch (NamingException e) {
-				throw new DeploymentException(e);
-			}
-		}
-	}
+        for (MessageProcessorMetaData each : allMetaData) {
+            try {
+                deploy( unit, each );
+            } catch (NamingException e) {
+                throw new DeploymentException( e );
+            }
+        }
+    }
 
-	protected void deploy(DeploymentUnit unit, MessageProcessorMetaData metaData) throws NamingException {
-		
-		String simpleName = metaData.getDestinationName() + "." + metaData.getRubyClassName();
-		String beanName = AttachmentUtils.beanName( unit, RubyMessageProcessor.class, simpleName );
+    protected void deploy(DeploymentUnit unit, MessageProcessorMetaData metaData) throws NamingException {
 
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, RubyMessageProcessor.class.getName());
+        String simpleName = metaData.getDestinationName() + "." + metaData.getRubyClassName();
+        String beanName = AttachmentUtils.beanName( unit, RubyMessageProcessor.class, simpleName );
 
-		ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, "messaging") );
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyMessageProcessor.class.getName() );
 
-		builder.addPropertyMetaData("name", metaData.getRubyClassName());
-		builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
-		builder.addPropertyMetaData("messageSelector", metaData.getMessageSelector());
-		builder.addPropertyMetaData("rubyConfig", metaData.getRubyConfig());
-		builder.addPropertyMetaData("concurrency", metaData.getConcurrency());
-		builder.addPropertyMetaData("componentResolver", createComponentResolver(unit, metaData));
+        ValueMetaData runtimePoolInject = builder.createInject( AttachmentUtils.beanName( unit, RubyRuntimePool.class, "messaging" ) );
 
-		Class<? extends AbstractManagedDestination> demandClass = demandDestination(unit, metaData.getDestinationName());
-		
-		if (demandClass != null ) {
-			String destinationBeanName = AttachmentUtils.beanName(unit, demandClass, metaData.getDestinationName());
-			builder.addDemand(destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null);
-		}
+        builder.addPropertyMetaData( "name", metaData.getRubyClassName() );
+        builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
+        builder.addPropertyMetaData( "messageSelector", metaData.getMessageSelector() );
+        builder.addPropertyMetaData( "rubyConfig", metaData.getRubyConfig() );
+        builder.addPropertyMetaData( "concurrency", metaData.getConcurrency() );
+        builder.addPropertyMetaData( "componentResolver", createComponentResolver( unit, metaData ) );
 
-		Context context = new InitialContext();
+        Class<? extends AbstractManagedDestination> demandClass = demandDestination( unit, metaData.getDestinationName() );
 
-		//JndiRefMetaData destinationJndiRef = new JndiRefMetaData(context, metaData.getDestinationName());
-		ValueMetaData destinationJndiRef = builder.createInject("naming:" + metaData.getDestinationName() );
-		builder.addPropertyMetaData("destination", destinationJndiRef);
-		
-		//JndiRefMetaData connectionFactoryJndiRef = new JndiRefMetaData(context, "/ConnectionFactory");
-		ValueMetaData connectionFactoryJndiRef = builder.createInject("naming:/ConnectionFactory");
-		builder.addPropertyMetaData("connectionFactory", connectionFactoryJndiRef);
+        if (demandClass != null) {
+            String destinationBeanName = AttachmentUtils.beanName( unit, demandClass, metaData.getDestinationName() );
+            builder.addDemand( destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null );
+        }
 
-		BeanMetaData beanMetaData = builder.getBeanMetaData();
+        Context context = new InitialContext();
 
-		unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class);
-	}
+        // JndiRefMetaData destinationJndiRef = new JndiRefMetaData(context,
+        // metaData.getDestinationName());
+        ValueMetaData destinationJndiRef = builder.createInject( "naming:" + metaData.getDestinationName() );
+        builder.addPropertyMetaData( "destination", destinationJndiRef );
 
-	protected Class<? extends AbstractManagedDestination> demandDestination(DeploymentUnit unit, String destinationName) {
-		Set<? extends AbstractDestinationMetaData> destinations = unit.getAllMetaData( AbstractDestinationMetaData.class );
+        // JndiRefMetaData connectionFactoryJndiRef = new
+        // JndiRefMetaData(context, "/ConnectionFactory");
+        ValueMetaData connectionFactoryJndiRef = builder.createInject( "naming:/ConnectionFactory" );
+        builder.addPropertyMetaData( "connectionFactory", connectionFactoryJndiRef );
 
-		for ( AbstractDestinationMetaData each : destinations ) {
-			if ( each.getName().equals( destinationName ) ) { 
-				if ( each.getClass() == QueueMetaData.class ) {
-					return ManagedQueue.class;
-				} else {
-					return ManagedTopic.class;
-				}
-			}
-		}
-		return null;
-	}
+        BeanMetaData beanMetaData = builder.getBeanMetaData();
 
-	protected RubyComponentResolver createComponentResolver(DeploymentUnit unit, MessageProcessorMetaData metaData) {
-		InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
-		result.setRubyClassName(metaData.getRubyClassName());
-		result.setRubyRequirePath(metaData.getRubyRequirePath());
-		result.setComponentName("message-processor." + metaData.getRubyClassName());
-		RubyApplicationMetaData envMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-		if (envMetaData != null) {
-			result.setAlwaysReload(envMetaData.isDevelopmentMode());
-			log.info(metaData.getRubyClassName() + " alwaysReload=" + envMetaData.isDevelopmentMode());
-		} else {
-			log.warn("No EnvironmentMetaData found for " + metaData.getRubyClassName());
-		}
-		return result;
-	}		
+        unit.addAttachment( BeanMetaData.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class );
+    }
+
+    protected Class<? extends AbstractManagedDestination> demandDestination(DeploymentUnit unit, String destinationName) {
+        Set<? extends AbstractDestinationMetaData> destinations = unit.getAllMetaData( AbstractDestinationMetaData.class );
+
+        for (AbstractDestinationMetaData each : destinations) {
+            if (each.getName().equals( destinationName )) {
+                if (each.getClass() == QueueMetaData.class) {
+                    return ManagedQueue.class;
+                } else {
+                    return ManagedTopic.class;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected RubyComponentResolver createComponentResolver(DeploymentUnit unit, MessageProcessorMetaData metaData) {
+        InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
+        result.setRubyClassName( metaData.getRubyClassName() );
+        result.setRubyRequirePath( metaData.getRubyRequirePath() );
+        result.setComponentName( "message-processor." + metaData.getRubyClassName() );
+        RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+        if (envMetaData != null) {
+            result.setAlwaysReload( envMetaData.isDevelopmentMode() );
+            log.info( metaData.getRubyClassName() + " alwaysReload=" + envMetaData.isDevelopmentMode() );
+        } else {
+            log.warn( "No EnvironmentMetaData found for " + metaData.getRubyClassName() );
+        }
+        return result;
+    }
 }

@@ -20,7 +20,7 @@ import org.yaml.snakeyaml.error.YAMLException;
  *    In: RubyRuntimeMetaData
  *   Out: RubyRuntimeMetaData
  * </pre>
- *
+ * 
  * Parsing deployer for {@code ruby.yml} to specify ruby 1.8 -vs- 1.9, at least.
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
@@ -31,49 +31,48 @@ public class RubyYamlParsingDeployer extends AbstractDeployer {
      * Construct.
      */
     public RubyYamlParsingDeployer() {
-        setInput(RubyRuntimeMetaData.class);
+        setInput( RubyRuntimeMetaData.class );
     }
-    
+
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
-            deploy((VFSDeploymentUnit) unit);
+            deploy( (VFSDeploymentUnit) unit );
         }
     }
-    
+
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        VirtualFile file = unit.getMetaDataFile("ruby.yml");
+        VirtualFile file = unit.getMetaDataFile( "ruby.yml" );
 
         if (file != null) {
             try {
-                RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(RubyRuntimeMetaData.class);
+                RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
                 if (runtimeMetaData != null) {
-                    parse(unit, file, runtimeMetaData);
+                    parse( unit, file, runtimeMetaData );
                 }
             } catch (Exception e) {
-                throw new DeploymentException(e);
+                throw new DeploymentException( e );
             }
         }
     }
 
     @SuppressWarnings("unchecked")
     protected void parse(VFSDeploymentUnit unit, VirtualFile file, RubyRuntimeMetaData runtimeMetaData) throws Exception {
-        
+
         Yaml yaml = new Yaml();
         try {
-            Map<String, Object> config = (Map<String, Object>) yaml.load(file.openStream());
+            Map<String, Object> config = (Map<String, Object>) yaml.load( file.openStream() );
 
             if (config != null) {
-                Object version = config.get("version");
-                if ("1.8".equals("" + version)) {
-                    runtimeMetaData.setVersion(RubyRuntimeMetaData.Version.V1_8);
-                } else if ("1.9".equals("" + version)) {
-                    runtimeMetaData.setVersion(RubyRuntimeMetaData.Version.V1_9);
+                Object version = config.get( "version" );
+                if ("1.8".equals( "" + version )) {
+                    runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_8 );
+                } else if ("1.9".equals( "" + version )) {
+                    runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
                 }
             }
         } catch (YAMLException e) {
-            log.error("Error parsing ruby.yml: " + e.getMessage());
+            log.error( "Error parsing ruby.yml: " + e.getMessage() );
         }
     }
-
 
 }

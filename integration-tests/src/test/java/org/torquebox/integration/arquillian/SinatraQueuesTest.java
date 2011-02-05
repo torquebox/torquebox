@@ -12,23 +12,23 @@ import org.openqa.selenium.WebElement;
 @Run(RunModeType.AS_CLIENT)
 public class SinatraQueuesTest extends AbstractIntegrationTest {
 
-	@Deployment
-	public static JavaArchive createDeployment() {
-		return createDeployment( "sinatra/1.0/queues-knob.yml" );
-	}
+    @Deployment
+    public static JavaArchive createDeployment() {
+        return createDeployment( "sinatra/1.0/queues-knob.yml" );
+    }
 
-	@Test
-	public void testTobyCrawley() throws Exception {
+    @Test
+    public void testTobyCrawley() throws Exception {
         driver.get( "http://localhost:8080/uppercaser/up/toby+crawley" );
-        WebElement body = driver.findElementByTagName("body");
-        assertEquals( "TOBY CRAWLEY", body.getText().trim());
-	}
+        WebElement body = driver.findElementByTagName( "body" );
+        assertEquals( "TOBY CRAWLEY", body.getText().trim() );
+    }
 
-	@Test
-	public void testEmployment() throws Exception {
+    @Test
+    public void testEmployment() throws Exception {
         driver.get( "http://localhost:8080/uppercaser/job" );
-        WebElement body = driver.findElementByTagName("body");
-        assertEquals( "employment!", body.getText().trim());
-	}
+        WebElement body = driver.findElementByTagName( "body" );
+        assertEquals( "employment!", body.getText().trim() );
+    }
 
 }

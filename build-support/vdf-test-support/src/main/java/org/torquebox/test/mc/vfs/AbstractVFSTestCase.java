@@ -5,9 +5,9 @@ import org.torquebox.test.AbstractTorqueBoxTestCase;
 
 public class AbstractVFSTestCase extends AbstractTorqueBoxTestCase {
 
-	@BeforeClass
-	public static void setUpVfs() throws ClassNotFoundException {
-		Class.forName("org.jboss.vfs.VFS");
-	}
-	
+    @BeforeClass
+    public static void setUpVfs() throws ClassNotFoundException {
+        Class.forName( "org.jboss.vfs.VFS" );
+    }
+
 }

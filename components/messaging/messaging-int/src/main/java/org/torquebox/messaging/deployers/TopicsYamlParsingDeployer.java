@@ -19,7 +19,7 @@ import org.torquebox.messaging.metadata.TopicMetaData;
 public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public TopicsYamlParsingDeployer() {
-        setSectionName("topics");
+        setSectionName( "topics" );
         addOutput( TopicMetaData.class );
     }
 
@@ -29,9 +29,9 @@ public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
         Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) baseData;
 
         for (String topicName : data.keySet()) {
-            log.info("Read configuration for topic [" + topicName + "]");
-            TopicMetaData topicMetaData = new TopicMetaData(topicName);
-            AttachmentUtils.multipleAttach(unit, topicMetaData, topicName);
+            log.info( "Read configuration for topic [" + topicName + "]" );
+            TopicMetaData topicMetaData = new TopicMetaData( topicName );
+            AttachmentUtils.multipleAttach( unit, topicMetaData, topicName );
         }
     }
 

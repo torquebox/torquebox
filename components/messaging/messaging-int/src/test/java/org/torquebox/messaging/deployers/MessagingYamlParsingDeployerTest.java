@@ -24,18 +24,18 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
     @Before
     public void setUpDeployer() throws Throwable {
         this.deployer = new MessagingYamlParsingDeployer();
-        addDeployer(this.deployer);
+        addDeployer( this.deployer );
     }
 
     @After
     public void tearDownDeployer() throws Throwable {
-        undeploy(this.deploymentName);
+        undeploy( this.deploymentName );
     }
 
     @Test
     public void testEmptyMessagingConfig() throws Exception {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/empty-messaging.yml" );
-        assertTrue(allMetaData.isEmpty());
+        assertTrue( allMetaData.isEmpty() );
     }
 
     @Test(expected = DeploymentException.class)
@@ -46,15 +46,15 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
     @Test
     public void testSingleMessagingConfig() throws Exception {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/single-messaging.yml" );
-        assertEquals(1, allMetaData.size());
+        assertEquals( 1, allMetaData.size() );
 
         MessageProcessorMetaData metaData = allMetaData.iterator().next();
-        assertNotNull(metaData);
-        assertEquals("MyClass", metaData.getRubyClassName());
-        assertEquals("/topics/foo", metaData.getDestinationName());
-        assertEquals("myfilter", metaData.getMessageSelector());
-        assertEquals("toast", metaData.getRubyConfig().get("a"));
-        assertEquals(new Integer(2), metaData.getConcurrency());
+        assertNotNull( metaData );
+        assertEquals( "MyClass", metaData.getRubyClassName() );
+        assertEquals( "/topics/foo", metaData.getDestinationName() );
+        assertEquals( "myfilter", metaData.getMessageSelector() );
+        assertEquals( "toast", metaData.getRubyConfig().get( "a" ) );
+        assertEquals( new Integer( 2 ), metaData.getConcurrency() );
     }
 
     @Test
@@ -79,8 +79,8 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         MessageProcessorMetaData metadata = find( allMetaData, "/array", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
         Map config = metadata.getRubyConfig();
-        assertEquals( "ex", config.get("x") );
-        assertEquals( "why", config.get("y") );
+        assertEquals( "ex", config.get( "x" ) );
+        assertEquals( "why", config.get( "y" ) );
         assertTrue( isUnconfigured( find( allMetaData, "/array", "One" ) ) );
         assertTrue( isUnconfigured( find( allMetaData, "/array", "Three" ) ) );
     }
@@ -91,9 +91,9 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "B" );
         assertEquals( "y < 18", metadata.getMessageSelector() );
         Map config = metadata.getRubyConfig();
-        assertEquals( "ache", config.get("h") );
-        assertEquals( "eye", config.get("i") );
-        assertEquals( new Integer(3), metadata.getConcurrency() );
+        assertEquals( "ache", config.get( "h" ) );
+        assertEquals( "eye", config.get( "i" ) );
+        assertEquals( new Integer( 3 ), metadata.getConcurrency() );
         assertTrue( isUnconfigured( find( allMetaData, "/hash", "A" ) ) );
     }
 
@@ -103,30 +103,30 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
         Map config = metadata.getRubyConfig();
-        assertEquals( "ex", config.get("x") );
-        assertEquals( "why", config.get("y") );
+        assertEquals( "ex", config.get( "x" ) );
+        assertEquals( "why", config.get( "y" ) );
     }
 
     @Test
     public void testDefaultConcurrency() throws Exception {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "A" );
-        assertEquals( new Integer(1), metadata.getConcurrency() );
+        assertEquals( new Integer( 1 ), metadata.getConcurrency() );
     }
 
     private Set<? extends MessageProcessorMetaData> getMetaData(String filename) throws Exception {
         File config = new File( System.getProperty( "user.dir" ), filename );
-        this.deploymentName = addDeployment(config.toURI().toURL(), "messaging.yml");
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        //unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
-        processDeployments(true);
-        return unit.getAllMetaData(MessageProcessorMetaData.class);
+        this.deploymentName = addDeployment( config.toURI().toURL(), "messaging.yml" );
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        // unit.addAttachment(DeployerRuby.class, new DeployerRuby(this.ruby));
+        processDeployments( true );
+        return unit.getAllMetaData( MessageProcessorMetaData.class );
     }
 
     private List<MessageProcessorMetaData> filter(Set<? extends MessageProcessorMetaData> metadata, String destination) {
         List<MessageProcessorMetaData> results = new ArrayList<MessageProcessorMetaData>();
-        for (MessageProcessorMetaData md: metadata) {
-            if (destination.equals(md.getDestinationName())) {
+        for (MessageProcessorMetaData md : metadata) {
+            if (destination.equals( md.getDestinationName() )) {
                 results.add( md );
             }
         }
@@ -134,8 +134,8 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
     }
 
     private MessageProcessorMetaData find(Set<? extends MessageProcessorMetaData> metadata, String destination, String handler) {
-        for (MessageProcessorMetaData md: metadata) {
-            if (destination.equals(md.getDestinationName()) && handler.equals(md.getRubyClassName())) {
+        for (MessageProcessorMetaData md : metadata) {
+            if (destination.equals( md.getDestinationName() ) && handler.equals( md.getRubyClassName() )) {
                 return md;
             }
         }

@@ -33,19 +33,19 @@ public class RackApplicationDefaultsDeployer extends AbstractDeployer {
     public static final String DEFAULT_CONTEXT_PATH = "/";
 
     public RackApplicationDefaultsDeployer() {
-        setStage(DeploymentStages.PRE_REAL);
-        setInput(RackApplicationMetaData.class);
-        addOutput(RackApplicationMetaData.class);
+        setStage( DeploymentStages.PRE_REAL );
+        setInput( RackApplicationMetaData.class );
+        addOutput( RackApplicationMetaData.class );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RackApplicationMetaData metadata = unit.getAttachment(RackApplicationMetaData.class);
+        RackApplicationMetaData metadata = unit.getAttachment( RackApplicationMetaData.class );
         if (metadata.getHosts().isEmpty()) {
-            metadata.addHost(DEFAULT_HOST);
+            metadata.addHost( DEFAULT_HOST );
         }
 
-        if ( (metadata.getContextPath() == null) || (metadata.getContextPath().trim().equals("")) ) {
-            metadata.setContextPath(DEFAULT_CONTEXT_PATH);
+        if ((metadata.getContextPath() == null) || (metadata.getContextPath().trim().equals( "" ))) {
+            metadata.setContextPath( DEFAULT_CONTEXT_PATH );
         }
     }
 }

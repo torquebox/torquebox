@@ -14,16 +14,16 @@ import org.openqa.selenium.WebElement;
 @Run(RunModeType.AS_CLIENT)
 public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTest {
 
-	@Deployment
-	public static JavaArchive createDeployment() throws Exception {
-        File exploded = new File( System.getProperty("user.dir") + "/apps/rails/3.0.0/torque-174.knob" );
-        
-	    return archive( exploded );
-	}
+    @Deployment
+    public static JavaArchive createDeployment() throws Exception {
+        File exploded = new File( System.getProperty( "user.dir" ) + "/apps/rails/3.0.0/torque-174.knob" );
+
+        return archive( exploded );
+    }
 
     public void setUp() {
         super.setUp();
-        driver.setJavascriptEnabled(true);
+        driver.setJavascriptEnabled( true );
     }
 
     @Test

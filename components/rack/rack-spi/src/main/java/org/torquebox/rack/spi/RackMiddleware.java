@@ -22,5 +22,5 @@
 package org.torquebox.rack.spi;
 
 public interface RackMiddleware {
-	RackResponse call(RackEnvironment env);
+    RackResponse call(RackEnvironment env);
 }

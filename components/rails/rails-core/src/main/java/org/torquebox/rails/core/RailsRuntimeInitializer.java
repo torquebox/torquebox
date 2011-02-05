@@ -44,7 +44,7 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
     private RailsApplicationMetaData railsAppMetaData;
 
     public RailsRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackAppMetaData, RailsApplicationMetaData railsAppMetaData) {
-        super(rubyAppMetaData, rackAppMetaData);
+        super( rubyAppMetaData, rackAppMetaData );
         this.railsAppMetaData = railsAppMetaData;
     }
 
@@ -57,7 +57,7 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
     }
 
     public void addAutoloadPath(String path) {
-        this.autoloadPaths.add(path);
+        this.autoloadPaths.add( path );
     }
 
     public List<String> getAutoloadPaths() {
@@ -65,24 +65,23 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
     }
 
     public void initialize(Ruby ruby) throws Exception {
-        super.initialize(ruby);
-        Logger logger = Logger.getLogger(getRailsRoot().toURL().toExternalForm());
-        IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby(ruby, logger);
-        ruby.getGlobalVariables().set("$JBOSS_RAILS_LOGGER", rubyLogger);
+        super.initialize( ruby );
+        Logger logger = Logger.getLogger( getRailsRoot().toURL().toExternalForm() );
+        IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby( ruby, logger );
+        ruby.getGlobalVariables().set( "$JBOSS_RAILS_LOGGER", rubyLogger );
 
-        String scriptLocationBase = new URL(getRailsRoot().toURL(), "<torquebox-bootstrap>").toExternalForm();
-        makeAutoloadPathsAvailable(ruby);
-        ruby.executeScript(createBoot(getRailsRoot()), scriptLocationBase + "-boot.rb");
+        String scriptLocationBase = new URL( getRailsRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
+        makeAutoloadPathsAvailable( ruby );
+        ruby.executeScript( createBoot( getRailsRoot() ), scriptLocationBase + "-boot.rb" );
     }
 
     protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
-        return  "RAILS_ROOT=RACK_ROOT\n" + "RAILS_ENV=RACK_ENV\n" + 
-          "require %q(org/torquebox/rails/core/boot)\n";
+        return "RAILS_ROOT=RACK_ROOT\n" + "RAILS_ENV=RACK_ENV\n" + "require %q(org/torquebox/rails/core/boot)\n";
     }
 
     protected void makeAutoloadPathsAvailable(Ruby ruby) {
-        RubyModule object = ruby.getClassFromPath("Object");
-        object.setConstant("TORQUEBOX_RAILS_AUTOLOAD_PATHS", JavaEmbedUtils.javaToRuby(ruby, getAutoloadPaths()));
+        RubyModule object = ruby.getClassFromPath( "Object" );
+        object.setConstant( "TORQUEBOX_RAILS_AUTOLOAD_PATHS", JavaEmbedUtils.javaToRuby( ruby, getAutoloadPaths() ) );
     }
 
 }

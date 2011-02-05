@@ -24,29 +24,31 @@ public class RubyServiceProxyTest extends AbstractRubyTestCase {
     public void setUp() throws Exception {
         this.ruby = createRuby();
         this.resolver = new InstantiatingRubyComponentResolver();
-        this.proxy = new RubyServiceProxy( resolver, new SharedRubyRuntimePool(this.ruby) );
+        this.proxy = new RubyServiceProxy( resolver, new SharedRubyRuntimePool( this.ruby ) );
     }
 
-    @Test public void testServiceStartStop() throws Exception {
+    @Test
+    public void testServiceStartStop() throws Exception {
         resolver.setRubyClassName( "TestService" );
         resolver.setRubyRequirePath( "org/torquebox/jobs/core/test_service" );
-        
+
         proxy.start();
-        Boolean started = (Boolean) ReflectionHelper.callIfPossible(this.ruby, proxy.getService(), "started?", null);
+        Boolean started = (Boolean) ReflectionHelper.callIfPossible( this.ruby, proxy.getService(), "started?", null );
         assertTrue( started.booleanValue() );
 
         proxy.stop();
-        started = (Boolean) ReflectionHelper.callIfPossible(this.ruby, proxy.getService(), "started?", null);
+        started = (Boolean) ReflectionHelper.callIfPossible( this.ruby, proxy.getService(), "started?", null );
         assertFalse( started.booleanValue() );
     }
 
-    @Test public void testInitialization() throws Exception {
+    @Test
+    public void testInitialization() throws Exception {
         resolver.setRubyClassName( "TestService" );
         resolver.setRubyRequirePath( "org/torquebox/jobs/core/test_service" );
-        resolver.setInitializeParams( ruby.evalScriptlet("{'foo'=>42}").convertToHash() );
-        
+        resolver.setInitializeParams( ruby.evalScriptlet( "{'foo'=>42}" ).convertToHash() );
+
         proxy.start();
-        assertEquals( 42, JavaEmbedUtils.invokeMethod(ruby, proxy.getService(), "[]", new Object[] { "foo" }, Integer.class) );
+        assertEquals( 42, JavaEmbedUtils.invokeMethod( ruby, proxy.getService(), "[]", new Object[] { "foo" }, Integer.class ) );
         proxy.stop();
     }
 

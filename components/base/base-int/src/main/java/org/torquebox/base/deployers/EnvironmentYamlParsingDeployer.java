@@ -41,38 +41,38 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 public class EnvironmentYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public EnvironmentYamlParsingDeployer() {
-        setSectionName("environment");
-        setSupportsStandalone(false);
-        addInput(RubyApplicationMetaData.class);
-        addOutput(RubyApplicationMetaData.class);
+        setSectionName( "environment" );
+        setSupportsStandalone( false );
+        addInput( RubyApplicationMetaData.class );
+        addOutput( RubyApplicationMetaData.class );
     }
 
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-        log.debug("Deploying ruby environment: " + unit);
+        log.debug( "Deploying ruby environment: " + unit );
 
-        RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (appMetaData == null) {
-            log.debug("Configuring ruby environment: " + unit);
+            log.debug( "Configuring ruby environment: " + unit );
             appMetaData = new RubyApplicationMetaData();
-            unit.addAttachment(RubyApplicationMetaData.class, appMetaData);
+            unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
         } else {
-            log.debug("Configuring pre-existing ruby environment: " + unit + "\n  " + appMetaData);
+            log.debug( "Configuring pre-existing ruby environment: " + unit + "\n  " + appMetaData );
         }
 
         Map<String, String> env = (Map<String, String>) dataObj;
 
         Map<String, String> appEnv = appMetaData.getEnvironmentVariables();
-        
-        if (appEnv == null ) {
-            appEnv = new HashMap<String,String>();
-            appMetaData.setEnvironmentVariables(appEnv);
+
+        if (appEnv == null) {
+            appEnv = new HashMap<String, String>();
+            appMetaData.setEnvironmentVariables( appEnv );
         }
-        
+
         appEnv.putAll( env );
 
-        log.debug("Configured ruby application: " + unit + "\n  " + appMetaData);
+        log.debug( "Configured ruby application: " + unit + "\n  " + appMetaData );
 
     }
 }

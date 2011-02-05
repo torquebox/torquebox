@@ -20,28 +20,28 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
         rackAppMetaData.setContextPath( "/mycontext" );
         rackAppMetaData.setRackApplicationName( "app_name" );
 
-        RackRuntimeInitializer initializer = new RackRuntimeInitializer(rubyAppMetaData, rackAppMetaData);
+        RackRuntimeInitializer initializer = new RackRuntimeInitializer( rubyAppMetaData, rackAppMetaData );
 
         Ruby ruby = createRuby();
         initializer.initialize( ruby );
 
-        String rackRoot = (String) ruby.evalScriptlet( "RACK_ROOT" ).toJava(String.class);
+        String rackRoot = (String) ruby.evalScriptlet( "RACK_ROOT" ).toJava( String.class );
         assertEquals( "vfs:" + vfsAbsolutePrefix() + "/myapp", rackRoot );
 
-        String rackEnv = (String) ruby.evalScriptlet( "RACK_ENV" ).toJava(String.class);
+        String rackEnv = (String) ruby.evalScriptlet( "RACK_ENV" ).toJava( String.class );
         assertEquals( "test", rackEnv );
 
-        String pwd = (String) ruby.evalScriptlet( "Dir.pwd" ).toJava(String.class);
+        String pwd = (String) ruby.evalScriptlet( "Dir.pwd" ).toJava( String.class );
         assertEquals( absolutePrefix() + "/myapp", pwd );
 
-        String baseUri = (String) ruby.evalScriptlet( "ENV['RACK_BASE_URI']" ).toJava(String.class);
+        String baseUri = (String) ruby.evalScriptlet( "ENV['RACK_BASE_URI']" ).toJava( String.class );
         assertEquals( "/mycontext", baseUri );
 
-        String appName = (String) ruby.evalScriptlet( "ENV['TORQUEBOX_APP_NAME']").toJava(String.class);
-        assertEquals( "app_name", appName);
+        String appName = (String) ruby.evalScriptlet( "ENV['TORQUEBOX_APP_NAME']" ).toJava( String.class );
+        assertEquals( "app_name", appName );
 
-        appName = (String) ruby.evalScriptlet( "TORQUEBOX_APP_NAME").toJava(String.class);
-        assertEquals( "app_name", appName);
+        appName = (String) ruby.evalScriptlet( "TORQUEBOX_APP_NAME" ).toJava( String.class );
+        assertEquals( "app_name", appName );
 
     }
 }

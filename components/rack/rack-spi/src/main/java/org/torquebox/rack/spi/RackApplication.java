@@ -23,8 +23,6 @@ package org.torquebox.rack.spi;
 
 import org.jruby.Ruby;
 
-
-
 public interface RackApplication extends RackMiddleware {
-	Ruby getRuby();
+    Ruby getRuby();
 }

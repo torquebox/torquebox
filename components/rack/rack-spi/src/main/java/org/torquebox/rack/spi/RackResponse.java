@@ -24,6 +24,6 @@ package org.torquebox.rack.spi;
 import javax.servlet.http.HttpServletResponse;
 
 public interface RackResponse {
-	public void respond(HttpServletResponse response);
+    public void respond(HttpServletResponse response);
 
 }

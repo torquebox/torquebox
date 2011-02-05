@@ -25,7 +25,7 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyMessageProcessor {
 
-    private static final Logger log = Logger.getLogger(RubyMessageProcessor.class);
+    private static final Logger log = Logger.getLogger( RubyMessageProcessor.class );
 
     public RubyMessageProcessor() {
 
@@ -50,7 +50,7 @@ public class RubyMessageProcessor {
     public RubyComponentResolver getComponentResolver() {
         return this.componentResolver;
     }
-    
+
     public void setDestination(Destination destination) {
         this.destination = destination;
     }
@@ -68,7 +68,8 @@ public class RubyMessageProcessor {
     }
 
     public void setRubyConfig(Map rubyConfig) {
-        if (rubyConfig != null) this.rubyConfig = rubyConfig;
+        if (rubyConfig != null)
+            this.rubyConfig = rubyConfig;
     }
 
     public Map getRubyConfig() {
@@ -98,7 +99,7 @@ public class RubyMessageProcessor {
     public RubyRuntimePool getRubyRuntimePool() {
         return this.rubyRuntimePool;
     }
-    
+
     public void setConcurrency(int concurrency) {
         this.concurrency = concurrency;
     }
@@ -108,57 +109,57 @@ public class RubyMessageProcessor {
     }
 
     public void create() throws JMSException {
-        log.info("creating for " + getDestination());
+        log.info( "creating for " + getDestination() );
         this.connection = this.connectionFactory.createConnection();
-        for (int i=0; i<getConcurrency(); i++) {
-            new Handler( this.connection.createSession(true, this.acknowledgeMode) );
+        for (int i = 0; i < getConcurrency(); i++) {
+            new Handler( this.connection.createSession( true, this.acknowledgeMode ) );
         }
     }
 
     public void start() throws JMSException {
-        log.info("starting for " + getDestination());
+        log.info( "starting for " + getDestination() );
         if (connection != null) {
             connection.start();
         }
     }
 
     public void stop() throws JMSException {
-        log.info("stopping for " + getDestination());
+        log.info( "stopping for " + getDestination() );
         if (this.connection != null) {
-            log.info("stopping connection for " + getDestination());
+            log.info( "stopping connection for " + getDestination() );
             this.connection.stop();
         }
     }
 
     public void destroy() throws JMSException {
-        log.info("destroying for " + getDestination());
+        log.info( "destroying for " + getDestination() );
         if (this.connection != null) {
-            log.info("destroying connection for " + getDestination());
+            log.info( "destroying connection for " + getDestination() );
             this.connection.close();
             this.connection = null;
         }
     }
 
     protected IRubyObject instantiateProcessor(Ruby ruby) throws Exception {
-        return this.componentResolver.resolve(ruby);
+        return this.componentResolver.resolve( ruby );
     }
 
     protected void configureProcessor(IRubyObject processor) {
         Ruby ruby = processor.getRuntime();
-        ReflectionHelper.callIfPossible(ruby, processor, "configure", new Object[] { getRubyConfig() });
+        ReflectionHelper.callIfPossible( ruby, processor, "configure", new Object[] { getRubyConfig() } );
     }
 
     protected void processMessage(IRubyObject processor, Message message) {
         Ruby ruby = processor.getRuntime();
-        JavaEmbedUtils.invokeMethod(ruby, processor, "process!", new Object[] { message }, void.class);
+        JavaEmbedUtils.invokeMethod( ruby, processor, "process!", new Object[] { message }, void.class );
     }
 
     class Handler implements MessageListener {
-        
-        Handler (Session session) throws JMSException {
-            log.info("creating session handler for " + getDestination());
-            MessageConsumer consumer = session.createConsumer(getDestination(), getMessageSelector());
-            consumer.setMessageListener(this);
+
+        Handler(Session session) throws JMSException {
+            log.info( "creating session handler for " + getDestination() );
+            MessageConsumer consumer = session.createConsumer( getDestination(), getMessageSelector() );
+            consumer.setMessageListener( this );
             this.session = session;
         }
 
@@ -166,25 +167,31 @@ public class RubyMessageProcessor {
             Ruby ruby = null;
 
             try {
-                log.debug("Received message: "+message);
+                log.debug( "Received message: " + message );
                 ruby = getRubyRuntimePool().borrowRuntime();
-                log.debug("Got runtime: "+ruby);
-                IRubyObject processor = instantiateProcessor(ruby);
-                log.debug("Got processor: "+processor);
-                configureProcessor(processor);
-                log.debug("Configured processor: "+processor);
-                processMessage(processor, message);
-                log.debug("Message processed");
-                if ( session.getTransacted() ) session.commit();
+                log.debug( "Got runtime: " + ruby );
+                IRubyObject processor = instantiateProcessor( ruby );
+                log.debug( "Got processor: " + processor );
+                configureProcessor( processor );
+                log.debug( "Configured processor: " + processor );
+                processMessage( processor, message );
+                log.debug( "Message processed" );
+                if (session.getTransacted())
+                    session.commit();
             } catch (Exception e) {
-                log.error("unable to dispatch", e);
-                try { if ( session.getTransacted() ) session.rollback(); } catch (JMSException ignored) {}
+                log.error( "unable to dispatch", e );
+                try {
+                    if (session.getTransacted())
+                        session.rollback();
+                } catch (JMSException ignored) {
+                }
             } finally {
                 if (ruby != null) {
-                    getRubyRuntimePool().returnRuntime(ruby);
+                    getRubyRuntimePool().returnRuntime( ruby );
                 }
             }
         }
+
         private Session session;
     }
 

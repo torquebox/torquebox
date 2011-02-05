@@ -35,25 +35,25 @@ import org.jboss.vfs.VirtualFile;
 public class RackApplicationMetaData {
 
     public RackApplicationMetaData() {
-        
+
     }
-    
+
     public void setRackUpScript(String rackUpScript) {
         this.rackUpScript = rackUpScript;
     }
 
     public String getRackUpScript(VirtualFile root) throws IOException {
         if (this.rackUpScript == null) {
-            VirtualFile file = getRackUpScriptFile(root);
+            VirtualFile file = getRackUpScriptFile( root );
             if (file != null && file.exists()) {
                 StringBuilder script = new StringBuilder();
                 BufferedReader in = null;
                 try {
-                    in = new BufferedReader(new InputStreamReader(file.openStream()));
+                    in = new BufferedReader( new InputStreamReader( file.openStream() ) );
                     String line = null;
                     while ((line = in.readLine()) != null) {
-                        script.append(line);
-                        script.append("\n");
+                        script.append( line );
+                        script.append( "\n" );
                     }
                 } finally {
                     if (in != null)
@@ -81,20 +81,20 @@ public class RackApplicationMetaData {
     }
 
     public VirtualFile getRackUpScriptFile(VirtualFile root) {
-        if ( this.rackUpScriptLocation == null ) {
+        if (this.rackUpScriptLocation == null) {
             return null;
         }
-        
-        if (this.rackUpScriptLocation.startsWith("/") || rackUpScriptLocation.matches("^[A-Za-z]:.*") ) {
-           return VFS.getChild(rackUpScriptLocation);
+
+        if (this.rackUpScriptLocation.startsWith( "/" ) || rackUpScriptLocation.matches( "^[A-Za-z]:.*" )) {
+            return VFS.getChild( rackUpScriptLocation );
         } else {
-            return root.getChild(rackUpScriptLocation);
+            return root.getChild( rackUpScriptLocation );
         }
     }
 
     public void addHost(String host) {
-        if (host != null && !this.hosts.contains(host))
-            this.hosts.add(host);
+        if (host != null && !this.hosts.contains( host ))
+            this.hosts.add( host );
     }
 
     public List<String> getHosts() {
@@ -149,10 +149,9 @@ public class RackApplicationMetaData {
         return this.rackApplicationName;
     }
 
-
     public String toString() {
-        return "[RackApplicationMetaData:" + System.identityHashCode( this ) + "\n  rackupScriptLocation=" + this.rackUpScriptLocation + "\n  rackUpScript=" + this.rackUpScript + "\n  host=" + this.hosts
-                + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix + "]";
+        return "[RackApplicationMetaData:" + System.identityHashCode( this ) + "\n  rackupScriptLocation=" + this.rackUpScriptLocation + "\n  rackUpScript="
+                + this.rackUpScript + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix + "]";
     }
 
     private String rackUpScript;

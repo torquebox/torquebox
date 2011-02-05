@@ -15,40 +15,39 @@ import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
-
 public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
-	
-	private RackRuntimeDeployer deployer;
-    private Map<String,String> environment = new HashMap<String,String>();
 
-	@Before
-	public void setUpDeployer() throws Throwable {
-		this.deployer = new RackRuntimeDeployer();
-		addDeployer( this.deployer );
-	}
-	
-	@Test
-	public void testHappy() throws Exception {
-        environment.put("SOME_VAR", "gassy");
+    private RackRuntimeDeployer deployer;
+    private Map<String, String> environment = new HashMap<String, String>();
+
+    @Before
+    public void setUpDeployer() throws Throwable {
+        this.deployer = new RackRuntimeDeployer();
+        addDeployer( this.deployer );
+    }
+
+    @Test
+    public void testHappy() throws Exception {
+        environment.put( "SOME_VAR", "gassy" );
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
         RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
-        
-        rubyAppMetaData.setRoot(VFS.getChild("/foo"));
-        rubyAppMetaData.setEnvironmentVariables(environment);
 
-		String deploymentName = createDeployment("test");
-		DeploymentUnit unit = getDeploymentUnit(deploymentName);
-		
-		unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
-		unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
+        rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
+        rubyAppMetaData.setEnvironmentVariables( environment );
 
-		processDeployments(true);
+        String deploymentName = createDeployment( "test" );
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+        unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
+
+        processDeployments( true );
 
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
         assertNotNull( runtimeMetaData );
         assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
-        assertTrue( runtimeMetaData.getEnvironment().containsKey("SOME_VAR") );
+        assertTrue( runtimeMetaData.getEnvironment().containsKey( "SOME_VAR" ) );
         assertTrue( runtimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
-	}
-	
+    }
+
 }

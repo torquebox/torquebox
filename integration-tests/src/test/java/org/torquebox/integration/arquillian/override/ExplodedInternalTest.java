@@ -5,14 +5,13 @@ import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
-
 @Run(RunModeType.AS_CLIENT)
 public class ExplodedInternalTest extends AbstractOverrideTest {
 
-	@Deployment
-	public static JavaArchive createDeployment() throws Exception {
-		return createDeployment("sinatra/1.0/exploded-internal-rack.yml");
-	}
+    @Deployment
+    public static JavaArchive createDeployment() throws Exception {
+        return createDeployment( "sinatra/1.0/exploded-internal-rack.yml" );
+    }
 
     public ExplodedInternalTest() {
         context = "override-internal";

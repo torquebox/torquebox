@@ -9,14 +9,13 @@ import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-
 /**
  * <pre>
  * Stage: DESCRIBE
  *    In: RackApplicationMetaData
  *   Out: QueueMetaData, MessageProcessorMetaData
  * </pre>
- *
+ * 
  * Any object can have tasks!
  */
 public class BackgroundableDeployer extends AbstractDeployer {
@@ -30,19 +29,19 @@ public class BackgroundableDeployer extends AbstractDeployer {
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
 
         QueueMetaData queue = new QueueMetaData();
         String queueName = "/queues/torquebox/" + rackMetaData.getRackApplicationName() + "/backgroundable";
         queue.setName( queueName );
-        AttachmentUtils.multipleAttach(unit, queue, queue.getName() );
-     
-        //TODO: allow for configurable concurrency
+        AttachmentUtils.multipleAttach( unit, queue, queue.getName() );
+
+        // TODO: allow for configurable concurrency
         MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
         processorMetaData.setDestinationName( queue.getName() );
         processorMetaData.setRubyClassName( "TorqueBox::Messaging::BackgroundableProcessor" );
         processorMetaData.setRubyRequirePath( "torquebox/messaging/backgroundable_processor" );
-        AttachmentUtils.multipleAttach(unit, processorMetaData, processorMetaData.getName() );
+        AttachmentUtils.multipleAttach( unit, processorMetaData, processorMetaData.getName() );
     }
 
 }

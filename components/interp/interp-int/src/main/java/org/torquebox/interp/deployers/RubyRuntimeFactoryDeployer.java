@@ -47,102 +47,103 @@ import org.torquebox.mc.AttachmentUtils;
  *    In: RubyRuntimeMetaData
  *   Out: DeployerRuby
  * </pre>
- *
+ * 
  * Deployer which actually creates a RubyRuntimeFactory and attaches it to the
  * unit.
  * 
- * <p> This deployer actually creates an instance of
- * RubyRuntimeFactory and attaches it to the unit.  </p>
+ * <p>
+ * This deployer actually creates an instance of RubyRuntimeFactory and attaches
+ * it to the unit.
+ * </p>
  * 
  * @author Bob McWhirter
  */
 public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<RubyRuntimeMetaData> {
 
-	/** Kernel. */
-	private Kernel kernel;
-	
-	/** Should use JRUBY_HOME environment variable? */
-	private boolean useJRubyHomeEnvVar = true;
+    /** Kernel. */
+    private Kernel kernel;
 
-	/** Construct. */
-	public RubyRuntimeFactoryDeployer() {
-		super(RubyRuntimeMetaData.class);
-		setStage(DeploymentStages.CLASSLOADER);
-		addOutput(Ruby.class);
-	}
+    /** Should use JRUBY_HOME environment variable? */
+    private boolean useJRubyHomeEnvVar = true;
 
-	/**
-	 * Set the kernel.
-	 * 
-	 * @param kernel
-	 *            The kernel.
-	 */
-	public void setKernel(Kernel kernel) {
-		this.kernel = kernel;
-	}
+    /** Construct. */
+    public RubyRuntimeFactoryDeployer() {
+        super( RubyRuntimeMetaData.class );
+        setStage( DeploymentStages.CLASSLOADER );
+        addOutput( Ruby.class );
+    }
 
-	/**
-	 * Get the kernel.
-	 * 
-	 * @return The kernel.
-	 */
-	public Kernel getKernel() {
-		return this.kernel;
-	}
-	
-	public void setUseJRubyHomeEnvVar(boolean useJRubyHomeEnvVar) {
-		this.useJRubyHomeEnvVar = useJRubyHomeEnvVar;
-	}
-	
-	public boolean useJRubyHomeEnvVar() {
-		return this.useJRubyHomeEnvVar;
-	}
+    /**
+     * Set the kernel.
+     * 
+     * @param kernel
+     *            The kernel.
+     */
+    public void setKernel(Kernel kernel) {
+        this.kernel = kernel;
+    }
 
-	@Override
-	public void deploy(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData) throws DeploymentException {
-		
-		String beanName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class );
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyRuntimeFactoryImpl.class.getName() );
-		
-		log.info( "Using initializer: " + metaData.getRuntimeInitializer() );
-		RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( metaData.getRuntimeInitializer() );
-		
-		List<String> loadPaths = new ArrayList<String>();
+    /**
+     * Get the kernel.
+     * 
+     * @return The kernel.
+     */
+    public Kernel getKernel() {
+        return this.kernel;
+    }
 
-		for (RubyLoadPathMetaData loadPath : metaData.getLoadPaths()) {
-			loadPaths.add(loadPath.getURL().toExternalForm());
-		}
-		
-		
-		factory.setLoadPaths( loadPaths );
-		factory.setKernel( this.kernel );
-		factory.setApplicationName( unit.getSimpleName() );
-		factory.setClassLoader( unit.getClassLoader() );
-		factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
-		factory.setApplicationEnvironment( metaData.getEnvironment() );
-		
-		if ( metaData.getVersion() ==  RubyRuntimeMetaData.Version.V1_9) {
-			factory.setRubyVersion( CompatVersion.RUBY1_9 );
-		} else {
-			factory.setRubyVersion( CompatVersion.RUBY1_8 );
-		}
-		
-		KernelController controller = this.kernel.getController();
-		
-		try {
-			controller.install( builder.getBeanMetaData(), factory );
-		} catch (Throwable e) {
-			throw new DeploymentException(e );
-		}
-		
-		unit.addAttachment( DeployerRuby.class, new DeployerRuby( factory ) );
-		
-	}
-	
-	public void undeploy(VFSDeploymentUnit unit, RubyRuntimeMetaData md) {
-	    String beanName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class );
-	    KernelController controller = this.kernel.getController();
-	    controller.uninstall( beanName );
-	}
+    public void setUseJRubyHomeEnvVar(boolean useJRubyHomeEnvVar) {
+        this.useJRubyHomeEnvVar = useJRubyHomeEnvVar;
+    }
+
+    public boolean useJRubyHomeEnvVar() {
+        return this.useJRubyHomeEnvVar;
+    }
+
+    @Override
+    public void deploy(VFSDeploymentUnit unit, RubyRuntimeMetaData metaData) throws DeploymentException {
+
+        String beanName = AttachmentUtils.beanName( unit, RubyRuntimeFactory.class );
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyRuntimeFactoryImpl.class.getName() );
+
+        log.info( "Using initializer: " + metaData.getRuntimeInitializer() );
+        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( metaData.getRuntimeInitializer() );
+
+        List<String> loadPaths = new ArrayList<String>();
+
+        for (RubyLoadPathMetaData loadPath : metaData.getLoadPaths()) {
+            loadPaths.add( loadPath.getURL().toExternalForm() );
+        }
+
+        factory.setLoadPaths( loadPaths );
+        factory.setKernel( this.kernel );
+        factory.setApplicationName( unit.getSimpleName() );
+        factory.setClassLoader( unit.getClassLoader() );
+        factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
+        factory.setApplicationEnvironment( metaData.getEnvironment() );
+
+        if (metaData.getVersion() == RubyRuntimeMetaData.Version.V1_9) {
+            factory.setRubyVersion( CompatVersion.RUBY1_9 );
+        } else {
+            factory.setRubyVersion( CompatVersion.RUBY1_8 );
+        }
+
+        KernelController controller = this.kernel.getController();
+
+        try {
+            controller.install( builder.getBeanMetaData(), factory );
+        } catch (Throwable e) {
+            throw new DeploymentException( e );
+        }
+
+        unit.addAttachment( DeployerRuby.class, new DeployerRuby( factory ) );
+
+    }
+
+    public void undeploy(VFSDeploymentUnit unit, RubyRuntimeMetaData md) {
+        String beanName = AttachmentUtils.beanName( unit, RubyRuntimeFactory.class );
+        KernelController controller = this.kernel.getController();
+        controller.uninstall( beanName );
+    }
 
 }

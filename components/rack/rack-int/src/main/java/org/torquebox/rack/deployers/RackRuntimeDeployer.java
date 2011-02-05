@@ -44,39 +44,39 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
 public class RackRuntimeDeployer extends AbstractDeployer {
 
     public RackRuntimeDeployer() {
-        setStage(DeploymentStages.PRE_DESCRIBE);
-        setInput(RackApplicationMetaData.class);
-        addRequiredInput(RubyApplicationMetaData.class);
-        addOutput(RubyRuntimeMetaData.class);
+        setStage( DeploymentStages.PRE_DESCRIBE );
+        setInput( RackApplicationMetaData.class );
+        addRequiredInput( RubyApplicationMetaData.class );
+        addOutput( RubyRuntimeMetaData.class );
 
-        setRelativeOrder(1000);
+        setRelativeOrder( 1000 );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
-            deploy((VFSDeploymentUnit) unit);
+            deploy( (VFSDeploymentUnit) unit );
         }
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        log.debug("Deploying Ruby runtime: " + unit );
-        if (unit.isAttachmentPresent(RubyRuntimeMetaData.class)) {
-            log.warn("Ruby runtime already initialized");
+        log.debug( "Deploying Ruby runtime: " + unit );
+        if (unit.isAttachmentPresent( RubyRuntimeMetaData.class )) {
+            log.warn( "Ruby runtime already initialized" );
             return;
         }
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.class );
 
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
 
-        runtimeMetaData.setBaseDir(rubyAppMetaData.getRoot());
-        runtimeMetaData.setEnvironment(rubyAppMetaData.getEnvironmentVariables());
+        runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );
+        runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
 
-        RuntimeInitializer initializer = new RackRuntimeInitializer(rubyAppMetaData, rackAppMetaData);
-        runtimeMetaData.setRuntimeInitializer(initializer);
+        RuntimeInitializer initializer = new RackRuntimeInitializer( rubyAppMetaData, rackAppMetaData );
+        runtimeMetaData.setRuntimeInitializer( initializer );
 
-        unit.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
+        unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
     }
 
 }

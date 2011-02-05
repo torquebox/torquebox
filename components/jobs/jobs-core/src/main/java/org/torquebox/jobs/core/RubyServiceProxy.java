@@ -8,14 +8,13 @@ import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.interp.core.RubyComponentResolver;
 
-
 public class RubyServiceProxy {
 
     public RubyServiceProxy() {
         // MicroContainer seems to want this declared
     }
 
-    public RubyServiceProxy( RubyComponentResolver resolver, RubyRuntimePool pool ) {
+    public RubyServiceProxy(RubyComponentResolver resolver, RubyRuntimePool pool) {
         setRubyComponentResolver( resolver );
         setRubyRuntimePool( pool );
     }
@@ -23,27 +22,29 @@ public class RubyServiceProxy {
     public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
         this.runtimePool = runtimePool;
     }
-    
+
     public void setRubyComponentResolver(RubyComponentResolver resolver) {
         this.resolver = resolver;
     }
 
     public void start() throws Exception {
-        if (this.ruby != null) throw new IllegalStateException("Already running");
+        if (this.ruby != null)
+            throw new IllegalStateException( "Already running" );
         this.ruby = runtimePool.borrowRuntime();
-        ReflectionHelper.callIfPossible(this.ruby, getService(), "start", null);
+        ReflectionHelper.callIfPossible( this.ruby, getService(), "start", null );
     }
 
     public void stop() throws Exception {
-        if (this.ruby == null) throw new IllegalStateException("Not running");
-        ReflectionHelper.callIfPossible(this.ruby, getService(), "stop", null);
-        runtimePool.returnRuntime(this.ruby);
+        if (this.ruby == null)
+            throw new IllegalStateException( "Not running" );
+        ReflectionHelper.callIfPossible( this.ruby, getService(), "stop", null );
+        runtimePool.returnRuntime( this.ruby );
         this.ruby = null;
     }
 
     protected IRubyObject getService() throws Exception {
         if (this.service == null) {
-            this.service = resolver.resolve(this.ruby);
+            this.service = resolver.resolve( this.ruby );
         }
         return this.service;
     }

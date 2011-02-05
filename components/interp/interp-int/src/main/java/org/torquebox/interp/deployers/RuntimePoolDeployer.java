@@ -17,75 +17,74 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.vdf.AbstractMultipleMetaDataDeployer;
 
-
 /**
  * <pre>
  * Stage: REAL
  *    In: PoolMetaData, DeployerRuby
  *   Out: RubyRuntimePool
  * </pre>
- *
+ * 
  * Creates the proper RubyRuntimePool as specified by the PoolMetaData
  */
 public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMetaData> {
 
     public RuntimePoolDeployer() {
-        super(PoolMetaData.class);
-        addOutput(BeanMetaData.class);
-        setStage(DeploymentStages.REAL);
+        super( PoolMetaData.class );
+        addOutput( BeanMetaData.class );
+        setStage( DeploymentStages.REAL );
     }
 
     protected void deploy(DeploymentUnit unit, PoolMetaData poolMetaData) throws DeploymentException {
-        log.info("Deploying runtime pool: "+poolMetaData);
+        log.info( "Deploying runtime pool: " + poolMetaData );
 
         // String beanName = AttachmentUtils.beanName(unit, "pool",
         // poolMetaData.getName());
-        String beanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, poolMetaData.getName());
+        String beanName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, poolMetaData.getName() );
 
         BeanMetaData poolBean = null;
 
         if (poolMetaData.isGlobal()) {
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class.getName());
-            builder.addPropertyMetaData("name", poolMetaData.getName());
+            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, SharedRubyRuntimePool.class.getName() );
+            builder.addPropertyMetaData( "name", poolMetaData.getName() );
 
             String instanceName = poolMetaData.getInstanceName();
             if (instanceName == null) {
                 try {
-                    Ruby runtime = unit.getAttachment(DeployerRuby.class).getRuby();
-                    builder.addConstructorParameter(Ruby.class.getName(), runtime);
+                    Ruby runtime = unit.getAttachment( DeployerRuby.class ).getRuby();
+                    builder.addConstructorParameter( Ruby.class.getName(), runtime );
                 } catch (Exception e) {
-                    throw new DeploymentException(e);
+                    throw new DeploymentException( e );
                 }
             } else {
-                ValueMetaData runtimeInjection = builder.createInject(instanceName);
-                builder.addConstructorParameter(Ruby.class.getName(), runtimeInjection);
+                ValueMetaData runtimeInjection = builder.createInject( instanceName );
+                builder.addConstructorParameter( Ruby.class.getName(), runtimeInjection );
             }
             poolBean = builder.getBeanMetaData();
         } else if (poolMetaData.isShared()) {
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, SharedRubyRuntimePool.class.getName());
-            builder.addPropertyMetaData("name", poolMetaData.getName());
+            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, SharedRubyRuntimePool.class.getName() );
+            builder.addPropertyMetaData( "name", poolMetaData.getName() );
             String factoryName = poolMetaData.getInstanceFactoryName();
             if (factoryName == null) {
-                factoryName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class);
+                factoryName = AttachmentUtils.beanName( unit, RubyRuntimeFactory.class );
             }
-            ValueMetaData factoryInjection = builder.createInject(factoryName);
-            builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
+            ValueMetaData factoryInjection = builder.createInject( factoryName );
+            builder.addConstructorParameter( RubyRuntimeFactory.class.getName(), factoryInjection );
             poolBean = builder.getBeanMetaData();
         } else {
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, DefaultRubyRuntimePool.class.getName());
+            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, DefaultRubyRuntimePool.class.getName() );
             String factoryName = poolMetaData.getInstanceFactoryName();
             if (factoryName == null) {
-                factoryName = AttachmentUtils.beanName(unit, RubyRuntimeFactory.class);
+                factoryName = AttachmentUtils.beanName( unit, RubyRuntimeFactory.class );
             }
-            ValueMetaData factoryInjection = builder.createInject(factoryName);
-            builder.addConstructorParameter(RubyRuntimeFactory.class.getName(), factoryInjection);
-            builder.addPropertyMetaData("name", poolMetaData.getName());
-            builder.addPropertyMetaData("minimumInstances", poolMetaData.getMinimumSize());
-            builder.addPropertyMetaData("maximumInstances", poolMetaData.getMaximumSize());
+            ValueMetaData factoryInjection = builder.createInject( factoryName );
+            builder.addConstructorParameter( RubyRuntimeFactory.class.getName(), factoryInjection );
+            builder.addPropertyMetaData( "name", poolMetaData.getName() );
+            builder.addPropertyMetaData( "minimumInstances", poolMetaData.getMinimumSize() );
+            builder.addPropertyMetaData( "maximumInstances", poolMetaData.getMaximumSize() );
             poolBean = builder.getBeanMetaData();
         }
 
-        AttachmentUtils.attach(unit, poolBean);
+        AttachmentUtils.attach( unit, poolBean );
 
         // unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName,
         // poolBean, BeanMetaData.class);

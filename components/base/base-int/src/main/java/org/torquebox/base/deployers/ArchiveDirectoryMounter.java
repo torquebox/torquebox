@@ -40,55 +40,55 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
  *   Out: mounted virtual directories
  * </pre>
  * 
- * Ensure that directories requiring writability by packaged deployments
- * end up somewhere reasonable,
+ * Ensure that directories requiring writability by packaged deployments end up
+ * somewhere reasonable,
  * 
  * JBOSS_HOME/server/default/log/app.rails/ for logs
  * JBOSS_HOME/server/default/tmp/rails/app.rails/ for tmp files
  * 
  */
 public class ArchiveDirectoryMounter extends AbstractDeployer {
-    
+
     public ArchiveDirectoryMounter() {
-        setStage(DeploymentStages.PRE_REAL);
-        setInput(RubyApplicationMetaData.class);
+        setStage( DeploymentStages.PRE_REAL );
+        setInput( RubyApplicationMetaData.class );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (rubyAppMetaData.isArchive()) {
             try {
-                mountDir(unit, rubyAppMetaData.getRoot(), "log", System.getProperty("jboss.server.log.dir") + "/" + unit.getSimpleName());
-                mountDir(unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty("jboss.server.temp.dir") + "/rails/" + unit.getSimpleName());
+                mountDir( unit, rubyAppMetaData.getRoot(), "log", System.getProperty( "jboss.server.log.dir" ) + "/" + unit.getSimpleName() );
+                mountDir( unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/rails/" + unit.getSimpleName() );
             } catch (Exception e) {
-                throw new DeploymentException(e);
+                throw new DeploymentException( e );
             }
         }
     }
 
     public void undeploy(DeploymentUnit unit) {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-        
-        if ( rubyAppMetaData.isArchive() ) {
-            close(unit, "tmp");
-            close(unit, "log");
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+
+        if (rubyAppMetaData.isArchive()) {
+            close( unit, "tmp" );
+            close( unit, "log" );
         }
     }
 
     protected void mountDir(DeploymentUnit unit, VirtualFile root, String name, String path) throws IOException {
-        VirtualFile logical = root.getChild(name);
-        File physical = new File(path);
+        VirtualFile logical = root.getChild( name );
+        File physical = new File( path );
         physical.mkdirs();
-        Closeable mount = VFS.mountReal(physical, logical);
-        log.warn("Set Rails " + name + " directory to " + physical.getCanonicalPath());
-        unit.addAttachment(attachmentName(name), mount, Closeable.class);
+        Closeable mount = VFS.mountReal( physical, logical );
+        log.warn( "Set Rails " + name + " directory to " + physical.getCanonicalPath() );
+        unit.addAttachment( attachmentName( name ), mount, Closeable.class );
     }
 
     protected void close(DeploymentUnit unit, String name) {
-        Closeable mount = unit.getAttachment(attachmentName(name), Closeable.class);
+        Closeable mount = unit.getAttachment( attachmentName( name ), Closeable.class );
         if (mount != null) {
-            log.info("Closing virtual " + name + " directory for " + unit.getSimpleName());
+            log.info( "Closing virtual " + name + " directory for " + unit.getSimpleName() );
             try {
                 mount.close();
             } catch (IOException ignored) {
@@ -99,5 +99,5 @@ public class ArchiveDirectoryMounter extends AbstractDeployer {
     protected String attachmentName(String name) {
         return name + " dir handle";
     }
-    
+
 }

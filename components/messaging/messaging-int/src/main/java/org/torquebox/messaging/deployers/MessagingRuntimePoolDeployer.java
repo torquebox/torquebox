@@ -9,14 +9,13 @@ import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 
-
 /**
  * <pre>
  * Stage: DESCRIBE
  *    In: EnvironmentMetaData, PoolMetaData, MessageProcessorMetaData
  *   Out: PoolMetaData
  * </pre>
- *
+ * 
  * Ensures that pool metadata for messaging is available
  */
 public class MessagingRuntimePoolDeployer extends AbstractDeployer {
@@ -25,39 +24,38 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
 
     /**
      * I'd rather use setInput(MessageProcessorMetaData) and omit the
-     * getAllMetaData short circuit in deploy(), but that requires
-     * attachers to pass an ExpectedType, and I don't think we can
-     * assume that.
+     * getAllMetaData short circuit in deploy(), but that requires attachers to
+     * pass an ExpectedType, and I don't think we can assume that.
      */
     public MessagingRuntimePoolDeployer() {
-        setStage(DeploymentStages.DESCRIBE);
+        setStage( DeploymentStages.DESCRIBE );
         addInput( MessageProcessorMetaData.class );
         addInput( RubyApplicationMetaData.class );
         addInput( PoolMetaData.class );
         addOutput( PoolMetaData.class );
     }
-    
+
     public void setInstanceFactoryName(String instanceFactoryName) {
         this.instanceFactoryName = instanceFactoryName;
     }
-    
+
     public String getInstanceFactoryName() {
         return this.instanceFactoryName;
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        if (unit.getAllMetaData(MessageProcessorMetaData.class).isEmpty()) {
+        if (unit.getAllMetaData( MessageProcessorMetaData.class ).isEmpty()) {
             return;
         }
         PoolMetaData pool = AttachmentUtils.getAttachment( unit, "messaging", PoolMetaData.class );
         if (pool == null) {
-            RubyApplicationMetaData envMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+            RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
-            pool = devMode ? new PoolMetaData("messaging", 1, 2) : new PoolMetaData("messaging");
+            pool = devMode ? new PoolMetaData( "messaging", 1, 2 ) : new PoolMetaData( "messaging" );
             pool.setInstanceFactoryName( this.instanceFactoryName );
-            log.info("Configured Ruby runtime pool for messaging: " + pool);
-            AttachmentUtils.multipleAttach(unit, pool, "messaging");
+            log.info( "Configured Ruby runtime pool for messaging: " + pool );
+            AttachmentUtils.multipleAttach( unit, pool, "messaging" );
         }
     }
 

@@ -12,7 +12,7 @@ import org.jboss.vfs.util.automount.MountOption;
 
 public class PojoDeployment {
 
-    private static final Logger log = Logger.getLogger(PojoDeployment.class);
+    private static final Logger log = Logger.getLogger( PojoDeployment.class );
 
     private DeployerClient deployer;
     private VFSDeployment deployment;
@@ -35,13 +35,13 @@ public class PojoDeployment {
 
         if (!root.isDirectory()) {
             try {
-                Automounter.mount(root, MountOption.COPY);
+                Automounter.mount( root, MountOption.COPY );
             } catch (IOException e) {
-                throw new DeploymentException(e);
+                throw new DeploymentException( e );
             }
         }
 
-        this.deployer.addDeployment(this.deployment);
+        this.deployer.addDeployment( this.deployment );
         log.info( "Deploying: " + this.deployment.getRoot() );
         this.deployer.process();
         log.info( "Fully deployed: " + this.deployment.getRoot() );
@@ -49,10 +49,10 @@ public class PojoDeployment {
 
     public void stop() throws DeploymentException {
         try {
-            this.deployer.undeploy(this.deployment);
+            this.deployer.undeploy( this.deployment );
         } finally {
             VirtualFile root = deployment.getRoot();
-            Automounter.cleanup(root);
+            Automounter.cleanup( root );
         }
 
     }

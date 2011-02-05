@@ -7,12 +7,12 @@ import org.torquebox.interp.spi.ComponentInitializer;
 
 public class JobComponentInitializer implements ComponentInitializer {
 
-	@Override
-	public void initialize(IRubyObject object) throws Exception {
-		String rubyClassName = object.getMetaClass().getName();
-		String loggerName = rubyClassName.replaceAll("::", ".");
-		Logger log = Logger.getLogger( loggerName );
-		ReflectionHelper.setIfPossible(object.getRuntime(), object, "log", log);
-	}
+    @Override
+    public void initialize(IRubyObject object) throws Exception {
+        String rubyClassName = object.getMetaClass().getName();
+        String loggerName = rubyClassName.replaceAll( "::", "." );
+        Logger log = Logger.getLogger( loggerName );
+        ReflectionHelper.setIfPossible( object.getRuntime(), object, "log", log );
+    }
 
 }

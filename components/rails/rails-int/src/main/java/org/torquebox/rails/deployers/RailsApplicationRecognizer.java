@@ -9,27 +9,27 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
 public class RailsApplicationRecognizer extends AbstractRecognizer {
 
     public RailsApplicationRecognizer() {
-        addInput(RailsApplicationMetaData.class);
-        addInput(RackApplicationMetaData.class);
-        addOutput(RailsApplicationMetaData.class);
-        addOutput(RackApplicationMetaData.class);
-        setRelativeOrder(1000);
+        addInput( RailsApplicationMetaData.class );
+        addInput( RackApplicationMetaData.class );
+        addOutput( RailsApplicationMetaData.class );
+        addOutput( RackApplicationMetaData.class );
+        setRelativeOrder( 1000 );
     }
 
     @Override
     protected boolean isRecognized(VFSDeploymentUnit unit) {
-        return hasAnyOf(unit.getRoot(), "config/boot.rb");
+        return hasAnyOf( unit.getRoot(), "config/boot.rb" );
     }
 
     @Override
     protected void handle(VFSDeploymentUnit unit) throws DeploymentException {
-        log.info("Recognized rails application: " + unit);
-        RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
+        log.info( "Recognized rails application: " + unit );
+        RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.class );
 
         if (railsAppMetaData == null) {
-            log.info("Initializing rails application: " + unit);
+            log.info( "Initializing rails application: " + unit );
             railsAppMetaData = new RailsApplicationMetaData();
-            unit.addAttachment(RailsApplicationMetaData.class, railsAppMetaData);
+            unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
         }
     }
 

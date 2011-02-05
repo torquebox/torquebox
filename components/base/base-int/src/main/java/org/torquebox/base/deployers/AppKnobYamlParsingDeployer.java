@@ -55,86 +55,86 @@ import org.torquebox.mc.vdf.PojoDeployment;
 public class AppKnobYamlParsingDeployer extends AbstractDeployer {
 
     public AppKnobYamlParsingDeployer() {
-        addOutput(BeanMetaData.class);
-        setStage(DeploymentStages.PARSE);
+        addOutput( BeanMetaData.class );
+        setStage( DeploymentStages.PARSE );
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
-            deploy((VFSDeploymentUnit) unit);
+            deploy( (VFSDeploymentUnit) unit );
         }
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        VirtualFile appKnobYml = getFile(unit);
-        
-        if ( appKnobYml == null ) {
+        VirtualFile appKnobYml = getFile( unit );
+
+        if (appKnobYml == null) {
             return;
         }
 
         try {
-            TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse(appKnobYml);
+            TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse( appKnobYml );
             VirtualFile root = metaData.getApplicationRootFile();
 
             if (root == null) {
-                throw new DeploymentException("No application root specified");
+                throw new DeploymentException( "No application root specified" );
             }
 
-            Deployment deployment = createDeployment(metaData);
-            attachPojoDeploymentBeanMetaData(unit, deployment);
+            Deployment deployment = createDeployment( metaData );
+            attachPojoDeploymentBeanMetaData( unit, deployment );
 
         } catch (IOException e) {
-            throw new DeploymentException(e);
+            throw new DeploymentException( e );
         }
     }
 
     protected VirtualFile getFile(VFSDeploymentUnit unit) throws DeploymentException {
-        List<VirtualFile> matches = unit.getMetaDataFiles(null, "-knob.yml");
+        List<VirtualFile> matches = unit.getMetaDataFiles( null, "-knob.yml" );
 
         if (matches.isEmpty()) {
-            matches = unit.getMetaDataFiles(null, "-rails.yml");
+            matches = unit.getMetaDataFiles( null, "-rails.yml" );
 
             if (!matches.isEmpty()) {
-                log.warn("Using *-rails.yml is deprecated.  Please use *-knob.yml instead.");
+                log.warn( "Using *-rails.yml is deprecated.  Please use *-knob.yml instead." );
             } else {
-                matches = unit.getMetaDataFiles(null, "-rack.yml");
+                matches = unit.getMetaDataFiles( null, "-rack.yml" );
 
                 if (!matches.isEmpty()) {
-                    log.warn("Using *-rack.yml is deprecated.  Please use *-knob.yml instead.");
+                    log.warn( "Using *-rack.yml is deprecated.  Please use *-knob.yml instead." );
                 }
             }
         }
-        
-        if ( matches.isEmpty() ) {
+
+        if (matches.isEmpty()) {
             return null;
         }
 
         if (matches.size() != 1) {
-            throw new DeploymentException("Too many *-knob.yml files: " + matches);
+            throw new DeploymentException( "Too many *-knob.yml files: " + matches );
         }
 
-        VirtualFile appKnobYml = matches.get(0);
+        VirtualFile appKnobYml = matches.get( 0 );
 
         return appKnobYml;
     }
 
     private Deployment createDeployment(TorqueBoxMetaData metaData) throws IOException {
-        AbstractVFSDeployment deployment = new AbstractVFSDeployment(metaData.getApplicationRootFile());
+        AbstractVFSDeployment deployment = new AbstractVFSDeployment( metaData.getApplicationRootFile() );
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
-        attachments.addAttachment(TorqueBoxMetaData.EXTERNAL, metaData, TorqueBoxMetaData.class);
+        attachments.addAttachment( TorqueBoxMetaData.EXTERNAL, metaData, TorqueBoxMetaData.class );
         return deployment;
     }
 
     protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
-        String beanName = AttachmentUtils.beanName(unit, PojoDeployment.class, unit.getSimpleName());
+        String beanName = AttachmentUtils.beanName( unit, PojoDeployment.class, unit.getSimpleName() );
 
-        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, PojoDeployment.class.getName());
-        ValueMetaData deployerInject = builder.createInject("MainDeployer");
-        builder.addConstructorParameter(DeployerClient.class.getName(), deployerInject);
-        builder.addConstructorParameter(VFSDeployment.class.getName(), deployment);
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, PojoDeployment.class.getName() );
+        ValueMetaData deployerInject = builder.createInject( "MainDeployer" );
+        builder.addConstructorParameter( DeployerClient.class.getName(), deployerInject );
+        builder.addConstructorParameter( VFSDeployment.class.getName(), deployment );
 
-        AttachmentUtils.attach(unit, builder.getBeanMetaData());
+        AttachmentUtils.attach( unit, builder.getBeanMetaData() );
     }
 
 }

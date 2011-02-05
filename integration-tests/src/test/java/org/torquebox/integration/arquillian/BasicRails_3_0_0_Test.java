@@ -12,17 +12,17 @@ import org.openqa.selenium.WebElement;
 @Run(RunModeType.AS_CLIENT)
 public class BasicRails_3_0_0_Test extends AbstractIntegrationTest {
 
-	@Deployment
-	public static JavaArchive createDeployment() {
-		return createDeployment( "rails/3.0.0/basic-knob.yml" );
-	}
+    @Deployment
+    public static JavaArchive createDeployment() {
+        return createDeployment( "rails/3.0.0/basic-knob.yml" );
+    }
 
-	@Test
-	public void testHighLevel() {
+    @Test
+    public void testHighLevel() {
         driver.get( "http://localhost:8080/basic-rails" );
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "basic-rails", element.getAttribute( "class" ) );
-	}
+    }
 
 }

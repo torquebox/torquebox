@@ -25,12 +25,13 @@ import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.torquebox.common.spi.InstanceFactory;
 
-/** Factory to create Ruby instances.
+/**
+ * Factory to create Ruby instances.
  * 
  * @author Bob McWhirter
  */
 public interface RubyRuntimeFactory extends InstanceFactory<Ruby> {
-	
-	CompatVersion getRubyVersion();
+
+    CompatVersion getRubyVersion();
 
 }

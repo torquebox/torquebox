@@ -31,52 +31,51 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 
 public class RackApplicationFactoryImpl implements RackApplicationFactory {
 
-	private String rackUpScript;
-	private VirtualFile rackUpFile;
+    private String rackUpScript;
+    private VirtualFile rackUpFile;
 
-	public RackApplicationFactoryImpl() {
-	}
+    public RackApplicationFactoryImpl() {
+    }
 
-	public RackApplicationFactoryImpl(String rackUpScript, VirtualFile rackUpScriptLocation) {
-		this.rackUpScript = rackUpScript;
-		this.rackUpFile = rackUpScriptLocation;
-	}
+    public RackApplicationFactoryImpl(String rackUpScript, VirtualFile rackUpScriptLocation) {
+        this.rackUpScript = rackUpScript;
+        this.rackUpFile = rackUpScriptLocation;
+    }
 
-	public void setRackUpScript(String rackUpScript) {
-		this.rackUpScript = rackUpScript;
-	}
-	
-	public String getRackUpScript() {
-		return this.rackUpScript;
-	}
-	
-	public void setRackUpFile(VirtualFile rackUpScriptLocation)  {
-		this.rackUpFile = rackUpScriptLocation;
-	}
-	
-	public VirtualFile getRackUpFile() {
-		return this.rackUpFile;
-	}
-	
+    public void setRackUpScript(String rackUpScript) {
+        this.rackUpScript = rackUpScript;
+    }
 
-	public RackApplication createRackApplication(Ruby ruby) throws Exception {
+    public String getRackUpScript() {
+        return this.rackUpScript;
+    }
 
-		IRubyObject rubyRackApp = null;
-		RackApplication rackApp = null;
+    public void setRackUpFile(VirtualFile rackUpScriptLocation) {
+        this.rackUpFile = rackUpScriptLocation;
+    }
 
-		RubyModule torqueboxModule = ruby.getClassFromPath("TorqueBox");
-		if (torqueboxModule.getConstantNames().contains("TORQUEBOX_RACK_APP")) {
-			rubyRackApp = torqueboxModule.getConstant("TORQUEBOX_RACK_APP");
-		}
+    public VirtualFile getRackUpFile() {
+        return this.rackUpFile;
+    }
 
-		if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
-			rackApp = new RackApplicationImpl(ruby, rackUpScript, rackUpFile );
-			rubyRackApp = JavaEmbedUtils.javaToRuby(ruby, rackApp);
-			torqueboxModule.setConstant("TORQUEBOX_RACK_APP", rubyRackApp);
-		} else {
-			rackApp = (RackApplication) JavaEmbedUtils.rubyToJava(rubyRackApp);
-		}
-		return rackApp;
-	}
+    public RackApplication createRackApplication(Ruby ruby) throws Exception {
+
+        IRubyObject rubyRackApp = null;
+        RackApplication rackApp = null;
+
+        RubyModule torqueboxModule = ruby.getClassFromPath( "TorqueBox" );
+        if (torqueboxModule.getConstantNames().contains( "TORQUEBOX_RACK_APP" )) {
+            rubyRackApp = torqueboxModule.getConstant( "TORQUEBOX_RACK_APP" );
+        }
+
+        if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
+            rackApp = new RackApplicationImpl( ruby, rackUpScript, rackUpFile );
+            rubyRackApp = JavaEmbedUtils.javaToRuby( ruby, rackApp );
+            torqueboxModule.setConstant( "TORQUEBOX_RACK_APP", rubyRackApp );
+        } else {
+            rackApp = (RackApplication) JavaEmbedUtils.rubyToJava( rubyRackApp );
+        }
+        return rackApp;
+    }
 
 }

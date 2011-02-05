@@ -31,23 +31,23 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
 
     /** Opotional fine-name for NAME.yml parsing separate from torquebox.yml. */
     private String fileName;
-    
+
     /** Does this deployer support a standalone *.yml descriptor? */
     private boolean supportsStandalone = true;
 
     public AbstractSplitYamlParsingDeployer() {
-        addInput(TorqueBoxMetaData.class);
-        setStage(DeploymentStages.PARSE);
+        addInput( TorqueBoxMetaData.class );
+        setStage( DeploymentStages.PARSE );
     }
 
     public String getSectionName() {
         return this.sectionName;
     }
-    
+
     public void setSupportsStandalone(boolean supports) {
         this.supportsStandalone = supports;
     }
-    
+
     public boolean isSupportsStandalone() {
         return this.supportsStandalone;
     }
@@ -71,28 +71,28 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (!(unit instanceof VFSDeploymentUnit)) {
-            throw new DeploymentException("Only supports VFS deployments");
+            throw new DeploymentException( "Only supports VFS deployments" );
         }
 
         try {
-            deploy((VFSDeploymentUnit) unit);
+            deploy( (VFSDeploymentUnit) unit );
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DeploymentException(e);
+            throw new DeploymentException( e );
         }
     }
 
     @SuppressWarnings("unchecked")
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        TorqueBoxMetaData globalMetaData = unit.getAttachment(TorqueBoxMetaData.class);
+        TorqueBoxMetaData globalMetaData = unit.getAttachment( TorqueBoxMetaData.class );
 
         Object data = null;
 
         if (globalMetaData != null) {
-            data = globalMetaData.getSection(getSectionName());
+            data = globalMetaData.getSection( getSectionName() );
         }
 
-        if (data == null && isSupportsStandalone() ) {
+        if (data == null && isSupportsStandalone()) {
             VirtualFile metaDataFile = getMetaDataFile( unit, getFileName() );
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
@@ -101,18 +101,18 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
                 try {
                     in = metaDataFile.openStream();
                     Yaml yaml = new Yaml();
-                    data = (Map<String, ?>) yaml.load(in);
+                    data = (Map<String, ?>) yaml.load( in );
                 } catch (YAMLException e) {
-                    log.warn("Error parsing: " + metaDataFile + ": " + e.getMessage());
+                    log.warn( "Error parsing: " + metaDataFile + ": " + e.getMessage() );
                     data = null;
                 } catch (IOException e) {
-                    throw new DeploymentException(e);
+                    throw new DeploymentException( e );
                 } finally {
                     if (in != null) {
                         try {
                             in.close();
                         } catch (IOException e) {
-                            throw new DeploymentException(e);
+                            throw new DeploymentException( e );
                         }
                     }
                 }
@@ -124,19 +124,19 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
         }
 
         try {
-            parse(unit, data);
+            parse( unit, data );
         } catch (DeploymentException e) {
             throw e;
         } catch (Exception e) {
-            throw new DeploymentException(e);
+            throw new DeploymentException( e );
         }
     }
 
     protected String getOneOf(Map<String, String> map, String... keys) {
         for (String each : keys) {
             for (String key : map.keySet()) {
-                if (each.equalsIgnoreCase(key)) {
-                    return map.get(key);
+                if (each.equalsIgnoreCase( key )) {
+                    return map.get( key );
                 }
             }
         }

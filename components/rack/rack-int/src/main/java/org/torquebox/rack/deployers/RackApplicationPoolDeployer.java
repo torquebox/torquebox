@@ -36,56 +36,55 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationFactory;
 import org.torquebox.rack.spi.RackApplicationPool;
 
-
 /**
  * <pre>
  * Stage: PRE_DESCRIBE
  *    In: RackApplicationMetaData
  *   Out: RackApplicationMetaData, RackApplicationPool, PoolMetaData
  * </pre>
- *
+ * 
  */
 public class RackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
-    
+
     static final String POOL_NAME = "web";
 
-	public RackApplicationPoolDeployer() {
-		super(RackApplicationMetaData.class);
-		addOutput(RackApplicationMetaData.class);
-		addOutput(BeanMetaData.class);
-        addOutput(PoolMetaData.class);
-		setStage( DeploymentStages.PRE_DESCRIBE );
-		setRelativeOrder( 500 );
-	}
+    public RackApplicationPoolDeployer() {
+        super( RackApplicationMetaData.class );
+        addOutput( RackApplicationMetaData.class );
+        addOutput( BeanMetaData.class );
+        addOutput( PoolMetaData.class );
+        setStage( DeploymentStages.PRE_DESCRIBE );
+        setRelativeOrder( 500 );
+    }
 
-	@Override
-	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
-		String beanName = AttachmentUtils.beanName(unit, RackApplicationPool.class );
-		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationPoolImpl.class.getName());
-		
-		metaData.setRackApplicationPoolName( beanName );
+    @Override
+    public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
+        String beanName = AttachmentUtils.beanName( unit, RackApplicationPool.class );
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RackApplicationPoolImpl.class.getName() );
 
-		String appfactoryBeanName = metaData.getRackApplicationFactoryName();
-		if ( appfactoryBeanName == null ) {
-			appfactoryBeanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class );
-		}
-		
-		String runtimePoolBeanName = metaData.getRubyRuntimePoolName();
-		if ( runtimePoolBeanName == null ) {
-			runtimePoolBeanName = AttachmentUtils.beanName(unit, RubyRuntimePool.class, POOL_NAME );
-			metaData.setRubyRuntimePoolName( runtimePoolBeanName );
-		}
-		
-		ValueMetaData runtimePoolInjection = builder.createInject(runtimePoolBeanName);
-		ValueMetaData appFactoryInjection = builder.createInject(appfactoryBeanName);
-		
-		builder.addConstructorParameter(RubyRuntimePool.class.getName(), runtimePoolInjection );
-		builder.addConstructorParameter(RackApplicationFactory.class.getName(), appFactoryInjection);
+        metaData.setRackApplicationPoolName( beanName );
 
-		AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-        if ( null == AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class ) ) {
-            AttachmentUtils.multipleAttach( unit, new PoolMetaData(POOL_NAME), POOL_NAME );
+        String appfactoryBeanName = metaData.getRackApplicationFactoryName();
+        if (appfactoryBeanName == null) {
+            appfactoryBeanName = AttachmentUtils.beanName( unit, RackApplicationFactory.class );
         }
-	}
+
+        String runtimePoolBeanName = metaData.getRubyRuntimePoolName();
+        if (runtimePoolBeanName == null) {
+            runtimePoolBeanName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, POOL_NAME );
+            metaData.setRubyRuntimePoolName( runtimePoolBeanName );
+        }
+
+        ValueMetaData runtimePoolInjection = builder.createInject( runtimePoolBeanName );
+        ValueMetaData appFactoryInjection = builder.createInject( appfactoryBeanName );
+
+        builder.addConstructorParameter( RubyRuntimePool.class.getName(), runtimePoolInjection );
+        builder.addConstructorParameter( RackApplicationFactory.class.getName(), appFactoryInjection );
+
+        AttachmentUtils.attach( unit, builder.getBeanMetaData() );
+        if (null == AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class )) {
+            AttachmentUtils.multipleAttach( unit, new PoolMetaData( POOL_NAME ), POOL_NAME );
+        }
+    }
 
 }

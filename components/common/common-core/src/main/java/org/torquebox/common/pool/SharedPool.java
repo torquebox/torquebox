@@ -16,138 +16,145 @@ import org.torquebox.common.spi.Pool;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
- * @param <T> The poolable resource.
+ * @param <T>
+ *            The poolable resource.
  */
 public class SharedPool<T> implements Pool<T> {
 
-	/** Name of the pool. */
-	private String name = "anonymous-pool";
+    /** Name of the pool. */
+    private String name = "anonymous-pool";
 
-	/** The shared instance. */
-	private T instance;
+    /** The shared instance. */
+    private T instance;
 
-	/** Optional factory to create the initial instance. */
-	private InstanceFactory<T> factory;
+    /** Optional factory to create the initial instance. */
+    private InstanceFactory<T> factory;
 
-	/**
-	 * Construct.
-	 */
-	public SharedPool() {
-	}
+    /**
+     * Construct.
+     */
+    public SharedPool() {
+    }
 
-	/**
-	 * Construct with an instance factory.
-	 * 
-	 * @param factory The factory to create the initial instance.
-	 */
-	public SharedPool(InstanceFactory<T> factory) {
-		this.factory = factory;
-	}
+    /**
+     * Construct with an instance factory.
+     * 
+     * @param factory
+     *            The factory to create the initial instance.
+     */
+    public SharedPool(InstanceFactory<T> factory) {
+        this.factory = factory;
+    }
 
-	/**
-	 * Construct with an instance.
-	 * 
-	 * @param instance The initial instance.
-	 */
-	public SharedPool(T instance) {
-		this.instance = instance;
-	}
+    /**
+     * Construct with an instance.
+     * 
+     * @param instance
+     *            The initial instance.
+     */
+    public SharedPool(T instance) {
+        this.instance = instance;
+    }
 
-	/**
-	 * Set the pool name.
-	 * 
-	 * @param name The pool name.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * Set the pool name.
+     * 
+     * @param name
+     *            The pool name.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * Retrieve the pool name.
-	 * 
-	 * @return The pool name.
-	 */
-	public String getName() {
-		return this.name;
-	}
+    /**
+     * Retrieve the pool name.
+     * 
+     * @return The pool name.
+     */
+    public String getName() {
+        return this.name;
+    }
 
-	/**
-	 * Set the shared instance.
-	 * 
-	 * @param instance The initial instance.
-	 */
-	public void setInstance(T instance) {
-		this.instance = instance;
-	}
+    /**
+     * Set the shared instance.
+     * 
+     * @param instance
+     *            The initial instance.
+     */
+    public void setInstance(T instance) {
+        this.instance = instance;
+    }
 
-	/**
-	 * Retrieve the shared instance.
-	 * 
-	 * @return The shared instance.
-	 */
-	public T getInstance() {
-		return this.instance;
-	}
+    /**
+     * Retrieve the shared instance.
+     * 
+     * @return The shared instance.
+     */
+    public T getInstance() {
+        return this.instance;
+    }
 
-	/**
-	 * Set the instance factory to create the initial instance.
-	 * 
-	 * @param factory The instance factory.
-	 */
-	public void setInstanceFactory(InstanceFactory<T> factory) {
-		this.factory = factory;
-	}
+    /**
+     * Set the instance factory to create the initial instance.
+     * 
+     * @param factory
+     *            The instance factory.
+     */
+    public void setInstanceFactory(InstanceFactory<T> factory) {
+        this.factory = factory;
+    }
 
-	/**
-	 * Retrieve the instance factory to create the initial instance.
-	 * 
-	 * @return The instance factory;
-	 */
-	public InstanceFactory<T> getInstanceFactory() {
-		return this.factory;
-	}
+    /**
+     * Retrieve the instance factory to create the initial instance.
+     * 
+     * @return The instance factory;
+     */
+    public InstanceFactory<T> getInstanceFactory() {
+        return this.factory;
+    }
 
-	/**
-	 * Create the pool.
-	 * 
-	 * @throws Exception if an error occurs starting the pool.
-	 */
-	public void create() throws Exception {
-		if (this.instance != null) {
-			return;
-		}
+    /**
+     * Create the pool.
+     * 
+     * @throws Exception
+     *             if an error occurs starting the pool.
+     */
+    public void create() throws Exception {
+        if (this.instance != null) {
+            return;
+        }
 
-		if (this.factory == null) {
-			throw new IllegalArgumentException("Neither an instance nor an instance-factory provided.");
-		}
+        if (this.factory == null) {
+            throw new IllegalArgumentException( "Neither an instance nor an instance-factory provided." );
+        }
 
-		this.instance = factory.create();
-	}
-	
-	/** 
-	 * Destroy the pool.
-	 */
-	public void destroy() {
-		if ( this.factory != null && this.instance != null ) {
-			this.factory.dispose( this.instance );
-		}
-		this.instance = null;
-		this.factory = null;
-	}
+        this.instance = factory.create();
+    }
 
-	@Override
-	public T borrowInstance() throws Exception {
-		return borrowInstance(0);
-	}
+    /**
+     * Destroy the pool.
+     */
+    public void destroy() {
+        if (this.factory != null && this.instance != null) {
+            this.factory.dispose( this.instance );
+        }
+        this.instance = null;
+        this.factory = null;
+    }
 
-	@Override
-	public void releaseInstance(T instance) {
-		// nothing
-	}
+    @Override
+    public T borrowInstance() throws Exception {
+        return borrowInstance( 0 );
+    }
 
-	@Override
-	public T borrowInstance(long timeout) throws Exception {
-		return this.instance;
-	}
+    @Override
+    public void releaseInstance(T instance) {
+        // nothing
+    }
+
+    @Override
+    public T borrowInstance(long timeout) throws Exception {
+        return this.instance;
+    }
 
 }

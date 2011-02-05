@@ -51,10 +51,10 @@ public class ServicesYamlParsingDeployer extends AbstractSplitYamlParsingDeploye
     public static final String POOL_NAME = "services";
 
     public ServicesYamlParsingDeployer() {
-        setSectionName("services");
-        addInput(PoolMetaData.class);
-        addOutput(BeanMetaData.class);
-        addOutput(PoolMetaData.class);
+        setSectionName( "services" );
+        addInput( PoolMetaData.class );
+        addOutput( BeanMetaData.class );
+        addOutput( PoolMetaData.class );
     }
 
     @SuppressWarnings("unchecked")
@@ -62,50 +62,50 @@ public class ServicesYamlParsingDeployer extends AbstractSplitYamlParsingDeploye
         Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) dataObj;
         if (results != null) {
             for (String service : results.keySet()) {
-                Map<String, String> params = results.get(service);
-                createServiceProxyBean(unit, service, params);
+                Map<String, String> params = results.get( service );
+                createServiceProxyBean( unit, service, params );
             }
         }
-        createRuntimePool(unit, results.size());
+        createRuntimePool( unit, results.size() );
     }
 
     protected void createServiceProxyBean(DeploymentUnit unit, String service, Map params) {
-        String beanName = AttachmentUtils.beanName(unit, RubyServiceProxy.class, service);
-        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RubyServiceProxy.class.getName());
+        String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, service );
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
 
-        ValueMetaData runtimePoolInject = builder.createInject(AttachmentUtils.beanName(unit, RubyRuntimePool.class, POOL_NAME));
-        builder.addPropertyMetaData("rubyRuntimePool", runtimePoolInject);
-        builder.addPropertyMetaData("rubyComponentResolver", createComponentResolver(service, params));
+        ValueMetaData runtimePoolInject = builder.createInject( AttachmentUtils.beanName( unit, RubyRuntimePool.class, POOL_NAME ) );
+        builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
+        builder.addPropertyMetaData( "rubyComponentResolver", createComponentResolver( service, params ) );
 
-        if (requiresSingleton(params)) {
-            builder.addDependency("jboss.ha:service=HASingletonDeployer,type=Barrier");
+        if (requiresSingleton( params )) {
+            builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
         }
 
-        AttachmentUtils.attach(unit, builder.getBeanMetaData());
+        AttachmentUtils.attach( unit, builder.getBeanMetaData() );
     }
 
     protected RubyComponentResolver createComponentResolver(String service, Map params) {
         InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
-        result.setRubyClassName(StringUtils.camelize(service));
-        result.setRubyRequirePath(StringUtils.underscore(service));
-        result.setInitializeParams(params);
-        result.setComponentName("service." + service);
+        result.setRubyClassName( StringUtils.camelize( service ) );
+        result.setRubyRequirePath( StringUtils.underscore( service ) );
+        result.setInitializeParams( params );
+        result.setComponentName( "service." + service );
         return result;
     }
 
     protected PoolMetaData createRuntimePool(DeploymentUnit unit, int max) {
-        PoolMetaData pool = AttachmentUtils.getAttachment(unit, POOL_NAME, PoolMetaData.class);
+        PoolMetaData pool = AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class );
         ;
         if (pool == null && max > 0) {
-            pool = new PoolMetaData(POOL_NAME, 1, max);
-            log.info("Configured Ruby runtime pool for services: " + pool);
-            AttachmentUtils.multipleAttach(unit, pool, POOL_NAME);
+            pool = new PoolMetaData( POOL_NAME, 1, max );
+            log.info( "Configured Ruby runtime pool for services: " + pool );
+            AttachmentUtils.multipleAttach( unit, pool, POOL_NAME );
         }
         return pool;
     }
 
     protected boolean requiresSingleton(Map params) {
-        Boolean singleton = params == null ? null : (Boolean) params.remove("singleton");
+        Boolean singleton = params == null ? null : (Boolean) params.remove( "singleton" );
         return singleton != null && singleton.booleanValue();
     }
 }

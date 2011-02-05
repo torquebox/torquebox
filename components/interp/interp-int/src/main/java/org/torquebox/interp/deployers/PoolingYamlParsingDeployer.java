@@ -49,8 +49,8 @@ public class PoolingYamlParsingDeployer extends AbstractSplitYamlParsingDeployer
      * Construct.
      */
     public PoolingYamlParsingDeployer() {
-        setSectionName("pooling");
-        addOutput(PoolMetaData.class);
+        setSectionName( "pooling" );
+        addOutput( PoolMetaData.class );
     }
 
     @SuppressWarnings("unchecked")
@@ -61,29 +61,29 @@ public class PoolingYamlParsingDeployer extends AbstractSplitYamlParsingDeployer
         if (pooling != null) {
             for (String name : pooling.keySet()) {
 
-                Object pool = pooling.get(name);
+                Object pool = pooling.get( name );
 
-                PoolMetaData poolMetaData = new PoolMetaData(name);
+                PoolMetaData poolMetaData = new PoolMetaData( name );
 
                 if (pool instanceof Map) {
                     Map<String, Object> poolMap = (Map<String, Object>) pool;
 
-                    if (poolMap.get("min") != null) {
-                        poolMetaData.setMinimumSize(((Number) poolMap.get("min")).intValue());
+                    if (poolMap.get( "min" ) != null) {
+                        poolMetaData.setMinimumSize( ((Number) poolMap.get( "min" )).intValue() );
                     }
 
-                    if (poolMap.get("max") != null) {
-                        poolMetaData.setMaximumSize(((Number) poolMap.get("max")).intValue());
+                    if (poolMap.get( "max" ) != null) {
+                        poolMetaData.setMaximumSize( ((Number) poolMap.get( "max" )).intValue() );
                     }
                 } else if (pool instanceof String) {
-                    if (pool.toString().equals("shared")) {
+                    if (pool.toString().equals( "shared" )) {
                         poolMetaData.setShared();
-                    } else if (pool.toString().equals("global")) {
+                    } else if (pool.toString().equals( "global" )) {
                         poolMetaData.setGlobal();
                     }
                 }
-                log.info("Configured Ruby runtime pool: " + poolMetaData);
-                AttachmentUtils.multipleAttach(unit, poolMetaData, name);
+                log.info( "Configured Ruby runtime pool: " + poolMetaData );
+                AttachmentUtils.multipleAttach( unit, poolMetaData, name );
             }
         }
 

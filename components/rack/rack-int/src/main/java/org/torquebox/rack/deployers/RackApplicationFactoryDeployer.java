@@ -34,55 +34,54 @@ import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationFactory;
 
-
 /**
  * <pre>
  * Stage: PRE_DESCRIBE
  *    In: RackApplicationMetaData
  *   Out: RackApplicationMetaData, RackApplicationFactory
  * </pre>
- *
+ * 
  */
 public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
 
-	public static final String SYNTHETIC_CONFIG_RU_NAME = "torquebox-synthetic-config.ru";
+    public static final String SYNTHETIC_CONFIG_RU_NAME = "torquebox-synthetic-config.ru";
 
     public RackApplicationFactoryDeployer() {
-		super(RackApplicationMetaData.class);
-		addRequiredInput(RubyApplicationMetaData.class);
-		addOutput(RackApplicationMetaData.class);
-		addOutput(BeanMetaData.class);
-		setStage(DeploymentStages.PRE_DESCRIBE);
-		setRelativeOrder(500);
-	}
+        super( RackApplicationMetaData.class );
+        addRequiredInput( RubyApplicationMetaData.class );
+        addOutput( RackApplicationMetaData.class );
+        addOutput( BeanMetaData.class );
+        setStage( DeploymentStages.PRE_DESCRIBE );
+        setRelativeOrder( 500 );
+    }
 
-	@Override
-	public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
-	    log.debug( "Deploying rack application factory: " + unit );
-	    RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+    @Override
+    public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
+        log.debug( "Deploying rack application factory: " + unit );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         try {
-            String beanName = AttachmentUtils.beanName(unit, RackApplicationFactory.class);
-            
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, RackApplicationFactoryImpl.class.getName());
-            
+            String beanName = AttachmentUtils.beanName( unit, RackApplicationFactory.class );
+
+            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RackApplicationFactoryImpl.class.getName() );
+
             log.info( "factory rackup: " + rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
-            builder.addPropertyMetaData("rackUpScript", rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ));
-            
+            builder.addPropertyMetaData( "rackUpScript", rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
+
             VirtualFile rackUpScriptLocation = rackAppMetaData.getRackUpScriptFile( rubyAppMetaData.getRoot() );
-            
-            if ( rackUpScriptLocation == null ) {
+
+            if (rackUpScriptLocation == null) {
                 rackUpScriptLocation = rubyAppMetaData.getRoot().getChild( SYNTHETIC_CONFIG_RU_NAME );
             }
-            builder.addPropertyMetaData("rackUpFile", rackUpScriptLocation);
-            
-            AttachmentUtils.attach(unit, builder.getBeanMetaData());
-            
-            rackAppMetaData.setRackApplicationFactoryName(beanName);
-            
+            builder.addPropertyMetaData( "rackUpFile", rackUpScriptLocation );
+
+            AttachmentUtils.attach( unit, builder.getBeanMetaData() );
+
+            rackAppMetaData.setRackApplicationFactoryName( beanName );
+
         } catch (Exception e) {
             e.printStackTrace();
-            throw new DeploymentException(e);
+            throw new DeploymentException( e );
         }
-	}
+    }
 
 }

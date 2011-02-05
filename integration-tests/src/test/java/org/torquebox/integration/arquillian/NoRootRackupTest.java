@@ -12,20 +12,20 @@ import org.openqa.selenium.WebElement;
 @Run(RunModeType.AS_CLIENT)
 public class NoRootRackupTest extends AbstractIntegrationTest {
 
-	@Deployment
-	public static JavaArchive createDeployment() {
-		return createDeployment( "rack/1.1.0/norootrackup-knob.yml" );
-	}
+    @Deployment
+    public static JavaArchive createDeployment() {
+        return createDeployment( "rack/1.1.0/norootrackup-knob.yml" );
+    }
 
-	@Test
-	public void testHappiness() {
+    @Test
+    public void testHappiness() {
         driver.get( "http://localhost:8080/norootrackup" );
-        WebElement body = driver.findElementByTagName("body");
-        String expectedRoot = System.getProperty("basedir");
+        WebElement body = driver.findElementByTagName( "body" );
+        String expectedRoot = System.getProperty( "basedir" );
         expectedRoot = expectedRoot.replaceAll( "\\\\", "/" );
         expectedRoot = toVfsPath( expectedRoot + "/apps/rack/1.1.0/norootrackup" );
-        
-        assertEquals("RACK_ROOT=" + expectedRoot, body.getText().trim());
-	}
+
+        assertEquals( "RACK_ROOT=" + expectedRoot, body.getText().trim() );
+    }
 
 }

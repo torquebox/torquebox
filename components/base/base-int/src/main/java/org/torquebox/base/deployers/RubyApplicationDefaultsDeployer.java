@@ -32,15 +32,15 @@ public class RubyApplicationDefaultsDeployer extends AbstractDeployer {
     public static final String DEFAULT_ENVIRONMENT_NAME = "development";
 
     public RubyApplicationDefaultsDeployer() {
-        setStage(DeploymentStages.PRE_REAL);
-        setInput(RubyApplicationMetaData.class);
-        addOutput(RubyApplicationMetaData.class);
+        setStage( DeploymentStages.PRE_REAL );
+        setInput( RubyApplicationMetaData.class );
+        addOutput( RubyApplicationMetaData.class );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-        
-        if ( rubyAppMetaData.getEnvironmentName() == null || rubyAppMetaData.getEnvironmentName().trim().equals( "" ) ) {
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+
+        if (rubyAppMetaData.getEnvironmentName() == null || rubyAppMetaData.getEnvironmentName().trim().equals( "" )) {
             rubyAppMetaData.setEnvironmentName( DEFAULT_ENVIRONMENT_NAME );
             rubyAppMetaData.setDevelopmentMode( true );
         }

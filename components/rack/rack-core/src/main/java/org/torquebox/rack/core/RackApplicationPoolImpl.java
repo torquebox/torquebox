@@ -8,48 +8,48 @@ import org.torquebox.rack.spi.RackApplicationPool;
 
 public class RackApplicationPoolImpl implements RackApplicationPool {
 
-	private RubyRuntimePool runtimePool;
-	private RackApplicationFactory rackFactory;
+    private RubyRuntimePool runtimePool;
+    private RackApplicationFactory rackFactory;
 
-	public RackApplicationPoolImpl() {
-	}
-	
-	public RackApplicationPoolImpl(RubyRuntimePool runtimePool, RackApplicationFactory rackFactory) {
-		this.runtimePool = runtimePool;
-		this.rackFactory = rackFactory;
-	}
+    public RackApplicationPoolImpl() {
+    }
 
-	public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
-		this.runtimePool = runtimePool;
-	}
+    public RackApplicationPoolImpl(RubyRuntimePool runtimePool, RackApplicationFactory rackFactory) {
+        this.runtimePool = runtimePool;
+        this.rackFactory = rackFactory;
+    }
 
-	public RubyRuntimePool getRubyRuntimePool() {
-		return this.runtimePool;
-	}
+    public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
+        this.runtimePool = runtimePool;
+    }
 
-	public void setRackApplicationFactory(RackApplicationFactory rackFactory) {
-		this.rackFactory = rackFactory;
-	}
+    public RubyRuntimePool getRubyRuntimePool() {
+        return this.runtimePool;
+    }
 
-	public RackApplicationFactory getRackApplicationFactory() {
-		return this.rackFactory;
-	}
+    public void setRackApplicationFactory(RackApplicationFactory rackFactory) {
+        this.rackFactory = rackFactory;
+    }
 
-	@Override
-	public RackApplication borrowApplication() throws Exception {
-		Ruby ruby = this.runtimePool.borrowRuntime();
+    public RackApplicationFactory getRackApplicationFactory() {
+        return this.rackFactory;
+    }
 
-		return getRackApplication(ruby);
-	}
+    @Override
+    public RackApplication borrowApplication() throws Exception {
+        Ruby ruby = this.runtimePool.borrowRuntime();
 
-	@Override
-	public void releaseApplication(RackApplication rackApp) {
-		this.runtimePool.returnRuntime(rackApp.getRuby());
-	}
+        return getRackApplication( ruby );
+    }
 
-	protected RackApplication getRackApplication(Ruby ruby) throws Exception {
-		RackApplication rackApp = this.rackFactory.createRackApplication(ruby);
-		return rackApp;
-	}
+    @Override
+    public void releaseApplication(RackApplication rackApp) {
+        this.runtimePool.returnRuntime( rackApp.getRuby() );
+    }
+
+    protected RackApplication getRackApplication(Ruby ruby) throws Exception {
+        RackApplication rackApp = this.rackFactory.createRackApplication( ruby );
+        return rackApp;
+    }
 
 }

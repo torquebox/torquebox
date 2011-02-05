@@ -32,32 +32,32 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyScheduler {
 
-	private static final Logger log = Logger.getLogger(RubyScheduler.class);
+    private static final Logger log = Logger.getLogger( RubyScheduler.class );
 
-	private String name;
-	private Scheduler scheduler;
-	private RubyRuntimePool runtimePool;
-	private boolean alwaysReload;
+    private String name;
+    private Scheduler scheduler;
+    private RubyRuntimePool runtimePool;
+    private boolean alwaysReload;
 
-	public RubyScheduler() {
-		
-	}
+    public RubyScheduler() {
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    }
 
-	public String getName() {
-		return this.name;
-	}
-	
-	public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
-		this.runtimePool = runtimePool;
-	}
-	
-	public RubyRuntimePool getRubyRuntimePool() {
-		return this.runtimePool;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
+        this.runtimePool = runtimePool;
+    }
+
+    public RubyRuntimePool getRubyRuntimePool() {
+        return this.runtimePool;
+    }
 
     public void setAlwaysReload(boolean alwaysReload) {
         this.alwaysReload = alwaysReload;
@@ -67,29 +67,29 @@ public class RubyScheduler {
         return this.alwaysReload;
     }
 
-	public Scheduler getScheduler() {
-		return this.scheduler;
-	}
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
 
-	public void start() throws IOException, SchedulerException {
-		log.info("Starting Ruby job scheduler: " + getName());
-		Properties props = new Properties();
-		props.load(this.getClass().getResourceAsStream("scheduler.properties"));
-		props.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName());
-		
-		RubyJobFactory jobFactory = new RubyJobFactory(isAlwaysReload());
-		jobFactory.setRubyRuntimePool( this.runtimePool );
-		
-		StdSchedulerFactory factory = new StdSchedulerFactory(props);
-		this.scheduler = factory.getScheduler();
-		this.scheduler.setJobFactory( jobFactory );
-		this.scheduler.start();
-	}
+    public void start() throws IOException, SchedulerException {
+        log.info( "Starting Ruby job scheduler: " + getName() );
+        Properties props = new Properties();
+        props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
+        props.setProperty( StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName() );
 
-	public void stop() throws SchedulerException {
-		log.info("Stopping Ruby job scheduler: " + getName());
-		this.scheduler.shutdown( true );
-		log.info("Stopped Ruby job scheduler: " + getName());
-	}
+        RubyJobFactory jobFactory = new RubyJobFactory( isAlwaysReload() );
+        jobFactory.setRubyRuntimePool( this.runtimePool );
+
+        StdSchedulerFactory factory = new StdSchedulerFactory( props );
+        this.scheduler = factory.getScheduler();
+        this.scheduler.setJobFactory( jobFactory );
+        this.scheduler.start();
+    }
+
+    public void stop() throws SchedulerException {
+        log.info( "Stopping Ruby job scheduler: " + getName() );
+        this.scheduler.shutdown( true );
+        log.info( "Stopped Ruby job scheduler: " + getName() );
+    }
 
 }

@@ -22,7 +22,7 @@ public class FormHandlingRails3Test extends AbstractIntegrationTest {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment("rails/3.0.0/basic-knob.yml");
+        return createDeployment( "rails/3.0.0/basic-knob.yml" );
     }
 
     @Test
@@ -31,39 +31,39 @@ public class FormHandlingRails3Test extends AbstractIntegrationTest {
 
         String cookieValue = null;
 
-        driver.get("http://localhost:8080/basic-rails/form_handling");
-        assertEquals(1, options.getCookies().size());
-        assertNotNull(options.getCookieNamed("JSESSIONID"));
-        cookieValue = options.getCookieNamed("JSESSIONID").getValue();
-        assertNotNull(cookieValue);
+        driver.get( "http://localhost:8080/basic-rails/form_handling" );
+        assertEquals( 1, options.getCookies().size() );
+        assertNotNull( options.getCookieNamed( "JSESSIONID" ) );
+        cookieValue = options.getCookieNamed( "JSESSIONID" ).getValue();
+        assertNotNull( cookieValue );
 
-        WebElement form = driver.findElementById("the-form");
-        assertNotNull(form);
+        WebElement form = driver.findElementById( "the-form" );
+        assertNotNull( form );
 
-        WebElement authTokenInput = driver.findElementByXPath("//input[@name='authenticity_token']");
-        assertNotNull(authTokenInput);
+        WebElement authTokenInput = driver.findElementByXPath( "//input[@name='authenticity_token']" );
+        assertNotNull( authTokenInput );
 
         String authToken = authTokenInput.getValue();
-        assertNotNull(authToken);
+        assertNotNull( authToken );
 
-        WebElement valueInput = driver.findElementById("the-value");
-        assertNotNull(valueInput);
-        assertEquals("", valueInput.getValue());
+        WebElement valueInput = driver.findElementById( "the-value" );
+        assertNotNull( valueInput );
+        assertEquals( "", valueInput.getValue() );
 
-        valueInput.sendKeys("the value I submit");
+        valueInput.sendKeys( "the value I submit" );
 
         form.submit();
 
-        valueInput = driver.findElementById("the-value");
-        assertNotNull(valueInput);
-        assertEquals("the value I submit is returned", valueInput.getValue());
+        valueInput = driver.findElementById( "the-value" );
+        assertNotNull( valueInput );
+        assertEquals( "the value I submit is returned", valueInput.getValue() );
 
-        authTokenInput = driver.findElementByXPath("//input[@name='authenticity_token']");
-        assertNotNull(authTokenInput);
+        authTokenInput = driver.findElementByXPath( "//input[@name='authenticity_token']" );
+        assertNotNull( authTokenInput );
 
-        assertNotNull(authTokenInput.getValue());
+        assertNotNull( authTokenInput.getValue() );
 
-        assertEquals(authToken, authTokenInput.getValue());
+        assertEquals( authToken, authTokenInput.getValue() );
     }
 
     @Test
@@ -72,43 +72,43 @@ public class FormHandlingRails3Test extends AbstractIntegrationTest {
 
         String cookieValue = null;
 
-        driver.get("http://localhost:8080/basic-rails/form_handling/upload_file");
-        assertEquals(1, options.getCookies().size());
-        assertNotNull(options.getCookieNamed("JSESSIONID"));
-        cookieValue = options.getCookieNamed("JSESSIONID").getValue();
-        assertNotNull(cookieValue);
-        
-        WebElement form = driver.findElementById("the-upload-form");
-        assertNotNull(form);
-        
-        WebElement authTokenInput = driver.findElementByXPath("//input[@name='authenticity_token']");
-        assertNotNull(authTokenInput);
-        
+        driver.get( "http://localhost:8080/basic-rails/form_handling/upload_file" );
+        assertEquals( 1, options.getCookies().size() );
+        assertNotNull( options.getCookieNamed( "JSESSIONID" ) );
+        cookieValue = options.getCookieNamed( "JSESSIONID" ).getValue();
+        assertNotNull( cookieValue );
+
+        WebElement form = driver.findElementById( "the-upload-form" );
+        assertNotNull( form );
+
+        WebElement authTokenInput = driver.findElementByXPath( "//input[@name='authenticity_token']" );
+        assertNotNull( authTokenInput );
+
         String authToken = authTokenInput.getValue();
-        assertNotNull(authToken);
+        assertNotNull( authToken );
 
         String action = form.getAttribute( "action" );
-        
+
         assertTrue( action.contains( cookieValue ) );
 
-        WebElement fileInput = driver.findElementById("the-file");
-        
+        WebElement fileInput = driver.findElementById( "the-file" );
+
         URL fileUrl = getClass().getResource( "data.txt" );
         String filePath = fileUrl.getFile();
-        
+
         fileInput.sendKeys( filePath );
-        
+
         // CLEAR ALL COOKIES
         options.deleteAllCookies();
-        
+
         form.submit();
-        
-        WebElement data = driver.findElementById("data");
-        
+
+        WebElement data = driver.findElementById( "data" );
+
         assertEquals( "Just some data. As returned.", data.getText().trim() );
-        
+
         // No cookie should have been set, since session *was* passed.
-        assertNull(options.getCookieNamed("JSESSIONID"));
+        assertNull( options.getCookieNamed( "JSESSIONID" ) );
     }
 
 }

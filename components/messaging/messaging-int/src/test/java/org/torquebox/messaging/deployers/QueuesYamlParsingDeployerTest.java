@@ -21,86 +21,86 @@ public class QueuesYamlParsingDeployerTest extends AbstractDeployerTestCase {
     @Before
     public void setUpDeployer() throws Throwable {
         this.queuesDeployer = new QueuesYamlParsingDeployer();
-        addDeployer(this.queuesDeployer);
+        addDeployer( this.queuesDeployer );
         this.globalDeployer = new TorqueBoxYamlParsingDeployer();
-        addDeployer(this.globalDeployer);
+        addDeployer( this.globalDeployer );
     }
 
     @Test
     public void testEmptyYaml() throws Exception {
-        File config = new File(System.getProperty("user.dir"), "src/test/resources/empty-queues.yml");
-        String deploymentName = addDeployment(config.toURI().toURL(), "queues.yml");
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/empty-queues.yml" );
+        String deploymentName = addDeployment( config.toURI().toURL(), "queues.yml" );
 
-        processDeployments(true);
+        processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(QueueMetaData.class);
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
 
-        assertTrue(allMetaData.isEmpty());
+        assertTrue( allMetaData.isEmpty() );
 
-        undeploy(deploymentName);
+        undeploy( deploymentName );
     }
 
     @Test
     public void testJunkYaml() throws Exception {
-        File config = new File(System.getProperty("user.dir"), "src/test/resources/junk-queues.yml");
-        String deploymentName = addDeployment(config.toURI().toURL(), "queues.yml");
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/junk-queues.yml" );
+        String deploymentName = addDeployment( config.toURI().toURL(), "queues.yml" );
 
-        processDeployments(true);
+        processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(QueueMetaData.class);
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
 
-        assertTrue(allMetaData.isEmpty());
+        assertTrue( allMetaData.isEmpty() );
 
-        undeploy(deploymentName);
+        undeploy( deploymentName );
     }
 
     @Test
     public void testValidYaml() throws Exception {
-        File config = new File(System.getProperty("user.dir"), "src/test/resources/valid-queues.yml");
-        String deploymentName = addDeployment(config.toURI().toURL(), "queues.yml");
+        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/valid-queues.yml" );
+        String deploymentName = addDeployment( config.toURI().toURL(), "queues.yml" );
 
-        processDeployments(true);
+        processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(QueueMetaData.class);
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
 
-        assertFalse(allMetaData.isEmpty());
+        assertFalse( allMetaData.isEmpty() );
 
-        assertEquals(2, allMetaData.size());
+        assertEquals( 2, allMetaData.size() );
 
-        QueueMetaData queueFoo = getMetaData(allMetaData, "/queues/foo");
-        assertNotNull(queueFoo);
+        QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/foo" );
+        assertNotNull( queueFoo );
 
-        QueueMetaData queueBar = getMetaData(allMetaData, "/queues/bar");
-        assertNotNull(queueBar);
+        QueueMetaData queueBar = getMetaData( allMetaData, "/queues/bar" );
+        assertNotNull( queueBar );
 
-        undeploy(deploymentName);
+        undeploy( deploymentName );
     }
-    
+
     @Test
     public void testTorqueBoxYml() throws Exception {
-        String deploymentName = addDeployment( getClass().getResource( "/valid-torquebox.yml"), "torquebox.yml");
+        String deploymentName = addDeployment( getClass().getResource( "/valid-torquebox.yml" ), "torquebox.yml" );
 
-        processDeployments(true);
+        processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(QueueMetaData.class);
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
 
-        assertFalse(allMetaData.isEmpty());
+        assertFalse( allMetaData.isEmpty() );
 
-        assertEquals(2, allMetaData.size());
+        assertEquals( 2, allMetaData.size() );
 
-        QueueMetaData queueFoo = getMetaData(allMetaData, "/queues/tbyaml/foo");
-        assertNotNull(queueFoo);
+        QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/tbyaml/foo" );
+        assertNotNull( queueFoo );
 
-        QueueMetaData queueBar = getMetaData(allMetaData, "/queues/tbyaml/bar");
-        assertNotNull(queueBar);
+        QueueMetaData queueBar = getMetaData( allMetaData, "/queues/tbyaml/bar" );
+        assertNotNull( queueBar );
 
-        undeploy(deploymentName);
+        undeploy( deploymentName );
     }
-    
+
     @Test
     public void testTorqueBoxYmlWins() throws Exception {
         JavaArchive jar = createJar( "mystuff.jar" );
@@ -108,28 +108,28 @@ public class QueuesYamlParsingDeployerTest extends AbstractDeployerTestCase {
         jar.addResource( getClass().getResource( "/valid-torquebox.yml" ), "/META-INF/torquebox.yml" );
         String deploymentName = addDeployment( createJarFile( jar ) );
 
-        processDeployments(true);
+        processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit(deploymentName);
-        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(QueueMetaData.class);
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
 
-        assertFalse(allMetaData.isEmpty());
+        assertFalse( allMetaData.isEmpty() );
 
-        assertEquals(2, allMetaData.size());
+        assertEquals( 2, allMetaData.size() );
 
         System.err.println( allMetaData );
-        QueueMetaData queueFoo = getMetaData(allMetaData, "/queues/tbyaml/foo");
-        assertNotNull(queueFoo);
+        QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/tbyaml/foo" );
+        assertNotNull( queueFoo );
 
-        QueueMetaData queueBar = getMetaData(allMetaData, "/queues/tbyaml/bar");
-        assertNotNull(queueBar);
+        QueueMetaData queueBar = getMetaData( allMetaData, "/queues/tbyaml/bar" );
+        assertNotNull( queueBar );
 
-        undeploy(deploymentName);
+        undeploy( deploymentName );
     }
 
     private QueueMetaData getMetaData(Set<? extends QueueMetaData> allMetaData, String name) {
         for (QueueMetaData each : allMetaData) {
-            if (each.getName().equals(name)) {
+            if (each.getName().equals( name )) {
                 return each;
             }
         }

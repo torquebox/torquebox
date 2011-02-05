@@ -16,14 +16,14 @@ public class TorqueBoxMetaData {
     }
 
     public Object getSection(String name) {
-        return this.data.get(name);
+        return this.data.get( name );
     }
 
     @SuppressWarnings("unchecked")
     public String getApplicationRoot() {
-        Map<String, String> applicationSection = (Map<String, String>) getSection("application");
+        Map<String, String> applicationSection = (Map<String, String>) getSection( "application" );
         if (applicationSection != null) {
-            return getOneOf(applicationSection, "root", "RAILS_ROOT", "RACK_ROOT");
+            return getOneOf( applicationSection, "root", "RAILS_ROOT", "RACK_ROOT" );
         }
         return null;
     }
@@ -35,14 +35,14 @@ public class TorqueBoxMetaData {
             return null;
         }
 
-        return VFS.getChild(root);
+        return VFS.getChild( root );
     }
 
     @SuppressWarnings("unchecked")
     public String getApplicationEnvironment() {
-        Map<String, String> applicationSection = (Map<String, String>) getSection("application");
+        Map<String, String> applicationSection = (Map<String, String>) getSection( "application" );
         if (applicationSection != null) {
-            return getOneOf(applicationSection, "env", "RAILS_ENV", "RACK_ENV");
+            return getOneOf( applicationSection, "env", "RAILS_ENV", "RACK_ENV" );
         }
         return null;
     }
@@ -50,8 +50,8 @@ public class TorqueBoxMetaData {
     protected String getOneOf(Map<String, String> map, String... keys) {
         for (String each : keys) {
             for (String key : map.keySet()) {
-                if (each.equalsIgnoreCase(key)) {
-                    return map.get(key);
+                if (each.equalsIgnoreCase( key )) {
+                    return map.get( key );
                 }
             }
         }
@@ -59,11 +59,11 @@ public class TorqueBoxMetaData {
     }
 
     protected String determineEnvironmentKey(Map<String, String> section) {
-        if (section.containsKey("RAILS_ENV")) {
+        if (section.containsKey( "RAILS_ENV" )) {
             return "RAILS_ENV";
         }
 
-        if (section.containsKey("RACK_ENV")) {
+        if (section.containsKey( "RACK_ENV" )) {
             return "RACK_ENV";
         }
 
@@ -71,11 +71,11 @@ public class TorqueBoxMetaData {
     }
 
     protected String determineRootKey(Map<String, String> section) {
-        if (section.containsKey("RAILS_ROOT")) {
+        if (section.containsKey( "RAILS_ROOT" )) {
             return "RAILS_ROOT";
         }
 
-        if (section.containsKey("RACK_ROOT")) {
+        if (section.containsKey( "RACK_ROOT" )) {
             return "RACK_ROOT";
         }
 
@@ -88,38 +88,39 @@ public class TorqueBoxMetaData {
         Map<String, Object> baseData = baseMetaData.data;
 
         Map<String, Object> mergedData = new HashMap<String, Object>();
-        mergedData.putAll(baseData);
+        mergedData.putAll( baseData );
 
         for (String key : thisData.keySet()) {
-            if (key.equals("application")) {
-                // From the application: section, only overly env/RACK_ENV/RAILS_ENV
-                // and do it smartly using whatever key(s) are in use by the base
+            if (key.equals( "application" )) {
+                // From the application: section, only overly
+                // env/RACK_ENV/RAILS_ENV
+                // and do it smartly using whatever key(s) are in use by the
+                // base
                 // and overlay data maps.
-                
-                Map<String, String> thisAppSection = (Map<String, String>) thisData.get("application");
-                String envKey = determineEnvironmentKey(thisAppSection);
-                String envName = thisAppSection.get(envKey);
 
-                if (envName != null && !envName.trim().equals("")) {
-                    Map<String, String> mergedAppSection = (Map<String, String>) mergedData.get("application");
+                Map<String, String> thisAppSection = (Map<String, String>) thisData.get( "application" );
+                String envKey = determineEnvironmentKey( thisAppSection );
+                String envName = thisAppSection.get( envKey );
+
+                if (envName != null && !envName.trim().equals( "" )) {
+                    Map<String, String> mergedAppSection = (Map<String, String>) mergedData.get( "application" );
 
                     if (mergedAppSection == null) {
                         mergedAppSection = new HashMap<String, String>();
                     }
-                    
+
                     envKey = determineEnvironmentKey( mergedAppSection );
                     mergedAppSection.put( envKey, envName );
                 }
 
             } else {
-                mergedData.put(key, thisData.get(key));
+                mergedData.put( key, thisData.get( key ) );
             }
         }
 
-        return new TorqueBoxMetaData(mergedData);
+        return new TorqueBoxMetaData( mergedData );
     }
 
-    
     public String toString() {
         return "[TorqueBoxMetaData: data=" + this.data + "]";
     }

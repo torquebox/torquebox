@@ -23,7 +23,6 @@ package org.torquebox.rack.spi;
 
 import org.jruby.Ruby;
 
-
 public interface RackApplicationFactory {
-	RackApplication createRackApplication(Ruby ruby) throws Exception;
+    RackApplication createRackApplication(Ruby ruby) throws Exception;
 }

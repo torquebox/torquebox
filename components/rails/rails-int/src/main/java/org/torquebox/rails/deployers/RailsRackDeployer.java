@@ -46,12 +46,12 @@ public class RailsRackDeployer extends AbstractDeployer {
     public static final String STATIC_PATH_PREFIX = "public";
 
     public RailsRackDeployer() {
-        setInput(RailsApplicationMetaData.class);
-        addRequiredInput(RubyApplicationMetaData.class);
-        addRequiredInput(RackApplicationMetaData.class);
+        setInput( RailsApplicationMetaData.class );
+        addRequiredInput( RubyApplicationMetaData.class );
+        addRequiredInput( RackApplicationMetaData.class );
 
-        addOutput(RackApplicationMetaData.class);
-        setStage(DeploymentStages.POST_PARSE);
+        addOutput( RackApplicationMetaData.class );
+        setStage( DeploymentStages.POST_PARSE );
 
         // addInput(RackApplicationMetaData.class);
         // addInput(RackDefaultsDeployer.COMPLETE);
@@ -59,35 +59,35 @@ public class RailsRackDeployer extends AbstractDeployer {
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        log.debug("Deploying rails app as rack: " + unit);
-        RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
+        log.debug( "Deploying rails app as rack: " + unit );
+        RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.class );
 
         try {
-            RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
+            RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
 
-            log.info(rackMetaData);
-            log.info(railsAppMetaData);
+            log.info( rackMetaData );
+            log.info( railsAppMetaData );
 
             if (railsAppMetaData.isRails3()) {
                 log.debug( "Configuring up a rails 3 application: " + unit );
-                rackMetaData.setRackUpScriptLocation("config.ru");
+                rackMetaData.setRackUpScriptLocation( "config.ru" );
             } else {
                 log.debug( "Configuring up a rails 2 application: " + unit );
-                rackMetaData.setRackUpScript(getRackUpScript(rackMetaData.getContextPath()));
+                rackMetaData.setRackUpScript( getRackUpScript( rackMetaData.getContextPath() ) );
             }
-            
+
             rackMetaData.setStaticPathPrefix( STATIC_PATH_PREFIX );
-            log.debug("Configured rack deployment: " + unit + "\n" + rackMetaData);
+            log.debug( "Configured rack deployment: " + unit + "\n" + rackMetaData );
         } catch (Exception e) {
-            throw new DeploymentException(e);
+            throw new DeploymentException( e );
         }
     }
 
     protected String getRackUpScript(String context) {
-        if (context.endsWith("/")) {
-            context = context.substring(0, context.length() - 1);
+        if (context.endsWith( "/" )) {
+            context = context.substring( 0, context.length() - 1 );
         }
-        return  "require %q(org/torquebox/rails/deployers/rackup)\n" + "run TorqueBox::Rails.app\n";
+        return "require %q(org/torquebox/rails/deployers/rackup)\n" + "run TorqueBox::Rails.app\n";
 
     }
 

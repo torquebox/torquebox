@@ -42,44 +42,44 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
 public class WebYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public WebYamlParsingDeployer() {
-        setSectionName("web");
-        addInput(RackApplicationMetaData.class);
-        addOutput(RackApplicationMetaData.class);
+        setSectionName( "web" );
+        addInput( RackApplicationMetaData.class );
+        addOutput( RackApplicationMetaData.class );
     }
 
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
 
-        log.debug("Deploying web configuration: " + unit);
-        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.class);
+        log.debug( "Deploying web configuration: " + unit );
+        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
 
         if (rackMetaData == null) {
-            log.debug("Initializing web configuration: " + unit);
+            log.debug( "Initializing web configuration: " + unit );
             rackMetaData = new RackApplicationMetaData();
-            unit.addAttachment(RackApplicationMetaData.class, rackMetaData);
+            unit.addAttachment( RackApplicationMetaData.class, rackMetaData );
         }
 
         Map<String, Object> web = (Map<String, Object>) dataObj;
 
-        rackMetaData.setContextPath((String) web.get("context"));
-        rackMetaData.setStaticPathPrefix((String) web.get("static"));
+        rackMetaData.setContextPath( (String) web.get( "context" ) );
+        rackMetaData.setStaticPathPrefix( (String) web.get( "static" ) );
 
-        if (web.get("rackup") != null) {
-            rackMetaData.setRackUpScriptLocation((String) web.get("rackup"));
+        if (web.get( "rackup" ) != null) {
+            rackMetaData.setRackUpScriptLocation( (String) web.get( "rackup" ) );
         }
 
-        Object hosts = web.get("host");
+        Object hosts = web.get( "host" );
 
         if (hosts instanceof List) {
             List<String> list = (List<String>) hosts;
             for (String each : list) {
-                rackMetaData.addHost(each);
+                rackMetaData.addHost( each );
             }
         } else {
-            rackMetaData.addHost((String) hosts);
+            rackMetaData.addHost( (String) hosts );
         }
 
-        log.debug("Configured as: " + rackMetaData);
+        log.debug( "Configured as: " + rackMetaData );
     }
 
 }

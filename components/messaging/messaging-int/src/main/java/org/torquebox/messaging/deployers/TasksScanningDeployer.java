@@ -13,26 +13,26 @@ import org.torquebox.messaging.metadata.TaskMetaData;
  *    In: suffix and path from jboss-beans.xml
  *   Out: TaskMetaData
  * </pre>
- *
+ * 
  */
 public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
 
-	public TasksScanningDeployer() {
-		
-	}
-	
-	@Override
-	protected void deploy(VFSDeploymentUnit unit, VirtualFile file, String relativePath) throws DeploymentException {
-		log.info( "deploying " + relativePath );
-		
-		TaskMetaData taskMetaData = new TaskMetaData();
-		
-		String simpleLocation = getPath() + relativePath.substring( 0, relativePath.length() - 3 );
-		
-		taskMetaData.setLocation( simpleLocation );
-		taskMetaData.setRubyClassName( StringUtils.pathToClassName( relativePath, ".rb" ) );
-		
-		unit.addAttachment( TaskMetaData.class.getName() + "$" + simpleLocation, taskMetaData, TaskMetaData.class );
-	}
+    public TasksScanningDeployer() {
+
+    }
+
+    @Override
+    protected void deploy(VFSDeploymentUnit unit, VirtualFile file, String relativePath) throws DeploymentException {
+        log.info( "deploying " + relativePath );
+
+        TaskMetaData taskMetaData = new TaskMetaData();
+
+        String simpleLocation = getPath() + relativePath.substring( 0, relativePath.length() - 3 );
+
+        taskMetaData.setLocation( simpleLocation );
+        taskMetaData.setRubyClassName( StringUtils.pathToClassName( relativePath, ".rb" ) );
+
+        unit.addAttachment( TaskMetaData.class.getName() + "$" + simpleLocation, taskMetaData, TaskMetaData.class );
+    }
 
 }

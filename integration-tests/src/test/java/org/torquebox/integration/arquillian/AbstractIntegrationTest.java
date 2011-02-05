@@ -18,7 +18,7 @@ import org.torquebox.integration.FancyHtmlUnitDriver;
 import org.torquebox.test.AbstractTorqueBoxTestCase;
 
 @RunWith(Arquillian.class)
-public abstract class AbstractIntegrationTest  extends AbstractTorqueBoxTestCase {
+public abstract class AbstractIntegrationTest extends AbstractTorqueBoxTestCase {
 
     protected FancyHtmlUnitDriver driver;
 
@@ -37,24 +37,24 @@ public abstract class AbstractIntegrationTest  extends AbstractTorqueBoxTestCase
     }
 
     public static JavaArchive createDeployment(String name) {
-        int lastSlashLoc = name.lastIndexOf('/');
-        String tail = name.substring(lastSlashLoc + 1);
-        int lastDot = tail.lastIndexOf('.');
-        String base = tail.substring(0, lastDot);
+        int lastSlashLoc = name.lastIndexOf( '/' );
+        String tail = name.substring( lastSlashLoc + 1 );
+        int lastDot = tail.lastIndexOf( '.' );
+        String base = tail.substring( 0, lastDot );
 
-        JavaArchive archive = ShrinkWrap.create(JavaArchive.class, base + ".jar");
+        JavaArchive archive = ShrinkWrap.create( JavaArchive.class, base + ".jar" );
         ClassLoader classLoader = AbstractIntegrationTest.class.getClassLoader();
-        URL deploymentDescriptorUrl = classLoader.getResource(name);
-        archive.addResource(deploymentDescriptorUrl, "/META-INF/" + tail);
+        URL deploymentDescriptorUrl = classLoader.getResource( name );
+        archive.addResource( deploymentDescriptorUrl, "/META-INF/" + tail );
         return archive;
     }
 
     protected String slurpResource(String path) throws IOException {
-        System.err.println("attempting to slurp: " + path);
-        InputStream in = getClass().getClassLoader().getResourceAsStream(path);
-        System.err.println("  in=" + in);
+        System.err.println( "attempting to slurp: " + path );
+        InputStream in = getClass().getClassLoader().getResourceAsStream( path );
+        System.err.println( "  in=" + in );
         try {
-            return slurp(in);
+            return slurp( in );
         } finally {
             if (in != null) {
                 in.close();
@@ -64,13 +64,13 @@ public abstract class AbstractIntegrationTest  extends AbstractTorqueBoxTestCase
 
     protected String slurp(InputStream in) throws IOException {
         StringBuilder builder = new StringBuilder();
-        Reader reader = new InputStreamReader(in);
+        Reader reader = new InputStreamReader( in );
         char[] buf = new char[1024];
 
         int numRead = 0;
 
-        while ((numRead = reader.read(buf)) >= 0) {
-            builder.append(buf, 0, numRead);
+        while ((numRead = reader.read( buf )) >= 0) {
+            builder.append( buf, 0, numRead );
         }
 
         return builder.toString();
@@ -80,11 +80,11 @@ public abstract class AbstractIntegrationTest  extends AbstractTorqueBoxTestCase
         if (file.exists()) {
             if (file.isDirectory()) {
                 for (File child : file.listFiles()) {
-                    rm(child);
+                    rm( child );
                 }
             }
             if (!file.delete()) {
-                throw new IOException("Unable to delete: " + file.getAbsolutePath());
+                throw new IOException( "Unable to delete: " + file.getAbsolutePath() );
             }
         }
 

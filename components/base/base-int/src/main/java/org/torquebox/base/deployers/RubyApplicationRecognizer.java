@@ -10,52 +10,44 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 public class RubyApplicationRecognizer extends AbstractRecognizer {
 
     public RubyApplicationRecognizer() {
-        setStage(DeploymentStages.PRE_PARSE);
-        addOutput(RubyApplicationMetaData.class);
-        setRelativeOrder(5000);
+        setStage( DeploymentStages.PRE_PARSE );
+        addOutput( RubyApplicationMetaData.class );
+        setRelativeOrder( 5000 );
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
-            deploy((VFSDeploymentUnit) unit);
+            deploy( (VFSDeploymentUnit) unit );
         }
     }
 
     @Override
     protected void handle(VFSDeploymentUnit unit) throws DeploymentException {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (rubyAppMetaData == null) {
-            log.debug("Initializing ruby application: " + unit);
+            log.debug( "Initializing ruby application: " + unit );
             rubyAppMetaData = new RubyApplicationMetaData();
-            rubyAppMetaData.setRoot(unit.getRoot());
+            rubyAppMetaData.setRoot( unit.getRoot() );
 
-            unit.addAttachment(RubyApplicationMetaData.class, rubyAppMetaData);
+            unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
         } else {
-            log.debug("Ruby application already initialized: " + unit);
+            log.debug( "Ruby application already initialized: " + unit );
         }
     }
-    
+
     static boolean isRubyApplication(VirtualFile file) {
-        return  hasAnyOf(file, 
-                  "torquebox.yml", 
-                  "config/torquebox.yml", 
-                  "config.ru", 
-                  "config/environment.rb", 
-                  "Rakefile", 
-                  "Gemfile", 
-                  ".bundle/config",
-                  "vendor/rails" );
+        return hasAnyOf( file, "torquebox.yml", "config/torquebox.yml", "config.ru", "config/environment.rb", "Rakefile", "Gemfile", ".bundle/config", "vendor/rails" );
     }
 
     protected boolean isRecognized(VFSDeploymentUnit unit) {
-        return RubyApplicationRecognizer.isRubyApplication(unit.getRoot());
+        return RubyApplicationRecognizer.isRubyApplication( unit.getRoot() );
     }
 
     protected static boolean hasAnyOf(VirtualFile root, String... paths) {
         for (String path : paths) {
-            if (root.getChild(path).exists()) {
+            if (root.getChild( path ).exists()) {
                 return true;
             }
         }

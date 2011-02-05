@@ -7,16 +7,15 @@ import javax.servlet.ServletInputStream;
 
 public class MockServletInputStream extends ServletInputStream {
 
-	
-	private InputStream in;
+    private InputStream in;
 
-	public MockServletInputStream(InputStream in) {
-		this.in = in;
-	}
-	
-	@Override
-	public int read() throws IOException {
-		return in.read();
-	}
+    public MockServletInputStream(InputStream in) {
+        this.in = in;
+    }
+
+    @Override
+    public int read() throws IOException {
+        return in.read();
+    }
 
 }

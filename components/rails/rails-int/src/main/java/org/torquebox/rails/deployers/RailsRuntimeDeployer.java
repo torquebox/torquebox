@@ -45,41 +45,41 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
 public class RailsRuntimeDeployer extends AbstractDeployer {
 
     public RailsRuntimeDeployer() {
-        setStage(DeploymentStages.PRE_DESCRIBE);
-        setInput(RailsApplicationMetaData.class);
-        addRequiredInput(RackApplicationMetaData.class);
-        addRequiredInput(RubyApplicationMetaData.class);
-        addOutput(RubyRuntimeMetaData.class);
+        setStage( DeploymentStages.PRE_DESCRIBE );
+        setInput( RailsApplicationMetaData.class );
+        addRequiredInput( RackApplicationMetaData.class );
+        addRequiredInput( RubyApplicationMetaData.class );
+        addOutput( RubyRuntimeMetaData.class );
 
-        setRelativeOrder(500);
+        setRelativeOrder( 500 );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
-            deploy((VFSDeploymentUnit) unit);
+            deploy( (VFSDeploymentUnit) unit );
         }
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        log.debug("Deploying rails runtime: " + unit);
-        if (unit.isAttachmentPresent(RubyRuntimeMetaData.class)) {
-            log.warn("Ruby runtime already configured: " + unit);
+        log.debug( "Deploying rails runtime: " + unit );
+        if (unit.isAttachmentPresent( RubyRuntimeMetaData.class )) {
+            log.warn( "Ruby runtime already configured: " + unit );
             return;
         }
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment(RackApplicationMetaData.class);
-        RailsApplicationMetaData railsAppMetaData = unit.getAttachment(RailsApplicationMetaData.class);
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.class );
+        RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.class );
 
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
 
-        runtimeMetaData.setBaseDir(rubyAppMetaData.getRoot());
-        runtimeMetaData.setEnvironment(rubyAppMetaData.getEnvironmentVariables());
+        runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );
+        runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
 
-        RuntimeInitializer initializer = new RailsRuntimeInitializer(rubyAppMetaData, rackAppMetaData, railsAppMetaData);
-        runtimeMetaData.setRuntimeInitializer(initializer);
+        RuntimeInitializer initializer = new RailsRuntimeInitializer( rubyAppMetaData, rackAppMetaData, railsAppMetaData );
+        runtimeMetaData.setRuntimeInitializer( initializer );
 
-        unit.addAttachment(RubyRuntimeMetaData.class, runtimeMetaData);
+        unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
     }
 
 }

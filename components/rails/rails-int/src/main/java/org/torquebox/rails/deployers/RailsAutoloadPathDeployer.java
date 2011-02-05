@@ -30,42 +30,41 @@ import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.rails.core.RailsRuntimeInitializer;
 
-
 /**
  * <pre>
  * Stage: DESCRIBE
  *    In: RubyRuntimeMetaData
  *   Out: RubyRuntimeMetaData
  * </pre>
- *
- * I'm not entirely sure this can justify its existence.  I'd rather
- * merge this behavior into RailsRubyRuntimeFactoryDescriber, it needs
- * to deploy in a later stage than LoadPathDeployer.
+ * 
+ * I'm not entirely sure this can justify its existence. I'd rather merge this
+ * behavior into RailsRubyRuntimeFactoryDescriber, it needs to deploy in a later
+ * stage than LoadPathDeployer.
  */
 public class RailsAutoloadPathDeployer extends AbstractDeployer {
-	
-	public RailsAutoloadPathDeployer() {
-		setStage(DeploymentStages.DESCRIBE);
-		setInput(RubyRuntimeMetaData.class);
-		addOutput(RubyRuntimeMetaData.class);
-	}
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if (unit instanceof VFSDeploymentUnit) {
-			deploy((VFSDeploymentUnit) unit);
-		}
-	}
+    public RailsAutoloadPathDeployer() {
+        setStage( DeploymentStages.DESCRIBE );
+        setInput( RubyRuntimeMetaData.class );
+        addOutput( RubyRuntimeMetaData.class );
+    }
 
-	public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-		RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(RubyRuntimeMetaData.class);
-		if (runtimeMetaData != null && runtimeMetaData.getRuntimeInitializer() instanceof RailsRuntimeInitializer) {
-			RailsRuntimeInitializer initializer = (RailsRuntimeInitializer) runtimeMetaData.getRuntimeInitializer();
-			for (RubyLoadPathMetaData path: runtimeMetaData.getLoadPaths()) {
-				if (path.isAutoload()) {
-					initializer.addAutoloadPath(path.toString());
-				}
-			}
-		}
-	}
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        if (unit instanceof VFSDeploymentUnit) {
+            deploy( (VFSDeploymentUnit) unit );
+        }
+    }
+
+    public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
+        if (runtimeMetaData != null && runtimeMetaData.getRuntimeInitializer() instanceof RailsRuntimeInitializer) {
+            RailsRuntimeInitializer initializer = (RailsRuntimeInitializer) runtimeMetaData.getRuntimeInitializer();
+            for (RubyLoadPathMetaData path : runtimeMetaData.getLoadPaths()) {
+                if (path.isAutoload()) {
+                    initializer.addAutoloadPath( path.toString() );
+                }
+            }
+        }
+    }
 
 }

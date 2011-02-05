@@ -23,14 +23,13 @@ public class ServicesYamlParsingDeployerTest extends AbstractDeployerTestCase {
         addDeployer( this.deployer );
     }
 
-
     /** Ensure that an empty services.yml causes no problems. */
     @Test
     public void testEmptyServicesYml() throws Exception {
-        URL servicesYml = getClass().getResource("empty.yml");
+        URL servicesYml = getClass().getResource( "empty.yml" );
 
-        String deploymentName = addDeployment(servicesYml, "services.yml");
-        processDeployments(true);
+        String deploymentName = addDeployment( servicesYml, "services.yml" );
+        processDeployments( true );
 
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
 
@@ -38,15 +37,14 @@ public class ServicesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
     }
 
-
     /** Ensure that a valid services.yml attaches metadata. */
     @Ignore
     @Test
     public void testValidServicesYml() throws Exception {
-        URL servicesYml = getClass().getResource("valid-services.yml");
+        URL servicesYml = getClass().getResource( "valid-services.yml" );
 
-        String deploymentName = addDeployment(servicesYml, "services.yml");
-        processDeployments(true);
+        String deploymentName = addDeployment( servicesYml, "services.yml" );
+        processDeployments( true );
 
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
 
@@ -60,22 +58,22 @@ public class ServicesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
     @Test
     public void testRequiresSingletonReturnsFalseWhenNoSingletonKey() throws Exception {
-        Map<String, String>  params = new HashMap<String, String>();
-        params.put("key_other_than_singleton", "value");
+        Map<String, String> params = new HashMap<String, String>();
+        params.put( "key_other_than_singleton", "value" );
         assertFalse( this.deployer.requiresSingleton( params ) );
     }
 
     @Test
     public void testRequiresSingletonReturnsFalseWhenSingletonKeyIsFalse() throws Exception {
-        Map<String, Object>  params = new HashMap<String, Object>();
-        params.put("singleton", false);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put( "singleton", false );
         assertFalse( this.deployer.requiresSingleton( params ) );
     }
 
     @Test
     public void testRequiresSingletonReturnsTrueWhenSingletonKeyIsTrue() throws Exception {
-        Map<String, Object>  params = new HashMap<String, Object>();
-        params.put("singleton", true);
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put( "singleton", true );
         assertTrue( this.deployer.requiresSingleton( params ) );
     }
 

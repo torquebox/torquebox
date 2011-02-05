@@ -23,72 +23,72 @@ package org.torquebox.jobs.metadata;
 
 public class ScheduledJobMetaData {
 
-	private String group;
-	private String name;
-	private String description;
-	private String cronExpression;
-	private String rubyClassName;
-	private String rubyRequirePath;
+    private String group;
+    private String name;
+    private String description;
+    private String cronExpression;
+    private String rubyClassName;
+    private String rubyRequirePath;
 
-	private String rubySchedulerName;
-	
-	public ScheduledJobMetaData() {
-		
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public String getDescription() {
-		return this.description;
-	}
-	
-	public void setCronExpression(String cronExpression) {
-		this.cronExpression = cronExpression;
-	}
-	
-	public String getCronExpression() {
-		return this.cronExpression;
-	}
-	
-	public void setGroup(String group) {
-		this.group = group;
-	}
+    private String rubySchedulerName;
 
-	public String getGroup() {
-		return this.group;
-	}
+    public ScheduledJobMetaData() {
 
-	public void setRubyClassName(String rubyClassName) {
-		this.rubyClassName = rubyClassName;
-	}
-	
-	public String getRubyClassName() {
-		return this.rubyClassName;
-	}
-	
-	public void setRubyRequirePath(String rubyRequirePath) {
-		this.rubyRequirePath = rubyRequirePath;
-	}
-	
-	public String getRubyRequirePath() {
-		return this.rubyRequirePath;
-	}
-	
-	public void setRubySchedulerName(String rubySchedulerName) {
-		this.rubySchedulerName = rubySchedulerName;
-	}
-	
-	public String getRubySchedulerName() {
-		return this.rubySchedulerName;
-	}
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setCronExpression(String cronExpression) {
+        this.cronExpression = cronExpression;
+    }
+
+    public String getCronExpression() {
+        return this.cronExpression;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getGroup() {
+        return this.group;
+    }
+
+    public void setRubyClassName(String rubyClassName) {
+        this.rubyClassName = rubyClassName;
+    }
+
+    public String getRubyClassName() {
+        return this.rubyClassName;
+    }
+
+    public void setRubyRequirePath(String rubyRequirePath) {
+        this.rubyRequirePath = rubyRequirePath;
+    }
+
+    public String getRubyRequirePath() {
+        return this.rubyRequirePath;
+    }
+
+    public void setRubySchedulerName(String rubySchedulerName) {
+        this.rubySchedulerName = rubySchedulerName;
+    }
+
+    public String getRubySchedulerName() {
+        return this.rubySchedulerName;
+    }
 }

@@ -23,14 +23,15 @@ package org.torquebox.interp.spi;
 
 import org.jruby.Ruby;
 
-/** Functor to initialize Ruby runtimes.
+/**
+ * Functor to initialize Ruby runtimes.
  * 
  * @author Bob McWhirter
  * 
  * @see DefaultRubyRuntimeFactory
  */
 public interface RuntimeInitializer {
-	
-	public void initialize(Ruby ruby) throws Exception;
+
+    public void initialize(Ruby ruby) throws Exception;
 
 }

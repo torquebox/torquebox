@@ -21,10 +21,10 @@
  */
 package org.torquebox.rack.spi;
 
-
 public interface RackApplicationPool {
-	
-	RackApplication borrowApplication() throws Exception;
-	void releaseApplication(RackApplication app);
+
+    RackApplication borrowApplication() throws Exception;
+
+    void releaseApplication(RackApplication app);
 
 }

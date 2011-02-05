@@ -35,62 +35,61 @@ import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
-
 /**
  * <pre>
  * Stage: REAL
  *    In: ScheduledJobMetaData
  *   Out: ScheduledJob
  * </pre>
- *
+ * 
  * Creates objects from metadata
  */
 public class RubyJobDeployer extends AbstractDeployer {
 
-	public RubyJobDeployer() {
-		setAllInputs(true);
-		addInput(ScheduledJobMetaData.class);
-		addOutput(BeanMetaData.class);
-		setStage(DeploymentStages.REAL);
-	}
+    public RubyJobDeployer() {
+        setAllInputs( true );
+        addInput( ScheduledJobMetaData.class );
+        addOutput( BeanMetaData.class );
+        setStage( DeploymentStages.REAL );
+    }
 
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData(ScheduledJobMetaData.class);
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
 
-		if (allMetaData.size() == 0) {
-			return;
-		}
+        if (allMetaData.size() == 0) {
+            return;
+        }
 
-		for (ScheduledJobMetaData metaData : allMetaData) {
-			deploy(unit, metaData);
-		}
+        for (ScheduledJobMetaData metaData : allMetaData) {
+            deploy( unit, metaData );
+        }
 
-	}
+    }
 
-	protected void deploy(DeploymentUnit unit, ScheduledJobMetaData metaData) throws DeploymentException {
-		String beanName = AttachmentUtils.beanName(unit, ScheduledJob.class, metaData.getName());
+    protected void deploy(DeploymentUnit unit, ScheduledJobMetaData metaData) throws DeploymentException {
+        String beanName = AttachmentUtils.beanName( unit, ScheduledJob.class, metaData.getName() );
 
-		log.debug("deploying job: " + beanName);
+        log.debug( "deploying job: " + beanName );
 
-		BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(beanName, ScheduledJob.class.getName());
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, ScheduledJob.class.getName() );
 
-		builder.addPropertyMetaData("group", metaData.getGroup());
-		builder.addPropertyMetaData("name", metaData.getName());
-		builder.addPropertyMetaData("rubyClassName", metaData.getRubyClassName());
-		builder.addPropertyMetaData("rubyRequirePath", metaData.getRubyRequirePath());
-		builder.addPropertyMetaData("description", metaData.getDescription());
-		builder.addPropertyMetaData("cronExpression", metaData.getCronExpression());
+        builder.addPropertyMetaData( "group", metaData.getGroup() );
+        builder.addPropertyMetaData( "name", metaData.getName() );
+        builder.addPropertyMetaData( "rubyClassName", metaData.getRubyClassName() );
+        builder.addPropertyMetaData( "rubyRequirePath", metaData.getRubyRequirePath() );
+        builder.addPropertyMetaData( "description", metaData.getDescription() );
+        builder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
 
-		String schedulerBeanName = metaData.getRubySchedulerName();
-		if (schedulerBeanName == null) {
-			schedulerBeanName = AttachmentUtils.beanName(unit, RubyScheduler.class);
-		}
-		ValueMetaData schedulerInjection = builder.createInject(schedulerBeanName, "scheduler");
-		builder.addPropertyMetaData("scheduler", schedulerInjection);
+        String schedulerBeanName = metaData.getRubySchedulerName();
+        if (schedulerBeanName == null) {
+            schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
+        }
+        ValueMetaData schedulerInjection = builder.createInject( schedulerBeanName, "scheduler" );
+        builder.addPropertyMetaData( "scheduler", schedulerInjection );
 
-		BeanMetaData beanMetaData = builder.getBeanMetaData();
+        BeanMetaData beanMetaData = builder.getBeanMetaData();
 
-		AttachmentUtils.attach(unit, beanMetaData);
-	}
+        AttachmentUtils.attach( unit, beanMetaData );
+    }
 
 }

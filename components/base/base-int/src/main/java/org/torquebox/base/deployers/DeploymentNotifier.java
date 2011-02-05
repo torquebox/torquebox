@@ -9,8 +9,8 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 public class DeploymentNotifier extends AbstractDeployer {
 
     public DeploymentNotifier() {
-        setStage(DeploymentStages.INSTALLED);
-        setInput(RubyApplicationMetaData.class);
+        setStage( DeploymentStages.INSTALLED );
+        setInput( RubyApplicationMetaData.class );
     }
 
     @Override

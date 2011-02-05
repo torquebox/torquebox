@@ -43,104 +43,104 @@ import org.torquebox.rack.spi.RackApplicationPool;
 
 public class RackFilter implements Filter {
 
-	private static final Logger log = Logger.getLogger(RackFilter.class);
+    private static final Logger log = Logger.getLogger( RackFilter.class );
 
-	private static final String KERNEL_NAME = "jboss.kernel:service=Kernel";
+    private static final String KERNEL_NAME = "jboss.kernel:service=Kernel";
 
-	public static final String RACK_APP_POOL_INIT_PARAM = "torquebox.rack.app.pool.name";
+    public static final String RACK_APP_POOL_INIT_PARAM = "torquebox.rack.app.pool.name";
 
-	private RackApplicationPool rackAppPool;
+    private RackApplicationPool rackAppPool;
 
-	private ServletContext servletContext;
+    private ServletContext servletContext;
 
-	@SuppressWarnings("deprecation")
-	public void init(FilterConfig filterConfig) throws ServletException {
-		Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute(KERNEL_NAME);
-		String rackAppPoolName = filterConfig.getInitParameter(RACK_APP_POOL_INIT_PARAM);
-		KernelRegistryEntry entry = kernel.getRegistry().findEntry(rackAppPoolName);
-		if (entry != null) {
-			this.rackAppPool = (RackApplicationPool) entry.getTarget();
-		} else {
-			throw new ServletException("Unable to obtain Rack application pool '" + rackAppPoolName + "'");
-		}
+    @SuppressWarnings("deprecation")
+    public void init(FilterConfig filterConfig) throws ServletException {
+        Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute( KERNEL_NAME );
+        String rackAppPoolName = filterConfig.getInitParameter( RACK_APP_POOL_INIT_PARAM );
+        KernelRegistryEntry entry = kernel.getRegistry().findEntry( rackAppPoolName );
+        if (entry != null) {
+            this.rackAppPool = (RackApplicationPool) entry.getTarget();
+        } else {
+            throw new ServletException( "Unable to obtain Rack application pool '" + rackAppPoolName + "'" );
+        }
 
-		this.servletContext = filterConfig.getServletContext();
-	}
+        this.servletContext = filterConfig.getServletContext();
+    }
 
-	public void destroy() {
-	}
+    public void destroy() {
+    }
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
-			doFilter((HttpServletRequest) request, (HttpServletResponse) response, chain);
-		}
-	}
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (request instanceof HttpServletRequest && response instanceof HttpServletResponse) {
+            doFilter( (HttpServletRequest) request, (HttpServletResponse) response, chain );
+        }
+    }
 
-	protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-	    
-	    log.info( "request: " + request );
-	    log.info( "request.pathInfo: " + request.getPathInfo() );
-	    log.info( "request.requestUri: " + request.getRequestURI() );
+    protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-		if ( ((request.getPathInfo() == null) || (request.getPathInfo().equals("/"))) && !(request.getRequestURI().endsWith("/"))) {
-			String redirectUri = request.getRequestURI() + "/";
-			String queryString = request.getQueryString();
-			if (queryString != null) {
-				redirectUri = redirectUri + "?" + queryString;
-			}
-			redirectUri = response.encodeRedirectURL(redirectUri);
-			response.sendRedirect(redirectUri);
-			return;
-		}
+        log.info( "request: " + request );
+        log.info( "request.pathInfo: " + request.getPathInfo() );
+        log.info( "request.requestUri: " + request.getRequestURI() );
 
-		HttpServletResponseCapture responseCapture = new HttpServletResponseCapture(response);
-		try {
-			chain.doFilter(request, responseCapture);
-			if (responseCapture.isError()) {
-				response.reset();
-			} else {
-				return;
-			}
-		} catch (ServletException e) {
-			log.error("Error performing request", e);
-		}
-		doRack(request, response);
-	}
+        if (((request.getPathInfo() == null) || (request.getPathInfo().equals( "/" ))) && !(request.getRequestURI().endsWith( "/" ))) {
+            String redirectUri = request.getRequestURI() + "/";
+            String queryString = request.getQueryString();
+            if (queryString != null) {
+                redirectUri = redirectUri + "?" + queryString;
+            }
+            redirectUri = response.encodeRedirectURL( redirectUri );
+            response.sendRedirect( redirectUri );
+            return;
+        }
 
-	protected void doRack(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		RackApplication rackApp = null;
+        HttpServletResponseCapture responseCapture = new HttpServletResponseCapture( response );
+        try {
+            chain.doFilter( request, responseCapture );
+            if (responseCapture.isError()) {
+                response.reset();
+            } else {
+                return;
+            }
+        } catch (ServletException e) {
+            log.error( "Error performing request", e );
+        }
+        doRack( request, response );
+    }
 
-		RackEnvironmentImpl rackEnv = null;
+    protected void doRack(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        RackApplication rackApp = null;
 
-		try {
-			rackApp = borrowRackApplication();
-			rackEnv = new RackEnvironmentImpl( rackApp.getRuby(), servletContext, request );
-			rackApp.call(rackEnv).respond(response);
-		} catch (RaiseException e) {
-			log.error("Error invoking Rack filter", e);
-			log.error("Underlying Ruby exception", e.getCause() );
-			throw new ServletException(e);
-		} catch (Exception e) {
-			log.error("Error invoking Rack filter", e);
-			throw new ServletException(e);
-		} finally {
-			if (rackEnv != null) {
-				rackEnv.close();
-			}
-			
-			if (rackApp != null) {
-				releaseRackApplication(rackApp);
-				rackApp = null;
-			}
-		}
-	}
+        RackEnvironmentImpl rackEnv = null;
 
-	private RackApplication borrowRackApplication() throws Exception {
-		return this.rackAppPool.borrowApplication();
-	}
+        try {
+            rackApp = borrowRackApplication();
+            rackEnv = new RackEnvironmentImpl( rackApp.getRuby(), servletContext, request );
+            rackApp.call( rackEnv ).respond( response );
+        } catch (RaiseException e) {
+            log.error( "Error invoking Rack filter", e );
+            log.error( "Underlying Ruby exception", e.getCause() );
+            throw new ServletException( e );
+        } catch (Exception e) {
+            log.error( "Error invoking Rack filter", e );
+            throw new ServletException( e );
+        } finally {
+            if (rackEnv != null) {
+                rackEnv.close();
+            }
 
-	private void releaseRackApplication(RackApplication rackApp) {
-		this.rackAppPool.releaseApplication(rackApp);
-	}
+            if (rackApp != null) {
+                releaseRackApplication( rackApp );
+                rackApp = null;
+            }
+        }
+    }
+
+    private RackApplication borrowRackApplication() throws Exception {
+        return this.rackAppPool.borrowApplication();
+    }
+
+    private void releaseRackApplication(RackApplication rackApp) {
+        this.rackAppPool.releaseApplication( rackApp );
+    }
 
 }

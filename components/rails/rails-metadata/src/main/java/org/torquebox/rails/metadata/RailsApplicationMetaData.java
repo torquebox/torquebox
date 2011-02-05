@@ -23,7 +23,6 @@ package org.torquebox.rails.metadata;
 
 import java.util.regex.Pattern;
 
-
 public class RailsApplicationMetaData {
 
     public RailsApplicationMetaData() {
@@ -36,15 +35,15 @@ public class RailsApplicationMetaData {
     public String getVersionSpec() {
         return this.versionSpec;
     }
-    
+
     public boolean isRails2() {
         return getVersionSpec() != null && Pattern.matches( ".*2\\.[0-9]+\\.[0-9]+\\.*", getVersionSpec() );
     }
-    
+
     public boolean isRails3() {
-        return  ! isRails2();
+        return !isRails2();
     }
-    
+
     public String toString() {
         return "[RailsApplicationMetaData:\n  version=" + versionSpec + "]";
     }

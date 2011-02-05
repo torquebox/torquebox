@@ -33,121 +33,121 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class ScheduledJob {
 
-	private static final Logger log = Logger.getLogger(ScheduledJob.class);
+    private static final Logger log = Logger.getLogger( ScheduledJob.class );
 
-	public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
+    public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
 
-	private String group;
-	private String name;
-	private String description;
+    private String group;
+    private String name;
+    private String description;
 
-	private String rubyClassName;
-	private String rubyRequirePath;
+    private String rubyClassName;
+    private String rubyRequirePath;
 
-	private String cronExpression;
+    private String cronExpression;
 
-	private RubyRuntimePool runtimePool;
-	private Scheduler scheduler;
+    private RubyRuntimePool runtimePool;
+    private Scheduler scheduler;
 
-	public ScheduledJob() {
+    public ScheduledJob() {
 
-	}
+    }
 
-	public void setGroup(String group) {
-		this.group = group;
-	}
+    public void setGroup(String group) {
+        this.group = group;
+    }
 
-	public String getGroup() {
-		return this.group;
-	}
+    public String getGroup() {
+        return this.group;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getName() {
-		return this.name;
-	}
+    public String getName() {
+        return this.name;
+    }
 
-	public void setRubyClassName(String rubyClassName) {
-		this.rubyClassName = rubyClassName;
-	}
+    public void setRubyClassName(String rubyClassName) {
+        this.rubyClassName = rubyClassName;
+    }
 
-	public String getRubyClassName() {
-		return this.rubyClassName;
-	}
+    public String getRubyClassName() {
+        return this.rubyClassName;
+    }
 
-	public void setRubyRequirePath(String rubyRequirePath) {
-		this.rubyRequirePath = rubyRequirePath;
-	}
+    public void setRubyRequirePath(String rubyRequirePath) {
+        this.rubyRequirePath = rubyRequirePath;
+    }
 
-	public String getRubyRequirePath() {
-		return this.rubyRequirePath;
-	}
+    public String getRubyRequirePath() {
+        return this.rubyRequirePath;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public String getDescription() {
+        return this.description;
+    }
 
-	public void setCronExpression(String cronExpression) {
-		this.cronExpression = cronExpression;
-	}
+    public void setCronExpression(String cronExpression) {
+        this.cronExpression = cronExpression;
+    }
 
-	public String getCronExpression() {
-		return this.cronExpression;
-	}
+    public String getCronExpression() {
+        return this.cronExpression;
+    }
 
-	public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
-		this.runtimePool = runtimePool;
-	}
+    public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
+        this.runtimePool = runtimePool;
+    }
 
-	public RubyRuntimePool getRubyRuntimePool() {
-		return this.runtimePool;
-	}
+    public RubyRuntimePool getRubyRuntimePool() {
+        return this.runtimePool;
+    }
 
-	public void setScheduler(Scheduler scheduler) {
-		this.scheduler = scheduler;
-	}
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
+    }
 
-	public Scheduler getScheduler() {
-		return this.scheduler;
-	}
+    public Scheduler getScheduler() {
+        return this.scheduler;
+    }
 
-	public void start() throws ParseException, SchedulerException {
-		log.info("Starting Ruby job: " + this.group + "." + this.name);
-		JobDetail jobDetail = new JobDetail();
+    public void start() throws ParseException, SchedulerException {
+        log.info( "Starting Ruby job: " + this.group + "." + this.name );
+        JobDetail jobDetail = new JobDetail();
 
-		jobDetail.setGroup(this.group);
-		jobDetail.setName(this.name);
-		jobDetail.setDescription(this.description);
-		jobDetail.setJobClass(RubyJob.class);
+        jobDetail.setGroup( this.group );
+        jobDetail.setName( this.name );
+        jobDetail.setDescription( this.description );
+        jobDetail.setJobClass( RubyJob.class );
 
-		JobDataMap jobData = jobDetail.getJobDataMap();
+        JobDataMap jobData = jobDetail.getJobDataMap();
 
-		jobData.put(RubyJobFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName);
-		if ( (this.rubyRequirePath != null) && (!this.rubyRequirePath.trim().equals( "" )) ) {
-			jobData.put(RubyJobFactory.RUBY_REQUIRE_PATH_KEY, this.rubyRequirePath);
-		}
+        jobData.put( RubyJobFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName );
+        if ((this.rubyRequirePath != null) && (!this.rubyRequirePath.trim().equals( "" ))) {
+            jobData.put( RubyJobFactory.RUBY_REQUIRE_PATH_KEY, this.rubyRequirePath );
+        }
 
-		CronTrigger trigger = new CronTrigger(getTriggerName(), this.group, this.cronExpression);
-		scheduler.scheduleJob(jobDetail, trigger);
-	}
+        CronTrigger trigger = new CronTrigger( getTriggerName(), this.group, this.cronExpression );
+        scheduler.scheduleJob( jobDetail, trigger );
+    }
 
-	private String getTriggerName() {
-		return this.name + ".trigger";
-	}
+    private String getTriggerName() {
+        return this.name + ".trigger";
+    }
 
-	public void stop() throws SchedulerException {
-		log.info("Stopping Ruby job: " + this.group + "." + this.name);
-		scheduler.unscheduleJob(getTriggerName(), this.group);
-	}
+    public void stop() throws SchedulerException {
+        log.info( "Stopping Ruby job: " + this.group + "." + this.name );
+        scheduler.unscheduleJob( getTriggerName(), this.group );
+    }
 
-	public String toString() {
-		return "[RubyJob: name=" + this.name + "; description=" + this.description + "; rubyClass=" + this.rubyClassName + "]";
-	}
+    public String toString() {
+        return "[RubyJob: name=" + this.name + "; description=" + this.description + "; rubyClass=" + this.rubyClassName + "]";
+    }
 
 }

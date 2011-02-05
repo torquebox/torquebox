@@ -50,7 +50,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
     protected Logger log;
 
     public AbstractDeployerTestCase() {
-        this.log = Logger.getLogger(getClass());
+        this.log = Logger.getLogger( getClass() );
     }
 
     private Closeable mount;
@@ -60,14 +60,14 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
         this.server = MCServerFactory.createServer();
 
         final List<BootstrapDescriptor> descriptors = this.server.getConfiguration().getBootstrapDescriptors();
-        descriptors.add(ReloadedDescriptors.getClassLoadingDescriptor());
-        descriptors.add(ReloadedDescriptors.getVdfDescriptor());
+        descriptors.add( ReloadedDescriptors.getClassLoadingDescriptor() );
+        descriptors.add( ReloadedDescriptors.getVdfDescriptor() );
 
         long start = System.currentTimeMillis();
         this.server.start();
         long elapsed = System.currentTimeMillis() - start;
 
-        log.info("Server started in " + elapsed + "ms");
+        log.info( "Server started in " + elapsed + "ms" );
     }
 
     @After
@@ -76,7 +76,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
             this.mount.close();
             this.mount = null;
         }
-        if (this.server != null && this.server.getState().equals(LifecycleState.STARTED)) {
+        if (this.server != null && this.server.getState().equals( LifecycleState.STARTED )) {
             this.server.stop();
         }
 
@@ -84,66 +84,66 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
 
     protected void addDeployer(Deployer deployer) throws Throwable {
         String deployerName = deployer.getClass().getSimpleName();
-        addDeployer(deployer, deployerName);
+        addDeployer( deployer, deployerName );
     }
 
     protected void addDeployer(Deployer deployer, String deployerName) throws Throwable {
         KernelController controller = this.server.getKernel().getController();
-        BeanMetaDataBuilder bmdb = BeanMetaDataBuilder.createBuilder(deployerName, deployer.getClass().getName());
-        controller.install(bmdb.getBeanMetaData(), deployer);
+        BeanMetaDataBuilder bmdb = BeanMetaDataBuilder.createBuilder( deployerName, deployer.getClass().getName() );
+        controller.install( bmdb.getBeanMetaData(), deployer );
     }
 
     protected void addStructureDeployer(StructureDeployer deployer) throws Throwable {
         String deployerName = deployer.getClass().getSimpleName();
-        addStructureDeployer(deployer, deployerName);
+        addStructureDeployer( deployer, deployerName );
     }
 
     protected void addStructureDeployer(StructureDeployer deployer, String deployerName) throws Throwable {
         KernelController controller = this.server.getKernel().getController();
-        BeanMetaDataBuilder bmdb = BeanMetaDataBuilder.createBuilder(deployerName, deployer.getClass().getName());
-        controller.install(bmdb.getBeanMetaData(), deployer);
+        BeanMetaDataBuilder bmdb = BeanMetaDataBuilder.createBuilder( deployerName, deployer.getClass().getName() );
+        controller.install( bmdb.getBeanMetaData(), deployer );
     }
 
     protected String addDeployment(URL url, String name) throws IOException, URISyntaxException, DeploymentException {
 
-        File tmpRoot = File.createTempFile(getClass().getName(), ".tmp");
+        File tmpRoot = File.createTempFile( getClass().getName(), ".tmp" );
         tmpRoot.deleteOnExit();
 
         VirtualFileAssembly assembly = new VirtualFileAssembly();
-        assembly.add(name, VFS.getChild(url.toURI()));
+        assembly.add( name, VFS.getChild( url.toURI() ) );
 
-        VirtualFile mountPoint = VFS.getChild(tmpRoot.getAbsolutePath());
-        this.mount = VFS.mountAssembly(assembly, mountPoint);
+        VirtualFile mountPoint = VFS.getChild( tmpRoot.getAbsolutePath() );
+        this.mount = VFS.mountAssembly( assembly, mountPoint );
 
-        return addDeployment(mountPoint.getChild(name));
+        return addDeployment( mountPoint.getChild( name ) );
     }
 
     protected String addDeployment(File file) throws DeploymentException {
-        VirtualFile virtualFile = VFS.getChild(file.getAbsolutePath());
-        return addDeployment(virtualFile);
+        VirtualFile virtualFile = VFS.getChild( file.getAbsolutePath() );
+        return addDeployment( virtualFile );
     }
 
     protected String addDeployment(URL url) throws DeploymentException, URISyntaxException {
-        VirtualFile file = VFS.getChild(url.toURI());
-        return addDeployment(file);
+        VirtualFile file = VFS.getChild( url.toURI() );
+        return addDeployment( file );
     }
 
     protected String addDeployment(VirtualFile file) throws DeploymentException {
-        VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment(file);
-        return addDeployment(deployment);
+        VFSDeployment deployment = VFSDeploymentFactory.getInstance().createVFSDeployment( file );
+        return addDeployment( deployment );
     }
 
     protected String addDeployment(Deployment deployment) throws DeploymentException {
         MainDeployer mainDeployer = getMainDeployer();
-        log.info("add deployment: " + deployment);
-        mainDeployer.addDeployment(deployment);
+        log.info( "add deployment: " + deployment );
+        mainDeployer.addDeployment( deployment );
         return deployment.getName();
     }
 
     protected String createDeployment(String name) throws IOException, DeploymentException {
-        File file = File.createTempFile(name, ".tmp");
+        File file = File.createTempFile( name, ".tmp" );
         file.deleteOnExit();
-        return addDeployment(file);
+        return addDeployment( file );
     }
 
     protected KernelController getKernelController() {
@@ -151,11 +151,11 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
     }
 
     protected MainDeployer getMainDeployer() {
-        return (MainDeployer) getKernelController().getInstalledContext(MC_MAIN_DEPLOYER_NAME).getTarget();
+        return (MainDeployer) getKernelController().getInstalledContext( MC_MAIN_DEPLOYER_NAME ).getTarget();
     }
 
     protected void processDeployments() throws DeploymentException {
-        processDeployments(false);
+        processDeployments( false );
     }
 
     protected void processDeployments(boolean checkComplete) throws DeploymentException {
@@ -166,18 +166,18 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
     }
 
     protected ManagedDeployment getDeployment(String name) throws DeploymentException {
-        return getMainDeployer().getManagedDeployment(name);
+        return getMainDeployer().getManagedDeployment( name );
     }
 
     protected DeploymentUnit getDeploymentUnit(String name) {
-        return ((MainDeployerImpl) getMainDeployer()).getDeploymentUnit(name);
+        return ((MainDeployerImpl) getMainDeployer()).getDeploymentUnit( name );
     }
 
     protected BeanMetaData getBeanMetaData(DeploymentUnit unit, String name) {
-        Set<? extends BeanMetaData> metaData = unit.getAllMetaData(BeanMetaData.class);
+        Set<? extends BeanMetaData> metaData = unit.getAllMetaData( BeanMetaData.class );
 
         for (BeanMetaData each : metaData) {
-            if (each.getName().equals(name)) {
+            if (each.getName().equals( name )) {
                 return each;
             }
         }
@@ -188,7 +188,7 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
     @SuppressWarnings("deprecation")
     protected Object getBean(String name) {
 
-        KernelRegistryEntry entry = getKernelController().getKernel().getRegistry().findEntry(name);
+        KernelRegistryEntry entry = getKernelController().getKernel().getRegistry().findEntry( name );
         if (entry == null) {
             return null;
         }
@@ -197,22 +197,22 @@ public abstract class AbstractDeployerTestCase extends AbstractVFSTestCase {
     }
 
     protected void undeploy(String name) throws DeploymentException {
-        getMainDeployer().undeploy(name);
-        processDeployments(true);
+        getMainDeployer().undeploy( name );
+        processDeployments( true );
     }
 
     protected JavaArchive createJar(String name) {
-        return ShrinkWrap.create(JavaArchive.class, name);
+        return ShrinkWrap.create( JavaArchive.class, name );
     }
 
     protected File createJarFile(JavaArchive archive) throws IOException {
         return createJarFile( archive, ".jar" );
     }
-    
+
     protected File createJarFile(JavaArchive archive, String suffix) throws IOException {
-        File archiveFile = File.createTempFile(archive.getName(), suffix );
-        archive.as(ZipExporter.class).exportZip(archiveFile, true);
+        File archiveFile = File.createTempFile( archive.getName(), suffix );
+        archive.as( ZipExporter.class ).exportZip( archiveFile, true );
         archiveFile.deleteOnExit();
         return archiveFile;
-    } 
+    }
 }

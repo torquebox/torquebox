@@ -36,84 +36,70 @@ import org.jboss.logging.Logger;
 
 /**
  * A kernel registry plugin which checks for JNDI names.
- *
+ * 
  * @author <a href="mailto:carlo.dewolf@jboss.com">Carlo de Wolf</a>
  * @author <a href="mailto:ajustin@redhat.com">Ales Justin</a>
  * @version $Revision: 72001 $
  */
-public class JNDIKernelRegistryPlugin implements KernelRegistryPlugin
-{
-   private static final Logger log = Logger.getLogger(JNDIKernelRegistryPlugin.class);
-   
-   public static final String JNDI_DEPENDENCY_PREFIX = "naming:";
-   
-   private Context context;
-   private Hashtable<?, ?> environment;
-   
-   public JNDIKernelRegistryPlugin()
-   {
-   }
-   
-   public JNDIKernelRegistryPlugin(Hashtable environment)
-   {
-      this.environment = environment;
-   }
-   
-   public void create() throws NamingException
-   {
-      //this.context = InitialContextFactory.getInitialContext(environment);
-      this.context = new InitialContext(environment);
-   }
-   
-   public void destroy() throws NamingException
-   {
-      if(context != null) {
-         context.close();
-      }
-      context = null;
-   }
-   
-   public KernelRegistryEntry getEntry(Object name)
-   {
-      assert name != null : "name is null";
-      
-      String s = String.valueOf(name);
-      if(!s.startsWith(JNDI_DEPENDENCY_PREFIX))
-         return null;
-      
-      if(log.isTraceEnabled())
-         log.trace("get entry for " + name);
-      
-      try
-      {
-         Object target = context.lookup(s.substring(JNDI_DEPENDENCY_PREFIX.length()));
-         if(log.isTraceEnabled()) {
-            log.trace("found: " + target);
-         }
-         return new AbstractKernelRegistryEntry(name, target);
-      }
-      catch(NameNotFoundException e)
-      {
-         log.trace("not found");
-         return null;
-      }
-      catch (NamingException e)
-      {
-         log.trace("entry can't be resolved", e);
-         throw new RuntimeException(e);
-      }
-      catch(RuntimeException e)
-      {
-         log.trace("entry can't be resolved", e);
-         throw e;
-      }
-   }
+public class JNDIKernelRegistryPlugin implements KernelRegistryPlugin {
+    private static final Logger log = Logger.getLogger( JNDIKernelRegistryPlugin.class );
 
-   public void setEnvironment(Hashtable<?, ?> env)
-   {
-      if(context != null) {
-         throw new IllegalStateException("context already initialized");
-      }
-      this.environment = env;
-   }
+    public static final String JNDI_DEPENDENCY_PREFIX = "naming:";
+
+    private Context context;
+    private Hashtable<?, ?> environment;
+
+    public JNDIKernelRegistryPlugin() {
+    }
+
+    public JNDIKernelRegistryPlugin(Hashtable environment) {
+        this.environment = environment;
+    }
+
+    public void create() throws NamingException {
+        // this.context = InitialContextFactory.getInitialContext(environment);
+        this.context = new InitialContext( environment );
+    }
+
+    public void destroy() throws NamingException {
+        if (context != null) {
+            context.close();
+        }
+        context = null;
+    }
+
+    public KernelRegistryEntry getEntry(Object name) {
+        assert name != null : "name is null";
+
+        String s = String.valueOf( name );
+        if (!s.startsWith( JNDI_DEPENDENCY_PREFIX ))
+            return null;
+
+        if (log.isTraceEnabled())
+            log.trace( "get entry for " + name );
+
+        try {
+            Object target = context.lookup( s.substring( JNDI_DEPENDENCY_PREFIX.length() ) );
+            if (log.isTraceEnabled()) {
+                log.trace( "found: " + target );
+            }
+            return new AbstractKernelRegistryEntry( name, target );
+        } catch (NameNotFoundException e) {
+            log.trace( "not found" );
+            return null;
+        } catch (NamingException e) {
+            log.trace( "entry can't be resolved", e );
+            throw new RuntimeException( e );
+        } catch (RuntimeException e) {
+            log.trace( "entry can't be resolved", e );
+            throw e;
+        }
+    }
+
+    public void setEnvironment(Hashtable<?, ?> env) {
+        if (context != null) {
+            throw new IllegalStateException( "context already initialized" );
+        }
+        this.environment = env;
+    }
 }

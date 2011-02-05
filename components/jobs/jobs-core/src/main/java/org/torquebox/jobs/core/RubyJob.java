@@ -9,25 +9,25 @@ import org.quartz.StatefulJob;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyJob implements Job, StatefulJob {
-	
-	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
-	private RubyRuntimePool runtimePool;
-	private IRubyObject component;
+    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
-	public RubyJob(RubyRuntimePool runtimePool, IRubyObject component) {
-		this.runtimePool = runtimePool;
-		this.component = component;
-	}
+    private RubyRuntimePool runtimePool;
+    private IRubyObject component;
 
-	@Override
-	public void execute(JobExecutionContext context) throws JobExecutionException {
-		try {
-			Object jobResult = JavaEmbedUtils.invokeMethod(component.getRuntime(), component, "run", EMPTY_OBJECT_ARRAY, Object.class);
-			context.setResult(jobResult);
-		} finally {
-			this.runtimePool.returnRuntime( component.getRuntime() );
-		}
-	}
+    public RubyJob(RubyRuntimePool runtimePool, IRubyObject component) {
+        this.runtimePool = runtimePool;
+        this.component = component;
+    }
+
+    @Override
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        try {
+            Object jobResult = JavaEmbedUtils.invokeMethod( component.getRuntime(), component, "run", EMPTY_OBJECT_ARRAY, Object.class );
+            context.setResult( jobResult );
+        } finally {
+            this.runtimePool.returnRuntime( component.getRuntime() );
+        }
+    }
 
 }

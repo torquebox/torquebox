@@ -14,43 +14,41 @@ import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.core.ManagedQueue;
 import org.torquebox.messaging.metadata.QueueMetaData;
 
-
 /**
  * <pre>
  * Stage: REAL
  *    In: QueueMetaData
  *   Out: ManagedQueue
  * </pre>
- *
+ * 
  */
 public class ManagedQueueDeployer extends AbstractDeployer {
-	
-	public ManagedQueueDeployer() {
-		setAllInputs( true );
-		addOutput(BeanMetaData.class);
-		setStage( DeploymentStages.REAL );
-	}
 
-	@Override
-	public void deploy(DeploymentUnit unit) throws DeploymentException {
-		Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
-		
-		for ( QueueMetaData each : allMetaData) {
-			deploy( unit, each );
-		}
-	}
+    public ManagedQueueDeployer() {
+        setAllInputs( true );
+        addOutput( BeanMetaData.class );
+        setStage( DeploymentStages.REAL );
+    }
 
+    @Override
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
 
-	protected void deploy(DeploymentUnit unit, QueueMetaData metaData) {
-		String beanName = AttachmentUtils.beanName( unit, ManagedQueue.class, metaData.getName() );
-		
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, ManagedQueue.class.getName() );
-		builder.addPropertyMetaData( "name", metaData.getName() );
-		
-		ValueMetaData hornetServerInjection = builder.createInject("JMSServerManager" );
-		builder.addPropertyMetaData( "server", hornetServerInjection );
-		
-		AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-	}	
+        for (QueueMetaData each : allMetaData) {
+            deploy( unit, each );
+        }
+    }
+
+    protected void deploy(DeploymentUnit unit, QueueMetaData metaData) {
+        String beanName = AttachmentUtils.beanName( unit, ManagedQueue.class, metaData.getName() );
+
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, ManagedQueue.class.getName() );
+        builder.addPropertyMetaData( "name", metaData.getName() );
+
+        ValueMetaData hornetServerInjection = builder.createInject( "JMSServerManager" );
+        builder.addPropertyMetaData( "server", hornetServerInjection );
+
+        AttachmentUtils.attach( unit, builder.getBeanMetaData() );
+    }
 
 }

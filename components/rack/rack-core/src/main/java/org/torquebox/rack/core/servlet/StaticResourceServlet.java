@@ -30,33 +30,33 @@ import org.apache.naming.resources.FileDirContext;
 
 public class StaticResourceServlet extends DefaultServlet {
 
-	private static final long serialVersionUID = 7173759925797350928L;
+    private static final long serialVersionUID = 7173759925797350928L;
 
-	private String resourceRoot;
+    private String resourceRoot;
 
-	@Override
-	public void init() throws ServletException {
-		super.init();
-		String resourceRoot = getServletConfig().getInitParameter("resource.root");
-		this.resourceRoot = resourceRoot;
-		((FileDirContext) this.resources.getDirContext()).setAllowLinking(true);
-	}
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        String resourceRoot = getServletConfig().getInitParameter( "resource.root" );
+        this.resourceRoot = resourceRoot;
+        ((FileDirContext) this.resources.getDirContext()).setAllowLinking( true );
+    }
 
-	@Override
-	protected String getRelativePath(HttpServletRequest request) {
-		String path = resourceRoot + super.getRelativePath(request);
-		CacheEntry cacheEntry = resources.lookupCache( path );
-		
-		if ( cacheEntry != null ) {
-			if ( cacheEntry.context != null ) {
-				if ( path.endsWith( "/" ) ) {
-					path = path + "index.html";
-				} else {
-					path = path + "/index.html";
-				}
-			}
-		}
-		return path;
-	}
+    @Override
+    protected String getRelativePath(HttpServletRequest request) {
+        String path = resourceRoot + super.getRelativePath( request );
+        CacheEntry cacheEntry = resources.lookupCache( path );
+
+        if (cacheEntry != null) {
+            if (cacheEntry.context != null) {
+                if (path.endsWith( "/" )) {
+                    path = path + "index.html";
+                } else {
+                    path = path + "/index.html";
+                }
+            }
+        }
+        return path;
+    }
 
 }

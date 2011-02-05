@@ -7,16 +7,15 @@ import javax.servlet.ServletOutputStream;
 
 public class MockServletOutputStream extends ServletOutputStream {
 
-	private OutputStream out;
+    private OutputStream out;
 
-	public MockServletOutputStream(OutputStream out) {
-		this.out = out;
-	}
-	
-	@Override
-	public void write(int b) throws IOException {
-		out.write( b );
-	}
+    public MockServletOutputStream(OutputStream out) {
+        this.out = out;
+    }
 
-	
+    @Override
+    public void write(int b) throws IOException {
+        out.write( b );
+    }
+
 }

@@ -15,16 +15,15 @@ import org.torquebox.mc.AttachmentUtils;
  *    In: EnvironmentMetaData, PoolMetaData, ScheduledJobMetaData
  *   Out: PoolMetaData
  * </pre>
- *
+ * 
  * Ensures that pool metadata for jobs is available
  */
 public class JobsRuntimePoolDeployer extends AbstractDeployer {
-    
+
     /**
-     * I'd rather use setInput(ScheduledJobMetaData) and omit the
-     * getAllMetaData short circuit in deploy(), but that requires
-     * attachers to pass an ExpectedType, and I don't think we can
-     * assume that.
+     * I'd rather use setInput(ScheduledJobMetaData) and omit the getAllMetaData
+     * short circuit in deploy(), but that requires attachers to pass an
+     * ExpectedType, and I don't think we can assume that.
      */
     public JobsRuntimePoolDeployer() {
         setStage( DeploymentStages.DESCRIBE );
@@ -36,16 +35,17 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        if ( unit.getAllMetaData( ScheduledJobMetaData.class ).isEmpty() ) {
+        if (unit.getAllMetaData( ScheduledJobMetaData.class ).isEmpty()) {
             return;
         }
-        PoolMetaData jobsPool = AttachmentUtils.getAttachment( unit, "jobs", PoolMetaData.class );;
-        if ( jobsPool == null ) {
-            RubyApplicationMetaData envMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+        PoolMetaData jobsPool = AttachmentUtils.getAttachment( unit, "jobs", PoolMetaData.class );
+        ;
+        if (jobsPool == null) {
+            RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
-            jobsPool = devMode ? new PoolMetaData("jobs", 1, 2) : new PoolMetaData("jobs");
-            log.info("Configured Ruby runtime pool for jobs: " + jobsPool);
-            AttachmentUtils.multipleAttach(unit, jobsPool, "jobs");
+            jobsPool = devMode ? new PoolMetaData( "jobs", 1, 2 ) : new PoolMetaData( "jobs" );
+            log.info( "Configured Ruby runtime pool for jobs: " + jobsPool );
+            AttachmentUtils.multipleAttach( unit, jobsPool, "jobs" );
         }
     }
 

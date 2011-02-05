@@ -23,11 +23,13 @@ package org.torquebox.interp.spi;
 
 import org.jruby.Ruby;
 
-/** Pool of managed Ruby runtime instances.
+/**
+ * Pool of managed Ruby runtime instances.
  * 
  * @author Bob McWhirter
  */
 public interface RubyRuntimePool {
-	Ruby borrowRuntime() throws Exception;
-	void returnRuntime(Ruby runtime);
+    Ruby borrowRuntime() throws Exception;
+
+    void returnRuntime(Ruby runtime);
 }

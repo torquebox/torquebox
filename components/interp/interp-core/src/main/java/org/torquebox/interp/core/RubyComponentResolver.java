@@ -4,7 +4,7 @@ import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 
 public interface RubyComponentResolver {
-	
-	IRubyObject resolve(Ruby ruby) throws Exception;
+
+    IRubyObject resolve(Ruby ruby) throws Exception;
 
 }

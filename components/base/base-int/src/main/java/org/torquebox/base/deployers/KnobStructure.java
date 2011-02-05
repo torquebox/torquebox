@@ -54,76 +54,76 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
      * Construct.
      */
     public KnobStructure() {
-        setRelativeOrder(-1000);
+        setRelativeOrder( -1000 );
     }
 
     public boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
         VirtualFile root = structureContext.getFile();
 
-        log.debug("Determine structure for: " + root);
+        log.debug( "Determine structure for: " + root );
 
         try {
-            if (isKnob( root ) || RubyApplicationRecognizer.isRubyApplication(root)) {
-                log.debug("is knob");
+            if (isKnob( root ) || RubyApplicationRecognizer.isRubyApplication( root )) {
+                log.debug( "is knob" );
                 StructureMetaData structureMetaData = structureContext.getMetaData();
-                ContextInfo context = createBaseContextInfo(root, structureMetaData);
-                structureMetaData.addContext(context);
+                ContextInfo context = createBaseContextInfo( root, structureMetaData );
+                structureMetaData.addContext( context );
                 return true;
             }
         } catch (IOException e) {
-            throw new DeploymentException(e);
+            throw new DeploymentException( e );
         }
 
         return false;
     }
-    
+
     public static boolean isKnob(VirtualFile root) {
         String name = root.getName();
-        
-        return ( name.endsWith( ".knob" ) || name.endsWith( ".rails" ) || name.endsWith(".rack" ) );
+
+        return (name.endsWith( ".knob" ) || name.endsWith( ".rails" ) || name.endsWith( ".rack" ));
     }
 
     public ContextInfo createBaseContextInfo(VirtualFile rackRoot, StructureMetaData structureMetaData) throws IOException {
         List<String> metaDataPaths = new ArrayList<String>();
-        metaDataPaths.add("");
-        metaDataPaths.add("config");
-        metaDataPaths.add("META-INF");
-        metaDataPaths.add("WEB-INF");
+        metaDataPaths.add( "" );
+        metaDataPaths.add( "config" );
+        metaDataPaths.add( "META-INF" );
+        metaDataPaths.add( "WEB-INF" );
 
-        List<ClassPathEntry> classPaths = getClassPathEntries(rackRoot.getChild("lib"), rackRoot);
-        classPaths.addAll(getClassPathEntries(rackRoot.getChild("vendor/jars"), rackRoot));
-        classPaths.addAll(getClassPathEntries(rackRoot.getChild("vendor/plugins"), rackRoot));
+        List<ClassPathEntry> classPaths = getClassPathEntries( rackRoot.getChild( "lib" ), rackRoot );
+        classPaths.addAll( getClassPathEntries( rackRoot.getChild( "vendor/jars" ), rackRoot ) );
+        classPaths.addAll( getClassPathEntries( rackRoot.getChild( "vendor/plugins" ), rackRoot ) );
 
-        ContextInfo context = StructureMetaDataFactory.createContextInfo("", metaDataPaths, classPaths);
+        ContextInfo context = StructureMetaDataFactory.createContextInfo( "", metaDataPaths, classPaths );
         return context;
     }
 
     public void addDirectoryOfJarsToClasspath(StructureContext structureContext, ContextInfo context, String dirPath) throws IOException {
-        log.info("Add dir to CLASSPATH: " + dirPath);
+        log.info( "Add dir to CLASSPATH: " + dirPath );
 
-        VirtualFile dir = structureContext.getFile().getChild(dirPath);
+        VirtualFile dir = structureContext.getFile().getChild( dirPath );
 
         if (dir.exists() && dir.isDirectory()) {
-            List<VirtualFile> children = getClassPathEntries(dir);
+            List<VirtualFile> children = getClassPathEntries( dir );
 
             for (VirtualFile jar : children) {
-                log.info("..." + jar);
-                addClassPath(structureContext, jar, true, true, context);
+                log.info( "..." + jar );
+                addClassPath( structureContext, jar, true, true, context );
             }
         }
     }
 
     public List<VirtualFile> getClassPathEntries(VirtualFile dir) throws IOException {
-        return dir.getChildrenRecursively(JAR_FILTER);
+        return dir.getChildrenRecursively( JAR_FILTER );
     }
 
     public List<ClassPathEntry> getClassPathEntries(VirtualFile dir, VirtualFile relativeTo) throws IOException {
         List<ClassPathEntry> entries = new ArrayList<ClassPathEntry>();
 
-        List<VirtualFile> files = getClassPathEntries(dir);
+        List<VirtualFile> files = getClassPathEntries( dir );
 
         for (VirtualFile file : files) {
-            entries.add(StructureMetaDataFactory.createClassPathEntry(getRelativePath(relativeTo, file)));
+            entries.add( StructureMetaDataFactory.createClassPathEntry( getRelativePath( relativeTo, file ) ) );
         }
 
         return entries;
@@ -134,13 +134,11 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
         return isKnob( file );
     }
 
-
-
     @Override
     protected boolean hasValidSuffix(String name) {
         return true;
     }
 
-    public static final VirtualFileFilter JAR_FILTER = new SuffixMatchFilter(".jar", VisitorAttributes.DEFAULT);
+    public static final VirtualFileFilter JAR_FILTER = new SuffixMatchFilter( ".jar", VisitorAttributes.DEFAULT );
 
 }
