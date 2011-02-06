@@ -409,7 +409,7 @@
 	    <phase>test</phase>
 	    <configuration>
               <includes>
-                <include>**/arquillian/**Test*</include>
+                <include>**/arquillian/**/*Test.class</include>
               </includes>
 	    </configuration>
 	  </execution>

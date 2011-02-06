@@ -1,4 +1,4 @@
-package org.torquebox.integration.arquillian;
+package org.torquebox.integration.arquillian.rails3;
 
 import static org.junit.Assert.*;
 
@@ -10,9 +10,10 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.torquebox.integration.arquillian.AbstractOnTheFlyArchivingTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTest {
+public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {

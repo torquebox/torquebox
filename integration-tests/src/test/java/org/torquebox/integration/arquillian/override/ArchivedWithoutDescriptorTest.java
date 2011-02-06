@@ -8,18 +8,20 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.importer.ZipImporter;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.junit.Ignore;
 
+@Ignore
 @Run(RunModeType.AS_CLIENT)
 public class ArchivedWithoutDescriptorTest extends ArchivedInternalTest {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {
-        ZipFile app = new ZipFile( System.getProperty( "user.dir" ) + "/apps/sinatra/1.0/override.rack" );
-        return ShrinkWrap.create( ZipImporter.class, "indescribable.rack" ).importZip( app ).as( JavaArchive.class );
+        ZipFile app = new ZipFile( System.getProperty( "user.dir" ) + "/apps/sinatra/1.0/override.knob" );
+        return ShrinkWrap.create( ZipImporter.class, "indescribable.knob" ).importZip( app ).as( JavaArchive.class );
     }
 
     public ArchivedWithoutDescriptorTest() {
-        home = "/indescribable.rack";
+        home = "/indescribable.knob";
     }
 
 }

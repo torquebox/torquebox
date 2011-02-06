@@ -8,11 +8,11 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 @Run(RunModeType.AS_CLIENT)
-public class ExplodedExternalTest extends AbstractOverrideTest {
+public class ExplodedExternalTest extends AbstractOverrideTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "sinatra/1.0/exploded-external-rack.yml" );
+        return createDeployment( "sinatra/1.0/exploded-external-knob.yml" );
     }
 
     public ExplodedExternalTest() {
@@ -24,8 +24,7 @@ public class ExplodedExternalTest extends AbstractOverrideTest {
 
     public void testEnvironmentVariables() {
         assertEquals( app, getEnvironmentVariable( "APP" ) );
-        assertEquals( "internal foo", getEnvironmentVariable( "foo" ) ); // not
-                                                                         // overridden
+        assertEquals( "internal foo", getEnvironmentVariable( "foo" ) ); // not overridden
         assertEquals( "stink", getEnvironmentVariable( "foot" ) ); // extra
         assertEquals( "maid", getEnvironmentVariable( "bar" ) ); // overridden
     }

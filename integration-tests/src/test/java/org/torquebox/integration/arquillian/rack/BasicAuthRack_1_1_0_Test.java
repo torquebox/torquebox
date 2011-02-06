@@ -1,4 +1,4 @@
-package org.torquebox.integration.arquillian;
+package org.torquebox.integration.arquillian.rack;
 
 import static org.junit.Assert.*;
 
@@ -9,9 +9,10 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.util.Base64;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicAuthRack_1_1_0_Test extends AbstractIntegrationTest {
+public class BasicAuthRack_1_1_0_Test extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {

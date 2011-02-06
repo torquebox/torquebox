@@ -107,12 +107,22 @@ public class TorqueBoxMetaData {
 
                     if (mergedAppSection == null) {
                         mergedAppSection = new HashMap<String, String>();
+                        mergedData.put( "application", mergedAppSection );
                     }
 
                     envKey = determineEnvironmentKey( mergedAppSection );
                     mergedAppSection.put( envKey, envName );
                 }
 
+            } else if ( key.equals( "environment" ) ) {
+                Map<String, String> thisEnvSection = (Map<String, String>) thisData.get( "environment" );
+                Map<String, String> baseEnvSection = (Map<String, String>) baseData.get( "environment" );
+                Map<String, String> mergedEnvSection = new HashMap<String,String>();
+                
+                mergedEnvSection.putAll(  baseEnvSection );
+                mergedEnvSection.putAll(  thisEnvSection );
+                
+                mergedData.put(  "environment", mergedEnvSection );
             } else {
                 mergedData.put( key, thisData.get( key ) );
             }

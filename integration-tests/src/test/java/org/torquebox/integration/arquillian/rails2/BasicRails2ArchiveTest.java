@@ -1,4 +1,4 @@
-package org.torquebox.integration.arquillian;
+package org.torquebox.integration.arquillian.rails2;
 
 import static org.junit.Assert.*;
 
@@ -13,9 +13,10 @@ import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails2ArchiveTest extends AbstractIntegrationTest {
+public class BasicRails2ArchiveTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {

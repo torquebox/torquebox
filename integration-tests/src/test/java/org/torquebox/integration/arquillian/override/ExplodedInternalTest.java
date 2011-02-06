@@ -6,11 +6,11 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 @Run(RunModeType.AS_CLIENT)
-public class ExplodedInternalTest extends AbstractOverrideTest {
+public class ExplodedInternalTest extends AbstractOverrideTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {
-        return createDeployment( "sinatra/1.0/exploded-internal-rack.yml" );
+        return createDeployment( "sinatra/1.0/exploded-internal-knob.yml" );
     }
 
     public ExplodedInternalTest() {

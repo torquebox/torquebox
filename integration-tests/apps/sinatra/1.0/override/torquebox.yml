@@ -1,8 +1,8 @@
 application:
   root: "should be ignored"
   env: production
-  rackup: internal.ru
 web:
+  rackup: internal.ru
   static: internal.static
   context: /override-internal
 environment:

@@ -1,2 +1,2 @@
 application:
-  root: ${basedir}/apps/sinatra/1.0/override.rack
+  root: ${basedir}/apps/sinatra/1.0/override.knob

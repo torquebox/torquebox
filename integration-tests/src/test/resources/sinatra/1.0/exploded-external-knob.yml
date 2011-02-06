@@ -1,8 +1,8 @@
 application:
   root: ${basedir}/apps/sinatra/1.0/override
   env: development
-  rackup: external.ru
 web:
+  rackup: external.ru
   static: external.static
   context: /override-external
 environment:

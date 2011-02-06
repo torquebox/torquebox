@@ -74,7 +74,7 @@ public class RubyApplicationMetaData {
     }
 
     public void setEnvironmentVariables(Map<String, String> environment) {
-        this.environment = new HashMap<String, String>( environment );
+        this.environment = environment;
     }
 
     public Map<String, String> getEnvironmentVariables() {
@@ -82,7 +82,7 @@ public class RubyApplicationMetaData {
     }
 
     public String toString() {
-        return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "]";
+        return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "\n  environment=" + this.environment + "]";
     }
 
 }

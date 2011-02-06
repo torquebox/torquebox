@@ -5,9 +5,9 @@ import static org.junit.Assert.*;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
-import org.torquebox.integration.arquillian.AbstractIntegrationTest;
+import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
-public abstract class AbstractOverrideTest extends AbstractIntegrationTest {
+public abstract class AbstractOverrideTestCase extends AbstractIntegrationTestCase {
 
     protected String context;
     protected String app;
@@ -41,7 +41,8 @@ public abstract class AbstractOverrideTest extends AbstractIntegrationTest {
     }
 
     protected String getEnvironmentVariable(String name) {
-        driver.get( "http://localhost:8080/" + context + "/" + name );
+        String url = "http://localhost:8080/" + context + "/" + name;
+        driver.get( url );
         WebElement body = driver.findElementByTagName( "body" );
         return body.getText().trim();
     }

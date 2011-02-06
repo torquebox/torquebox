@@ -60,7 +60,7 @@ public class EnvironmentYamlParsingDeployer extends AbstractSplitYamlParsingDepl
         } else {
             log.debug( "Configuring pre-existing ruby environment: " + unit + "\n  " + appMetaData );
         }
-
+        
         Map<String, String> env = (Map<String, String>) dataObj;
 
         Map<String, String> appEnv = appMetaData.getEnvironmentVariables();
@@ -69,9 +69,9 @@ public class EnvironmentYamlParsingDeployer extends AbstractSplitYamlParsingDepl
             appEnv = new HashMap<String, String>();
             appMetaData.setEnvironmentVariables( appEnv );
         }
-
+        
         appEnv.putAll( env );
-
+        
         log.debug( "Configured ruby application: " + unit + "\n  " + appMetaData );
 
     }

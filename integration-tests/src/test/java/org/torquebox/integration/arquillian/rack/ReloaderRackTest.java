@@ -1,4 +1,4 @@
-package org.torquebox.integration.arquillian;
+package org.torquebox.integration.arquillian.rack;
 
 import static org.junit.Assert.*;
 
@@ -11,9 +11,10 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class ReloaderRackTest extends AbstractIntegrationTest {
+public class ReloaderRackTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {

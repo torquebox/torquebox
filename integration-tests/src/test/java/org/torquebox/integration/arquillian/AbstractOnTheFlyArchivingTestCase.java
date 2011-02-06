@@ -5,9 +5,9 @@ import java.io.File;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
-public abstract class AbstractOnTheFlyArchivingTest extends AbstractIntegrationTest {
+public abstract class AbstractOnTheFlyArchivingTestCase extends AbstractIntegrationTestCase {
 
-    static JavaArchive archive(File directory) {
+    static protected JavaArchive archive(File directory) {
         return archive( directory, directory.getName() );
     }
 

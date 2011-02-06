@@ -1,4 +1,4 @@
-package org.torquebox.integration.arquillian;
+package org.torquebox.integration.arquillian.rails2;
 
 import static org.junit.Assert.*;
 
@@ -8,13 +8,14 @@ import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Test;
 import org.openqa.selenium.WebElement;
+import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails2Test extends AbstractIntegrationTest {
+public class BasicRails2BackwardsCompatTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails/2.x/basic-knob.yml" );
+        return createDeployment( "rails/2.x/basic-rails.yml" );
     }
 
     @Test

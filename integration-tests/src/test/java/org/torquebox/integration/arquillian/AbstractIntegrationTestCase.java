@@ -18,7 +18,7 @@ import org.torquebox.integration.FancyHtmlUnitDriver;
 import org.torquebox.test.AbstractTorqueBoxTestCase;
 
 @RunWith(Arquillian.class)
-public abstract class AbstractIntegrationTest extends AbstractTorqueBoxTestCase {
+public abstract class AbstractIntegrationTestCase extends AbstractTorqueBoxTestCase {
 
     protected FancyHtmlUnitDriver driver;
 
@@ -43,7 +43,7 @@ public abstract class AbstractIntegrationTest extends AbstractTorqueBoxTestCase 
         String base = tail.substring( 0, lastDot );
 
         JavaArchive archive = ShrinkWrap.create( JavaArchive.class, base + ".jar" );
-        ClassLoader classLoader = AbstractIntegrationTest.class.getClassLoader();
+        ClassLoader classLoader = AbstractIntegrationTestCase.class.getClassLoader();
         URL deploymentDescriptorUrl = classLoader.getResource( name );
         archive.addResource( deploymentDescriptorUrl, "/META-INF/" + tail );
         return archive;
