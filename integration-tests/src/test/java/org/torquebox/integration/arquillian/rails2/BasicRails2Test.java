@@ -15,7 +15,7 @@ public class BasicRails2Test extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails/2.x/basic-knob.yml" );
+        return createDeployment( "rails2/basic-knob.yml" );
     }
 
     @Test

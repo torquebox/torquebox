@@ -16,7 +16,7 @@ public class ArchivedWithoutDescriptorTest extends ArchivedInternalTest {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {
-        ZipFile app = new ZipFile( System.getProperty( "user.dir" ) + "/apps/sinatra/1.0/override.knob" );
+        ZipFile app = new ZipFile( System.getProperty( "user.dir" ) + "/apps/sinatra/override.knob" );
         return ShrinkWrap.create( ZipImporter.class, "indescribable.knob" ).importZip( app ).as( JavaArchive.class );
     }
 

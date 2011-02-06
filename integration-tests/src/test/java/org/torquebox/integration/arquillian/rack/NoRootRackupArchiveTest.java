@@ -15,7 +15,7 @@ public class NoRootRackupArchiveTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rack/1.1.0/norootrackup-archive-knob.yml" );
+        return createDeployment( "rack/norootrackup-archive-knob.yml" );
     }
 
     @Test

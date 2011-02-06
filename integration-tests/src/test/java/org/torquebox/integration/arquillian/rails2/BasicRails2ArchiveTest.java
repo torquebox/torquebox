@@ -22,7 +22,7 @@ public class BasicRails2ArchiveTest extends AbstractIntegrationTestCase {
     public static JavaArchive createDeployment() throws Exception {
         JavaArchive archive = ShrinkWrap.create( JavaArchive.class, "archive.knob" );
 
-        File railsApp = new File( System.getProperty( "user.dir" ) + "/apps/rails/2.x/basic" );
+        File railsApp = new File( System.getProperty( "user.dir" ) + "/apps/rails2/basic" );
 
         importDirectory( archive, railsApp );
 

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "rack lib/-based jar loading" do
 
-  deploy :path => "rack/1.1.0/lib-jar-knob.yml"
+  deploy :path => "rack/lib-jar-knob.yml"
 
   it "should work" do
     visit "/lib-jar"

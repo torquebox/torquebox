@@ -15,7 +15,7 @@ public class BasicSinatra_1_0_Test extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "sinatra/1.0/basic-sinatra-knob.yml" );
+        return createDeployment( "sinatra/basic-sinatra-knob.yml" );
     }
 
     @Test

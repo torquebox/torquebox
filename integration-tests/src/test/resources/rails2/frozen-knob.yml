@@ -1,0 +1,6 @@
+---
+application:
+  RAILS_ROOT: ${basedir}/apps/rails2/frozen
+  RAILS_ENV: development
+web:
+  context: /frozen-rails

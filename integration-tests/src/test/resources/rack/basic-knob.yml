@@ -1,0 +1,6 @@
+---
+application:
+  root: ${basedir}/apps/rack/basic
+  env: development
+web:
+  context: /basic-rack

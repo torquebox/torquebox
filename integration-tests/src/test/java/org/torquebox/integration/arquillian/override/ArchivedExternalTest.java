@@ -10,11 +10,11 @@ public class ArchivedExternalTest extends ExplodedExternalTest {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "sinatra/1.0/archived-external-knob.yml" );
+        return createDeployment( "sinatra/archived-external-knob.yml" );
     }
 
     public ArchivedExternalTest() {
-        home = "/apps/sinatra/1.0/override.rack";
+        home = "/apps/sinatra/override.rack";
     }
 
 }

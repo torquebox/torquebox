@@ -12,13 +12,13 @@ public class ExplodedExternalTest extends AbstractOverrideTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "sinatra/1.0/exploded-external-knob.yml" );
+        return createDeployment( "sinatra/exploded-external-knob.yml" );
     }
 
     public ExplodedExternalTest() {
         context = "override-external";
         app = "external";
-        home = "/apps/sinatra/1.0/override";
+        home = "/apps/sinatra/override";
         env = "development";
     }
 

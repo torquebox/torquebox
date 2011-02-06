@@ -18,7 +18,7 @@ public class ReloaderRackTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rack/1.1.0/reloader-knob.yml" );
+        return createDeployment( "rack/reloader-knob.yml" );
     }
 
     @Test

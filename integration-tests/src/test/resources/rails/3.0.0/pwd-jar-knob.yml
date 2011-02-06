@@ -1,6 +1,0 @@
----
-application:
-  RAILS_ROOT: ${basedir}/apps/rails/3.0.0/pwd-jar
-  RAILS_ENV: development
-web:
-  context: /pwd-jar

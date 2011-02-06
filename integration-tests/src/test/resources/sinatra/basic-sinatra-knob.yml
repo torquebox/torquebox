@@ -1,0 +1,6 @@
+---
+application:
+  RACK_ROOT: ${basedir}/apps/sinatra/basic
+  RACK_ENV: development
+web:
+  context: /basic-sinatra

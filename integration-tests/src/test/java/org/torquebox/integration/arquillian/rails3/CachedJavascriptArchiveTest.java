@@ -17,7 +17,7 @@ public class CachedJavascriptArchiveTest extends AbstractOnTheFlyArchivingTestCa
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {
-        File exploded = new File( System.getProperty( "user.dir" ) + "/apps/rails/3.0.0/torque-174.knob" );
+        File exploded = new File( System.getProperty( "user.dir" ) + "/apps/rails3/torque-174.knob" );
 
         return archive( exploded );
     }

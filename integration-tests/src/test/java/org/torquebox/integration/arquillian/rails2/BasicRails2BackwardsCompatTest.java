@@ -15,7 +15,7 @@ public class BasicRails2BackwardsCompatTest extends AbstractIntegrationTestCase 
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails/2.x/basic-rails.yml" );
+        return createDeployment( "rails2/basic-rails.yml" );
     }
 
     @Test

@@ -18,7 +18,7 @@ public class BasicProductionRails2Test extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails/2.x/basic-production-knob.yml" );
+        return createDeployment( "rails2/basic-production-knob.yml" );
     }
 
     @Test
@@ -32,7 +32,7 @@ public class BasicProductionRails2Test extends AbstractIntegrationTestCase {
 
     @Test
     public void testCaching() throws Exception {
-        File cacheDir = new File( "apps/rails/2.x/basic/tmp/cache/views" );
+        File cacheDir = new File( "apps/rails2/basic/tmp/cache/views" );
 
         rm( cacheDir );
 

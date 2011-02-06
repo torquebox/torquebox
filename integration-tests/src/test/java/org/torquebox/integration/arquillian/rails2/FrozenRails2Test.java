@@ -20,7 +20,7 @@ public class FrozenRails2Test extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails/2.x/frozen-knob.yml" );
+        return createDeployment( "rails2/frozen-knob.yml" );
     }
 
     @Test

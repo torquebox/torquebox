@@ -10,13 +10,13 @@ public class ExplodedInternalTest extends AbstractOverrideTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {
-        return createDeployment( "sinatra/1.0/exploded-internal-knob.yml" );
+        return createDeployment( "sinatra/exploded-internal-knob.yml" );
     }
 
     public ExplodedInternalTest() {
         context = "override-internal";
         app = "internal";
-        home = "/apps/sinatra/1.0/override";
+        home = "/apps/sinatra/override";
         env = "production";
     }
 

@@ -16,7 +16,7 @@ public class BasicAuthRack_1_1_0_Test extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rack/1.1.0/basic-auth-knob.yml" );
+        return createDeployment( "rack/basic-auth-knob.yml" );
     }
 
     @Test

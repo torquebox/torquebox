@@ -10,10 +10,10 @@ public class ArchivedInternalTest extends ExplodedInternalTest {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {
-        return createDeployment( "sinatra/1.0/archived-internal-knob.yml" );
+        return createDeployment( "sinatra/archived-internal-knob.yml" );
     }
 
     public ArchivedInternalTest() {
-        home = "/apps/sinatra/1.0/override.knob";
+        home = "/apps/sinatra/override.knob";
     }
 }

@@ -1,6 +1,0 @@
----
-application:
-  RAILS_ROOT: ${basedir}/apps/rails/2.x/basic
-  RAILS_ENV: production
-web:
-  context: /basic-production-rails

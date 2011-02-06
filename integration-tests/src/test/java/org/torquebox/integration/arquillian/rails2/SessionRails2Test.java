@@ -11,7 +11,7 @@ public class SessionRails2Test extends CommonSessionRailsTest {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails/2.x/basic-knob.yml" );
+        return createDeployment( "rails2/basic-knob.yml" );
     }
 
 }

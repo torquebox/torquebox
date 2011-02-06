@@ -15,7 +15,7 @@ public class NoRootRackupTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rack/1.1.0/norootrackup-knob.yml" );
+        return createDeployment( "rack/norootrackup-knob.yml" );
     }
 
     @Test
@@ -24,7 +24,7 @@ public class NoRootRackupTest extends AbstractIntegrationTestCase {
         WebElement body = driver.findElementByTagName( "body" );
         String expectedRoot = System.getProperty( "basedir" );
         expectedRoot = expectedRoot.replaceAll( "\\\\", "/" );
-        expectedRoot = toVfsPath( expectedRoot + "/apps/rack/1.1.0/norootrackup" );
+        expectedRoot = toVfsPath( expectedRoot + "/apps/rack/norootrackup" );
 
         assertEquals( "RACK_ROOT=" + expectedRoot, body.getText().trim() );
     }
