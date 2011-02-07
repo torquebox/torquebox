@@ -14,7 +14,7 @@ import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicProductionRails2Test extends AbstractIntegrationTestCase {
+public class BasicProductionTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {

@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicAuthRack_1_1_0_Test extends AbstractIntegrationTestCase {
+public class AuthTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {

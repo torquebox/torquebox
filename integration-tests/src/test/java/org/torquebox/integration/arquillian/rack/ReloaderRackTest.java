@@ -45,7 +45,6 @@ public class ReloaderRackTest extends AbstractIntegrationTestCase {
         element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "0", element.getText() );
-        System.err.println( "==>" + element.getText() );
 
         Thread.sleep( 3000 );
 
@@ -53,19 +52,16 @@ public class ReloaderRackTest extends AbstractIntegrationTestCase {
         element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "1", element.getText() );
-        System.err.println( "==>" + element.getText() );
 
         driver.get( "http://localhost:8080/reloader-rack" );
         element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "1", element.getText() );
-        System.err.println( "==>" + element.getText() );
 
         driver.get( "http://localhost:8080/reloader-rack" );
         element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "1", element.getText() );
-        System.err.println( "==>" + element.getText() );
 
         Thread.sleep( 3000 );
 
@@ -73,7 +69,6 @@ public class ReloaderRackTest extends AbstractIntegrationTestCase {
         element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "4", element.getText() );
-        System.err.println( "==>" + element.getText() );
     }
 
     // DO NOT MARK AS @Test

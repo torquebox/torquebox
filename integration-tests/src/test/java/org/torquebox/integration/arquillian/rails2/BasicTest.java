@@ -11,11 +11,11 @@ import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails2BackwardsCompatTest extends AbstractIntegrationTestCase {
+public class BasicTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails2/basic-rails.yml" );
+        return createDeployment( "rails2/basic-knob.yml" );
     }
 
     @Test

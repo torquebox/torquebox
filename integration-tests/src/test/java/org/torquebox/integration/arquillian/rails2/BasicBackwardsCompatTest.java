@@ -1,4 +1,4 @@
-package org.torquebox.integration.arquillian.rails3;
+package org.torquebox.integration.arquillian.rails2;
 
 import static org.junit.Assert.*;
 
@@ -11,11 +11,11 @@ import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails_3_0_0_Test extends AbstractIntegrationTestCase {
+public class BasicBackwardsCompatTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails3/basic-knob.yml" );
+        return createDeployment( "rails2/basic-rails.yml" );
     }
 
     @Test
@@ -24,6 +24,24 @@ public class BasicRails_3_0_0_Test extends AbstractIntegrationTestCase {
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "basic-rails", element.getAttribute( "class" ) );
+    }
+
+    @Test
+    public void testSendData() {
+        driver.get( "http://localhost:8080/basic-rails/senddata" );
+        String content = driver.getPageSource();
+        assertNotNull( content );
+        assertEquals( "this is the content", content );
+
+    }
+
+    @Test
+    public void testSendFile() {
+        driver.get( "http://localhost:8080/basic-rails/sendfile" );
+        String content = driver.getPageSource();
+        assertNotNull( content );
+        assertEquals( "this is the contents of the file", content.trim() );
+
     }
 
 }

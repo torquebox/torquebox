@@ -1,17 +1,17 @@
-package org.torquebox.integration.arquillian.rails2;
+package org.torquebox.integration.arquillian.rails3;
 
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.torquebox.integration.arquillian.rails.CommonSessionRailsTest;
+import org.torquebox.integration.arquillian.rails.CommonSessionHandlingTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class SessionRails2Test extends CommonSessionRailsTest {
+public class SessionHandlingTest extends CommonSessionHandlingTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return createDeployment( "rails2/basic-knob.yml" );
+        return createDeployment( "rails3/basic-knob.yml" );
     }
 
 }

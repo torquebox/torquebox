@@ -7,7 +7,7 @@ import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
-public abstract class CommonSessionRailsTest extends AbstractIntegrationTestCase {
+public abstract class CommonSessionHandlingTestCase extends AbstractIntegrationTestCase {
 
     @Test
     public void testHighLevel() {

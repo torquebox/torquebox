@@ -16,11 +16,11 @@ import org.openqa.selenium.WebElement;
 import org.torquebox.integration.arquillian.AbstractIntegrationTestCase;
 
 @Run(RunModeType.AS_CLIENT)
-public class BasicRails2ArchiveTest extends AbstractIntegrationTestCase {
+public class BasicArchiveBackwardsCompatTest extends AbstractIntegrationTestCase {
 
     @Deployment
     public static JavaArchive createDeployment() throws Exception {
-        JavaArchive archive = ShrinkWrap.create( JavaArchive.class, "archive.knob" );
+        JavaArchive archive = ShrinkWrap.create( JavaArchive.class, "archive.rails" );
 
         File railsApp = new File( System.getProperty( "user.dir" ) + "/apps/rails2/basic" );
 
@@ -34,9 +34,6 @@ public class BasicRails2ArchiveTest extends AbstractIntegrationTestCase {
 
         Asset torqueboxYaml = new StringAsset( torqueboxYamlText.toString() );
         archive.addResource( torqueboxYaml, "config/torquebox.yml" );
-
-        System.err.println( "DEPLOYING" );
-        System.err.println( archive );
 
         return archive;
     }
