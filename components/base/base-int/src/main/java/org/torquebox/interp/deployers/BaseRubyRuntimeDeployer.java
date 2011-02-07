@@ -33,6 +33,7 @@ public class BaseRubyRuntimeDeployer extends AbstractDeployer {
         
         runtimeMetaData = new RubyRuntimeMetaData();
         runtimeMetaData.setBaseDir( appMetaData.getRoot() );
+        runtimeMetaData.setEnvironment(  appMetaData.getEnvironmentVariables()  );
         try {
             runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( appMetaData.getRoot().toURL() ) );
         } catch (MalformedURLException e) {

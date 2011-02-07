@@ -2,3 +2,6 @@
 application:
   root: ${basedir}/apps/alacarte/jobs
   env: development
+
+environment:
+  BASEDIR: ${basedir}
