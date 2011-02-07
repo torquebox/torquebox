@@ -133,13 +133,13 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-spi</artifactId>
+      <artifactId>torquebox-base-spi</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-core</artifactId>
+      <artifactId>torquebox-base-core</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

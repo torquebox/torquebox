@@ -17,31 +17,16 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-spi</artifactId>
+      <artifactId>torquebox-base-spi</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-interp-core</artifactId>
+      <artifactId>torquebox-base-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-core</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-<!--
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-processor</artifactId>
-      <version>${project.version}</version>
-      <type>gem</type>
-      <scope>provided</scope>
-    </dependency>
--->
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>

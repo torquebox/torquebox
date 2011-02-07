@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-common-spi</artifactId>
+      <artifactId>torquebox-base-spi</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

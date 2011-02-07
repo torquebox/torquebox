@@ -17,6 +17,8 @@
   <description></description>
 
   <modules>
+    <module>base-spi</module>
+    <module>base-core</module>
     <module>base-metadata</module>
     <module>base-int</module>
   </modules>

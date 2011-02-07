@@ -72,8 +72,10 @@
     <module>mc-support</module>
 
     <module>base</module>
+<!--
     <module>common</module>
     <module>interp</module>
+-->
 
     <module>rack</module>
     <module>rails</module>

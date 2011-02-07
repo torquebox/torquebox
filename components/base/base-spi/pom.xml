@@ -9,24 +9,24 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-base-metadata</artifactId>
+  <artifactId>torquebox-base-spi</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Base Metadata</name>
+  <name>TorqueBox Base SPI</name>
   <description></description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-vfs</artifactId>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
 
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-kernel</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
 
 </project>
