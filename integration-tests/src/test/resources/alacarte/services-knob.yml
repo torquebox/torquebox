@@ -1,0 +1,7 @@
+---
+application:
+  root: ${basedir}/apps/alacarte/services
+  env: development
+
+environment:
+  BASEDIR: ${basedir}
