@@ -1,0 +1,6 @@
+
+jobs:
+  job.one:
+    job: SimpleJob
+    description: My Job is simple 
+    cron: '*/1 * * * * ?'

@@ -50,34 +50,33 @@ public class JobsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
     public void parse(VFSDeploymentUnit unit, Object dataObject) throws DeploymentException {
         Map<String, Map<String, String>> data = (Map<String, Map<String, String>>) dataObject;
 
-        if (data != null) {
+        log.debug( "Deploying: " + data );
 
-            for (String jobName : data.keySet()) {
-                Map<String, String> jobSpec = data.get( jobName );
-                String description = jobSpec.get( "description" );
-                String job = jobSpec.get( "job" );
-                String cron = jobSpec.get( "cron" );
+        for (String jobName : data.keySet()) {
+            Map<String, String> jobSpec = data.get( jobName );
+            String description = jobSpec.get( "description" );
+            String job = jobSpec.get( "job" );
+            String cron = jobSpec.get( "cron" );
 
-                if (job == null) {
-                    throw new DeploymentException( "Attribute 'job' must be specified" );
-                }
-
-                if (cron == null) {
-                    throw new DeploymentException( "Attribute 'cron' must be specified" );
-                }
-
-                ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
-
-                jobMetaData.setName( jobName.toString() );
-                jobMetaData.setGroup( unit.getName() );
-                if (description != null) {
-                    jobMetaData.setDescription( description.toString() );
-                }
-                jobMetaData.setRubyClassName( job.trim() );
-                jobMetaData.setCronExpression( cron.trim() );
-                jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
-                AttachmentUtils.multipleAttach( unit, jobMetaData, jobName );
+            if (job == null) {
+                throw new DeploymentException( "Attribute 'job' must be specified" );
             }
+
+            if (cron == null) {
+                throw new DeploymentException( "Attribute 'cron' must be specified" );
+            }
+
+            ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
+
+            jobMetaData.setName( jobName.toString() );
+            jobMetaData.setGroup( unit.getName() );
+            if (description != null) {
+                jobMetaData.setDescription( description.toString() );
+            }
+            jobMetaData.setRubyClassName( job.trim() );
+            jobMetaData.setCronExpression( cron.trim() );
+            jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
+            AttachmentUtils.multipleAttach( unit, jobMetaData, jobName );
         }
     }
 }

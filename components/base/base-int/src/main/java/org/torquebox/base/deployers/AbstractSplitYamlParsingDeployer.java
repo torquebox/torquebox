@@ -37,7 +37,6 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
 
     public AbstractSplitYamlParsingDeployer() {
         addInput( TorqueBoxMetaData.class );
-        setStage( DeploymentStages.PARSE );
     }
 
     public String getSectionName() {
@@ -77,7 +76,6 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
         try {
             deploy( (VFSDeploymentUnit) unit );
         } catch (Exception e) {
-            e.printStackTrace();
             throw new DeploymentException( e );
         }
     }
@@ -85,11 +83,14 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
     @SuppressWarnings("unchecked")
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
         TorqueBoxMetaData globalMetaData = unit.getAttachment( TorqueBoxMetaData.class );
+        
+        log.debug( "Global torquebox.yml: " + globalMetaData );
 
         Object data = null;
 
         if (globalMetaData != null) {
             data = globalMetaData.getSection( getSectionName() );
+            log.debug( "Global data section for " + getSectionName() + ": " + data );
         }
 
         if (data == null && isSupportsStandalone()) {

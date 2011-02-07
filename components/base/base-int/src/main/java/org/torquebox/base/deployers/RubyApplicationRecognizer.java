@@ -38,7 +38,8 @@ public class RubyApplicationRecognizer extends AbstractRecognizer {
     }
 
     static boolean isRubyApplication(VirtualFile file) {
-        return hasAnyOf( file, "torquebox.yml", "config/torquebox.yml", "config.ru", "config/environment.rb", "Rakefile", "Gemfile", ".bundle/config", "vendor/rails" );
+        boolean result = hasAnyOf( file, "torquebox.yml", "config/torquebox.yml", "config.ru", "config/environment.rb", "Rakefile", "Gemfile", ".bundle/config", "vendor/rails" );
+        return result;
     }
 
     protected boolean isRecognized(VFSDeploymentUnit unit) {

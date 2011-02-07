@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.metadata.TorqueBoxMetaData;
@@ -16,7 +15,6 @@ public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
 
     public TorqueBoxYamlParsingDeployer() {
         addOutput( TorqueBoxMetaData.class );
-        setStage( DeploymentStages.PARSE );
         setRelativeOrder( -5000 );
     }
 

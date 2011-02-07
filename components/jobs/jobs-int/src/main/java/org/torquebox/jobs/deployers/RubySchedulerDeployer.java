@@ -49,6 +49,8 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         if (allMetaData.isEmpty()) {
             return;
         }
+        
+        log.debug( "Deploying scheduler: " + unit );
 
         String beanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyScheduler.class.getName() );

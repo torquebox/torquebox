@@ -55,10 +55,14 @@ public class RubyJobDeployer extends AbstractDeployer {
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
+        
+        log.debug( "Deployable jobs: " + unit );
+        log.debug( "  " + allMetaData );
 
         if (allMetaData.size() == 0) {
             return;
         }
+        
 
         for (ScheduledJobMetaData metaData : allMetaData) {
             deploy( unit, metaData );
