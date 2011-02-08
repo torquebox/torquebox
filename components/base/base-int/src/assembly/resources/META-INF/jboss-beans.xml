@@ -2,6 +2,8 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
+
   <bean name="KnobStructure"                     class="org.torquebox.base.deployers.KnobStructure"/>
   <bean name="RubyApplicationRecognizer"         class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>
   
@@ -28,7 +30,9 @@
 
   <bean name="PoolingYamlParsingDeployer"        class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
   <bean name="RuntimePoolDeployer"               class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
-  <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
 
+  <bean name="ServicesYamlParsingDeployer"       class="org.torquebox.services.deployers.ServicesYamlParsingDeployer"/>
+  <bean name="ServicesRuntimePoolDeployer"       class="org.torquebox.services.deployers.ServicesRuntimePoolDeployer"/>
+  <bean name="ServicesDeployer"                  class="org.torquebox.services.deployers.ServicesDeployer"/>
 
 </deployment>

@@ -1,4 +1,4 @@
-package org.torquebox.jobs.core;
+package org.torquebox.services;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;

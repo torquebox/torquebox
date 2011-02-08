@@ -19,23 +19,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.torquebox.jobs.deployers;
+package org.torquebox.services.deployers;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
+import org.jboss.deployers.spi.DeploymentException;
+import org.jboss.deployers.spi.deployer.DeploymentStages;
+import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
-import org.torquebox.jobs.core.RubyServiceProxy;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.services.RubyServiceProxy;
+import org.torquebox.services.ServiceMetaData;
 
 /**
  * <pre>
@@ -46,50 +49,47 @@ import org.torquebox.mc.AttachmentUtils;
  * 
  * Creates BeanMetaData instances from services.yml
  */
-public class ServicesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
+public class ServicesDeployer extends AbstractDeployer {
 
     public static final String POOL_NAME = "services";
 
-    public ServicesYamlParsingDeployer() {
-        setSectionName( "services" );
-        addInput( PoolMetaData.class );
+    public ServicesDeployer() {
+        addInput( ServiceMetaData.class );
         addOutput( BeanMetaData.class );
-        addOutput( PoolMetaData.class );
+        setStage( DeploymentStages.REAL );
     }
 
-    @SuppressWarnings("unchecked")
-    public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-        Map<String, Map<String, String>> results = (Map<String, Map<String, String>>) dataObj;
-        if (results != null) {
-            for (String service : results.keySet()) {
-                Map<String, String> params = results.get( service );
-                createServiceProxyBean( unit, service, params );
-            }
+    @Override
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+        Set<? extends ServiceMetaData> allMetaData = unit.getAllMetaData( ServiceMetaData.class );
+        
+        for ( ServiceMetaData each : allMetaData ) {
+            deploy( unit, each );
         }
-        createRuntimePool( unit, results.size() );
     }
-
-    protected void createServiceProxyBean(DeploymentUnit unit, String service, Map params) {
-        String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, service );
+    
+    public void deploy(DeploymentUnit unit, ServiceMetaData serviceMetaData) throws DeploymentException {
+        String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, serviceMetaData.getClassName() );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
 
         ValueMetaData runtimePoolInject = builder.createInject( AttachmentUtils.beanName( unit, RubyRuntimePool.class, POOL_NAME ) );
+        
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
-        builder.addPropertyMetaData( "rubyComponentResolver", createComponentResolver( service, params ) );
+        builder.addPropertyMetaData( "rubyComponentResolver", createComponentResolver( serviceMetaData ) );
 
-        if (requiresSingleton( params )) {
+        if ( serviceMetaData.isRequiresSingleton() ) {
             builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
         }
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
     }
 
-    protected RubyComponentResolver createComponentResolver(String service, Map params) {
+    protected RubyComponentResolver createComponentResolver(ServiceMetaData serviceMetaData) {
         InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
-        result.setRubyClassName( StringUtils.camelize( service ) );
-        result.setRubyRequirePath( StringUtils.underscore( service ) );
-        result.setInitializeParams( params );
-        result.setComponentName( "service." + service );
+        result.setRubyClassName( StringUtils.camelize( serviceMetaData.getClassName() ) );
+        result.setRubyRequirePath( StringUtils.underscore( serviceMetaData.getClassName() ) );
+        result.setInitializeParams( serviceMetaData.getParameters() );
+        result.setComponentName( "service." + serviceMetaData.getClassName() );
         return result;
     }
 
@@ -108,4 +108,6 @@ public class ServicesYamlParsingDeployer extends AbstractSplitYamlParsingDeploye
         Boolean singleton = params == null ? null : (Boolean) params.remove( "singleton" );
         return singleton != null && singleton.booleanValue();
     }
+
+
 }

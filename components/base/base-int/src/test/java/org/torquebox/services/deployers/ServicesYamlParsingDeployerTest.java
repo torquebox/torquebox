@@ -1,4 +1,4 @@
-package org.torquebox.jobs.deployers;
+package org.torquebox.services.deployers;
 
 import static org.junit.Assert.*;
 
@@ -57,7 +57,7 @@ public class ServicesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
     @Test
     public void testRequiresSingletonReturnsFalseWhenNoSingletonKey() throws Exception {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put( "key_other_than_singleton", "value" );
         assertFalse( this.deployer.requiresSingleton( params ) );
     }
