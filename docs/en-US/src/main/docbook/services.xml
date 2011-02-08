@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="services">
+  <title>Services</title>
+
+  <section>
+    <title>What Are Services?</title>
+
+    <para>Services are persistent background Ruby daemons deployed and
+    managed by TorqueBox. Common uses for services include connecting
+    to a remote service (IRC bot, Twitter Streaming API client) or
+    starting a server to listen for incoming connections. A service
+    may be deployed as part of a web application or as its own
+    application without any web component. Services have full access
+    to the entire Ruby environment. This means that a service deployed
+    as part of a web application can interact with database models and
+    other application functionality.</para>
+  </section>
+
+  <section>
+    <title>Service Classes</title>
+
+    <para>Each service maps to exactly one Ruby class that should
+    optionally implement <methodname>initialize(Hash)</methodname>,
+    <methodname>start()</methodname> and
+    <methodname>stop()</methodname> methods which should each return
+    quickly. Typically the <methodname>start</methodname> method will
+    spawn a new thread to start an event loop or other long-running
+    task.</para>
+
+    <para><example>
+      <title>Service implementation
+      (<filename>my_service.rb</filename>)</title>
+
+      <para><programlisting>class MyService
+  def intialize(opts={})
+    @name = opts[:name]
+  end
+
+  def start
+    Thread.new { run }
+  end
+
+  def stop
+    @done = true
+  end
+
+  def run
+    until @done
+      puts "Hello #{@name}"
+      sleep(1)
+    end
+  end
+end</programlisting>This example service prints a message every second until stopped. By
+      convention the long-running task is executed in a
+      <methodname>run</methodname> method but could also reside inside the
+      block passed to Thread.new in the <methodname>start</methodname>
+      method.</para>
+    </example></para>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Deploying Services</title>
+
+    <para>Services are deployed by creating a services.yml file inside
+    your application.</para>
+
+    <section>
+      <title><filename>services.yml</filename> Location</title>
+
+      <para>The <filename>services.yml</filename> should reside in
+      either <filename>$RAILS_ROOT/config/services.yml</filename> for
+      Rails applications, <filename>$RACK_ROOT/services.yml</filename>
+      for Rack applications, or a <filename>services.yml</filename> in
+      the top-level directory of non-web applications.</para>
+    </section>
+
+    <section>
+      <title><filename>services.yml</filename> Format</title>
+
+      <para>Top-level keys in <filename>services.yml</filename>
+      reference a Ruby class. Any nested key/value pairs underneath
+      the class will be passed in as parameters to the service's
+      <methodname>initialize</methodname> method.</para>
+
+      <para><example>
+        <title><filename>services.yml</filename></title>
+
+        <para><programlisting>MyService:
+  name: TorqueBox User
+
+AnotherService:</programlisting>This deploys two services -
+        <classname>MyService</classname> which corresponds to the
+        example above and <classname>AnotherService</classname>
+        which doesn't take any initialization parameters.</para>
+      </example></para>
+
+      <para>Service classes should be available in Ruby's load path. For
+      Rails applications, the convention is to put your service
+      classes in <filename>$RAILS_ROOT/app/services/</filename> and
+      ensure this directory is on your load path.</para>
+
+      <para><informalexample>
+        <para><programlisting>config.autoload_paths += %W(#{config.root}/app/services)</programlisting></para>
+      </informalexample></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Clustered Services</title>
+
+    <section>
+      <title>Services Running on Every Node</title>
+
+      <para>By default, if a service is deployed to every node in a
+      cluster it will run on each node. This is useful for stateless
+      services</para>
+    </section>
+
+    <section>
+      <title>High Availability Singleton Services</title>
+
+      <para>TorqueBox also supports high availability singleton
+      services. In this scenario, the service only runs on one node in
+      the cluster and if that node goes down it automatically starts
+      on a new node. To enable this feature, add a special
+      <code>singleton</code> key with a value of <code>true</code> to
+      your <filename>services.yml</filename>. If no
+      <code>singleton</code> key is defined or it has a value of
+      <code>false</code> the service will run on every node in the
+      cluster.</para>
+
+      <para><example>
+        <title><filename>services.yml</filename></title>
+
+        <para><programlisting>MyService:
+  singleton: true
+  name: TorqueBox User
+
+AnotherService:</programlisting>This is the same
+        <filename>services.yml</filename> from the example above but
+        this time <classname>MyService</classname> is marked as a
+        singleton and will only run on one node in the cluster.
+        <classname>AnotherService</classname> will run on all nodes
+        in the cluster since a <code>singleton</code> key isn't
+        specified.</para>
+      </example></para>
+    </section>
+  </section>
+</chapter>
