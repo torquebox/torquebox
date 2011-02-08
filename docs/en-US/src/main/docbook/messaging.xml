@@ -154,7 +154,7 @@
       <section>
         <title><filename>Long-lived queues and topics</filename></title>
 
-        <para>If your queues and topics have a lifecycel that extends beyond
+        <para>If your queues and topics have a lifecycle that extends beyond
         the deployment of any single app, you may want long-lived queues and
         topics. Long-lived destinations are first-order components, and may be
         deployed on their own. In this way, many applications can come and go
