@@ -1,0 +1,7 @@
+---
+application:
+  root: ${basedir}/apps/rack/basic
+  env: development
+web:
+  context: /vhosting
+  host: integ-app1.torquebox.org

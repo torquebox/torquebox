@@ -42,6 +42,8 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
+import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.rack.core.WebHost;
 import org.torquebox.rack.core.servlet.RackFilter;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
@@ -64,6 +66,8 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
     public static final String FIVE_HUNDRED_SERVLET_NAME = "torquebox.500";
     public static final String FIVE_HUNDRED_SERVLET_CLASS_NAME = "org.torquebox.rack.core.servlet.FiveHundredServlet";
+
+    public static final String LOCALHOST_MBEAN_NAME = "jboss.web:host=localhost,type=Host";
 
     public RackWebApplicationDeployer() {
         super( RackApplicationMetaData.class );
@@ -89,8 +93,12 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         setUpRackFilter( rackAppMetaData, webMetaData );
         setUpStaticResourceServlet( rackAppMetaData, webMetaData );
         ensureSomeServlet( rackAppMetaData, webMetaData );
-        JBossWebMetaData jbossWebMetaData = setUpHostAndContext( unit, rackAppMetaData, webMetaData );
-        setUpPoolDependency( rackAppMetaData, jbossWebMetaData );
+        try {
+            JBossWebMetaData jbossWebMetaData = setUpHostAndContext( unit, rackAppMetaData, webMetaData );
+            setUpPoolDependency( rackAppMetaData, jbossWebMetaData );
+        } catch (Exception e) {
+            throw new DeploymentException( e );
+        }
     }
 
     protected void setUpRackFilter(RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) {
@@ -183,7 +191,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         }
     }
 
-    protected JBossWebMetaData setUpHostAndContext(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) {
+    protected JBossWebMetaData setUpHostAndContext(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) throws Exception {
 
         JBossWebMetaData jbossWebMetaData = unit.getAttachment( JBossWebMetaData.class );
 
@@ -203,6 +211,12 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
         if (!rackAppMetaData.getHosts().isEmpty()) {
             jbossWebMetaData.setVirtualHosts( rackAppMetaData.getHosts() );
+            List<String> depends = jbossWebMetaData.getDepends();
+            if (depends == null) {
+                depends = new ArrayList<String>();
+                jbossWebMetaData.setDepends( depends );
+            }
+            depends.add( AttachmentUtils.beanName( unit, WebHost.class ) );
         }
 
         return jbossWebMetaData;
@@ -218,4 +232,5 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         }
         depends.add( rackAppMetaData.getRackApplicationPoolName() );
     }
+
 }

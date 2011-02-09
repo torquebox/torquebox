@@ -17,5 +17,6 @@
   <bean name="RackRuntimeDeployer"                    class="org.torquebox.rack.deployers.RackRuntimeDeployer"/>
 
   <bean name="WebYamlParsingDeployer"                 class="org.torquebox.rack.deployers.WebYamlParsingDeployer"/>
+  <bean name="WebHostDeployer"                        class="org.torquebox.rack.deployers.WebHostDeployer"/>
 
 </deployment>
