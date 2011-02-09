@@ -1,0 +1,9 @@
+---
+application:
+  root: ${basedir}/apps/rack/basic
+  env: development
+web:
+  context: /vhosting
+  host: integ-app2.torquebox.org
+environment:
+  GRIST: this-is-app-two

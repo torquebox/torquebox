@@ -24,7 +24,7 @@ public class BasicTest extends AbstractIntegrationTestCase {
         System.err.println( driver.getPageSource() );
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
-        assertEquals( "basic-rack", element.getAttribute( "class" ) );
+        assertEquals( "basic-rack", element.getAttribute( "class" ).trim() );
     }
 
 }

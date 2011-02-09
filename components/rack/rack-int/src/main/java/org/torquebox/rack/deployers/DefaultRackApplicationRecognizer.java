@@ -17,7 +17,9 @@ public class DefaultRackApplicationRecognizer extends AbstractRecognizer {
 
     @Override
     protected boolean isRecognized(VFSDeploymentUnit unit) {
-        return hasAnyOf( unit.getRoot(), DEFAULT_RACKUP_PATH );
+        boolean isRecognized = hasAnyOf( unit.getRoot(), DEFAULT_RACKUP_PATH );
+        log.debug(  "isRecognized?( " + unit.getRoot() + ") " + isRecognized  );
+        return isRecognized;
     }
 
     @Override

@@ -19,6 +19,8 @@ public class RubyApplicationRecognizer extends AbstractRecognizer {
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
             deploy( (VFSDeploymentUnit) unit );
+        } else {
+            log.debug( "Not a VFS deployment unit: " + unit );
         }
     }
 

@@ -67,67 +67,58 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        VirtualFile appKnobYml = getFile( unit );
 
-        if (appKnobYml == null) {
-            return;
-        }
+        List<VirtualFile> files = getFiles( unit );
+        
+        log.debug( "Deploying: " + files );
 
-        try {
-            TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse( appKnobYml );
-            VirtualFile root = metaData.getApplicationRootFile();
+        for (VirtualFile appKnobYml : files) {
+            try {
+                TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse( appKnobYml );
+                VirtualFile root = metaData.getApplicationRootFile();
 
-            if (root == null) {
-                throw new DeploymentException( "No application root specified" );
+                if (root == null) {
+                    throw new DeploymentException( "No application root specified" );
+                }
+
+                String name = appKnobYml.getName().replaceAll( "-knob.yml$", "" );
+                Deployment deployment = createDeployment( name, metaData );
+                attachPojoDeploymentBeanMetaData( unit, deployment );
+
+            } catch (IOException e) {
+                throw new DeploymentException( e );
             }
-
-            Deployment deployment = createDeployment( metaData );
-            attachPojoDeploymentBeanMetaData( unit, deployment );
-
-        } catch (IOException e) {
-            throw new DeploymentException( e );
         }
     }
 
-    protected VirtualFile getFile(VFSDeploymentUnit unit) throws DeploymentException {
+    protected List<VirtualFile> getFiles(VFSDeploymentUnit unit) throws DeploymentException {
         List<VirtualFile> matches = unit.getMetaDataFiles( null, "-knob.yml" );
 
-        if (matches.isEmpty()) {
-            matches = unit.getMetaDataFiles( null, "-rails.yml" );
+        matches.addAll( unit.getMetaDataFiles( null, "-rails.yml" ) );
+        matches.addAll( unit.getMetaDataFiles( null, "-rack.yml" ) );
 
-            if (!matches.isEmpty()) {
-                log.warn( "Using *-rails.yml is deprecated.  Please use *-knob.yml instead." );
-            } else {
-                matches = unit.getMetaDataFiles( null, "-rack.yml" );
-
-                if (!matches.isEmpty()) {
-                    log.warn( "Using *-rack.yml is deprecated.  Please use *-knob.yml instead." );
-                }
+        for (VirtualFile each : matches) {
+            if (each.getName().endsWith( "-rails.yml" )) {
+                log.warn( "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + each );
+            } else if (each.getName().endsWith( "-rack.yml" )) {
+                log.warn( "Usage of -rack.yml is deprecated, please rename to -knob.yml: " + each );
             }
         }
 
-        if (matches.isEmpty()) {
-            return null;
-        }
-
-        if (matches.size() != 1) {
-            throw new DeploymentException( "Too many *-knob.yml files: " + matches );
-        }
-
-        VirtualFile appKnobYml = matches.get( 0 );
-
-        return appKnobYml;
+        return matches;
     }
 
-    private Deployment createDeployment(TorqueBoxMetaData metaData) throws IOException {
-        AbstractVFSDeployment deployment = new AbstractVFSDeployment( metaData.getApplicationRootFile() );
+    private Deployment createDeployment(String name, TorqueBoxMetaData metaData) throws IOException {
+        log.debug( "Creating deployment: " + name );
+        AbstractVFSDeployment deployment = new TorqueBoxVFSDeployment( name, metaData.getApplicationRootFile() );
+        log.debug( "Deployment: " + deployment.getSimpleName() + " // " + deployment );
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
         attachments.addAttachment( TorqueBoxMetaData.EXTERNAL, metaData, TorqueBoxMetaData.class );
         return deployment;
     }
 
     protected void attachPojoDeploymentBeanMetaData(VFSDeploymentUnit unit, Deployment deployment) {
-        String beanName = AttachmentUtils.beanName( unit, PojoDeployment.class, unit.getSimpleName() );
+        String beanName = AttachmentUtils.beanName( unit, PojoDeployment.class, deployment.getName() );
 
         BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, PojoDeployment.class.getName() );
         ValueMetaData deployerInject = builder.createInject( "MainDeployer" );

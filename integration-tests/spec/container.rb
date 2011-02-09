@@ -8,7 +8,8 @@ module ArquillianMethods
   # from the block.
   def deploy options = {}, &block
     @run_mode = options.fetch(:run_mode, :client)
-    path = options[:path]
+    paths = options[:path] || options[:paths]
+    archive_name = options[:name]
     add_class_annotation( org.jboss.arquillian.api.Run => { "value" => run_mode } )
     metaclass = class << self
                   add_method_signature( "create_deployment", [org.jboss.shrinkwrap.api.spec.JavaArchive] )
@@ -16,16 +17,23 @@ module ArquillianMethods
                   self
                 end
     metaclass.send(:define_method, :create_deployment) do
-      path ? create_archive_for_resource(path) : block.call
+      paths ? create_archive_for_resources(paths, archive_name) : block.call
     end
   end
 
-  def create_archive_for_resource path
-    tail = path.split('/')[-1]
-    base = /(.*)\./.match(tail)[1]
-    archive = org.jboss.shrinkwrap.api.ShrinkWrap.create( org.jboss.shrinkwrap.api.spec.JavaArchive.java_class, "#{base}.jar" )
-    deploymentDescriptorUrl = JRuby.runtime.jruby_class_loader.getResource( path )
-    archive.addResource( deploymentDescriptorUrl, "/META-INF/#{tail}" )
+  def create_archive_for_resources paths, name=nil
+    paths = [ paths ].flatten
+    if ( name.nil? )
+      first_path = paths.first
+      tail = first_path.split('/')[-1]
+      name = /(.*)\./.match(tail)[1]
+    end
+    archive = org.jboss.shrinkwrap.api.ShrinkWrap.create( org.jboss.shrinkwrap.api.spec.JavaArchive.java_class, "#{name}.jar" )
+    paths.each do |path|
+      tail = path.split('/')[-1]
+      deploymentDescriptorUrl = JRuby.runtime.jruby_class_loader.getResource( path )
+      archive.addResource( deploymentDescriptorUrl, "/META-INF/#{tail}" )
+    end
     archive
   end
   

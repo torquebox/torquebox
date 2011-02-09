@@ -5,3 +5,5 @@ application:
 web:
   context: /vhosting
   host: integ-app1.torquebox.org
+environment:
+  GRIST: this-is-app-one
