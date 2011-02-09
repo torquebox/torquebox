@@ -1,4 +1,5 @@
 require 'torquebox/messaging/message_processor'
+require 'torquebox/messaging/const_missing'
 
 module TorqueBox
   module Messaging
