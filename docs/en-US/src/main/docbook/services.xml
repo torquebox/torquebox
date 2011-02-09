@@ -65,34 +65,27 @@ end</programlisting>This example service prints a message every second until sto
   <section>
     <title>Deploying Services</title>
 
-    <para>Services are deployed by creating a services.yml file inside
-    your application.</para>
+    <para>Services are deployed by creating a services section inside
+    your application's <filename>torquebox.yml</filename>.</para>
 
     <section>
-      <title><filename>services.yml</filename> Location</title>
+      <title><filename>torquebox.yml</filename> Services Format</title>
 
-      <para>The <filename>services.yml</filename> should reside in
-      either <filename>$RAILS_ROOT/config/services.yml</filename> for
-      Rails applications, <filename>$RACK_ROOT/services.yml</filename>
-      for Rack applications, or a <filename>services.yml</filename> in
-      the top-level directory of non-web applications.</para>
-    </section>
-
-    <section>
-      <title><filename>services.yml</filename> Format</title>
-
-      <para>Top-level keys in <filename>services.yml</filename>
-      reference a Ruby class. Any nested key/value pairs underneath
-      the class will be passed in as parameters to the service's
-      <methodname>initialize</methodname> method.</para>
+      <para>Services reside under a <code>services</code> key of
+      <filename>torquebox.yml</filename>. Each key underneath
+      <code>services</code> references a Ruby class. Any nested
+      key/value pairs underneath the class will be passed in as
+      parameters to the service's <methodname>initialize</methodname>
+      method.</para>
 
       <para><example>
-        <title><filename>services.yml</filename></title>
+        <title><filename>torquebox.yml</filename></title>
 
-        <para><programlisting>MyService:
-  name: TorqueBox User
+        <para><programlisting>services:
+  MyService:
+    name: TorqueBox User
 
-AnotherService:</programlisting>This deploys two services -
+  AnotherService:</programlisting>This deploys two services -
         <classname>MyService</classname> which corresponds to the
         example above and <classname>AnotherService</classname>
         which doesn't take any initialization parameters.</para>
@@ -126,22 +119,31 @@ AnotherService:</programlisting>This deploys two services -
       <para>TorqueBox also supports high availability singleton
       services. In this scenario, the service only runs on one node in
       the cluster and if that node goes down it automatically starts
-      on a new node. To enable this feature, add a special
-      <code>singleton</code> key with a value of <code>true</code> to
-      your <filename>services.yml</filename>. If no
-      <code>singleton</code> key is defined or it has a value of
-      <code>false</code> the service will run on every node in the
-      cluster.</para>
+      on a new node.</para>
+
+      <para>To use high availability singleton services, you must
+      start TorqueBox with a JBoss profile that supports
+      clustering. In our binary distribution, this is the
+      <code>all</code> profile.</para>
+
+      <para><screen><prompt>$</prompt> JBOSS_CONF=all <command>jruby</command> <parameter>-S rake torquebox:run</parameter></screen></para>
+
+      <para>You also need to add a special <code>singleton</code> key
+      with a value of <code>true</code> to your services section of
+      <filename>torquebox.yml</filename>. If no <code>singleton</code>
+      key is defined or it has a value of <code>false</code> the
+      service will run on every node in the cluster.</para>
 
       <para><example>
-        <title><filename>services.yml</filename></title>
+        <title><filename>torquebox.yml</filename></title>
 
-        <para><programlisting>MyService:
-  singleton: true
-  name: TorqueBox User
+        <para><programlisting>services:
+  MyService:
+    singleton: true
+    name: TorqueBox User
 
-AnotherService:</programlisting>This is the same
-        <filename>services.yml</filename> from the example above but
+  AnotherService:</programlisting>This is the same
+        <filename>torquebox.yml</filename> from the example above but
         this time <classname>MyService</classname> is marked as a
         singleton and will only run on one node in the cluster.
         <classname>AnotherService</classname> will run on all nodes
