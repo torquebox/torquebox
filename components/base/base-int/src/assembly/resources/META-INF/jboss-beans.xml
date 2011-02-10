@@ -2,6 +2,8 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
+  
   <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
 
   <bean name="KnobStructure"                     class="org.torquebox.base.deployers.KnobStructure"/>

@@ -105,6 +105,47 @@
     <plugins> 
       <plugin>
         <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-torquebox-properties</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                def modifications_modifier
+                  git_output = `git status -s`.split( "\n" )
+                  git_output.any? {|line| line =~ /^ M/ } ? ' +modifications' : ''
+                end
+
+                def determine_revision_from_git()
+                  revision = '(unknown)'
+                  git_output = `git log HEAD^1..HEAD`.split( "\n" )
+                  junk, sha1 = git_output[0].split( ' ' )
+                  sha1.strip + modifications_modifier
+                end
+
+                def revision()
+                  ENV['BUILD_VCS_NUMBER_TORQUEBOX'] || determine_revision_from_git()
+                end
+
+                def build_number()
+                  ENV['BUILD_NUMBER'] || '(unknown)'
+                end
+
+                File.open( "${project.build.directory}/classes/org/torquebox/torquebox.properties", 'a' ) do |f|
+                  f.puts "build.revision: #{revision}"
+                  f.puts "build.number: #{build_number}"
+                end
+              </script>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
