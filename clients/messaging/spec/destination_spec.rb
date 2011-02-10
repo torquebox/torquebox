@@ -81,13 +81,7 @@ describe TorqueBox::Messaging::Destination do
           }.should raise_error(ArgumentError)
         end
       end
-      
 
-      it "should convert ttl to milliseconds" do
-        @session.should_receive(:publish).with(anything, anything, { :ttl => 5000 })
-        @queue.publish('message', { :ttl => 5 })
-      end
-      
       it "should handle persistence = true" do
         @session.should_receive(:publish).with(anything, anything, { :delivery_mode => javax.jms::DeliveryMode.PERSISTENT })
         @queue.publish('message', { :persistent => true })

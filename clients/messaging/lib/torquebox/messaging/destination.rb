@@ -74,8 +74,6 @@ module TorqueBox
           end
         end
 
-        options[:ttl] *= 1000 if options[:ttl]
-        
         options
       end
     end
