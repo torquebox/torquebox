@@ -128,7 +128,7 @@
                 end
 
                 def revision()
-                  ENV['BUILD_VCS_NUMBER_TORQUEBOX'] || determine_revision_from_git()
+                  ENV['BUILD_VCS_NUMBER_torquebox'] || determine_revision_from_git()
                 end
 
                 def build_number()
