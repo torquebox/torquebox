@@ -116,15 +116,23 @@
             <configuration>
               <script>
                 def modifications_modifier
-                  git_output = `git status -s`.split( "\n" )
-                  git_output.any? {|line| line =~ /^ M/ } ? ' +modifications' : ''
+                  begin
+                    git_output = `git status -s`.split( "\n" )
+                    git_output.any? {|line| line =~ /^ M/ } ? ' +modifications' : ''
+                  rescue=>e
+                    ' +unknown'
+                  end
                 end
 
                 def determine_revision_from_git()
-                  revision = '(unknown)'
-                  git_output = `git log HEAD^1..HEAD`.split( "\n" )
-                  junk, sha1 = git_output[0].split( ' ' )
-                  sha1.strip + modifications_modifier
+                  begin
+                    revision = '(unknown)'
+                    git_output = `git log HEAD^1..HEAD`.split( "\n" )
+                    junk, sha1 = git_output[0].split( ' ' )
+                    sha1.strip + modifications_modifier
+                  rescue=>e
+                    '(unknown)'
+                  end
                 end
 
                 def revision()
