@@ -22,6 +22,7 @@
 package org.torquebox.base.deployers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
@@ -92,12 +93,28 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
     }
 
     protected List<VirtualFile> getFiles(VFSDeploymentUnit unit) throws DeploymentException {
-        List<VirtualFile> matches = unit.getMetaDataFiles( null, "-knob.yml" );
+        List<VirtualFile> allMatches = new ArrayList<VirtualFile>();
+        List<VirtualFile> matches = null;
+        
+        matches = unit.getMetaDataFiles( null, "-knob.yml" );
+        
+        if ( matches != null && ! matches.isEmpty() ) {
+            allMatches.addAll(  matches  );
+        }
 
-        matches.addAll( unit.getMetaDataFiles( null, "-rails.yml" ) );
-        matches.addAll( unit.getMetaDataFiles( null, "-rack.yml" ) );
-
-        for (VirtualFile each : matches) {
+        matches = unit.getMetaDataFiles( null, "-rails.yml" );
+        
+        if ( matches != null && ! matches.isEmpty() ) {
+            allMatches.addAll(  matches  );
+        }
+        
+        matches = unit.getMetaDataFiles( null, "-rack.yml" );
+        
+        if ( matches != null && ! matches.isEmpty() ) {
+            allMatches.addAll(  matches  );
+        }
+        
+        for (VirtualFile each : allMatches) {
             if (each.getName().endsWith( "-rails.yml" )) {
                 log.warn( "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + each );
             } else if (each.getName().endsWith( "-rack.yml" )) {
@@ -105,7 +122,7 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
             }
         }
 
-        return matches;
+        return allMatches;
     }
 
     private Deployment createDeployment(String name, TorqueBoxMetaData metaData) throws IOException {
