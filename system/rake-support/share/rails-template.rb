@@ -33,7 +33,7 @@ else
   end
 end
 
-initializer("active_record_handle_async.rb") do
+initializer("active_record_backgroundable.rb") do
   <<-INIT
 # Enable backgroundable methods for ActiveRecord classes. Provides:
 # class AModel < ActiveRecord::Base
