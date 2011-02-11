@@ -45,7 +45,7 @@ public class NoRootRackupArchiveTest extends AbstractIntegrationTestCase {
 
         String pwd = pwd().replaceAll( "\\\\", "/" );
 
-        assertTrue( text.matches( "RACK_ROOT=" + toVfsPath( pwd ) + ".*/norootrackup.rack.*" ) );
+        assertTrue( text.matches( "RACK_ROOT=" + toVfsPath( pwd ) + ".*/norootrackup.knob.*" ) );
     }
 
 }

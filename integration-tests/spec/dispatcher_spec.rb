@@ -1,5 +1,5 @@
-require 'org.torquebox.torquebox-messaging-client'
-require 'org.torquebox.torquebox-messaging-container'
+require 'org.torquebox.messaging-client'
+require 'org.torquebox.messaging-container'
 
 QUEUE_QUESTIONS = TorqueBox::Messaging::Queue.new("/queues/questions")
 QUEUE_ANSWERS   = TorqueBox::Messaging::Queue.new("/queues/answers")

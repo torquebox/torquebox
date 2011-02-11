@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'org.torquebox.torquebox-messaging-client'
+require 'org.torquebox.messaging-client'
 
 describe "backgroundable tests" do
 
