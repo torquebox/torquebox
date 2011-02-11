@@ -135,18 +135,34 @@ describe TorqueBox::Messaging::Destination do
       msgs.to_a.should eql( ["howdy"] * count )
     end
 
-    it "should be able to publish_and_receive and receive_and_publish from a queue" do
-      queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
-      queue.start
+    context "synchronous messaging" do
+      it "should return value of block given to receive_and_publish" do
+        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
+        queue.start
 
-      response_thread = Thread.new {
-        queue.receive_and_publish( :timeout => 5000 ) { |msg| msg.upcase }
-      }
-      message = queue.publish_and_receive "ping", :timeout => 5000
-      response_thread.join
+        response_thread = Thread.new {
+          queue.receive_and_publish( :timeout => 5000 ) { |msg| msg.upcase }
+        }
+        message = queue.publish_and_receive "ping", :timeout => 5000
+        response_thread.join
 
-      queue.destroy
-      message.should eql( "PING" )
+        queue.destroy
+        message.should eql( "PING" )
+      end
+
+      it "should return request message if no block given" do
+        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
+        queue.start
+
+        response_thread = Thread.new {
+          queue.receive_and_publish( :timeout => 5000 )
+        }
+        message = queue.publish_and_receive "ping", :timeout => 5000
+        response_thread.join
+
+        queue.destroy
+        message.should eql( "ping" )
+      end
     end
   end
 
