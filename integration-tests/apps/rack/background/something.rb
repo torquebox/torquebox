@@ -11,8 +11,8 @@ class Something
   end
 
   def foo
-    puts "JC: in foo"
-    puts "JC: ", @background.receive(:timeout => 25000)
-    @foreground.publish "success"
+    if "release" == @background.receive(:timeout => 25000)
+      @foreground.publish "success"
+    end
   end
 end
