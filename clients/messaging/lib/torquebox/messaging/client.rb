@@ -15,7 +15,11 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'org.torquebox.messaging-client'
+begin
+  require 'org.torquebox.messaging-client'
+rescue LoadError=>e
+  # ignore!
+end
 
 require 'torquebox/naming'
 require 'torquebox/messaging/ext/javax_jms_session'

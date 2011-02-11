@@ -266,8 +266,10 @@ topics:
   ...</programlisting></para>
     </example>
 
-    <para>And to use them in any other JRuby script, you would do something
-    like this:</para>
+    <para>And to use them in any other JRuby script, it's even simpler.
+    First, ensure that <filename>rubygems</filename> is loaded, then
+    require the <filename>torquebox/messaging</filename> feature.
+    </para>
 
     <example>
       <title>To use <classname>TorqueBox::Messaging</classname> in a shell
@@ -276,7 +278,7 @@ topics:
       <para><programlisting>#!/usr/bin/env jruby
 
 require 'rubygems'
-require 'org.torquebox.messaging-client'
+require 'torquebox/messaging'
         </programlisting></para>
     </example>
 
