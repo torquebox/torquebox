@@ -1,15 +1,15 @@
 # Copyright 2008-2011 Red Hat, Inc, and individual contributors.
-# 
+#
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation; either version 2.1 of
 # the License, or (at your option) any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this software; if not, write to the Free
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -35,41 +35,43 @@ module TorqueBox
           @__backgroundable_methods ||= {}
           methods.each do |method|
             method = method.to_s
-            @__backgroundable_methods[method] = options
-            if instance_methods.include?(method) || private_instance_methods.include?(method)
-              __enable_backgrounding(method, options)
+            if !@__backgroundable_methods[method]
+              @__backgroundable_methods[method] ||= { }
+              @__backgroundable_methods[method][:options] = options
+              if instance_methods.include?(method) || private_instance_methods.include?(method)
+                __enable_backgrounding(method)
+              end
             end
           end
         end
 
         def method_added(method)
-          # don't enable backgrounding for methods we don't care about
-          # and ignore adding of the method we are currently
-          # backgrounding. This fixes class reloading that just
-          # redef's methods [TORQUE-260]
+          method = method.to_s
           if @__backgroundable_methods &&
-              @__backgroundable_methods[method.to_s] &&
-              @__currently_backgrounding_method != method
-            __enable_backgrounding(method, @__backgroundable_methods[method.to_s])
+              @__backgroundable_methods[method] &&
+              !@__backgroundable_methods[method][:backgrounding]
+            __enable_backgrounding(method)
           else
             super
           end
         end
 
-        def __enable_backgrounding(method, options)
-          privatize = private_instance_methods.include?(method.to_s)
-          protect = protected_instance_methods.include?(method.to_s) unless privatize
+        private
+        def __enable_backgrounding(method)
+          privatize = private_instance_methods.include?(method)
+          protect = protected_instance_methods.include?(method) unless privatize
 
           async_method = "__async_#{method}"
           sync_method = "__sync_#{method}"
 
-          # stash the method we are currently working on to turn off
-          # method_added for the alias_method call.
-          @__currently_backgrounding_method = method
+          @__backgroundable_methods[method][:backgrounding] = true
+          options = @__backgroundable_methods[method][:options]
           class_eval do
+
             define_method async_method do |*args|
               Util.publish_message(self, sync_method, args, options)
             end
+
             alias_method sync_method, method
             alias_method method, async_method
 
@@ -78,7 +80,7 @@ module TorqueBox
             end
           end
         ensure
-          @__currently_backgrounding_method = nil
+          @__backgroundable_methods[method][:backgrounding] = nil
         end
 
       end
