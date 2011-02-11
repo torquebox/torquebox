@@ -43,7 +43,8 @@ module TorqueBox
       end
       
       def load_session_data(session)
-        session_data = {}
+        session_data = SessionData.new
+        session_data.java_session = session
         session.getAttributeNames.each do |key|
           if ( key == RAILS_SESSION_KEY )
             marshalled_bytes = session.getAttribute(RAILS_SESSION_KEY)
@@ -57,19 +58,13 @@ module TorqueBox
         end
         initial_keys = session_data.keys
         session_data[:session_id] = session.getId()
-        metaclass = class << session_data
-          def url_suffix
-            ";jsessionid=#{self[:session_id]}"
-          end
-          self
-        end
-        metaclass.send(:define_method, :destroy) { session.invalidate }
         session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
         session_data
       end
       
       def store_session_data(session, session_data)
         hash = session_data.dup
+        hash.java_session = nil # java session shouldn't be marshalled
         initial_keys = hash[:TORQUEBOX_INITIAL_KEYS] || []
         removed_keys = initial_keys - hash.keys 
         hash.delete(:TORQUEBOX_INITIAL_KEYS)
@@ -97,6 +92,18 @@ module TorqueBox
         removed_keys.each do |k|
           session.removeAttribute( k.to_s )
         end
+      end
+    end
+
+    class SessionData < Hash
+      attr_accessor :java_session
+
+      def url_suffix
+        ";jsessionid=#{self[:session_id]}"
+      end
+
+      def destroy
+        @java_session.invalidate if @java_session
       end
     end
   end
