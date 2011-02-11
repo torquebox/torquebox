@@ -1,7 +1,7 @@
 
-require 'org.torquebox.torquebox-container-foundation'
-require 'org.torquebox.torquebox-naming-container'
-require 'org.torquebox.torquebox-messaging-container'
+require 'org.torquebox.container-foundation'
+require 'org.torquebox.naming-container'
+require 'org.torquebox.messaging-container'
 require 'torquebox/messaging/destination'
 
 describe TorqueBox::Messaging::Destination do

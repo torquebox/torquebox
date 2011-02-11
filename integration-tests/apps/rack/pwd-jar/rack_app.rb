@@ -5,7 +5,7 @@ require 'weird/uuid-3.2.jar'
 
 java_import 'com.eaio.uuid.UUID' 
 
-require 'org.torquebox.torquebox-messaging-client' 
+require 'org.torquebox.messaging-client' 
   
 class RackApp 
   def initialize 

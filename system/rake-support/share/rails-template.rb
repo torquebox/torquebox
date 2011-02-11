@@ -11,7 +11,7 @@ end
 
 # gems defs common to v2 and v3
 gem "org.torquebox.rake-support"
-gem 'org.torquebox.torquebox-messaging-client'
+gem 'org.torquebox.messaging-client'
 
 
 if ( Rails::VERSION::MAJOR == 2 )

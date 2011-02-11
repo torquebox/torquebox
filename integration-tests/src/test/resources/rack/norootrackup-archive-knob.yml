@@ -1,6 +1,6 @@
 --- 
 application: 
-  RACK_ROOT: ${basedir}/apps/rack/norootrackup.rack
+  RACK_ROOT: ${basedir}/apps/rack/norootrackup.knob
   RACK_ENV: development
 web: 
   rackup: foobar/config.ru

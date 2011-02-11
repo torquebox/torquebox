@@ -1,8 +1,8 @@
 
 
-require 'org.torquebox.torquebox-messaging-container'
-require 'org.torquebox.torquebox-naming-container'
-require 'org.torquebox.torquebox-container-foundation'
+require 'org.torquebox.messaging-container'
+require 'org.torquebox.naming-container'
+require 'org.torquebox.container-foundation'
 
 require 'torquebox/messaging/client'
 

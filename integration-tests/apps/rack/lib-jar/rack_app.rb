@@ -3,7 +3,7 @@ include Java
 
 java_import 'com.eaio.uuid.UUID' 
 
-require 'org.torquebox.torquebox-messaging-client' 
+require 'org.torquebox.messaging-client' 
   
 class RackApp 
   def initialize 

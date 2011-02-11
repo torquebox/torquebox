@@ -9,7 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-client-parent</artifactId>
+  <artifactId>client-parent</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Client Parent</name>
   <description></description>

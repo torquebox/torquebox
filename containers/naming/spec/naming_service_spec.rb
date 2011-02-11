@@ -1,5 +1,5 @@
 
-require 'org.torquebox.torquebox-naming-client'
+require 'org.torquebox.naming-client'
 
 require 'torquebox/naming/naming_service'
 

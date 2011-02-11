@@ -9,7 +9,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-container-parent</artifactId>
+  <artifactId>container-parent</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Container Parent</name>
   <description></description>

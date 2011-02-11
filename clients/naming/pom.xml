@@ -2,14 +2,14 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-client-parent</artifactId>
+    <artifactId>client-parent</artifactId>
     <version>1.0.0.CR1-SNAPSHOT</version>
     <relativePath>../client-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-naming-client</artifactId>
+  <artifactId>naming-client</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Naming Client</name>
   <description></description>

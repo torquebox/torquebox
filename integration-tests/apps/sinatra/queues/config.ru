@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require 'sinatra'
-require 'org.torquebox.torquebox-messaging-client'
+require 'org.torquebox.messaging-client'
 
 publisher = TorqueBox::Messaging::Queue.new '/queues/requests'
 receiver = TorqueBox::Messaging::Queue.new '/queues/responses'

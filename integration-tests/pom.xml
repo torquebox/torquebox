@@ -105,7 +105,7 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-client</artifactId>
+      <artifactId>messaging-client</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -113,7 +113,7 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-container</artifactId>
+      <artifactId>messaging-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>

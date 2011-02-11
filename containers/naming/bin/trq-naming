@@ -18,10 +18,10 @@ if ( File.exist?( dev_lib_dir ) )
     require jar
   end
 else
-  require 'org.torquebox.torquebox-naming-container'
+  require 'org.torquebox.naming-container'
 end
 
-require 'org.torquebox.torquebox-container-foundation'
+require 'org.torquebox.container-foundation'
 
 require 'torquebox/naming/commands/naming_service'
 

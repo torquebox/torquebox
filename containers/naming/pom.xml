@@ -2,14 +2,14 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-container-parent</artifactId>
+    <artifactId>container-parent</artifactId>
     <version>1.0.0.CR1-SNAPSHOT</version>
     <relativePath>../container-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-naming-container</artifactId>
+  <artifactId>naming-container</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Naming Container</name>
   <description></description>
@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-container-foundation</artifactId>
+      <artifactId>container-foundation</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
       <scope>compile</scope>
@@ -32,7 +32,7 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-naming-client</artifactId>
+      <artifactId>naming-client</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>

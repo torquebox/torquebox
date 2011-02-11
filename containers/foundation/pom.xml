@@ -2,14 +2,14 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-container-parent</artifactId>
+    <artifactId>container-parent</artifactId>
     <version>1.0.0.CR1-SNAPSHOT</version>
     <relativePath>../container-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-container-foundation</artifactId>
+  <artifactId>container-foundation</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Container Foundation</name>
   <description></description>
