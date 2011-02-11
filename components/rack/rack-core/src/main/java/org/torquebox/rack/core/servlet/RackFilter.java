@@ -76,10 +76,6 @@ public class RackFilter implements Filter {
 
     protected void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        //log.info( "request: " + request );
-        //log.info( "request.pathInfo: " + request.getPathInfo() );
-        //log.info( "request.requestUri: " + request.getRequestURI() );
-
         if (((request.getPathInfo() == null) || (request.getPathInfo().equals( "/" ))) && !(request.getRequestURI().endsWith( "/" ))) {
             String redirectUri = request.getRequestURI() + "/";
             String queryString = request.getQueryString();
