@@ -1,0 +1,6 @@
+
+queues:
+  /queues/simple_queue:
+
+messaging:
+  /queues/simple_queue: SimpleProcessor
