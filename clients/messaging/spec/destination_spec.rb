@@ -163,6 +163,28 @@ describe TorqueBox::Messaging::Destination do
         queue.destroy
         message.should eql( "ping" )
       end
+
+      it "should not mess up with multiple consumers" do
+        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
+        queue.start
+
+        thread_count = 3
+        response_threads = (1..thread_count).map do
+          Thread.new {
+            queue.receive_and_publish( :timeout => 5000 ) { |msg| msg.upcase }
+          }
+        end
+
+        message = queue.publish_and_receive "ping", :timeout => 5000
+        # Send extra messages to trigger all remaining response threads
+        (thread_count - 1).times do
+          queue.publish_and_receive "ping", :timeout => 5000
+        end
+        response_threads.each { |thread| thread.join }
+
+        queue.destroy
+        message.should eql( "PING" )
+      end
     end
   end
 

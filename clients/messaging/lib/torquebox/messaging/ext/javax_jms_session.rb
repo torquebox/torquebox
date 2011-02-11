@@ -91,7 +91,7 @@ module javax.jms::Session
   def receive_and_publish(destination, options = {})
     receive_options = options.merge(:decode => false,
                                     :selector => "synchronous = 'true'")
-    request = receive(destination, options.merge(:decode => false))
+    request = receive(destination, receive_options)
     unless request.nil?
       decoded_request = request.decode
       request_message = decoded_request[:message]
