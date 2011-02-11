@@ -12,6 +12,7 @@ class MyTestModel
   def foo;  end
   def bar;  end
   def optioned; end
+  def redefine_me; end
 end
 
 describe TorqueBox::Messaging::Backgroundable do
@@ -31,6 +32,12 @@ describe TorqueBox::Messaging::Backgroundable do
       MyTestModel.instance_methods.should include('__async_baz')
     end
 
+    it "should handle methods that are redefined after the always_background call" do
+      MyTestModel.always_background :redefine_me
+      MyTestModel.class_eval('def redefine_me; :xyz; end')
+      MyTestModel.new.__sync_redefine_me.should == :xyz
+    end
+    
     it "should work for private methods, maintaining visibility" do
       MyTestModel.class_eval('private; def no_peeking;end')
       MyTestModel.always_background :no_peeking

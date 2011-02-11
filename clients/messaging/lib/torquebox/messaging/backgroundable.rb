@@ -29,27 +29,58 @@ module TorqueBox
       end
 
       module ClassMethods
+
         def always_background(*methods)
           options = methods.last.is_a?(Hash) ? methods.pop : {}
+          @__backgroundable_methods ||= {}
           methods.each do |method|
             method = method.to_s
+            @__backgroundable_methods[method] = options
             if instance_methods.include?(method) || private_instance_methods.include?(method)
-              Util.create_background_hook(self, method, options)
-            else
-              @__deferred_backgroundable_methods ||= {}
-              @__deferred_backgroundable_methods[method] = options
+              __enable_backgrounding(method, options)
             end
           end
         end
 
         def method_added(method)
-          if @__deferred_backgroundable_methods && @__deferred_backgroundable_methods[method.to_s]
-            options = @__deferred_backgroundable_methods.delete(method.to_s)
-            Util.create_background_hook(self, method, options)
+          # don't enable backgrounding for methods we don't care about
+          # and ignore adding of the method we are currently
+          # backgrounding. This fixes class reloading that just
+          # redef's methods [TORQUE-260]
+          if @__backgroundable_methods &&
+              @__backgroundable_methods[method.to_s] &&
+              @__currently_backgrounding_method != method
+            __enable_backgrounding(method, @__backgroundable_methods[method.to_s])
           else
             super
           end
         end
+
+        def __enable_backgrounding(method, options)
+          privatize = private_instance_methods.include?(method.to_s)
+          protect = protected_instance_methods.include?(method.to_s) unless privatize
+
+          async_method = "__async_#{method}"
+          sync_method = "__sync_#{method}"
+
+          # stash the method we are currently working on to turn off
+          # method_added for the alias_method call.
+          @__currently_backgrounding_method = method
+          class_eval do
+            define_method async_method do |*args|
+              Util.publish_message(self, sync_method, args, options)
+            end
+            alias_method sync_method, method
+            alias_method method, async_method
+
+            if privatize || protect
+              send((privatize ? :private : :protected), method, sync_method, async_method)
+            end
+          end
+        ensure
+          @__currently_backgrounding_method = nil
+        end
+
       end
 
       class BackgroundProxy
@@ -64,7 +95,7 @@ module TorqueBox
           Util.publish_message(@receiver, method, args, @options)
         end
       end
-      
+
       module Util
         QUEUE_NAME = "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/backgroundable"
 
@@ -73,24 +104,6 @@ module TorqueBox
             Queue.new(QUEUE_NAME).publish({:receiver => receiver, :method => method, :args => args}, options)
           end
 
-          def create_background_hook(klass, method, options)
-            privatize = klass.private_instance_methods.include?(method.to_s)
-            protect = klass.protected_instance_methods.include?(method.to_s) unless privatize
-            
-            async_method = "__async_#{method}"
-            sync_method = "__sync_#{method}"
-            klass.class_eval do
-              define_method async_method do |*args|
-                Util.publish_message(self, sync_method, args, options)
-              end
-              alias_method sync_method, method
-              alias_method method, async_method
-
-              if privatize || protect
-                send((privatize ? :private : :protected), method, sync_method, async_method)
-              end
-            end
-          end
         end
       end
     end
