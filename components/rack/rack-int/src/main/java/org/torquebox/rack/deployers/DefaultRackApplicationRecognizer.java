@@ -49,6 +49,7 @@ public class DefaultRackApplicationRecognizer extends AbstractRecognizer {
         if (rackAppMetaData == null) {
             log.info( "Initializing rack application: " + unit );
             rackAppMetaData = new RackApplicationMetaData();
+            rackAppMetaData.setRackApplicationName( unit.getSimpleName() );
             rackAppMetaData.setRackUpScriptLocation( DEFAULT_RACKUP_PATH );
             unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
         }

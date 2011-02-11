@@ -54,6 +54,7 @@ public class WebYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
         if (rackMetaData == null) {
             log.debug( "Initializing web configuration: " + unit );
             rackMetaData = new RackApplicationMetaData();
+            rackMetaData.setRackApplicationName( unit.getSimpleName() );
             unit.addAttachment( RackApplicationMetaData.class, rackMetaData );
         }
 
