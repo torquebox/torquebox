@@ -92,7 +92,7 @@ module TorqueBox
       begin
         attempts += 1
         yield
-      rescue
+      rescue javax.naming.CommunicationException
         if attempts > max_retries
           raise
         else
