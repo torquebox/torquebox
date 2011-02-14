@@ -30,12 +30,12 @@ module TorqueBox
           :high => 7,
           :critical => 9
       }
-      
+
       def initialize(name, options={})
         @name = name
         @connect_options = options
       end
-      
+
       def publish(message, options = {})
         Client.connect(@connect_options) do |session|
           session.publish name, message, normalize_options(options)
@@ -60,7 +60,7 @@ module TorqueBox
         end
       end
       alias_method :create, :start
-      
+
       def destroy
         TorqueBox::Kernel.lookup("JMSServerManager") do |server|
           destination.name = name
@@ -68,19 +68,19 @@ module TorqueBox
           destination.destroy
         end
       end
-      
+
       def to_s
         name
       end
 
       protected
-      
+
       def normalize_options(options)
         if options.has_key?(:persistent)
           options[:delivery_mode] =
             options.delete(:persistent) ? javax.jms::DeliveryMode.PERSISTENT : javax.jms::DeliveryMode.NON_PERSISTENT
         end
-        
+
         if options.has_key?(:priority)
           if PRIORITY_MAP[options[:priority]]
             options[:priority] = PRIORITY_MAP[options[:priority]]
@@ -118,7 +118,7 @@ module TorqueBox
         end
       end
     end
-    
+
     class Topic
       include Destination
       def destination
