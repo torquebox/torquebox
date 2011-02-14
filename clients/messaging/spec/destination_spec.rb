@@ -186,6 +186,45 @@ describe TorqueBox::Messaging::Destination do
         message.should eql( "PING" )
       end
     end
+
+    context "destination not ready" do
+      it "should block on publish until queue is ready" do
+        queue = TorqueBox::Messaging::Queue.new "/queues/not_ready"
+        # Start the queue in a separate thread after a delay
+        setup_thread = Thread.new {
+          sleep( 0.2 )
+          queue.start
+        }
+        # The queue will not be ready when we call the publish method
+        queue.publish "something"
+        message = queue.receive
+
+        setup_thread.join
+        queue.destroy
+        message.should eql( "something" )
+      end
+
+      it "should block on receive until topic is ready" do
+        topic = TorqueBox::Messaging::Topic.new "/topics/not_ready"
+        # Start the topic in a separate thread after a delay
+        setup_thread = Thread.new {
+          topic.start
+        }
+        # The topic will not be ready when we call the receive method
+        message = topic.receive :timeout => 200
+
+        setup_thread.join
+        topic.destroy
+        message.should be_nil
+      end
+
+      it "should block until startup_timeout reached" do
+        queue = TorqueBox::Messaging::Queue.new "/queues/not_ready"
+        lambda {
+          queue.publish "something", :startup_timeout => 200
+        }.should raise_error(javax.naming.NameNotFoundException)
+      end
+    end
   end
 
 end

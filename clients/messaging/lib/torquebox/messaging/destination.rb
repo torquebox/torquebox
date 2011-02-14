@@ -37,18 +37,22 @@ module TorqueBox
       end
 
       def publish(message, options = {})
-        Client.connect(@connect_options) do |session|
-          session.publish name, message, normalize_options(options)
-          session.commit if session.transacted?
-        end
+        wait_for_destination(options[:startup_timeout]) {
+          Client.connect(@connect_options) do |session|
+            session.publish name, message, normalize_options(options)
+            session.commit if session.transacted?
+          end
+        }
       end
 
       def receive(options={})
         result = nil
-        Client.connect(@connect_options) do |session|
-          result = session.receive( name, options )
-          session.commit if session.transacted?
-        end
+        wait_for_destination(options[:startup_timeout]) {
+          Client.connect(@connect_options) do |session|
+            result = session.receive( name, options )
+            session.commit if session.transacted?
+          end
+        }
         result
       end
 
@@ -93,6 +97,22 @@ module TorqueBox
 
         options
       end
+
+      def wait_for_destination(timeout, &block)
+        timeout ||= 30000 # 30s default
+        start = Time.now
+        begin
+          block.call
+        rescue javax.naming.NameNotFoundException => ex
+          elapsed = (Time.now - start) * 1000
+          if elapsed > timeout
+            raise ex
+          else
+            sleep(0.1)
+            retry
+          end
+        end
+      end
     end
 
     class Queue
@@ -103,19 +123,23 @@ module TorqueBox
 
       def publish_and_receive(message, options={})
         result = nil
-        Client.connect(@connect_options) do |session|
-          result = session.publish_and_receive(name, message,
-                                               normalize_options(options))
-          session.commit if session.transacted?
-        end
+        wait_for_destination(options[:startup_timeout]) {
+          Client.connect(@connect_options) do |session|
+            result = session.publish_and_receive(name, message,
+                                                 normalize_options(options))
+            session.commit if session.transacted?
+          end
+        }
         result
       end
 
       def receive_and_publish(options={}, &block)
-        Client.connect(@connect_options) do |session|
-          session.receive_and_publish(name, normalize_options(options), &block)
-          session.commit if session.transacted?
-        end
+        wait_for_destination(options[:startup_timeout]) {
+          Client.connect(@connect_options) do |session|
+            session.receive_and_publish(name, normalize_options(options), &block)
+            session.commit if session.transacted?
+          end
+        }
       end
     end
 
