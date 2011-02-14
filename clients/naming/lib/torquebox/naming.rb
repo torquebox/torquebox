@@ -92,7 +92,7 @@ module TorqueBox
       begin
         attempts += 1
         yield
-      rescue javax.naming.CommunicationException
+      rescue javax.naming.NoInitialContextException, javax.naming.CommunicationException
         if attempts > max_retries
           raise
         else
