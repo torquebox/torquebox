@@ -2,10 +2,12 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
+  
   <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
   
   <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
-
+  
   <bean name="KnobStructure"                     class="org.torquebox.base.deployers.KnobStructure"/>
   <bean name="RubyApplicationRecognizer"         class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>
   

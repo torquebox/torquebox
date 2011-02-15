@@ -37,7 +37,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>src/main/deployments/jboss-beans.xml</file>
+                  <file>src/main/deployments/${project.artifactId}-jboss-beans.xml</file>
                   <type>xml</type>
                   <classifier>jboss-beans</classifier>
                 </artifact>

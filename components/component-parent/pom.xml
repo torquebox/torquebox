@@ -14,6 +14,10 @@
   <name>TorqueBox Component Parent</name>
   <description></description>
 
+  <properties>
+    <common.dir.name>torquebox</common.dir.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.logging</groupId>
@@ -98,7 +102,7 @@
                         <artifactId>${project.artifactId}</artifactId>
                         <version>${project.version}</version>
                         <type>jar</type>
-                        <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/common/lib/</outputDirectory>
+                        <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/common/${common.dir.name}/</outputDirectory>
                         <overWrite>true</overWrite>
                       </artifactItem>
                     </artifactItems>

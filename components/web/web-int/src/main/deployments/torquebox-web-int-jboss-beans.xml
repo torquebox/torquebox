@@ -2,6 +2,8 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
+
   <!-- Rack -->
   
   <bean name="DefaultRackApplicationRecognizer"       class="org.torquebox.rack.deployers.DefaultRackApplicationRecognizer"/>

@@ -38,6 +38,23 @@
       <type>zip</type>
     </dependency>
 
+    <!-- bootstrap -->
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-bootstrap-int</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-bootstrap-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>jboss-beans</classifier>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- base -->
 
     <dependency>
@@ -298,6 +315,25 @@
             </goals>
             <configuration>
               <includeGroupIds>org.torquebox</includeGroupIds>
+              <excludeArtifactIds>torquebox-bootstrap-int</excludeArtifactIds>
+              <includeTypes>jar</includeTypes>
+              <excludeTypes>gem</excludeTypes>
+              <includeScope>runtime</includeScope>
+              <excludeScope>provided</excludeScope>
+              <excludeTransitive>true</excludeTransitive>
+              <outputDirectory>${stage.dir}/jboss/common/torquebox/</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-bootstrap-jars</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeArtifactIds>torquebox-bootstrap-int</includeArtifactIds>
               <includeTypes>jar</includeTypes>
               <excludeTypes>gem</excludeTypes>
               <includeScope>runtime</includeScope>
@@ -314,12 +350,12 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <excludeGroupIds>org.torquebox</excludeGroupIds>
+              <excludeGroupIds>org.torquebox,org.jruby</excludeGroupIds>
               <includeTypes>jar</includeTypes>
               <excludeTypes>gem</excludeTypes>
               <includeScope>compile</includeScope>
               <excludeTransitive>false</excludeTransitive>
-              <outputDirectory>${stage.dir}/jboss/common/lib/</outputDirectory>
+              <outputDirectory>${stage.dir}/jboss/common/torquebox/</outputDirectory>
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>

@@ -2,6 +2,8 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
+  <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
+
   <bean name="JobsYamlParsingDeployer"     class="org.torquebox.jobs.deployers.JobsYamlParsingDeployer"/>
   
   <bean name="RubySchedulerDeployer"       class="org.torquebox.jobs.deployers.RubySchedulerDeployer"/>
