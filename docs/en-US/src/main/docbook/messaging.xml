@@ -496,6 +496,87 @@ queue.publish "Some message"</programlisting></para>
 
       <section>
         <title>Receiving Messages</title>
+
+        <para>Receiving messages from a JMS
+        <classname>Queue</classname> or <classname>Topic</classname>
+        is very similar to publishing messages. To consume a message,
+        simply construct either a <classname>Queue</classname> or
+        <classname>Topic</classname> instance with its name, and then
+        call its receive method. The API's of both Topics and Queues
+        are identical.</para>
+
+        <example>
+          <title>Receive messages</title>
+
+          <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+message = queue.receive
+
+topic = TorqueBox::Messaging::Topic.new('/topics/foo')
+message = topic.receive
+          </programlisting></para>
+        </example>
+
+        <para>The <methodname>receive</methodname> takes an optional
+        second argument containing a hash of options, the keys of
+        which are as follows:</para>
+
+        <table>
+          <title>Publish options</title>
+
+          <tgroup cols="3">
+            <colspec align="left" />
+            <thead>
+              <row>
+                <entry>Option</entry>
+                <entry>Default</entry>
+                <entry>Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><parameter>:decode</parameter></entry>
+                <entry>true</entry>
+                <entry>When <parameter>:decode</parameter> is set to
+                true, <methodname>receive</methodname> returns the
+                same value that was sent via
+                <methodname>publish</methodname>. If
+                <parameter>:decode</parameter> is false, the JMS
+                <ulink
+                url="http://download.oracle.com/javaee/1.3/api/javax/jms/TextMessage.html">TextMessage</ulink>
+                object will be returned instead. This should be true
+                unless you need to access headers or properties of the
+                JMS message.</entry>
+              </row>
+              <row>
+                <entry><parameter>:timeout</parameter></entry>
+                <entry>0</entry>
+                <entry>The amount of time to wait before giving up, in
+                milliseconds. A value of 0 means to wait
+                indefinitely. If <methodname>receive</methodname>
+                times out it will return a <literal>nil</literal>
+                value.</entry>
+              </row>
+              <row>
+                <entry><parameter>:selector</parameter></entry>
+                <entry>nil</entry>
+                <entry>The JMS selector string used to filter messages
+                received by this consumer. For details see the
+                "Message Selectors" section of the <ulink
+                url="http://download.oracle.com/javaee/1.3/api/javax/jms/Message.html">javax.jms.Message</ulink>
+                documentation. A <literal>nil</literal> value means
+                all messages are received.</entry>
+              </row>
+              <row>
+                <entry><parameter>:startup_timeout</parameter></entry>
+                <entry>30000</entry>
+                <entry>The maximum time to wait for the destination to
+                become ready on initial app startup, in
+                milliseconds. On a very slow machine this may need to
+                be increased from the default.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
       </section>
 
       <section>
