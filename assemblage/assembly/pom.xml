@@ -37,96 +37,235 @@
       <artifactId>jboss-as-distribution</artifactId>
       <type>zip</type>
     </dependency>
+
+    <!-- base -->
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-base-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-base-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-base-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-int</artifactId>
-      <classifier>deployer</classifier>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-base-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>jboss-beans</classifier>
+      <scope>compile</scope>
+    </dependency>
+  
+    <!-- rack -->
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-spi</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rack-int</artifactId>
-      <classifier>deployer</classifier>
       <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rack-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>jboss-beans</classifier>
       <scope>provided</scope>
+    </dependency>
+
+    <!-- rails -->
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rails-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rails-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rails-int</artifactId>
-      <classifier>deployer</classifier>
       <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-rails-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>jboss-beans</classifier>
       <scope>provided</scope>
+    </dependency>
+
+    <!-- jobs -->
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-jobs-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-jobs-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-jobs-int</artifactId>
-      <classifier>deployer</classifier>
       <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-jobs-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>jboss-beans</classifier>
       <scope>provided</scope>
+    </dependency>
+
+    <!-- messaging -->
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-metadata</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-core</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-messaging-int</artifactId>
-      <classifier>deployer</classifier>
       <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>jboss-beans</classifier>
       <scope>provided</scope>
     </dependency>
 
+    <!-- other -->
+
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-mc-support</artifactId>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>vfs</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>rake-support</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>rake-support</artifactId>
       <type>template.rb</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>capistrano-support</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>container-foundation</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>naming-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>messaging-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>naming-client</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>messaging-client</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -134,18 +273,10 @@
       <artifactId>builder</artifactId>
       <version>3.0.0</version>
       <type>gem</type>
+      <scope>runtime</scope>
     </dependency>
 
   </dependencies>
-
-  <profiles>
-    <profile>
-      <id>dist</id>
-      <properties>
-        <install.docs>true</install.docs>
-      </properties>
-    </profile>
-  </profiles>
 
   <build>
     <plugins> 
@@ -154,7 +285,7 @@
         <executions>
           <execution>
             <id>stage-jboss</id>
-            <phase>generate-resources</phase>
+            <phase>generate-sources</phase>
             <goals>
               <goal>unpack</goal>
             </goals>
@@ -189,23 +320,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>install-deployers-default-profile</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds> 
-              <includeTypes>jar</includeTypes>
-              <includeClassifiers>deployer</includeClassifiers> 
-              <includeScope>provided</includeScope>
-              <excludeTransitive>true</excludeTransitive>
-              <outputDirectory>${stage.dir}/jboss/server/default/deployers/torquebox.deployer</outputDirectory>
-              <stripVersion>true</stripVersion>
-            </configuration>
-          </execution>
-          <execution>
-            <id>install-deployers-all-profile</id>
+            <id>install-common-jars</id>
             <phase>package</phase>
             <goals>
               <goal>copy-dependencies</goal>
@@ -213,17 +328,50 @@
             <configuration>
               <includeGroupIds>org.torquebox</includeGroupIds>
               <includeTypes>jar</includeTypes>
-              <includeClassifiers>deployer</includeClassifiers>
-              <includeScope>provided</includeScope>
+              <excludeTypes>gem</excludeTypes>
+              <includeScope>runtime</includeScope>
+              <excludeScope>provided</excludeScope>
               <excludeTransitive>true</excludeTransitive>
-              <outputDirectory>${stage.dir}/jboss/server/all/deployers/torquebox.deployer</outputDirectory>
+              <outputDirectory>${stage.dir}/jboss/common/lib/</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-common-dependency-jars</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <excludeGroupIds>org.torquebox</excludeGroupIds>
+              <includeTypes>jar</includeTypes>
+              <excludeTypes>gem</excludeTypes>
+              <includeScope>compile</includeScope>
+              <excludeTransitive>false</excludeTransitive>
+              <outputDirectory>${stage.dir}/jboss/common/lib/</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>install-deployments-default-profile</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeTypes>xml</includeTypes>
+              <includeClassifiers>jboss-beans</includeClassifiers>
+              <excludeTransitive>false</excludeTransitive>
+              <outputDirectory>${stage.dir}/jboss/server/default/deployers/torquebox.deployer</outputDirectory>
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
 
           <execution>
             <id>install-rails-template</id>
-            <phase>generate-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -266,19 +414,6 @@
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>rename-packages</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <move file="${stage.dir}/jboss-${version.jbossas}" tofile="${stage.dir}/jboss" failonerror="false"/>
-                <move file="${stage.dir}/jruby-${version.jruby}" tofile="${stage.dir}/jruby" failonerror="false"/>
-              </tasks>
-            </configuration>
-          </execution>
-          <execution>
             <id>remove-gratuitous-JBOSS_CONFs</id>
             <phase>process-resources</phase>
             <goals>
@@ -307,7 +442,7 @@
           </execution>
           <execution>
             <id>chmod-bin</id>
-            <phase>process-resources</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>run</goal>
             </goals>
@@ -383,7 +518,7 @@
         <executions>
           <execution>
             <id>install-jruby-home-gems</id>
-            <phase>generate-resources</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>initialize</goal>
             </goals>
@@ -403,6 +538,22 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>jruby-maven-plugin</artifactId>
         <executions>
+          <execution>
+            <id>rename-packages</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                require 'fileutils'
+                puts "Renaming JBoss installation dir"
+                FileUtils.mv "${stage.dir}/jboss-${version.jbossas}", "${stage.dir}/jboss"
+                puts "Renaming JRuby installation"
+                FileUtils.mv "${stage.dir}/jruby-${version.jruby}",   "${stage.dir}/jruby"
+              </script>
+            </configuration>
+          </execution>
           <execution>
             <id>install-builder</id>
             <phase>package</phase>

@@ -37,6 +37,17 @@
 
   <build> 
     <plugins> 
+<!--
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-common-jar</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+-->
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
@@ -58,5 +69,47 @@
       </plugin>
     </plugins> 
   </build> 
+
+  <profiles>
+    <profile>
+      <id>assemblage-present</id>
+      <activation>
+        <file>
+          <exists>./../../../assemblage/assembly/target/stage/</exists>
+        </file>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>install-common-jar</id>
+                  <inherited>true</inherited>
+                  <phase>install</phase>
+                  <goals>
+                    <goal>copy</goal>
+                  </goals>
+                  <configuration>
+                    <artifactItems>
+                      <artifactItem>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <version>${project.version}</version>
+                        <type>jar</type>
+                        <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/common/lib/</outputDirectory>
+                        <overWrite>true</overWrite>
+                      </artifactItem>
+                    </artifactItems>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
+    </profile>
+  </profiles>
 
 </project>

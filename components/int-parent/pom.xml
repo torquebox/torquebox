@@ -23,35 +23,30 @@
   </dependencies>
   
   <build> 
-    <pluginManagement> 
-      <plugins> 
-        <plugin> 
-          <artifactId>maven-assembly-plugin</artifactId> 
-          <dependencies> 
-            <dependency> 
-              <groupId>org.torquebox</groupId> 
-              <artifactId>torquebox-deployer-support</artifactId> 
-              <version>${project.version}</version>
-            </dependency> 
-          </dependencies> 
-          <executions>
-            <execution>
-              <id>assemble-deployer</id>
-              <inherited>true</inherited>
-              <phase>package</phase>
-              <goals>
-                <goal>single</goal>
-              </goals>
-              <configuration> 
-                <descriptorRefs> 
-                  <descriptorRef>deployer</descriptorRef> 
-                </descriptorRefs>
-              </configuration> 
-            </execution>
-          </executions>
-        </plugin> 
-      </plugins> 
-    </pluginManagement> 
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-jboss-beans-artifact</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>src/main/deployments/jboss-beans.xml</file>
+                  <type>xml</type>
+                  <classifier>jboss-beans</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build> 
 
   <profiles>
@@ -88,7 +83,7 @@
               <artifactId>maven-dependency-plugin</artifactId>
               <executions>
                 <execution>
-                  <id>install-deployer</id>
+                  <id>install-jboss-beans</id>
                   <phase>install</phase>
                   <inherited>true</inherited>
                   <goals>
@@ -99,9 +94,9 @@
                       <artifactItem>
                         <groupId>${project.groupId}</groupId>
                         <artifactId>${project.artifactId}</artifactId>
-                        <classifier>deployer</classifier>
+                        <classifier>jboss-beans</classifier>
                         <version>${project.version}</version>
-                        <type>jar</type>
+                        <type>xml</type>
                         <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/server/default/deployers/torquebox.deployer/</outputDirectory>
                         <overWrite>true</overWrite>
                       </artifactItem>
