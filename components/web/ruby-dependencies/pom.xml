@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-parent</artifactId>
+    <version>1.0.0.CR1-SNAPSHOT</version>
+    <relativePath>../../../parent/</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-web-ruby-dependencies</artifactId>
+  <packaging>pom</packaging>
+  <name>TorqueBox Web Ruby Dependencies</name>
+  <description></description>
+
+
+  <profiles>
+    <profile>
+      <activation>
+        <file>
+          <missing>./../target/rubygems/bin/rackup</missing>
+        </file>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>jruby-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install-rack</id>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <args>-S gem install rack -v ${version.rack} --no-rdoc --no-ri</args>
+                  <gemHome>./../target/rubygems</gemHome>
+                  <gemPath>./../target/rubygems</gemPath>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-rails2</id>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <args>-S gem install rails -v ${version.rails2} --no-rdoc --no-ri</args>
+                  <gemHome>./../target/rubygems</gemHome>
+                  <gemPath>./../target/rubygems</gemPath>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-rails3</id>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <args>-S gem install rails -v ${version.rails3} --no-rdoc --no-ri</args>
+                  <gemHome>./../target/rubygems</gemHome>
+                  <gemPath>./../target/rubygems</gemPath>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+
+</project>

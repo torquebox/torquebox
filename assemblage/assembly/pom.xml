@@ -73,64 +73,35 @@
       <scope>compile</scope>
     </dependency>
   
-    <!-- rack -->
+    <!-- web -->
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-metadata</artifactId>
+      <artifactId>torquebox-web-metadata</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-spi</artifactId>
+      <artifactId>torquebox-web-spi</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-core</artifactId>
+      <artifactId>torquebox-web-core</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-int</artifactId>
+      <artifactId>torquebox-web-int</artifactId>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-int</artifactId>
-      <version>${project.version}</version>
-      <type>xml</type>
-      <classifier>jboss-beans</classifier>
-      <scope>provided</scope>
-    </dependency>
-
-    <!-- rails -->
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rails-metadata</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rails-core</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rails-int</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rails-int</artifactId>
+      <artifactId>torquebox-web-int</artifactId>
       <version>${project.version}</version>
       <type>xml</type>
       <classifier>jboss-beans</classifier>
@@ -269,7 +240,7 @@
     </dependency>
 
     <dependency>
-      <groupId>rubygem</groupId>
+      <groupId>rubygems</groupId>
       <artifactId>builder</artifactId>
       <version>3.0.0</version>
       <type>gem</type>

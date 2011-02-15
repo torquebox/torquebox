@@ -23,10 +23,10 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 /**
  * <pre>
@@ -41,17 +41,17 @@ public class BackgroundableDeployer extends AbstractDeployer {
 
     public BackgroundableDeployer() {
         setStage( DeploymentStages.DESCRIBE );
-        setInput( RackApplicationMetaData.class );
+        setInput( RubyApplicationMetaData.class );
         addOutput( MessageProcessorMetaData.class );
         addOutput( QueueMetaData.class );
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
+        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         QueueMetaData queue = new QueueMetaData();
-        String queueName = "/queues/torquebox/" + rackMetaData.getRackApplicationName() + "/backgroundable";
+        String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + "/backgroundable";
         queue.setName( queueName );
         AttachmentUtils.multipleAttach( unit, queue, queue.getName() );
 

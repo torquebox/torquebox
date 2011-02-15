@@ -54,6 +54,7 @@ public class EnvironmentYamlParsingDeployer extends AbstractSplitYamlParsingDepl
         if (appMetaData == null) {
             log.debug( "Configuring ruby environment: " + unit );
             appMetaData = new RubyApplicationMetaData();
+            appMetaData.setApplicationName( unit.getSimpleName() );
             unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
         } else {
             log.debug( "Configuring pre-existing ruby environment: " + unit + "\n  " + appMetaData );

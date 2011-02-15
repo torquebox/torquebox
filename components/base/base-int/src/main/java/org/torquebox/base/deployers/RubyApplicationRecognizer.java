@@ -56,6 +56,8 @@ public class RubyApplicationRecognizer extends AbstractRecognizer {
         } else {
             log.debug( "Ruby application already initialized: " + unit );
         }
+        
+        rubyAppMetaData.setApplicationName( unit.getSimpleName() );
     }
 
     static boolean isRubyApplication(VirtualFile file) {

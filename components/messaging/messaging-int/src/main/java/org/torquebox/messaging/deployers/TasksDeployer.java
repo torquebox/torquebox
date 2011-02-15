@@ -25,12 +25,12 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.messaging.metadata.TaskMetaData;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
 
 /**
  * <pre>
@@ -46,6 +46,7 @@ public class TasksDeployer extends AbstractDeployer {
     public TasksDeployer() {
         setStage( DeploymentStages.DESCRIBE );
         setAllInputs( true );
+        addInput( RubyApplicationMetaData.class );
         addInput( TaskMetaData.class );
         addOutput( MessageProcessorMetaData.class );
         addOutput( QueueMetaData.class );
@@ -62,7 +63,7 @@ public class TasksDeployer extends AbstractDeployer {
     }
 
     protected void deploy(DeploymentUnit unit, TaskMetaData task) throws DeploymentException {
-        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
+        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         String baseQueueName = task.getRubyClassName();
         if (baseQueueName.endsWith( "Task" )) {
             baseQueueName = baseQueueName.substring( 0, baseQueueName.length() - 4 );
@@ -70,7 +71,7 @@ public class TasksDeployer extends AbstractDeployer {
         baseQueueName = StringUtils.underscore( baseQueueName );
 
         QueueMetaData queue = new QueueMetaData();
-        queue.setName( "/queues/torquebox/" + rackMetaData.getRackApplicationName() + "/tasks/" + baseQueueName );
+        queue.setName( "/queues/torquebox/" + appMetaData.getApplicationName() + "/tasks/" + baseQueueName );
         AttachmentUtils.multipleAttach( unit, queue, queue.getName() );
 
         MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();

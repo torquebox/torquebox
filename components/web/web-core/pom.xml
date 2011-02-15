@@ -2,40 +2,33 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-int-parent</artifactId>
+    <artifactId>torquebox-component-parent</artifactId>
     <version>1.0.0.CR1-SNAPSHOT</version>
-    <relativePath>../../int-parent/</relativePath>
+    <relativePath>../../component-parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-messaging-int</artifactId>
+  <artifactId>torquebox-web-core</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Messaging Integration</name>
+  <name>TorqueBox Web Core</name>
   <description></description>
 
   <dependencies>
     <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-mc-support</artifactId>
+      <artifactId>torquebox-base-metadata</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-core</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-metadata</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-metadata</artifactId>
+      <artifactId>torquebox-base-spi</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -47,31 +40,52 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-int</artifactId>
+      <artifactId>torquebox-web-spi</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
-<!--
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-rack-int</artifactId>
+      <artifactId>torquebox-web-metadata</artifactId>
       <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.servlet</groupId>
+      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
--->
+    <dependency>
+      <groupId>org.mobicents.servlet.sip</groupId>
+      <artifactId>sip-servlets-spec</artifactId>
+      <version>${mobicents.spec.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.web</groupId>
+      <artifactId>jbossweb</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.kernel</groupId>
       <artifactId>jboss-kernel</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-client-spi</artifactId>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-aop-mc-int</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs-spi</artifactId>
+      <groupId>org.torquebox</groupId>
+      <artifactId>vfs</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -87,29 +101,51 @@
 
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-ruby-test-support</artifactId>
+      <artifactId>torquebox-test-support</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
-      <type>gem</type>
+      <artifactId>torquebox-ruby-test-support</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rspec</artifactId>
-      <type>gem</type>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
-    <plugins>
+    <resources> 
+      <resource> 
+        <directory>src/main/resources</directory> 
+      </resource> 
+      <resource> 
+        <directory>src/main/java</directory> 
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.rb</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource> 
+      <resource> 
+        <directory>src/main/ruby</directory> 
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources> 
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+
+    <plugins> 
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
@@ -139,46 +175,8 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>assemble-deployer</id>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
-          <execution>
-            <id>install-deployer</id>
-            <phase>install</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install-dependency-gems</id>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>rspec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>run-specs-gems</id>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install-jboss-beans</id>
-          </execution>
           <execution>
             <id>install-common-jar</id>
           </execution>
