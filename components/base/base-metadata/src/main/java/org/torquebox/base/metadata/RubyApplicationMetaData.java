@@ -19,11 +19,10 @@
 
 package org.torquebox.base.metadata;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+
+import java.util.Map;
 
 public class RubyApplicationMetaData {
 
@@ -33,6 +32,7 @@ public class RubyApplicationMetaData {
     private boolean developmentMode = false;
     private Map<String, String> environment;
     private boolean archive = false;
+    private String authenticationStrategy;
 
     public RubyApplicationMetaData() {
     }
@@ -99,6 +99,14 @@ public class RubyApplicationMetaData {
 
     public String getEnvironmentName() {
         return this.environmentName;
+    }
+
+    public String getAuthenticationStrategy() {
+        return this.authenticationStrategy;
+    }
+
+    public void setAuthenticationStrategy(String authenticationStrategy) {
+        this.authenticationStrategy = authenticationStrategy;
     }
 
     public void setEnvironmentVariables(Map<String, String> environment) {
