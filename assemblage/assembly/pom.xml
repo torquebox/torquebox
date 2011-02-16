@@ -360,25 +360,6 @@
             </configuration>
           </execution>
 
-<!--
-          <execution>
-            <id>install-deployments-jbossweb-standalone-profile</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
-              <includeArtifactIds>torquebox-bootstrap-int,torquebox-base-int,torquebox-web-int</includeArtifactIds>
-              <includeTypes>xml</includeTypes>
-              <includeClassifiers>jboss-beans</includeClassifiers>
-              <excludeTransitive>false</excludeTransitive>
-              <outputDirectory>${stage.dir}/jboss/server/jbossweb-standalone/deployers/torquebox.deployer</outputDirectory>
-              <stripVersion>true</stripVersion>
-            </configuration>
-          </execution>
--->
-
           <execution>
             <id>install-deployments-default-profile</id>
             <phase>package</phase>
