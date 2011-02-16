@@ -37,21 +37,31 @@ import org.torquebox.messaging.metadata.TaskMetaData;
 public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
 
     public TasksScanningDeployer() {
-
+        addInput( TaskMetaData.class );
     }
 
     @Override
     protected void deploy(VFSDeploymentUnit unit, VirtualFile file, String relativePath) throws DeploymentException {
         log.info( "deploying " + relativePath );
 
-        TaskMetaData taskMetaData = new TaskMetaData();
+        String rubyClassName = StringUtils.pathToClassName( relativePath, ".rb" );
+        TaskMetaData taskMetaData = getTaskMetaData(unit, rubyClassName);
 
         String simpleLocation = getPath() + relativePath.substring( 0, relativePath.length() - 3 );
 
         taskMetaData.setLocation( simpleLocation );
-        taskMetaData.setRubyClassName( StringUtils.pathToClassName( relativePath, ".rb" ) );
+        taskMetaData.setRubyClassName( rubyClassName );
 
         unit.addAttachment( TaskMetaData.class.getName() + "$" + simpleLocation, taskMetaData, TaskMetaData.class );
     }
 
+    protected TaskMetaData getTaskMetaData(VFSDeploymentUnit unit, String rubyClassName) {
+        for (TaskMetaData each : unit.getAllMetaData( TaskMetaData.class )) {
+            if (rubyClassName.equals( each.getRubyClassName() )) {
+                return each;
+            }
+        }
+        
+        return new TaskMetaData();
+    }
 }
