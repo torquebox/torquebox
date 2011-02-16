@@ -29,6 +29,7 @@ public class RackApplicationDefaultsDeployer extends AbstractDeployer {
 
     public static final String DEFAULT_HOST = "localhost";
     public static final String DEFAULT_CONTEXT_PATH = "/";
+    public static final String DEFAULT_STATIC_PATH_PREFIX = "public/";
 
     public RackApplicationDefaultsDeployer() {
         setStage( DeploymentStages.PRE_REAL );
@@ -44,6 +45,10 @@ public class RackApplicationDefaultsDeployer extends AbstractDeployer {
 
         if ((metadata.getContextPath() == null) || (metadata.getContextPath().trim().equals( "" ))) {
             metadata.setContextPath( DEFAULT_CONTEXT_PATH );
+        }
+        
+        if ((metadata.getStaticPathPrefix() == null) || (metadata.getStaticPathPrefix().trim().equals( "" ))) {
+            metadata.setStaticPathPrefix( DEFAULT_STATIC_PATH_PREFIX );
         }
     }
 }
