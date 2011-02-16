@@ -38,6 +38,7 @@ public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
 
     public TasksScanningDeployer() {
         addInput( TaskMetaData.class );
+        addOutput( TaskMetaData.class );
     }
 
     @Override

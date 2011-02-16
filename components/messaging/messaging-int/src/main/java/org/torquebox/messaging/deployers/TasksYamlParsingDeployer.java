@@ -45,6 +45,7 @@ public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public TasksYamlParsingDeployer() {
         addInput( TaskMetaData.class );
+        addOutput( TaskMetaData.class );
         setSectionName( "tasks" );
     }
 
