@@ -19,6 +19,8 @@
 
 package org.torquebox.messaging.deployers;
 
+import java.util.Set;
+
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
@@ -41,26 +43,50 @@ public class BackgroundableDeployer extends AbstractDeployer {
 
     public BackgroundableDeployer() {
         setStage( DeploymentStages.DESCRIBE );
+
         setInput( RubyApplicationMetaData.class );
+        addInput( MessageProcessorMetaData.class );
+
         addOutput( MessageProcessorMetaData.class );
         addOutput( QueueMetaData.class );
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );     
+        MessageProcessorMetaData processorMetaData = getMessageProcessorMetaData( unit );
+        String appName = appMetaData.getApplicationName();
 
-        QueueMetaData queue = new QueueMetaData();
-        String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + "/backgroundable";
-        queue.setName( queueName );
-        AttachmentUtils.multipleAttach( unit, queue, queue.getName() );
+        if (processorMetaData.getConcurrency() > 0) {
+            log.info( "Setting up Backgroundable queue and message processor for " + 
+                      appName + " with a concurrency of " + 
+                      processorMetaData.getConcurrency().toString() );
+            QueueMetaData queue = new QueueMetaData();
+            String queueName = "/queues/torquebox/" + appName + "/backgroundable";
+            queue.setName( queueName );
+            AttachmentUtils.multipleAttach( unit, queue, queue.getName() );
 
-        // TODO: allow for configurable concurrency
-        MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
-        processorMetaData.setDestinationName( queue.getName() );
-        processorMetaData.setRubyClassName( "TorqueBox::Messaging::BackgroundableProcessor" );
-        processorMetaData.setRubyRequirePath( "torquebox/messaging/backgroundable_processor" );
-        AttachmentUtils.multipleAttach( unit, processorMetaData, processorMetaData.getName() );
+
+            processorMetaData.setDestinationName( queue.getName() );
+            processorMetaData.setRubyClassName( "TorqueBox::Messaging::BackgroundableProcessor" );
+            processorMetaData.setRubyRequirePath( "torquebox/messaging/backgroundable_processor" );
+            AttachmentUtils.multipleAttach( unit, processorMetaData, processorMetaData.getName() );
+        } else {
+            log.warn( "Backgroundable concurrency is 0, disabling queue and message processor for " + appName );
+            unit.removeAttachment( MessageProcessorMetaData.class.getName() + "$" + processorMetaData.getName(), 
+                                   MessageProcessorMetaData.class );
+        }
     }
 
+    protected MessageProcessorMetaData getMessageProcessorMetaData(DeploymentUnit unit) {
+        Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData( MessageProcessorMetaData.class );
+
+        for (MessageProcessorMetaData each : allMetaData) {
+            if ("tasks".equals( each.getDestinationName() ) && 
+                "Backgroundable".equals( each.getRubyClassName() )) {
+                return each;
+            }
+        }
+        return new MessageProcessorMetaData();
+    }
 }
