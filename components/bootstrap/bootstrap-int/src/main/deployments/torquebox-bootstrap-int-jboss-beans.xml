@@ -2,8 +2,10 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
-  <bean name="TorqueBoxClassLoaderBootstrapper"          class="org.torquebox.bootstrap.ClassLoaderBootstrapper">
-    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+  <bean name="TorqueBoxBootstrap" class="org.torquebox.bootstrap.Bootstrap">
+    <property name="kernelController">
+      <inject bean="jboss.kernel:service=Kernel" property="controller"/>
+    </property>
   </bean>
 
 </deployment>

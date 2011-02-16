@@ -140,7 +140,7 @@
                 end
 
                 def build_number()
-                  ENV['BUILD_NUMBER'] || '(unknown)'
+                  ENV['BUILD_NUMBER'] || ''
                 end
 
                 File.open( "${project.build.directory}/classes/org/torquebox/torquebox.properties", 'a' ) do |f|
