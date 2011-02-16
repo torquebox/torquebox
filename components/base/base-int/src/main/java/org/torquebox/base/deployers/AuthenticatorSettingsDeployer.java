@@ -23,24 +23,46 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.kernel.Kernel;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 
-public class AuthenticatorDeployer extends AbstractDeployer
+public class AuthenticatorSettingsDeployer extends AbstractDeployer
 {
 
     private static final String DEFAULT_AUTHENTICATION_STRATEGY = "file";
+    private Kernel kernel;
 
-    public AuthenticatorDeployer() {
+    public AuthenticatorSettingsDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
         addOutput(RubyApplicationMetaData.class);
     }
 
+    public Kernel getKernel() {
+        return this.kernel;
+    }
+
+    public void setKernel(Kernel kernel) {
+        this.kernel = kernel;
+    }
+
+    @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
 
         if (rubyAppMetaData.getAuthenticationStrategy() == null || rubyAppMetaData.getAuthenticationStrategy().trim().equals("")) {
             rubyAppMetaData.setAuthenticationStrategy(DEFAULT_AUTHENTICATION_STRATEGY);
         }
+//        String beanName = AttachmentUtils.beanName(unit, Authenticator.class);
+//        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, Authenticator.class.getName());
+
+//        KernelController controller = this.kernel.getController();
+//
+//        try {
+//            controller.install(builder.getBeanMetaData(), factory);
+//        }
+//        catch (Throwable e) {
+//            throw new DeploymentException(e);
+//        }
     }
 }
