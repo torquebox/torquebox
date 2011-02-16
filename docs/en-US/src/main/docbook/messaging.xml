@@ -517,11 +517,11 @@ message = topic.receive
         </example>
 
         <para>The <methodname>receive</methodname> takes an optional
-        second argument containing a hash of options, the keys of
-        which are as follows:</para>
+        argument containing a hash of options, the keys of which are
+        as follows:</para>
 
         <table>
-          <title>Publish options</title>
+          <title>Receive options</title>
 
           <tgroup cols="3">
             <colspec align="left" />
@@ -581,6 +581,42 @@ message = topic.receive
 
       <section>
         <title>Synchronous Messaging</title>
+
+        <para>The <methodname>publish</methodname> and
+        <methodname>receive</methodname> methods and our higher-level
+        messaging abstractions are designed for asynchronous
+        communication and are recommended for most uses. However, if
+        you do need to send a message and wait for a response,
+        TorqueBox also provides a synchronous messaging
+        abstraction.</para>
+
+        <example>
+          <title>Synchronous messaging</title>
+
+          <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+Thread.new {
+  queue.receive_and_publish(:timeout => 5000) { |message| message.upcase }
+}
+message = queue.publish_and_receive "ping", :timeout => 5000
+# message equals "PING"
+          </programlisting></para>
+        </example>
+
+        <para>You send a message with the
+        <methodname>publish_and_receive</methodname> method which
+        blocks until the <parameter>:timeout</parameter> elapses or a
+        response is received. This method has a default
+        <parameter>:timeout</parameter> of 10 seconds since you'll
+        rarely want to wait indefinitely for a response. In a separate
+        thread (likely TorqueBox Services - <xref linkend="services"
+        />), you consume messages and publish responses with the
+        <methodname>receive_and_publish</methodname> method. The
+        return value of the block passed to this method is the message
+        response. The options allowed in both these methods are a
+        union of those from <methodname>publish</methodname> and
+        <methodname>receive</methodname>. Synchronous messaging is
+        only available with queues, not topics.</para>
+
       </section>
     </section>
 
