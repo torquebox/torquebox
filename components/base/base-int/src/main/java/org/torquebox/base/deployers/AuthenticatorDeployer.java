@@ -19,50 +19,40 @@
 
 package org.torquebox.base.deployers;
 
+import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
+import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.beans.metadata.spi.ValueMetaData;
+import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.kernel.Kernel;
+import org.torquebox.auth.Authenticator;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.mc.AttachmentUtils;
 
-public class AuthenticatorSettingsDeployer extends AbstractDeployer
+public class AuthenticatorDeployer extends AbstractDeployer
 {
-
     private static final String DEFAULT_AUTHENTICATION_STRATEGY = "file";
-    private Kernel kernel;
 
-    public AuthenticatorSettingsDeployer() {
+    public AuthenticatorDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
-        addOutput(RubyApplicationMetaData.class);
-    }
-
-    public Kernel getKernel() {
-        return this.kernel;
-    }
-
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
+        addOutput(BeanMetaData.class);
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
+        String beanName = AttachmentUtils.beanName(unit, Authenticator.class);
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, Authenticator.class.getName());
+        ValueMetaData kernelControllerInject = builder.createInject("jboss.kernel:service=Kernel", "kernel");
+        builder.addPropertyMetaData("kernel", kernelControllerInject);
+
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-
-        if (rubyAppMetaData.getAuthenticationStrategy() == null || rubyAppMetaData.getAuthenticationStrategy().trim().equals("")) {
-            rubyAppMetaData.setAuthenticationStrategy(DEFAULT_AUTHENTICATION_STRATEGY);
+        String authStrategy = rubyAppMetaData.getAuthenticationStrategy();
+        if (authStrategy == null || authStrategy.trim().equals("")) {
+            authStrategy = DEFAULT_AUTHENTICATION_STRATEGY;
         }
-//        String beanName = AttachmentUtils.beanName(unit, Authenticator.class);
-//        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, Authenticator.class.getName());
-
-//        KernelController controller = this.kernel.getController();
-//
-//        try {
-//            controller.install(builder.getBeanMetaData(), factory);
-//        }
-//        catch (Throwable e) {
-//            throw new DeploymentException(e);
-//        }
+        builder.addPropertyMetaData("authStrategy", authStrategy);
     }
 }
