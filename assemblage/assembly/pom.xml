@@ -360,6 +360,7 @@
             </configuration>
           </execution>
 
+<!--
           <execution>
             <id>install-deployments-jbossweb-standalone-profile</id>
             <phase>package</phase>
@@ -376,6 +377,7 @@
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
+-->
 
           <execution>
             <id>install-deployments-default-profile</id>
@@ -463,9 +465,7 @@
               <tasks>
                 <delete dir="${stage.dir}/jboss/server/minimal/" failonerror="false"/>
                 <delete dir="${stage.dir}/jboss/server/standard/" failonerror="false"/>
-<!--
                 <delete dir="${stage.dir}/jboss/server/jbossweb-standalone/" failonerror="false"/>
--->
               </tasks>
             </configuration>
           </execution>
