@@ -34,6 +34,11 @@
       <artifactId>jboss-classloading-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-core-spi</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build> 
