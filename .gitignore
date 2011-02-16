@@ -13,6 +13,7 @@ tmp
 .classpath
 .settings
 .project
+.idea
 *~
 package-cache
 release.properties
