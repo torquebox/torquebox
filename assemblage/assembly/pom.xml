@@ -590,9 +590,15 @@
               <script>
                 require 'fileutils'
                 puts "Renaming JBoss installation dir"
-                FileUtils.mv "${stage.dir}/jboss-${version.jbossas}", "${stage.dir}/jboss" if ( File.exists?( "${stage.dir}/jboss-${version.jbossas}" ) )
+                if ( File.exists?( "${stage.dir}/jboss-${version.jbossas}" ) )
+                  FileUtils.rm_rf "${stage.dir}/jboss"
+                  FileUtils.mv "${stage.dir}/jboss-${version.jbossas}", "${stage.dir}/jboss" 
+                end
                 puts "Renaming JRuby installation"
-                FileUtils.mv "${stage.dir}/jruby-${version.jruby}",   "${stage.dir}/jruby" if ( File.exists?( "${stage.dir}/jruby-${version.jruby}" ) )
+                if ( File.exists?( "${stage.dir}/jruby-${version.jruby}" ) )
+                  FileUtils.rm_rf "${stage.dir}/jruby"
+                  FileUtils.mv "${stage.dir}/jruby-${version.jruby}",   "${stage.dir}/jruby" 
+                end
               </script>
             </configuration>
           </execution>
