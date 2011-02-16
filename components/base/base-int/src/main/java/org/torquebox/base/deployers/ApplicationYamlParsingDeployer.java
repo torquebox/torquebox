@@ -54,6 +54,7 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
         if (appMetaData == null) {
             log.debug( "Configuring ruby application: " + unit );
             appMetaData = new RubyApplicationMetaData();
+            appMetaData.setApplicationName( unit.getSimpleName() );
             unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
         } else {
             log.debug( "Configuring pre-existing ruby application: " + unit + "\n  " + appMetaData );

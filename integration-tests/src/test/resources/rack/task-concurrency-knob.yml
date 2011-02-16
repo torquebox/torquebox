@@ -1,0 +1,6 @@
+---
+application:
+  root: ${basedir}/apps/rack/task-concurrency
+  env: development
+web:
+  context: /task-concurrency

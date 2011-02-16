@@ -70,19 +70,15 @@
     <module>int-parent</module>
 
     <module>mc-support</module>
+    <module>vfs</module>
 
+    <module>bootstrap</module>
     <module>base</module>
-<!--
-    <module>common</module>
-    <module>interp</module>
--->
 
-    <module>rack</module>
-    <module>rails</module>
-
+    <module>web</module>
     <module>jobs</module>
     <module>messaging/</module>
-    <module>vfs</module>
+
 
   </modules>
 

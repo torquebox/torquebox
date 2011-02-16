@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<deployment xmlns="urn:jboss:bean-deployer:2.0">
+
+  <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
+  
+  <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
+  
+  <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
+  
+  <bean name="KnobStructure"                     class="org.torquebox.base.deployers.KnobStructure"/>
+  <bean name="RubyApplicationRecognizer"         class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>
+  
+  <bean name="AppKnobYamlParsingDeployer"        class="org.torquebox.base.deployers.AppKnobYamlParsingDeployer"/>
+  <bean name="TorqueBoxYamlParsingDeployer"      class="org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer"/>
+  <bean name="MergedTorqueBoxMetaDataDeployer"   class="org.torquebox.base.deployers.MergedTorqueBoxMetaDataDeployer"/>
+  
+  <bean name="ApplicationYamlParsingDeployer"    class="org.torquebox.base.deployers.ApplicationYamlParsingDeployer"/>
+  <bean name="EnvironmentYamlParsingDeployer"    class="org.torquebox.base.deployers.EnvironmentYamlParsingDeployer"/>
+  
+  <bean name="RubyApplicationExploder"           class="org.torquebox.base.deployers.RubyApplicationExploder"/>
+  <bean name="ArchiveDirectoryMounter"           class="org.torquebox.base.deployers.ArchiveDirectoryMounter"/>
+  
+  <bean name="RubyApplicationDefaultsDeployer"   class="org.torquebox.base.deployers.RubyApplicationDefaultsDeployer"/>
+  
+  <bean name="DeploymentNotifier"                class="org.torquebox.base.deployers.DeploymentNotifier"/>
+
+
+  <bean name="BaseRubyRuntimeDeployer"           class="org.torquebox.interp.deployers.BaseRubyRuntimeDeployer"/>
+  
+  <bean name="RubyRuntimeFactoryDeployer"        class="org.torquebox.interp.deployers.RubyRuntimeFactoryDeployer">
+    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+  </bean>
+
+  <bean name="PoolingYamlParsingDeployer"        class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
+  <bean name="RuntimePoolDeployer"               class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
+
+  <bean name="ServicesYamlParsingDeployer"       class="org.torquebox.services.deployers.ServicesYamlParsingDeployer"/>
+  <bean name="ServicesRuntimePoolDeployer"       class="org.torquebox.services.deployers.ServicesRuntimePoolDeployer"/>
+  <bean name="ServicesDeployer"                  class="org.torquebox.services.deployers.ServicesDeployer"/>
+
+</deployment>

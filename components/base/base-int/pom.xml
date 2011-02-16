@@ -88,24 +88,19 @@
   </dependencies>
 
   <build> 
-    <plugins> 
-      <plugin> 
-        <artifactId>maven-assembly-plugin</artifactId> 
-        <executions>
-          <execution>
-            <id>assemble-deployer</id>
-          </execution>
-        </executions>
-      </plugin> 
+    <plugins>
       <plugin>
-        <artifactId>maven-dependency-plugin</artifactId> 
+        <artifactId>maven-dependency-plugin</artifactId>
         <executions>
           <execution>
-            <id>install-deployer</id>
+            <id>install-common-jar</id>
+          </execution>
+          <execution>
+            <id>install-jboss-beans</id>
           </execution>
         </executions>
       </plugin>
-    </plugins> 
+    </plugins>
   </build> 
 
 </project>

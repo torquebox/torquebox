@@ -1,0 +1,9 @@
+queues:
+  /queues/backchannel:
+
+messaging:
+  tasks: 
+    Backgroundable:
+      concurrency: 2
+    SampleTask:
+      concurrency: 2

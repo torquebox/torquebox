@@ -55,14 +55,26 @@ public class TorqueBox {
     }
 
     protected String getBuildNumber() {
-        return this.properties.getProperty( "build.number", "(unknown)" );
+        return this.properties.getProperty( "build.number" );
+    }
+    
+    protected String getBuildUser() {
+        return this.properties.getProperty( "build.user" );
     }
 
     public void start() {
         log.info( "Welcome to TorqueBox AS - http://torquebox.org/" );
-        log.info( "  version.... " + getVersion() );
-        log.info( "  build...... " + getBuildNumber() );
-        log.info( "  revision... " + getRevision() );
+        log.info( "  version...... " + getVersion() );
+        String buildNo = getBuildNumber();
+        if (buildNo != null && ! buildNo.trim().equals( "" )) {
+            log.info( "  build........ " + getBuildNumber() );
+        } else if ( getVersion().contains(  "SNAPSHOT"  ) ) {
+            log.info( "  build........ development (" + getBuildUser() + ")" );
+        } else {
+            log.info( "  build........ official" );
+        }
+        log.info( "  revision..... " + getRevision() );
+        log.info( "  jruby.home... " + System.getProperty( "jruby.home" ) );
     }
 
     public void stop() {

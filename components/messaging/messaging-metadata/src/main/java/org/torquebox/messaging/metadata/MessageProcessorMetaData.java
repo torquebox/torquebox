@@ -30,12 +30,28 @@ public class MessageProcessorMetaData {
     private String messageSelector;
     private int concurrency = 1;
     private Map rubyConfig = Collections.EMPTY_MAP;
-
+    
     public MessageProcessorMetaData() {
     }
 
     public String getName() {
         return (this.destinationName + "." + this.rubyClassName);
+    }
+
+    public boolean isDeployable() {
+        return (this.destinationName != null && 
+                this.destinationName.startsWith("/") && 
+                this.concurrency > 0);
+    }
+
+    public String getNotDeployableReason() {
+        if (this.destinationName == null)
+            return "the queue/topic name is blank";
+        if (!this.destinationName.startsWith("/")) 
+            return "the queue/topic name is invalid";
+        if (this.concurrency == 0)
+            return "the concurrency is 0";
+        return "";
     }
 
     public void setRubyClassName(String rubyClassName, String rubyRequirePath) {
@@ -85,11 +101,12 @@ public class MessageProcessorMetaData {
     }
 
     public void setConcurrency(Integer concurrency) {
-        if (concurrency != null && concurrency > 0)
+        if (concurrency != null && concurrency >= 0)
             this.concurrency = concurrency;
     }
 
     public Integer getConcurrency() {
         return this.concurrency;
     }
+
 }

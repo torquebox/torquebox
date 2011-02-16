@@ -51,12 +51,14 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+<!--
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-rack-int</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+-->
     <dependency>
       <groupId>org.jboss.kernel</groupId>
       <artifactId>jboss-kernel</artifactId>
@@ -168,6 +170,17 @@
         <executions>
           <execution>
             <id>run-specs-gems</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-jboss-beans</id>
+          </execution>
+          <execution>
+            <id>install-common-jar</id>
           </execution>
         </executions>
       </plugin>

@@ -27,6 +27,7 @@ import java.util.Map;
 public class RubyApplicationMetaData {
 
     private VirtualFile root;
+    private String applicationName;
     private String environmentName;
     private boolean developmentMode = false;
     private Map<String, String> environment;
@@ -70,6 +71,14 @@ public class RubyApplicationMetaData {
     public void explode(VirtualFile root) {
         this.root = root;
         this.archive = true;
+    }
+    
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+    
+    public String getApplicationName() {
+        return this.applicationName;
     }
 
     public void setDevelopmentMode(boolean developmentMode) {

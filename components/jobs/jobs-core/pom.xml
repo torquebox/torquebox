@@ -112,6 +112,14 @@
           </systemProperties>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-common-jar</id>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
