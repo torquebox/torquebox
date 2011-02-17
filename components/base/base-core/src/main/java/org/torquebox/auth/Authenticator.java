@@ -69,7 +69,7 @@ public class Authenticator
         } else {
             UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
             KernelController controller = this.getKernel().getController();
-            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication", UsersRolesAuthenticator.class.getName());
+            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication-" + Authenticator.DEFAULT_DOMAIN, UsersRolesAuthenticator.class.getName());
             BeanMetaData beanMetaData = builder.getBeanMetaData();
             try {
                 controller.install(beanMetaData, authenticator);
