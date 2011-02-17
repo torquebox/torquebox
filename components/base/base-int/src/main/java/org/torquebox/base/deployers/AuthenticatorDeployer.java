@@ -49,14 +49,15 @@ public class AuthenticatorDeployer extends AbstractDeployer
         ValueMetaData kernelControllerInject = builder.createInject("jboss.kernel:service=Kernel", "kernel");
         builder.addPropertyMetaData("kernel", kernelControllerInject);
 
-
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
         String authStrategy = rubyAppMetaData.getAuthenticationStrategy();
         if (authStrategy == null || authStrategy.trim().equals("")) {
             authStrategy = DEFAULT_AUTHENTICATION_STRATEGY;
         }
+        
         builder.addPropertyMetaData("authStrategy", authStrategy);
         builder.addPropertyMetaData("applicationName", rubyAppMetaData.getApplicationName());
+
         BeanMetaData beanMetaData = builder.getBeanMetaData();
         AttachmentUtils.attach(unit, beanMetaData);
     }
