@@ -54,5 +54,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
             authStrategy = DEFAULT_AUTHENTICATION_STRATEGY;
         }
         builder.addPropertyMetaData("authStrategy", authStrategy);
+        BeanMetaData beanMetaData = builder.getBeanMetaData();
+        AttachmentUtils.attach(unit, beanMetaData);
     }
 }
