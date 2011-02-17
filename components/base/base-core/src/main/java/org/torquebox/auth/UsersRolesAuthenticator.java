@@ -19,6 +19,12 @@
 
 package org.torquebox.auth;
 
+import org.jboss.security.AuthenticationManager;
+import org.jboss.security.SecurityContext;
+import org.picketbox.factories.SecurityFactory;
+
+import java.security.Principal;
+
 /**
  * Provides JBoss file-based authentication
  * auth bits to ruby apps.
@@ -27,4 +33,28 @@ package org.torquebox.auth;
  */
 public class UsersRolesAuthenticator
 {
+    public boolean authenticate(String name, String pass) {
+        String securityDomain = Authenticator.DEFAULT_DOMAIN; // configurable, eventually
+        SecurityContext securityContext = null;
+        boolean authenticated = false;
+        SecurityFactory.prepare();
+        try {
+            securityContext = SecurityFactory.establishSecurityContext(securityDomain);
+            AuthenticationManager am = securityContext.getAuthenticationManager();
+            authenticated = am.isValid(getPrincipal(name), new String(pass));
+        }
+        finally {
+            SecurityFactory.release();
+        }
+        return authenticated;
+    }
+
+    private Principal getPrincipal(final String name) {
+        return new Principal()
+        {
+            public String getName() {
+                return name;
+            }
+        };
+    }
 }

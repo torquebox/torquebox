@@ -16,6 +16,11 @@
 
   <dependencies>
     <dependency>
+        <groupId>org.picketbox</groupId>
+        <artifactId>picketbox-bare</artifactId>
+        <version>3.0.0.Final</version>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-spi</artifactId>
       <version>${project.version}</version>
@@ -74,6 +79,21 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>org.torquebox</groupId>
+          <artifactId>torquebox-mc-support</artifactId>
+          <version>1.0.0.CR1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.torquebox</groupId>
+          <artifactId>torquebox-mc-support</artifactId>
+          <version>1.0.0.CR1-SNAPSHOT</version>
+      </dependency>
+      <dependency>
+          <groupId>org.torquebox</groupId>
+          <artifactId>torquebox-mc-support</artifactId>
+          <version>1.0.0.CR1-SNAPSHOT</version>
+      </dependency>
 
   </dependencies>
 

@@ -19,7 +19,11 @@
 
 package org.torquebox.auth;
 
+import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
+import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.kernel.Kernel;
+import org.jboss.kernel.spi.dependency.KernelController;
 
 /**
  * Authentication bean - integrates with PicketBox to provide JBoss
@@ -29,8 +33,11 @@ import org.jboss.kernel.Kernel;
  */
 public class Authenticator
 {
+    static final String DEFAULT_DOMAIN = "other";
     private String authStrategy;
     private Kernel kernel;
+    private String applicationName;
+
 
     public String getAuthStrategy() {
         return this.authStrategy;
@@ -48,11 +55,30 @@ public class Authenticator
         return this.kernel;
     }
 
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getApplicationName() {
+        return this.applicationName;
+    }
+
     public void start() {
-        if (this.authStrategy != "file") {
-            // Log something
+        if (!this.getAuthStrategy().equals("file")) {
+            System.err.println("Sorry - don't know how to authenticate with the " + this.authStrategy + " strategy");
         } else {
-            // instantiate a UsersRolesAuthenticator
+            UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
+            KernelController controller = this.getKernel().getController();
+            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication", UsersRolesAuthenticator.class.getName());
+            BeanMetaData beanMetaData = builder.getBeanMetaData();
+            try {
+                controller.install(beanMetaData, authenticator);
+            }
+            catch (Throwable throwable) {
+                System.err.println("Cannot install PicketBox authentication.");
+                System.err.println(throwable.getMessage());
+                throwable.printStackTrace(System.err);
+            }
         }
 
     }
