@@ -19,13 +19,22 @@
 
 package org.torquebox.messaging.metadata;
 
+import org.torquebox.common.util.StringUtils;
+
 public class TaskMetaData {
 
     private String rubyClassName;
     private String location;
+    private String queueSuffix;
+    private int concurrency = 1;
+    private String simpleName;
 
     public TaskMetaData() {
 
+    }
+
+    public String getName() {
+        return this.location;
     }
 
     public void setRubyClassName(String rubyClassName) {
@@ -42,6 +51,43 @@ public class TaskMetaData {
 
     public String getLocation() {
         return this.location;
+    }
+
+    public void setQueueSuffix(String suffix) {
+        this.queueSuffix = suffix;
+    }
+
+    public String getQueueSuffix() {
+        if (this.queueSuffix == null) {
+            String baseQueueName = this.getRubyClassName();
+            if (baseQueueName.endsWith( "Task" )) {
+                baseQueueName = baseQueueName.substring( 0, baseQueueName.length() - 4 );
+            }
+            baseQueueName = StringUtils.underscore( baseQueueName );
+            this.queueSuffix = "/tasks/" + baseQueueName;
+        }
+        return this.queueSuffix;
+    }
+
+    public void setConcurrency(Integer concurrency) {
+        if (concurrency != null && concurrency >= 0)
+            this.concurrency = concurrency;
+    }
+
+    public Integer getConcurrency() {
+        return this.concurrency;
+    }
+
+    public void setSimpleName(String simpleName) {
+        this.simpleName = simpleName;
+    }
+
+    public String getSimpleName() {
+        if (this.simpleName != null) {
+            return this.simpleName;
+        } else {
+            return getRubyClassName();
+        }
     }
 
 }

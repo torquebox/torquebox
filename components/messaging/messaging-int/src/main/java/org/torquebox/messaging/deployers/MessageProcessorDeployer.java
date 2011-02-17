@@ -71,11 +71,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 
         for (MessageProcessorMetaData each : allMetaData) {
             try {
-                if (each.isDeployable()) {
-                    deploy( unit, each );
-                } else {
-                    log.warn( "MessageProcessor " + each.getName() + " IS NOT DEPLOYABLE: " + each.getNotDeployableReason() );
-                }
+                deploy( unit, each );
             } catch (NamingException e) {
                 throw new DeploymentException( e );
             }
