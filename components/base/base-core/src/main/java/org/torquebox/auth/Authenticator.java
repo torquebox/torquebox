@@ -33,13 +33,16 @@ import org.jboss.kernel.spi.dependency.KernelController;
  */
 public class Authenticator
 {
-    static final String DEFAULT_DOMAIN = "other";
-    private String authStrategy;
+    public static final String DEFAULT_AUTH_STRATEGY = "file";
+    static final String DEFAULT_DOMAIN               = "other";
+
     private Kernel kernel;
+    private String authStrategy;
     private String applicationName;
 
 
     public String getAuthStrategy() {
+        if (this.authStrategy == null) { return Authenticator.DEFAULT_AUTH_STRATEGY; }
         return this.authStrategy;
     }
 
@@ -69,6 +72,7 @@ public class Authenticator
         } else {
             UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
             KernelController controller = this.getKernel().getController();
+            // TODO: User configured security domain
             BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication-" + Authenticator.DEFAULT_DOMAIN, UsersRolesAuthenticator.class.getName());
             BeanMetaData beanMetaData = builder.getBeanMetaData();
             try {
@@ -86,4 +90,5 @@ public class Authenticator
     public void stop() {
         // release resources
     }
+
 }
