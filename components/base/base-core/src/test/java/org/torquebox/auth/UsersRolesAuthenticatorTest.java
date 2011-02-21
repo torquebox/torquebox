@@ -45,6 +45,6 @@ public class UsersRolesAuthenticatorTest
         String configFileName = "org/torquebox/auth/authentication.conf";
         usersRolesAuthenticator = new UsersRolesAuthenticator();
         usersRolesAuthenticator.configure(configFileName);
-        assertTrue(usersRolesAuthenticator.authenticate("biobasdf", "fasdfasdar"));
+        assertTrue(usersRolesAuthenticator.authenticate("bar", "foo"));
     }
 }

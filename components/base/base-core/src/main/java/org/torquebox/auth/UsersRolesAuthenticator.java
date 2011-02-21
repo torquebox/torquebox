@@ -43,7 +43,6 @@ public class UsersRolesAuthenticator
     public boolean authenticate(String name, String pass) {
         String securityDomain = Authenticator.DEFAULT_DOMAIN; // configurable, eventually
         SecurityContext securityContext = null;
-        boolean authenticated = false;
 
         if (this.configFile != null) {
     		PicketBoxConfiguration config = new PicketBoxConfiguration();
@@ -52,8 +51,7 @@ public class UsersRolesAuthenticator
 
         securityContext = SecurityFactory.establishSecurityContext(securityDomain);
         AuthenticationManager am = securityContext.getAuthenticationManager();
-        authenticated = am.isValid(getPrincipal(name), new String(pass));
-        return authenticated;
+        return am.isValid(getPrincipal(name), new String(pass));
     }
 
     private Principal getPrincipal(final String name) {
