@@ -48,7 +48,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
     /** Name of the section within torquebox.yml. */
     private String sectionName;
 
-    /** Opotional fine-name for NAME.yml parsing separate from torquebox.yml. */
+    /** Optional fine-name for NAME.yml parsing separate from torquebox.yml. */
     private String fileName;
 
     /** Does this deployer support a standalone *.yml descriptor? */
