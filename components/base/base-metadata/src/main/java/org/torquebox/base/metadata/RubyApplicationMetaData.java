@@ -33,6 +33,7 @@ public class RubyApplicationMetaData {
     private Map<String, String> environment;
     private boolean archive = false;
     private String authenticationStrategy;
+	private String authenticationDomain;
 
     public RubyApplicationMetaData() {
     }
@@ -108,6 +109,14 @@ public class RubyApplicationMetaData {
     public void setAuthenticationStrategy(String authenticationStrategy) {
         this.authenticationStrategy = authenticationStrategy;
     }
+
+	public String getAuthenticationDomain() {
+		return this.authenticationDomain;
+	}
+	
+	public void setAuthenticationDomain(String domain) {
+		this.authenticationDomain = domain;
+	}
 
     public void setEnvironmentVariables(Map<String, String> environment) {
         this.environment = environment;

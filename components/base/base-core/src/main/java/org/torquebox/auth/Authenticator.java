@@ -34,14 +34,23 @@ import org.jboss.kernel.spi.dependency.KernelController;
 public class Authenticator
 {
     public static final String DEFAULT_AUTH_STRATEGY = "file";
-    static final String DEFAULT_DOMAIN               = "other";
+    public static final String DEFAULT_DOMAIN        = "other";
 
     private Kernel kernel;
     private String authStrategy;
+    private String authDomain;
     private String applicationName;
 
 
-    public String getAuthStrategy() {
+    public void setAuthDomain(String authDomain) {
+		this.authDomain = authDomain;
+	}
+
+	public String getAuthDomain() {
+		return authDomain;
+	}
+
+	public String getAuthStrategy() {
         if (this.authStrategy == null) { return Authenticator.DEFAULT_AUTH_STRATEGY; }
         return this.authStrategy;
     }
@@ -71,9 +80,10 @@ public class Authenticator
             System.err.println("Sorry - don't know how to authenticate with the " + this.authStrategy + " strategy");
         } else {
             UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
+            authenticator.setAuthDomain(this.getAuthDomain());
             KernelController controller = this.getKernel().getController();
             // TODO: User configured security domain
-            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication-" + Authenticator.DEFAULT_DOMAIN, UsersRolesAuthenticator.class.getName());
+            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication-" + this.getAuthDomain(), UsersRolesAuthenticator.class.getName());
             BeanMetaData beanMetaData = builder.getBeanMetaData();
             try {
                 controller.install(beanMetaData, authenticator);

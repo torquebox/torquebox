@@ -33,8 +33,6 @@ import org.torquebox.mc.AttachmentUtils;
 
 public class AuthenticatorDeployer extends AbstractDeployer
 {
-    private static final String DEFAULT_AUTHENTICATION_STRATEGY = "file";
-
     public AuthenticatorDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
@@ -52,10 +50,17 @@ public class AuthenticatorDeployer extends AbstractDeployer
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
         String authStrategy = rubyAppMetaData.getAuthenticationStrategy();
         if (authStrategy == null || authStrategy.trim().equals("")) {
-            authStrategy = DEFAULT_AUTHENTICATION_STRATEGY;
+            authStrategy = Authenticator.DEFAULT_AUTH_STRATEGY;
         }
         
+        String authDomain = rubyAppMetaData.getAuthenticationDomain();
+        if (authDomain == null || authStrategy.trim().equals("")) {
+        	authDomain = Authenticator.DEFAULT_DOMAIN;
+        }
+
         builder.addPropertyMetaData("authStrategy", authStrategy);
+        builder.addPropertyMetaData("authDomain", authDomain);
+        
         builder.addPropertyMetaData("applicationName", rubyAppMetaData.getApplicationName());
 
         BeanMetaData beanMetaData = builder.getBeanMetaData();

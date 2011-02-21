@@ -35,13 +35,21 @@ import org.picketbox.factories.SecurityFactory;
 public class UsersRolesAuthenticator
 {
 	private String configFile;
+	private String authDomain;
 	
 	public void configure(String configFile) {
 		this.configFile = configFile;
 	}
 	
+	public void setAuthDomain(String domain) {
+		this.authDomain = domain;
+	}
+	
+	public String getAuthDomain() {
+		return this.authDomain;
+	}
+	
     public boolean authenticate(String name, String pass) {
-        String securityDomain = Authenticator.DEFAULT_DOMAIN; // configurable, eventually
         SecurityContext securityContext = null;
 
         if (this.configFile != null) {
@@ -49,7 +57,7 @@ public class UsersRolesAuthenticator
     	    config.load(configFile);
         }
 
-        securityContext = SecurityFactory.establishSecurityContext(securityDomain);
+        securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
         AuthenticationManager am = securityContext.getAuthenticationManager();
         return am.isValid(getPrincipal(name), new String(pass));
     }
