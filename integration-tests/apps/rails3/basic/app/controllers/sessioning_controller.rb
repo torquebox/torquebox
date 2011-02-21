@@ -32,4 +32,13 @@ class SessioningController < ApplicationController
     @java_session = request.env['java.servlet_request'].session
   end
 
+  def reset_and_restore
+    backup = request.env['rack.session'].to_hash
+    backup.delete('session_id')
+    request.reset_session
+    request.env['rack.session'] = Hash.new.update(backup)
+
+    render :action=>:get_value
+  end
+
 end
