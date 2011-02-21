@@ -19,11 +19,12 @@
 
 package org.torquebox.auth;
 
+import java.security.Principal;
+
 import org.jboss.security.AuthenticationManager;
 import org.jboss.security.SecurityContext;
+import org.picketbox.config.PicketBoxConfiguration;
 import org.picketbox.factories.SecurityFactory;
-
-import java.security.Principal;
 
 /**
  * Provides JBoss file-based authentication
@@ -33,19 +34,25 @@ import java.security.Principal;
  */
 public class UsersRolesAuthenticator
 {
+	private String configFile;
+	
+	public void configure(String configFile) {
+		this.configFile = configFile;
+	}
+	
     public boolean authenticate(String name, String pass) {
         String securityDomain = Authenticator.DEFAULT_DOMAIN; // configurable, eventually
         SecurityContext securityContext = null;
         boolean authenticated = false;
-        SecurityFactory.prepare();
-        try {
-            securityContext = SecurityFactory.establishSecurityContext(securityDomain);
-            AuthenticationManager am = securityContext.getAuthenticationManager();
-            authenticated = am.isValid(getPrincipal(name), new String(pass));
+
+        if (this.configFile != null) {
+    		PicketBoxConfiguration config = new PicketBoxConfiguration();
+    	    config.load(configFile);
         }
-        finally {
-            SecurityFactory.release();
-        }
+
+        securityContext = SecurityFactory.establishSecurityContext(securityDomain);
+        AuthenticationManager am = securityContext.getAuthenticationManager();
+        authenticated = am.isValid(getPrincipal(name), new String(pass));
         return authenticated;
     }
 

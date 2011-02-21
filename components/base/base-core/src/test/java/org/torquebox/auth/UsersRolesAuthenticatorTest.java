@@ -18,16 +18,33 @@
  */
 package org.torquebox.auth;
 
+import static org.junit.Assert.assertTrue;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.picketbox.factories.SecurityFactory;
 
 public class UsersRolesAuthenticatorTest
 {
     private UsersRolesAuthenticator usersRolesAuthenticator;
+    
+    @Before
+    public void prepare() {
+    	SecurityFactory.prepare();
+    }
+    
+    @After
+    public void release() {
+    	SecurityFactory.release();
+    }
+
 
     @Test
     public void testAuthenticate() throws Exception {
+        String configFileName = "org/torquebox/auth/authentication.conf";
         usersRolesAuthenticator = new UsersRolesAuthenticator();
-        // TODO: Actually test
-        usersRolesAuthenticator.authenticate("foo", "bar");
+        usersRolesAuthenticator.configure(configFileName);
+        assertTrue(usersRolesAuthenticator.authenticate("biobasdf", "fasdfasdar"));
     }
 }
