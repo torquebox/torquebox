@@ -34,6 +34,7 @@ public class RubyApplicationMetaData {
     private boolean archive = false;
     private String authenticationStrategy;
 	private String authenticationDomain;
+	private Map<String, Map<String, String>> authenticationConfig;
 
     public RubyApplicationMetaData() {
     }
@@ -129,5 +130,14 @@ public class RubyApplicationMetaData {
     public String toString() {
         return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "\n  environment=" + this.environment + "]";
     }
+
+	public Map<String, Map<String, String>> getAuthenticationConfig() {
+		return this.authenticationConfig;
+	}
+
+	public void setAuthenticationConfig(
+			Map<String, Map<String, String>> authConfig) {
+		this.authenticationConfig = authConfig;
+	}
 
 }

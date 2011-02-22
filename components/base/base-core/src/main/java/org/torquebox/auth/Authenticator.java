@@ -22,7 +22,6 @@ package org.torquebox.auth;
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
-import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.dependency.KernelController;
 
 /**
@@ -36,7 +35,7 @@ public class Authenticator
     public static final String DEFAULT_AUTH_STRATEGY = "file";
     public static final String DEFAULT_DOMAIN        = "other";
 
-    private Kernel kernel;
+    private KernelController controller;
     private String authStrategy;
     private String authDomain;
     private String applicationName;
@@ -47,6 +46,7 @@ public class Authenticator
 	}
 
 	public String getAuthDomain() {
+		if (this.authDomain == null) { return Authenticator.DEFAULT_DOMAIN; }
 		return authDomain;
 	}
 
@@ -59,12 +59,12 @@ public class Authenticator
         this.authStrategy = authStrategy;
     }
 
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
+    public void setKernelController(KernelController controller) {
+        this.controller = controller;
     }
 
-    public Kernel getKernel() {
-        return this.kernel;
+    public KernelController getKernelController() {
+        return this.controller;
     }
 
     public void setApplicationName(String applicationName) {
@@ -81,10 +81,12 @@ public class Authenticator
         } else {
             UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
             authenticator.setAuthDomain(this.getAuthDomain());
-            KernelController controller = this.getKernel().getController();
-            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication-" + this.getAuthDomain(), UsersRolesAuthenticator.class.getName());
+            KernelController controller = this.getKernelController();
+            String beanName = this.getApplicationName() + "-authentication-" + this.getAuthDomain();
+            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, UsersRolesAuthenticator.class.getName());
             BeanMetaData beanMetaData = builder.getBeanMetaData();
             try {
+            	System.out.println("Installing bean: " + beanName);
                 controller.install(beanMetaData, authenticator);
             }
             catch (Throwable throwable) {
