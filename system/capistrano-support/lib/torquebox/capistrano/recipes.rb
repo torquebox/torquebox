@@ -113,9 +113,7 @@ Capistrano::Configuration.instance.load do
     
         dd_str = YAML.dump_stream( dd )
 
-        dd_suffix = is_rails? ? 'rails' : 'rack'
-    
-        dd_file = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}-#{dd_suffix}.yml"
+        dd_file = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}-knob.yml"
         dd_tmp_file = "#{dd_file}.tmp"
         
         cmd =  "cat /dev/null > #{dd_tmp_file}"

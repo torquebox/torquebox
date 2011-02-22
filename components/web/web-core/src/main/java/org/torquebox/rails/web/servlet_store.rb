@@ -64,7 +64,8 @@ module TorqueBox
       
       def store_session_data(session, session_data)
         hash = session_data.dup
-        hash.java_session = nil # java session shouldn't be marshalled
+        # java session shouldn't be marshalled
+        hash.java_session = nil if hash.respond_to?(:java_session=)
         initial_keys = hash[:TORQUEBOX_INITIAL_KEYS] || []
         removed_keys = initial_keys - hash.keys 
         hash.delete(:TORQUEBOX_INITIAL_KEYS)

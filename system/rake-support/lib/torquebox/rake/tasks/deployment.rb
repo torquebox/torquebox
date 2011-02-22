@@ -17,30 +17,42 @@
 
 require 'rake'
 
+def deployment_descriptor(root, env, context_path)
+  d = {}
+  d['application'] = {}
+  d['application']['root'] = root
+  unless ( env.nil? )
+    d['application']['env'] = env
+  end
+
+  if ( context_path.nil? )
+    if ( ! ( File.exists?( File.join( root, "torquebox.yml" ) ) || File.exists?( File.join( root, "config", "torquebox.yml" ) ) ) )
+      context_path = '/'
+    end
+  end
+
+  unless ( context_path.nil? )
+    d['web'] = {}
+    d['web']['context'] = context_path
+  end 
+
+  d
+
+end
+
 def deployment(app_name, root, context_path)
   env = defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
   if ( env.nil? ) 
     env = defined?(RAILS_ENV) ? RAILS_ENV : ENV['RAILS_ENV']
   end
 
-  deployment_descriptor = {
-    'application' => {
-      'root'=>root,
-      'env'=>( env || 'development' ).to_s,
-    },
-    'web' => {
-      'context'=> context_path[0,1] != '/'? %Q(/#{context_path}) : context_path
-    }
-  }
-
-  [ "#{app_name}-knob.yml", deployment_descriptor ]
+  [ "#{app_name}-knob.yml", deployment_descriptor( root, env, context_path) ]
 end
 
 namespace :torquebox do
 
   desc "Deploy the app in the current directory"
   task :deploy, :context_path, :needs =>['torquebox:check'] do |t, args|
-    args.with_defaults(:context_path => '/')
     app_name = File.basename( Dir.pwd )
     deployment_name, deployment_descriptor = deployment( app_name, Dir.pwd, args[:context_path] )
     TorqueBox::RakeUtils.deploy_yaml( deployment_name, deployment_descriptor )
