@@ -44,7 +44,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
         String beanName = AttachmentUtils.beanName(unit, Authenticator.class);
         BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, Authenticator.class.getName());
 
-        ValueMetaData kernelControllerInject = builder.createInject("jboss.kernel:service=Kernel", "kernel");
+        ValueMetaData kernelControllerInject = builder.createInject("kernel");
         builder.addPropertyMetaData("kernel", kernelControllerInject);
 
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);

@@ -82,7 +82,6 @@ public class Authenticator
             UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
             authenticator.setAuthDomain(this.getAuthDomain());
             KernelController controller = this.getKernel().getController();
-            // TODO: User configured security domain
             BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(this.getApplicationName() + "-authentication-" + this.getAuthDomain(), UsersRolesAuthenticator.class.getName());
             BeanMetaData beanMetaData = builder.getBeanMetaData();
             try {
