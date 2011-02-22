@@ -429,26 +429,49 @@ queue.publish "Some message"</programlisting></para>
             </thead>
             <tbody>
               <row>
-                <entry><parameter>:persistent</parameter></entry>
-                <entry>true</entry>
-                <entry>FIXME - what does persistent actually mean?</entry>
-              </row>
-              <row>
                 <entry><parameter>:priority</parameter></entry>
-                <entry><varname>:normal</varname></entry>
-                <entry>FIXME - how does setting priority impact
-                message delivery, what are valid values in both
-                symbols and numbers</entry>
+                
+                <entry>:normal</entry>
+                
+                <entry>higher priority messages will be delivered before lower priority
+                messages within the context of a queue. You can specify the priority as
+                an integer in the range 0..9, or as one of the following convenience
+                symbols (with the corresponding integer priorities in parentheses):
+                <itemizedlist>
+                  <listitem><para><parameter>:low</parameter> (1)</para></listitem>
+                  <listitem><para><parameter>:normal</parameter> (4)</para></listitem>
+                  <listitem><para><parameter>:high</parameter> (7)</para></listitem>
+                  <listitem><para><parameter>:critical</parameter> (9)</para></listitem>
+                </itemizedlist>
+                Higher priority messages will be processed before lower priority ones
+                for a specific message processor.</entry>
               </row>
+
               <row>
                 <entry><parameter>:ttl</parameter></entry>
-                <entry>0</entry>
+
+                <entry></entry>
+
                 <entry>The maximum time the message will wait in a
                 destination to be consumed, in milliseconds. If the
                 message isn't consumed within this time it will be
-                delivered to an expiry queue. FIXME - need to document
-                the expiry queue name</entry>
+                delivered to an expiry queue. By default, messages don't have a
+                ttl (and therefore never expire). By default, expired messages 
+                end up on the <varname>/queue/ExpiryQueue</varname> queue. If
+                you want to do something special with those messages, you'll need 
+                to add a processor for that queue.</entry>
               </row>
+
+              <row>
+                <entry><parameter>:persistent</parameter></entry>
+                
+                <entry>true</entry>
+                
+                <entry>By default, queued messages will survive across AS restarts.
+                If you don't want a message to be persistent, set the persistence to
+                <parameter>false</parameter>.</entry>
+              </row>
+
               <row>
                 <entry><parameter>:correlation_id</parameter></entry>
                 <entry>nil</entry>
@@ -908,7 +931,7 @@ messaging:
       user request, without forcing the user to wait for its
       completion. TorqueBox makes this easy.</para>
 
-      <section>
+      <section id="task-classes">
         <title>Task Classes</title>
 
         <para>Task classes simply extend
@@ -970,10 +993,309 @@ end</programlisting>The first parameter to the <function>async(...)</function>
           message follow.</para>
         </example></para>
       </section>
+
+      <section id="task-invocation-options">
+        <title>Task invocation options</title>
+        <para>When invoking a task, you can override the default priority, time-to-live,
+        and persistence options by passing an options hash to
+        <function>async</function>. The available options are:</para>
+  
+        <table>
+          <title>Task invocation options</title>
+  
+          <tgroup cols="3">
+            <colspec align="left" />
+  
+            <thead>
+              <row>
+                <entry>Option</entry>
+  
+                <entry>Default</entry>
+  
+                <entry>Description</entry>
+              </row>
+            </thead>
+  
+            <tbody>
+              <row>
+                <entry><parameter>:priority</parameter></entry>
+  
+                <entry>:normal</entry>
+  
+                  <entry>higher priority messages will be delivered before lower priority
+                  messages within the context of a queue. You can specify the priority as
+                  an integer in the range 0..9, or as one of the following convenience
+                  symbols (with the corresponding integer priorities in parentheses):
+                  <itemizedlist>
+                    <listitem><para><parameter>:low</parameter> (1)</para></listitem>
+                    <listitem><para><parameter>:normal</parameter> (4)</para></listitem>
+                    <listitem><para><parameter>:high</parameter> (7)</para></listitem>
+                    <listitem><para><parameter>:critical</parameter> (9)</para></listitem>
+                  </itemizedlist>
+                  Higher priority messages will be processed before lower priority ones
+                  for a specific message processor.</entry>
+              </row>
+  
+              <row>
+                <entry><parameter>:ttl</parameter></entry>
+  
+                <entry></entry>
+  
+                <entry>The maximum time the message will wait in a
+                destination to be consumed, in milliseconds. If the
+                message isn't consumed within this time it will be
+                delivered to an expiry queue. By default, messages don't have a
+                ttl (and therefore never expire). By default, expired messages 
+                end up on the <varname>/queue/ExpiryQueue</varname> queue. If
+                you want to do something special with those messages, you'll need 
+                to add a processor for that queue.</entry>
+              </row>
+  
+              <row>
+                <entry><parameter>:persistent</parameter></entry>
+  
+                <entry>true</entry>
+  
+                <entry>By default, queued messages will survive across AS restarts.
+                If you don't want a message to be persistent, set the persistence to
+                <parameter>false</parameter>.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+  
+        <para>The options are passed as the third argument to <function>async</function>:</para>
+        <para><example>
+          <title>Passing options to <function>async</function></title>
+  
+            <para><programlisting>SomeTask.async(:an_important_action, {:id =&gt; 28}, :priority =&gt; :high)
+SomeTask.async(:a_timeboxed_action, {:some_value =&gt; :foo}, :ttl =&gt; 5000)
+</programlisting>The message options are passed as a <classname>Hash</classname> after the
+            payload argument.</para>
+          </example></para>
+      </section>
+  
+      <section id="task-message-processor-options">
+        <title>Task message processor options</title>
+        <para>You can set options for the message processors for each task in 
+        <filename>torquebox.yml</filename>. Currently, the concurrency is the 
+        only available option:</para>
+  
+        <table>
+          <title>Task message processor options</title>
+  
+          <tgroup cols="3">
+            <colspec align="left" />
+            
+            <thead>
+              <row>
+                <entry>Option</entry>
+                
+                <entry>Default</entry>
+                
+                <entry>Description</entry>
+              </row>
+            </thead>
+            
+            <tbody>
+              <row>
+                <entry><parameter>concurrency</parameter></entry>
+  
+                <entry>1</entry>
+  
+                <entry>May be used to throttle the throughput of
+                your processor. Processors are single-threaded, by
+                default, but you can increase this value to match
+                the number of concurrent messages you expect to
+                receive.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+  
+        <para>The options are set in the <filename>torquebox.yml</filename> by keying the
+        options to the task class name:</para>
+  
+        <example>
+          <title>Task message processor options in
+              <filename>torquebox.yml</filename></title>
+  
+              <para><programlisting>application:
+  ...
+tasks:
+  SomeTask:
+    concurrency: 2
+  SomeOtherTask:
+    concurrency: 5</programlisting></para>
+        </example>
+
+      </section>
     </section>
 
     <section id="backgroundable">
-      <title>Backgroundable</title>
+      <title><classname>Backgroundable</classname> Methods</title>
+      <para>In addition to <link linkend="task-classes">task classes</link>
+      for background proccessing, TorqueBox also provides <classname>Backgroundable</classname>
+      methods. <classname>Backgroundable</classname> allows you to process any
+      method on any object asynchronously. You can mark a method to
+      *always* execute in the background, or send a method to the
+      background on an ad hoc basis.</para>
+
+      <section>
+        <title><function>always_background</function></title>
+        <para><classname>Backgroundable</classname> provides the 
+        <function>always_background</function> class method that allows you to flag a 
+        method to always be executed in the background:</para>
+      
+        <example>
+          <title>Having a method always execute in the background</title>
+          <para><programlisting>class User &lt; ActiveRecord::Base
+  always_background :send_signup_notification
+
+  def send_signup_notification
+    ...
+  end
+end
+
+user = User.find(id)
+
+# executes in the background, returning immediately
+user.send_signup_notification
+  </programlisting>The <function>always_background</function> method can be called before or after
+          the method being backgrounded is defined, and can take multiple method symbols: 
+          <function>always_background :foo, :bar</function>.</para>
+        </example>
+
+        <para>You can also call <function>always_background</function> from outside of the class
+        definition if you prefer:</para>
+
+        <example>
+          <title>Alternative <function>always_background</function> usage</title>
+          <para><programlisting>class User &lt; ActiveRecord::Base
+  def send_signup_notification
+    ...
+  end
+end
+
+User.always_background(:send_signup_notification)
+  </programlisting></para>
+        </example>
+      </section>
+
+      <section>
+        <title><function>background</function></title>      
+        <para>If you have not marked an instance method with 
+        <function>always_background</function>, you can background it at call time
+        with the <function>background</function> instance method:</para>
+
+        <example>
+          <title>Backgrounding a method ad hoc</title>
+          <para><programlisting>class User &lt; ActiveRecord::Base
+  def process_avatar(image_data)
+    ...
+  end
+end
+
+user = User.find(id)
+
+# executes in the background, returning immediately
+user.background.process_avatar(the_image)
+
+# executes in the foreground (this thread)
+user.process_avatar(the_image)
+</programlisting></para>
+        </example>
+      </section>
+
+      <section>
+        <title>The <classname>Backgroundable</classname> module</title>
+        <para>To use <classname>Backgroundable</classname> methods in a class, you will
+        need to include the <classname>TorqueBox::Messaging::Backgroundable</classname> 
+        module into the class:</para>
+
+        <example>
+          <title>Including the <classname>Backgroundable</classname> module</title>
+          <para><programlisting>class User
+  include TorqueBox::Messaging::Backgroundable
+  ...
+end
+          </programlisting>Including <classname>Backgroundable</classname> provides both the
+          <function>always_background</function> class method and the 
+          <function>background</function> instance method.</para>
+        </example>
+        <para>If your appplication uses Rails and you use the rails template that ships 
+        with TorqueBox (<filename>$TORQUEBOX_HOME/share/rails/template.rb</filename>), you 
+        should have an initializer 
+        (<filename>RAILS_ROOT/config/initializers/active_record_backgroundable.rb</filename>) 
+        that already includes <classname>Backgroundable</classname> 
+        into <classname>ActiveRecord::Base</classname>.</para>
+      </section>
+
+      <section>
+        <title>Object/argument marshaling</title>
+        <para>We serialize the receiver and arguments using Marshal and include them in
+        the message that gets enqueued. The message processors run in a separate ruby runtime from
+        the application, which may be on a different machine if you have a cluster. The marshaling 
+        works well for ActiveRecord objects and basic ruby objects. It may not work as well for 
+        objects that expect a lot of plumbing in place (ActionControllers, for example).</para>
+      </section>
+
+      <section>
+        <title><classname>Backgroundable</classname> method invocation options</title>
+        <para>The priority, time-to-live, and persistence options that are available to
+        <link linkend="task-invocation-options">available to task classes</link> are available to 
+        <classname>Backgroundable</classname> methods as well:</para>
+
+        <example>
+          <title>Passing options to <classname>Backgroundable</classname> methods</title>
+  
+            <para><programlisting>class Widget
+  always_background :productize, :priority =&gt; :low
+  def productize
+    ...
+  end
+
+  def monetize
+    ...
+  end
+end
+
+widget = Widget.new
+
+widget.background(:ttl => 1000, :persistent => false).monetize
+</programlisting>The message options are passed as a <classname>Hash</classname> as the
+            last argument to <function>always_background</function>, and as the only
+            argument to <function>background</function>. Options passed to 
+            <function>always_background</function> affect every background invocation
+            of the specified methods, while options passed to <function>background</function>
+            affect only that particular invocation.</para>
+          </example>
+      </section>
+
+      <section>
+        <title><classname>Backgroundable</classname> message processor options</title>
+        <para>The concurrency option that is 
+        <link linkend="task-message-processor-options">available to task class message processors</link>
+        in <filename>torquebox.yml</filename> is available to 
+        <classname>Backgroundable</classname> message processors as well. Instead of a task
+        class name, you specify <classname>Backgroundable</classname>:</para>
+
+        <example>
+          <title>Task message processor options in
+              <filename>torquebox.yml</filename></title>
+  
+              <para><programlisting>application:
+  ...
+tasks:
+  Backgroundable:
+    concurrency: 2
+  SomeTask:
+    concurrency: 5</programlisting></para>
+        </example>
+        <para>By default, every application you deploy will have a queue for <classname>Backgroundable</classname>
+        methods, even if you don't use it. To turn off the queue, set the <varname>concurrency</varname> to 0.</para>
+      </section>
+
     </section>
   </section>
 </chapter>
