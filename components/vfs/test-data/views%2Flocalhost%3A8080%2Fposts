@@ -1,0 +1,61 @@
+o: ActiveSupport::Cache::Entry	:@compressedF:@created_atf1298345757.09:@expires_in0:@value"V<!DOCTYPE html>
+<html>
+<head>
+  <title>Postgres</title>
+  <link href="/stylesheets/scaffold.css?1295928982" media="screen" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/prototype.js?1295928292" type="text/javascript"></script>
+<script src="/javascripts/effects.js?1295928292" type="text/javascript"></script>
+<script src="/javascripts/dragdrop.js?1295928292" type="text/javascript"></script>
+<script src="/javascripts/controls.js?1295928292" type="text/javascript"></script>
+<script src="/javascripts/rails.js?1295928292" type="text/javascript"></script>
+<script src="/javascripts/application.js?1295928292" type="text/javascript"></script>
+  <meta name="csrf-param" content="authenticity_token"/>
+<meta name="csrf-token" content="lYDDNMEWeQmRt0sMfEpVnvO87GKQOVEPkN+6ySClwYk="/>
+</head>
+<body>
+
+<h1>Listing posts</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Title</th>
+    <th>Content</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+  <tr>
+    <td>Jim</td>
+    <td>What Postgres is like</td>
+    <td>Pretty darn cool!</td>
+    <td><a href="/posts/1">Show</a></td>
+    <td><a href="/posts/1/edit">Edit</a></td>
+    <td><a href="/posts/1" data-confirm="Are you sure?" data-method="delete" rel="nofollow">Destroy</a></td>
+  </tr>
+  <tr>
+    <td>bobaloo</td>
+    <td>what?</td>
+    <td>yep!</td>
+    <td><a href="/posts/2">Show</a></td>
+    <td><a href="/posts/2/edit">Edit</a></td>
+    <td><a href="/posts/2" data-confirm="Are you sure?" data-method="delete" rel="nofollow">Destroy</a></td>
+  </tr>
+  <tr>
+    <td>after</td>
+    <td>after already cached</td>
+    <td>lkjsdf</td>
+    <td><a href="/posts/3">Show</a></td>
+    <td><a href="/posts/3/edit">Edit</a></td>
+    <td><a href="/posts/3" data-confirm="Are you sure?" data-method="delete" rel="nofollow">Destroy</a></td>
+  </tr>
+</table>
+
+<br />
+
+<a href="/posts/new">New Post</a>
+
+
+</body>
+</html>

@@ -73,6 +73,13 @@ describe "File extensions for VFS" do
     File.file?( vfs_path("#{prefix}/sound of music/flibberty gibbet" ) ).should be_false
   end
 
+  it "should handle percent-encoded filenames" do
+    prefix = test_copy_base_path( :absolute )
+    File.file?( "#{prefix}/views%2Flocalhost%3A8080%2Fposts" ).should be_true
+    File.file?( vfs_path("#{prefix}/views%2Flocalhost%3A8080%2Fposts" ) ).should be_true
+    File.file?( vfs_path("#{prefix}/views%2Flocalhost%3A8080%2Fmissing" ) ).should be_false
+  end
+
   it "should handle backslashes in filenames even though there's no good reason to use them regardless of platform" do
     filename = __FILE__.gsub("/","\\")
     File.readable?( filename ).should be_true
