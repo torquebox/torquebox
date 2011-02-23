@@ -32,8 +32,6 @@ public class RubyApplicationMetaData {
     private boolean developmentMode = false;
     private Map<String, String> environment;
     private boolean archive = false;
-    private String authenticationStrategy;
-	private String authenticationDomain;
 	private Map<String, Map<String, String>> authenticationConfig;
 
     public RubyApplicationMetaData() {
@@ -102,22 +100,6 @@ public class RubyApplicationMetaData {
     public String getEnvironmentName() {
         return this.environmentName;
     }
-
-    public String getAuthenticationStrategy() {
-        return this.authenticationStrategy;
-    }
-
-    public void setAuthenticationStrategy(String authenticationStrategy) {
-        this.authenticationStrategy = authenticationStrategy;
-    }
-
-	public String getAuthenticationDomain() {
-		return this.authenticationDomain;
-	}
-	
-	public void setAuthenticationDomain(String domain) {
-		this.authenticationDomain = domain;
-	}
 
     public void setEnvironmentVariables(Map<String, String> environment) {
         this.environment = environment;

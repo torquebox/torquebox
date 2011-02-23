@@ -1,22 +1,7 @@
 module TorqueBox
-  class Authenticator
-    attr_reader :strategy
-    attr_reader :domain
-
+  module Authenticator
     def self.[](name)
-      strategy, domain = load_config
-      Authenticator.new(strategy, domain)
+      ::TorqueBox::Kernel.lookup(TORQUEBOX_APP_NAME + "-" + authentication + "-" + name)
     end
-
-    def initialize(strategy, domain)
-      @strategy = strategy
-      @domain   = domain
-    end
-
-    private
-    def self.load_config
-      ['file', 'other']
-    end
-
   end
 end

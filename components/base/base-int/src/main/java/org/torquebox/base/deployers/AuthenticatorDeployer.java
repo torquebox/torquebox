@@ -48,20 +48,8 @@ public class AuthenticatorDeployer extends AbstractDeployer
         builder.addPropertyMetaData("kernelController", kernelControllerInject);
 
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-        String authStrategy = rubyAppMetaData.getAuthenticationStrategy();
-        if (authStrategy == null || authStrategy.trim().equals("")) {
-            authStrategy = Authenticator.DEFAULT_AUTH_STRATEGY;
-        }
-        
-        String authDomain = rubyAppMetaData.getAuthenticationDomain();
-        if (authDomain == null || authStrategy.trim().equals("")) {
-        	authDomain = Authenticator.DEFAULT_DOMAIN;
-        }
-
-        builder.addPropertyMetaData("authStrategy", authStrategy);
-        builder.addPropertyMetaData("authDomain", authDomain);
-        
         builder.addPropertyMetaData("applicationName", rubyAppMetaData.getApplicationName());
+        builder.addPropertyMetaData("authenticationConfig", rubyAppMetaData.getAuthenticationConfig());
 
         BeanMetaData beanMetaData = builder.getBeanMetaData();
         AttachmentUtils.attach(unit, beanMetaData);

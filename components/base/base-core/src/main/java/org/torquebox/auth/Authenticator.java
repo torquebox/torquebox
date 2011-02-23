@@ -19,6 +19,8 @@
 
 package org.torquebox.auth;
 
+import java.util.Map;
+
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
@@ -36,28 +38,9 @@ public class Authenticator
     public static final String DEFAULT_DOMAIN        = "other";
 
     private KernelController controller;
-    private String authStrategy;
-    private String authDomain;
     private String applicationName;
+    private Map<String, Map<String, String>> config;
 
-
-    public void setAuthDomain(String authDomain) {
-		this.authDomain = authDomain;
-	}
-
-	public String getAuthDomain() {
-		if (this.authDomain == null) { return Authenticator.DEFAULT_DOMAIN; }
-		return authDomain;
-	}
-
-	public String getAuthStrategy() {
-        if (this.authStrategy == null) { return Authenticator.DEFAULT_AUTH_STRATEGY; }
-        return this.authStrategy;
-    }
-
-    public void setAuthStrategy(String authStrategy) {
-        this.authStrategy = authStrategy;
-    }
 
     public void setKernelController(KernelController controller) {
         this.controller = controller;
@@ -74,32 +57,45 @@ public class Authenticator
     public String getApplicationName() {
         return this.applicationName;
     }
+    
+	public void setConfig(Map<String, Map<String, String>> config) {
+		this.config = config;
+	}
+
+	public Map<String, Map<String, String>> getConfig() {
+		return config;
+	}
 
     public void start() {
-        if (!this.getAuthStrategy().equals("file")) {
-            System.err.println("Sorry - don't know how to authenticate with the " + this.authStrategy + " strategy");
-        } else {
-            UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
-            authenticator.setAuthDomain(this.getAuthDomain());
-            KernelController controller = this.getKernelController();
-            String beanName = this.getApplicationName() + "-authentication-" + this.getAuthDomain();
-            BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, UsersRolesAuthenticator.class.getName());
-            BeanMetaData beanMetaData = builder.getBeanMetaData();
-            try {
-            	System.out.println("Installing bean: " + beanName);
-                controller.install(beanMetaData, authenticator);
+    	if (config == null) { return; }
+    	for(String key: config.keySet()) {
+    		String strategy = config.get(key).get("strategy");
+    		String domain   = config.get(key).get("domain");
+    		
+            if (!strategy.equals("file")) {
+                System.err.println("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
+            } else {
+                UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
+                authenticator.setAuthDomain(domain);
+                KernelController controller = this.getKernelController();
+                String beanName = this.getApplicationName() + "-authentication-" + key;
+                BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, UsersRolesAuthenticator.class.getName());
+                BeanMetaData beanMetaData = builder.getBeanMetaData();
+                try {
+                	System.out.println("Installing bean: " + beanName);
+                    controller.install(beanMetaData, authenticator);
+                }
+                catch (Throwable throwable) {
+                    System.err.println("Cannot install PicketBox authentication.");
+                    System.err.println(throwable.getMessage());
+                    throwable.printStackTrace(System.err);
+                }
             }
-            catch (Throwable throwable) {
-                System.err.println("Cannot install PicketBox authentication.");
-                System.err.println(throwable.getMessage());
-                throwable.printStackTrace(System.err);
-            }
-        }
-
+	
+    	}
     }
 
     public void stop() {
         // release resources
     }
-
 }

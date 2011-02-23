@@ -18,15 +18,13 @@
  */
 package org.torquebox.auth;
 
-import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.kernel.Kernel;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+
 import org.jboss.kernel.spi.dependency.KernelController;
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.*;
 
 /**
  * Test the Authenticator bean
@@ -38,17 +36,6 @@ public class AuthenticatorTest
     @Before
     public void setUp() {
         authenticator = new Authenticator();    
-    }
-
-    @Test
-    public void testAuthStrategy() {
-        authenticator.setAuthStrategy("FooBar");
-        assertEquals("FooBar", authenticator.getAuthStrategy());
-    }
-
-    @Test
-    public void testDefaultAuthStrategy() {
-        assertEquals(Authenticator.DEFAULT_AUTH_STRATEGY, authenticator.getAuthStrategy());
     }
 
     @Test
