@@ -11,7 +11,9 @@
   <bean name="ManagedTopicDeployer" class="org.torquebox.messaging.deployers.ManagedTopicDeployer"/>
   
   <bean name="MessagingYamlParsingDeployer" class="org.torquebox.messaging.deployers.MessagingYamlParsingDeployer"/>
-  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer"/>
+  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer">
+    <property name="demand">HornetQCoreDeployment::2</property>
+  </bean>
   
   <bean name="MessagingRuntimePoolDeployer" class="org.torquebox.messaging.deployers.MessagingRuntimePoolDeployer"/>
 
