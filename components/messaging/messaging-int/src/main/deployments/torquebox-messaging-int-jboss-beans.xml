@@ -24,8 +24,8 @@
     <property name="suffixFilter">_task.rb</property>
     <property name="paths">
       <list elementClass="java.lang.String">
-        <value>app/tasks</value>
-        <value>tasks</value>
+        <value>app/tasks/</value>
+        <value>tasks/</value>
       </list>
     </property>
   </bean>
