@@ -24,12 +24,14 @@
   <bean name="RubyApplicationDefaultsDeployer"   class="org.torquebox.base.deployers.RubyApplicationDefaultsDeployer"/>
   
   <bean name="DeploymentNotifier"                class="org.torquebox.base.deployers.DeploymentNotifier"/>
-  <bean name="AuthenticatorDeployer"     class="org.torquebox.base.deployers.AuthenticatorDeployer"/>
+  <bean name="AuthenticatorDeployer"             class="org.torquebox.base.deployers.AuthenticatorDeployer">
+    <property name="controller"><inject bean="jboss.kernel:service=Kernel"/></property>
+  </bean>
 
   <bean name="BaseRubyRuntimeDeployer"         class="org.torquebox.interp.deployers.BaseRubyRuntimeDeployer"/>
 
   <bean name="RubyRuntimeFactoryDeployer"        class="org.torquebox.interp.deployers.RubyRuntimeFactoryDeployer">
-    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+    <property name="controller"><inject bean="jboss.kernel:service=Kernel" propert="controller"/></property>
   </bean>
 
   <bean name="PoolingYamlParsingDeployer"        class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>

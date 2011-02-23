@@ -19,39 +19,78 @@
 
 package org.torquebox.base.deployers;
 
+import java.util.Map;
+
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.auth.Authenticator;
+import org.jboss.kernel.spi.dependency.KernelController;
+import org.torquebox.auth.UsersRolesAuthenticator;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.mc.AttachmentUtils;
 
 public class AuthenticatorDeployer extends AbstractDeployer
 {
-    public AuthenticatorDeployer() {
+    public static final String DEFAULT_AUTH_STRATEGY = "file";
+	public static final String DEFAULT_DOMAIN        = "other";
+	
+    private KernelController controller;
+
+	public AuthenticatorDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
         addOutput(BeanMetaData.class);
     }
 
+	public void setController(KernelController controller) {
+		this.controller = controller;
+	}
+
+	public KernelController getController() {
+		return controller;
+	}
+
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        String beanName = AttachmentUtils.beanName(unit, Authenticator.class);
-        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, Authenticator.class.getName());
-
-        ValueMetaData kernelControllerInject = builder.createInject("jboss.kernel:service=Kernel", "controller");
-        builder.addPropertyMetaData("kernelController", kernelControllerInject);
-
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-        builder.addPropertyMetaData("applicationName", rubyAppMetaData.getApplicationName());
-        builder.addPropertyMetaData("authenticationConfig", rubyAppMetaData.getAuthenticationConfig());
-
-        BeanMetaData beanMetaData = builder.getBeanMetaData();
-        AttachmentUtils.attach(unit, beanMetaData);
+		if (this.getController() == null) {
+			log.error("Unable to configure authentication. No KernelController available");
+		} else {
+	    	start_authenticators(unit.getAttachment(RubyApplicationMetaData.class));
+		}
+    }
+    
+    private void start_authenticators(RubyApplicationMetaData metadata) {
+    	Map<String, Map<String, String>> config = metadata.getAuthenticationConfig();
+    	if (config == null) { 
+    		log.warn("No auth configuration provided. Using defaults");
+    		// TODO : Add defaults
+    	}
+    	for(String key: config.keySet()) {
+    		String strategy = config.get(key).get("strategy");
+    		String domain   = config.get(key).get("domain");
+    		
+            if (!strategy.equals("file")) {
+                System.err.println("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
+            } else {
+                UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
+                authenticator.setAuthDomain(domain);
+                String beanName = metadata.getApplicationName() + "-authentication-" + key;
+                BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, UsersRolesAuthenticator.class.getName());
+                BeanMetaData beanMetaData = builder.getBeanMetaData();
+                try {
+                	System.out.println("Installing bean: " + beanName);
+                    this.getController().install(beanMetaData, authenticator);
+                }
+                catch (Throwable throwable) {
+                    System.err.println("Cannot install PicketBox authentication.");
+                    System.err.println(throwable.getMessage());
+                    throwable.printStackTrace(System.err);
+                }
+            }
+	
+    	}
     }
 }
