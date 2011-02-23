@@ -22,7 +22,12 @@
 
   <bean name="RailsTasksScanningDeployer" class="org.torquebox.messaging.deployers.TasksScanningDeployer">
     <property name="suffixFilter">_task.rb</property>
-    <property name="path">app/tasks/</property>
+    <property name="paths">
+      <list elementClass="java.lang.String">
+        <value>app/tasks</value>
+        <value>tasks</value>
+      </list>
+    </property>
   </bean>
 
   <bean name="BackgroundableDeployer" class="org.torquebox.messaging.deployers.BackgroundableDeployer"/>
@@ -32,6 +37,7 @@
     <property name="loadPaths">
       <list elementClass="java.lang.String">
         <value>app/tasks</value>
+        <value>tasks</value>
       </list>
     </property>
   </bean>

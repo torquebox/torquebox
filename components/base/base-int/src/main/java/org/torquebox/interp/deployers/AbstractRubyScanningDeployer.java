@@ -20,6 +20,7 @@
 package org.torquebox.interp.deployers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.deployers.spi.DeploymentException;
@@ -34,19 +35,19 @@ import org.jboss.vfs.util.SuffixMatchFilter;
 
 public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
-    private String path;
+    private ArrayList<String> paths;
     private VirtualFileFilter filter;
 
     public AbstractRubyScanningDeployer() {
         setStage( DeploymentStages.PARSE );
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setPaths(ArrayList<String> paths) {
+        this.paths = paths;
     }
 
-    public String getPath() {
-        return this.path;
+    public ArrayList<String> getPaths() {
+        return this.paths;
     }
 
     public void setFilter(VirtualFileFilter filter) {
@@ -71,32 +72,33 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
 
     protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
         try {
-            VirtualFile scanRoot = unit.getRoot().getChild( this.path );
+            for (String path : this.paths) {
+                VirtualFile scanRoot = unit.getRoot().getChild( path );
 
-            if (scanRoot == null || !scanRoot.exists()) {
-                return;
+                if (scanRoot == null || !scanRoot.exists()) {
+                    continue;
+                }
+
+                List<VirtualFile> children = null;
+
+                if (this.filter != null) {
+                    children = scanRoot.getChildrenRecursively( this.filter );
+                } else {
+                    children = scanRoot.getChildrenRecursively();
+                }
+
+                int prefixLength = scanRoot.getPathName().length();
+
+                for (VirtualFile child : children) {
+                    String relativePath = child.getPathName().substring( prefixLength );
+                    deploy( unit, child, path, relativePath.substring( 1 ) );
+                }
             }
-
-            List<VirtualFile> children = null;
-
-            if (this.filter != null) {
-                children = scanRoot.getChildrenRecursively( this.filter );
-            } else {
-                children = scanRoot.getChildrenRecursively();
-            }
-
-            int prefixLength = scanRoot.getPathName().length();
-
-            for (VirtualFile child : children) {
-                String relativePath = child.getPathName().substring( prefixLength );
-                deploy( unit, child, relativePath.substring( 1 ) );
-            }
-
         } catch (IOException e) {
             throw new DeploymentException( e );
         }
     }
 
-    protected abstract void deploy(VFSDeploymentUnit unit, VirtualFile file, String relativePath) throws DeploymentException;
+    protected abstract void deploy(VFSDeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentException;
 
 }
