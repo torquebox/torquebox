@@ -15,11 +15,21 @@ describe TorqueBox::Authenticator do
   end
 
   it "should accept a block to scope actions to authentication" do
-    obj = mock(Object)
-    obj.should_receive :foo
+    obj = nil
+    @auth_bean.should_receive(:authenticate).and_return(true)
     @auth.authenticate('scott', 'tiger') do
-      obj.foo
+      obj = 'foo'
     end
+    obj.should eql('foo')
+  end
+
+  it "should only call a provided block if the credentials authenticate" do
+    obj = nil
+    @auth_bean.should_receive(:authenticate).and_return(false)
+    @auth.authenticate('scott', 'tiger') do
+      obj = 'foo'
+    end
+    obj.should be_nil
   end
 
   before :each do

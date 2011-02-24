@@ -16,7 +16,7 @@ module TorqueBox
 
     def authenticate(user, pass, &block)
       authenticated = @auth_bean.authenticate(user, pass)
-      block.call if block
+      block.call if authenticated && block
       authenticated
     end
   end
