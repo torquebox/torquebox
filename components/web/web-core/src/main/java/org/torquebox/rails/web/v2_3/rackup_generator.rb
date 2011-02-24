@@ -17,8 +17,6 @@
 
 require 'org/torquebox/rails/web/v2_3/dispatcher'
 
-ActionController::Base.relative_url_root = TORQUEBOX_RACKUP_CONTEXT
-
 module TorqueBox
   module Rails
     module V2_3
