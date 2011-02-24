@@ -16,7 +16,7 @@ describe "basic rails3 asset test" do
   end
 
   it "should work for rails3 at root context" do
-    Capybara.app_host = "http://integ-app2.torquebox.org:8080"
+    Capybara.app_host = "http://integ-app3.torquebox.org:8080"
     visit "/"
     image = page.find('img')
     image['src'].should match(/^\/images\/rails\.png/)

@@ -4,4 +4,4 @@ application:
   RAILS_ENV: development
 web:
   context: /
-  host: integ-app2.torquebox.org
+  host: integ-app3.torquebox.org
