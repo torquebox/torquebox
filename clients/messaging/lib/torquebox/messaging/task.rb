@@ -23,14 +23,15 @@ module TorqueBox
     class Task
 
       def self.queue_name
-        "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/tasks/#{name[0...-4].downcase}"
+        suffix = org.torquebox.common.util.StringUtils.underscore(name[0...-4])
+        "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/tasks/#{suffix}"
       end
 
       def self.async(method, payload = {}, options = {})
         message = {:method => method, :payload => payload}
         Queue.new(queue_name).publish message, options
       rescue javax.naming.NameNotFoundException => ex
-        raise RuntimeError.new("The queue for #{self.class.name} is not available. Did you disable it by setting its concurrency to 0?")
+        raise RuntimeError.new("The queue for #{self.name} is not available. Did you disable it by setting its concurrency to 0?")
       end
 
       def process!(message)

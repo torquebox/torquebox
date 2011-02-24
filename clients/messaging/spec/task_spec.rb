@@ -33,12 +33,34 @@ describe TorqueBox::Messaging::Task do
     MyTestTask.async(:payload=)
   end
 
-  it "should derive the queue name from the class name" do
-    MyTestTask.queue_name.should =~ %r{/mytest$}
-  end
 
-  it "should include the app name in the queue name" do
-    ENV['TORQUEBOX_APP_NAME'] = 'app_name'
-    MyTestTask.queue_name.should =~ %r{/app_name/}
+  describe "queue_name" do
+    before(:each) do
+      ENV['TORQUEBOX_APP_NAME'] = 'app_name'
+    end
+
+    after(:each) do
+      ENV.delete('TORQUEBOX_APP_NAME')
+    end
+    
+    it "should derive the queue name from the class name" do
+      MyTestTask.queue_name.should =~ %r{/my_test$}
+    end
+    
+    it "should include the app name in the queue name" do
+      MyTestTask.queue_name.should =~ %r{/app_name/}
+    end
+
+    {
+      'FooTask' => 'foo',
+      'FooBarTask' => 'foo_bar',
+      'Foo::BarBazTask' => 'foo/bar_baz'
+    }.each do |given, expected|
+      it "should generate the proper queue name for #{given}" do
+        MyTestTask.stub(:name).and_return(given)
+        MyTestTask.queue_name.should == "/queues/torquebox/app_name/tasks/#{expected}"
+      end
+    end
+
   end
 end
