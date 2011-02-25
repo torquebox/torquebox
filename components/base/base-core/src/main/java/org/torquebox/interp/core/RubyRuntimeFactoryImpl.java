@@ -324,13 +324,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         Ruby runtime = JavaEmbedUtils.initialize( loadPath, config );
 
+        injectKernel( runtime );
+
         if (this.initializer != null) {
             this.initializer.initialize( runtime );
         } else {
             log.warn( "No initializer set for runtime" );
         }
-
-        injectKernel( runtime );
 
         performRuntimeInitialization( runtime );
         runtime.getLoadService().require( "rubygems" );
