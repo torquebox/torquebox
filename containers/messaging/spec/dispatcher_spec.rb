@@ -38,25 +38,25 @@ describe TorqueBox::Messaging::Dispatcher do
 
   end
 
-  context "naming" do
-    it "should configure naming host and url" do
-      dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'ahost', :naming_port => 1234) do
-        map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
-      end
+  # context "naming" do
+  #   it "should configure naming host and url" do
+  #     dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'ahost', :naming_port => 1234) do
+  #       map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
+  #     end
 
-      dispatcher.send(:container)
+  #     dispatcher.send(:container)
 
-      java.lang::System.getProperty('java.naming.provider.url').should eql('jnp://ahost:1234/')
-    end
+  #     java.lang::System.getProperty('java.naming.provider.url').should eql('jnp://ahost:1234/')
+  #   end
 
-    it "should configure only naming host" do
-      dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'somehost') do
-        map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
-      end
+  #   it "should configure only naming host" do
+  #     dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'somehost') do
+  #       map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
+  #     end
 
-      dispatcher.send(:container)
+  #     dispatcher.send(:container)
 
-      java.lang::System.getProperty('java.naming.provider.url').should eql('jnp://somehost:1099/')
-    end
-  end
+  #     java.lang::System.getProperty('java.naming.provider.url').should eql('jnp://somehost:1099/')
+  #   end
+  # end
 end
