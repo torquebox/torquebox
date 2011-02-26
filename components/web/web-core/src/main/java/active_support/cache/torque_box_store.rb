@@ -18,36 +18,45 @@ module ActiveSupport
 
       # Delete all entries with keys matching the pattern.
       def delete_matched( matcher, options = nil )
+        options = merged_options(options)
         pattern = key_matcher( matcher, options )
-        @cache.keySet.each { |key| delete( key, options ) if key =~ pattern }
+        keys.each { |key| delete( key, options ) if key =~ pattern }
       end
 
-      # Increment an integer value in the cache.
-      #
-      # TODO: what are the concurrent expectations for this?
-      #
+      # Increment an integer value in the cache; return new value
       def increment(name, amount = 1, options = nil)
-        raise NotImplementedError.new("#{self.class.name} does not support increment")
+        options = merged_options( options )
+        key = namespaced_key( name, options )
+        old_entry = read_entry( key, options )
+        value = old_entry.value.to_i + amount
+        new_entry = Entry.new( value, options )
+        if @cache.replace( key, old_entry, new_entry )
+          return value
+        else
+          raise "Concurrent modification, old value was #{old_entry.value}"
+        end
       end
 
-      # Increment an integer value in the cache.
-      #
-      # TODO: what are the concurrent expectations for this?
-      #
+      # Decrement an integer value in the cache; return new value
       def decrement(name, amount = 1, options = nil)
-        raise NotImplementedError.new("#{self.class.name} does not support decrement")
+        increment( name, -amount, options )
       end
 
       # Cleanup the cache by removing expired entries.
-      #
-      # TODO: Infinispan equivalent? 
-      #
-      # All implementations may not support this method.
       def cleanup(options = nil)
-        raise NotImplementedError.new("#{self.class.name} does not support cleanup")
+        options = merged_options(options)
+        keys.each do |key|
+          entry = read_entry(key, options)
+          delete_entry(key, options) if entry && entry.expired?
+        end
       end
 
       protected
+
+      # Return the keys in the cache; potentially very expensive depending on configuration
+      def keys
+        @cache.key_set
+      end
 
       # Read an entry from the cache implementation. Subclasses must implement this method.
       def read_entry(key, options)
