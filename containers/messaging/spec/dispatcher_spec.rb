@@ -38,25 +38,42 @@ describe TorqueBox::Messaging::Dispatcher do
 
   end
 
-  # context "naming" do
-  #   it "should configure naming host and url" do
-  #     dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'ahost', :naming_port => 1234) do
-  #       map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
-  #     end
+  context "naming" do
+     it "should configure naming host and url" do
+       dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'ahost', :naming_port => 1234) do
+         map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
+       end
 
-  #     dispatcher.send(:container)
+       config = mock('Config')
+       config.should_receive(:host=).with('ahost')
+       config.should_receive(:port=).with(1234)
 
-  #     java.lang::System.getProperty('java.naming.provider.url').should eql('jnp://ahost:1234/')
-  #   end
+       TorqueBox::Naming.should_receive(:configure).and_yield(config)
 
-  #   it "should configure only naming host" do
-  #     dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'somehost') do
-  #       map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
-  #     end
+       container = mock('Container')
+       container.should_receive(:enable)
 
-  #     dispatcher.send(:container)
+       TorqueBox::Container::Foundation.should_receive(:new).and_return(container)
 
-  #     java.lang::System.getProperty('java.naming.provider.url').should eql('jnp://somehost:1099/')
-  #   end
-  # end
+       dispatcher.send(:container)
+     end
+
+     it "should configure only naming host" do
+       dispatcher = TorqueBox::Messaging::Dispatcher.new(:naming_host => 'somehost') do
+         map Nothing, Topic.new('/topics/not'), 'filter' => 'whatever'
+       end
+
+       config = mock('Config')
+       config.should_receive(:host=).with('somehost')
+
+       TorqueBox::Naming.should_receive(:configure).and_yield(config)
+
+       container = mock('Container')
+       container.should_receive(:enable)
+
+       TorqueBox::Container::Foundation.should_receive(:new).and_return(container)
+
+       dispatcher.send(:container)
+     end
+  end
 end
