@@ -12,7 +12,7 @@ public class AuthYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
     public static final String DEFAULT_STRATEGY = "file";
 	public static final String DEFAULT_DOMAIN   = "other";
 	
-    public void AppKnobYamlParsingDeployer() {
+    public AuthYamlParsingDeployer() {
         setSectionName( "auth" );
         setSupportsStandalone( true);
         addInput( AuthMetaData.class );
