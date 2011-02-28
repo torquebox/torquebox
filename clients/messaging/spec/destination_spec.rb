@@ -107,16 +107,11 @@ describe TorqueBox::Messaging::Destination do
       @container.stop
     end
 
-    it "should allow browsing the messages" do
+    it "should allow enumeration of the messages" do
       queue = TorqueBox::Messaging::Queue.new "/queues/browseable"
       queue.start
-
       queue.publish "howdy"
-
-      queue.browse do |browser|
-        browser.first.text.should == 'howdy'
-      end
-
+      queue.first.text.should == 'howdy'
       queue.destroy
     end
   end

@@ -24,6 +24,8 @@ module TorqueBox
   module Messaging
 
     module Destination
+      include Enumerable
+      
       attr_reader :name
 
       PRIORITY_MAP = {
@@ -75,15 +77,18 @@ module TorqueBox
         end
       end
 
-      def browse(options = {})
-        wait_for_destination(options[:startup_timeout]) {
+      def each(options = {}, &block)
+        wait_for_destination(options[:startup_timeout]) do
           Client.connect(@connect_options) do |session|
             destination = session.lookup_destination( name )
             browser = session.createBrowser( destination )
-            yield browser
-            browser.close
+            begin
+              browser.each(&block)
+            ensure
+              browser.close
+            end
           end
-        }
+        end
       end
       
       def to_s
