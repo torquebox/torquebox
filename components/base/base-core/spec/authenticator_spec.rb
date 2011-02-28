@@ -2,8 +2,26 @@
 require 'org/torquebox/auth/authenticator'
 
 describe TorqueBox::Authentication do
-  it "should provide a default authenticator"
-  it "should allow authenticators to be looked up by name"
+  it "should provide a default authenticator" do
+    TorqueBox::Kernel.should_receive(:lookup).with 'myapp-authentication-default'
+    TorqueBox::Authentication.default
+  end
+
+  it "should allow authenticators to be looked up by name" do
+    TorqueBox::Kernel.should_receive(:lookup).with 'myapp-authentication-namedthing'
+    TorqueBox::Authentication['namedthing']
+  end
+
+  it "should return nil if TorqueBox is not running" do
+    ENV['TORQUEBOX_APP_NAME'] = nil
+    TorqueBox::Authentication.default.should be_nil
+  end
+
+  before :each do
+    TorqueBox::Kernel.stub! :lookup
+    ENV['TORQUEBOX_APP_NAME'] = 'myapp'
+  end
+
 end
 
 
