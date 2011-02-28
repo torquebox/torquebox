@@ -1,10 +1,10 @@
 
 if ( Rails::VERSION::MAJOR == 2 )
-  gem "activerecord-jdbc-adapter", :lib => "jdbc_adapter"
+  gem "activerecord-jdbc-adapter", :lib => "arjdbc"
 else
   text = File.read 'Gemfile'
   File.open('Gemfile', 'w') {|f| f << text.gsub(/^(gem 'sqlite3)/, '# \1') }
-  gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
+  gem "activerecord-jdbc-adapter", :require => "arjdbc"
   gem "jdbc-sqlite3"
   gem "jruby-openssl"
 end
