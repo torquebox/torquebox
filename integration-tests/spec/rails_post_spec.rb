@@ -7,10 +7,8 @@ describe "rails POST behavior" do
   context "raw_post" do
     it "should work" do
       visit "/basic-rails/post/raw"
-      puts page.body
       fill_in "name", :with => "my-name"
       click_button "submit"
-      puts page.body
       find("#raw_post").should have_content("name=my-name")
       find("#name").should have_content("my-name")
     end
