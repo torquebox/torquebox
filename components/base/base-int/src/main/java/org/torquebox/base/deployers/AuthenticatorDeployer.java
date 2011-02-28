@@ -68,7 +68,8 @@ public class AuthenticatorDeployer extends AbstractDeployer
 			log.error("Unable to configure authentication. No KernelController available");
 		} else {
 	    	RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-	    	this.setApplicationName(appMetaData.getApplicationName());
+        String applicationName = appMetaData.getApplicationName();
+	    	this.setApplicationName(applicationName);
 	    	
 	    	AuthMetaData authMetaData = unit.getAttachment(AuthMetaData.class);
 	    	if (authMetaData != null) { 

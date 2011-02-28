@@ -31,7 +31,7 @@
   <bean name="BaseRubyRuntimeDeployer"         class="org.torquebox.interp.deployers.BaseRubyRuntimeDeployer"/>
 
   <bean name="RubyRuntimeFactoryDeployer"        class="org.torquebox.interp.deployers.RubyRuntimeFactoryDeployer">
-    <property name="controller"><inject bean="jboss.kernel:service=Kernel" propert="controller"/></property>
+    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
   </bean>
 
   <bean name="PoolingYamlParsingDeployer"        class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
