@@ -104,10 +104,27 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
     and <command>rails</command> will load from the TorqueBox-provided JRuby
     installation.</para>
 
-    <para>You can also run TorqueBox using your own install of JRuby. You will
-    need to ensure that the gems that are included with the bundled JRuby
-    installed under your JRuby: <screen>cd $TORQUEBOX_HOME/jruby/lib/ruby/gems/1.8/cache
-gem install *.gem</screen> You will also need to set $JRUBY_HOME to point to
+    <para>You can also run TorqueBox using your own install of JRuby. 
+      You will need to ensure that your <command>gem</command> command
+      can find the torquebox gems by adding http://rubygems.torquebox.org
+      to your ~/.gemrc file.
+      <screen>
+$ cat ~/.gemrc 
+--- 
+:sources: 
+- http://rubygems.org
+- http://rubygems.torquebox.org
+      </screen>
+
+      Install the torquebox gems with jruby. Be sure to include the --pre
+      flag to get the pre-release gems if you are following the development
+      builds.
+
+      <screen>
+jruby -S gem install org.torquebox.container-foundation org.torquebox.messaging-client org.torquebox.messaging-container org.torquebox.naming-client org.torquebox.naming-container org.torquebox.rake-support org.torquebox.vfs --pre
+    </screen>
+
+    You will also need to set $JRUBY_HOME to point to
     your JRuby installation.</para>
 
     <para><command>Note:</command> if you are going to run a non-bundled JRuby
@@ -117,6 +134,7 @@ gem install *.gem</screen> You will also need to set $JRUBY_HOME to point to
     build, or be sure to reinstall the TorqueBox gems for the latest beta.
     Rubygems does not support the Beta<replaceable>X</replaceable> naming
     scheme, so sees all of the different betas of a version as
-    equivalent.</para>
+    equivalent.  There is a <ulink url="http://torquebox.org/news/2011/02/25/using-rvm-with-torquebox/">blog post</ulink> on torquebox.org describing how to 
+    set up your torquebox environment with RVM.</para>
   </section>
 </chapter>
