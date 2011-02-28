@@ -50,7 +50,10 @@ public class RackEnvironmentImpl implements RackEnvironment {
     private void initializeEnv(Ruby ruby, ServletContext servletContext, HttpServletRequest request) throws IOException {
         this.env = new RubyHash( ruby );
 
-        this.input = new RubyIO( ruby, request.getInputStream() );
+        // Wrap the input stream in a RewindableChannel because Rack expects
+        // 'rack.input' to be rewindable and a ServletInputStream is not
+        RewindableChannel rewindableChannel = new RewindableChannel( request.getInputStream() );
+        this.input = new RubyIO( ruby, rewindableChannel );
         env.put( RubyString.newString( ruby, "rack.input" ), input );
 
         this.errors = new RubyIO( ruby, STDIO.ERR );
