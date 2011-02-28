@@ -11,7 +11,9 @@
   <bean name="ManagedTopicDeployer" class="org.torquebox.messaging.deployers.ManagedTopicDeployer"/>
   
   <bean name="MessagingYamlParsingDeployer" class="org.torquebox.messaging.deployers.MessagingYamlParsingDeployer"/>
-  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer"/>
+  <bean name="MessageProcessorDeployer" class="org.torquebox.messaging.deployers.MessageProcessorDeployer">
+    <property name="demand">HornetQCoreDeployment::2</property>
+  </bean>
   
   <bean name="MessagingRuntimePoolDeployer" class="org.torquebox.messaging.deployers.MessagingRuntimePoolDeployer"/>
 
@@ -20,7 +22,12 @@
 
   <bean name="RailsTasksScanningDeployer" class="org.torquebox.messaging.deployers.TasksScanningDeployer">
     <property name="suffixFilter">_task.rb</property>
-    <property name="path">app/tasks/</property>
+    <property name="paths">
+      <list elementClass="java.lang.String">
+        <value>app/tasks/</value>
+        <value>tasks/</value>
+      </list>
+    </property>
   </bean>
 
   <bean name="BackgroundableDeployer" class="org.torquebox.messaging.deployers.BackgroundableDeployer"/>
@@ -30,6 +37,7 @@
     <property name="loadPaths">
       <list elementClass="java.lang.String">
         <value>app/tasks</value>
+        <value>tasks</value>
       </list>
     </property>
   </bean>

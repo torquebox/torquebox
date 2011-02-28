@@ -94,6 +94,33 @@ describe TorqueBox::Messaging::Destination do
     end
   end
 
+  
+  describe "browse" do
+    before(:each) do
+      @container = TorqueBox::Container::Foundation.new
+      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
+      @container.enable( TorqueBox::Messaging::MessageBroker )
+      @container.start
+    end
+
+    after(:each) do
+      @container.stop
+    end
+
+    it "should allow browsing the messages" do
+      queue = TorqueBox::Messaging::Queue.new "/queues/browseable"
+      queue.start
+
+      queue.publish "howdy"
+
+      queue.browse do |browser|
+        browser.first.text.should == 'howdy'
+      end
+
+      queue.destroy
+    end
+  end
+  
   describe "sending and receiving" do
     before(:each) do
       @container = TorqueBox::Container::Foundation.new

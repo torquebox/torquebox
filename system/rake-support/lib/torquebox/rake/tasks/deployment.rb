@@ -22,7 +22,7 @@ def deployment_descriptor(root, env, context_path)
   d['application'] = {}
   d['application']['root'] = root
   unless ( env.nil? )
-    d['application']['env'] = env
+    d['application']['env'] = env.to_s
   end
 
   if ( context_path.nil? )

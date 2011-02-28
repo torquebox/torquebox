@@ -57,12 +57,22 @@ import org.torquebox.messaging.metadata.QueueMetaData;
  */
 public class MessageProcessorDeployer extends AbstractDeployer {
 
+    private String demand;
+
     public MessageProcessorDeployer() {
         setStage( DeploymentStages.REAL );
         addInput( MessageProcessorMetaData.class );
         addInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setRelativeOrder( 1000 );
+    }
+
+    public void setDemand(String demand) {
+        this.demand = demand;
+    }
+
+    public String getDemand() {
+        return this.demand;
     }
 
     @Override
@@ -101,15 +111,16 @@ public class MessageProcessorDeployer extends AbstractDeployer {
             builder.addDemand( destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null );
         }
 
+        if (this.demand != null) {
+            log.debug( "adding a demand for " + this.demand + " to " + simpleName );
+            builder.addDemand( this.demand, ControllerState.CREATE, ControllerState.INSTALLED, null);
+        }
+
         Context context = new InitialContext();
 
-        // JndiRefMetaData destinationJndiRef = new JndiRefMetaData(context,
-        // metaData.getDestinationName());
         ValueMetaData destinationJndiRef = builder.createInject( "naming:" + metaData.getDestinationName() );
         builder.addPropertyMetaData( "destination", destinationJndiRef );
 
-        // JndiRefMetaData connectionFactoryJndiRef = new
-        // JndiRefMetaData(context, "/ConnectionFactory");
         ValueMetaData connectionFactoryJndiRef = builder.createInject( "naming:/ConnectionFactory" );
         builder.addPropertyMetaData( "connectionFactory", connectionFactoryJndiRef );
 

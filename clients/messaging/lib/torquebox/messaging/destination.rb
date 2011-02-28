@@ -18,6 +18,8 @@
 require 'org/torquebox/interp/core/kernel'
 require 'torquebox/messaging/client'
 
+require 'torquebox/messaging/ext/javax_jms_queue_browser'
+
 module TorqueBox
   module Messaging
 
@@ -73,6 +75,17 @@ module TorqueBox
         end
       end
 
+      def browse(options = {})
+        wait_for_destination(options[:startup_timeout]) {
+          Client.connect(@connect_options) do |session|
+            destination = session.lookup_destination( name )
+            browser = session.createBrowser( destination )
+            yield browser
+            browser.close
+          end
+        }
+      end
+      
       def to_s
         name
       end

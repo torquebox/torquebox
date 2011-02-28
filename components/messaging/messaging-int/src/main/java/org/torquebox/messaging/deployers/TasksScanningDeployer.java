@@ -42,13 +42,13 @@ public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
     }
 
     @Override
-    protected void deploy(VFSDeploymentUnit unit, VirtualFile file, String relativePath) throws DeploymentException {
+    protected void deploy(VFSDeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentException {
         log.info( "deploying " + relativePath );
 
         String rubyClassName = StringUtils.pathToClassName( relativePath, ".rb" );
         TaskMetaData taskMetaData = getTaskMetaData(unit, rubyClassName);
 
-        String simpleLocation = getPath() + relativePath.substring( 0, relativePath.length() - 3 );
+        String simpleLocation = parentPath + relativePath.substring( 0, relativePath.length() - 3 );
 
         taskMetaData.setLocation( simpleLocation );
         taskMetaData.setRubyClassName( rubyClassName );

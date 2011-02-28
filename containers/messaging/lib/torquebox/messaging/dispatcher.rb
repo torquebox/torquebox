@@ -18,6 +18,7 @@
 require 'org.torquebox.container-foundation'
 require 'torquebox/container/foundation'
 require 'torquebox/messaging/message_processor_host'
+require 'torquebox/naming'
 
 module TorqueBox
   module Messaging
@@ -26,7 +27,8 @@ module TorqueBox
     # consumers to destinations
     class Dispatcher
 
-      def initialize &block
+      def initialize(options = {}, &block)
+        @options = options
         instance_eval &block if block_given?
       end
 
@@ -61,7 +63,12 @@ module TorqueBox
       
       def container
         unless @container
-          TorqueBox::Naming.configure
+
+          TorqueBox::Naming.configure do |config|
+            config.host = @options[:naming_host] unless @options[:naming_host].nil?
+            config.port = @options[:naming_port] unless @options[:naming_port].nil?
+          end
+
           @container = TorqueBox::Container::Foundation.new
           @container.enable( MessageProcessorHost )
         end

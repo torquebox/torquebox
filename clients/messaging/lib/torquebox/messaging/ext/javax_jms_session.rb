@@ -125,7 +125,7 @@ module javax.jms::Session
   def populate_message_properties(jms_message, properties)
     return if properties.nil?
     properties.each do |key, value|
-      jms_message.setStringProperty(key, value)
+      jms_message.setStringProperty(key.to_s, value.to_s)
     end
   end
 

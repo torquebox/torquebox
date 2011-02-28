@@ -941,9 +941,11 @@ messaging:
         <classname>Hash</classname>.</para>
 
         <para>In Rails applications, these tasks should be placed in
-        the <filename>app/tasks/</filename> directory, and be named
-        with a suffix of <filename>_task.rb</filename> on the file,
-        and a suffix of <classname>Task</classname> on the class
+        the <filename>app/tasks/</filename> directory. For non-Rails
+        applications, they should be placed in <filename>tasks/</filename>.
+        The tasks should be suffixed with <filename>_task.rb</filename> 
+        for the file name,
+        and suffixed with <classname>Task</classname> for the class
         name.</para>
 
         <para>Any of the task's methods can be invoked asynchronously

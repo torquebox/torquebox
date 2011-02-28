@@ -1,0 +1,9 @@
+
+<% form_tag "#{url_for}#{session.url_suffix}" do %>
+  <%= text_field_tag 'name', '', :id => 'the-name' %>
+  <%= submit_tag 'submit', :name => 'submit' %>
+<% end %>
+
+<div id="raw_post"><%= @raw_post %></div>
+
+<div id="name"><%= @name %></div>

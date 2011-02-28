@@ -15,20 +15,13 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'org/torquebox/rails/web/v2_3/dispatcher'
 
-module TorqueBox
-  module Rails
-    module V2_3
-      module Rack
-        module Generator
-          def self.generate(context)
-            ::Rack::Builder.new {
-              run ActionController::Dispatcher.new
-            }.to_app
-          end
-        end
-      end
-    end
+
+module javax.jms::QueueBrowser
+  include Enumerable
+  
+  def each(&block)
+    enumeration.each(&block)
   end
 end
+

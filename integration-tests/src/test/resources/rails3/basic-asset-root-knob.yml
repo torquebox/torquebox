@@ -1,0 +1,7 @@
+---
+application:
+  RAILS_ROOT: ${basedir}/apps/rails3/basic
+  RAILS_ENV: development
+web:
+  context: /
+  host: integ-app3.torquebox.org
