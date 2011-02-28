@@ -28,7 +28,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.kernel.spi.dependency.KernelController;
+import org.jboss.kernel.Kernel;
 import org.torquebox.auth.UsersRolesAuthenticator;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
@@ -36,7 +36,7 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 
 public class AuthenticatorDeployer extends AbstractDeployer
 {
-    private KernelController controller;
+    private Kernel kernel;
 	private String applicationName;
 
 	public AuthenticatorDeployer() {
@@ -46,12 +46,12 @@ public class AuthenticatorDeployer extends AbstractDeployer
         addOutput(BeanMetaData.class);
     }
 
-	public void setController(KernelController controller) {
-		this.controller = controller;
+	public void setKernel(Kernel kernel) {
+		this.kernel = kernel;
 	}
 
-	public KernelController getController() {
-		return controller;
+	public Kernel getKernel() {
+		return kernel;
 	}
 
     public void setApplicationName(String applicationName) {
@@ -64,7 +64,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if (this.getController() == null) {
+		if (this.getKernel() == null) {
 			log.error("Unable to configure authentication. No KernelController available");
 		} else {
 	    	RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.class);
@@ -91,7 +91,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
 		    BeanMetaData beanMetaData = builder.getBeanMetaData();
 		    try {
 		    	log.info("Installing bean: " + beanName);
-		        this.getController().install(beanMetaData, authenticator);
+		        this.getKernel().getController().install(beanMetaData, authenticator);
 		    }
 		    catch (Throwable throwable) {
 		        log.error("Cannot install PicketBox authentication.");
