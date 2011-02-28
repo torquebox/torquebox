@@ -60,19 +60,24 @@ module ActiveSupport
 
       # Read an entry from the cache implementation. Subclasses must implement this method.
       def read_entry(key, options)
+        log(:read_entry, key, options)
         @cache.get( key )
       end
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
-      #
-      # TODO: support :expires_in and :unless_exist
-      #
-      def write_entry(key, entry, options)
-        @cache.putAsync( key, entry )
+      def write_entry(key, entry, options = {})
+        log(:write_entry, key, options)
+        args = [ key, entry ]
+        # First arg should be method, determined by :unless_exist option
+        args.unshift( options[:unless_exist] ? :put_if_absent_async : :put_async )
+        # Append number of seconds if :expires_in option passed
+        args << options[:expires_in].to_i << java.util.concurrent.TimeUnit.SECONDS if options[:expires_in]
+        @cache.send( *args )
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
       def delete_entry(key, options) # :nodoc:
+        log(:delete_entry, key, options)
         @cache.removeAsync( key )
       end
 
