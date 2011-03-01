@@ -30,7 +30,6 @@ public class RubyApplicationMetaData {
     private VirtualFile root;
     private String applicationName;
     private String environmentName;
-    private boolean developmentMode = false;
     private Map<String, String> environment;
     private boolean archive = false;
 
@@ -81,16 +80,12 @@ public class RubyApplicationMetaData {
         return this.applicationName;
     }
 
-    public void setDevelopmentMode(boolean developmentMode) {
-        this.developmentMode = developmentMode;
-    }
-
     public boolean isArchive() {
         return this.archive;
     }
 
     public boolean isDevelopmentMode() {
-        return this.developmentMode;
+        return environmentName == null || environmentName.trim().equalsIgnoreCase( "development" );
     }
 
     public void setEnvironmentName(String environmentName) {
