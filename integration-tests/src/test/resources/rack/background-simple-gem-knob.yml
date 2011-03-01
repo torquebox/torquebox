@@ -1,0 +1,6 @@
+---
+application:
+  root: ${basedir}/apps/rack/background-simple-gem
+  env: development
+web:
+  context: /background
