@@ -69,7 +69,7 @@
       TorqueBox deployments. If you use Bundler, you should also include the
       Bunlder recipes at this point.</para>
 
-      <para><screen>require 'org.torquebox.capistrano-support'
+      <para><screen>require 'torquebox-capistrano-support'
 require 'bundler/capistrano'</screen></para>
     </section>
 

@@ -121,7 +121,7 @@ $ cat ~/.gemrc
       builds.
 
       <screen>
-jruby -S gem install org.torquebox.container-foundation org.torquebox.messaging-client org.torquebox.messaging-container org.torquebox.naming-client org.torquebox.naming-container org.torquebox.rake-support org.torquebox.vfs --pre
+jruby -S gem install torquebox-container-foundation torquebox-messaging torquebox-messaging-container torquebox.naming torquebox-naming-container torquebox-rake-support torquebox-capistrano-support torquebox-vfs --pre
     </screen>
 
     You will also need to set $JRUBY_HOME to point to

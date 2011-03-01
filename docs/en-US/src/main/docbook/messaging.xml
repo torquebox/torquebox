@@ -253,7 +253,7 @@ topics:
 
     <para>All classes in the <classname>TorqueBox::Messaging</classname>
     module reside in the Ruby gem,
-    <filename>org.torquebox.messaging-client</filename>, so to use
+    <filename>torquebox-messaging</filename>, so to use
     them in your Rails app, add this to your
     <filename>config/environment.rb</filename>:</para>
 
@@ -263,7 +263,7 @@ topics:
 
       <para><programlisting>Rails::Initializer.run do |config|
   ...
-  config.gem 'org.torquebox.messaging-client'
+  config.gem 'torquebox-messaging'
   ...</programlisting></para>
     </example>
 
