@@ -117,6 +117,12 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-core</artifactId>
+      <version>${version.infinispan}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-web-int</artifactId>
       <version>${project.version}</version>
@@ -314,7 +320,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeGroupIds>org.torquebox,org.infinispan</includeGroupIds>
               <excludeArtifactIds>torquebox-bootstrap-int</excludeArtifactIds>
               <includeTypes>jar</includeTypes>
               <excludeTypes>gem</excludeTypes>
