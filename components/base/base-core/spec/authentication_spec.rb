@@ -1,5 +1,5 @@
 
-require 'org/torquebox/auth/authenticator'
+require 'org/torquebox/auth/authentication'
 
 describe TorqueBox::Authentication do
   it "should provide a default authenticator" do
