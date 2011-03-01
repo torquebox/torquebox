@@ -67,10 +67,8 @@ module ActiveSupport
       # Write an entry to the cache implementation. Subclasses must implement this method.
       def write_entry(key, entry, options = {})
         log(:write_entry, key, options)
-        args = [ key, entry ]
-        # First arg should be method, determined by :unless_exist option
-        args.unshift( options[:unless_exist] ? :put_if_absent_async : :put_async )
-        # Append number of seconds if :expires_in option passed
+        args = [ :put_async, key, entry ]
+        args[0] = :put_if_absent_async if options[:unless_exist]
         args << options[:expires_in].to_i << java.util.concurrent.TimeUnit.SECONDS if options[:expires_in]
         @cache.send( *args )
       end
