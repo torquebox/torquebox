@@ -16,5 +16,5 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 # Backwards-compatibility
-$stderr.puts "Usage of 'org.torquebox.capistrano-support' is deprecated.  Please use 'torquebox-capistrano-support'."
-require 'torquebox-capistrano-support'
+$stderr.puts "Usage of 'org.torquebox.messaging-client' is deprecated.  Please use 'torquebox-messaging'."
+require 'torquebox-messaging'

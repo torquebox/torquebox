@@ -1,4 +1,4 @@
-require 'org.torquebox.messaging-client'
+require 'torquebox-messaging'
 
 class JobQueuePublisher
   def initialize

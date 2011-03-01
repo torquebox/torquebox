@@ -1,6 +1,6 @@
 
 begin
-  require 'org.torquebox.messaging-client'
+  require 'torquebox-messaging'
 rescue LoadError=>e
   # ignore!
 end

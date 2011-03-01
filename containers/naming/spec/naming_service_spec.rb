@@ -1,6 +1,5 @@
 
-require 'org.torquebox.naming-client'
-
+require 'torquebox-naming'
 require 'torquebox/naming/naming_service'
 
 require 'socket'

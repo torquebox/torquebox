@@ -1,6 +1,6 @@
 
-require 'org.torquebox.naming-container'
-require 'org.torquebox.naming-client'
+require 'torquebox-naming-container'
+require 'torquebox-naming'
 
 require 'torquebox/messaging/message_broker'
 

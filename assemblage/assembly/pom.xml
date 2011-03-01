@@ -198,64 +198,64 @@
     </dependency>
 
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>rake-support</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-rake-support</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>rake-support</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-rake-support</artifactId>
       <type>template.rb</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>capistrano-support</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-capistrano-support</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>container-foundation</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-container-foundation</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>naming-container</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-naming-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>messaging-container</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>naming-client</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-naming</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>messaging-client</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
@@ -404,7 +404,8 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeGroupIds>rubygems</includeGroupIds>
+              <includeArtifactIds>torquebox-rake-support</includeArtifactIds>
               <includeTypes>template.rb</includeTypes>
               <outputDirectory>${stage.dir}/share/rails</outputDirectory>
               <stripVersion>true</stripVersion>
@@ -534,7 +535,7 @@
             </goals>
             <configuration>
               <tasks>
-                <move file="${stage.dir}/share/rails/rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb"/>
+                <move file="${stage.dir}/share/rails/torquebox-rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb"/>
               </tasks>
             </configuration>
           </execution>

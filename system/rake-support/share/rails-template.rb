@@ -10,8 +10,8 @@ else
 end
 
 # gems defs common to v2 and v3
-gem "org.torquebox.rake-support"
-gem 'org.torquebox.messaging-client'
+gem "torquebox-rake-support"
+gem 'torquebox'
 
 
 if ( Rails::VERSION::MAJOR == 2 )
@@ -57,9 +57,9 @@ rakefile( 'torquebox.rake' ) do
   <<-TASK
 
 begin
-  require 'org.torquebox.rake-support'
+  require 'torquebox-rake-support'
 rescue LoadError => ex
-  puts "Failed to load the TorqueBox rake gem (org.torquebox.rake-support). Make sure it is available in your environment."
+  puts "Failed to load the TorqueBox rake gem (torquebox-rake-support). Make sure it is available in your environment."
 end
 
 # Patch db:load_config to make sure activerecord-jdbc-adapter gets loaded

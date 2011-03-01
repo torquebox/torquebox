@@ -36,5 +36,5 @@ gem "jdbc-sqlite3"
 gem "jruby-openssl"
 
 group :development do
-  gem "org.torquebox.rake-support"
+  gem "torquebox-rake-support"
 end

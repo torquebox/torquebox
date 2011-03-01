@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'org.torquebox.messaging-client'
+require 'torquebox-messaging'
 
 describe "messaging rack test" do
 

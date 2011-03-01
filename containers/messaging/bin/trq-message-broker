@@ -10,10 +10,10 @@ if ( File.exist?( dev_lib_dir ) )
     require jar
   end
 else
-  require 'org.torquebox.messaging-container'
+  require 'torquebox-messaging-container'
 end
 
-require 'org.torquebox.naming-container'
+require 'torquebox-naming-container'
 require 'torquebox/messaging/commands/message_broker'
 
 command = TorqueBox::Messaging::Commands::MessageBroker.new

@@ -2,46 +2,30 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>container-parent</artifactId>
+    <artifactId>client-parent</artifactId>
     <version>1.0.0.CR1-SNAPSHOT</version>
-    <relativePath>../container-parent/pom.xml</relativePath>
+    <relativePath>../client-parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
-  <artifactId>torquebox-naming-container</artifactId>
-  <packaging>java-gem</packaging>
-  <name>TorqueBox Naming Container</name>
+  <artifactId>torquebox</artifactId>
+  <packaging>gem</packaging>
+  <name>TorqueBox Gem</name>
   <description></description>
 
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>torquebox-container-foundation</artifactId>
+      <artifactId>torquebox-messaging</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
-      <scope>compile</scope>
     </dependency>
-
-    <dependency>
-      <groupId>org.jboss.naming</groupId>
-      <artifactId>jnpserver</artifactId>
-      <scope>compile</scope>
-    </dependency>
-
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquebox-naming</artifactId>
-      <type>gem</type>
       <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rspec</artifactId>
       <type>gem</type>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -57,9 +41,6 @@
           <execution>
             <id>default-install</id>
             <phase>install</phase>
-            <goals>
-              <goal>install</goal>
-            </goals>
           </execution>
           <execution>
             <id>install-gem-into-assemblage</id>

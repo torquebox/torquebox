@@ -8,8 +8,8 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
-  <artifactId>vfs</artifactId>
+  <groupId>rubygems</groupId>
+  <artifactId>torquebox-vfs</artifactId>
   <packaging>gem</packaging>
   <name>TorqueBox VFS</name>
   <description></description>

@@ -5,5 +5,5 @@ gem 'activerecord-jdbc-adapter'
 gem 'jdbc-sqlite3'
 
 group :development do
-  gem "org.torquebox.rake-support", '~>1.0.0'
+  gem "torquebox-rake-support", '~>1.0.0'
 end

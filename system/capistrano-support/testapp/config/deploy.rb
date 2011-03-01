@@ -1,4 +1,4 @@
-require 'org.torquebox.capistrano-support'
+require 'torquebox-capistrano-support'
 require 'bundler/capistrano'
 
 set :application, "testapp"

@@ -77,8 +77,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>gem</type>

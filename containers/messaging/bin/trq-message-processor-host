@@ -11,10 +11,10 @@ if ( File.exist?( dev_lib_dir ) )
     require jar
   end
 else
-  require 'org.torquebox.messaging-container'
+  require 'torquebox-messaging-container'
 end
 
-require 'org.torquebox.container-foundation'
+require 'torquebox-container-foundation'
 require 'torquebox/messaging/commands/message_processor_host'
 
 command = TorqueBox::Messaging::Commands::MessageProcessorHost.new

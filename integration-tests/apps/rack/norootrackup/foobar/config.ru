@@ -1,5 +1,5 @@
 
-require 'org.torquebox.messaging-client'
+require 'torquebox-messaging'
 
 TorqueBox::Messaging::Queue.new('/queues/foobar').publish("this won't work if queues.yml isn't in a metadata dir")
 

@@ -1,1 +1,1 @@
-require "org.torquebox.rake-support"
+require "torquebox-rake-support"
