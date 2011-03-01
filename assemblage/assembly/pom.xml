@@ -119,7 +119,6 @@
     <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-core</artifactId>
-      <version>${version.infinispan}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

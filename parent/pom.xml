@@ -256,7 +256,6 @@
     <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
 
     <version.hornetq>2.0.0.GA</version.hornetq>
-    <version.infinispan>4.2.0.FINAL</version.infinispan>
     <version.netty>3.1.5.GA</version.netty>
     <version.jms>1.1</version.jms>
 
