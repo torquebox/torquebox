@@ -24,6 +24,8 @@
   <bean name="RubyApplicationDefaultsDeployer"   class="org.torquebox.base.deployers.RubyApplicationDefaultsDeployer"/>
   
   <bean name="DeploymentNotifier"                class="org.torquebox.base.deployers.DeploymentNotifier"/>
+  <bean name="AuthYamlParsingDeployer"           class="org.torquebox.base.deployers.AuthYamlParsingDeployer"/>
+  <bean name="AuthDefaultsDeployer"              class="org.torquebox.base.deployers.AuthDefaultsDeployer"/>
   <bean name="AuthenticatorDeployer"             class="org.torquebox.base.deployers.AuthenticatorDeployer">
     <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
   </bean>

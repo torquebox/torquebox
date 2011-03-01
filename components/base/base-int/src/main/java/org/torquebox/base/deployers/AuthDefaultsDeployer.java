@@ -41,7 +41,7 @@ public class AuthDefaultsDeployer extends AbstractDeployer
     public void deploy(DeploymentUnit unit) throws DeploymentException {
 		AuthMetaData authMetaData = unit.getAttachment( AuthMetaData.class );
 		if (authMetaData == null) {
-			log.debug("Configuring TorqueBox Authentication");
+			log.warn("No authentication configuration found. Configuring TorqueBox Authentication");
 			authMetaData = new AuthMetaData();
 			unit.addAttachment(AuthMetaData.class, authMetaData);
 		}
