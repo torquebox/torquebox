@@ -93,7 +93,7 @@ public class ServicesDeployer extends AbstractDeployer {
 
     protected PoolMetaData createRuntimePool(DeploymentUnit unit, int max) {
         PoolMetaData pool = AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class );
-        ;
+
         if (pool == null && max > 0) {
             pool = new PoolMetaData( POOL_NAME, 1, max );
             log.info( "Configured Ruby runtime pool for services: " + pool );
