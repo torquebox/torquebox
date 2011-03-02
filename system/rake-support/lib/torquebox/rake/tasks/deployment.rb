@@ -71,7 +71,7 @@ namespace :torquebox do
   namespace :deploy do
     task :archive=>[ 'torquebox:archive' ] do
       archive_name = get_archive_name
-      src = "#{Dir.pwd}/#{archive_name}"
+      src = File.join("#{Dir.pwd}", "#{archive_name}")
       FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
       puts "Deployed #{archive_name}"
     end
