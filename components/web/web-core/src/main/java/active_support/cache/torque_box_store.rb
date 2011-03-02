@@ -1,13 +1,15 @@
 
 require 'active_support/cache'
 require 'org/torquebox/interp/core/kernel'
+require 'logger'
 
 module ActiveSupport
   module Cache
     class TorqueBoxStore < Store
 
-      def initialize(*args)
-        super(*args)
+      def initialize(options = {})
+        self.logger = options.delete(:logger) || Logger.new(STDOUT)
+        super(options)
         @cache = clustered || local || nothing
       end
 
@@ -86,25 +88,25 @@ module ActiveSupport
         registry = TorqueBox::Kernel.lookup("CacheContainerRegistry")
         container = registry.cache_container( 'web' )
         result = container.get_cache(TORQUEBOX_APP_NAME)
-        puts "Using clustered cache: #{result}"
+        logger.info "Using clustered cache: #{result}"
         result
       rescue
-        puts "Unable to obtain clustered cache"
+        logger.warn("Unable to obtain clustered cache") && nil
       end
 
       def local
         container = org.infinispan.manager.DefaultCacheManager.new()
         result = container.get_cache()
-        puts "Using local cache: #{result}"
+        logger.info "Using local cache: #{result}"
         result
       rescue
-        puts "Unable to obtain local cache: #{$!}"
+        logger.warn("Unable to obtain local cache: #{$!}") && nil
       end
       
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        puts "No caching will occur"
+        logger.warn "No caching will occur"
         result
       end
 
