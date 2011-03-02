@@ -1,4 +1,5 @@
 
+require 'active_support/cache'
 require 'org/torquebox/interp/core/kernel'
 
 module ActiveSupport
