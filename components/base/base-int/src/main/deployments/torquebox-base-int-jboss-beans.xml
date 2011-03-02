@@ -39,4 +39,5 @@
   <bean name="ServicesRuntimePoolDeployer"       class="org.torquebox.services.deployers.ServicesRuntimePoolDeployer"/>
   <bean name="ServicesDeployer"                  class="org.torquebox.services.deployers.ServicesDeployer"/>
 
+  <bean name="RubyApplicationDeployer"           class="org.torquebox.base.deployers.RubyApplicationDeployer"/>
 </deployment>
