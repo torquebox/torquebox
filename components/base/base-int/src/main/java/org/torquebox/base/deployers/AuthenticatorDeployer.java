@@ -33,72 +33,88 @@ import org.torquebox.auth.UsersRolesAuthenticator;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.mc.AttachmentUtils;
 
 public class AuthenticatorDeployer extends AbstractDeployer
 {
     private Kernel kernel;
-	private String applicationName;
+    private String applicationName;
 
-	public AuthenticatorDeployer() {
+    public AuthenticatorDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
         addInput(AuthMetaData.class);
         addOutput(BeanMetaData.class);
     }
 
-	public void setKernel(Kernel kernel) {
-		this.kernel = kernel;
-	}
+    public void setKernel(Kernel kernel) {
+        this.kernel = kernel;
+    }
 
-	public Kernel getKernel() {
-		return kernel;
-	}
+    public Kernel getKernel() {
+        return kernel;
+    }
 
     public void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;		
-	}
+        this.applicationName = applicationName;        
+    }
     
     public String getApplicationName() {
-    	return this.applicationName;
+        return this.applicationName;
     }
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-		if (this.getKernel() == null) {
-			log.error("Unable to configure authentication. No KernelController available");
-		} else {
-	    	RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.class);
-	    	String applicationName = appMetaData.getApplicationName();
-	    	this.setApplicationName(applicationName);
-	    	
-	    	AuthMetaData authMetaData = unit.getAttachment(AuthMetaData.class);
-	    	if (authMetaData != null) { 
-		    	Collection<Config> authConfigs = authMetaData.getConfigurations();
-		    	for(Config config: authConfigs) {
-		            installAuthenticator(config.getName(), config.getStrategy(), config.getDomain());
-		    	}
-	    	}
-		}
+        if (this.getKernel() == null) {
+            log.error("Unable to configure authentication. No KernelController available");
+        } else {
+            RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.class);
+            String applicationName = appMetaData.getApplicationName();
+            this.setApplicationName(applicationName);
+            
+            AuthMetaData authMetaData = unit.getAttachment(AuthMetaData.class);
+            if (authMetaData != null) { 
+                Collection<Config> authConfigs = authMetaData.getConfigurations();
+                for(Config config: authConfigs) {
+                    installAuthenticator(unit, config.getName(), config.getStrategy(), config.getDomain());
+                }
+            }
+        }
     }
     
-	private void installAuthenticator(String name, String strategy, String domain) {
-		if (!strategy.equals("file")) {
-		    System.err.println("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
-		} else {
-		    UsersRolesAuthenticator authenticator = new UsersRolesAuthenticator();
-		    authenticator.setAuthDomain(domain);
-		    String beanName = this.getApplicationName() + "-authentication-" + name;
-		    BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder(beanName, UsersRolesAuthenticator.class.getName());
-		    BeanMetaData beanMetaData = builder.getBeanMetaData();
-		    try {
-		    	log.info("Installing bean: " + beanName);
-		        this.getKernel().getController().install(beanMetaData, authenticator);
-		    }
-		    catch (Throwable throwable) {
-		        log.error("Cannot install PicketBox authentication.");
-		        log.error(throwable.getMessage());
-		        throwable.printStackTrace(System.err);
-		    }
-		}
-	}
+    private void installAuthenticator(DeploymentUnit unit, String name, String strategy, String domain) {
+        String strategyClass = strategyClassFor(strategy);
+        if (strategyClass != null) {
+            String authenticatorBeanName = this.getApplicationName() + "-authentication-" + name;
+            String jaasDelagateBeanName  = authenticatorBeanName + "-delegate";
+
+            // Create a fancy annotated thing
+            BeanMetaDataBuilder delagateBuilder = BeanMetaDataBuilderFactory.createBuilder(jaasDelagateBeanName, Object.class.getName());
+            delagateBuilder.addAnnotation("@org.jboss.security.annotation.Authentication(modules={@org.jboss.security.annotation.Module(code = "+strategyClass+", options = {@org.jboss.security.annotation.ModuleOption})})");
+            
+            // Set up our authenticator
+            BeanMetaDataBuilder authenticatorBuilder = BeanMetaDataBuilderFactory.createBuilder(authenticatorBeanName, UsersRolesAuthenticator.class.getName());
+            authenticatorBuilder.addPropertyMetaData("authDomain", domain);
+            authenticatorBuilder.addPropertyMetaData("delagate", authenticatorBuilder.createInject(jaasDelagateBeanName));
+            
+            try {
+                log.info("Installing bean: " + authenticatorBeanName);
+                AttachmentUtils.attach(unit, delagateBuilder.getBeanMetaData());
+                AttachmentUtils.attach(unit, authenticatorBuilder.getBeanMetaData());
+            }
+            catch (Throwable throwable) {
+                log.error("Cannot install PicketBox authentication.");
+                log.error(throwable.getMessage());
+                throwable.printStackTrace(System.err);
+            }
+        }
+    }
+
+    private String strategyClassFor(String strategy) {
+        if (strategy.equals("file")) {
+            return "org.jboss.security.auth.spi.UsersRolesLoginModule.class";
+        } 
+        System.err.println("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
+        return null;
+    }
 }

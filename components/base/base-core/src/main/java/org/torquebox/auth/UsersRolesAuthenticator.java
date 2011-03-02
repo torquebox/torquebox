@@ -19,12 +19,10 @@
 
 package org.torquebox.auth;
 
-import java.security.Principal;
+import javax.security.auth.login.LoginException;
 
-import org.jboss.security.AuthenticationManager;
-import org.jboss.security.SecurityContext;
-import org.picketbox.config.PicketBoxConfiguration;
-import org.picketbox.factories.SecurityFactory;
+import org.picketbox.exceptions.PicketBoxProcessingException;
+import org.picketbox.plugins.PicketBoxProcessor;
 
 /**
  * Provides JBoss file-based authentication
@@ -34,12 +32,8 @@ import org.picketbox.factories.SecurityFactory;
  */
 public class UsersRolesAuthenticator
 {
-	private String configFile;
 	private String authDomain;
-	
-	public void configure(String configFile) {
-		this.configFile = configFile;
-	}
+	private Object delagate;
 	
 	public void setAuthDomain(String domain) {
 		this.authDomain = domain;
@@ -49,25 +43,28 @@ public class UsersRolesAuthenticator
 		return this.authDomain;
 	}
 	
-    public boolean authenticate(String name, String pass) {
-        SecurityContext securityContext = null;
+	public void setDelagate(Object delagate) {
+		this.delagate = delagate;
+	}
 
-        if (this.configFile != null) {
-    		PicketBoxConfiguration config = new PicketBoxConfiguration();
-    	    config.load(configFile);
-        }
+	public Object getDelagate() {
+		return delagate;
+	}
 
-        securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
-        AuthenticationManager am = securityContext.getAuthenticationManager();
-        return am.isValid(getPrincipal(name), new String(pass));
+	public boolean authenticate(String name, String pass) {
+		PicketBoxProcessor processor = new PicketBoxProcessor();
+		processor.setSecurityInfo(name, pass);
+		
+		try {
+			processor.process(this.getDelagate());
+			return true;
+		} catch (LoginException e) {
+			System.err.println("Failed login from: " + name);
+		} catch (PicketBoxProcessingException e) {
+			System.err.println("Unknown error occurred within JAAS");
+			e.printStackTrace();
+		}
+		return false;
     }
 
-    private Principal getPrincipal(final String name) {
-        return new Principal()
-        {
-            public String getName() {
-                return name;
-            }
-        };
-    }
 }
