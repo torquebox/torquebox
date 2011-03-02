@@ -29,6 +29,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
@@ -78,6 +79,10 @@ public class RubyJobDeployerTest extends AbstractDeployerTestCase {
         String deploymentName = createDeployment( "simple" );
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         AttachmentUtils.multipleAttach( unit, jobMetaData, "job.one" );
+        
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName(  "test-app" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
 
         processDeployments( true );
 

@@ -29,7 +29,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class ScheduledJob {
+public class ScheduledJob implements ScheduledJobMBean {
 
     private static final Logger log = Logger.getLogger( ScheduledJob.class );
 
@@ -46,6 +46,8 @@ public class ScheduledJob {
 
     private RubyRuntimePool runtimePool;
     private Scheduler scheduler;
+
+    private JobDetail jobDetail;
 
     public ScheduledJob() {
 
@@ -115,9 +117,9 @@ public class ScheduledJob {
         return this.scheduler;
     }
 
-    public void start() throws ParseException, SchedulerException {
+    public synchronized void start() throws ParseException, SchedulerException {
         log.info( "Starting Ruby job: " + this.group + "." + this.name );
-        JobDetail jobDetail = new JobDetail();
+        this.jobDetail = new JobDetail();
 
         jobDetail.setGroup( this.group );
         jobDetail.setName( this.name );
@@ -139,9 +141,26 @@ public class ScheduledJob {
         return this.name + ".trigger";
     }
 
-    public void stop() throws SchedulerException {
+    public synchronized void stop() throws SchedulerException {
         log.info( "Stopping Ruby job: " + this.group + "." + this.name );
         scheduler.unscheduleJob( getTriggerName(), this.group );
+        this.jobDetail = null;
+    }
+    
+    public synchronized boolean isStarted() {
+        return this.jobDetail != null;
+    }
+    
+    public synchronized boolean isStopped() {
+        return this.jobDetail == null;
+    }
+    
+    public synchronized String getStatus() {
+        if ( isStarted() ) {
+            return "STARTED";
+        }
+        
+        return "STOPPED";
     }
 
     public String toString() {

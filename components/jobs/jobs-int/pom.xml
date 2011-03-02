@@ -64,6 +64,16 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-aop-mc-int</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.aop</groupId>
+      <artifactId>jboss-aop</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-client-spi</artifactId>
       <scope>provided</scope>
