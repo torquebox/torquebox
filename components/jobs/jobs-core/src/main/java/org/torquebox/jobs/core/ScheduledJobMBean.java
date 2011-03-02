@@ -1,5 +1,8 @@
 package org.torquebox.jobs.core;
 
+import javax.management.DescriptorKey;
+
+
 
 public interface ScheduledJobMBean {
     
