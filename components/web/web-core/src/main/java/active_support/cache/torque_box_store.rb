@@ -1,22 +1,20 @@
 
 require 'active_support/cache'
 require 'org/torquebox/interp/core/kernel'
-require 'logger'
 
 module ActiveSupport
   module Cache
     class TorqueBoxStore < Store
 
       def initialize(options = {})
-        self.logger = options.delete(:logger) || Logger.new(STDOUT)
         super(options)
-        @cache = clustered || local || nothing
+        cache
       end
 
       # Clear the entire cache. Be careful with this method since it could
       # affect other processes if shared cache is being used.
       def clear(options = nil)
-        @cache.clearAsync
+        cache.clearAsync
       end
 
       # Delete all entries with keys matching the pattern.
@@ -33,7 +31,7 @@ module ActiveSupport
         old_entry = read_entry( key, options )
         value = old_entry.value.to_i + amount
         new_entry = Entry.new( value, options )
-        if @cache.replace( key, old_entry, new_entry )
+        if cache.replace( key, old_entry, new_entry )
           return value
         else
           raise "Concurrent modification, old value was #{old_entry.value}"
@@ -58,55 +56,59 @@ module ActiveSupport
 
       # Return the keys in the cache; potentially very expensive depending on configuration
       def keys
-        @cache.key_set
+        cache.key_set
       end
 
       # Read an entry from the cache implementation. Subclasses must implement this method.
       def read_entry(key, options)
-        log(:read_entry, key, options)
-        @cache.get( key )
+        value = cache.get(key)
+        value && Marshal.load(String.from_java_bytes(value))
       end
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
       def write_entry(key, entry, options = {})
-        log(:write_entry, key, options)
-        args = [ :put_async, key, entry ]
+        args = [ :put_async, key, Marshal.dump(entry).to_java_bytes ]
         args[0] = :put_if_absent_async if options[:unless_exist]
         args << options[:expires_in].to_i << java.util.concurrent.TimeUnit.SECONDS if options[:expires_in]
-        @cache.send( *args ) && true
+        cache.send( *args ) && true
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
       def delete_entry(key, options) # :nodoc:
-        log(:delete_entry, key, options)
-        @cache.removeAsync( key )
+        cache.removeAsync( key )
       end
 
       private
+
+      def cache
+        @cache ||= clustered || local || nothing
+      end
 
       def clustered
         registry = TorqueBox::Kernel.lookup("CacheContainerRegistry")
         container = registry.cache_container( 'web' )
         result = container.get_cache(TORQUEBOX_APP_NAME)
-        logger.info "Using clustered cache: #{result}"
+        logger.info "Using clustered cache: #{result}" if logger
         result
       rescue
-        logger.warn("Unable to obtain clustered cache") && nil
+        logger.warn("Unable to obtain clustered cache") if logger
+        nil
       end
 
       def local
         container = org.infinispan.manager.DefaultCacheManager.new()
         result = container.get_cache()
-        logger.info "Using local cache: #{result}"
+        logger.info "Using local cache: #{result}" if logger
         result
       rescue
-        logger.warn("Unable to obtain local cache: #{$!}") && nil
+        logger.warn("Unable to obtain local cache: #{$!}") if logger
+        nil
       end
       
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        logger.warn "No caching will occur"
+        logger.warn "No caching will occur" if logger
         result
       end
 

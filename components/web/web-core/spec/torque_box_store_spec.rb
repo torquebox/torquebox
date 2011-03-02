@@ -1,10 +1,13 @@
 require 'active_support/cache/torque_box_store'
+require 'logger'
 
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   describe "basics" do
+
     before(:each) do
       @store = ActiveSupport::Cache::TorqueBoxStore.new()
+      @store.logger = Logger.new(STDOUT)
     end
 
     it "should write and read a string" do
