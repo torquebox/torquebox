@@ -71,7 +71,7 @@ module ActiveSupport
         args = [ :put_async, key, entry ]
         args[0] = :put_if_absent_async if options[:unless_exist]
         args << options[:expires_in].to_i << java.util.concurrent.TimeUnit.SECONDS if options[:expires_in]
-        @cache.send( *args )
+        @cache.send( *args ) && true
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
@@ -98,7 +98,7 @@ module ActiveSupport
         puts "Using local cache: #{result}"
         result
       rescue
-        puts "Unable to obtain local cache"
+        puts "Unable to obtain local cache: #{$!}"
       end
       
       def nothing
