@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gem 'haml'
 
 group :provided do
-  gem 'rails', '3.0.3'
+  gem 'rails', '3.0.5'
   gem 'activerecord-jdbc-adapter'
   gem 'jdbc-sqlite3'
 end
