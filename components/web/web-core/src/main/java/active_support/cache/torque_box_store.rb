@@ -69,13 +69,13 @@ module ActiveSupport
       def write_entry(key, entry, options = {})
         args = [ :put_async, key, Marshal.dump(entry).to_java_bytes ]
         args[0] = :put_if_absent_async if options[:unless_exist]
-        args << options[:expires_in].to_i << java.util.concurrent.TimeUnit.SECONDS if options[:expires_in]
+        args << options[:expires_in].to_i << java.util.concurrent.TimeUnit::SECONDS if options[:expires_in]
         cache.send( *args ) && true
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
       def delete_entry(key, options) # :nodoc:
-        cache.removeAsync( key )
+        cache.removeAsync( key ) && true
       end
 
       private
