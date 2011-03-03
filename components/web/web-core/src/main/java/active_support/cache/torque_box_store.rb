@@ -28,13 +28,13 @@ module ActiveSupport
       def increment(name, amount = 1, options = nil)
         options = merged_options( options )
         key = namespaced_key( name, options )
-        old_entry = read_entry( key, options )
-        value = old_entry.value.to_i + amount
-        new_entry = Entry.new( value, options )
-        if cache.replace( key, old_entry, new_entry )
-          return value
+        current = cache.get(key)
+        value = decode(current).value.to_i
+        new_entry = Entry.new( value+amount, options )
+        if cache.replace( key, current, encode(new_entry) )
+          return new_entry.value
         else
-          raise "Concurrent modification, old value was #{old_entry.value}"
+          raise "Concurrent modification, old value was #{value}"
         end
       end
 
@@ -61,13 +61,12 @@ module ActiveSupport
 
       # Read an entry from the cache implementation. Subclasses must implement this method.
       def read_entry(key, options)
-        value = cache.get(key)
-        value && Marshal.load(String.from_java_bytes(value))
+        decode(cache.get(key))
       end
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
       def write_entry(key, entry, options = {})
-        args = [ :put_async, key, Marshal.dump(entry).to_java_bytes ]
+        args = [ :put_async, key, encode(entry) ]
         args[0] = :put_if_absent_async if options[:unless_exist]
         args << options[:expires_in].to_i << java.util.concurrent.TimeUnit::SECONDS if options[:expires_in]
         cache.send( *args ) && true
@@ -76,6 +75,14 @@ module ActiveSupport
       # Delete an entry from the cache implementation. Subclasses must implement this method.
       def delete_entry(key, options) # :nodoc:
         cache.removeAsync( key ) && true
+      end
+
+      def encode value
+        Marshal.dump(value).to_java_bytes
+      end
+
+      def decode value
+        value && Marshal.load(String.from_java_bytes(value))
       end
 
       private
