@@ -67,6 +67,69 @@ describe ActiveSupport::Cache::TorqueBoxStore do
 
   end
 
+  describe "fetching" do
+
+    it "should fetch existing keys" do
+      @store.write("today", "Monday")
+      @store.fetch("today").should == "Monday"
+    end
+
+    it "should fetch block values for missing keys" do
+      @store.fetch("city").should be_nil
+      @store.fetch("city") {
+        "Duckburgh"
+      }.should == "Duckburgh"
+      @store.fetch("city").should == "Duckburgh"
+    end
+
+    it "should fetch block values when forced" do
+      @store.write("today", "Monday")
+      @store.fetch("today").should == "Monday"
+      @store.fetch("today", :force => true) { "Tuesday" }.should == "Tuesday"
+    end
+
+  end
+
+  describe "multiples" do
+
+    before(:each) do
+      @store.write("john", "guitar")
+      @store.write("paul", "bass")
+      @store.write("george", "lead")
+      @store.write("ringo", "drums")
+    end
+
+    it "should delete by regexp" do
+      @store.delete_matched /g/
+      @store.read("george").should be_nil
+      @store.read("ringo").should be_nil
+      @store.read("john").should == "guitar"
+      @store.read("paul").should == "bass"
+    end
+
+    it "should clear all entries" do
+      @store.clear
+      @store.read("george").should be_nil
+      @store.read("ringo").should be_nil
+      @store.read("john").should be_nil
+      @store.read("paul").should be_nil
+    end
+
+    it "should cleanup expired entries" do
+      @store.write("jimi", "guitar", :expires_in => 1.second)
+      @store.exist?("jimi").should be_true
+      sleep(1.1)
+      @store.cleanup
+      @store.exist?("jimi").should be_false
+      @store.exist?("ringo").should be_true
+    end
+
+    it "should read multiple values" do
+      @store.read_multi("john", "paul").should == {"john" => "guitar", "paul" => "bass"}
+    end
+
+  end
+
   describe "advanced" do
     
     it "should support incrementation" do
