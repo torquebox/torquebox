@@ -6,7 +6,7 @@ module TorqueBox
     end
 
     def self.default
-      self['default']
+      self['torquebox-auth']
     end
 
     private

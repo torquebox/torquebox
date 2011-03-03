@@ -19,10 +19,11 @@
 
 package org.torquebox.auth;
 
-import javax.security.auth.login.LoginException;
+import java.security.Principal;
 
-import org.picketbox.exceptions.PicketBoxProcessingException;
-import org.picketbox.plugins.PicketBoxProcessor;
+import org.jboss.security.AuthenticationManager;
+import org.jboss.security.SecurityContext;
+import org.picketbox.factories.SecurityFactory;
 
 /**
  * Provides JBoss file-based authentication
@@ -33,7 +34,6 @@ import org.picketbox.plugins.PicketBoxProcessor;
 public class UsersRolesAuthenticator
 {
 	private String authDomain;
-	private Object delagate;
 	
 	public void setAuthDomain(String domain) {
 		this.authDomain = domain;
@@ -43,28 +43,23 @@ public class UsersRolesAuthenticator
 		return this.authDomain;
 	}
 	
-	public void setDelagate(Object delagate) {
-		this.delagate = delagate;
-	}
-
-	public Object getDelagate() {
-		return delagate;
-	}
-
 	public boolean authenticate(String name, String pass) {
-		PicketBoxProcessor processor = new PicketBoxProcessor();
-		processor.setSecurityInfo(name, pass);
-		
-		try {
-			processor.process(this.getDelagate());
-			return true;
-		} catch (LoginException e) {
-			System.err.println("Failed login from: " + name);
-		} catch (PicketBoxProcessingException e) {
-			System.err.println("Unknown error occurred within JAAS");
-			e.printStackTrace();
-		}
-		return false;
+         SecurityContext securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain()); 
+         AuthenticationManager am = securityContext.getAuthenticationManager(); 
+         Principal principal = getPrincipal(name);
+         Object credential = new String(pass);
+         return am.isValid(principal, credential); 
     }
+	
+	private Principal getPrincipal(final String name)
+	{
+	     return new Principal()
+	     {
+	         public String getName()
+	         {
+	            return name;
+	         }
+	     };
+	}
 
 }

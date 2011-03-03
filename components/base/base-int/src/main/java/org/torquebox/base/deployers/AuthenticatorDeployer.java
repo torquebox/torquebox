@@ -49,7 +49,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
     public AuthenticatorDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
-        setInput(AuthenticationMetaData.class);
+        addInput(AuthenticationMetaData.class);
         addInput(AuthMetaData.class);
         addOutput(BeanMetaData.class);
     }
@@ -95,7 +95,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
     	if (jaasMetaData.getModules() != null) {
         	authModules.addAll(jaasMetaData.getModules());
     	}
-        String strategyClass = strategyClassFor(strategy);
+        String strategyClass = classFor(strategy);
         if (strategyClass != null) {
         	// Create some metadata for the authentication bits
         	BaseModuleMetaData metaData = new BaseModuleMetaData();
@@ -112,11 +112,8 @@ public class AuthenticatorDeployer extends AbstractDeployer
             // Set up our authenticator
             String authenticatorBeanName = this.getApplicationName() + "-authentication-" + name;
             BeanMetaDataBuilder authenticatorBuilder = BeanMetaDataBuilderFactory.createBuilder(authenticatorBeanName, UsersRolesAuthenticator.class.getName());
-            authenticatorBuilder.addPropertyMetaData("authDomain", domain);
-            //authenticatorBuilder.addPropertyMetaData("delagate", authenticatorBuilder.createInject(jaasDelagateBeanName));
-            
+            authenticatorBuilder.addPropertyMetaData("authDomain", domain);            
             log.info("Installing bean: " + authenticatorBeanName);
-            //  AttachmentUtils.attach(unit, delagateBuilder.getBeanMetaData());
             AttachmentUtils.attach(unit, authenticatorBuilder.getBeanMetaData());
         }
     }
@@ -130,7 +127,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
 		return jaasMetaData;
 	}
 
-    private String strategyClassFor(String strategy) {
+    private String classFor(String strategy) {
         if (strategy.equals("file")) {
             return "org.jboss.security.auth.spi.UsersRolesLoginModule.class";
         } 
