@@ -35,14 +35,17 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.mc.jmx.JMXUtils;
 import org.torquebox.messaging.core.AbstractManagedDestination;
 import org.torquebox.messaging.core.ManagedQueue;
 import org.torquebox.messaging.core.ManagedTopic;
 import org.torquebox.messaging.core.RubyMessageProcessor;
+import org.torquebox.messaging.core.RubyMessageProcessorMBean;
 import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
 import org.torquebox.messaging.metadata.MessageProcessorMetaData;
 import org.torquebox.messaging.metadata.QueueMetaData;
@@ -62,7 +65,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
     public MessageProcessorDeployer() {
         setStage( DeploymentStages.REAL );
         addInput( MessageProcessorMetaData.class );
-        addInput( RubyApplicationMetaData.class );
+        addRequiredInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setRelativeOrder( 1000 );
     }
@@ -123,10 +126,16 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 
         ValueMetaData connectionFactoryJndiRef = builder.createInject( "naming:/ConnectionFactory" );
         builder.addPropertyMetaData( "connectionFactory", connectionFactoryJndiRef );
+        
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(  RubyApplicationMetaData.class );
+        
+        String mbeanName = JMXUtils.jmxName( "torquebox.messaging.processors", rubyAppMetaData.getApplicationName() ).with( "name", StringUtils.underscore( metaData.getName() ) ).name();
+        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\""+ mbeanName + "\", exposedInterface=" + RubyMessageProcessorMBean.class.getName() + ".class)";
+        builder.addAnnotation( jmxAnno ); 
 
         BeanMetaData beanMetaData = builder.getBeanMetaData();
 
-        unit.addAttachment( BeanMetaData.class.getName() + "$" + beanName, beanMetaData, BeanMetaData.class );
+        AttachmentUtils.attach( unit, beanMetaData );
     }
 
     protected Class<? extends AbstractManagedDestination> demandDestination(DeploymentUnit unit, String destinationName) {

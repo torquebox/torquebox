@@ -16,6 +16,16 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-aop-mc-int</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.aop</groupId>
+      <artifactId>jboss-aop</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>
       <scope>compile</scope>

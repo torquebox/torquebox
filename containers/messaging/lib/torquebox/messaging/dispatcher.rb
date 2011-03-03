@@ -47,6 +47,11 @@ module TorqueBox
         processors.each do |processor|
           org.torquebox.mc::AttachmentUtils.multipleAttach( unit, processor, processor.name )
         end
+        app_meta = org.torquebox.base.metadata::RubyApplicationMetaData.new
+        app_meta.setApplicationName( "none" )
+        app_meta.setEnvironmentName( ENV['TORQUEBOX_ENV'] || 'development' )
+        app_meta.setRoot( org.jboss.vfs::VFS.getChild( Dir.pwd ) )
+        unit.addAttachment( org.torquebox.base.metadata::RubyApplicationMetaData.java_class, app_meta )
         container.process_deployments(true)
       end
 

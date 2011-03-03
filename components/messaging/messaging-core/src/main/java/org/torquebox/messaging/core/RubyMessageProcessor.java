@@ -39,7 +39,7 @@ import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class RubyMessageProcessor {
+public class RubyMessageProcessor implements RubyMessageProcessorMBean {
 
     private static final Logger log = Logger.getLogger( RubyMessageProcessor.class );
 

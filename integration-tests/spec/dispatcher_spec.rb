@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 require 'torquebox-messaging'
 require 'torquebox-messaging-container'
 
