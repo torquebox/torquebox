@@ -68,7 +68,7 @@ module ActiveSupport
       def write_entry(key, entry, options = {})
         args = [ :put_async, key, encode(entry) ]
         args[0] = :put_if_absent_async if options[:unless_exist]
-        args << options[:expires_in].to_i << java.util.concurrent.TimeUnit::SECONDS if options[:expires_in]
+        args << options[:expires_in].to_i << TimeUnit::SECONDS if options[:expires_in]
         cache.send( *args ) && true
       end
 
@@ -118,6 +118,8 @@ module ActiveSupport
         logger.warn "No caching will occur" if logger
         result
       end
+
+      java_import java.util.concurrent.TimeUnit
 
     end
   end
