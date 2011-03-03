@@ -11,6 +11,7 @@ public interface RubyMessageProcessorMBean {
     String getName();
     
     Destination getDestination();
+    String getDestinationName();
     String getMessageSelector();
     
 

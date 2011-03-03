@@ -75,6 +75,10 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
         return this.destination;
     }
 
+    public String getDestinationName() {
+        return this.destination.toString();
+    }
+
     public void setMessageSelector(String messageSelector) {
         this.messageSelector = messageSelector;
     }
