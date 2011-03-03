@@ -16,6 +16,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.picketbox</groupId>
+      <artifactId>jbosssx</artifactId>
+      <version>3.0.0.Final</version>
+    </dependency>
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <scope>compile</scope>

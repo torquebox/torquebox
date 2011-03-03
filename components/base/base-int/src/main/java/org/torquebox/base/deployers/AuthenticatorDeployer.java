@@ -19,7 +19,9 @@
 
 package org.torquebox.base.deployers;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -35,6 +37,10 @@ import org.torquebox.base.metadata.AuthMetaData.Config;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
+import org.jboss.security.microcontainer.beans.AuthenticationPolicyBean;
+import org.jboss.security.microcontainer.beans.metadata.AuthenticationMetaData;
+import org.jboss.security.microcontainer.beans.metadata.BaseModuleMetaData;
+
 public class AuthenticatorDeployer extends AbstractDeployer
 {
     private Kernel kernel;
@@ -43,6 +49,7 @@ public class AuthenticatorDeployer extends AbstractDeployer
     public AuthenticatorDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
+        setInput(AuthenticationMetaData.class);
         addInput(AuthMetaData.class);
         addOutput(BeanMetaData.class);
     }
@@ -83,32 +90,45 @@ public class AuthenticatorDeployer extends AbstractDeployer
     }
     
     private void installAuthenticator(DeploymentUnit unit, String name, String strategy, String domain) {
+    	AuthenticationMetaData jaasMetaData = getOrCreateAuthenticationMetaData(unit);
+    	List<BaseModuleMetaData> authModules = new ArrayList<BaseModuleMetaData>();
+    	if (jaasMetaData.getModules() != null) {
+        	authModules.addAll(jaasMetaData.getModules());
+    	}
         String strategyClass = strategyClassFor(strategy);
         if (strategyClass != null) {
-            String authenticatorBeanName = this.getApplicationName() + "-authentication-" + name;
-            String jaasDelagateBeanName  = authenticatorBeanName + "-delegate";
+        	// Create some metadata for the authentication bits
+        	BaseModuleMetaData metaData = new BaseModuleMetaData();
+        	metaData.setCode(strategyClass);
+        	authModules.add(metaData);
+        	jaasMetaData.setModules(authModules);
+        	
+        	// Get our bean metadata and attach it to the DeploymentUnit
+            List<BeanMetaData> authBeanMetaData = jaasMetaData.getBeans(domain, AuthenticationPolicyBean.class.getName());
+            for (BeanMetaData bmd: authBeanMetaData) {
+            	AttachmentUtils.attach(unit, bmd);
+            }
 
-            // Create a fancy annotated thing
-            BeanMetaDataBuilder delagateBuilder = BeanMetaDataBuilderFactory.createBuilder(jaasDelagateBeanName, Object.class.getName());
-            delagateBuilder.addAnnotation("@org.jboss.security.annotation.Authentication(modules={@org.jboss.security.annotation.Module(code = "+strategyClass+", options = {@org.jboss.security.annotation.ModuleOption})})");
-            
             // Set up our authenticator
+            String authenticatorBeanName = this.getApplicationName() + "-authentication-" + name;
             BeanMetaDataBuilder authenticatorBuilder = BeanMetaDataBuilderFactory.createBuilder(authenticatorBeanName, UsersRolesAuthenticator.class.getName());
             authenticatorBuilder.addPropertyMetaData("authDomain", domain);
-            authenticatorBuilder.addPropertyMetaData("delagate", authenticatorBuilder.createInject(jaasDelagateBeanName));
+            //authenticatorBuilder.addPropertyMetaData("delagate", authenticatorBuilder.createInject(jaasDelagateBeanName));
             
-            try {
-                log.info("Installing bean: " + authenticatorBeanName);
-                AttachmentUtils.attach(unit, delagateBuilder.getBeanMetaData());
-                AttachmentUtils.attach(unit, authenticatorBuilder.getBeanMetaData());
-            }
-            catch (Throwable throwable) {
-                log.error("Cannot install PicketBox authentication.");
-                log.error(throwable.getMessage());
-                throwable.printStackTrace(System.err);
-            }
+            log.info("Installing bean: " + authenticatorBeanName);
+            //  AttachmentUtils.attach(unit, delagateBuilder.getBeanMetaData());
+            AttachmentUtils.attach(unit, authenticatorBuilder.getBeanMetaData());
         }
     }
+
+	private AuthenticationMetaData getOrCreateAuthenticationMetaData( DeploymentUnit unit ) {
+		AuthenticationMetaData jaasMetaData = unit.getAttachment(AuthenticationMetaData.class);
+    	if (jaasMetaData == null) {
+    		jaasMetaData = new AuthenticationMetaData();
+    		unit.addAttachment(AuthenticationMetaData.class, jaasMetaData);
+    	}
+		return jaasMetaData;
+	}
 
     private String strategyClassFor(String strategy) {
         if (strategy.equals("file")) {
