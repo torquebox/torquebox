@@ -35,6 +35,7 @@ import org.jboss.security.microcontainer.beans.metadata.ApplicationPolicyMetaDat
 import org.jboss.security.microcontainer.beans.metadata.AuthenticationMetaData;
 import org.jboss.security.microcontainer.beans.metadata.BaseModuleMetaData;
 import org.jboss.security.microcontainer.beans.metadata.FlaggedModuleMetaData;
+import org.jboss.security.microcontainer.beans.metadata.ModuleOptionMetaData;
 import org.torquebox.auth.UsersRolesAuthenticator;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
@@ -82,14 +83,18 @@ public class AuthenticatorDeployer extends AbstractDeployer {
             if (authMetaData != null) {
                 Collection<Config> authConfigs = authMetaData.getConfigurations();
                 for (Config config : authConfigs) {
-                    installAuthenticator(unit, config.getName(), config.getStrategy(), config.getDomain());
+                    installAuthenticator(unit, config);
                 }
             }
         }
     }
 
-    private void installAuthenticator(DeploymentUnit unit, String name, String strategy, String domain) {
+    private void installAuthenticator(DeploymentUnit unit, Config config) {
 
+        String name     = config.getName();
+        String strategy = config.getStrategy();
+        String domain   = config.getDomain();
+        
         String strategyClass = classFor(strategy);
         if (name != null && domain != null && strategyClass != null) {
 
@@ -101,7 +106,15 @@ public class AuthenticatorDeployer extends AbstractDeployer {
 
             // Create some metadata for the authentication bits
             FlaggedModuleMetaData metaData = new FlaggedModuleMetaData();
+            
+            // Set the strategy class
             metaData.setCode(strategyClass);
+
+            // Tell it where to find users/passwords
+            List<ModuleOptionMetaData> moduleOptions = new ArrayList<ModuleOptionMetaData>();
+            moduleOptions.add(createModuleOption("usersProperties", "users.properties"));
+            moduleOptions.add(createModuleOption("rolesProperties", "roles.properties"));
+            metaData.setModuleOptions(moduleOptions);
 
             ArrayList<BaseModuleMetaData> authModules = new ArrayList<BaseModuleMetaData>();
             authModules.add(metaData);
@@ -123,6 +136,13 @@ public class AuthenticatorDeployer extends AbstractDeployer {
             log.info("Attaching TorqueBox BeanMetaData: " + bmd.getName() + " - " + bmd.getBean());
             AttachmentUtils.attach(unit, bmd);
         }
+    }
+
+    private ModuleOptionMetaData createModuleOption(String name, String value) {
+        ModuleOptionMetaData option = new ModuleOptionMetaData();
+        option.setName(name);
+        option.setValue(value);
+        return option;
     }
 
     private String classFor(String strategy) {
