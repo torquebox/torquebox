@@ -1,6 +1,9 @@
 require 'active_support/cache/torque_box_store'
 require 'logger'
 
+java_import org.infinispan.config.Configuration::CacheMode
+include ActiveSupport::Cache
+
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do
@@ -144,6 +147,34 @@ describe ActiveSupport::Cache::TorqueBoxStore do
       @cache.read("key").should == 42
       @cache.decrement("key").should == 41
       @cache.read("key").should == 41
+    end
+
+  end
+
+  describe "clustering" do
+    
+    it "should default to invalidation mode" do
+      @cache.clustering_mode.should == CacheMode::INVALIDATION_ASYNC
+      TorqueBoxStore.new(:mode => :unknown).clustering_mode.should == CacheMode::INVALIDATION_ASYNC
+    end
+
+    [:repl, :dist, :invalidation].each do |mode|
+      it "should be configurable in #{mode} mode" do
+        TorqueBoxStore.new(:mode => mode).clustering_mode.to_s.should == "#{mode.to_s.upcase}_ASYNC"
+        TorqueBoxStore.new(:mode => mode, :sync => true).clustering_mode.to_s.should == "#{mode.to_s.upcase}_SYNC"
+      end
+    end
+
+    it "should support replicated mode" do
+      [:r, :repl, :replicated, :replication].each do |mode|
+        TorqueBoxStore.new(:mode => mode).clustering_mode.should be_replicated
+      end
+    end
+
+    it "should support distributed mode" do
+      [:d, :dist, :distributed, :distribution].each do |mode|
+        TorqueBoxStore.new(:mode => mode).clustering_mode.should be_distributed
+      end
     end
 
   end

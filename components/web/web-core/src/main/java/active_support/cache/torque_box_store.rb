@@ -7,10 +7,29 @@ module ActiveSupport
     class TorqueBoxStore < Store
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
+      java_import org.infinispan.config.Configuration::CacheMode
 
       def initialize(options = {})
         super(options)
         cache
+      end
+
+      def name
+        options[:name] || TORQUEBOX_APP_NAME
+      end
+
+      def clustering_mode
+        replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
+        distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
+        sync = !!options[:sync]
+        case
+        when replicated 
+          sync ? CacheMode::REPL_SYNC : CacheMode::REPL_ASYNC
+        when distributed
+          sync ? CacheMode::DIST_SYNC : CacheMode::DIST_ASYNC
+        else
+          sync ? CacheMode::INVALIDATION_SYNC : CacheMode::INVALIDATION_ASYNC
+        end
       end
 
       # Clear the entire cache. Be careful with this method since it could
@@ -95,8 +114,11 @@ module ActiveSupport
 
       def clustered
         registry = TorqueBox::Kernel.lookup("CacheContainerRegistry")
-        container = registry.cache_container( 'web' )
-        result = container.get_cache(TORQUEBOX_APP_NAME)
+        manager = registry.cache_container( 'web' )
+        configuration = manager.default_configuration.clone
+        configuration.cache_mode = clustering_mode
+        manager.define_configuration(name, configuration)
+        result = manager.get_cache(name)
         logger.info "Using clustered cache: #{result}" if logger
         result
       rescue
@@ -105,8 +127,8 @@ module ActiveSupport
       end
 
       def local
-        container = org.infinispan.manager.DefaultCacheManager.new()
-        result = container.get_cache()
+        manager = org.infinispan.manager.DefaultCacheManager.new()
+        result = manager.get_cache()
         logger.info "Using local cache: #{result}" if logger
         result
       rescue
