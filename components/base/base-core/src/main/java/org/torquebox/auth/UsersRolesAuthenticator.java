@@ -26,40 +26,35 @@ import org.jboss.security.SecurityContext;
 import org.picketbox.factories.SecurityFactory;
 
 /**
- * Provides JBoss file-based authentication
- * auth bits to ruby apps.
- *
+ * Provides JBoss file-based authentication auth bits to ruby apps.
+ * 
  * @author Lance Ball <lball@redhat.com>
  */
-public class UsersRolesAuthenticator
-{
-	private String authDomain;
-	
-	public void setAuthDomain(String domain) {
-		this.authDomain = domain;
-	}
-	
-	public String getAuthDomain() {
-		return this.authDomain;
-	}
-	
-	public boolean authenticate(String name, String pass) {
-         SecurityContext securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain()); 
-         AuthenticationManager am = securityContext.getAuthenticationManager(); 
-         Principal principal = getPrincipal(name);
-         Object credential = new String(pass);
-         return am.isValid(principal, credential); 
+public class UsersRolesAuthenticator {
+    private String authDomain;
+
+    public void setAuthDomain(String domain) {
+        this.authDomain = domain;
     }
-	
-	private Principal getPrincipal(final String name)
-	{
-	     return new Principal()
-	     {
-	         public String getName()
-	         {
-	            return name;
-	         }
-	     };
-	}
+
+    public String getAuthDomain() {
+        return this.authDomain;
+    }
+
+    public boolean authenticate(String name, String pass) {
+        SecurityContext securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
+        AuthenticationManager am = securityContext.getAuthenticationManager();
+        Principal principal = getPrincipal(name);
+        Object credential = new String(pass);
+        return am.isValid(principal, credential);
+    }
+
+    private Principal getPrincipal(final String name) {
+        return new Principal() {
+            public String getName() {
+                return name;
+            }
+        };
+    }
 
 }

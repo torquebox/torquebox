@@ -27,41 +27,46 @@ public class AuthMetaData {
 
     private Map<String, Config> configs = new HashMap<String, Config>();
 
-	public void addAuthentication(String name, String domain, String strategy) {
-		Config configItem = new Config();
-		configItem.setName(name);
-		configItem.setDomain(domain);
-		configItem.setStrategy(strategy);
-		configs.put(name, configItem);
-	}
-	
-	public Collection<Config> getConfigurations() {
-		return this.configs.values();
-	}
-	
-	public class Config {
-		private String name;
-		private String domain;
-		private String strategy;
-		
-		public void setName(String name) {
-			this.name = name;
-		}
-		public String getName() {
-			return name;
-		}
-		public void setDomain(String domain) {
-			this.domain = domain;
-		}
-		public String getDomain() {
-			return domain;
-		}
-		public void setStrategy(String strategy) {
-			this.strategy = strategy;
-		}
-		public String getStrategy() {
-			return strategy;
-		}
-	}
+    public void addAuthentication(String name, String domain, String strategy) {
+        Config configItem = new Config();
+        configItem.setName(name);
+        configItem.setDomain(domain);
+        configItem.setStrategy(strategy);
+        configs.put(name, configItem);
+    }
+
+    public Collection<Config> getConfigurations() {
+        return this.configs.values();
+    }
+
+    public class Config {
+        private String name;
+        private String domain;
+        private String strategy;
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setDomain(String domain) {
+            this.domain = domain;
+        }
+
+        public String getDomain() {
+            return domain;
+        }
+
+        public void setStrategy(String strategy) {
+            this.strategy = strategy;
+        }
+
+        public String getStrategy() {
+            return strategy;
+        }
+    }
 
 }

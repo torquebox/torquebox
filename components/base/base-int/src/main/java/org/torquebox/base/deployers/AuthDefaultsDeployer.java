@@ -25,31 +25,30 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 
-public class AuthDefaultsDeployer extends AbstractDeployer
-{
-	public static final String DEFAULT_STRATEGY = "file";
-	public static final String DEFAULT_DOMAIN   = "torquebox-auth";
+public class AuthDefaultsDeployer extends AbstractDeployer {
+    public static final String DEFAULT_STRATEGY = "file";
+    public static final String DEFAULT_DOMAIN = "torquebox";
 
-	public AuthDefaultsDeployer() {
-        setInput( RubyApplicationMetaData.class );
-        addInput( AuthMetaData.class );
-        addOutput( AuthMetaData.class );
-        setStage( DeploymentStages.POST_PARSE );
-	}
-	
-	@Override
+    public AuthDefaultsDeployer() {
+        setInput(RubyApplicationMetaData.class);
+        addInput(AuthMetaData.class);
+        addOutput(AuthMetaData.class);
+        setStage(DeploymentStages.POST_PARSE);
+    }
+
+    @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-		AuthMetaData authMetaData = unit.getAttachment( AuthMetaData.class );
-		if (authMetaData == null) {
-			log.warn("No AuthMetaData found. Configuring TorqueBox Authentication");
-			authMetaData = new AuthMetaData();
-			unit.addAttachment(AuthMetaData.class, authMetaData);
-		}
-		if (authMetaData.getConfigurations().size() < 1) {
-    		log.warn("No authentication configuration provided for this application. Using defaults.");
-    		log.warn("Authentication Strategy: " + DEFAULT_STRATEGY);
-    		log.warn("Authentication Domain: " + DEFAULT_DOMAIN);
-    		authMetaData.addAuthentication("default", AuthDefaultsDeployer.DEFAULT_DOMAIN, AuthDefaultsDeployer.DEFAULT_STRATEGY);
-		}
+        AuthMetaData authMetaData = unit.getAttachment(AuthMetaData.class);
+        if (authMetaData == null) {
+            log.warn("No AuthMetaData found. Configuring TorqueBox Authentication");
+            authMetaData = new AuthMetaData();
+            unit.addAttachment(AuthMetaData.class, authMetaData);
+        }
+        if (authMetaData.getConfigurations().size() < 1) {
+            log.warn("No authentication configuration provided for this application. Using defaults.");
+            log.warn("Authentication Strategy: " + DEFAULT_STRATEGY);
+            log.warn("Authentication Domain: " + DEFAULT_DOMAIN);
+            authMetaData.addAuthentication("default", AuthDefaultsDeployer.DEFAULT_DOMAIN, AuthDefaultsDeployer.DEFAULT_STRATEGY);
+        }
     }
 }

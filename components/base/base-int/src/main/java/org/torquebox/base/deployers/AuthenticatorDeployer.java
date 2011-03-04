@@ -31,25 +31,24 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.kernel.Kernel;
+import org.jboss.security.microcontainer.beans.metadata.ApplicationPolicyMetaDataFactory;
+import org.jboss.security.microcontainer.beans.metadata.AuthenticationMetaData;
+import org.jboss.security.microcontainer.beans.metadata.BaseModuleMetaData;
+import org.jboss.security.microcontainer.beans.metadata.FlaggedModuleMetaData;
 import org.torquebox.auth.UsersRolesAuthenticator;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
-import org.jboss.security.microcontainer.beans.AuthenticationPolicyBean;
-import org.jboss.security.microcontainer.beans.metadata.AuthenticationMetaData;
-import org.jboss.security.microcontainer.beans.metadata.BaseModuleMetaData;
-
-public class AuthenticatorDeployer extends AbstractDeployer
-{
+public class AuthenticatorDeployer extends AbstractDeployer {
     private Kernel kernel;
     private String applicationName;
 
     public AuthenticatorDeployer() {
         setStage(DeploymentStages.REAL);
         setInput(RubyApplicationMetaData.class);
-        addInput(AuthenticationMetaData.class);
+        addOutput(AuthenticationMetaData.class);
         addInput(AuthMetaData.class);
         addOutput(BeanMetaData.class);
     }
@@ -63,9 +62,9 @@ public class AuthenticatorDeployer extends AbstractDeployer
     }
 
     public void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;        
+        this.applicationName = applicationName;
     }
-    
+
     public String getApplicationName() {
         return this.applicationName;
     }
@@ -78,60 +77,63 @@ public class AuthenticatorDeployer extends AbstractDeployer
             RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.class);
             String applicationName = appMetaData.getApplicationName();
             this.setApplicationName(applicationName);
-            
+
             AuthMetaData authMetaData = unit.getAttachment(AuthMetaData.class);
-            if (authMetaData != null) { 
+            if (authMetaData != null) {
                 Collection<Config> authConfigs = authMetaData.getConfigurations();
-                for(Config config: authConfigs) {
+                for (Config config : authConfigs) {
                     installAuthenticator(unit, config.getName(), config.getStrategy(), config.getDomain());
                 }
             }
         }
     }
-    
+
     private void installAuthenticator(DeploymentUnit unit, String name, String strategy, String domain) {
-    	AuthenticationMetaData jaasMetaData = getOrCreateAuthenticationMetaData(unit);
-    	List<BaseModuleMetaData> authModules = new ArrayList<BaseModuleMetaData>();
-    	if (jaasMetaData.getModules() != null) {
-        	authModules.addAll(jaasMetaData.getModules());
-    	}
+
         String strategyClass = classFor(strategy);
-        if (strategyClass != null) {
-        	// Create some metadata for the authentication bits
-        	BaseModuleMetaData metaData = new BaseModuleMetaData();
-        	metaData.setCode(strategyClass);
-        	authModules.add(metaData);
-        	jaasMetaData.setModules(authModules);
-        	
-        	// Get our bean metadata and attach it to the DeploymentUnit
-            List<BeanMetaData> authBeanMetaData = jaasMetaData.getBeans(domain, AuthenticationPolicyBean.class.getName());
-            for (BeanMetaData bmd: authBeanMetaData) {
-            	AttachmentUtils.attach(unit, bmd);
+        if (name != null && domain != null && strategyClass != null) {
+
+            AuthenticationMetaData jaasMetaData = new AuthenticationMetaData();
+            unit.addAttachment(AuthenticationMetaData.class, jaasMetaData);
+
+            ApplicationPolicyMetaDataFactory factory = new ApplicationPolicyMetaDataFactory();
+            factory.setPolicyName(domain);
+
+            // Create some metadata for the authentication bits
+            FlaggedModuleMetaData metaData = new FlaggedModuleMetaData();
+            metaData.setCode(strategyClass);
+
+            ArrayList<BaseModuleMetaData> authModules = new ArrayList<BaseModuleMetaData>();
+            authModules.add(metaData);
+            jaasMetaData.setModules(authModules);
+            factory.setAuthentication(jaasMetaData);
+
+            // Get our bean metadata and attach it to the DeploymentUnit
+            List<BeanMetaData> authBeanMetaData = factory.getBeans();
+            for (BeanMetaData bmd : authBeanMetaData) {
+                log.info("Attaching JAAS BeanMetaData: " + bmd.getName() + " - " + bmd.getBean());
+                AttachmentUtils.attach(unit, bmd);
             }
 
             // Set up our authenticator
             String authenticatorBeanName = this.getApplicationName() + "-authentication-" + name;
             BeanMetaDataBuilder authenticatorBuilder = BeanMetaDataBuilderFactory.createBuilder(authenticatorBeanName, UsersRolesAuthenticator.class.getName());
-            authenticatorBuilder.addPropertyMetaData("authDomain", domain);            
-            log.info("Installing bean: " + authenticatorBeanName);
-            AttachmentUtils.attach(unit, authenticatorBuilder.getBeanMetaData());
+            authenticatorBuilder.addPropertyMetaData("authDomain", domain);
+            BeanMetaData bmd = authenticatorBuilder.getBeanMetaData();
+            log.info("Attaching TorqueBox BeanMetaData: " + bmd.getName() + " - " + bmd.getBean());
+            AttachmentUtils.attach(unit, bmd);
         }
     }
 
-	private AuthenticationMetaData getOrCreateAuthenticationMetaData( DeploymentUnit unit ) {
-		AuthenticationMetaData jaasMetaData = unit.getAttachment(AuthenticationMetaData.class);
-    	if (jaasMetaData == null) {
-    		jaasMetaData = new AuthenticationMetaData();
-    		unit.addAttachment(AuthenticationMetaData.class, jaasMetaData);
-    	}
-		return jaasMetaData;
-	}
-
     private String classFor(String strategy) {
-        if (strategy.equals("file")) {
-            return "org.jboss.security.auth.spi.UsersRolesLoginModule.class";
-        } 
-        System.err.println("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
-        return null;
+        String result = null;
+        if (strategy == null) {
+            log.warn("No authentication strategy supplied.");
+        } else if (strategy.equals("file")) {
+            result = "org.jboss.security.auth.spi.UsersRolesLoginModule.class";
+        } else {
+            log.warn("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
+        }
+        return result;
     }
 }

@@ -2,11 +2,12 @@ module TorqueBox
   module Authentication
     def self.[](name)
       return nil unless torquebox_context
+      puts "Looking up authentication context #{torquebox_context}-authentication-#{name}"
       Authenticator.new(::TorqueBox::Kernel.lookup(torquebox_context + "-authentication-" + name))
     end
 
     def self.default
-      self['torquebox-auth']
+      self['default']
     end
 
     private
