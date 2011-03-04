@@ -143,11 +143,11 @@ public class RackApplicationMetaData {
     }
 
     private String rackUpScript;
-    private String rackUpScriptLocation;
+    private String rackUpScriptLocation = "config.ru";
 
     private List<String> hosts = new ArrayList<String>();
-    private String contextPath;
-    private String staticPathPrefix;
+    private String contextPath = "/";
+    private String staticPathPrefix = "public/";
 
     private String rubyRuntimePoolName;
     private String rackApplicationFactoryName;

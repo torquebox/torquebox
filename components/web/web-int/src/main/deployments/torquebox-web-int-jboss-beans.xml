@@ -6,8 +6,7 @@
 
   <!-- Rack -->
   
-  <bean name="DefaultRackApplicationRecognizer"       class="org.torquebox.rack.deployers.DefaultRackApplicationRecognizer"/>
-  
+  <bean name="RackApplicationRecognizer"              class="org.torquebox.rack.deployers.RackApplicationRecognizer"/>
   <bean name="RackApplicationDefaultsDeployer"        class="org.torquebox.rack.deployers.RackApplicationDefaultsDeployer"/>
   
   <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer"/>
