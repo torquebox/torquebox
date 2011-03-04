@@ -598,6 +598,28 @@
             </configuration>
           </execution>
           <execution>
+            <id>increase-xmx</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                puts "Updating JBoss default Xmx to 1024m"
+                def update_xmx(conf_file)
+                  lines = File.readlines( conf_file )
+                  File.open( conf_file, 'w' ) do |file|
+                    lines.each do |line|
+                      file.write( line.gsub( /Xmx\d*(m|M)/, 'Xmx1024\1' ) )
+                    end
+                  end
+                end
+                update_xmx( "${stage.dir}/jboss/bin/run.conf" )
+                update_xmx( "${stage.dir}/jboss/bin/run.conf.bat" )
+              </script>
+            </configuration>
+          </execution>
+          <execution>
             <id>install-builder</id>
             <phase>package</phase>
             <goals>
