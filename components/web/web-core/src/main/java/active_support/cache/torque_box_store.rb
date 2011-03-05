@@ -7,7 +7,6 @@ module ActiveSupport
     class TorqueBoxStore < Store
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
-      java_import org.infinispan.config.Configuration::CacheMode
 
       def initialize(options = {})
         super(options)
@@ -19,6 +18,7 @@ module ActiveSupport
       end
 
       def clustering_mode
+        java_import org.infinispan.config.Configuration::CacheMode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
         distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
         sync = !!options[:sync]
