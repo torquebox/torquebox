@@ -13,6 +13,6 @@ public interface RubyMessageProcessorMBean {
     Destination getDestination();
     String getDestinationName();
     String getMessageSelector();
-    
+    String getStatus();
 
 }

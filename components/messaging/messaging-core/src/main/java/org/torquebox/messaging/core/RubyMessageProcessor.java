@@ -140,6 +140,7 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
         log.info( "starting for " + getDestination() );
         if (connection != null) {
             connection.start();
+            this.started = true;
         }
     }
 
@@ -148,6 +149,7 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
         if (this.connection != null) {
             log.info( "stopping connection for " + getDestination() );
             this.connection.stop();
+            this.started = false;
         }
     }
 
@@ -158,6 +160,14 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
             this.connection.close();
             this.connection = null;
         }
+    }
+
+    public synchronized String getStatus() {
+        if ( this.started ) {
+            return "STARTED";
+        }
+        
+        return "STOPPED";
     }
 
     protected IRubyObject instantiateProcessor(Ruby ruby) throws Exception {
@@ -224,6 +234,7 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     private RubyComponentResolver componentResolver;
     private int concurrency = 1;
     private Map rubyConfig = Collections.EMPTY_MAP;
+    private boolean started = false;
 
     private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 
