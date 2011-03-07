@@ -22,7 +22,7 @@ public class AuthYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
 		AuthMetaData authMetaData = unit.getAttachment( AuthMetaData.class );
 		if (authMetaData == null) {
-			log.debug("Configuring TorqueBox Authentication");
+			log.info("Initializing TorqueBox Authentication");
 			authMetaData = new AuthMetaData();
 			unit.addAttachment(AuthMetaData.class, authMetaData);
 		}
@@ -34,6 +34,7 @@ public class AuthYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
         		String strategy = ((Map<String, String>) data.get(name)).get("strategy");
         		Map<String,String> users = ((Map<String,Map<String,String>>) data.get(name)).get("users");
                 Map<String,String> roles = ((Map<String,Map<String,String>>) data.get(name)).get("roles");
+                log.info("Configuring TorqueBox authentication for domain ["+domain+"] strategy ["+strategy+"]");
         		authMetaData.addAuthentication(name, domain, strategy, users, roles);
         	}
         }

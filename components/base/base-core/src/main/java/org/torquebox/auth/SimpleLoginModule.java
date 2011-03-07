@@ -3,6 +3,8 @@ package org.torquebox.auth;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.security.auth.login.LoginException;
+
 import org.jboss.security.auth.spi.UsersRolesLoginModule;
 
 public class SimpleLoginModule extends UsersRolesLoginModule {
@@ -16,6 +18,13 @@ public class SimpleLoginModule extends UsersRolesLoginModule {
     protected Properties createRoles(Map<String,?> options) {
         return extractPairs(options, "rolesMap");
     }
+    
+    @Override
+    public boolean login() throws LoginException
+    {
+       return super.login();
+    }
+
 
     private Properties extractPairs(Map<String, ?> options, String optionKey) {
         Properties properties = new Properties();
