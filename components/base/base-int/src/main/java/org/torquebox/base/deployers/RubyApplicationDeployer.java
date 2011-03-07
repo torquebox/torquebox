@@ -15,7 +15,7 @@ public class RubyApplicationDeployer extends AbstractDeployer {
     
     public RubyApplicationDeployer() {
         setInput(RubyApplicationMetaData.class);
-        setStage( DeploymentStages.REAL );
+        setStage( DeploymentStages.PRE_REAL );
     }
 
     @Override
@@ -28,7 +28,6 @@ public class RubyApplicationDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "environmentName", rubyAppMetaData.getEnvironmentName() );
         builder.addPropertyMetaData( "rootPath", rubyAppMetaData.getRootPath() );
         
-        //String mbeanName = JMXUtils.jmxName( "torquebox.apps", rubyAppMetaData.getApplicationName() ).with("foo", "bar" ).name();
         String mbeanName = JMXUtils.jmxName( "torquebox.apps", rubyAppMetaData.getApplicationName() ).name();
         String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\""+ mbeanName + "\", exposedInterface=" + RubyApplicationMBean.class.getName() + ".class)";
         builder.addAnnotation( jmxAnno );
