@@ -89,6 +89,10 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         if (contextPath != null && contextPath.length() > 1) { // only set if
                                                                // not root
                                                                // context
+            // context path should always start with a "/"
+            if (!contextPath.startsWith( "/" )) {
+                contextPath = "/" + contextPath;
+            }
             script.append( "ENV['RAILS_RELATIVE_URL_ROOT']=%q(" + contextPath + ")\n" );
             script.append( "ENV['RACK_BASE_URI']=%q(" + contextPath + ")\n" );
         }
