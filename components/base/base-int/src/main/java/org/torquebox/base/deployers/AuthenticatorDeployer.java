@@ -150,7 +150,7 @@ public class AuthenticatorDeployer extends AbstractDeployer {
         if (strategy == null) {
             log.warn("No authentication strategy supplied.");
         } else if (strategy.equals("file")) {
-            result = "org.jboss.security.auth.spi.UsersRolesLoginModule.class";
+            result = "org.torquebox.auth.SimpleLoginModule.class";
         } else {
             log.warn("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
         }

@@ -27,12 +27,14 @@ public class AuthYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 			unit.addAttachment(AuthMetaData.class, authMetaData);
 		}
 		
-        Map<String, Map<String, String>> data = (Map<String, Map<String, String>>) dataObject;
+        Map<String, Object> data = (Map<String, Object>) dataObject;
         if (data != null) {
-        	for(String name: data.keySet()) {
-        		String domain   = data.get(name).get("domain");    		
-        		String strategy = data.get(name).get("strategy");
-        		authMetaData.addAuthentication(name, domain, strategy);
+        	for(String name: data.keySet()) {        	    
+        		String domain   = ((Map<String, String>) data.get(name)).get("domain");    		
+        		String strategy = ((Map<String, String>) data.get(name)).get("strategy");
+        		Map<String,String> users = ((Map<String,Map<String,String>>) data.get(name)).get("users");
+                Map<String,String> roles = ((Map<String,Map<String,String>>) data.get(name)).get("roles");
+        		authMetaData.addAuthentication(name, domain, strategy, users, roles);
         	}
         }
 	}

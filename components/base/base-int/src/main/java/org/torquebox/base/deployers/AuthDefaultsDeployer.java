@@ -23,9 +23,11 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.AuthMetaData;
+import org.torquebox.base.metadata.AuthMetaData.Config;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 
 public class AuthDefaultsDeployer extends AbstractDeployer {
+    private static final String DEFAULT_NAME = "default";
     public static final String DEFAULT_STRATEGY = "file";
     public static final String DEFAULT_DOMAIN = "torquebox";
 
@@ -48,7 +50,24 @@ public class AuthDefaultsDeployer extends AbstractDeployer {
             log.warn("No authentication configuration provided for this application. Using defaults.");
             log.warn("Authentication Strategy: " + DEFAULT_STRATEGY);
             log.warn("Authentication Domain: " + DEFAULT_DOMAIN);
-            authMetaData.addAuthentication("default", AuthDefaultsDeployer.DEFAULT_DOMAIN, AuthDefaultsDeployer.DEFAULT_STRATEGY);
+            authMetaData.addAuthentication(DEFAULT_NAME, AuthDefaultsDeployer.DEFAULT_DOMAIN, AuthDefaultsDeployer.DEFAULT_STRATEGY);
+        } else {
+            // Set defaults for any values that weren't explicityly specified in the yaml
+            for (Config config: authMetaData.getConfigurations()) {
+                if (blank(config.getDomain())) {
+                    config.setDomain(DEFAULT_DOMAIN);
+                }
+                if (blank(config.getStrategy())) {
+                    config.setStrategy(DEFAULT_STRATEGY);
+                }
+                if (blank(config.getName())) {
+                    config.setName(DEFAULT_NAME);
+                }
+            }
         }
+    }
+    
+    private boolean blank(String s) {
+        return (s.equals("") || s == null);
     }
 }
