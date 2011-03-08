@@ -68,6 +68,7 @@
 
     <module>component-parent</module>
     <module>int-parent</module>
+    <module>gem-parent</module>
 
     <module>support</module>
     <module>vfs</module>

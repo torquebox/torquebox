@@ -16,6 +16,20 @@
 
   <dependencies>
     <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-base</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-base-spi</artifactId>
       <version>${project.version}</version>
@@ -70,7 +84,23 @@
 
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>torquebox-base</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activesupport</artifactId>
+      <version>${version.rails3}</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
@@ -190,6 +220,10 @@
             <property>
               <name>test.version.jruby</name>
               <value>${version.jruby}</value>
+            </property>
+            <property>
+              <name>gem.path</name>
+              <value>${project.build.directory}/rubygems</value>
             </property>
           </systemProperties>
         </configuration>

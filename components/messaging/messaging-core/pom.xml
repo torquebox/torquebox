@@ -79,6 +79,22 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>test-log4j.xml</value>
+            </property>
+            <property>
+              <name>gem.path</name>
+              <value>${project.basedir}/../target/rubygems</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
         <executions>

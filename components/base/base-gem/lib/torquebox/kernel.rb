@@ -28,6 +28,11 @@ module TorqueBox
       @kernel
     end
 
+    # blocks are not allowed on the method named :[]
+    def self.[](name)
+      self.lookup(name)
+    end
+
     def self.lookup(name, &block)
       if @kernel.nil?
         self.blocks[name] << block

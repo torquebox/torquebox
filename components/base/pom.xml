@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-base</artifactId>
+  <artifactId>torquebox-base-components</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Base Components</name>
   <description></description>
@@ -21,6 +21,7 @@
     <module>base-core</module>
     <module>base-metadata</module>
     <module>base-int</module>
+    <module>base-gem</module>
   </modules>
 
 

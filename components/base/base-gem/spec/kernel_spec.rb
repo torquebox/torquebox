@@ -1,5 +1,5 @@
 
-require 'org/torquebox/interp/core/kernel'
+require 'torquebox/kernel'
 
 describe TorqueBox::Kernel do
 

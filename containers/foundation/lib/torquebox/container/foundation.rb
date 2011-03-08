@@ -16,7 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'ostruct'
-require 'org/torquebox/interp/core/kernel'
+require 'torquebox/kernel'
 require 'torquebox/container/foundation_enabler'
 require 'jruby'
 

@@ -15,9 +15,9 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module TorqueBox
+module ActionDispatch
   module Session
-    class ServletStore 
+    class TorqueBoxStore 
       
       RAILS_SESSION_KEY = '__current_rails_session'
       
@@ -107,5 +107,10 @@ module TorqueBox
         @java_session.invalidate if @java_session
       end
     end
+
   end
 end
+
+# This assignment allows :torquebox_store to work as a symbol
+ActionDispatch::Session::TorqueboxStore = ActionDispatch::Session::TorqueBoxStore 
+

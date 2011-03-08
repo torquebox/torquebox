@@ -56,12 +56,17 @@ module Rails
     end
 
     def load_rails_gem
+      puts "load_rails_gem --> #{self.class.gem_version}"
       if version = self.class.gem_version
+        puts "LOAD #{version}"
         gem 'rails', version
       else
+        puts "LOAD generically"
         gem 'rails'
       end
     rescue Gem::LoadError => load_error
+      puts load_error.message
+      puts load_error.backtrace
       $stderr.puts %(Missing the Rails #{version} gem. Please `gem install -v=#{version} rails`, update your RAILS_GEM_VERSION setting in config/environment.rb for the Rails version you do have installed, or comment out RAILS_GEM_VERSION to use the latest version installed.)
       exit 1
     end

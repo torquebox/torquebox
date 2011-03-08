@@ -3,5 +3,6 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 	<bean name="instance_factory" class="org.torquebox.interp.core.RubyRuntimeFactoryImpl">
 	  <property name="useJRubyHomeEnvVar">false</property>
+	  <property name="gemPath">${project.basedir}/../target/rubygems</property>
 	</bean>
 </deployment>

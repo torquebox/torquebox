@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-messaging</artifactId>
+  <artifactId>torquebox-messaging-components</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Messaging Components</name>
   <description></description>
