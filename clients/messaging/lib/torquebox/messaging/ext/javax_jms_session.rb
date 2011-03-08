@@ -125,7 +125,16 @@ module javax.jms::Session
   def populate_message_properties(jms_message, properties)
     return if properties.nil?
     properties.each do |key, value|
-      jms_message.setStringProperty(key.to_s, value.to_s)
+      case value
+      when Integer
+        jms_message.set_long_property(key.to_s, value)
+      when Float
+        jms_message.set_double_property(key.to_s, value)
+      when TrueClass, FalseClass
+        jms_message.set_boolean_property(key.to_s, value)
+      else
+        jms_message.set_string_property(key.to_s, value.to_s)
+      end
     end
   end
 

@@ -18,7 +18,7 @@ describe javax.jms::Session do
       properties = {'abc' => 'def'}
 
       jms_message = mock('JMSMessage')
-      jms_message.should_receive(:setStringProperty).with('abc', 'def')
+      jms_message.should_receive(:set_string_property).with('abc', 'def')
 
       @session.populate_message_properties jms_message, properties
     end
@@ -27,7 +27,43 @@ describe javax.jms::Session do
       properties = {:abc => :def}
 
       jms_message = mock('JMSMessage')
-      jms_message.should_receive(:setStringProperty).with('abc', 'def')
+      jms_message.should_receive(:set_string_property).with('abc', 'def')
+
+      @session.populate_message_properties jms_message, properties
+    end
+
+    it "should register true as a boolean" do
+      properties = {:abc => true}
+
+      jms_message = mock('JMSMessage')
+      jms_message.should_receive(:set_boolean_property).with('abc', true)
+
+      @session.populate_message_properties jms_message, properties
+    end
+
+    it "should register false as a boolean" do
+      properties = {:abc => false}
+
+      jms_message = mock('JMSMessage')
+      jms_message.should_receive(:set_boolean_property).with('abc', false)
+
+      @session.populate_message_properties jms_message, properties
+    end
+
+    it "should register 5 as an long" do
+      properties = {:abc => 5}
+
+      jms_message = mock('JMSMessage')
+      jms_message.should_receive(:set_long_property).with('abc', 5)
+
+      @session.populate_message_properties jms_message, properties
+    end
+
+    it "should register 5.5 as a double" do
+      properties = {:abc => 5.5}
+
+      jms_message = mock('JMSMessage')
+      jms_message.should_receive(:set_double_property).with('abc', 5.5)
 
       @session.populate_message_properties jms_message, properties
     end
