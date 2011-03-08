@@ -1,0 +1,6 @@
+---
+application:
+  RAILS_ROOT: ${basedir}/apps/rails3/basic-with-cache
+  RAILS_ENV: development
+web:
+  context: /basic-cache
