@@ -3,36 +3,29 @@ package org.torquebox.auth;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.security.auth.login.LoginException;
-
 import org.jboss.security.auth.spi.UsersRolesLoginModule;
 
 public class SimpleLoginModule extends UsersRolesLoginModule {
+    private Properties users = new Properties();
+    private Properties roles = new Properties();
     
     @Override
     protected Properties createUsers(Map<String,?> options) { 
-        return extractPairs(options, "usersMap");
+        return users;
     }
 
     @Override
     protected Properties createRoles(Map<String,?> options) {
-        return extractPairs(options, "rolesMap");
+        return roles;
     }
     
-    @Override
-    public boolean login() throws LoginException
-    {
-       return super.login();
+    public void setUsersMap(Map<String,String> users) {
+        this.users.clear();
+        this.users.putAll(users);
     }
-
-
-    private Properties extractPairs(Map<String, ?> options, String optionKey) {
-        Properties properties = new Properties();
-        @SuppressWarnings("unchecked")
-        Map<String,String> propertyMap = (Map<String, String>) options.get(optionKey);
-        for (String propertyKey: propertyMap.keySet()) {
-            properties.put(propertyKey, propertyMap.get(propertyKey));
-        }
-        return properties;
+    
+    public void setRolesMap(Map<String,String> roles) {
+        this.roles.clear();
+        this.roles.putAll(roles);
     }
 }

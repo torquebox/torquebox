@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
@@ -31,7 +32,6 @@ import org.jboss.security.microcontainer.beans.metadata.ApplicationPolicyMetaDat
 import org.jboss.security.microcontainer.beans.metadata.AuthenticationMetaData;
 import org.jboss.security.microcontainer.beans.metadata.BaseModuleMetaData;
 import org.jboss.security.microcontainer.beans.metadata.FlaggedModuleMetaData;
-import org.jboss.security.microcontainer.beans.metadata.ModuleOptionMetaData;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
 import org.torquebox.mc.AttachmentUtils;
@@ -71,18 +71,9 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
             factory.setPolicyName(domain);
 
             // Create some metadata for the authentication bits
-            FlaggedModuleMetaData metaData = new FlaggedModuleMetaData();
-            
-            // Set the strategy class
-            metaData.setCode(strategyClass);
-
-            // Tell it where to find users/passwords
-            List<ModuleOptionMetaData> moduleOptions = new ArrayList<ModuleOptionMetaData>();
-            moduleOptions.add(createModuleOption("usersMap", config.getUsers()));
-            moduleOptions.add(createModuleOption("rolesMap", config.getRoles()));
-            metaData.setModuleOptions(moduleOptions);
-
             ArrayList<BaseModuleMetaData> authModules = new ArrayList<BaseModuleMetaData>();
+            FlaggedModuleMetaData metaData = new FlaggedModuleMetaData();
+            metaData.setCode(strategyClass);
             authModules.add(metaData);
             jaasMetaData.setModules(authModules);
             factory.setAuthentication(jaasMetaData);
@@ -90,21 +81,18 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
             // Get our bean metadata and attach it to the DeploymentUnit
             List<BeanMetaData> authBeanMetaData = factory.getBeans();
             for (BeanMetaData bmd : authBeanMetaData) {
-                log.info("Attaching JAAS BeanMetaData: " + bmd.getName() + " - " + bmd.getBean());
-                AttachmentUtils.attach(unit, bmd);
+                BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(bmd);
+                builder.addPropertyMetaData("usersMap", config.getUsers());
+                builder.addPropertyMetaData("rolesMap", config.getRoles());
+                BeanMetaData theRealBeanMetaData = builder.getBeanMetaData();
+                log.info("Attaching JAAS BeanMetaData: " + theRealBeanMetaData.getName() + " - " + theRealBeanMetaData.getBean());
+                AttachmentUtils.attach(unit, theRealBeanMetaData);
             }
         } else {
         	log.warn("TorqueBox authentication configuration error. Skipping auth deployment.");
         }
     }
     
-    private ModuleOptionMetaData createModuleOption(String name, Object value) {
-        ModuleOptionMetaData option = new ModuleOptionMetaData();
-//        option.setName(name);
-//        option.setValue(value);
-        return option;
-    }
-
     private String classFor(String strategy) {
         String result = null;
         if (strategy == null) {
