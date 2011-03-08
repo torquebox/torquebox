@@ -15,11 +15,6 @@
   <description></description>
 
   <dependencies>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <scope>runtime</scope>
-    </dependency>
   </dependencies>
 
   <build>

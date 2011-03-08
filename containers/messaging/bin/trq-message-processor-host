@@ -1,7 +1,7 @@
 #!/usr/bin/env jruby
 
 
-dev_lib_dir = File.dirname(__FILE__) + '/../target/org.torquebox.torquebox-naming-container/lib/'
+dev_lib_dir = File.dirname(__FILE__) + '/../target/torquebox-messaging-container/lib/'
 
 require 'rubygems'
 
@@ -11,10 +11,10 @@ if ( File.exist?( dev_lib_dir ) )
     require jar
   end
 else
-  require 'org.torquebox.messaging-container'
+  require 'torquebox-messaging-container'
 end
 
-require 'org.torquebox.container-foundation'
+require 'torquebox-container-foundation'
 require 'torquebox/messaging/commands/message_processor_host'
 
 command = TorqueBox::Messaging::Commands::MessageProcessorHost.new

@@ -69,7 +69,7 @@
     <module>component-parent</module>
     <module>int-parent</module>
 
-    <module>mc-support</module>
+    <module>support</module>
     <module>vfs</module>
 
     <module>bootstrap</module>

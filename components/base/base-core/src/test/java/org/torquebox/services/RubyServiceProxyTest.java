@@ -49,6 +49,7 @@ public class RubyServiceProxyTest extends AbstractTorqueBoxTestCase {
         resolver.setRubyClassName( "TestService" );
         resolver.setRubyRequirePath( "org/torquebox/services/test_service" );
 
+        proxy.create();
         proxy.start();
         Boolean started = (Boolean) ReflectionHelper.callIfPossible( this.ruby, proxy.getService(), "started?", null );
         assertTrue( started.booleanValue() );
@@ -56,6 +57,7 @@ public class RubyServiceProxyTest extends AbstractTorqueBoxTestCase {
         proxy.stop();
         started = (Boolean) ReflectionHelper.callIfPossible( this.ruby, proxy.getService(), "started?", null );
         assertFalse( started.booleanValue() );
+        proxy.destroy();
     }
 
     @Test
@@ -64,9 +66,11 @@ public class RubyServiceProxyTest extends AbstractTorqueBoxTestCase {
         resolver.setRubyRequirePath( "org/torquebox/services/test_service" );
         resolver.setInitializeParams( ruby.evalScriptlet( "{'foo'=>42}" ).convertToHash() );
 
+        proxy.create();
         proxy.start();
         assertEquals( 42, JavaEmbedUtils.invokeMethod( ruby, proxy.getService(), "[]", new Object[] { "foo" }, Integer.class ) );
         proxy.stop();
+        proxy.destroy();
     }
     
     public Ruby createRuby() throws Exception {

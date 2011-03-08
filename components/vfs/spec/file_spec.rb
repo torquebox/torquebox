@@ -147,7 +147,7 @@ describe "File extensions for VFS" do
     child = parent + "/b/c"
     FileUtils.rm_rf parent
     File.exist?(child).should be_false
-    FileUtils.mkdir_p (child)
+    FileUtils.mkdir_p(child)
     File.exist?(child).should be_true
     FileUtils.rm_rf parent
   end

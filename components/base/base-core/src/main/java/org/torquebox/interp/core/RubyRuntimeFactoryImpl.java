@@ -307,8 +307,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             // jrubyHome = jrubyHome.replaceAll( "!/", "/" );
         }
 
-        System.err.println( "JRUBY_HOME=>[" + jrubyHome + "]" );
-
         if (jrubyHome != null) {
             config.setJRubyHome( jrubyHome );
         }

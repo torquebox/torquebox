@@ -8,8 +8,8 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
-  <artifactId>rake-support</artifactId>
+  <groupId>rubygems</groupId>
+  <artifactId>torquebox-rake-support</artifactId>
   <packaging>gem</packaging>
   <name>TorqueBox Rake Support</name>
   <description></description>

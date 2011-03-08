@@ -22,11 +22,12 @@ package org.torquebox.services;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
+import org.torquebox.interp.core.ManagedComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class RubyServiceProxy {
-
+public class RubyServiceProxy implements RubyServiceProxyMBean {
+    
     public RubyServiceProxy() {
         // MicroContainer seems to want this declared
     }
@@ -43,20 +44,69 @@ public class RubyServiceProxy {
     public void setRubyComponentResolver(RubyComponentResolver resolver) {
         this.resolver = resolver;
     }
-
-    public void start() throws Exception {
-        if (this.ruby != null)
-            throw new IllegalStateException( "Already running" );
+    
+    public String getRubyClassName() {
+        if ( this.resolver instanceof ManagedComponentResolver ) {
+            return ((ManagedComponentResolver) this.resolver).getComponentName();
+        }
+        
+        return "<unknown>";
+    }
+    
+    public synchronized void create() throws Exception {
+        if (this.ruby != null) {
+            throw new IllegalStateException( "Already created" );
+        }
+        
         this.ruby = runtimePool.borrowRuntime();
-        ReflectionHelper.callIfPossible( this.ruby, getService(), "start", null );
     }
 
-    public void stop() throws Exception {
-        if (this.ruby == null)
-            throw new IllegalStateException( "Not running" );
+    public synchronized void start() throws Exception {
+        if (this.ruby == null) {
+            throw new IllegalStateException( "Not created" );
+        }
+        ReflectionHelper.callIfPossible( this.ruby, getService(), "start", null );
+        this.started = true;
+    }
+
+    public synchronized void stop() throws Exception {
+        if (this.ruby == null) {
+            throw new IllegalStateException( "Not created" );
+        }
         ReflectionHelper.callIfPossible( this.ruby, getService(), "stop", null );
+        this.started = false;
+    }
+    
+    public synchronized void destroy() throws Exception {
+        if (this.ruby == null) {
+            throw new IllegalStateException( "Not created" );
+        }
         runtimePool.returnRuntime( this.ruby );
         this.ruby = null;
+    }
+    
+    public synchronized boolean isCreated() {
+        return this.ruby != null;
+    }
+    
+    public synchronized boolean isStarted() {
+        return this.started;
+    }
+    
+    public synchronized boolean isStopped() {
+        return ! this.started;
+    }
+    
+    public synchronized String getStatus() {
+        if ( ! isCreated() ) {
+            return "NOT CREATED";
+        }
+        
+        if ( isStarted() ) {
+            return "STARTED";
+        }
+        
+        return "STOPPED";
     }
 
     protected IRubyObject getService() throws Exception {
@@ -65,6 +115,8 @@ public class RubyServiceProxy {
         }
         return this.service;
     }
+    
+    private boolean started = false;
 
     private RubyRuntimePool runtimePool;
     private Ruby ruby;

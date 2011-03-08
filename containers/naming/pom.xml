@@ -8,16 +8,16 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
-  <artifactId>naming-container</artifactId>
+  <groupId>rubygems</groupId>
+  <artifactId>torquebox-naming-container</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Naming Container</name>
   <description></description>
 
   <dependencies>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>container-foundation</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-container-foundation</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
       <scope>compile</scope>
@@ -29,10 +29,9 @@
       <scope>compile</scope>
     </dependency>
 
-
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>naming-client</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-naming</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>

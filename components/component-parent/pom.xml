@@ -41,17 +41,6 @@
 
   <build> 
     <plugins> 
-<!--
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install-common-jar</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
--->
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>

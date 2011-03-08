@@ -104,16 +104,16 @@
     </dependency>
 
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>messaging-client</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>messaging-container</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>

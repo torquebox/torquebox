@@ -23,7 +23,8 @@ class IO
 
     #alias_method :open_without_vfs, :open
     alias_method :read_without_vfs, :read
-
+    alias_method :readlines_without_vfs, :readlines
+    
     def vfs_open(fd,mode_str='r', &block)
       append   = false
       truncate = false
@@ -122,21 +123,25 @@ class IO
     end
 
     def read(name, length=nil, offset=nil)
-      return read_without_vfs(name, length, offset) if ::File.exist_without_vfs?( name )
-
-      full_path = File.expand_path( name )
-
-      virtual_file = org.jboss.vfs.VFS.child( full_path )
-      raise ::Errno::ENOENT.new( "#{name} (#{virtual_file})" ) unless virtual_file.exists()
-
-      stream = virtual_file.openStream()
-      io = stream.to_io
-      begin
-        s = io.read
-      ensure
-        io.close()
+      if ::File.exist_without_vfs?( name )
+        read_without_vfs(name, length, offset)
+      else
+        vfs_file = vfs_open( name )
+        vfs_file.seek( offset ) if offset
+        vfs_file.read( length )
       end
-      s
+    end
+    
+    # FIXME: this is not ruby 1.9 compliant - the 1.9 signature is:
+    # IO.readlines( portname, separator=$/ <, options-for-open> )
+    # IO.readlines( portname, limit <, options-for-open> )
+    # IO.readlines( portname, separator, limit <, options-for-open> )
+    def readlines(name, separator=$/)
+      if ::File.exist_without_vfs?( name )
+        readlines_without_vfs( name, separator )
+      else
+        vfs_open( name ).readlines( separator )
+      end
     end
   end
 

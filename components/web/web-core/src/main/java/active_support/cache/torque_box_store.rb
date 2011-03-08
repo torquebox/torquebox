@@ -1,19 +1,41 @@
 
+require 'active_support/cache'
 require 'org/torquebox/interp/core/kernel'
 
 module ActiveSupport
   module Cache
     class TorqueBoxStore < Store
 
-      def initialize(*args)
-        super(*args)
-        @cache = clustered || local || nothing
+      SECONDS = java.util.concurrent.TimeUnit::SECONDS
+
+      def initialize(options = {})
+        super(options)
+        cache
+      end
+
+      def name
+        options[:name] || TORQUEBOX_APP_NAME
+      end
+
+      def clustering_mode
+        java_import org.infinispan.config.Configuration::CacheMode
+        replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
+        distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
+        sync = !!options[:sync]
+        case
+        when replicated 
+          sync ? CacheMode::REPL_SYNC : CacheMode::REPL_ASYNC
+        when distributed
+          sync ? CacheMode::DIST_SYNC : CacheMode::DIST_ASYNC
+        else
+          sync ? CacheMode::INVALIDATION_SYNC : CacheMode::INVALIDATION_ASYNC
+        end
       end
 
       # Clear the entire cache. Be careful with this method since it could
       # affect other processes if shared cache is being used.
       def clear(options = nil)
-        @cache.clearAsync
+        cache.clearAsync
       end
 
       # Delete all entries with keys matching the pattern.
@@ -27,13 +49,13 @@ module ActiveSupport
       def increment(name, amount = 1, options = nil)
         options = merged_options( options )
         key = namespaced_key( name, options )
-        old_entry = read_entry( key, options )
-        value = old_entry.value.to_i + amount
-        new_entry = Entry.new( value, options )
-        if @cache.replace( key, old_entry, new_entry )
-          return value
+        current = cache.get(key)
+        value = decode(current).value.to_i
+        new_entry = Entry.new( value+amount, options )
+        if cache.replace( key, current, encode(new_entry) )
+          return new_entry.value
         else
-          raise "Concurrent modification, old value was #{old_entry.value}"
+          raise "Concurrent modification, old value was #{value}"
         end
       end
 
@@ -55,52 +77,69 @@ module ActiveSupport
 
       # Return the keys in the cache; potentially very expensive depending on configuration
       def keys
-        @cache.key_set
+        cache.key_set
       end
 
       # Read an entry from the cache implementation. Subclasses must implement this method.
       def read_entry(key, options)
-        @cache.get( key )
+        decode(cache.get(key))
       end
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
-      #
-      # TODO: support :expires_in and :unless_exist
-      #
-      def write_entry(key, entry, options)
-        @cache.putAsync( key, entry )
+      def write_entry(key, entry, options = {})
+        args = [ :put_async, key, encode(entry) ]
+        args[0] = :put_if_absent_async if options[:unless_exist]
+        args << options[:expires_in].to_i << SECONDS if options[:expires_in]
+        cache.send( *args ) && true
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
       def delete_entry(key, options) # :nodoc:
-        @cache.removeAsync( key )
+        cache.removeAsync( key ) && true
+      end
+
+      def encode value
+        Marshal.dump(value).to_java_bytes
+      end
+
+      def decode value
+        value && Marshal.load(String.from_java_bytes(value))
       end
 
       private
 
+      def cache
+        @cache ||= clustered || local || nothing
+      end
+
       def clustered
         registry = TorqueBox::Kernel.lookup("CacheContainerRegistry")
-        container = registry.cache_container( 'web' )
-        result = container.get_cache(TORQUEBOX_APP_NAME)
-        puts "Using clustered cache: #{result}"
+        manager = registry.cache_container( 'web' )
+        configuration = manager.default_configuration.clone
+        configuration.cache_mode = clustering_mode
+        manager.define_configuration(name, configuration)
+        result = manager.get_cache(name)
+        logger.info "Using clustered cache: #{result}" if logger
         result
       rescue
-        puts "Unable to obtain clustered cache"
+        logger.warn("Unable to obtain clustered cache") if logger
+        nil
       end
 
       def local
-        container = org.infinispan.manager.DefaultCacheManager.new()
-        result = container.get_cache()
-        puts "Using local cache: #{result}"
+        manager = org.infinispan.manager.DefaultCacheManager.new()
+        result = manager.get_cache()
+        logger.info "Using local cache: #{result}" if logger
         result
       rescue
-        puts "Unable to obtain local cache"
+        logger.warn("Unable to obtain local cache: #{$!}") if logger
+        nil
       end
       
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        puts "No caching will occur"
+        logger.warn "No caching will occur" if logger
         result
       end
 

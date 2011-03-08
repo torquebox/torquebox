@@ -8,8 +8,8 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
-  <artifactId>naming-client</artifactId>
+  <groupId>rubygems</groupId>
+  <artifactId>torquebox-naming</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Naming Client</name>
   <description></description>
@@ -19,6 +19,12 @@
       <groupId>org.jboss.naming</groupId>
       <artifactId>jnp-client</artifactId>
       <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>

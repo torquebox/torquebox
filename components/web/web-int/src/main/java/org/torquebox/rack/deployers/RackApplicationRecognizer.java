@@ -24,11 +24,11 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.base.deployers.AbstractRecognizer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 
-public class DefaultRackApplicationRecognizer extends AbstractRecognizer {
+public class RackApplicationRecognizer extends AbstractRecognizer {
 
     public static final String DEFAULT_RACKUP_PATH = "config.ru";
 
-    public DefaultRackApplicationRecognizer() {
+    public RackApplicationRecognizer() {
         addInput( RackApplicationMetaData.class );
         addOutput( RackApplicationMetaData.class );
         setRelativeOrder( 5000 );

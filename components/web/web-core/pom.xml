@@ -77,8 +77,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
       <type>gem</type>
@@ -117,6 +117,50 @@
       <artifactId>mockito-all</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.marshalling</groupId>
+      <artifactId>jboss-marshalling</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.marshalling</groupId>
+      <artifactId>jboss-marshalling-river</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activesupport</artifactId>
+      <version>3.0.5</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>i18n</artifactId>
+      <version>0.5.0</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -182,7 +226,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>run-specs</id>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
 </project>

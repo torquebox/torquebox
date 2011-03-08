@@ -3,12 +3,12 @@ source 'http://rubygems.org'
 gem 'haml'
 
 group :provided do
-  gem 'rails', '3.0.3'
+  gem 'rails', '3.0.5'
   gem 'activerecord-jdbc-adapter'
   gem 'jdbc-sqlite3'
 end
   
 group :development do
-  gem "org.torquebox.rake-support", '~>1.0.0'
+  gem "torquebox-rake-support", '~>1.0.0'
 end
 

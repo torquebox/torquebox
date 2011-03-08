@@ -39,7 +39,7 @@ import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class RubyMessageProcessor {
+public class RubyMessageProcessor implements RubyMessageProcessorMBean {
 
     private static final Logger log = Logger.getLogger( RubyMessageProcessor.class );
 
@@ -73,6 +73,10 @@ public class RubyMessageProcessor {
 
     public Destination getDestination() {
         return this.destination;
+    }
+
+    public String getDestinationName() {
+        return this.destination.toString();
     }
 
     public void setMessageSelector(String messageSelector) {
@@ -136,6 +140,7 @@ public class RubyMessageProcessor {
         log.info( "starting for " + getDestination() );
         if (connection != null) {
             connection.start();
+            this.started = true;
         }
     }
 
@@ -144,6 +149,7 @@ public class RubyMessageProcessor {
         if (this.connection != null) {
             log.info( "stopping connection for " + getDestination() );
             this.connection.stop();
+            this.started = false;
         }
     }
 
@@ -154,6 +160,14 @@ public class RubyMessageProcessor {
             this.connection.close();
             this.connection = null;
         }
+    }
+
+    public synchronized String getStatus() {
+        if ( this.started ) {
+            return "STARTED";
+        }
+        
+        return "STOPPED";
     }
 
     protected IRubyObject instantiateProcessor(Ruby ruby) throws Exception {
@@ -220,6 +234,7 @@ public class RubyMessageProcessor {
     private RubyComponentResolver componentResolver;
     private int concurrency = 1;
     private Map rubyConfig = Collections.EMPTY_MAP;
+    private boolean started = false;
 
     private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 

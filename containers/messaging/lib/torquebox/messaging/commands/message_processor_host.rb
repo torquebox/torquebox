@@ -48,12 +48,16 @@ module TorqueBox
           @deploy_files.each do |file|
             deployment = container.deploy( file )
             unit = container.deployment_unit( deployment.name )
-            puts "unit is #{unit.inspect}"
             builder = TorqueBox::Messaging::MetaData::Builder.new() 
             builder.evaluate_file( file )
             builder.processors.each do |processor|
               org.torquebox.mc::AttachmentUtils.multipleAttach( unit, processor, processor.name )
             end
+            app_meta = org.torquebox.base.metadata::RubyApplicationMetaData.new
+            app_meta.setApplicationName( "none" )
+            app_meta.setEnvironmentName( ENV['TORQUEBOX_ENV'] || 'development' )
+            app_meta.setRoot( org.jboss.vfs::VFS.getChild( Dir.pwd ) )
+            unit.addAttachment( org.torquebox.base.metadata::RubyApplicationMetaData.java_class, app_meta )
             container.process_deployments(true)
             @deployments << deployment
           end

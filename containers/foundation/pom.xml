@@ -8,13 +8,23 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
-  <artifactId>container-foundation</artifactId>
+  <groupId>rubygems</groupId>
+  <artifactId>torquebox-container-foundation</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Container Foundation</name>
   <description></description>
 
   <dependencies>
+    <dependency>
+      <groupId>org.jboss.kernel</groupId>
+      <artifactId>jboss-aop-mc-int</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.aop</groupId>
+      <artifactId>jboss-aop</artifactId>
+      <scope>compile</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss.deployers</groupId>
       <artifactId>jboss-deployers-vfs-spi</artifactId>

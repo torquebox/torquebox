@@ -15,7 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'org.torquebox.container-foundation'
+require 'torquebox-container-foundation'
 require 'torquebox/container/foundation'
 require 'torquebox/messaging/message_processor_host'
 require 'torquebox/naming'
@@ -47,6 +47,11 @@ module TorqueBox
         processors.each do |processor|
           org.torquebox.mc::AttachmentUtils.multipleAttach( unit, processor, processor.name )
         end
+        app_meta = org.torquebox.base.metadata::RubyApplicationMetaData.new
+        app_meta.setApplicationName( "none" )
+        app_meta.setEnvironmentName( ENV['TORQUEBOX_ENV'] || 'development' )
+        app_meta.setRoot( org.jboss.vfs::VFS.getChild( Dir.pwd ) )
+        unit.addAttachment( org.torquebox.base.metadata::RubyApplicationMetaData.java_class, app_meta )
         container.process_deployments(true)
       end
 

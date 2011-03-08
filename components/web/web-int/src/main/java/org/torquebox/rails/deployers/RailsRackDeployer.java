@@ -72,6 +72,7 @@ public class RailsRackDeployer extends AbstractDeployer {
             } else {
                 log.debug( "Configuring up a rails 2 application: " + unit );
                 rackMetaData.setRackUpScript( getRackUpScript( rackMetaData.getContextPath() ) );
+                rackMetaData.setRackUpScriptLocation( null );
             }
 
             rackMetaData.setStaticPathPrefix( STATIC_PATH_PREFIX );

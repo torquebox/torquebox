@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 require 'fileutils'
-require 'org.torquebox.messaging-client'
+require 'torquebox-messaging'
 
 describe "messaging alacarte rack test" do
 

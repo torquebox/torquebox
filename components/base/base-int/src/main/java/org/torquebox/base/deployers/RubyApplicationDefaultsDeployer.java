@@ -30,7 +30,7 @@ public class RubyApplicationDefaultsDeployer extends AbstractDeployer {
     public static final String DEFAULT_ENVIRONMENT_NAME = "development";
 
     public RubyApplicationDefaultsDeployer() {
-        setStage( DeploymentStages.PRE_REAL );
+        setStage( DeploymentStages.POST_PARSE );
         setInput( RubyApplicationMetaData.class );
         addOutput( RubyApplicationMetaData.class );
     }
@@ -40,7 +40,6 @@ public class RubyApplicationDefaultsDeployer extends AbstractDeployer {
 
         if (rubyAppMetaData.getEnvironmentName() == null || rubyAppMetaData.getEnvironmentName().trim().equals( "" )) {
             rubyAppMetaData.setEnvironmentName( DEFAULT_ENVIRONMENT_NAME );
-            rubyAppMetaData.setDevelopmentMode( true );
         }
     }
 }

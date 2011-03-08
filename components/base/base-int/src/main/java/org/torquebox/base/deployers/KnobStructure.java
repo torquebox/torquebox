@@ -34,6 +34,7 @@ import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
 import org.jboss.vfs.VisitorAttributes;
 import org.jboss.vfs.util.SuffixMatchFilter;
+import org.jboss.vfs.util.automount.Automounter;
 
 /**
  * <pre>
@@ -76,9 +77,9 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
 
     public static boolean isKnob(VirtualFile root) {
         String name = root.getName();
-        
+
         boolean result = (name.endsWith( ".knob" ) || name.endsWith( ".rails" ) || name.endsWith( ".rack" ));
-        
+
         return result;
 
     }
@@ -90,43 +91,40 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
         metaDataPaths.add( "META-INF" );
         metaDataPaths.add( "WEB-INF" );
 
-        List<ClassPathEntry> classPaths = getClassPathEntries( rackRoot.getChild( "lib" ), rackRoot );
-        classPaths.addAll( getClassPathEntries( rackRoot.getChild( "vendor/jars" ), rackRoot ) );
-        classPaths.addAll( getClassPathEntries( rackRoot.getChild( "vendor/plugins" ), rackRoot ) );
+        List<VirtualFile> allJars = new ArrayList<VirtualFile>();
+        allJars.addAll( getJarFiles( rackRoot.getChild( "lib" ) ) );
+        allJars.addAll( getJarFiles( rackRoot.getChild( "vendor/jars" ) ) );
+        allJars.addAll( getJarFiles( rackRoot.getChild( "vendor/plugins" ) ) );
 
-        ContextInfo context = StructureMetaDataFactory.createContextInfo( "", metaDataPaths, classPaths );
+        mountFiles( allJars, rackRoot );
+
+        List<ClassPathEntry> classPathEntries = getClassPathEntries( allJars, rackRoot );
+
+        ContextInfo context = StructureMetaDataFactory.createContextInfo( "", metaDataPaths, classPathEntries );
         return context;
     }
 
-    public void addDirectoryOfJarsToClasspath(StructureContext structureContext, ContextInfo context, String dirPath) throws IOException {
-        log.info( "Add dir to CLASSPATH: " + dirPath );
-
-        VirtualFile dir = structureContext.getFile().getChild( dirPath );
-
-        if (dir.exists() && dir.isDirectory()) {
-            List<VirtualFile> children = getClassPathEntries( dir );
-
-            for (VirtualFile jar : children) {
-                log.info( "..." + jar );
-                addClassPath( structureContext, jar, true, true, context );
-            }
-        }
-    }
-
-    public List<VirtualFile> getClassPathEntries(VirtualFile dir) throws IOException {
+    public List<VirtualFile> getJarFiles(VirtualFile dir) throws IOException {
         return dir.getChildrenRecursively( JAR_FILTER );
     }
 
-    public List<ClassPathEntry> getClassPathEntries(VirtualFile dir, VirtualFile relativeTo) throws IOException {
+    public List<ClassPathEntry> getClassPathEntries(List<VirtualFile> files, VirtualFile relativeTo) {
         List<ClassPathEntry> entries = new ArrayList<ClassPathEntry>();
-
-        List<VirtualFile> files = getClassPathEntries( dir );
-
         for (VirtualFile file : files) {
             entries.add( StructureMetaDataFactory.createClassPathEntry( getRelativePath( relativeTo, file ) ) );
         }
 
         return entries;
+    }
+
+    public void mountFiles(List<VirtualFile> files, VirtualFile owner) {
+        for (VirtualFile file : files) {
+            try {
+                Automounter.mount( owner, file );
+            } catch (IOException e) {
+                log.warn( "Exception mounting  file " + file.getPathName(), e );
+            }
+        }
     }
 
     @Override

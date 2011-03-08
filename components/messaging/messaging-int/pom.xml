@@ -92,8 +92,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>

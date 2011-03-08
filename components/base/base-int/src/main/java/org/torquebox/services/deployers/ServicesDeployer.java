@@ -29,13 +29,16 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.mc.jmx.JMXUtils;
 import org.torquebox.services.RubyServiceProxy;
+import org.torquebox.services.RubyServiceProxyMBean;
 import org.torquebox.services.ServiceMetaData;
 
 /**
@@ -53,6 +56,7 @@ public class ServicesDeployer extends AbstractDeployer {
 
     public ServicesDeployer() {
         addInput( ServiceMetaData.class );
+        addInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
     }
@@ -67,6 +71,7 @@ public class ServicesDeployer extends AbstractDeployer {
     }
     
     public void deploy(DeploymentUnit unit, ServiceMetaData serviceMetaData) throws DeploymentException {
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(  RubyApplicationMetaData.class );
         String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, serviceMetaData.getClassName() );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
 
@@ -78,6 +83,10 @@ public class ServicesDeployer extends AbstractDeployer {
         if ( serviceMetaData.isRequiresSingleton() ) {
             builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
         }
+        
+        String mbeanName = JMXUtils.jmxName( "torquebox.services", rubyAppMetaData.getApplicationName() ).with( "name", serviceMetaData.getClassName() ).name();
+        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\""+ mbeanName + "\", exposedInterface=" + RubyServiceProxyMBean.class.getName() + ".class)";
+        builder.addAnnotation( jmxAnno );
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
     }
@@ -93,7 +102,7 @@ public class ServicesDeployer extends AbstractDeployer {
 
     protected PoolMetaData createRuntimePool(DeploymentUnit unit, int max) {
         PoolMetaData pool = AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class );
-        ;
+
         if (pool == null && max > 0) {
             pool = new PoolMetaData( POOL_NAME, 1, max );
             log.info( "Configured Ruby runtime pool for services: " + pool );

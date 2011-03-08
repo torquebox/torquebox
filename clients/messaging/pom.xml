@@ -8,8 +8,8 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
-  <artifactId>messaging-client</artifactId>
+  <groupId>rubygems</groupId>
+  <artifactId>torquebox-messaging</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Messaging Client</name>
   <description></description>
@@ -46,30 +46,36 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.naming</groupId>
       <artifactId>jnp-client</artifactId>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>naming-client</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-naming</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>naming-container</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-naming-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>messaging-container</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>

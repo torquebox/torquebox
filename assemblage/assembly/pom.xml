@@ -117,6 +117,11 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
+      <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-core</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-web-int</artifactId>
       <version>${project.version}</version>
@@ -192,65 +197,73 @@
       <scope>runtime</scope>
     </dependency>
 
+
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>vfs</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>rake-support</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>rake-support</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-rake-support</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-rake-support</artifactId>
       <type>template.rb</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>capistrano-support</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-capistrano-support</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>container-foundation</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-container-foundation</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>naming-container</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-naming-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>messaging-container</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging-container</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>naming-client</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-naming</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>messaging-client</artifactId>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>runtime</scope>
@@ -314,7 +327,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeGroupIds>org.torquebox,org.infinispan</includeGroupIds>
               <excludeArtifactIds>torquebox-bootstrap-int</excludeArtifactIds>
               <includeTypes>jar</includeTypes>
               <excludeTypes>gem</excludeTypes>
@@ -399,7 +412,8 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <includeGroupIds>org.torquebox</includeGroupIds>
+              <includeGroupIds>rubygems</includeGroupIds>
+              <includeArtifactIds>torquebox-rake-support</includeArtifactIds>
               <includeTypes>template.rb</includeTypes>
               <outputDirectory>${stage.dir}/share/rails</outputDirectory>
               <stripVersion>true</stripVersion>
@@ -513,7 +527,7 @@
                 <mkdir dir="${repo.stage.dir}/gems"/>
 
                 <move todir="${repo.stage.dir}/gems">
-                  <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="org.torquebox*.gem"/>
+                  <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="torquebox-*.gem"/>
                 </move>
 
                 <delete dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" failonerror="false"/>
@@ -529,7 +543,7 @@
             </goals>
             <configuration>
               <tasks>
-                <move file="${stage.dir}/share/rails/rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb"/>
+                <move file="${stage.dir}/share/rails/torquebox-rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb"/>
               </tasks>
             </configuration>
           </execution>
@@ -580,6 +594,28 @@
                   FileUtils.rm_rf "${stage.dir}/jruby"
                   FileUtils.mv "${stage.dir}/jruby-${version.jruby}",   "${stage.dir}/jruby" 
                 end
+              </script>
+            </configuration>
+          </execution>
+          <execution>
+            <id>increase-xmx</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                puts "Updating JBoss default Xmx to 1024m"
+                def update_xmx(conf_file)
+                  lines = File.readlines( conf_file )
+                  File.open( conf_file, 'w' ) do |file|
+                    lines.each do |line|
+                      file.write( line.gsub( /Xmx\d*(m|M)/, 'Xmx1024\1' ) )
+                    end
+                  end
+                end
+                update_xmx( "${stage.dir}/jboss/bin/run.conf" )
+                update_xmx( "${stage.dir}/jboss/bin/run.conf.bat" )
               </script>
             </configuration>
           </execution>
