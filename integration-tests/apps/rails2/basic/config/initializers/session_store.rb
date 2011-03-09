@@ -14,4 +14,5 @@
 # (create the session table with "rake db:sessions:create")
 # ActionController::Base.session_store = :active_record_store
 
-( ActionController::Base.session_store = TorqueBox::Session::ServletStore ) if defined?(TorqueBox::Session::ServletStore)
+#ActionController::Base.session_store = :torque_box_store
+ActionController::Base.session_store = :torquebox_store

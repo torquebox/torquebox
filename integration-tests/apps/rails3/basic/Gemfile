@@ -1,11 +1,15 @@
 source 'http://rubygems.org'
+source 'file:///Users/bob/torquebox/torquebox/assemblage/assembly/target/stage/gem-repo'
 
 gem 'haml'
+
 
 group :provided do
   gem 'rails', '3.0.5'
   gem 'activerecord-jdbc-adapter'
   gem 'jdbc-sqlite3'
+  gem 'torquebox-base'
+  gem 'torquebox-web'
 end
   
 group :development do

@@ -137,4 +137,21 @@ jruby -S gem install torquebox-container-foundation torquebox-messaging torquebo
     equivalent.  There is a <ulink url="http://torquebox.org/news/2011/02/25/using-rvm-with-torquebox/">blog post</ulink> on torquebox.org describing how to 
     set up your torquebox environment with RVM.</para>
   </section>
+
+  <section id="running">
+    <title>How to run TorqueBox</title>
+
+    <para>Running TorqueBox essentially amounts to running JBoss:</para>
+    
+    <screen>
+      $JBOSS_HOME/bin/run.sh
+    </screen>
+
+    <para>Alternatively, the <filename>torquebox-rake-support</filename> gem provides a <command>torquebox:run</command> task:</para>
+
+    <screen>
+      jruby -S rake torquebox:run
+    </screen>
+
+  </section>
 </chapter>

@@ -15,11 +15,9 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'rubygems'
-require 'vfs'
 require 'pp'
 
-require 'org/torquebox/rails/web/servlet_store'
+#require 'torquebox-web'
 
 class Class
   
@@ -65,6 +63,18 @@ class Class
               end
             end
             load_gems_before_torquebox()
+            ( require 'action_controller/session/torque_box_store' ) if ( Rails::VERSION::MAJOR == 2 )
+          end
+        end
+      end
+      if ( (self.to_s == 'Rails::Application') && ( method_name == :initialize! ) )
+        self.class_eval do
+          alias_method :initialize_before_torquebox!, :initialize!            
+          
+          def initialize!
+            require 'torquebox-web'
+            require 'action_dispatch/session/torque_box_store'
+            initialize_before_torquebox!
           end
         end
       end
@@ -73,22 +83,18 @@ class Class
   end # method_added
 end
 
-puts "RAILS_ROOT = #{RAILS_ROOT}"
-puts "RAILS_ENV = #{RAILS_ENV}"
 
+  
 begin
   load RAILS_ROOT + '/config/environment.rb'
 rescue => e
   puts e.message
   puts e.backtrace
-  puts ""
-  puts ""
-  puts ""
   raise e
 end
 
 if ( Rails::VERSION::MAJOR == 2 )
-  if ( ActionController::Base.session_store == TorqueBox::Session::ServletStore )
+  if ( ActionController::Base.session_store == ActionController::Session::TorqueBoxStore )
     class ActionController::Request
       def reset_session
         session.destroy if session

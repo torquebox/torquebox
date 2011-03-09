@@ -15,7 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'org/torquebox/interp/core/kernel'
+require 'torquebox/kernel'
 require 'torquebox/messaging/client'
 
 require 'torquebox/messaging/ext/javax_jms_queue_browser'

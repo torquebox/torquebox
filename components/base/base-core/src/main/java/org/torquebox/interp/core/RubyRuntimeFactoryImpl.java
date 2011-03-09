@@ -322,7 +322,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         Ruby runtime = JavaEmbedUtils.initialize( loadPath, config );
 
-        injectKernel( runtime );
+        prepareRuntime( runtime );
 
         if (this.initializer != null) {
             this.initializer.initialize( runtime );
@@ -331,9 +331,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         }
 
         performRuntimeInitialization( runtime );
-        runtime.getLoadService().require( "rubygems" );
-        runtime.evalScriptlet( "puts Gem.path.inspect" );
-        runtime.evalScriptlet( "begin; require 'vfs'; puts 'Loaded VFS'; rescue Exception; puts 'Failed to load VFS'; end" );
         return runtime;
     }
 
@@ -361,9 +358,16 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         JavaEmbedUtils.invokeMethod( runtime, torqueBoxModule, "application_name=", new Object[] { applicationName }, void.class );
 
     }
+    
+    private void prepareRuntime(Ruby runtime) {
+        runtime.getLoadService().require( "rubygems" );
+        runtime.evalScriptlet( "require %q(torquebox-vfs)" );
+        runtime.evalScriptlet( "require %q(torquebox-base)" );
+        injectKernel( runtime );
+    }
 
     private void injectKernel(Ruby runtime) {
-        runtime.evalScriptlet( "require %q(org/torquebox/interp/core/kernel)" );
+        runtime.evalScriptlet( "require %q(torquebox/kernel)" );
         RubyModule torqueBoxKernelModule = runtime.getClassFromPath( "TorqueBox::Kernel" );
         JavaEmbedUtils.invokeMethod( runtime, torqueBoxKernelModule, "kernel=", new Object[] { this.kernel }, void.class );
     }
@@ -387,7 +391,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             env.remove( "GEM_HOME" );
             gemPath = null;
         }
-
+        
         if (gemPath != null) {
             env.put( "GEM_PATH", gemPath );
             env.put( "GEM_HOME", gemPath );

@@ -32,6 +32,7 @@ public class TestRubyFactory {
         } else {
             factory.setGemPath( "target/rubygems" );
         }
+        System.err.println( "gem.path is " + factory.getGemPath() );
         factory.setUseJRubyHomeEnvVar( false );
 
         Ruby ruby = factory.create();

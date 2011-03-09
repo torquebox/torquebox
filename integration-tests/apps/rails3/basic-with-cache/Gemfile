@@ -1,0 +1,11 @@
+source 'file:///Users/bob/torquebox/torquebox/assemblage/assembly/target/stage/gem-repo'
+source 'http://rubygems.org'
+
+gem 'rails', '3.0.5'
+gem 'activerecord-jdbc-adapter'
+gem 'jdbc-sqlite3'
+
+group :provided do
+  gem 'torquebox'
+end
+

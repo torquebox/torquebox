@@ -94,6 +94,39 @@ describe TorqueBox::Messaging::Destination do
     end
   end
 
+
+  describe "message selectors" do
+    before(:each) do
+      @container = TorqueBox::Container::Foundation.new
+      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
+      @container.enable( TorqueBox::Messaging::MessageBroker )
+      @container.start
+      @queue = TorqueBox::Messaging::Queue.new "/queues/selector_test"
+      @queue.start
+    end
+
+    after(:each) do
+      @queue.destroy
+      @container.stop
+    end
+
+    {
+      true => 'prop = true',
+      true => 'prop <> false',
+      5 => 'prop = 5',
+      5 => 'prop > 4',
+      5.5 => 'prop = 5.5',
+      5.5 => 'prop < 6',
+      'string' => "prop = 'string'"
+    }.each do |value, selector|
+      it "should be able to select with property set to #{value} using selector '#{selector}'" do
+        @queue.publish value.to_s, :properties => { :prop => value }
+        message = @queue.receive(:timeout => 1000, :selector => selector)
+        message.should == value.to_s
+      end
+    end
+    
+  end
   
   describe "browse" do
     before(:each) do

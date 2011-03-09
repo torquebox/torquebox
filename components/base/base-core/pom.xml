@@ -16,9 +16,23 @@
 
   <dependencies>
     <dependency>
-        <groupId>org.picketbox</groupId>
-        <artifactId>picketbox-bare</artifactId>
-        <version>3.0.0.Final</version>
+      <groupId>org.picketbox</groupId>
+      <artifactId>picketbox-bare</artifactId>
+      <version>3.0.0.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-base</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
@@ -95,6 +109,14 @@
 
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>torquebox-base</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
       <scope>test</scope>
@@ -104,6 +126,14 @@
           <artifactId>torquebox-mc-support</artifactId>
           <version>${project.version}</version>
       </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>activesupport</artifactId>
+      <version>${version.rails3}</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -220,6 +250,10 @@
             <property>
               <name>test.version.jruby</name>
               <value>${version.jruby}</value>
+            </property>
+            <property>
+              <name>gem.path</name>
+              <value>${project.build.directory}/rubygems</value>
             </property>
           </systemProperties>
         </configuration>

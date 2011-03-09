@@ -55,7 +55,9 @@ public abstract class ManagedComponentResolver implements RubyComponentResolver 
         log.debug( "resolve(" + ruby + ")" );
         synchronized (ruby) {
             log.debug( "Got exclusive access: " + ruby );
-            ruby.getLoadService().require( "org/torquebox/interp/core/component_manager" );
+            ruby.getLoadService().require(  "rubygems"  );
+            ruby.getLoadService().require(  "torquebox-base"  );
+            ruby.getLoadService().require(  "torquebox/component_manager"  );
             RubyClass managerClass = (RubyClass) ruby.getClassFromPath( "TorqueBox::ComponentManager" );
             log.debug( "Got manager: " + managerClass );
             IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, managerClass, "lookup_component", new Object[] { this.componentName },

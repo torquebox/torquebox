@@ -50,6 +50,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 
     @Override
     public void initialize(Ruby ruby) throws Exception {
+        ruby.evalScriptlet( "require %(torquebox-web)" );
         ruby.evalScriptlet( getInitializerScript() );
         ruby.setCurrentDirectory( this.rubyAppMetaData.getRoot().getPhysicalFile().getCanonicalPath() );
         log.info( "Current directory: " + ruby.getCurrentDirectory() );

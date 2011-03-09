@@ -19,7 +19,10 @@
 
 package org.torquebox.interp.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,17 +31,27 @@ import java.util.Map;
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public class InstantiatingRubyComponentResolverTest {
 
+    private RubyRuntimeFactoryImpl factory;
     private Ruby ruby;
 
     @Before
     public void setUpRuby() throws Exception {
         List<String> loadPaths = new ArrayList<String>();
-        this.ruby = JavaEmbedUtils.initialize( loadPaths );
+        //this.ruby = JavaEmbedUtils.initialize( loadPaths );
+        this.factory = new RubyRuntimeFactoryImpl();
+        this.ruby = this.factory.create();
+    }
+    
+    @After
+    public void tearDownRuby() throws Exception {
+        this.factory.dispose(  this.ruby  );
+        this.ruby = null;
     }
 
     /** Ensure that resolution instantiates if-required. */

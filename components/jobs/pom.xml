@@ -11,7 +11,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-jobs</artifactId>
+  <artifactId>torquebox-jobs-components</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Scheduled Job Components</name>
   <description></description>

@@ -117,11 +117,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.infinispan</groupId>
-      <artifactId>infinispan-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-web-int</artifactId>
       <version>${project.version}</version>
