@@ -122,7 +122,7 @@ module ActiveSupport
         logger.info "Using clustered cache: #{result}" if logger
         result
       rescue
-        logger.warn("Unable to obtain clustered cache") if logger
+        puts "Unable to obtain clustered cache; falling back to local"
         nil
       end
 
@@ -134,7 +134,7 @@ module ActiveSupport
         logger.info "Using local cache: #{result}" if logger
         result
       rescue
-        logger.warn("Unable to obtain local cache: #{$!}") if logger
+        puts "Unable to obtain local cache: #{$!}"
         nil
       end
       
