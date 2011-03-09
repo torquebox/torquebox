@@ -127,6 +127,8 @@ module ActiveSupport
       end
 
       def local
+        # workaround common problem running infinispan in web containers (see FAQ)
+        java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
         manager = org.infinispan.manager.DefaultCacheManager.new()
         result = manager.get_cache()
         logger.info "Using local cache: #{result}" if logger
