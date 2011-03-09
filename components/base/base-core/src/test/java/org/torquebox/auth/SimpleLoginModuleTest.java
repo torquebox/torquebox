@@ -18,10 +18,10 @@ public class SimpleLoginModuleTest {
     public void setUp() {
         Map<String,String> users = new HashMap<String,String>();
         users.put("scott", "tiger");
-        options.put("usersMap", users);
+        module.setUsersMap(users);
         Map<String,String> roles = new HashMap<String,String>();
         roles.put("admin", "scott");
-        options.put("rolesMap", roles);
+        module.setRolesMap(roles);
     }
     
     @Test
