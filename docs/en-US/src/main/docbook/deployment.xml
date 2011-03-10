@@ -199,7 +199,7 @@ app/controllers/application_controller.rb
       used</para>
 
       <para><screen>$ <command>rake</command> <command>torquebox:archive</command>
-$ <command>cp</command> <filename><replaceable>myapp</replaceable>.rails</filename> <filename><envar>$JBOSS_HOME</envar>/server/$JBOSS_CONF/deploy/</filename></screen>If
+$ <command>cp</command> <filename><replaceable>myapp</replaceable>.knob</filename> <filename><envar>$JBOSS_HOME</envar>/server/$JBOSS_CONF/deploy/</filename></screen>If
       you redeploy an archive, the server will remove the previous version,
       and hot-redeploy the new versions just copied.</para>
     </section>
