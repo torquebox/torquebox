@@ -1,4 +1,5 @@
 
+require 'torquebox/kernel'
 require 'org/torquebox/auth/authentication'
 
 describe TorqueBox::Authentication do
