@@ -12,20 +12,24 @@ import org.jboss.classloading.spi.metadata.ExportAll;
 import org.jboss.classloading.spi.vfs.metadata.VFSClassLoaderFactory;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.kernel.spi.dependency.KernelController;
+import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 
 public class Bootstrap implements BeanMetaDataFactory {
+    
+    private static Logger log = Logger.getLogger( Bootstrap.class );
 
     private KernelController controller;
     private List<Object> contextNames = new ArrayList<Object>();
     private List<BeanMetaData> beans;
     private VirtualFile jrubyHome;
 
-    public Bootstrap() throws IOException {
+    public Bootstrap() {
     }
 
     public void create() throws Throwable {
+        log.info( "Bootstrapping TorqueBox AS" );
         determineJRubyHome();
         createClassLoaderBeans();
     }
@@ -35,24 +39,21 @@ public class Bootstrap implements BeanMetaDataFactory {
         factory.setParentDomain( "DefaultDomain" );
         factory.setImportAll( true );
         factory.setExportAll( ExportAll.ALL );
+        log.info( "Roots: " + getRoots() );
         factory.setRoots( getRoots() );
         this.beans = factory.getBeans();
     }
 
-    protected void determineJRubyHome() throws DeploymentException {
-        String jrubyHomePath = getJRubyHomePath();
-
-        if (jrubyHomePath == null) {
-            throw new DeploymentException( "Unable to determine JRUBY_HOME" );
-        }
-
-        this.jrubyHome = VFS.getRootVirtualFile().getChild( jrubyHomePath );
+    protected void determineJRubyHome() throws DeploymentException, IOException {
+        this.jrubyHome = getJRubyHomeVirtualFile();
 
         if (!this.jrubyHome.exists()) {
             throw new DeploymentException( "JRUBY_HOME does not exist: " + this.jrubyHome );
         }
         
         System.setProperty( "jruby.home", this.jrubyHome.getPathName() );
+        
+        log.info( "Using JRuby: " + this.jrubyHome );
     }
 
     @Override
@@ -105,7 +106,7 @@ public class Bootstrap implements BeanMetaDataFactory {
     protected List<String> getTorqueBoxRoots() throws URISyntaxException {
         List<String> paths = new ArrayList<String>();
         
-        VirtualFile torqueBoxLibDir = getJBossHome().getChild( "common/torquebox" );
+        VirtualFile torqueBoxLibDir = getJBossHome().getChild( "common" ).getChild( "torquebox" );
 
         for (VirtualFile child : torqueBoxLibDir.getChildren()) {
             paths.add( child.toURI().toString() );
@@ -115,14 +116,22 @@ public class Bootstrap implements BeanMetaDataFactory {
     }
     
     protected VirtualFile getJBossHome() {
-        return VFS.getRootVirtualFile().getChild( System.getProperty( "jboss.home"  )  );
+        return VFS.getChild( System.getProperty( "jboss.home"  )  );
     }
 
     protected VirtualFile getJRubyHome() {
         return this.jrubyHome;
     }
+    
+    protected VirtualFile getJRubyHomeVirtualFile() throws IOException {
+        String path = getJRubyHomePath();
+        if ( path == null ) {
+            return null;
+        }
+        return VFS.getChild( path );
+    }
 
-    protected String getJRubyHomePath() {
+    protected String getJRubyHomePath() throws IOException {
         String jrubyHome = getJRubyHomeSysProp();
 
         if (jrubyHome != null) {
@@ -150,13 +159,13 @@ public class Bootstrap implements BeanMetaDataFactory {
         return null;
     }
 
-    protected String getJRubyHomeDefault() {
+    protected String getJRubyHomeDefault() throws IOException {
         String jbossHome = System.getProperty( "jboss.home" );
-
+        
         if (jbossHome != null) {
-            File candidatePath = new File( jbossHome, "../jruby" );
+            File candidatePath = new File( new File( jbossHome, ".." ), "jruby" );
             if (candidatePath.exists() && candidatePath.isDirectory()) {
-                return candidatePath.getAbsolutePath();
+                return candidatePath.getCanonicalPath();
             }
         }
 

@@ -19,6 +19,11 @@
 
 package org.torquebox.rack.deployers;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +45,7 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.WebHost;
 import org.torquebox.rack.core.servlet.RackFilter;
@@ -67,73 +73,88 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
     public static final String LOCALHOST_MBEAN_NAME = "jboss.web:host=localhost,type=Host";
 
+    public static final String EXPANDED_WAR_URL_ATTACHMENT_NAME = "org.jboss.web.expandedWarURL";
+
     public RackWebApplicationDeployer() {
-        super( RackApplicationMetaData.class );
-        addInput( WebMetaData.class );
-        addInput( JBossWebMetaData.class );
-        addOutput( WebMetaData.class );
-        addOutput( JBossWebMetaData.class );
-        setStage( DeploymentStages.DESCRIBE );
-        setRelativeOrder( 1000 );
+        super(RackApplicationMetaData.class);
+        addInput(RubyApplicationMetaData.class);
+        addInput(WebMetaData.class);
+        addInput(JBossWebMetaData.class);
+        addOutput(WebMetaData.class);
+        addOutput(JBossWebMetaData.class);
+        setStage(DeploymentStages.DESCRIBE);
+        setRelativeOrder(1000);
     }
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
-        log.debug( "Deploy rack web application: " + unit );
-        WebMetaData webMetaData = unit.getAttachment( WebMetaData.class );
+        log.debug("Deploy rack web application: " + unit);
+        WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
 
         if (webMetaData == null) {
             webMetaData = new WebMetaData();
-            webMetaData.setDistributable( new EmptyMetaData() );
-            unit.addAttachment( WebMetaData.class, webMetaData );
+            webMetaData.setDistributable(new EmptyMetaData());
+            unit.addAttachment(WebMetaData.class, webMetaData);
         }
 
-        setUpRackFilter( rackAppMetaData, webMetaData );
-        setUpStaticResourceServlet( rackAppMetaData, webMetaData );
-        ensureSomeServlet( rackAppMetaData, webMetaData );
+        setUpRackFilter(rackAppMetaData, webMetaData);
+        setUpStaticResourceServlet(rackAppMetaData, webMetaData);
+        ensureSomeServlet(rackAppMetaData, webMetaData);
         try {
-            JBossWebMetaData jbossWebMetaData = setUpHostAndContext( unit, rackAppMetaData, webMetaData );
-            setUpPoolDependency( rackAppMetaData, jbossWebMetaData );
+            JBossWebMetaData jbossWebMetaData = setUpHostAndContext(unit, rackAppMetaData, webMetaData);
+            setUpPoolDependency(rackAppMetaData, jbossWebMetaData);
         } catch (Exception e) {
-            throw new DeploymentException( e );
+            throw new DeploymentException(e);
         }
+
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+        
+        try {
+            URL docBaseUrl = rubyAppMetaData.getRoot().toURL();
+            log.info( "DOCBASE: " + docBaseUrl );
+            log.info( "DOCBASE.external: " + docBaseUrl.toExternalForm() );
+            unit.addAttachment(EXPANDED_WAR_URL_ATTACHMENT_NAME, docBaseUrl, URL.class);
+        } catch (MalformedURLException e) {
+            throw new DeploymentException(e);
+        }
+
     }
 
     protected void setUpRackFilter(RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) {
         FilterMetaData rackFilter = new FilterMetaData();
-        rackFilter.setId( RACK_FILTER_NAME );
-        rackFilter.setFilterClass( RackFilter.class.getName() );
-        rackFilter.setFilterName( RACK_FILTER_NAME );
+        rackFilter.setId(RACK_FILTER_NAME);
+        rackFilter.setFilterClass(RackFilter.class.getName());
+        rackFilter.setFilterName(RACK_FILTER_NAME);
 
         List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
         ParamValueMetaData rackAppFactory = new ParamValueMetaData();
-        rackAppFactory.setParamName( RackFilter.RACK_APP_POOL_INIT_PARAM );
-        rackAppFactory.setParamValue( rackAppMetaData.getRackApplicationPoolName() );
-        initParams.add( rackAppFactory );
+        rackAppFactory.setParamName(RackFilter.RACK_APP_POOL_INIT_PARAM);
+        rackAppFactory.setParamValue(rackAppMetaData.getRackApplicationPoolName());
+        initParams.add(rackAppFactory);
 
-        rackFilter.setInitParam( initParams );
+        rackFilter.setInitParam(initParams);
 
         FiltersMetaData filters = webMetaData.getFilters();
 
         if (filters == null) {
             filters = new FiltersMetaData();
-            webMetaData.setFilters( filters );
+            webMetaData.setFilters(filters);
         }
 
-        filters.add( rackFilter );
+        filters.add(rackFilter);
 
         FilterMappingMetaData filterMapping = new FilterMappingMetaData();
-        filterMapping.setFilterName( RACK_FILTER_NAME );
-        filterMapping.setUrlPatterns( Collections.singletonList( "*" ) );
+        filterMapping.setFilterName(RACK_FILTER_NAME);
+        filterMapping.setUrlPatterns(Collections.singletonList("*"));
 
         List<FilterMappingMetaData> filterMappings = webMetaData.getFilterMappings();
 
         if (filterMappings == null) {
             filterMappings = new ArrayList<FilterMappingMetaData>();
-            webMetaData.setFilterMappings( filterMappings );
+            webMetaData.setFilterMappings(filterMappings);
         }
 
-        filterMappings.add( filterMapping );
+        filterMappings.add(filterMapping);
 
     }
 
@@ -141,32 +162,32 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         ServletsMetaData servlets = webMetaData.getServlets();
         if (servlets == null) {
             servlets = new ServletsMetaData();
-            webMetaData.setServlets( servlets );
+            webMetaData.setServlets(servlets);
         }
 
         List<ServletMappingMetaData> servletMappings = webMetaData.getServletMappings();
         if (servletMappings == null) {
             servletMappings = new ArrayList<ServletMappingMetaData>();
-            webMetaData.setServletMappings( servletMappings );
+            webMetaData.setServletMappings(servletMappings);
         }
 
         if (rackAppMetaData.getStaticPathPrefix() != null) {
             ServletMetaData staticServlet = new ServletMetaData();
-            staticServlet.setServletClass( STATIC_RESOURCE_SERVLET_CLASS_NAME );
-            staticServlet.setServletName( STATIC_RESROUCE_SERVLET_NAME );
-            staticServlet.setId( STATIC_RESROUCE_SERVLET_NAME );
+            staticServlet.setServletClass(STATIC_RESOURCE_SERVLET_CLASS_NAME);
+            staticServlet.setServletName(STATIC_RESROUCE_SERVLET_NAME);
+            staticServlet.setId(STATIC_RESROUCE_SERVLET_NAME);
 
             ParamValueMetaData resourceRootParam = new ParamValueMetaData();
-            resourceRootParam.setParamName( "resource.root" );
-            resourceRootParam.setParamValue( rackAppMetaData.getStaticPathPrefix() );
-            staticServlet.setInitParam( Collections.singletonList( resourceRootParam ) );
-            servlets.add( staticServlet );
+            resourceRootParam.setParamName("resource.root");
+            resourceRootParam.setParamValue(rackAppMetaData.getStaticPathPrefix());
+            staticServlet.setInitParam(Collections.singletonList(resourceRootParam));
+            servlets.add(staticServlet);
 
             ServletMappingMetaData staticMapping = new ServletMappingMetaData();
-            staticMapping.setServletName( STATIC_RESROUCE_SERVLET_NAME );
-            staticMapping.setUrlPatterns( Collections.singletonList( "/*" ) );
+            staticMapping.setServletName(STATIC_RESROUCE_SERVLET_NAME);
+            staticMapping.setUrlPatterns(Collections.singletonList("/*"));
 
-            servletMappings.add( staticMapping );
+            servletMappings.add(staticMapping);
         }
     }
 
@@ -175,46 +196,46 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
         if (servlets.isEmpty()) {
             ServletMetaData fiveHundredServlet = new ServletMetaData();
-            fiveHundredServlet.setServletClass( FIVE_HUNDRED_SERVLET_CLASS_NAME );
-            fiveHundredServlet.setServletName( FIVE_HUNDRED_SERVLET_NAME );
-            fiveHundredServlet.setId( FIVE_HUNDRED_SERVLET_NAME );
-            servlets.add( fiveHundredServlet );
+            fiveHundredServlet.setServletClass(FIVE_HUNDRED_SERVLET_CLASS_NAME);
+            fiveHundredServlet.setServletName(FIVE_HUNDRED_SERVLET_NAME);
+            fiveHundredServlet.setId(FIVE_HUNDRED_SERVLET_NAME);
+            servlets.add(fiveHundredServlet);
 
             ServletMappingMetaData fiveHundredMapping = new ServletMappingMetaData();
-            fiveHundredMapping.setServletName( FIVE_HUNDRED_SERVLET_NAME );
-            fiveHundredMapping.setUrlPatterns( Collections.singletonList( "/*" ) );
+            fiveHundredMapping.setServletName(FIVE_HUNDRED_SERVLET_NAME);
+            fiveHundredMapping.setUrlPatterns(Collections.singletonList("/*"));
 
             List<ServletMappingMetaData> servletMappings = webMetaData.getServletMappings();
-            servletMappings.add( fiveHundredMapping );
+            servletMappings.add(fiveHundredMapping);
         }
     }
 
     protected JBossWebMetaData setUpHostAndContext(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) throws Exception {
 
-        JBossWebMetaData jbossWebMetaData = unit.getAttachment( JBossWebMetaData.class );
+        JBossWebMetaData jbossWebMetaData = unit.getAttachment(JBossWebMetaData.class);
 
         if (jbossWebMetaData == null) {
             jbossWebMetaData = new JBossWebMetaData();
-            unit.addAttachment( JBossWebMetaData.class, jbossWebMetaData );
+            unit.addAttachment(JBossWebMetaData.class, jbossWebMetaData);
             if (webMetaData.getDistributable() != null) {
-                jbossWebMetaData.setDistributable( webMetaData.getDistributable() );
+                jbossWebMetaData.setDistributable(webMetaData.getDistributable());
                 ReplicationConfig repCfg = new ReplicationConfig();
-                repCfg.setReplicationGranularity( ReplicationGranularity.SESSION );
-                repCfg.setReplicationTrigger( ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET );
-                jbossWebMetaData.setReplicationConfig( repCfg );
+                repCfg.setReplicationGranularity(ReplicationGranularity.SESSION);
+                repCfg.setReplicationTrigger(ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET);
+                jbossWebMetaData.setReplicationConfig(repCfg);
             }
         }
 
-        jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
+        jbossWebMetaData.setContextRoot(rackAppMetaData.getContextPath());
 
         if (!rackAppMetaData.getHosts().isEmpty()) {
-            jbossWebMetaData.setVirtualHosts( rackAppMetaData.getHosts() );
+            jbossWebMetaData.setVirtualHosts(rackAppMetaData.getHosts());
             List<String> depends = jbossWebMetaData.getDepends();
             if (depends == null) {
                 depends = new ArrayList<String>();
-                jbossWebMetaData.setDepends( depends );
+                jbossWebMetaData.setDepends(depends);
             }
-            depends.add( AttachmentUtils.beanName( unit, WebHost.class ) );
+            depends.add(AttachmentUtils.beanName(unit, WebHost.class));
         }
 
         return jbossWebMetaData;
@@ -226,9 +247,9 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
         if (depends == null) {
             depends = new ArrayList<String>();
-            jbossWebMetaData.setDepends( depends );
+            jbossWebMetaData.setDepends(depends);
         }
-        depends.add( rackAppMetaData.getRackApplicationPoolName() );
+        depends.add(rackAppMetaData.getRackApplicationPoolName());
     }
 
 }

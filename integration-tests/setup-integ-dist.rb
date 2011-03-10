@@ -20,6 +20,17 @@ else
 	deployer_path = 'jboss/server/default/deployers/torquebox.deployer' 
 	FileUtils.rm_rf( "#{output_dir}/#{deployer_path}" )
         FileUtils.cp_r( "./#{deployer_path}", "#{output_dir}/#{deployer_path}" )
+
+	tb_common_path = 'jboss/common/torquebox'
+	FileUtils.rm_rf( "#{output_dir}/#{tb_common_path}" )
+        FileUtils.cp_r( "./#{tb_common_path}", "#{output_dir}/#{tb_common_path}" )
+
+	jboss_lib_path = 'jboss/common/lib'
+	FileUtils.rm( Dir["#{output_dir}/#{jboss_lib_path}/torquebox*"] )
+
+        Dir[ "./#{jboss_lib_path}/torquebox*" ].each do |f|
+	  FileUtils.cp( f, "#{output_dir}/#{jboss_lib_path}/" )
+	end
       else
         FileUtils.rm_rf( output_dir )
         FileUtils.cp_r( '.', output_dir )

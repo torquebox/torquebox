@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VFS;
+import org.jboss.vfs.VFSUtils;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 
 /**
@@ -48,6 +49,10 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
         log.debug( "Deploying ruby application: " + unit );
+        log.info( "UNIT.root: " + unit.getRoot() );
+        log.info( "UNIT.root.uri: " + unit.getRoot().toURI() );
+        log.info( "UNIT.root.uri.url: " + unit.getRoot().toURI().toURL() );
+        log.info( "UNIT.root.uri.url.ext: " + unit.getRoot().toURI().toURL().toExternalForm() );
 
         RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
@@ -66,10 +71,10 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
             String root = getOneOf( app, "root", "RAILS_ROOT", "RACK_ROOT" );
 
             if (root != null && !root.trim().equals( "" )) {
-                appMetaData.setRoot( VFS.getChild( root.trim() ) );
+                appMetaData.setRoot( root.trim() );
             }
         }
-
+        
         if (appMetaData.getEnvironmentName() == null) {
             String env = getOneOf( app, "env", "RAILS_ENV", "RACK_ENV" );
 
