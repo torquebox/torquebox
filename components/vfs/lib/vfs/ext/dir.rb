@@ -29,7 +29,6 @@ class Dir
     alias_method :foreach_before_vfs, :foreach
 
     def open(str,&block)
-      puts "Dir.open(#{str})"
       if ( ::File.exist_without_vfs?( str.to_str ) )
         return open_before_vfs(str,&block)
       end
