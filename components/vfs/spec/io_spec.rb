@@ -57,21 +57,21 @@ describe "IO extensions for VFS" do
             content = IO.readlines( "#{prefix}/home/larry/file1.txt" )
             content.should_not be_nil
             content.should_not be_empty
-            content.first.should eql( "This is file 1\n" )
+            content.first.chomp.should eql( "This is file 1" )
           end
 
           it "should allow reading of files within an archive" do
             content = IO.readlines( "#{prefix}/home/larry/archive1.jar/web.xml" )
             content.should_not be_nil
             content.should_not be_empty
-            content.first.should eql( "This is web.xml\n" )
+            content.first.chomp.should eql( "This is web.xml" )
           end
 
           it "should allow reading of files within a nested archive" do
             content = IO.readlines( "#{prefix}/home/larry/archive1.jar/lib/archive2.jar/manifest.txt" )
             content.should_not be_nil
             content.should_not be_empty
-            content.first.should eql( "This is manifest.txt\n" )
+            content.first.chomp.should eql( "This is manifest.txt" )
           end
 
         end
