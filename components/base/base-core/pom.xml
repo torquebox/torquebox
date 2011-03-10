@@ -147,7 +147,7 @@
               <script>
                 def modifications_modifier
                   begin
-                    git_output = `git status -s`.split( "\n" )
+                    git_output = `git status -s`.lines
                     git_output.any? {|line| line =~ /^ M/ } ? ' +modifications' : ''
                   rescue=>e
                     ' +unknown'
@@ -157,7 +157,7 @@
                 def determine_revision_from_git()
                   begin
                     revision = '(unknown)'
-                    git_output = `git log HEAD^1..HEAD`.split( "\n" )
+                    git_output = `git log HEAD^1..HEAD`.lines
                     junk, sha1 = git_output[0].split( ' ' )
                     sha1.strip + modifications_modifier
                   rescue=>e
@@ -173,9 +173,9 @@
                   ENV['BUILD_NUMBER'] || ''
                 end
 
-                File.open( "${project.build.directory}/classes/org/torquebox/torquebox.properties", 'a' ) do |f|
-                  f.puts "build.revision: #{revision}"
-                  f.puts "build.number: #{build_number}"
+                File.open( './target/classes/org/torquebox/torquebox.properties', 'a' ) do |f|
+                  f.puts %Q(build.revision: #{revision})
+                  f.puts %Q(build.number: #{build_number})
                 end
               </script>
             </configuration>
