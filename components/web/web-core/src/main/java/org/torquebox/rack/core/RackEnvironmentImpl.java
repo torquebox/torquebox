@@ -54,6 +54,7 @@ public class RackEnvironmentImpl implements RackEnvironment {
         // 'rack.input' to be rewindable and a ServletInputStream is not
         RewindableChannel rewindableChannel = new RewindableChannel( request.getInputStream() );
         this.input = new RubyIO( ruby, rewindableChannel );
+        this.input.binmode();
         env.put( RubyString.newString( ruby, "rack.input" ), input );
 
         this.errors = new RubyIO( ruby, STDIO.ERR );
