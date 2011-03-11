@@ -5,9 +5,7 @@ require 'torquebox-messaging'
 
 describe "messaging alacarte rack test" do
 
-  deploy :name=>'vhosting-test', :paths=> [ 
-    "alacarte/messaging-knob.yml",
-  ]
+  deploy :path=>"alacarte/messaging-knob.yml"
 
   it "should work" do
     touchfile = Pathname.new( "./target/messaging-touchfile.txt" )
