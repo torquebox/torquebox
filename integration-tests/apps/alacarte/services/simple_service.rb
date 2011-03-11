@@ -17,7 +17,10 @@ class SimpleService
 
   def loop_once
     $stderr.puts "Service executing loop!"
-    touchfile = ENV['BASEDIR'] + '/target/touchfile.txt'
+    basedir = ENV['BASEDIR' ]
+    basedir.gsub!( %r(\\:), ':' )
+    basedir.gsub!( %r(\\\\), '\\' )
+    touchfile = File.join( basedir, 'target', 'touchfile.txt' )
     File.open( touchfile, 'w' ) do |f|
       f.puts( "Updated #{Time.now}" )
     end
