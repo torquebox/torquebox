@@ -249,7 +249,7 @@ describe "Dir extensions for VFS" do
     it "should work for home dirs" do
       pwd = Dir.pwd
       dir = Dir.chdir { Dir.pwd }
-      dir.should == ENV['HOME']
+      dir.downcase.should == ENV['HOME'].downcase
       pwd.should == Dir.pwd
     end
   end

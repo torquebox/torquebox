@@ -126,9 +126,10 @@ class IO
       if ::File.exist_without_vfs?( name )
         read_without_vfs(name, length, offset)
       else
-        vfs_file = vfs_open( name )
-        vfs_file.seek( offset ) if offset
-        vfs_file.read( length )
+        vfs_open( name ) do |f|
+          f.seek( offset ) if offset
+          f.read( length )
+        end
       end
     end
     

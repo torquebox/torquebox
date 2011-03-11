@@ -147,6 +147,17 @@ describe TorqueBox::Messaging::Destination do
       queue.first.text.should == 'howdy'
       queue.destroy
     end
+
+    it "should accept a selector" do
+      queue = TorqueBox::Messaging::Queue.new "/queues/browseable", {}, :selector => 'blurple > 5'
+      queue.start
+      queue.publish "howdy", :properties => {:blurple => 5}
+      queue.publish "ahoyhoy", :properties => {:blurple => 6}
+      queue.first.text.should == 'ahoyhoy'
+      queue.detect { |m| m.text == 'howdy' }.should be_nil
+      queue.destroy
+      
+    end
   end
   
   describe "sending and receiving" do

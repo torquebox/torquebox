@@ -143,13 +143,13 @@ describe "File extensions for VFS" do
   end
 
   it "should allow rm_rf and mkdir_p of vfs path" do
-    parent = "vfs:#{Dir.tmpdir}/a"
+    parent = Dir.tmpdir
     child = parent + "/b/c"
-    FileUtils.rm_rf parent
-    File.exist?(child).should be_false
-    FileUtils.mkdir_p(child)
-    File.exist?(child).should be_true
-    FileUtils.rm_rf parent
+    FileUtils.rm_rf vfs_path( parent )
+    File.exist?( vfs_path( child ) ).should be_false
+    FileUtils.mkdir_p( vfs_path( child) )
+    File.exist?( vfs_path( child) ).should be_true
+    FileUtils.rm_rf vfs_path( parent )
   end
 
   describe "Tempfiles" do
@@ -177,32 +177,42 @@ describe "File extensions for VFS" do
 
   describe "open" do
     it "should return File when called on File with VFS url" do
-      File.open( archive1_vfs_path, 'r').should be_an_instance_of(File)
+      f = File.open( archive1_vfs_path, 'r')
+      f.should be_an_instance_of(File)
+      f.close
     end
 
     it "should return File when called on File without VFS url" do
-      File.open(archive1_path, 'r').should be_an_instance_of(File)
+      f = File.open(archive1_path, 'r')
+      f.should be_an_instance_of(File)
+      f.close
     end
 
     it "should find files by pathnames" do
       lambda {
-        File.open(Pathname.new(archive1_path), 'r')
+        f = File.open(Pathname.new(archive1_path), 'r')
+	f.close
       }.should_not raise_error
     end
   end
 
   describe "new" do
     it "should return File when called on File with VFS url" do
-      File.new( archive1_vfs_path, 'r').should be_an_instance_of(File)
+      f = File.new( archive1_vfs_path, 'r')
+      f.should be_an_instance_of(File)
+      f.close
     end
 
     it "should return File when called on File without VFS url" do
-      File.new( archive1_path, 'r').should be_an_instance_of(File)
+      f = File.new( archive1_path, 'r')
+      f.should be_an_instance_of(File)
+      f.close
     end
 
     it "should create objects that respond to lstat for files in an archive" do
-      file = File.new( "#{archive1_vfs_path}/web.xml")
-      file.lstat.should_not be_nil
+      f = File.new( "#{archive1_vfs_path}/web.xml")
+      f.lstat.should_not be_nil
+      f.close
     end
   end
 

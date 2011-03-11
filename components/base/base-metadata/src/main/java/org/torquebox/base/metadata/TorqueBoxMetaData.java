@@ -48,13 +48,23 @@ public class TorqueBoxMetaData {
     }
 
     public VirtualFile getApplicationRootFile() {
-        String root = getApplicationRoot();
+        String path = getApplicationRoot();
 
-        if (root == null) {
+        if (path == null) {
             return null;
         }
+        
+        String sanitizedPath = null;
 
-        return VFS.getChild( root );
+        if (path.indexOf( "\\\\" ) >= 0) {
+            sanitizedPath = path.replaceAll( "\\\\\\\\", "/" );
+            sanitizedPath = sanitizedPath.replaceAll( "\\\\", "" );
+        } else {
+            sanitizedPath = path.replaceAll( "\\\\", "/" );
+        }
+        VirtualFile root = VFS.getChild( sanitizedPath );
+
+        return root;
     }
 
     @SuppressWarnings("unchecked")

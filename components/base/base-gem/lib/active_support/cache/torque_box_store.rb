@@ -112,30 +112,48 @@ module ActiveSupport
         @cache ||= clustered || local || nothing
       end
 
+      def manager
+        @manager ||= TorqueBox::Kernel.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
+      end
+                       
+      def reconfigure(mode=clustering_mode)
+        cache = manager.get_cache(name)
+        config = cache.configuration
+        unless config.cache_mode == mode
+          puts "Reconfiguring cache #{name} from #{config.cache_mode} to #{mode}"
+          cache.stop
+          config.cache_mode = mode
+          manager.define_configuration(name, config)
+          cache.start
+        end
+        return cache
+      end
+
+      def configure(mode=clustering_mode)
+        puts "Configuring cache #{name} as #{mode}"
+        config = manager.default_configuration.clone
+        config.cache_mode = mode
+        manager.define_configuration(name, config)
+        manager.get_cache(name)
+      end
+
       def clustered
-        registry = TorqueBox::Kernel.lookup("CacheContainerRegistry")
-        manager = registry.cache_container( 'web' )
-        configuration = manager.default_configuration.clone
-        configuration.cache_mode = clustering_mode
-        manager.define_configuration(name, configuration)
-        result = manager.get_cache(name)
-        logger.info "Using clustered cache: #{result}" if logger
-        result
+        if manager.running?(name)
+          reconfigure
+        else
+          configure
+        end
       rescue
-        puts "Unable to obtain clustered cache; falling back to local"
-        nil
+        puts "Unable to obtain clustered cache; falling back to local: #{$!}" if manager
       end
 
       def local
         # workaround common problem running infinispan in web containers (see FAQ)
         java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
         manager = org.infinispan.manager.DefaultCacheManager.new()
-        result = manager.get_cache()
-        logger.info "Using local cache: #{result}" if logger
-        result
+        manager.get_cache()
       rescue
         puts "Unable to obtain local cache: #{$!}"
-        nil
       end
       
       def nothing

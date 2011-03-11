@@ -16,7 +16,7 @@
 
   <properties>
     <install.docs>false</install.docs>
-    <stage.dir>${project.build.directory}/stage/torquebox-${project.version}</stage.dir>
+    <stage.dir>./target/stage/torquebox-${project.version}</stage.dir>
     <repo.stage.dir>${project.build.directory}/stage/gem-repo</repo.stage.dir>
   </properties>
 
@@ -579,15 +579,15 @@
             <configuration>
               <script>
                 require 'fileutils'
-                puts "Renaming JBoss installation dir"
-                if ( File.exists?( "${stage.dir}/jboss-${version.jbossas}" ) )
-                  FileUtils.rm_rf "${stage.dir}/jboss"
-                  FileUtils.mv "${stage.dir}/jboss-${version.jbossas}", "${stage.dir}/jboss" 
+                puts 'Renaming JBoss installation dir'
+                if ( File.exists?( %Q(${stage.dir}/jboss-${version.jbossas}) ) )
+                  FileUtils.rm_rf %Q(${stage.dir}/jboss)
+                  FileUtils.mv %Q(${stage.dir}/jboss-${version.jbossas}), %Q(${stage.dir}/jboss)
                 end
-                puts "Renaming JRuby installation"
-                if ( File.exists?( "${stage.dir}/jruby-${version.jruby}" ) )
-                  FileUtils.rm_rf "${stage.dir}/jruby"
-                  FileUtils.mv "${stage.dir}/jruby-${version.jruby}",   "${stage.dir}/jruby" 
+                puts 'Renaming JRuby installation'
+                if ( File.exists?( %Q(${stage.dir}/jruby-${version.jruby}) ) )
+                  FileUtils.rm_rf %Q(${stage.dir}/jruby)
+                  FileUtils.mv %Q(${stage.dir}/jruby-${version.jruby}),   %Q(${stage.dir}/jruby)
                 end
               </script>
             </configuration>
@@ -600,7 +600,7 @@
             </goals>
             <configuration>
               <script>
-                puts "Updating JBoss default Xmx to 1024m"
+                puts %Q(Updating JBoss default Xmx to 1024m)
                 def update_xmx(conf_file)
                   lines = File.readlines( conf_file )
                   File.open( conf_file, 'w' ) do |file|
@@ -609,8 +609,8 @@
                     end
                   end
                 end
-                update_xmx( "${stage.dir}/jboss/bin/run.conf" )
-                update_xmx( "${stage.dir}/jboss/bin/run.conf.bat" )
+                update_xmx( './target/stage/torquebox-${project.version}/jboss/bin/run.conf' )
+                update_xmx( './target/stage/torquebox-${project.version}/jboss/bin/run.conf.bat' )
               </script>
             </configuration>
           </execution>

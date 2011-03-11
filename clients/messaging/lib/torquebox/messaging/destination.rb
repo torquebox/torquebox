@@ -35,9 +35,10 @@ module TorqueBox
           :critical => 9
       }
 
-      def initialize(name, options={})
+      def initialize(name, connect_options=nil, enumerable_options=nil)
         @name = name
-        @connect_options = options
+        @connect_options = connect_options || {}
+        @enumerable_options = enumerable_options || {}
       end
 
       def publish(message, options = {})
@@ -77,11 +78,11 @@ module TorqueBox
         end
       end
 
-      def each(options = {}, &block)
-        wait_for_destination(options[:startup_timeout]) do
+      def each(&block)
+        wait_for_destination do
           Client.connect(@connect_options) do |session|
             destination = session.lookup_destination( name )
-            browser = session.createBrowser( destination )
+            browser = session.create_browser( destination, @enumerable_options[:selector] )
             begin
               browser.each(&block)
             ensure
@@ -116,7 +117,7 @@ module TorqueBox
         options
       end
 
-      def wait_for_destination(timeout, &block)
+      def wait_for_destination(timeout=nil, &block)
         timeout ||= 30000 # 30s default
         start = Time.now
         begin
