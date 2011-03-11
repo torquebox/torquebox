@@ -20,6 +20,7 @@
 
     <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
+    <arquillian.max.deploys>100</arquillian.max.deploys>
   </properties>
 
   <dependencyManagement>
@@ -179,6 +180,9 @@
           <family>Windows</family>
         </os>
       </activation>
+      <properties>
+        <arquillian.max.deploys>10</arquillian.max.deploys>
+      </properties>
       <build>
         <plugins>
           <plugin>
