@@ -19,13 +19,14 @@
 
 package org.torquebox.base.metadata;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 
 public class RubyApplicationMetaData {
+    
+    public static final String DEFAULT_ENVIRONMENT_NAME = "development";
 
     private VirtualFile root;
     private String applicationName;
@@ -34,6 +35,12 @@ public class RubyApplicationMetaData {
     private boolean archive = false;
 
     public RubyApplicationMetaData() {
+    }
+    
+    public void applyDefaults() {
+        if ( environmentName == null ) {
+            this.environmentName = DEFAULT_ENVIRONMENT_NAME;
+        }
     }
 
     public void setRoot(VirtualFile root) {
