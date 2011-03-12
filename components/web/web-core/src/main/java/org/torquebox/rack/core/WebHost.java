@@ -25,7 +25,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
 import org.apache.catalina.Service;
 import org.apache.catalina.core.ServiceMapperListener;
 import org.apache.catalina.core.StandardEngine;

@@ -19,7 +19,6 @@
 
 package org.torquebox.base.metadata;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.vfs.VFS;
