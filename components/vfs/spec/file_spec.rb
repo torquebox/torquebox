@@ -14,6 +14,11 @@ describe "File extensions for VFS" do
     File.exist?( url ).should be_true
     File.writable?( url ).should be_true
   end
+  
+  it "should not loop infinitely" do
+    File.exists?("/nothingtoseehere").should be_false
+    File.exists?(vfs_path("/nothingtoseehere")).should be_false
+  end
 
   describe "expand_path" do
     it "should handle relative non-vfs path" do
