@@ -128,6 +128,8 @@ module TestDataHelper
     cls.after(:each) do
       @archive2_handle.close
       @archive1_handle.close
+      @temp_file_provider.close
+      @executor.shutdown
     end
 
   end
@@ -160,6 +162,9 @@ module TestDataCopyHelper
     cls.after(:each) do
       @archive2_handle.close
       @archive1_handle.close
+      @temp_file_provider.close
+      @executor.shutdown
+      FileUtils.rm_rf( test_copy_base_path(:absolute) )
     end
 
   end

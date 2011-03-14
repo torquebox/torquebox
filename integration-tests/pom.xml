@@ -181,7 +181,7 @@
         </os>
       </activation>
       <properties>
-        <arquillian.max.deploys>10</arquillian.max.deploys>
+        <arquillian.max.deploys>8</arquillian.max.deploys>
       </properties>
       <build>
         <plugins>

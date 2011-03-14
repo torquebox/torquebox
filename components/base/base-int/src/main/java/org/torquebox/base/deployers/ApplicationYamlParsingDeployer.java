@@ -49,17 +49,15 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
         log.debug( "Deploying ruby application: " + unit );
-        log.info( "UNIT.root: " + unit.getRoot() );
-        log.info( "UNIT.root.uri: " + unit.getRoot().toURI() );
-        log.info( "UNIT.root.uri.url: " + unit.getRoot().toURI().toURL() );
-        log.info( "UNIT.root.uri.url.ext: " + unit.getRoot().toURI().toURL().toExternalForm() );
 
         RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (appMetaData == null) {
             log.debug( "Configuring ruby application: " + unit );
             appMetaData = new RubyApplicationMetaData();
-            appMetaData.setApplicationName( unit.getSimpleName() );
+            String applicationName = unit.getSimpleName();
+            applicationName = applicationName.replaceAll( ".trq$", "" );
+            appMetaData.setApplicationName( applicationName );
             unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
         } else {
             log.debug( "Configuring pre-existing ruby application: " + unit + "\n  " + appMetaData );

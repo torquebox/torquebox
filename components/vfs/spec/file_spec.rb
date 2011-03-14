@@ -14,6 +14,11 @@ describe "File extensions for VFS" do
     File.exist?( url ).should be_true
     File.writable?( url ).should be_true
   end
+  
+  it "should not loop infinitely" do
+    File.exists?("/nothingtoseehere").should be_false
+    File.exists?(vfs_path("/nothingtoseehere")).should be_false
+  end
 
   describe "expand_path" do
     it "should handle relative non-vfs path" do
@@ -144,12 +149,15 @@ describe "File extensions for VFS" do
 
   it "should allow rm_rf and mkdir_p of vfs path" do
     parent = Dir.tmpdir
-    child = parent + "/b/c"
-    FileUtils.rm_rf vfs_path( parent )
+    workdir = parent + '/vfs-test'
+    child = workdir + "/b/c"
+    FileUtils.rm_rf vfs_path( workdir )
     File.exist?( vfs_path( child ) ).should be_false
-    FileUtils.mkdir_p( vfs_path( child) )
-    File.exist?( vfs_path( child) ).should be_true
-    FileUtils.rm_rf vfs_path( parent )
+    FileUtils.mkdir_p( vfs_path( child ) )
+    File.exist?( vfs_path( child ) ).should be_true
+    FileUtils.rm_rf vfs_path( workdir )
+    File.exist?( vfs_path( workdir ) ).should be_false
+    File.exist?( vfs_path( parent ) ).should be_true
   end
 
   describe "Tempfiles" do

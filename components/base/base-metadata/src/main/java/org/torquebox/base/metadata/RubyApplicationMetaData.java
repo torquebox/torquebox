@@ -25,6 +25,8 @@ import org.jboss.vfs.VirtualFile;
 import java.util.Map;
 
 public class RubyApplicationMetaData {
+    
+    public static final String DEFAULT_ENVIRONMENT_NAME = "development";
 
     private VirtualFile root;
     private String applicationName;
@@ -34,6 +36,12 @@ public class RubyApplicationMetaData {
 	private Map<String, Map<String, String>> authenticationConfig;
 
     public RubyApplicationMetaData() {
+    }
+    
+    public void applyDefaults() {
+        if ( environmentName == null ) {
+            this.environmentName = DEFAULT_ENVIRONMENT_NAME;
+        }
     }
 
     public void setRoot(VirtualFile root) {

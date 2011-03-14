@@ -19,22 +19,26 @@
 
 package org.torquebox.base.deployers;
 
+import java.net.URL;
+
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.junit.Before;
+import org.junit.Test;
+import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
-public class RubyApplicationDefaultsDeployer extends AbstractDeployer {
+public class AppKnobYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
-    public RubyApplicationDefaultsDeployer() {
-        setStage( DeploymentStages.POST_PARSE );
-        setInput( RubyApplicationMetaData.class );
-        addOutput( RubyApplicationMetaData.class );
+    @Before
+    public void setUp() throws Throwable {
+        addDeployer( new AppKnobYamlParsingDeployer() );
     }
 
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-        rubyAppMetaData.applyDefaults();
+    @Test(expected=DeploymentException.class)
+    public void testInvalidRootKnob() throws Exception {
+        
+        URL appKnobYml = getClass().getResource( "/invalid-root-knob.yml" );
+        String deploymentName = addDeployment( appKnobYml, "invalid-root-knob.yml" );
+        processDeployments( true );
     }
+
 }
