@@ -95,12 +95,8 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
             // Get our bean metadata and attach it to the DeploymentUnit
             List<BeanMetaData> authBeanMetaData = factory.getBeans();
             for (BeanMetaData bmd : authBeanMetaData) {
-                BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(bmd);
-                builder.addPropertyMetaData("usersProperties", config.getUsers());
-                builder.addPropertyMetaData("rolesProperties", config.getRoles());
-                BeanMetaData theRealBeanMetaData = builder.getBeanMetaData();
-                log.info("Attaching JAAS BeanMetaData: " + theRealBeanMetaData.getName() + " - " + theRealBeanMetaData.getBean());
-                AttachmentUtils.attach(unit, theRealBeanMetaData);
+                log.info("Attaching JAAS BeanMetaData: " + bmd.getName() + " - " + bmd.getBean());
+                AttachmentUtils.attach(unit, bmd);
             }
         } else {
         	log.warn("TorqueBox authentication configuration error. Skipping auth deployment.");

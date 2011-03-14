@@ -11,13 +11,19 @@ public class SimpleLoginModule extends UsersRolesLoginModule {
     
     @Override
     protected Properties createUsers(Map<String,?> options) { 
-        System.err.println("FUCK FUCK FUCK HERE I AM FUCKITY FUCK!!!");
+    	System.err.println("I'm suspposed to be loading a users properties file");
         return users;
     }
 
     @Override
     protected Properties createRoles(Map<String,?> options) {
+    	System.err.println("I'm suspposed to be loading a roles properties file");
         return roles;
+    }
+
+    @Override
+    public boolean login() {
+      throw new RuntimeException("EAT ME");
     }
     
 }

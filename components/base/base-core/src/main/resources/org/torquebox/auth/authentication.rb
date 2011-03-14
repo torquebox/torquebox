@@ -20,6 +20,7 @@ module TorqueBox
   class Authenticator
     def initialize(auth_bean)
       @auth_bean = auth_bean
+      puts "Initializing TorqueBox Authenticator with #{auth_bean.inspect}"
     end
 
     def authenticate(user, pass, &block)

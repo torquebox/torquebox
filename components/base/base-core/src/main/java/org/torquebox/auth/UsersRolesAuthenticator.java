@@ -42,6 +42,7 @@ public class UsersRolesAuthenticator {
     }
 
     public boolean authenticate(String name, String pass) {
+        System.out.println("Authenticating user " + name + " for " + this.getAuthDomain());
         SecurityContext securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
         AuthenticationManager am = securityContext.getAuthenticationManager();
         Principal principal = getPrincipal(name);
