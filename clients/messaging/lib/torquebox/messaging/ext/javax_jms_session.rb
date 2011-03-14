@@ -75,7 +75,7 @@ module javax.jms::Session
     jms_message = publish(destination, wrapped_message, options)
     commit if transacted?
 
-    options[:selector] = "JMSCorrelationID='#{jms_message.jmsmessage_id}'"
+    options[:selector] = "JMSCorrelationID='#{jms_message.jms_message_id}'"
     response = receive(destination, options)
     commit if transacted?
 
@@ -101,7 +101,7 @@ module javax.jms::Session
 
       response = block_given? ? yield(request_message) : request_message
 
-      options[:correlation_id] = request.jmsmessage_id
+      options[:correlation_id] = request.jms_message_id
       publish(destination, response, options)
     end
     commit if transacted?

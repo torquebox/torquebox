@@ -13,6 +13,6 @@ group :provided do
 end
   
 group :development do
-  gem "torquebox-rake-support", '~>1.0.0'
+  gem "torquebox-rake-support", '1.0.0.CR1'
 end
 

@@ -18,8 +18,4 @@
     <jruby.bin.url>http://jruby.org.s3.amazonaws.com/downloads/${version.jruby}/jruby-bin-${version.jruby}.zip</jruby.bin.url>
   </properties>
 
-  <modules>
-    <module>jruby-bin</module>
-  </modules>
-
 </project>
