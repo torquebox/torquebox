@@ -27,9 +27,11 @@ import org.torquebox.base.metadata.AuthMetaData.Config;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 
 public class AuthDefaultsDeployer extends AbstractDeployer {
-    private static final String DEFAULT_NAME = "default";
+    public static final String DEFAULT_NAME     = "default";
     public static final String DEFAULT_STRATEGY = "file";
-    public static final String DEFAULT_DOMAIN = "torquebox-auth";
+    public static final String DEFAULT_DOMAIN   = "torquebox-auth";
+    public static final String DEFAULT_ROLES    = "roles.txt";
+    public static final String DEFAULT_USERS    = "users.txt";
 
     public AuthDefaultsDeployer() {
         setInput(RubyApplicationMetaData.class);
@@ -66,10 +68,18 @@ public class AuthDefaultsDeployer extends AbstractDeployer {
                 	log.warn("No name specified. Configuring using default: " + DEFAULT_NAME);
                     config.setName(DEFAULT_NAME);
                 }
+                if (blank(config.getUsers())) {
+                	log.warn("No users specified. Configuring using default: " + DEFAULT_USERS);
+                    config.setUsers(DEFAULT_USERS);
+                }
+                if (blank(config.getRoles())) {
+                	log.warn("No roles specified. Configuring using default: " + DEFAULT_ROLES);
+                    config.setRoles(DEFAULT_ROLES);
+                }
             }
         }
     }
-    
+
     private boolean blank(String s) {
         return (s == null || s.equals(""));
     }

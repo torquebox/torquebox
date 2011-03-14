@@ -32,6 +32,7 @@ import org.jboss.security.microcontainer.beans.metadata.ApplicationPolicyMetaDat
 import org.jboss.security.microcontainer.beans.metadata.AuthenticationMetaData;
 import org.jboss.security.microcontainer.beans.metadata.BaseModuleMetaData;
 import org.jboss.security.microcontainer.beans.metadata.FlaggedModuleMetaData;
+import org.jboss.security.microcontainer.beans.metadata.ModuleOptionMetaData;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
 import org.torquebox.mc.AttachmentUtils;
@@ -74,6 +75,19 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
             ArrayList<BaseModuleMetaData> authModules = new ArrayList<BaseModuleMetaData>();
             FlaggedModuleMetaData metaData = new FlaggedModuleMetaData();
             metaData.setCode(strategyClass);
+
+            ModuleOptionMetaData usersMetaData = new ModuleOptionMetaData();
+            usersMetaData.setName("usersProperties");
+            usersMetaData.setValue(config.getUsers());
+            ModuleOptionMetaData rolesMetaData = new ModuleOptionMetaData();
+            rolesMetaData.setName("rolesProperties");
+            rolesMetaData.setValue(config.getRoles());
+            
+            List<ModuleOptionMetaData> moduleOptions = new ArrayList<ModuleOptionMetaData>();
+            moduleOptions.add(usersMetaData);
+            moduleOptions.add(rolesMetaData);
+            metaData.setModuleOptions(moduleOptions);
+
             authModules.add(metaData);
             jaasMetaData.setModules(authModules);
             factory.setAuthentication(jaasMetaData);
@@ -82,8 +96,8 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
             List<BeanMetaData> authBeanMetaData = factory.getBeans();
             for (BeanMetaData bmd : authBeanMetaData) {
                 BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(bmd);
-                builder.addPropertyMetaData("usersMap", config.getUsers());
-                builder.addPropertyMetaData("rolesMap", config.getRoles());
+                builder.addPropertyMetaData("usersProperties", config.getUsers());
+                builder.addPropertyMetaData("rolesProperties", config.getRoles());
                 BeanMetaData theRealBeanMetaData = builder.getBeanMetaData();
                 log.info("Attaching JAAS BeanMetaData: " + theRealBeanMetaData.getName() + " - " + theRealBeanMetaData.getBean());
                 AttachmentUtils.attach(unit, theRealBeanMetaData);

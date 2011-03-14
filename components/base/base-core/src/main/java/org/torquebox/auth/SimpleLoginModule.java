@@ -11,6 +11,7 @@ public class SimpleLoginModule extends UsersRolesLoginModule {
     
     @Override
     protected Properties createUsers(Map<String,?> options) { 
+        System.err.println("FUCK FUCK FUCK HERE I AM FUCKITY FUCK!!!");
         return users;
     }
 
@@ -19,13 +20,4 @@ public class SimpleLoginModule extends UsersRolesLoginModule {
         return roles;
     }
     
-    public void setUsersMap(Map<String,String> users) {
-        this.users.clear();
-        this.users.putAll(users);
-    }
-    
-    public void setRolesMap(Map<String,String> roles) {
-        this.roles.clear();
-        this.roles.putAll(roles);
-    }
 }

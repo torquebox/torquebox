@@ -27,7 +27,7 @@ public class AuthMetaData {
 
     private Map<String, Config> configs = new HashMap<String, Config>();
 
-    public void addAuthentication(String name, String domain, String strategy, Map<String,String> users, Map<String,String> roles) {
+    public void addAuthentication(String name, String domain, String strategy, String users, String roles) {
         Config configItem = new Config();
         configItem.setName(name);
         configItem.setDomain(domain);
@@ -38,7 +38,7 @@ public class AuthMetaData {
     }
     
     public void addAuthentication(String name, String domain, String strategy) {
-        this.addAuthentication(name, domain, strategy, new HashMap<String,String>(), new HashMap<String,String>());
+        this.addAuthentication(name, domain, strategy, "", "");
     }
 
     public Collection<Config> getConfigurations() {
@@ -49,8 +49,8 @@ public class AuthMetaData {
         private String name;
         private String domain;
         private String strategy;
-        private Map<String,String> users;
-        private Map<String,String> roles;
+        private String users;
+        private String roles;
 
         public void setName(String name) {
             this.name = name;
@@ -76,19 +76,19 @@ public class AuthMetaData {
             return strategy;
         }
 
-        public void setUsers(Map<String,String> users) {
+        public void setUsers(String users) {
             this.users = users;
         }
 
-        public Map<String,String> getUsers() {
+        public String getUsers() {
             return users;
         }
 
-        public void setRoles(Map<String,String> roles) {
+        public void setRoles(String roles) {
             this.roles = roles;
         }
 
-        public Map<String,String> getRoles() {
+        public String getRoles() {
             return roles;
         }
     }
