@@ -49,7 +49,7 @@ public abstract class AbstractManagedDestination {
         return this.name;
     }
 
-    public abstract void start() throws Exception;
+    public abstract void create() throws Exception;
 
     public abstract void destroy() throws Exception;
 }

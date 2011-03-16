@@ -25,8 +25,8 @@ public class ManagedQueue extends AbstractManagedDestination {
 
     }
 
-    public void start() throws Exception {
-        log.info( "Starting queue: " + getName() );
+    public void create() throws Exception {
+        log.info( "Creating queue: " + getName() );
         getServer().createQueue( false, getName(), "", false, getName() );
     }
 

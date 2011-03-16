@@ -65,7 +65,7 @@ module TorqueBox
         TorqueBox::Kernel.lookup("JMSServerManager") do |server|
           destination.name = name
           destination.server = server
-          destination.start
+          destination.create
         end
       end
       alias_method :create, :start
