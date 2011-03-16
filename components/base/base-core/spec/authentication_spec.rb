@@ -51,6 +51,12 @@ describe TorqueBox::Authenticator do
     obj.should be_nil
   end
 
+  it "should return false if delegated auth_bean is found" do
+    @auth_bean = nil
+    @auth = TorqueBox::Authenticator.new(@auth_bean)
+    @auth.authenticate('scott', 'tiger').should be_false
+  end
+
   before :each do
     @auth_bean = mock(Object)
     @auth_bean.stub! :authenticate

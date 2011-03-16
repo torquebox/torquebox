@@ -24,6 +24,11 @@ module TorqueBox
     end
 
     def authenticate(user, pass, &block)
+      if @auth_bean.nil?
+        puts "ERROR: No authentication delegate found. Authentication not enabled." 
+        return false 
+      end
+
       authenticated = @auth_bean.authenticate(user, pass)
       block.call if authenticated && block
       authenticated

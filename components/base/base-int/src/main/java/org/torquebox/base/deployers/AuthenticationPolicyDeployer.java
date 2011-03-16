@@ -70,7 +70,7 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
                 Map<String,Object> options = new HashMap<String,Object>();
                 options.put("users", config.getUsers());
                 options.put("roles", config.getRoles());
-                AppConfigurationEntry appConfigurationEntry = new AppConfigurationEntry(strategyClass, LoginModuleControlFlag.OPTIONAL, options);
+                AppConfigurationEntry appConfigurationEntry = new AppConfigurationEntry(strategyClass, LoginModuleControlFlag.REQUIRED, options);
                 authenticationInfo.addAppConfigurationEntry(appConfigurationEntry);
                 policy.setAuthenticationInfo(authenticationInfo);
                 ApplicationPolicyRegistration applicationPolicyRegistration = (ApplicationPolicyRegistration) configuration;
@@ -87,8 +87,10 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
         String result = null;
         if (strategy == null) {
             log.warn("No authentication strategy supplied.");
-        } else if (strategy.equals("file")) {
+        } else if (strategy.equals("simple")) {
             result = "org.torquebox.auth.SimpleLoginModule.class";
+        } else if (strategy.equals("file")) {
+        	result = "org.jboss.security.auth.spi.UsersRolesLoginModule";
         } else {
             log.warn("Sorry - I don't know how to authenticate with the " + strategy + " strategy yet.");
         }
