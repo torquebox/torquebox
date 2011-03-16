@@ -5,6 +5,9 @@ import java.util.Properties;
 
 import org.jboss.security.auth.spi.UsersRolesLoginModule;
 
+/*
+ * Use of this class is deferred until AS7 integration
+ */
 public class SimpleLoginModule extends UsersRolesLoginModule {
     private Properties users = new Properties();
     private Properties roles = new Properties();
@@ -12,7 +15,6 @@ public class SimpleLoginModule extends UsersRolesLoginModule {
 	@Override
     @SuppressWarnings("unchecked")
     protected Properties createUsers(Map<String,?> options) { 
-    	System.err.println("LOADING USERS");
     	Map<String,String> provided = (Map<String,String>)options.get("users");
     	this.users.putAll(provided);
         return users;
@@ -21,15 +23,9 @@ public class SimpleLoginModule extends UsersRolesLoginModule {
     @Override
     @SuppressWarnings("unchecked")
     protected Properties createRoles(Map<String,?> options) {
-    	System.err.println("LOADING ROLES");
     	Map<String,String> provided = (Map<String, String>) options.get("roles");
     	this.roles.putAll(provided);
         return roles;
     }
 
-    @Override
-    public boolean login() {
-      throw new RuntimeException("EAT ME");
-    }
-    
 }

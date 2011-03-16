@@ -48,19 +48,14 @@ public class AuthDefaultsDeployer extends AbstractDeployer {
         }
         if (authMetaData.getConfigurations().size() < 1) {
             log.warn("No authentication configuration provided for this application. Using defaults.");
-            log.warn("Authentication Strategy: " + DEFAULT_STRATEGY);
             log.warn("Authentication Domain: " + DEFAULT_DOMAIN);
-            authMetaData.addAuthentication(DEFAULT_NAME, AuthDefaultsDeployer.DEFAULT_DOMAIN, AuthDefaultsDeployer.DEFAULT_STRATEGY);
+            authMetaData.addAuthentication(DEFAULT_NAME, AuthDefaultsDeployer.DEFAULT_DOMAIN);
         } else {
             // Set defaults for any values that weren't explicitly specified in the YAML
             for (Config config: authMetaData.getConfigurations()) {
                 if (blank(config.getDomain())) {
                 	log.warn("No domain specified. Configuring using default: " + DEFAULT_DOMAIN);
                     config.setDomain(DEFAULT_DOMAIN);
-                }
-                if (blank(config.getStrategy())) {
-                	log.warn("No strategy specified. Configuring using default: " + DEFAULT_STRATEGY);
-                    config.setStrategy(DEFAULT_STRATEGY);
                 }
                 if (blank(config.getName())) {
                 	log.warn("No name specified. Configuring using default: " + DEFAULT_NAME);

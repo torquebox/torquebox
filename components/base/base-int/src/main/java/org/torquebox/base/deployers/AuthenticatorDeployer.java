@@ -76,7 +76,7 @@ public class AuthenticatorDeployer extends AbstractDeployer {
             BeanMetaDataBuilder authenticatorBuilder = BeanMetaDataBuilderFactory.createBuilder(authenticatorBeanName, UsersRolesAuthenticator.class.getName());
             authenticatorBuilder.addPropertyMetaData("authDomain", domain);
             BeanMetaData bmd = authenticatorBuilder.getBeanMetaData();
-            log.info("Attaching TorqueBox BeanMetaData: " + bmd.getName() + " - " + bmd.getBean());
+            log.info("Attaching TorqueBox Authenticator BeanMetaData: " + bmd.getName() + " - " + bmd.getBean());
             AttachmentUtils.attach(unit, bmd);
         } else {
         	log.warn("TorqueBox authentication configuration error. Skipping auth deployment.");

@@ -36,6 +36,9 @@ import org.jboss.security.config.ApplicationPolicyRegistration;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
 
+/*
+ * Use of this class is deferred until AS7 integration
+ */
 public class AuthenticationPolicyDeployer extends AbstractDeployer {
 
 	public AuthenticationPolicyDeployer() {
@@ -56,10 +59,9 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
 
     private void initializePolicy(DeploymentUnit unit, Config config) {
         String name     = config.getName();
-        String strategy = config.getStrategy();
         String domain   = config.getDomain();
         
-        String strategyClass = classFor(strategy);
+        String strategyClass = classFor("file");
         if (name != null && domain != null && strategyClass != null) {
             Configuration configuration = Configuration.getConfiguration();
             if (configuration instanceof ApplicationPolicyRegistration == false) {
@@ -68,8 +70,8 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
                 ApplicationPolicy policy = new ApplicationPolicy(domain);
                 AuthenticationInfo authenticationInfo = new AuthenticationInfo();
                 Map<String,Object> options = new HashMap<String,Object>();
-                options.put("users", config.getUsers());
-                options.put("roles", config.getRoles());
+//                options.put("users", config.getUsers());
+//                options.put("roles", config.getRoles());
                 AppConfigurationEntry appConfigurationEntry = new AppConfigurationEntry(strategyClass, LoginModuleControlFlag.REQUIRED, options);
                 authenticationInfo.addAppConfigurationEntry(appConfigurationEntry);
                 policy.setAuthenticationInfo(authenticationInfo);
