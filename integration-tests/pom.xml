@@ -16,6 +16,7 @@
 
   <properties>
     <version.arquillian>1.0.0.Alpha4</version.arquillian>
+    <version.haml>~&gt;3.0</version.haml>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
 
     <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
@@ -241,6 +242,18 @@
             <groupId>de.saumya.mojo</groupId>
             <artifactId>gem-maven-plugin</artifactId>
             <executions>
+              <execution>
+                <id>install-haml</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>haml -v ${version.haml} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
               <execution>
                 <id>install-rails2</id>
                 <phase>test-compile</phase>

@@ -1,7 +1,0 @@
-Manifest.txt
-Rakefile
-README.txt
-LICENSE.txt
-lib/jdbc
-lib/sqlitejdbc-3.6.14.2.056.jar
-lib/jdbc/sqlite3.rb
