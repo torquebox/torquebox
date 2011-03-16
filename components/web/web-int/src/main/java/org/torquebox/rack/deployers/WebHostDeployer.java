@@ -22,17 +22,12 @@ package org.torquebox.rack.deployers;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.DependencyMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
-import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.plugins.dependency.DependencyItemMetaData;
-import org.jboss.kernel.spi.dependency.DependencyBuilder;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.WebHost;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
