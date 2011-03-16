@@ -111,7 +111,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 
         if (demandClass != null) {
             String destinationBeanName = AttachmentUtils.beanName( unit, demandClass, metaData.getDestinationName() );
-            builder.addDemand( destinationBeanName, ControllerState.START, ControllerState.INSTALLED, null );
+            builder.addDemand( destinationBeanName, ControllerState.CREATE, ControllerState.INSTALLED, null );
         }
 
         if (this.demand != null) {

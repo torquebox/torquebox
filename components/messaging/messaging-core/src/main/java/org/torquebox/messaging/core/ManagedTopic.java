@@ -25,8 +25,8 @@ public class ManagedTopic extends AbstractManagedDestination {
 
     }
 
-    public void start() throws Exception {
-        log.info( "Starting topic " + getName() );
+    public void create() throws Exception {
+        log.info( "Creating topic " + getName() );
         getServer().createTopic( false, getName(), getName() );
     }
 
