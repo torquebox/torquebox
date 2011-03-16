@@ -32,8 +32,8 @@ public class AuthYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
         	for(String name: data.keySet()) {        	    
         		String domain   = ((Map<String, String>) data.get(name)).get("domain");    		
         		String strategy = ((Map<String, String>) data.get(name)).get("strategy");
-        		String users = ((Map<String,String>) data.get(name)).get("users");
-        		String roles = ((Map<String,String>) data.get(name)).get("roles");
+        		Map<String,String>users = ((Map<String,Map<String,String>>) data.get(name)).get("users");
+        		Map<String,String>roles = ((Map<String,Map<String,String>>) data.get(name)).get("roles");
             log.info("Configuring TorqueBox authentication for domain ["+domain+"] strategy ["+strategy+"]");
         		authMetaData.addAuthentication(name, domain, strategy, users, roles);
         	}

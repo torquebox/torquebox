@@ -9,15 +9,21 @@ public class SimpleLoginModule extends UsersRolesLoginModule {
     private Properties users = new Properties();
     private Properties roles = new Properties();
     
-    @Override
+	@Override
+    @SuppressWarnings("unchecked")
     protected Properties createUsers(Map<String,?> options) { 
-    	System.err.println("I'm suspposed to be loading a users properties file");
+    	System.err.println("LOADING USERS");
+    	Map<String,String> provided = (Map<String,String>)options.get("users");
+    	this.users.putAll(provided);
         return users;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Properties createRoles(Map<String,?> options) {
-    	System.err.println("I'm suspposed to be loading a roles properties file");
+    	System.err.println("LOADING ROLES");
+    	Map<String,String> provided = (Map<String, String>) options.get("roles");
+    	this.roles.putAll(provided);
         return roles;
     }
 

@@ -68,8 +68,8 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
                 ApplicationPolicy policy = new ApplicationPolicy(domain);
                 AuthenticationInfo authenticationInfo = new AuthenticationInfo();
                 Map<String,Object> options = new HashMap<String,Object>();
-                options.put("usersProperties", config.getUsers());
-                options.put("rolesProperties", config.getRoles());
+                options.put("users", config.getUsers());
+                options.put("roles", config.getRoles());
                 AppConfigurationEntry appConfigurationEntry = new AppConfigurationEntry(strategyClass, LoginModuleControlFlag.OPTIONAL, options);
                 authenticationInfo.addAppConfigurationEntry(appConfigurationEntry);
                 policy.setAuthenticationInfo(authenticationInfo);
