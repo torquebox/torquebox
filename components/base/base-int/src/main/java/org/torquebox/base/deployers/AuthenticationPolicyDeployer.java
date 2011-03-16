@@ -75,6 +75,7 @@ public class AuthenticationPolicyDeployer extends AbstractDeployer {
                 policy.setAuthenticationInfo(authenticationInfo);
                 ApplicationPolicyRegistration applicationPolicyRegistration = (ApplicationPolicyRegistration) configuration;
                 applicationPolicyRegistration.addApplicationPolicy(domain, policy);
+                log.info("Added application auth policy for domain: " + domain);
             }
 
         } else {

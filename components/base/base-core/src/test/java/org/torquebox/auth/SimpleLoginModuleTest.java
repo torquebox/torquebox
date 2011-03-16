@@ -1,5 +1,8 @@
 package org.torquebox.auth;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -14,23 +17,25 @@ public class SimpleLoginModuleTest {
     
     @Before
     public void setUp() {
-//        Map<String,String> users = new HashMap<String,String>();
-//        users.put("scott", "tiger");
-//        module.setUsersMap(users);
-//        Map<String,String> roles = new HashMap<String,String>();
-//        roles.put("admin", "scott");
-//        module.setRolesMap(roles);
+        Map<String,String> users = new HashMap<String,String>();
+        users.put("scott", "tiger");
+        options.put("users", users);
+        Map<String,String> roles = new HashMap<String,String>();
+        roles.put("admin", "scott");
+        options.put("roles", roles);
     }
     
     @Test
     public void testCreateRoles() {
         Properties roles = module.createRoles(options);
-//        assertEquals("scott", roles.get("admin"));
+        assertNotNull(roles);
+        assertEquals("scott", roles.get("admin"));
     }
     
     @Test
     public void testCreateUsers() {
         Properties users = module.createUsers(options);
-//        assertEquals("tiger", users.get("scott"));
+        assertNotNull(users);
+        assertEquals("tiger", users.get("scott"));
     }
 }
