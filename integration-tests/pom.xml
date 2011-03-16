@@ -303,6 +303,18 @@
                 </configuration>
               </execution>
               <execution>
+                <id>install-sinatra</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>sinatra --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
                 <id>install-mail-wtf</id>
                 <phase>test-compile</phase>
                 <goals>
