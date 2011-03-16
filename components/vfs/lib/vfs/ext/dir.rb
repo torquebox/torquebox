@@ -29,12 +29,16 @@ class Dir
     alias_method :foreach_before_vfs, :foreach
 
     def open(str,&block)
-      if ( ::File.exist_without_vfs?( str.to_str ) )
+      str = str.to_str
+      if ( ::File.exist_without_vfs?( str ) )
         return open_before_vfs(str,&block)
       end
       #puts "open(#{str})"
-      result = dir = VFS::Dir.new( str.to_str )
+      result = dir = VFS::Dir.new( str )
       #puts "  result = #{result}"
+      unless result.exists?
+        return open_before_vfs(str,&block)
+      end
       if block
         begin
           result = block.call(dir)
@@ -130,12 +134,15 @@ class Dir
       chdir_before_vfs( *args.map{ |x| File.name_without_vfs(x) }, &block )
     end
 
-    def rmdir(path) 
-      name = File.name_without_vfs(path)
-      rmdir_before_vfs(name) if ( File.exist_without_vfs?( name ) )
+    def rmdir(path)
+      name = File.name_without_vfs(path.to_str)
+      rmdir_before_vfs(name)
     end
+    alias_method :unlink, :rmdir
+    alias_method :delete, :rmdir
 
     def mkdir(path, mode=0777)
+      path = path.to_str
       mkdir_before_vfs( File.name_without_vfs(path), mode )
     rescue Errno::ENOTDIR => e
       path = VFS.writable_path_or_error( path, e )
@@ -146,10 +153,10 @@ class Dir
     end
 
     def new(string)
-      if ( ::File.exist_without_vfs?( string.to_s ) )
+      if ( ::File.exist_without_vfs?( string.to_str ) )
         return new_before_vfs( string )
       end
-      VFS::Dir.new( string.to_s )
+      VFS::Dir.new( string.to_str )
     end
 
     def entries(path)
@@ -157,12 +164,17 @@ class Dir
         return entries_before_vfs(path.to_str)
       end
       vfs_dir = org.jboss.vfs::VFS.child( path )
+      # Delegate to original entries if passed a nonexistent file
+      unless vfs_dir.exists?
+        return entries_before_vfs( path.to_str )
+      end
       [ '.', '..' ] + vfs_dir.children.collect{|e| e.name }
     end
 
     def foreach(path,&block)
       entries(path).each{|e| yield e}
-    end 
+      nil
+    end
 
   end
 end

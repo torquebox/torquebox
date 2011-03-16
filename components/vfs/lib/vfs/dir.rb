@@ -67,6 +67,10 @@ module VFS
       [ '.', '..' ] + @virtual_file.children.map(&:name)
     end
 
+    def exists?
+      @virtual_file.exists?
+    end
+
   end
 
 end

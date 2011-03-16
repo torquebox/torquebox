@@ -65,7 +65,8 @@ class File
     end
 
     def readable?(filename)
-      return true if readable_without_vfs?( name_without_vfs( filename ) )
+      real_name = name_without_vfs( filename )
+      return readable_without_vfs?( real_name ) if exist_without_vfs?( real_name )
 
       virtual_file = virtual_file( filename )
       # VirtualFile has no readable? so assume we can read it if it exists
@@ -172,7 +173,7 @@ class File
     end
 
     def directory?(filename)
-      return true if directory_without_vfs?( filename )
+      return directory_without_vfs?( filename ) if exist_without_vfs?( filename )
 
       virtual_file = virtual_file(filename)
       !virtual_file.nil? && virtual_file.is_directory?
@@ -190,8 +191,16 @@ class File
       vfs_path?(filename) ? VFS.resolve_path_url(dirname) : dirname
     end
 
-    def join(*args) 
+    def join(*args)
       prefix = vfs_path?(args[0]) ? "vfs:" : ""
+      args = args.map do |arg|
+        if arg.is_a?(Array)
+          raise ArgumentError if arg.include?(arg)
+          join(*arg)
+        else
+          arg
+        end
+      end
       prefix + join_without_vfs(*args.map{|x|name_without_vfs(x)})
     end
 
@@ -241,7 +250,8 @@ class File
     end
 
     def name_without_vfs(filename)
-      name = filename.to_s.gsub("\\", "/")
+      raise TypeError unless filename.respond_to?(:to_str)
+      name = filename.to_str.gsub("\\", "/")
       if vfs_path?(name) 
         result = name[4..-1]
         result.size==0 ? "/" : result
