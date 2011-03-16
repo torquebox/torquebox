@@ -79,6 +79,10 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
                 if (root == null) {
                     throw new DeploymentException( "No application root specified" );
                 }
+                
+                if ( ! root.exists() ) {
+                    throw new DeploymentException( "Application root does not exist: " + root.toURL().toExternalForm() );
+                }
 
                 String name = appKnobYml.getName().replaceAll( "-knob.yml$", "" );
                 Deployment deployment = createDeployment( name, metaData );

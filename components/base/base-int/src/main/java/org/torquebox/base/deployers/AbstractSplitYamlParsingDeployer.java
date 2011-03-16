@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
@@ -53,7 +52,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
 
     /** Does this deployer support a standalone *.yml descriptor? */
     private boolean supportsStandalone = true;
-
+    
     public AbstractSplitYamlParsingDeployer() {
         addInput( TorqueBoxMetaData.class );
     }
@@ -69,7 +68,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
     public boolean isSupportsStandalone() {
         return this.supportsStandalone;
     }
-
+    
     public void setSectionName(String sectionName) {
         this.sectionName = sectionName;
     }
@@ -102,7 +101,7 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
     @SuppressWarnings("unchecked")
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
         TorqueBoxMetaData globalMetaData = unit.getAttachment( TorqueBoxMetaData.class );
-        
+
         log.debug( "Global torquebox.yml: " + globalMetaData );
 
         Object data = null;
@@ -116,7 +115,9 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
             VirtualFile metaDataFile = getMetaDataFile( unit, getFileName() );
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
-                log.warn( "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
+                if ( ! metaDataFile.equals( unit.getRoot() ) ) {
+                    log.warn( "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
+                }
                 InputStream in = null;
                 try {
                     in = metaDataFile.openStream();

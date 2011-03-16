@@ -21,6 +21,7 @@ package org.torquebox.base.metadata;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -31,11 +32,30 @@ public class TorqueBoxMetaData {
     private Map<String, Object> data;
 
     public TorqueBoxMetaData(Map<String, Object> data) {
-        this.data = data;
+        this.data = normalizeSectionNames( data );
+    }
+    
+    private Map<String, Object> normalizeSectionNames(Map<String, Object> data) {
+        Map<String, Object> normalized = new HashMap<String, Object>();
+        
+        Set<String> keys = data.keySet();
+        
+        for ( String key : keys ) {
+            normalized.put( normalizeSectionName( key ), data.get( key ) );
+        }
+        return normalized;
+    }
+    
+    private String normalizeSectionName(String name) {
+        if ( name.equalsIgnoreCase( "app" ) ) {
+            return "application";
+        }
+        
+        return name.toLowerCase();
     }
 
     public Object getSection(String name) {
-        return this.data.get( name );
+        return this.data.get( normalizeSectionName( name ) );
     }
 
     @SuppressWarnings("unchecked")

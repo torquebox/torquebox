@@ -27,8 +27,6 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 
 public class RubyApplicationDefaultsDeployer extends AbstractDeployer {
 
-    public static final String DEFAULT_ENVIRONMENT_NAME = "development";
-
     public RubyApplicationDefaultsDeployer() {
         setStage( DeploymentStages.POST_PARSE );
         setInput( RubyApplicationMetaData.class );
@@ -37,9 +35,6 @@ public class RubyApplicationDefaultsDeployer extends AbstractDeployer {
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-
-        if (rubyAppMetaData.getEnvironmentName() == null || rubyAppMetaData.getEnvironmentName().trim().equals( "" )) {
-            rubyAppMetaData.setEnvironmentName( DEFAULT_ENVIRONMENT_NAME );
-        }
+        rubyAppMetaData.applyDefaults();
     }
 }

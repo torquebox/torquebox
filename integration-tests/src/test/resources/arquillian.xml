@@ -6,6 +6,7 @@
 
   <engine>
     <deploymentExportPath>/tmp</deploymentExportPath>
+    <maxDeploymentsBeforeRestart>${arquillian.max.deploys}</maxDeploymentsBeforeRestart>
   </engine>
 
   <jboss:container>
