@@ -5,4 +5,4 @@ gem 'rails', '~>3'
 gem 'activerecord-jdbc-adapter'
 gem 'jdbc-sqlite3'
 
-gem "torquebox", '~>1.0.0'
+gem 'torquebox'
