@@ -19,8 +19,6 @@
 
 package org.torquebox.soap.deployers;
 
-import java.util.Set;
-
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;

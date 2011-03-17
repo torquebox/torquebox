@@ -48,7 +48,8 @@ module ::VFS
         end
         return ::VFS.resolve_path_url( cur ), child_path
       end
-      cur = ::File.dirname( cur ) + '/'
+      cur = ::File.dirname( cur )
+      cur << '/' unless cur[-1,1] == '/'
     end
     nil
   end
