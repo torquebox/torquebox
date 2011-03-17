@@ -641,6 +641,24 @@
               <gemPath>./target/rubygems</gemPath>
             </configuration>
           </execution>
+          <execution>
+            <id>generate-repo-index-for-jquery</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <gemHome>./target/rubygems</gemHome>
+              <gemPath>./target/rubygems</gemPath>
+              <script>
+                File.open( '${repo.stage.dir}/simple-index', 'w' ) do |out|
+                  Dir[ '${repo.stage.dir}/gems/*.gem' ].each do |gem|
+                    out.puts File.basename( gem, '.gem' )
+                  end    
+                end
+              </script>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
