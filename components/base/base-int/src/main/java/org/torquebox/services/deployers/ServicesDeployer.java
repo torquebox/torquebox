@@ -19,6 +19,10 @@
 
 package org.torquebox.services.deployers;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,11 +33,16 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
+import org.torquebox.injection.Injection;
+import org.torquebox.injection.InjectionAnalyzer;
+import org.torquebox.injection.RubyProxyInjectionBuilder;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.metadata.PoolMetaData;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.jmx.JMXUtils;
@@ -57,6 +66,7 @@ public class ServicesDeployer extends AbstractDeployer {
     public ServicesDeployer() {
         addInput( ServiceMetaData.class );
         addInput( RubyApplicationMetaData.class );
+        addInput( RubyRuntimeMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
     }
@@ -64,31 +74,41 @@ public class ServicesDeployer extends AbstractDeployer {
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         Set<? extends ServiceMetaData> allMetaData = unit.getAllMetaData( ServiceMetaData.class );
-        
-        for ( ServiceMetaData each : allMetaData ) {
+
+        for (ServiceMetaData each : allMetaData) {
             deploy( unit, each );
         }
     }
-    
+
     public void deploy(DeploymentUnit unit, ServiceMetaData serviceMetaData) throws DeploymentException {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(  RubyApplicationMetaData.class );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         String beanName = AttachmentUtils.beanName( unit, RubyServiceProxy.class, serviceMetaData.getClassName() );
-        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
+        BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder( beanName, RubyServiceProxy.class.getName() );
 
-        ValueMetaData runtimePoolInject = builder.createInject( AttachmentUtils.beanName( unit, RubyRuntimePool.class, POOL_NAME ) );
-        
-        builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
-        builder.addPropertyMetaData( "rubyComponentResolver", createComponentResolver( serviceMetaData ) );
+        ValueMetaData runtimePoolInject = beanBuilder.createInject( AttachmentUtils.beanName( unit, RubyRuntimePool.class, POOL_NAME ) );
 
-        if ( serviceMetaData.isRequiresSingleton() ) {
-            builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
+        beanBuilder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
+        beanBuilder.addPropertyMetaData( "rubyComponentResolver", createComponentResolver( serviceMetaData ) );
+
+        if (serviceMetaData.isRequiresSingleton()) {
+            beanBuilder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
+        }
+
+        String mbeanName = JMXUtils.jmxName( "torquebox.services", rubyAppMetaData.getApplicationName() ).with( "name", serviceMetaData.getClassName() ).name();
+        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + RubyServiceProxyMBean.class.getName()
+                + ".class)";
+        beanBuilder.addAnnotation( jmxAnno );
+
+        RubyProxyInjectionBuilder injectionBuilder = new RubyProxyInjectionBuilder( unit, this.injectionAnalyzer, beanBuilder );
+        try {
+            injectionBuilder.build(  StringUtils.underscore( serviceMetaData.getClassName() ) + ".rb" );
+        } catch (IOException e) {
+            throw new DeploymentException( e );
+        } catch (URISyntaxException e) {
+            throw new DeploymentException( e );
         }
         
-        String mbeanName = JMXUtils.jmxName( "torquebox.services", rubyAppMetaData.getApplicationName() ).with( "name", serviceMetaData.getClassName() ).name();
-        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\""+ mbeanName + "\", exposedInterface=" + RubyServiceProxyMBean.class.getName() + ".class)";
-        builder.addAnnotation( jmxAnno );
-
-        AttachmentUtils.attach( unit, builder.getBeanMetaData() );
+        AttachmentUtils.attach( unit, beanBuilder.getBeanMetaData() );
     }
 
     protected RubyComponentResolver createComponentResolver(ServiceMetaData serviceMetaData) {
@@ -115,6 +135,11 @@ public class ServicesDeployer extends AbstractDeployer {
         Boolean singleton = params == null ? null : (Boolean) params.remove( "singleton" );
         return singleton != null && singleton.booleanValue();
     }
-
+    
+    public void setInjectionAnalyzer(InjectionAnalyzer injectionAnalyzer) {
+        this.injectionAnalyzer = injectionAnalyzer;
+    }
+    
+    private InjectionAnalyzer injectionAnalyzer;
 
 }

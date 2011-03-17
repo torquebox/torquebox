@@ -26,6 +26,11 @@
       <artifactId>jboss-kernel</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.deployers</groupId>
+      <artifactId>jboss-deployers-structure-spi</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
   </dependencies>
 

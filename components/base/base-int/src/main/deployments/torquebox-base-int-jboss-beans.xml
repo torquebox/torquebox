@@ -4,6 +4,16 @@
 
   <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
   
+  
+  <bean name="InjectableHandlerRegistry"        class="org.torquebox.injection.InjectableHandlerRegistry"/>
+  
+  <bean name="RubyInjectionAnalyzer"            class="org.torquebox.injection.InjectionAnalyzer">
+    <property name="injectableHandlerRegistry"><inject bean="InjectableHandlerRegistry"/></property>
+  </bean> 
+  
+  <bean name="MCBeanInjectableHandler"          class="org.torquebox.injection.MCBeanInjectableHandler"/>
+  <bean name="JNDIInjectableHandler"            class="org.torquebox.injection.JNDIInjectableHandler"/>
+  
   <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
   
   <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
@@ -39,7 +49,9 @@
 
   <bean name="ServicesYamlParsingDeployer"       class="org.torquebox.services.deployers.ServicesYamlParsingDeployer"/>
   <bean name="ServicesRuntimePoolDeployer"       class="org.torquebox.services.deployers.ServicesRuntimePoolDeployer"/>
-  <bean name="ServicesDeployer"                  class="org.torquebox.services.deployers.ServicesDeployer"/>
+  <bean name="ServicesDeployer"                  class="org.torquebox.services.deployers.ServicesDeployer">
+    <property name="injectionAnalyzer"><inject bean="RubyInjectionAnalyzer"/></property>
+  </bean>
 
   <bean name="RubyApplicationDeployer"           class="org.torquebox.base.deployers.RubyApplicationDeployer"/>
 </deployment>

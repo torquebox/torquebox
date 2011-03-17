@@ -3,6 +3,14 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 
   <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
+  
+  <bean name="QueueInjectableHandler" class="org.torquebox.messaging.injection.DestinationInjectableHandler">
+    <property name="type">queue</property>
+  </bean>
+  
+  <bean name="TopicInjectableHandler" class="org.torquebox.messaging.injection.DestinationInjectableHandler">
+    <property name="type">topic</property>
+  </bean>
 
   <bean name="QueuesYamlParsingDeployer" class="org.torquebox.messaging.deployers.QueuesYamlParsingDeployer"/>
   <bean name="TopicsYamlParsingDeployer" class="org.torquebox.messaging.deployers.TopicsYamlParsingDeployer"/>

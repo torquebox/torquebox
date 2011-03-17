@@ -19,14 +19,17 @@
 
 package org.torquebox.services;
 
+import java.util.Map;
+
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
+import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.interp.core.ManagedComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class RubyServiceProxy implements RubyServiceProxyMBean {
+public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBean {
     
     public RubyServiceProxy() {
         // MicroContainer seems to want this declared
@@ -116,10 +119,18 @@ public class RubyServiceProxy implements RubyServiceProxyMBean {
         return this.service;
     }
     
+    @Override
+    public void setRubyProxyInjectionMap(Map injections) {
+        this.injections = injections;
+    }
+    
     private boolean started = false;
 
     private RubyRuntimePool runtimePool;
     private Ruby ruby;
     private IRubyObject service;
     private RubyComponentResolver resolver;
+    
+    private Map injections;
+    
 }
