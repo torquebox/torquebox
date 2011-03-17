@@ -27,7 +27,6 @@ import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.interp.spi.ComponentInitializer;
 
 public class InstantiatingRubyComponentResolver extends ManagedComponentResolver {
 
@@ -36,8 +35,6 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
     private Object[] initializeParams;
 
     private static final Logger log = Logger.getLogger( InstantiatingRubyComponentResolver.class );
-
-    private ComponentInitializer componentInitializer;
 
     public InstantiatingRubyComponentResolver() {
     }
@@ -76,14 +73,6 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
         return this.initializeParams;
     }
 
-    public void setComponentInitializer(ComponentInitializer componentInitializer) {
-        this.componentInitializer = componentInitializer;
-    }
-
-    public ComponentInitializer getComponentInitializer() {
-        return this.componentInitializer;
-    }
-
     protected IRubyObject createComponent(Ruby ruby) throws Exception {
         log.debug( "createComponent(" + ruby + ")" );
         if (this.rubyRequirePath != null) {
@@ -92,18 +81,11 @@ public class InstantiatingRubyComponentResolver extends ManagedComponentResolver
         }
 
         RubyClass componentClass = (RubyClass) ruby.getClassFromPath( this.rubyClassName );
-        log.debug( "Got componentClass: " + componentClass );
         if (componentClass == null || componentClass.isNil()) {
             return null;
         }
 
         IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, componentClass, "new", getInitializeParams(), IRubyObject.class );
-        log.debug( "Got component: " + component );
-        if (this.componentInitializer != null) {
-            this.componentInitializer.initialize( component );
-            log.debug( "Initialized component" );
-        }
-
         return component;
     }
 

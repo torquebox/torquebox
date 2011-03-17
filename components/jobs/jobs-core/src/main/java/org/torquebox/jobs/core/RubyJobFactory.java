@@ -36,11 +36,9 @@ public class RubyJobFactory implements JobFactory {
     public static final String RUBY_REQUIRE_PATH_KEY = "torquebox.ruby.require.path";
 
     private RubyRuntimePool runtimePool;
-    private JobComponentInitializer componentInitializer;
     private boolean alwaysReload;
 
     public RubyJobFactory(boolean reload) {
-        this.componentInitializer = new JobComponentInitializer();
         this.alwaysReload = reload;
     }
 
@@ -61,7 +59,6 @@ public class RubyJobFactory implements JobFactory {
 
         InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
         resolver.setAlwaysReload( this.alwaysReload );
-        resolver.setComponentInitializer( this.componentInitializer );
         resolver.setComponentName( "jobs." + jobDetail.getFullName() );
         resolver.setRubyClassName( jobDataMap.getString( RUBY_CLASS_NAME_KEY ) );
         resolver.setRubyRequirePath( jobDataMap.getString( RUBY_REQUIRE_PATH_KEY ) );
