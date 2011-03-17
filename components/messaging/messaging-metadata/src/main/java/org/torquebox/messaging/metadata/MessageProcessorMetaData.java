@@ -29,7 +29,7 @@ public class MessageProcessorMetaData {
     private String destinationName;
     private String messageSelector;
     private int concurrency = 1;
-    private Map rubyConfig = Collections.EMPTY_MAP;
+    private Map rubyConfig;
     
     public MessageProcessorMetaData() {
     }
@@ -76,8 +76,7 @@ public class MessageProcessorMetaData {
     }
 
     public void setRubyConfig(Map rubyConfig) {
-        if (rubyConfig != null)
-            this.rubyConfig = rubyConfig;
+        this.rubyConfig = rubyConfig;
     }
 
     public Map getRubyConfig() {

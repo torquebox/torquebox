@@ -162,6 +162,6 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
     }
 
     private boolean isUnconfigured(MessageProcessorMetaData metadata) {
-        return null == metadata.getMessageSelector() && metadata.getRubyConfig().isEmpty();
+        return null == metadata.getMessageSelector() && null == metadata.getRubyConfig();
     }
 }

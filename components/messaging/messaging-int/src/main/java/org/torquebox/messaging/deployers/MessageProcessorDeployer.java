@@ -103,7 +103,6 @@ public class MessageProcessorDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "name", metaData.getRubyClassName() );
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
         builder.addPropertyMetaData( "messageSelector", metaData.getMessageSelector() );
-        builder.addPropertyMetaData( "rubyConfig", metaData.getRubyConfig() );
         builder.addPropertyMetaData( "concurrency", metaData.getConcurrency() );
         builder.addPropertyMetaData( "componentResolver", createComponentResolver( unit, metaData ) );
 
