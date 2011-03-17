@@ -7,7 +7,6 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.injection.JNDIInjectable;
-import org.torquebox.injection.SimpleNamedInjectable;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.core.AbstractManagedDestination;
 import org.torquebox.messaging.core.ManagedQueue;
@@ -17,8 +16,8 @@ import org.torquebox.messaging.metadata.QueueMetaData;
 
 public class DestinationInjectable extends JNDIInjectable {
     
-    public DestinationInjectable(String name) {
-        super( name );
+    public DestinationInjectable(String type, String name) {
+        super( type, name );
     }
 
     @Override

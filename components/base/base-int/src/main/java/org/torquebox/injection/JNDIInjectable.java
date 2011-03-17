@@ -9,7 +9,11 @@ public class JNDIInjectable extends SimpleNamedInjectable {
     public static final String JNDI_NAME_PREFIX = "jndi:";
     
     public JNDIInjectable(String name) {
-        super( name );
+        this( "jndi", name );
+    }
+    
+    public JNDIInjectable(String type, String name) {
+        super( type, name );
     }
 
     @Override

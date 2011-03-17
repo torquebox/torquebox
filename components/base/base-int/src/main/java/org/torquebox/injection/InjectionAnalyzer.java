@@ -23,26 +23,26 @@ public class InjectionAnalyzer extends ScriptAnalyzer {
     
     
     @SuppressWarnings("unchecked")
-    public List<Injection> analyze(InputStream script) throws IOException {
+    public List<Injectable> analyze(InputStream script) throws IOException {
         Object result = super.analyze( script );
         if ( result instanceof List ) {
-            return (List<Injection>) result;
+            return (List<Injectable>) result;
         }
         
-        List<Injection> injections = new ArrayList<Injection>();
-        injections.add( (Injection) result );
+        List<Injectable> injections = new ArrayList<Injectable>();
+        injections.add( (Injectable) result );
         return injections;
     }
     
     @SuppressWarnings("unchecked")
-    public List<Injection> analyze(String script) {
+    public List<Injectable> analyze(String script) {
         Object result = super.analyze( script );
         if ( result instanceof List ) {
-            return (List<Injection>) result;
+            return (List<Injectable>) result;
         }
         
-        List<Injection> injections = new ArrayList<Injection>();
-        injections.add( (Injection) result );
+        List<Injectable> injections = new ArrayList<Injectable>();
+        injections.add( (Injectable) result );
         return injections;
     }
     

@@ -19,11 +19,10 @@
 
 package org.torquebox.services;
 
-import java.util.Map;
-
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
+import org.torquebox.injection.spi.InjectableRegistry;
 import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.interp.core.ManagedComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
@@ -120,8 +119,12 @@ public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBe
     }
     
     @Override
-    public void setRubyProxyInjectionMap(Map injections) {
-        this.injections = injections;
+    public void setInjectableRegistry(InjectableRegistry injectableRegistry) {
+        this.injectableRegistry = injectableRegistry;
+    }
+    
+    public InjectableRegistry getInjectableRegistry() {
+        return this.injectableRegistry;
     }
     
     private boolean started = false;
@@ -131,6 +134,6 @@ public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBe
     private IRubyObject service;
     private RubyComponentResolver resolver;
     
-    private Map injections;
+    private InjectableRegistry injectableRegistry;
     
 }

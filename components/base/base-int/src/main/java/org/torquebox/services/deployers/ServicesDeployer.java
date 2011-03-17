@@ -20,9 +20,7 @@
 package org.torquebox.services.deployers;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,10 +31,8 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.injection.Injection;
 import org.torquebox.injection.InjectionAnalyzer;
 import org.torquebox.injection.RubyProxyInjectionBuilder;
 import org.torquebox.interp.core.InstantiatingRubyComponentResolver;

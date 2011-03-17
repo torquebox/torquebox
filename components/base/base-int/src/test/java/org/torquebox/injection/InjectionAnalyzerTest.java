@@ -45,18 +45,17 @@ public class InjectionAnalyzerTest {
     public void testAnalysis() throws Exception {
         String script = readScript( "injection.rb" );
         
-        List<Injection> injections = analyzer.analyze( script.toString() );
+        List<Injectable> injectables = analyzer.analyze( script.toString() );
         
-        assertEquals( 2, injections.size() );
+        assertEquals( 2, injectables.size() );
         
-        assertEquals( "random", injections.get( 0 ).getSiteName() );
-        assertTrue( injections.get( 0 ).getInjectable() instanceof MCBeanInjectable );
-        assertEquals( "jboss.whatever.Thing", injections.get( 0 ).getInjectable().getName() );
+        assertTrue( injectables.get( 0 ) instanceof MCBeanInjectable );
+        assertEquals( "mc", injectables.get( 0 ).getType() );
+        assertEquals( "jboss.whatever.Thing", injectables.get( 0 ).getName() );
         
-        assertEquals( "something", injections.get( 1 ).getSiteName() );
-        assertTrue( injections.get( 1 ).getInjectable() instanceof JNDIInjectable );
-        assertEquals( "java:/comp/whatever", injections.get( 1 ).getInjectable().getName() );
-        
+        assertTrue( injectables.get( 1 ) instanceof JNDIInjectable );
+        assertEquals( "jndi", injectables.get( 1 ).getType() );
+        assertEquals( "java:/comp/whatever", injectables.get( 1 ).getName() );
     }
 
 }

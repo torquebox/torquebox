@@ -26,10 +26,8 @@ public class InjectBlockVisitor extends DefaultNodeVisitor {
                     Node siteNode = argsNode.get( 0 );
                     Node injectableNode = argsNode.get( 1 );
 
-                    String siteName = getString( siteNode );
                     Injectable injectable = (Injectable) injectableNode.accept(  this  );
-                    
-                    return new Injection( siteName, injectable );
+                    return injectable;
                 }
             }
         } else {

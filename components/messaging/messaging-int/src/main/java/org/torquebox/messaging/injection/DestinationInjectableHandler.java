@@ -12,7 +12,7 @@ public class DestinationInjectableHandler extends AbstractInjectableHandler {
     @Override
     public Injectable handle(Node node) {
         String name = getString( node );
-        return new DestinationInjectable( name );
+        return new DestinationInjectable( getType(), name );
     }
     
 }

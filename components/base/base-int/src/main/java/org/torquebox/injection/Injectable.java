@@ -6,6 +6,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 
 public interface Injectable {
     
+    String getType();
     String getName();
     ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder);
 

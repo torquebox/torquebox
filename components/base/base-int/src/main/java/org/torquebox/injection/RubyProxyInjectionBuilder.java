@@ -7,21 +7,25 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.injection.spi.InjectableRegistry;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.mc.AttachmentUtils;
 
 public class RubyProxyInjectionBuilder {
-    
-    private static final Logger log = Logger.getLogger(  RubyProxyInjectionBuilder.class );
+
+    private static final Logger log = Logger.getLogger( RubyProxyInjectionBuilder.class );
 
     private DeploymentUnit context;
     private InjectionAnalyzer injectionAnalyzer;
@@ -47,17 +51,17 @@ public class RubyProxyInjectionBuilder {
         return urls;
     }
 
-    public void build(Collection<Injection> injections) {
-        addInjections( injections );
+    public void build(Collection<Injectable> injectables) {
+        addInjectableRegistry( injectables );
     }
 
     public void build(InputStream source) throws IOException {
-        List<Injection> injections = this.injectionAnalyzer.analyze( source );
-        if (injections == null || injections.isEmpty()) {
+        List<Injectable> injectables = this.injectionAnalyzer.analyze( source );
+        if (injectables == null || injectables.isEmpty()) {
             return;
         }
 
-        addInjections( injections );
+        addInjectableRegistry( injectables );
     }
 
     public void build(VirtualFile source) throws IOException {
@@ -75,8 +79,8 @@ public class RubyProxyInjectionBuilder {
 
     public void build(String sourceRelativePath) throws IOException, URISyntaxException {
         VirtualFile source = locateSource( sourceRelativePath );
-        
-        if ( source != null ) {
+
+        if (source != null) {
             build( source );
         }
     }
@@ -88,24 +92,58 @@ public class RubyProxyInjectionBuilder {
             if (each.getProtocol().equals( "vfs" )) {
                 URL candidateUrl = new URL( each, path );
                 VirtualFile candidateFile = VFS.getChild( candidateUrl.toURI() );
-                
-                if ( candidateFile.exists() ) {
+
+                if (candidateFile.exists()) {
                     return candidateFile;
                 }
             }
         }
-        
+
         return null;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected void addInjections(Collection<Injection> injections) {
-        Map injectionMap = beanBuilder.createMap();
-        beanBuilder.addPropertyMetaData( "rubyProxyInjectionMap", injectionMap );
+    protected void addInjectableRegistry(Collection<Injectable> injectables) {
 
-        for (Injection injection : injections) {
-            ValueMetaData siteNameKey = beanBuilder.createString( String.class.getName(), injection.getSiteName() );
-            injectionMap.put( siteNameKey, injection.getInjectable().createMicrocontainerInjection( context, beanBuilder ) );
+        Map<String, Collection<Injectable>> collated = collate( injectables );
+
+        List<ValueMetaData> collections = beanBuilder.createList();
+        
+        BeanMetaDataBuilder registryBuilder = BeanMetaDataBuilder.createBuilder( beanBuilder.getBeanMetaData().getName() + "$" + InjectableRegistry.class.getName(), InjectableRegistryImpl.class.getName() );
+
+        for (String collectionName : collated.keySet()) {
+            Collection<Injectable> collectionInjectables = collated.get( collectionName );
+
+            String collectionBeanName = beanBuilder.getBeanMetaData().getName() + "$" + InjectableCollection.class.getName() + "$" + collectionName;
+            BeanMetaDataBuilder collectionBuilder = BeanMetaDataBuilder.createBuilder( collectionBeanName, InjectableCollection.class.getName() );
+            collectionBuilder.addConstructorParameter( "java.lang.String", collectionName );
+            Map<ValueMetaData, ValueMetaData> collectionMap = collectionBuilder.createMap();
+            for (Injectable each : collectionInjectables) {
+                ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), each.getName() );
+                collectionMap.put( collectionKey, each.createMicrocontainerInjection( this.context, this.beanBuilder ) );
+            }
+            collectionBuilder.addConstructorParameter( "java.util.Map", collectionMap );
+            collections.add( registryBuilder.createInject( collectionBuilder.getBeanMetaData().getName() ) );
+            AttachmentUtils.attach( this.context, collectionBuilder.getBeanMetaData() );
         }
+
+        registryBuilder.addPropertyMetaData( "collections", collections );
+        AttachmentUtils.attach( this.context, registryBuilder.getBeanMetaData() );
+
+        beanBuilder.addPropertyMetaData( "injectableRegistry", beanBuilder.createInject( registryBuilder.getBeanMetaData().getName() ) );
+    }
+
+    protected Map<String, Collection<Injectable>> collate(Collection<Injectable> injectables) {
+        Map<String, Collection<Injectable>> collated = new HashMap<String, Collection<Injectable>>();
+
+        for (Injectable each : injectables) {
+            Collection<Injectable> collection = collated.get( each.getType() );
+            if (collection == null) {
+                collection = new ArrayList<Injectable>();
+                collated.put( each.getType(), collection );
+            }
+            collection.add( each );
+        }
+
+        return collated;
     }
 }

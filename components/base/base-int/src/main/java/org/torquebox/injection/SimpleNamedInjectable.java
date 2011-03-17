@@ -6,10 +6,16 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 
 public class SimpleNamedInjectable implements Injectable {
     
+    private String type;
     private String name;
 
-    public SimpleNamedInjectable(String name) {
+    public SimpleNamedInjectable(String type, String name) {
+        this.type = type;
         this.name = name;
+    }
+    
+    public String getType() {
+        return this.type;
     }
     
     public String getName() {
