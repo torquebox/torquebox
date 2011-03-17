@@ -56,36 +56,6 @@ public class RubyMessageProcessorTest extends AbstractRubyTestCase {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testConfigureProcessorWithNoConfiguration() throws Exception {
-        RubyMessageProcessor processor = new RubyMessageProcessor();
-        processor.configureProcessor( this.rubyProcessor );
-
-        Map opts = (Map) ReflectionHelper.getIfPossible( this.ruby, this.rubyProcessor, "opts" );
-
-        assertNotNull( opts );
-        assertTrue( opts.isEmpty() );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void testConfigureProcessorWithConfiguration() throws Exception {
-        RubyMessageProcessor processor = new RubyMessageProcessor();
-
-        RubyHash rubyConfig = (RubyHash) ruby.evalScriptlet( "TestMessageProcessor::CONFIG_ONE" );
-        processor.setRubyConfig( rubyConfig );
-
-        processor.configureProcessor( rubyProcessor );
-
-        Map opts = (Map) ReflectionHelper.getIfPossible( ruby, rubyProcessor, "opts" );
-        assertNotNull( opts );
-        assertFalse( opts.isEmpty() );
-
-        assertEquals( "cheese", opts.get( RubySymbol.newSymbol( ruby, "prop1" ) ) );
-        assertEquals( 42L, opts.get( RubySymbol.newSymbol( ruby, "prop2" ) ) );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
     public void testDispatchMessage() throws Exception {
         RubyMessageProcessor processor = new RubyMessageProcessor();
 

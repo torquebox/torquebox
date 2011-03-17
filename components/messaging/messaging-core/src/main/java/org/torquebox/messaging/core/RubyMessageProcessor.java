@@ -87,15 +87,6 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
         return this.messageSelector;
     }
 
-    public void setRubyConfig(Map rubyConfig) {
-        if (rubyConfig != null)
-            this.rubyConfig = rubyConfig;
-    }
-
-    public Map getRubyConfig() {
-        return this.rubyConfig;
-    }
-
     public void setAcknowledgeMode(int acknowledgeMode) {
         this.acknowledgeMode = acknowledgeMode;
     }
@@ -174,11 +165,6 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
         return this.componentResolver.resolve( ruby );
     }
 
-    protected void configureProcessor(IRubyObject processor) {
-        Ruby ruby = processor.getRuntime();
-        ReflectionHelper.callIfPossible( ruby, processor, "configure", new Object[] { getRubyConfig() } );
-    }
-
     protected void processMessage(IRubyObject processor, Message message) {
         Ruby ruby = processor.getRuntime();
         JavaEmbedUtils.invokeMethod( ruby, processor, "process!", new Object[] { message }, void.class );
@@ -202,8 +188,6 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
                 log.debug( "Got runtime: " + ruby );
                 IRubyObject processor = instantiateProcessor( ruby );
                 log.debug( "Got processor: " + processor );
-                configureProcessor( processor );
-                log.debug( "Configured processor: " + processor );
                 processMessage( processor, message );
                 log.debug( "Message processed" );
                 if (session.getTransacted())
@@ -233,7 +217,6 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     private Connection connection;
     private RubyComponentResolver componentResolver;
     private int concurrency = 1;
-    private Map rubyConfig = Collections.EMPTY_MAP;
     private boolean started = false;
 
     private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;

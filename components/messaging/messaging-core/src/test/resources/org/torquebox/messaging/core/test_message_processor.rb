@@ -7,13 +7,9 @@ class TestMessageProcessor < TorqueBox::Messaging::MessageProcessor
   attr_accessor :opts
   attr_accessor :messages
   
-  def initialize()
-    @opts = {}
+  def initialize(opts = {})
+    @opts = opts
     @messages = []
-  end
-  
-  def configure(opts)
-    @opts = opts    
   end
   
   def on_message(body)

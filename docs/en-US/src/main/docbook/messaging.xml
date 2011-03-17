@@ -796,10 +796,11 @@ messaging:
 
                   <entry></entry>
 
-                  <entry>Should contain a hash of data which will be
-                  passed to your consumer's
-                  <function>configure(hash)</function> method prior to
-                  invoking <function>process!</function>.</entry>
+                  <entry>
+                    Should contain a hash of data which will be passed
+                    to your consumer's constructor,
+                    <function>initialize(Hash)</function>.
+                  </entry>
                 </row>
               </tbody>
             </tgroup>

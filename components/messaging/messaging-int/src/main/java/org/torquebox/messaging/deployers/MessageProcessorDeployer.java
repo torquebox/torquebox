@@ -158,6 +158,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
         result.setRubyClassName( metaData.getRubyClassName() );
         result.setRubyRequirePath( metaData.getRubyRequirePath() );
         result.setComponentName( "message-processor." + metaData.getRubyClassName() );
+        result.setInitializeParams( metaData.getRubyConfig() );
         RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         if (envMetaData != null) {
             result.setAlwaysReload( envMetaData.isDevelopmentMode() );
