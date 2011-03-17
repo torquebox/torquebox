@@ -1,6 +1,10 @@
 
 class SimpleService 
 
+  torque {
+    inject :webserver, mc('jboss.web:service=WebServer')
+  }
+
   def start() 
     @should_run = true
     spawn_thread()
