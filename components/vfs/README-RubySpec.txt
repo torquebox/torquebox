@@ -1,12 +1,7 @@
 To ensure that mixing in VFS does not increase the bug-count for typical non-VFS usage, 
 we've wired up RubySpec to run.
 
-First, ensure you have the 'mspec' and 'rspec' (1.3.x) gems installed.
-
-	jruby -S gem install mspec
-  jruby -S gem install rspec -v=1.3.1
-
-Secondly, make sure VFS maven project has been built
+Make sure VFS maven project has been built
 
 	mvn install
 

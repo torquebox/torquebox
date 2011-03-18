@@ -89,6 +89,7 @@ task 'maven:package'=>[ :package ]
 task 'jruby:prepare'=>[ 'jruby:checkout' ] do
   Dir.chdir( JRUBY_DIR ) do
     run3( "ant jar" )
+    run3( "ant install-dev-gems" )
   end
 end
 
