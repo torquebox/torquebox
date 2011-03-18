@@ -3,7 +3,6 @@ package org.torquebox.injection;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.mc.CDIKernelRegistryPlugin;
 
 public class CDIInjectable extends SimpleNamedInjectable {
 
@@ -17,7 +16,14 @@ public class CDIInjectable extends SimpleNamedInjectable {
 
     @Override
     public ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder) {
-        return builder.createInject( CDIKernelRegistryPlugin.CDI_DEPENDENCY_PREFIX + getName() );
+        String injectableBridgeBeanName = null;
+        String cdiBridgeBeanName = null;
+        
+        BeanMetaDataBuilder injectableBridgeBuilder = BeanMetaDataBuilder.createBuilder( injectableBridgeBeanName, CDIInjectionBridge.class.getName() );
+        injectableBridgeBuilder.addConstructorParameter( CDIBridge.class.getName(), builder.createInject( cdiBridgeBeanName ) );
+        injectableBridgeBuilder.addConstructorParameter( String.class.getName(), getName() );
+        
+        return builder.createInject( injectableBridgeBuilder.getBeanMetaData(), "value" );
     }
 
     @Override

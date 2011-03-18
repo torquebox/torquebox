@@ -18,7 +18,6 @@
   <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
   
   <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
-  <bean name="TorqueBoxCDIKernelRegistryPlugin"  class="org.torquebox.mc.CDIKernelRegistryPlugin"/>
   
   <bean name="KnobStructure"                     class="org.torquebox.base.deployers.KnobStructure"/>
   <bean name="RubyApplicationRecognizer"         class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>

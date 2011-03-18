@@ -119,17 +119,15 @@ public class RubyProxyInjectionBuilder {
             Map<ValueMetaData, ValueMetaData> collectionMap = collectionBuilder.createMap();
             for (Injectable each : collectionInjectables) {
                 ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), each.getKey() );
-                collectionMap.put( collectionKey, each.createMicrocontainerInjection( this.context, this.beanBuilder ) );
+                collectionMap.put( collectionKey, each.createMicrocontainerInjection( this.context, collectionBuilder ) );
             }
             collectionBuilder.addConstructorParameter( "java.util.Map", collectionMap );
-            collections.add( registryBuilder.createInject( collectionBuilder.getBeanMetaData().getName() ) );
-            AttachmentUtils.attach( this.context, collectionBuilder.getBeanMetaData() );
+            collections.add( collectionBuilder.getBeanMetaData() );
         }
 
         registryBuilder.addPropertyMetaData( "collections", collections );
-        AttachmentUtils.attach( this.context, registryBuilder.getBeanMetaData() );
 
-        beanBuilder.addPropertyMetaData( "injectableRegistry", beanBuilder.createInject( registryBuilder.getBeanMetaData().getName() ) );
+        beanBuilder.addPropertyMetaData( "injectableRegistry", registryBuilder.getBeanMetaData() );
     }
 
     protected Map<String, Collection<Injectable>> collate(Collection<Injectable> injectables) {
