@@ -84,6 +84,19 @@
     </dependency>
 
     <dependency>
+      <!-- 
+        the latest stable nokogiri doesn't work on windows with jruby 1.6,
+	and capybara just needs nokogiri >= 1.3.3, so we need to install
+	the latest nokogiri before installing capybara.
+      -->
+      <groupId>rubygems</groupId>
+      <artifactId>nokogiri</artifactId>
+      <version>1.5.0.beta.4</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>capybara</artifactId>
       <version>0.4.0</version>
@@ -93,6 +106,10 @@
         <exclusion>
           <groupId>rubygems</groupId>
           <artifactId>ffi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>nokogiri</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
