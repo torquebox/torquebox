@@ -5,7 +5,6 @@ module TheModule
   class TheClass
   
     include Enumerable
-    include TorqueBox::Injectors
     include ::SomethingElse
     
     def initialize()

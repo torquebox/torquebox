@@ -28,11 +28,11 @@ public class DefaultNodeVisitor implements NodeVisitor {
                     indent.append( "    " );
                 }
                 if (node instanceof INameNode) {
-                    System.err.println( indent + " " + getNodeName( node ) + ": " + ((INameNode) node).getName() );
+                    System.err.println( indent + " " + node + " // " + getNodeName( node ) + ": " + ((INameNode) node).getName() );
                 } else if (node instanceof StrNode) {
-                    System.err.println( indent + " " + getNodeName( node ) + ": " + ((StrNode) node).getValue() );
+                    System.err.println( indent + " " + node + " // " + getNodeName( node ) + ": " + ((StrNode) node).getValue() );
                 } else {
-                    System.err.println( indent + " " + getNodeName( node ) );
+                    System.err.println( indent + " " + node + " // "  + getNodeName( node ) );
                 }
 
                 ++indentLevel;

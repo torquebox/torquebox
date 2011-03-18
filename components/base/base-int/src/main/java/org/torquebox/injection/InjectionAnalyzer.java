@@ -10,7 +10,6 @@ import org.torquebox.interp.analysis.ScriptAnalyzer;
 public class InjectionAnalyzer extends ScriptAnalyzer {
 
     public InjectionAnalyzer() {
-        setNodeVisitor( new InjectionVisitor( this ) );
     }
     
     public void setInjectableHandlerRegistry(InjectableHandlerRegistry registry) {
@@ -24,26 +23,16 @@ public class InjectionAnalyzer extends ScriptAnalyzer {
     
     @SuppressWarnings("unchecked")
     public List<Injectable> analyze(InputStream script) throws IOException {
-        Object result = super.analyze( script );
-        if ( result instanceof List ) {
-            return (List<Injectable>) result;
-        }
-        
-        List<Injectable> injections = new ArrayList<Injectable>();
-        injections.add( (Injectable) result );
-        return injections;
+        InjectionVisitor visitor = new InjectionVisitor( this );
+        analyze( script, visitor );
+        return visitor.getInjectables();
     }
     
     @SuppressWarnings("unchecked")
     public List<Injectable> analyze(String script) {
-        Object result = super.analyze( script );
-        if ( result instanceof List ) {
-            return (List<Injectable>) result;
-        }
-        
-        List<Injectable> injections = new ArrayList<Injectable>();
-        injections.add( (Injectable) result );
-        return injections;
+        InjectionVisitor visitor = new InjectionVisitor( this );
+        analyze( script, visitor );
+        return visitor.getInjectables();
     }
     
     private InjectableHandlerRegistry injectableHandlerRegistry;

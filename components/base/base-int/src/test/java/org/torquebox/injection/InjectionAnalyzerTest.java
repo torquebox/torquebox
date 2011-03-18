@@ -62,5 +62,14 @@ public class InjectionAnalyzerTest {
         assertEquals( "cdi", injectables.get( 2 ).getType() );
         assertEquals( "com.mycorp.mypackage.MyThing", injectables.get( 2 ).getName() );
     }
+    
+    @Test
+    public void testAnalysisWithoutMarker() throws Exception {
+        String script = readScript( "not_injection.rb" );
+        
+        List<Injectable> injectables = analyzer.analyze( script.toString() );
+        
+        assertTrue( injectables.isEmpty() );
+    }
 
 }

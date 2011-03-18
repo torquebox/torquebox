@@ -13,20 +13,10 @@ import org.jruby.runtime.scope.ManyVarsDynamicScope;
 
 public class ScriptAnalyzer {
 
-    private NodeVisitor visitor;
-
     public ScriptAnalyzer() {
     }
     
-    public void setNodeVisitor(NodeVisitor visitor) {
-        this.visitor = visitor;
-    }
-    
-    public NodeVisitor getNodeVisitor() {
-        return this.visitor;
-    }
-    
-    public Object analyze(InputStream in) throws IOException {
+    public Object analyze(InputStream in, NodeVisitor visitor) throws IOException {
         StringBuffer script = new StringBuffer();
         
         int numRead = 0;
@@ -36,14 +26,14 @@ public class ScriptAnalyzer {
             script.append( new String( buf, 0, numRead ) );
         }
         
-        return analyze( script.toString() );
+        return analyze( script.toString(), visitor );
     }
     
-    public Object analyze(String script) {
+    public Object analyze(String script, NodeVisitor visitor) {
         Ruby ruby = Ruby.newInstance();
         StaticScope staticScope = new LocalStaticScope( null );
         DynamicScope scope = new ManyVarsDynamicScope( staticScope );
         Node result = ruby.parseEval( script, "<analyzing>", scope, 0 );
-        return result.accept( this.visitor );
+        return result.accept( visitor );
     }
 }
