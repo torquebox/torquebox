@@ -26,7 +26,7 @@ import org.jruby.javasupport.JavaEmbedUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.common.reflect.ReflectionHelper;
-import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
+import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.interp.core.SharedRubyRuntimePool;
 import org.torquebox.test.AbstractTorqueBoxTestCase;
@@ -34,13 +34,13 @@ import org.torquebox.test.AbstractTorqueBoxTestCase;
 public class RubyServiceProxyTest extends AbstractTorqueBoxTestCase {
 
     private Ruby ruby;
-    private InstantiatingRubyComponentResolver resolver;
+    private RubyComponentResolver resolver;
     private RubyServiceProxy proxy;
 
     @Before
     public void setUp() throws Exception {
         this.ruby = createRuby();
-        this.resolver = new InstantiatingRubyComponentResolver();
+        this.resolver = new RubyComponentResolver();
         this.proxy = new RubyServiceProxy( resolver, new SharedRubyRuntimePool( this.ruby ) );
     }
 

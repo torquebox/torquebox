@@ -27,7 +27,7 @@ import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
-import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
+import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyJobFactory implements JobFactory {
@@ -57,7 +57,7 @@ public class RubyJobFactory implements JobFactory {
         JobDetail jobDetail = bundle.getJobDetail();
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
 
-        InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolver = new RubyComponentResolver();
         resolver.setAlwaysReload( this.alwaysReload );
         resolver.setComponentName( "jobs." + jobDetail.getFullName() );
         resolver.setRubyClassName( jobDataMap.getString( RUBY_CLASS_NAME_KEY ) );

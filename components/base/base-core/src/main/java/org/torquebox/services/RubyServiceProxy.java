@@ -24,7 +24,6 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.injection.spi.InjectableRegistry;
 import org.torquebox.injection.spi.RubyInjectionProxy;
-import org.torquebox.interp.core.ManagedComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
@@ -48,11 +47,7 @@ public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBe
     }
     
     public String getRubyClassName() {
-        if ( this.resolver instanceof ManagedComponentResolver ) {
-            return ((ManagedComponentResolver) this.resolver).getComponentName();
-        }
-        
-        return "<unknown>";
+        return this.resolver.getComponentName();
     }
     
     public synchronized void create() throws Exception {

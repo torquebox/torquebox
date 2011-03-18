@@ -36,7 +36,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
+import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
@@ -153,7 +153,7 @@ public class MessageProcessorDeployer extends AbstractDeployer {
     }
 
     protected RubyComponentResolver createComponentResolver(DeploymentUnit unit, MessageProcessorMetaData metaData) {
-        InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver result = new RubyComponentResolver();
         result.setRubyClassName( metaData.getRubyClassName() );
         result.setRubyRequirePath( metaData.getRubyRequirePath() );
         result.setComponentName( "message-processor." + metaData.getRubyClassName() );

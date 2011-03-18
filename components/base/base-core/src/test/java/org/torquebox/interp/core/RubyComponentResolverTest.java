@@ -35,7 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class InstantiatingRubyComponentResolverTest {
+public class RubyComponentResolverTest {
 
     private RubyRuntimeFactoryImpl factory;
     private Ruby ruby;
@@ -57,7 +57,7 @@ public class InstantiatingRubyComponentResolverTest {
     /** Ensure that resolution instantiates if-required. */
     @Test
     public void testResolveToInstantiate() throws Exception {
-        InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolver = new RubyComponentResolver();
 
         this.ruby.evalScriptlet( "class ComponentClass; end" );
         resolver.setComponentName( "component-foo" );
@@ -72,7 +72,7 @@ public class InstantiatingRubyComponentResolverTest {
     /** Ensure that repeated resolutions resolve to the same object. */
     @Test
     public void testResolveRepeatedly() throws Exception {
-        InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolver = new RubyComponentResolver();
 
         this.ruby.evalScriptlet( "class ComponentClass; end" );
         resolver.setComponentName( "component-foo" );
@@ -91,7 +91,7 @@ public class InstantiatingRubyComponentResolverTest {
     /** Ensure that appropriate file is required/loaded if provided. */
     @Test
     public void testResolveWithRequirePath() throws Exception {
-        InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolver = new RubyComponentResolver();
 
         resolver.setComponentName( "some-component" );
         resolver.setRubyClassName( "SomeComponent" );
@@ -111,7 +111,7 @@ public class InstantiatingRubyComponentResolverTest {
     /** Ensure that constructors may take arguments. */
     @Test
     public void testResolveWithContructorArguments() throws Exception {
-        InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolver = new RubyComponentResolver();
 
         resolver.setComponentName( "optional-component" );
         resolver.setRubyClassName( "OptionalComponent" );
@@ -131,11 +131,11 @@ public class InstantiatingRubyComponentResolverTest {
      */
     @Test
     public void testResolveMultipleNames() throws Exception {
-        InstantiatingRubyComponentResolver resolverOne = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolverOne = new RubyComponentResolver();
         resolverOne.setComponentName( "component-one" );
         resolverOne.setRubyClassName( "ComponentClassOne" );
 
-        InstantiatingRubyComponentResolver resolverTwo = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolverTwo = new RubyComponentResolver();
         resolverTwo.setComponentName( "component-two" );
         resolverTwo.setRubyClassName( "ComponentClassTwo" );
 
@@ -157,7 +157,7 @@ public class InstantiatingRubyComponentResolverTest {
      */
     @Test
     public void testAlwaysReload() throws Exception {
-        InstantiatingRubyComponentResolver resolver = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver resolver = new RubyComponentResolver();
 
         this.ruby.evalScriptlet( "class ComponentClass; end" );
         resolver.setComponentName( "component-foo" );

@@ -35,7 +35,7 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.injection.InjectionAnalyzer;
 import org.torquebox.injection.RubyProxyInjectionBuilder;
-import org.torquebox.interp.core.InstantiatingRubyComponentResolver;
+import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
@@ -108,7 +108,7 @@ public class ServicesDeployer extends AbstractDeployer {
     }
 
     protected RubyComponentResolver createComponentResolver(ServiceMetaData serviceMetaData) {
-        InstantiatingRubyComponentResolver result = new InstantiatingRubyComponentResolver();
+        RubyComponentResolver result = new RubyComponentResolver();
         result.setRubyClassName( StringUtils.camelize( serviceMetaData.getClassName() ) );
         result.setRubyRequirePath( StringUtils.underscore( serviceMetaData.getClassName() ) );
         result.setInitializeParams( serviceMetaData.getParameters() );
