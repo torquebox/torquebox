@@ -27,16 +27,10 @@ import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.injection.spi.InjectableRegistry;
+
 
 public class RubyComponentResolver {
-
-    private String componentName;
-    private boolean alwaysReload;
-    private String rubyClassName;
-    private String rubyRequirePath;
-    private Object[] initializeParams;
-
-    private static final Logger log = Logger.getLogger( RubyComponentResolver.class );
 
     public RubyComponentResolver() {
     }
@@ -91,6 +85,14 @@ public class RubyComponentResolver {
         return this.initializeParams;
     }
 
+    public void setRegistry(InjectableRegistry registry) {
+        this.registry = registry;
+    }
+
+    public InjectableRegistry getRegistry() {
+        return this.registry;
+    }
+
     public IRubyObject resolve(Ruby ruby) throws Exception {
         log.debug( "resolve(" + ruby + ")" );
         synchronized (ruby) {
@@ -132,9 +134,18 @@ public class RubyComponentResolver {
         if (componentClass == null || componentClass.isNil()) {
             return null;
         }
-
+        JavaEmbedUtils.invokeMethod( ruby, componentClass, "const_set", new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getRegistry() }, Object.class );
         IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, componentClass, "new", getInitializeParams(), IRubyObject.class );
         return component;
     }
+
+    private String componentName;
+    private boolean alwaysReload;
+    private String rubyClassName;
+    private String rubyRequirePath;
+    private Object[] initializeParams;
+    private InjectableRegistry registry;
+
+    private static final Logger log = Logger.getLogger( RubyComponentResolver.class );
 
 }

@@ -19,15 +19,25 @@ module TorqueBox
   module Injectors
 
     def mc name
+      lookup_injection 'mc', name
     end
 
     def cdi klass, qualifiers = {}
+      lookup_injection 'cdi', klass.to_s
     end
 
     def jndi name
+      lookup_injection 'jndi', name
     end
 
     def log name
+      lookup_injection 'log', name
+    end
+
+    def lookup_injection type, name
+      self.class.const_get("TORQUEBOX_INJECTION_REGISTRY").get(type, name)
+    rescue
+      STDERR.puts "Unable to inject '#{type}:#{name}': #{$!}"
     end
 
   end

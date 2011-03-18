@@ -108,6 +108,7 @@ public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBe
 
     protected IRubyObject getService() throws Exception {
         if (this.service == null) {
+            resolver.setRegistry( this.injectableRegistry );
             this.service = resolver.resolve( this.ruby );
         }
         return this.service;
