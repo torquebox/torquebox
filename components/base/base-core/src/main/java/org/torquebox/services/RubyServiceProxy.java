@@ -117,6 +117,7 @@ public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBe
     @Override
     public void setInjectableRegistry(InjectableRegistry injectableRegistry) {
         this.injectableRegistry = injectableRegistry;
+        System.out.println("JC: registry="+injectableRegistry);
     }
     
     public InjectableRegistry getInjectableRegistry() {

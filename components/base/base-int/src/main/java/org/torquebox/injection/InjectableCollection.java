@@ -20,4 +20,8 @@ public class InjectableCollection {
         return this.map.get( name );
     }
 
+    public String toString() {
+        return "[InjectableCollection: name=" + getName() + ", count=" + this.map.size() + "]";
+    }
+
 }

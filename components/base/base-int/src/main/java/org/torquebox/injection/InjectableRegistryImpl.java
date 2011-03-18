@@ -41,4 +41,13 @@ public class InjectableRegistryImpl implements InjectableRegistry {
         return collection.get( objectName );
     }
 
+    public String toString() {
+        StringBuilder result = new StringBuilder("[InjectableRegistryImpl:\n");
+        for (InjectableCollection collection: this.collections.values()) {
+            result.append( "  " + collection.toString() + "\n" );
+        }
+        result.append("]");
+        return result.toString();
+    }
+
 }
