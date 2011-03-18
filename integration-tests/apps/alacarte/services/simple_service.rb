@@ -1,9 +1,10 @@
 
 class SimpleService 
+  include TorqueBox::Injectors
 
-  torque {
-    inject :webserver, mc('jboss.web:service=WebServer')
-  }
+  def initialize
+    @webserver = mc('jboss.web:service=WebServer')
+  end
 
   def start() 
     @should_run = true
