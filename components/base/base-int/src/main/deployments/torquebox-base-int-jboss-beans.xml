@@ -13,7 +13,9 @@
   
   <bean name="MCBeanInjectableHandler"          class="org.torquebox.injection.MCBeanInjectableHandler"/>
   <bean name="JNDIInjectableHandler"            class="org.torquebox.injection.JNDIInjectableHandler"/>
+  <!--
   <bean name="CDIInjectableHandler"             class="org.torquebox.injection.CDIInjectableHandler"/>
+  -->
   
   <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
   
