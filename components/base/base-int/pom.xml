@@ -92,6 +92,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.weld</groupId>
+      <artifactId>weld-core</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-vdf-test-support</artifactId>
       <version>${project.version}</version>

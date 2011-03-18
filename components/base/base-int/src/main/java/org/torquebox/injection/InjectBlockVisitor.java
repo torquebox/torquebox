@@ -1,11 +1,15 @@
 package org.torquebox.injection;
 
+import java.util.Stack;
+
 import org.jruby.ast.ArrayNode;
+import org.jruby.ast.CallNode;
 import org.jruby.ast.FCallNode;
 import org.jruby.ast.Node;
 import org.jruby.ast.NodeType;
 import org.jruby.ast.StrNode;
 import org.jruby.ast.SymbolNode;
+import org.jruby.ast.VCallNode;
 import org.torquebox.interp.analysis.DefaultNodeVisitor;
 
 public class InjectBlockVisitor extends DefaultNodeVisitor {
@@ -17,7 +21,9 @@ public class InjectBlockVisitor extends DefaultNodeVisitor {
     @Override
     public Object visitFCallNode(FCallNode node) {
         String type = node.getName();
+        System.err.println( "calling on " + node );
         InjectableHandler handler = this.analyzer.getInjectableHandlerRegistry().getHandler( type );
+        System.err.println( "hanlder: " + handler );
         if (handler != null) {
             return handler.handle( node.getArgsNode() );
         }
@@ -39,6 +45,7 @@ public class InjectBlockVisitor extends DefaultNodeVisitor {
         }
         return str;
     }
+    
 
     private InjectionAnalyzer analyzer;
 

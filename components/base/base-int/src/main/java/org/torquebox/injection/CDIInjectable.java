@@ -3,21 +3,21 @@ package org.torquebox.injection;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.mc.JNDIKernelRegistryPlugin;
+import org.torquebox.mc.CDIKernelRegistryPlugin;
 
-public class JNDIInjectable extends SimpleNamedInjectable {
+public class CDIInjectable extends SimpleNamedInjectable {
     
-    public JNDIInjectable(String name) {
-        this( "jndi", name );
+    public CDIInjectable(String name) {
+        this( "cdi", name );
     }
     
-    public JNDIInjectable(String type, String name) {
+    public CDIInjectable(String type, String name) {
         super( type, name );
     }
 
     @Override
     public ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder) {
-        return builder.createInject( JNDIKernelRegistryPlugin.JNDI_DEPENDENCY_PREFIX + getName() );
+        return builder.createInject( CDIKernelRegistryPlugin.CDI_DEPENDENCY_PREFIX + getName() );
     }
 
 }

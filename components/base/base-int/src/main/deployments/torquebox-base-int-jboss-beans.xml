@@ -13,10 +13,12 @@
   
   <bean name="MCBeanInjectableHandler"          class="org.torquebox.injection.MCBeanInjectableHandler"/>
   <bean name="JNDIInjectableHandler"            class="org.torquebox.injection.JNDIInjectableHandler"/>
+  <bean name="CDIInjectableHandler"             class="org.torquebox.injection.CDIInjectableHandler"/>
   
   <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
   
   <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
+  <bean name="TorqueBoxCDIKernelRegistryPlugin"  class="org.torquebox.mc.CDIKernelRegistryPlugin"/>
   
   <bean name="KnobStructure"                     class="org.torquebox.base.deployers.KnobStructure"/>
   <bean name="RubyApplicationRecognizer"         class="org.torquebox.base.deployers.RubyApplicationRecognizer"/>

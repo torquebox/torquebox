@@ -39,6 +39,7 @@ public class InjectionAnalyzerTest {
         this.analyzer.setInjectableHandlerRegistry(  this.registry  );
         this.registry.addInjectableHandler( new MCBeanInjectableHandler() );
         this.registry.addInjectableHandler( new JNDIInjectableHandler() );
+        this.registry.addInjectableHandler( new CDIInjectableHandler() );
     }
     
     @Test
@@ -47,7 +48,7 @@ public class InjectionAnalyzerTest {
         
         List<Injectable> injectables = analyzer.analyze( script.toString() );
         
-        assertEquals( 2, injectables.size() );
+        assertEquals( 3, injectables.size() );
         
         assertTrue( injectables.get( 0 ) instanceof MCBeanInjectable );
         assertEquals( "mc", injectables.get( 0 ).getType() );
@@ -56,6 +57,10 @@ public class InjectionAnalyzerTest {
         assertTrue( injectables.get( 1 ) instanceof JNDIInjectable );
         assertEquals( "jndi", injectables.get( 1 ).getType() );
         assertEquals( "java:/comp/whatever", injectables.get( 1 ).getName() );
+        
+        assertTrue( injectables.get( 2 ) instanceof CDIInjectable );
+        assertEquals( "cdi", injectables.get( 2 ).getType() );
+        assertEquals( "com.mycorp.mypackage.MyThing", injectables.get( 2 ).getName() );
     }
 
 }

@@ -6,6 +6,7 @@ module TheModule
     torque {
    		@random = mc('jboss.whatever.Thing')
    		@something = jndi('java:/comp/whatever' )
+   		@another = cdi( com.mycorp.mypackage.MyThing )
     }
   end
 end
