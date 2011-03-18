@@ -22,6 +22,10 @@ public class SimpleNamedInjectable implements Injectable {
         return this.name;
     }
     
+    public String getKey() {
+        return getName();
+    }
+    
     @Override
     public ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder) {
         return builder.createInject( getName() );

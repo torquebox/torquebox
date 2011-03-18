@@ -118,7 +118,7 @@ public class RubyProxyInjectionBuilder {
             collectionBuilder.addConstructorParameter( "java.lang.String", collectionName );
             Map<ValueMetaData, ValueMetaData> collectionMap = collectionBuilder.createMap();
             for (Injectable each : collectionInjectables) {
-                ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), each.getName() );
+                ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), each.getKey() );
                 collectionMap.put( collectionKey, each.createMicrocontainerInjection( this.context, this.beanBuilder ) );
             }
             collectionBuilder.addConstructorParameter( "java.util.Map", collectionMap );

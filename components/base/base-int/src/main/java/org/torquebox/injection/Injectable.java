@@ -8,6 +8,7 @@ public interface Injectable {
     
     String getType();
     String getName();
+    String getKey();
     ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder);
 
 }

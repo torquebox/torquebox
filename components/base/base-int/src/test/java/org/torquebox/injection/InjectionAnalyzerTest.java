@@ -53,14 +53,17 @@ public class InjectionAnalyzerTest {
         assertTrue( injectables.get( 0 ) instanceof MCBeanInjectable );
         assertEquals( "mc", injectables.get( 0 ).getType() );
         assertEquals( "jboss.whatever.Thing", injectables.get( 0 ).getName() );
+        assertEquals( "jboss.whatever.Thing", injectables.get( 0 ).getKey() );
         
         assertTrue( injectables.get( 1 ) instanceof JNDIInjectable );
         assertEquals( "jndi", injectables.get( 1 ).getType() );
         assertEquals( "java:/comp/whatever", injectables.get( 1 ).getName() );
+        assertEquals( "java:/comp/whatever", injectables.get( 1 ).getKey() );
         
         assertTrue( injectables.get( 2 ) instanceof CDIInjectable );
         assertEquals( "cdi", injectables.get( 2 ).getType() );
         assertEquals( "com.mycorp.mypackage.MyThing", injectables.get( 2 ).getName() );
+        assertEquals( "Java::ComMycorpMypackage::MyThing", injectables.get( 2 ).getKey() );
     }
     
     @Test
