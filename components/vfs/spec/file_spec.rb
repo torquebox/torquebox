@@ -439,4 +439,13 @@ describe "File extensions for VFS" do
     end
   end
 
+  describe 'subclasses' do
+    it "should open an instance of the subclass" do
+      class MyFile < File
+        def new_method; 'hello'; end
+      end
+      MyFile.open(__FILE__).new_method.should == 'hello'
+    end
+  end
+
 end

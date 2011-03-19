@@ -44,13 +44,13 @@ class File
 
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
-        return File.open_without_vfs( fname, mode_str, &block )
+        return open_without_vfs( fname, mode_str, &block )
       end
       unless ( vfs_path?(fname) )
-        return File.open_without_vfs(fname, mode_str, flags, &block )
+        return open_without_vfs(fname, mode_str, flags, &block )
       end
       if ( File.exist_without_vfs?( name_without_vfs(fname) ) )
-        return File.open_without_vfs( name_without_vfs(fname), mode_str, flags, &block )
+        return open_without_vfs( name_without_vfs(fname), mode_str, flags, &block )
       end
       self.vfs_open( fname.to_s, mode_str, &block )
     end
