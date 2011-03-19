@@ -21,7 +21,7 @@ class SimpleService
   end
 
   def loop_once
-    $stderr.puts "Service executing loop!"
+    $stderr.puts "Service executing loop with #{@webserver}!"
     basedir = ENV['BASEDIR' ]
     basedir.gsub!( %r(\\:), ':' )
     basedir.gsub!( %r(\\\\), '\\' )
