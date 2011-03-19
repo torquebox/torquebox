@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
@@ -106,27 +105,43 @@ public class RubyProxyInjectionBuilder {
 
         Map<String, Collection<Injectable>> collated = collate( injectables );
 
-        List<ValueMetaData> collections = beanBuilder.createList();
-        
         BeanMetaDataBuilder registryBuilder = BeanMetaDataBuilder.createBuilder( beanBuilder.getBeanMetaData().getName() + "$" + InjectableRegistry.class.getName(), InjectableRegistryImpl.class.getName() );
+        
+        List<ValueMetaData> collections = beanBuilder.createList( null, InjectableCollection.class.getName() );
+        //List collections = new ArrayList();
 
         for (String collectionName : collated.keySet()) {
             Collection<Injectable> collectionInjectables = collated.get( collectionName );
 
-            String collectionBeanName = beanBuilder.getBeanMetaData().getName() + "$" + InjectableCollection.class.getName() + "$" + collectionName;
+            //String collectionBeanName = beanBuilder.getBeanMetaData().getName() + "-" + InjectableCollection.class.getName() + "-" + collectionName;
+            String collectionBeanName = "chuck";
             BeanMetaDataBuilder collectionBuilder = BeanMetaDataBuilder.createBuilder( collectionBeanName, InjectableCollection.class.getName() );
-            collectionBuilder.addConstructorParameter( "java.lang.String", collectionName );
-            Map<ValueMetaData, ValueMetaData> collectionMap = collectionBuilder.createMap();
+            collectionBuilder.addConstructorParameter( String.class.getName(), collectionName );
+            
+            Map<ValueMetaData, ValueMetaData> collectionMap = collectionBuilder.createMap( HashMap.class.getName(), String.class.getName(), null );
             for (Injectable each : collectionInjectables) {
-                ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), each.getKey() );
+                String injectableKey = each.getKey();
+                ValueMetaData injectable = each.createMicrocontainerInjection( this.context, collectionBuilder );
+                
+                System.err.println( "key: " + injectableKey );
+                System.err.println( "injectable: " + injectable );
+                
+                ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), injectableKey );
                 collectionMap.put( collectionKey, each.createMicrocontainerInjection( this.context, collectionBuilder ) );
             }
-            collectionBuilder.addConstructorParameter( "java.util.Map", collectionMap );
+            
+            collectionBuilder.addConstructorParameter( Map.class.getName(), collectionMap );
+            
+            collectionBuilder.addPropertyMetaData( "map", collectionMap );
             collections.add( collectionBuilder.getBeanMetaData() );
+            
+            System.err.println( "ATTACH: " + collectionBuilder.getBeanMetaData() );
+            AttachmentUtils.attach(  this.context, collectionBuilder.getBeanMetaData() );
         }
 
         registryBuilder.addPropertyMetaData( "collections", collections );
 
+        AttachmentUtils.attach( this.context, registryBuilder.getBeanMetaData() );
         beanBuilder.addPropertyMetaData( "injectableRegistry", registryBuilder.getBeanMetaData() );
     }
 

@@ -131,7 +131,7 @@
           <systemProperties>
             <property>
               <name>log4j.configuration</name>
-              <value>log4j.xml</value>
+              <value>test-log4j.xml</value>
             </property>
           </systemProperties>
         </configuration>   

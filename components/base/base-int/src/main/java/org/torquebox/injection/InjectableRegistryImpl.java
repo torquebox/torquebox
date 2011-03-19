@@ -1,5 +1,6 @@
 package org.torquebox.injection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,27 @@ public class InjectableRegistryImpl implements InjectableRegistry {
         
     }
     
+    public void create() {
+        System.err.println( "CREATE InjectableRegistryImpl: " + this.collections );
+    }
+    
+    public void start() {
+        System.err.println( "START InjectableRegistryImpl: " + this.collections );
+    }
+    
     public void setCollections(List<InjectableCollection> collections) {
+        System.err.println( "SET COLLECTIONS: " + collections );
         this.collections.clear();
         
         for ( InjectableCollection each : collections ) {
             this.collections.put( each.getName(), each );
         }
+    }
+    
+    public List<InjectableCollection> getCollections() {
+        ArrayList<InjectableCollection> list = new ArrayList<InjectableCollection>();
+        list.addAll( this.collections.values() );
+        return list;
     }
     
     public Set<String> getCollectionNames() {
