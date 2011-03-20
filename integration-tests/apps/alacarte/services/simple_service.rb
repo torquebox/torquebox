@@ -21,13 +21,14 @@ class SimpleService
   end
 
   def loop_once
-    $stderr.puts "Service executing loop with #{@webserver}!"
-    basedir = ENV['BASEDIR' ]
-    basedir.gsub!( %r(\\:), ':' )
-    basedir.gsub!( %r(\\\\), '\\' )
-    touchfile = File.join( basedir, 'target', 'touchfile.txt' )
-    File.open( touchfile, 'w' ) do |f|
-      f.puts( "Updated #{Time.now}" )
+    if @webserver
+      basedir = ENV['BASEDIR' ]
+      basedir.gsub!( %r(\\:), ':' )
+      basedir.gsub!( %r(\\\\), '\\' )
+      touchfile = File.join( basedir, 'target', 'touchfile.txt' )
+      File.open( touchfile, 'w' ) do |f|
+        f.puts( "Updated #{Time.now}" )
+      end
     end
   end
 
