@@ -30,6 +30,7 @@ public class CDIInjectable extends SimpleNamedInjectable {
         
         String bootstrapName = DeployersUtils.getBootstrapBeanName(context);
         injectionBridgeBuilder.addDemand(  bootstrapName );
+        injectionBridgeBuilder.addDemand(  "TorqueBoxWeldJndiBinder" );
         
         AttachmentUtils.attach( context, injectionBridgeBuilder.getBeanMetaData() );
         

@@ -3,16 +3,19 @@ class SimpleService
   include TorqueBox::Injectors
 
   def initialize
+    puts "init"
     @webserver = mc('jboss.web:service=WebServer')
-    #@something = cdi( javax.validator.Validator )
+    @something = cdi( org.torquebox.ThingOne )
   end
 
   def start() 
+    puts "start"
     @should_run = true
     spawn_thread()
   end
 
   def spawn_thread()
+    puts "spawn_thread"
     @thread = Thread.new do
       while @should_run 
         loop_once
@@ -22,7 +25,7 @@ class SimpleService
   end
 
   def loop_once
-    if @webserver
+    if ( @webserver && @something )
       basedir = ENV['BASEDIR' ]
       basedir.gsub!( %r(\\:), ':' )
       basedir.gsub!( %r(\\\\), '\\' )

@@ -1,5 +1,6 @@
 package org.torquebox.injection.deployers;
 
+import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
@@ -13,17 +14,29 @@ import org.torquebox.mc.AttachmentUtils;
 public class CDIBridgeDeployer extends AbstractDeployer {
 
     public CDIBridgeDeployer() {
-        setInput(RubyApplicationMetaData.class);
+        setInput( RubyApplicationMetaData.class );
         addOutput( BootstrapInfo.class );
-        setStage( DeploymentStages.PRE_PARSE );
+        addOutput( BeanMetaData.class );
+        setStage( DeploymentStages.POST_PARSE );
     }
-    
+
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
+        
         String beanName = AttachmentUtils.beanName( unit, CDIBridge.class );
-        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder(  beanName, CDIBridge.class.getName() );
+        
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, CDIBridge.class.getName() );
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-        log.info(  "Deploying CDIBridge" );
+        
+        System.err.println( "CDIBridge-Attach: " + builder.getBeanMetaData() );
+        
+        /*
+        log.info( "Deploying CDIBridge" );
+        for (VirtualFile path : ((VFSDeploymentUnit) unit).getClassPath()) {
+            log.info( "Path: " + path );
+            log.info( "--> " + path.getChild(  "META-INF/beans.xml"  ));
+        }
+        */
         unit.addAttachment( BootstrapInfo.class, new BootstrapInfo() );
     }
 

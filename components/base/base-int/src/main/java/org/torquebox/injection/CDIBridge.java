@@ -15,7 +15,15 @@ import javax.naming.NamingException;
 public class CDIBridge {
 
     public CDIBridge() {
-
+        System.err.println( "CDIBridge: construct" );
+    }
+    
+    public void create() {
+        System.err.println( "CDIBridge: create" );
+    }
+    
+    public void start() {
+        System.err.println( "CDIBridge: create" );
     }
 
     public CDIBridge(Hashtable<?, ?> environment) {
@@ -34,7 +42,8 @@ public class CDIBridge {
 
         if (this.manager == null) {
 
-            InitialContext context = new InitialContext( this.environment );
+            //InitialContext context = new InitialContext( this.environment );
+            InitialContext context = new InitialContext();
 
             try {
                 this.manager = (BeanManager) context.lookup( BEAN_MANAGER_JNDI_NAME );
@@ -71,7 +80,8 @@ public class CDIBridge {
         return manager.getReference( bean, type, context );
     }
 
-    public static final String BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";
+    //public static final String BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";
+    public static final String BEAN_MANAGER_JNDI_NAME = "java:global/cdi/services/services/BeanManager";
     private Hashtable<?, ?> environment;
     private BeanManager manager;
 }
