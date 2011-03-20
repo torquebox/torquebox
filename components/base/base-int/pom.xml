@@ -97,6 +97,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>weld-int-deployer</artifactId>
+      <version>${version.jbossas}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-vdf-test-support</artifactId>
       <version>${project.version}</version>

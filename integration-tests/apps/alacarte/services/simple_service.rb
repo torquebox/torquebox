@@ -4,6 +4,7 @@ class SimpleService
 
   def initialize
     @webserver = mc('jboss.web:service=WebServer')
+    #@something = cdi( javax.validator.Validator )
   end
 
   def start() 

@@ -1,8 +1,12 @@
 package org.torquebox.injection;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.weld.integration.deployer.DeployersUtils;
+import org.torquebox.mc.AttachmentUtils;
 
 public class CDIInjectable extends SimpleNamedInjectable {
 
@@ -16,14 +20,23 @@ public class CDIInjectable extends SimpleNamedInjectable {
 
     @Override
     public ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder) {
-        String injectableBridgeBeanName = null;
-        String cdiBridgeBeanName = null;
         
-        BeanMetaDataBuilder injectableBridgeBuilder = BeanMetaDataBuilder.createBuilder( injectableBridgeBeanName, CDIInjectionBridge.class.getName() );
-        injectableBridgeBuilder.addConstructorParameter( CDIBridge.class.getName(), builder.createInject( cdiBridgeBeanName ) );
-        injectableBridgeBuilder.addConstructorParameter( String.class.getName(), getName() );
+        String cdiBridgeBeanName = AttachmentUtils.beanName( context, CDIBridge.class  );
+        String injectableBridgeBeanName = AttachmentUtils.beanName( context, CDIInjectionBridge.class, "" + this.counter.getAndIncrement() );
         
-        return builder.createInject( injectableBridgeBuilder.getBeanMetaData(), "value" );
+        BeanMetaDataBuilder injectionBridgeBuilder = BeanMetaDataBuilder.createBuilder( injectableBridgeBeanName, CDIInjectionBridge.class.getName() );
+        injectionBridgeBuilder.addConstructorParameter( CDIBridge.class.getName(), builder.createInject( cdiBridgeBeanName ) );
+        injectionBridgeBuilder.addConstructorParameter( String.class.getName(), getName() );
+        
+        String bootstrapName = DeployersUtils.getBootstrapBeanName(context);
+        injectionBridgeBuilder.addDemand(  bootstrapName );
+        
+        AttachmentUtils.attach( context, injectionBridgeBuilder.getBeanMetaData() );
+        
+        System.err.println( "BRIDGE ATTACH: " + injectionBridgeBuilder.getBeanMetaData() );
+
+        
+        return builder.createInject( injectableBridgeBeanName, "value" );
     }
 
     @Override
@@ -62,5 +75,7 @@ public class CDIInjectable extends SimpleNamedInjectable {
         }
         return buf.toString();
     }
+    
+    private AtomicInteger counter = new AtomicInteger();
 
 }

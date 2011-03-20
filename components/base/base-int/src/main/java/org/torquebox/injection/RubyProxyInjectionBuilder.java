@@ -113,8 +113,8 @@ public class RubyProxyInjectionBuilder {
         for (String collectionName : collated.keySet()) {
             Collection<Injectable> collectionInjectables = collated.get( collectionName );
 
-            //String collectionBeanName = beanBuilder.getBeanMetaData().getName() + "-" + InjectableCollection.class.getName() + "-" + collectionName;
-            String collectionBeanName = "chuck";
+            String collectionBeanName = beanBuilder.getBeanMetaData().getName() + "-" + InjectableCollection.class.getName() + "-" + collectionName;
+            //String collectionBeanName = "chuck";
             BeanMetaDataBuilder collectionBuilder = BeanMetaDataBuilder.createBuilder( collectionBeanName, InjectableCollection.class.getName() );
             collectionBuilder.addConstructorParameter( String.class.getName(), collectionName );
             
@@ -127,7 +127,7 @@ public class RubyProxyInjectionBuilder {
                 System.err.println( "injectable: " + injectable );
                 
                 ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), injectableKey );
-                collectionMap.put( collectionKey, each.createMicrocontainerInjection( this.context, collectionBuilder ) );
+                collectionMap.put( collectionKey, injectable );
             }
             
             collectionBuilder.addConstructorParameter( Map.class.getName(), collectionMap );
@@ -141,7 +141,7 @@ public class RubyProxyInjectionBuilder {
 
         registryBuilder.addPropertyMetaData( "collections", collections );
 
-        AttachmentUtils.attach( this.context, registryBuilder.getBeanMetaData() );
+        AttachmentUtils.attach( this.context, registryBuilder.getBeanMetaDataFactory() );
         beanBuilder.addPropertyMetaData( "injectableRegistry", registryBuilder.getBeanMetaData() );
     }
 

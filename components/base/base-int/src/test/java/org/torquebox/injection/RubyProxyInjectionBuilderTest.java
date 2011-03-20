@@ -47,8 +47,6 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         System.err.println(  "AAA" );
         processDeployments(true);
         
-        System.err.println( "chuck: " + getBean( "chuck" ) );
-        
         MockProxy proxy = (MockProxy) getBean( "proxy" );
         
         System.err.println(  "BBB" );
