@@ -23,20 +23,15 @@ public class CDIBridgeDeployer extends AbstractDeployer {
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         
-        String beanName = AttachmentUtils.beanName( unit, CDIBridge.class );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         
+        String beanName = AttachmentUtils.beanName( unit, CDIBridge.class );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, CDIBridge.class.getName() );
+        builder.addConstructorParameter( String.class.getName(), rubyAppMetaData.getApplicationName() );
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
         
         System.err.println( "CDIBridge-Attach: " + builder.getBeanMetaData() );
         
-        /*
-        log.info( "Deploying CDIBridge" );
-        for (VirtualFile path : ((VFSDeploymentUnit) unit).getClassPath()) {
-            log.info( "Path: " + path );
-            log.info( "--> " + path.getChild(  "META-INF/beans.xml"  ));
-        }
-        */
         unit.addAttachment( BootstrapInfo.class, new BootstrapInfo() );
     }
 

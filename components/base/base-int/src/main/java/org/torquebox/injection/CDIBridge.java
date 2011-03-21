@@ -14,39 +14,18 @@ import javax.naming.NamingException;
 
 public class CDIBridge {
 
-    public CDIBridge() {
-        System.err.println( "CDIBridge: construct" );
+    public CDIBridge(String applicationName) {
+        this.applicationName = applicationName;
     }
     
-    public void create() {
-        System.err.println( "CDIBridge: create" );
-    }
-    
-    public void start() {
-        System.err.println( "CDIBridge: create" );
-    }
-
-    public CDIBridge(Hashtable<?, ?> environment) {
-        this.environment = environment;
-    }
-
-    public void setEnvironment(Hashtable<?, ?> environment) {
-        this.environment = environment;
-    }
-
-    public Hashtable<?, ?> getEnvironment() {
-        return this.environment;
-    }
-
     public synchronized BeanManager getBeanManager() throws NamingException {
 
         if (this.manager == null) {
 
-            //InitialContext context = new InitialContext( this.environment );
             InitialContext context = new InitialContext();
 
             try {
-                this.manager = (BeanManager) context.lookup( BEAN_MANAGER_JNDI_NAME );
+                this.manager = (BeanManager) context.lookup( getBeanManagerName() );
             } finally {
                 context.close();
             }
@@ -79,9 +58,13 @@ public class CDIBridge {
         CreationalContext<?> context = manager.createCreationalContext( bean );
         return manager.getReference( bean, type, context );
     }
+    
+    public String getBeanManagerName() {
+        return "java:global/cdi/" + this.applicationName + "/" + this.applicationName + "/BeanManager";
+    }
 
     //public static final String BEAN_MANAGER_JNDI_NAME = "java:comp/BeanManager";
-    public static final String BEAN_MANAGER_JNDI_NAME = "java:global/cdi/services/services/BeanManager";
-    private Hashtable<?, ?> environment;
+    //public static final String BEAN_MANAGER_JNDI_NAME = "java:global/cdi/services/services/BeanManager";
+    private String applicationName;
     private BeanManager manager;
 }

@@ -81,6 +81,7 @@ public class RubyApplicationMetaData {
     }
     
     public void setApplicationName(String applicationName) {
+        applicationName = applicationName.replaceAll( "\\.trq$", "" );
         this.applicationName = applicationName;
     }
     
