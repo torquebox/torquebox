@@ -6,6 +6,6 @@ describe "exposing app name to rack app" do
 
   it "set the constant and env var" do
     visit "/app_name"
-    page.should have_content('constant:app_name.trq|env:app_name.trq')
+    page.should have_content('constant:app_name|env:app_name')
   end
 end
