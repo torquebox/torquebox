@@ -30,12 +30,20 @@ module TorqueBox
       lookup_injection 'jndi', name
     end
 
+    def queue name
+      lookup_injection 'queue', name
+    end
+
+    def topic name
+      lookup_injection 'topic', name
+    end
+
     def log name
       lookup_injection 'log', name
     end
 
     def lookup_injection type, name
-      self.class.const_get("TORQUEBOX_INJECTION_REGISTRY").get(type, name)
+      TORQUEBOX_INJECTION_REGISTRY.get(type, name)
     rescue
       STDERR.puts "Unable to inject '#{type}:#{name}': #{$!}"
     end
