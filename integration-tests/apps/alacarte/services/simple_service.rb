@@ -2,7 +2,7 @@
 class SimpleService 
   include TorqueBox::Injectors
 
-  def initialize
+  def initialize(opts={})
     puts "init"
     @webserver = mc('jboss.web:service=WebServer')
     @something = cdi( org.torquebox.ThingOne )
