@@ -22,12 +22,10 @@ package org.torquebox.services;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.common.reflect.ReflectionHelper;
-import org.torquebox.injection.spi.InjectableRegistry;
-import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBean {
+public class RubyServiceProxy implements RubyServiceProxyMBean {
     
     public RubyServiceProxy() {
         // MicroContainer seems to want this declared
@@ -108,20 +106,9 @@ public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBe
 
     protected IRubyObject getService() throws Exception {
         if (this.service == null) {
-            resolver.setRegistry( this.injectableRegistry );
             this.service = resolver.resolve( this.ruby );
         }
         return this.service;
-    }
-    
-    @Override
-    public void setInjectableRegistry(InjectableRegistry injectableRegistry) {
-        this.injectableRegistry = injectableRegistry;
-        System.out.println("JC: registry="+injectableRegistry);
-    }
-    
-    public InjectableRegistry getInjectableRegistry() {
-        return this.injectableRegistry;
     }
     
     private boolean started = false;
@@ -130,7 +117,5 @@ public class RubyServiceProxy implements RubyInjectionProxy, RubyServiceProxyMBe
     private Ruby ruby;
     private IRubyObject service;
     private RubyComponentResolver resolver;
-    
-    private InjectableRegistry injectableRegistry;
     
 }

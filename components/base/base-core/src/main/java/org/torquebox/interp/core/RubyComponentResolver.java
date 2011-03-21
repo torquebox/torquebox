@@ -28,9 +28,10 @@ import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.injection.spi.InjectableRegistry;
+import org.torquebox.injection.spi.RubyInjectionProxy;
 
 
-public class RubyComponentResolver {
+public class RubyComponentResolver implements RubyInjectionProxy {
 
     public RubyComponentResolver() {
     }
@@ -85,11 +86,12 @@ public class RubyComponentResolver {
         return this.initializeParams;
     }
 
-    public void setRegistry(InjectableRegistry registry) {
+    @Override
+    public void setInjectableRegistry(InjectableRegistry registry) {
         this.registry = registry;
     }
 
-    public InjectableRegistry getRegistry() {
+    public InjectableRegistry getInjectableRegistry() {
         return this.registry;
     }
 
@@ -134,7 +136,7 @@ public class RubyComponentResolver {
         if (componentClass == null || componentClass.isNil()) {
             return null;
         }
-        JavaEmbedUtils.invokeMethod( ruby, componentClass, "const_set", new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getRegistry() }, Object.class );
+        JavaEmbedUtils.invokeMethod( ruby, componentClass, "const_set", new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getInjectableRegistry() }, Object.class );
         IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, componentClass, "new", getInitializeParams(), IRubyObject.class );
         return component;
     }

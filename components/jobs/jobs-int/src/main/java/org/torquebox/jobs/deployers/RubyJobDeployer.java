@@ -19,6 +19,8 @@
 
 package org.torquebox.jobs.deployers;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Set;
 
 import javax.management.JMX;
@@ -31,6 +33,10 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.common.util.StringUtils;
+import org.torquebox.injection.AbstractRubyComponentDeployer;
+import org.torquebox.injection.InjectionAnalyzer;
+import org.torquebox.injection.RubyProxyInjectionBuilder;
 import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.core.ScheduledJobMBean;
@@ -47,7 +53,7 @@ import org.torquebox.mc.jmx.JMXUtils;
  * 
  * Creates objects from metadata
  */
-public class RubyJobDeployer extends AbstractDeployer {
+public class RubyJobDeployer extends AbstractRubyComponentDeployer {
 
     public RubyJobDeployer() {
         setAllInputs( true );
@@ -79,28 +85,29 @@ public class RubyJobDeployer extends AbstractDeployer {
 
         log.debug( "deploying job: " + beanName );
 
-        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, ScheduledJob.class.getName() );
+        BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder( beanName, ScheduledJob.class.getName() );
 
-        builder.addPropertyMetaData( "group", metaData.getGroup() );
-        builder.addPropertyMetaData( "name", metaData.getName() );
-        builder.addPropertyMetaData( "rubyClassName", metaData.getRubyClassName() );
-        builder.addPropertyMetaData( "rubyRequirePath", metaData.getRubyRequirePath() );
-        builder.addPropertyMetaData( "description", metaData.getDescription() );
-        builder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
+        beanBuilder.addPropertyMetaData( "group", metaData.getGroup() );
+        beanBuilder.addPropertyMetaData( "name", metaData.getName() );
+        beanBuilder.addPropertyMetaData( "rubyClassName", metaData.getRubyClassName() );
+        beanBuilder.addPropertyMetaData( "rubyRequirePath", metaData.getRubyRequirePath() );
+        beanBuilder.addPropertyMetaData( "description", metaData.getDescription() );
+        beanBuilder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
         
         String mbeanName = JMXUtils.jmxName( "torquebox.jobs", rubyAppMetaData.getApplicationName() ).with( "name", metaData.getName() ).name();
         String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\""+ mbeanName + "\", exposedInterface=" + ScheduledJobMBean.class.getName() + ".class)";
-        builder.addAnnotation( jmxAnno );
+        beanBuilder.addAnnotation( jmxAnno );
 
         String schedulerBeanName = metaData.getRubySchedulerName();
         if (schedulerBeanName == null) {
             schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
         }
-        ValueMetaData schedulerInjection = builder.createInject( schedulerBeanName, "scheduler" );
-        builder.addPropertyMetaData( "scheduler", schedulerInjection );
-
-        BeanMetaData beanMetaData = builder.getBeanMetaData();
+        ValueMetaData schedulerInjection = beanBuilder.createInject( schedulerBeanName, "scheduler" );
+        beanBuilder.addPropertyMetaData( "scheduler", schedulerInjection );
+        
+        BeanMetaData beanMetaData = beanBuilder.getBeanMetaData();
 
         AttachmentUtils.attach( unit, beanMetaData );
     }
+    
 }
