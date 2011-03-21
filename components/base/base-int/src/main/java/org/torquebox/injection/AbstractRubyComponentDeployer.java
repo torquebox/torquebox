@@ -24,9 +24,8 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jboss.beans.metadata.spi.ValueMetaData;
+import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
-import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.common.util.StringUtils;
@@ -46,7 +45,7 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
         return this.injectionAnalyzer;
     }
 
-    protected ValueMetaData createComponentResolver(DeploymentUnit unit, String componentName, String rubyClassName, Map<String, Object> initParams) throws IOException, URISyntaxException {
+    protected BeanMetaData createComponentResolver(DeploymentUnit unit, String componentName, String rubyClassName, Map<String, Object> initParams) throws IOException, URISyntaxException {
         String beanName = AttachmentUtils.beanName( unit, RubyComponentResolver.class, "" + this.counter.getAndIncrement() );
         BeanMetaDataBuilder resolverBuilder = BeanMetaDataBuilder.createBuilder( beanName, RubyComponentResolver.class.getName() );
 

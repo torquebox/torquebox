@@ -41,6 +41,7 @@ public class ScheduledJob implements ScheduledJobMBean {
 
     private String rubyClassName;
     private String rubyRequirePath;
+    private String rubyComponentResolverName;
 
     private String cronExpression;
 
@@ -48,6 +49,7 @@ public class ScheduledJob implements ScheduledJobMBean {
     private Scheduler scheduler;
 
     private JobDetail jobDetail;
+    
 
     public ScheduledJob() {
 
@@ -67,6 +69,14 @@ public class ScheduledJob implements ScheduledJobMBean {
 
     public String getName() {
         return this.name;
+    }
+    
+    public void setComponentResolverName(String name) {
+        this.rubyComponentResolverName = name;
+    }
+    
+    public String getComponentResolverName() {
+        return this.rubyComponentResolverName;
     }
 
     public void setRubyClassName(String rubyClassName) {
@@ -127,6 +137,8 @@ public class ScheduledJob implements ScheduledJobMBean {
         jobDetail.setJobClass( RubyJob.class );
 
         JobDataMap jobData = jobDetail.getJobDataMap();
+        
+        jobData.put(  RubyJobFactory.COMPONENT_RESOLVER_NAME, getComponentResolverName() );
 
         jobData.put( RubyJobFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName );
         if ((this.rubyRequirePath != null) && (!this.rubyRequirePath.trim().equals( "" ))) {

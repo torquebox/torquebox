@@ -28,6 +28,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.kernel.Kernel;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.jobs.core.RubyScheduler;
@@ -46,12 +47,21 @@ import org.torquebox.mc.AttachmentUtils;
 public class RubySchedulerDeployer extends AbstractDeployer {
 
     private String runtimePoolName;
+    private Kernel kernel;
 
     public RubySchedulerDeployer() {
         setAllInputs( true );
         addInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
+    }
+    
+    public void setKernel(Kernel kernel) {
+        this.kernel = kernel;
+    }
+    
+    public Kernel getKernel() {
+        return this.kernel;
     }
 
     public void setRubyRuntimePoolName(String runtimePoolName) {
@@ -74,6 +84,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         String beanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyScheduler.class.getName() );
 
+        builder.addPropertyMetaData( "kernel", this.kernel );
         builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
         RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         if (envMetaData != null) {

@@ -80,7 +80,7 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
     }
 
     protected void deploy(DeploymentUnit unit, ScheduledJobMetaData metaData) throws DeploymentException {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(  RubyApplicationMetaData.class  );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         String beanName = AttachmentUtils.beanName( unit, ScheduledJob.class, metaData.getName() );
 
         log.debug( "deploying job: " + beanName );
@@ -93,9 +93,18 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addPropertyMetaData( "rubyRequirePath", metaData.getRubyRequirePath() );
         beanBuilder.addPropertyMetaData( "description", metaData.getDescription() );
         beanBuilder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
-        
+
+        try {
+            BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), null );
+            beanBuilder.addPropertyMetaData( "componentResolverName", resolverMetaData.getName() );
+        } catch (URISyntaxException e) {
+            throw new DeploymentException( e );
+        } catch (IOException e) {
+            throw new DeploymentException( e );
+        }
+
         String mbeanName = JMXUtils.jmxName( "torquebox.jobs", rubyAppMetaData.getApplicationName() ).with( "name", metaData.getName() ).name();
-        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\""+ mbeanName + "\", exposedInterface=" + ScheduledJobMBean.class.getName() + ".class)";
+        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + ScheduledJobMBean.class.getName() + ".class)";
         beanBuilder.addAnnotation( jmxAnno );
 
         String schedulerBeanName = metaData.getRubySchedulerName();
@@ -104,10 +113,10 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         }
         ValueMetaData schedulerInjection = beanBuilder.createInject( schedulerBeanName, "scheduler" );
         beanBuilder.addPropertyMetaData( "scheduler", schedulerInjection );
-        
+
         BeanMetaData beanMetaData = beanBuilder.getBeanMetaData();
 
         AttachmentUtils.attach( unit, beanMetaData );
     }
-    
+
 }
