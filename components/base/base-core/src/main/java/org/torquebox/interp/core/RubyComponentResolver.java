@@ -72,18 +72,13 @@ public class RubyComponentResolver implements RubyInjectionProxy {
         this.initializeParams = initializeParams;
     }
 
-    public void setInitializeParams(Collection params) {
-        if (params != null)
-            setInitializeParams( params.toArray() );
-    }
-
-    public void setInitializeParams(Map params) {
-        if (params != null)
-            setInitializeParams( new Object[] { params } );
-    }
-
     public Object[] getInitializeParams() {
         return this.initializeParams;
+    }
+
+    public void setInitializeParamsMap(Map params) {
+        if (params != null)
+            setInitializeParams( new Object[] { params } );
     }
 
     @Override

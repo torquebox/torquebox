@@ -51,7 +51,7 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
 
         resolverBuilder.addPropertyMetaData( "rubyClassName", StringUtils.camelize( rubyClassName ) );
         resolverBuilder.addPropertyMetaData( "rubyRequirePath", StringUtils.underscore( rubyClassName ) );
-        resolverBuilder.addPropertyMetaData( "initializeParams", initParams );
+        resolverBuilder.addPropertyMetaData( "initializeParamsMap", initParams );
         resolverBuilder.addPropertyMetaData( "componentName", componentName );
 
         setUpInjections( unit, resolverBuilder, rubyClassName );

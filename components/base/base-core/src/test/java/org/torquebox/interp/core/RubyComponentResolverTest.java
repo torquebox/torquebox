@@ -117,7 +117,7 @@ public class RubyComponentResolverTest {
         resolver.setRubyClassName( "OptionalComponent" );
         resolver.setRubyRequirePath( "org/torquebox/interp/core/optional_component" );
         Map options = ruby.evalScriptlet( "{ :a => '1', 'b' => '2' }" ).convertToHash();
-        resolver.setInitializeParams( options );
+        resolver.setInitializeParamsMap( options );
 
         IRubyObject component = resolver.resolve( this.ruby );
         assertNotNull( component );

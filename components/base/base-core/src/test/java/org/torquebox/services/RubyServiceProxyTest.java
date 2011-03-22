@@ -64,7 +64,7 @@ public class RubyServiceProxyTest extends AbstractTorqueBoxTestCase {
     public void testInitialization() throws Exception {
         resolver.setRubyClassName( "TestService" );
         resolver.setRubyRequirePath( "org/torquebox/services/test_service" );
-        resolver.setInitializeParams( ruby.evalScriptlet( "{'foo'=>42}" ).convertToHash() );
+        resolver.setInitializeParamsMap( ruby.evalScriptlet( "{'foo'=>42}" ).convertToHash() );
 
         proxy.create();
         proxy.start();
