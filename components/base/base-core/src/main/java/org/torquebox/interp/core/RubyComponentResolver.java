@@ -111,7 +111,8 @@ public class RubyComponentResolver implements RubyInjectionProxy {
                     log.debug( "Registered component: " + component );
                 }
                 if (isAlwaysReload()) {
-                    ruby.evalScriptlet( "Dispatcher.cleanup_application if defined?(Dispatcher)" );
+                    ruby.evalScriptlet( "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); //rails2
+                    ruby.evalScriptlet( "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); //rails3
                     log.debug( "Reloaded ruby: " + ruby );
                 }
             }

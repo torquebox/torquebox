@@ -1,8 +1,7 @@
 require 'spec_helper'
 require 'torquebox-messaging'
 
-describe "backgroundable tests" do
-
+describe "rails 2 backgroundable tests" do
   deploy :path => "rails2/backgroundable_reload-knob.yml"
 
   before(:each) do
@@ -14,7 +13,7 @@ describe "backgroundable tests" do
     visit "/backgroundable_reload/widgets"
     page.should have_content( 'it worked' )
     @background.receive(:timeout => 25000).should == 'a response'
-    
+
     rewrite_file( @model_path, 'a response', 'a new response' )
     @background.receive(:timeout => 25000).should == 'a new response'
 
