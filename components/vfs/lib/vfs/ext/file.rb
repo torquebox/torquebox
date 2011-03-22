@@ -96,6 +96,7 @@ class File
 
       virtual_file = Java::org.jboss.vfs.VFS.child( vfs_url )
       virtual_file = virtual_file.get_child( child_path ) if child_path
+      raise Errno::ENOENT.new(filename) unless virtual_file.exists?
 
       Time.at( virtual_file.getLastModified() / 1000 )
     end
