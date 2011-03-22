@@ -171,6 +171,8 @@ class File
       stat = stat(filename)
       return stat.writable? if stat
       false
+    rescue Errno::ENOENT
+      false
     end
 
     def directory?(filename)
