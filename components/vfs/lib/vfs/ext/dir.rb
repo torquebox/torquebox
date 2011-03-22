@@ -171,9 +171,9 @@ class Dir
       [ '.', '..' ] + vfs_dir.children.collect{|e| e.name }
     end
 
-    def foreach(path,&block)
-      entries(path).each{|e| yield e}
-      nil
+    def foreach(path, &block)
+      enum = entries(path).each(&block)
+      block_given? ? nil : enum
     end
 
   end
