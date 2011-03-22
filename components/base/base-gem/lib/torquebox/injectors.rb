@@ -43,7 +43,7 @@ module TorqueBox
     end
 
     def lookup_injection type, name
-      TORQUEBOX_INJECTION_REGISTRY.get(type, name)
+      self.class.const_get("TORQUEBOX_INJECTION_REGISTRY").get(type, name)
     rescue
       STDERR.puts "Unable to inject '#{type}:#{name}': #{$!}"
     end
