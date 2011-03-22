@@ -23,7 +23,7 @@ module TorqueBox
         @components[name]
       end
 
-      def register_component(name, component )
+      def register_component(name, component)
         @components ||= {}
         @components[name] = component
       end

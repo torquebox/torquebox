@@ -26,7 +26,7 @@ import java.net.URL;
  * 
  * <p>
  * While the load path is described as a collection of {@link URL} instances,
- * the URLs are intended to be local or VFS-based URLs. It is highly unlike a
+ * the URLs are intended to be local or VFS-based URLs. It is highly unlikely a
  * {@code http://} URL will work.
  * </p>
  * 

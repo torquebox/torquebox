@@ -37,7 +37,6 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.core.RubyComponentResolver;
-import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.jmx.JMXUtils;
