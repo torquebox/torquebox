@@ -596,6 +596,48 @@
             </configuration>
           </execution>
           <execution>
+            <id>create-security-realm</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                <![CDATA[
+                puts 'Creating JBoss security realm for TorqueBox'
+                conf_file = './target/stage/torquebox-${project.version}/jboss/server/default/conf/login-config.xml' 
+                finished  = false
+                lines = File.readlines( conf_file )
+                File.open( conf_file, 'w' ) do |file|
+                  lines.each do |line|
+                    if (/\<\/policy\>/ =~ line)
+                      file.write( %Q(
+  <application-policy name="torquebox-auth">
+    <authentication>
+      <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
+        <module-option name="usersProperties">props/torquebox-users.properties</module-option>
+        <module-option name="rolesProperties">props/torquebox-roles.properties</module-option>
+      </login-module>
+    </authentication>
+  </application-policy>
+))
+                      finished = true
+                    end
+                    file.write( line )
+                    break if finished
+                  end
+                end
+                File.open('./target/stage/torquebox-${project.version}/jboss/server/default/conf/props/torquebox-users.properties', 'w') do |file|
+                  file.write('admin=torquebox')
+                end
+                File.open('./target/stage/torquebox-${project.version}/jboss/server/default/conf/props/torquebox-roles.properties', 'w') do |file|
+                  file.write('admin=admin')
+                end
+]]>
+              </script>
+            </configuration>
+          </execution>
+          <execution>
             <id>increase-xmx</id>
             <phase>generate-resources</phase>
             <goals>
