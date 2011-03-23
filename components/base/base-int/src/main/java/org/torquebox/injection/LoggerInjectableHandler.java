@@ -10,6 +10,7 @@ public class LoggerInjectableHandler extends AbstractInjectableHandler {
 
     public Injectable handle(Node node) {
         String name = getString( node );
+        if (name == null) name = getJavaClassName( node );
         return new LoggerInjectable( name );
     }
     

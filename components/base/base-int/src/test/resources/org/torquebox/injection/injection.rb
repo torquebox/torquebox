@@ -19,5 +19,10 @@ module TheModule
     def another_method() 
       @another = cdi( com.mycorp.mypackage.MyThing )
     end
+
+    def logging_methods()
+      @log_by_string = log( 'some name' )
+      @log_by_class = log( com.mycorp.mypackage.MyThing )
+    end
   end
 end
