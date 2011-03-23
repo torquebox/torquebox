@@ -625,7 +625,7 @@
                   end
                 end
                 File.open('./target/stage/torquebox-${project.version}/jboss/server/default/conf/props/torquebox-users.properties', 'w') do |file|
-                  file.write('admin=torquebox')
+                  file.write("admin=torquebox\n")
                 end
                 File.open('./target/stage/torquebox-${project.version}/jboss/server/default/conf/props/torquebox-roles.properties', 'w') do |file|
                   file.write('admin=admin')

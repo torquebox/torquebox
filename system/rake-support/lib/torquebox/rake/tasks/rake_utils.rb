@@ -36,6 +36,12 @@ module TorqueBox
     def self.server_dir
       File.join("#{jboss_home}","server", "#{jboss_conf}" )
     end
+    def self.config_dir
+      File.join("#{server_dir}","conf")
+    end
+    def self.properties_dir
+      File.join("#{config_dir}","props")
+    end
     def self.deploy_dir
       File.join("#{server_dir}","deploy")
     end

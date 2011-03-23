@@ -15,8 +15,22 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/rake/tasks/rake_utils'
-require 'torquebox/rake/tasks/server'
-require 'torquebox/rake/tasks/deployment'
-require 'torquebox/rake/tasks/archive'
-require 'torquebox/rake/tasks/auth'
+require 'rake'
+
+
+namespace :torquebox do
+
+  namespace :auth do
+    desc "Add a username and password to the torquebox-auth security realm with CREDENTIALS=user:pass"
+    task :adduser do
+      puts "Provide credentials as rake torquebox:auth:adduser CREDENTIALS=user:pass" and return unless ENV['CREDENTIALS']
+      credentials = ENV['CREDENTIALS'].gsub(/:/,'=')
+      properties_file = "#{TorqueBox::RakeUtils.properties_dir}/torquebox-users.properties"
+      File.open( properties_file, 'a' ) do |file|
+        file.puts "#{credentials}"
+      end
+      puts "Credentials written to #{properties_file}"
+    end
+  end
+end
+
