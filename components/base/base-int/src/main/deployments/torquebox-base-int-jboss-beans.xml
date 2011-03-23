@@ -22,6 +22,7 @@
   <bean name="MCBeanInjectableHandler"          class="org.torquebox.injection.MCBeanInjectableHandler"/>
   <bean name="JNDIInjectableHandler"            class="org.torquebox.injection.JNDIInjectableHandler"/>
   <bean name="CDIInjectableHandler"             class="org.torquebox.injection.CDIInjectableHandler"/>
+  <bean name="LoggerInjectableHandler"          class="org.torquebox.injection.LoggerInjectableHandler"/>
   
   <bean name="CDIBridgeDeployer"                class="org.torquebox.injection.deployers.CDIBridgeDeployer"/>
   
