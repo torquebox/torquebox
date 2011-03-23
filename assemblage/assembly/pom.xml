@@ -606,7 +606,6 @@
                 <![CDATA[
                 puts 'Creating JBoss security realm for TorqueBox'
                 conf_file = './target/stage/torquebox-${project.version}/jboss/server/default/conf/login-config.xml' 
-                finished  = false
                 lines = File.readlines( conf_file )
                 File.open( conf_file, 'w' ) do |file|
                   lines.each do |line|
@@ -621,10 +620,8 @@
     </authentication>
   </application-policy>
 ))
-                      finished = true
                     end
                     file.write( line )
-                    break if finished
                   end
                 end
                 File.open('./target/stage/torquebox-${project.version}/jboss/server/default/conf/props/torquebox-users.properties', 'w') do |file|
