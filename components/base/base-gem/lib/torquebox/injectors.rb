@@ -38,8 +38,8 @@ module TorqueBox
       lookup_injection 'topic', name
     end
 
-    def log name
-      lookup_injection 'log', name
+    def jboss_logger(category = self.class)
+      org.jboss.logging::Logger.getLogger( category.to_s )
     end
 
     def lookup_injection type, name

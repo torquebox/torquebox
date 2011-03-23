@@ -6,7 +6,7 @@ class SimpleService
     puts "init"
     @webserver = mc('jboss.web:service=WebServer')
     @something = cdi( org.torquebox.ThingOne )
-    @logger = log( "Foobledydoo" )
+    @logger = jboss_logger
   end
 
   def start() 
