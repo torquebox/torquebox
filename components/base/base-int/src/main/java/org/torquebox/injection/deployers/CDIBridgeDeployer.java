@@ -6,6 +6,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.jboss.weld.integration.deployer.DeployersUtils;
 import org.jboss.weld.integration.deployer.env.BootstrapInfo;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.injection.CDIBridge;
@@ -33,6 +34,9 @@ public class CDIBridgeDeployer extends AbstractDeployer {
         System.err.println( "CDIBridge-Attach: " + builder.getBeanMetaData() );
         
         unit.addAttachment( BootstrapInfo.class, new BootstrapInfo() );
+        unit.addAttachment( DeployersUtils.WELD_DEPLOYMENT_FLAG, Boolean.TRUE, Boolean.class );
+        
+
     }
 
 }

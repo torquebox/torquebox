@@ -4,14 +4,12 @@
 
   <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
   
-  <bean name="TorqueBoxWeldJndiBinder" class="org.jboss.weld.integration.deployer.env.WeldJndiBinder">
-    <start method="startService">
-      <parameter>java:comp/BeanManager</parameter>
-      <parameter>org.jboss.weld.resources.ManagerObjectFactory</parameter>
-    </start>
-    <stop method="stopService"/>
-  </bean>
+  <bean name="WeldJndiBinderDeployer" class="org.torquebox.injection.deployers.WeldJndiBinderDeployer"/>
   
+  <bean name="TorqueBoxWeldJndiBinder" class="org.torquebox.injection.cdi.TorqueBoxWeldJndiBinder">
+    <depends>JndiBinder</depends>
+    <property name="nameSpaces"><inject bean="NameSpaces"/></property>
+  </bean>
   
   <bean name="InjectableHandlerRegistry"        class="org.torquebox.injection.InjectableHandlerRegistry"/>
   
