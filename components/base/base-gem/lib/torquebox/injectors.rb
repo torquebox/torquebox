@@ -18,6 +18,14 @@
 module TorqueBox
   module Injectors
 
+    def inject something, qualifiers = {}
+      if something.is_a? Class
+        inject_cdi something, qualifiers
+      else
+        lookup_injection nil, something
+      end
+    end
+
     def inject_mc name
       lookup_injection 'mc', name
     end
