@@ -18,27 +18,27 @@
 module TorqueBox
   module Injectors
 
-    def mc name
+    def inject_mc name
       lookup_injection 'mc', name
     end
 
-    def cdi klass, qualifiers = {}
+    def inject_cdi klass, qualifiers = {}
       lookup_injection 'cdi', klass.to_s
     end
 
-    def jndi name
+    def inject_jndi name
       lookup_injection 'jndi', name
     end
 
-    def queue name
+    def inject_queue name
       lookup_injection 'queue', name
     end
 
-    def topic name
+    def inject_topic name
       lookup_injection 'topic', name
     end
 
-    def jboss_logger(category = self.class)
+    def inject_logger(category = self.class)
       org.jboss.logging::Logger.getLogger( category.to_s )
     end
 
