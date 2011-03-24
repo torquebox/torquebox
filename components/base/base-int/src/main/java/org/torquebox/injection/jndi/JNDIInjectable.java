@@ -1,8 +1,9 @@
-package org.torquebox.injection;
+package org.torquebox.injection.jndi;
 
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.injection.SimpleNamedInjectable;
 import org.torquebox.mc.JNDIKernelRegistryPlugin;
 
 public class JNDIInjectable extends SimpleNamedInjectable {

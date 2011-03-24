@@ -10,6 +10,12 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.injection.cdi.CDIInjectable;
+import org.torquebox.injection.cdi.CDIInjectableHandler;
+import org.torquebox.injection.jndi.JNDIInjectable;
+import org.torquebox.injection.jndi.JNDIInjectableHandler;
+import org.torquebox.injection.mc.MCBeanInjectable;
+import org.torquebox.injection.mc.MCBeanInjectableHandler;
 
 public class InjectionAnalyzerTest {
     

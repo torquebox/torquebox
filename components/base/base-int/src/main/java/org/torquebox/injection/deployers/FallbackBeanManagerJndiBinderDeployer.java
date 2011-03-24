@@ -12,10 +12,21 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.weld.integration.deployer.DeployersUtils;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.injection.cdi.FallbackBeanManagerJndiBinder;
 
-public class WeldJndiBinderDeployer extends AbstractDeployer {
+/** Deployer that notices a Weld bootstrap, and wires up our FallbackBeanManagerJndiBinder 
+ *  to catch non-JavaEE-alike deployments.
+ *  
+ *  Such as service-only knobs.
+ *  
+ *  @see FallbackBeanManagerJndiBinder#bind(DeploymentUnit)
+ *  
+ *  @author Bob McWhirter
+ *
+ */
+public class FallbackBeanManagerJndiBinderDeployer extends AbstractDeployer {
     
-    public WeldJndiBinderDeployer() {
+    public FallbackBeanManagerJndiBinderDeployer() {
         setStage( DeploymentStages.PRE_REAL );
         setInput( RubyApplicationMetaData.class );
         addInput( BeanMetaData.class );
@@ -26,30 +37,22 @@ public class WeldJndiBinderDeployer extends AbstractDeployer {
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        System.err.println( "FIX CANDIDATE: "+ unit );
         String bootstrapAttachmentName = DeployersUtils.getBootstrapBeanAttachmentName(unit);
         BeanMetaData bootstrapBmd = unit.getAttachment( bootstrapAttachmentName, BeanMetaData.class );
         
         if ( bootstrapBmd == null ) {
-            Set<? extends BeanMetaData> all = unit.getAllMetaData( BeanMetaData.class );
-            
-            for ( BeanMetaData each : all ) {
-                System.err.println( "FIX DUMP: " + each );
-            }
             return;
         }
         
-        System.err.println( "==> FIXING UP BMD: " + bootstrapBmd );
         BeanMetaDataBuilder bootstrap = BeanMetaDataBuilder.createBuilder( bootstrapBmd );
         
-        ParameterMetaDataBuilder jndiInstall = bootstrap.addInstallWithParameters("bind", "TorqueBoxWeldJndiBinder", ControllerState.INSTALLED, ControllerState.START);
+        ParameterMetaDataBuilder jndiInstall = bootstrap.addInstallWithParameters("bind", FallbackBeanManagerJndiBinder.class.getSimpleName(), ControllerState.INSTALLED, ControllerState.START);
         jndiInstall.addParameterMetaData(DeploymentUnit.class.getName(), unit);
 
-        ParameterMetaDataBuilder jndiUninstall = bootstrap.addUninstallWithParameters("unbind", "TorqueBoxWeldJndiBinder");
+        ParameterMetaDataBuilder jndiUninstall = bootstrap.addUninstallWithParameters("unbind", FallbackBeanManagerJndiBinder.class.getSimpleName() );
         jndiUninstall.addParameterMetaData(DeploymentUnit.class.getName(), unit);
 
         bootstrapBmd = bootstrap.getBeanMetaData();
-        System.err.println( "==> FIXED UP BMD: " + bootstrapBmd );
         unit.addAttachment(DeployersUtils.getBootstrapBeanAttachmentName(unit), bootstrapBmd );
         
     }

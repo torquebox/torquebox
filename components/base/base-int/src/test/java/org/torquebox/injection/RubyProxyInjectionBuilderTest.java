@@ -11,6 +11,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.injection.spi.InjectableRegistry;
 import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.mc.AttachmentUtils;

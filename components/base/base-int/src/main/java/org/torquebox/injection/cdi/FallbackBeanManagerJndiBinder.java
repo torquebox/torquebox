@@ -18,11 +18,19 @@ import org.jboss.weld.integration.util.IdFactory;
 import org.jboss.weld.integration.util.JndiUtils;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 
-public class TorqueBoxWeldJndiBinder {
+/** Binds the CDI BeanManager in cases where an application is not recognized as a JavaEE app.
+ * 
+ * @author Bob McWhirter
+ */
+public class FallbackBeanManagerJndiBinder {
     
-    private static final String INHIBIT_JNDI = TorqueBoxWeldJndiBinder.class.getName() + "$inhibit.jndi";
+    /** Attachment key determining if this action should be inhibited. */
+    private static final String INHIBIT = FallbackBeanManagerJndiBinder.class.getName() + "$inhibit";
     
+    /** Context into which to bind the beanManager. */
     private Context beanManagerContext;
+    
+    /** Global namespaces. */
     private NameSpaces nameSpaces;
 
     public void bind(DeploymentUnit unit) throws DeploymentException {
@@ -79,7 +87,7 @@ public class TorqueBoxWeldJndiBinder {
                     subcontext.bind( "BeanManager", reference );
                 }
             } catch (NameAlreadyBoundException e) {
-                unit.addAttachment( INHIBIT_JNDI, Boolean.TRUE );
+                unit.addAttachment( INHIBIT, Boolean.TRUE );
             } catch (NamingException e) {
                 throw new DeploymentException( e );
             }
@@ -98,7 +106,7 @@ public class TorqueBoxWeldJndiBinder {
         }
 
         public void visit(DeploymentUnit unit) throws DeploymentException {
-            if ( unit.isAttachmentPresent( INHIBIT_JNDI ) ) {
+            if ( unit.isAttachmentPresent( INHIBIT) ) {
                 return;
             }
             try {
