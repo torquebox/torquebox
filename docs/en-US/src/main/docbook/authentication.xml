@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="authentication">
+  <title>Authentication</title>
+
+  <para>
+    TorqueBox provides a simple Ruby interface to the underlying JAAS 
+    security framework built into the JBoss Application Server. JAAS
+    (Java Authentication and Authorization Service) is a pluggable 
+    security framework which intends to shield application developers
+    from the underlying security implementation.  We kept with this
+    approach for TorqueBox and have hidden most all of the implementation
+    details so you can focus on writing your applications.
+  </para>
+  <para>
+    TorqueBox applications can authenticate against any security policy
+    that you have specified in your JBoss login configuration. To learn
+    more about how JBoss security works and is configured, refer to the
+    JBoss documentation.
+    <ulink>
+    http://www.jboss.org/jbossas/docs/6-x/Core-Documentation/security.html
+    </ulink>
+    The TorqueBox integration, however, makes authenticating against a corporate 
+    JAAS data store trivial.
+  </para>
+
+  <section>
+    <title>Security Domains</title>
+    <para>
+      The JBoss Application Server provides security policy functionality that allows
+      application developers to authenticate against one of many named and configured 
+      security policies.  We refer to these policy names as "domains".
+      TorqueBox ships with a simple authentication domain, named <code>torquebox-auth</code> 
+      pre-configured in the Application Server.  The <code>torquebox-auth</code> domain
+      authenticates against a simple users properties file found in
+      <code>$TORQUEBOX_HOME/jboss/server/default/conf/props/torquebox-users.properties</code>.  
+      There is no need, however to edit this file directly. To add a new username and
+      password to the security domain, use our rake task.
+      <screen>
+rake torquebox:auth:adduser CREDENTIALS=user:pass
+      </screen>
+      The <code>torquebox-auth</code> domain is loaded and configured by default when your 
+      application is deployed.  To authenticate 
+      against a different security domain, for example <code>jms-console</code>, configure 
+      this in your deployment descriptor as described in the YAML Configuration section.
+    </para>
+  </section>
+
+  <section>
+    <title>YAML Configuration</title>
+    <para>
+      TorqueBox authentication is configured in the <code>torquebox.yml</code> file or in a
+      separate <code>auth.yml</code> by adding an <code>auth</code> 
+      section.  Within this, you may add one or more named authentication handles.  For 
+      example, let's say your application is a dashboard which allows users to access JMX
+      and HornetQ data.  Most of the time, you're going to be using the hornetq domain, but
+      on occasion, you'll want to authenticate against the JMX domain.  You can do this
+      within Ruby code by configuring your <code>auth</code> section like this.
+      <screen>
+auth:
+  default:
+    domain: hornetq
+  jmx:
+    domain: jmx-console
+      </screen>
+    </para>
+    A handle to the HornetQ authentication domain is now available to you with 
+    <screen>authenticator = TorqueBox::Authentication.default</screen> and the JMX authentication
+    domain can be obtained like this: <screen>authenticator = TorqueBox::Authentication['jmx']</screen>
+  </section>
+
+  <section>
+    <title>Ruby API</title>
+    <para>
+      The Ruby API has 3 methods.
+    <itemizedlist spacing="compact">
+      <listitem>
+        <para><code>default</code></para>
+      </listitem>
+      <listitem>
+        <para><code>[]( name )</code></para>
+      </listitem>
+      <listitem>
+        <para><code>authenticate( username, password )</code></para>
+      </listitem>
+    </itemizedlist>
+    </para>
+    <para>
+      The first two methods, <code>default</code> and <code>[]</code> are used
+      to get the default authentication domain or to lookup an authenticator by
+      name.  The last is to actually authenticate a user.  To use the Ruby API,
+      include <code>torquebox</code> and
+      <code>org/torquebox/auth/authentication</code> as shown below. This code
+      shows a simple Ruby authentication module that authenticates agains the
+      JAAS security configuration.
+    </para>
+    
+    <para>
+      <screen>
+require 'torquebox'
+require 'org/torquebox/auth/authentication'
+
+module MyApp
+  module Authentication
+ 
+    def login_path
+      "/login"
+    end
+
+    def authenticated?
+      !session[:user].nil?
+    end
+   
+    def authenticate(username, password)
+      return false if username.blank? || password.blank?
+      authenticator = TorqueBox::Authentication.default
+      authenticator.authenticate(username, password) do
+        session[:user] = username
+      end
+    end
+
+    def require_authentication
+      return if authenticated?
+      redirect login_path 
+    end
+
+    def logout
+      session[:user] = nil
+      redirect login_path
+    end
+   
+  end
+end
+      </screen>
+      The <code>authenticate</code> method accepts a block, so
+      you can execute code within an authenticated context.
+    </para>
+
+  </section>
+
+</chapter>
