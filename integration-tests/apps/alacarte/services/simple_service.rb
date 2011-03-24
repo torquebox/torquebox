@@ -4,8 +4,9 @@ class SimpleService
 
   def initialize(opts={})
     puts "init"
-    @webserver = mc('jboss.web:service=WebServer')
-    @something = cdi( org.torquebox.ThingOne )
+    @webserver = inject_mc('jboss.web:service=WebServer')
+    @something = inject_cdi( org.torquebox.ThingOne )
+    @logger = inject_logger
   end
 
   def start() 
@@ -26,6 +27,7 @@ class SimpleService
 
   def loop_once
     if ( @webserver && @something )
+      @logger.info "Looping once"
       basedir = ENV['BASEDIR' ]
       basedir.gsub!( %r(\\:), ':' )
       basedir.gsub!( %r(\\\\), '\\' )
