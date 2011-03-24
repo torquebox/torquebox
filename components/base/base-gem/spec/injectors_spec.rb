@@ -9,13 +9,13 @@ describe TorqueBox::Injectors do
 
     it "should return a logger identified by a class" do
       require 'active_support/cache/torque_box_store'
-      logger = jboss_logger( ActiveSupport::Cache::TorqueBoxStore )
+      logger = inject_logger( ActiveSupport::Cache::TorqueBoxStore )
       logger.info("this should work")
       logger.name.should == "ActiveSupport::Cache::TorqueBoxStore"
     end
 
     it "should return a logger identified by a string" do
-      logger = jboss_logger( "flibbity-jibbit" )
+      logger = inject_logger( "flibbity-jibbit" )
       logger.info("this should work")
       logger.name.should == "flibbity-jibbit"
     end
@@ -24,7 +24,7 @@ describe TorqueBox::Injectors do
       class Foo
         include TorqueBox::Injectors
         def logger
-          jboss_logger
+          inject_logger
         end
       end
       logger = Foo.new.logger
