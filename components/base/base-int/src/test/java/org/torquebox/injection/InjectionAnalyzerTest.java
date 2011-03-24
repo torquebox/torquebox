@@ -40,7 +40,6 @@ public class InjectionAnalyzerTest {
         this.registry.addInjectableHandler( new MCBeanInjectableHandler() );
         this.registry.addInjectableHandler( new JNDIInjectableHandler() );
         this.registry.addInjectableHandler( new CDIInjectableHandler() );
-        this.registry.addInjectableHandler( new LoggerInjectableHandler() );
     }
     
     @Test
@@ -49,7 +48,7 @@ public class InjectionAnalyzerTest {
         
         List<Injectable> injectables = analyzer.analyze( script.toString() );
         
-        assertEquals( 5, injectables.size() );
+        assertEquals( 3, injectables.size() );
         
         assertTrue( injectables.get( 0 ) instanceof MCBeanInjectable );
         assertEquals( "mc", injectables.get( 0 ).getType() );
@@ -65,16 +64,6 @@ public class InjectionAnalyzerTest {
         assertEquals( "cdi", injectables.get( 2 ).getType() );
         assertEquals( "com.mycorp.mypackage.MyThing", injectables.get( 2 ).getName() );
         assertEquals( "Java::ComMycorpMypackage::MyThing", injectables.get( 2 ).getKey() );
-
-        assertTrue( injectables.get( 3 ) instanceof LoggerInjectable );
-        assertEquals( "log", injectables.get( 3 ).getType() );
-        assertEquals( "some name", injectables.get( 3 ).getName() );
-        assertEquals( "some name", injectables.get( 3 ).getKey() );
-
-        assertTrue( injectables.get( 4 ) instanceof LoggerInjectable );
-        assertEquals( "log", injectables.get( 4 ).getType() );
-        assertEquals( "com.mycorp.mypackage.MyThing", injectables.get( 4 ).getName() );
-        assertEquals( "com.mycorp.mypackage.MyThing", injectables.get( 4 ).getKey() );
     }
     
     @Test
