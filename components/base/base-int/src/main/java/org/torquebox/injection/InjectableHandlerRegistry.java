@@ -36,8 +36,8 @@ public class InjectableHandlerRegistry {
         log.info( "Unregistering injectable handler: " + handler.getType() + " - " + handler );
         return this.registry.remove( handler.getType() );
     }
-    
+
     public InjectableHandler getHandler(String type) {
-        return this.registry.get( type );
+        return type.startsWith("inject_") ? this.registry.get( type.substring(7) ) : null;
     }
 }

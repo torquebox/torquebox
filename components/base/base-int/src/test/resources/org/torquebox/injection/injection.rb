@@ -9,15 +9,15 @@ module TheModule
     include ::SomethingElse
     
     def initialize()
-      @random = mc('jboss.whatever.Thing')
+      @random = inject_mc('jboss.whatever.Thing')
     end
     
     def do_something()
-      @something = jndi('java:/comp/whatever' )
+      @something = inject_jndi('java:/comp/whatever' )
     end
     
     def another_method() 
-      @another = cdi( com.mycorp.mypackage.MyThing )
+      @another = inject_cdi( com.mycorp.mypackage.MyThing )
     end
   end
 end
