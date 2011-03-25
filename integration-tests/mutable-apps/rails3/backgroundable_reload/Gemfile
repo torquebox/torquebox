@@ -29,7 +29,7 @@ gem 'rails', '3.0.5'
 # group :development, :test do
 #   gem 'webrat'
 # end
-gem "activerecord-jdbc-adapter", :require => "arjdbc"
+gem "activerecord-jdbc-adapter" 
 gem "jdbc-sqlite3"
 gem "jruby-openssl"
 gem "torquebox-rake-support"

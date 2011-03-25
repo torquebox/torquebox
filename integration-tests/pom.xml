@@ -260,6 +260,18 @@
             <artifactId>gem-maven-plugin</artifactId>
             <executions>
               <execution>
+                <id>install-jruby-openssl</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>jruby-openssl --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
                 <id>install-haml</id>
                 <phase>test-compile</phase>
                 <goals>
