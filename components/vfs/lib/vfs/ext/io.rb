@@ -122,26 +122,35 @@ class IO
 
     end
 
-    def read(name, length=nil, offset=nil)
+
+    # 1.8: IO.read( portname, <length=$/ <,offset>> )
+    # 1.9: IO.read( portname, <length=$/ <,offset>> <,options-for-open> )
+    def read(name, *options)
+      length, offset = options unless options.first.is_a?( Hash ) #1.9
+      
       if ::File.exist_without_vfs?( name )
-        read_without_vfs(name, length, offset)
+        read_without_vfs( name, *options )
       else
+        # FIXME: we're ignoring the 1.9 options (encoding, mode, open_args)
         vfs_open( name ) do |f|
           f.seek( offset ) if offset
           f.read( length )
         end
       end
     end
-    
-    # FIXME: this is not ruby 1.9 compliant - the 1.9 signature is:
-    # IO.readlines( portname, separator=$/ <, options-for-open> )
-    # IO.readlines( portname, limit <, options-for-open> )
-    # IO.readlines( portname, separator, limit <, options-for-open> )
-    def readlines(name, separator=$/)
+
+  
+    # 1.8: IO.readlines( portname, separator=$/ )
+    # 1.9: IO.readlines( portname, separator=$/ <, options-for-open> )
+    #      IO.readlines( portname, limit <, options-for-open> )
+    #      IO.readlines( portname, separator, limit <, options-for-open> )
+    def readlines(name, *options)
       if ::File.exist_without_vfs?( name )
-        readlines_without_vfs( name, separator )
+        readlines_without_vfs( name, *options )
       else
-        vfs_open( name ).readlines( separator )
+        opts = options.pop if options.last.is_a?( Hash ) #1.9
+        # FIXME: we're ignoring the 1.9 options (encoding, mode, open_args)
+        vfs_open( name ).readlines( *options )
       end
     end
   end

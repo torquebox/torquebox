@@ -21,6 +21,7 @@ package org.torquebox.interp.spi;
 
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyInstanceConfig.CompileMode;
 import org.torquebox.common.spi.InstanceFactory;
 
 /**
@@ -31,5 +32,5 @@ import org.torquebox.common.spi.InstanceFactory;
 public interface RubyRuntimeFactory extends InstanceFactory<Ruby> {
 
     CompatVersion getRubyVersion();
-
+    CompileMode getCompileMode();
 }

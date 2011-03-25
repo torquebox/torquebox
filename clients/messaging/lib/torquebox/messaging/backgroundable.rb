@@ -33,12 +33,14 @@ module TorqueBox
         def always_background(*methods)
           options = methods.last.is_a?(Hash) ? methods.pop : {}
           @__backgroundable_methods ||= {}
+
           methods.each do |method|
             method = method.to_s
             if !@__backgroundable_methods[method]
               @__backgroundable_methods[method] ||= { }
               @__backgroundable_methods[method][:options] = options
-              if instance_methods.include?(method) || private_instance_methods.include?(method)
+              if instance_methods.collect(&:to_s).include?(method) ||
+                  private_instance_methods.collect(&:to_s).include?(method)
                 __enable_backgrounding(method)
               end
             end
@@ -58,9 +60,8 @@ module TorqueBox
 
         private
         def __enable_backgrounding(method)
-          privatize = private_instance_methods.include?(method)
-          protect = protected_instance_methods.include?(method) unless privatize
-
+          privatize = private_instance_methods.collect(&:to_s).include?(method)
+          protect = protected_instance_methods.collect(&:to_s).include?(method) unless privatize
           async_method = "__async_#{method}"
           sync_method = "__sync_#{method}"
 

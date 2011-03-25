@@ -19,12 +19,16 @@
 
 package org.torquebox.rails.deployers;
 
+import java.net.MalformedURLException;
+
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
@@ -59,23 +63,36 @@ public class RailsRuntimeDeployer extends AbstractDeployer {
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        if (unit.isAttachmentPresent( RubyRuntimeMetaData.class )) {
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(  RubyRuntimeMetaData.class );
+        
+        if ( runtimeMetaData != null && runtimeMetaData.getRuntimeType() != null ) {
+            log.warn( "Ruby runtime already configured as " + runtimeMetaData.getRuntimeType() + ": " + unit );
             return;
+        }
+
+        log.debug( "Deploying rails ruby runtime: " + unit );
+
+        if (runtimeMetaData == null) {
+            runtimeMetaData = new RubyRuntimeMetaData();
+            unit.addAttachment(  RubyRuntimeMetaData.class, runtimeMetaData );
         }
 
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.class );
         RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.class );
 
-        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
-
         runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
+        runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.RAILS );
+
+        try {
+            runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot().toURL() ) );
+        } catch (MalformedURLException e) {
+            throw new DeploymentException( e );
+        }
 
         RuntimeInitializer initializer = new RailsRuntimeInitializer( rubyAppMetaData, rackAppMetaData, railsAppMetaData );
         runtimeMetaData.setRuntimeInitializer( initializer );
-
-        unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
     }
 
 }

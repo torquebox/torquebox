@@ -25,6 +25,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
@@ -42,22 +43,31 @@ public class BaseRubyRuntimeDeployer extends AbstractDeployer {
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(  RubyRuntimeMetaData.class );
         
-        if ( runtimeMetaData != null ) {
+        if ( runtimeMetaData != null && runtimeMetaData.getRuntimeType() != null ) {
+            log.warn( "Ruby runtime already configured as " + runtimeMetaData.getRuntimeType() + ": " + unit );
             return;
         }
         
-        RubyApplicationMetaData appMetaData = unit.getAttachment(  RubyApplicationMetaData.class  );
+        log.debug("Deploying base ruby runtime: " + unit );
         
-        runtimeMetaData = new RubyRuntimeMetaData();
+        if (runtimeMetaData == null) {
+            runtimeMetaData = new RubyRuntimeMetaData();
+            unit.addAttachment(  RubyRuntimeMetaData.class, runtimeMetaData );
+        }
+
+        RubyApplicationMetaData appMetaData = unit.getAttachment(  RubyApplicationMetaData.class  );
+
+        runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.BARE );
         runtimeMetaData.setBaseDir( appMetaData.getRoot() );
         runtimeMetaData.setEnvironment(  appMetaData.getEnvironmentVariables()  );
+
         try {
             runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( appMetaData.getRoot().toURL() ) );
         } catch (MalformedURLException e) {
             throw new DeploymentException( e );
         }
         
-        unit.addAttachment(  RubyRuntimeMetaData.class, runtimeMetaData );
+
     }
 
 }

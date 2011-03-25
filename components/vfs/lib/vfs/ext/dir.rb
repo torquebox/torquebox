@@ -28,6 +28,9 @@ class Dir
     alias_method :entries_before_vfs, :entries
     alias_method :foreach_before_vfs, :foreach
 
+    # 1.8: open( dirname )
+    # 1.9: open( dirname, <, :encoding => enc> )
+    # We currently ignore the encoding.
     def open(str,&block)
       str = str.to_str
       if ( ::File.exist_without_vfs?( str ) )
@@ -152,14 +155,20 @@ class Dir
       mkdir_before_vfs( path, mode )
     end
 
-    def new(string)
+    # 1.8: new( dirname )
+    # 1.9: new( dirname, <, :encoding => enc> )
+    # We currently ignore the encoding.
+    def new(string, options = nil)
       if ( ::File.exist_without_vfs?( string.to_str ) )
         return new_before_vfs( string )
       end
       VFS::Dir.new( string.to_str )
     end
 
-    def entries(path)
+    # 1.9 has an optional, undocumented options arg that appears to be
+    # used for encoding. We'll ignore it for now, since JRuby does as
+    # well. (see org.jruby.RubyDir.java)
+    def entries(path, options = {})
       if ( ::File.exist_without_vfs?( path.to_str ) )
         return entries_before_vfs(path.to_str)
       end

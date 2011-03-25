@@ -81,6 +81,7 @@ public class TorqueBoxYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertNotNull( metaData.getSection( "messaging" ) );
         assertNotNull( metaData.getSection( "services" ) );
         assertNotNull( metaData.getSection( "jobs" ) );
+        assertNotNull( metaData.getSection( "ruby" ) );
     }
 
 }

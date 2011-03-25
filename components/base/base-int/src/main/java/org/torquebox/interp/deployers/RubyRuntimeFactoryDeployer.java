@@ -30,10 +30,14 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.dependency.KernelController;
+
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyInstanceConfig.CompileMode;
+
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
+
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
@@ -127,6 +131,16 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
             factory.setRubyVersion( CompatVersion.RUBY1_9 );
         } else {
             factory.setRubyVersion( CompatVersion.RUBY1_8 );
+        }
+
+        RubyRuntimeMetaData.CompileMode compileMode = metaData.getCompileMode();
+
+        if (compileMode == RubyRuntimeMetaData.CompileMode.JIT) {
+            factory.setCompileMode( CompileMode.JIT );
+        } else if (compileMode == RubyRuntimeMetaData.CompileMode.OFF) {
+            factory.setCompileMode( CompileMode.OFF );
+        } else if (compileMode == RubyRuntimeMetaData.CompileMode.FORCE) {
+            factory.setCompileMode( CompileMode.FORCE );
         }
 
         KernelController controller = this.kernel.getController();

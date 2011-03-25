@@ -21,6 +21,8 @@ package org.torquebox.interp.core;
 
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyInstanceConfig.CompileMode;
+
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 
 public class SingletonRubyRuntimeFactory implements RubyRuntimeFactory {
@@ -57,4 +59,7 @@ public class SingletonRubyRuntimeFactory implements RubyRuntimeFactory {
         return CompatVersion.RUBY1_8;
     }
 
+    public CompileMode getCompileMode() {
+        return this.ruby.getInstanceConfig().getCompileMode();
+    }
 }

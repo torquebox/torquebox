@@ -16,7 +16,7 @@ end
 
 describe "dispatcher test" do
 
-  deploy :path => 'messaging/queues.yml'
+  deploy :path => 'messaging/queues.yml', :ruby_1_9 => false 
 
   unless TESTING_ON_WINDOWS
     it "should associate a processor with a queue" do

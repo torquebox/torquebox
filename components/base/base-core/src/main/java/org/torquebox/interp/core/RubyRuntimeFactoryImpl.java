@@ -36,12 +36,15 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
+import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
+
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RuntimeInitializer;
 
@@ -95,6 +98,9 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
     /** Ruby compatibility version. */
     private CompatVersion rubyVersion;
+
+    /** JRuby compile mode. */
+    private CompileMode compileMode;
 
     /**
      * Construct.
@@ -213,6 +219,25 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     }
 
     /**
+     * Set the compile mode.
+     * 
+     * @param compileMode
+     *            The mode.
+     */
+    public void setCompileMode(CompileMode compileMode) {
+        this.compileMode = compileMode;
+    }
+
+    /**
+     * Retrieve the compile mode.
+     * 
+     * @return The mode.
+     */
+    public CompileMode getCompileMode() {
+        return this.compileMode;
+    }
+
+    /**
      * Set the application-specific environment additions.
      * 
      * @param applicationEnvironment
@@ -242,9 +267,15 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         if (this.classCache == null) {
             this.classCache = new ClassCache<Object>( getClassLoader() );
         }
+
         config.setClassCache( classCache );
         config.setLoadServiceCreator( new VFSLoadServiceCreator() );
-        config.setCompatVersion( this.rubyVersion );
+        if (this.rubyVersion != null) {
+            config.setCompatVersion( this.rubyVersion );
+        }
+        if (this.compileMode != null) {
+            config.setCompileMode( this.compileMode );
+        }
 
         String jrubyHome = this.jrubyHome;
 
@@ -318,7 +349,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             loadPath.addAll( this.loadPaths );
         }
 
-        Ruby runtime = JavaEmbedUtils.initialize( loadPath, config );
+        config.setLoadPaths( loadPath );
+
+        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + 
+                  ", compile_mode: " + config.getCompileMode() + ")" );
+
+        Ruby runtime = Ruby.newInstance( config );
+        runtime.getLoadService().require("java"); 
 
         prepareRuntime( runtime );
 
