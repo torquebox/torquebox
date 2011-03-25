@@ -54,7 +54,7 @@ public class RubyProxyInjectionBuilder {
         addInjectableRegistry( injectables );
     }
 
-    public void build(String filename, InputStream source) throws InvalidInjectionTypeException, IOException {
+    public void build(String filename, InputStream source) throws InjectionException, IOException {
         List<Injectable> injectables = this.injectionAnalyzer.analyze( filename, source );
         if (injectables == null || injectables.isEmpty()) {
             return;
@@ -63,7 +63,7 @@ public class RubyProxyInjectionBuilder {
         addInjectableRegistry( injectables );
     }
 
-    public void build(VirtualFile source) throws InvalidInjectionTypeException, IOException {
+    public void build(VirtualFile source) throws InjectionException, IOException {
         InputStream in = null;
 
         try {
@@ -76,7 +76,7 @@ public class RubyProxyInjectionBuilder {
         }
     }
 
-    public void build(String sourceRelativePath) throws InvalidInjectionTypeException, IOException, URISyntaxException {
+    public void build(String sourceRelativePath) throws InjectionException, IOException, URISyntaxException {
         VirtualFile source = locateSource( sourceRelativePath );
 
         if (source != null) {

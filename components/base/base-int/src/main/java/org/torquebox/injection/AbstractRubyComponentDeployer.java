@@ -67,7 +67,7 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
         try {
             RubyProxyInjectionBuilder injectionBuilder = new RubyProxyInjectionBuilder( unit, this.injectionAnalyzer, beanBuilder );
             injectionBuilder.build( StringUtils.underscore( rubyClassName ) + ".rb" );
-        } catch (InvalidInjectionTypeException e) {
+        } catch (InjectionException e) {
             throw new DeploymentException( e );
         } catch (IOException e) {
             throw new DeploymentException( e );

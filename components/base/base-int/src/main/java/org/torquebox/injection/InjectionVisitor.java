@@ -20,7 +20,7 @@ public class InjectionVisitor extends DefaultNodeVisitor {
     }
 
     @Override
-    public Object visitFCallNode(FCallNode node) throws InvalidInjectionTypeException {
+    public Object visitFCallNode(FCallNode node) throws InjectionException {
         String callName = node.getName();
 
         if (!this.markerSeen && callName.equals( "include" )) {
