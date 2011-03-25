@@ -22,7 +22,9 @@ describe TorqueBox::Logger do
 
   it "should deal with blocks correctly" do 
     logger = TorqueBox::Logger.new
+    logger.error "JC: message zero"
     logger.error { "JC: message" }
+    logger.error "JC: message too"
   end
 
 end
