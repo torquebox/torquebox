@@ -16,7 +16,7 @@ public class ScriptAnalyzer {
     public ScriptAnalyzer() {
     }
     
-    public Object analyze(InputStream in, NodeVisitor visitor) throws IOException {
+    public Object analyze(String filename, InputStream in, NodeVisitor visitor) throws IOException {
         StringBuffer script = new StringBuffer();
         
         int numRead = 0;
@@ -26,14 +26,14 @@ public class ScriptAnalyzer {
             script.append( new String( buf, 0, numRead ) );
         }
         
-        return analyze( script.toString(), visitor );
+        return analyze( filename, script.toString(), visitor );
     }
     
-    public Object analyze(String script, NodeVisitor visitor) {
+    public Object analyze(String filename, String script, NodeVisitor visitor) {
         Ruby ruby = Ruby.newInstance();
         StaticScope staticScope = new LocalStaticScope( null );
         DynamicScope scope = new ManyVarsDynamicScope( staticScope );
-        Node result = ruby.parseEval( script, "<analyzing>", scope, 0 );
+        Node result = ruby.parseEval( script, filename, scope, 0 );
         return result.accept( visitor );
     }
 }

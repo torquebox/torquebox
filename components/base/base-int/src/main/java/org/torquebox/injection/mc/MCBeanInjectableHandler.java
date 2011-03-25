@@ -13,9 +13,16 @@ public class MCBeanInjectableHandler extends AbstractInjectableHandler {
     }
 
     @Override
-    public Injectable handle(Node node) {
+    public Injectable handle(Node node, boolean generic) {
         String name = getString( node );
-        return new MCBeanInjectable( name );
+        return new MCBeanInjectable( name, generic );
+    }
+
+    @Override
+    public boolean recognizes(Node argsNode) {
+        String str = getString( argsNode );
+        
+        return ( str != null ) && str.matches( "^[^:]+:[^=]+=.*$" );
     }
     
 }

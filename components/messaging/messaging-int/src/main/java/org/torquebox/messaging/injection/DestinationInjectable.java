@@ -16,8 +16,8 @@ import org.torquebox.messaging.metadata.QueueMetaData;
 
 public class DestinationInjectable extends JNDIInjectable {
     
-    public DestinationInjectable(String type, String name) {
-        super( type, name );
+    public DestinationInjectable(String type, String name, boolean generic) {
+        super( type, name, generic );
     }
 
     @Override

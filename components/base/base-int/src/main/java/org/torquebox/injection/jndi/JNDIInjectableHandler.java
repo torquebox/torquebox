@@ -13,9 +13,17 @@ public class JNDIInjectableHandler extends AbstractInjectableHandler {
     }
 
     @Override
-    public Injectable handle(Node node) {
+    public Injectable handle(Node node, boolean generic) {
         String name = getString( node );
-        return new JNDIInjectable( name );
+        return new JNDIInjectable( name, generic );
+    }
+
+    @Override
+    public boolean recognizes(Node argsNode) {
+        String str = getString( argsNode );
+        
+        return (str != null) && str.startsWith(  "java:" );
+        
     }
     
 }

@@ -11,6 +11,7 @@ import org.torquebox.injection.spi.InjectableRegistry;
 public class InjectableRegistryImpl implements InjectableRegistry {
     
     private Map<String,InjectableCollection> collections = new HashMap<String,InjectableCollection>();
+    private Map<String, Injectable> genericInjections;
     
     public InjectableRegistryImpl() {
         
@@ -39,6 +40,14 @@ public class InjectableRegistryImpl implements InjectableRegistry {
         return list;
     }
     
+    public void setGenericInjections(Map<String, Injectable> genericInjections) {
+        this.genericInjections = genericInjections;
+    }
+    
+    public Map<String, Injectable> getGenericInjections() {
+        return this.genericInjections;
+    }
+    
     public Set<String> getCollectionNames() {
         return this.collections.keySet();
     }
@@ -48,6 +57,10 @@ public class InjectableRegistryImpl implements InjectableRegistry {
     }
     
     public Object get(String collectionName, String objectName) {
+        if ( collectionName == null ) {
+            return this.genericInjections.get(  objectName  );
+        }
+        
         InjectableCollection collection = getCollection(collectionName);
         
         if ( collection == null ) {

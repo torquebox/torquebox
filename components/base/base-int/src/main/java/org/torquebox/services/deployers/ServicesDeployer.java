@@ -25,17 +25,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.BeanMetaDataFactory;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.common.util.StringUtils;
 import org.torquebox.injection.AbstractRubyComponentDeployer;
-import org.torquebox.injection.RubyProxyInjectionBuilder;
-import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
@@ -84,15 +80,9 @@ public class ServicesDeployer extends AbstractRubyComponentDeployer {
 
         beanBuilder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
 
-        try {
-            ValueMetaData componentResolver = createComponentResolver( unit, "services." + serviceMetaData.getClassName(), serviceMetaData.getClassName(),
-                    serviceMetaData.getParameters() );
-            beanBuilder.addPropertyMetaData( "rubyComponentResolver", componentResolver );
-        } catch (URISyntaxException e) {
-            throw new DeploymentException( e );
-        } catch (IOException e) {
-            throw new DeploymentException( e );
-        }
+        ValueMetaData componentResolver = createComponentResolver( unit, "services." + serviceMetaData.getClassName(), serviceMetaData.getClassName(),
+                serviceMetaData.getParameters() );
+        beanBuilder.addPropertyMetaData( "rubyComponentResolver", componentResolver );
 
         if (serviceMetaData.isRequiresSingleton()) {
             beanBuilder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
@@ -107,7 +97,7 @@ public class ServicesDeployer extends AbstractRubyComponentDeployer {
 
         AttachmentUtils.attach( unit, beanBuilder.getBeanMetaData() );
     }
-    
+
     protected PoolMetaData createRuntimePool(DeploymentUnit unit, int max) {
         PoolMetaData pool = AttachmentUtils.getAttachment( unit, POOL_NAME, PoolMetaData.class );
 

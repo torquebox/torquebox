@@ -11,12 +11,8 @@ import org.torquebox.mc.AttachmentUtils;
 
 public class CDIInjectable extends SimpleNamedInjectable {
 
-    public CDIInjectable(String name) {
-        this( "cdi", name );
-    }
-
-    public CDIInjectable(String type, String name) {
-        super( type, name );
+    public CDIInjectable(String name, boolean generic) {
+        super( "cdi", name, generic);
     }
 
     @Override

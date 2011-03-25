@@ -48,6 +48,7 @@ public abstract class AbstractInjectableHandler implements InjectableHandler {
                 str = getString( ((ArrayNode) node).get( 0 ) );
             }
         }
+        
         return str;
     }
 

@@ -8,14 +8,15 @@ import org.torquebox.mc.JNDIKernelRegistryPlugin;
 
 public class JNDIInjectable extends SimpleNamedInjectable {
     
-    public JNDIInjectable(String name) {
-        this( "jndi", name );
+    public JNDIInjectable(String name, boolean generic) {
+        this( "jndi", name, generic );
     }
     
-    public JNDIInjectable(String type, String name) {
-        super( type, name );
+    protected JNDIInjectable(String type, String name, boolean generic) {
+        super( type, name, generic );
     }
-
+    
+    
     @Override
     public ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder) {
         return builder.createInject( JNDIKernelRegistryPlugin.JNDI_DEPENDENCY_PREFIX + getName() );

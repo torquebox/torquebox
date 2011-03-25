@@ -4,8 +4,8 @@ import org.torquebox.injection.SimpleNamedInjectable;
 
 public class MCBeanInjectable extends SimpleNamedInjectable {
     
-    public MCBeanInjectable(String name) {
-        super( "mc", name );
+    public MCBeanInjectable(String name, boolean generic) {
+        super( "mc", name, generic );
     }
 
 }

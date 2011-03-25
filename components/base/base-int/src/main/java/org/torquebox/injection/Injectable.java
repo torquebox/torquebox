@@ -10,5 +10,6 @@ public interface Injectable {
     String getName();
     String getKey();
     ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder);
+    boolean isGeneric();
 
 }

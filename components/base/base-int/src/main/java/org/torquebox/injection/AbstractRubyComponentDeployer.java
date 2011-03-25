@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
+import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.common.util.StringUtils;
@@ -45,7 +46,8 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
         return this.injectionAnalyzer;
     }
 
-    protected BeanMetaData createComponentResolver(DeploymentUnit unit, String componentName, String rubyClassName, Map<String, Object> initParams) throws IOException, URISyntaxException {
+    protected BeanMetaData createComponentResolver(DeploymentUnit unit, String componentName, String rubyClassName, Map<String, Object> initParams)
+            throws DeploymentException {
         String beanName = AttachmentUtils.beanName( unit, RubyComponentResolver.class, "" + this.counter.getAndIncrement() );
         BeanMetaDataBuilder resolverBuilder = BeanMetaDataBuilder.createBuilder( beanName, RubyComponentResolver.class.getName() );
 
@@ -61,9 +63,17 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
         return resolverBuilder.getBeanMetaData();
     }
 
-    public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, String rubyClassName) throws IOException, URISyntaxException {
-        RubyProxyInjectionBuilder injectionBuilder = new RubyProxyInjectionBuilder( unit, this.injectionAnalyzer, beanBuilder );
-        injectionBuilder.build( StringUtils.underscore( rubyClassName ) + ".rb" );
+    public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, String rubyClassName) throws DeploymentException {
+        try {
+            RubyProxyInjectionBuilder injectionBuilder = new RubyProxyInjectionBuilder( unit, this.injectionAnalyzer, beanBuilder );
+            injectionBuilder.build( StringUtils.underscore( rubyClassName ) + ".rb" );
+        } catch (InvalidInjectionTypeException e) {
+            throw new DeploymentException( e );
+        } catch (IOException e) {
+            throw new DeploymentException( e );
+        } catch (URISyntaxException e) {
+            throw new DeploymentException( e );
+        }
     }
 
     private AtomicInteger counter = new AtomicInteger();

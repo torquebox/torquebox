@@ -34,7 +34,7 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder( "proxy", MockProxy.class.getName() );
         
         List<Injectable> injectables = new ArrayList<Injectable>();
-        injectables.add( new MCBeanInjectable( "mcbean"  ) );
+        injectables.add( new MCBeanInjectable( "mcbean", false  ) );
         
         String deploymentName = createDeployment( "test-deployment" );
         DeploymentUnit unit = getDeploymentUnit(  deploymentName  );
