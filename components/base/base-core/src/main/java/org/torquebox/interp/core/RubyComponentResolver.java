@@ -27,11 +27,9 @@ import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.injection.spi.InjectableRegistry;
-import org.torquebox.injection.spi.RubyInjectionProxy;
 
 
-public class RubyComponentResolver implements RubyInjectionProxy {
+public class RubyComponentResolver {
 
     public RubyComponentResolver() {
     }
@@ -81,15 +79,6 @@ public class RubyComponentResolver implements RubyInjectionProxy {
             setInitializeParams( new Object[] { params } );
     }
 
-    @Override
-    public void setInjectableRegistry(InjectableRegistry registry) {
-        this.registry = registry;
-    }
-
-    public InjectableRegistry getInjectableRegistry() {
-        return this.registry;
-    }
-
     public IRubyObject resolve(Ruby ruby) throws Exception {
         log.debug( "resolve(" + ruby + ")" );
         synchronized (ruby) {
@@ -132,13 +121,6 @@ public class RubyComponentResolver implements RubyInjectionProxy {
         if (componentClass == null || componentClass.isNil()) {
             return null;
         }
-        if (getInjectableRegistry() != null) {
-            JavaEmbedUtils.invokeMethod( ruby, 
-                                         componentClass, 
-                                         "const_set", 
-                                         new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getInjectableRegistry() }, 
-                                         Object.class );
-        }
         IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, componentClass, "new", getInitializeParams(), IRubyObject.class );
         return component;
     }
@@ -148,7 +130,6 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     private String rubyClassName;
     private String rubyRequirePath;
     private Object[] initializeParams;
-    private InjectableRegistry registry;
 
     private static final Logger log = Logger.getLogger( RubyComponentResolver.class );
 
