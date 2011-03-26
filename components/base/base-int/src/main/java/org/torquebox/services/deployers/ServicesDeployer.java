@@ -93,8 +93,6 @@ public class ServicesDeployer extends AbstractRubyComponentDeployer {
                 + ".class)";
         beanBuilder.addAnnotation( jmxAnno );
 
-        // setUpInjections( unit, beanBuilder, serviceMetaData.getClassName() );
-
         AttachmentUtils.attach( unit, beanBuilder.getBeanMetaData() );
     }
 

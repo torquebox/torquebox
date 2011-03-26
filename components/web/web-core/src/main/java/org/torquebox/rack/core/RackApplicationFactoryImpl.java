@@ -19,18 +19,23 @@
 
 package org.torquebox.rack.core;
 
+import java.util.Map;
+
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationFactory;
 
-public class RackApplicationFactoryImpl implements RackApplicationFactory {
+public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyInjectionProxy {
 
+    private static final String TORQUEBOX_REGISTRY_CLASS_NAME = "TorqueBox::Registry";
     private String rackUpScript;
     private VirtualFile rackUpFile;
+    private Map<String, Object> injectionRegistry;
 
     public RackApplicationFactoryImpl() {
     }
@@ -67,6 +72,7 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
         }
 
         if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
+            
             rackApp = new RackApplicationImpl( ruby, rackUpScript, rackUpFile );
             rubyRackApp = JavaEmbedUtils.javaToRuby( ruby, rackApp );
             torqueboxModule.setConstant( "TORQUEBOX_RACK_APP", rubyRackApp );
@@ -74,6 +80,22 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory {
             rackApp = (RackApplication) JavaEmbedUtils.rubyToJava( rubyRackApp );
         }
         return rackApp;
+    }
+    
+    protected void mergeInjections(Ruby ruby) {
+        if (getInjectionRegistry() != null) {
+            RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
+            JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getInjectionRegistry() }, void.class );
+        }
+    }
+
+    @Override
+    public void setInjectionRegistry(Map<String, Object> injectionRegistry) {
+        this.injectionRegistry = injectionRegistry;
+    }
+    
+    public Map<String, Object> getInjectionRegistry() {
+        return this.injectionRegistry;
     }
 
 }

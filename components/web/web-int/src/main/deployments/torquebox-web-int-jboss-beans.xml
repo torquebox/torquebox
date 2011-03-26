@@ -9,7 +9,9 @@
   <bean name="RackApplicationRecognizer"              class="org.torquebox.rack.deployers.RackApplicationRecognizer"/>
   <bean name="RackApplicationDefaultsDeployer"        class="org.torquebox.rack.deployers.RackApplicationDefaultsDeployer"/>
   
-  <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer"/>
+  <bean name="RackApplicationFactoryDeployer"         class="org.torquebox.rack.deployers.RackApplicationFactoryDeployer">
+      <property name="injectionAnalyzer"><inject bean="RubyInjectionAnalyzer"/></property>
+  </bean> 
   <bean name="RackApplicationPoolDeployer"            class="org.torquebox.rack.deployers.RackApplicationPoolDeployer"/>
   <bean name="RackWebApplicationDeployer"             class="org.torquebox.rack.deployers.RackWebApplicationDeployer"/>
   <bean name="RackRuntimeDeployer"                    class="org.torquebox.rack.deployers.RackRuntimeDeployer"/>
