@@ -4,14 +4,18 @@
 
   <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
   
-  <bean name="TorqueBoxWeldJndiBinder" class="org.jboss.weld.integration.deployer.env.WeldJndiBinder">
-    <start method="startService">
-      <parameter>java:comp/BeanManager</parameter>
-      <parameter>org.jboss.weld.resources.ManagerObjectFactory</parameter>
-    </start>
-    <stop method="stopService"/>
+  <!-- CDI and Weld -->
+  
+  <bean name="FallbackBeanManagerJndiBinder" class="org.torquebox.injection.cdi.FallbackBeanManagerJndiBinder">
+    <depends>JndiBinder</depends>
+    <property name="nameSpaces"><inject bean="NameSpaces"/></property>
   </bean>
   
+  <bean name="FallbackBeanManagerJndiBinderDeployer" class="org.torquebox.injection.deployers.FallbackBeanManagerJndiBinderDeployer">
+    <depends>FallbackBeanManagerJndiBinder</depends>
+  </bean>
+  
+  <bean name="CDIBridgeDeployer"                class="org.torquebox.injection.deployers.CDIBridgeDeployer"/>
   
   <bean name="InjectableHandlerRegistry"        class="org.torquebox.injection.InjectableHandlerRegistry"/>
   
@@ -19,11 +23,11 @@
     <property name="injectableHandlerRegistry"><inject bean="InjectableHandlerRegistry"/></property>
   </bean> 
   
-  <bean name="MCBeanInjectableHandler"          class="org.torquebox.injection.MCBeanInjectableHandler"/>
-  <bean name="JNDIInjectableHandler"            class="org.torquebox.injection.JNDIInjectableHandler"/>
-  <bean name="CDIInjectableHandler"             class="org.torquebox.injection.CDIInjectableHandler"/>
+  <bean name="MCBeanInjectableHandler"          class="org.torquebox.injection.mc.MCBeanInjectableHandler"/>
+  <bean name="JNDIInjectableHandler"            class="org.torquebox.injection.jndi.JNDIInjectableHandler"/>
+  <bean name="CDIInjectableHandler"             class="org.torquebox.injection.cdi.CDIInjectableHandler"/>
   
-  <bean name="CDIBridgeDeployer"                class="org.torquebox.injection.deployers.CDIBridgeDeployer"/>
+  <!-- Base -->
   
   <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
   

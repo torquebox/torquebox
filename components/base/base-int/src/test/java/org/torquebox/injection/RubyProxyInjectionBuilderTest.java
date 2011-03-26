@@ -11,6 +11,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.injection.spi.InjectableRegistry;
 import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.mc.AttachmentUtils;
@@ -33,7 +34,7 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder( "proxy", MockProxy.class.getName() );
         
         List<Injectable> injectables = new ArrayList<Injectable>();
-        injectables.add( new MCBeanInjectable( "mcbean"  ) );
+        injectables.add( new MCBeanInjectable( "mcbean", false  ) );
         
         String deploymentName = createDeployment( "test-deployment" );
         DeploymentUnit unit = getDeploymentUnit(  deploymentName  );

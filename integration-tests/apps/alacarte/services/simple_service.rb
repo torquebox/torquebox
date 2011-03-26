@@ -5,8 +5,8 @@ class SimpleService
   def initialize(opts={})
     puts "init"
     @webserver = inject_mc('jboss.web:service=WebServer')
-    @something = inject_cdi( org.torquebox.ThingOne )
-    @logger = inject_logger
+    #@something = inject_cdi( org.torquebox.ThingOne )
+    @something = inject( org.torquebox.ThingOne )
   end
 
   def start() 

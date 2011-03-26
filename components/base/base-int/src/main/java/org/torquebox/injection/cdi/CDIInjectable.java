@@ -1,4 +1,4 @@
-package org.torquebox.injection;
+package org.torquebox.injection.cdi;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -6,16 +6,13 @@ import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.weld.integration.deployer.DeployersUtils;
+import org.torquebox.injection.SimpleNamedInjectable;
 import org.torquebox.mc.AttachmentUtils;
 
 public class CDIInjectable extends SimpleNamedInjectable {
 
-    public CDIInjectable(String name) {
-        this( "cdi", name );
-    }
-
-    public CDIInjectable(String type, String name) {
-        super( type, name );
+    public CDIInjectable(String name, boolean generic) {
+        super( "cdi", name, generic);
     }
 
     @Override
@@ -30,12 +27,9 @@ public class CDIInjectable extends SimpleNamedInjectable {
         
         String bootstrapName = DeployersUtils.getBootstrapBeanName(context);
         injectionBridgeBuilder.addDemand(  bootstrapName );
-        injectionBridgeBuilder.addDemand(  "TorqueBoxWeldJndiBinder" );
+        injectionBridgeBuilder.addDemand(  FallbackBeanManagerJndiBinder.class.getSimpleName() );
         
         AttachmentUtils.attach( context, injectionBridgeBuilder.getBeanMetaData() );
-        
-        System.err.println( "BRIDGE ATTACH: " + injectionBridgeBuilder.getBeanMetaData() );
-
         
         return builder.createInject( injectableBridgeBeanName, "value" );
     }

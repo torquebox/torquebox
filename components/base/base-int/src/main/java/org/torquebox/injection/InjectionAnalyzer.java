@@ -2,7 +2,6 @@ package org.torquebox.injection;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.torquebox.interp.analysis.ScriptAnalyzer;
@@ -22,16 +21,16 @@ public class InjectionAnalyzer extends ScriptAnalyzer {
     
     
     @SuppressWarnings("unchecked")
-    public List<Injectable> analyze(InputStream script) throws IOException {
+    public List<Injectable> analyze(String filename, InputStream script) throws IOException {
         InjectionVisitor visitor = new InjectionVisitor( this );
-        analyze( script, visitor );
+        analyze( filename, script, visitor );
         return visitor.getInjectables();
     }
     
     @SuppressWarnings("unchecked")
-    public List<Injectable> analyze(String script) {
+    public List<Injectable> analyze(String filename, String script) {
         InjectionVisitor visitor = new InjectionVisitor( this );
-        analyze( script, visitor );
+        analyze( filename, script, visitor );
         return visitor.getInjectables();
     }
     

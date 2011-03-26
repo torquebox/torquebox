@@ -1,8 +1,7 @@
-package org.torquebox.injection;
+package org.torquebox.injection.cdi;
 
 import java.lang.reflect.Type;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -12,10 +11,22 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.logging.Logger;
+
 public class CDIBridge {
+    
+    private static final Logger log = Logger.getLogger( CDIBridge.class );
 
     public CDIBridge(String applicationName) {
         this.applicationName = applicationName;
+    }
+    
+    public void start() {
+        log.debug(  "start: " + this.applicationName );
+    }
+    
+    public void stop() {
+        log.debug(  "stop: " + this.applicationName );
     }
     
     public synchronized BeanManager getBeanManager() throws NamingException {

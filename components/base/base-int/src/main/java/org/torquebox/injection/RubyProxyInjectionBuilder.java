@@ -54,8 +54,8 @@ public class RubyProxyInjectionBuilder {
         addInjectableRegistry( injectables );
     }
 
-    public void build(InputStream source) throws IOException {
-        List<Injectable> injectables = this.injectionAnalyzer.analyze( source );
+    public void build(String filename, InputStream source) throws InjectionException, IOException {
+        List<Injectable> injectables = this.injectionAnalyzer.analyze( filename, source );
         if (injectables == null || injectables.isEmpty()) {
             return;
         }
@@ -63,12 +63,12 @@ public class RubyProxyInjectionBuilder {
         addInjectableRegistry( injectables );
     }
 
-    public void build(VirtualFile source) throws IOException {
+    public void build(VirtualFile source) throws InjectionException, IOException {
         InputStream in = null;
 
         try {
             in = source.openStream();
-            build( in );
+            build( source.getPathName(), in );
         } finally {
             if (in != null) {
                 in.close();
@@ -76,7 +76,7 @@ public class RubyProxyInjectionBuilder {
         }
     }
 
-    public void build(String sourceRelativePath) throws IOException, URISyntaxException {
+    public void build(String sourceRelativePath) throws InjectionException, IOException, URISyntaxException {
         VirtualFile source = locateSource( sourceRelativePath );
 
         if (source != null) {
@@ -108,13 +108,13 @@ public class RubyProxyInjectionBuilder {
         BeanMetaDataBuilder registryBuilder = BeanMetaDataBuilder.createBuilder( beanBuilder.getBeanMetaData().getName() + "$" + InjectableRegistry.class.getName(), InjectableRegistryImpl.class.getName() );
         
         List<ValueMetaData> collections = beanBuilder.createList( null, InjectableCollection.class.getName() );
-        //List collections = new ArrayList();
+        Map<ValueMetaData, ValueMetaData> genericInjections = beanBuilder.createMap( HashMap.class.getName(), String.class.getName(), null );
 
         for (String collectionName : collated.keySet()) {
             Collection<Injectable> collectionInjectables = collated.get( collectionName );
 
             String collectionBeanName = beanBuilder.getBeanMetaData().getName() + "-" + InjectableCollection.class.getName() + "-" + collectionName;
-            //String collectionBeanName = "chuck";
+            
             BeanMetaDataBuilder collectionBuilder = BeanMetaDataBuilder.createBuilder( collectionBeanName, InjectableCollection.class.getName() );
             collectionBuilder.addConstructorParameter( String.class.getName(), collectionName );
             
@@ -128,6 +128,10 @@ public class RubyProxyInjectionBuilder {
                 
                 ValueMetaData collectionKey = collectionBuilder.createString( String.class.getName(), injectableKey );
                 collectionMap.put( collectionKey, injectable );
+                
+                if ( each.isGeneric() ) {
+                    genericInjections.put( collectionKey, injectable );
+                }
             }
             
             collectionBuilder.addConstructorParameter( Map.class.getName(), collectionMap );
@@ -140,6 +144,7 @@ public class RubyProxyInjectionBuilder {
         }
 
         registryBuilder.addPropertyMetaData( "collections", collections );
+        registryBuilder.addPropertyMetaData( "genericInjections", genericInjections );
 
         AttachmentUtils.attach( this.context, registryBuilder.getBeanMetaDataFactory() );
         beanBuilder.addPropertyMetaData( "injectableRegistry", registryBuilder.getBeanMetaData() );

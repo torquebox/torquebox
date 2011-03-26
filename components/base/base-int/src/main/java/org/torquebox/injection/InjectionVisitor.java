@@ -20,20 +20,37 @@ public class InjectionVisitor extends DefaultNodeVisitor {
     }
 
     @Override
-    public Object visitFCallNode(FCallNode node) {
+    public Object visitFCallNode(FCallNode node) throws InjectionException {
         String callName = node.getName();
 
-        if ( ! this.markerSeen && callName.equals( "include" )) {
+        if (!this.markerSeen && callName.equals( "include" )) {
             String includedName = getConstString( ((ArrayNode) node.getArgsNode()).get( 0 ) );
-            if ( includedName.equals( TORQUEBOX_MARKER_MODULE ) ) {
+            if (includedName.equals( TORQUEBOX_MARKER_MODULE )) {
                 this.markerSeen = true;
             }
         } else {
-            InjectableHandler handler = this.analyzer.getInjectableHandlerRegistry().getHandler( callName );
+            InjectableHandler handler = null;
+            
+            boolean generic = false;
+            if (callName.equals( "inject" )) {
+                Node argsNode = node.getArgsNode();
+                handler = this.analyzer.getInjectableHandlerRegistry().getHandler( argsNode );
+
+                if (handler == null) {
+                    throw new AmbiguousInjectionException( node.getPosition(), getString( argsNode ) );
+                }
+                generic = true;
+            } else if (callName.startsWith( INJECTION_PREFIX )) {
+                String injectionType = callName.substring( INJECTION_PREFIX.length() );
+                handler = this.analyzer.getInjectableHandlerRegistry().getHandler( injectionType );
+                if (handler == null) {
+                    throw new InvalidInjectionTypeException( node.getPosition(), injectionType );
+                }
+            }
             if (handler != null) {
-                Injectable injectable = handler.handle( node.getArgsNode() );
-                if ( injectable != null ) {
-                    this.injectables.add(  injectable  );
+                Injectable injectable = handler.handle( node.getArgsNode(), generic );
+                if (injectable != null) {
+                    this.injectables.add( injectable );
                 }
             }
         }
@@ -72,32 +89,33 @@ public class InjectionVisitor extends DefaultNodeVisitor {
 
             cur = children.get( 0 );
         }
-        
+
         StringBuilder str = new StringBuilder();
-        
-        while ( ! stack.isEmpty() ) {
+
+        while (!stack.isEmpty()) {
             str.append( stack.pop() );
-            
-            if ( ! stack.isEmpty() ) {
+
+            if (!stack.isEmpty()) {
                 str.append( "::" );
             }
         }
-        
+
         return str.toString();
 
     }
-    
+
     public List<Injectable> getInjectables() {
-        if ( ! this.markerSeen ) {
+        if (!this.markerSeen) {
             return Collections.emptyList();
         }
         return this.injectables;
     }
 
+    private static final String INJECTION_PREFIX = "inject_";
     public static final String TORQUEBOX_MARKER_MODULE = "TorqueBox::Injectors";
-    
+
     private InjectionAnalyzer analyzer;
     private boolean markerSeen = false;
-    
+
     private List<Injectable> injectables = new ArrayList<Injectable>();
 }

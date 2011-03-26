@@ -132,7 +132,13 @@ public class RubyComponentResolver implements RubyInjectionProxy {
         if (componentClass == null || componentClass.isNil()) {
             return null;
         }
-        JavaEmbedUtils.invokeMethod( ruby, componentClass, "const_set", new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getInjectableRegistry() }, Object.class );
+        if (getInjectableRegistry() != null) {
+            JavaEmbedUtils.invokeMethod( ruby, 
+                                         componentClass, 
+                                         "const_set", 
+                                         new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getInjectableRegistry() }, 
+                                         Object.class );
+        }
         IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, componentClass, "new", getInitializeParams(), IRubyObject.class );
         return component;
     }

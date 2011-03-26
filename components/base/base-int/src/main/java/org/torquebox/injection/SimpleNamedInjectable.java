@@ -8,10 +8,16 @@ public class SimpleNamedInjectable implements Injectable {
     
     private String type;
     private String name;
+    private boolean generic;
 
-    public SimpleNamedInjectable(String type, String name) {
+    public SimpleNamedInjectable(String type, String name, boolean generic) {
         this.type = type;
         this.name = name;
+        this.generic = generic;
+    }
+    
+    public boolean isGeneric() {
+        return this.generic;
     }
     
     public String getType() {

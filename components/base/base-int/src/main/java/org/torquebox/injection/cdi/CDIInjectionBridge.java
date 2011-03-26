@@ -1,4 +1,4 @@
-package org.torquebox.injection;
+package org.torquebox.injection.cdi;
 
 import javax.naming.NamingException;
 

@@ -94,14 +94,8 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addPropertyMetaData( "description", metaData.getDescription() );
         beanBuilder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
 
-        try {
-            BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), null );
-            beanBuilder.addPropertyMetaData( "componentResolverName", resolverMetaData.getName() );
-        } catch (URISyntaxException e) {
-            throw new DeploymentException( e );
-        } catch (IOException e) {
-            throw new DeploymentException( e );
-        }
+        BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), null );
+        beanBuilder.addPropertyMetaData( "componentResolverName", resolverMetaData.getName() );
 
         String mbeanName = JMXUtils.jmxName( "torquebox.jobs", rubyAppMetaData.getApplicationName() ).with( "name", metaData.getName() ).name();
         String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + ScheduledJobMBean.class.getName() + ".class)";
