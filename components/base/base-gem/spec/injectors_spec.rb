@@ -3,35 +3,17 @@ require 'torquebox/injectors'
 
 describe TorqueBox::Injectors do
 
-  describe "jboss logger injection" do
-    
-    include TorqueBox::Injectors
+  include TorqueBox::Injectors
 
-    it "should return a logger identified by a class" do
-      require 'active_support/cache/torque_box_store'
-      logger = inject_logger( ActiveSupport::Cache::TorqueBoxStore )
-      logger.info("this should work")
-      logger.name.should == "ActiveSupport::Cache::TorqueBoxStore"
-    end
-
-    it "should return a logger identified by a string" do
-      logger = inject_logger( "flibbity-jibbit" )
-      logger.info("this should work")
-      logger.name.should == "flibbity-jibbit"
-    end
-
-    it "should return a logger for the class if not passed an identifier" do
-      class Foo
-        include TorqueBox::Injectors
-        def logger
-          inject_logger
-        end
-      end
-      logger = Foo.new.logger
-      logger.info("this should work")
-      logger.name.should == "Foo"
-    end
-
+  it "should return the same thing for all injection types" do
+    TorqueBox::Registry.merge!('this' => :that)
+    TorqueBox::Registry['this'].should == :that
+    inject('this').should == :that
+    inject_mc('this').should == :that
+    inject_cdi(:this).should == :that
+    inject_jndi('this').should == :that
+    inject_queue('this').should == :that
+    inject_topic('this').should == :that
   end
 
 end
