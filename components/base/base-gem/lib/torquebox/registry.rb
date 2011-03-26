@@ -15,18 +15,18 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/registry'
-
 module TorqueBox
-  module Injectors
-
-    def inject something
-      TorqueBox::Registry[something.to_s]
-    end
-
-    %w{ mc cdi jndi queue topic }.each do |type|
-      define_method("inject_#{type}".to_sym) do |key|
-        inject(key)
+  class Registry
+    
+    class << self
+      def merge!(hash)
+        registry.merge!(hash)
+      end
+      def [](key)
+        registry[key]
+      end
+      def registry
+        @registry ||= {}
       end
     end
 
