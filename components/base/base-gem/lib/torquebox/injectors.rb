@@ -46,10 +46,6 @@ module TorqueBox
       lookup_injection 'topic', name
     end
 
-    def inject_logger(category = self.class)
-      org.jboss.logging::Logger.getLogger( category.to_s )
-    end
-
     def lookup_injection type, name
       self.class.const_get("TORQUEBOX_INJECTION_REGISTRY").get(type, name)
     rescue

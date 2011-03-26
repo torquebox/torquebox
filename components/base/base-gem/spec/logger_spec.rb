@@ -4,6 +4,12 @@ require 'logger'
 
 describe TorqueBox::Logger do
 
+  it "should look nice for class objects" do
+    require 'active_support/cache/torque_box_store'
+    logger = TorqueBox::Logger.new( ActiveSupport::Cache::TorqueBoxStore )
+    logger.error("JC: log for cache store")
+  end
+
   it "should support the various boolean methods" do
     logger = TorqueBox::Logger.new
     logger.trace?.should be_false

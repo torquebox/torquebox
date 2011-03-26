@@ -3,7 +3,8 @@ module TorqueBox
   class Logger 
 
     def initialize name = nil
-      @logger = org.jboss.logging::Logger.getLogger( name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox" )
+      category = name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox"
+      @logger = org.jboss.logging::Logger.getLogger( category.to_s.gsub('::','.') )
     end
 
     [:warn?, :error?, :fatal?].each do |method|
