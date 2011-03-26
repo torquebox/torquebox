@@ -15,9 +15,7 @@ public abstract class AbstractInjectableHandler implements InjectableHandler {
 
     private Logger log = Logger.getLogger( this.getClass() );
     private String type;
-
-    public AbstractInjectableHandler() {
-    }
+    private int recognitionPriority = 0;
 
     public AbstractInjectableHandler(String type) {
         this.type = type;
@@ -34,6 +32,14 @@ public abstract class AbstractInjectableHandler implements InjectableHandler {
     @Override
     public String getType() {
         return this.type;
+    }
+    
+    public int getRecognitionPriority() {
+        return this.recognitionPriority;
+    }
+    
+    public void setRecognitionPriority(int priority) {
+        this.recognitionPriority = priority;
     }
 
     protected static String getString(Node node) {
