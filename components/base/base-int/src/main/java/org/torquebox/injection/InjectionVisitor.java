@@ -104,6 +104,10 @@ public class InjectionVisitor extends DefaultNodeVisitor {
 
     }
 
+    public InjectionAnalyzer getAnalyzer() {
+        return this.analyzer;
+    }
+
     public List<Injectable> getInjectables() {
         if (!this.markerSeen) {
             return Collections.emptyList();

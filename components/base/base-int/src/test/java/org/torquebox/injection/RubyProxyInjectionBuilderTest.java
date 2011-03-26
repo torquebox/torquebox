@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
@@ -12,7 +13,6 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.injection.mc.MCBeanInjectable;
-import org.torquebox.injection.spi.InjectableRegistry;
 import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
@@ -39,8 +39,8 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         String deploymentName = createDeployment( "test-deployment" );
         DeploymentUnit unit = getDeploymentUnit(  deploymentName  );
         
-        RubyProxyInjectionBuilder injectionBuilder = new RubyProxyInjectionBuilder( unit, null, beanBuilder );
-        injectionBuilder.addInjectableRegistry( injectables );
+        BaseRubyProxyInjectionBuilder injectionBuilder = new BaseRubyProxyInjectionBuilder( unit, beanBuilder );
+        injectionBuilder.injectInjectableRegistryMap( injectables );
         
         System.err.println( "BEANS: " + beanBuilder.getBeanMetaDataFactory().getBeans().size() );
         AttachmentUtils.attach(  unit, beanBuilder.getBeanMetaDataFactory() );
@@ -53,18 +53,18 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         System.err.println(  "BBB" );
         assertNotNull( proxy );
         assertNotNull( proxy.registry );
-        assertSame( this.mcbean, proxy.registry.get(  "mc", "mcbean" ));
+        assertSame( this.mcbean, proxy.registry.get( "mcbean" ));
         System.err.println(  "CCC" );
     }
     
     public static class MockProxy implements RubyInjectionProxy {
 
-        public InjectableRegistry registry;
+        public Map<String, Object> registry;
 
         @Override
-        public void setInjectableRegistry(InjectableRegistry injectionRegistry) {
-            System.err.println( "setInjectableRegistry(" + injectionRegistry + ")" );
-            this.registry = injectionRegistry;
+        public void setInjectionRegistry(Map<String,Object> registry) {
+            System.err.println( "setInjectionRegistry(" + registry + ")" );
+            this.registry = registry;
             
         }
         

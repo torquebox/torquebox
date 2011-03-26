@@ -64,14 +64,14 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
     }
 
     public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, String rubyClassName) throws DeploymentException {
+        AnalyzingRubyProxyInjectionBuilder injectionBuilder = new AnalyzingRubyProxyInjectionBuilder( unit, beanBuilder, this.injectionAnalyzer );
+        
+        String path = StringUtils.underscore( rubyClassName ) + ".rb";
         try {
-            RubyProxyInjectionBuilder injectionBuilder = new RubyProxyInjectionBuilder( unit, this.injectionAnalyzer, beanBuilder );
-            injectionBuilder.build( StringUtils.underscore( rubyClassName ) + ".rb" );
-        } catch (InjectionException e) {
+            injectionBuilder.analyzeAndInject( path );
+        } catch (URISyntaxException e) {
             throw new DeploymentException( e );
         } catch (IOException e) {
-            throw new DeploymentException( e );
-        } catch (URISyntaxException e) {
             throw new DeploymentException( e );
         }
     }

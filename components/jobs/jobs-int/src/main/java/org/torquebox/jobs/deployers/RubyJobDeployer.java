@@ -36,7 +36,7 @@ import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.injection.AbstractRubyComponentDeployer;
 import org.torquebox.injection.InjectionAnalyzer;
-import org.torquebox.injection.RubyProxyInjectionBuilder;
+import org.torquebox.injection.BaseRubyProxyInjectionBuilder;
 import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.core.ScheduledJobMBean;

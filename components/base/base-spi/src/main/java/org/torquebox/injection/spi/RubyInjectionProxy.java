@@ -1,7 +1,9 @@
 package org.torquebox.injection.spi;
 
+import java.util.Map;
+
 public interface RubyInjectionProxy {
     
-    void setInjectableRegistry(InjectableRegistry injectionRegistry);
+    void setInjectionRegistry(Map<String,Object> injectionRegistry);
 
 }
