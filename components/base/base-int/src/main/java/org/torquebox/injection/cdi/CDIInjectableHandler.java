@@ -6,12 +6,21 @@ import org.jruby.ast.NodeType;
 import org.torquebox.injection.AbstractInjectableHandler;
 import org.torquebox.injection.Injectable;
 
+
+/** CDI injection handler.
+ * 
+ * Priority: 1,000
+ * 
+ * @author Bob McWhirter
+ *
+ */
 public class CDIInjectableHandler extends AbstractInjectableHandler {
 
     public static final String TYPE = "cdi";
 
     public CDIInjectableHandler() {
         super( TYPE );
+        setRecognitionPriority( 1 * 1000 );
     }
 
     @Override

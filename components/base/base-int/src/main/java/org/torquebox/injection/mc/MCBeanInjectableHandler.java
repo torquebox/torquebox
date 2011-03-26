@@ -10,6 +10,7 @@ public class MCBeanInjectableHandler extends AbstractInjectableHandler {
 
     public MCBeanInjectableHandler() {
         super( TYPE );
+        setRecognitionPriority( Integer.MAX_VALUE );
     }
 
     @Override
