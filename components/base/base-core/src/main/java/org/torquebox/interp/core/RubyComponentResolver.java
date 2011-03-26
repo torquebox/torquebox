@@ -82,11 +82,11 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     }
 
     @Override
-    public void setInjectableRegistry(InjectableRegistry registry) {
+    public void setInjectionRegistry(Map<String,Object> registry) {
         this.registry = registry;
     }
 
-    public InjectableRegistry getInjectableRegistry() {
+    public Map<String, Object> getInjectionRegistry() {
         return this.registry;
     }
 
@@ -132,11 +132,11 @@ public class RubyComponentResolver implements RubyInjectionProxy {
         if (componentClass == null || componentClass.isNil()) {
             return null;
         }
-        if (getInjectableRegistry() != null) {
+        if (getInjectionRegistry() != null) {
             JavaEmbedUtils.invokeMethod( ruby, 
                                          componentClass, 
                                          "const_set", 
-                                         new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getInjectableRegistry() }, 
+                                         new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getInjectionRegistry() }, 
                                          Object.class );
         }
         IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, componentClass, "new", getInitializeParams(), IRubyObject.class );
@@ -148,7 +148,7 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     private String rubyClassName;
     private String rubyRequirePath;
     private Object[] initializeParams;
-    private InjectableRegistry registry;
+    private Map<String, Object> registry;
 
     private static final Logger log = Logger.getLogger( RubyComponentResolver.class );
 
