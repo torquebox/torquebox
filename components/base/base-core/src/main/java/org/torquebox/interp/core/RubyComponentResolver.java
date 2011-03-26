@@ -25,11 +25,10 @@ import java.util.Map;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
+import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.injection.spi.InjectableRegistry;
 import org.torquebox.injection.spi.RubyInjectionProxy;
-
 
 public class RubyComponentResolver implements RubyInjectionProxy {
 
@@ -82,7 +81,7 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     }
 
     @Override
-    public void setInjectionRegistry(Map<String,Object> registry) {
+    public void setInjectionRegistry(Map<String, Object> registry) {
         this.registry = registry;
     }
 
@@ -94,9 +93,9 @@ public class RubyComponentResolver implements RubyInjectionProxy {
         log.debug( "resolve(" + ruby + ")" );
         synchronized (ruby) {
             log.debug( "Got exclusive access: " + ruby );
-            ruby.getLoadService().require(  "rubygems"  );
-            ruby.getLoadService().require(  "torquebox-base"  );
-            ruby.getLoadService().require(  "torquebox/component_manager"  );
+            ruby.getLoadService().require( "rubygems" );
+            ruby.getLoadService().require( "torquebox-base" );
+            ruby.getLoadService().require( "torquebox/component_manager" );
             RubyClass managerClass = (RubyClass) ruby.getClassFromPath( "TorqueBox::ComponentManager" );
             log.debug( "Got manager: " + managerClass );
             IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, managerClass, "lookup_component", new Object[] { this.componentName },
@@ -111,8 +110,8 @@ public class RubyComponentResolver implements RubyInjectionProxy {
                     log.debug( "Registered component: " + component );
                 }
                 if (isAlwaysReload()) {
-                    ruby.evalScriptlet( "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); //rails2
-                    ruby.evalScriptlet( "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); //rails3
+                    ruby.evalScriptlet( "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
+                    ruby.evalScriptlet( "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
                     log.debug( "Reloaded ruby: " + ruby );
                 }
             }
@@ -132,17 +131,19 @@ public class RubyComponentResolver implements RubyInjectionProxy {
         if (componentClass == null || componentClass.isNil()) {
             return null;
         }
-        if (getInjectionRegistry() != null) {
-            JavaEmbedUtils.invokeMethod( ruby, 
-                                         componentClass, 
-                                         "const_set", 
-                                         new Object[] { "TORQUEBOX_INJECTION_REGISTRY", getInjectionRegistry() }, 
-                                         Object.class );
-        }
+        mergeInjections(ruby);
         IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, componentClass, "new", getInitializeParams(), IRubyObject.class );
         return component;
     }
 
+    protected void mergeInjections(Ruby ruby) {
+        if (getInjectionRegistry() != null) {
+            RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
+            JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getInjectionRegistry() }, void.class );
+        }
+    }
+
+    private static final String TORQUEBOX_REGISTRY_CLASS_NAME = "TorqueBox::Registry";
     private String componentName;
     private boolean alwaysReload;
     private String rubyClassName;

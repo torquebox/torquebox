@@ -7,7 +7,7 @@ class SimpleService
     @webserver = inject_mc('jboss.web:service=WebServer')
     #@something = inject_cdi( org.torquebox.ThingOne )
     @something = inject( org.torquebox.ThingOne )
-    @logger = inject_logger
+    @logger = TorqueBox::Logger.new(self.class)
   end
 
   def start() 

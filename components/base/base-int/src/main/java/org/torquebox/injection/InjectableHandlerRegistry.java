@@ -22,6 +22,7 @@ public class InjectableHandlerRegistry {
     @Install
     public void addInjectableHandler(InjectableHandler handler) {
         log.info( "Registering injectable handler: " + handler.getType() + " - " + handler );
+        System.err.println( "Registering injectable handler: " + handler.getType() + " - " + handler );
         this.registry.put( handler.getType(), handler );
         this.handlersByPriority.add(  handler  );
     }
@@ -29,6 +30,7 @@ public class InjectableHandlerRegistry {
     @Uninstall
     public InjectableHandler removeInjectableHandler(InjectableHandler handler) {
         log.info( "Unregistering injectable handler: " + handler.getType() + " - " + handler );
+        System.err.println( "Unregistering injectable handler: " + handler.getType() + " - " + handler );
         this.handlersByPriority.remove( handler );
         return this.registry.remove( handler.getType() );
     }
