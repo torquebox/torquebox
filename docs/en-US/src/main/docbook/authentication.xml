@@ -14,15 +14,13 @@
     details so you can focus on writing your applications.
   </para>
   <para>
-    TorqueBox applications can authenticate against any security policy
-    that you have specified in your JBoss login configuration. To learn
-    more about how JBoss security works and is configured, refer to the
-    JBoss documentation.
-    <ulink>
-    http://www.jboss.org/jbossas/docs/6-x/Core-Documentation/security.html
-    </ulink>
-    The TorqueBox integration, however, makes authenticating against a corporate 
-    JAAS data store trivial.
+    TorqueBox applications can authenticate against any security
+    policy that you have specified in your JBoss login
+    configuration. To learn more about how JBoss security works and is
+    configured, refer to <ulink
+    url="http://www.jboss.org/jbossas/docs/6-x/Core-Documentation/security.html">the
+    JBoss documentation. </ulink> The TorqueBox integration, however,
+    makes authenticating against a corporate JAAS data store trivial.
   </para>
 
   <section>
@@ -65,9 +63,11 @@ auth:
     domain: jmx-console
       </screen>
     </para>
-    A handle to the HornetQ authentication domain is now available to you with 
-    <screen>authenticator = TorqueBox::Authentication.default</screen> and the JMX authentication
-    domain can be obtained like this: <screen>authenticator = TorqueBox::Authentication['jmx']</screen>
+    <para>
+      A handle to the HornetQ authentication domain is now available to you with 
+      <screen>authenticator = TorqueBox::Authentication.default</screen> and the JMX authentication
+      domain can be obtained like this: <screen>authenticator = TorqueBox::Authentication['jmx']</screen>
+    </para>
   </section>
 
   <section>
