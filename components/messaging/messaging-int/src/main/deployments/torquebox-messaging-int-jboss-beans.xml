@@ -5,11 +5,15 @@
   <classloader><inject bean="torquebox-bootstrap:0.0.0"/></classloader>
   
   <bean name="QueueInjectableHandler" class="org.torquebox.messaging.injection.DestinationInjectableHandler">
-    <property name="type">queue</property>
+    <constructor>
+      <parameter>queue</parameter>
+    </constructor>
   </bean>
-  
+
   <bean name="TopicInjectableHandler" class="org.torquebox.messaging.injection.DestinationInjectableHandler">
-    <property name="type">topic</property>
+    <constructor>
+      <parameter>topic</parameter>
+    </constructor>
   </bean>
 
   <bean name="QueuesYamlParsingDeployer" class="org.torquebox.messaging.deployers.QueuesYamlParsingDeployer"/>

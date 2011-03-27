@@ -2,6 +2,7 @@ package org.torquebox.injection;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 import org.jboss.vfs.VirtualFile;
@@ -36,6 +37,9 @@ public class InjectionAnalyzer extends ScriptAnalyzer {
     }
 
     public List<Injectable> analyze(VirtualFile file) throws IOException {
+        if ( ! file.exists() ) {
+            return Collections.emptyList();
+        }
         InjectionVisitor visitor = new InjectionVisitor( this );
         InputStream in = null;
         

@@ -72,7 +72,7 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
         }
 
         if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
-            
+            mergeInjections( ruby );
             rackApp = new RackApplicationImpl( ruby, rackUpScript, rackUpFile );
             rubyRackApp = JavaEmbedUtils.javaToRuby( ruby, rackApp );
             torqueboxModule.setConstant( "TORQUEBOX_RACK_APP", rubyRackApp );

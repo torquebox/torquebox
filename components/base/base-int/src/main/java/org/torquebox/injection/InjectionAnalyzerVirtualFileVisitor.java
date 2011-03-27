@@ -21,9 +21,12 @@ public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
 
     @Override
     public void visit(VirtualFile file) {
+        System.err.println( "** visit: " + file );
         if ( file.getName().endsWith(  ".rb"  ) ) {
             try {
+                System.err.println( "analyze: " + file );
                 List<Injectable> injectables = this.analyzer.analyze( file );
+                System.err.println( "grab: " + injectables );
                 this.injectables.addAll( injectables );
             } catch (IOException e) {
                 throw new InjectionException( e );

@@ -20,9 +20,11 @@ module TorqueBox
     
     class << self
       def merge!(hash)
+        puts "REGISTRY: merging from #{hash}"
         registry.merge!(hash)
       end
       def [](key)
+         puts "REGISTRY: lookup #{key}"
         registry[key]
       end
       def registry
