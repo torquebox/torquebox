@@ -40,7 +40,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
         }
 
         for (Node child : node.childNodes()) {
-            if ( ! ( child instanceof ArgumentNode) ) {
+            if ( ! ( child.getNodeType() == NodeType.ARGUMENTNODE) && ! ( child.getNodeType() == NodeType.LISTNODE ) ) {
                 Object childResult = child.accept( this );
                 if (childResult != null) {
                     results.add( childResult );

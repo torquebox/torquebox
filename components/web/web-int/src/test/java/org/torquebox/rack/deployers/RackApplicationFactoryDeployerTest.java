@@ -30,6 +30,8 @@ import org.jboss.vfs.VFS;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.injection.InjectableHandlerRegistry;
+import org.torquebox.injection.InjectionAnalyzer;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
@@ -44,6 +46,9 @@ public class RackApplicationFactoryDeployerTest extends AbstractDeployerTestCase
     @Before
     public void setUpDeployer() throws Throwable {
         this.deployer = new RackApplicationFactoryDeployer();
+        InjectionAnalyzer analyzer = new InjectionAnalyzer();
+        analyzer.setInjectableHandlerRegistry( new InjectableHandlerRegistry() );
+        this.deployer.setInjectionAnalyzer( analyzer );
         addDeployer( this.deployer );
     }
 
