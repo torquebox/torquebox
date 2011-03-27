@@ -96,6 +96,7 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
 
         BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), null );
         beanBuilder.addPropertyMetaData( "componentResolverName", resolverMetaData.getName() );
+        beanBuilder.addDependency( resolverMetaData.getName() );
 
         String mbeanName = JMXUtils.jmxName( "torquebox.jobs", rubyAppMetaData.getApplicationName() ).with( "name", metaData.getName() ).name();
         String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + ScheduledJobMBean.class.getName() + ".class)";
