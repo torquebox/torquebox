@@ -13,7 +13,6 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.injection.mc.MCBeanInjectable;
-import org.torquebox.injection.spi.RubyInjectionProxy;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
@@ -40,7 +39,7 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         DeploymentUnit unit = getDeploymentUnit(  deploymentName  );
         
         BaseRubyProxyInjectionBuilder injectionBuilder = new BaseRubyProxyInjectionBuilder( unit, beanBuilder );
-        injectionBuilder.injectInjectableRegistryMap( injectables );
+        injectionBuilder.injectInjectionRegistry( injectables );
         
         System.err.println( "BEANS: " + beanBuilder.getBeanMetaDataFactory().getBeans().size() );
         AttachmentUtils.attach(  unit, beanBuilder.getBeanMetaDataFactory() );
@@ -53,16 +52,16 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         System.err.println(  "BBB" );
         assertNotNull( proxy );
         assertNotNull( proxy.registry );
-        assertSame( this.mcbean, proxy.registry.get( "mcbean" ));
+        assertSame( this.mcbean, proxy.registry.getUnconverted( "mcbean" ));
         System.err.println(  "CCC" );
     }
     
     public static class MockProxy implements RubyInjectionProxy {
 
-        public Map<String, Object> registry;
+        public InjectionRegistry registry;
 
         @Override
-        public void setInjectionRegistry(Map<String,Object> registry) {
+        public void setInjectionRegistry(InjectionRegistry registry) {
             System.err.println( "setInjectionRegistry(" + registry + ")" );
             this.registry = registry;
             

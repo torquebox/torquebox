@@ -23,14 +23,14 @@ public class InjectionVisitor extends DefaultNodeVisitor {
     public Object visitFCallNode(FCallNode node) throws InjectionException {
         String callName = node.getName();
 
-        if (!this.markerSeen && callName.equals( "include" )) {
+        if (!this.markerSeen && (callName.equals( "include" ) || callName.equals( "extend" ))) {
             String includedName = getConstString( ((ArrayNode) node.getArgsNode()).get( 0 ) );
             if (includedName.equals( TORQUEBOX_MARKER_MODULE )) {
                 this.markerSeen = true;
             }
         } else {
             InjectableHandler handler = null;
-            
+
             boolean generic = false;
             if (callName.equals( "inject" )) {
                 Node argsNode = node.getArgsNode();

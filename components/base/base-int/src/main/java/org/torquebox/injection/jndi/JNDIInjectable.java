@@ -19,7 +19,11 @@ public class JNDIInjectable extends SimpleNamedInjectable {
     
     @Override
     public ValueMetaData createMicrocontainerInjection(DeploymentUnit context, BeanMetaDataBuilder builder) {
-        return builder.createInject( JNDIKernelRegistryPlugin.JNDI_DEPENDENCY_PREFIX + getName() );
+        return builder.createInject( getTargetName() );
+    }
+    
+    protected String getTargetName() {
+        return JNDIKernelRegistryPlugin.JNDI_DEPENDENCY_PREFIX + getName();
     }
 
 }

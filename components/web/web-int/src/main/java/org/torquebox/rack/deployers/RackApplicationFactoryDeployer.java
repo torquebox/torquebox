@@ -132,6 +132,6 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
         System.err.println( "INJECTABLES: " + injectables );
 
         BaseRubyProxyInjectionBuilder injectionBuilder = new BaseRubyProxyInjectionBuilder( unit, beanBuilder );
-        injectionBuilder.injectInjectableRegistryMap( injectables );
+        injectionBuilder.injectInjectionRegistry( injectables );
     }
 }

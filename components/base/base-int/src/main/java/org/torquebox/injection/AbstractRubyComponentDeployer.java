@@ -36,6 +36,7 @@ import org.torquebox.mc.AttachmentUtils;
 public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
 
     public AbstractRubyComponentDeployer() {
+        addOutput( BeanMetaData.class );
     }
 
     public void setInjectionAnalyzer(InjectionAnalyzer injectionAnalyzer) {

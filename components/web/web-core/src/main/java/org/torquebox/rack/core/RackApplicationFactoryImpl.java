@@ -26,7 +26,8 @@ import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.injection.spi.RubyInjectionProxy;
+import org.torquebox.injection.InjectionRegistry;
+import org.torquebox.injection.RubyInjectionProxy;
 import org.torquebox.rack.spi.RackApplication;
 import org.torquebox.rack.spi.RackApplicationFactory;
 
@@ -35,7 +36,7 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
     private static final String TORQUEBOX_REGISTRY_CLASS_NAME = "TorqueBox::Registry";
     private String rackUpScript;
     private VirtualFile rackUpFile;
-    private Map<String, Object> injectionRegistry;
+    private InjectionRegistry injectionRegistry;
 
     public RackApplicationFactoryImpl() {
     }
@@ -83,18 +84,17 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
     }
     
     protected void mergeInjections(Ruby ruby) {
-        if (getInjectionRegistry() != null) {
-            RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
-            JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getInjectionRegistry() }, void.class );
+        if (this.injectionRegistry != null) {
+            this.injectionRegistry.merge( ruby );
         }
     }
 
     @Override
-    public void setInjectionRegistry(Map<String, Object> injectionRegistry) {
+    public void setInjectionRegistry(InjectionRegistry injectionRegistry) {
         this.injectionRegistry = injectionRegistry;
     }
     
-    public Map<String, Object> getInjectionRegistry() {
+    public InjectionRegistry getInjectionRegistry() {
         return this.injectionRegistry;
     }
 

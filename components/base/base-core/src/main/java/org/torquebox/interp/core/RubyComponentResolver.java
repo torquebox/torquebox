@@ -19,7 +19,6 @@
 
 package org.torquebox.interp.core;
 
-import java.util.Collection;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
@@ -28,7 +27,8 @@ import org.jruby.RubyClass;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.injection.spi.RubyInjectionProxy;
+import org.torquebox.injection.InjectionRegistry;
+import org.torquebox.injection.RubyInjectionProxy;
 
 public class RubyComponentResolver implements RubyInjectionProxy {
 
@@ -81,11 +81,11 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     }
 
     @Override
-    public void setInjectionRegistry(Map<String, Object> registry) {
+    public void setInjectionRegistry(InjectionRegistry registry) {
         this.registry = registry;
     }
 
-    public Map<String, Object> getInjectionRegistry() {
+    public InjectionRegistry getInjectionRegistry() {
         return this.registry;
     }
 
@@ -137,19 +137,17 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     }
 
     protected void mergeInjections(Ruby ruby) {
-        if (getInjectionRegistry() != null) {
-            RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
-            JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getInjectionRegistry() }, void.class );
+        if ( this.registry != null ) {
+            this.registry.merge( ruby );
         }
     }
 
-    private static final String TORQUEBOX_REGISTRY_CLASS_NAME = "TorqueBox::Registry";
     private String componentName;
     private boolean alwaysReload;
     private String rubyClassName;
     private String rubyRequirePath;
     private Object[] initializeParams;
-    private Map<String, Object> registry;
+    private InjectionRegistry registry;
 
     private static final Logger log = Logger.getLogger( RubyComponentResolver.class );
 

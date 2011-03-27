@@ -21,8 +21,6 @@ package org.torquebox.messaging.deployers;
 
 import java.util.Set;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
@@ -32,11 +30,10 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
-import org.torquebox.interp.core.RubyComponentResolver;
+import org.torquebox.injection.AbstractRubyComponentDeployer;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.jmx.JMXUtils;
@@ -57,7 +54,7 @@ import org.torquebox.messaging.metadata.QueueMetaData;
  * </pre>
  * 
  */
-public class MessageProcessorDeployer extends AbstractDeployer {
+public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
 
     private String demand;
 
@@ -82,15 +79,11 @@ public class MessageProcessorDeployer extends AbstractDeployer {
         Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData( MessageProcessorMetaData.class );
 
         for (MessageProcessorMetaData each : allMetaData) {
-            try {
-                deploy( unit, each );
-            } catch (NamingException e) {
-                throw new DeploymentException( e );
-            }
+            deploy( unit, each );
         }
     }
 
-    protected void deploy(DeploymentUnit unit, MessageProcessorMetaData metaData) throws NamingException {
+    protected void deploy(DeploymentUnit unit, MessageProcessorMetaData metaData) throws DeploymentException {
 
         String simpleName = metaData.getDestinationName() + "." + metaData.getRubyClassName();
         String beanName = AttachmentUtils.beanName( unit, RubyMessageProcessor.class, simpleName );
@@ -103,7 +96,9 @@ public class MessageProcessorDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
         builder.addPropertyMetaData( "messageSelector", metaData.getMessageSelector() );
         builder.addPropertyMetaData( "concurrency", metaData.getConcurrency() );
-        builder.addPropertyMetaData( "componentResolver", createComponentResolver( unit, metaData ) );
+        
+        BeanMetaData componentResolver = createComponentResolver( unit, "message-processor." + metaData.getName(), metaData.getRubyClassName(), metaData.getRubyConfig() );
+        builder.addPropertyMetaData( "componentResolver", builder.createInject( componentResolver.getName() ) );
 
         Class<? extends AbstractManagedDestination> demandClass = demandDestination( unit, metaData.getDestinationName() );
 
@@ -114,22 +109,22 @@ public class MessageProcessorDeployer extends AbstractDeployer {
 
         if (this.demand != null) {
             log.debug( "adding a demand for " + this.demand + " to " + simpleName );
-            builder.addDemand( this.demand, ControllerState.CREATE, ControllerState.INSTALLED, null);
+            builder.addDemand( this.demand, ControllerState.CREATE, ControllerState.INSTALLED, null );
         }
-
-        Context context = new InitialContext();
 
         ValueMetaData destinationJndiRef = builder.createInject( "naming:" + metaData.getDestinationName() );
         builder.addPropertyMetaData( "destination", destinationJndiRef );
 
         ValueMetaData connectionFactoryJndiRef = builder.createInject( "naming:/ConnectionFactory" );
         builder.addPropertyMetaData( "connectionFactory", connectionFactoryJndiRef );
-        
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(  RubyApplicationMetaData.class );
-        
-        String mbeanName = JMXUtils.jmxName( "torquebox.messaging.processors", rubyAppMetaData.getApplicationName() ).with( "name", StringUtils.underscore( metaData.getName() ) ).name();
-        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\""+ mbeanName + "\", exposedInterface=" + RubyMessageProcessorMBean.class.getName() + ".class)";
-        builder.addAnnotation( jmxAnno ); 
+
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+
+        String mbeanName = JMXUtils.jmxName( "torquebox.messaging.processors", rubyAppMetaData.getApplicationName() )
+                .with( "name", StringUtils.underscore( metaData.getName() ) ).name();
+        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + RubyMessageProcessorMBean.class.getName()
+                + ".class)";
+        builder.addAnnotation( jmxAnno );
 
         BeanMetaData beanMetaData = builder.getBeanMetaData();
 
@@ -151,19 +146,4 @@ public class MessageProcessorDeployer extends AbstractDeployer {
         return null;
     }
 
-    protected RubyComponentResolver createComponentResolver(DeploymentUnit unit, MessageProcessorMetaData metaData) {
-        RubyComponentResolver result = new RubyComponentResolver();
-        result.setRubyClassName( metaData.getRubyClassName() );
-        result.setRubyRequirePath( metaData.getRubyRequirePath() );
-        result.setComponentName( "message-processor." + metaData.getRubyClassName() );
-        result.setInitializeParamsMap( metaData.getRubyConfig() );
-        RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-        if (envMetaData != null) {
-            result.setAlwaysReload( envMetaData.isDevelopmentMode() );
-            log.info( metaData.getRubyClassName() + " alwaysReload=" + envMetaData.isDevelopmentMode() );
-        } else {
-            log.warn( "No EnvironmentMetaData found for " + metaData.getRubyClassName() );
-        }
-        return result;
-    }
 }

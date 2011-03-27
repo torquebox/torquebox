@@ -28,12 +28,12 @@ public class AnalyzingRubyProxyInjectionBuilder extends BaseRubyProxyInjectionBu
         }
         
         List<Injectable> injectables = this.analyzer.analyze( source );
-        injectInjectableRegistryMap(injectables );
+        injectInjectionRegistry(injectables );
     }
     
     public void analyzeRecursivelyAndInject(String propertyName, VirtualFile root) throws URISyntaxException, IOException {
         List<Injectable> injectables = this.analyzer.analyzeRecursively( root );
-        injectInjectableRegistryMap( injectables );
+        injectInjectionRegistry( injectables );
     }
     
     protected List<URL> getLoadPathURLs() {

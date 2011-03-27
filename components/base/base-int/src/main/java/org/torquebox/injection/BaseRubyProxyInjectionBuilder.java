@@ -8,6 +8,7 @@ import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
+import org.torquebox.mc.AttachmentUtils;
 
 public class BaseRubyProxyInjectionBuilder {
 
@@ -30,9 +31,15 @@ public class BaseRubyProxyInjectionBuilder {
         return this.beanBuilder;
     }
     
-    public void injectInjectableRegistryMap(Collection<Injectable> injectables) {
+    public void injectInjectionRegistry(Collection<Injectable> injectables) {
         Map<ValueMetaData, ValueMetaData> registryMap = buildInjectableRegistryMap( injectables );
-        beanBuilder.addPropertyMetaData( DEFAULT_INJECTION_REGISTRY_PROPERTY_NAME, registryMap );
+        String registryBeanName = this.beanBuilder.getBeanMetaData().getName() + "$" + InjectionRegistry.class.getName();
+        
+        BeanMetaDataBuilder registryBuilder = BeanMetaDataBuilder.createBuilder( registryBeanName, InjectionRegistry.class.getName() );
+        registryBuilder.addPropertyMetaData( "injectionRegistry", registryMap );
+        
+        AttachmentUtils.attach(  this.context, registryBuilder.getBeanMetaData() );
+        beanBuilder.addPropertyMetaData( DEFAULT_INJECTION_REGISTRY_PROPERTY_NAME, beanBuilder.createInject( registryBeanName ) );
     }
 
     public Map<ValueMetaData, ValueMetaData> buildInjectableRegistryMap(Collection<Injectable> injectables) {
