@@ -50,7 +50,7 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
 
     protected BeanMetaData createComponentResolver(DeploymentUnit unit, String componentName, String rubyClassName, String classLocation, Map<String, Object> initParams)
             throws DeploymentException {
-        String beanName = AttachmentUtils.beanName( unit, RubyComponentResolver.class, "" + this.counter.getAndIncrement() );
+        String beanName = AttachmentUtils.beanName( unit, RubyComponentResolver.class, componentName + counter.getAndIncrement() );
         BeanMetaDataBuilder resolverBuilder = BeanMetaDataBuilder.createBuilder( beanName, RubyComponentResolver.class.getName() );
 
         resolverBuilder.addPropertyMetaData( "rubyClassName", StringUtils.camelize( rubyClassName ) );
@@ -90,7 +90,7 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
         }
     }
 
-    private AtomicInteger counter = new AtomicInteger();
+    private static AtomicInteger counter = new AtomicInteger();
     private InjectionAnalyzer injectionAnalyzer;
 
 }
