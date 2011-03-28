@@ -31,6 +31,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.common.util.StringUtils;
 import org.torquebox.injection.AbstractRubyComponentDeployer;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
@@ -81,7 +82,7 @@ public class ServicesDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
 
         ValueMetaData componentResolver = createComponentResolver( unit, "services." + serviceMetaData.getClassName(), serviceMetaData.getClassName(),
-                serviceMetaData.getParameters() );
+                StringUtils.underscore( serviceMetaData.getClassName() ), serviceMetaData.getParameters() );
         beanBuilder.addPropertyMetaData( "rubyComponentResolver", componentResolver );
 
         if (serviceMetaData.isRequiresSingleton()) {

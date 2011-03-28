@@ -29,6 +29,7 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.mc.AttachmentUtils;
@@ -47,21 +48,33 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
         return this.injectionAnalyzer;
     }
 
-    protected BeanMetaData createComponentResolver(DeploymentUnit unit, String componentName, String rubyClassName, Map<String, Object> initParams)
+    protected BeanMetaData createComponentResolver(DeploymentUnit unit, String componentName, String rubyClassName, String classLocation, Map<String, Object> initParams)
             throws DeploymentException {
         String beanName = AttachmentUtils.beanName( unit, RubyComponentResolver.class, "" + this.counter.getAndIncrement() );
         BeanMetaDataBuilder resolverBuilder = BeanMetaDataBuilder.createBuilder( beanName, RubyComponentResolver.class.getName() );
 
         resolverBuilder.addPropertyMetaData( "rubyClassName", StringUtils.camelize( rubyClassName ) );
-        resolverBuilder.addPropertyMetaData( "rubyRequirePath", StringUtils.underscore( rubyClassName ) );
+        resolverBuilder.addPropertyMetaData( "rubyRequirePath", classLocation );
         resolverBuilder.addPropertyMetaData( "initializeParamsMap", initParams );
         resolverBuilder.addPropertyMetaData( "componentName", componentName );
+        System.err.println( "Setting alwaysReload: " + isAlwaysReload( unit ) + " : on " + componentName );
+        resolverBuilder.addPropertyMetaData( "alwaysReload", isAlwaysReload(unit) );
 
         setUpInjections( unit, resolverBuilder, rubyClassName );
 
         AttachmentUtils.attach( unit, resolverBuilder.getBeanMetaData() );
 
         return resolverBuilder.getBeanMetaData();
+    }
+    
+    protected boolean isAlwaysReload(DeploymentUnit unit) {
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+        
+        if ( rubyAppMetaData != null ) {
+            return rubyAppMetaData.isDevelopmentMode();
+        }
+        
+        return false;
     }
 
     public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, String rubyClassName) throws DeploymentException {

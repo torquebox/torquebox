@@ -94,7 +94,7 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addPropertyMetaData( "description", metaData.getDescription() );
         beanBuilder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
 
-        BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), null );
+        BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), metaData.getRubyRequirePath(), null );
         beanBuilder.addPropertyMetaData( "componentResolverName", resolverMetaData.getName() );
         beanBuilder.addDependency( resolverMetaData.getName() );
 

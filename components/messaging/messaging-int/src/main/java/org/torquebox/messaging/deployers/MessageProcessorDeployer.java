@@ -97,7 +97,7 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         builder.addPropertyMetaData( "messageSelector", metaData.getMessageSelector() );
         builder.addPropertyMetaData( "concurrency", metaData.getConcurrency() );
         
-        BeanMetaData componentResolver = createComponentResolver( unit, "message-processor." + metaData.getName(), metaData.getRubyClassName(), metaData.getRubyConfig() );
+        BeanMetaData componentResolver = createComponentResolver( unit, "message-processor." + metaData.getName(), metaData.getRubyClassName(), metaData.getRubyRequirePath(), metaData.getRubyConfig() );
         builder.addPropertyMetaData( "componentResolver", builder.createInject( componentResolver.getName() ) );
 
         Class<? extends AbstractManagedDestination> demandClass = demandDestination( unit, metaData.getDestinationName() );
