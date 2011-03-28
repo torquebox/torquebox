@@ -6,9 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.vfs.VirtualFile;
-import org.jboss.vfs.VirtualFileFilter;
-import org.jboss.vfs.VirtualFileVisitor;
-import org.jboss.vfs.VisitorAttributes;
 import org.torquebox.interp.analysis.ScriptAnalyzer;
 
 public class InjectionAnalyzer extends ScriptAnalyzer {

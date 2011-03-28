@@ -20,10 +20,7 @@
 package org.torquebox.jobs.core;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Properties;
-
-import javax.naming.NamingException;
 
 import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
@@ -78,7 +75,7 @@ public class RubyScheduler {
         return this.scheduler;
     }
 
-    public void start() throws IOException, SchedulerException, NamingException, SQLException {
+    public void start() throws IOException, SchedulerException {
         log.info( "Starting Ruby job scheduler: " + getName() );
         Properties props = new Properties();
         props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
