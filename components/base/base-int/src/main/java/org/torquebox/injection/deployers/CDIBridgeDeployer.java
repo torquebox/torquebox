@@ -37,6 +37,7 @@ public class CDIBridgeDeployer extends AbstractDeployer {
         System.err.println( "CDIBridge-Attach: " + builder.getBeanMetaData() );
         
         unit.addAttachment( BootstrapInfo.class, new BootstrapInfo() );
+        
         unit.addAttachment( DeployersUtils.WELD_DEPLOYMENT_FLAG, Boolean.TRUE, Boolean.class );
     }
 

@@ -29,6 +29,8 @@
   
   <!-- Base -->
   
+  <bean name="RubyApplicationClassLoaderDeployer"  class="org.torquebox.base.deployers.RubyApplicationClassLoaderDeployer"/>
+  
   <bean name="TorqueBox"                         class="org.torquebox.TorqueBox"/>
   
   <bean name="TorqueBoxJNDIKernelRegistryPlugin" class="org.torquebox.mc.JNDIKernelRegistryPlugin"/>
