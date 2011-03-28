@@ -29,10 +29,19 @@ public class ScheduledJobMetaData {
     private String rubyRequirePath;
 
     private String rubySchedulerName;
+    private boolean singleton;
 
-    public ScheduledJobMetaData() {
+	public ScheduledJobMetaData() {
 
     }
+	
+    public boolean isSingleton() {
+		return singleton;
+	}
+
+	public void setSingleton(boolean singleton) {
+		this.singleton = singleton;
+	}	
 
     public void setName(String name) {
         this.name = name;

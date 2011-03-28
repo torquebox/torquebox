@@ -4,10 +4,13 @@ job.one:
   description: My Job is routine 
   cron: 01 * * * * ? 
   
-  
-  
-  
 job.two:
   job: MyOtherJobClass
   description: My other Job is extraodinary
   cron: 01 01 01 15 * ?     
+  
+job.three:
+  job: SingletonJobClass
+  description: My singleton job class
+  cron: 01 01 01 15 * ?  
+  singleton: true

@@ -73,7 +73,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Set<? extends ScheduledJobMetaData> allJobMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
 
         assertNotNull( allJobMetaData );
-        assertEquals( 2, allJobMetaData.size() );
+        assertEquals( 3, allJobMetaData.size() );
 
         ScheduledJobMetaData jobOne = getJobMetaData( allJobMetaData, "job.one" );
         assertNotNull( jobOne );
@@ -81,6 +81,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals( "My Job is routine", jobOne.getDescription() );
         assertEquals( "01 * * * * ?", jobOne.getCronExpression() );
         assertEquals( "MyJobClass", jobOne.getRubyClassName() );
+        assertFalse( jobOne.isSingleton() );
         assertNotNull( jobOne.getGroup() );
 
         ScheduledJobMetaData jobTwo = getJobMetaData( allJobMetaData, "job.two" );
@@ -89,9 +90,20 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals( "My other Job is extraodinary", jobTwo.getDescription() );
         assertEquals( "01 01 01 15 * ?", jobTwo.getCronExpression() );
         assertEquals( "MyOtherJobClass", jobTwo.getRubyClassName() );
+        assertFalse( jobTwo.isSingleton() );
         assertNotNull( jobTwo.getGroup() );
+        
+        ScheduledJobMetaData jobThree = getJobMetaData( allJobMetaData, "job.three" );
+        assertNotNull( jobThree );
+        assertEquals( "job.three", jobThree.getName() );
+        assertEquals( "My singleton job class", jobThree.getDescription() );
+        assertEquals( "01 01 01 15 * ?", jobThree.getCronExpression() );
+        assertEquals( "SingletonJobClass", jobThree.getRubyClassName() );
+        assertTrue( jobThree.isSingleton() );
+        assertNotNull( jobTwo.getGroup() );        
 
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
+        assertEquals( jobOne.getGroup(), jobThree.getGroup() );
     }
 
     /**

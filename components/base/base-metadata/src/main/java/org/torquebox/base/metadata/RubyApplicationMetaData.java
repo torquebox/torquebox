@@ -19,10 +19,10 @@
 
 package org.torquebox.base.metadata;
 
+import java.util.Map;
+
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-
-import java.util.Map;
 
 public class RubyApplicationMetaData {
     

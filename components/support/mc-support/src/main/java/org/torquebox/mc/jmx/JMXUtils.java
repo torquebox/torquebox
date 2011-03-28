@@ -1,6 +1,5 @@
 package org.torquebox.mc.jmx;
 
-import java.util.Map;
 
 public class JMXUtils {
     

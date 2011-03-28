@@ -45,7 +45,7 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
  */
 public class LoadPathDeployer extends AbstractDeployer {
 
-    private List<String> loadPaths = Collections.EMPTY_LIST;
+    private List<String> loadPaths = Collections.emptyList();
 
     public LoadPathDeployer() {
         setStage( DeploymentStages.PRE_DESCRIBE );

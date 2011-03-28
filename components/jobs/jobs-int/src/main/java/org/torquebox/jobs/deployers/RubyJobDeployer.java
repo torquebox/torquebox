@@ -19,24 +19,16 @@
 
 package org.torquebox.jobs.deployers;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Set;
-
-import javax.management.JMX;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.common.util.StringUtils;
 import org.torquebox.injection.AbstractRubyComponentDeployer;
-import org.torquebox.injection.InjectionAnalyzer;
-import org.torquebox.injection.BaseRubyProxyInjectionBuilder;
 import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.core.ScheduledJobMBean;
@@ -93,6 +85,7 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addPropertyMetaData( "rubyRequirePath", metaData.getRubyRequirePath() );
         beanBuilder.addPropertyMetaData( "description", metaData.getDescription() );
         beanBuilder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
+        beanBuilder.addPropertyMetaData( "singleton", metaData.isSingleton() );
 
         BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), null );
         beanBuilder.addPropertyMetaData( "componentResolverName", resolverMetaData.getName() );
@@ -103,9 +96,11 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addAnnotation( jmxAnno );
 
         String schedulerBeanName = metaData.getRubySchedulerName();
+        boolean isSingleton = metaData.isSingleton();
         if (schedulerBeanName == null) {
-            schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
+            schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class, isSingleton ? "Singleton" : null );
         }
+        log.info( "Job " + metaData.getName() +" will be scheduled against scheduler " + schedulerBeanName );
         ValueMetaData schedulerInjection = beanBuilder.createInject( schedulerBeanName, "scheduler" );
         beanBuilder.addPropertyMetaData( "scheduler", schedulerInjection );
 
