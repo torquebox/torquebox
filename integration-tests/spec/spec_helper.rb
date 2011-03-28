@@ -1,11 +1,12 @@
 require 'container'
 require 'capybara/dsl'
+require 'akephalos'
 
-Capybara.register_driver :selenium do |app|
-  Capybara::Driver::Selenium.new(app, :browser => :firefox)
+Capybara.register_driver :akephalos do |app|
+  Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)
 end
 
-Capybara.default_driver = :selenium
+Capybara.default_driver = :akephalos
 Capybara.app_host = "http://localhost:8080"
 Capybara.run_server = false
 

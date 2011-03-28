@@ -21,6 +21,9 @@ package org.torquebox.integration.arquillian.rack;
 
 import static org.junit.Assert.*;
 
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.api.Run;
 import org.jboss.arquillian.api.RunModeType;
@@ -44,7 +47,10 @@ public class AuthTest extends AbstractIntegrationTestCase {
         String creds = "bmcwhirt@redhat.com:swordfish";
         String encodedCreds = Base64.encodeBytes( creds.getBytes() );
 
-        driver.setCredentials( "bmcwhirt@redhat.com", "swordfish" );
+        AuthScope authScope = new AuthScope( "localhost", 8080 );
+        Credentials credentials = new UsernamePasswordCredentials( "bmcwhirt@redhat.com",
+                                                                   "swordfish" );
+        driver.setCredentials( authScope, credentials );
 
         driver.get( "http://localhost:8080/basic-auth" );
 

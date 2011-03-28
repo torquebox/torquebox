@@ -6,10 +6,7 @@ describe "rack lib/-based jar loading" do
 
   it "should work" do
     visit "/lib-jar"
-    puts "==="
-    puts page.body.to_s
-    puts "==="
-    uuid = page.find( :xpath, '//pre' ).text
+    uuid = page.find( :xpath, '//body' ).text
     uuid.should match(/^........-....-....-....-............$/)
   end
 

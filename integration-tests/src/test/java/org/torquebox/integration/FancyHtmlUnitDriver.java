@@ -19,10 +19,9 @@
 
 package org.torquebox.integration;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.auth.AuthScheme;
-import org.apache.commons.httpclient.auth.CredentialsNotAvailableException;
-import org.apache.commons.httpclient.auth.CredentialsProvider;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.client.CredentialsProvider;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 import com.gargoylesoftware.htmlunit.DefaultCredentialsProvider;
@@ -42,18 +41,17 @@ public class FancyHtmlUnitDriver extends HtmlUnitDriver implements CredentialsPr
         return client;
     }
 
-    public void setCredentials(String username, String password) {
-        resetCredentials();
-        this.credentialsProvider.addCredentials( username, password );
+    public void setCredentials(AuthScope authScope, Credentials credentials) {
+        clear();
+        this.credentialsProvider.setCredentials( authScope, credentials);
     }
 
-    public void resetCredentials() {
+    public void clear() {
         this.credentialsProvider = new DefaultCredentialsProvider();
     }
 
-    @Override
-    public Credentials getCredentials(AuthScheme scheme, String host, int port, boolean proxy) throws CredentialsNotAvailableException {
-        return this.credentialsProvider.getCredentials( scheme, host, port, proxy );
+    public Credentials getCredentials(AuthScope authScope) {
+        return this.credentialsProvider.getCredentials(authScope);
     }
 
 }

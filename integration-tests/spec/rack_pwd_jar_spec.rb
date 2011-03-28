@@ -6,7 +6,7 @@ describe "rack PWD-based jar loading" do
 
   it "should work" do
     visit "/pwd-jar"
-    uuid = page.find( :xpath, '//pre' ).text
+    uuid = page.find( :xpath, '//body' ).text
     uuid.should match(/^........-....-....-....-............$/)
   end
 

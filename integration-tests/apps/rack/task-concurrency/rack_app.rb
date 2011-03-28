@@ -11,6 +11,6 @@ class RackApp
       SampleTask.async(:foo, 1)
       SampleTask.async(:foo, 2)
     end
-    [200, {'Content-Type' => 'text/plain'}, "tasks fired" ]
+    [200, {'Content-Type' => 'text/html'}, "tasks fired" ]
   end
 end

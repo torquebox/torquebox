@@ -34,14 +34,14 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium</artifactId>
-      <version>2.0a5</version>
+      <version>2.0a7</version>
       <scope>test</scope>
     </dependency> 
 
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-htmlunit-driver</artifactId>
-      <version>2.0a5</version>
+      <version>2.0a7</version>
       <scope>test</scope>
     </dependency> 
 
@@ -100,6 +100,24 @@
       <groupId>rubygems</groupId>
       <artifactId>capybara</artifactId>
       <version>0.4.0</version>
+      <type>gem</type>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>ffi</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>nokogiri</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>akephalos</artifactId>
+      <version>0.2.5</version>
       <type>gem</type>
       <scope>test</scope>
       <exclusions>

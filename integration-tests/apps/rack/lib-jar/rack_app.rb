@@ -23,6 +23,6 @@ class RackApp
     @log.info "Sending JMS message:" 
     @topic.publish(h) 
 
-    [200, {'Content-Type' => 'text/plain'}, @uuid.to_s ]
+    [200, {'Content-Type' => 'text/html'}, @uuid.to_s ]
   end 
 end 

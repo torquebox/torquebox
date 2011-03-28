@@ -6,7 +6,7 @@ describe "rack vendor/jars/-based jar loading" do
 
   it "should work" do
     visit "/vendor-jars-jar"
-    uuid = page.find( :xpath, '//pre' ).text
+    uuid = page.find( :xpath, '//body' ).text
     uuid.should match(/^........-....-....-....-............$/)
   end
 
