@@ -19,8 +19,7 @@
 
 package org.torquebox.rack.core;
 
-import java.util.Map;
-
+import org.apache.log4j.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
@@ -33,6 +32,7 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 
 public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyInjectionProxy {
 
+    private static final Logger log = Logger.getLogger(  RackApplicationFactoryImpl.class );
     private static final String TORQUEBOX_REGISTRY_CLASS_NAME = "TorqueBox::Registry";
     private String rackUpScript;
     private VirtualFile rackUpFile;
@@ -40,10 +40,14 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
 
     public RackApplicationFactoryImpl() {
     }
-
+    
     public RackApplicationFactoryImpl(String rackUpScript, VirtualFile rackUpScriptLocation) {
         this.rackUpScript = rackUpScript;
         this.rackUpFile = rackUpScriptLocation;
+    }
+    
+    public void start() {
+        log.info( "Starting" );
     }
 
     public void setRackUpScript(String rackUpScript) {

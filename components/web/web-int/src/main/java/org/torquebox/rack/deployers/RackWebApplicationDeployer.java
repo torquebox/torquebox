@@ -249,7 +249,10 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
             depends = new ArrayList<String>();
             jbossWebMetaData.setDepends(depends);
         }
+        
         depends.add(rackAppMetaData.getRackApplicationPoolName());
+        
+        log.info( "Dependencies are: " + depends );
     }
 
 }
