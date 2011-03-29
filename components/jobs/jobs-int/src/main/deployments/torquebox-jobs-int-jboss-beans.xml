@@ -8,6 +8,7 @@
   
   <bean name="RubySchedulerDeployer" class="org.torquebox.jobs.deployers.RubySchedulerDeployer">
       <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
+      <depend optional="true">WebAppClusteringDependencyDeployer</depend>
   </bean>
   
   <bean name="RubyJobDeployer"             class="org.torquebox.jobs.deployers.RubyJobDeployer">
