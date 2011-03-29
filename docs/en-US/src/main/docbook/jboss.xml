@@ -52,7 +52,7 @@
       <filename>lib/</filename>, <filename>deployers/</filename>, and
       <filename>deploy/</filename>.  In general, it isn't a good idea
       to remove anything from these directories that you didn't put
-      there yourself. :)
+      there yourself.
     </para>
     <para><mediaobject>
       <imageobject role="html">
