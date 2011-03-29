@@ -496,6 +496,7 @@
                     <include name="rdoc"/>
                     <include name="ri"/>
                     <include name="rdebug"/>
+                    <include name="rake"/>
                   </fileset>
                 </chmod>
               </tasks>
