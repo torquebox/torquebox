@@ -19,7 +19,7 @@
 
 package org.torquebox.rack.core;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
