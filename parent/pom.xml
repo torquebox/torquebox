@@ -77,6 +77,12 @@
       </activation>
     </profile>
     <profile>
+      <id>ci</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
       <id>experimental</id>
       <activation>
         <activeByDefault>false</activeByDefault>

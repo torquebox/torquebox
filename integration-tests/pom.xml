@@ -203,6 +203,12 @@
 
   <profiles>
     <profile>
+      <id>ci</id>
+      <properties>
+        <arquillian.max.deploys>2</arquillian.max.deploys>
+      </properties>
+    </profile>
+    <profile>
       <id>inplace</id>
       <properties>
         <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
