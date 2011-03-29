@@ -55,11 +55,11 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
     }
-    
+
     public void setKernel(Kernel kernel) {
         this.kernel = kernel;
     }
-    
+
     public Kernel getKernel() {
         return this.kernel;
     }
@@ -71,18 +71,17 @@ public class RubySchedulerDeployer extends AbstractDeployer {
     public String getRubyRuntimePoolName() {
         return this.runtimePoolName;
     }
-    
+
     private void buildScheduler(DeploymentUnit unit, boolean singleton) {
-        String beanName = AttachmentUtils.beanName( unit, RubyScheduler.class, 
-        		singleton ? "Singleton":null );
+        String beanName = AttachmentUtils.beanName( unit, RubyScheduler.class, singleton ? "Singleton" : null );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyScheduler.class.getName() );
 
         builder.addPropertyMetaData( "kernel", this.kernel );
         builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
-        
+
         if (singleton)
-        	builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
-        
+            builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
+
         RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         if (envMetaData != null) {
             builder.addPropertyMetaData( "alwaysReload", envMetaData.isDevelopmentMode() );
@@ -100,7 +99,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInjection );
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-        log.info( "Created scheduler with name " + beanName ); 
+        log.info( "Created scheduler with name " + beanName );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
@@ -110,10 +109,26 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         if (allMetaData.isEmpty()) {
             return;
         }
-        
+
         log.debug( "Deploying scheduler: " + unit );
-        this.buildScheduler( unit, false );
-        this.buildScheduler( unit, true );
+        boolean hasSingletonJobs = false;
+        boolean hasRegularJobs = false;
+
+        for (ScheduledJobMetaData each : allMetaData) {
+            if (each.isSingleton()) {
+                hasSingletonJobs = true;
+            } else {
+                hasRegularJobs = true;
+            }
+        }
+
+        if (hasRegularJobs) {
+            this.buildScheduler( unit, false );
+        }
+
+        if (hasSingletonJobs) {
+            this.buildScheduler( unit, true );
+        }
     }
 
 }
