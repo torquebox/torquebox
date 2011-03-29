@@ -20,6 +20,7 @@
 
   <xi:include href="what-is-torquebox.xml"            xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="installation.xml"                 xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="jboss.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="rack.xml"                         xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="rails.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="deployment.xml"                   xmlns:xi="http://www.w3.org/2001/XInclude" />
