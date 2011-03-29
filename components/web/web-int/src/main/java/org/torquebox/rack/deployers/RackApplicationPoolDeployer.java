@@ -58,6 +58,7 @@ public class RackApplicationPoolDeployer extends AbstractSimpleVFSRealDeployer<R
     @Override
     public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData metaData) throws DeploymentException {
         String beanName = AttachmentUtils.beanName( unit, RackApplicationPool.class );
+        log.info( "Deploying pool: " + beanName );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RackApplicationPoolImpl.class.getName() );
 
         metaData.setRackApplicationPoolName( beanName );

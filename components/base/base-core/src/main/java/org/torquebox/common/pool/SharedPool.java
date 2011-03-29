@@ -19,6 +19,7 @@
 
 package org.torquebox.common.pool;
 
+import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.Pool;
 
@@ -37,7 +38,9 @@ import org.torquebox.common.spi.Pool;
  *            The poolable resource.
  */
 public class SharedPool<T> implements Pool<T> {
-
+    
+    protected Logger log = Logger.getLogger( getClass() );
+    
     /** Name of the pool. */
     private String name = "anonymous-pool";
 
@@ -137,6 +140,7 @@ public class SharedPool<T> implements Pool<T> {
      *             if an error occurs starting the pool.
      */
     public void create() throws Exception {
+        log.info(  "create"  );
         if (this.instance != null) {
             return;
         }
@@ -152,6 +156,7 @@ public class SharedPool<T> implements Pool<T> {
      * Destroy the pool.
      */
     public void destroy() {
+        log.info(  "destroy"  );
         if (this.factory != null && this.instance != null) {
             this.factory.dispose( this.instance );
         }
