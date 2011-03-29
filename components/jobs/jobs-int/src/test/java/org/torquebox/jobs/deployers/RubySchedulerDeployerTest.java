@@ -19,7 +19,8 @@
 
 package org.torquebox.jobs.deployers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 
@@ -63,7 +64,8 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
     /** Ensure that given at least one job, a scheduler is deployed. */
     @Test
     public void testSchedulerDeployment() throws Exception {
-        JavaArchive archive = createJar( "scheduler-support" );
+
+    	JavaArchive archive = createJar( "scheduler-support" );
         archive.addResource( getClass().getResource( "interp-jboss-beans.xml" ), "interp-jboss-beans.xml" );
         File archiveFile = createJarFile( archive );
 
@@ -85,8 +87,10 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
         RubyScheduler scheduler = (RubyScheduler) getBean( schedulerBeanName );
         assertNotNull( scheduler );
 
+
         undeploy( deploymentName );
         undeploy( supportDeploymentName );
+
     }
 
 }

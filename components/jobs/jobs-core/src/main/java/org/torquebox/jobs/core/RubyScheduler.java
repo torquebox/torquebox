@@ -38,10 +38,6 @@ public class RubyScheduler {
     private Kernel kernel;
     private RubyRuntimePool runtimePool;
     private boolean alwaysReload;
-
-    public RubyScheduler() {
-
-    }
     
     public void setKernel(Kernel kernel) {
         this.kernel = kernel;

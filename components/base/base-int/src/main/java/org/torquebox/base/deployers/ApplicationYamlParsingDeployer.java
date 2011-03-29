@@ -22,9 +22,8 @@ package org.torquebox.base.deployers;
 import java.util.Map;
 
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VFSUtils;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
+
 
 /**
  * <pre>
@@ -49,6 +48,7 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
         log.debug( "Deploying ruby application: " + unit );
+        Map<String, String> app = (Map<String, String>) dataObj;
 
         RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
@@ -62,8 +62,6 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
         } else {
             log.debug( "Configuring pre-existing ruby application: " + unit + "\n  " + appMetaData );
         }
-
-        Map<String, String> app = (Map<String, String>) dataObj;
 
         if (appMetaData.getRoot() == null) {
             String root = getOneOf( app, "root", "RAILS_ROOT", "RACK_ROOT" );

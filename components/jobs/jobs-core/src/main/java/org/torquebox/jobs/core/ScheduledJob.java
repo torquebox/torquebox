@@ -49,11 +49,19 @@ public class ScheduledJob implements ScheduledJobMBean {
     private Scheduler scheduler;
 
     private JobDetail jobDetail;
-    
+    private boolean singleton;
 
-    public ScheduledJob() {
+	public ScheduledJob() {
 
     }
+	
+    public boolean isSingleton() {
+		return singleton;
+	}
+
+	public void setSingleton(boolean singleton) {
+		this.singleton = singleton;
+	}	
 
     public void setGroup(String group) {
         this.group = group;
@@ -128,16 +136,17 @@ public class ScheduledJob implements ScheduledJobMBean {
     }
 
     public synchronized void start() throws ParseException, SchedulerException {
-        log.info( "Starting Ruby job: " + this.group + "." + this.name );
+		log.info( "Starting Ruby job: " + this.group + "." + this.name );
         this.jobDetail = new JobDetail();
 
         jobDetail.setGroup( this.group );
         jobDetail.setName( this.name );
         jobDetail.setDescription( this.description );
         jobDetail.setJobClass( RubyJob.class );
+        jobDetail.setRequestsRecovery( true );
 
-        JobDataMap jobData = jobDetail.getJobDataMap();
-        
+	    JobDataMap jobData = jobDetail.getJobDataMap();
+	        
         jobData.put(  RubyJobFactory.COMPONENT_RESOLVER_NAME, getComponentResolverName() );
 
         jobData.put( RubyJobFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName );

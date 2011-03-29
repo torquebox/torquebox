@@ -46,22 +46,26 @@ public class JobsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObject) throws DeploymentException {
-        Map<String, Map<String, String>> data = (Map<String, Map<String, String>>) dataObject;
+        Map<String, Map<String, ?>> data = (Map<String, Map<String, ?>>) dataObject;
 
         log.debug( "Deploying: " + data );
 
         for (String jobName : data.keySet()) {
-            Map<String, String> jobSpec = data.get( jobName );
-            String description = jobSpec.get( "description" );
-            String job = jobSpec.get( "job" );
-            String cron = jobSpec.get( "cron" );
-
+            Map<String, ?> jobSpec = data.get( jobName );
+            String description = (String) jobSpec.get( "description" );
+            String job = (String) jobSpec.get( "job" );
+            String cron = (String) jobSpec.get( "cron" );
+            Object singleton = jobSpec.get("singleton");
             if (job == null) {
                 throw new DeploymentException( "Attribute 'job' must be specified" );
             }
 
             if (cron == null) {
                 throw new DeploymentException( "Attribute 'cron' must be specified" );
+            }
+            
+            if (singleton != null && !(singleton instanceof Boolean)) {
+            	throw new DeploymentException(" Attribute 'singleton' must be either true or false." );
             }
 
             ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
@@ -74,6 +78,8 @@ public class JobsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
             jobMetaData.setRubyClassName( job.trim() );
             jobMetaData.setCronExpression( cron.trim() );
             jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
+            jobMetaData.setSingleton( singleton == null ? false : (Boolean) singleton );
+            
             AttachmentUtils.multipleAttach( unit, jobMetaData, jobName );
         }
     }

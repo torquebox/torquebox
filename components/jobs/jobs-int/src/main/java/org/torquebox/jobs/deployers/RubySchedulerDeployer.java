@@ -71,21 +71,18 @@ public class RubySchedulerDeployer extends AbstractDeployer {
     public String getRubyRuntimePoolName() {
         return this.runtimePoolName;
     }
-
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
-
-        if (allMetaData.isEmpty()) {
-            return;
-        }
-        
-        log.debug( "Deploying scheduler: " + unit );
-
-        String beanName = AttachmentUtils.beanName( unit, RubyScheduler.class );
+    
+    private void buildScheduler(DeploymentUnit unit, boolean singleton) {
+        String beanName = AttachmentUtils.beanName( unit, RubyScheduler.class, 
+        		singleton ? "Singleton":null );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyScheduler.class.getName() );
 
         builder.addPropertyMetaData( "kernel", this.kernel );
         builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
+        
+        if (singleton)
+        	builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
+        
         RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         if (envMetaData != null) {
             builder.addPropertyMetaData( "alwaysReload", envMetaData.isDevelopmentMode() );
@@ -103,6 +100,20 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInjection );
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
+        log.info( "Created scheduler with name " + beanName ); 
+    }
+
+    public void deploy(DeploymentUnit unit) throws DeploymentException {
+
+        Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
+
+        if (allMetaData.isEmpty()) {
+            return;
+        }
+        
+        log.debug( "Deploying scheduler: " + unit );
+        this.buildScheduler( unit, false );
+        this.buildScheduler( unit, true );
     }
 
 }

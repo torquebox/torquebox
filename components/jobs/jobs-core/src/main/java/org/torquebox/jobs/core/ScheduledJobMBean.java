@@ -1,6 +1,5 @@
 package org.torquebox.jobs.core;
 
-import javax.management.DescriptorKey;
 
 
 

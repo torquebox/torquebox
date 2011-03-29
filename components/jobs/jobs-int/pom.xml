@@ -112,7 +112,7 @@
       <groupId>logkit</groupId>
       <artifactId>logkit</artifactId>
       <scope>provided</scope>
-    </dependency>
+    </dependency>    
   </dependencies>
 
   <build> 
