@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.jvnet.winp.WinProcess;
 import org.junit.Test;
 import org.torquebox.test.AbstractTorqueBoxTestCase;
 
@@ -43,10 +44,10 @@ public class CommandLineMessagingTest extends AbstractTorqueBoxTestCase {
             assertTrue( "Didn't receive expected message", lookFor( "received: did it work?", hoster.getInputStream() ) );
         } finally {
             if (hoster != null) {
-                hoster.destroy();
+                stop(hoster);
             }
             if (broker != null) {
-                broker.destroy();
+                stop(broker);
             }
         }
     }
@@ -75,6 +76,14 @@ public class CommandLineMessagingTest extends AbstractTorqueBoxTestCase {
 
     private Process start(String... args) throws Exception {
         return new ProcessBuilder( args ).redirectErrorStream( true ).directory( new File( System.getProperty( "user.dir" ), "src/test/resources/messaging" ) ).start();
+    }
+
+    private void stop(Process process) throws Exception {
+        if (isWindows()) {
+            new WinProcess( process ).killRecursively();
+        } else {
+            process.destroy();
+        }
     }
 
     class ProcessOutputSearcher implements Runnable {
