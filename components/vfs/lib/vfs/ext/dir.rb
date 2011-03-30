@@ -31,7 +31,7 @@ class Dir
     # 1.8: open( dirname )
     # 1.9: open( dirname, <, :encoding => enc> )
     # We currently ignore the encoding.
-    def open(str,&block)
+    def open(str, options = nil, &block)
       str = str.to_str
       if ( ::File.exist_without_vfs?( str ) )
         return open_before_vfs(str,&block)
