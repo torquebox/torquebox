@@ -11,7 +11,7 @@ class Something
 
   def foo(index)
     @backchannel.publish "bg#{index}-sleep"
-    sleep 3
+    sleep 5
     @backchannel.publish "bg#{index}-awake"
   end
 end
