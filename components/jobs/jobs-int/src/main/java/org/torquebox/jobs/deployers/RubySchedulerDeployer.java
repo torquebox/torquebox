@@ -120,7 +120,6 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 
         if (this.isClustered()) {
             log.debug( "Deploying clustered scheduler: " + unit );
-            this.buildScheduler( unit, false );
             if (jobTypes.singletonJobs) { this.buildScheduler(unit, true);  }
             if (jobTypes.regularJobs)   { this.buildScheduler(unit, false); }
         } else {
