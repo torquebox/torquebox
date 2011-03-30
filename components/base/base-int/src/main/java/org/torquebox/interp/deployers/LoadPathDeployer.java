@@ -73,7 +73,6 @@ public class LoadPathDeployer extends AbstractDeployer {
         for (String path : getLoadPaths()) {
             try {
                 URL url = unit.getRoot().getChild( path ).toURL();
-                log.debug( "Adding to load path: " + url );
                 RubyLoadPathMetaData loadPathMeta = new RubyLoadPathMetaData( url );
                 runtimeMetaData.appendLoadPath( loadPathMeta );
             } catch (MalformedURLException e) {

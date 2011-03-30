@@ -40,7 +40,7 @@ public class UsersRolesAuthenticatorTest
 
     @Test
     public void testAuthenticate() throws Exception {
-        String configFileName = "org/torquebox/auth/authentication.conf";
+        //String configFileName = "org/torquebox/auth/authentication.conf";
         usersRolesAuthenticator = new UsersRolesAuthenticator();
         usersRolesAuthenticator.setAuthDomain("other");
 //        assertTrue(usersRolesAuthenticator.authenticate("bar", "foo"));

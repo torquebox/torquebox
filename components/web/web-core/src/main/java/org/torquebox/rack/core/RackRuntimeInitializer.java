@@ -33,6 +33,7 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
  */
 public class RackRuntimeInitializer implements RuntimeInitializer {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
 
     public RackRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackMetaData) {
@@ -53,8 +54,6 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         ruby.evalScriptlet( "require %(torquebox-web)" );
         ruby.evalScriptlet( getInitializerScript() );
         ruby.setCurrentDirectory( this.rubyAppMetaData.getRoot().getPhysicalFile().getCanonicalPath() );
-        log.info( "Current directory: " + ruby.getCurrentDirectory() );
-        log.info( "Initialize with: \n  " + rubyAppMetaData + "\n  " + rackAppMetaData );
     }
 
     /**
@@ -97,8 +96,6 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
             script.append( "ENV['RAILS_RELATIVE_URL_ROOT']=%q(" + contextPath + ")\n" );
             script.append( "ENV['RACK_BASE_URI']=%q(" + contextPath + ")\n" );
         }
-
-        script.append( "puts \"CONTEXT: #{ENV['RAILS_RELATIVE_URL_ROOT']}\"\n" );
 
         return script.toString();
     }

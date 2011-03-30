@@ -26,12 +26,10 @@ public class ManagedTopic extends AbstractManagedDestination {
     }
 
     public void create() throws Exception {
-        log.info( "Creating topic " + getName() );
         getServer().createTopic( false, getName(), getName() );
     }
 
     public void destroy() throws Exception {
-        log.info( "Destroying topic " + getName() );
         getServer().destroyTopic( getName() );
     }
 

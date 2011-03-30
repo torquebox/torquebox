@@ -59,6 +59,7 @@ module TorqueBox
             app_meta.setRoot( org.jboss.vfs::VFS.getChild( Dir.pwd ) )
             unit.addAttachment( org.torquebox.base.metadata::RubyApplicationMetaData.java_class, app_meta )
             container.process_deployments(true)
+            puts "deployed #{file}"
             @deployments << deployment
           end
         end

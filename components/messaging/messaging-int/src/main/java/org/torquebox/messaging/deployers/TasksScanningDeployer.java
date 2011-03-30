@@ -24,6 +24,7 @@ import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.deployers.AbstractRubyScanningDeployer;
+import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.metadata.TaskMetaData;
 
 /**
@@ -43,8 +44,6 @@ public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
 
     @Override
     protected void deploy(VFSDeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentException {
-        log.info( "deploying " + relativePath );
-
         String rubyClassName = StringUtils.pathToClassName( relativePath, ".rb" );
         TaskMetaData taskMetaData = getTaskMetaData(unit, rubyClassName);
 
@@ -53,7 +52,7 @@ public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
         taskMetaData.setLocation( simpleLocation );
         taskMetaData.setRubyClassName( rubyClassName );
 
-        unit.addAttachment( TaskMetaData.class.getName() + "$" + simpleLocation, taskMetaData, TaskMetaData.class );
+        AttachmentUtils.multipleAttach( unit, taskMetaData, simpleLocation );
     }
 
     protected TaskMetaData getTaskMetaData(VFSDeploymentUnit unit, String rubyClassName) {

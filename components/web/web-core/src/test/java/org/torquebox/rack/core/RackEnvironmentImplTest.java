@@ -53,6 +53,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
         String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
         RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+        assertNotNull( rackApp );
 
         final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
@@ -113,6 +114,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
         String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
         RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+        assertNotNull( rackApp );
 
         final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
@@ -183,7 +185,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
         assertNull( envHash.get( "CONTENT_LENGTH" ) );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Enumeration enumeration(Object... values) {
         Vector v = new Vector();
         for (Object each : values) {

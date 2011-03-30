@@ -19,10 +19,7 @@
 
 package org.torquebox.rack.deployers;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,7 +85,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
-        log.debug("Deploy rack web application: " + unit);
         WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
 
         if (webMetaData == null) {
@@ -111,8 +107,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         
         try {
             URL docBaseUrl = rubyAppMetaData.getRoot().toURL();
-            log.info( "DOCBASE: " + docBaseUrl );
-            log.info( "DOCBASE.external: " + docBaseUrl.toExternalForm() );
             unit.addAttachment(EXPANDED_WAR_URL_ATTACHMENT_NAME, docBaseUrl, URL.class);
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
@@ -251,8 +245,6 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         }
         
         depends.add(rackAppMetaData.getRackApplicationPoolName());
-        
-        log.info( "Dependencies are: " + depends );
     }
 
 }

@@ -37,17 +37,14 @@ public class RackApplicationRecognizer extends AbstractRecognizer {
     @Override
     protected boolean isRecognized(VFSDeploymentUnit unit) {
         boolean isRecognized = hasAnyOf( unit.getRoot(), DEFAULT_RACKUP_PATH );
-        log.debug(  "isRecognized?( " + unit.getRoot() + ") " + isRecognized  );
         return isRecognized;
     }
 
     @Override
     protected void handle(VFSDeploymentUnit unit) throws DeploymentException {
-        log.info( "Recognized rack application: " + unit );
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.class );
 
         if (rackAppMetaData == null) {
-            log.info( "Initializing rack application: " + unit );
             rackAppMetaData = new RackApplicationMetaData();
             rackAppMetaData.setRackUpScriptLocation( DEFAULT_RACKUP_PATH );
             unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );

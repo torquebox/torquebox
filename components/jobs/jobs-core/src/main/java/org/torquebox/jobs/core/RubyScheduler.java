@@ -31,13 +31,13 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyScheduler {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RubyScheduler.class );
 
     private String name;
     private Scheduler scheduler;
     private Kernel kernel;
     private RubyRuntimePool runtimePool;
-    private boolean alwaysReload;
     
     public void setKernel(Kernel kernel) {
         this.kernel = kernel;
@@ -63,25 +63,16 @@ public class RubyScheduler {
         return this.runtimePool;
     }
 
-    public void setAlwaysReload(boolean alwaysReload) {
-        this.alwaysReload = alwaysReload;
-    }
-
-    public boolean isAlwaysReload() {
-        return this.alwaysReload;
-    }
-
     public Scheduler getScheduler() {
         return this.scheduler;
     }
 
     public void start() throws IOException, SchedulerException {
-        log.info( "Starting Ruby job scheduler: " + getName() );
         Properties props = new Properties();
         props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
         props.setProperty( StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName() );
 
-        RubyJobFactory jobFactory = new RubyJobFactory( isAlwaysReload() );
+        RubyJobProxyFactory jobFactory = new RubyJobProxyFactory();
         jobFactory.setKernel( this.kernel );
         jobFactory.setRubyRuntimePool( this.runtimePool );
 
@@ -92,9 +83,7 @@ public class RubyScheduler {
     }
 
     public void stop() throws SchedulerException {
-        log.info( "Stopping Ruby job scheduler: " + getName() );
         this.scheduler.shutdown( true );
-        log.info( "Stopped Ruby job scheduler: " + getName() );
     }
 
 }

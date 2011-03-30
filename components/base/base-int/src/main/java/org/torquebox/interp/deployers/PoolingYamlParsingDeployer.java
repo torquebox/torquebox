@@ -99,7 +99,6 @@ public class PoolingYamlParsingDeployer extends AbstractSplitYamlParsingDeployer
                         poolMetaData.setGlobal();
                     }
                 }
-                log.info( "Configured Ruby runtime pool: " + poolMetaData );
                 AttachmentUtils.multipleAttach( unit, poolMetaData, name );
             }
         }

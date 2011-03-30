@@ -19,6 +19,7 @@
 
 package org.torquebox.common.pool;
 
+import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.Pool;
 
@@ -37,7 +38,9 @@ import org.torquebox.common.spi.Pool;
  *            The poolable resource.
  */
 public class SharedPool<T> implements Pool<T> {
-
+    
+    protected Logger log = Logger.getLogger( getClass() );
+    
     /** Name of the pool. */
     private String name = "anonymous-pool";
 

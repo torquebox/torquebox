@@ -44,11 +44,8 @@ public class TorqueBoxYamlParsingDeployer extends AbstractParsingDeployer {
         if (file == null) {
             return;
         }
-        log.info( "Parsing: " + unit );
-
         try {
             TorqueBoxMetaData metaData = parse( file );
-            log.info( "Parsed: " + metaData );
             unit.addAttachment( TorqueBoxMetaData.class, metaData );
         } catch (Exception e) {
             throw new DeploymentException( e );

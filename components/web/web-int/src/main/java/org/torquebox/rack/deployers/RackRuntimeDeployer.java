@@ -57,9 +57,7 @@ public class RackRuntimeDeployer extends AbstractDeployer {
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        log.debug( "Deploying Ruby runtime: " + unit );
         if (unit.isAttachmentPresent( RubyRuntimeMetaData.class )) {
-            log.warn( "Ruby runtime already initialized" );
             return;
         }
 

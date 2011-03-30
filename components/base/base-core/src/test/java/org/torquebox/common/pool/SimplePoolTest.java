@@ -79,6 +79,7 @@ public class SimplePoolTest extends AbstractPoolTestCase {
         assertBorrowTimeout( pool );
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testListenerCallbacks() throws Exception {
         SimplePool<String> pool = new SimplePool<String>();

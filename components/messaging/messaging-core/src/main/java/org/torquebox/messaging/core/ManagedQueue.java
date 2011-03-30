@@ -26,12 +26,10 @@ public class ManagedQueue extends AbstractManagedDestination {
     }
 
     public void create() throws Exception {
-        log.info( "Creating queue: " + getName() );
         getServer().createQueue( false, getName(), "", false, getName() );
     }
 
     public void destroy() throws Exception {
-        log.info( "Destroying queue: " + getName() );
         getServer().destroyQueue( getName() );
     }
 

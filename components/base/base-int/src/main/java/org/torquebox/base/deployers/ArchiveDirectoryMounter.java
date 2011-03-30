@@ -57,8 +57,8 @@ public class ArchiveDirectoryMounter extends AbstractDeployer {
 
         if (rubyAppMetaData.isArchive()) {
             try {
-                mountDir( unit, rubyAppMetaData.getRoot(), "log", System.getProperty( "jboss.server.log.dir" ) + "/" + unit.getSimpleName() );
-                mountDir( unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/rails/" + unit.getSimpleName() );
+                mountDir( unit, rubyAppMetaData.getRoot(), "log", System.getProperty( "jboss.server.log.dir" ) + "/" + rubyAppMetaData.getApplicationName() );
+                mountDir( unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/rails/" + rubyAppMetaData.getApplicationName() );
             } catch (Exception e) {
                 throw new DeploymentException( e );
             }
@@ -79,14 +79,12 @@ public class ArchiveDirectoryMounter extends AbstractDeployer {
         File physical = new File( path );
         physical.mkdirs();
         Closeable mount = VFS.mountReal( physical, logical );
-        log.warn( "Set Rails " + name + " directory to " + physical.getCanonicalPath() );
         unit.addAttachment( attachmentName( name ), mount, Closeable.class );
     }
 
     protected void close(DeploymentUnit unit, String name) {
         Closeable mount = unit.getAttachment( attachmentName( name ), Closeable.class );
         if (mount != null) {
-            log.info( "Closing virtual " + name + " directory for " + unit.getSimpleName() );
             try {
                 mount.close();
             } catch (IOException ignored) {

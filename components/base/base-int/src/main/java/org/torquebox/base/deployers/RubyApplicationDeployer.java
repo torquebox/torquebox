@@ -20,7 +20,6 @@ public class RubyApplicationDeployer extends AbstractDeployer {
 
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
-        System.err.println( "DEPLOY RUBY APP: " + unit );
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         String beanName = AttachmentUtils.beanName( unit, RubyApplication.class );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RubyApplication.class.getName() );

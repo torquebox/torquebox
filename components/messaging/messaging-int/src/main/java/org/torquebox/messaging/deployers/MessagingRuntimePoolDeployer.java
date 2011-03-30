@@ -73,7 +73,6 @@ public class MessagingRuntimePoolDeployer extends AbstractDeployer {
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
             pool = devMode ? new PoolMetaData( "messaging", 1, 2 ) : new PoolMetaData( "messaging" );
             pool.setInstanceFactoryName( this.instanceFactoryName );
-            log.info( "Configured Ruby runtime pool for messaging: " + pool );
             AttachmentUtils.multipleAttach( unit, pool, "messaging" );
         }
     }

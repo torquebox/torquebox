@@ -55,20 +55,20 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
 
     public static class Parser {
 
+        @SuppressWarnings("unchecked")
         static List<MessageProcessorMetaData> parse(Object data) throws Exception {
-            System.err.println( "parsing: " + data + " // " + data.getClass() );
             if (data instanceof String) {
                 String s = (String) data;
                 if (s.trim().length() == 0) {
-                    return Collections.EMPTY_LIST;
+                    return Collections.emptyList();
                 } else {
-                    // throw new RuntimeException("Invalid configuration");
                     return parse( new Yaml().load( (String) data ) );
                 }
             }
             return parseDestinations( (Map<String, Object>) data );
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         static List<MessageProcessorMetaData> parseDestinations(Map<String, Object> data) {
             List<MessageProcessorMetaData> result = new ArrayList<MessageProcessorMetaData>();
             for (String destination : data.keySet()) {
@@ -88,6 +88,7 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
             return subscribe( handler, destination, Collections.EMPTY_MAP );
         }
 
+        @SuppressWarnings("rawtypes")
         static List<MessageProcessorMetaData> parseHandlers(String destination, Map<String, Map> handlers) {
             List<MessageProcessorMetaData> result = new ArrayList<MessageProcessorMetaData>();
             for (String handler : handlers.keySet()) {
@@ -96,6 +97,7 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
             return result;
         }
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         static List<MessageProcessorMetaData> parseHandlers(String destination, List handlers) {
             List<MessageProcessorMetaData> result = new ArrayList<MessageProcessorMetaData>();
             for (Object v : handlers) {
@@ -108,6 +110,7 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
             return result;
         }
 
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         public static MessageProcessorMetaData subscribe(String handler, String destination, Map options) {
             if (options == null)
                 options = Collections.EMPTY_MAP;

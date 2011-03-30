@@ -13,6 +13,8 @@ import org.torquebox.mc.AttachmentUtils;
 public class BaseRubyProxyInjectionBuilder {
 
     public static final String DEFAULT_INJECTION_REGISTRY_PROPERTY_NAME = "injectionRegistry";
+    
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( BaseRubyProxyInjectionBuilder.class );
 
     private DeploymentUnit context;

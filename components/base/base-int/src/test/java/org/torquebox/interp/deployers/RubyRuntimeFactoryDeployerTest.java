@@ -27,6 +27,7 @@ import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.mc.AttachmentUtils;
@@ -53,11 +54,14 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeployerTestCase {
     @Test
     public void testDeployment() throws Exception {
         String deploymentName = createDeployment( "runtimeFactory" );
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
 
         RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
-
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( RubyRuntimeMetaData.class, metaData );
+        
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
 
         processDeployments( true );
 
@@ -72,12 +76,15 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeployerTestCase {
     @Test
     public void testDeploymentWithNonDefaultRubyCompatibilityVersion() throws Exception {
         String deploymentName = createDeployment( "runtimeFactory" );
-
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        
         RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
         metaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
-
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( RubyRuntimeMetaData.class, metaData );
+        
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
 
         processDeployments( true );
 

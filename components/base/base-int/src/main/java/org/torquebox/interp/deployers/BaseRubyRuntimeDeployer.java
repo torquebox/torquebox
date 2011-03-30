@@ -46,8 +46,6 @@ public class BaseRubyRuntimeDeployer extends AbstractDeployer {
             return;
         }
         
-        log.debug("Deploying base ruby runtime: " + unit );
-        
         RubyApplicationMetaData appMetaData = unit.getAttachment(  RubyApplicationMetaData.class  );
         
         runtimeMetaData = new RubyRuntimeMetaData();

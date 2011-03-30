@@ -66,16 +66,10 @@ public class ReflectionHelper {
 
         Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
 
-        // System.err.println( "OBJ: " + target );
-        // System.err.println( "OBJ.class: " + target.getClass() );
-        // System.err.println( "name: " + name );
-        // System.err.println( "respondTo?" + respondTo );
-
         if (respondTo.booleanValue()) {
             result = JavaEmbedUtils.invokeMethod( ruby, target, name, new Object[] {}, Object.class );
         }
 
-        // System.err.println( "RESULT: " + result );
         return result;
     }
 

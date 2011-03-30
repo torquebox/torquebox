@@ -32,6 +32,7 @@ import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.dependency.KernelController;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.interp.metadata.RubyLoadPathMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
@@ -66,6 +67,7 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
     /** Construct. */
     public RubyRuntimeFactoryDeployer() {
         super( RubyRuntimeMetaData.class );
+        addInput(RubyApplicationMetaData.class);
         addInput( ClassLoader.class );
         setStage( DeploymentStages.CLASSLOADER );
         addOutput( Ruby.class );
@@ -104,7 +106,6 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
         String beanName = AttachmentUtils.beanName( unit, RubyRuntimeFactory.class );
         BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyRuntimeFactoryImpl.class.getName() );
 
-        log.info( "Using initializer: " + metaData.getRuntimeInitializer() );
         RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( metaData.getRuntimeInitializer() );
 
         List<String> loadPaths = new ArrayList<String>();
@@ -112,10 +113,12 @@ public class RubyRuntimeFactoryDeployer extends AbstractSimpleVFSRealDeployer<Ru
         for (RubyLoadPathMetaData loadPath : metaData.getLoadPaths()) {
             loadPaths.add( loadPath.getURL().toExternalForm() );
         }
+        
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         factory.setLoadPaths( loadPaths );
         factory.setKernel( this.kernel );
-        factory.setApplicationName( unit.getSimpleName() );
+        factory.setApplicationName( rubyAppMetaData.getApplicationName() );
         factory.setClassLoader( unit.getClassLoader() );
         factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
         factory.setApplicationEnvironment( metaData.getEnvironment() );

@@ -14,7 +14,6 @@ module TorqueBox
     attr_accessor :level
 
     def method_missing(method, *args, &block)
-      # puts "JC: method_missing=#{method}"
       delegate = method
       if method.to_s.end_with?('?')
         delegate = "#{method.to_s.chop}_enabled?".to_sym

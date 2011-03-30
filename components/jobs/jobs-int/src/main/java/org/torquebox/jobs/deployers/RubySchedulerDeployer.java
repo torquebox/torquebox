@@ -81,14 +81,8 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "kernel", this.kernel );
         builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
 
-        if (singleton)
+        if (singleton) {
             builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
-
-        RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-        if (envMetaData != null) {
-            builder.addPropertyMetaData( "alwaysReload", envMetaData.isDevelopmentMode() );
-        } else {
-            log.warn( "No EnvironmentMetaData found for " + unit.getSimpleName() );
         }
 
         String runtimePoolBeanName = this.runtimePoolName;
@@ -101,7 +95,6 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInjection );
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-        log.info( "Created scheduler with name " + beanName );
     }
     
     // This will tell us if we're running in a clustered environment or not

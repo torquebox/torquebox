@@ -82,7 +82,6 @@ public class WebHost {
 
         for (String host : existingHosts) {
             if (host.equals( this.name )) {
-                log.info( "Host already registered: " + this.name );
                 return;
             }
         }
@@ -102,10 +101,7 @@ public class WebHost {
     }
 
     public void start() throws Exception {
-        log.debug( "Start virtual host: " + this.name );
-
         if (this.host == null) {
-            log.debug( "Not required: " + this.name );
             return;
         }
 
@@ -116,7 +112,6 @@ public class WebHost {
     }
 
     public void stop() throws Exception {
-        log.debug( "Stop virtual host" );
         if (this.host != null) {
             this.host.stop();
         }
@@ -133,6 +128,8 @@ public class WebHost {
     private static final String[] FETCH_SIGNATURE = new String[] { "java.lang.String" };
 
     private static final String SERVER_NAME = "jboss.web:type=Server";
+    
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( WebHost.class );
 
     private String name;

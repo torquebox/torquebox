@@ -43,7 +43,6 @@ public class WebHostDeployer extends AbstractDeployer {
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
 
-        log.debug( "Deploying virtual hosts: " + unit );
         RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
         
         if ( rackMetaData == null ) {
@@ -54,14 +53,11 @@ public class WebHostDeployer extends AbstractDeployer {
         hosts.addAll( rackMetaData.getHosts() );
 
         if (hosts.isEmpty()) {
-            log.debug( "No host to deploy" );
             return;
         }
 
         String canonicalHost = hosts.remove( 0 );
         
-        log.debug( "Hosts: " + canonicalHost + " :: " + hosts );
-
         String beanName = AttachmentUtils.beanName( unit, WebHost.class );
         BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, WebHost.class.getName() );
 

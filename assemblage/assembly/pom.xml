@@ -496,6 +496,7 @@
                     <include name="rdoc"/>
                     <include name="ri"/>
                     <include name="rdebug"/>
+                    <include name="rake"/>
                   </fileset>
                 </chmod>
               </tasks>
@@ -611,11 +612,11 @@
                   lines.each do |line|
                     if (/\<\/policy\>/ =~ line)
                       file.write( %Q(
-  <application-policy name="torquebox-auth">
+  <application-policy name='torquebox-auth'>
     <authentication>
-      <login-module code="org.jboss.security.auth.spi.UsersRolesLoginModule" flag="required">
-        <module-option name="usersProperties">props/torquebox-users.properties</module-option>
-        <module-option name="rolesProperties">props/torquebox-roles.properties</module-option>
+      <login-module code='org.jboss.security.auth.spi.UsersRolesLoginModule' flag='required'>
+        <module-option name='usersProperties'>props/torquebox-users.properties</module-option>
+        <module-option name='rolesProperties'>props/torquebox-roles.properties</module-option>
       </login-module>
     </authentication>
   </application-policy>
@@ -625,7 +626,7 @@
                   end
                 end
                 File.open('./target/stage/torquebox-${project.version}/jboss/server/default/conf/props/torquebox-users.properties', 'w') do |file|
-                  file.write("admin=torquebox\n")
+                  file.write(%Q(admin=torquebox\n))
                 end
                 File.open('./target/stage/torquebox-${project.version}/jboss/server/default/conf/props/torquebox-roles.properties', 'w') do |file|
                   file.write('admin=admin')

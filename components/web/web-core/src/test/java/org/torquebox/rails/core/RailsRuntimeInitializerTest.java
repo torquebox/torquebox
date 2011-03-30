@@ -65,8 +65,6 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
         VirtualFile railsRoot = VFS.getChild( railsRootStr );
 
-        System.err.println( "railsRoot=" + railsRoot );
-
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
         initializer.initialize( ruby );
@@ -95,7 +93,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         initializer.initialize( ruby );
 
         String script = "class Foo; def self.fetch(); NoSuchModel; end; end; Foo.fetch";
-        Object noSuchModel = ruby.evalScriptlet( script );
+        ruby.evalScriptlet( script );
     }
 
     @Test
@@ -120,9 +118,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         initializer.initialize( ruby );
 
         String script = "require 'openssl'\nOpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, 'mykey', 'hashme')";
-        Object result = ruby.evalScriptlet( script );
-
-        System.err.println( "result=" + result );
+        ruby.evalScriptlet( script );
     }
 
     @SuppressWarnings("unchecked")

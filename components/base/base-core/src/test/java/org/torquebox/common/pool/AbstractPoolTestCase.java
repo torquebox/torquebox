@@ -40,7 +40,7 @@ public abstract class AbstractPoolTestCase {
         return instance;
     }
 
-    protected void assertBorrowTimeout(Pool pool) throws Exception {
+    protected <T> void assertBorrowTimeout(Pool<T> pool) throws Exception {
         long start = System.currentTimeMillis();
         Object instance = pool.borrowInstance( TIMEOUT );
         long stop = System.currentTimeMillis();

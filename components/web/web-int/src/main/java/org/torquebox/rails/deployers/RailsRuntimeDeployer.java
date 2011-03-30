@@ -59,9 +59,7 @@ public class RailsRuntimeDeployer extends AbstractDeployer {
     }
 
     public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        log.debug( "Deploying rails runtime: " + unit );
         if (unit.isAttachmentPresent( RubyRuntimeMetaData.class )) {
-            log.warn( "Ruby runtime already configured: " + unit );
             return;
         }
 

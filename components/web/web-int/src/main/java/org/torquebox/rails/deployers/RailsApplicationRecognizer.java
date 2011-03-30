@@ -42,11 +42,9 @@ public class RailsApplicationRecognizer extends AbstractRecognizer {
 
     @Override
     protected void handle(VFSDeploymentUnit unit) throws DeploymentException {
-        log.info( "Recognized rails application: " + unit );
         RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.class );
 
         if (railsAppMetaData == null) {
-            log.info( "Initializing rails application: " + unit );
             railsAppMetaData = new RailsApplicationMetaData();
             unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
         }

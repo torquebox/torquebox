@@ -67,9 +67,6 @@ public class TasksDeployer extends AbstractDeployer {
         String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + task.getQueueSuffix();
 
         if (task.getConcurrency() > 0) {
-            log.info( "Setting up queue and message processor for " + queueName + " with a concurrency of " + 
-                      task.getConcurrency().toString() );
-
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );
             AttachmentUtils.multipleAttach( unit, queue, queue.getName() );
@@ -79,8 +76,6 @@ public class TasksDeployer extends AbstractDeployer {
             processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
             processorMetaData.setConcurrency( task.getConcurrency() );
             AttachmentUtils.multipleAttach( unit, processorMetaData, processorMetaData.getName() );
-        } else {
-            log.warn( "concurrency is 0, disabling queue and message processor for " + queueName );
         }
     }
 

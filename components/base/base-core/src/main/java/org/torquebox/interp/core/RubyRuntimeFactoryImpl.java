@@ -236,6 +236,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
      */
     @Create(ignored = true)
     public synchronized Ruby create() throws Exception {
+        
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         if (this.classCache == null) {
@@ -302,9 +303,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
                 }
 
             }
-
-            // jrubyHome = jrubyHome.replaceAll( "^file:", "vfs:" );
-            // jrubyHome = jrubyHome.replaceAll( "!/", "/" );
         }
 
         if (jrubyHome != null) {

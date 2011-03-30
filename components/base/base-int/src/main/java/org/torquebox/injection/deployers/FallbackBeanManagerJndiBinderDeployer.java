@@ -1,7 +1,5 @@
 package org.torquebox.injection.deployers;
 
-import java.util.Set;
-
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.beans.metadata.spi.builder.ParameterMetaDataBuilder;

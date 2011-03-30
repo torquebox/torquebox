@@ -43,12 +43,6 @@ module TorqueBox
     self.versions[:torquebox] = VersionSpec.new( "${project.version}" )
     self.versions[:jbossas]   = VersionSpec.new( "${version.jbossas}" )
     self.versions[:jruby]     = VersionSpec.new( "${version.jruby}" )
-
-    unless ( logger.nil? )
-      logger.info( "TorqueBox...#{self.versions[:torquebox]}" )
-      logger.info( "JBossAS.....#{self.versions[:jbossas]}" )
-      logger.info( "JRuby.......#{self.versions[:jruby]}" )
-    end
   end
 
   def self.application_name=(application_name)

@@ -44,7 +44,6 @@ module TorqueBox
           full_path = File.expand_path( @logging_config_xml ) 
         end
 
-        puts "setting logging to #{full_path}"
         org.apache.log4j.xml::DOMConfigurator.configure( full_path )
 
         container = TorqueBox::Container::Foundation.new

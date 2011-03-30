@@ -40,7 +40,6 @@ public class BasicTest extends AbstractIntegrationTestCase {
     @Test
     public void testHighlevel() {
         driver.get( "http://localhost:8080/basic-rack" );
-        System.err.println( driver.getPageSource() );
         WebElement element = driver.findElementById( "success" );
         assertNotNull( element );
         assertEquals( "basic-rack", element.getAttribute( "class" ).trim() );

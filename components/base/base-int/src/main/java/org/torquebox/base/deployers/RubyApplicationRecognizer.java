@@ -38,8 +38,6 @@ public class RubyApplicationRecognizer extends AbstractRecognizer {
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         if (unit instanceof VFSDeploymentUnit) {
             deploy( (VFSDeploymentUnit) unit );
-        } else {
-            log.debug( "Not a VFS deployment unit: " + unit );
         }
     }
 
@@ -48,13 +46,9 @@ public class RubyApplicationRecognizer extends AbstractRecognizer {
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (rubyAppMetaData == null) {
-            log.debug( "Initializing ruby application: " + unit );
             rubyAppMetaData = new RubyApplicationMetaData();
             rubyAppMetaData.setRoot( unit.getRoot() );
-
             unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
-        } else {
-            log.debug( "Ruby application already initialized: " + unit );
         }
         
         rubyAppMetaData.setApplicationName( unit.getSimpleName() );

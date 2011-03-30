@@ -39,7 +39,7 @@ public class Bootstrap implements BeanMetaDataFactory {
         factory.setParentDomain( "DefaultDomain" );
         factory.setImportAll( true );
         factory.setExportAll( ExportAll.ALL );
-        log.info( "Roots: " + getRoots() );
+        log.debug( "Roots: " + getRoots() );
         factory.setRoots( getRoots() );
         this.beans = factory.getBeans();
     }

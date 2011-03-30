@@ -44,11 +44,9 @@ public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object baseData) throws Exception {
-        System.err.println( "deploy with: " + baseData );
         Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) baseData;
 
         for (String topicName : data.keySet()) {
-            log.info( "Read configuration for topic [" + topicName + "]" );
             TopicMetaData topicMetaData = new TopicMetaData( topicName );
             AttachmentUtils.multipleAttach( unit, topicMetaData, topicName );
         }

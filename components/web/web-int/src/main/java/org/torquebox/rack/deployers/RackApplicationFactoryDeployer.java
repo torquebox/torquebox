@@ -19,8 +19,6 @@
 
 package org.torquebox.rack.deployers;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,14 +80,11 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
     @Override
     public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
-        log.debug( "Deploying rack application factory: " + unit );
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         try {
             String beanName = AttachmentUtils.beanName( unit, RackApplicationFactory.class );
 
             BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RackApplicationFactoryImpl.class.getName() );
-
-            log.info( "factory rackup: " + rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
 
             builder.addPropertyMetaData( "rackUpScript", rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
 
@@ -107,29 +102,22 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
             rackAppMetaData.setRackApplicationFactoryName( beanName );
 
         } catch (Exception e) {
-            e.printStackTrace();
             throw new DeploymentException( e );
         }
     }
 
-    public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, VirtualFile rackRoot, VirtualFile rackUpScriptLocation) throws DeploymentException {
+    public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, VirtualFile rackRoot, VirtualFile rackUpScriptLocation) throws Exception {
         List<Injectable> injectables = new ArrayList<Injectable>();
 
-        try {
-            injectables.addAll( this.injectionAnalyzer.analyze( rackUpScriptLocation ) );
+        injectables.addAll( this.injectionAnalyzer.analyze( rackUpScriptLocation ) );
 
-            for (VirtualFile child : rackRoot.getChildren( RB_FILTER )) {
-                injectables.addAll( this.injectionAnalyzer.analyze( child ) );
-            }
-
-            injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/controllers/" ) ) );
-            injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/models/" ) ) );
-            injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "lib/" ) ) );
-        } catch (Exception e) {
-            throw new DeploymentException( e );
+        for (VirtualFile child : rackRoot.getChildren( RB_FILTER )) {
+            injectables.addAll( this.injectionAnalyzer.analyze( child ) );
         }
-        
-        System.err.println( "INJECTABLES: " + injectables );
+
+        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/controllers/" ) ) );
+        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/models/" ) ) );
+        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "lib/" ) ) );
 
         BaseRubyProxyInjectionBuilder injectionBuilder = new BaseRubyProxyInjectionBuilder( unit, beanBuilder );
         injectionBuilder.injectInjectionRegistry( injectables );

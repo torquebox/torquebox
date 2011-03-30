@@ -68,6 +68,9 @@ public class RubyApplicationExploder extends AbstractDeployer {
                 public void visit(VirtualFile vf) {
                     try {
                         File physicalFile = vf.getPhysicalFile();
+                        if ( ! physicalFile.exists() ) {
+                            throw new RuntimeException( "Physical file does not exist: " + physicalFile );
+                        }
                     } catch (IOException e) {
                         throw new RuntimeException( "Failed to force explosion of VirtualFile: " + vf, e );
                     }

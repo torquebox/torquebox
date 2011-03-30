@@ -136,7 +136,6 @@ public class QueuesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertEquals( 2, allMetaData.size() );
 
-        System.err.println( allMetaData );
         QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/tbyaml/foo" );
         assertNotNull( queueFoo );
 

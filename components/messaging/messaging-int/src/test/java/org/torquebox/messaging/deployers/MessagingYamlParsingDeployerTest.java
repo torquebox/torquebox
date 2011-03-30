@@ -97,7 +97,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/array", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
-        Map config = metadata.getRubyConfig();
+        Map<String, Object> config = metadata.getRubyConfig();
         assertEquals( "ex", config.get( "x" ) );
         assertEquals( "why", config.get( "y" ) );
         assertTrue( isUnconfigured( find( allMetaData, "/array", "One" ) ) );
@@ -109,7 +109,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "B" );
         assertEquals( "y < 18", metadata.getMessageSelector() );
-        Map config = metadata.getRubyConfig();
+        Map<String, Object> config = metadata.getRubyConfig();
         assertEquals( "ache", config.get( "h" ) );
         assertEquals( "eye", config.get( "i" ) );
         assertEquals( new Integer( 3 ), metadata.getConcurrency() );
@@ -121,7 +121,7 @@ public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {
         Set<? extends MessageProcessorMetaData> allMetaData = getMetaData( "src/test/resources/messaging.yml" );
         MessageProcessorMetaData metadata = find( allMetaData, "/hash", "Two" );
         assertEquals( "x > 18", metadata.getMessageSelector() );
-        Map config = metadata.getRubyConfig();
+        Map<String, Object> config = metadata.getRubyConfig();
         assertEquals( "ex", config.get( "x" ) );
         assertEquals( "why", config.get( "y" ) );
     }
