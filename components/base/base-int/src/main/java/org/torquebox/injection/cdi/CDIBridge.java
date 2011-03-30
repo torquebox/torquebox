@@ -21,14 +21,6 @@ public class CDIBridge {
         this.applicationName = applicationName;
     }
     
-    public void start() {
-        log.debug(  "start: " + this.applicationName );
-    }
-    
-    public void stop() {
-        log.debug(  "stop: " + this.applicationName );
-    }
-    
     public synchronized BeanManager getBeanManager() throws NamingException {
 
         if (this.manager == null) {

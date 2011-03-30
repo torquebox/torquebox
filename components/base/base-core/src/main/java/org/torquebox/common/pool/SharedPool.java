@@ -140,7 +140,6 @@ public class SharedPool<T> implements Pool<T> {
      *             if an error occurs starting the pool.
      */
     public void create() throws Exception {
-        log.info(  "create"  );
         if (this.instance != null) {
             return;
         }
@@ -156,7 +155,6 @@ public class SharedPool<T> implements Pool<T> {
      * Destroy the pool.
      */
     public void destroy() {
-        log.info(  "destroy"  );
         if (this.factory != null && this.instance != null) {
             this.factory.dispose( this.instance );
         }

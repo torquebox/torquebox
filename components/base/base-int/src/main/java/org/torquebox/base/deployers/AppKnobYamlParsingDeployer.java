@@ -69,8 +69,6 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
 
         List<VirtualFile> files = getFiles( unit );
         
-        log.debug( "Deploying: " + files );
-
         for (VirtualFile appKnobYml : files) {
             try {
                 TorqueBoxMetaData metaData = TorqueBoxYamlParsingDeployer.parse( appKnobYml );

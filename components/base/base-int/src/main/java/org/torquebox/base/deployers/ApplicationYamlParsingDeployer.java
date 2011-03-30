@@ -53,9 +53,7 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
 
         if (appMetaData == null) {
             appMetaData = new RubyApplicationMetaData();
-            String applicationName = unit.getSimpleName();
-            applicationName = applicationName.replaceAll( ".trq$", "" );
-            appMetaData.setApplicationName( applicationName );
+            appMetaData.setApplicationName( unit.getSimpleName() );
             unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
         }
 

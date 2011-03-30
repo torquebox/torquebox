@@ -58,6 +58,7 @@ module TorqueBox
             virtual_file = org.jboss.vfs::VFS.child( File.join( Dir.pwd, file ) )
             unit.addAttachment( 'queues.yml.altDD', virtual_file )
             container.process_deployments(true)
+            puts "deployed #{file}"
             @deployments << deployment
           end
         end

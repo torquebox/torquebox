@@ -38,14 +38,16 @@ public class CommandLineMessagingTest extends AbstractTorqueBoxTestCase {
             broker = start( jruby(), jrubyBin( "trq-message-broker" ), "-s", "-d", "queues.yml" );
             assertTrue( "Broker failed to start", lookFor( "deployed queues.yml", broker.getInputStream() ) );
             hoster = start( jruby(), jrubyBin( "trq-message-processor-host" ), "-d", "messaging.yml" );
-            assertTrue( "Processor host failed to start", lookFor( "starting for", hoster.getInputStream() ) );
+            assertTrue( "Processor host failed to start", lookFor( "deployed messaging.yml", hoster.getInputStream() ) );
             start( jruby(), "messenger.rb", "/queues/foo", "did it work?" );
             assertTrue( "Didn't receive expected message", lookFor( "received: did it work?", hoster.getInputStream() ) );
         } finally {
-            if (hoster != null)
+            if (hoster != null) {
                 hoster.destroy();
-            if (broker != null)
+            }
+            if (broker != null) {
                 broker.destroy();
+            }
         }
     }
 
@@ -55,8 +57,9 @@ public class CommandLineMessagingTest extends AbstractTorqueBoxTestCase {
 
     private String jrubyBin(String script) throws Exception {
         String home = System.getProperty( "jruby.home" );
-        if (home == null)
+        if (home == null) {
             throw new RuntimeException( "You must set system property, jruby.home" );
+        }
         return new File( new File( home, "bin" ), script ).getCanonicalPath();
     }
 

@@ -42,7 +42,6 @@ module TorqueBox
                                        config_url )
       end
 =end
-    
 
     end
   end

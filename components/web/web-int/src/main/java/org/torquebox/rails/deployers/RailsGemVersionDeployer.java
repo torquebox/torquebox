@@ -44,9 +44,6 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
  */
 public class RailsGemVersionDeployer extends AbstractParsingDeployer {
 
-    // private static final Logger log =
-    // Logger.getLogger(RailsGemVersionDeployer.class);
-
     public RailsGemVersionDeployer() {
         setInput( RailsApplicationMetaData.class );
         addRequiredInput( RubyApplicationMetaData.class );
@@ -57,8 +54,6 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         RailsApplicationMetaData railsMetaData = unit.getAttachment( RailsApplicationMetaData.class );
         VirtualFile railsRoot = rubyAppMetaData.getRoot();
-
-        log.info( "Rails Root = " + railsRoot );
 
         railsMetaData.setVersionSpec( determineRailsGemVersion( railsRoot ) );
     }
@@ -87,7 +82,6 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
     }
 
     protected String determineVersionTryRails2Vendor(VirtualFile railsRoot) throws IOException {
-        log.debug( "Try vendored rails 2: " + railsRoot );
         VirtualFile railsVersion = railsRoot.getChild( "vendor/rails/railties/lib/rails/version.rb" );
 
         if (!railsVersion.exists()) {
@@ -108,7 +102,6 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
                 String tiny = find( railsVersion, tinyPattern );
 
                 if (tiny != null) {
-                    log.debug( "Matched vendored rails 2: " + railsRoot );
                     return "" + major + "." + minor + "." + tiny;
                 }
             }
@@ -118,17 +111,14 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
     }
 
     protected String determineVersionTryRails2(VirtualFile railsRoot) throws IOException {
-        log.debug( "Try gems rails 2: " + railsRoot );
         VirtualFile configEnvironmentFile = railsRoot.getChild( "/config/environment.rb" );
         if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
             return null;
         }
-        log.info( "config/environment.rb = " + configEnvironmentFile );
         Pattern pattern = Pattern.compile( "^[^#]*RAILS_GEM_VERSION\\s*=\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*" );
         String version = find( configEnvironmentFile, pattern );
 
         if (version != null) {
-            log.debug( "Matched gems rails 2: " + railsRoot );
             return version;
         }
 
@@ -136,20 +126,16 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
     }
 
     protected String determineVersionTryRails3(VirtualFile railsRoot) throws IOException {
-        log.debug( "Try rails 3: " + railsRoot );
         VirtualFile gemfile = railsRoot.getChild( "Gemfile" );
         if (gemfile == null || !gemfile.exists()) {
             return null;
         }
-        log.info( "Gemfile = " + gemfile );
         Pattern pattern = Pattern.compile( "^[^#]*gem\\s*['\"]rails['\"]\\s*,\\s*[\"']([!~<>=]*\\s*[\\d.]+)[\"'].*" );
         String version = find( gemfile, pattern );
 
         if (version == null) {
             version = "3.x.x.default";
         }
-
-        log.debug( "Matched rails 3: " + railsRoot );
 
         return version;
     }
@@ -162,10 +148,8 @@ public class RailsGemVersionDeployer extends AbstractParsingDeployer {
             in = new BufferedReader( inReader );
             String line = null;
             while ((line = in.readLine()) != null) {
-                log.debug( "line: " + line );
                 Matcher matcher = pattern.matcher( line );
                 if (matcher.matches()) {
-                    log.debug( "MATCH: " + matcher.group( 1 ) );
                     return matcher.group( 1 ).trim();
                 }
             }

@@ -67,11 +67,15 @@ public class AttachmentUtils {
     }
 
     public static String beanName(DeploymentUnit unit, String category, String name) {
+        String unitName = unit.getSimpleName();
+        if ( unitName.endsWith( ".trq" ) ) {
+            unitName = unitName.substring( 0, unitName.length() - 4 );
+        }
         if (name == null) {
-            return "torquebox." + unit.getSimpleName() + "." + category;
+            return "torquebox." + unitName + "." + category;
         } else {
-            return "torquebox." + unit.getSimpleName() + "." + category + "." + name;
+            return "torquebox." + unitName + "." + category + "." + name;
         }
     }
-
+    
 }

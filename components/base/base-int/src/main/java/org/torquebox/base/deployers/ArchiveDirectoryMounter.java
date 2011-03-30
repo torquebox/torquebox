@@ -57,8 +57,8 @@ public class ArchiveDirectoryMounter extends AbstractDeployer {
 
         if (rubyAppMetaData.isArchive()) {
             try {
-                mountDir( unit, rubyAppMetaData.getRoot(), "log", System.getProperty( "jboss.server.log.dir" ) + "/" + unit.getSimpleName() );
-                mountDir( unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/rails/" + unit.getSimpleName() );
+                mountDir( unit, rubyAppMetaData.getRoot(), "log", System.getProperty( "jboss.server.log.dir" ) + "/" + rubyAppMetaData.getApplicationName() );
+                mountDir( unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/rails/" + rubyAppMetaData.getApplicationName() );
             } catch (Exception e) {
                 throw new DeploymentException( e );
             }

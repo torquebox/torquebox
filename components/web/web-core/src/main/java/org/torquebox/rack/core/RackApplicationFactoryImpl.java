@@ -32,7 +32,9 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 
 public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyInjectionProxy {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger(  RackApplicationFactoryImpl.class );
+    
     private String rackUpScript;
     private VirtualFile rackUpFile;
     private InjectionRegistry injectionRegistry;
@@ -45,10 +47,6 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
         this.rackUpFile = rackUpScriptLocation;
     }
     
-    public void start() {
-        log.info( "Starting" );
-    }
-
     public void setRackUpScript(String rackUpScript) {
         this.rackUpScript = rackUpScript;
     }
