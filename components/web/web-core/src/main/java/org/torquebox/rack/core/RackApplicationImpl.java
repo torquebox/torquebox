@@ -37,10 +37,8 @@ import org.torquebox.rack.spi.RackResponse;
 public class RackApplicationImpl implements RackApplication {
 
     /** Log. */
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RackApplicationImpl.class );
-
-    /** Empty object array for ruby invocation. */
-    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 
     /** Ruby object of the app. */
     private IRubyObject rubyApp;
@@ -64,7 +62,6 @@ public class RackApplicationImpl implements RackApplication {
      *            The rackup script.
      */
     private IRubyObject rackUp(Ruby ruby, String script, VirtualFile rackUpScriptLocation) throws Exception {
-        log.debug( "Rackup: " + rackUpScriptLocation + "\n" + script );
         ruby.getLoadService().require( "rubygems" );
         String fullScript = "require %q(vfs)\nrequire %q(rack)\nRack::Builder.new{(\n" + script + "\n)}.to_app";
         IRubyObject app = ruby.executeScript( fullScript, rackUpScriptLocation.toURL().toString() );

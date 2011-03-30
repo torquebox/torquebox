@@ -28,6 +28,7 @@ import org.torquebox.rack.spi.RackApplicationPool;
 
 public class RackApplicationPoolImpl implements RackApplicationPool {
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RackApplicationPoolImpl.class );
 
     private RubyRuntimePool runtimePool;
@@ -41,16 +42,6 @@ public class RackApplicationPoolImpl implements RackApplicationPool {
         this.rackFactory = rackFactory;
     }
     
-    public void start() {
-        log.info(  "start"  );
-        log.info( "factory: " + this.rackFactory );
-        log.info( "pool: " + this.runtimePool );
-    }
-    
-    public void stop() {
-        log.info( "stop" );
-    }
-
     public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
         this.runtimePool = runtimePool;
     }

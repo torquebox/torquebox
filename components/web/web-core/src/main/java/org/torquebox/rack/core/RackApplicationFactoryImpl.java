@@ -33,7 +33,6 @@ import org.torquebox.rack.spi.RackApplicationFactory;
 public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyInjectionProxy {
 
     private static final Logger log = Logger.getLogger(  RackApplicationFactoryImpl.class );
-    private static final String TORQUEBOX_REGISTRY_CLASS_NAME = "TorqueBox::Registry";
     private String rackUpScript;
     private VirtualFile rackUpFile;
     private InjectionRegistry injectionRegistry;

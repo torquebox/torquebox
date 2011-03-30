@@ -52,7 +52,6 @@ public class RackFilter implements Filter {
 
     private ServletContext servletContext;
 
-    @SuppressWarnings("deprecation")
     public void init(FilterConfig filterConfig) throws ServletException {
         Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute( KERNEL_NAME );
         String rackAppPoolName = filterConfig.getInitParameter( RACK_APP_POOL_INIT_PARAM );

@@ -48,11 +48,9 @@ public class WebYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
 
-        log.debug( "Deploying web configuration: " + unit );
         RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.class );
 
         if (rackMetaData == null) {
-            log.debug( "Initializing web configuration: " + unit );
             rackMetaData = new RackApplicationMetaData();
             unit.addAttachment( RackApplicationMetaData.class, rackMetaData );
         }
@@ -76,8 +74,6 @@ public class WebYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
         } else {
             rackMetaData.addHost( (String) hosts );
         }
-
-        log.debug( "Configured as: " + rackMetaData );
     }
 
 }

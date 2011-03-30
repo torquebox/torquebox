@@ -65,13 +65,6 @@ public class RackApplicationMetaData {
         this.rackUpScriptLocation = rackUpScriptLocation;
     }
 
-    /*
-     * public void setRackUpScriptLocation(String path) throws IOException { if
-     * (path != null) { setRackUpScriptLocation((path.startsWith("/") ||
-     * path.matches("^[A-Za-z]:.*")) ? VFS.getChild(path) :
-     * getRackRoot().getChild(path)); } }
-     */
-
     public String getRackUpScriptLocation() {
         return this.rackUpScriptLocation;
     }

@@ -103,7 +103,9 @@ public class RackEnvironmentImpl implements RackEnvironment {
         env.put( "servlet_request", request );
         env.put( "java.servlet_request", request );
 
-        log.debug( "Created environment: " + env.inspect() );
+        if (log.isTraceEnabled()) {
+            log.trace( "Created: " + env.inspect() );
+        }
     }
 
     public RubyHash getEnv() {
