@@ -128,10 +128,7 @@ public class AppKnobYamlParsingDeployer extends AbstractDeployer {
     }
 
     private Deployment createDeployment(String name, TorqueBoxMetaData metaData) throws IOException {
-        log.debug( "Creating deployment: " + name );
-        log.debug( "POJO: " + metaData.getApplicationRootFile() );
         AbstractVFSDeployment deployment = new TorqueBoxVFSDeployment( name, metaData.getApplicationRootFile() );
-        log.debug( "Deployment: " + deployment.getSimpleName() + " // " + deployment );
         MutableAttachments attachments = ((MutableAttachments) deployment.getPredeterminedManagedObjects());
         attachments.addAttachment( TorqueBoxMetaData.EXTERNAL, metaData, TorqueBoxMetaData.class );
         return deployment;

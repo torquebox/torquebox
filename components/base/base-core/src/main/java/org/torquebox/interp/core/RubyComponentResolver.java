@@ -24,7 +24,6 @@ import java.util.Map;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
-import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.injection.InjectionRegistry;
@@ -90,29 +89,22 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     }
 
     public IRubyObject resolve(Ruby ruby) throws Exception {
-        log.debug( "resolve(" + ruby + ")" );
         synchronized (ruby) {
-            log.debug( "Got exclusive access: " + ruby );
             ruby.getLoadService().require( "rubygems" );
             ruby.getLoadService().require( "torquebox-base" );
             ruby.getLoadService().require( "torquebox/component_manager" );
             RubyClass managerClass = (RubyClass) ruby.getClassFromPath( "TorqueBox::ComponentManager" );
-            log.debug( "Got manager: " + managerClass );
             IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, managerClass, "lookup_component", new Object[] { this.componentName },
                     IRubyObject.class );
-            log.debug( "Looked up component: " + component );
 
             if (isAlwaysReload() || component == null || component.isNil()) {
                 component = createComponent( ruby );
-                log.debug( "Created component: " + component );
                 if (component != null) {
                     JavaEmbedUtils.invokeMethod( ruby, managerClass, "register_component", new Object[] { this.componentName, component }, void.class );
-                    log.debug( "Registered component: " + component );
                 }
                 if (isAlwaysReload()) {
                     ruby.evalScriptlet( "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
                     ruby.evalScriptlet( "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
-                    log.debug( "Reloaded ruby: " + ruby );
                 }
             }
 
@@ -121,10 +113,8 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     }
 
     protected IRubyObject createComponent(Ruby ruby) throws Exception {
-        log.debug( "createComponent(" + ruby + ")" );
         if (this.rubyRequirePath != null) {
             ruby.getLoadService().load( this.rubyRequirePath + ".rb", false );
-            log.debug( "Loaded source file: " + this.rubyRequirePath + ".rb" );
         }
 
         RubyClass componentClass = (RubyClass) ruby.getClassFromPath( this.rubyClassName );

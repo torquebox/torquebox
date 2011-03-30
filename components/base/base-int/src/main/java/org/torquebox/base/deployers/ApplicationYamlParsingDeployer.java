@@ -47,20 +47,16 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
 
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-        log.debug( "Deploying ruby application: " + unit );
         Map<String, String> app = (Map<String, String>) dataObj;
 
         RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (appMetaData == null) {
-            log.debug( "Configuring ruby application: " + unit );
             appMetaData = new RubyApplicationMetaData();
             String applicationName = unit.getSimpleName();
             applicationName = applicationName.replaceAll( ".trq$", "" );
             appMetaData.setApplicationName( applicationName );
             unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
-        } else {
-            log.debug( "Configuring pre-existing ruby application: " + unit + "\n  " + appMetaData );
         }
 
         if (appMetaData.getRoot() == null) {
@@ -79,7 +75,5 @@ public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingDepl
             }
 
         }
-        log.debug( "Configured ruby application: " + unit + "\n  " + appMetaData );
-
     }
 }

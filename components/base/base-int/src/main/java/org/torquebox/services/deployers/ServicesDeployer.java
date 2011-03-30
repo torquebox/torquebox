@@ -19,8 +19,6 @@
 
 package org.torquebox.services.deployers;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Set;
 
@@ -102,7 +100,6 @@ public class ServicesDeployer extends AbstractRubyComponentDeployer {
 
         if (pool == null && max > 0) {
             pool = new PoolMetaData( POOL_NAME, 1, max );
-            log.info( "Configured Ruby runtime pool for services: " + pool );
             AttachmentUtils.multipleAttach( unit, pool, POOL_NAME );
         }
         return pool;

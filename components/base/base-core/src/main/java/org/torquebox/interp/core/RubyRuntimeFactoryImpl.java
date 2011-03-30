@@ -303,9 +303,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
                 }
 
             }
-
-            // jrubyHome = jrubyHome.replaceAll( "^file:", "vfs:" );
-            // jrubyHome = jrubyHome.replaceAll( "!/", "/" );
         }
 
         if (jrubyHome != null) {

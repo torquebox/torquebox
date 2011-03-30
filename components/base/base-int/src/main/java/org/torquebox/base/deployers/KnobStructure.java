@@ -59,8 +59,6 @@ public class KnobStructure extends AbstractVFSArchiveStructureDeployer {
     public boolean doDetermineStructure(StructureContext structureContext) throws DeploymentException {
         VirtualFile root = structureContext.getFile();
 
-        log.debug( "Determine structure for: " + root );
-
         try {
             if (isKnob( root ) || RubyApplicationRecognizer.isRubyApplication( root )) {
                 StructureMetaData structureMetaData = structureContext.getMetaData();

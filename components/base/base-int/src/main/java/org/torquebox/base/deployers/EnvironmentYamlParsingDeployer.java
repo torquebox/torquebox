@@ -47,17 +47,13 @@ public class EnvironmentYamlParsingDeployer extends AbstractSplitYamlParsingDepl
 
     @SuppressWarnings("unchecked")
     public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-        log.debug( "Deploying ruby environment: " + unit );
 
         RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         if (appMetaData == null) {
-            log.debug( "Configuring ruby environment: " + unit );
             appMetaData = new RubyApplicationMetaData();
             appMetaData.setApplicationName( unit.getSimpleName() );
             unit.addAttachment( RubyApplicationMetaData.class, appMetaData );
-        } else {
-            log.debug( "Configuring pre-existing ruby environment: " + unit + "\n  " + appMetaData );
         }
         
         Map<String, Object> envData = (Map<String, Object>) dataObj;
@@ -75,8 +71,5 @@ public class EnvironmentYamlParsingDeployer extends AbstractSplitYamlParsingDepl
         }
         
         appEnv.putAll( env );
-        
-        log.debug( "Configured ruby application: " + unit + "\n  " + appMetaData );
-
     }
 }

@@ -20,7 +20,7 @@ public class CDIBridgeDeployer extends AbstractDeployer {
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.POST_PARSE );
     }
-
+    
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         
@@ -33,11 +33,7 @@ public class CDIBridgeDeployer extends AbstractDeployer {
         builder.addDependency( "jboss:service=Naming" );
         
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-        
-        System.err.println( "CDIBridge-Attach: " + builder.getBeanMetaData() );
-        
         unit.addAttachment( BootstrapInfo.class, new BootstrapInfo() );
-        
         unit.addAttachment( DeployersUtils.WELD_DEPLOYMENT_FLAG, Boolean.TRUE, Boolean.class );
     }
 

@@ -18,18 +18,15 @@ public class RubyApplicationClassLoaderDeployer extends AbstractDeployer {
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         
-        log.info(  "Set up classloader for: " + unit  );
         ClassLoadingMetaData clMetaData = unit.getAttachment( ClassLoadingMetaData.class );
         
         if ( clMetaData != null ) {
-            log.info( "ClassLoader already configured: " + clMetaData );
             // someone already did something?
             return;
         }
         
         clMetaData = new ClassLoadingMetaData();
         clMetaData.setDomain( unit.getName() );
-        log.info( "Configuring as: " + clMetaData );
         unit.addAttachment( ClassLoadingMetaData.class, clMetaData );
     }
 

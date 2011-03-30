@@ -52,10 +52,6 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
     }
 
     protected void deploy(DeploymentUnit unit, PoolMetaData poolMetaData) throws DeploymentException {
-        log.info( "Deploying runtime pool: " + poolMetaData );
-
-        // String beanName = AttachmentUtils.beanName(unit, "pool",
-        // poolMetaData.getName());
         String beanName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, poolMetaData.getName() );
 
         BeanMetaData poolBean = null;
@@ -102,9 +98,5 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
         }
 
         AttachmentUtils.attach( unit, poolBean );
-
-        // unit.addAttachment(BeanMetaData.class.getName() + "$" + beanName,
-        // poolBean, BeanMetaData.class);
     }
-
 }

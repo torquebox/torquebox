@@ -39,14 +39,18 @@ public class MergedTorqueBoxMetaDataDeployer extends AbstractDeployer {
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         TorqueBoxMetaData externalMetaData = unit.getAttachment( TorqueBoxMetaData.EXTERNAL, TorqueBoxMetaData.class );
-        log.debug( "External: " + externalMetaData );
+        if (log.isTraceEnabled()) {
+            log.trace( "External: " + externalMetaData );
+        }
 
         if (externalMetaData == null) {
             return;
         }
 
         TorqueBoxMetaData metaData = unit.getAttachment( TorqueBoxMetaData.class );
-        log.debug( "Internal: " + metaData );
+        if (log.isTraceEnabled()) {
+            log.trace( "Internal: " + metaData );
+        }
 
         if (metaData == null) {
             unit.addAttachment( TorqueBoxMetaData.class, externalMetaData );
@@ -55,7 +59,9 @@ public class MergedTorqueBoxMetaDataDeployer extends AbstractDeployer {
 
         TorqueBoxMetaData mergedMetaData = externalMetaData.overlayOnto( metaData );
 
-        log.debug( "Merged: " + mergedMetaData );
+        if (log.isTraceEnabled()) {
+            log.trace( "Merged: " + mergedMetaData );
+        }
 
         unit.addAttachment( TorqueBoxMetaData.class, mergedMetaData );
     }

@@ -42,23 +42,22 @@ public class AuthDefaultsDeployer extends AbstractDeployer {
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         AuthMetaData authMetaData = unit.getAttachment(AuthMetaData.class);
         if (authMetaData == null) {
-            log.warn("Initializing TorqueBox authentication.");
             authMetaData = new AuthMetaData();
             unit.addAttachment(AuthMetaData.class, authMetaData);
         }
         if (authMetaData.getConfigurations().size() < 1) {
-            log.warn("No authentication configuration provided for this application. Using defaults.");
-            log.warn("Authentication Domain: " + DEFAULT_DOMAIN);
+            log.info("No authentication configuration provided for this application. Using defaults.");
+            log.info("Authentication Domain: " + DEFAULT_DOMAIN);
             authMetaData.addAuthentication(DEFAULT_NAME, AuthDefaultsDeployer.DEFAULT_DOMAIN);
         } else {
             // Set defaults for any values that weren't explicitly specified in the YAML
             for (Config config: authMetaData.getConfigurations()) {
                 if (blank(config.getDomain())) {
-                	log.warn("No domain specified. Configuring using default: " + DEFAULT_DOMAIN);
+                	log.info("No domain specified. Configuring using default: " + DEFAULT_DOMAIN);
                     config.setDomain(DEFAULT_DOMAIN);
                 }
                 if (blank(config.getName())) {
-                	log.warn("No name specified. Configuring using default: " + DEFAULT_NAME);
+                	log.info("No name specified. Configuring using default: " + DEFAULT_NAME);
                     config.setName(DEFAULT_NAME);
                 }
             }

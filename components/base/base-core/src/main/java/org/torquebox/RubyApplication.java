@@ -13,10 +13,6 @@ public class RubyApplication implements RubyApplicationMBean {
         this.deployedAt = new Date();
     }
     
-    public void start() {
-        System.err.println( "APP START()" );
-    }
-    
     public void setName(String name) {
         this.name = name;
     }

@@ -55,11 +55,9 @@ public class ServicesRuntimePoolDeployer extends AbstractDeployer {
             return;
         }
 
-        log.debug( "Deploying ruby runtime pool for services: " + unit );
         PoolMetaData servicesPool = AttachmentUtils.getAttachment( unit, "services", PoolMetaData.class );
 
         if (servicesPool == null) {
-            log.debug( "Configuring ruby runtime pool for services: " + unit );
             servicesPool = new PoolMetaData( "services" );
             AttachmentUtils.multipleAttach( unit, servicesPool, "services" );
         }
