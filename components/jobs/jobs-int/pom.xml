@@ -113,6 +113,11 @@
       <artifactId>logkit</artifactId>
       <scope>provided</scope>
     </dependency>    
+    <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-as-cluster</artifactId>
+      <scope>provided</scope>
+    </dependency>    
   </dependencies>
 
   <build> 

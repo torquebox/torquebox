@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
-	<bean name="scheduler" class="org.torquebox.jobs.core.RubyScheduler">
-	  <property name="name">test-scheduler</property>
-	</bean>
+  <bean name="scheduler" class="org.torquebox.jobs.core.RubyScheduler">
+    <property name="name">test-scheduler</property>
+  </bean> 
 </deployment>
+

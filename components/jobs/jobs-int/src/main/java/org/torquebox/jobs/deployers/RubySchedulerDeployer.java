@@ -24,11 +24,13 @@ import java.util.Set;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
+import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.kernel.Kernel;
+import org.jboss.kernel.spi.dependency.KernelController;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.jobs.core.RubyScheduler;
@@ -101,6 +103,17 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
         log.info( "Created scheduler with name " + beanName );
     }
+    
+    // This will tell us if we're running in a clustered environment or not
+    public boolean isClustered() {
+    	KernelController controller = this.getKernel().getController();
+    	if (null == controller) {
+    		log.warn("No kernel controller available");
+    	} else {
+    		return controller.getContext("HAPartitionDependencyCreator", ControllerState.INSTANTIATED, false) != null;
+    	}
+    	return false;
+    }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
 
@@ -110,25 +123,26 @@ public class RubySchedulerDeployer extends AbstractDeployer {
             return;
         }
 
-        log.debug( "Deploying scheduler: " + unit );
-        boolean hasSingletonJobs = false;
-        boolean hasRegularJobs = false;
+        boolean hasSingletonJobs = hasSingletonJobs(allMetaData);
 
-        for (ScheduledJobMetaData each : allMetaData) {
-            if (each.isSingleton()) {
-                hasSingletonJobs = true;
-            } else {
-                hasRegularJobs = true;
-            }
-        }
-
-        if (hasRegularJobs) {
+        if (this.isClustered()) {
+            log.debug( "Deploying clustered scheduler: " + unit );
             this.buildScheduler( unit, false );
+            if (hasSingletonJobs) { this.buildScheduler(unit, true); }
+        } else {
+            log.debug( "Deploying scheduler: " + unit );
+            this.buildScheduler( unit, false );
+            if (hasSingletonJobs) { log.warn("Can't have singleton jobs in a non-clustered environment."); }
         }
 
-        if (hasSingletonJobs) {
-            this.buildScheduler( unit, true );
-        }
+
     }
+
+	private boolean hasSingletonJobs(Set<? extends ScheduledJobMetaData> allMetaData) {
+        for (ScheduledJobMetaData each : allMetaData) {
+            if (each.isSingleton()) { return true; }
+        }
+		return false;
+	}
 
 }

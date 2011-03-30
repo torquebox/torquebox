@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNull;
 import java.io.File;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
+import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
@@ -42,6 +43,7 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
     public void setUp() throws Throwable {
         this.deployer = new RubySchedulerDeployer();
         this.deployer.setRubyRuntimePoolName( "runtime-pool" );
+        this.deployer.setKernel(getKernelController().getKernel());
         addDeployer( this.deployer );
     }
 
@@ -91,6 +93,42 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
         undeploy( deploymentName );
         undeploy( supportDeploymentName );
 
+    }
+    
+    /** Ensure that we create a singleton deployer in a clustered environment 
+     * @throws Throwable */
+    @Test
+    public void testSingletonSchedulerDeployment() throws Throwable {
+
+    	JavaArchive archive = createJar( "scheduler-support" );
+        archive.addResource( getClass().getResource( "interp-jboss-beans.xml" ), "interp-jboss-beans.xml" );
+        File archiveFile = createJarFile( archive );
+        String supportDeploymentName = addDeployment( archiveFile );
+
+        String deploymentName = createDeployment( "with-jobs" );
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        ScheduledJobMetaData jobMeta = new ScheduledJobMetaData();
+        jobMeta.setSingleton(true);
+        
+        // Now setup our flag that tells the scheduler we're in clustered mode
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder("HAPartitionDependencyCreator", java.lang.Object.class.getName());
+        getKernelController().install(builder.getBeanMetaData(), new Object());
+        
+        AttachmentUtils.multipleAttach( unit, jobMeta, "job.one" );
+        processDeployments( true );
+
+        // We'll have a Singleton scheduler bean if we're clustered
+        String schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class, "Singleton" );
+        BeanMetaData schedulerMetaData = getBeanMetaData( unit, schedulerBeanName );
+        assertNotNull( schedulerMetaData );
+
+        RubyScheduler scheduler = (RubyScheduler) getBean( schedulerBeanName );
+        assertNotNull( scheduler );
+
+
+        undeploy( deploymentName );
+        undeploy( supportDeploymentName );
+    	
     }
 
 }
