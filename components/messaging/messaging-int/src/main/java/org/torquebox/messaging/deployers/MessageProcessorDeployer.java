@@ -21,8 +21,6 @@ package org.torquebox.messaging.deployers;
 
 import java.util.Set;
 
-import javax.naming.NamingException;
-
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
 import org.jboss.beans.metadata.spi.ValueMetaData;
@@ -108,7 +106,6 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         }
 
         if (this.demand != null) {
-            log.debug( "adding a demand for " + this.demand + " to " + simpleName );
             builder.addDemand( this.demand, ControllerState.CREATE, ControllerState.INSTALLED, null );
         }
 

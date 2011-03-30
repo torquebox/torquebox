@@ -19,9 +19,6 @@
 
 package org.torquebox.messaging.core;
 
-import java.util.Collections;
-import java.util.Map;
-
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
@@ -35,7 +32,6 @@ import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.common.reflect.ReflectionHelper;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
@@ -48,7 +44,7 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     }
 
     public String toString() {
-        return "[MessageDrivenConsumer: " + getName() + "]";
+        return "[RubyMessageProcessor: " + getName() + "]";
     }
 
     public void setName(String name) {
@@ -120,7 +116,6 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     }
 
     public void create() throws JMSException {
-        log.info( "creating for " + getDestination() );
         this.connection = this.connectionFactory.createConnection();
         for (int i = 0; i < getConcurrency(); i++) {
             new Handler( this.connection.createSession( true, this.acknowledgeMode ) );
@@ -128,7 +123,6 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     }
 
     public void start() throws JMSException {
-        log.info( "starting for " + getDestination() );
         if (connection != null) {
             connection.start();
             this.started = true;
@@ -136,18 +130,14 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     }
 
     public void stop() throws JMSException {
-        log.info( "stopping for " + getDestination() );
         if (this.connection != null) {
-            log.info( "stopping connection for " + getDestination() );
             this.connection.stop();
             this.started = false;
         }
     }
 
     public void destroy() throws JMSException {
-        log.info( "destroying for " + getDestination() );
         if (this.connection != null) {
-            log.info( "destroying connection for " + getDestination() );
             this.connection.close();
             this.connection = null;
         }
@@ -173,7 +163,6 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     class Handler implements MessageListener {
 
         Handler(Session session) throws JMSException {
-            log.info( "creating session handler for " + getDestination() );
             MessageConsumer consumer = session.createConsumer( getDestination(), getMessageSelector() );
             consumer.setMessageListener( this );
             this.session = session;
@@ -183,20 +172,17 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
             Ruby ruby = null;
 
             try {
-                log.debug( "Received message: " + message );
                 ruby = getRubyRuntimePool().borrowRuntime();
-                log.debug( "Got runtime: " + ruby );
                 IRubyObject processor = instantiateProcessor( ruby );
-                log.debug( "Got processor: " + processor );
                 processMessage( processor, message );
-                log.debug( "Message processed" );
-                if (session.getTransacted())
+                if (session.getTransacted()) {
                     session.commit();
+                }
             } catch (Exception e) {
-                log.error( "unable to dispatch", e );
                 try {
-                    if (session.getTransacted())
+                    if (session.getTransacted()) {
                         session.rollback();
+                    }
                 } catch (JMSException ignored) {
                 }
             } finally {

@@ -57,13 +57,14 @@ public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
 
     public static class Parser {
 
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         static List<TaskMetaData> parse(Object data, Set<? extends TaskMetaData> existingTasks) throws Exception {
             List<TaskMetaData> result = null;
 
             if (data instanceof String) {
                 String s = (String) data;
                 if (s.trim().length() == 0) {
-                    result = Collections.EMPTY_LIST;
+                    result = Collections.emptyList();
                 } else {
                     result = parse( new Yaml().load( (String) data ), existingTasks );
                 }
@@ -73,6 +74,7 @@ public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
             return result;
         }
 
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         static List<TaskMetaData> parseTasks( Map<String, Map>tasks, Set existingTasks) {
             List<TaskMetaData> result = new ArrayList<TaskMetaData>();
 
@@ -83,6 +85,7 @@ public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
             return result;
         }
 
+        @SuppressWarnings("rawtypes")
         static TaskMetaData createTaskMetaData(String rubyClassName, Map options, Set<? extends TaskMetaData> existingTasks) {
             if (options == null)
                 options = Collections.EMPTY_MAP;
