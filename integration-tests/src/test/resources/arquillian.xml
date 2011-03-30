@@ -15,7 +15,7 @@
     <jboss:httpPort>8080</jboss:httpPort>
     <jboss:jbossHome>${integ.dist.dir}/jboss</jboss:jbossHome>
     <!--<jboss:javaVmArguments>-Xmx512m -XX:MaxPermSize=128m -Djruby_home.env.ignore=true -Dgem.path=${project.basedir}/${integ.dist.dir}/jruby/lib/ruby/gems/1.8</jboss:javaVmArguments>-->
-    <jboss:javaVmArguments>-Xmx512m -XX:MaxPermSize=128m -Djruby_home.env.ignore=true -Dgem.path=default</jboss:javaVmArguments>
+    <jboss:javaVmArguments>-Xmx${arquillian.max.heap} -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default</jboss:javaVmArguments>
   </jboss:container> 
 
 </arquillian>
