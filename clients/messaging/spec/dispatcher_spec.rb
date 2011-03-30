@@ -1,9 +1,10 @@
 #require 'spec_helper'
 
+require 'rubygems'
 require 'torquebox-naming'
-require 'torquebox-messaging'
 require 'torquebox-naming-container'
 require 'torquebox-messaging-container'
+require 'torquebox/messaging/message_processor'
 
 QUEUE_QUESTIONS = TorqueBox::Messaging::Queue.new("/queues/questions")
 QUEUE_ANSWERS   = TorqueBox::Messaging::Queue.new("/queues/answers")
