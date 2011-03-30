@@ -1,2 +1,4 @@
 application:
   root: ${basedir}/apps/sinatra/override
+web:
+  foo: barf

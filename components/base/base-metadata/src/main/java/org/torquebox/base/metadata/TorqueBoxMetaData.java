@@ -142,10 +142,9 @@ public class TorqueBoxMetaData {
         for (String key : thisData.keySet()) {
             if (key.equals( "application" )) {
                 // From the application: section, only overly
-                // env/RACK_ENV/RAILS_ENV
-                // and do it smartly using whatever key(s) are in use by the
-                // base
-                // and overlay data maps.
+                // env/RACK_ENV/RAILS_ENV and do it smartly using
+                // whatever key(s) are in use by the base and overlay
+                // data maps.
 
                 Map<String, String> thisAppSection = (Map<String, String>) thisData.get( "application" );
                 String envKey = determineEnvironmentKey( thisAppSection );
@@ -163,9 +162,9 @@ public class TorqueBoxMetaData {
                     mergedAppSection.put( envKey, envName );
                 }
 
-            } else if (key.equals( "environment" )) {
-                Map<String, String> thisEnvSection = (Map<String, String>) thisData.get( "environment" );
-                Map<String, String> baseEnvSection = (Map<String, String>) baseData.get( "environment" );
+            } else if (key.equals( "environment" ) || key.equals( "web" )) {
+                Map<String, String> thisEnvSection = (Map<String, String>) thisData.get( key );
+                Map<String, String> baseEnvSection = (Map<String, String>) baseData.get( key );
                 Map<String, String> mergedEnvSection = new HashMap<String, String>();
 
                 if (baseEnvSection != null) {
@@ -173,7 +172,7 @@ public class TorqueBoxMetaData {
                 }
                 mergedEnvSection.putAll( thisEnvSection );
 
-                mergedData.put( "environment", mergedEnvSection );
+                mergedData.put( key, mergedEnvSection );
             } else {
                 mergedData.put( key, thisData.get( key ) );
             }
