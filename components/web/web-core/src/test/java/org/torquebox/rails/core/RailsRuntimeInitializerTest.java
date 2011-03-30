@@ -118,8 +118,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         initializer.initialize( ruby );
 
         String script = "require 'openssl'\nOpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, 'mykey', 'hashme')";
-        Object result = ruby.evalScriptlet( script );
-
+        ruby.evalScriptlet( script );
     }
 
     @SuppressWarnings("unchecked")
