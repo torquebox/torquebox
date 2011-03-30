@@ -116,26 +116,32 @@ public class RubySchedulerDeployer extends AbstractDeployer {
             return;
         }
 
-        boolean hasSingletonJobs = hasSingletonJobs(allMetaData);
+        DeployedJobTypes jobTypes = getJobTypes(allMetaData);
 
         if (this.isClustered()) {
             log.debug( "Deploying clustered scheduler: " + unit );
             this.buildScheduler( unit, false );
-            if (hasSingletonJobs) { this.buildScheduler(unit, true); }
+            if (jobTypes.singletonJobs) { this.buildScheduler(unit, true);  }
+            if (jobTypes.regularJobs)   { this.buildScheduler(unit, false); }
         } else {
             log.debug( "Deploying scheduler: " + unit );
             this.buildScheduler( unit, false );
-            if (hasSingletonJobs) { log.warn("Can't have singleton jobs in a non-clustered environment."); }
+            if (jobTypes.singletonJobs) { log.warn("Can't have singleton jobs in a non-clustered environment."); }
         }
-
-
     }
 
-	private boolean hasSingletonJobs(Set<? extends ScheduledJobMetaData> allMetaData) {
+	private DeployedJobTypes getJobTypes(Set<? extends ScheduledJobMetaData> allMetaData) {
+		DeployedJobTypes deployedJobTypes = new DeployedJobTypes();
         for (ScheduledJobMetaData each : allMetaData) {
-            if (each.isSingleton()) { return true; }
+            if (each.isSingleton()) { deployedJobTypes.singletonJobs = true; }
+            else { deployedJobTypes.regularJobs = true; }
         }
-		return false;
+		return deployedJobTypes;
+	}
+	
+	private class DeployedJobTypes {
+		boolean regularJobs   = false;
+		boolean singletonJobs = false;
 	}
 
 }

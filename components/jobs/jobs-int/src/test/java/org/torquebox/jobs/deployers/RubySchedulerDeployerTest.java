@@ -124,7 +124,10 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
 
         RubyScheduler scheduler = (RubyScheduler) getBean( schedulerBeanName );
         assertNotNull( scheduler );
-
+        
+        // We shouldn't have a non-singleton scheduler
+        schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class, null );
+//        assertNull( getBean( schedulerBeanName ) );
 
         undeploy( deploymentName );
         undeploy( supportDeploymentName );
