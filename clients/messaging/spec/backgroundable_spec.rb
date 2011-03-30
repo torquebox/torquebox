@@ -16,20 +16,22 @@ class MyTestModel
 end
 
 describe TorqueBox::Messaging::Backgroundable do
-
+  before(:all) do
+    @util = TorqueBox::Messaging::Backgroundable::Util
+  end
+  
   describe "always_background" do
     it "should be able to handle mutliple methods" do
       MyTestModel.always_background :foo, :bar
-      instance_methods = MyTestModel.instance_methods
-      instance_methods.collect(&:to_s).should include('__async_foo')
-      instance_methods.collect(&:to_s).should include('__async_bar')
+      @util.instance_methods_include?(MyTestModel, '__async_foo').should be_true
+      @util.instance_methods_include?(MyTestModel, '__async_bar').should be_true
     end
 
     it "should handle methods that are defined after the always_background call" do
       MyTestModel.always_background :baz
-      MyTestModel.instance_methods.collect(&:to_s).should_not include('__async_baz')
+      @util.instance_methods_include?(MyTestModel, '__async_baz').should_not be_true
       MyTestModel.class_eval('def baz;end')
-      MyTestModel.instance_methods.collect(&:to_s).should include('__async_baz')
+      @util.instance_methods_include?(MyTestModel, '__async_baz').should be_true
     end
 
     it "should handle methods that are redefined after the always_background call" do
@@ -41,17 +43,17 @@ describe TorqueBox::Messaging::Backgroundable do
     it "should work for private methods, maintaining visibility" do
       MyTestModel.class_eval('private; def no_peeking;end')
       MyTestModel.always_background :no_peeking
-      MyTestModel.private_instance_methods.collect(&:to_s).should include('no_peeking')
-      MyTestModel.private_instance_methods.collect(&:to_s).should include('__async_no_peeking')
-      MyTestModel.private_instance_methods.collect(&:to_s).should include('__sync_no_peeking')
+      @util.private_instance_methods_include?(MyTestModel, 'no_peeking').should be_true
+      @util.private_instance_methods_include?(MyTestModel, '__async_no_peeking').should be_true
+      @util.private_instance_methods_include?(MyTestModel, '__sync_no_peeking').should be_true
     end
 
     it "should work for protected methods, maintaining visibility" do
       MyTestModel.class_eval('protected; def some_peeking;end')
       MyTestModel.always_background :some_peeking
-      MyTestModel.protected_instance_methods.collect(&:to_s).should include('some_peeking')
-      MyTestModel.protected_instance_methods.collect(&:to_s).should include('__async_some_peeking')
-      MyTestModel.protected_instance_methods.collect(&:to_s).should include('__sync_some_peeking')
+      @util.protected_instance_methods_include?(MyTestModel, 'some_peeking').should be_true
+      @util.protected_instance_methods_include?(MyTestModel, '__async_some_peeking').should be_true
+      @util.protected_instance_methods_include?(MyTestModel, '__sync_some_peeking').should be_true
     end
   end
 

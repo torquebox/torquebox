@@ -39,8 +39,8 @@ module TorqueBox
             if !@__backgroundable_methods[method]
               @__backgroundable_methods[method] ||= { }
               @__backgroundable_methods[method][:options] = options
-              if instance_methods.collect(&:to_s).include?(method) ||
-                  private_instance_methods.collect(&:to_s).include?(method)
+              if Util.instance_methods_include?(self, method) ||
+                  Util.private_instance_methods_include?(self, method)
                 __enable_backgrounding(method)
               end
             end
@@ -60,8 +60,8 @@ module TorqueBox
 
         private
         def __enable_backgrounding(method)
-          privatize = private_instance_methods.collect(&:to_s).include?(method)
-          protect = protected_instance_methods.collect(&:to_s).include?(method) unless privatize
+          privatize = Util.private_instance_methods_include?(self, method)
+          protect = Util.protected_instance_methods_include?(self, method) unless privatize
           async_method = "__async_#{method}"
           sync_method = "__sync_#{method}"
 
@@ -109,6 +109,22 @@ module TorqueBox
             raise RuntimeError.new("The backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")
           end
 
+          def instance_methods_include?(klass, method)
+            methods_include?(klass.instance_methods, method)
+          end
+
+          def private_instance_methods_include?(klass, method)
+            methods_include?(klass.private_instance_methods, method)
+          end
+
+          def protected_instance_methods_include?(klass, method)
+            methods_include?(klass.protected_instance_methods, method)
+          end
+
+          def methods_include?(methods, method)
+            method = (RUBY_VERSION =~ /^1\.9\./ ? method.to_sym : method.to_s)
+            methods.include?(method)
+          end
         end
       end
     end
