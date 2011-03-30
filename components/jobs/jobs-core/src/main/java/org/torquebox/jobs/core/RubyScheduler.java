@@ -76,12 +76,11 @@ public class RubyScheduler {
     }
 
     public void start() throws IOException, SchedulerException {
-        log.info( "Starting Ruby job scheduler: " + getName() );
         Properties props = new Properties();
         props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
         props.setProperty( StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName() );
 
-        RubyJobFactory jobFactory = new RubyJobFactory( isAlwaysReload() );
+        RubyJobProxyFactory jobFactory = new RubyJobProxyFactory( isAlwaysReload() );
         jobFactory.setKernel( this.kernel );
         jobFactory.setRubyRuntimePool( this.runtimePool );
 
@@ -92,9 +91,7 @@ public class RubyScheduler {
     }
 
     public void stop() throws SchedulerException {
-        log.info( "Stopping Ruby job scheduler: " + getName() );
         this.scheduler.shutdown( true );
-        log.info( "Stopped Ruby job scheduler: " + getName() );
     }
 
 }

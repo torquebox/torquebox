@@ -19,6 +19,8 @@
 
 package org.torquebox.jobs.core;
 
+import org.jboss.dependency.spi.ControllerContext;
+import org.jboss.dependency.spi.ControllerState;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jruby.Ruby;
@@ -32,7 +34,7 @@ import org.quartz.spi.TriggerFiredBundle;
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
-public class RubyJobFactory implements JobFactory {
+public class RubyJobProxyFactory implements JobFactory {
 
     public static final String RUBY_CLASS_NAME_KEY = "torquebox.ruby.class.name";
     public static final String RUBY_REQUIRE_PATH_KEY = "torquebox.ruby.require.path";
@@ -42,7 +44,7 @@ public class RubyJobFactory implements JobFactory {
     private boolean alwaysReload;
     private Kernel kernel;
 
-    public RubyJobFactory(boolean reload) {
+    public RubyJobProxyFactory(boolean reload) {
         this.alwaysReload = reload;
     }
 
@@ -64,25 +66,17 @@ public class RubyJobFactory implements JobFactory {
 
     @Override
     public Job newJob(TriggerFiredBundle bundle) throws SchedulerException {
-        RubyJob rubyJob = null;
+        RubyJobProxy rubyJob = null;
 
         JobDetail jobDetail = bundle.getJobDetail();
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
         
-        RubyComponentResolver resolver = getComponentResolver( jobDataMap.getString(   RubyJobFactory.COMPONENT_RESOLVER_NAME ));
-
-        /*
-        RubyComponentResolver resolver = new RubyComponentResolver();
-        resolver.setAlwaysReload( this.alwaysReload );
-        resolver.setComponentName( "jobs." + jobDetail.getFullName() );
-        resolver.setRubyClassName( jobDataMap.getString( RUBY_CLASS_NAME_KEY ) );
-        resolver.setRubyRequirePath( jobDataMap.getString( RUBY_REQUIRE_PATH_KEY ) );
-        */
+        RubyComponentResolver resolver = getComponentResolver( jobDataMap.getString(   RubyJobProxyFactory.COMPONENT_RESOLVER_NAME ));
 
         try {
             Ruby ruby = this.runtimePool.borrowRuntime();
             IRubyObject rubyObject = resolver.resolve( ruby );
-            rubyJob = new RubyJob( this.runtimePool, rubyObject );
+            rubyJob = new RubyJobProxy( this.runtimePool, rubyObject );
         } catch (Exception e) {
             throw new SchedulerException( e );
         }
@@ -91,7 +85,7 @@ public class RubyJobFactory implements JobFactory {
     }
     
     protected RubyComponentResolver getComponentResolver(String name) {
-        KernelRegistryEntry entry = getKernel().getRegistry().getEntry( name );
+        ControllerContext entry = getKernel().getController().getContext( name, ControllerState.START ); 
         if ( entry == null ) {
             return null;
         }

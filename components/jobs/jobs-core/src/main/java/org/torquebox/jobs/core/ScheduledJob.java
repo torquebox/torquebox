@@ -136,22 +136,21 @@ public class ScheduledJob implements ScheduledJobMBean {
     }
 
     public synchronized void start() throws ParseException, SchedulerException {
-		log.info( "Starting Ruby job: " + this.group + "." + this.name );
         this.jobDetail = new JobDetail();
 
         jobDetail.setGroup( this.group );
         jobDetail.setName( this.name );
         jobDetail.setDescription( this.description );
-        jobDetail.setJobClass( RubyJob.class );
+        jobDetail.setJobClass( RubyJobProxy.class );
         jobDetail.setRequestsRecovery( true );
 
 	    JobDataMap jobData = jobDetail.getJobDataMap();
 	        
-        jobData.put(  RubyJobFactory.COMPONENT_RESOLVER_NAME, getComponentResolverName() );
+        jobData.put(  RubyJobProxyFactory.COMPONENT_RESOLVER_NAME, getComponentResolverName() );
 
-        jobData.put( RubyJobFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName );
+        jobData.put( RubyJobProxyFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName );
         if ((this.rubyRequirePath != null) && (!this.rubyRequirePath.trim().equals( "" ))) {
-            jobData.put( RubyJobFactory.RUBY_REQUIRE_PATH_KEY, this.rubyRequirePath );
+            jobData.put( RubyJobProxyFactory.RUBY_REQUIRE_PATH_KEY, this.rubyRequirePath );
         }
 
         CronTrigger trigger = new CronTrigger( getTriggerName(), this.group, this.cronExpression );
@@ -163,7 +162,6 @@ public class ScheduledJob implements ScheduledJobMBean {
     }
 
     public synchronized void stop() throws SchedulerException {
-        log.info( "Stopping Ruby job: " + this.group + "." + this.name );
         scheduler.unscheduleJob( getTriggerName(), this.group );
         this.jobDetail = null;
     }

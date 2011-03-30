@@ -58,9 +58,6 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
 
-        log.debug( "Deployable jobs: " + unit );
-        log.debug( "  " + allMetaData );
-
         if (allMetaData.size() == 0) {
             return;
         }
@@ -74,8 +71,6 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
     protected void deploy(DeploymentUnit unit, ScheduledJobMetaData metaData) throws DeploymentException {
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         String beanName = AttachmentUtils.beanName( unit, ScheduledJob.class, metaData.getName() );
-
-        log.debug( "deploying job: " + beanName );
 
         BeanMetaDataBuilder beanBuilder = BeanMetaDataBuilder.createBuilder( beanName, ScheduledJob.class.getName() );
 
@@ -100,7 +95,7 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         if (schedulerBeanName == null) {
             schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class, isSingleton ? "Singleton" : null );
         }
-        log.info( "Job " + metaData.getName() +" will be scheduled against scheduler " + schedulerBeanName );
+        
         ValueMetaData schedulerInjection = beanBuilder.createInject( schedulerBeanName, "scheduler" );
         beanBuilder.addPropertyMetaData( "scheduler", schedulerInjection );
 

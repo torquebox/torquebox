@@ -63,7 +63,6 @@ public class JobsRuntimePoolDeployer extends AbstractDeployer {
             RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
             jobsPool = devMode ? new PoolMetaData( "jobs", 1, 2 ) : new PoolMetaData( "jobs" );
-            log.info( "Configured Ruby runtime pool for jobs: " + jobsPool );
             AttachmentUtils.multipleAttach( unit, jobsPool, "jobs" );
         }
     }

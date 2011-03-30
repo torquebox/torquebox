@@ -85,8 +85,6 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         if (envMetaData != null) {
             builder.addPropertyMetaData( "alwaysReload", envMetaData.isDevelopmentMode() );
-        } else {
-            log.warn( "No EnvironmentMetaData found for " + unit.getSimpleName() );
         }
 
         String runtimePoolBeanName = this.runtimePoolName;
@@ -99,7 +97,6 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInjection );
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-        log.info( "Created scheduler with name " + beanName );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
@@ -110,7 +107,6 @@ public class RubySchedulerDeployer extends AbstractDeployer {
             return;
         }
 
-        log.debug( "Deploying scheduler: " + unit );
         boolean hasSingletonJobs = false;
         boolean hasRegularJobs = false;
 
