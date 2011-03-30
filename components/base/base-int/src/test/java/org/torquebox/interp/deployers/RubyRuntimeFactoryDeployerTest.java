@@ -110,6 +110,10 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeployerTestCase {
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( RubyRuntimeMetaData.class, metaData );
 
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+
         processDeployments( true );
 
         RubyRuntimeFactory factory = (RubyRuntimeFactory) getBean( AttachmentUtils.beanName( unit, RubyRuntimeFactory.class ) );
@@ -130,6 +134,10 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeployerTestCase {
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( RubyRuntimeMetaData.class, metaData );
 
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+
         processDeployments( true );
 
         RubyRuntimeFactory factory = (RubyRuntimeFactory) getBean( AttachmentUtils.beanName( unit, RubyRuntimeFactory.class ) );
@@ -149,6 +157,10 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeployerTestCase {
 
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( RubyRuntimeMetaData.class, metaData );
+
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
 
         processDeployments( true );
 
