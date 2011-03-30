@@ -39,6 +39,7 @@ public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
     public QueuesYamlParsingDeployer() {
         setSectionName( "queues" );
+        setSupportsSuffix( true );
         addOutput( QueueMetaData.class );
     }
 

@@ -39,6 +39,7 @@ public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
     public TopicsYamlParsingDeployer() {
         setSectionName( "topics" );
+        setSupportsSuffix( true );
         addOutput( TopicMetaData.class );
     }
 

@@ -19,6 +19,8 @@
 
 package org.torquebox.base.deployers;
 
+import java.util.List;
+
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
@@ -40,6 +42,10 @@ public abstract class AbstractParsingDeployer extends AbstractDeployer {
         }
 
         return metaDataFile;
+    }
+    
+    protected List<VirtualFile> getMetaDataFileBySuffix(VFSDeploymentUnit unit, String suffix) {
+        return unit.getMetaDataFiles( null, suffix );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
