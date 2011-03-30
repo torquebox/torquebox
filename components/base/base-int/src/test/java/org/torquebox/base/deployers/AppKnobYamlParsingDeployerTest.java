@@ -37,7 +37,7 @@ public class AppKnobYamlParsingDeployerTest extends AbstractDeployerTestCase {
     public void testInvalidRootKnob() throws Exception {
         
         URL appKnobYml = getClass().getResource( "/invalid-root-knob.yml" );
-        String deploymentName = addDeployment( appKnobYml, "invalid-root-knob.yml" );
+        addDeployment( appKnobYml, "invalid-root-knob.yml" );
         processDeployments( true );
     }
 

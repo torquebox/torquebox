@@ -1,5 +1,8 @@
 package org.torquebox.messaging.injection;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,15 +14,12 @@ import org.junit.Test;
 import org.torquebox.injection.Injectable;
 import org.torquebox.injection.InjectableHandlerRegistry;
 import org.torquebox.injection.InjectionAnalyzer;
-import org.torquebox.injection.InvalidInjectionTypeException;
 import org.torquebox.injection.cdi.CDIInjectable;
 import org.torquebox.injection.cdi.CDIInjectableHandler;
 import org.torquebox.injection.jndi.JNDIInjectable;
 import org.torquebox.injection.jndi.JNDIInjectableHandler;
 import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.injection.mc.MCBeanInjectableHandler;
-
-import static org.junit.Assert.*;
 
 public class InjectionHandlerTest {
 

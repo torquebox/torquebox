@@ -80,6 +80,8 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     private Executor executor;
     private FillTask<T> fillTask;
+    
+    // TODO: Use this!
     private DrainTask<T> drainTask;
 
     public PoolManager(SimplePool<T> pool, InstanceFactory<T> factory, int minInstances, int maxInstances) {

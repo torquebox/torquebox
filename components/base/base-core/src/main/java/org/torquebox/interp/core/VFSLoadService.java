@@ -123,6 +123,7 @@ public class VFSLoadService extends LoadService {
         return library;
     }
 
+    @SuppressWarnings("rawtypes")
     protected LoadServiceResource tryResourceFromLoadPathOrURL(SearchState state, String baseName, SuffixType suffixType) {
         // System.err.println("tryResourceFromLoadPathOrUrl(" + baseName + "," +
         // suffixType + ")");
@@ -194,9 +195,7 @@ public class VFSLoadService extends LoadService {
                 if (loadPathEntry.startsWith( "vfs:" )) {
                     try {
                         URL vfsUrl = makeUrl( loadPathEntry, namePlusSuffix );
-                        // VirtualFile file = VFS.getRoot(vfsUrl);
-                        VirtualFile file = VFS.getChild( vfsUrl );
-                        // System.err.println(file.exists() + " = " + file);
+                        VirtualFile file = VFS.getChild(  vfsUrl.toURI() );
                         if (file != null && file.exists()) {
                             return new LoadServiceResource( file.toURI().toURL(), vfsUrl.toExternalForm() );
                         }
@@ -249,7 +248,7 @@ public class VFSLoadService extends LoadService {
                     try {
                         URL vfsUrl = new URL( reportedPath );
                         // VirtualFile file = VFS.getRoot(vfsUrl);
-                        VirtualFile file = VFS.getChild( vfsUrl );
+                        VirtualFile file = VFS.getChild( vfsUrl.toURI() );
                         if (file != null && file.exists()) {
                             return new LoadServiceResource( file.toURI().toURL(), reportedPath );
                         }

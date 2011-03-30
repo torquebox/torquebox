@@ -30,6 +30,7 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyJobProxy implements Job, StatefulJob {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RubyJobProxy.class );
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 

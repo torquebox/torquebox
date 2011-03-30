@@ -37,6 +37,7 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyMessageProcessor implements RubyMessageProcessorMBean {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RubyMessageProcessor.class );
 
     public RubyMessageProcessor() {

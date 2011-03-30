@@ -39,6 +39,8 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
 public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
     private List<String> autoloadPaths = new ArrayList<String>();
+    
+    @SuppressWarnings("unused")
     private RailsApplicationMetaData railsAppMetaData;
 
     public RailsRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackAppMetaData, RailsApplicationMetaData railsAppMetaData) {

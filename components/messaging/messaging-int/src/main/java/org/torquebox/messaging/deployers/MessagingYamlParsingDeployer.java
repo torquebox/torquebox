@@ -110,7 +110,7 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
             return result;
         }
 
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         public static MessageProcessorMetaData subscribe(String handler, String destination, Map options) {
             if (options == null)
                 options = Collections.EMPTY_MAP;

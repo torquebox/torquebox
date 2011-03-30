@@ -43,7 +43,7 @@ public class WebYamlParsingDeployerTest extends AbstractDeployerTestCase {
     public void testEmptyWebYml() throws Exception {
         URL appRackYml = getClass().getResource( "empty-web.yml" );
 
-        String deploymentName = addDeployment( appRackYml, "web.yml" );
+        addDeployment( appRackYml, "web.yml" );
         processDeployments( true );
     }
 

@@ -2,10 +2,6 @@ package org.torquebox.injection;
 
 import java.util.Map;
 
-import org.jboss.beans.metadata.api.annotations.Create;
-import org.jboss.beans.metadata.api.annotations.Start;
-import org.jboss.beans.metadata.plugins.AbstractDependencyValueMetaData;
-
 public class InjectableCollection {
     
     private String name;
@@ -27,16 +23,6 @@ public class InjectableCollection {
     
     public void setMap(Map<String,Object> map) {
         this.map = map;
-    }
-    
-    @Create
-    public void create() {
-        System.err.println( "CREATE InjectableCollection: " + this );
-    }
-    
-    @Start
-    public void start() {
-        System.err.println( "START InjectableCollection: " + this );
     }
     
     public String getName() {

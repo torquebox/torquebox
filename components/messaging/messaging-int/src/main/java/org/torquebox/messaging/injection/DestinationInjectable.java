@@ -4,7 +4,6 @@ import java.util.Set;
 
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
-import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.injection.jndi.JNDIInjectable;
@@ -29,10 +28,8 @@ public class DestinationInjectable extends JNDIInjectable {
         
         if (destinationClass != null) {
             rootDependencyName = AttachmentUtils.beanName( context, destinationClass, getName() );
-            System.err.println( "internal dependency: " + rootDependencyName );
         } else {
             rootDependencyName = getTargetName();
-            System.err.println( "external dependency: " + rootDependencyName );
         }
         
         String beanName = AttachmentUtils.beanName( context, DestinationInjection.class, getName() );
@@ -40,7 +37,6 @@ public class DestinationInjectable extends JNDIInjectable {
         injectionBuilder.addConstructorParameter( String.class.getName(), StringUtils.camelize( getType() ) );
         injectionBuilder.addConstructorParameter( String.class.getName(), getName() );
         injectionBuilder.addDemand( rootDependencyName );
-        System.err.println( "attach injectable: " + injectionBuilder.getBeanMetaData().getName() + " // " + injectionBuilder.getBeanMetaData() );
         AttachmentUtils.attach( context, injectionBuilder.getBeanMetaData() );
         return injectionBuilder.createInject( injectionBuilder.getBeanMetaData().getName() );
     }
@@ -49,13 +45,10 @@ public class DestinationInjectable extends JNDIInjectable {
         Set<? extends AbstractDestinationMetaData> destinations = unit.getAllMetaData( AbstractDestinationMetaData.class );
 
         for (AbstractDestinationMetaData each : destinations) {
-            System.err.println( "SCAN: " + each );
             if (each.getName().equals( destinationName )) {
                 if (each.getClass() == QueueMetaData.class) {
-                    System.err.println( "found queue: " + each );
                     return ManagedQueue.class;
                 } else {
-                    System.err.println( "found topic: " + each );
                     return ManagedTopic.class;
                 }
             }

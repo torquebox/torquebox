@@ -78,7 +78,7 @@ public class WebServer implements Runnable {
     /**
      * The map of class loaders registered with the web server
      */
-    private final ConcurrentHashMap loaderMap = new ConcurrentHashMap();
+    private final ConcurrentHashMap<String,ClassLoader> loaderMap = new ConcurrentHashMap<String,ClassLoader>();
 
     /**
      * The web server http listening socket

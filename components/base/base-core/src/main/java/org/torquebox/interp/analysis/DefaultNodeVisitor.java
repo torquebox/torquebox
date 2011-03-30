@@ -10,6 +10,7 @@ import org.jruby.ast.visitor.NodeVisitor;
 
 public class DefaultNodeVisitor implements NodeVisitor {
 
+    @SuppressWarnings("unused")
     private Logger log = Logger.getLogger( this.getClass() );
 
     private int indentLevel = 0;

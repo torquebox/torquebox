@@ -74,9 +74,11 @@ public class RubyComponentResolver implements RubyInjectionProxy {
         return this.initializeParams;
     }
 
+    @SuppressWarnings("rawtypes")
     public void setInitializeParamsMap(Map params) {
-        if (params != null)
+        if (params != null) {
             setInitializeParams( new Object[] { params } );
+        }
     }
 
     @Override
@@ -139,6 +141,7 @@ public class RubyComponentResolver implements RubyInjectionProxy {
     private Object[] initializeParams;
     private InjectionRegistry registry;
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RubyComponentResolver.class );
 
 }

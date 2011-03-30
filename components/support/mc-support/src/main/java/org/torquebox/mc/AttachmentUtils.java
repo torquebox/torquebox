@@ -30,6 +30,7 @@ public class AttachmentUtils {
     
     private static final AtomicInteger factoryCounter = new AtomicInteger();
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( AttachmentUtils.class );
 
     public static void attach(DeploymentUnit unit, BeanMetaData bmd) {

@@ -31,6 +31,7 @@ import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class ScheduledJob implements ScheduledJobMBean {
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( ScheduledJob.class );
 
     public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";

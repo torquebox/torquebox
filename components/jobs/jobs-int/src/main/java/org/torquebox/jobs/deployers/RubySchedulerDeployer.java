@@ -79,12 +79,8 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "kernel", this.kernel );
         builder.addPropertyMetaData( "name", "RubyScheduler$" + unit.getSimpleName() );
 
-        if (singleton)
+        if (singleton) {
             builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
-
-        RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-        if (envMetaData != null) {
-            builder.addPropertyMetaData( "alwaysReload", envMetaData.isDevelopmentMode() );
         }
 
         String runtimePoolBeanName = this.runtimePoolName;

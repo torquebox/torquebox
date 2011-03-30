@@ -47,6 +47,8 @@ public class RubyRackResponseTest extends AbstractRubyTestCase {
     public void setUpRuby() throws Exception {
         this.ruby = createRuby();
         this.headers = createHash( new HashMap<String, String>() {
+            private static final long serialVersionUID = 1L;
+
             {
                 put( "header1", "header_value1" );
                 put( "header2", "header_value2" );

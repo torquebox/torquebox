@@ -1,11 +1,11 @@
 package org.torquebox.injection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
@@ -41,19 +41,15 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
         BaseRubyProxyInjectionBuilder injectionBuilder = new BaseRubyProxyInjectionBuilder( unit, beanBuilder );
         injectionBuilder.injectInjectionRegistry( injectables );
         
-        System.err.println( "BEANS: " + beanBuilder.getBeanMetaDataFactory().getBeans().size() );
         AttachmentUtils.attach(  unit, beanBuilder.getBeanMetaDataFactory() );
         
-        System.err.println(  "AAA" );
         processDeployments(true);
         
         MockProxy proxy = (MockProxy) getBean( "proxy" );
         
-        System.err.println(  "BBB" );
         assertNotNull( proxy );
         assertNotNull( proxy.registry );
         assertSame( this.mcbean, proxy.registry.getUnconverted( "mcbean" ));
-        System.err.println(  "CCC" );
     }
     
     public static class MockProxy implements RubyInjectionProxy {
@@ -62,9 +58,7 @@ public class RubyProxyInjectionBuilderTest extends AbstractDeployerTestCase {
 
         @Override
         public void setInjectionRegistry(InjectionRegistry registry) {
-            System.err.println( "setInjectionRegistry(" + registry + ")" );
             this.registry = registry;
-            
         }
         
     }

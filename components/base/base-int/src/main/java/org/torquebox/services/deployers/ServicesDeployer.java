@@ -105,6 +105,7 @@ public class ServicesDeployer extends AbstractRubyComponentDeployer {
         return pool;
     }
 
+    @SuppressWarnings("rawtypes")
     protected boolean requiresSingleton(Map params) {
         Boolean singleton = params == null ? null : (Boolean) params.remove( "singleton" );
         return singleton != null && singleton.booleanValue();

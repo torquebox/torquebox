@@ -49,6 +49,7 @@ public class JNDIKernelRegistryPlugin implements KernelRegistryPlugin {
     public JNDIKernelRegistryPlugin() {
     }
 
+    @SuppressWarnings("rawtypes")
     public JNDIKernelRegistryPlugin(Hashtable environment) {
         this.environment = environment;
     }

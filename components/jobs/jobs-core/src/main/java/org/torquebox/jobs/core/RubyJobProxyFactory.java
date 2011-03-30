@@ -22,7 +22,6 @@ package org.torquebox.jobs.core;
 import org.jboss.dependency.spi.ControllerContext;
 import org.jboss.dependency.spi.ControllerState;
 import org.jboss.kernel.Kernel;
-import org.jboss.kernel.spi.registry.KernelRegistryEntry;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.quartz.Job;
@@ -41,11 +40,9 @@ public class RubyJobProxyFactory implements JobFactory {
     public static final String COMPONENT_RESOLVER_NAME = "torquebox.ruby.component.resolver.name";
 
     private RubyRuntimePool runtimePool;
-    private boolean alwaysReload;
     private Kernel kernel;
 
-    public RubyJobProxyFactory(boolean reload) {
-        this.alwaysReload = reload;
+    public RubyJobProxyFactory() {
     }
 
     public void setRubyRuntimePool(RubyRuntimePool runtimePool) {

@@ -19,19 +19,19 @@
 
 package org.torquebox.messaging.core;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 import javax.jms.Message;
 import javax.jms.TextMessage;
 
 import org.jruby.Ruby;
-import org.jruby.RubyHash;
-import org.jruby.RubySymbol;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +54,7 @@ public class RubyMessageProcessorTest extends AbstractRubyTestCase {
         assertNotNull( rubyProcessor );
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     @Test
     public void testDispatchMessage() throws Exception {
         RubyMessageProcessor processor = new RubyMessageProcessor();

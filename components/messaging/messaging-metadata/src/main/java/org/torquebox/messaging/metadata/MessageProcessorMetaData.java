@@ -19,7 +19,6 @@
 
 package org.torquebox.messaging.metadata;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class MessageProcessorMetaData {
@@ -29,7 +28,7 @@ public class MessageProcessorMetaData {
     private String destinationName;
     private String messageSelector;
     private int concurrency = 1;
-    private Map rubyConfig;
+    private Map<String, Object> rubyConfig;
     
     public MessageProcessorMetaData() {
     }
@@ -75,11 +74,11 @@ public class MessageProcessorMetaData {
         return this.messageSelector;
     }
 
-    public void setRubyConfig(Map rubyConfig) {
+    public void setRubyConfig(Map<String, Object> rubyConfig) {
         this.rubyConfig = rubyConfig;
     }
 
-    public Map getRubyConfig() {
+    public Map<String, Object> getRubyConfig() {
         return this.rubyConfig;
     }
 

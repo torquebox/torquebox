@@ -53,15 +53,11 @@ module TorqueBox
         def after_start(container)
           require 'vfs'
           @deploy_files.each do |file|
-            puts "deploying #{file}"
             deployment = container.deploy( file )
             unit = container.deployment_unit( deployment.name )
             virtual_file = org.jboss.vfs::VFS.child( File.join( Dir.pwd, file ) )
             unit.addAttachment( 'queues.yml.altDD', virtual_file )
             container.process_deployments(true)
-            puts "deployed #{file}"
-            puts "deployment #{deployment.inspect}"
-            #puts "queue is #{TorqueBox::Naming['/queues/foo']}"
             @deployments << deployment
           end
         end

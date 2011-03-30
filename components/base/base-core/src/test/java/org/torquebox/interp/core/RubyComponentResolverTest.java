@@ -24,8 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.jruby.Ruby;
@@ -42,8 +40,6 @@ public class RubyComponentResolverTest {
 
     @Before
     public void setUpRuby() throws Exception {
-        List<String> loadPaths = new ArrayList<String>();
-        //this.ruby = JavaEmbedUtils.initialize( loadPaths );
         this.factory = new RubyRuntimeFactoryImpl();
         this.ruby = this.factory.create();
     }
@@ -109,6 +105,7 @@ public class RubyComponentResolverTest {
     }
 
     /** Ensure that constructors may take arguments. */
+    @SuppressWarnings("rawtypes")
     @Test
     public void testResolveWithContructorArguments() throws Exception {
         RubyComponentResolver resolver = new RubyComponentResolver();

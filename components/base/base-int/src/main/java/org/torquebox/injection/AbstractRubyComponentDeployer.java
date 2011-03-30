@@ -57,7 +57,6 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
         resolverBuilder.addPropertyMetaData( "rubyRequirePath", classLocation );
         resolverBuilder.addPropertyMetaData( "initializeParamsMap", initParams );
         resolverBuilder.addPropertyMetaData( "componentName", componentName );
-        System.err.println( "Setting alwaysReload: " + isAlwaysReload( unit ) + " : on " + componentName );
         resolverBuilder.addPropertyMetaData( "alwaysReload", isAlwaysReload(unit) );
 
         setUpInjections( unit, resolverBuilder, rubyClassName );
