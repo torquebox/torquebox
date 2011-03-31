@@ -42,7 +42,11 @@
     <dependency>
       <groupId>org.jboss.jbossas</groupId>
       <artifactId>jboss-as-system</artifactId>
-      <version>${version.jbossas}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.bootstrap</groupId>
+      <artifactId>jboss-bootstrap-impl-mc</artifactId>
       <scope>provided</scope>
     </dependency>
   </dependencies>
