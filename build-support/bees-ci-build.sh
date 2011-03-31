@@ -1,11 +1,11 @@
 #!/bin/sh
 
 echo "*** Start Preflight ***"
-echo "Removing $HOME/.m2/repository/org/torquebox/"
-rm -rf $HOME/.m2/repository/org/torquebox
+echo "Removing $M2_REPO/org/torquebox/"
+rm -rf $M2_REPO/org/torquebox
 
-echo "Removing $HOME/.m2/repository/rubygems"
-rm -rf $HOME/.m2/repository/rubygems
+echo "Removing $M2_REPO/rubygems"
+rm -rf $M2_REPO/rubygems
 
 echo "Peforming cleaning"
 mvn clean -Pinteg -Pdist
