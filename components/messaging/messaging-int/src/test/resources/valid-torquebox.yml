@@ -8,8 +8,5 @@ queues:
 topics:
   /topics/tbyaml/foo:
   /topics/tbyaml/bar:
-    durable: false
-  /topics/tbyaml/foobar:
-    durable: true
 
 

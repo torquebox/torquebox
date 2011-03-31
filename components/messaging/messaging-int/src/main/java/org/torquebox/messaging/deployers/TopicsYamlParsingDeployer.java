@@ -49,13 +49,6 @@ public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
         for (String topicName : data.keySet()) {
             TopicMetaData topicMetaData = new TopicMetaData( topicName );
-            Map<String, Object> queueOptions = data.get( topicName );
-            if (queueOptions == null || !queueOptions.containsKey( "durable" )) { 
-            	topicMetaData.setDurable( true ); 
-            }
-            else if (queueOptions.containsKey("durable")) {
-            	topicMetaData.setDurable((Boolean) queueOptions.get("durable"));
-            } 
             AttachmentUtils.multipleAttach( unit, topicMetaData, topicName );
         }
     }

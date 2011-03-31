@@ -29,7 +29,6 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer;
-import org.torquebox.messaging.metadata.QueueMetaData;
 import org.torquebox.messaging.metadata.TopicMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
@@ -111,7 +110,7 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertFalse( allMetaData.isEmpty() );
 
-        assertEquals( 3, allMetaData.size() );
+        assertEquals( 2, allMetaData.size() );
 
         TopicMetaData topicFoo = getMetaData( allMetaData, "/topics/tbyaml/foo" );
         assertNotNull( topicFoo );
@@ -136,7 +135,7 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertFalse( allMetaData.isEmpty() );
 
-        assertEquals( 3, allMetaData.size() );
+        assertEquals( 2, allMetaData.size() );
 
         TopicMetaData topicFoo = getMetaData( allMetaData, "/topics/tbyaml/foo" );
         assertNotNull( topicFoo );
@@ -146,38 +145,6 @@ public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         undeploy( deploymentName );
     }
-
-    @Test
-    public void testDestinationDurability() throws Exception {
-        String deploymentName = addDeployment( getClass().getResource( "/valid-torquebox.yml" ), "torquebox.yml" );
-
-        processDeployments( true );
-
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
-        Set<? extends TopicMetaData> allMetaData = unit.getAllMetaData( TopicMetaData.class );
-
-        assertFalse( allMetaData.isEmpty() );
-
-        assertEquals( 3, allMetaData.size() );
-
-        // /topics/tbyaml/foo has no durability flag set, we should default to durable
-        TopicMetaData topicFoo = getMetaData( allMetaData, "/topics/tbyaml/foo" );
-        assertNotNull( topicFoo );
-        assertTrue( topicFoo.isDurable() );
-
-        // /topics/tbyaml/bar has durability set to true, we should reflect that
-        TopicMetaData topicFooBar = getMetaData( allMetaData, "/topics/tbyaml/foobar" );
-        assertNotNull( topicFooBar );        
-        assertTrue( topicFooBar.isDurable() );
-
-        // /topics/tbyaml/bar has durability set to false, we should reflect that
-        TopicMetaData topicBar = getMetaData( allMetaData, "/topics/tbyaml/bar" );
-        assertNotNull( topicBar );
-        assertFalse( topicBar.isDurable() );
-
-        undeploy( deploymentName );
-    }
-
 
     private TopicMetaData getMetaData(Set<? extends TopicMetaData> allMetaData, String name) {
         for (TopicMetaData each : allMetaData) {
