@@ -5,6 +5,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
+
 import org.junit.Test;
 
 
@@ -40,8 +43,13 @@ public class TorqueBoxMetaDataTest {
         torqueboxYml.put(  "application", appSection );
         
         TorqueBoxMetaData metaData = new TorqueBoxMetaData( torqueboxYml );
+
+        String expected = System.getProperty( "user.home" ) + "/tacos";
+        // Normalize the file paths across OSes
+        VirtualFile expectedFile = VFS.getChild( expected );
+        expected = expectedFile.getPathName();
         
-        assertEquals( System.getProperty( "user.home" ) + "/tacos", metaData.getApplicationRootFile().getPathName() );
+        assertEquals( expected, metaData.getApplicationRootFile().getPathName() );
         
     }
     
