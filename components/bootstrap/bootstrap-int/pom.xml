@@ -39,6 +39,12 @@
       <artifactId>jboss-deployers-core-spi</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-as-system</artifactId>
+      <version>${version.jbossas}</version>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build> 

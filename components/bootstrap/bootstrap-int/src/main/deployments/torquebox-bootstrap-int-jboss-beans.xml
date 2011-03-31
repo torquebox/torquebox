@@ -7,5 +7,14 @@
       <inject bean="jboss.kernel:service=Kernel" property="controller"/>
     </property>
   </bean>
+  
+  <bean name="AppsDirectoryBootstrapper" class="org.torquebox.bootstrap.AppsDirectoryBootstrapper">
+    <property name="server">
+      <inject bean="JBossServer"/>
+    </property>
+    <property name="profileService">
+      <inject bean="jboss.profileservice:service=ProfileService"/>
+    </property>
+  </bean>
 
 </deployment>
