@@ -5,6 +5,7 @@ require 'torquebox-naming'
 require 'torquebox-naming-container'
 require 'torquebox-messaging-container'
 require 'torquebox/messaging/message_processor'
+require 'torquebox/messaging/destination'
 
 QUEUE_QUESTIONS = TorqueBox::Messaging::Queue.new("/queues/questions")
 QUEUE_ANSWERS   = TorqueBox::Messaging::Queue.new("/queues/answers")
