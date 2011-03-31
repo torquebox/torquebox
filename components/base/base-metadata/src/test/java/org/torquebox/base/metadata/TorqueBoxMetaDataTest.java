@@ -45,6 +45,16 @@ public class TorqueBoxMetaDataTest {
         assertEquals("0 */5 * * * ?", merged.get("x").get("cron"));
     }
     
+    @Test (expected=ClassCastException.class)
+    public void testUnexpectedType() {
+        Map external = ruby.evalScriptlet( "{ 'foo' => { 'x' => 'y' } }" ).convertToHash();
+        Map internal = ruby.evalScriptlet( "{ 'foo' => 'scalar' }" ).convertToHash();
+        
+        TorqueBoxMetaData externalMetaData = new TorqueBoxMetaData(external);
+        TorqueBoxMetaData internalMetaData = new TorqueBoxMetaData(internal);
+        TorqueBoxMetaData mergedMetaData = externalMetaData.overlayOnto(internalMetaData);
+    }
+    
     @Test
     public void testHomeTildeExpansion() {
         Map<String,Object> torqueboxYml = ruby.evalScriptlet( "{ 'application' => { 'root' => '~/tacos' } }" ).convertToHash();

@@ -56,13 +56,15 @@ public class MergedTorqueBoxMetaDataDeployer extends AbstractDeployer {
             unit.addAttachment( TorqueBoxMetaData.class, externalMetaData );
             return;
         }
-
-        TorqueBoxMetaData mergedMetaData = externalMetaData.overlayOnto( metaData );
-
-        if (log.isTraceEnabled()) {
-            log.trace( "Merged: " + mergedMetaData );
+        try {
+            TorqueBoxMetaData mergedMetaData = externalMetaData.overlayOnto( metaData );
+            if (log.isTraceEnabled()) {
+                log.trace( "Merged: " + mergedMetaData );
+            }
+            unit.addAttachment( TorqueBoxMetaData.class, mergedMetaData );
+        } catch (ClassCastException e) {
+            throw new DeploymentException("Incompatible structures in external and internal deployment descriptors", e);
         }
 
-        unit.addAttachment( TorqueBoxMetaData.class, mergedMetaData );
     }
 }
