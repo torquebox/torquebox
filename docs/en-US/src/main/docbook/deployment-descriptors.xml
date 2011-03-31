@@ -52,16 +52,20 @@
 
     <orderedlist spacing="compact">
       <listitem>
-        <para><emphasis>application:</emphasis> General application
+        <para><emphasis>application</emphasis>: General application
         configuration</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>web:</emphasis> Web-specific configuration</para>
+        <para><emphasis>web</emphasis>: Web-specific configuration</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>environment:</emphasis> Environment variables</para>
+        <para><emphasis>ruby</emphasis>: Runtime version and JIT options</para>
+      </listitem>
+
+      <listitem>
+        <para><emphasis>environment</emphasis>: Environment variables</para>
       </listitem>
 
       <listitem>
@@ -229,6 +233,76 @@
   host: www.host-one.com</programlisting></para>
         </informalexample></para>
     </section>
+
+
+    <section>
+      <title>Ruby runtime configuration</title>
+
+      <para>TorqueBox exposes two of the JRuby runtime options: the 
+      ruby compatibility version, and the JIT compile mode. Both of 
+      these options are configured in the ruby: section of a
+      deployment descriptor.</para>
+
+      <para>Note that these settings are per application, allowing
+      you to run 1.8 and 1.9 applications in the same TorqueBox, 
+      or have one JIT'ed and another not.</para>
+      
+      <table>
+        <title>ruby</title>
+
+        <tgroup cols="3">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Variable</entry>
+
+              <entry>Description</entry>
+
+              <entry>Default</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><varname>version</varname></entry>
+
+              <entry>The ruby compatibility version for JRuby. Options are:
+                <itemizedlist>
+                  <listitem><para>1.8 - provides 1.8.7 compatibility</para></listitem>
+                  <listitem><para>1.9 - provides 1.9.2 compatibility</para></listitem>
+                </itemizedlist>
+              </entry>
+
+              <entry>1.8</entry>
+
+            </row>
+
+            <row>
+              <entry><varname>compile_mode</varname></entry>
+
+              <entry>The JIT compile mode for JRuby. Options are:
+                <itemizedlist>
+                  <listitem><para>jit - Tells JRuby to use JIT on code where it determines there will be a speed improvement</para></listitem>
+                  <listitem><para>force - Tells JRuby to use JIT on all code</para></listitem>
+                  <listitem><para>off - Turns off JIT completely</para></listitem>
+                </itemizedlist>
+              </entry>
+
+              <entry><parameter>jit</parameter></entry>
+            </row>
+
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>For example: <informalexample>
+          <para><programlisting>ruby:
+  version: 1.9
+  compile_mode: off</programlisting></para>
+        </informalexample></para>
+    </section>
+
 
     <section>
       <title>Environment variables</title>
