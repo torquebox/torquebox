@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
+import org.jboss.dependency.spi.ControllerState;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
@@ -67,7 +68,7 @@ public class WebHostDeployer extends AbstractDeployer {
         ValueMetaData mbeanServerInject = builder.createInject( "JMXKernel", "mbeanServer" );
         builder.addPropertyMetaData( "MBeanServer", mbeanServerInject );
 
-        builder.addDependency( "WebServer" );
+        builder.addDemand( "WebServer", ControllerState.CREATE, ControllerState.CONFIGURED, null );
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
     }
