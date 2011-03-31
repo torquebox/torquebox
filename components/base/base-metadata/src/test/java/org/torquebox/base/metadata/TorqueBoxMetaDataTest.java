@@ -1,8 +1,14 @@
 package org.torquebox.base.metadata;
 
-import static org.junit.Assert.*;
-import org.junit.*;
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
+
+import org.junit.Test;
 import org.jruby.Ruby;
 
 
@@ -37,6 +43,25 @@ public class TorqueBoxMetaDataTest {
         Map<String,Map> merged = (Map<String,Map>) mergedMetaData.getSection("jobs");
         assertEquals("Y", merged.get("x").get("job"));
         assertEquals("0 */5 * * * ?", merged.get("x").get("cron"));
+    }
+    
+    @Test
+    public void testHomeTildeExpansion() {
+        Map<String,String> appSection = new HashMap<String,String>();
+        appSection.put( "root", "~/tacos" );
+        
+        Map<String,Object> torqueboxYml = new HashMap<String,Object>();
+        torqueboxYml.put(  "application", appSection );
+        
+        TorqueBoxMetaData metaData = new TorqueBoxMetaData( torqueboxYml );
+
+        String expected = System.getProperty( "user.home" ) + "/tacos";
+        // Normalize the file paths across OSes
+        VirtualFile expectedFile = VFS.getChild( expected );
+        expected = expectedFile.getPathName();
+        
+        assertEquals( expected, metaData.getApplicationRootFile().getPathName() );
+        
     }
     
 }

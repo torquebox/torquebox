@@ -30,6 +30,7 @@ public class ScheduledJobMetaData {
 
     private String rubySchedulerName;
     private boolean singleton;
+    private boolean clustered;
 
 	public ScheduledJobMetaData() {
 
@@ -98,4 +99,12 @@ public class ScheduledJobMetaData {
     public String getRubySchedulerName() {
         return this.rubySchedulerName;
     }
+
+	public void setClustered(boolean b) {
+		this.clustered = b;
+	}
+	
+	public boolean isClustered() {
+		return this.clustered;
+	}
 }

@@ -1,1 +1,2 @@
-version: 1.8
+ruby:
+  version: 1.8

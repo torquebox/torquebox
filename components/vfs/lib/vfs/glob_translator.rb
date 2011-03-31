@@ -45,13 +45,13 @@ module VFS
       while ( ! complete? )
         c = la()
         case( c )
-          when '*':
+          when '*'
             result += splat()
-          when '?':
+          when '?'
             result += question()
-          when '{':
+          when '{'
             result += alternation()
-          when '[':
+          when '['
             result += char_class()
           else
             if ( la_is_char? )
@@ -161,9 +161,9 @@ module VFS
     def la_is_char?()
       ( return true ) if ( @alternation_depth == 0 )
       case ( la() )
-        when '}':
+        when '}'
           return false
-        when ',':
+        when ','
           return false
         else
           return true

@@ -156,17 +156,14 @@ class File
       rename_without_vfs( name_without_vfs(oldname), name_without_vfs(newname) )
     end
 
-    def exists?(filename)
-      exist?(filename)
-    end
-
     def exist?(filename)
       return true if exist_without_vfs?( filename )
 
       virtual_file = virtual_file(filename)
       !virtual_file.nil? && virtual_file.exists?
     end
-
+    alias_method :exists?, :exist?
+    
     def writable?(filename)
       stat = stat(filename)
       return stat.writable? if stat
@@ -253,6 +250,8 @@ class File
     end
 
     def name_without_vfs(filename)
+      # 1.9 - to_str became to_path for Pathnames
+      filename = filename.to_path if filename.respond_to?(:to_path) 
       raise TypeError unless filename.respond_to?(:to_str)
       name = filename.to_str.gsub("\\", "/")
       if vfs_path?(name) 

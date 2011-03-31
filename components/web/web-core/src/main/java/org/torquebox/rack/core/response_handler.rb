@@ -28,15 +28,19 @@ module TorqueBox
           servlet_response.setStatus( status_code )
           
           headers.each{|key,value|
-            for v in value
-              servlet_response.addHeader( key, v )
+            if value.respond_to?( :each ) 
+              value.each { |v| servlet_response.addHeader( key, v ) }
+            else
+              servlet_response.addHeader( key, value )
             end
           }
           out = servlet_response.getOutputStream()
-          
-          body.each{|chunk|
-            out.write( chunk.to_java_bytes)
-          }
+
+          if body.respond_to?( :each )
+            body.each { |chunk| out.write( chunk.to_java_bytes ) }
+          else
+            out.write( body.to_java_bytes )
+          end
         ensure
           body.close if body && body.respond_to?( :close )
         end

@@ -28,9 +28,13 @@ import java.util.Map;
 
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyString;
+import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.runtime.builtin.IRubyObject;
+
 import org.junit.Ignore;
 import org.junit.Test;
+
 import org.torquebox.interp.spi.RuntimeInitializer;
 
 public class RubyRuntimeFactoryImplTest {
@@ -98,14 +102,13 @@ public class RubyRuntimeFactoryImplTest {
     public void testRuby18() throws Exception {
         RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
         factory.setUseJRubyHomeEnvVar( false );
+        factory.setRubyVersion( CompatVersion.RUBY1_8 );
         Ruby ruby = factory.create();
         assertNotNull( ruby );
         assertFalse( ruby.is1_9() );
     }
 
-    // TODO fix this once jruby-complete.jar actually contains 1.9isms.
     @Test
-    @Ignore
     public void testRuby19() throws Exception {
         RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
         factory.setUseJRubyHomeEnvVar( false );
@@ -113,6 +116,57 @@ public class RubyRuntimeFactoryImplTest {
         Ruby ruby = factory.create();
         assertNotNull( ruby );
         assertTrue( ruby.is1_9() );
+        assertEquals( "1.9.2", ((RubyString)ruby.evalScriptlet( "RUBY_VERSION" )).toString() );
+    }
+
+    @Test
+    public void testCompileModeDefault() throws Exception {
+        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Ruby ruby = factory.create();
+        assertNotNull( ruby );
+        assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
+    }
+
+    @Test
+    public void testCompileModeDefault19() throws Exception {
+        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setRubyVersion( CompatVersion.RUBY1_9 );
+        Ruby ruby = factory.create();
+        assertNotNull( ruby );
+        assertTrue( ruby.is1_9() );
+        assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
+    }
+
+    @Test
+    public void testCompileModeJIT() throws Exception {
+        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setCompileMode( CompileMode.JIT );
+        Ruby ruby = factory.create();
+        assertNotNull( ruby );
+        assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
+    }
+
+    @Test
+    public void testCompileModeFORCE() throws Exception {
+        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setCompileMode( CompileMode.FORCE );
+        Ruby ruby = factory.create();
+        assertNotNull( ruby );
+        assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
+    }
+
+    @Test
+    public void testCompileModeOFF() throws Exception {
+        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setCompileMode( CompileMode.OFF );
+        Ruby ruby = factory.create();
+        assertNotNull( ruby );
+        assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
     }
 
     @Test

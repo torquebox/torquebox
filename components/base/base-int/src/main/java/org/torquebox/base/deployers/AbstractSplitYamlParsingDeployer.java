@@ -21,6 +21,7 @@ package org.torquebox.base.deployers;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.deployers.spi.DeploymentException;
@@ -53,6 +54,9 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
     /** Does this deployer support a standalone *.yml descriptor? */
     private boolean supportsStandalone = true;
     
+    /** Does this deploy support a *-<name>.yml format? */
+    private boolean supportsSuffix = false;
+    
     public AbstractSplitYamlParsingDeployer() {
         addInput( TorqueBoxMetaData.class );
     }
@@ -67,6 +71,14 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
 
     public boolean isSupportsStandalone() {
         return this.supportsStandalone;
+    }
+    
+    public void setSupportsSuffix(boolean supports) {
+        this.supportsSuffix = supports;
+    }
+    
+    public boolean isSupportsSuffix() {
+        return this.supportsSuffix;
     }
     
     public void setSectionName(String sectionName) {
@@ -110,6 +122,16 @@ public abstract class AbstractSplitYamlParsingDeployer extends AbstractParsingDe
 
         if (data == null && isSupportsStandalone()) {
             VirtualFile metaDataFile = getMetaDataFile( unit, getFileName() );
+            
+            if ( ( metaDataFile == null || ! metaDataFile.exists() ) && this.supportsSuffix ) {
+                List<VirtualFile> matches = getMetaDataFileBySuffix( unit, "-" + getFileName() );
+                if ( ! matches.isEmpty() ) {
+                    if ( matches.size() > 1 ) {
+                        log.warn( "Multiple matches: " + matches );
+                    }
+                    metaDataFile = matches.get(0);
+                }
+            }
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
                 if ( ! metaDataFile.equals( unit.getRoot() ) ) {

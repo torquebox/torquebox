@@ -95,7 +95,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInjection );
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-    }
+    }    
     
     // This will tell us if we're running in a clustered environment or not
     public boolean isClustered() {
@@ -112,16 +112,16 @@ public class RubySchedulerDeployer extends AbstractDeployer {
 
         Set<? extends ScheduledJobMetaData> allMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
 
-        if (allMetaData.isEmpty()) {
-            return;
-        }
+        if (allMetaData.isEmpty()) { return; }
 
         DeployedJobTypes jobTypes = getJobTypes(allMetaData);
 
         if (this.isClustered()) {
             log.debug( "Deploying clustered scheduler: " + unit );
-            if (jobTypes.singletonJobs) { this.buildScheduler(unit, true);  }
-            if (jobTypes.regularJobs)   { this.buildScheduler(unit, false); }
+            if ( jobTypes.singletonJobs ) { this.buildScheduler( unit, true  ); }
+            if ( jobTypes.regularJobs )   { this.buildScheduler( unit, false ); }
+            // Provide info for other deployers down the line (e.g. RubyJobDeployer) that we're clustered
+            for (ScheduledJobMetaData each : allMetaData) { each.setClustered( true ); }
         } else {
             log.debug( "Deploying scheduler: " + unit );
             this.buildScheduler( unit, false );

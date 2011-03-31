@@ -69,9 +69,11 @@ module TorqueBox
       def container
         unless @container
 
-          TorqueBox::Naming.configure do |config|
-            config.host = @options[:naming_host] unless @options[:naming_host].nil?
-            config.port = @options[:naming_port] unless @options[:naming_port].nil?
+          unless( @options[:skip_naming] ) 
+            TorqueBox::Naming.configure do |config|
+              config.host = @options[:naming_host] unless @options[:naming_host].nil?
+              config.port = @options[:naming_port] unless @options[:naming_port].nil?
+            end
           end
 
           @container = TorqueBox::Container::Foundation.new

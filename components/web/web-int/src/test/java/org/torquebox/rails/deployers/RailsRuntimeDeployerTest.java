@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.rack.deployers;
+package org.torquebox.rails.deployers;
 
 import static org.junit.Assert.*;
 
@@ -26,22 +26,25 @@ import java.util.Map;
 
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.vfs.VFS;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
-import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.rails.core.RailsRuntimeInitializer;
+import org.torquebox.rails.metadata.RailsApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
-public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
+public class RailsRuntimeDeployerTest extends AbstractDeployerTestCase {
 
-    private RackRuntimeDeployer deployer;
+    private RailsRuntimeDeployer deployer;
     private Map<String, String> environment = new HashMap<String, String>();
 
     @Before
     public void setUpDeployer() throws Throwable {
-        this.deployer = new RackRuntimeDeployer();
+        this.deployer = new RailsRuntimeDeployer();
         addDeployer( this.deployer );
     }
 
@@ -49,6 +52,7 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
     public void testHappy() throws Exception {
         environment.put( "SOME_VAR", "gassy" );
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData();
         RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
 
         rubyAppMetaData.setApplicationName( "app_name" );
@@ -59,6 +63,7 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
 
         unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+        unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
         unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
 
         processDeployments( true );
@@ -67,13 +72,14 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
         assertNotNull( runtimeMetaData );
         assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
         assertTrue( runtimeMetaData.getEnvironment().containsKey( "SOME_VAR" ) );
-        assertTrue( runtimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
-        assertEquals( RubyRuntimeMetaData.RuntimeType.RACK, runtimeMetaData.getRuntimeType() );
+        assertTrue( runtimeMetaData.getRuntimeInitializer() instanceof RailsRuntimeInitializer );
+        assertEquals( RubyRuntimeMetaData.RuntimeType.RAILS, runtimeMetaData.getRuntimeType() );
     }
 
     @Test
     public void testWithExistingRubyRuntimeMD() throws Exception {
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData();
         RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
 
         rubyAppMetaData.setApplicationName( "app_name" );
@@ -85,6 +91,7 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
         RubyRuntimeMetaData originalRuntimeMD = new RubyRuntimeMetaData();
         unit.addAttachment( RubyRuntimeMetaData.class, originalRuntimeMD );
         unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+        unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
         unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
 
         processDeployments( true );
@@ -93,12 +100,13 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
         assertNotNull( runtimeMetaData );
         assertEquals( originalRuntimeMD, runtimeMetaData );
         assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
-        assertEquals( RubyRuntimeMetaData.RuntimeType.RACK, runtimeMetaData.getRuntimeType() );
+        assertEquals( RubyRuntimeMetaData.RuntimeType.RAILS, runtimeMetaData.getRuntimeType() );
     }
 
     @Test
     public void testWithExistingTypedRubyRuntimeMD() throws Exception {
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        RailsApplicationMetaData railsAppMetaData = new RailsApplicationMetaData();
         RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
 
         rubyAppMetaData.setApplicationName( "app_name" );
@@ -112,6 +120,7 @@ public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
 
         unit.addAttachment( RubyRuntimeMetaData.class, originalRuntimeMD );
         unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+        unit.addAttachment( RailsApplicationMetaData.class, railsAppMetaData );
         unit.addAttachment( RackApplicationMetaData.class, rackAppMetaData );
 
         processDeployments( true );

@@ -91,9 +91,9 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addAnnotation( jmxAnno );
 
         String schedulerBeanName = metaData.getRubySchedulerName();
-        boolean isSingleton = metaData.isSingleton();
         if (schedulerBeanName == null) {
-            schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class, isSingleton ? "Singleton" : null );
+        	String suffix = (metaData.isClustered() && metaData.isSingleton()) ? "Singleton" : null;
+            schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class, suffix );
         }
         
         ValueMetaData schedulerInjection = beanBuilder.createInject( schedulerBeanName, "scheduler" );

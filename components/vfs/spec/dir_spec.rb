@@ -218,6 +218,7 @@ describe "Dir extensions for VFS" do
   describe "mkdir" do
     it "should mkdir inside vfs archive when directory mounted on filesystem" do
       FileUtils.rm_rf "target/mnt"
+      File.exists?("target/mnt").should_not be_true # catches a 1.9 issue 
       archive = org.jboss.vfs::VFS.child( @archive1_path )
       logical = archive.getChild( "lib" )
       physical = java.io::File.new( "target/mnt" )

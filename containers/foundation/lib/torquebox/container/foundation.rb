@@ -95,6 +95,14 @@ module TorqueBox
         deployment
       end
 
+      def deploy_as(path, name)
+        virtual_file = Java::org.jboss.vfs::VFS.getChild( path )
+        deployment_factory = Java::org.jboss.deployers.vfs.spi.client::VFSDeploymentFactory.instance
+        deployment = deployment_factory.createVFSDeployment(name, virtual_file)
+        main_deployer.addDeployment(deployment)
+        deployment
+      end
+
       def undeploy(deployment_name)
         main_deployer.undeploy( deployment_name )
       end

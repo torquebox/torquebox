@@ -46,6 +46,14 @@ public class RubyRuntimeMetaData {
         V1_8, V1_9
     }
 
+    public enum CompileMode {
+        FORCE, JIT, OFF
+    }
+
+    public enum RuntimeType {
+        BARE, RACK, RAILS
+    }
+
     /** Base working directory. */
     private VirtualFile baseDir;
 
@@ -60,6 +68,12 @@ public class RubyRuntimeMetaData {
 
     /** Version of Ruby to use. */
     private Version version;
+
+    /** JRuby JIT compile mode to use. */
+    private CompileMode compileMode;
+
+    /** The type of runtime this MD is for, if any */
+    private RuntimeType runtimeType;
 
     /**
      * Construct.
@@ -173,4 +187,30 @@ public class RubyRuntimeMetaData {
         return this.version;
     }
 
+    /**
+     * Set the compileMode of the Ruby interpreter.
+     * 
+     * @param compileMode
+     *            The compileMode.
+     */
+    public void setCompileMode(CompileMode compileMode) {
+        this.compileMode = compileMode;
+    }
+
+    /**
+     * Retrieve the compileMode of the Ruby interpreter.
+     * 
+     * @return The compileMode.
+     */
+    public CompileMode getCompileMode() {
+        return this.compileMode;
+    }
+
+    public void setRuntimeType(RuntimeType type) {
+        this.runtimeType = type;
+    }
+
+    public RuntimeType getRuntimeType() {
+        return this.runtimeType;
+    }
 }

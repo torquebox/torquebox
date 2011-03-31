@@ -26,6 +26,7 @@ import java.net.URL;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
@@ -34,26 +35,29 @@ public class RubyYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
     @Before
     public void setUpDeployer() throws Throwable {
+        addDeployer( new TorqueBoxYamlParsingDeployer() );
         this.deployer = new RubyYamlParsingDeployer();
         addDeployer( this.deployer );
     }
 
     @Test
-    public void testNoRuntimeMetaData() throws Exception {
-        URL rubyYml = getClass().getResource( "ruby-1.8.yml" );
+    public void testInvalidVersionMetaData() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-invalid.yml" );
 
-        String deploymentName = addDeployment( rubyYml, "ruby.yml" );
+        String deploymentName = addDeployment( rubyYml, "torquebox.yml" );
         processDeployments( true );
 
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
-        assertTrue( unit.getAllMetaData( RubyRuntimeMetaData.class ).isEmpty() );
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
+        assertEquals( null, runtimeMetaData.getVersion() );
+        assertEquals( null, runtimeMetaData.getCompileMode() );
     }
 
     @Test
     public void testWithRuntimeMetaData18() throws Exception {
         URL rubyYml = getClass().getResource( "ruby-1.8.yml" );
 
-        String deploymentName = addDeployment( rubyYml, "ruby.yml" );
+        String deploymentName = addDeployment( rubyYml, "torquebox.yml" );
 
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
 
@@ -72,7 +76,7 @@ public class RubyYamlParsingDeployerTest extends AbstractDeployerTestCase {
     public void testWithRuntimeMetaData19() throws Exception {
         URL rubyYml = getClass().getResource( "ruby-1.9.yml" );
 
-        String deploymentName = addDeployment( rubyYml, "ruby.yml" );
+        String deploymentName = addDeployment( rubyYml, "torquebox.yml" );
 
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
 
@@ -85,6 +89,64 @@ public class RubyYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertSame( runtimeMetaData, runtimeMetaData2 );
         assertEquals( RubyRuntimeMetaData.Version.V1_9, runtimeMetaData.getVersion() );
+    }
+
+
+    @Test
+    public void testWithRuntimeMetaDataCompileModeForce() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-compile-mode-force.yml" );
+
+        String deploymentName = addDeployment( rubyYml, "torquebox.yml" );
+
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
+
+        processDeployments( true );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.class );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertEquals( RubyRuntimeMetaData.CompileMode.FORCE, runtimeMetaData.getCompileMode() );
+    }
+
+    @Test
+    public void testWithRuntimeMetaDataCompileModeJit() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-compile-mode-jit.yml" );
+
+        String deploymentName = addDeployment( rubyYml, "torquebox.yml" );
+
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
+
+        processDeployments( true );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.class );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertEquals( RubyRuntimeMetaData.CompileMode.JIT, runtimeMetaData.getCompileMode() );
+    }
+
+    @Test
+    public void testWithRuntimeMetaDataCompileModeOff() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-compile-mode-off.yml" );
+
+        String deploymentName = addDeployment( rubyYml, "torquebox.yml" );
+
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.addAttachment( RubyRuntimeMetaData.class, runtimeMetaData );
+
+        processDeployments( true );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.class );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertEquals( RubyRuntimeMetaData.CompileMode.OFF, runtimeMetaData.getCompileMode() );
     }
 
 }

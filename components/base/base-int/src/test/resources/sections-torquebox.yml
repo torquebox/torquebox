@@ -68,6 +68,10 @@ jobs:
     description: My other Job is extraodinary
     cron: 01 01 01 15 * ?
 
-
 environment:
   A_BOOLEAN_VALUE: true
+
+ruby:
+  version: 1.8
+  compile_mode: off
+

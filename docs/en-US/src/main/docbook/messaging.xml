@@ -269,7 +269,7 @@ topics:
 
     <para>And to use them in any other JRuby script, it's even simpler.
     First, ensure that <filename>rubygems</filename> is loaded, then
-    require the <filename>torquebox/messaging</filename> feature.
+    require the <filename>torquebox-messaging</filename> feature.
     </para>
 
     <example>
@@ -279,7 +279,7 @@ topics:
       <para><programlisting>#!/usr/bin/env jruby
 
 require 'rubygems'
-require 'torquebox/messaging'
+require 'torquebox-messaging'
         </programlisting></para>
     </example>
   </section>

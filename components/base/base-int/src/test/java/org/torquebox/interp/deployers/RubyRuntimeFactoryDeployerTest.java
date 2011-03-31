@@ -23,10 +23,14 @@ import static org.junit.Assert.*;
 
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyInstanceConfig.CompileMode;
+
 import org.junit.Before;
 import org.junit.Test;
+
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
@@ -92,6 +96,78 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeployerTestCase {
 
         assertNotNull( factory );
         assertEquals( CompatVersion.RUBY1_9, factory.getRubyVersion() );
+
+        undeploy( deploymentName );
+    }
+
+    @Test
+    public void testDeploymentWithJITCompileMode() throws Exception {
+        String deploymentName = createDeployment( "runtimeFactory" );
+
+        RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
+        metaData.setCompileMode( RubyRuntimeMetaData.CompileMode.JIT );
+
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        unit.addAttachment( RubyRuntimeMetaData.class, metaData );
+
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+
+        processDeployments( true );
+
+        RubyRuntimeFactory factory = (RubyRuntimeFactory) getBean( AttachmentUtils.beanName( unit, RubyRuntimeFactory.class ) );
+
+        assertNotNull( factory );
+        assertEquals( CompileMode.JIT, factory.getCompileMode() );
+
+        undeploy( deploymentName );
+    }
+
+    @Test
+    public void testDeploymentWithOFFCompileMode() throws Exception {
+        String deploymentName = createDeployment( "runtimeFactory" );
+
+        RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
+        metaData.setCompileMode( RubyRuntimeMetaData.CompileMode.OFF );
+
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        unit.addAttachment( RubyRuntimeMetaData.class, metaData );
+
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+
+        processDeployments( true );
+
+        RubyRuntimeFactory factory = (RubyRuntimeFactory) getBean( AttachmentUtils.beanName( unit, RubyRuntimeFactory.class ) );
+
+        assertNotNull( factory );
+        assertEquals( CompileMode.OFF, factory.getCompileMode() );
+
+        undeploy( deploymentName );
+    }
+
+    @Test
+    public void testDeploymentWithFORCECompileMode() throws Exception {
+        String deploymentName = createDeployment( "runtimeFactory" );
+
+        RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
+        metaData.setCompileMode( RubyRuntimeMetaData.CompileMode.FORCE );
+
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        unit.addAttachment( RubyRuntimeMetaData.class, metaData );
+
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "foo.trq" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+
+        processDeployments( true );
+
+        RubyRuntimeFactory factory = (RubyRuntimeFactory) getBean( AttachmentUtils.beanName( unit, RubyRuntimeFactory.class ) );
+
+        assertNotNull( factory );
+        assertEquals( CompileMode.FORCE, factory.getCompileMode() );
 
         undeploy( deploymentName );
     }
