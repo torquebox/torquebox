@@ -82,6 +82,10 @@ public class TorqueBoxMetaData {
         } else {
             sanitizedPath = path.replaceAll( "\\\\", "/" );
         }
+        
+        if ( sanitizedPath.startsWith( "~" ) ) {
+            sanitizedPath = System.getProperty( "user.home" ) + sanitizedPath.substring( 1 );
+        }
         VirtualFile root = VFS.getChild( sanitizedPath );
 
         return root;

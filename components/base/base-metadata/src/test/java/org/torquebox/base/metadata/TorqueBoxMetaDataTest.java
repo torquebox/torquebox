@@ -1,8 +1,11 @@
 package org.torquebox.base.metadata;
 
-import static org.junit.Assert.*;
-import org.junit.*;
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Test;
 
 
 public class TorqueBoxMetaDataTest {
@@ -26,6 +29,20 @@ public class TorqueBoxMetaDataTest {
         Map<String,String> merged = (Map<String,String>) mergedMetaData.getSection("web");
         assertEquals("/", merged.get("context"));
         assertEquals("foo.ru", merged.get("rackup"));
+    }
+    
+    @Test
+    public void testHomeTildeExpansion() {
+        Map<String,String> appSection = new HashMap<String,String>();
+        appSection.put( "root", "~/tacos" );
+        
+        Map<String,Object> torqueboxYml = new HashMap<String,Object>();
+        torqueboxYml.put(  "application", appSection );
+        
+        TorqueBoxMetaData metaData = new TorqueBoxMetaData( torqueboxYml );
+        
+        assertEquals( System.getProperty( "user.home" ) + "/tacos", metaData.getApplicationRootFile().getPathName() );
+        
     }
     
 }
