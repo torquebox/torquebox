@@ -13,5 +13,5 @@ $MAVEN_HOME/bin/mvn clean -Pinteg -Pdist
 echo "*** Start Build ***"
 
 echo "Peforming build"
-$MAVEN_HOME/bin/mvn -U -s build-support/settings.xml install -Pinteg -Pdist -Pci -e
+$MAVEN_HOME/bin/mvn -Dmaven.repo.local=$M2_REPO -U -s build-support/settings.xml install -Pinteg -Pdist -Pci -e
 
