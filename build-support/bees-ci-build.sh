@@ -34,8 +34,8 @@ $MAVEN_HOME/bin/mvn clean -Pinteg -Pdist
 echo "*** Start Build ***"
 
 echo "Peforming core build skipping tests"
-$MAVEN_HOME/bin/mvn -Dmaven.repo.local=$M2_REPO -U -s build-support/settings.xml install -Dmaven.test.skip=true
+$MAVEN_HOME/bin/mvn -Dmaven.repo.local=$M2_REPO -U -s $WORKSPACE/build-support/settings.xml install -Dmaven.test.skip=true
 
 echo "Peforming integ build"
-cd integration-tests && $MAVEN_HOME/bin/mvn -Dmaven.repo.local=$M2_REPO -U -s build-support/settings.xml test
+cd integration-tests && $MAVEN_HOME/bin/mvn -Dmaven.repo.local=$M2_REPO -U -s $WORKSPACE/build-support/settings.xml test
 
