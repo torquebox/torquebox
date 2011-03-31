@@ -47,12 +47,7 @@ public class TorqueBoxMetaDataTest {
     
     @Test
     public void testHomeTildeExpansion() {
-        Map<String,String> appSection = new HashMap<String,String>();
-        appSection.put( "root", "~/tacos" );
-        
-        Map<String,Object> torqueboxYml = new HashMap<String,Object>();
-        torqueboxYml.put(  "application", appSection );
-        
+        Map<String,Object> torqueboxYml = ruby.evalScriptlet( "{ 'application' => { 'root' => '~/tacos' } }" ).convertToHash();
         TorqueBoxMetaData metaData = new TorqueBoxMetaData( torqueboxYml );
 
         String expected = System.getProperty( "user.home" ) + "/tacos";
