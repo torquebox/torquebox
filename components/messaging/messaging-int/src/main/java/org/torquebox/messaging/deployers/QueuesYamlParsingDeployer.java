@@ -49,6 +49,13 @@ public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
         for (String queueName : data.keySet()) {
             QueueMetaData queueMetaData = new QueueMetaData( queueName );
+            Map<String, Object> queueOptions = data.get( queueName );
+            if (queueOptions == null || !queueOptions.containsKey( "durable" )) { 
+            	queueMetaData.setDurable( true ); 
+            }
+            else if (queueOptions.containsKey("durable")) {
+            	queueMetaData.setDurable((Boolean) queueOptions.get("durable"));
+            } 
             AttachmentUtils.multipleAttach( unit, queueMetaData, queueName );
         }
     }

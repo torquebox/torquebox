@@ -109,7 +109,7 @@ public class QueuesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertFalse( allMetaData.isEmpty() );
 
-        assertEquals( 2, allMetaData.size() );
+        assertEquals( 3, allMetaData.size() );
 
         QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/tbyaml/foo" );
         assertNotNull( queueFoo );
@@ -134,13 +134,44 @@ public class QueuesYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
         assertFalse( allMetaData.isEmpty() );
 
-        assertEquals( 2, allMetaData.size() );
+        assertEquals( 3, allMetaData.size() );
 
         QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/tbyaml/foo" );
         assertNotNull( queueFoo );
 
         QueueMetaData queueBar = getMetaData( allMetaData, "/queues/tbyaml/bar" );
         assertNotNull( queueBar );
+
+        undeploy( deploymentName );
+    }
+    
+    @Test
+    public void testDestinationDurability() throws Exception {
+        String deploymentName = addDeployment( getClass().getResource( "/valid-torquebox.yml" ), "torquebox.yml" );
+
+        processDeployments( true );
+
+        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
+
+        assertFalse( allMetaData.isEmpty() );
+
+        assertEquals( 3, allMetaData.size() );
+
+        // /queues/tbyaml/foo has no durability flag set, we should default to durable
+        QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/tbyaml/foo" );
+        assertNotNull( queueFoo );        
+        assertTrue( queueFoo.isDurable() );
+
+        // /queues/tbyaml/bar has durability set to true, we should reflect that
+        QueueMetaData queueFooBar = getMetaData( allMetaData, "/queues/tbyaml/foobar" );
+        assertNotNull( queueFooBar );        
+        assertTrue( queueFooBar.isDurable() );
+
+        // /queues/tbyaml/bar has durability set to false, we should reflect that
+        QueueMetaData queueBar = getMetaData( allMetaData, "/queues/tbyaml/bar" );
+        assertNotNull( queueBar );        
+        assertFalse( queueBar.isDurable() );
 
         undeploy( deploymentName );
     }

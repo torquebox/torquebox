@@ -1,9 +1,15 @@
 queues:
   /queues/tbyaml/foo:
   /queues/tbyaml/bar:
+    durable: false
+  /queues/tbyaml/foobar:
+    durable: true
   
 topics:
   /topics/tbyaml/foo:
   /topics/tbyaml/bar:
+    durable: false
+  /topics/tbyaml/foobar:
+    durable: true
 
 
