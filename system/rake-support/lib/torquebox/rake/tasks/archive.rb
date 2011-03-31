@@ -26,7 +26,7 @@ namespace :torquebox do
 
   desc "Create a nice self-contained application archive"
   task :archive do
-    skip_files = %w{ ^log$ ^tmp$ \.knob$ vendor }
+    skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
 
     include_files = []
     Dir[ "*", ".bundle" ].each do |entry|
