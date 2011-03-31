@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'torquebox-messaging'
 
 describe "rails 2 backgroundable tests" do
+  mutable_app 'rails2/backgroundable_reload'
   deploy :path => "rails2/backgroundable_reload-knob.yml"
 
   before(:each) do

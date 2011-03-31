@@ -424,28 +424,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-mutable-apps</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>process-test-resources</phase>
-            <configuration>
-              <outputDirectory>${project.build.directory}/apps</outputDirectory>
-              <overwrite>true</overwrite>
-              <resources>
-                <resource>
-                  <directory>mutable-apps/</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>jruby-maven-plugin</artifactId>
         <executions>
