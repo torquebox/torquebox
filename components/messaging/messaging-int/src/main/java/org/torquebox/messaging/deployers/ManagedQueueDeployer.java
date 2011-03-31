@@ -63,6 +63,7 @@ public class ManagedQueueDeployer extends AbstractDeployer {
 
         BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, ManagedQueue.class.getName() );
         builder.addPropertyMetaData( "name", metaData.getName() );
+        builder.addPropertyMetaData( "durable", metaData.isDurable() );
 
         ValueMetaData hornetServerInjection = builder.createInject( "JMSServerManager" );
         builder.addPropertyMetaData( "server", hornetServerInjection );

@@ -21,13 +21,23 @@ package org.torquebox.messaging.core;
 
 public class ManagedQueue extends AbstractManagedDestination {
 
+    private boolean durable;
+
     public ManagedQueue() {
 
+    }
+    
+    public void setDurable(boolean durable) {
+        this.durable = durable;
+    }
+
+    public boolean isDurable() {
+        return durable;
     }
 
     public void create() throws Exception {
         log.trace(  "Creating queue: " + getName()  );
-        getServer().createQueue( false, getName(), "", false, getName() );
+        getServer().createQueue( false, getName(), "", this.isDurable(), getName() );
         log.trace(  "Created queue: " + getName()  );
     }
 
