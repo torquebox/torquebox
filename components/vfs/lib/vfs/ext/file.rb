@@ -250,10 +250,7 @@ class File
     end
 
     def name_without_vfs(filename)
-      # 1.9 - to_str became to_path for Pathnames
-      filename = filename.to_path if filename.respond_to?(:to_path) 
-      raise TypeError unless filename.respond_to?(:to_str)
-      name = filename.to_str.gsub("\\", "/")
+      name = path_to_str(filename).gsub("\\", "/")
       if vfs_path?(name) 
         result = name[4..-1]
         result.size==0 ? "/" : result
@@ -262,6 +259,13 @@ class File
       end
     end
 
+    def path_to_str(path)
+      # 1.9 - to_str became to_path for Pathnames
+      return path.to_path if path.respond_to?(:to_path) 
+      raise TypeError unless path.respond_to?(:to_str)
+      path.to_str
+    end
+    
     def vfs_path?(path)
       path.to_s =~ /^vfs:/
     end
