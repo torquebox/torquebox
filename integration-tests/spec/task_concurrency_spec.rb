@@ -10,6 +10,12 @@ describe "task concurrency" do
   end
 
   it "set concurreny for backgroundable tasks" do
+    #warm up the queue and MPs
+    visit "/task-concurrency?backgroundable"
+    task_responses
+    visit "/task-concurrency?backgroundable"
+    task_responses
+    
     visit "/task-concurrency?backgroundable"
     page.should have_content('tasks fired')
     responses = task_responses
@@ -18,6 +24,12 @@ describe "task concurrency" do
   end
 
   it "set concurreny for app/tasks/ tasks" do
+    #warm up the queue and MPs
+    visit "/task-concurrency?app-tasks"
+    task_responses
+    visit "/task-concurrency?app-tasks"
+    task_responses
+    
     visit "/task-concurrency?app-tasks"
     page.should have_content('tasks fired')
     responses = task_responses
