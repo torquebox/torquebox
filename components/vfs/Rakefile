@@ -97,11 +97,19 @@ task 'novfs' do
   ENV['NOVFS']='true'
 end
 
+task '19' do
+  ENV['19']='true'
+end
+
 task 'rubyspec' => [ 'check:dependencies', 'rubyspec:prepare' ] do
   classpath = Dir[ "#{DEP_JARS_DIR}/*.jar" ].join(':')
 
   cmd = [ 'jruby' ]
 
+  if ( ENV['19'] )
+    cmd << "--1.9"
+  end
+  
   unless ( ENV['NOVFS'] )
     cmd << "-J-classpath #{classpath}"
   end
@@ -110,7 +118,11 @@ task 'rubyspec' => [ 'check:dependencies', 'rubyspec:prepare' ] do
   cmd << 'ci'
   cmd << '--verbose'
   cmd << '--debug'
-  cmd << "--config jruby.1.8.mspec" 
+  if ( ENV['19'] )
+    cmd << "--config jruby.1.9.mspec"
+  else
+    cmd << "--config jruby.1.8.mspec" 
+  end
   cmd << "-t #{JRUBY_DIR}/bin/jruby" 
 
   unless( ENV['NOVFS'] )
@@ -119,7 +131,7 @@ task 'rubyspec' => [ 'check:dependencies', 'rubyspec:prepare' ] do
   end
   
   cmd << '--format html'
-  cmd << "--output #{File.dirname(__FILE__)}/target/rubyspec#{ ENV['NOVFS'] ? '-novfs' : '' }.html"
+  cmd << "--output #{File.dirname(__FILE__)}/target/rubyspec#{ ENV['NOVFS'] ? '-novfs' : '' }#{ ENV['19'] ? '-19' : '' }.html"
   cmd << SPECS.collect{|e| "ruby/#{e}"}
   #cmd << SPECS
   cmd.flatten!

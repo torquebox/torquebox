@@ -21,7 +21,19 @@ A report will be placed in
 
 	target/rubyspec-novfs.html
 
+To run the specs in 1.9 compatibility mode, add the '19' task:
+
+	jruby -S rake 19 rubyspec
+
+The report will be placed in 
+
+	target/rubyspec-19.html
+
+1.9 can also be used with novfs.
 
 To run just a single test using VFS:
 
      jruby -J-classpath target/dependencies/jboss-vfs.jar -Ilib -rvfs -S spec target/jruby/spec/ruby/core/file/chmod_spec.rb
+
+or, for 1.9:
+     jruby --1.9 -J-classpath target/dependencies/jboss-vfs.jar -Ilib -rvfs -S spec target/jruby/spec/ruby/core/file/chmod_spec.rb
