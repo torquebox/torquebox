@@ -161,24 +161,29 @@ public class TorqueBoxMetaData {
                     envKey = determineEnvironmentKey( mergedAppSection );
                     mergedAppSection.put( envKey, envName );
                 }
-
-            } else if (key.equals( "environment" ) || key.equals( "web" )) {
-                Map<String, String> thisEnvSection = (Map<String, String>) thisData.get( key );
-                Map<String, String> baseEnvSection = (Map<String, String>) baseData.get( key );
-                Map<String, String> mergedEnvSection = new HashMap<String, String>();
-
-                if (baseEnvSection != null) {
-                    mergedEnvSection.putAll( baseEnvSection );
-                }
-                mergedEnvSection.putAll( thisEnvSection );
-
-                mergedData.put( key, mergedEnvSection );
+                
             } else {
-                mergedData.put( key, thisData.get( key ) );
+                mergedData.put( key, merge( key, thisData, baseData ) );
             }
         }
 
         return new TorqueBoxMetaData( mergedData );
+    }
+
+    protected Object merge( Object key, Map src, Map tgt ) {
+        Object value = src.get( key );
+        if ( value instanceof Map && tgt != null ) {
+            Map source = (Map) value;
+            Object target = tgt.get( key );
+            if ( target != null ) {
+                Map result = new HashMap( (Map) target );
+                for( Object k: source.keySet() ) {
+                    result.put( k, merge( k, source, result ) );
+                }
+                return result;
+            }
+        }
+        return value;
     }
 
     public String toString() {
