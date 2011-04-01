@@ -21,7 +21,7 @@ package org.torquebox.messaging.metadata;
 
 public class QueueMetaData extends AbstractDestinationMetaData {
 
-    private boolean durable;
+    private boolean durable = true;
 
     public QueueMetaData() {
 
