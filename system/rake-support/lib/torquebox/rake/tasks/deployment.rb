@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rake'
+require 'torquebox/rake/tasks/rake_utils'
 
 def deployment_descriptor(root, env, context_path)
   d = {}
@@ -43,7 +44,7 @@ end
 def deployment(app_name, root, context_path)
   env = defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
   if ( env.nil? ) 
-    env = defined?(RAILS_ENV) ? RAILS_ENV : ENV['RAILS_ENV']
+    env = defined?(::Rails) ? ::Rails.env : ENV['RAILS_ENV']
   end
 
   [ "#{app_name}-knob.yml", deployment_descriptor( root, env, context_path) ]
@@ -56,7 +57,8 @@ namespace :torquebox do
     app_name = File.basename( Dir.pwd )
     deployment_name, deployment_descriptor = deployment( app_name, Dir.pwd, args[:context_path] )
     TorqueBox::RakeUtils.deploy_yaml( deployment_name, deployment_descriptor )
-    puts "Deployed #{deployment_name}"
+    puts "Deployed: #{deployment_name}"
+    puts "    into: #{TorqueBox::RakeUtils.deploy_dir}"
   end
 
   desc "Undeploy the app in the current directory"
@@ -64,7 +66,7 @@ namespace :torquebox do
     app_name = File.basename( Dir.pwd )
     deployment_name = "#{app_name}-knob.yml"
     TorqueBox::RakeUtils.undeploy( deployment_name )
-    puts "Undeployed #{deployment_name}"
+    puts "Undeployed: #{deployment_name}"
   end
 
   desc "Create (if needed) and deploy as application archive"
@@ -73,7 +75,8 @@ namespace :torquebox do
       archive_name = get_archive_name
       src = File.join("#{Dir.pwd}", "#{archive_name}")
       FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
-      puts "Deployed #{archive_name}"
+      puts "Deployed: #{archive_name}"
+      puts "    into: #{TorqueBox::RakeUtils.deploy_dir}"
     end
   end
   namespace :undeploy do

@@ -30,6 +30,13 @@ module TorqueBox
       raise "$JBOSS_HOME is not set" unless jboss_home
       return jboss_home
     end
+    def self.torquebox_home
+      torquebox_home = nil
+      if ( ENV['TORQUEBOX_HOME'] )
+        torquebox_home = File.expand_path(ENV['TORQUEBOX_HOME'])
+      end
+      torquebox_home
+    end
     def self.jboss_conf
       ENV['TORQUEBOX_CONF'] || ENV['JBOSS_CONF'] || 'default'
     end
@@ -43,7 +50,12 @@ module TorqueBox
       File.join("#{config_dir}","props")
     end
     def self.deploy_dir
-      File.join("#{server_dir}","deploy")
+      d = File.join( torquebox_home, 'apps' ) 
+      if ( File.exists?( d ) && File.directory?( d ) )
+        return d 
+      end
+
+      File.join( "#{server_dir}", "deploy" )
     end
     def self.deployers_dir
       File.join("#{server_dir}","deployers")
