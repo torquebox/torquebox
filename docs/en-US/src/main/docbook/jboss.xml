@@ -23,14 +23,9 @@
       <emphasis>profile</emphasis>.
     </para>
     <para><mediaobject>
-      <imageobject role="html">
+      <imageobject >
         <imagedata align="center" fileref="images/jboss-server.png"
                    format="PNG" />
-      </imageobject>
-
-      <imageobject role="fo">
-        <imagedata align="center" fileref="images/jboss-server.svg"
-                   format="SVG" />
       </imageobject>
     </mediaobject></para>
     <para>
@@ -55,14 +50,9 @@
       there yourself.
     </para>
     <para><mediaobject>
-      <imageobject role="html">
+      <imageobject>
         <imagedata align="center" fileref="images/jboss-default.png"
                    format="PNG" />
-      </imageobject>
-
-      <imageobject role="fo">
-        <imagedata align="center" fileref="images/jboss-default.svg"
-                   format="SVG" />
       </imageobject>
     </mediaobject></para>
     <para>
@@ -127,14 +117,9 @@
       (redeploying) it when it's changed.
     </para>
     <para><mediaobject>
-      <imageobject role="html">
+      <imageobject>
         <imagedata align="center" fileref="images/jboss-deploy.png"
                    format="PNG" scale="70" />
-      </imageobject>
-
-      <imageobject role="fo">
-        <imagedata align="center" fileref="images/jboss-deploy.svg"
-                   format="SVG" scale="70" />
       </imageobject>
     </mediaobject></para>
     <para>
