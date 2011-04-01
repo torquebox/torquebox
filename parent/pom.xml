@@ -29,40 +29,14 @@
 
   <profiles>
     <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <distributionManagement>
-        <repository>
-          <id>torquebox.release.repository</id>
-          <name>TorqueBox Release Repository</name>
-          <url>scpexe://repository.torquebox.org/opt/torquebox/repository/maven2/releases</url>
-        </repository>
-        <snapshotRepository>
-          <id>torquebox.snapshot.repository</id>
-          <name>TorqueBox Snapshot Repository</name>
-          <url>scpexe://repository.torquebox.org/opt/torquebox/repository/maven2/snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
-    </profile>
-    <profile>
-      <id>local</id>
+      <id>bees</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <distributionManagement>
-        <repository>
-          <id>torquebox.release.repository</id>
-          <name>TorqueBox Release Repository</name>
-          <url>file:///opt/torquebox/repository/maven2/releases</url>
-        </repository>
-        <snapshotRepository>
-          <id>torquebox.snapshot.repository</id>
-          <name>TorqueBox Snapshot Repository</name>
-          <url>file:///opt/torquebox/repository/maven2/snapshots</url>
-        </snapshotRepository>
-      </distributionManagement>
+      <properties>
+        <jboss.releases.repo.url>https://repository-torquebox.forge.cloudbees.com/release/</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>https://repository-torquebox.forge.cloudbees.com/snapshot/</jboss.snapshots.repo.url>
+      </properties>
     </profile>
     <profile>
       <id>integ</id>
