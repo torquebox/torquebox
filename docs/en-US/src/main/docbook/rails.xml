@@ -57,6 +57,16 @@
     of a codebase to TorqueBox easier.</para>
 
     <section>
+      <title>Install Rails</title>
+
+      <para>Previous releases of TorqueBox bundled Rails but it is no
+      longer included. You'll need to install the version needed by
+      your application.</para>
+
+      <para><screen><prompt>$</prompt> <command>gem</command> <parameter>install rails</parameter></screen></para>
+    </section>
+
+    <section>
       <title>Using the application template</title>
 
       <para>You can use the included application template to setup a new Rails
