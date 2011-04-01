@@ -23,13 +23,12 @@ public class AppsDirectoryBootstrapper {
     public void setServer(AbstractServer server) {
         this.server = server;
     }
-    
+
     public void setProfileService(ProfileService profileService) {
         this.profileService = profileService;
     }
 
     public void create() throws Exception {
-        System.err.println( " *************** START" );
         File appsDir = getAppsDir();
 
         if (appsDir.exists()) {
@@ -45,27 +44,31 @@ public class AppsDirectoryBootstrapper {
 
             PropertyProfileSourceMetaData source = new PropertyProfileSourceMetaData( appsDir.getAbsolutePath() );
             metaData.setSource( source );
-            log.info( "registering profile: " + metaData );
             this.key = this.profileService.registerProfile( metaData );
         } else {
+            this.key = null;
             log.info( "Deployment directory does not exist: " + appsDir );
         }
     }
 
     public void start() throws Exception {
-        log.info( "registering listener: " + this.key );
-        this.listener = new AppsDirectoryNotificationListener( this.profileService, this.key );
-        this.server.addNotificationListener( listener, null, null );
+        if (this.key != null) {
+            this.listener = new AppsDirectoryNotificationListener( this.profileService, this.key );
+            this.server.addNotificationListener( listener, null, null );
+        }
     }
 
     public void stop() throws Exception {
-        log.info( "unregistering listener: " + this.key );
-        this.server.removeNotificationListener( this.listener );
+        if (this.listener != null) {
+            this.server.removeNotificationListener( this.listener );
+        }
     }
 
     public void destroy() throws Exception {
-        System.err.println( " *************** DESTROY" );
-        this.profileService.unregisterProfile( this.key );
+        if (this.key != null) {
+            this.profileService.unregisterProfile( this.key );
+        }
+        this.key = null;
     }
 
     protected File getAppsDir() {
@@ -85,6 +88,8 @@ public class AppsDirectoryBootstrapper {
     private static final Logger log = Logger.getLogger( AppsDirectoryBootstrapper.class );
 
     private AppsDirectoryNotificationListener listener;
+    
+    @SuppressWarnings("rawtypes")
     private AbstractServer server;
     private ProfileKey key;
     private ProfileService profileService;
