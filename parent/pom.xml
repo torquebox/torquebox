@@ -34,8 +34,8 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <jboss.releases.repo.url>https://repository-torquebox.forge.cloudbees.com/release/</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>https://repository-torquebox.forge.cloudbees.com/snapshot/</jboss.snapshots.repo.url>
+        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/release/</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/snapshot/</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
