@@ -27,6 +27,7 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
+import javax.jms.Topic;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
@@ -117,6 +118,12 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     }
 
     public void create() throws JMSException {
+        if (getConcurrency() > 1 && getDestination() instanceof Topic) {
+            log.warn( "Creating " + this.toString() + " for a Topic with a " +
+                      "concurrency greater than 1. This will result in " +
+                      "duplicate messages being processed and is an uncommon " +
+                      "usage of Topic MessageProcessors.");
+        }
         this.connection = this.connectionFactory.createConnection();
         for (int i = 0; i < getConcurrency(); i++) {
             new Handler( this.connection.createSession( true, this.acknowledgeMode ) );

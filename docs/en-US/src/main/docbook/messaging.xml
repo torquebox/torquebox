@@ -779,7 +779,11 @@ messaging:
                   your processor. Processors are single-threaded, by
                   default, but you can increase this value to match
                   the number of concurrent messages you expect to
-                  receive.</entry>
+                  receive. Note that this value determines the number
+                  of consumers connected to the destination and thus
+                  you'll rarely want a concurrency greater than 1 for
+                  topics since that means you'll process duplicate
+                  messages.</entry>
                 </row>
 
                 <row>
