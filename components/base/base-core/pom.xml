@@ -187,10 +187,10 @@
                 def determine_revision_from_git()
                   begin
                     revision = '(unknown)'
-                    git_output = `git log HEAD^1..HEAD`.lines
-                    junk, sha1 = git_output[0].split( ' ' )
+                    sha1 = `git rev-parse HEAD`
                     sha1.strip + modifications_modifier
                   rescue=>e
+                    puts %Q(*** rescue #{e})
                     '(unknown)'
                   end
                 end
