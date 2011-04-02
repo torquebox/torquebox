@@ -22,9 +22,9 @@
   </description>
 
   <scm>
-    <connection>scm:git:git://github.com/torquebox/${project.artifactId}.git</connection>
-    <developerConnection>scm:git:ssh://github.com/torquebox/${project.artifactId}.git</developerConnection>
-    <url>http://github.com/torquebox/${project.artifactId}/tree/master</url>
+    <connection>scm:git:git://github.com/torquebox/torquebox.git</connection>
+    <developerConnection>scm:git:ssh://github.com/torquebox/torquebox.git</developerConnection>
+    <url>http://github.com/torquebox/torquebox/tree/master</url>
   </scm>
 
   <profiles>
@@ -36,6 +36,16 @@
       <properties>
         <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
+      </properties>
+    </profile>
+    <profile>
+      <id>localrepo</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <jboss.releases.repo.url>file:///${user.dir}/target/m2repo</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>file:///${user.dir}/target/m2repo</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
