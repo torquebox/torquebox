@@ -1,1 +1,2 @@
 /queues/foobar:
+  durable: false

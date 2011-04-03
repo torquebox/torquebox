@@ -1,3 +1,5 @@
 /queues/foreground:
+  durable: false
 
 /queues/background:
+  durable: false

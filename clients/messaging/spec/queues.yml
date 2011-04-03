@@ -1,4 +1,6 @@
 
 /queues/foo:
+  durable: false
 
 /queues/bar:
+  durable: false

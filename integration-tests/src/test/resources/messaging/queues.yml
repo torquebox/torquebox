@@ -1,5 +1,8 @@
 /queues/foo:
+  durable: false
 
 /queues/questions:
+  durable: false
 
 /queues/answers:
+  durable: false
