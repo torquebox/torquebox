@@ -212,9 +212,11 @@
   <profiles>
     <profile>
       <id>ci</id>
+<!--
       <properties>
-        <arquillian.max.deploys>2</arquillian.max.deploys>
+        <arquillian.max.deploys>10</arquillian.max.deploys>
       </properties>
+-->
     </profile>
     <profile>
       <id>inplace</id>
