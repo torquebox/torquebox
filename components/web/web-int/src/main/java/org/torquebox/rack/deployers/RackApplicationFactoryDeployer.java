@@ -31,10 +31,12 @@ import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
+
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.injection.BaseRubyProxyInjectionBuilder;
 import org.torquebox.injection.Injectable;
 import org.torquebox.injection.InjectionAnalyzer;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.rack.core.RackApplicationFactoryImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
@@ -107,17 +109,29 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
     }
 
     public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, VirtualFile rackRoot, VirtualFile rackUpScriptLocation) throws Exception {
-        List<Injectable> injectables = new ArrayList<Injectable>();
 
-        injectables.addAll( this.injectionAnalyzer.analyze( rackUpScriptLocation ) );
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
+        RubyRuntimeMetaData.Version rubyVersion = null;
 
-        for (VirtualFile child : rackRoot.getChildren( RB_FILTER )) {
-            injectables.addAll( this.injectionAnalyzer.analyze( child ) );
+        if (runtimeMetaData != null) {
+            rubyVersion = runtimeMetaData.getVersion();
         }
 
-        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/controllers/" ) ) );
-        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/models/" ) ) );
-        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "lib/" ) ) );
+        if (rubyVersion == null) {
+            rubyVersion = RubyRuntimeMetaData.Version.V1_8;
+        }
+
+        List<Injectable> injectables = new ArrayList<Injectable>();
+
+        injectables.addAll( this.injectionAnalyzer.analyze( rackUpScriptLocation, rubyVersion ) );
+
+        for (VirtualFile child : rackRoot.getChildren( RB_FILTER )) {
+            injectables.addAll( this.injectionAnalyzer.analyze( child, rubyVersion ) );
+        }
+
+        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/controllers/" ), rubyVersion ) );
+        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "app/models/" ), rubyVersion ) );
+        injectables.addAll( this.injectionAnalyzer.analyzeRecursively( rackRoot.getChild( "lib/" ), rubyVersion ) );
 
         BaseRubyProxyInjectionBuilder injectionBuilder = new BaseRubyProxyInjectionBuilder( unit, beanBuilder );
         injectionBuilder.injectInjectionRegistry( injectables );

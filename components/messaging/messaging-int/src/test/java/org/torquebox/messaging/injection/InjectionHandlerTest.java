@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.torquebox.injection.Injectable;
 import org.torquebox.injection.InjectableHandlerRegistry;
 import org.torquebox.injection.InjectionAnalyzer;
@@ -20,6 +21,7 @@ import org.torquebox.injection.jndi.JNDIInjectable;
 import org.torquebox.injection.jndi.JNDIInjectableHandler;
 import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.injection.mc.MCBeanInjectableHandler;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData.Version;
 
 public class InjectionHandlerTest {
 
@@ -57,7 +59,7 @@ public class InjectionHandlerTest {
     @Test
     public void testGenericAnalysis() throws Exception {
         String script = readScript( "generic_injection.rb" );
-        List<Injectable> injectables = analyzer.analyze( "generic_injection.rb", script.toString() );
+        List<Injectable> injectables = analyzer.analyze( "generic_injection.rb", script.toString(), Version.V1_8 );
 
         assertEquals( 5, injectables.size() );
 

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.interp.analysis.ScriptAnalyzer;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData.Version;
 
 public class InjectionAnalyzer extends ScriptAnalyzer {
 
@@ -21,19 +22,19 @@ public class InjectionAnalyzer extends ScriptAnalyzer {
         return this.injectableHandlerRegistry;
     }
 
-    public List<Injectable> analyze(String filename, InputStream script) throws IOException {
+    public List<Injectable> analyze(String filename, InputStream script, Version rubyVersion) throws IOException {
         InjectionVisitor visitor = new InjectionVisitor( this );
-        analyze( filename, script, visitor );
+        analyze( filename, script, visitor, rubyVersion );
         return visitor.getInjectables();
     }
 
-    public List<Injectable> analyze(String filename, String script) {
+    public List<Injectable> analyze(String filename, String script, Version rubyVersion) {
         InjectionVisitor visitor = new InjectionVisitor( this );
-        analyze( filename, script, visitor );
+        analyze( filename, script, visitor, rubyVersion );
         return visitor.getInjectables();
     }
 
-    public List<Injectable> analyze(VirtualFile file) throws IOException {
+    public List<Injectable> analyze(VirtualFile file, Version rubyVersion) throws IOException {
         if ( ! file.exists() ) {
             return Collections.emptyList();
         }
@@ -42,7 +43,7 @@ public class InjectionAnalyzer extends ScriptAnalyzer {
         
         try {
             in = file.openStream();
-            analyze( file.getPathName(), in, visitor );
+            analyze( file.getPathName(), in, visitor, rubyVersion );
         } finally {
             if ( in != null ) {
                 in.close();
@@ -51,8 +52,8 @@ public class InjectionAnalyzer extends ScriptAnalyzer {
         return visitor.getInjectables();
     }
     
-    public List<Injectable> analyzeRecursively(VirtualFile root) throws IOException {
-        InjectionAnalyzerVirtualFileVisitor fileVisitor = new InjectionAnalyzerVirtualFileVisitor( this );
+    public List<Injectable> analyzeRecursively(VirtualFile root, Version rubyVersion) throws IOException {
+        InjectionAnalyzerVirtualFileVisitor fileVisitor = new InjectionAnalyzerVirtualFileVisitor( this, rubyVersion );
         root.visit( fileVisitor );
         return fileVisitor.getInjectables();
     }

@@ -29,15 +29,18 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.core.RubyComponentResolver;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
 public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
 
     public AbstractRubyComponentDeployer() {
         addOutput( BeanMetaData.class );
+        addInput( RubyRuntimeMetaData.class );
     }
 
     public void setInjectionAnalyzer(InjectionAnalyzer injectionAnalyzer) {
@@ -77,7 +80,18 @@ public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {
     }
 
     public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, String rubyClassName) throws DeploymentException {
-        AnalyzingRubyProxyInjectionBuilder injectionBuilder = new AnalyzingRubyProxyInjectionBuilder( unit, beanBuilder, this.injectionAnalyzer );
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
+        RubyRuntimeMetaData.Version rubyVersion = null;
+
+        if (runtimeMetaData != null) {
+            rubyVersion = runtimeMetaData.getVersion();
+        }
+
+        if (rubyVersion == null) {
+            rubyVersion = RubyRuntimeMetaData.Version.V1_8;
+        }
+
+        AnalyzingRubyProxyInjectionBuilder injectionBuilder = new AnalyzingRubyProxyInjectionBuilder( unit, beanBuilder, this.injectionAnalyzer, rubyVersion );
         
         String path = StringUtils.underscore( rubyClassName ) + ".rb";
         try {

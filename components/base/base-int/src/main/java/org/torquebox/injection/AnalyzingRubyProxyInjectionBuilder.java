@@ -16,9 +16,10 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 
 public class AnalyzingRubyProxyInjectionBuilder extends BaseRubyProxyInjectionBuilder {
 
-    public AnalyzingRubyProxyInjectionBuilder(DeploymentUnit context, BeanMetaDataBuilder beanBuilder, InjectionAnalyzer analyzer) {
+    public AnalyzingRubyProxyInjectionBuilder(DeploymentUnit context, BeanMetaDataBuilder beanBuilder, InjectionAnalyzer analyzer, RubyRuntimeMetaData.Version rubyVersion) {
         super( context, beanBuilder );
         this.analyzer = analyzer;
+        this.rubyVersion = rubyVersion;
     }
     
     public void analyzeAndInject(String path) throws URISyntaxException, IOException {
@@ -27,12 +28,12 @@ public class AnalyzingRubyProxyInjectionBuilder extends BaseRubyProxyInjectionBu
             return;
         }
         
-        List<Injectable> injectables = this.analyzer.analyze( source );
+        List<Injectable> injectables = this.analyzer.analyze( source, this.rubyVersion );
         injectInjectionRegistry(injectables );
     }
     
     public void analyzeRecursivelyAndInject(String propertyName, VirtualFile root) throws URISyntaxException, IOException {
-        List<Injectable> injectables = this.analyzer.analyzeRecursively( root );
+        List<Injectable> injectables = this.analyzer.analyzeRecursively( root, this.rubyVersion );
         injectInjectionRegistry( injectables );
     }
     
@@ -68,5 +69,6 @@ public class AnalyzingRubyProxyInjectionBuilder extends BaseRubyProxyInjectionBu
     }
 
     private InjectionAnalyzer analyzer;
+    private RubyRuntimeMetaData.Version rubyVersion;
 
 }

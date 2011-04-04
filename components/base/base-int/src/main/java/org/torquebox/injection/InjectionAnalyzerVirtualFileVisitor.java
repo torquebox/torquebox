@@ -8,10 +8,13 @@ import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileVisitor;
 import org.jboss.vfs.VisitorAttributes;
 
+import org.torquebox.interp.metadata.RubyRuntimeMetaData.Version;
+
 public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
     
-    public InjectionAnalyzerVirtualFileVisitor(InjectionAnalyzer analyzer) {
+    public InjectionAnalyzerVirtualFileVisitor(InjectionAnalyzer analyzer, Version rubyVersion) {
         this.analyzer = analyzer;
+        this.rubyVersion = rubyVersion;
     }
 
     @Override
@@ -23,7 +26,7 @@ public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
     public void visit(VirtualFile file) {
         if ( file.getName().endsWith(  ".rb"  ) ) {
             try {
-                List<Injectable> injectables = this.analyzer.analyze( file );
+                List<Injectable> injectables = this.analyzer.analyze( file, this.rubyVersion );
                 this.injectables.addAll( injectables );
             } catch (IOException e) {
                 throw new InjectionException( e );
@@ -36,6 +39,7 @@ public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
     }
 
     private InjectionAnalyzer analyzer;
+    private Version rubyVersion;
     private List<Injectable> injectables = new ArrayList<Injectable>();
 
 }

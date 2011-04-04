@@ -10,18 +10,22 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import org.jruby.exceptions.RaiseException;
+
 import org.torquebox.injection.cdi.CDIInjectable;
 import org.torquebox.injection.cdi.CDIInjectableHandler;
 import org.torquebox.injection.jndi.JNDIInjectable;
 import org.torquebox.injection.jndi.JNDIInjectableHandler;
 import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.injection.mc.MCBeanInjectableHandler;
+import org.torquebox.interp.metadata.RubyRuntimeMetaData.Version;
 
 public class InjectionAnalyzerTest {
     
     private InjectionAnalyzer analyzer;
     private InjectableHandlerRegistry registry;
-
+    
     protected String readScript(String name) throws IOException {
         InputStream in = getClass().getResourceAsStream( name );
         InputStreamReader reader = new InputStreamReader( in );
@@ -52,7 +56,7 @@ public class InjectionAnalyzerTest {
     public void testAnalysis() throws Exception {
         String script = readScript( "injection.rb" );
         
-        List<Injectable> injectables = analyzer.analyze( "testfile.rb", script.toString() );
+        List<Injectable> injectables = analyzer.analyze( "testfile.rb", script.toString(), Version.V1_8 );
         
         assertEquals( 3, injectables.size() );
         
@@ -75,14 +79,30 @@ public class InjectionAnalyzerTest {
     @Test(expected=InvalidInjectionTypeException.class)
     public void testInvalidAnalysis() throws Exception {
         String script = readScript( "invalid_injection.rb" );
-        analyzer.analyze( "invalid_injection.rb", script.toString() );
+        analyzer.analyze( "invalid_injection.rb", script.toString(), Version.V1_8 );
+    }
+
+    @Test
+    public void test19CodeIn19Mode() throws Exception {
+        String script = readScript( "injection_19.rb" );
+        
+        List<Injectable> injectables = analyzer.analyze( "testfile.rb", script.toString(), Version.V1_9 );
+        
+        assertEquals( 3, injectables.size() );
     }
     
+    @Test(expected=RaiseException.class)
+    public void test19CodeIn18Mode() throws Exception {
+        String script = readScript( "injection_19.rb" );
+        
+        analyzer.analyze( "testfile.rb", script.toString(), Version.V1_8 );
+    }
+
     @Test
     public void testAnalysisWithoutMarker() throws Exception {
         String script = readScript( "not_injection.rb" );
         
-        List<Injectable> injectables = analyzer.analyze( "testfile.rb", script.toString() );
+        List<Injectable> injectables = analyzer.analyze( "testfile.rb", script.toString(), Version.V1_8 );
         
         assertTrue( injectables.isEmpty() );
     }
@@ -90,7 +110,7 @@ public class InjectionAnalyzerTest {
     @Test
     public void testGenericAnalysis() throws Exception {
         String script = readScript( "generic_injection.rb" );
-        List<Injectable> injectables = analyzer.analyze( "generic_injection.rb", script.toString() );
+        List<Injectable> injectables = analyzer.analyze( "generic_injection.rb", script.toString(), Version.V1_8 );
         
         assertEquals( 3, injectables.size() );
         
