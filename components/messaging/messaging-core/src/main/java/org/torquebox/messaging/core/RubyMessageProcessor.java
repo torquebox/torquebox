@@ -30,9 +30,11 @@ import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.jboss.logging.Logger;
+
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
@@ -117,6 +119,23 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
         return this.concurrency;
     }
 
+    // Durability only has meaning for topic processors, not for queues
+    public void setDurable(boolean durable) {
+        this.durable = durable;
+    }
+
+    public boolean getDurable() {
+        return this.durable;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
+    public String getApplicationName() {
+        return this.applicationName;
+    }
+
     public void create() throws JMSException {
         if (getConcurrency() > 1 && getDestination() instanceof Topic) {
             log.warn( "Creating " + this.toString() + " for a Topic with a " +
@@ -125,6 +144,7 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
                       "usage of Topic MessageProcessors.");
         }
         this.connection = this.connectionFactory.createConnection();
+        this.connection.setClientID( getApplicationName() );
         for (int i = 0; i < getConcurrency(); i++) {
             new Handler( this.connection.createSession( true, this.acknowledgeMode ) );
         }
@@ -171,7 +191,19 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     class Handler implements MessageListener {
 
         Handler(Session session) throws JMSException {
-            MessageConsumer consumer = session.createConsumer( getDestination(), getMessageSelector() );
+            MessageConsumer consumer = null;
+            if (getDurable() && getDestination() instanceof Topic) {
+                consumer = session.createDurableSubscriber( (Topic)getDestination(), 
+                                                            getName(),
+                                                            getMessageSelector(),
+                                                            false );
+            } else {
+                if (getDurable() && !(getDestination() instanceof Topic)) {
+                    log.warn( "Durable set for processor " + getName() + ", but "
+                              + getDestinationName() + " is not a topic - ignoring." );
+                }
+                consumer = session.createConsumer( getDestination(), getMessageSelector() );
+            }
             consumer.setMessageListener( this );
             this.session = session;
         }
@@ -212,6 +244,8 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     private RubyComponentResolver componentResolver;
     private int concurrency = 1;
     private boolean started = false;
+    private boolean durable = false;
+    private String applicationName;
 
     private int acknowledgeMode = Session.AUTO_ACKNOWLEDGE;
 

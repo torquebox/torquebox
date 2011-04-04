@@ -28,6 +28,8 @@ public class MessageProcessorMetaData {
     private String destinationName;
     private String messageSelector;
     private int concurrency = 1;
+    private boolean durable = false; //only has meaning for Topic processors
+
     private Map<String, Object> rubyConfig;
     
     public MessageProcessorMetaData() {
@@ -89,6 +91,15 @@ public class MessageProcessorMetaData {
 
     public Integer getConcurrency() {
         return this.concurrency;
+    }
+
+    public void setDurable(Boolean durable) {
+        if (durable != null)
+            this.durable = durable;
+    }
+
+    public Boolean getDurable() {
+        return this.durable;
     }
 
 }

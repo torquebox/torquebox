@@ -118,6 +118,38 @@
             <id>attach-jboss-beans-artifact</id>
             <phase>package</phase>
           </execution>
+          <execution>
+            <id>attach-hornetq-configuration-default-artifact</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>src/main/deployments/hornetq-configuration-default.xml</file>
+                  <type>xml</type>
+                  <classifier>hornetq-configuration-default</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+          <execution>
+            <id>attach-hornetq-configuration-all-artifact</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>src/main/deployments/hornetq-configuration-all.xml</file>
+                  <type>xml</type>
+                  <classifier>hornetq-configuration-all</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -191,6 +223,50 @@
           </execution>
           <execution>
             <id>install-common-jar</id>
+          </execution>
+          <execution>
+            <id>install-hornetq-configuration-default-profile</id>
+            <phase>install</phase>
+            <inherited>true</inherited>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <classifier>hornetq-configuration-default</classifier>
+                  <version>${project.version}</version>
+                  <type>xml</type>
+                  <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/server/default/deploy/hornetq/</outputDirectory>
+                  <overWrite>true</overWrite>
+                  <destFileName>hornetq-configuration.xml</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>install-hornetq-configuration-all-profile</id>
+            <phase>install</phase>
+            <inherited>true</inherited>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <classifier>hornetq-configuration-all</classifier>
+                  <version>${project.version}</version>
+                  <type>xml</type>
+                  <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/server/all/deploy/hornetq/</outputDirectory>
+                  <overWrite>true</overWrite>
+                  <destFileName>hornetq-configuration.xml</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
           </execution>
         </executions>
       </plugin>

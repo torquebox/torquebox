@@ -121,6 +121,7 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
             result.setMessageSelector( (String) options.get( "filter" ) );
             result.setRubyConfig( (Map) options.get( "config" ) );
             result.setConcurrency( (Integer) options.get( "concurrency" ) );
+            result.setDurable( (Boolean) options.get( "durable" ) );
             return result;
         }
 

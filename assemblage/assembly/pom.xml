@@ -184,6 +184,23 @@
       <classifier>jboss-beans</classifier>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>hornetq-configuration-all</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-messaging-int</artifactId>
+      <version>${project.version}</version>
+      <type>xml</type>
+      <classifier>hornetq-configuration-default</classifier>
+      <scope>provided</scope>
+    </dependency>
+
 
     <!-- other -->
 

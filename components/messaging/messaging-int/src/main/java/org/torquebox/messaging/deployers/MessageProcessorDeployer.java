@@ -86,6 +86,8 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         String simpleName = metaData.getDestinationName() + "." + metaData.getRubyClassName();
         String beanName = AttachmentUtils.beanName( unit, RubyMessageProcessor.class, simpleName );
 
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
+
         BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, RubyMessageProcessor.class.getName() );
 
         ValueMetaData runtimePoolInject = builder.createInject( AttachmentUtils.beanName( unit, RubyRuntimePool.class, "messaging" ) );
@@ -94,6 +96,8 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         builder.addPropertyMetaData( "rubyRuntimePool", runtimePoolInject );
         builder.addPropertyMetaData( "messageSelector", metaData.getMessageSelector() );
         builder.addPropertyMetaData( "concurrency", metaData.getConcurrency() );
+        builder.addPropertyMetaData( "durable", metaData.getDurable() );
+        builder.addPropertyMetaData( "applicationName", rubyAppMetaData.getApplicationName() );
         
         BeanMetaData componentResolver = createComponentResolver( unit, "message-processor." + metaData.getName(), metaData.getRubyClassName(), metaData.getRubyRequirePath(), metaData.getRubyConfig() );
         builder.addPropertyMetaData( "componentResolver", builder.createInject( componentResolver.getName() ) );
@@ -115,7 +119,6 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         ValueMetaData connectionFactoryJndiRef = builder.createInject( "naming:/ConnectionFactory" );
         builder.addPropertyMetaData( "connectionFactory", connectionFactoryJndiRef );
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         String mbeanName = JMXUtils.jmxName( "torquebox.messaging.processors", rubyAppMetaData.getApplicationName() )
                 .with( "name", StringUtils.underscore( metaData.getName() ) ).name();
