@@ -20,18 +20,53 @@
   </description>
 
 
+  <scm>
+    <connection>scm:git:git://github.com/torquebox/torquebox.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/torquebox/torquebox.git</developerConnection>
+    <url>http://github.com/torquebox/torquebox</url>
+  </scm>
+
   <build>
     <plugins>
-     <plugin>
-       <artifactId>maven-deploy-plugin</artifactId>
-       <configuration>
-         <skip>true</skip>
-       </configuration>
-       </plugin>
+      <plugin>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <autoVersionSubmodules>true</autoVersionSubmodules>
+          <localCheckout>true</localCheckout>
+          <preparationGoals>install</preparationGoals>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
   <profiles>
+    <profile>
+      <id>bees</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
+      </properties>
+    </profile>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <jboss.releases.repo.url>file:///${user.dir}/target/m2repo/releases</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>file:///${user.dir}/target/m2repo/snapshots</jboss.snapshots.repo.url>
+      </properties>
+    </profile>
     <profile>
       <id>integ</id>
       <activation>

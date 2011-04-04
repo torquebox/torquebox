@@ -23,8 +23,8 @@
 
   <scm>
     <connection>scm:git:git://github.com/torquebox/torquebox.git</connection>
-    <developerConnection>scm:git:ssh://github.com/torquebox/torquebox.git</developerConnection>
-    <url>http://github.com/torquebox/torquebox/tree/master</url>
+    <developerConnection>scm:git:ssh://git@github.com/torquebox/torquebox.git</developerConnection>
+    <url>http://github.com/torquebox/torquebox</url>
   </scm>
 
   <profiles>
@@ -39,13 +39,13 @@
       </properties>
     </profile>
     <profile>
-      <id>localrepo</id>
+      <id>local</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <jboss.releases.repo.url>file:///${user.dir}/target/m2repo</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>file:///${user.dir}/target/m2repo</jboss.snapshots.repo.url>
+        <jboss.releases.repo.url>file:///${user.dir}/target/m2repo/releases</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>file:///${user.dir}/target/m2repo/snapshots</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
@@ -376,14 +376,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <commitByProject>true</commitByProject>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
