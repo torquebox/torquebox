@@ -19,15 +19,6 @@
     The TorqueBox Ruby Application Platform
   </description>
 
-  <modules>
-    <module>parent</module>
-    <module>build-support</module>
-    <module>components</module>
-    <module>containers</module>
-    <module>clients</module>
-    <module>assemblage</module>
-    <module>system</module>
-  </modules>
 
   <build>
     <plugins>
@@ -42,6 +33,15 @@
 
   <profiles>
     <profile>
+      <id>integ</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
+    </profile>
+    <profile>
       <id>dist</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -51,15 +51,16 @@
         <module>docs</module>
       </modules>
     </profile>
-    <profile>
-      <id>integ</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <modules>
-        <module>integration-tests</module>
-      </modules>
-    </profile>
   </profiles>
+
+  <modules>
+    <module>parent</module>
+    <module>build-support</module>
+    <module>components</module>
+    <module>containers</module>
+    <module>clients</module>
+    <module>assemblage</module>
+    <module>system</module>
+  </modules>
 
 </project>
