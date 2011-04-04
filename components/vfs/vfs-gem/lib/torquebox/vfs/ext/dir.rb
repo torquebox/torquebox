@@ -36,7 +36,7 @@ class Dir
         return open_before_vfs(str,&block)
       end
       #puts "open(#{str})"
-      result = dir = VFS::Dir.new( str )
+      result = dir = TorqueBox::VFS::Dir.new( str )
       #puts "  result = #{result}"
       unless result.exists?
         return open_before_vfs(str,&block)
@@ -86,7 +86,7 @@ class Dir
 
       #puts "base= #{base}"
 
-      vfs_url, child_path = VFS.resolve_within_archive( base )
+      vfs_url, child_path = TorqueBox::VFS.resolve_within_archive( base )
       #puts "vfs_url=#{vfs_url}"
       #puts "child_path=#{child_path}"
 
@@ -113,7 +113,7 @@ class Dir
         child_path = "" if child_path == "/"
         #puts "child_path=#{child_path}"
         #puts "base=#{base}"
-        filter = VFS::GlobFilter.new( child_path, matcher )
+        filter = TorqueBox::VFS::GlobFilter.new( child_path, matcher )
         #puts "filter is #{filter}"
         paths = starting_point.getChildrenRecursively( filter ).collect{|e|
           #path_name = e.path_name
@@ -146,10 +146,10 @@ class Dir
     def mkdir(path, mode=0777)
       mkdir_before_vfs( File.name_without_vfs(path), mode )
     rescue Errno::ENOTDIR => e
-      path = VFS.writable_path_or_error( File.path_to_str(path), e )
+      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
       mkdir_before_vfs( path, mode )
     rescue Errno::ENOENT => e
-      path = VFS.writable_path_or_error( File.path_to_str(path), e )
+      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
       mkdir_before_vfs( path, mode )
     end
 
@@ -160,7 +160,7 @@ class Dir
       if ( ::File.exist_without_vfs?( string ) )
         return new_before_vfs( string )
       end
-      VFS::Dir.new( string )
+      TorqueBox::VFS::Dir.new( string )
     end
 
     # 1.9 has an optional, undocumented options arg that appears to be

@@ -2,7 +2,7 @@ require 'java'
 
 $: << File.dirname(__FILE__) + '/../lib' 
 
-require 'vfs'
+require 'torquebox/vfs'
 
 TEST_DATA_BASE = 'target/test-data'
 TEST_COPY_BASE = File.join( File.dirname( TEST_DATA_BASE ), 'test-copy' )
@@ -72,9 +72,9 @@ module PathHelper
           when :vfs
             path = vfs_path( test_data_base_path( :absolute ) )
         end
-	if ( path =~ /^[a-z]:/ )
-	  path = path[0,1].upcase + path[1..-1]
-	end
+  if ( path =~ /^[a-z]:/ )
+    path = path[0,1].upcase + path[1..-1]
+  end
         path
       end
 
@@ -92,9 +92,9 @@ module PathHelper
           when :vfs
             path = vfs_path( test_copy_base_path( :absolute ) )
         end
-	if ( path =~ /^[a-z]:/ )
-	  path = path[0,1].upcase + path[1..-1]
-	end
+  if ( path =~ /^[a-z]:/ )
+    path = path[0,1].upcase + path[1..-1]
+  end
         path
       end
 

@@ -15,7 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'vfs/ext/virtual_file'
+require 'torquebox/vfs/ext/virtual_file'
 
 class IO
 
@@ -108,7 +108,7 @@ class IO
         raise Error.new( "Random-access on VFS not supported" )
       end
 
-      file_io = VFS::Ext::VirtualFile.new( ruby_io, fd )
+      file_io = TorqueBox::VFS::Ext::VirtualFile.new( ruby_io, fd )
 
       if ( block )
         begin

@@ -1,184 +1,24 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+    http://maven.apache.org/maven-v4_0_0.xsd">
 
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
     <version>1.0.0.CR1-SNAPSHOT</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../../parent/</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>rubygems</groupId>
-  <artifactId>torquebox-vfs</artifactId>
-  <packaging>gem</packaging>
-  <name>TorqueBox VFS</name>
+
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-vfs-components</artifactId>
+  <packaging>pom</packaging>
+  <name>TorqueBox VFS Components</name>
   <description></description>
 
-  <dependencies>
+  <modules>
+    <module>vfs-gem</module>
+  </modules>
 
-    <dependency>
-      <groupId>org.jboss</groupId>
-      <artifactId>jboss-vfs</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logmanager</groupId>
-      <artifactId>jboss-logmanager</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.logmanager</groupId>
-      <artifactId>jboss-logmanager-log4j</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rspec</artifactId>
-      <type>gem</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
-      <type>gem</type>
-      <scope>test</scope>
-    </dependency>
 
-  </dependencies>
-
-  <profiles>
-    <profile>
-      <id>assemblage-present</id>
-      <activation>
-        <file>
-          <exists>./../../assemblage/assembly/target/stage/</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins> 
-          <plugin>
-            <groupId>de.saumya.mojo</groupId>
-            <artifactId>gem-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>install-gems</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>install</goal>
-                </goals>
-                <configuration>
-                  <gemPath>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemPath>
-                  <gemHome>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemHome>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>install-vfs-jars</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>copy-dependencies</goal>
-                </goals>
-                <configuration>
-                  <stripVersion>true</stripVersion>
-                  <outputDirectory>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/</outputDirectory>
-                  <overWriteReleases>false</overWriteReleases>
-                  <overWriteSnapshots>false</overWriteSnapshots>
-                  <overWriteIfNewer>true</overWriteIfNewer>
-                  <includeArtifactIds>jboss-vfs,jboss-logging,jboss-logmanager,jboss-logmanager-log4j,log4j</includeArtifactIds>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>rspec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>run-specs</id>
-            <phase>test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <configuration>
-              <gemHome>${project.build.directory}/rubygems</gemHome>
-              <gemPath>${project.build.directory}/rubygems</gemPath>
-              <fork>true</fork>
-              <systemProperties>
-                <property>
-                  <name>log4j.configuration</name>
-                  <value>test-log4j.xml</value>
-                </property>
-              </systemProperties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>jruby-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>prepare-test-data</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>jruby</goal>
-            </goals>
-            <configuration>
-              <gemHome>${project.build.directory}/rubygems</gemHome>
-              <gemPath>${project.build.directory}/rubygems</gemPath>
-              <fork>true</fork>
-              <args>-S rake test:data:prepare</args>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>install-common-jar</id>
-            <phase>none</phase>
-          </execution>
-          <execution>
-            <id>install-vfs-jars-for-rubyspec</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <stripVersion>true</stripVersion>
-              <outputDirectory>${project.basedir}/target/dependencies/</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <includeArtifactIds>jboss-vfs,jboss-logging,jboss-logmanager,jboss-logmanager-log4j,log4j</includeArtifactIds>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-    
 </project>

@@ -15,56 +15,32 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'delegate'
+require 'torquebox/vfs/glob_translator'
 
-module VFS
-  module Ext
-    class VirtualFile < SimpleDelegator
 
-      def initialize(io, path=nil)
-        super(io)
-        @path = path
+module TorqueBox
+  module VFS
+    class GlobFilter
+      include Java::org.jboss.vfs.VirtualFileFilter
+      
+      def initialize(child_path, glob)
+        regexp_str = GlobTranslator.translate( glob )
+        if ( child_path && child_path != '' )
+          if ( child_path[-1,1] == '/' )
+            regexp_str = "^#{child_path}#{regexp_str}$"
+          else
+            regexp_str = "^#{child_path}/#{regexp_str}$"
+          end
+        else
+          regexp_str = "^#{regexp_str}$"
+        end
+        @regexp = Regexp.new( regexp_str ) 
       end
-
-      def atime()
-        ::File.atime( path )
+      
+      def accepts(file)
+        !!( file.path_name =~ @regexp )
       end
-
-      def chmod(mode_int)
-        ::File.chmod( mode_int, path )
-      end
-
-      def chown(owner_int, group_int)
-        ::File.chown( owner_int, group_int, path )
-      end
-
-      def ctime()
-        ::File.ctime( path )
-      end
-
-      def flock(locking_constant)
-        # not supported
-      end
-
-      def lstat()
-        ::File.stat( path )
-      end
-
-      def mtime()
-        ::File.mtime( path )
-      end
-
-      def o_chmod(mode_int)
-        self.chmod(mode_int)
-      end
-
-      def path()
-        @path
-      end
-
-      def truncate(max_len)
-      end
-
     end
   end
 end
+
