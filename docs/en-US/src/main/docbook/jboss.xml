@@ -151,11 +151,16 @@
       which may be found example configs for categorized log message
       routing, complex file rotation, syslog integration, SMTP
       notifications, SNMP traps, JMS, JMX and more!  It is
-      <emphasis>WAY</emphasis> beyond of the scope of this document to
+      <emphasis>WAY</emphasis> beyond the scope of this document to
       explain those rules, but by default you will see INFO messages
-      on the console (the shell where you start JBoss) and DEBUG
-      messages in <filename>log/server.log</filename>.  Any messages
-      written to <constant>stdout</constant> or
+      on the console (the shell where you start JBoss) and
+      persistently written to <filename>log/server.log</filename>.
+      You can control the log level easily using the following system
+      property:
+
+      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -Djboss.server.log.threshold=DEBUG</command> </screen>
+
+      Any messages written to <constant>stdout</constant> or
       <constant>stderr</constant> will also be displayed on the
       console and written to <filename>log/server.log</filename>.
     </para>
