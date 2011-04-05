@@ -73,4 +73,14 @@
   </bean>
 
   <bean name="RubyApplicationDeployer"           class="org.torquebox.base.deployers.RubyApplicationDeployer"/>
+
+  <bean name="ServicesLoadPathConfigurator" class="org.torquebox.interp.deployers.LoadPathDeployer">
+    <property name="loadPaths">
+      <list elementClass="java.lang.String">
+        <value>app/services</value>
+        <value>services</value>
+      </list>
+    </property>
+  </bean>
+
 </deployment>
