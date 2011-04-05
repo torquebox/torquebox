@@ -91,7 +91,7 @@ public class RackApplicationMetaData {
     }
 
     public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
+        if (contextPath != null) this.contextPath = contextPath;
     }
 
     public String getContextPath() {
