@@ -434,32 +434,6 @@
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
-
-          <execution>
-            <id>install-jruby-vfs</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <stripVersion>true</stripVersion>
-              <outputDirectory>${stage.dir}/jruby/lib</outputDirectory>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.jboss</groupId>
-                  <artifactId>jboss-vfs</artifactId>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>org.jboss.logging</groupId>
-                  <artifactId>jboss-logging</artifactId>
-                </artifactItem>
-                <artifactItem>
-                  <groupId>log4j</groupId>
-                  <artifactId>log4j</artifactId>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>
