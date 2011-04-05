@@ -146,7 +146,8 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     protected void drainInstance() throws Exception {
-        this.pool.drainInstance();
+        T instance = this.pool.drainInstance();
+        this.factory.dispose( instance );
     }
 
     public void start() {
@@ -159,6 +160,12 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     public void stop() {
+        
+        int poolSize = pool.size();
+        
+        for ( int i = 0 ; i < poolSize ; ++i ) {
+            this.executor.execute( this.drainTask );
+        }
 
     }
 
@@ -166,7 +173,12 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         while (this.pool.size() < this.minInstances) {
             Thread.sleep( 50 );
         }
-
+    }
+    
+    public void waitForEmpty() throws InterruptedException {
+        while (this.pool.size() > 0 ) {
+            Thread.sleep( 50 );
+        }
     }
 
 }

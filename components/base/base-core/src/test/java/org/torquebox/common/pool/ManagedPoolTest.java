@@ -50,6 +50,9 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         assertEquals( 5, pool.size() );
         assertEquals( 5, pool.availableSize() );
         assertEquals( 0, pool.borrowedSize() );
+        
+        pool.stop();
+        assertEquals( 0, pool.size() );
     }
 
     @Test
@@ -85,6 +88,9 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         assertEquals( 8, pool.size() );
         assertEquals( 0, pool.borrowedSize() );
         assertEquals( 8, pool.availableSize() );
+        
+        pool.stop();
+        assertEquals( 0, pool.size() );
     }
 
     @Test
@@ -128,6 +134,9 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         assertEquals( 10, pool.size() );
         assertEquals( 0, pool.borrowedSize() );
         assertEquals( 10, pool.availableSize() );
+        
+        pool.stop();
+        assertEquals( 0, pool.size() );
     }
 
     @Test

@@ -61,6 +61,11 @@ public class ManagedPool<T> implements Pool<T> {
         this.poolManager.start();
         this.poolManager.waitForMinimumFill();
     }
+    
+    public void stop() throws InterruptedException {
+        this.poolManager.stop();
+        this.poolManager.waitForEmpty();
+    }
 
     @Override
     public T borrowInstance() throws Exception {
