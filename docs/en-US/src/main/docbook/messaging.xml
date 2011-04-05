@@ -796,6 +796,19 @@ messaging:
                 </row>
 
                 <row>
+                  <entry><parameter>durable</parameter></entry>
+
+                  <entry>false</entry>
+
+                  <entry>Turns the processor into a durable subscriber. 
+                  Once a processor durably subscribes to a topic, if
+                  it disconnects any messages sent will be saved and
+                  delivered once the processor reconnects. This setting 
+                  only affects processors attached to topics,
+                  and is ignored for queue processors.</entry>
+                </row>
+
+                <row>
                   <entry><parameter>config</parameter></entry>
 
                   <entry></entry>
@@ -824,7 +837,10 @@ messaging:
       config:
         type: "premium"
         season: "fall"
-      concurrency: 2</programlisting></para>
+      concurrency: 2
+  /topics/bar:
+    MyBarHandler:
+      durable: true</programlisting></para>
 
             <para>Because the structure of the file is <ulink
             url="http://www.yaml.org">YAML</ulink>, proper indentation
