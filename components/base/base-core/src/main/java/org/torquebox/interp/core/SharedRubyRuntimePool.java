@@ -41,7 +41,7 @@ import org.torquebox.interp.spi.RubyRuntimePool;
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
  */
-public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool {
+public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool, BasicRubyRuntimePoolMBean {
 
     /**
      * Construct with a factory.
@@ -91,6 +91,20 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
      */
     public Ruby getRuntime() {
         return getInstance();
+    }
+    
+    @Override
+    public Object evaluate(String code) throws Exception {
+        Ruby ruby = null;
+        
+        try {
+            ruby = borrowRuntime();
+            return ruby.evalScriptlet( code );
+        } finally {
+            if ( ruby != null ) {
+                returnRuntime( ruby );
+            }
+        }
     }
 
 }

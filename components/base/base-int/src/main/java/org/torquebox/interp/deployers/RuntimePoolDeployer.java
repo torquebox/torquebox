@@ -26,12 +26,17 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jruby.Ruby;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.interp.core.BasicRubyRuntimePoolMBean;
 import org.torquebox.interp.core.DefaultRubyRuntimePool;
+import org.torquebox.interp.core.DefaultRubyRuntimePoolMBean;
 import org.torquebox.interp.core.SharedRubyRuntimePool;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.mc.jmx.JMXNameBuilder;
+import org.torquebox.mc.jmx.JMXUtils;
 import org.torquebox.mc.vdf.AbstractMultipleMetaDataDeployer;
 
 /**
@@ -47,17 +52,20 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
 
     public RuntimePoolDeployer() {
         super( PoolMetaData.class );
+        addRequiredInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
     }
 
     protected void deploy(DeploymentUnit unit, PoolMetaData poolMetaData) throws DeploymentException {
         String beanName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, poolMetaData.getName() );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         BeanMetaData poolBean = null;
+        BeanMetaDataBuilder builder = null;
 
         if (poolMetaData.isGlobal()) {
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, SharedRubyRuntimePool.class.getName() );
+            builder = BeanMetaDataBuilder.createBuilder( beanName, SharedRubyRuntimePool.class.getName() );
             builder.addPropertyMetaData( "name", poolMetaData.getName() );
 
             String instanceName = poolMetaData.getInstanceName();
@@ -72,9 +80,17 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
                 ValueMetaData runtimeInjection = builder.createInject( instanceName );
                 builder.addConstructorParameter( Ruby.class.getName(), runtimeInjection );
             }
-            poolBean = builder.getBeanMetaData();
+
+            JMXNameBuilder jmxName = JMXUtils.jmxName( "torquebox.pools", rubyAppMetaData.getApplicationName() );
+            jmxName.with( "name", poolMetaData.getName() );
+            jmxName.with( "type", "shared" );
+            
+            String mbeanName = jmxName.name();
+            String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + BasicRubyRuntimePoolMBean.class.getName() + ".class)";
+            builder.addAnnotation( jmxAnno );
+
         } else if (poolMetaData.isShared()) {
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, SharedRubyRuntimePool.class.getName() );
+            builder = BeanMetaDataBuilder.createBuilder( beanName, SharedRubyRuntimePool.class.getName() );
             builder.addPropertyMetaData( "name", poolMetaData.getName() );
             String factoryName = poolMetaData.getInstanceFactoryName();
             if (factoryName == null) {
@@ -82,9 +98,16 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
             }
             ValueMetaData factoryInjection = builder.createInject( factoryName );
             builder.addConstructorParameter( RubyRuntimeFactory.class.getName(), factoryInjection );
-            poolBean = builder.getBeanMetaData();
+            
+            JMXNameBuilder jmxName = JMXUtils.jmxName( "torquebox.pools", rubyAppMetaData.getApplicationName() );
+            jmxName.with( "name", poolMetaData.getName() );
+            jmxName.with( "type", "shared" );
+            
+            String mbeanName = jmxName.name();
+            String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + BasicRubyRuntimePoolMBean.class.getName() + ".class)";
+            builder.addAnnotation( jmxAnno );
         } else {
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, DefaultRubyRuntimePool.class.getName() );
+            builder = BeanMetaDataBuilder.createBuilder( beanName, DefaultRubyRuntimePool.class.getName() );
             String factoryName = poolMetaData.getInstanceFactoryName();
             if (factoryName == null) {
                 factoryName = AttachmentUtils.beanName( unit, RubyRuntimeFactory.class );
@@ -94,9 +117,20 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
             builder.addPropertyMetaData( "name", poolMetaData.getName() );
             builder.addPropertyMetaData( "minimumInstances", poolMetaData.getMinimumSize() );
             builder.addPropertyMetaData( "maximumInstances", poolMetaData.getMaximumSize() );
-            poolBean = builder.getBeanMetaData();
+            
+            JMXNameBuilder jmxName = JMXUtils.jmxName( "torquebox.pools", rubyAppMetaData.getApplicationName() );
+            jmxName.with( "name", poolMetaData.getName() );
+            jmxName.with( "type", "default" );
+            
+            String mbeanName = jmxName.name();
+            String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + DefaultRubyRuntimePoolMBean.class.getName() + ".class)";
+            builder.addAnnotation( jmxAnno );
         }
+        
+        System.err.println( "attaching: " + builder.getBeanMetaData() );
 
+        poolBean = builder.getBeanMetaData();
         AttachmentUtils.attach( unit, poolBean );
     }
+
 }

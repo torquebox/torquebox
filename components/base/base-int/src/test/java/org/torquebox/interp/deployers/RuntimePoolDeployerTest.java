@@ -30,6 +30,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.core.DefaultRubyRuntimePool;
 import org.torquebox.interp.core.SharedRubyRuntimePool;
 import org.torquebox.interp.metadata.PoolMetaData;
@@ -65,6 +66,10 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
 
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( PoolMetaData.class, poolMetaData );
+        
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "test-app" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
 
         String beanName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, "pool_one" );
 
@@ -101,6 +106,10 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( PoolMetaData.class, poolMetaData );
 
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "test-app" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+        
         String beanName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, "pool_one" );
 
         processDeployments( true );
@@ -131,6 +140,10 @@ public class RuntimePoolDeployerTest extends AbstractDeployerTestCase {
         DeploymentUnit unit = getDeploymentUnit( deploymentName );
         unit.addAttachment( PoolMetaData.class, poolMetaData );
 
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setApplicationName( "test-app" );
+        unit.addAttachment( RubyApplicationMetaData.class, rubyAppMetaData );
+        
         String beanName = AttachmentUtils.beanName( unit, RubyRuntimePool.class, "pool_one" );
 
         processDeployments( true );

@@ -76,6 +76,18 @@ public class ManagedPool<T> implements Pool<T> {
     public void releaseInstance(T instance) {
         this.pool.releaseInstance( instance );
     }
+    
+    public int getSize() {
+        return size();
+    }
+    
+    public int getBorrowed() {
+        return borrowedSize();
+    }
+    
+    public int getAvailable() {
+        return availableSize();
+    }
 
     int size() {
         return this.pool.size();

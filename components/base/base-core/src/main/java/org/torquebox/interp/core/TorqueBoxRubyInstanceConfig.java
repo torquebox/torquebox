@@ -34,5 +34,10 @@ public class TorqueBoxRubyInstanceConfig extends RubyInstanceConfig {
     public void setJRubyHome(String jrubyHome) {
         this.jrubyHome = jrubyHome;
     }
+    
+    @Override
+    public boolean isManagementEnabled() {
+        return true;
+    }
 
 }

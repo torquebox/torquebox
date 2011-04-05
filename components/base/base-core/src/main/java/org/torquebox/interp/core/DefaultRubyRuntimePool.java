@@ -35,7 +35,7 @@ import org.torquebox.interp.spi.RubyRuntimePool;
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
  */
-public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRuntimePool {
+public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRuntimePool, DefaultRubyRuntimePoolMBean {
 
     private String name;
 
@@ -74,6 +74,20 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
 
     public String getName() {
         return this.name;
+    }
+
+    @Override
+    public Object evaluate(String code) throws Exception {
+        Ruby ruby = null;
+        
+        try {
+            ruby = borrowRuntime();
+            return ruby.evalScriptlet( code );
+        } finally {
+            if ( ruby != null ) {
+                returnRuntime( ruby );
+            }
+        }
     }
 
 }
