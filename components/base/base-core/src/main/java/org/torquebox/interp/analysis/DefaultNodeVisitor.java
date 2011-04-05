@@ -48,8 +48,10 @@ public class DefaultNodeVisitor implements NodeVisitor {
                         results.add( childResult );
                     }
                 } catch(UnsupportedOperationException ex) {
-                    //ignore
-                    log.warn( "JRuby doesn't support visiting node " + child + ", skipping." );
+                    log.warn( "JRuby doesn't support visiting node " + child + " - skipping it, but looking at its children." );
+                    for (Node grandChild : child.childNodes()) {
+                        defaultVisitNode( grandChild );
+                    }
                 }
             }
         }

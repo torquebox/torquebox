@@ -88,7 +88,22 @@ public class InjectionAnalyzerTest {
         
         List<Injectable> injectables = analyzer.analyze( "testfile.rb", script.toString(), Version.V1_9 );
         
-        assertEquals( 3, injectables.size() );
+        assertEquals( 4, injectables.size() );
+    }
+
+    @Test
+    public void testInjectionInsideJRubyNonVisitableNodeIn19Mode() throws Exception {
+        String script = readScript( "injection_19.rb" );
+        
+        List<Injectable> injectables = analyzer.analyze( "testfile.rb", script.toString(), Version.V1_9 );
+        
+        assertEquals( 4, injectables.size() );
+
+        assertTrue( injectables.get( 0 ) instanceof JNDIInjectable );
+        assertEquals( "jndi", injectables.get( 0 ).getType() );
+        assertEquals( "java:/some/hidden/thing", injectables.get( 0 ).getName() );
+        assertEquals( "java:/some/hidden/thing", injectables.get( 0 ).getKey() );
+
     }
     
     @Test(expected=RaiseException.class)

@@ -10,11 +10,16 @@ module TheModule
 
     hash19 = { a: 'b' }
 
-    ->(a, b=nil, *c, d) { }
+    ->(a, b=:stabbylambda, *c, d) {
+      inject_jndi('java:/some/hidden/thing')
+    }
 
-    lambda { |a, b=nil, *c, d| }
+    lambda { |a, b=:lambda, *c, d|
+      x = a
+    }
     
-    def boo(a, b=nil, *c, d)
+    def boo(a, b=:def, *c, d)
+      y = a
     end
    
     def initialize()
