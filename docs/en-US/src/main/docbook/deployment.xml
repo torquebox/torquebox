@@ -34,7 +34,7 @@
     <filename>Rakefile</filename> using a <methodname>single</methodname>
     require statement.</para>
 
-    <para><screen>require 'torquebox/tasks'</screen></para>
+    <para><screen>require 'torquebox-rake-support'</screen></para>
 
     <para>Once these variables are set, you may perform a default deployment
     using the <command>torquebox:deploy</command> task to deploy either
