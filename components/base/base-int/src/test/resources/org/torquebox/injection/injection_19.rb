@@ -9,7 +9,14 @@ module TheModule
     include ::SomethingElse
 
     hash19 = { a: 'b' }
+
+    ->(a, b=nil, *c, d) { }
+
+    lambda { |a, b=nil, *c, d| }
     
+    def boo(a, b=nil, *c, d)
+    end
+   
     def initialize()
       @random = inject_mc('jboss.whatever.Thing')
     end

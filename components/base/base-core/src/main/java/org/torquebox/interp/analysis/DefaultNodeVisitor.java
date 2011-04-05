@@ -42,9 +42,14 @@ public class DefaultNodeVisitor implements NodeVisitor {
 
         for (Node child : node.childNodes()) {
             if ( ! ( child.getNodeType() == NodeType.ARGUMENTNODE) && ! ( child.getNodeType() == NodeType.LISTNODE ) ) {
-                Object childResult = child.accept( this );
-                if (childResult != null) {
-                    results.add( childResult );
+                try {
+                    Object childResult = child.accept( this );
+                    if (childResult != null) {
+                        results.add( childResult );
+                    }
+                } catch(UnsupportedOperationException ex) {
+                    //ignore
+                    log.warn( "JRuby doesn't support visiting node " + child + ", skipping." );
                 }
             }
         }
