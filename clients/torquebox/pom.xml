@@ -41,6 +41,12 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>torquebox-web</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
