@@ -95,6 +95,7 @@ Capistrano::Configuration.instance.load do
         run "test -d #{jboss_home}",                               :roles=>[ :app ]
         run "test -d #{jboss_home}/server/#{jboss_config}",        :roles=>[ :app ]
         run "test -w #{jboss_home}/server/#{jboss_config}/deploy", :roles=>[ :app ]
+        run "test -w #{torquebox_home}/apps", :roles=>[ :app ]
         unless ( [ :initd, :binscripts ].include?( jboss_control_style.to_sym ) )
           fail "invalid jboss_control_style: #{jboss_control_style}"
         end

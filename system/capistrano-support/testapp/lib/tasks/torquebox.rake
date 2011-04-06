@@ -1,4 +1,4 @@
-require 'torquebox/tasks'
+require 'torquebox/rake/tasks'
 
 # Patch db:load_config to make sure activerecord-jdbc-adapter gets loaded
 namespace :db do
