@@ -103,7 +103,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
     	if (null == controller) {
     		log.warn("No kernel controller available");
     	} else {
-    		return controller.getContext("HAPartitionDependencyCreator", ControllerState.INSTANTIATED, false) != null;
+    		return controller.getContext("WebAppClusteringDependencyDeployer", ControllerState.INSTANTIATED, false) != null;
     	}
     	return false;
     }
