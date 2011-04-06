@@ -670,6 +670,14 @@ message = queue.publish_and_receive "ping", :timeout => 5000
   end
 end</programlisting></para>
         </example></para>
+        <para>
+          If <function>process!</function> raises an exception, the
+          message broker considers the message undelivered and will
+          retry delivery up to some configurable limit (default is
+          10).  If all of those attempts fail, the broker stores the
+          message in a Dead Letter Queue (DLQ) that may be
+          interrogated later.
+        </para>
       </section>
 
       <section>
@@ -688,6 +696,10 @@ end</programlisting></para>
     # The body will be of whatever type was <link linkend="producers">published by the Producer</link>
     # the entire JMS message is available as a member variable called <function>message()</function>
   end
+  def on_error(exception)
+    # You may optionally override this to interrogate the exception. If you do, 
+    # you're responsible for re-raising it to force a retry.
+  end
 end</programlisting></para>
 
           <para>There is an accessor for the actual JMS message that
@@ -695,6 +707,16 @@ end</programlisting></para>
           <function>on_message</function>, so it's there if you need
           it.</para>
         </example></para>
+        
+        <para>
+          Just like with <function>process!</function>, if
+          <function>on_message</function> raises an exception, the
+          message broker considers the message undelivered.  You may
+          trap the error by overriding <function>on_error</function>,
+          at which point you decide whether to re-raise the exception
+          to force a retry.  That is the default behavior if you do
+          not override the method.
+        </para>
       </section>
 
       <section>

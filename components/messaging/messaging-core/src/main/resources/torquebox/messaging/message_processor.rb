@@ -15,15 +15,14 @@ module TorqueBox
       end
 
       def on_error(error)
-        puts error.message
-        puts error.backtrace        
+        raise error
       end
 
       def process!(message)
         @message = message
         begin
           on_message( message.decode )
-        rescue => e
+        rescue Exception => e
           on_error( e ) 
         end 
       end

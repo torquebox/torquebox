@@ -219,6 +219,7 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
                     session.commit();
                 }
             } catch (Exception e) {
+                log.error( "Unexpected error in "+getName(), e );
                 try {
                     if (session.getTransacted()) {
                         session.rollback();
