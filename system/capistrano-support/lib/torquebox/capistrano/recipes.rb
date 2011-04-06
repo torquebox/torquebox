@@ -113,7 +113,7 @@ Capistrano::Configuration.instance.load do
     
         dd_str = YAML.dump_stream( dd )
 
-        dd_file = "#{jboss_home}/server/#{jboss_config}/deploy/#{application}-knob.yml"
+        dd_file = "#{torquebox_home}/apps/#{application}-knob.yml"
         dd_tmp_file = "#{dd_file}.tmp"
         
         cmd =  "cat /dev/null > #{dd_tmp_file}"
