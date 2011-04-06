@@ -66,6 +66,9 @@
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
+        <configuration>
+          <includeDependencies>true</includeDependencies>
+        </configuration>
         <executions>
           <execution>
             <id>default-package</id>
