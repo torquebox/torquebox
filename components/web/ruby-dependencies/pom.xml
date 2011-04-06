@@ -65,6 +65,18 @@
                   <gemPath>./../target/rubygems</gemPath>
                 </configuration>
               </execution>
+              <execution>
+                <id>install-ar-jdbc-etc</id>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <args>-S gem install activerecord-jdbc-adapter jdbc-sqlite3 --no-rdoc --no-ri</args>
+                  <gemHome>./../target/rubygems</gemHome>
+                  <gemPath>./../target/rubygems</gemPath>
+                </configuration>
+              </execution>
             </executions>
           </plugin>
         </plugins>

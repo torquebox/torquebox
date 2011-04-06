@@ -39,7 +39,7 @@ import org.torquebox.rails.metadata.RailsApplicationMetaData;
 public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
     private List<String> autoloadPaths = new ArrayList<String>();
-    
+
     @SuppressWarnings("unused")
     private RailsApplicationMetaData railsAppMetaData;
 
@@ -76,7 +76,11 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
     }
 
     protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
-        return "RAILS_ROOT=RACK_ROOT\n" + "RAILS_ENV=RACK_ENV\n" + "require %q(org/torquebox/rails/core/boot)\n";
+        StringBuffer bootScript = new StringBuffer();
+        bootScript.append( "ENV['RAILS_ROOT']=RACK_ROOT\n" );
+        bootScript.append( "ENV['RAILS_ENV']=RACK_ENV\n" );
+        bootScript.append( "require %q(org/torquebox/rails/core/boot)\n" );
+        return bootScript.toString();
     }
 
     protected void makeAutoloadPathsAvailable(Ruby ruby) {

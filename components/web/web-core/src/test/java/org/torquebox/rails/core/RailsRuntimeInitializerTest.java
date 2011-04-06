@@ -146,6 +146,17 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         String load_paths = "" + ruby.evalScriptlet( "ActiveSupport::Dependencies.load_paths.join(',')" );
         assertTrue( load_paths.endsWith( ",path1,path2" ) );
     }
+    
+    @Test
+    public void testRails3() throws Exception {
+        String railsRootStr = System.getProperty( "user.dir" ) + "/src/test/rails/ballast3";
+        VirtualFile railsRoot = VFS.getChild( railsRootStr );
+        RailsRuntimeInitializer initializer = create( railsRoot, "development" );
+
+        initializer.initialize( ruby ); 
+        
+        assertEquals( "vfs:" + railsRootStr, ruby.evalScriptlet( "Rails.root" ).toString() );
+    }
 
     private RailsRuntimeInitializer create(VirtualFile root, String env) {
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();

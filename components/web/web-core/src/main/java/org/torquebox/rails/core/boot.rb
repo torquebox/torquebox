@@ -29,7 +29,8 @@ class Class
       if ( (self.to_s == 'Rails::Configuration') && ( method_name == :set_root_path! ) )
         self.class_eval do
           def set_root_path!
-            @root_path = RAILS_ROOT
+            @root_path = ENV['RAILS_ROOT']
+            ::RAILS_ROOT.replace @root_path
           end 
         end
       end
@@ -86,7 +87,7 @@ end
 
   
 begin
-  load RAILS_ROOT + '/config/environment.rb'
+  load ENV['RAILS_ROOT'] + '/config/environment.rb'
 rescue => e
   puts e.message
   puts e.backtrace
