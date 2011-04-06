@@ -83,7 +83,7 @@ public class RubyServiceProxyTest extends AbstractTorqueBoxTestCase {
         }
         factory.setUseJRubyHomeEnvVar( false );
 
-        Ruby ruby = factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
 
         ruby.evalScriptlet( "require %q(rubygems)" );
         return ruby;

@@ -96,12 +96,12 @@ public class SharedPoolTest {
             this.instance = instance;
         }
 
-        public String create() throws Exception {
+        public String createInstance(String contextInfo) throws Exception {
             return this.instance;
         }
 
         @Override
-        public void dispose(String instance) {
+        public void destroyInstance(String instance) {
             // no-op
         }
 

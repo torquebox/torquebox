@@ -26,12 +26,12 @@ public class StringInstanceFactory implements InstanceFactory<String> {
     private int counter = 0;
 
     @Override
-    public String create() throws Exception {
+    public String createInstance(String contextInfo) throws Exception {
         return "Instance-" + (++counter);
     }
 
     @Override
-    public void dispose(String instance) {
+    public void destroyInstance(String instance) {
         // no-op
     }
 

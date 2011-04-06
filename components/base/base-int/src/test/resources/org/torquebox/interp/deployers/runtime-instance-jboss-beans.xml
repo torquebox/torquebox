@@ -2,8 +2,9 @@
 
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 	<bean name="runtime_instance" class="org.jruby.Ruby">
-	    <constructor factoryMethod="create">
+	    <constructor factoryMethod="createInstance">
 	    	<factory bean="instance_factory"/>
+	    	<parameter>runtime-instance</parameter>
 	    </constructor>
     </bean>
 </deployment>

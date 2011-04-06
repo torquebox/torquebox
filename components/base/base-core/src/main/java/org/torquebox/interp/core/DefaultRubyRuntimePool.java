@@ -37,8 +37,6 @@ import org.torquebox.interp.spi.RubyRuntimePool;
  */
 public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRuntimePool, DefaultRubyRuntimePoolMBean {
 
-    private String name;
-
     /**
      * Construct with a factory.
      * 
@@ -66,14 +64,6 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
      */
     public RubyRuntimeFactory getRubyRuntimeFactory() {
         return (RubyRuntimeFactory) getInstanceFactory();
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
     }
 
     @Override

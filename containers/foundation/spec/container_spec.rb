@@ -36,7 +36,7 @@ describe TorqueBox::Container::Foundation do
     it "should expose a ruby runtime factory as an MCBean" do
       factory = @container['RubyRuntimeFactory']
       factory.should_not be_nil
-      ruby = factory.create
+      ruby = factory.createInstance( __FILE__ )
       ruby.should be( JRuby.runtime )
     end
     

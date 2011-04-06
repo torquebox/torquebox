@@ -42,12 +42,12 @@ public class SingletonRubyRuntimeFactory implements RubyRuntimeFactory {
     }
 
     @Override
-    public Ruby create() throws Exception {
+    public Ruby createInstance(String contextInfo) throws Exception {
         return getRuby();
     }
 
     @Override
-    public void dispose(Ruby instance) {
+    public void destroyInstance(Ruby instance) {
         // no-op, we didn't create the ruby.
     }
 

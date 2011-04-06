@@ -28,11 +28,20 @@ import org.torquebox.common.spi.PoolListener;
 
 public class SimplePool<T> implements ManageablePool<T> {
 
+    private String name;
     private final Set<T> instances = new HashSet<T>();
     private final Set<T> borrowedInstances = new HashSet<T>();
     private final Set<T> availableInstances = new HashSet<T>();
 
     private final PoolListeners<T> listeners = new PoolListeners<T>();
+    
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return this.name;
+    }
 
     public void addListener(PoolListener<T> listener) {
         this.listeners.getListeners().add( listener );

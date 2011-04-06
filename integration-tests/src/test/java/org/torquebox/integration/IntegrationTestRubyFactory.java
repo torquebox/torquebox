@@ -33,7 +33,7 @@ public class IntegrationTestRubyFactory {
             factory.setJRubyHome( System.getProperty( "jruby.home" ) );
         }
 
-        Ruby ruby = factory.create();
+        Ruby ruby = factory.createInstance( "integration-test" );
 
         ruby.evalScriptlet( "require %q(rubygems)" );
         return ruby;

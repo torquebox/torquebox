@@ -56,5 +56,7 @@ public interface Pool<T> {
      *            The instance to release.
      */
     void releaseInstance(T instance);
+    
+    String getName();
 
 }

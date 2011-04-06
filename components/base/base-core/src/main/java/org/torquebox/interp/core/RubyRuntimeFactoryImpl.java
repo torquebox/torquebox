@@ -30,8 +30,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.jboss.beans.metadata.api.annotations.Create;
-import org.jboss.beans.metadata.api.annotations.Destroy;
 import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
@@ -259,8 +257,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     /**
      * Create a new instance of a fully-initialized runtime.
      */
-    @Create(ignored = true)
-    public synchronized Ruby create() throws Exception {
+    public synchronized Ruby createInstance(String contextInfo) throws Exception {
 
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
@@ -346,8 +343,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         }
 
         config.setLoadPaths( loadPath );
-
-        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + ")" );
+        
+        long startTime = logRuntimeCreationStart( config, contextInfo );
 
         Ruby runtime = null;
         try {
@@ -368,11 +365,50 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             if (runtime != null) {
                 this.undisposed.add( runtime );
             }
+            
+            logRuntimeCreationComplete( config, contextInfo, startTime );
         }
+    }
+    
+    private long logRuntimeCreationStart(RubyInstanceConfig config, String contextInfo) {
+        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ")" );
+        return System.currentTimeMillis();
+    }
+    
+    private void logRuntimeCreationComplete(RubyInstanceConfig config, String contextInfo, long startTime) {
+        long elapsedMillis = System.currentTimeMillis() - startTime;
+        double elapsedSeconds = Math.floor( (elapsedMillis * 1.0) / 10.0 ) / 100;
+        log.info( "Created ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ") in " + elapsedSeconds + "s" );
+    }
+    
+    protected String getFullContext(String contextInfo) {
+        String fullContext = null;
+        
+        if ( this.applicationName != null ) {
+            fullContext = "app: " + this.applicationName;
+        }
+        
+        if ( contextInfo != null ) {
+            if ( fullContext != null ) {
+                fullContext += ", ";
+            } else {
+                fullContext = "";
+            }
+            
+            fullContext += "context: " + contextInfo;
+        }
+        
+        if ( fullContext == null ) {
+            fullContext = "";
+        } else {
+            fullContext = ", " + fullContext;
+        }
+        
+        return fullContext;
     }
 
     @Override
-    public synchronized void dispose(Ruby instance) {
+    public synchronized void destroyInstance(Ruby instance) {
         if (undisposed.remove( instance )) {
             instance.tearDown( false );
         }
@@ -500,15 +536,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         return this.loadPaths;
     }
     
-    @Create
-    public void createFactory() {
+    public void create() {
         this.classCache = new ClassCache<Script>( getClassLoader() );
     }
 
-    @Destroy
-    public synchronized void destroyFactory() {
+    public synchronized void destroy() {
         for (Ruby ruby : undisposed) {
-            dispose( ruby );
+            destroyInstance( ruby );
         }
     }
     

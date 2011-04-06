@@ -128,8 +128,6 @@ public class RuntimePoolDeployer extends AbstractMultipleMetaDataDeployer<PoolMe
             builder.addAnnotation( jmxAnno );
         }
         
-        System.err.println( "attaching: " + builder.getBeanMetaData() );
-
         poolBean = builder.getBeanMetaData();
         AttachmentUtils.attach( unit, poolBean );
     }

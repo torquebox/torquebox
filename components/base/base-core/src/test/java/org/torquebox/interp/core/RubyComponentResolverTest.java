@@ -41,12 +41,12 @@ public class RubyComponentResolverTest {
     @Before
     public void setUpRuby() throws Exception {
         this.factory = new RubyRuntimeFactoryImpl();
-        this.ruby = this.factory.create();
+        this.ruby = this.factory.createInstance( getClass().getSimpleName() );
     }
     
     @After
     public void tearDownRuby() throws Exception {
-        this.factory.dispose(  this.ruby  );
+        this.factory.destroyInstance(  this.ruby  );
         this.ruby = null;
     }
 

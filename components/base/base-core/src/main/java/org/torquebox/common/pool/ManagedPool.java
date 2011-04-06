@@ -39,7 +39,15 @@ public class ManagedPool<T> implements Pool<T> {
         this.poolManager = new PoolManager<T>( this.pool, factory, minInstances, maxInstances );
         this.pool.addListener( this.poolManager );
     }
-
+    
+    public void setName(String name) {
+        this.pool.setName( name );
+    }
+    
+    public String getName() {
+        return this.pool.getName();
+    }
+    
     public void setMinimumInstances(int minInstances) {
         this.poolManager.setMinimumInstances( minInstances );
     }

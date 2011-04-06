@@ -28,6 +28,6 @@ import org.jruby.Ruby;
  */
 public interface RubyRuntimePool {
     Ruby borrowRuntime() throws Exception;
-
     void returnRuntime(Ruby runtime);
+    String getName();
 }

@@ -144,13 +144,13 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     protected void fillInstance() throws Exception {
-        T instance = this.factory.create();
+        T instance = this.factory.createInstance( this.pool.getName() );
         this.pool.fillInstance( instance );
     }
 
     protected void drainInstance() throws Exception {
         T instance = this.pool.drainInstance();
-        this.factory.dispose( instance );
+        this.factory.destroyInstance( instance );
     }
 
     public void start() {

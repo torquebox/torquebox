@@ -19,7 +19,6 @@
 
 package org.torquebox.common.spi;
 
-import org.jboss.beans.metadata.api.annotations.Create;
 
 /**
  * Generic interface for simple factories.
@@ -38,9 +37,7 @@ public interface InstanceFactory<T> {
      * @throws Exception
      *             if an error occurred attempting to create the instance.
      */
-    @Create(ignored = true)
-    T create() throws Exception;
-
-    void dispose(T instance);
+    T createInstance(String contextInfo) throws Exception;
+    void destroyInstance(T instance);
 
 }

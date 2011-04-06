@@ -148,7 +148,7 @@ public class SharedPool<T> implements Pool<T> {
             throw new IllegalArgumentException( "Neither an instance nor an instance-factory provided." );
         }
 
-        this.instance = factory.create();
+        this.instance = factory.createInstance( getName() );
     }
 
     /**
@@ -156,7 +156,7 @@ public class SharedPool<T> implements Pool<T> {
      */
     public void destroy() {
         if (this.factory != null && this.instance != null) {
-            this.factory.dispose( this.instance );
+            this.factory.destroyInstance( this.instance );
         }
         this.instance = null;
         this.factory = null;

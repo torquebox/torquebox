@@ -35,7 +35,7 @@ public class TestRubyFactory {
         System.err.println( "gem.path is " + factory.getGemPath() );
         factory.setUseJRubyHomeEnvVar( false );
 
-        Ruby ruby = factory.create();
+        Ruby ruby = factory.createInstance( "test" );
 
         ruby.evalScriptlet( "require %q(rubygems)" );
         return ruby;

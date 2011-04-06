@@ -41,7 +41,7 @@ public class DeployerRuby {
 
     public synchronized Ruby getRuby() throws Exception {
         if (this.ruby == null) {
-            this.ruby = this.factory.create();
+            this.ruby = this.factory.createInstance( "deployer" );
         }
 
         return this.ruby;
