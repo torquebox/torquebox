@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="resource-injection">
+  <title>Resource Injection</title>
+
+  <section id="what-is-resource-injection">
+    <title>What is Resource Injection?</title>
+
+    <para>Resource injection is the term given a software architectural
+    strategy that moves the responsibility of finding and connecting
+    components to a container, allowing components to remain simple and
+    testable. Components declare what they need, and when instantiated by the
+    container, the container also satisfies those needs.</para>
+
+    <formalpara>
+      <title>What's a resource?</title>
+
+      <para>A resource may be any component within your application, ranging
+      from instances of Java classes, to messaging destinations.</para>
+    </formalpara>
+  </section>
+
+  <section id="basics-of-resource-injection">
+    <title>Basics of Resource Injection</title>
+
+    <para>TorqueBox supports injection within the context of jobs, services,
+    messaging-handlers and web applications. The two key components of using
+    the injection capabilities are as follow:</para>
+
+    <para><itemizedlist>
+        <listitem>
+          <para>Include <classname>TorqueBox::Injectors</classname> in any
+          source file that needs to perform injection. If injection occurs in
+          a super-class, the super class must include
+          <classname>TorqueBox::Injectors</classname>. If injection also
+          occurs in a sub-class, the sub-class must also include
+          <classname>TorqueBox::Injectors</classname>. By including this
+          module, you indicate to the injection analyzer that a given source
+          file should be considered. Inclusion of it does not inherit.</para>
+        </listitem>
+
+        <listitem>
+          <para>To inject a value, use the
+          <methodname>inject(...)</methodname> method (or a variant) with a
+          literal value. Variable interpolation is not supported within the
+          argument list of <methodname>inject(...)</methodname>. For
+          convenience, the result of the inject(...) call would be assigned to
+          an instance value, but this is not required.</para>
+        </listitem>
+      </itemizedlist></para>
+
+    <para>For instance:</para>
+
+    <para><screen>class MyService 
+
+  include TorqueBox::Injectors
+
+  def initialize()
+    @queue = inject( '/queues/new-accounts' ) 
+  end
+
+  def that_thing()
+    inject( com.foo.ThatThing )
+  end
+
+end</screen></para>
+  </section>
+
+  <section id="injectable-resources">
+    <title>Injectable Resources</title>
+
+    <para>A variety of resources may easily be injected with the
+    <methodname>inject(...)</methodname> method.</para>
+
+    <formalpara>
+      <title>CDI Resources</title>
+
+      <para>The Java Context and Depedency Injection (CDI) spec defines a
+      method for managing relationships between components. CDI-enabled
+      components may be injected by providing a fully-qualified Java class
+      name to the <methodname>inject(...)</methodname> method. Typically CDI
+      components should be packaged in a JAR archive, and placed in your
+      application's <filename>lib/</filename> or
+      <filename>vendor/jars/</filename> directory.</para>
+    </formalpara>
+
+    <para>TorqueBox uses the JBoss Weld implementation of CDI. Please see the
+    <ulink url="http://seamframework.org/Weld">Weld website</ulink> for more
+    information.</para>
+
+    <screen>class MyService
+
+  include TorqueBox::Injectors
+
+  def initialize()
+    @java_service = inject( com.mycorp.MyJavaService )
+  end
+
+end</screen>
+
+    <formalpara>
+      <title>Messaging Destinations</title>
+
+      <para>Message destinations, such as queues and topics, may be injected
+      into your components. If the argument to
+      <methodname>inject(...)</methodname> includes the string fragment
+      <literal>"/queue"</literal> or <literal>"/topic"</literal>, TorqueBox
+      will inject the relevant
+      <classname>TorqueBox::Messaging::Queue</classname> or
+      <classname>TorqueBox::Messaging::Topic</classname>.</para>
+    </formalpara>
+
+    <para>Using injection is the preferred method for obtaining a reference to
+    a destination, to ensure that your job, service or web application relying
+    upon the destination does not begin operation until the destination has
+    been completely provisioned.</para>
+
+    <para><screen>class MyController &lt; ApplicationController
+
+  include TorqueBox::Injectors
+
+  def create
+    notify_topic = inject( '/topics/new-accounts' )
+  end
+
+end</screen></para>
+
+    <formalpara>
+      <title>Naming &amp; Directory Entries</title>
+
+      <para>Arbitrary items within the application's naming environment may be
+      injected if the argument to <methodname>inject(...)</methodname> begins
+      with <literal>"java:comp/env"</literal>.</para>
+    </formalpara>
+
+    <para><screen>class MyController &lt; ApplicationController
+
+  include TorqueBox::Injectors
+
+  def create
+    jndi_item = inject( 'java:comp/env/that_thing' )
+  end
+
+end</screen></para>
+
+    <formalpara>
+      <title>JBoss Microcontainer Beans (MCBeans, MBeans)</title>
+
+      <para>JBoss Microcontainer is the container that drives the entire
+      TorqueBox AS. Many components are accessible as MCBeans or Java JMX
+      MBeans. These may be injected by passing an MBean style name to
+      <methodname>inject(...)</methodname>.</para>
+    </formalpara>
+
+    <para><screen>class MyController &lt; ApplicationController
+
+  include TorqueBox::Injectors
+
+  def create
+    the_actual_webserver = inject( 'jboss.web:service=WebServer' )
+  end
+
+end</screen></para>
+  </section>
+
+  <section id="variants-of-inject">
+    <title>Variants of <methodname>inject(...)</methodname></title>
+
+    <para>While the inject(...) method is overloaded to detect the correct
+    type of resource, there are occasions where it may guess incorrectly. To
+    overcome this, variant are provided that explicitly direct the injection
+    analyzer to look for a specific type of resource. For string-based
+    injections, the previously mentioned matching rules do not apply to the
+    injection method variants.</para>
+
+    <formalpara>
+      <title><methodname>inject_cdi(...)</methodname></title>
+
+      <para>Injects CDI resources by literal class name.</para>
+    </formalpara>
+
+    <formalpara>
+      <title><methodname>inject_queue(...)</methodname></title>
+
+      <para>Injects a messaging queue by literal name.</para>
+    </formalpara>
+
+    <formalpara>
+      <title><methodname>inject_topic(...)</methodname></title>
+
+      <para>Injects a messaging topic by literal name.</para>
+    </formalpara>
+
+    <formalpara>
+      <title><methodname>inject_naming(...)</methodname></title>
+
+      <para>Injects JNDI resources by literal name.</para>
+    </formalpara>
+
+    <formalpara>
+      <title><methodname>inject_mc(...)</methodname></title>
+
+      <para>Injects MCBeans by literal name.</para>
+    </formalpara>
+  </section>
+
+  <section id="injection-internals-and-testing">
+    <title>Internals and Testing</title>
+
+    <para>At runtime, each <classname>inject(...)</classname> method looks up
+    the injected resource through the
+    <classname>TorqueBox::Registry</classname> singleton. In test
+    environments, you may desire to populate this registry, using the
+    <methodname>merge!(...)</methodname> method, which accepts a key/value
+    <classname>Hash</classname>.</para>
+
+    <para>The key for each entry should match either the string argument used
+    with inject(...), or the Ruby version of the Java class name, if
+    performing CDI injection. The value should be an appropriate
+    object.</para>
+
+    <para>For instance, the Java class of <classname>java.util.Set</classname>
+    should be converted into a string of
+    <literal>"Java::JavaUtil::Set"</literal> when used as an injection lookup
+    key.</para>
+  </section>
+</chapter>

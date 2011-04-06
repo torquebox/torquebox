@@ -28,9 +28,10 @@
   <xi:include href="messaging.xml"                    xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="scheduled-jobs.xml"               xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="services.xml"                     xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="pooling.xml"                      xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="injection.xml"                    xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="authentication.xml"               xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="database.xml"                     xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="pooling.xml"                      xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="capistrano-support.xml"           xmlns:xi="http://www.w3.org/2001/XInclude" />
 
   <xi:include href="licenses.xml"                 xmlns:xi="http://www.w3.org/2001/XInclude" />
