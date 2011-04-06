@@ -8,3 +8,6 @@ queues:
   /queues/injection_service:
 services:
   Service:
+
+ruby:
+  version: ${ruby.compat.version}
