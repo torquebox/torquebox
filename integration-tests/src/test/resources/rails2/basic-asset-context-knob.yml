@@ -4,3 +4,6 @@ application:
   RAILS_ENV: development
 web:
   context: /basic-rails2-asset
+
+ruby:
+  version: ${ruby.compat.version}

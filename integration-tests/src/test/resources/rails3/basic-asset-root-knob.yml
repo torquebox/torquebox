@@ -5,3 +5,6 @@ application:
 web:
   context: /
   host: integ-app3.torquebox.org
+
+ruby:
+  version: ${ruby.compat.version}

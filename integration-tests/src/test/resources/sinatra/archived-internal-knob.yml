@@ -1,2 +1,5 @@
 application:
   root: ${basedir}/apps/sinatra/override.knob
+
+ruby:
+  version: ${ruby.compat.version}

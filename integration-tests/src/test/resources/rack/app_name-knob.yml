@@ -4,3 +4,6 @@ application:
   env: development
 web:
   context: /app_name
+
+ruby:
+  version: ${ruby.compat.version}

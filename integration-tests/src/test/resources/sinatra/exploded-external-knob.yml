@@ -8,3 +8,6 @@ web:
 environment:
   foot: stink
   bar:  maid
+
+ruby:
+  version: ${ruby.compat.version}

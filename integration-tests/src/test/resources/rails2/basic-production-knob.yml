@@ -4,3 +4,6 @@ application:
   RAILS_ENV: production
 web:
   context: /basic-production-rails
+
+ruby:
+  version: ${ruby.compat.version}

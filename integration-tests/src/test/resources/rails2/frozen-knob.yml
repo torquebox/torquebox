@@ -4,3 +4,6 @@ application:
   RAILS_ENV: development
 web:
   context: /frozen-rails
+
+ruby:
+  version: ${ruby.compat.version}

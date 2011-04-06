@@ -2,3 +2,6 @@ application:
   root: ${basedir}/apps/sinatra/queues
 web:
   context: /uppercaser
+
+ruby:
+  version: ${ruby.compat.version}

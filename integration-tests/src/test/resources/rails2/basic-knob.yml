@@ -4,3 +4,6 @@ application:
   RAILS_ENV: development
 web:
   context: /basic-rails
+
+ruby:
+  version: ${ruby.compat.version}

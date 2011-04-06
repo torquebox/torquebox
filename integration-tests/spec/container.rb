@@ -10,9 +10,6 @@ module ArquillianMethods
   def deploy options = {}, &block
     @run_mode = options.fetch(:run_mode, :client)
     paths = options[:path] || options[:paths]
-    @ruby_1_9 = options[:ruby_1_9]
-    @ruby_1_9 = (RUBY_VERSION =~ /^1\.9/) if @ruby_1_9.nil?
-    paths = duplicate_paths_for_1_9( paths ) if @ruby_1_9
     archive_name = options[:name]
     add_class_annotation( org.jboss.arquillian.api.Run => { "value" => run_mode } )
     metaclass = class << self
@@ -24,28 +21,6 @@ module ArquillianMethods
       paths ? create_archive_for_resources(paths, archive_name) : block.call
     end
   end
-
-  def duplicate_paths_for_1_9(paths)
-    paths = [ paths ].flatten
-    paths.inject( [] ) do |accum, path|
-      puts "Setting up #{path} to run in 1.9 mode"
-      ext = File.extname( path )
-      path_19 = path[0..-(ext.length+1)] + "-19" + ext
-      accum << path_19
-      full_19_path = File.join( 'target', 'test-classes', path_19 )
-      unless File.exists?( full_19_path )
-        FileUtils.cp( File.join( 'target', 'test-classes', path ), full_19_path )
-         File.open( full_19_path, 'a' ) do |f|
-          f.write <<EOT
-
-ruby:
-  version: 1.9
-EOT
-        end
-      end
-      accum
-    end
-  end
   
   def create_archive_for_resources paths, name=nil
     paths = [ paths ].flatten
@@ -53,13 +28,11 @@ EOT
       first_path = paths.first
       tail = first_path.split('/')[-1]
       name = /(.*)\./.match(tail)[1]
-      name.gsub!(/-19$/, '') if @ruby_1_9
     end
     archive = org.jboss.shrinkwrap.api.ShrinkWrap.create( org.jboss.shrinkwrap.api.spec.JavaArchive.java_class, "#{name}.jar" )
     paths.each do |path|
       tail = path.split('/')[-1]
       deploymentDescriptorUrl = JRuby.runtime.jruby_class_loader.getResource( path )
-      tail.gsub!(/-19\./, '.') if @ruby_1_9
       archive.addResource( deploymentDescriptorUrl, "/META-INF/#{tail}" )
     end
     archive

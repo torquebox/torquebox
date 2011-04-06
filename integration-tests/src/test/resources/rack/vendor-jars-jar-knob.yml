@@ -4,3 +4,6 @@ application:
   RACK_ENV: development
 web:
   context: /vendor-jars-jar
+
+ruby:
+  version: ${ruby.compat.version}

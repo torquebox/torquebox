@@ -7,3 +7,6 @@ web:
   host: integ-app2.torquebox.org
 environment:
   GRIST: this-is-app-two
+
+ruby:
+  version: ${ruby.compat.version}

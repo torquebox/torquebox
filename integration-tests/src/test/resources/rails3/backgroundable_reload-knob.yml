@@ -4,3 +4,6 @@ application:
   RAILS_ENV: development
 web:
   context: /backgroundable_reload3
+
+ruby:
+  version: ${ruby.compat.version}

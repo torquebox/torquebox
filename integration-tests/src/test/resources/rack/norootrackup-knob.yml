@@ -5,3 +5,6 @@ application:
 web: 
   rackup: foobar/config.ru
   context: /norootrackup
+
+ruby:
+  version: ${ruby.compat.version}
