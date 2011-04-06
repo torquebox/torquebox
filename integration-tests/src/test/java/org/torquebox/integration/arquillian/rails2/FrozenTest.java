@@ -61,8 +61,9 @@ public class FrozenTest extends AbstractIntegrationTestCase {
             // vendored Rails, and not from system gems. Inspect the paths for
             // known elements that indicate frozenness.
             for (int i = 0; i < GEM_NAMES.length; ++i) {
-                if (pathElement.contains( "/" + GEM_NAMES[i] + "/" )) {
-                    assert (pathElement.contains( "frozen/vendor/rails/" + GEM_NAMES[i] + "/lib" ));
+                if (pathElement.contains( "/" + GEM_NAMES[i] + "/lib" )) {
+                    String regex = "^.*frozen.*vendor/rails/" + GEM_NAMES[i] + "/lib.*$";
+                    assert (pathElement.matches( regex ) );
                 }
             }
         }
