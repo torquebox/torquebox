@@ -6,3 +6,7 @@ application:
 environment:
   BASEDIR: ${basedir}
 
+ruby:
+  version: ${ruby.compat.version}
+
+
