@@ -31,6 +31,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.kernel.Kernel;
 import org.jboss.kernel.spi.dependency.KernelController;
+import org.jboss.kernel.spi.registry.KernelRegistry;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.jobs.core.RubyScheduler;
@@ -103,7 +104,7 @@ public class RubySchedulerDeployer extends AbstractDeployer {
     	if (null == controller) {
     		log.warn("No kernel controller available");
     	} else {
-    		return controller.getContext("WebAppClusteringDependencyDeployer", ControllerState.INSTANTIATED, false) != null;
+    		return controller.getContext("HASingeltonDeployer", ControllerState.INSTANTIATED, false) != null;
     	}
     	return false;
     }

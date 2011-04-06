@@ -111,7 +111,7 @@ public class RubySchedulerDeployerTest extends AbstractDeployerTestCase {
         jobMeta.setSingleton(true);
         
         // Now setup our flag that tells the scheduler we're in clustered mode
-        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder("WebAppClusteringDependencyDeployer", java.lang.Object.class.getName());
+        BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder("HASingeltonDeployer", java.lang.Object.class.getName());
         getKernelController().install(builder.getBeanMetaData(), new Object());
         
         AttachmentUtils.multipleAttach( unit, jobMeta, "job.one" );
