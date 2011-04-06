@@ -19,10 +19,13 @@
 
 package org.torquebox.common.pool;
 
+import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.Pool;
 
 public class ManagedPool<T> implements Pool<T> {
+    
+    private Logger log = Logger.getLogger( this.getClass() );
 
     private SimplePool<T> pool;
     private PoolManager<T> poolManager;

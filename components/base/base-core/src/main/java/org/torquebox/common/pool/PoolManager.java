@@ -23,9 +23,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
+import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
 
 public class PoolManager<T> extends DefaultPoolListener<T> {
+    
+    private static final Logger log = Logger.getLogger( PoolManager.class );
 
     private static abstract class PoolTask<T> implements Runnable {
         protected PoolManager<T> poolManager;
@@ -160,7 +163,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     public void stop() {
-        
         int poolSize = pool.size();
         
         for ( int i = 0 ; i < poolSize ; ++i ) {

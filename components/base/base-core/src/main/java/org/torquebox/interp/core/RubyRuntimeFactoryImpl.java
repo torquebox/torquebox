@@ -261,7 +261,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
      */
     @Create(ignored = true)
     public synchronized Ruby create() throws Exception {
-        
+
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         if (this.classCache == null) {
@@ -351,22 +351,28 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         config.setLoadPaths( loadPath );
 
-        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + 
-                  ", compile_mode: " + config.getCompileMode() + ")" );
+        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + ")" );
 
-        Ruby runtime = Ruby.newInstance( config );
-        runtime.getLoadService().require("java"); 
+        Ruby runtime = null;
+        try {
+            runtime = Ruby.newInstance( config );
+            runtime.getLoadService().require( "java" );
 
-        prepareRuntime( runtime );
+            prepareRuntime( runtime );
 
-        if (this.initializer != null) {
-            this.initializer.initialize( runtime );
-        } else {
-            log.warn( "No initializer set for runtime" );
+            if (this.initializer != null) {
+                this.initializer.initialize( runtime );
+            } else {
+                log.warn( "No initializer set for runtime" );
+            }
+
+            performRuntimeInitialization( runtime );
+            return runtime;
+        } finally {
+            if (runtime != null) {
+                this.undisposed.add( runtime );
+            }
         }
-
-        performRuntimeInitialization( runtime );
-        return runtime;
     }
 
     @Override
@@ -393,7 +399,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         JavaEmbedUtils.invokeMethod( runtime, torqueBoxModule, "application_name=", new Object[] { applicationName }, void.class );
 
     }
-    
+
     private void prepareRuntime(Ruby runtime) {
         runtime.getLoadService().require( "rubygems" );
         runtime.evalScriptlet( "require %q(torquebox-vfs)" );
@@ -426,7 +432,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             env.remove( "GEM_HOME" );
             gemPath = null;
         }
-        
+
         if (gemPath != null) {
             env.put( "GEM_PATH", gemPath );
             env.put( "GEM_HOME", gemPath );
