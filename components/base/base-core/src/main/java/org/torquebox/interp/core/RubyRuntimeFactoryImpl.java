@@ -31,20 +31,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.jboss.beans.metadata.api.annotations.Create;
+import org.jboss.beans.metadata.api.annotations.Destroy;
 import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.RubyModule;
+import org.jruby.ast.executable.Script;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
-
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RuntimeInitializer;
 
@@ -67,7 +67,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     private ClassLoader classLoader;
 
     /** Shared interpreter class cache. */
-    private ClassCache<?> classCache;
+    private ClassCache<Script> classCache;
 
     /** Application name. */
     private String applicationName;
@@ -264,11 +264,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
-        if (this.classCache == null) {
-            this.classCache = new ClassCache<Object>( getClassLoader() );
-        }
-
-        config.setClassCache( classCache );
+        config.setClassCache( getClassCache() );
         config.setLoadServiceCreator( new VFSLoadServiceCreator() );
         if (this.rubyVersion != null) {
             config.setCompatVersion( this.rubyVersion );
@@ -503,11 +499,21 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     public List<String> getLoadPaths() {
         return this.loadPaths;
     }
+    
+    @Create
+    public void createFactory() {
+        this.classCache = new ClassCache<Script>( getClassLoader() );
+    }
 
-    public synchronized void destroy() {
+    @Destroy
+    public synchronized void destroyFactory() {
         for (Ruby ruby : undisposed) {
             dispose( ruby );
         }
+    }
+    
+    public ClassCache getClassCache() {
+        return this.classCache;
     }
 
 }
