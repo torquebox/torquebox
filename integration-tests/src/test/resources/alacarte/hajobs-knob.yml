@@ -1,0 +1,8 @@
+---
+application:
+  root: ${basedir}/apps/alacarte/ha-jobs
+  env: development
+
+environment:
+  BASEDIR: ${basedir}
+

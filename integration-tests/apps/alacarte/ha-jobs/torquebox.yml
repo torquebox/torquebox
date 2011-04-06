@@ -1,0 +1,8 @@
+
+jobs:
+  job.one:
+    job: HaJob
+    description: My Job is simple and singleton
+    cron: '*/1 * * * * ?'
+    singleton: true
+
