@@ -39,6 +39,7 @@ else
       puts "*** Syncing to integ-dist by rsync"
       cmd = [ 'rsync -a . --relative',
 	      '--include jboss/server/default',
+              "--exclude 'apps/*'",
 	      '--exclude default/deploy/*.yml',
 	      '--exclude default/deploy/*.knob',
 	      '--exclude default/data',
