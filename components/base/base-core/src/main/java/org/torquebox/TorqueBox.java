@@ -23,19 +23,63 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.jboss.aop.microcontainer.aspects.jmx.JMX;
+import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
+import org.jruby.Ruby;
+import org.jruby.RubyInstanceConfig;
+import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
+import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.interp.spi.RuntimeInitializer;
 
-public class TorqueBox {
+@JMX(exposedInterface=TorqueBoxMBean.class,name="torquebox:type=system")
+public class TorqueBox implements TorqueBoxMBean {
 
     private static final Logger log = Logger.getLogger( TorqueBox.class );
 
     private Properties properties = new Properties();
 
+    private String gemPath;
+    private Kernel kernel;
+    private RubyRuntimeFactoryImpl factory;
+    private Ruby globalRuby;
+
     public TorqueBox() {
 
     }
 
-    public void create() throws IOException {
+    public void create() throws Exception {
+        loadProperties();
+        createRubyRuntimeFactory();
+        createGlobalRuby();
+    }
+    
+    public void destroy() {
+        destroyGlobalRuby();
+        destroyRubyRuntimeFactory();
+    }
+    
+    public Object evaluate(String script) {
+        return getGlobalRuby().evalScriptlet( script );
+    }
+    
+    public void setKernel(Kernel kernel) {
+        this.kernel = kernel;
+    }
+    
+    public Kernel getKernel() {
+        return this.kernel;
+    }
+    
+    void setGemPath(String gemPath) {
+        this.gemPath = gemPath;
+    }
+    
+    String getGemPath() {
+        return this.gemPath;
+    }
+    
+    protected void loadProperties() throws IOException {
         InputStream propsStream = getClass().getResourceAsStream( "torquebox.properties" );
         if (propsStream != null) {
             try {
@@ -45,16 +89,45 @@ public class TorqueBox {
             }
         }
     }
-
-    protected String getVersion() {
+    
+    public Ruby getGlobalRuby() {
+        return this.globalRuby;
+    }
+    
+    protected void createRubyRuntimeFactory() {
+        this.factory = new RubyRuntimeFactoryImpl();
+        this.factory.setKernel( kernel );
+        this.factory.setGemPath( getGemPath() );
+        this.factory.create();
+    }
+    
+    protected void destroyRubyRuntimeFactory() {
+        this.factory.destroy();
+    }
+    
+    protected void createGlobalRuby() throws Exception {
+        this.globalRuby = getRubyRuntimeFactory().createInstance( "torquebox.global" );
+        this.globalRuby.useAsGlobalRuntime();
+    }
+    
+    protected void destroyGlobalRuby() {
+        getRubyRuntimeFactory().destroyInstance( this.globalRuby );
+        this.globalRuby = null;
+    }
+    
+    protected RubyRuntimeFactory getRubyRuntimeFactory() {
+        return this.factory;
+    }
+    
+    public String getVersion() {
         return this.properties.getProperty( "version", "(unknown)" );
     }
 
-    protected String getRevision() {
+    public String getRevision() {
         return this.properties.getProperty( "build.revision", "(unknown)" );
     }
 
-    protected String getBuildNumber() {
+    public String getBuildNumber() {
         return this.properties.getProperty( "build.number" );
     }
     
