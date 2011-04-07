@@ -66,9 +66,10 @@ namespace :torquebox do
   if ( File.exist?( 'Gemfile' ) )
     desc "Freeze application gems"
     task :freeze do
-      jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
-      exec_cmd( "#{jruby} -S bundle package" )
-      exec_cmd( "#{jruby} -S bundle install --local --path vendor/bundle" )
+      jruby = [File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )]
+      jruby << "--1.9" if RUBY_VERSION =~ /^1\.9\./
+      exec_cmd( jruby + %w{-S bundle package} )
+      exec_cmd( jruby + %w{-S bundle install --local --path vendor/bundle} )
     end
   end
 
@@ -76,7 +77,7 @@ end
 
 
 def exec_cmd(cmd)
-  Open3.popen3( cmd ) do |stdin, stdout, stderr|
+  (IO.respond_to?( :popen3 ) ? IO : Open3).popen3( *cmd ) do |stdin, stdout, stderr|
     stdin.close
     stdout_thr = Thread.new(stdout) {|stdout_io|
       stdout_io.each_line do |l|
