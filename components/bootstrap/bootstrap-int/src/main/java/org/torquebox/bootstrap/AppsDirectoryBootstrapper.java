@@ -13,6 +13,8 @@ import org.jboss.profileservice.profile.metadata.plugin.ScanPeriod;
 import org.jboss.profileservice.spi.NoSuchProfileException;
 import org.jboss.profileservice.spi.ProfileKey;
 import org.jboss.profileservice.spi.ProfileService;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
 
 public class AppsDirectoryBootstrapper {
 
@@ -42,13 +44,29 @@ public class AppsDirectoryBootstrapper {
             scanPeriod.setTimeUnit( TimeUnit.SECONDS );
             metaData.setScanPeriod( scanPeriod );
 
-            PropertyProfileSourceMetaData source = new PropertyProfileSourceMetaData( appsDir.getAbsolutePath() );
+            PropertyProfileSourceMetaData source = new PropertyProfileSourceMetaData( getSanitizedPath( appsDir.getPath() ) );
             metaData.setSource( source );
             this.key = this.profileService.registerProfile( metaData );
         } else {
             this.key = null;
             log.info( "Deployment directory does not exist: " + appsDir );
         }
+    }
+
+    protected String getSanitizedPath(String path) {
+        String sanitizedPath = null;
+
+        if (path.indexOf( "\\\\" ) >= 0) {
+            sanitizedPath = path.replaceAll( "\\\\\\\\", "/" );
+            sanitizedPath = sanitizedPath.replaceAll( "\\\\", "" );
+        } else {
+            sanitizedPath = path.replaceAll( "\\\\", "/" );
+        }
+        if (!sanitizedPath.startsWith( "/" )) {
+            sanitizedPath = "/" + sanitizedPath;
+        }
+        
+        return sanitizedPath;
     }
 
     public void start() throws Exception {
@@ -88,7 +106,7 @@ public class AppsDirectoryBootstrapper {
     private static final Logger log = Logger.getLogger( AppsDirectoryBootstrapper.class );
 
     private AppsDirectoryNotificationListener listener;
-    
+
     @SuppressWarnings("rawtypes")
     private AbstractServer server;
     private ProfileKey key;
