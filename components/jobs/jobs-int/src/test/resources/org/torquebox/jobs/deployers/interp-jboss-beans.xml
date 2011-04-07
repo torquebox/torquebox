@@ -7,11 +7,11 @@
 	</bean>
 	<bean name="runtime-pool" class="org.torquebox.interp.core.SharedRubyRuntimePool">
 	  <constructor>
-	    <parameter>
-              <value-factory bean="runtime-factory" method="createInstance">
+	    <parameter class="org.jruby.Ruby">
+          <value-factory bean="runtime-factory" method="createInstance">
 	        <parameter>test</parameter>
-		</value-factory>
-            </parameter>
+		  </value-factory>
+        </parameter>
 	  </constructor>
 	</bean>
 </deployment>
