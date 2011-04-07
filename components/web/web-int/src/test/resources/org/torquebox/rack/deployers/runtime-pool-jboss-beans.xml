@@ -3,7 +3,7 @@
 <deployment xmlns="urn:jboss:bean-deployer:2.0">
 	<bean name="runtime-pool" class="org.torquebox.interp.core.SharedRubyRuntimePool">
 	  <constructor>
-	    <parameter type="org.jruby.Ruby">
+	    <parameter class="org.jruby.Ruby">
 	      <value-factory bean="runtime-factory" method="createInstance">
 	        <parameter>test</parameter>
           </value-factory>
