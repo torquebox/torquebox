@@ -154,8 +154,8 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
         initializer.initialize( ruby ); 
-        
-        assertEquals( "vfs:" + railsRootStr, ruby.evalScriptlet( "Rails.root" ).toString() );
+    
+        assertEquals( "vfs:" + railsRoot.getPathName(), ruby.evalScriptlet( "Rails.root" ).toString() );
     }
 
     private RailsRuntimeInitializer create(VirtualFile root, String env) {
