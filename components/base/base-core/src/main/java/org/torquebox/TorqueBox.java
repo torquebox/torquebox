@@ -60,7 +60,7 @@ public class TorqueBox implements TorqueBoxMBean {
     }
     
     public Object evaluate(String script) {
-        return getGlobalRuby().evalScriptlet( script );
+        return getGlobalRuntime().evalScriptlet( script );
     }
     
     public void setKernel(Kernel kernel) {
@@ -90,8 +90,12 @@ public class TorqueBox implements TorqueBoxMBean {
         }
     }
     
-    public Ruby getGlobalRuby() {
+    public Ruby getGlobalRuntime() {
         return this.globalRuby;
+    }
+    
+    public String getGlobalRuntimeName() {
+        return "" + getGlobalRuntime().hashCode();
     }
     
     protected void createRubyRuntimeFactory() {

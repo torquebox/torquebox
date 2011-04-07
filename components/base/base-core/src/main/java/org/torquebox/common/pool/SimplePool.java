@@ -110,6 +110,24 @@ public class SimplePool<T> implements ManageablePool<T> {
             return instance;
         }
     }
+    
+    Set<T> getAllInstances() {
+        Set<T> instances = new HashSet<T>();
+        instances.addAll( this.instances );
+        return instances;
+    }
+    
+    Set<T> getBorrowedInstances() {
+        Set<T> instances = new HashSet<T>();
+        instances.addAll( this.borrowedInstances);
+        return instances;
+    }
+    
+    Set<T> getAvailableInstances() {
+        Set<T> instances = new HashSet<T>();
+        instances.addAll( this.availableInstances );
+        return instances;
+    }
 
     int size() {
         synchronized (instances) {

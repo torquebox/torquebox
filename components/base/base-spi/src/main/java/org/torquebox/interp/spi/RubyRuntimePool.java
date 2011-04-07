@@ -19,6 +19,8 @@
 
 package org.torquebox.interp.spi;
 
+import java.util.Set;
+
 import org.jruby.Ruby;
 
 /**
@@ -29,5 +31,8 @@ import org.jruby.Ruby;
 public interface RubyRuntimePool {
     Ruby borrowRuntime() throws Exception;
     void returnRuntime(Ruby runtime);
+    
+    Set<String> getAllRuntimeNames();
+    
     String getName();
 }

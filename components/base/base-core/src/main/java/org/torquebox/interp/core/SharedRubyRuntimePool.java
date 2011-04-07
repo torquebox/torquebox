@@ -19,6 +19,10 @@
 
 package org.torquebox.interp.core;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+
 import org.jruby.Ruby;
 import org.torquebox.common.pool.SharedPool;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
@@ -105,6 +109,11 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
                 returnRuntime( ruby );
             }
         }
+    }
+
+    @Override
+    public Set<String> getAllRuntimeNames() {
+        return Collections.singleton( "" + getRuntime().hashCode() );
     }
 
 }

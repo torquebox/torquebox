@@ -19,6 +19,9 @@
 
 package org.torquebox.common.pool;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.Pool;
@@ -103,6 +106,18 @@ public class ManagedPool<T> implements Pool<T> {
     
     public int getAvailable() {
         return availableSize();
+    }
+    
+    protected Set<T> getAllInstances() {
+        return this.pool.getAllInstances();
+    }
+    
+    protected Set<T> getBorrowedInstances() {
+        return this.pool.getBorrowedInstances();
+    }
+    
+    protected Set<T> getAvailableInstances() {
+        return this.pool.getAvailableInstances();
     }
 
     int size() {
