@@ -207,9 +207,9 @@ describe TorqueBox::Messaging::Destination do
         queue.start
 
         response_thread = Thread.new {
-          queue.receive_and_publish( :timeout => 5000 ) { |msg| msg.upcase }
+          queue.receive_and_publish( :timeout => 10000 ) { |msg| msg.upcase }
         }
-        message = queue.publish_and_receive "ping", :timeout => 5000
+        message = queue.publish_and_receive "ping", :timeout => 10000
         response_thread.join
 
         queue.destroy
@@ -221,9 +221,9 @@ describe TorqueBox::Messaging::Destination do
         queue.start
 
         response_thread = Thread.new {
-          queue.receive_and_publish( :timeout => 5000 )
+          queue.receive_and_publish( :timeout => 10000 )
         }
-        message = queue.publish_and_receive "ping", :timeout => 5000
+        message = queue.publish_and_receive "ping", :timeout => 10000
         response_thread.join
 
         queue.destroy
@@ -237,14 +237,14 @@ describe TorqueBox::Messaging::Destination do
         thread_count = 3
         response_threads = (1..thread_count).map do
           Thread.new {
-            queue.receive_and_publish( :timeout => 5000 ) { |msg| msg.upcase }
+            queue.receive_and_publish( :timeout => 10000 ) { |msg| msg.upcase }
           }
         end
 
-        message = queue.publish_and_receive "ping", :timeout => 5000
+        message = queue.publish_and_receive "ping", :timeout => 10000
         # Send extra messages to trigger all remaining response threads
         (thread_count - 1).times do
-          queue.publish_and_receive "ping", :timeout => 5000
+          queue.publish_and_receive "ping", :timeout => 10000
         end
         response_threads.each { |thread| thread.join }
 
