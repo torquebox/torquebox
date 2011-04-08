@@ -7,7 +7,7 @@
   <para>The TorqueBox Application Server is capable of serving many
   applications simultaneously. To add your application to the server, you must
   <emphasis>deploy</emphasis> it. To deploy an application, you put some
-  artifact in the deploy/ directory (or farm/ if clustering) of the TorqueBox
+  artifact in the apps/ directory of the TorqueBox
   AS. When the AS is running, it will detect that artifact and activate the
   associated application.</para>
 
@@ -18,11 +18,13 @@
     assist in the deployment to and undeployment from an instance of the
     TorqueBox Server.</para>
 
-    <para>First, the variable <envar>$JBOSS_HOME</envar> must be set to the
-    path of the top of your JBoss installation as described in <xref
-    linkend="installation" /></para>
+    <para>First, the <envar>$TORQUEBOX_HOME</envar> and <envar>$JBOSS_HOME</envar> 
+    variables must be set to the path of the top of your TorqueBox Installation and
+    the JBoss installation inside of it, respectively, as described in <xref
+    linkend="installation" />.</para>
 
-    <para><screen><prompt>$</prompt> <command>export JBOSS_HOME=/path/to/torquebox/jboss</command></screen></para>
+    <para><screen><prompt>$</prompt> <command>export TORQUEBOX_HOME=/path/to/torquebox</command>
+<prompt>$</prompt> <command>export JBOSS_HOME=$TORQUEBOX_HOME/jboss</command></screen></para>
 
     <para>If you're using any configuration other than
     <classname>default</classname>, you must also set
@@ -56,15 +58,13 @@
     access <uri>http://localhost:8080/</uri>.</para>
 
     <para>When the application is deployed, a deployment descriptor is written
-    to the <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>
+    to the <filename>$TORQUEBOX_HOME/apps/</filename>
     directory with a filename based upon the directory name of your current
     directory.</para>
 
     <para>For instance, if your application was deployed from
     /Users/bob/myapp/, the deployment descriptor would be named
-    <filename>myapp-rails.yml</filename> or
-    <filename>myapp-rack.yml</filename>, depending on the type of application
-    you are working on.</para>
+    <filename>myapp-knob.yml</filename>.</para>
 
     <para>Rewriting or simply updating the last-modified time (using a command
     such as <command>touch</command>) of this descriptor will cause the
@@ -111,10 +111,9 @@
     descriptor</emphasis>.</para>
 
     <para>A deployment descriptor is a small text file that is placed in the
-    <filename>deploy/</filename> directory of the TorqueBox server. This
+    <filename>apps/</filename> directory of the TorqueBox server. This
     directory is constantly monitored for changes. To deploy an app, add a
-    descriptor with a suffix of either <filename>-rails.yml</filename> for a
-    Rails app, or <filename>-rack.yml</filename> for any other. To redeploy or
+    descriptor with a suffix of <filename>-knob.yml</filename>. To redeploy or
     "bounce" the app, edit or <command>touch</command> the descriptor. To
     undeploy it, remove the descriptor. This is precisely what the
     <command>torquebox:deploy</command> and
@@ -139,7 +138,7 @@
       <para>Typically, an application is <link
       linkend="deployment-descriptors">configured using a deployment
       descriptor suffixed by <filename>-knob.yml</filename></link> and placed
-      in <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>. We refer
+      in <filename>$TORQUEBOX_HOME/apps/</filename>. We refer
       to this file as an <emphasis>external</emphasis> descriptor, because it
       resides outside of the app's root directory.</para>
 
@@ -154,11 +153,11 @@
       self-contained archive, you may override portions of the internal
       descriptor using an external descriptor. If you do, make sure that only
       the external descriptor resides beneath
-      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename>. The archive
+      <filename>$TORQUEBOX_HOME/apps/</filename>. The archive
       containing the (possibly overridden) internal descriptors should reside
       elsewhere on the filesystem, its path referenced in the external
       descriptor. Having both the archive and the external descriptor beneath
-      <filename>$JBOSS_HOME/server/$JBOSS_CONF/deploy/</filename> will result
+      <filename>$TORQUEBOX_HOME/apps/</filename> will result
       in errors stemming from two separate deployments of the same app.</para>
     </section>
 
@@ -169,7 +168,8 @@
       the <command>torquebox:archive</command> rake task may be used to create
       a bundle of the application. The task invokes the Java
       <command>jar</command> commandline tool to bundle up the project
-      directory, <emphasis>excluding</emphasis> <filename>tmp/</filename> and
+      directory, <emphasis>excluding</emphasis> the <filename>tmp/</filename>, 
+      <filename>test/</filename>, <filename>spec/</filename>, and
       <filename>log/</filename> directories.</para>
 
       <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>
@@ -190,7 +190,7 @@ app/controllers/application_controller.rb
       <title>Deploying an archive</title>
 
       <para>To deploy an archive, simply copy it to the
-      <filename>deploy/</filename> directory of the server. The
+      <filename>apps/</filename> directory of the server. The
       <command>torquebox:deploy:archive</command> rake task may be used to
       both create and deploy an archive.</para>
 
@@ -199,9 +199,13 @@ app/controllers/application_controller.rb
       used</para>
 
       <para><screen>$ <command>rake</command> <command>torquebox:archive</command>
-$ <command>cp</command> <filename><replaceable>myapp</replaceable>.knob</filename> <filename><envar>$JBOSS_HOME</envar>/server/$JBOSS_CONF/deploy/</filename></screen>If
+$ <command>cp</command> <filename><replaceable>myapp</replaceable>.knob</filename> <filename><envar>$TORQUEBOX_HOME</envar>/apps/</filename></screen>If
       you redeploy an archive, the server will remove the previous version,
       and hot-redeploy the new versions just copied.</para>
+
+      <para>To undeploy an archive, you can either run the 
+      <command>torquebox:undeploy</command> rake task, or manually 
+      remove the archive file from the <filename>apps/</filename> dir.</para>
     </section>
   </section>
 </chapter>
