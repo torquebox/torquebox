@@ -109,9 +109,10 @@ end</programlisting></para>
       <parameter>jobs:</parameter> section.</para>
 
       <para><warning>
-          <para>While previous versions of TorqueBox supported jobs.yml
+          <para>While previous versions of TorqueBox supported 
+          <filename>jobs.yml</filename>
           configuration file, this usage is now deprecated and will be removed
-          before the final 1.0 release</para>
+          before the final 1.0 release.</para>
         </warning></para>
 
       <para>Within the <parameter>jobs</parameter>, a block of information is
@@ -127,7 +128,7 @@ end</programlisting></para>
 jobs:
   mail.notifier:
     job:         Mail::Notifier
-    cron:        0 */5 * * * ?
+    cron:        '0 */5 * * * ?'
     description: Deliver queued mail notifications</programlisting></para>
         </example></para>
 

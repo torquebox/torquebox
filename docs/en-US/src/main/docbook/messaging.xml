@@ -236,13 +236,13 @@
             <title>Defining topics and queues in
             <filename>torquebox.yml</filename></title>
 
-            <para><screen>application:
+            <para><programlisting>application:
   ..
 queues:
   /queues/my_app_queue:
 
 topics:
-  /queues/my_app_topic:</screen></para>
+  /queues/my_app_topic:</programlisting></para>
           </example></para>
       </section>
     </section>
@@ -738,8 +738,10 @@ end</programlisting></para>
 
           <warning>
             <para>While previous versions of TorqueBox supported a
-            messaging.yml file, this usage is now deprecated and will
-            be removed before the file release.</para>
+            <filename>messaging.yml</filename>
+            configuration file, this usage is now 
+            deprecated and will be removed before the final 1.0 
+            release.</para>
           </warning>
 
           <para>This section will contain the mappings from your

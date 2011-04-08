@@ -138,8 +138,9 @@
 
     <para><warning>
         <para>While previous versions of TorqueBox supported a
-        <filename>pooling.yml</filename> file, this usage is now deprecated
-        and will be removed before the final release.</para>
+        <filename>pooling.yml</filename> configuration file, this
+        usage is now deprecated
+        and will be removed before the final 1.0 release.</para>
       </warning></para>
 
     <section>
