@@ -16,19 +16,15 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rake'
-
+require 'torquebox/deploy_utils'
 
 namespace :torquebox do
 
   namespace :auth do
     desc "Add a username and password to the torquebox-auth security realm with CREDENTIALS=user:pass"
     task :adduser do
-      puts "Provide credentials as rake torquebox:auth:adduser CREDENTIALS=user:pass" and return unless ENV['CREDENTIALS']
-      credentials = ENV['CREDENTIALS'].gsub(/:/,'=')
-      properties_file = "#{TorqueBox::RakeUtils.properties_dir}/torquebox-users.properties"
-      File.open( properties_file, 'a' ) do |file|
-        file.puts "#{credentials}"
-      end
+      abort "Provide credentials as rake torquebox:auth:adduser CREDENTIALS=user:pass" unless ENV['CREDENTIALS']
+      properties_file = TorqueBox::DeployUtils.write_credentials( [ENV['CREDENTIALS'].split( ':' )] )
       puts "Credentials written to #{properties_file}"
     end
   end

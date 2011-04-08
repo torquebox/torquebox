@@ -15,84 +15,26 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'rbconfig'
 require 'rake'
-
-def get_archive_name root=Dir.pwd
-  File.basename(root) + '.knob'
-end
+require 'torquebox/deploy_utils'
 
 namespace :torquebox do
 
   desc "Create a nice self-contained application archive"
   task :archive do
-    skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
-
-    include_files = []
-    Dir[ "*", ".bundle" ].each do |entry|
-      entry = File.basename( entry )
-      unless ( skip_files.any?{ |regex| entry.match(regex)} )
-        include_files << entry
-      end
-    end
-
-    Dir[ 'vendor/*' ].each do |entry|
-      include_files << entry unless ( entry == 'vendor/cache' )
-    end
-
-    app_name = File.basename( Dir.pwd )
-    archive_name = "#{app_name}.knob"
-    puts "Creating archive: #{archive_name}"
-    cmd = "jar cvf #{archive_name} #{include_files.join(' ')}"
-    IO.popen4( cmd ) do |pid, stdin, stdout, stderr|
-      stdin.close
-      stdout_thr = Thread.new(stdout) {|stdout_io|
-        stdout_io.readlines.each do |l|
-          puts l
-        end
-        stdout_io.close
-      }
-      stderr_thr = Thread.new(stderr) {|stderr_io|
-        stderr_io.readlines.each do |l|
-          puts l
-        end
-      }
-      stdout_thr.join
-      stderr_thr.join
-    end
-    puts "Created archive: #{Dir.pwd}/#{archive_name}"
+    puts "Creating archive: #{TorqueBox::DeployUtils.archive_name}"
+    path = TorqueBox::DeployUtils.create_archive
+    puts "Created archive: #{path}"
   end
 
   if ( File.exist?( 'Gemfile' ) )
     desc "Freeze application gems"
     task :freeze do
-      jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
-      jruby << " --1.9" if RUBY_VERSION =~ /^1\.9\./
-      exec_cmd( "#{jruby} -S bundle package" )
-      exec_cmd( "#{jruby} -S bundle install --local --path vendor/bundle" )
+      TorqueBox::DeployUtils.freeze_gems
     end
   end
 
 end
 
 
-def exec_cmd(cmd)
-  IO.popen4( cmd ) do |pid, stdin, stdout, stderr|
-    stdin.close
-    stdout_thr = Thread.new(stdout) {|stdout_io|
-      stdout_io.each_line do |l|
-        STDOUT.puts l
-        STDOUT.flush
-      end
-      stdout_io.close
-    }
-    stderr_thr = Thread.new(stderr) {|stderr_io|
-      stderr_io.each_line do |l|
-        STDERR.puts l
-        STDERR.flush
-      end
-    }
-    stdout_thr.join
-    stderr_thr.join
-  end
-end
+

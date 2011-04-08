@@ -16,13 +16,14 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rake'
+require 'torquebox/deploy_utils'
 
 namespace :torquebox do
   desc "Check your installation of the TorqueBox server"
   task :check do
-    matching = Dir[ "#{TorqueBox::RakeUtils.deployers_dir}/torquebox*deployer*" ] 
-    raise "No TorqueBox deployer installed in #{TorqueBox::RakeUtils.deployers_dir}" if ( matching.empty? )
-    puts "TorqueBox Server OK: #{TorqueBox::RakeUtils.server_dir}"
+    #this will raise if things aren't correct
+    TorqueBox::DeployUtils.check_server 
+    puts "TorqueBox Server OK: #{TorqueBox::DeployUtils.server_dir}"
   end
 
   desc "Run TorqueBox server"

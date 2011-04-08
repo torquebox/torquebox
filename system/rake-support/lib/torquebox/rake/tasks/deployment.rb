@@ -16,76 +16,41 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rake'
-require 'torquebox/rake/tasks/rake_utils'
-
-def deployment_descriptor(root, env, context_path)
-  d = {}
-  d['application'] = {}
-  d['application']['root'] = root
-  unless ( env.nil? )
-    d['application']['env'] = env.to_s
-  end
-
-  if ( context_path.nil? )
-    if ( ! ( File.exists?( File.join( root, "torquebox.yml" ) ) || File.exists?( File.join( root, "config", "torquebox.yml" ) ) ) )
-      context_path = '/'
-    end
-  end
-
-  unless ( context_path.nil? )
-    d['web'] = {}
-    d['web']['context'] = context_path
-  end 
-
-  d
-
-end
-
-def deployment(app_name, root, context_path)
-  env = defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
-  if ( env.nil? ) 
-    env = defined?(::Rails) ? ::Rails.env : ENV['RAILS_ENV']
-  end
-
-  [ "#{app_name}-knob.yml", deployment_descriptor( root, env, context_path) ]
-end
+require 'torquebox/deploy_utils'
 
 namespace :torquebox do
 
   desc "Deploy the app in the current directory"
   task :deploy, :context_path, :needs =>['torquebox:check'] do |t, args|
-    app_name = File.basename( Dir.pwd )
-    deployment_name, deployment_descriptor = deployment( app_name, Dir.pwd, args[:context_path] )
-    TorqueBox::RakeUtils.deploy_yaml( deployment_name, deployment_descriptor )
+    descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor( :context_path => args[:context_path] )
+    deployment_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml( descriptor )    
+  
     puts "Deployed: #{deployment_name}"
-    puts "    into: #{TorqueBox::RakeUtils.deploy_dir}"
+    puts "    into: #{deploy_dir}"
   end
 
   desc "Undeploy the app in the current directory"
   task :undeploy=>['torquebox:check'] do
-    app_name = File.basename( Dir.pwd )
-    deployment_name = "#{app_name}-knob.yml"
-    TorqueBox::RakeUtils.undeploy( deployment_name )
-    puts "Undeployed: #{deployment_name}"
+    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy # try -knob.yml first
+    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy( TorqueBox::DeployUtils.archive_name ) unless deploy_name
+
+    if deploy_name
+      puts "Undeployed: #{deploy_name}"
+      puts "      from: #{deploy_dir}"
+    else
+      puts "Nothing to undeploy"
+    end
   end
 
   desc "Create (if needed) and deploy as application archive"
   namespace :deploy do
     task :archive=>[ 'torquebox:archive' ] do
-      archive_name = get_archive_name
-      src = File.join("#{Dir.pwd}", "#{archive_name}")
-      FileUtils.cp( src, TorqueBox::RakeUtils.deploy_dir )
+      archive_name, deploy_dir = TorqueBox::DeployUtils.deploy_archive
+      
       puts "Deployed: #{archive_name}"
-      puts "    into: #{TorqueBox::RakeUtils.deploy_dir}"
+      puts "    into: #{deploy_dir}"
     end
   end
-  namespace :undeploy do
-    task :archive do
-      archive_name = get_archive_name
-      FileUtils.rm_f( File.join( TorqueBox::RakeUtils.deploy_dir, archive_name ) )
-      puts "Undeployed #{archive_name}"
-    end
-  end
- 
+   
 end
 
