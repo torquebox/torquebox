@@ -1,4 +1,4 @@
-class Service
+class InjectionService
   include TorqueBox::Injectors
 
   def start

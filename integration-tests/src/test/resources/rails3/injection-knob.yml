@@ -6,8 +6,18 @@ web:
   context: injection
 queues:
   /queues/injection_service:
+    durable: false
+  /queues/injection_job:
+    durable: false
+  /queues/injection_task:
+    durable: false
 services:
-  Service:
+  InjectionService:
+jobs:
+  injection_job:
+    job: InjectionJob
+    cron: '* * * * * ?'
+    description: Test injection from a job
 
 ruby:
   version: ${ruby.compat.version}
