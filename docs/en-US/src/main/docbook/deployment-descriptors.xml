@@ -52,36 +52,37 @@
 
     <orderedlist spacing="compact">
       <listitem>
-        <para><emphasis>application</emphasis>: General application
+        <para><varname>application</varname>: General application
         configuration</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>web</emphasis>: Web-specific configuration</para>
+        <para><varname>web</varname>: Web-specific configuration</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>ruby</emphasis>: Runtime version and JIT options</para>
+        <para><varname>ruby</varname>: Runtime version and JIT
+        options</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>environment</emphasis>: Environment variables</para>
+        <para><varname>environment</varname>: Environment variables</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>jobs</emphasis>: Scheduled </para>
+        <para><varname>jobs</varname>: Scheduled</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>messaging</emphasis>: Advanced message-handling</para>
+        <para><varname>messaging</varname>: Advanced message-handling</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>pooling</emphasis>: Runtime pooling control</para>
+        <para><varname>pooling</varname>: Runtime pooling control</para>
       </listitem>
 
       <listitem>
-        <para><emphasis>services</emphasis>: low-level service daemons</para>
+        <para><varname>services</varname>: low-level service daemons</para>
       </listitem>
     </orderedlist>
 
@@ -234,19 +235,17 @@
         </informalexample></para>
     </section>
 
-
     <section id="ruby-runtime-config-in-descriptor">
       <title>Ruby runtime configuration</title>
 
-      <para>TorqueBox exposes two of the JRuby runtime options: the 
-      ruby compatibility version, and the JIT compile mode. Both of 
-      these options are configured in the ruby: section of a
-      deployment descriptor.</para>
+      <para>TorqueBox exposes two of the JRuby runtime options: the ruby
+      compatibility version, and the JIT compile mode. Both of these options
+      are configured in the ruby: section of a deployment descriptor.</para>
 
-      <para>Note that these settings are per application, allowing
-      you to run 1.8 and 1.9 applications in the same TorqueBox, 
-      or have one JIT'ed and another not.</para>
-      
+      <para>Note that these settings are per application, allowing you to run
+      1.8 and 1.9 applications in the same TorqueBox, or have one JIT'ed and
+      another not.</para>
+
       <table>
         <title>ruby</title>
 
@@ -268,30 +267,40 @@
               <entry><varname>version</varname></entry>
 
               <entry>The ruby compatibility version for JRuby. Options are:
-                <itemizedlist>
-                  <listitem><para>1.8 - provides 1.8.7 compatibility</para></listitem>
-                  <listitem><para>1.9 - provides 1.9.2 compatibility</para></listitem>
-                </itemizedlist>
-              </entry>
+              <itemizedlist>
+                  <listitem>
+                    <para>1.8 - provides 1.8.7 compatibility</para>
+                  </listitem>
+
+                  <listitem>
+                    <para>1.9 - provides 1.9.2 compatibility</para>
+                  </listitem>
+                </itemizedlist></entry>
 
               <entry>1.8</entry>
-
             </row>
 
             <row>
               <entry><varname>compile_mode</varname></entry>
 
               <entry>The JIT compile mode for JRuby. Options are:
-                <itemizedlist>
-                  <listitem><para>jit - Tells JRuby to use JIT on code where it determines there will be a speed improvement</para></listitem>
-                  <listitem><para>force - Tells JRuby to use JIT on all code</para></listitem>
-                  <listitem><para>off - Turns off JIT completely</para></listitem>
-                </itemizedlist>
-              </entry>
+              <itemizedlist>
+                  <listitem>
+                    <para>jit - Tells JRuby to use JIT on code where it
+                    determines there will be a speed improvement</para>
+                  </listitem>
+
+                  <listitem>
+                    <para>force - Tells JRuby to use JIT on all code</para>
+                  </listitem>
+
+                  <listitem>
+                    <para>off - Turns off JIT completely</para>
+                  </listitem>
+                </itemizedlist></entry>
 
               <entry><parameter>jit</parameter></entry>
             </row>
-
           </tbody>
         </tgroup>
       </table>
@@ -302,7 +311,6 @@
   compile_mode: off</programlisting></para>
         </informalexample></para>
     </section>
-
 
     <section id="environment-variables-config-in-descriptor">
       <title>Environment variables</title>
