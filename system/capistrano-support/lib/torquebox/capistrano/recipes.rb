@@ -17,17 +17,15 @@
 
 require 'capistrano'
 
-def is_rails?
-  return true if ( File.exists?( 'config/deploy.rb' ) )  
-  false
-end
-
 Capistrano::Configuration.instance.load do 
+
+  # --
 
   _cset( :torquebox_home,      '/opt/torquebox'   )
   _cset( :jboss_home,          lambda{ "#{torquebox_home}/jboss" } )
   _cset( :jruby_home,          lambda{ "#{torquebox_home}/jruby" } )
-  _cset( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby" } )
+  _cset( :jruby_opts,          lambda{ "--#{app_ruby_version}" } )
+  _cset( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } )
 
   _cset( :jboss_config,        'default'      )
 
@@ -38,6 +36,7 @@ Capistrano::Configuration.instance.load do
 
   _cset( :bundle_cmd,          lambda{ "#{jruby_bin} -S bundle" } )
   _cset( :bundle_flags,        '' )
+ 
   
   namespace :deploy do
   
@@ -104,15 +103,7 @@ Capistrano::Configuration.instance.load do
       task :deployment_descriptor do
         puts "creating deployment descriptor"
 
-        root_key = is_rails? ? 'RAILS_ROOT' : 'RACK_ROOT'
-    
-        dd = {
-          'application'=>{
-            root_key=>"#{latest_release}",
-          },
-        }
-    
-        dd_str = YAML.dump_stream( dd )
+        dd_str = YAML.dump_stream( create_deployment_descriptor() )
 
         dd_file = "#{torquebox_home}/apps/#{application}-knob.yml"
         dd_tmp_file = "#{dd_file}.tmp"
@@ -127,6 +118,36 @@ Capistrano::Configuration.instance.load do
     
         run cmd
       end
+    end
+
+
+    desc "Dump the deployment descriptor"
+    task :dump do
+      puts YAML.dump( create_deployment_descriptor )
+    end
+
+    def create_deployment_descriptor
+        dd = {
+          'application'=>{
+            'root'=>"#{latest_release}",
+          },
+        }
+
+        if ( exists?( :app_host ) )
+          dd['web'] ||= {}
+          dd['web']['host'] = app_host
+        end
+
+        if ( exists?( :app_context ) )
+          dd['web'] ||= {}
+          dd['web']['context'] = app_context
+        end
+
+        if ( exists?( :app_environment ) && ! app_environment.empty? ) 
+          dd['environment'] = app_environment
+        end
+
+        dd
     end
   
   end

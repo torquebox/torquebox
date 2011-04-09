@@ -99,6 +99,51 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
     </section>
 
     <section>
+      <title>Optionally configuration application variables</title>
+
+      <para>Typical usage of Capistrano expects production values to be
+      embedded into your application's <filename>torquebox.yml</filename>
+      file. In the event you need to override some values when deploying with
+      Capistrano, several application variables may be set. If these are
+      un-set, they will not be emitted by Capistrano into the
+      <filename>*-knob.yml</filename> it deploys.</para>
+
+      <table>
+        <title>Application variables</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Name</entry>
+
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>:app_host</entry>
+
+              <entry>String to use a the web virtual host.</entry>
+            </row>
+
+            <row>
+              <entry>:app_context</entry>
+
+              <entry>Application web context.</entry>
+            </row>
+
+            <row>
+              <entry>:app_environment</entry>
+
+              <entry>Hash of name/values for environment variables.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+
+    <section>
       <title>Configure server control style</title>
 
       <para>The TorqueBox AS can be controlled in two different ways. By

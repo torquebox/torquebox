@@ -13,6 +13,13 @@ set :jboss_config,      :default
 
 set :jboss_control_style, :binscripts
 
+#set :app_environment, {
+  #'FOO'=>'bar'
+#}
+
+#set :app_host, 'taco.com'
+#set :app_context, '/myapp'
+
 #set :jboss_init_script, "#{jboss_home}/bin/jboss_init_redhat.sh"
 #set :jboss_user,        :self
 
@@ -36,3 +43,12 @@ role :db,  "captest.local", :primary => true        # This is where Rails migrat
 #     run "#{try_sudo} touch #{File.join(current_path,'tmp','restart.txt')}"
 #   end
 # end
+
+#require 'pp'
+#
+#task :what do
+  #puts exists?(:app_host)
+  #puts variables[:app_host].inspect
+  #puts exists?(:app_context)
+  #puts variables[:app_context].inspect
+#end
