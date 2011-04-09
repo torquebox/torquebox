@@ -20,7 +20,7 @@
   subsystem descriptor sections, please see: <xref linkend="messaging" />,
   <xref linkend="scheduled-jobs" />, and <xref linkend="pooling" />.</para>
 
-  <section>
+  <section id="external-and-internal-descriptors">
     <title>External and Internal descriptors</title>
 
     <para>Deployment descriptors are small, YAML-formatted text files. They
@@ -44,7 +44,7 @@
     descriptor files is identical.</para>
   </section>
 
-  <section>
+  <section id="contents-of-deployment-descriptors">
     <title>Contents of the descriptor</title>
 
     <para>The descriptor has several sections, grouped by subsystem,
@@ -85,7 +85,7 @@
       </listitem>
     </orderedlist>
 
-    <section>
+    <section id="general-application-config-in-descriptor">
       <title>General Application Configuration</title>
 
       <formalpara>
@@ -152,7 +152,7 @@
         </informalexample></para>
     </section>
 
-    <section>
+    <section id="web-specific-config-in-descriptor">
       <title>Web-specific configuration</title>
 
       <para>Ruby web apps are often deployed individually, without respect to
@@ -235,7 +235,7 @@
     </section>
 
 
-    <section>
+    <section id="ruby-runtime-config-in-descriptor">
       <title>Ruby runtime configuration</title>
 
       <para>TorqueBox exposes two of the JRuby runtime options: the 
@@ -304,7 +304,7 @@
     </section>
 
 
-    <section>
+    <section id="environment-variables-config-in-descriptor">
       <title>Environment variables</title>
 
       <para>Each application may have its own unique set of environment
@@ -325,14 +325,14 @@
     </section>
   </section>
 
-  <section>
+  <section id="java-deployment-descriptors">
     <title>Java Deployment Descriptors</title>
 
     <para>In addition to Ruby, Rails and TorqueBox-specific descriptors, your
     application may also include any traditional JavaEE or JBoss-specific
     descriptors within its <filename>config/</filename> directory.</para>
 
-    <section>
+    <section id="config-web-xml">
       <title>config/web.xml</title>
 
       <para>A JavaEE <filename>web.xml</filename> deployment descriptor may be

@@ -4,7 +4,7 @@
 <chapter id="services">
   <title>Services</title>
 
-  <section>
+  <section id="what-are-services">
     <title>What Are Services?</title>
 
     <para>Services are persistent background Ruby daemons deployed and
@@ -18,7 +18,7 @@
     other application functionality.</para>
   </section>
 
-  <section>
+  <section id="service-classes">
     <title>Service Classes</title>
 
     <para>Each service maps to exactly one Ruby class that should
@@ -62,13 +62,13 @@ end</programlisting>This example service prints a message every second until sto
     <para></para>
   </section>
 
-  <section>
+  <section id="deploying-services">
     <title>Deploying Services</title>
 
     <para>Services are deployed by creating a services section inside
     your application's <filename>torquebox.yml</filename>.</para>
 
-    <section>
+    <section id="services-yaml-format">
       <title><filename>torquebox.yml</filename> Services Format</title>
 
       <para>Services reside under a <code>services</code> key of
@@ -102,10 +102,10 @@ end</programlisting>This example service prints a message every second until sto
     </section>
   </section>
 
-  <section>
+  <section id="clustered-services">
     <title>Clustered Services</title>
 
-    <section>
+    <section id="services-running-on-every-node">
       <title>Services Running on Every Node</title>
 
       <para>By default, if a service is deployed to every node in a
@@ -113,7 +113,7 @@ end</programlisting>This example service prints a message every second until sto
       services</para>
     </section>
 
-    <section>
+    <section id="ha-singleton-services">
       <title>High Availability Singleton Services</title>
 
       <para>TorqueBox also supports high availability singleton

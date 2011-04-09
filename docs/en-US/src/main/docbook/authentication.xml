@@ -23,7 +23,7 @@
     makes authenticating against a corporate JAAS data store trivial.
   </para>
 
-  <section>
+  <section id="security-domains">
     <title>Security Domains</title>
     <para>
       The JBoss Application Server provides security policy functionality that allows
@@ -45,7 +45,7 @@ rake torquebox:auth:adduser CREDENTIALS=user:pass
     </para>
   </section>
 
-  <section>
+  <section id="authentication-yaml-configuration">
     <title>YAML Configuration</title>
     <para>
       TorqueBox authentication is configured in the <code>torquebox.yml</code> file or in a
@@ -70,7 +70,7 @@ auth:
     </para>
   </section>
 
-  <section>
+  <section id="authentication-ruby-api">
     <title>Ruby API</title>
     <para>
       The Ruby API has 3 methods.

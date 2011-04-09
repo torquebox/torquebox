@@ -4,7 +4,7 @@
 <chapter id="rack">
   <title>Rack</title>
 
-  <section>
+  <section id="rack-applications">
     <title>Rack Applications</title>
 
     <para>Rack is a specification which describes how web server engines can
@@ -34,7 +34,7 @@
     path.</para>
   </section>
 
-  <section>
+  <section id="rack-frameworks">
     <title>Rack Frameworks</title>
 
     <para>Many Rack-compatible frameworks and components work right out of the
@@ -42,7 +42,7 @@
     run without surprise or modification.</para>
   </section>
 
-  <section>
+  <section id="rack-api">
     <title>Rack API</title>
 
     <para>TorqueBox aims to provide complete Ruby Rack compatibility. Please

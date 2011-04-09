@@ -11,7 +11,7 @@
   more Ruby interpreters, giving you complete concurrency control, but the
   defaults should be reasonable.</para>
 
-  <section>
+  <section id="types-of-pools">
     <title>Types of Runtime Pools</title>
 
     <para>TorqueBox defines three types of pools from which a Ruby interpreter
@@ -69,7 +69,7 @@
     </formalpara>
   </section>
 
-  <section>
+  <section id="subsystem-pools">
     <title>Subsystem Pools</title>
 
     <para>As noted above, an advanced application may use the functionality of
@@ -119,7 +119,7 @@
     </formalpara>
   </section>
 
-  <section>
+  <section id="pooling-yaml-configuration">
     <title>YAML Configuration</title>
 
     <para>If your application is not designed to be thread-safe, you can
@@ -143,7 +143,7 @@
         and will be removed before the final 1.0 release.</para>
       </warning></para>
 
-    <section>
+    <section id="pooling-yaml-configuration-syntax">
       <title>Syntax</title>
 
       <para>Within <filename>pooling.yml</filename>, a section may be added
@@ -235,10 +235,10 @@
         </informalexample></para>
     </section>
 
-    <section>
+    <section id="pooling-yaml-examples">
       <title>Examples</title>
 
-      <section>
+      <section id="pooling-yaml-examples-default">
         <title>Default development-mode pooling</title>
 
         <para>The following is the implicit default configuration for an
@@ -259,7 +259,7 @@ pooling:
           </informalexample></para>
       </section>
 
-      <section>
+      <section id="pooling-yaml-examples-non-devmode">
         <title>Default non-development-mode pooling</title>
 
         <para>The following is the implicit default configuration for an

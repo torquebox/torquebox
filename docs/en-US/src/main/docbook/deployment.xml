@@ -75,7 +75,7 @@
     the application. This is what the <command>torquebox:undeploy</command>
     task does.</para>
 
-    <section>
+    <section id="deploying-non-root-context">
       <title>Deploying a non-root context</title>
 
       <para>By default, the <command>torquebox:deploy</command> task will
@@ -88,7 +88,7 @@
       <uri>http://localhost:8080/my-application</uri>.</para>
     </section>
 
-    <section>
+    <section id="deploying-non-development-environment">
       <title>Deploying to a non-development environment</title>
 
       <para>By default, if otherwise unspecified, the variables
@@ -103,7 +103,7 @@
     </section>
   </section>
 
-  <section>
+  <section id="deploying-using-a-descriptor">
     <title>Deploy using a descriptor</title>
 
     <para>To customize some of the aspects of deployment, instead of using the
@@ -123,7 +123,7 @@
     descriptors, see <xref linkend="deployment-descriptors" />.</para>
   </section>
 
-  <section>
+  <section id="deploying-using-archive">
     <title>Deployment using a self-contained archive</title>
 
     <para>Ruby web applications may be deployed as atomic
@@ -132,7 +132,7 @@
     bundles created with the Java <command>jar</command> tool. Rake tasks are
     provided to assist with the creation and deployment of bundles.</para>
 
-    <section>
+    <section id="configuring-knob-archive">
       <title>Configuring an archive</title>
 
       <para>Typically, an application is <link
@@ -161,7 +161,7 @@
       in errors stemming from two separate deployments of the same app.</para>
     </section>
 
-    <section>
+    <section id="creating-a-knob-archive">
       <title>Creating an archive</title>
 
       <para>After creating <filename>torquebox.yml</filename>, if necessary,
@@ -186,7 +186,7 @@ app/controllers/application_controller.rb
 ...</screen></para>
     </section>
 
-    <section>
+    <section id="deploying-a-knob-archive">
       <title>Deploying an archive</title>
 
       <para>To deploy an archive, simply copy it to the

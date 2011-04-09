@@ -4,7 +4,7 @@
 <chapter id="messaging">
   <title>Messaging</title>
 
-  <section>
+  <section id="messaging-intro">
     <title>Introduction</title>
 
     <formalpara>
@@ -97,7 +97,7 @@
     </formalpara>
   </section>
 
-  <section>
+  <section id="deploying-destinations">
     <title>Deploying Destinations</title>
 
     <para>Queues and topics (collectively known as destinations) may be
@@ -109,10 +109,10 @@
     expectations of your application and its interaction with resources
     outside the scope of the application.</para>
 
-    <section>
+    <section id="destination-deployment-styles">
       <title>Deployment Styles</title>
 
-      <section>
+      <section id="destination-deployment-with-app">
         <title>Deploying destinations with your application</title>
 
         <para>If you decide to deploy your queues and topics with your
@@ -125,7 +125,7 @@
         parts.</para>
       </section>
 
-      <section>
+      <section id="destination-deployment-apart-from-app">
         <title>Deploying destinations apart from your application</title>
 
         <para>If you deploy destinations separate and apart from your
@@ -145,13 +145,13 @@
       </section>
     </section>
 
-    <section>
+    <section id="messaging-deployment-descriptors">
       <title>Deployment Descriptors</title>
 
       <para>You have several options when deploying queues and topics, based
       on the lifecycle that suits your systems best.</para>
 
-      <section>
+      <section id="long-lived-destinations">
         <title><filename>Long-lived queues and topics</filename></title>
 
         <para>If your queues and topics have a lifecycle that extends beyond
@@ -214,7 +214,7 @@
           </example></para>
       </section>
 
-      <section>
+      <section id="application-linked-destinations">
         <title>Application-linked queues and topics</title>
 
         <para>Some destinations are intimately tied to the lifecycle of some
@@ -248,7 +248,7 @@ topics:
     </section>
   </section>
 
-  <section>
+  <section id="messaging-ruby-classes">
     <title>TorqueBox Ruby Classes</title>
 
     <para>All classes in the <classname>TorqueBox::Messaging</classname>
@@ -284,10 +284,10 @@ require 'torquebox-messaging'
     </example>
   </section>
 
-  <section>
+  <section id="messaging-abstractions">
     <title>Messaging Abstractions</title>
 
-    <section>
+    <section id="messaging-queues-and-topics">
       <title>Queues and Topics</title>
 
       <para>There are two main messaging destination abstractions:
@@ -363,7 +363,7 @@ require 'torquebox-messaging'
       linkend="backgroundable">Backgroundable</link> are often
       better-suited to the task.</para>
 
-      <section id="producers">
+      <section id="messaging-producers">
         <title>Publishing Messages</title>
 
         <para>It's trivial to publish a message to a JMS
@@ -517,7 +517,7 @@ queue.publish "Some message"</programlisting></para>
         </table>
       </section>
 
-      <section>
+      <section id="receiving-messages">
         <title>Receiving Messages</title>
 
         <para>Receiving messages from a JMS
@@ -602,7 +602,7 @@ message = topic.receive
         </table>
       </section>
 
-      <section>
+      <section id="synchronous-messaging">
         <title>Synchronous Messaging</title>
 
         <para>The <methodname>publish</methodname> and
@@ -643,7 +643,7 @@ message = queue.publish_and_receive "ping", :timeout => 5000
       </section>
     </section>
 
-    <section id="consumers">
+    <section id="messaging-consumers">
       <title>Message Processors</title>
 
       <para>Message consumers may be implemented in Ruby and easily
@@ -651,7 +651,7 @@ message = queue.publish_and_receive "ping", :timeout => 5000
       the lowest JMS-level, or take advantage of higher-level
       semantics.</para>
 
-      <section>
+      <section id="low-level-message-consumption">
         <title>Low-level message consumption</title>
 
         <para>For the lowest-level implementation of a Ruby consumer,
@@ -680,7 +680,7 @@ end</programlisting></para>
         </para>
       </section>
 
-      <section>
+      <section id="syntactic-sugar-for-consumers">
         <title>Syntactic sugar for message consumers</title>
 
         <para>Message consumers may extend
@@ -719,7 +719,7 @@ end</programlisting></para>
         </para>
       </section>
 
-      <section>
+      <section id="connecting-consumers-to-destinations">
         <title>Connecting Consumers to Destinations</title>
 
         <para>You can connect consumers hosted within a
@@ -728,7 +728,7 @@ end</programlisting></para>
         different, since TorqueBox-hosted consumers get more baked-in
         support from the container.</para>
 
-        <section>
+        <section id="connecting-consumers-within-torquebox">
           <title>Connecting consumers within TorqueBox</title>
 
           <para>To connect consumers within a TorqueBox-deployed
@@ -925,7 +925,7 @@ messaging:
             processors are configured identically.</para>
           </example>
 
-          <section>
+          <section id="connecting-consumers-outside-of-torquebox">
             <title>Connecting Consumers outside of TorqueBox</title>
 
             <para>To support messaging outside of TorqueBox,
@@ -1014,7 +1014,7 @@ end</programlisting></para>
         </example></para>
       </section>
 
-      <section>
+      <section id="invoke-a-task">
         <title>Invoke a task</title>
 
         <para>Tasks can be invoked asynchronously from within any
@@ -1188,7 +1188,7 @@ tasks:
       *always* execute in the background, or send a method to the
       background on an ad hoc basis.</para>
 
-      <section>
+      <section id="backgroundable-always-background">
         <title><function>always_background</function></title>
         <para><classname>Backgroundable</classname> provides the 
         <function>always_background</function> class method that allows you to flag a 
@@ -1229,7 +1229,7 @@ User.always_background(:send_signup_notification)
         </example>
       </section>
 
-      <section>
+      <section id="backgroundable-background">
         <title><function>background</function></title>      
         <para>If you have not marked an instance method with 
         <function>always_background</function>, you can background it at call time
@@ -1254,7 +1254,7 @@ user.process_avatar(the_image)
         </example>
       </section>
 
-      <section>
+      <section id="backgroundable-module">
         <title>The <classname>Backgroundable</classname> module</title>
         <para>To use <classname>Backgroundable</classname> methods in a class, you will
         need to include the <classname>TorqueBox::Messaging::Backgroundable</classname> 
@@ -1278,8 +1278,8 @@ end
         into <classname>ActiveRecord::Base</classname>.</para>
       </section>
 
-      <section>
-        <title>Object/argument marshaling</title>
+      <section id="backgroundable-marshalling">
+        <title>Object/argument marshalling</title>
         <para>We serialize the receiver and arguments using Marshal and include them in
         the message that gets enqueued. The message processors run in a separate ruby runtime from
         the application, which may be on a different machine if you have a cluster. The marshaling 
@@ -1287,7 +1287,7 @@ end
         objects that expect a lot of plumbing in place (ActionControllers, for example).</para>
       </section>
 
-      <section>
+      <section id="backgroundable-invocation-options">
         <title><classname>Backgroundable</classname> method invocation options</title>
         <para>The priority, time-to-live, and persistence options that are available to
         <link linkend="task-invocation-options">available to task classes</link> are available to 
@@ -1319,7 +1319,7 @@ widget.background(:ttl => 1000, :persistent => false).monetize
           </example>
       </section>
 
-      <section>
+      <section id="backgroundable-message-processor-options">
         <title><classname>Backgroundable</classname> message processor options</title>
         <para>The concurrency option that is 
         <link linkend="task-message-processor-options">available to task class message processors</link>
