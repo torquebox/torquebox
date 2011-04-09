@@ -95,7 +95,9 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
 
       <para>Capistrano uses these values in order to control the TorqueBox AS
       process, deploy applications to the correct location, and execute
-      Bundler on the remote server if required.</para>
+      Bundler on the remote server if required. If required, you may also set
+      <varname>:jruby_opts</varname> variable to pass to all invocations of
+      JRuby.</para>
     </section>
 
     <section>
@@ -137,6 +139,12 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
               <entry>:app_environment</entry>
 
               <entry>Hash of name/values for environment variables.</entry>
+            </row>
+
+            <row>
+              <entry>:app_ruby_version</entry>
+
+              <entry>Ruby compatibility version (defaults to 1.8)</entry>
             </row>
           </tbody>
         </tgroup>

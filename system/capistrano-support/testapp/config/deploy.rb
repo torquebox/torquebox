@@ -23,6 +23,7 @@ set :jboss_control_style, :binscripts
 #set :jboss_init_script, "#{jboss_home}/bin/jboss_init_redhat.sh"
 #set :jboss_user,        :self
 
+
 set :scm, :none
 # Or: `accurev`, `bzr`, `cvs`, `darcs`, `git`, `mercurial`, `perforce`, `subversion` or `none`
 

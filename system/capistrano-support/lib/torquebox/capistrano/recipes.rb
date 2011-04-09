@@ -21,6 +21,8 @@ Capistrano::Configuration.instance.load do
 
   # --
 
+  _cset( :app_ruby_version,    1.8 )
+
   _cset( :torquebox_home,      '/opt/torquebox'   )
   _cset( :jboss_home,          lambda{ "#{torquebox_home}/jboss" } )
   _cset( :jruby_home,          lambda{ "#{torquebox_home}/jruby" } )
@@ -141,6 +143,11 @@ Capistrano::Configuration.instance.load do
         if ( exists?( :app_context ) )
           dd['web'] ||= {}
           dd['web']['context'] = app_context
+        end
+
+        if ( exists?( :app_ruby_version ) && ! app_ruby_version.empty? ) 
+          dd['ruby'] ||= {}
+          dd['ruby']['version'] = app_ruby_version
         end
 
         if ( exists?( :app_environment ) && ! app_environment.empty? ) 
