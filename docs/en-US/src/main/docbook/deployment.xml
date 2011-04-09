@@ -23,31 +23,31 @@
     the JBoss installation inside of it, respectively, as described in <xref
     linkend="installation" />.</para>
 
-    <para><screen><prompt>$</prompt> <command>export TORQUEBOX_HOME=/path/to/torquebox</command>
-<prompt>$</prompt> <command>export JBOSS_HOME=$TORQUEBOX_HOME/jboss</command></screen></para>
+    <para><informalexample><screen><prompt>$</prompt> <command>export TORQUEBOX_HOME=/path/to/torquebox</command>
+<prompt>$</prompt> <command>export JBOSS_HOME=$TORQUEBOX_HOME/jboss</command></screen></informalexample></para>
 
     <para>If you're using any configuration other than
     <classname>default</classname>, you must also set
     <envar>$JBOSS_CONF</envar>.</para>
 
-    <para><screen><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></para>
+    <para><informalexample><screen><prompt>$</prompt> <command>export JBOSS_CONF=web</command></screen></informalexample></para>
 
     <para>You need to include these tasks into your
     <filename>Rakefile</filename> using a <methodname>single</methodname>
     require statement.</para>
 
-    <para><screen>require 'torquebox-rake-support'</screen></para>
+    <para><informalexample><programlisting>require 'torquebox-rake-support'</programlisting></informalexample></para>
 
     <para>Once these variables are set, you may perform a default deployment
     using the <command>torquebox:deploy</command> task to deploy either
     Ruby-on-Rails applications or plain Ruby Rack applications.</para>
 
-    <para><screen><prompt>$</prompt> <command>rake torquebox:deploy</command></screen></para>
+    <para><informalexample><screen><prompt>$</prompt> <command>rake torquebox:deploy</command></screen></informalexample></para>
 
     <para>To undeploy your application, the
     <command>torquebox:undeploy</command> task is available</para>
 
-    <para><screen><prompt>$</prompt> <command>rake torquebox:undeploy</command></screen></para>
+    <para><informalexample><screen><prompt>$</prompt> <command>rake torquebox:undeploy</command></screen></informalexample></para>
 
     <para>The TorqueBox Server does not need to be running for these commands
     to work.</para>
@@ -97,9 +97,9 @@
       when deploying an application. To alter these values, simply set the
       variable when executing the rake tasks.</para>
 
-      <para>For example: <screen>$ <command>RAILS_ENV=production rake torquebox:deploy</command></screen></para>
+      <para>For example: <informalexample><screen>$ <command>RAILS_ENV=production rake torquebox:deploy</command></screen></informalexample></para>
 
-      <para>or <screen>$ <command>RACK_ENV=staging rake torquebox:deploy</command></screen></para>
+      <para>or <informalexample><screen>$ <command>RACK_ENV=staging rake torquebox:deploy</command></screen></informalexample></para>
     </section>
   </section>
 
@@ -172,18 +172,18 @@
       <filename>test/</filename>, <filename>spec/</filename>, and
       <filename>log/</filename> directories.</para>
 
-      <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>
+      <para><informalexample><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen></informalexample>
       The resulting archive will be placed at the root of the application,
       with a suffix of <filename>.knob</filename>. To inspect the contents,
       you may use the <command>jar</command> tool.</para>
 
-      <para><screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.knob</filename>
+      <para><informalexample><screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.knob</filename>
 META-INF/
 META-INF/MANIFEST.MF
 app/
 app/controllers/
 app/controllers/application_controller.rb
-...</screen></para>
+...</screen></informalexample></para>
     </section>
 
     <section id="deploying-a-knob-archive">
@@ -194,12 +194,16 @@ app/controllers/application_controller.rb
       <command>torquebox:deploy:archive</command> rake task may be used to
       both create and deploy an archive.</para>
 
-      <para><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive</command></screen>If
-      you wish to deploy manually, a command similar to the following may be
+      <para><informalexample><screen><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive</command></screen></informalexample></para>
+
+      <para>
+      If you wish to deploy manually, a command similar to the following may be
       used</para>
 
-      <para><screen>$ <command>rake</command> <command>torquebox:archive</command>
-$ <command>cp</command> <filename><replaceable>myapp</replaceable>.knob</filename> <filename><envar>$TORQUEBOX_HOME</envar>/apps/</filename></screen>If
+      <para><informalexample><screen>$ <command>rake</command> <command>torquebox:archive</command>
+$ <command>cp</command> <filename><replaceable>myapp</replaceable>.knob</filename> <filename><envar>$TORQUEBOX_HOME</envar>/apps/</filename></screen></informalexample></para>
+
+      <para>If
       you redeploy an archive, the server will remove the previous version,
       and hot-redeploy the new versions just copied.</para>
 

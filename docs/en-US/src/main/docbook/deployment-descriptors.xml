@@ -179,7 +179,7 @@
 
           <tbody>
             <row>
-              <entry>rackup</entry>
+              <entry><varname>rackup</varname></entry>
 
               <entry>The "rackup" script containing the complete logic for
               initializing your application.</entry>

@@ -52,7 +52,7 @@
 
     <para>For instance:</para>
 
-    <para><screen>class MyService 
+    <para><informalexample><programlisting>class MyService 
 
   include TorqueBox::Injectors
 
@@ -64,7 +64,7 @@
     inject( com.foo.ThatThing )
   end
 
-end</screen></para>
+end</programlisting></informalexample></para>
   </section>
 
   <section id="injectable-resources">
@@ -89,7 +89,7 @@ end</screen></para>
     <ulink url="http://seamframework.org/Weld">Weld website</ulink> for more
     information.</para>
 
-    <screen>class MyService
+    <para><informalexample><programlisting>class MyService
 
   include TorqueBox::Injectors
 
@@ -97,7 +97,7 @@ end</screen></para>
     @java_service = inject( com.mycorp.MyJavaService )
   end
 
-end</screen>
+end</programlisting></informalexample></para>
 
     <formalpara>
       <title>Messaging Destinations</title>
@@ -116,7 +116,7 @@ end</screen>
     upon the destination does not begin operation until the destination has
     been completely provisioned.</para>
 
-    <para><screen>class MyController &lt; ApplicationController
+    <para><informalexample><programlisting>class MyController &lt; ApplicationController
 
   include TorqueBox::Injectors
 
@@ -124,7 +124,7 @@ end</screen>
     notify_topic = inject( '/topics/new-accounts' )
   end
 
-end</screen></para>
+end</programlisting></informalexample></para>
 
     <formalpara>
       <title>Naming &amp; Directory Entries</title>
@@ -134,7 +134,7 @@ end</screen></para>
       with <literal>"java:comp/env"</literal>.</para>
     </formalpara>
 
-    <para><screen>class MyController &lt; ApplicationController
+    <para><informalexample><programlisting>class MyController &lt; ApplicationController
 
   include TorqueBox::Injectors
 
@@ -142,7 +142,7 @@ end</screen></para>
     jndi_item = inject( 'java:comp/env/that_thing' )
   end
 
-end</screen></para>
+end</programlisting></informalexample></para>
 
     <formalpara>
       <title>JBoss Microcontainer Beans (MCBeans, MBeans)</title>
@@ -153,7 +153,7 @@ end</screen></para>
       <methodname>inject(...)</methodname>.</para>
     </formalpara>
 
-    <para><screen>class MyController &lt; ApplicationController
+    <para><informalexample><programlisting>class MyController &lt; ApplicationController
 
   include TorqueBox::Injectors
 
@@ -161,7 +161,7 @@ end</screen></para>
     the_actual_webserver = inject( 'jboss.web:service=WebServer' )
   end
 
-end</screen></para>
+end</programlisting></informalexample></para>
   </section>
 
   <section id="variants-of-inject">
