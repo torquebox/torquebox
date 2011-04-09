@@ -145,7 +145,7 @@ Capistrano::Configuration.instance.load do
           dd['web']['context'] = app_context
         end
 
-        if ( exists?( :app_ruby_version ) && ! app_ruby_version.empty? ) 
+        if ( exists?( :app_ruby_version ) )
           dd['ruby'] ||= {}
           dd['ruby']['version'] = app_ruby_version
         end
