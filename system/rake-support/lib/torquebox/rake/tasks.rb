@@ -15,7 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/rake/tasks/rake_utils'
+require 'torquebox/deploy_utils'
 require 'torquebox/rake/tasks/server'
 require 'torquebox/rake/tasks/deployment'
 require 'torquebox/rake/tasks/archive'
