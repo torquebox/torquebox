@@ -14,7 +14,7 @@
     reference later.
   </para>
 
-  <section>
+  <section id="configuring-jboss">
     <title>Configuring</title>
     <para>
       JBoss has a very simple way of representing server
@@ -66,7 +66,7 @@
 
   </section>
 
-  <section>
+  <section id="running-jboss">
     <title>Running</title>
     <para>
       The <filename>$JBOSS_HOME/bin/</filename> directory contains the main JBoss
@@ -104,7 +104,7 @@
     </para>
   </section>
 
-  <section>
+  <section id="deploying-to-jboss">
     <title>Deploying</title>
     <para>
       Each server configuration has a <filename>deploy/</filename>
@@ -136,7 +136,7 @@
     </para>
   </section>
 
-  <section>
+  <section id="jboss-logging">
     <title>Logging</title>
     <para>
       Each server configuration has a <filename>log/</filename>
@@ -165,7 +165,7 @@
       console and written to <filename>log/server.log</filename>.
     </para>
     
-    <section>
+    <section id="torquebox-logger">
       <title>The <classname>TorqueBox::Logger</classname></title>
       <para>
         Ruby Loggers work normally inside of TorqueBox, of course, and

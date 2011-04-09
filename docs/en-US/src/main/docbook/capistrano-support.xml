@@ -4,7 +4,7 @@
 <chapter id="capistrano-support">
   <title>Capistrano Support</title>
 
-  <section>
+  <section id="what-is-capistrano">
     <title id="capistrano-support.title">What is Capistrano?</title>
 
     <para>Capistrano is a deployment tool to assist in moving code from a
@@ -19,7 +19,7 @@
     TorqueBox.</para>
   </section>
 
-  <section>
+  <section id="installing-capistrano">
     <title>Installing Capistrano</title>
 
     <para>The TorqueBox distribution includes support for Capistrano, but does
@@ -29,7 +29,7 @@
     <para><screen><prompt>$</prompt> <command>jruby</command> <option>-S</option> <command>gem</command> <command>install</command> jruby-openssl ffi-ncurses capistrano</screen></para>
   </section>
 
-  <section>
+  <section id="capify-your-application">
     <title>Capify your Application</title>
 
     <para>You can skip this section if you're already using Capistrano with
@@ -45,7 +45,7 @@
     deploy.rb file is the primary location for configuring your deployment
     strategy.</para>
 
-    <section>
+    <section id="basic-deploy-rb-configuration">
       <title>Basic deploy.rb configuration</title>
 
       <para>All applications, whether using TorqueBox or another server,
@@ -55,14 +55,14 @@
     </section>
   </section>
 
-  <section>
+  <section id="deploy-rb-configuration">
     <title>TorqueBox-specific deploy.rb configuration</title>
 
     <para>Within your deploy.rb, there are a few additional steps and
     variables you may configure in order to deploy to a remote TorqueBox
     server.</para>
 
-    <section>
+    <section id="include-torquebox-recipes">
       <title>Include TorqueBox recipes</title>
 
       <para>First, you should include the Capistrano recipes which support
@@ -73,7 +73,7 @@
 require 'bundler/capistrano'</screen></para>
     </section>
 
-    <section>
+    <section id="set-up-home-variables">
       <title>Set up <varname>home</varname> variable(s)</title>
 
       <para>Capistrano needs to know some details about how TorqueBox is
@@ -100,7 +100,7 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
       JRuby.</para>
     </section>
 
-    <section>
+    <section id="configuration-application-variables">
       <title>Optionally configuration application variables</title>
 
       <para>Typical usage of Capistrano expects production values to be
@@ -151,7 +151,7 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
       </table>
     </section>
 
-    <section>
+    <section id="configure-server-control-style">
       <title>Configure server control style</title>
 
       <para>The TorqueBox AS can be controlled in two different ways. By
@@ -220,7 +220,7 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
       <para></para>
     </section>
 
-    <section>
+    <section id="perform-deployes-with-cap">
       <title>Perform deployments</title>
 
       <para>Once your application is setup and configured, and your deployment

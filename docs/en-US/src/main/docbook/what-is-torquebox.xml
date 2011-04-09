@@ -7,7 +7,7 @@
   provides complete Ruby-on-Rails compatibility, but also goes beyond the
   functionality offered in traditional Rails environments.</para>
 
-  <section>
+  <section id="built-upon-jboss-as">
     <title>Built upon JBoss AS</title>
 
     <para>Instead of building a Ruby Application Platform from the ground-up,
@@ -18,7 +18,7 @@
     applications gain more capabilities right out-of-the-box.</para>
   </section>
 
-  <section>
+  <section id="built-upon-jruby">
     <title>Built upon JRuby</title>
 
     <para>JRuby is a fast, compliant implementation of the Ruby language upon
@@ -27,7 +27,7 @@
     their functionality is exposed in a manner suitable to Rubyists.</para>
   </section>
 
-  <section>
+  <section id="torquebox-is-opensource">
     <title>Open-Source</title>
 
     <para>TorqueBox is a product of the JBoss Community, and is completely
@@ -36,7 +36,7 @@
     it, even for profit, without any licensing costs.</para>
   </section>
 
-  <section>
+  <section id="as-concept">
     <title>The "application platform" concept</title>
 
     <para>Traditionally, Ruby applications were responsible for their services

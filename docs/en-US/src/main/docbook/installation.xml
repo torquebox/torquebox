@@ -4,7 +4,7 @@
 <chapter id="installation">
   <title>Installation</title>
 
-  <section>
+  <section id="using-complete-binary">
     <title>Installation using Complete Binary Distribution</title>
 
     <para>The latest Complete Binary Distribution contains:</para>
@@ -24,7 +24,7 @@
     </itemizedlist>
   </section>
 
-  <section>
+  <section id="ensure-you-have-java6">
     <title>Ensure you have Java 6</title>
 
     <para>TorqueBox requires Java JDK 6.</para>
@@ -55,7 +55,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
     <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
   </section>
 
-  <section>
+  <section id="get-latest-torquebox-binary-package">
     <title>Get the latest version of TorqueBox binary package</title>
 
     <para>You can obtain the latest version of TorqueBox from the TorqueBox
@@ -66,7 +66,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
     url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</ulink></para>
   </section>
 
-  <section>
+  <section id="unzip-the-package">
     <title>Unzip it somewhere handy</title>
 
     <para>We'll install TorqueBox under your user's $HOME directory.</para>
@@ -138,7 +138,7 @@ jruby -S gem install torquebox-base torquebox-vfs torquebox torquebox-capistrano
     set up your torquebox environment with RVM.</para>
   </section>
 
-  <section id="running">
+  <section id="running-torquebox">
     <title>How to run TorqueBox</title>
 
     <para>Running TorqueBox essentially amounts to running JBoss:</para>
