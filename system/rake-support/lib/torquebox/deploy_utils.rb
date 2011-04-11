@@ -185,11 +185,22 @@ module TorqueBox
         end
       end
 
-      def append_credentials(user_data)
+      def write_credentials(user_data)
         properties_file = "#{properties_dir}/torquebox-users.properties"
-        File.open( properties_file, 'a' ) do |file|
-          user_data.each do |data|
-            file.puts( data.join( '=' ) )
+        users = File.readlines( properties_file ).inject( {} ) do |accum, line|
+          user, pass = line.split( '=' )
+          accum[user] = pass
+          accum
+        end
+
+        users = user_data.inject( users ) do |accum, user|
+          accum[user[0]] = user[1]
+          accum
+        end
+        
+        File.open( properties_file, 'w' ) do |file|
+          users.each do |user, pass|
+            file.puts( "#{user}=#{pass}" )
           end
         end
         properties_file
