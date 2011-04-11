@@ -174,9 +174,14 @@
           <filename>-queues.yml</filename>, such as
           <filename><replaceable>these</replaceable>-queues.yml</filename> or
           <filename><replaceable>those</replaceable>-queues.yml</filename>.
-          Currently, no additional configuration parameters are allowed.
-          FIXME: Is this true? Don't we allow the durable parameter?</para>
+          The only configuration option available on queues is the
+          <parameter>durable</parameter> option.</para>
         </formalpara>
+
+        <para>Durability is enabled by default, and involves writing each
+        message to disk so as to be able to recover in the event of failure or
+        server restart. Disabling durability on queues may result in better
+        performance, but increases the risk of losing messages.</para>
 
         <para><example>
             <title>queues.yml</title>
@@ -184,10 +189,9 @@
             <para><programlisting>/queues/my_queue:
 
 /queues/my_other_queue:
-
-</programlisting>The name of the queue will be used when registering the queue
-            in the naming-service, and is used to discover the queue for
-            attaching consumers and producers.</para>
+  durable: false</programlisting>The name of the queue will be used when
+            registering the queue in the naming-service, and is used to
+            discover the queue for attaching consumers and producers.</para>
 
             <para>By convention, queues are named with the prefix of
             <filename>/queues</filename>.</para>
