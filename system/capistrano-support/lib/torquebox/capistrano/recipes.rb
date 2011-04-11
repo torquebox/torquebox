@@ -105,7 +105,15 @@ Capistrano::Configuration.instance.load do
 
       task :deployment_descriptor do
         puts "creating deployment descriptor"
-        ::TorqueBox::DeployUtils.deploy_yaml( create_deployment_descriptor() )
+        dd_str = YAML.dump_stream( create_deployment_descriptor() )
+        dd_file = "#{torquebox_home}/apps/#{application}-knob.yml"
+        dd_tmp_file = "#{dd_file}.tmp"
+        cmd =  "cat /dev/null > #{dd_tmp_file}"
+        dd_str.each_line do |line|
+          cmd += " && echo \"#{line}\" >> #{dd_tmp_file}"
+        end
+        cmd += " && mv #{dd_tmp_file} #{dd_file}"
+        run cmd
       end
     end
 
