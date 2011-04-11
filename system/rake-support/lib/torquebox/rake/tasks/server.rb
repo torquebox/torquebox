@@ -28,7 +28,7 @@ namespace :torquebox do
 
   desc "Run TorqueBox server"
   task :run=>[ :check ] do
-    TorqueBox::RakeUtils.run_server
+    TorqueBox::DeployUtils.run_server
   end
 
 end
