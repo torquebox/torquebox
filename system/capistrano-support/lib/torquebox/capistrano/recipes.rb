@@ -16,7 +16,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'capistrano'
-require 'torquebox-rake-support'
 
 Capistrano::Configuration.instance.load do 
 
