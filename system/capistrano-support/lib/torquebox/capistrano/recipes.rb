@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'capistrano'
+require 'torquebox-rake-support'
 
 Capistrano::Configuration.instance.load do 
 
@@ -104,7 +105,7 @@ Capistrano::Configuration.instance.load do
 
       task :deployment_descriptor do
         puts "creating deployment descriptor"
-        TorqueBox::DeployUtils.deploy_yaml( create_deployment_descriptor() )
+        ::TorqueBox::DeployUtils.deploy_yaml( create_deployment_descriptor() )
       end
     end
 

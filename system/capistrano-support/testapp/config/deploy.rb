@@ -1,10 +1,10 @@
 require 'torquebox-capistrano-support'
-require 'bundler/capistrano'
+#require 'bundler/capistrano'
 
 set :application, "testapp"
 set :repository,  "."
 set :user,        ENV['user']
-set :deploy_to,   "#{ENV['HOME']}/apps/testapp"
+set :deploy_to,   "/home/#{ENV['LOGNAME']}/apps/testapp"
 set :deploy_via,  :copy
 set :use_sudo,    false
 
