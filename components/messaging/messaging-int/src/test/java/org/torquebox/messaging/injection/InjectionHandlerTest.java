@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import org.torquebox.injection.Injectable;
 import org.torquebox.injection.InjectableHandlerRegistry;
 import org.torquebox.injection.InjectionAnalyzer;
@@ -54,6 +54,12 @@ public class InjectionHandlerTest {
         this.registry.addInjectableHandler( new CDIInjectableHandler() );
         this.registry.addInjectableHandler( new DestinationInjectableHandler( "queue" ) );
         this.registry.addInjectableHandler( new DestinationInjectableHandler( "topic" ) );
+        this.analyzer.create();
+    }
+    
+    @After
+    public void tearDownAnalyzer() {
+        this.analyzer.destroy();
     }
 
     @Test

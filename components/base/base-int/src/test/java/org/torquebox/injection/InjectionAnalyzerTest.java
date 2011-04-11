@@ -1,6 +1,7 @@
 package org.torquebox.injection;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,11 +9,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
 
+import org.jruby.exceptions.RaiseException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import org.jruby.exceptions.RaiseException;
-
 import org.torquebox.injection.cdi.CDIInjectable;
 import org.torquebox.injection.cdi.CDIInjectableHandler;
 import org.torquebox.injection.jndi.JNDIInjectable;
@@ -50,6 +50,12 @@ public class InjectionAnalyzerTest {
         this.registry.addInjectableHandler( new MCBeanInjectableHandler() );
         this.registry.addInjectableHandler( new JNDIInjectableHandler() );
         this.registry.addInjectableHandler( new CDIInjectableHandler() );
+        this.analyzer.create();
+    }
+    
+    @After
+    public void tearDownAnalyzer() {
+        this.analyzer.destroy();
     }
     
     @Test
