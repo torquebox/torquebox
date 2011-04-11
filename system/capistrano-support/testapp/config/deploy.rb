@@ -3,12 +3,12 @@ require 'bundler/capistrano'
 
 set :application, "testapp"
 set :repository,  "."
-set :user,        "bob"
-set :deploy_to,   "/home/bob/apps/testapp"
+set :user,        ENV['user']
+set :deploy_to,   "#{ENV['HOME']}/apps/testapp"
 set :deploy_via,  :copy
 set :use_sudo,    false
 
-set :torquebox_home,    '/home/bob/torquebox-current'
+set :torquebox_home,    ENV['TORQUEBOX_HOME']
 set :jboss_config,      :default
 
 set :jboss_control_style, :binscripts
