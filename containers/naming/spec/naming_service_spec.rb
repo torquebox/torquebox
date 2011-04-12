@@ -17,7 +17,9 @@ describe TorqueBox::Naming::NamingService do
     end
 
     after(:each) do
+      puts "Stopping the container"
       @container.stop
+      puts "Stopped the container"
     end
 
     it "should have a Naming bean" do
@@ -62,7 +64,9 @@ describe TorqueBox::Naming::NamingService do
     end
 
     after(:each) do
+      puts "Stopping the container"
       @container.stop
+      puts "Stopped the container"
     end
 
     it "should have a Naming bean" do
