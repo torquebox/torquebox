@@ -51,7 +51,7 @@ module TorqueBox
         end
 
         def after_start(container)
-          require 'vfs'
+          require 'torquebox-vfs'
           @deploy_files.each do |file|
             deployment = container.deploy( file )
             unit = container.deployment_unit( deployment.name )
