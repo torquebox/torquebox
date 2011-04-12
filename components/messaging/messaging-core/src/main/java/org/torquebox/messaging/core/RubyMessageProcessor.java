@@ -19,8 +19,6 @@
 
 package org.torquebox.messaging.core;
 
-import java.util.HashSet;
-import java.util.Set;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
