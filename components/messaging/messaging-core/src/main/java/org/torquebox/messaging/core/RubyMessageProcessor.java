@@ -146,6 +146,7 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
         this.connection = this.connectionFactory.createConnection();
         this.connection.setClientID( getApplicationName() );
         for (int i = 0; i < getConcurrency(); i++) {
+            log.info("Creating handler");
             new Handler( this.connection.createSession( true, this.acknowledgeMode ) );
         }
     }
@@ -191,24 +192,29 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     class Handler implements MessageListener {
 
         Handler(Session session) throws JMSException {
+            log.info("Handler constructor");
             MessageConsumer consumer = null;
             if (getDurable() && getDestination() instanceof Topic) {
+                log.info("Durable Topic");
                 consumer = session.createDurableSubscriber( (Topic)getDestination(), 
                                                             getName(),
                                                             getMessageSelector(),
                                                             false );
             } else {
+                log.info("Durable Queue");
                 if (getDurable() && !(getDestination() instanceof Topic)) {
                     log.warn( "Durable set for processor " + getName() + ", but "
                               + getDestinationName() + " is not a topic - ignoring." );
                 }
                 consumer = session.createConsumer( getDestination(), getMessageSelector() );
             }
+            log.info("Consumer = " + consumer);
             consumer.setMessageListener( this );
             this.session = session;
         }
 
         public void onMessage(Message message) {
+            log.info("Message received " + message);
             Ruby ruby = null;
 
             try {

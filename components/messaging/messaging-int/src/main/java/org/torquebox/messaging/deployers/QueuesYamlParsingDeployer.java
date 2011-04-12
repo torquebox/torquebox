@@ -55,7 +55,10 @@ public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
             }
             else if (queueOptions.containsKey("durable")) {
             	queueMetaData.setDurable((Boolean) queueOptions.get("durable"));
-            } 
+            }
+            if (queueOptions != null && queueOptions.containsKey("remote_host")) {
+            	queueMetaData.setRemoteHost((String) queueOptions.get("remote_host"));
+            }
             AttachmentUtils.multipleAttach( unit, queueMetaData, queueName );
         }
     }

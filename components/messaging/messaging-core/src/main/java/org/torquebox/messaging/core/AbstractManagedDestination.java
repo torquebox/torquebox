@@ -20,18 +20,10 @@
 package org.torquebox.messaging.core;
 
 import org.hornetq.jms.server.JMSServerManager;
-import org.jboss.logging.Logger;
 
-public abstract class AbstractManagedDestination {
-
-    protected Logger log;
+public abstract class AbstractManagedDestination extends AbstractDestination {
 
     private JMSServerManager server;
-    private String name;
-
-    public AbstractManagedDestination() {
-        log = Logger.getLogger( getClass() );
-    }
 
     public void setServer(JMSServerManager server) {
         this.server = server;
@@ -41,15 +33,4 @@ public abstract class AbstractManagedDestination {
         return this.server;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public abstract void create() throws Exception;
-
-    public abstract void destroy() throws Exception;
 }

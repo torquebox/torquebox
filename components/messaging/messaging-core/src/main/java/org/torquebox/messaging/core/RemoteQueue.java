@@ -17,46 +17,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.metadata;
+package org.torquebox.messaging.core;
 
-public class AbstractDestinationMetaData {
+public class RemoteQueue extends AbstractRemoteDestination {
 
-    private String name;
-    private String bindName;
-    private String remoteHost;
-    public AbstractDestinationMetaData() {
-
+    public RemoteQueue() {
     }
 
-    public AbstractDestinationMetaData(String name) {
-        this.name = name;
+    public void create() throws Exception {
+        log.trace("Fetching remote Queue details");
+        Object remoteQueue = getInitialContextRemote().lookup(getName());
+        log.trace("Binding remote Queue details to local JNDI");
+        getInitialContextLocal().bind(getName(), remoteQueue);
     }
 
-    public String getName() {
-        return this.name;
+    public void destroy() throws Exception {
+        log.trace("Unbinding remote Queue details from local JNDI");
+        getInitialContextLocal().unbind(getName());
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBindName() {
-        return this.bindName;
-    }
-
-    public void setBindName(String bindName) {
-        this.bindName = bindName;
-    }
-
-    public String getRemoteHost() {
-        return remoteHost;
-    }
-
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-
-    public boolean isRemote() {
-        return remoteHost != null && !remoteHost.equals("");
-    }
 }
