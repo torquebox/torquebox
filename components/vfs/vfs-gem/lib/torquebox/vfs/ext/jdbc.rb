@@ -20,8 +20,36 @@ class Java::java.sql::DriverManager
     alias_method :get_connection_without_vfs, :getConnection
     alias_method :register_driver_without_vfs, :registerDriver
 
-    def getConnection(url, user, pass)
+    # Monkey patch getConnection so we can sort out local filesystem url's for
+    # SQLite (we need to remove the 'vfs:' from the url)
+    def getConnection(url, *params)
+
+      # Remove any VFS prefix from the url (for SQLite)
       url = url.sub(':vfs:', ':')
+
+      # Call the correct version based on the number of arguments
+      raise NotImplementedError.new('Need to hande the single param version of getConnection') if params.count == 0
+      params.count == 1 ? get_connection_with_properties( url, params.first ) : get_connection_with_username_password(url,params[0],params[1])
+    end
+
+    def registerDriver(driver)
+      # Should this call the aliased method ??
+      @driver = driver
+    end
+
+  private
+
+    # The 2 param version of getConnection passing in url and a hash of properties
+    def get_connection_with_properties(url, properties)
+      get_connection_without_vfs(url, properties)
+    rescue => e
+      raise e unless @driver
+      # If we did register a driver, try to connection using it directly
+      @driver.connect(url,props)
+    end
+
+    # The 3 param version of getConnection passing in url, username and pasword
+    def get_connection_with_username_password(url,user,pass)
       get_connection_without_vfs(url, user, pass)
     rescue => e
       # If we didn't register a driver, throw the exception
@@ -33,8 +61,5 @@ class Java::java.sql::DriverManager
       @driver.connect(url, props)
     end
 
-    def registerDriver(driver)
-      @driver = driver
-    end
   end
 end
