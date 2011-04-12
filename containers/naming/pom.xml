@@ -73,6 +73,14 @@
         <executions>
           <execution>
             <id>run-specs</id>
+            <configuration>
+              <systemProperties>
+                <property>
+                  <name>log4j.configuration</name>
+                  <value>test-log4j.xml</value>
+                </property>
+              </systemProperties>
+            </configuration>
           </execution>
         </executions>
       </plugin>

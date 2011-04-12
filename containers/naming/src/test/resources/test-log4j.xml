@@ -13,11 +13,9 @@
     </layout>
   </appender>
 
-  <!--
-  <category name="org.jboss.deployers">
-    <priority value="TRACE"/>
+  <category name="org.jboss">
+    <priority value="DEBUG"/>
   </category>
-  -->
 
   <category name="org.torquebox">
     <priority value="DEBUG"/>
