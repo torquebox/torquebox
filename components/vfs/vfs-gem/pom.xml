@@ -114,7 +114,7 @@
             <configuration>
               <gemHome>${project.build.directory}/rubygems</gemHome>
               <gemPath>${project.build.directory}/rubygems</gemPath>
-              <fork>true</fork>
+              <fork>false</fork>
               <args>-S rake test:data:prepare</args>
             </configuration>
           </execution>
