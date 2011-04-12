@@ -16,47 +16,23 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.torquebox.messaging.core;
 
-package org.torquebox.messaging.metadata;
+public class RemoteTopic extends AbstractRemoteDestination {
 
-public class AbstractDestinationMetaData {
-
-    private String name;
-    private String bindName;
-    private String remoteHost;
-    public AbstractDestinationMetaData() {
-
+    public RemoteTopic() {
     }
 
-    public AbstractDestinationMetaData(String name) {
-        this.name = name;
+    public void create() throws Exception {
+        log.trace("Fetching remote Topic details");
+        Object remoteTopic = getInitialContextRemote().lookup(getName());
+        log.trace("Binding remote Topic details to local JNDI");
+        getInitialContextLocal().bind(getName(), remoteTopic);
     }
 
-    public String getName() {
-        return this.name;
+    public void destroy() throws Exception {
+        log.trace("Unbinding remote Topic details from local JNDI");
+        getInitialContextLocal().unbind(getName());
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBindName() {
-        return this.bindName;
-    }
-
-    public void setBindName(String bindName) {
-        this.bindName = bindName;
-    }
-
-    public String getRemoteHost() {
-        return remoteHost;
-    }
-
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-
-    public boolean isRemote() {
-        return remoteHost != null && !remoteHost.equals("");
-    }
 }

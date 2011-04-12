@@ -49,6 +49,10 @@ public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer 
 
         for (String topicName : data.keySet()) {
             TopicMetaData topicMetaData = new TopicMetaData( topicName );
+            Map<String, Object> topicOptions = data.get( topicName );
+            if (topicOptions != null && topicOptions.containsKey("remote_host")) {
+            	topicMetaData.setRemoteHost((String) topicOptions.get("remote_host"));
+            }
             AttachmentUtils.multipleAttach( unit, topicMetaData, topicName );
         }
     }

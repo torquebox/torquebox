@@ -17,35 +17,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.metadata;
+package org.torquebox.messaging.core;
 
-public class AbstractDestinationMetaData {
+import javax.naming.NamingException;
+import org.torquebox.common.util.JNDIUtils;
+import javax.naming.InitialContext;
 
-    private String name;
-    private String bindName;
+/**
+ * Represents a destination hosted on a remote HornetQ instance.
+ * @author peteroyle
+ */
+public abstract class AbstractRemoteDestination extends AbstractDestination {
+
     private String remoteHost;
-    public AbstractDestinationMetaData() {
 
-    }
-
-    public AbstractDestinationMetaData(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getBindName() {
-        return this.bindName;
-    }
-
-    public void setBindName(String bindName) {
-        this.bindName = bindName;
+    public AbstractRemoteDestination() {
     }
 
     public String getRemoteHost() {
@@ -56,7 +42,12 @@ public class AbstractDestinationMetaData {
         this.remoteHost = remoteHost;
     }
 
-    public boolean isRemote() {
-        return remoteHost != null && !remoteHost.equals("");
+    public InitialContext getInitialContextLocal() throws NamingException {
+        return JNDIUtils.getInitialContext("localhost");
     }
+
+    public InitialContext getInitialContextRemote() throws NamingException {
+        return JNDIUtils.getInitialContext(remoteHost);
+    }
+
 }

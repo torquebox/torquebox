@@ -30,7 +30,9 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.messaging.core.AbstractDestination;
 import org.torquebox.messaging.core.ManagedTopic;
+import org.torquebox.messaging.core.RemoteTopic;
 import org.torquebox.messaging.metadata.TopicMetaData;
 
 /**
@@ -59,13 +61,19 @@ public class ManagedTopicDeployer extends AbstractDeployer {
     }
 
     protected void deploy(DeploymentUnit unit, TopicMetaData metaData) {
-        String beanName = AttachmentUtils.beanName( unit, ManagedTopic.class, metaData.getName() );
 
-        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, ManagedTopic.class.getName() );
+        Class<? extends AbstractDestination> topicClass = metaData.isRemote() ? RemoteTopic.class : ManagedTopic.class;
+        String beanName = AttachmentUtils.beanName( unit, topicClass, metaData.getName() );
+
+        BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, topicClass.getName() );
         builder.addPropertyMetaData( "name", metaData.getName() );
 
-        ValueMetaData hornetServerInjection = builder.createInject( "JMSServerManager" );
-        builder.addPropertyMetaData( "server", hornetServerInjection );
+        if (metaData.isRemote()) {
+            builder.addPropertyMetaData( "remoteHost",  metaData.getRemoteHost() );
+        }  else {
+            ValueMetaData hornetServerInjection = builder.createInject( "JMSServerManager" );
+            builder.addPropertyMetaData( "server", hornetServerInjection );
+        }
 
         AttachmentUtils.attach( unit, builder.getBeanMetaData() );
     }

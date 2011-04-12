@@ -17,18 +17,23 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.metadata;
+package org.torquebox.messaging.core;
 
-public class AbstractDestinationMetaData {
+import org.jboss.logging.Logger;
+
+public abstract class AbstractDestination {
+
+    protected Logger log;
 
     private String name;
-    private String bindName;
-    private String remoteHost;
-    public AbstractDestinationMetaData() {
 
+    private boolean durable;
+
+    public AbstractDestination() {
+        log = Logger.getLogger( getClass() );
     }
 
-    public AbstractDestinationMetaData(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -36,27 +41,16 @@ public class AbstractDestinationMetaData {
         return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDurable(boolean durable) {
+        this.durable = durable;
     }
 
-    public String getBindName() {
-        return this.bindName;
+    public boolean isDurable() {
+        return durable;
     }
 
-    public void setBindName(String bindName) {
-        this.bindName = bindName;
-    }
+    public abstract void create() throws Exception;
 
-    public String getRemoteHost() {
-        return remoteHost;
-    }
+    public abstract void destroy() throws Exception;
 
-    public void setRemoteHost(String remoteHost) {
-        this.remoteHost = remoteHost;
-    }
-
-    public boolean isRemote() {
-        return remoteHost != null && !remoteHost.equals("");
-    }
 }

@@ -20,6 +20,8 @@
 package org.torquebox.messaging.deployers;
 
 import java.util.Set;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
 import org.jboss.beans.metadata.spi.BeanMetaData;
@@ -31,13 +33,16 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.common.util.StringUtils;
+import org.torquebox.common.util.JNDIUtils;
 import org.torquebox.injection.AbstractRubyComponentDeployer;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.jmx.JMXUtils;
-import org.torquebox.messaging.core.AbstractManagedDestination;
+import org.torquebox.messaging.core.AbstractDestination;
 import org.torquebox.messaging.core.ManagedQueue;
 import org.torquebox.messaging.core.ManagedTopic;
+import org.torquebox.messaging.core.RemoteQueue;
+import org.torquebox.messaging.core.RemoteTopic;
 import org.torquebox.messaging.core.RubyMessageProcessor;
 import org.torquebox.messaging.core.RubyMessageProcessorMBean;
 import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
@@ -102,7 +107,7 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         BeanMetaData componentResolver = createComponentResolver( unit, "message-processor." + metaData.getName(), metaData.getRubyClassName(), metaData.getRubyRequirePath(), metaData.getRubyConfig() );
         builder.addPropertyMetaData( "componentResolver", builder.createInject( componentResolver.getName() ) );
 
-        Class<? extends AbstractManagedDestination> demandClass = demandDestination( unit, metaData.getDestinationName() );
+        Class<? extends AbstractDestination> demandClass = demandDestination( unit, metaData.getDestinationName() );
 
         if (demandClass != null) {
             String destinationBeanName = AttachmentUtils.beanName( unit, demandClass, metaData.getDestinationName() );
@@ -116,9 +121,19 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         ValueMetaData destinationJndiRef = builder.createInject( "naming:" + metaData.getDestinationName() );
         builder.addPropertyMetaData( "destination", destinationJndiRef );
 
-        ValueMetaData connectionFactoryJndiRef = builder.createInject( "naming:/ConnectionFactory" );
-        builder.addPropertyMetaData( "connectionFactory", connectionFactoryJndiRef );
-
+        String destRemoteHost = getRemoteHost( unit, metaData.getDestinationName() );
+        if (destRemoteHost != null) {
+            try {
+                // Look up the remote HornetQ's ConnectionFactory.
+                InitialContext ic = JNDIUtils.getInitialContext(destRemoteHost);
+                builder.addPropertyMetaData( "connectionFactory", ic.lookup("/ConnectionFactory") );
+            } catch (NamingException ne) {
+                throw new DeploymentException(ne);
+            }
+        } else {
+            ValueMetaData connectionFactoryJndiRef = builder.createInject( "naming:/ConnectionFactory" );
+            builder.addPropertyMetaData( "connectionFactory", connectionFactoryJndiRef );
+        }
 
         String mbeanName = JMXUtils.jmxName( "torquebox.messaging.processors", rubyAppMetaData.getApplicationName() )
                 .with( "name", StringUtils.underscore( metaData.getName() ) ).name();
@@ -131,15 +146,36 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         AttachmentUtils.attach( unit, beanMetaData );
     }
 
-    protected Class<? extends AbstractManagedDestination> demandDestination(DeploymentUnit unit, String destinationName) {
+    protected Class<? extends AbstractDestination> demandDestination(DeploymentUnit unit, String destinationName) {
         Set<? extends AbstractDestinationMetaData> destinations = unit.getAllMetaData( AbstractDestinationMetaData.class );
 
         for (AbstractDestinationMetaData each : destinations) {
             if (each.getName().equals( destinationName )) {
                 if (each.getClass() == QueueMetaData.class) {
-                    return ManagedQueue.class;
+                    if (each.getRemoteHost() == null || each.getRemoteHost().equals("")) {
+                        return ManagedQueue.class;
+                    } else {
+                        return RemoteQueue.class;
+                    }
                 } else {
-                    return ManagedTopic.class;
+                    if (each.getRemoteHost() == null || each.getRemoteHost().equals("")) {
+                        return ManagedTopic.class;
+                    } else {
+                        return RemoteTopic.class;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    protected String getRemoteHost(DeploymentUnit unit, String destinationName) {
+        Set<? extends AbstractDestinationMetaData> destinations = unit.getAllMetaData( AbstractDestinationMetaData.class );
+
+        for (AbstractDestinationMetaData each : destinations) {
+            if (each.getName().equals( destinationName )) {
+                if(each.isRemote()) {
+                    return each.getRemoteHost();
                 }
             }
         }
