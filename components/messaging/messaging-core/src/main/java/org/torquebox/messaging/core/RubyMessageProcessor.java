@@ -19,9 +19,12 @@
 
 package org.torquebox.messaging.core;
 
+import java.util.HashSet;
+import java.util.Set;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
@@ -143,11 +146,15 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
                       "duplicate messages being processed and is an uncommon " +
                       "usage of Topic MessageProcessors.");
         }
+        connect();
+    }
+
+    public void connect() throws JMSException {
         this.connection = this.connectionFactory.createConnection();
-        this.connection.setClientID( getApplicationName() );
+        this.connection.setClientID(getApplicationName());
+        this.connection.setExceptionListener(new ReconnectExceptionListener(this));
         for (int i = 0; i < getConcurrency(); i++) {
-            log.info("Creating handler");
-            new Handler( this.connection.createSession( true, this.acknowledgeMode ) );
+            new Handler(this.connection.createSession(true, this.acknowledgeMode));
         }
     }
 
@@ -192,29 +199,24 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
     class Handler implements MessageListener {
 
         Handler(Session session) throws JMSException {
-            log.info("Handler constructor");
             MessageConsumer consumer = null;
             if (getDurable() && getDestination() instanceof Topic) {
-                log.info("Durable Topic");
                 consumer = session.createDurableSubscriber( (Topic)getDestination(), 
                                                             getName(),
                                                             getMessageSelector(),
                                                             false );
             } else {
-                log.info("Durable Queue");
                 if (getDurable() && !(getDestination() instanceof Topic)) {
                     log.warn( "Durable set for processor " + getName() + ", but "
                               + getDestinationName() + " is not a topic - ignoring." );
                 }
                 consumer = session.createConsumer( getDestination(), getMessageSelector() );
             }
-            log.info("Consumer = " + consumer);
             consumer.setMessageListener( this );
             this.session = session;
         }
 
         public void onMessage(Message message) {
-            log.info("Message received " + message);
             Ruby ruby = null;
 
             try {
@@ -239,7 +241,62 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
             }
         }
 
+        public void disconnect() {
+            try {
+                session.close();
+            } catch (Exception e) {
+                log.error("Error closing session on disconnet: ", e);
+            }
+        }
+
         private Session session;
+    }
+
+    class ReconnectExceptionListener implements ExceptionListener {
+
+        private RubyMessageProcessor msgProcessor;
+
+        public ReconnectExceptionListener(RubyMessageProcessor processor) {
+            this.msgProcessor = processor;
+        }
+
+        public void onException(JMSException jmse) {
+
+            log.error("Connection error for consumer " + name, jmse);
+
+            try {
+                msgProcessor.stop();
+            } catch (JMSException jmse2) {
+                // Logging at info level as this error is probably expected at this point
+                log.info("Error stopping message processor after connection exception was raised for consumer " +
+                        name + ": " + jmse2.getMessage());
+            }
+
+            boolean connected = false;
+
+            while (!connected) {
+
+                log.trace("Sleeping 5 seconds before next connection attempt");
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException ex) {
+                    log.trace("Interrupted while waiting to reconnect consumer " + name + " failed.");
+                }
+
+                log.trace("Reconnecting ...");
+
+                try {
+                    msgProcessor.connect();
+                    msgProcessor.start();
+                    connected = true;
+                } catch (Exception ex) {
+                    log.trace("Attempt to reconnect consumer " + name + " failed.");
+                }
+
+            }
+            log.info("Reconnected consumer " + name);
+
+        }
     }
 
     private String name;
