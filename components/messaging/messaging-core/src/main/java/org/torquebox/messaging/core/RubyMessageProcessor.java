@@ -151,10 +151,10 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
 
     public void connect() throws JMSException {
         this.connection = this.connectionFactory.createConnection();
-        this.connection.setClientID(getApplicationName());
-        this.connection.setExceptionListener(new ReconnectExceptionListener(this));
+        this.connection.setClientID( getApplicationName() );
+        this.connection.setExceptionListener( new ReconnectExceptionListener(this) );
         for (int i = 0; i < getConcurrency(); i++) {
-            new Handler(this.connection.createSession(true, this.acknowledgeMode));
+            new Handler( this.connection.createSession(true, this.acknowledgeMode) );
         }
     }
 
@@ -262,39 +262,39 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
 
         public void onException(JMSException jmse) {
 
-            log.error("Connection error for consumer " + name, jmse);
+            log.error( "Connection error for consumer " + name, jmse );
 
             try {
                 msgProcessor.stop();
             } catch (JMSException jmse2) {
                 // Logging at info level as this error is probably expected at this point
-                log.info("Error stopping message processor after connection exception was raised for consumer " +
-                        name + ": " + jmse2.getMessage());
+                log.info( "Error stopping message processor after connection exception was raised for consumer " +
+                        name + ": " + jmse2.getMessage() );
             }
 
             boolean connected = false;
 
             while (!connected) {
 
-                log.trace("Sleeping 5 seconds before next connection attempt");
+                log.trace( "Sleeping 5 seconds before next connection attempt" );
                 try {
                     Thread.sleep(5000);
-                } catch (InterruptedException ex) {
-                    log.trace("Interrupted while waiting to reconnect consumer " + name + " failed.");
+                } catch ( InterruptedException ex ) {
+                    log.trace( "Interrupted while waiting to reconnect consumer " + name + " failed." );
                 }
 
-                log.trace("Reconnecting ...");
+                log.trace( "Reconnecting ..." );
 
                 try {
                     msgProcessor.connect();
                     msgProcessor.start();
                     connected = true;
                 } catch (Exception ex) {
-                    log.trace("Attempt to reconnect consumer " + name + " failed.");
+                    log.trace( "Attempt to reconnect consumer " + name + " failed." );
                 }
 
             }
-            log.info("Reconnected consumer " + name);
+            log.info( "Reconnected consumer " + name );
 
         }
     }
