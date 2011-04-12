@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="additional-resources">
+  <title>Additional Resources</title>
+
+  <section id="backstage">
+    <title>BackStage</title>
+
+    <para>BackStage is a Sinatra app that you may deploy within TorqueBox to
+    get additional views and control into your application's components.
+    </para>
+
+    <para><mediaobject>
+        <imageobject>
+          <imagedata fileref="images/backstage.png" width="100%" />
+        </imageobject>
+      </mediaobject></para>
+
+    <section>
+      <title>Features</title>
+
+      <formalpara>
+        <title>Applications</title>
+
+        <para>View all deployed Ruby applications.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Destinations</title>
+
+        <para>Enumerate and interrogate messaging queues and topics. Allows
+        browsing of messages within queues.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Message Processors</title>
+
+        <para>Control message processors, including pausing their
+        execution.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Scheduled Jobs</title>
+
+        <para>Scheduled jobs can be paused and rescheduled.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Ruby Runtimes</title>
+
+        <para>Statistics for each Ruby interpreter for each
+        application.</para>
+      </formalpara>
+    </section>
+
+    <section>
+      <title>Installing</title>
+
+      <para>BackStage is available as a RubyGem.</para>
+
+      <para><informalexample>
+          <para><screen>$ jruby -S gem install torquebox-backstage</screen></para>
+        </informalexample></para>
+    </section>
+
+    <section>
+      <title>More Information</title>
+
+      <para>More Information About Backstage May Be Found On The Torquebox
+      Website. The Source For Backstage Is Hosted At Github.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><ulink
+          url="http://torquebox.org/backstage">Http://torquebox.org/backstage</ulink></para>
+        </listitem>
+
+        <listitem>
+          <para><ulink
+          url="http://github.com/torquebox/backstage">Http://github.com/torquebox/backstage</ulink></para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+
+  <section>
+    <title>StompBox</title>
+
+    <para>StompBox enables easy Git-based deployments to a TorqueBox AS.
+    </para>
+
+    <para><mediaobject>
+        <imageobject>
+          <imagedata fileref="images/stompbox.jpg" width="100%" />
+        </imageobject>
+      </mediaobject></para>
+
+    <para>By using a post-commit POST-back hook, StompBox is able to check
+    your application code out of the repository and deploy it into the running
+    server.</para>
+
+    <section>
+      <title>Features</title>
+
+      <formalpara>
+        <title>Deploy via Git</title>
+
+        <para>Using POST-back hooks, deploy code using <command>git
+        push</command>.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Multiple Revisions</title>
+
+        <para>Role forward or backward through revisions of your application
+        code.</para>
+      </formalpara>
+    </section>
+
+    <section>
+      <title>Installing</title>
+
+      <para>StompBox is available as a RubyGem.</para>
+
+      <para><informalexample>
+          <para><screen>$ jruby -S gem install torquebox-stompbox</screen></para>
+        </informalexample></para>
+    </section>
+
+    <section>
+      <title>More Information</title>
+
+      <para>More Information About Backstage May Be Found On The Torquebox
+      Website. The Source For Backstage Is Hosted At Github.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para><ulink
+          url="http://torquebox.org/stompbox">Http://torquebox.org/stompbox</ulink></para>
+        </listitem>
+
+        <listitem>
+          <para><ulink
+          url="http://github.com/torquebox/backstage">Http://github.com/torquebox/stompbox</ulink></para>
+        </listitem>
+      </itemizedlist>
+    </section>
+  </section>
+</chapter>
