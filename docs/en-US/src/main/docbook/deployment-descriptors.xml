@@ -70,7 +70,7 @@
       </listitem>
 
       <listitem>
-        <para><varname>jobs</varname>: Scheduled</para>
+        <para><varname>jobs</varname>: Scheduled executions</para>
       </listitem>
 
       <listitem>

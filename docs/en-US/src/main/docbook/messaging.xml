@@ -49,7 +49,7 @@
       <title>Destinations</title>
 
       <para>A destination represents a rendezvous where messages are
-      exchanged. A message message may be sent to a destination by one actor,
+      exchanged. A message may be sent to a destination by one actor,
       and received from the destination by another.</para>
     </formalpara>
 
@@ -57,7 +57,7 @@
     <emphasis>queues</emphasis> and <emphasis>topics</emphasis>. All
     destinations allow multiple actors to place messages with them. The type
     of destination affects what happens to the message once given to the
-    destination. A queue delivers to the message to a single recipient
+    destination. A queue delivers the message to a single recipient
     (possibly one of many candidate recipients). A topic delivers the message
     to multiple interested recipients.</para>
 
@@ -101,7 +101,7 @@
     <title>Deploying Destinations</title>
 
     <para>Queues and topics (collectively known as destinations) may be
-    deployed with with your application, or separate from your application.
+    deployed with your application, or separate from your application.
     Additionally, various parts of your application may also implicitly deploy
     and use some destinations.</para>
 
