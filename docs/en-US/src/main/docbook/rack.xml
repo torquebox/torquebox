@@ -11,7 +11,7 @@
     integrate with additional logic written in Ruby. Rack is a akin to CGI or
     the Java Servlets Spec in terms of goals and functionality.</para>
 
-    <para>TorqueBox current supports general
+    <para>TorqueBox currently supports general
     <filename>config.ru</filename>-based applications. In your application's
     directory, your Rack application can be booted from a file named
     <filename>config.ru</filename> that you provide. The Ruby runtime provided

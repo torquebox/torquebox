@@ -4,8 +4,8 @@
   <title>What is TorqueBox?</title>
 
   <para>TorqueBox provides an enterprise-grade environment that not only
-  provides complete Ruby-on-Rails compatibility, but also goes beyond the
-  functionality offered in traditional Rails environments.</para>
+  provides complete Ruby-on-Rails and Rack compatibility, but also goes
+  beyond the functionality offered in traditional Rails/Rack environments.</para>
 
   <section id="built-upon-jboss-as">
     <title>Built upon JBoss AS</title>

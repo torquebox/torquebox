@@ -114,8 +114,7 @@
         through <filename>config/environment.rb</filename> or a
         <filename>Gemfile</filename>. For more information on database
         connectivity wihtin the TorqueBox environment, please see <xref
-        linkend="database" />. Database gems supporting MySQL, PostgreSQL, and
-        SQLite3 are supplied in the TorqueBox binary distribution.</para>
+        linkend="database" />.</para>
 
         <formalpara>
           <title>Rails 2.x</title>
@@ -176,7 +175,7 @@ gem 'jdbc-sqlite3'</programlisting></para>
         above, these modifications are made for you.</para>
 
         <formalpara>
-          <title>Rails 2</title>
+          <title>Rails 2.x</title>
 
           <para>To use the application-server's session storage mechanism,
           your application's config/initializers/session_store.rb should
@@ -186,7 +185,7 @@ gem 'jdbc-sqlite3'</programlisting></para>
         <screen>ActionController::Base.session_store = TorqueBox::Session::ServletStore</screen>
 
         <formalpara>
-          <title>Rails 3</title>
+          <title>Rails 3.x</title>
 
           <para>To use the application-server's session storage mechanism,
           your application's
@@ -218,14 +217,14 @@ gem 'jdbc-sqlite3'</programlisting></para>
 
     <para>Additionally, by using the TorqueBox session store, your application
     can communicate between both the Java and Ruby sides through the HTTP
-    session. Where possible, elemental scalar attribtues of the Ruby session
-    are synchronized to similar attribtues in the Java session, and
+    session. Where possible, elemental scalar attributes of the Ruby session
+    are synchronized to similar attributes in the Java session, and
     vice-versa.</para>
 
     <para>For complex objects, they are retained in a Ruby hash, and
     serialized as a blob into a single attribute of the Java session.</para>
 
-    <para>When copying between the Ruby and Java sessions, attribtues will be
+    <para>When copying between the Ruby and Java sessions, attributes will be
     retained under symbol keys in the ruby session, and string keys in the
     Java session.</para>
 
