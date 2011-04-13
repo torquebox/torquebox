@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "basic sinatra test" do
 
-  deploy :path => "sinatra/basic-sinatra-knob.yml"
+  deploy "sinatra/basic-sinatra-knob.yml"
 
   it "should work" do
     visit "/basic-sinatra"

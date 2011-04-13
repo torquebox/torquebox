@@ -3,7 +3,7 @@ require 'torquebox-messaging'
 
 describe "backgroundable tests" do
 
-  deploy :path => "rack/background-knob.yml"
+  deploy "rack/background-knob.yml"
 
   before(:each) do
     @foreground = TorqueBox::Messaging::Queue.new("/queues/foreground")

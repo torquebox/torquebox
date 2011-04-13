@@ -2,10 +2,7 @@ require 'spec_helper'
 
 describe "vhost rack test" do
 
-  deploy :name=>'vhosting-test', :paths=> [ 
-    "rack/vhost-app1-knob.yml",
-    "rack/vhost-app2-knob.yml",
-  ]
+  deploy "rack/vhost-app1-knob.yml", "rack/vhost-app2-knob.yml"
 
   before(:each) do
     @original_capy_app_host = Capybara.app_host

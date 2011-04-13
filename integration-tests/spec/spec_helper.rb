@@ -1,6 +1,10 @@
-require 'container'
+require 'torquespec'
 require 'capybara/dsl'
 require 'akephalos'
+require 'fileutils'
+
+TorqueSpec.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'test-classes' ) )
+TorqueSpec.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
 
 Capybara.register_driver :akephalos do |app|
   Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)

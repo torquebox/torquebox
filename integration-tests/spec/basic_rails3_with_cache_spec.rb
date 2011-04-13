@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "basic rails3 asset test" do
 
-  deploy :path=>"rails3/basic-with-cache-knob.yml"
+  deploy "rails3/basic-with-cache-knob.yml"
 
   it "should deploy, at least" do
     visit "/basic-cache"

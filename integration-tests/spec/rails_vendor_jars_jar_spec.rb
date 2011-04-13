@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "rails vendor/jars/-based jar loading" do
 
-  deploy :path => "rails3/vendor-jars-jar-knob.yml"
+  deploy "rails3/vendor-jars-jar-knob.yml"
 
   it "should work" do
     visit "/vendor-jars-jar"

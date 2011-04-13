@@ -3,7 +3,7 @@ require 'torquebox-messaging'
 
 describe "messaging rack test" do
 
-  deploy :path => "rails2/messaging-knob.yml"
+  deploy "rails2/messaging-knob.yml"
 
   it "should receive a ham biscuit" do
     visit "/messaging-rails/message/queue?text=ham+biscuit"

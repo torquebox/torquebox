@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "rails POST behavior" do
 
-  deploy :path => "rails3/basic-knob.yml"
+  deploy "rails3/basic-knob.yml"
 
   context "raw_post" do
     it "should work" do

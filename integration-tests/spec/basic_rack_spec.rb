@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "basic rack test" do
 
-  deploy :path => "rack/basic-knob.yml"
+  deploy "rack/basic-knob.yml"
 
   it "should work" do
     visit "/basic-rack"
