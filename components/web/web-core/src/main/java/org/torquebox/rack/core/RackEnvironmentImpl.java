@@ -55,9 +55,11 @@ public class RackEnvironmentImpl implements RackEnvironment {
         RewindableChannel rewindableChannel = new RewindableChannel( request.getInputStream() );
         this.input = new RubyIO( ruby, rewindableChannel );
         this.input.binmode();
+        this.input.setAutoclose( false );
         env.put( RubyString.newString( ruby, "rack.input" ), input );
 
         this.errors = new RubyIO( ruby, STDIO.ERR );
+        this.errors.setAutoclose( false );
         env.put( RubyString.newString( ruby, "rack.errors" ), errors );
 
         RubyArray rackVersion = RubyArray.newArray( ruby );
@@ -113,18 +115,11 @@ public class RackEnvironmentImpl implements RackEnvironment {
     }
 
     public void close() {
-
-        if (this.input != null) {
-            if (!this.input.isClosed()) {
-                this.input.close();
-            }
-        }
-
-        if (this.errors != null) {
-            if (!this.errors.isClosed()) {
-                this.errors.close();
-            }
-        }
+        // no-op per TORQUE-350 and bump to JRuby 1.6
+        // We believe the need for this has been resolved in JRuby 1.6
+        // But I'm just commenting it out so we can revisit it if it
+        // turns out we're leaking file descriptors.  
+        // Don't bother explicitly closing stdin or stderr
     }
 
 }
