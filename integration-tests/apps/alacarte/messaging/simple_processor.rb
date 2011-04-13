@@ -4,7 +4,7 @@ class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
 
   def on_message(body)
     basedir = ENV['BASEDIR']
-    basedir.gsub!( %r(\\:), ':' )
+    basedir = basedir.gsub( %r(\\:), ':' )
     basedir.gsub!( %r(\\\\), '\\' )
     $stderr.puts "BASEDIR #{basedir}"
     touchfile = File.join( basedir,  'target', 'messaging-touchfile.txt' )

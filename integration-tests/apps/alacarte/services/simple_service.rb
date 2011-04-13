@@ -29,8 +29,8 @@ class SimpleService
   def loop_once
     if ( @webserver && @something )
       @logger.info "Looping once"
-      basedir = ENV['BASEDIR' ]
-      basedir.gsub!( %r(\\:), ':' )
+      basedir = ENV['BASEDIR']
+      basedir = basedir.gsub( %r(\\:), ':' )
       basedir.gsub!( %r(\\\\), '\\' )
       touchfile = File.join( basedir, 'target', 'touchfile.txt' )
       File.open( touchfile, 'w' ) do |f|
