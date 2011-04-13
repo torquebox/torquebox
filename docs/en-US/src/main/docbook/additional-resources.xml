@@ -43,14 +43,14 @@
       <formalpara>
         <title>Scheduled Jobs</title>
 
-        <para>Scheduled jobs can be paused and rescheduled.</para>
+        <para>Scheduled jobs can be paused.</para>
       </formalpara>
 
       <formalpara>
-        <title>Ruby Runtimes</title>
+        <title>Ruby Runtime Pools</title>
 
-        <para>Statistics for each Ruby interpreter for each
-        application.</para>
+        <para>View information about the runtime pools for all applications. Allows 
+        arbitrary script execution within a runtime from a pool.</para>
       </formalpara>
     </section>
 
