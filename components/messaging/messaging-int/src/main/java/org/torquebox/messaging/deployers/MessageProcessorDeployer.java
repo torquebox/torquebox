@@ -118,10 +118,12 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
             builder.addDemand( this.demand, ControllerState.CREATE, ControllerState.INSTALLED, null );
         }
 
-        ValueMetaData destinationJndiRef = builder.createInject( "naming:" + metaData.getDestinationName() );
+        String destRemoteHost = getRemoteHost( unit, metaData.getDestinationName() );
+
+        String jndiName = (destRemoteHost != null ? rubyAppMetaData.getApplicationName() + "." : "") + metaData.getDestinationName();
+        ValueMetaData destinationJndiRef = builder.createInject( "naming:" + jndiName );
         builder.addPropertyMetaData( "destination", destinationJndiRef );
 
-        String destRemoteHost = getRemoteHost( unit, metaData.getDestinationName() );
         if (destRemoteHost != null) {
             try {
                 // Look up the remote HornetQ's ConnectionFactory.

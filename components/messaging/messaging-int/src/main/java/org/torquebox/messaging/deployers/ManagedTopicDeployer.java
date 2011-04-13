@@ -29,6 +29,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.messaging.core.AbstractDestination;
 import org.torquebox.messaging.core.ManagedTopic;
@@ -47,6 +48,7 @@ public class ManagedTopicDeployer extends AbstractDeployer {
 
     public ManagedTopicDeployer() {
         setAllInputs( true );
+        addRequiredInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
     }
@@ -54,13 +56,14 @@ public class ManagedTopicDeployer extends AbstractDeployer {
     @Override
     public void deploy(DeploymentUnit unit) throws DeploymentException {
         Set<? extends TopicMetaData> allMetaData = unit.getAllMetaData( TopicMetaData.class );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
 
         for (TopicMetaData each : allMetaData) {
-            deploy( unit, each );
+            deploy( unit, rubyAppMetaData, each );
         }
     }
 
-    protected void deploy(DeploymentUnit unit, TopicMetaData metaData) {
+    protected void deploy(DeploymentUnit unit, RubyApplicationMetaData rubyAppMetaData, TopicMetaData metaData) {
 
         Class<? extends AbstractDestination> topicClass = metaData.isRemote() ? RemoteTopic.class : ManagedTopic.class;
         String beanName = AttachmentUtils.beanName( unit, topicClass, metaData.getName() );
@@ -69,6 +72,7 @@ public class ManagedTopicDeployer extends AbstractDeployer {
         builder.addPropertyMetaData( "name", metaData.getName() );
 
         if (metaData.isRemote()) {
+            builder.addPropertyMetaData( "applicationName", rubyAppMetaData.getApplicationName());
             builder.addPropertyMetaData( "remoteHost",  metaData.getRemoteHost() );
         }  else {
             ValueMetaData hornetServerInjection = builder.createInject( "JMSServerManager" );

@@ -16,24 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.torquebox.messaging.core;
 
 public class RemoteQueue extends AbstractRemoteDestination {
-
-    public RemoteQueue() {
-    }
-
-    public void create() throws Exception {
-        log.trace("Fetching remote Queue details");
-        Object remoteQueue = getInitialContextRemote().lookup(getName());
-        log.trace("Binding remote Queue details to local JNDI");
-        getInitialContextLocal().bind(getName(), remoteQueue);
-    }
-
-    public void destroy() throws Exception {
-        log.trace("Unbinding remote Queue details from local JNDI");
-        getInitialContextLocal().unbind(getName());
-    }
-
 }
