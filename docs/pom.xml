@@ -78,6 +78,7 @@
             <includes>
               <include>images/*.svg</include>
               <include>images/*.png</include>
+              <include>images/*.jpg</include>
             </includes>
           </imageResource>
           <formats>
