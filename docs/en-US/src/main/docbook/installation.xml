@@ -22,6 +22,10 @@
         <para>Additional RubyGems for use in other contexts</para>
       </listitem>
     </itemizedlist>
+
+    <para>Note: these instructions assume you are running on a unix-like system.
+    If you are using Windows, you will need to adjust the file-system paths and
+    environment variables accordingly.</para>
   </section>
 
   <section id="ensure-you-have-java6">
@@ -128,13 +132,12 @@ jruby -S gem install torquebox-base torquebox-vfs torquebox torquebox-capistrano
     your JRuby installation.</para>
 
     <para><command>Note:</command> if you are going to run a non-bundled JRuby
-    with a beta build of TorqueBox, it is recommended that you either use a
+    with a prerelease build of TorqueBox, it is recommended that you either use a
     separate <ulink url="http://rvm.beginrescueend.com">rvm</ulink> <ulink
-    url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink> for each beta
-    build, or be sure to reinstall the TorqueBox gems for the latest beta.
-    Rubygems does not support the Beta<replaceable>X</replaceable> naming
-    scheme, so sees all of the different betas of a version as
-    equivalent.  There is a <ulink url="http://torquebox.org/news/2011/02/25/using-rvm-with-torquebox/">blog post</ulink> on torquebox.org describing how to 
+    url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink> for each prerelease
+    build, or be sure to reinstall the TorqueBox gems for the latest prerelease.
+    There is a <ulink url="http://torquebox.org/news/2011/02/25/using-rvm-with-torquebox/">blog post</ulink> 
+    on torquebox.org describing how to 
     set up your torquebox environment with RVM.</para>
   </section>
 
