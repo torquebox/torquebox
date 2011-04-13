@@ -19,20 +19,4 @@
 package org.torquebox.messaging.core;
 
 public class RemoteTopic extends AbstractRemoteDestination {
-
-    public RemoteTopic() {
-    }
-
-    public void create() throws Exception {
-        log.trace("Fetching remote Topic details");
-        Object remoteTopic = getInitialContextRemote().lookup(getName());
-        log.trace("Binding remote Topic details to local JNDI");
-        getInitialContextLocal().bind(getName(), remoteTopic);
-    }
-
-    public void destroy() throws Exception {
-        log.trace("Unbinding remote Topic details from local JNDI");
-        getInitialContextLocal().unbind(getName());
-    }
-
 }

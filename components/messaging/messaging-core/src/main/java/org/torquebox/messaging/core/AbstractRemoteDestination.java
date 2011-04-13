@@ -16,7 +16,6 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.torquebox.messaging.core;
 
 import javax.naming.NamingException;
@@ -30,6 +29,7 @@ import javax.naming.InitialContext;
 public abstract class AbstractRemoteDestination extends AbstractDestination {
 
     private String remoteHost;
+    private String applicationName;
 
     public AbstractRemoteDestination() {
     }
@@ -42,6 +42,14 @@ public abstract class AbstractRemoteDestination extends AbstractDestination {
         this.remoteHost = remoteHost;
     }
 
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
     public InitialContext getInitialContextLocal() throws NamingException {
         return JNDIUtils.getInitialContext("localhost");
     }
@@ -50,4 +58,23 @@ public abstract class AbstractRemoteDestination extends AbstractDestination {
         return JNDIUtils.getInitialContext(remoteHost);
     }
 
+    public void create() throws Exception {
+        bindRemoteToLocalJndi();
+    }
+
+    public void destroy() throws Exception {
+        unbindFromLocalJndi();
+    }
+
+    private void bindRemoteToLocalJndi() throws NamingException {
+        log.trace("Fetching remote destination details");
+        Object remoteQueue = getInitialContextRemote().lookup(getName());
+        log.trace("Binding remote destination details to local JNDI");
+        getInitialContextLocal().bind(getApplicationName() + "." + getName(), remoteQueue);
+    }
+
+    private void unbindFromLocalJndi() throws NamingException {
+        log.trace("Unbinding remote destination details from local JNDI");
+        getInitialContextLocal().unbind(getApplicationName() + "." + getName());
+    }
 }
