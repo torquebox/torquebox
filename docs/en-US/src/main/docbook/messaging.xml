@@ -103,7 +103,8 @@
     <para>Queues and topics (collectively known as destinations) may be
     deployed with your application, or separate from your application.
     Additionally, various parts of your application may also implicitly deploy
-    and use some destinations.</para>
+    and use some destinations. Furthermore you may have existing message destinations
+    somewhere on your network which you would like to interact with.</para>
 
     <para>Each method has advantages and disadvantages involving the
     expectations of your application and its interaction with resources
@@ -143,6 +144,20 @@
         and undeploy them separate from any app, creating additional
         work.</para>
       </section>
+    </section>
+
+    <section>
+        <title>Interacting with external message destinations</title>
+
+        <para>In the most common use-case all destinations and the apps which
+        use them are deployed to the same TorqueBox server or cluster. Thus by
+        default TorqueBox need only refer to its embedded messaging server when
+        looking up destinations. However it is sometimes the case that you have
+        several independent systems which all communicate via destinations
+        deployed on a central messaging server. In these cases you simply need
+        to let TorqueBox know where each of those destinations is hosted.
+        </para>
+
     </section>
 
     <section id="messaging-deployment-descriptors">
@@ -230,6 +245,7 @@
       </section>
 
       <section id="application-linked-destinations">
+
         <title>Application-linked queues and topics</title>
 
         <para>Some destinations are intimately tied to the lifecycle of some
@@ -258,6 +274,40 @@ queues:
 
 topics:
   /queues/my_app_topic:</programlisting></para>
+          </example></para>
+      </section>
+
+      <section>
+        <title>External queues and topics</title>
+
+        <para>If you have destinations deployed on an external, dediated messaging server
+        you will need to provide TorqueBox with some additional info in order to
+        be able to interact with them.</para>
+
+        <para>Publishing to external destinations is straightforward and is covered in the <link linkend="producers">
+            Publishing Messages</link> section below.</para>
+
+        <para>To consume messages from remote destinations, the configuration is identical
+        to that for <link linkend="application-linked-destinations">Application-linked queues
+        and topics</link> plus the addition of the "remote_host" property to your
+        queue and/or topic definitions. This should be set to the  hostname or
+        IP address of the external messaging server's Naming Directory.</para>
+
+        <para><example>
+            <title>Defining external topics and queues in
+            <filename>torquebox.yml</filename></title>
+
+            <para><programlisting>application:
+  ..
+queues:
+  /members/new_member:
+    remote_host: 192.168.1.100
+
+topics:
+  /members/member_tweets:
+    remote_host: 192.168.1.100
+  /news_aggregator/technology:
+    remote_host: 192.168.1.200</programlisting></para>
           </example></para>
       </section>
     </section>
