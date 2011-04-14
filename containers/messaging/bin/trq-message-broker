@@ -4,6 +4,11 @@ dev_lib_dir = File.dirname(__FILE__) + '/../target/org.torquebox.torquebox-namin
 
 require 'rubygems'
 
+# Require torquebox-vfs but unset the VFS protocol handlers because
+# VFSUtils.toURI(url) has bugs when used outside of AS on Windows
+require 'torquebox-vfs'
+java.lang.System.setProperty('java.protocol.handler.pkgs', 'java.net')
+
 if ( File.exist?( dev_lib_dir ) )
   $:.unshift File.join( File.dirname(__FILE__), '..', 'lib' )
   Dir[ "#{dev_lib_dir}/*.jar" ].each do |jar|

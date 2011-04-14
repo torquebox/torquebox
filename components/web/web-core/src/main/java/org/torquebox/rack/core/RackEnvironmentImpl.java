@@ -55,9 +55,11 @@ public class RackEnvironmentImpl implements RackEnvironment {
         RewindableChannel rewindableChannel = new RewindableChannel( request.getInputStream() );
         this.input = new RubyIO( ruby, rewindableChannel );
         this.input.binmode();
+        this.input.setAutoclose( false );
         env.put( RubyString.newString( ruby, "rack.input" ), input );
 
         this.errors = new RubyIO( ruby, STDIO.ERR );
+        this.errors.setAutoclose( false );
         env.put( RubyString.newString( ruby, "rack.errors" ), errors );
 
         RubyArray rackVersion = RubyArray.newArray( ruby );
@@ -113,17 +115,12 @@ public class RackEnvironmentImpl implements RackEnvironment {
     }
 
     public void close() {
+        //explicitly close the inputstream, but leave the err stream open,
+        //as closing that detaches it from the log forever!
 
-        if (this.input != null) {
-            if (!this.input.isClosed()) {
-                this.input.close();
-            }
-        }
-
-        if (this.errors != null) {
-            if (!this.errors.isClosed()) {
-                this.errors.close();
-            }
+        if (this.input != null &&
+            !this.input.isClosed()) {
+            this.input.close();
         }
     }
 

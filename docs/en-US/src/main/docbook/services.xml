@@ -110,7 +110,7 @@ end</programlisting>This example service prints a message every second until sto
 
       <para>By default, if a service is deployed to every node in a
       cluster it will run on each node. This is useful for stateless
-      services</para>
+      services.</para>
     </section>
 
     <section id="ha-singleton-services">

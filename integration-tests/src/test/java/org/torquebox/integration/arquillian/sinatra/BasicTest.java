@@ -38,7 +38,7 @@ public class BasicTest extends AbstractIntegrationTestCase {
     }
 
     @Test
-    public void testPostAlot() throws Exception {
+    public void testSirPostALot() throws Exception {
         int numIterations = 500;
         for (int i = 0; i < numIterations; ++i) {
             if (i % 10 == 0) {
