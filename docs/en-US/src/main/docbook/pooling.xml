@@ -136,13 +136,6 @@
     descriptor. This section is always optional, and only required if you wish
     to modify the defaults.</para>
 
-    <para><warning>
-        <para>While previous versions of TorqueBox supported a
-        <filename>pooling.yml</filename> configuration file, this
-        usage is now deprecated
-        and will be removed before the final 1.0 release.</para>
-      </warning></para>
-
     <section id="pooling-yaml-configuration-syntax">
       <title>Syntax</title>
 
@@ -203,12 +196,13 @@
         requests.</para>
       </formalpara>
 
-      <informalexample>
-        <para><screen>pooling:
+      <example>
+        <title>Configuring a bounded pool</title>
+        <para><programlisting>pooling:
   web:
     min: 3
-    max: 10</screen></para>
-      </informalexample>
+    max: 10</programlisting></para>
+      </example>
 
       <formalpara>
         <title>Shared pools</title>
@@ -217,10 +211,11 @@
         subsystem should use a shared pool.</para>
       </formalpara>
 
-      <informalexample>
-        <para><screen>pooling:
-  web: shared</screen></para>
-      </informalexample>
+      <example>
+        <title>Configuring a shared pool</title>
+        <para><programlisting>pooling:
+  web: shared</programlisting></para>
+      </example>
 
       <formalpara>
         <title>Global pool</title>
@@ -229,23 +224,20 @@
         susbsystem should use the global pool.</para>
       </formalpara>
 
-      <para><informalexample>
-          <para><screen>pooling:
-  web: global</screen></para>
-        </informalexample></para>
+      <example>
+        <title>Configuring a global pool</title>
+        <para><programlisting>pooling:
+  web: global</programlisting></para>
+        </example>
     </section>
 
     <section id="pooling-yaml-examples">
       <title>Examples</title>
 
-      <section id="pooling-yaml-examples-default">
+      <example id="pooling-yaml-examples-default">
         <title>Default development-mode pooling</title>
 
-        <para>The following is the implicit default configuration for an
-        application deployed in <code>development</code> mode.</para>
-
-        <para><informalexample>
-            <para><screen>application:
+        <para><programlisting>application:
   <replaceable>...</replaceable>
 
 pooling:
@@ -255,27 +247,24 @@ pooling:
   messaging:
     min: 1
     max: 2
-  web: shared</screen></para>
-          </informalexample></para>
-      </section>
+  web: shared</programlisting>The following is the implicit default configuration for an
+        application deployed in <code>development</code> mode.</para>
+      </example>
 
-      <section id="pooling-yaml-examples-non-devmode">
+
+      <example id="pooling-yaml-examples-non-devmode">
         <title>Default non-development-mode pooling</title>
 
-        <para>The following is the implicit default configuration for an
-        application deployed in a mode other than
-        <code>development</code>.</para>
-
-        <para><informalexample>
-            <para><screen>application:
+        <para><programlisting>application:
   ...
 
 pooling:
   jobs: shared
   messaging: shared
-  web: shared</screen></para>
-          </informalexample></para>
-      </section>
+  web: shared</programlisting>The following is the implicit default configuration for an
+        application deployed in a mode other than
+        <code>development</code>.</para>
+      </example>
     </section>
   </section>
 </chapter>

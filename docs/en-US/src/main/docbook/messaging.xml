@@ -208,7 +208,9 @@
           <filename><replaceable>these</replaceable>-topics.yml</filename> or
           <filename><replaceable>those</replaceable>-topics.yml</filename>.
           Currently, no additional configuration parameters are
-          allowed.</para>
+          allowed - topic durability is controlled via options on
+          the attached processors (See <xref
+          linkend="connecting-consumers-within-torquebox" />).</para>
         </formalpara>
 
         <para><example>
@@ -266,17 +268,39 @@ topics:
 
     <para>All classes in the <classname>TorqueBox::Messaging</classname>
     module reside in the Ruby gem, <filename>torquebox-messaging</filename>,
-    so to use them in your Rails app, add this to your
-    <filename>config/environment.rb</filename>:</para>
+    so to use them in your Rails app, you'll need to configure your app to 
+    load the gem.</para>
+
+    <formalpara>
+      <title>Rails 2.x</title>
+      <para>Add this to your <filename>config/environment.rb</filename>:</para>
+    </formalpara>
 
     <example>
-      <title>To use <classname>TorqueBox::Messaging</classname> in a Rails
+      <title>To use <classname>TorqueBox::Messaging</classname> in a Rails 2.x
       app</title>
 
       <para><programlisting>Rails::Initializer.run do |config|
   ...
   config.gem 'torquebox-messaging'
   ...</programlisting></para>
+    </example>
+
+
+    <formalpara>
+      <title>Rails 3.x</title>
+      <para>Add this to your <filename>Gemfile</filename>:</para>
+    </formalpara>
+
+    <example>
+      <title>To use <classname>TorqueBox::Messaging</classname> in a Rails 3.x
+      app</title>
+
+      <para><programlisting>source 'http://rubygems.org'
+
+gem 'rails', '3.0.4'
+...
+gem 'torquebox-messaging'</programlisting></para>
     </example>
 
     <para>And to use them in any other JRuby script, it's even simpler. First,
@@ -306,8 +330,7 @@ require 'torquebox-messaging'
       <classname>TorqueBox::Messaging::Topic</classname>. Each has a
       <methodname>publish</methodname> and a <methodname>receive</methodname>
       method, and each must be constructed with a <parameter>name</parameter>
-      and an optional hash of options, the keys of which are as
-      follows:</para>
+      and an optional hash of options:</para>
 
       <table>
         <title>Message destination options</title>
@@ -417,14 +440,14 @@ queue.publish {:key =&gt; 'value', :list =&gt; %w{one two three}}
         <example>
           <title>Send message using a remote JNDI server</title>
 
-          <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo', :naming_host =&gt; 'jndi.jboss.org',
+          <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo', 
+                                        :naming_host =&gt; 'jndi.jboss.org',
                                         :naming_port =&gt; 1099)
 queue.publish "Some message"</programlisting></para>
         </example>
 
         <para>The <methodname>publish</methodname> method takes an optional
-        second argument containing a hash of options, the keys of which are as
-        follows:</para>
+        second argument containing a hash of options:</para>
 
         <table>
           <title>Publish options</title>
@@ -496,7 +519,9 @@ queue.publish "Some message"</programlisting></para>
 
                 <entry>By default, queued messages will survive across AS
                 restarts. If you don't want a message to be persistent, set
-                the persistence to <parameter>false</parameter>.</entry>
+                the persistence to <parameter>false</parameter> 
+                (see <xref linkend="long-lived-destinations"/> for controlling
+                message durability globally for a queue).</entry>
               </row>
 
               <row>
@@ -578,7 +603,7 @@ message = topic.receive
         </example>
 
         <para>The <methodname>receive</methodname> takes an optional argument
-        containing a hash of options, the keys of which are as follows:</para>
+        containing a hash of options:</para>
 
         <table>
           <title>Receive options</title>
@@ -772,13 +797,6 @@ end</programlisting></para>
           you need to add a messaging: section to your
           <filename><filename>torquebox.yml</filename></filename> (or external
           *-knob.yml descriptor).</para>
-
-          <warning>
-            <para>While previous versions of TorqueBox supported a
-            <filename>messaging.yml</filename> configuration file, this usage
-            is now deprecated and will be removed before the final 1.0
-            release.</para>
-          </warning>
 
           <para>This section will contain the mappings from your destinations
           (topics and queues) to your consumers. The section is a YAML hash,
@@ -1220,7 +1238,7 @@ tasks:
       for background proccessing, TorqueBox also provides
       <classname>Backgroundable</classname> methods.
       <classname>Backgroundable</classname> allows you to process any method
-      on any object asynchronously. You can mark a method to *always* execute
+      on any object asynchronously. You can mark a method to always execute
       in the background, or send a method to the background on an ad hoc
       basis.</para>
 
