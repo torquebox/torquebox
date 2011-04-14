@@ -408,19 +408,25 @@ require 'torquebox-messaging'
         in the runtime environments of both the producer and the
         consumer.</para>
 
-        <para>To send a message, simply construct either a
+        <para>To send a message, you will need access to a <classname>Topic</classname> or 
+        <classname>Queue</classname> instance. The preferred method for
+        accessing the destination instance is to use <methodname>inject(...)</methodname>
+        (see <xref linkend="injectable-destinations"/> for more details). If you need to 
+        pass options to the instance, or only have access to the destination
+        name at runtime, construct either a
         <classname>Topic</classname> or a <classname>Queue</classname>
-        instance with its name, and then call its publish method. The API's of
+        instance with its name and options. Once you have a destination instance,
+        simply call its publish method. The API's of
         both Topics and Queues are identical; they each simply represent a
         destination for your messages.</para>
 
         <example>
           <title>Publish text messages</title>
 
-          <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+          <para><programlisting>queue = inject('/queues/foo')
 queue.publish "A text message"
 
-topic = TorqueBox::Messaging::Topic.new('/topics/foo')
+topic = inject('/topics/foo')
 topic.publish "A text message"
           </programlisting></para>
         </example>
@@ -428,7 +434,7 @@ topic.publish "A text message"
         <example>
           <title>Publish a Ruby Hash</title>
 
-          <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+          <para><programlisting>queue = inject('/queues/foo')
 queue.publish {:key =&gt; 'value', :list =&gt; %w{one two three}}
           </programlisting></para>
 

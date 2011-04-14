@@ -67,7 +67,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
     ${project.version}.</para>
 
     <para><ulink
-    url="http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</ulink></para>
+    url="http://repository-torquebox.forge.cloudbees.com/release/org/torquebox/torquebox-dist/${project-version}/torquebox-dist-${project-version}-bin.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</ulink></para>
   </section>
 
   <section id="unzip-the-package">

@@ -26,7 +26,7 @@
 
     <para>TorqueBox supports injection within the context of jobs, services,
     messaging-handlers and web applications. The two key components of using
-    the injection capabilities are as follow:</para>
+    the injection capabilities are:</para>
 
     <para><itemizedlist>
         <listitem>
@@ -45,7 +45,8 @@
           <methodname>inject(...)</methodname> method (or a variant) with a
           literal value. Variable interpolation is not supported within the
           argument list of <methodname>inject(...)</methodname>. For
-          convenience, the result of the inject(...) call would be assigned to
+          convenience, the result of the <methodname>inject(...)</methodname>
+          call would be assigned to
           an instance value, but this is not required.</para>
         </listitem>
       </itemizedlist></para>
@@ -99,7 +100,7 @@ end</programlisting></informalexample></para>
 
 end</programlisting></informalexample></para>
 
-    <formalpara>
+    <formalpara id="injectable-destinations">
       <title>Messaging Destinations</title>
 
       <para>Message destinations, such as queues and topics, may be injected
@@ -167,7 +168,8 @@ end</programlisting></informalexample></para>
   <section id="variants-of-inject">
     <title>Variants of <methodname>inject(...)</methodname></title>
 
-    <para>While the inject(...) method is overloaded to detect the correct
+    <para>While the <methodname>inject(...)</methodname> method is overloaded to
+    detect the correct
     type of resource, there are occasions where it may guess incorrectly. To
     overcome this, variant are provided that explicitly direct the injection
     analyzer to look for a specific type of resource. For string-based
@@ -216,7 +218,7 @@ end</programlisting></informalexample></para>
     <classname>Hash</classname>.</para>
 
     <para>The key for each entry should match either the string argument used
-    with inject(...), or the Ruby version of the Java class name, if
+    with <methodname>inject(...)</methodname>, or the Ruby version of the Java class name, if
     performing CDI injection. The value should be an appropriate
     object.</para>
 
