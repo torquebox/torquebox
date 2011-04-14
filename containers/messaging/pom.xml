@@ -68,7 +68,7 @@
       <artifactId>torquebox-vfs</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
