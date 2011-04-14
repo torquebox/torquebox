@@ -15,16 +15,19 @@ module TorqueSpec
       yield self
     end
   end
+end
 
-  # Default configuration options
-  configure do |config|
-    config.host = 'localhost'
-    config.port = 8080
-    config.jboss_home = ENV['JBOSS_HOME']
-    config.jboss_conf = 'default'
-    config.jvm_args = "-Xmx1024m -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default"
-  end
+# Default configuration options
+TorqueSpec.configure do |config|
+  config.host = 'localhost'
+  config.port = 8080
+  config.jboss_home = ENV['JBOSS_HOME']
+  config.jboss_conf = 'default'
+  config.jvm_args = "-Xmx1024m -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default"
+end
 
+
+module TorqueSpec
   class Server
     
     def start(opts={})
@@ -32,14 +35,10 @@ module TorqueSpec
       raise "JBoss is already running" if ready?
       cmd = command
       @process = IO.popen( cmd )
+      Thread.new(@process) { |console| while(console.gets); end }
       %w{ INT TERM KILL }.each { |signal| trap(signal) { stop } }
-      puts cmd
-      puts "pid=#{@process.pid}"
-      if (wait > 0)
-        wait_for_ready(wait)
-      else
-        @process
-      end
+      puts "#{cmd}\npid=#{@process.pid}"
+      wait > 0 ? wait_for_ready(wait) : @process.pid
     end
 
     def deploy(url)
@@ -66,7 +65,7 @@ module TorqueSpec
       response = jmx_console( :action => 'inspectMBean', :name => 'jboss.system:type=Server' )
       "True" == response.match(/>Started<.*?<pre>\n(\w+)/m)[1]
     rescue
-      nil
+      false
     end
 
     def wait_for_ready(timeout)
@@ -108,7 +107,10 @@ module TorqueSpec
     end
 
     def http req
-      res = Net::HTTP.start(TorqueSpec.host, TorqueSpec.port) {|http| http.request(req) }
+      res = Net::HTTP.start(TorqueSpec.host, TorqueSpec.port) do |http| 
+        http.read_timeout = 120 
+        http.request(req)
+      end
       unless Net::HTTPSuccess === res
         STDERR.puts res.body
         res.error!
