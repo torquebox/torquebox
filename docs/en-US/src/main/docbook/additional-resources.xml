@@ -113,7 +113,7 @@
       <formalpara>
         <title>Multiple Revisions</title>
 
-        <para>Role forward or backward through revisions of your application
+        <para>Roll forward or backward through revisions of your application
         code.</para>
       </formalpara>
     </section>
@@ -131,8 +131,9 @@
     <section>
       <title>More Information</title>
 
-      <para>More Information About Backstage May Be Found On The Torquebox
-      Website. The Source For Backstage Is Hosted At Github.</para>
+      <para>More Information About StompBox May Be Found On The 
+        <ulink url="http://torquebox.org/stompbox">TorqueBox Website.</ulink> 
+          The Source For StompBox Is Hosted At Github.</para>
 
       <itemizedlist>
         <listitem>
