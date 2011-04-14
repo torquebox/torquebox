@@ -63,7 +63,7 @@ module TorqueSpec
 
     def ready?
       response = jmx_console( :action => 'inspectMBean', :name => 'jboss.system:type=Server' )
-      "True" == response.match(/>Started<.*?<pre>\n(\w+)/m)[1]
+      "True" == response.match(/>Started<.*?<pre>\s+^(\w+)/m)[1]
     rescue
       false
     end
