@@ -5,6 +5,7 @@ require 'fileutils'
 
 TorqueSpec.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'test-classes' ) )
 TorqueSpec.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
+TorqueSpec.max_heap = java.lang::System.getProperty( 'max.heap' )
 
 Capybara.register_driver :akephalos do |app|
   Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)

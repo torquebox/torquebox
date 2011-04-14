@@ -10,9 +10,12 @@ module TorqueSpec
   end
 
   class << self
-    attr_accessor :host, :port, :knob_root, :jboss_home, :jboss_conf, :jvm_args
+    attr_accessor :host, :port, :knob_root, :jboss_home, :jboss_conf, :jvm_args, :max_heap
     def configure
       yield self
+    end
+    def jvm_args
+      max_heap ? @jvm_args.sub(/-Xmx\w+/, "-Xmx#{max_heap}") : @jvm_args
     end
   end
 end
