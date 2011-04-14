@@ -54,16 +54,16 @@
     </dependency>
 
     <dependency>
-       <groupId>org.jboss.arquillian.container</groupId>
-       <artifactId>arquillian-jbossas-managed-6</artifactId>
-       <version>${version.arquillian}</version>
+      <groupId>org.jboss.arquillian.container</groupId>
+      <artifactId>arquillian-jbossas-managed-6</artifactId>
+      <version>${version.arquillian}</version>
     </dependency>
 
     <dependency>
-       <groupId>org.jboss.jbossas</groupId>
-       <artifactId>jboss-as-client</artifactId>
-       <version>${version.jbossas}</version>
-       <type>pom</type>
+      <groupId>org.jboss.jbossas</groupId>
+      <artifactId>jboss-as-client</artifactId>
+      <version>${version.jbossas}</version>
+      <type>pom</type>
     </dependency>
 
     <dependency>
@@ -86,9 +86,9 @@
 
     <dependency>
       <!-- 
-        the latest stable nokogiri doesn't work on windows with jruby 1.6,
-	and capybara just needs nokogiri >= 1.3.3, so we need to install
-	the latest nokogiri before installing capybara.
+           the latest stable nokogiri doesn't work on windows with jruby 1.6,
+           and capybara just needs nokogiri >= 1.3.3, so we need to install
+           the latest nokogiri before installing capybara.
       -->
       <groupId>rubygems</groupId>
       <artifactId>nokogiri</artifactId>
@@ -212,11 +212,11 @@
   <profiles>
     <profile>
       <id>ci</id>
-<!--
-      <properties>
-        <arquillian.max.deploys>10</arquillian.max.deploys>
-      </properties>
--->
+      <!--
+          <properties>
+          <arquillian.max.deploys>10</arquillian.max.deploys>
+          </properties>
+      -->
     </profile>
     <profile>
       <id>inplace</id>
@@ -247,7 +247,7 @@
             <groupId>de.saumya.mojo</groupId>
             <artifactId>rspec-maven-plugin</artifactId>
             <configuration>
-	      <jrubyFork>false</jrubyFork>
+              <jrubyFork>false</jrubyFork>
             </configuration>
           </plugin>
         </plugins>
@@ -262,28 +262,28 @@
       </activation>
       <build>
         <plugins>
-	  <plugin>
+          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-surefire-plugin</artifactId>
-	    <executions>
-	      <execution>
-	        <id>arquillian-test</id>
-		<configuration>
-		  <skip>true</skip>
-		</configuration>
-	      </execution>
-	    </executions>
-	  </plugin>
+            <executions>
+              <execution>
+                <id>arquillian-test</id>
+                <configuration>
+                  <skip>true</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>de.saumya.mojo</groupId>
             <artifactId>rspec-maven-plugin</artifactId>
-	    <executions>
-	      <execution>
-	        <id>run-specs</id>
-		<phase>none</phase>
-	      </execution>
-	    </executions>
-	  </plugin>
+            <executions>
+              <execution>
+                <id>run-specs</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
         </plugins>
       </build>
     </profile>
@@ -452,7 +452,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>	
+        <configuration> 
           <systemProperties>
             <property>
               <name>log4j.configuration</name>
@@ -463,33 +463,33 @@
               <value>${integ.dist.dir}/jruby</value>
             </property>
           </systemProperties>
-        </configuration>	
-	<executions>
-	  <execution>
-	    <id>default-test</id>
-	    <goals>
-	      <goal>test</goal>
-	    </goals>
-	    <phase>test</phase>
-	    <configuration>
+        </configuration>    
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
               <excludes>
                 <exclude>**/arquillian/**</exclude>
               </excludes>
-	    </configuration>
-	  </execution>
-	  <execution>
-	    <id>arquillian-test</id>
-	    <goals>
-	      <goal>test</goal>
-	    </goals>
-	    <phase>test</phase>
-	    <configuration>
+            </configuration>
+          </execution>
+          <execution>
+            <id>arquillian-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <phase>test</phase>
+            <configuration>
               <includes>
                 <include>**/arquillian/**/*Test.class</include>
               </includes>
-	    </configuration>
-	  </execution>
-	</executions>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
