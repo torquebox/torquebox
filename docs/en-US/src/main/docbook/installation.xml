@@ -73,7 +73,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
   <section id="unzip-the-package">
     <title>Unzip it somewhere handy</title>
 
-    <para>We'll install TorqueBox under your user's $HOME directory.</para>
+    <para>We'll install TorqueBox under your user's <envar>$HOME</envar> directory.</para>
 
     <para><screen><prompt>$</prompt> <command>unzip -q torquebox-dist-${project.version}-bin.zip</command>
 </screen></para>
@@ -108,27 +108,12 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
     and <command>rails</command> will load from the TorqueBox-provided JRuby
     installation.</para>
 
-    <para>You can also run TorqueBox using your own install of JRuby. 
-      You will need to ensure that your <command>gem</command> command
-      can find the torquebox gems by adding http://rubygems.torquebox.org
-      to your ~/.gemrc file.
-      <screen>
-$ cat ~/.gemrc 
---- 
-:sources: 
-- http://rubygems.org
-- http://rubygems.torquebox.org
-      </screen>
+    <para>You can also run TorqueBox using your own install of
+    JRuby by installing the TorqueBox gems.
 
-      Install the torquebox gems with jruby. Be sure to include the --pre
-      flag to get the pre-release gems if you are following the development
-      builds.
+      <screen><prompt>$</prompt> <command>jruby -S gem install torquebox torquebox-capistrano-support</command></screen>
 
-      <screen>
-jruby -S gem install torquebox-base torquebox-vfs torquebox torquebox-capistrano-support 
-    </screen>
-
-    You will also need to set $JRUBY_HOME to point to
+    You will also need to set <envar>$JRUBY_HOME</envar> to point to
     your JRuby installation.</para>
 
     <para><command>Note:</command> if you are going to run a non-bundled JRuby
@@ -139,6 +124,19 @@ jruby -S gem install torquebox-base torquebox-vfs torquebox torquebox-capistrano
     There is a <ulink url="http://torquebox.org/news/2011/02/25/using-rvm-with-torquebox/">blog post</ulink> 
     on torquebox.org describing how to 
     set up your torquebox environment with RVM.</para>
+
+    <para>For prerelease builds, you will also need to ensure that
+    your <command>gem</command> command can find the prerelease
+    TorqueBox gems by adding http://rubygems.torquebox.org to your
+    <filename>~/.gemrc</filename> file and including the
+    <command>--pre</command> flag to <command>gem install</command>.
+      <screen>
+<prompt>$</prompt> <command>cat ~/.gemrc</command>
+--- 
+:sources: 
+- http://rubygems.org
+- http://rubygems.torquebox.org</screen>
+    </para>
   </section>
 
   <section id="running-torquebox">
@@ -146,15 +144,11 @@ jruby -S gem install torquebox-base torquebox-vfs torquebox torquebox-capistrano
 
     <para>Running TorqueBox essentially amounts to running JBoss:</para>
     
-    <screen>
-      $JBOSS_HOME/bin/run.sh
-    </screen>
+    <screen><prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh</command></screen>
 
     <para>Alternatively, the <filename>torquebox-rake-support</filename> gem provides a <command>torquebox:run</command> task:</para>
 
-    <screen>
-      jruby -S rake torquebox:run
-    </screen>
+    <screen><prompt>$</prompt> <command>jruby -S rake torquebox:run</command></screen>
 
   </section>
 </chapter>
