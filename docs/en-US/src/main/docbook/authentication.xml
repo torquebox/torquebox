@@ -19,7 +19,7 @@
     configuration. To learn more about how JBoss security works and is
     configured, refer to <ulink
     url="http://www.jboss.org/jbossas/docs/6-x/Core-Documentation/security.html">the
-    JBoss documentation. </ulink> The TorqueBox integration, however,
+    JBoss documentation</ulink>. The TorqueBox integration, however,
     makes authenticating against a corporate JAAS data store trivial.
   </para>
 
@@ -33,14 +33,14 @@
       pre-configured in the Application Server.  The <code>torquebox-auth</code> domain
       authenticates against a simple users properties file found in
       <code>$TORQUEBOX_HOME/jboss/server/default/conf/props/torquebox-users.properties</code>.  
-      There is no need, however to edit this file directly. To add a new username and
-      password to the security domain, use our rake task.
+      There is no need, however, to edit this file directly. To add a new username and
+      password to the security domain, use our rake task:
       <screen>
 rake torquebox:auth:adduser CREDENTIALS=user:pass
       </screen>
       The <code>torquebox-auth</code> domain is loaded and configured by default when your 
       application is deployed.  To authenticate 
-      against a different security domain, for example <code>jms-console</code>, configure 
+      against a different security domain, for example <code>jmx-console</code>, configure 
       this in your deployment descriptor as described in the YAML Configuration section.
     </para>
   </section>
@@ -54,7 +54,7 @@ rake torquebox:auth:adduser CREDENTIALS=user:pass
       example, let's say your application is a dashboard which allows users to access JMX
       and HornetQ data.  Most of the time, you're going to be using the hornetq domain, but
       on occasion, you'll want to authenticate against the JMX domain.  You can do this
-      within Ruby code by configuring your <code>auth</code> section like this.
+      within Ruby code by configuring your <code>auth</code> section:
       <screen>
 auth:
   default:
@@ -64,16 +64,16 @@ auth:
       </screen>
     </para>
     <para>
-      A handle to the HornetQ authentication domain is now available to you with 
+      A handle to the HornetQ authentication domain is now available to you with:
       <screen>authenticator = TorqueBox::Authentication.default</screen> and the JMX authentication
-      domain can be obtained like this: <screen>authenticator = TorqueBox::Authentication['jmx']</screen>
+      domain can be obtained with: <screen>authenticator = TorqueBox::Authentication['jmx']</screen>
     </para>
   </section>
 
   <section id="authentication-ruby-api">
     <title>Ruby API</title>
     <para>
-      The Ruby API has 3 methods.
+      The Ruby API has 3 methods:
     <itemizedlist spacing="compact">
       <listitem>
         <para><code>default</code></para>
@@ -133,8 +133,8 @@ module MyApp
   end
 end
       </screen>
-      The <code>authenticate</code> method accepts a block, so
-      you can execute code within an authenticated context.
+      The <code>authenticate</code> method accepts a block, 
+      allowing you to execute code within an authenticated context.
     </para>
 
   </section>
