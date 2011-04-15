@@ -48,7 +48,7 @@ public class ManagedTopicDeployer extends AbstractDeployer {
 
     public ManagedTopicDeployer() {
         setAllInputs( true );
-        addRequiredInput( RubyApplicationMetaData.class );
+        addInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
     }

@@ -48,7 +48,7 @@ public class ManagedQueueDeployer extends AbstractDeployer {
 
     public ManagedQueueDeployer() {
         setAllInputs( true );
-        addRequiredInput( RubyApplicationMetaData.class );
+        addInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
     }
