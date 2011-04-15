@@ -55,16 +55,6 @@
     </section>
 
     <section>
-      <title>Installing</title>
-
-      <para>BackStage is available as a RubyGem.</para>
-
-      <para><informalexample>
-          <para><screen>$ jruby -S gem install torquebox-backstage</screen></para>
-        </informalexample></para>
-    </section>
-
-    <section>
       <title>More Information</title>
 
       <para>More Information About Backstage May Be Found On The Torquebox
@@ -116,16 +106,6 @@
         <para>Roll forward or backward through revisions of your application
         code.</para>
       </formalpara>
-    </section>
-
-    <section>
-      <title>Installing</title>
-
-      <para>StompBox is available as a RubyGem.</para>
-
-      <para><informalexample>
-          <para><screen>$ jruby -S gem install torquebox-stompbox</screen></para>
-        </informalexample></para>
     </section>
 
     <section>
