@@ -21,9 +21,9 @@
 
 
   <scm>
-    <connection>scm:git:git://github.com/torquebox/torquebox-release.git</connection>
-    <developerConnection>scm:git:ssh://git@github.com/torquebox/torquebox-release.git</developerConnection>
-    <url>http://github.com/torquebox/torquebox-release</url>
+    <connection>scm:git:git://github.com/torquebox/torquebox.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/torquebox/torquebox.git</developerConnection>
+    <url>http://github.com/torquebox/torquebox</url>
   </scm>
 
   <build>
