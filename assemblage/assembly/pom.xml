@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
     <relativePath>../../parent/</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>torquebox-assembly</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Assembly</name>
-  <description></description>
+  <description />
 
   <properties>
     <install.docs>false</install.docs>
@@ -447,9 +447,9 @@
             </goals>
             <configuration>
               <tasks>
-                <delete dir="${stage.dir}/jboss/server/minimal/" failonerror="false"/>
-                <delete dir="${stage.dir}/jboss/server/standard/" failonerror="false"/>
-                <delete dir="${stage.dir}/jboss/server/jbossweb-standalone/" failonerror="false"/>
+                <delete dir="${stage.dir}/jboss/server/minimal/" failonerror="false" />
+                <delete dir="${stage.dir}/jboss/server/standard/" failonerror="false" />
+                <delete dir="${stage.dir}/jboss/server/jbossweb-standalone/" failonerror="false" />
               </tasks>
             </configuration>
           </execution>
@@ -461,8 +461,8 @@
             </goals>
             <configuration>
               <tasks>
-                <delete dir="${stage.dir}/jboss/server/default/deploy/ROOT.war" failonerror="false"/>
-                <delete dir="${stage.dir}/jboss/server/all/deploy/ROOT.war" failonerror="false"/>
+                <delete dir="${stage.dir}/jboss/server/default/deploy/ROOT.war" failonerror="false" />
+                <delete dir="${stage.dir}/jboss/server/all/deploy/ROOT.war" failonerror="false" />
               </tasks>
             </configuration>
           </execution>
@@ -476,18 +476,18 @@
               <tasks>
                 <chmod perm="ugo+x">
                   <fileset dir="${stage.dir}/jboss/bin">
-                    <include name="*.sh"/>
+                    <include name="*.sh" />
                   </fileset>
                   <fileset dir="${stage.dir}/jruby/bin">
-                    <include name="gem"/>
-                    <include name="jruby"/>
-                    <include name="jrubyc"/>
-                    <include name="jrubyd"/>
-                    <include name="jirb"/>
-                    <include name="rdoc"/>
-                    <include name="ri"/>
-                    <include name="rdebug"/>
-                    <include name="rake"/>
+                    <include name="gem" />
+                    <include name="jruby" />
+                    <include name="jrubyc" />
+                    <include name="jrubyd" />
+                    <include name="jirb" />
+                    <include name="rdoc" />
+                    <include name="ri" />
+                    <include name="rdebug" />
+                    <include name="rake" />
                   </fileset>
                 </chmod>
               </tasks>
@@ -501,7 +501,7 @@
             </goals>
             <configuration>
               <tasks>
-                <delete dir="${stage.dir}/jruby/share/" failonerror="false"/>
+                <delete dir="${stage.dir}/jruby/share/" failonerror="false" />
               </tasks>
             </configuration>
           </execution>
@@ -513,14 +513,14 @@
             </goals>
             <configuration>
               <tasks>
-                <mkdir dir="${repo.stage.dir}"/>
-                <mkdir dir="${repo.stage.dir}/gems"/>
+                <mkdir dir="${repo.stage.dir}" />
+                <mkdir dir="${repo.stage.dir}/gems" />
 
                 <move todir="${repo.stage.dir}/gems">
-                  <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="torquebox-*.gem"/>
+                  <fileset dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" includes="torquebox-*.gem" />
                 </move>
 
-                <delete dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" failonerror="false"/>
+                <delete dir="${stage.dir}/jruby/lib/ruby/gems/1.8/cache/" failonerror="false" />
                 
               </tasks>
             </configuration>
@@ -533,7 +533,7 @@
             </goals>
             <configuration>
               <tasks>
-                <move file="${stage.dir}/share/rails/torquebox-rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb"/>
+                <move file="${stage.dir}/share/rails/torquebox-rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb" />
               </tasks>
             </configuration>
           </execution>
@@ -545,7 +545,7 @@
             </goals>
             <configuration>
               <tasks>
-                <mkdir dir="${stage.dir}/apps"/>
+                <mkdir dir="${stage.dir}/apps" />
               </tasks>
             </configuration>
           </execution>

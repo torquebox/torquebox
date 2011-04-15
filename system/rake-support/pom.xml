@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
     <relativePath>../../parent/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>torquebox-rake-support</artifactId>
   <packaging>gem</packaging>
   <name>TorqueBox Rake Support</name>
-  <description></description>
+  <description />
 
 
   <build>
@@ -32,7 +32,7 @@
                 <artifact>
                   <file>share/rails-template.rb</file>
                   <type>template.rb</type>
-                  <classifier></classifier>
+                  <classifier />
                 </artifact>
               </artifacts>
             </configuration>
