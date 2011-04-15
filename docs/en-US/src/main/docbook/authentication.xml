@@ -35,9 +35,7 @@
       <code>$TORQUEBOX_HOME/jboss/server/default/conf/props/torquebox-users.properties</code>.  
       There is no need, however, to edit this file directly. To add a new username and
       password to the security domain, use our rake task:
-      <screen>
-rake torquebox:auth:adduser CREDENTIALS=user:pass
-      </screen>
+      <screen>rake torquebox:auth:adduser CREDENTIALS=user:pass</screen>
       The <code>torquebox-auth</code> domain is loaded and configured by default when your 
       application is deployed.  To authenticate 
       against a different security domain, for example <code>jmx-console</code>, configure 
@@ -60,8 +58,7 @@ auth:
   default:
     domain: hornetq
   jmx:
-    domain: jmx-console
-      </screen>
+    domain: jmx-console</screen>
     </para>
     <para>
       A handle to the HornetQ authentication domain is now available to you with:
@@ -131,8 +128,7 @@ module MyApp
     end
    
   end
-end
-      </screen>
+end</screen>
       The <code>authenticate</code> method accepts a block, 
       allowing you to execute code within an authenticated context.
     </para>
