@@ -84,7 +84,7 @@
     </section>
   </section>
 
-  <section>
+  <section id="stompbox">
     <title>StompBox</title>
 
     <para>StompBox enables easy Git-based deployments to a TorqueBox AS.
