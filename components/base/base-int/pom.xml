@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-int-parent</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
     <relativePath>../../int-parent/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>torquebox-base-int</artifactId>
   <packaging>jar</packaging>
   <name>TorqueBox Base Integration</name>
-  <description></description>
+  <description />
 
   <dependencies>
     <dependency>

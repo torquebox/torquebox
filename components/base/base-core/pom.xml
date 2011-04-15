@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-component-parent</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
     <relativePath>../../component-parent/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>torquebox-base-core</artifactId>
   <packaging>jar</packaging>
   <name>TorqueBox Base Core</name>
-  <description></description>
+  <description />
 
   <dependencies>
     <dependency>
@@ -189,7 +189,7 @@
                   begin
                     git_output = `git status -s`.lines
                     git_output.any? {|line| line =~ /^ M/ } ? ' +modifications' : ''
-                  rescue=>e
+                  rescue=&gt;e
                     ' +unknown'
                   end
                 end
@@ -199,7 +199,7 @@
                     revision = '(unknown)'
                     sha1 = `git rev-parse HEAD`
                     sha1.strip + modifications_modifier
-                  rescue=>e
+                  rescue=&gt;e
                     puts %Q(*** rescue #{e})
                     '(unknown)'
                   end

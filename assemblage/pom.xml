@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
     <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>torquebox-assemblage</artifactId>
   <packaging>pom</packaging>
   <name>TorqueBox Assemblage</name>
-  <description></description>
+  <description />
 
   <modules>
     <module>pre-assembly</module>

@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>container-parent</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
     <relativePath>../container-parent/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>torquebox-messaging-container</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Messaging Container</name>
-  <description></description>
+  <description />
 
   <dependencies>
     <dependency>

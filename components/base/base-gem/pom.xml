@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>gem-parent</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
     <relativePath>../../gem-parent/pom.xml</relativePath>
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>torquebox-base</artifactId>
   <packaging>java-gem</packaging>
   <name>TorqueBox Base Gem</name>
-  <description></description>
+  <description />
 
   <dependencies>
     <dependency>

@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-docs</artifactId>
-    <version>1.0.0.CR1-SNAPSHOT</version>
+    <version>1.0.0.CR1</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -55,7 +55,7 @@
                 <artifact>
                   <file>target/docbook/publish/en-US/pdf/${artifactId}.pdf</file>
                   <type>pdf</type>
-                  <classifier></classifier>
+                  <classifier />
                 </artifact>
               </artifacts>
             </configuration>
