@@ -48,7 +48,7 @@
   specified driver.</para>
 
   <para>Additional gems need to be available to your system, depending on your
-  target database.</para>
+  target database:</para>
 
   <itemizedlist spacing="compact">
     <listitem>
