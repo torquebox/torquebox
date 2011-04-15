@@ -11,7 +11,7 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-parent</artifactId>
-  <version>1.0.0.CR1</version>
+  <version>1.0.0.CR2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TorqueBox Parent</name>
   <url>http://www.torquebox.org/</url>
