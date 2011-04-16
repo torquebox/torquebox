@@ -29,5 +29,10 @@
   <bean name="RailsRackDeployer"                    class="org.torquebox.rails.deployers.RailsRackDeployer"/>
   <bean name="RailsAutoloadPathDeployer"            class="org.torquebox.rails.deployers.RailsAutoloadPathDeployer"/>
   
+  <!-- Web Sockets -->
+  <bean name="WebSocketDeployer"					class="org.torquebox.websocket.deployers.WebSocketDeployer">
+  	<property name="hornetQServer"><inject bean="HornetQServer" /></property>
+  </bean>
+  
 
 </deployment>
