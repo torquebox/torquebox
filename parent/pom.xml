@@ -72,27 +72,13 @@
       </activation>
     </profile>
     <profile>
-      <id>18</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-    </profile>
-    <profile>
       <id>19</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>de.saumya.mojo</groupId>
-            <artifactId>rspec-maven-plugin</artifactId>
-            <configuration>
-              <jrubySwitches>--1.9</jrubySwitches>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <ruby.compat.version>1.9</ruby.compat.version>
+      </properties>
     </profile>
   </profiles>
     
@@ -235,6 +221,7 @@
   </dependencyManagement>
 
   <properties>
+    <ruby.compat.version>1.8</ruby.compat.version>
     <version.jruby-maven-plugins>0.25.1</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
@@ -494,6 +481,7 @@
               <configuration>
                 <inherit>true</inherit>
                 <jrubyVersion>${version.jruby}</jrubyVersion>
+                <jrubySwitches>--${ruby.compat.version}</jrubySwitches>
                 <gemHome>${project.build.directory}/rubygems</gemHome>
                 <gemPath>${project.build.directory}/rubygems</gemPath>
                 <fork>true</fork>
