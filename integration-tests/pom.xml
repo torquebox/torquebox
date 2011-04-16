@@ -143,6 +143,21 @@
 
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>rake</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-rake-support</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>torquebox-messaging</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
