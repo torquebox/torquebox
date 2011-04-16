@@ -14,7 +14,7 @@
     <jboss:bindAddress>127.0.0.1</jboss:bindAddress>
     <jboss:httpPort>8080</jboss:httpPort>
     <jboss:jbossHome>${integ.dist.dir}/jboss</jboss:jbossHome>
-    <jboss:javaVmArguments>-Xmx${arquillian.max.heap} -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default</jboss:javaVmArguments>
+    <jboss:javaVmArguments>-Xmx${max.heap} -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -XX:+CMSClassUnloadingEnabled -Djruby_home.env.ignore=true -Dgem.path=default</jboss:javaVmArguments>
   </jboss:container> 
 
 </arquillian>
