@@ -1,6 +1,7 @@
 
 queues:
   /queues/simple_queue:
+    durable: false
 
 messaging:
   /queues/simple_queue: SimpleProcessor
