@@ -35,6 +35,8 @@ def rewrite_file(file_name, replace, replacement)
       f.write( line.gsub( replace, replacement ) )
     end
   end
+  $stderr.puts "rewritten:"
+  $stderr.puts File.read( file_name )
 end
 
 

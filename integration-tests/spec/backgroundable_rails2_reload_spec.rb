@@ -16,9 +16,11 @@ describe "rails 2 backgroundable tests" do
     @background.receive(:timeout => 25000).should == 'a response'
 
     rewrite_file( @model_path, 'a response', 'a new response' )
+    sleep( 2 )
     @background.receive(:timeout => 25000).should == 'a new response'
 
     rewrite_file( @model_path, 'a new response', 'another new response' )
+    sleep( 2 )
     @background.receive(:timeout => 25000).should == 'another new response'
   end
 
