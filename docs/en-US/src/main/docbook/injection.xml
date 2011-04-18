@@ -46,14 +46,15 @@
           literal value. Variable interpolation is not supported within the
           argument list of <methodname>inject(...)</methodname>. For
           convenience, the result of the <methodname>inject(...)</methodname>
-          call would be assigned to
-          an instance value, but this is not required.</para>
+          call would be assigned to an instance value, but this is not
+          required.</para>
         </listitem>
       </itemizedlist></para>
 
     <para>For instance:</para>
 
-    <para><informalexample><programlisting>class MyService 
+    <para><informalexample>
+        <programlisting>class MyService 
 
   include TorqueBox::Injectors
 
@@ -65,7 +66,8 @@
     inject( com.foo.ThatThing )
   end
 
-end</programlisting></informalexample></para>
+end</programlisting>
+      </informalexample></para>
   </section>
 
   <section id="injectable-resources">
@@ -90,7 +92,8 @@ end</programlisting></informalexample></para>
     <ulink url="http://seamframework.org/Weld">Weld website</ulink> for more
     information.</para>
 
-    <para><informalexample><programlisting>class MyService
+    <para><informalexample>
+        <programlisting>class MyService
 
   include TorqueBox::Injectors
 
@@ -98,7 +101,20 @@ end</programlisting></informalexample></para>
     @java_service = inject( com.mycorp.MyJavaService )
   end
 
-end</programlisting></informalexample></para>
+end</programlisting>
+      </informalexample></para>
+
+    <para>JRuby explicitly supports the simple syntax for common US-centric
+    package names starting with <literal>com</literal>,
+    <literal>org</literal>, <literal>net</literal>, <literal>java</literal>,
+    and javax, amongst others. For other top-level packages based on country
+    codes, such as <literal>pl</literal>, <literal>de</literal>, or
+    <literal>za</literal>, to perform injection you should reference your
+    class through the Java ruby package.</para>
+
+    <para><informalexample>
+        <para><programlisting>inject( Java::pl.softwaremine.PolishingService )</programlisting></para>
+      </informalexample></para>
 
     <formalpara id="injectable-destinations">
       <title>Messaging Destinations</title>
@@ -117,7 +133,8 @@ end</programlisting></informalexample></para>
     upon the destination does not begin operation until the destination has
     been completely provisioned.</para>
 
-    <para><informalexample><programlisting>class MyController &lt; ApplicationController
+    <para><informalexample>
+        <programlisting>class MyController &lt; ApplicationController
 
   include TorqueBox::Injectors
 
@@ -125,7 +142,8 @@ end</programlisting></informalexample></para>
     notify_topic = inject( '/topics/new-accounts' )
   end
 
-end</programlisting></informalexample></para>
+end</programlisting>
+      </informalexample></para>
 
     <formalpara>
       <title>Naming &amp; Directory Entries</title>
@@ -135,7 +153,8 @@ end</programlisting></informalexample></para>
       with <literal>"java:comp/env"</literal>.</para>
     </formalpara>
 
-    <para><informalexample><programlisting>class MyController &lt; ApplicationController
+    <para><informalexample>
+        <programlisting>class MyController &lt; ApplicationController
 
   include TorqueBox::Injectors
 
@@ -143,7 +162,8 @@ end</programlisting></informalexample></para>
     jndi_item = inject( 'java:comp/env/that_thing' )
   end
 
-end</programlisting></informalexample></para>
+end</programlisting>
+      </informalexample></para>
 
     <formalpara>
       <title>JBoss Microcontainer Beans (MCBeans, MBeans)</title>
@@ -154,7 +174,8 @@ end</programlisting></informalexample></para>
       <methodname>inject(...)</methodname>.</para>
     </formalpara>
 
-    <para><informalexample><programlisting>class MyController &lt; ApplicationController
+    <para><informalexample>
+        <programlisting>class MyController &lt; ApplicationController
 
   include TorqueBox::Injectors
 
@@ -162,19 +183,19 @@ end</programlisting></informalexample></para>
     the_actual_webserver = inject( 'jboss.web:service=WebServer' )
   end
 
-end</programlisting></informalexample></para>
+end</programlisting>
+      </informalexample></para>
   </section>
 
   <section id="variants-of-inject">
     <title>Variants of <methodname>inject(...)</methodname></title>
 
-    <para>While the <methodname>inject(...)</methodname> method is overloaded to
-    detect the correct
-    type of resource, there are occasions where it may guess incorrectly. To
-    overcome this, variant are provided that explicitly direct the injection
-    analyzer to look for a specific type of resource. For string-based
-    injections, the previously mentioned matching rules do not apply to the
-    injection method variants.</para>
+    <para>While the <methodname>inject(...)</methodname> method is overloaded
+    to detect the correct type of resource, there are occasions where it may
+    guess incorrectly. To overcome this, variant are provided that explicitly
+    direct the injection analyzer to look for a specific type of resource. For
+    string-based injections, the previously mentioned matching rules do not
+    apply to the injection method variants.</para>
 
     <formalpara>
       <title><methodname>inject_cdi(...)</methodname></title>
@@ -218,9 +239,9 @@ end</programlisting></informalexample></para>
     <classname>Hash</classname>.</para>
 
     <para>The key for each entry should match either the string argument used
-    with <methodname>inject(...)</methodname>, or the Ruby version of the Java class name, if
-    performing CDI injection. The value should be an appropriate
-    object.</para>
+    with <methodname>inject(...)</methodname>, or the Ruby version of the Java
+    class name, if performing CDI injection. The value should be an
+    appropriate object.</para>
 
     <para>For instance, the Java class of <classname>java.util.Set</classname>
     should be converted into a string of

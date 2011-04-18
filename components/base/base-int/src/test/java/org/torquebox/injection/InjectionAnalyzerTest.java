@@ -82,6 +82,30 @@ public class InjectionAnalyzerTest {
         assertEquals( "Java::ComMycorpMypackage::MyThing", injectables.get( 2 ).getKey() );
     }
     
+    @Test
+    public void testPolishAnalysis() throws Exception {
+        String script = readScript( "injection-pl.rb" );
+        
+        List<Injectable> injectables = analyzer.analyze( "testfile-pl.rb", script.toString(), Version.V1_8 );
+        
+        assertEquals( 3, injectables.size() );
+        
+        assertTrue( injectables.get( 0 ) instanceof MCBeanInjectable );
+        assertEquals( "mc", injectables.get( 0 ).getType() );
+        assertEquals( "jboss.whatever.Thing", injectables.get( 0 ).getName() );
+        assertEquals( "jboss.whatever.Thing", injectables.get( 0 ).getKey() );
+        
+        assertTrue( injectables.get( 1 ) instanceof JNDIInjectable );
+        assertEquals( "jndi", injectables.get( 1 ).getType() );
+        assertEquals( "java:/comp/whatever", injectables.get( 1 ).getName() );
+        assertEquals( "java:/comp/whatever", injectables.get( 1 ).getKey() );
+        
+        assertTrue( injectables.get( 2 ) instanceof CDIInjectable );
+        assertEquals( "cdi", injectables.get( 2 ).getType() );
+        assertEquals( "pl.mycorp.mypackage.MyThing", injectables.get( 2 ).getName() );
+        assertEquals( "Java::PlMycorpMypackage::MyThing", injectables.get( 2 ).getKey() );
+    }
+    
     @Test(expected=InvalidInjectionTypeException.class)
     public void testInvalidAnalysis() throws Exception {
         String script = readScript( "invalid_injection.rb" );
