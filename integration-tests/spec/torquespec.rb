@@ -10,7 +10,7 @@ module TorqueSpec
   end
 
   class << self
-    attr_accessor :host, :port, :knob_root, :jboss_home, :jboss_conf, :jvm_args, :max_heap
+    attr_accessor :host, :port, :knob_root, :jboss_home, :jboss_conf, :jvm_args, :max_heap, :lazy
     def configure
       yield self
     end
@@ -22,6 +22,7 @@ end
 
 # Default configuration options
 TorqueSpec.configure do |config|
+  config.lazy = true
   config.host = 'localhost'
   config.port = 8080
   config.jboss_home = ENV['JBOSS_HOME']
@@ -34,6 +35,7 @@ module TorqueSpec
   class Server
     
     def start(opts={})
+      return if TorqueSpec.lazy and ready?
       wait = opts[:wait].to_i
       raise "JBoss is already running" if ready?
       cmd = command
@@ -57,6 +59,7 @@ module TorqueSpec
     end
 
     def stop
+      return if TorqueSpec.lazy
       if @process
         Process.kill("INT", @process.pid) 
         @process = nil
@@ -143,14 +146,18 @@ TorqueSpec::Configurator.configure do |config|
   end
   
   config.before(:all) do
-    self.class.deploy_paths.each do |path|
-      Thread.current[:app_server].deploy(path)
+    if self.class.respond_to?( :deploy_paths )
+      self.class.deploy_paths.each do |path|
+        Thread.current[:app_server].deploy(path)
+      end
     end
   end
 
   config.after(:all) do
-    self.class.deploy_paths.each do |path|
-      Thread.current[:app_server].undeploy(path)
+    if self.class.respond_to?( :deploy_paths )
+      self.class.deploy_paths.each do |path|
+        Thread.current[:app_server].undeploy(path)
+      end
     end
   end
 
