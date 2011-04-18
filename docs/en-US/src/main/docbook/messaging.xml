@@ -291,7 +291,8 @@ topics:
         to that for <link linkend="application-linked-destinations">Application-linked queues
         and topics</link> plus the addition of the "remote_host" property to your
         queue and/or topic definitions. This should be set to the  hostname or
-        IP address of the external messaging server's Naming Directory.</para>
+        IP address and port of the external messaging server's Naming Directory.
+        If no port is provided the default of 1099 will be used.</para>
 
         <para><example>
             <title>Defining external topics and queues in
@@ -307,7 +308,7 @@ topics:
   /members/member_tweets:
     remote_host: 192.168.1.100
   /news_aggregator/technology:
-    remote_host: 192.168.1.200</programlisting></para>
+    remote_host: 192.168.1.200:1089</programlisting></para>
           </example></para>
       </section>
     </section>

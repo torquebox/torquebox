@@ -32,15 +32,21 @@ public class JNDIUtils {
     public static final String FACTORY = "org.jnp.interfaces.NamingContextFactory";
     public static final String KEY_FACTORY = "java.naming.factory.initial";
     public static final String KEY_URL_PKGS = "java.naming.factory.url.pkgs";
-    public static final String PORT = ":1099";
+    public static final String PORT = "1099";
+    public static final String COLON = ":";
     public static final String PROTOCOL = "jnp://";
     public static final String KEY_PROVIDER_URL = "java.naming.provider.url";
     public static final String URL_PKGS = "org.jboss.naming:org.jnp.interfaces";
 
     public static InitialContext getInitialContext(String host) throws NamingException {
 
+        String hostAndPort = host;
+        if (!hostAndPort.contains(COLON)) {
+            hostAndPort += COLON + PORT;
+        }
+
         Hashtable props = new Hashtable();
-        props.put(KEY_PROVIDER_URL, PROTOCOL + host + PORT);
+        props.put(KEY_PROVIDER_URL, PROTOCOL + hostAndPort);
         props.put(KEY_FACTORY, FACTORY);
         props.put(KEY_URL_PKGS, URL_PKGS);
         return new InitialContext(props);
