@@ -10,7 +10,7 @@ describe "frozen gems" do
     visit "/frozen-rails"
     element = page.find("#success")
     element[:class].should == "frozen-rails"
-    x = page.all(".load_path_element").inject(GEM_NAMES.dup) { |gems, path|
+    page.all(".load_path_element").inject(GEM_NAMES.dup) { |gems, path|
       gems.reject { |g| path.text =~ /frozen.*vendor\/rails\/#{g}\/lib/ }
     }.should be_empty
   end
