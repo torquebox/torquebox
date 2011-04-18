@@ -4,6 +4,7 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-docs</artifactId>
     <version>1.0.0.CR2-SNAPSHOT</version>
+    <relativePath>../</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -23,20 +24,31 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptors>
-            <descriptor>src/main/assembly/html.xml</descriptor>
-<!--
-            <descriptor>src/main/assembly/html-single.xml</descriptor>
--->
-          </descriptors>
-        </configuration>
         <executions>
           <execution>
+            <id>create-bundles</id>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
             </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/html.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>create-epub-stage1</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <attach>false</attach>
+              <descriptors>
+                <descriptor>src/main/assembly/epub.xml</descriptor>
+              </descriptors>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -55,6 +67,11 @@
                 <artifact>
                   <file>target/docbook/publish/en-US/pdf/${artifactId}.pdf</file>
                   <type>pdf</type>
+                  <classifier />
+                </artifact>
+                <artifact>
+                  <file>target/${artifactId}-epub.zip</file>
+                  <type>epub</type>
                   <classifier />
                 </artifact>
               </artifacts>
