@@ -28,14 +28,5 @@ def mutable_app(path)
   FileUtils.cp_r( File.join( File.dirname( __FILE__ ), '..', 'apps', path ), dest_path )
 end
 
-def rewrite_file(file_name, replace, replacement)
-  lines = File.readlines( file_name )
-  File.open( file_name, 'w' ) do |f|
-    lines.each do |line|
-      f.write( line.gsub( replace, replacement ) )
-    end
-  end
-end
-
 
 

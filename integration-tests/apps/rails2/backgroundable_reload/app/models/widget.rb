@@ -1,9 +1,9 @@
 class Widget < ActiveRecord::Base
-  def foo
-    @queue = TorqueBox::Messaging::Queue.new('/queues/background')
-    @queue.publish('a response')
-    puts "published 'a response'"
-    sleep(2)
+  def foo(call_count)
+    @responseq = TorqueBox::Messaging::Queue.new('/queues/response')
+    @responseq.publish("response 0")
+    puts "published 'response 0'"
+    Rewriter.rewrite_file( __FILE__, "response #{call_count - 1}", "response #{call_count}" )
   end
   always_background :foo
 end
