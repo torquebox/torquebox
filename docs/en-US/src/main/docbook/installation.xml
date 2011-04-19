@@ -116,7 +116,7 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
     You will also need to set <envar>$JRUBY_HOME</envar> to point to
     your JRuby installation.</para>
 
-    <para><command>Note:</command> if you are going to run a non-bundled JRuby
+    <para><emphasis>Note:</emphasis> if you are going to run a non-bundled JRuby
     with a prerelease build of TorqueBox, it is recommended that you either use a
     separate <ulink url="http://rvm.beginrescueend.com">rvm</ulink> <ulink
     url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink> for each prerelease
@@ -129,7 +129,7 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
     your <command>gem</command> command can find the prerelease
     TorqueBox gems by adding http://rubygems.torquebox.org to your
     <filename>~/.gemrc</filename> file and including the
-    <command>--pre</command> flag to <command>gem install</command>.
+    <command>--pre</command> flag to <command>gem install</command>. 
       <screen>
 <prompt>$</prompt> <command>cat ~/.gemrc</command>
 --- 
@@ -137,6 +137,12 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 - http://rubygems.org
 - http://rubygems.torquebox.org</screen>
     </para>
+   
+    <para><emphasis>Note:</emphasis> If you are runnning a candidate release 
+    (1.0.0.CR<replaceable>X</replaceable>), the gems can be installed from the 
+    default gem host (http://rubygems.org), but you will still need to use the 
+    <command>--pre</command> flag in order to install them.</para>
+
   </section>
 
   <section id="running-torquebox">
