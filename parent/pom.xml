@@ -80,6 +80,17 @@
         <ruby.compat.version>1.9</ruby.compat.version>
       </properties>
     </profile>
+    <profile>
+      <id>windows-can't-dance-with-19</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <ruby.compat.version>1.8</ruby.compat.version>
+      </properties>
+    </profile>
   </profiles>
     
   <dependencyManagement>
@@ -222,7 +233,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.jruby-maven-plugins>0.25.1</version.jruby-maven-plugins> 
+    <version.jruby-maven-plugins>0.27.0-SNAPSHOT</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
@@ -480,6 +491,7 @@
               </goals>
               <configuration>
                 <inherit>true</inherit>
+                <gemArgs>--verbose --force --backtrace</gemArgs>
                 <jrubyVersion>${version.jruby}</jrubyVersion>
                 <jrubySwitches>--${ruby.compat.version}</jrubySwitches>
                 <gemHome>${project.build.directory}/rubygems</gemHome>
