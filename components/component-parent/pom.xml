@@ -60,6 +60,20 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>run-specs</id>
+            <configuration>
+              <inherit>true</inherit>
+              <gemHome>${project.basedir}/../target/rubygems</gemHome>
+              <gemPath>${project.basedir}/../target/rubygems</gemPath>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin> 
     </plugins> 
   </build> 
 
