@@ -23,4 +23,14 @@ describe "basic sinatra test" do
     find('#success').should have_content("you posted something")
   end
 
+  it "should test Sir Postalot" do
+    500.times do |i|
+      print '.' if (i % 10 == 0)
+      visit "/basic-sinatra/poster"
+      click_button 'submit'
+      find('#success').text.should == "you posted nothing"
+    end
+    puts " complete!"
+  end
+
 end
