@@ -521,6 +521,14 @@
           <execution>
             <id>run-specs</id>
             <phase>test</phase>
+            <configuration>
+              <systemProperties>
+                <property>
+                  <name>max.heap</name>
+                  <value>${max.heap}</value>
+                </property>
+              </systemProperties>
+            </configuration>
           </execution>
         </executions>
       </plugin>
