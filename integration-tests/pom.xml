@@ -22,6 +22,7 @@
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <arquillian.max.deploys>100</arquillian.max.deploys>
     <max.heap>1024m</max.heap>
+    <jboss.lazy>true</jboss.lazy>
     <ruby.compat.version>1.8</ruby.compat.version>
   </properties>
 
@@ -255,6 +256,7 @@
       </activation>
       <properties>
         <max.heap>1536m</max.heap>
+        <jboss.lazy>false</jboss.lazy>
       </properties>
       <build>
         <plugins>
@@ -515,6 +517,10 @@
               <name>max.heap</name>
               <value>${max.heap}</value>
             </property>
+            <property>
+              <name>jboss.lazy</name>
+              <value>${jboss.lazy}</value>
+            </property>
           </systemProperties>
         </configuration>
         <executions>
@@ -526,6 +532,10 @@
                 <property>
                   <name>max.heap</name>
                   <value>${max.heap}</value>
+                </property>
+                <property>
+                  <name>jboss.lazy</name>
+                  <value>${jboss.lazy}</value>
                 </property>
               </systemProperties>
             </configuration>
