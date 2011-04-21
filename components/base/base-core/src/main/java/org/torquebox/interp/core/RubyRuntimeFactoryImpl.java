@@ -541,9 +541,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     }
 
     public synchronized void destroy() {
-        for (Ruby ruby : undisposed) {
+        Set<Ruby> toDispose = new HashSet<Ruby>();
+        toDispose.addAll( this.undisposed );
+        
+        for (Ruby ruby : toDispose ) {
             destroyInstance( ruby );
         }
+        this.undisposed.clear();
     }
     
     public ClassCache getClassCache() {
