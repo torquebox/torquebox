@@ -56,6 +56,12 @@
             <artifactId>highlight</artifactId>
             <version>1.0.0</version>
           </dependency>
+          <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jbossorg-jdocbook-style</artifactId>
+            <version>1.1.1</version>
+            <type>jdocbook-style</type>
+          </dependency>
         </dependencies>
         <configuration>
           <fontsDirectory>${basedir}/../src/main/fonts</fontsDirectory>
