@@ -491,7 +491,8 @@
               </goals>
               <configuration>
                 <inherit>true</inherit>
-                <gemArgs>--verbose --force --backtrace</gemArgs>
+                <gemArgs>--backtrace</gemArgs>
+                <verbose>false</verbose>
                 <jrubyVersion>${version.jruby}</jrubyVersion>
                 <jrubySwitches>--${ruby.compat.version}</jrubySwitches>
                 <gemHome>${project.build.directory}/rubygems</gemHome>
