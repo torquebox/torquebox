@@ -61,10 +61,19 @@ module TorqueSpec
     def stop
       return if TorqueSpec.lazy
       if @process
-        Process.kill("INT", @process.pid) 
+        unless clean_stop
+          puts "Unable to shutdown JBoss cleanly, interrupting process"
+          Process.kill("INT", @process.pid) 
+        end
         @process = nil
         puts "JBoss stopped"
       end
+    end
+
+    def clean_stop
+      success?( jmx_console( :action     => 'invokeOpByName', 
+                             :name       => 'jboss.system:type=Server', 
+                             :methodName => 'shutdown' ) )
     end
 
     def ready?
