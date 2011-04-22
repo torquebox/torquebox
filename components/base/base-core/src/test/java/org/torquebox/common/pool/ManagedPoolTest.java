@@ -95,7 +95,18 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
 
     @Test
     public void testGrowToBounds() throws Exception {
-        ManagedPool<String> pool = new ManagedPool<String>( this.factory, 5, 10 );
+        growToBounds( new ManagedPool<String>( this.factory, 5, 10 ) );
+    }
+
+    @Test
+    public void testGrowToBoundsWithBeanInit() throws Exception {
+        ManagedPool<String> pool = new ManagedPool<String>( this.factory );
+        pool.setMinimumInstances( 5 );
+        pool.setMaximumInstances( 10 );
+        growToBounds( pool );
+    }
+
+    private void growToBounds(ManagedPool<String> pool) throws Exception {
         pool.start();
         pool.waitForInitialFill();
 

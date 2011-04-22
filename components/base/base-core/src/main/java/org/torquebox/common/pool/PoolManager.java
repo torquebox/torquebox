@@ -135,7 +135,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     @Override
     public void instanceRequested(int totalInstances, int availableNow) {
         if (this.instances == null) {
-            this.instances = new Semaphore( this.maxInstances - totalInstances, true );
+            this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
         }
         log.trace( "instanceRequested - totalInstances = " + totalInstances + 
                   ", availableNow = " + availableNow + ", availablePermits = " + 
