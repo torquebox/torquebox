@@ -22,7 +22,7 @@
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <arquillian.max.deploys>100</arquillian.max.deploys>
     <max.heap>1024m</max.heap>
-    <jboss.lazy>true</jboss.lazy>
+    <jboss.lazy>false</jboss.lazy>
     <ruby.compat.version>1.8</ruby.compat.version>
   </properties>
 
@@ -255,7 +255,7 @@
         </os>
       </activation>
       <properties>
-        <max.heap>1536m</max.heap>
+        <max.heap>2048m</max.heap>
         <jboss.lazy>false</jboss.lazy>
       </properties>
       <build>
