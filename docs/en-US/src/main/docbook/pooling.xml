@@ -178,7 +178,7 @@
             <row>
               <entry>Services</entry>
 
-              <entry>services</entry>
+              <entry><code>services</code></entry>
             </row>
           </tbody>
         </tgroup>
