@@ -9,9 +9,8 @@ class Something
     @backchannel = TorqueBox::Messaging::Queue.new("/queues/backchannel")
   end
 
-  def foo(index)
-    @backchannel.publish "bg#{index}-sleep"
+  def foo
+    @backchannel.publish Thread.current.id
     sleep(1) 
-    @backchannel.publish "bg#{index}-awake"
   end
 end

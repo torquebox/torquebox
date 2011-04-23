@@ -5,11 +5,9 @@ class RackApp
   def call(env)
     if env['QUERY_STRING'] =~ /background/
       something = Something.new
-      something.foo(1)
-      something.foo(2)
+      4.times { something.foo }
     else
-      SampleTask.async(:foo, 1)
-      SampleTask.async(:foo, 2)
+      4.times { SampleTask.async(:foo) }
     end
     [200, {'Content-Type' => 'text/html'}, "tasks fired" ]
   end
