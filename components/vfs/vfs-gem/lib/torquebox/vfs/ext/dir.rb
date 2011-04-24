@@ -52,11 +52,17 @@ class Dir
       result
     end
 
-    def [](pattern)
+    def [](*pattern)
       self.glob( pattern )
     end
 
-    def glob(pattern,flags=0, &block)
+    def glob(pattern, flags=0, &block)
+      patterns = [pattern].flatten
+      patterns.collect { |pattern| glob_one( pattern, flags, &block ) }.flatten
+    end
+    
+    def glob_one(pattern, flags=0, &block)
+
       is_absolute_vfs = false
 
       #str_pattern = "#{pattern}"

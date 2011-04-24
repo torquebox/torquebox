@@ -206,6 +206,35 @@ describe "Dir extensions for VFS" do
         items.should_not include( "#{prefix}/home/larry/archive1.jar/lib/archive4.txt" )
       end
 
+      it "should allow globbing of an array of patterns" do
+        items = []
+        lambda {
+          items = Dir.glob( ["#{prefix}/home/larry/*", "#{prefix}/home/todd/*"] )
+        }.should_not raise_error
+        
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+        items.should include( "#{prefix}/home/todd/index.html.haml" )
+      end
+
+      it "should allow globbing of multiple patterns via []" do
+        items = []
+        lambda {
+          items = Dir["#{prefix}/home/larry/*", "#{prefix}/home/todd/*"]
+        }.should_not raise_error
+
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+        items.should include( "#{prefix}/home/todd/index.html.haml" )
+      end
+
+      it "should allow globbing of multiple single patterns via []" do
+        items = []
+        lambda {
+          items = Dir["#{prefix}/home/larry/*"]
+        }.should_not raise_error
+
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+      end
+
       it "should create new Dirs" do
         lambda {
           Dir.new(prefix)
