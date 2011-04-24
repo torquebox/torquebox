@@ -10,7 +10,7 @@ class Something
   end
 
   def foo
-    @backchannel.publish Thread.current.id
+    @backchannel.publish Thread.current.object_id
     sleep(1) 
   end
 end
