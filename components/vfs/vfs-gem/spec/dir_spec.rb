@@ -226,7 +226,7 @@ describe "Dir extensions for VFS" do
         items.should include( "#{prefix}/home/todd/index.html.haml" )
       end
 
-      it "should allow globbing of multiple single patterns via []" do
+      it "should allow globbing of a single pattern via []" do
         items = []
         lambda {
           items = Dir["#{prefix}/home/larry/*"]
