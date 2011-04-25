@@ -349,6 +349,13 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>default-push</id>
+            <goals><goal>push</goal></goals>
+            <phase>none</phase>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
