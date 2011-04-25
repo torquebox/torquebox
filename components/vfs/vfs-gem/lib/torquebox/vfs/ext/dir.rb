@@ -121,7 +121,6 @@ class Dir
 
       #str_pattern = "#{pattern}"
       str_pattern = pattern.to_str
-      #puts "glob(#{str_pattern})"
 
       segments = str_pattern.split( '/' )
 
@@ -173,6 +172,7 @@ class Dir
         child_path = "" if child_path == "/"
         #puts "child_path=#{child_path}"
         #puts "base=#{base}"
+        puts "preparing glob filter for path #{child_path} and match #{matcher}"
         filter = TorqueBox::VFS::GlobFilter.new( child_path, matcher )
         #puts "filter is #{filter}"
         paths = starting_point.getChildrenRecursively( filter ).collect{|e|
