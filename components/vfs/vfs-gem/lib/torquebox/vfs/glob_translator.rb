@@ -31,7 +31,7 @@ module TorqueBox
       def self.translate(glob_str)
         translator = GlobTranslator.new( glob_str )
         regexp_str = translator.glob()
-        puts "#{glob_str} ==> #{regexp_str}"
+        # puts "#{glob_str} ==> #{regexp_str}"
         regexp_str
       end
 
@@ -83,7 +83,6 @@ module TorqueBox
 
       def double_splat()
         #puts "enter double_splat()"
-        # result = '(.*)'
         result = '([^.]*)\/(?!.*\/.*)'
         consume('*')
         consume('*')

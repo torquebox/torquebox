@@ -118,7 +118,7 @@ class Dir
         child_path = "" if child_path == "/"
         #puts "child_path=#{child_path}"
         #puts "base=#{base}"
-        puts "preparing glob filter for path #{child_path} and match #{matcher}"
+        # puts "preparing glob filter for path #{child_path} and match #{matcher}"
         filter = TorqueBox::VFS::GlobFilter.new( child_path, matcher )
         #puts "filter is #{filter}"
         paths = starting_point.getChildrenRecursively( filter ).collect{|e|
