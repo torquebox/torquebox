@@ -1,2 +1,4 @@
 queues:
-  /queues/background:
+  /queues/response:
+    durable: false
+

@@ -4,16 +4,15 @@ require 'torquebox-messaging'
 shared_examples_for "rails backgroundable tests" do
 
   before(:each) do
-    @background = TorqueBox::Messaging::Queue.new( "/queues/background" )
+    @response = TorqueBox::Messaging::Queue.new( "/queues/response" )
   end
 
   it "should reload the model in the task runtime" do
     visit "#{@context}/widgets"
     page.should have_content( 'it worked' )
-    @background.receive(:timeout => 25000).should == 'a response'
-
-    rewrite_file( @model_path, 'a response', 'a new response' )
-    @background.receive(:timeout => 25000).should == 'a new response'
+    @response.receive(:timeout => 25000).should == 'response 0'
+    @response.receive(:timeout => 25000).should == 'response 1'
+    @response.receive(:timeout => 25000).should == 'response 2'
   end
 
 end

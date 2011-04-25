@@ -68,13 +68,17 @@ public class RubyJobProxyFactory implements JobFactory {
         JobDetail jobDetail = bundle.getJobDetail();
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
         
-        RubyComponentResolver resolver = getComponentResolver( jobDataMap.getString(   RubyJobProxyFactory.COMPONENT_RESOLVER_NAME ));
-
+        RubyComponentResolver resolver = getComponentResolver( jobDataMap.getString( RubyJobProxyFactory.COMPONENT_RESOLVER_NAME ) );
+        
+        Ruby ruby = null;
         try {
-            Ruby ruby = this.runtimePool.borrowRuntime();
+            ruby = this.runtimePool.borrowRuntime();
             IRubyObject rubyObject = resolver.resolve( ruby );
             rubyJob = new RubyJobProxy( this.runtimePool, rubyObject );
         } catch (Exception e) {
+            if (ruby != null) {
+                this.runtimePool.returnRuntime( ruby );
+            }
             throw new SchedulerException( e );
         }
 

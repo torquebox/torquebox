@@ -1,5 +1,6 @@
 queues:
   /queues/backchannel:
+    durable: false
 
 tasks: 
   Backgroundable:

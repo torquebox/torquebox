@@ -228,11 +228,9 @@
   <profiles>
     <profile>
       <id>ci</id>
-      <!--
-          <properties>
-          <arquillian.max.deploys>10</arquillian.max.deploys>
-          </properties>
-      -->
+      <properties>
+        <arquillian.max.heap>4096m</arquillian.max.heap>
+      </properties>
     </profile>
     <profile>
       <id>inplace</id>

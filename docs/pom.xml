@@ -47,14 +47,9 @@
         <extensions>true</extensions>
         <dependencies>
           <dependency>
-            <groupId>org.jboss.pressgang</groupId>
-            <artifactId>pressgang-xslt</artifactId>
-            <version>1.2.0</version>
-          </dependency>
-          <dependency>
-            <groupId>net.sf.docbook</groupId>
-            <artifactId>docbook</artifactId>
-            <version>1.72.0</version>
+            <groupId>org.torquebox</groupId>
+            <artifactId>torquebox-style</artifactId>
+            <version>1.0.0</version>
           </dependency>
           <dependency>
             <groupId>org.jboss.docs</groupId>
@@ -83,6 +78,11 @@
           </imageResource>
           <formats>
             <format>
+              <formatName>man</formatName>
+              <stylesheetResource>classpath:/epub/docbook.xsl</stylesheetResource>
+              <finalName>${pom.artifactId}.epub-out</finalName>
+            </format>
+            <format>
               <formatName>pdf</formatName>
               <stylesheetResource>file:${project.parent.basedir}/src/main/xsl/pdf-style.xsl</stylesheetResource>
               <finalName>${pom.artifactId}.pdf</finalName>
@@ -102,7 +102,7 @@
           </formats>
           <options>
             <xincludeSupported>true</xincludeSupported>
-            <docbookVersion>1.72.0</docbookVersion>
+            <docbookVersion>1.76.1</docbookVersion>
             <xincludeSupported>true</xincludeSupported>
             <useRelativeImageUris>true</useRelativeImageUris>
             <xmlTransformerType>saxon</xmlTransformerType>

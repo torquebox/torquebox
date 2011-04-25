@@ -33,8 +33,8 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
+        <jboss.releases.repo.url>dav:http://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:http://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
@@ -76,17 +76,20 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>de.saumya.mojo</groupId>
-            <artifactId>rspec-maven-plugin</artifactId>
-            <configuration>
-              <jrubySwitches>--1.9</jrubySwitches>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
+      <properties>
+        <ruby.compat.version>1.9</ruby.compat.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>windows-can't-dance-with-19</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <ruby.compat.version>1.8</ruby.compat.version>
+      </properties>
     </profile>
   </profiles>
     
@@ -229,7 +232,8 @@
   </dependencyManagement>
 
   <properties>
-    <version.jruby-maven-plugins>0.25.1</version.jruby-maven-plugins> 
+    <ruby.compat.version>1.8</ruby.compat.version>
+    <version.jruby-maven-plugins>0.27.0-SNAPSHOT</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
@@ -487,7 +491,10 @@
               </goals>
               <configuration>
                 <inherit>true</inherit>
+                <gemArgs>--backtrace</gemArgs>
+                <verbose>false</verbose>
                 <jrubyVersion>${version.jruby}</jrubyVersion>
+                <jrubySwitches>--${ruby.compat.version}</jrubySwitches>
                 <gemHome>${project.build.directory}/rubygems</gemHome>
                 <gemPath>${project.build.directory}/rubygems</gemPath>
                 <fork>true</fork>

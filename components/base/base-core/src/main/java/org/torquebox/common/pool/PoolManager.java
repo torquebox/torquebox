@@ -92,7 +92,6 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         this.factory = factory;
         this.minInstances = minInstances;
         this.maxInstances = maxInstances;
-        this.instances = new Semaphore( maxInstances, true );
 
         this.fillTask = new FillTask<T>( this );
         this.drainTask = new DrainTask<T>( this );
@@ -135,6 +134,13 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     @Override
     public void instanceRequested(int totalInstances, int availableNow) {
+        if (this.instances == null) {
+            this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
+        }
+        log.trace( "instanceRequested - totalInstances = " + totalInstances + 
+                  ", availableNow = " + availableNow + ", availablePermits = " + 
+                  this.instances.availablePermits() );
+
         if (totalInstances >= maxInstances) {
             return;
         }

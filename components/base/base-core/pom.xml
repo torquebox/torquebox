@@ -231,14 +231,6 @@
           <gemPath>${project.build.directory}/rubygems</gemPath>
           <fork>true</fork>
         </configuration>
-        <executions>
-          <execution>
-            <phase>process-test-classes</phase>
-            <goals>
-              <goal>initialize</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

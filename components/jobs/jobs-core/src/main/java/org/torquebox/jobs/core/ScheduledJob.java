@@ -145,7 +145,7 @@ public class ScheduledJob implements ScheduledJobMBean {
         jobDetail.setJobClass( RubyJobProxy.class );
         jobDetail.setRequestsRecovery( true );
 
-	    JobDataMap jobData = jobDetail.getJobDataMap();
+        JobDataMap jobData = jobDetail.getJobDataMap();
 	        
         jobData.put(  RubyJobProxyFactory.COMPONENT_RESOLVER_NAME, getComponentResolverName() );
 
