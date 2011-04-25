@@ -230,6 +230,7 @@
       <id>ci</id>
       <properties>
         <arquillian.max.heap>4096m</arquillian.max.heap>
+        <max.heap>4096m</max.heap>
       </properties>
     </profile>
     <profile>
