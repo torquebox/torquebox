@@ -61,6 +61,60 @@ class Dir
       patterns.collect { |pattern| glob_one( pattern, flags, &block ) }.flatten
     end
     
+    def chdir(*args, &block)
+      raise "You shouldn't use chdir, but if you must, pass a block!" unless block_given?
+      chdir_before_vfs( *args.map{ |x| File.name_without_vfs(x) }, &block )
+    end
+
+    def rmdir(path)
+      name = File.name_without_vfs(path)
+      rmdir_before_vfs(name)
+    end
+    alias_method :unlink, :rmdir
+    alias_method :delete, :rmdir
+
+    def mkdir(path, mode=0777)
+      mkdir_before_vfs( File.name_without_vfs(path), mode )
+    rescue Errno::ENOTDIR => e
+      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
+      mkdir_before_vfs( path, mode )
+    rescue Errno::ENOENT => e
+      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
+      mkdir_before_vfs( path, mode )
+    end
+
+    # 1.8: new( dirname )
+    # 1.9: new( dirname, <, :encoding => enc> )
+    # We currently ignore the encoding.
+    def new(string, options = nil)
+      if ( ::File.exist_without_vfs?( string ) )
+        return new_before_vfs( string )
+      end
+      TorqueBox::VFS::Dir.new( string )
+    end
+
+    # 1.9 has an optional, undocumented options arg that appears to be
+    # used for encoding. We'll ignore it for now, since JRuby does as
+    # well. (see org.jruby.RubyDir.java)
+    def entries(path, options = {})
+      if ( ::File.exist_without_vfs?( path ) )
+        return entries_before_vfs(path)
+      end
+      vfs_dir = org.jboss.vfs::VFS.child( File.path_to_str(path) )
+      # Delegate to original entries if passed a nonexistent file
+      unless vfs_dir.exists?
+        return entries_before_vfs( path )
+      end
+      [ '.', '..' ] + vfs_dir.children.collect{|e| e.name }
+    end
+
+    def foreach(path, &block)
+      enum = entries(path).each(&block)
+      block_given? ? nil : enum
+    end
+
+    private
+
     def glob_one(pattern, flags=0, &block)
 
       is_absolute_vfs = false
@@ -135,58 +189,6 @@ class Dir
       rescue Java::JavaIo::IOException => e
         return []
       end
-    end
-
-    def chdir(*args, &block)
-      raise "You shouldn't use chdir, but if you must, pass a block!" unless block_given?
-      chdir_before_vfs( *args.map{ |x| File.name_without_vfs(x) }, &block )
-    end
-
-    def rmdir(path)
-      name = File.name_without_vfs(path)
-      rmdir_before_vfs(name)
-    end
-    alias_method :unlink, :rmdir
-    alias_method :delete, :rmdir
-
-    def mkdir(path, mode=0777)
-      mkdir_before_vfs( File.name_without_vfs(path), mode )
-    rescue Errno::ENOTDIR => e
-      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
-      mkdir_before_vfs( path, mode )
-    rescue Errno::ENOENT => e
-      path = TorqueBox::VFS.writable_path_or_error( File.path_to_str(path), e )
-      mkdir_before_vfs( path, mode )
-    end
-
-    # 1.8: new( dirname )
-    # 1.9: new( dirname, <, :encoding => enc> )
-    # We currently ignore the encoding.
-    def new(string, options = nil)
-      if ( ::File.exist_without_vfs?( string ) )
-        return new_before_vfs( string )
-      end
-      TorqueBox::VFS::Dir.new( string )
-    end
-
-    # 1.9 has an optional, undocumented options arg that appears to be
-    # used for encoding. We'll ignore it for now, since JRuby does as
-    # well. (see org.jruby.RubyDir.java)
-    def entries(path, options = {})
-      if ( ::File.exist_without_vfs?( path ) )
-        return entries_before_vfs(path)
-      end
-      vfs_dir = org.jboss.vfs::VFS.child( File.path_to_str(path) )
-      # Delegate to original entries if passed a nonexistent file
-      unless vfs_dir.exists?
-        return entries_before_vfs( path )
-      end
-      [ '.', '..' ] + vfs_dir.children.collect{|e| e.name }
-    end
-
-    def foreach(path, &block)
-      enum = entries(path).each(&block)
-      block_given? ? nil : enum
     end
 
   end
