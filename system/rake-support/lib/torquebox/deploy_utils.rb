@@ -94,6 +94,11 @@ module TorqueBox
           old_trap = trap("INT") do
             puts "caught SIGINT, shutting down"
           end
+          # don't send the gemfile from the current app, instead let
+          # bundler suss it out itself for each deployed
+          # app. Otherwise, they'll end up sharing this Gemfile, which
+          # is probably not what we want.          
+          ENV.delete('BUNDLE_GEMFILE') 
           exec_command(run_command_line)
           trap("INT", old_trap )
         end
