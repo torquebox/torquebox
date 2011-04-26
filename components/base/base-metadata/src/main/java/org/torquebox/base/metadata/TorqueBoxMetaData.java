@@ -174,6 +174,7 @@ public class TorqueBoxMetaData {
         return new TorqueBoxMetaData( mergedData );
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected Object merge( Object key, Map src, Map tgt ) {
         Object value = src.get( key );
         if ( value instanceof Map && tgt != null ) {
