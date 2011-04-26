@@ -42,7 +42,13 @@ describe "Dir extensions for VFS" do
         when :vfs
           prefix = test_data_base_path( :vfs )
       end
-
+      
+      it "should ignore dotdirs by default" do
+      	items = Dir.glob( "#{prefix}/**/*" )
+      	items.should_not be_empty
+      	items.size.should eql(32)
+      end
+      
       it "should ignore dotfiles by default" do
         glob_pattern = "#{prefix}/dotfiles/*"
         items = Dir.glob( glob_pattern )

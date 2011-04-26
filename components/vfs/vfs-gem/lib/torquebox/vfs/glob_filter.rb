@@ -35,6 +35,7 @@ module TorqueBox
           regexp_str = "^#{regexp_str}$"
         end
         @regexp = Regexp.new( regexp_str ) 
+        # puts "glob #{glob} ==> #{@regexp}"
       end
       
       def accepts(file)

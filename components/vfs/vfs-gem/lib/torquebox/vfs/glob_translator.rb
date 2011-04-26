@@ -71,10 +71,12 @@ module TorqueBox
           result = double_splat()
         else
           if ( cur() == 0 || lb() == '/' )
-            result = '[^/.][^/]*'
+            result = '(?<=/|^)[^.][^/]*'
+            # result = '[^/.][^/]*'
           else
             result = '[^/]+'
           end
+          
           consume('*')
         end
         #puts "exit splat()"
@@ -83,7 +85,8 @@ module TorqueBox
 
       def double_splat()
         #puts "enter double_splat()"
-        result = '([^.]*)\/(?!.*\/.*)'
+        # result = '([^.]*)(\/){0,1}(?!.*\/.*)'
+        result = '([^.][^/]+/){0,}'
         consume('*')
         consume('*')
         consume('/') if ( la() == '/' )
