@@ -123,7 +123,7 @@ module TorqueSpec
 
     def http req
       res = Net::HTTP.start(TorqueSpec.host, TorqueSpec.port) do |http| 
-        http.read_timeout = 120 
+        http.read_timeout = 180 
         http.request(req)
       end
       unless Net::HTTPSuccess === res
