@@ -42,7 +42,19 @@ describe "Dir extensions for VFS" do
         when :vfs
           prefix = test_data_base_path( :vfs )
       end
+      
+      it "should ignore dotdirs by default" do
+      	items = Dir.glob( "#{prefix}/**/*" )
+      	items.should_not be_empty
+      	items.size.should eql(32)
+      end
 
+      xit "should handle crazy-ass rails globs" do
+        items = Dir.glob( "#{prefix}/**/*/**" )
+        items.should_not be_empty
+        items.size.should eql(32)
+      end
+      
       it "should ignore dotfiles by default" do
         glob_pattern = "#{prefix}/dotfiles/*"
         items = Dir.glob( glob_pattern )
@@ -204,6 +216,35 @@ describe "Dir extensions for VFS" do
         items.should     include( "#{prefix}/home/larry/archive1.jar/lib/archive2.jar" )
         items.should     include( "#{prefix}/home/larry/archive1.jar/other_lib/subdir/archive6.jar" )
         items.should_not include( "#{prefix}/home/larry/archive1.jar/lib/archive4.txt" )
+      end
+
+      it "should allow globbing of an array of patterns" do
+        items = []
+        lambda {
+          items = Dir.glob( ["#{prefix}/home/larry/*", "#{prefix}/home/todd/*"] )
+        }.should_not raise_error
+        
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+        items.should include( "#{prefix}/home/todd/index.html.haml" )
+      end
+
+      it "should allow globbing of multiple patterns via []" do
+        items = []
+        lambda {
+          items = Dir["#{prefix}/home/larry/*", "#{prefix}/home/todd/*"]
+        }.should_not raise_error
+
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+        items.should include( "#{prefix}/home/todd/index.html.haml" )
+      end
+
+      it "should allow globbing of a single pattern via []" do
+        items = []
+        lambda {
+          items = Dir["#{prefix}/home/larry/*"]
+        }.should_not raise_error
+
+        items.should include( "#{prefix}/home/larry/file1.txt" )
       end
 
       it "should create new Dirs" do

@@ -360,7 +360,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             }
 
             performRuntimeInitialization( runtime );
-            return runtime;
+        } catch (Exception ex) {
+            log.error( "Failed to initialize runtime: ", ex );
         } finally {
             if (runtime != null) {
                 this.undisposed.add( runtime );
@@ -368,6 +369,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             
             logRuntimeCreationComplete( config, contextInfo, startTime );
         }
+
+        return runtime;
     }
     
     private long logRuntimeCreationStart(RubyInstanceConfig config, String contextInfo) {

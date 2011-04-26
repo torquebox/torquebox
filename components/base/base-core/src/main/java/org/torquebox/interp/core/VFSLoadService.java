@@ -197,13 +197,15 @@ public class VFSLoadService extends LoadService {
                         URL vfsUrl = makeUrl( loadPathEntry, namePlusSuffix );
                         VirtualFile file = VFS.getChild(  vfsUrl.toURI() );
                         if (file != null && file.exists()) {
-                            return new LoadServiceResource( file.toURI().toURL(), vfsUrl.toExternalForm() );
+                            return new LoadServiceResource( file.getPhysicalFile(), vfsUrl.toExternalForm(), true );
                         }
                         return null;
                     } catch (MalformedURLException e) {
-                        e.printStackTrace();
+                        throw runtime.newIOErrorFromException( e );
                     } catch (URISyntaxException e) {
-                        e.printStackTrace();
+                        throw runtime.newSyntaxError( e.getMessage() );
+                    } catch (IOException e) {
+                        throw runtime.newIOErrorFromException( e );
                     }
                 }
 
@@ -223,11 +225,7 @@ public class VFSLoadService extends LoadService {
                             RubyFile.expandUserPath( runtime.getCurrentContext(), namePlusSuffix ) );
                 }
                 if (actualPath.isFile()) {
-                    try {
-                        foundResource = new LoadServiceResource( actualPath.toURI().toURL(), reportedPath );
-                    } catch (MalformedURLException e) {
-                        throw runtime.newIOErrorFromException( e );
-                    }
+                        foundResource = new LoadServiceResource( actualPath.getAbsoluteFile(), reportedPath );
                 }
             }
         } catch (SecurityException secEx) {
@@ -250,7 +248,7 @@ public class VFSLoadService extends LoadService {
                         // VirtualFile file = VFS.getRoot(vfsUrl);
                         VirtualFile file = VFS.getChild( vfsUrl.toURI() );
                         if (file != null && file.exists()) {
-                            return new LoadServiceResource( file.toURI().toURL(), reportedPath );
+                            return new LoadServiceResource( file.getPhysicalFile(), reportedPath, true );
                         }
                     } catch (IOException e) {
                         // ignore
@@ -272,11 +270,7 @@ public class VFSLoadService extends LoadService {
                     actualPath = new File( RubyFile.expandUserPath( runtime.getCurrentContext(), reportedPath ) );
                 }
                 if (actualPath.isFile()) {
-                    try {
-                        foundResource = new LoadServiceResource( actualPath.toURI().toURL(), reportedPath );
-                    } catch (MalformedURLException e) {
-                        throw runtime.newIOErrorFromException( e );
-                    }
+                    foundResource = new LoadServiceResource( actualPath.getAbsoluteFile(), reportedPath );
                 }
             }
         } catch (SecurityException secEx) {
@@ -330,14 +324,13 @@ public class VFSLoadService extends LoadService {
                     if (!namePlusSuffix.startsWith( "./" )) {
                         s = "./" + s;
                     }
-                    foundResource = new LoadServiceResource( file.toURI().toURL(), s, absolute );
+                    foundResource = new LoadServiceResource( file.getAbsoluteFile(), s, absolute );
                     debugLogFound( foundResource );
                     state.loadName = resolveLoadName( foundResource, namePlusSuffix );
                     break;
                 }
             } catch (IllegalArgumentException illArgEx) {
             } catch (SecurityException secEx) {
-            } catch (IOException ioEx) {
             }
         }
 

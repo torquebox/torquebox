@@ -11,7 +11,7 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-parent</artifactId>
-  <version>1.0.0.CR2-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TorqueBox Parent</name>
   <url>http://www.torquebox.org/</url>
@@ -33,8 +33,8 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <jboss.releases.repo.url>dav:http://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>dav:http://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
+        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
@@ -233,7 +233,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.jruby-maven-plugins>0.27.0-SNAPSHOT</version.jruby-maven-plugins> 
+    <version.jruby-maven-plugins>0.26.0</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
@@ -349,6 +349,13 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>default-push</id>
+            <goals><goal>push</goal></goals>
+            <phase>none</phase>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
