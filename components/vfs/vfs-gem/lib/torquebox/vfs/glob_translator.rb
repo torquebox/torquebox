@@ -85,8 +85,12 @@ module TorqueBox
 
       def double_splat()
         #puts "enter double_splat()"
-        # result = '([^.]*)(\/){0,1}(?!.*\/.*)'
-        result = '([^.][^/]+/){0,}'
+        if la(2) == '/'
+        	# result = '([^.][^/]+/){0,}'
+        	result = '([^/.][^/]*/){0,}'
+        else
+        	result = '([^/.][^/]*)'
+        end
         consume('*')
         consume('*')
         consume('/') if ( la() == '/' )
