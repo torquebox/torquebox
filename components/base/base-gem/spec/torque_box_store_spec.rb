@@ -105,6 +105,42 @@ describe ActiveSupport::Cache::TorqueBoxStore do
       @cache.fetch("today", :force => true) { "Tuesday" }.should == "Tuesday"
     end
 
+    it "should support :race_condition_ttl" do
+      database = mock('database')
+      fetch_options = { :expires_in => 0.1.seconds, :race_condition_ttl => 30.seconds }
+      # First fetch looks up from database and populates
+      database.should_receive(:town).and_return("Pantsville")
+      @cache.fetch("town", fetch_options) {
+        database.town
+      }.should == "Pantsville"
+      # Sleep until the entry is expired
+      sleep(0.2)
+      # Create a set of CountDownLatches to test :race_condition_ttl
+      # without relying on sleep calls
+      read_latch = java.util.concurrent.CountDownLatch.new(1)
+      write_latch = java.util.concurrent.CountDownLatch.new(1)
+      # Read the cache from two threads but only one should hit our database
+      database.should_receive(:town).once.and_return {
+        # Trigger the read latch so the other thread can read the cached value
+        read_latch.count_down
+        write_latch.await(15, java.util.concurrent.TimeUnit::SECONDS)
+        "NoPantsville"
+      }
+      other_thread = Thread.new {
+        read_latch.await(15, java.util.concurrent.TimeUnit::SECONDS)
+        @cache.fetch("town", fetch_options) {
+          database.town
+        }.should == "Pantsville"
+        # Trigger the write latch to update the cached value
+        write_latch.count_down
+      }
+      @cache.fetch("town", fetch_options) {
+        database.town
+      }.should == "NoPantsville"
+      other_thread.join
+      @cache.read("town").should == "NoPantsville"
+    end
+
   end
 
   describe "multiples" do
