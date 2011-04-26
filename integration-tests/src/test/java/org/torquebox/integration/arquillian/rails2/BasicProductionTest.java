@@ -50,6 +50,7 @@ public class BasicProductionTest extends AbstractIntegrationTestCase {
     }
 
     @Test
+    @Ignore
     public void testCaching() throws Exception {
         File cacheDir = new File( "apps/rails2/basic/tmp/cache/views" );
 
