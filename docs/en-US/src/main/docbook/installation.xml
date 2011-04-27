@@ -137,12 +137,6 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 - http://rubygems.org
 - http://rubygems.torquebox.org</screen>
     </para>
-   
-    <para><emphasis>Note:</emphasis> If you are runnning a candidate release 
-    (1.0.0.CR<replaceable>X</replaceable>), the gems can be installed from the 
-    default gem host (http://rubygems.org), but you will still need to use the 
-    <command>--pre</command> flag in order to install them.</para>
-
   </section>
 
   <section id="running-torquebox">
