@@ -46,8 +46,6 @@ describe "Dir extensions for VFS" do
       it "should ignore dotdirs by default" do
       	items = Dir.glob( "#{prefix}/**/*" )
       	items.should_not be_empty
-      	puts "size is #{items.length}"
-      	items.each {|item| puts "item is #{item}" }
       	items.size.should eql(32)
       end
 
@@ -60,8 +58,6 @@ describe "Dir extensions for VFS" do
       it "should handle Rails 2 glob-related arglebargle" do
       	items = Dir.glob( "#{prefix}/**/*/**" )
       	items.should_not be_empty
-      	puts "size is #{items.length}"
-      	items.each {|item| puts "item is #{item}" }
       	items.size.should eql(27)
       end
       
