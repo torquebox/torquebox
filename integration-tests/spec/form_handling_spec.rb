@@ -31,7 +31,7 @@ describe "rails3 form handling" do
     auth_token.length.should be > 0
     find("#the-upload-form")["action"].should include(session_id)
 
-    attach_file("the-file", File.expand_path( File.join( File.dirname( __FILE__ ), "..", "target/test-classes/org/torquebox/integration/arquillian/rails3/data.txt" ) ) )
+    attach_file("the-file", File.expand_path( File.join( File.dirname( __FILE__ ), "..", "target/test-classes/data.txt" ) ) )
     
     page.driver.cookies.clear
     click_button("Save changes")

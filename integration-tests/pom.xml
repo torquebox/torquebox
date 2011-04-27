@@ -15,12 +15,10 @@
   <description />
 
   <properties>
-    <version.arquillian>1.0.0.Alpha4</version.arquillian>
     <version.haml>~&gt;3.0</version.haml>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
     <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
-    <arquillian.max.deploys>100</arquillian.max.deploys>
     <max.heap>1024m</max.heap>
     <jboss.lazy>false</jboss.lazy>
     <ruby.compat.version>1.8</ruby.compat.version>
@@ -33,52 +31,6 @@
 
 
   <dependencies>
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium</artifactId>
-      <version>2.0a7</version>
-      <scope>test</scope>
-    </dependency> 
-
-    <dependency>
-      <groupId>org.seleniumhq.selenium</groupId>
-      <artifactId>selenium-htmlunit-driver</artifactId>
-      <version>2.0a7</version>
-      <scope>test</scope>
-    </dependency> 
-
-    <dependency>
-      <groupId>org.jboss.arquillian</groupId>
-      <artifactId>arquillian-junit</artifactId>
-      <version>${version.arquillian}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.arquillian.container</groupId>
-      <artifactId>arquillian-jbossas-managed-6</artifactId>
-      <version>${version.arquillian}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-client</artifactId>
-      <version>${version.jbossas}</version>
-      <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-server-manager</artifactId>
-      <version>${version.jboss-server-manager}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>1.5.6</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
@@ -206,24 +158,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-jms-client</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-logging</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.jvnet.winp</groupId>
       <artifactId>winp</artifactId>
       <version>1.14</version>
@@ -236,7 +170,6 @@
     <profile>
       <id>ci</id>
       <properties>
-        <arquillian.max.heap>4096m</arquillian.max.heap>
         <max.heap>4096m</max.heap>
       </properties>
     </profile>
@@ -286,18 +219,6 @@
       </activation>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>arquillian-test</id>
-                <configuration>
-                  <skip>true</skip>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
           <plugin>
             <groupId>de.saumya.mojo</groupId>
             <artifactId>rspec-maven-plugin</artifactId>
@@ -488,32 +409,6 @@
             </property>
           </systemProperties>
         </configuration>    
-        <executions>
-          <execution>
-            <id>default-test</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <excludes>
-                <exclude>**/arquillian/**</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-          <execution>
-            <id>arquillian-test</id>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <phase>test</phase>
-            <configuration>
-              <includes>
-                <include>**/arquillian/**/*Test.class</include>
-              </includes>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
