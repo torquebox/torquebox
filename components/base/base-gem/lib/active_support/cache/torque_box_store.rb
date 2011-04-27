@@ -89,7 +89,12 @@ module ActiveSupport
       def write_entry(key, entry, options = {})
         args = [ :put_async, key, encode(entry) ]
         args[0] = :put_if_absent_async if options[:unless_exist]
-        args << options[:expires_in].to_i << SECONDS if options[:expires_in]
+        if options[:expires_in]
+          # Set the Infinispan expire a few minutes into the future to support
+          # :race_condition_ttl on read
+          expires_in = options[:expires_in].to_i + 5.minutes
+          args << expires_in << SECONDS
+        end
         cache.send( *args ) && true
       end
 
