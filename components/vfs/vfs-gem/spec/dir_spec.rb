@@ -49,10 +49,16 @@ describe "Dir extensions for VFS" do
       	items.size.should eql(32)
       end
 
-      xit "should handle crazy-ass rails globs" do
-        items = Dir.glob( "#{prefix}/**/*/**" )
-        items.should_not be_empty
-        items.size.should eql(32)
+      it "should handle trailing double splats" do
+      	items = Dir.glob( "#{prefix}/**" )
+      	items.should_not be_empty
+      	items.size.should eql(5)
+      end
+      
+      it "should handle Rails 2 glob-related arglebargle" do
+      	items = Dir.glob( "#{prefix}/**/*/**" )
+      	items.should_not be_empty
+      	items.size.should eql(27)
       end
       
       it "should ignore dotfiles by default" do

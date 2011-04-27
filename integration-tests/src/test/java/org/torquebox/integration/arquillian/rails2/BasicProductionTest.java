@@ -41,7 +41,6 @@ public class BasicProductionTest extends AbstractIntegrationTestCase {
     }
 
     @Test
-    @Ignore
     public void testHighLevel() {
         driver.get( "http://localhost:8080/basic-production-rails" );
         WebElement element = driver.findElementById( "success" );
@@ -50,7 +49,6 @@ public class BasicProductionTest extends AbstractIntegrationTestCase {
     }
 
     @Test
-    @Ignore
     public void testCaching() throws Exception {
         File cacheDir = new File( "apps/rails2/basic/tmp/cache/views" );
 
