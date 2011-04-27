@@ -321,12 +321,17 @@ gem 'jdbc-sqlite3'</programlisting></para>
   end
 end</programlisting></para>
 
-      <para>Optionally, you could refer to the fully-qualified class name.
-      Either style is acceptable.</para>
+      <para>Using this symbolized form causes Rails to load the
+      appropriate Ruby file for you.  Alternatively, you may load the
+      file yourself and then refer to the fully-qualified class name.
+      This is required when using the
+      <classname>TorqueBoxStore</classname> outside of Rails, e.g. in
+      a Sinatra app.</para>
 
-      <para><programlisting language="ruby">
-          config.cache_store = ActiveSupport::Cache::TorqueBoxStore.new
-        </programlisting></para>
+      <para><programlisting language="ruby">require 'active_support/cache/torque_box_store'
+class SinatraCache &lt; Sinatra::Base
+  set :cache, ActiveSupport::Cache::TorqueBoxStore.new
+end</programlisting></para>
 
       <para>By default, the <code>TorqueBoxStore</code> will be in
       <emphasis>asynchronous invalidation</emphasis> mode when clustered
