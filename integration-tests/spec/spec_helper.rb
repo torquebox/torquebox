@@ -34,5 +34,7 @@ def mutable_app(path)
   FileUtils.cp_r( File.join( File.dirname( __FILE__ ), '..', 'apps', path ), dest_path )
 end
 
-
+def add_request_header(key, value)
+  page.driver.browser.send(:client).add_request_header(key, value)
+end
 
