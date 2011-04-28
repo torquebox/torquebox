@@ -16,6 +16,11 @@ describe "basic sinatra test" do
     find("#success #scheme").text.should eql("http")
   end
 
+  it "should return a static page beneath default 'public' dir" do
+    visit "/basic-sinatra/some_page.html"
+    page.find('#success')[:class].should == 'default'
+  end
+
   it "should post something" do
     visit "/basic-sinatra/poster"
     fill_in 'field', :with => 'something'
