@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "rack reloading" do
   mutable_app 'rack/reloader'
-  deploy :path => 'rack/reloader-knob.yml'
+  deploy 'rack/reloader-knob.yml'
 
   if TESTING_ON_WINDOWS
     it "should reload" do

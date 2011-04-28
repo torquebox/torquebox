@@ -5,7 +5,7 @@ require 'torquebox-messaging'
 
 describe "HA jobs test" do
 
-  deploy :path=>"alacarte/hajobs-knob.yml"
+  deploy "alacarte/hajobs-knob.yml"
 
   before do
     @touchfile = Pathname.new( "./target/hajobs-touchfile.txt" )

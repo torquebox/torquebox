@@ -3,7 +3,7 @@ require 'torquebox-messaging'
 
 describe "task concurrency" do
 
-  deploy :path => "rack/task-concurrency-knob.yml"
+  deploy "rack/task-concurrency-knob.yml"
 
   before(:each) do
     @backchannel = TorqueBox::Messaging::Queue.new("/queues/backchannel")

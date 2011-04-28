@@ -1,6 +1,12 @@
-require 'container'
+require 'torquespec'
 require 'capybara/dsl'
 require 'akephalos'
+require 'fileutils'
+
+TorqueSpec.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'test-classes' ) )
+TorqueSpec.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
+TorqueSpec.max_heap = java.lang::System.getProperty( 'max.heap' )
+TorqueSpec.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
 
 Capybara.register_driver :akephalos do |app|
   Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)
@@ -28,5 +34,7 @@ def mutable_app(path)
   FileUtils.cp_r( File.join( File.dirname( __FILE__ ), '..', 'apps', path ), dest_path )
 end
 
-
+def add_request_header(key, value)
+  page.driver.browser.send(:client).add_request_header(key, value)
+end
 

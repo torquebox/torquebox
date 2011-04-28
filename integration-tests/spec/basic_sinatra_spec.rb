@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "basic sinatra test" do
 
-  deploy :path => "sinatra/basic-sinatra-knob.yml"
+  deploy "sinatra/basic-sinatra-knob.yml"
 
   it "should work" do
     visit "/basic-sinatra"
@@ -21,6 +21,16 @@ describe "basic sinatra test" do
     fill_in 'field', :with => 'something'
     click_button 'submit'
     find('#success').should have_content("you posted something")
+  end
+
+  it "should test Sir Postalot" do
+    500.times do |i|
+      print '.' if (i % 10 == 0)
+      visit "/basic-sinatra/poster"
+      click_button 'submit'
+      find('#success').text.should == "you posted nothing"
+    end
+    puts " complete!"
   end
 
 end

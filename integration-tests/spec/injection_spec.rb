@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe "rails3 injection test" do
 
-  deploy(:name => "injection-test",
-         :path => "rails3/injection-knob.yml")
+  deploy "rails3/injection-knob.yml"
 
   it "should work for services defined in app/services" do
     visit "/injection/service"

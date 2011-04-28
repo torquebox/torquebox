@@ -2,10 +2,7 @@ require 'spec_helper'
 
 describe "basic rails2 asset test" do
 
-  deploy(:name => "rails2-asset-test",
-         :paths => ["rails2/basic-asset-root-knob.yml",
-                    "rails2/basic-asset-context-knob.yml"
-                   ])
+  deploy "rails2/basic-asset-root-knob.yml", "rails2/basic-asset-context-knob.yml"
 
   before(:each) do
     @original_capy_app_host = Capybara.app_host
