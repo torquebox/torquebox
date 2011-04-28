@@ -197,7 +197,7 @@ public class VFSLoadService extends LoadService {
                         URL vfsUrl = makeUrl( loadPathEntry, namePlusSuffix );
                         VirtualFile file = VFS.getChild(  vfsUrl.toURI() );
                         if (file != null && file.exists()) {
-                            return new LoadServiceResource( file.toURI().toURL(), vfsUrl.toExternalForm() );
+                            return new NonLeakingLoadServiceResource( file.toURI().toURL(), vfsUrl.toExternalForm() );
                         }
                         return null;
                     } catch (MalformedURLException e) {
@@ -224,7 +224,7 @@ public class VFSLoadService extends LoadService {
                 }
                 if (actualPath.isFile()) {
                     try {
-                        foundResource = new LoadServiceResource( actualPath.toURI().toURL(), reportedPath );
+                        foundResource = new NonLeakingLoadServiceResource( actualPath.toURI().toURL(), reportedPath );
                     } catch (MalformedURLException e) {
                         throw runtime.newIOErrorFromException( e );
                     }
@@ -250,7 +250,7 @@ public class VFSLoadService extends LoadService {
                         // VirtualFile file = VFS.getRoot(vfsUrl);
                         VirtualFile file = VFS.getChild( vfsUrl.toURI() );
                         if (file != null && file.exists()) {
-                            return new LoadServiceResource( file.toURI().toURL(), reportedPath );
+                            return new NonLeakingLoadServiceResource( file.toURI().toURL(), reportedPath );
                         }
                     } catch (IOException e) {
                         // ignore
@@ -273,7 +273,7 @@ public class VFSLoadService extends LoadService {
                 }
                 if (actualPath.isFile()) {
                     try {
-                        foundResource = new LoadServiceResource( actualPath.toURI().toURL(), reportedPath );
+                        foundResource = new NonLeakingLoadServiceResource( actualPath.toURI().toURL(), reportedPath );
                     } catch (MalformedURLException e) {
                         throw runtime.newIOErrorFromException( e );
                     }
@@ -330,7 +330,7 @@ public class VFSLoadService extends LoadService {
                     if (!namePlusSuffix.startsWith( "./" )) {
                         s = "./" + s;
                     }
-                    foundResource = new LoadServiceResource( file.toURI().toURL(), s, absolute );
+                    foundResource = new NonLeakingLoadServiceResource( file.toURI().toURL(), s, absolute );
                     debugLogFound( foundResource );
                     state.loadName = resolveLoadName( foundResource, namePlusSuffix );
                     break;
