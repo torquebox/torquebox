@@ -290,6 +290,20 @@
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
+    <repository>
+      <id>rubygems-releases</id>
+      <name>RubyGems Releases (Official)</name>
+      <url>http://gems.saumya.de/releases</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>fale</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
   </repositories>
 
   <!-- Plugin Repositories -->
