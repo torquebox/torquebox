@@ -171,7 +171,7 @@ module TorqueBox
         File.open( deployment, 'w' ) do |file|
           YAML.dump( deployment_descriptor, file )
         end
-        [name, deploy_dir]
+        [name, dest_dir]
       end
 
       def deploy_archive(archive_path = nil, dest_dir = deploy_dir)
