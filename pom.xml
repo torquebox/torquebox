@@ -4,7 +4,7 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.0</version>
   <packaging>pom</packaging>
   <name>TorqueBox</name>
   <url>http://www.torquebox.org/</url>
