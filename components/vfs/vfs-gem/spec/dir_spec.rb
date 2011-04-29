@@ -234,6 +234,15 @@ describe "Dir extensions for VFS" do
         items.should include( "#{prefix}/home/todd/index.html.haml" )
       end
 
+      it "should match only directories if trailing slash" do
+        items = Dir.glob( "#{prefix}/*/" )
+        items.should_not be_empty
+        items.size.should eql(3)
+        items.should include( "#{prefix}/dotfiles" )
+        items.should include( "#{prefix}/home" )
+        items.should include( "#{prefix}/sound of music" )
+      end
+
       it "should allow globbing of multiple patterns via []" do
         items = []
         lambda {

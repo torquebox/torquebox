@@ -155,6 +155,7 @@ class Dir
 
       matcher_segments = segments - base_segments
       matcher = matcher_segments.join( '/' )
+      dirs_only = (str_pattern[-1,1] == '/')
       #puts "matcher [#{matcher}]"
 
       begin
@@ -173,7 +174,7 @@ class Dir
         #puts "child_path=#{child_path}"
         #puts "base=#{base}"
         # puts "preparing glob filter for path #{child_path} and match #{matcher}"
-        filter = TorqueBox::VFS::GlobFilter.new( child_path, matcher )
+        filter = TorqueBox::VFS::GlobFilter.new( child_path, matcher, dirs_only )
         #puts "filter is #{filter}"
         paths = starting_point.getChildrenRecursively( filter ).collect{|e|
           #path_name = e.path_name

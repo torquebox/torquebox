@@ -23,7 +23,7 @@ module TorqueBox
     class GlobFilter
       include Java::org.jboss.vfs.VirtualFileFilter
       
-      def initialize(child_path, glob)
+      def initialize(child_path, glob, dirs_only)
         regexp_str = GlobTranslator.translate( glob )
         if ( child_path && child_path != '' )
           if ( child_path[-1,1] == '/' )
@@ -34,12 +34,19 @@ module TorqueBox
         else
           regexp_str = "^#{regexp_str}$"
         end
-        @regexp = Regexp.new( regexp_str ) 
+        @regexp = Regexp.new( regexp_str )
+        @dirs_only = dirs_only
         # puts "glob #{glob} ==> #{@regexp}"
       end
       
       def accepts(file)
-        !!( file.path_name =~ @regexp )
+        matched = !!( file.path_name =~ @regexp )
+        matched &&= file.directory? if @dirs_only
+        matched
+      end
+
+      def to_s
+        "#{@regexp}, dirs_only: #{@dirs_only}"
       end
     end
   end
