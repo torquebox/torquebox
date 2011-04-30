@@ -38,7 +38,7 @@ describe "basic rack test with hash" do
 
   deploy( :application => { :root => "#{File.dirname(__FILE__)}/../apps/rack/basic", :env => 'development' },
           :web => { :context => '/basic-rack' },
-          :ruby => { :version => RUBY_VERSION } )  
+          :ruby => { :version => RUBY_VERSION[0,3] } )  
 
   it "should work" do
     visit "/basic-rack"
