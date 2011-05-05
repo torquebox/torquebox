@@ -89,8 +89,11 @@ module javax.jms::Session
   # client. If no block is given then request is returned as the
   # response.
   def receive_and_publish(destination, options = {})
+    selector = "synchronous = 'true'"
+    selector = "#{selector} and #{options[:selector]}" if options[:selector]
     receive_options = options.merge(:decode => false,
-                                    :selector => "synchronous = 'true'")
+                                    :selector => selector)
+
     request = receive(destination, receive_options)
     unless request.nil?
       decoded_request = request.decode
