@@ -251,6 +251,34 @@ describe TorqueBox::Messaging::Destination do
         queue.destroy
         message.should eql( "PING" )
       end
+
+      it "should allow a selector to be passed" do
+        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
+        queue.start
+
+        response_thread = Thread.new {
+          queue.receive_and_publish( :timeout => 10000,
+                                     :selector => "age > 60 or tan = true" )
+        }
+
+        # Publish a non-synchronous message that should not match selector
+        queue.publish( "young and tan", :properties => { :age => 25, :tan => true } )
+        # Publish a synchronous message that should not match selector
+        queue.publish_and_receive( "young",
+                                   :timeout => 25,
+                                   :properties => { :age => 25 } )
+        # Publish a synchronous message that should match selector
+        message = queue.publish_and_receive( "wrinkled",
+                                             :timeout => 10000,
+                                             :properties => { :age => 65, :tan => true } )
+        message.should eql( "wrinkled" )
+        response_thread.join
+
+        # Drain any remaining messages off the queue
+        2.times { queue.receive(:timeout => 10) }
+
+        queue.destroy
+      end
     end
 
     context "destination not ready" do
