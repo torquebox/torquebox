@@ -71,7 +71,6 @@
 
     <module>vfs</module>
 
-    <module>bootstrap</module>
     <module>base</module>
 
     <module>web</module>

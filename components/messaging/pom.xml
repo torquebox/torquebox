@@ -18,7 +18,9 @@
   <modules>
     <module>messaging-core</module>
     <module>messaging-metadata</module>
+<!--
     <module>messaging-int</module>
+-->
   </modules>
 
 

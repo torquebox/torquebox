@@ -103,11 +103,6 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>org.torquebox</groupId>
-          <artifactId>torquebox-mc-support</artifactId>
-          <version>${project.version}</version>
-      </dependency>
 
     <dependency>
       <groupId>rubygems</groupId>

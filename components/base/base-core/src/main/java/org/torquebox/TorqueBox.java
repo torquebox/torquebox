@@ -23,8 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.jboss.aop.microcontainer.aspects.jmx.JMX;
-import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
@@ -32,7 +30,6 @@ import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RuntimeInitializer;
 
-@JMX(exposedInterface=TorqueBoxMBean.class,name="torquebox:type=system")
 public class TorqueBox implements TorqueBoxMBean {
 
     private static final Logger log = Logger.getLogger( TorqueBox.class );
@@ -40,7 +37,6 @@ public class TorqueBox implements TorqueBoxMBean {
     private Properties properties = new Properties();
 
     private String gemPath;
-    private Kernel kernel;
     private RubyRuntimeFactoryImpl factory;
     private Ruby globalRuby;
 
@@ -61,14 +57,6 @@ public class TorqueBox implements TorqueBoxMBean {
     
     public Object evaluate(String script) {
         return getGlobalRuntime().evalScriptlet( script );
-    }
-    
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
-    }
-    
-    public Kernel getKernel() {
-        return this.kernel;
     }
     
     void setGemPath(String gemPath) {
@@ -100,7 +88,6 @@ public class TorqueBox implements TorqueBoxMBean {
     
     protected void createRubyRuntimeFactory() {
         this.factory = new RubyRuntimeFactoryImpl();
-        this.factory.setKernel( kernel );
         this.factory.setGemPath( getGemPath() );
         this.factory.create();
     }

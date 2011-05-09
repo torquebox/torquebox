@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
@@ -54,9 +53,6 @@ import org.torquebox.interp.spi.RuntimeInitializer;
 public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
     private static final Logger log = Logger.getLogger( RubyRuntimeFactoryImpl.class );
-
-    /** MC Kernel. */
-    private Kernel kernel;
 
     /** Re-usable initializer. */
     private RuntimeInitializer initializer;
@@ -149,24 +145,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         return this.useJRubyHomeEnvVar;
     }
 
-    /**
-     * Inject the Microcontainer kernel.
-     * 
-     * @param kernel
-     *            The microcontainer kernel.
-     */
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
-    }
-
-    /**
-     * Retrieve the Microcontainer kernel.
-     * 
-     * @return The microcontainer kernel.
-     */
-    public Kernel getKernel() {
-        return this.kernel;
-    }
 
     /**
      * Set the interpreter classloader.
@@ -445,7 +423,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     private void injectKernel(Ruby runtime) {
         runtime.evalScriptlet( "require %q(torquebox/kernel)" );
         RubyModule torqueBoxKernelModule = runtime.getClassFromPath( "TorqueBox::Kernel" );
-        JavaEmbedUtils.invokeMethod( runtime, torqueBoxKernelModule, "kernel=", new Object[] { this.kernel }, void.class );
+        // TODO Replace with MSC version
+        //JavaEmbedUtils.invokeMethod( runtime, torqueBoxKernelModule, "kernel=", new Object[] { this.kernel }, void.class );
     }
 
     protected Map<String, String> createEnvironment() {

@@ -18,7 +18,9 @@
   <modules>
     <module>jobs-core</module>
     <module>jobs-metadata</module>
+<!--
     <module>jobs-int</module>
+-->
   </modules>
 
 

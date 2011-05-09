@@ -20,7 +20,9 @@
     <module>web-spi</module>
     <module>web-core</module>
     <module>web-metadata</module>
+<!--
     <module>web-int</module>
+-->
     <module>web-gem</module>
   </modules>
 
