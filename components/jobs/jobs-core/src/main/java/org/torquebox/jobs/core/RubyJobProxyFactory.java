@@ -19,9 +19,6 @@
 
 package org.torquebox.jobs.core;
 
-import org.jboss.dependency.spi.ControllerContext;
-import org.jboss.dependency.spi.ControllerState;
-import org.jboss.kernel.Kernel;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.quartz.Job;
@@ -40,7 +37,6 @@ public class RubyJobProxyFactory implements JobFactory {
     public static final String COMPONENT_RESOLVER_NAME = "torquebox.ruby.component.resolver.name";
 
     private RubyRuntimePool runtimePool;
-    private Kernel kernel;
 
     public RubyJobProxyFactory() {
     }
@@ -53,13 +49,6 @@ public class RubyJobProxyFactory implements JobFactory {
         return this.runtimePool;
     }
     
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
-    }
-    
-    public Kernel getKernel() {
-        return this.kernel;
-    }
 
     @Override
     public Job newJob(TriggerFiredBundle bundle) throws SchedulerException {
@@ -85,13 +74,9 @@ public class RubyJobProxyFactory implements JobFactory {
         return rubyJob;
     }
     
+    // TODO Fix me!
     protected RubyComponentResolver getComponentResolver(String name) {
-        ControllerContext entry = getKernel().getController().getContext( name, ControllerState.START ); 
-        if ( entry == null ) {
-            return null;
-        }
-        
-        return (RubyComponentResolver) entry.getTarget();
+        return null;
     }
 
 }

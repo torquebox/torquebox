@@ -22,7 +22,6 @@ package org.torquebox.jobs.core;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -36,17 +35,8 @@ public class RubyScheduler {
 
     private String name;
     private Scheduler scheduler;
-    private Kernel kernel;
     private RubyRuntimePool runtimePool;
     
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
-    }
-    
-    public Kernel getKernel() {
-        return this.kernel;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -73,7 +63,7 @@ public class RubyScheduler {
         props.setProperty( StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName() );
 
         RubyJobProxyFactory jobFactory = new RubyJobProxyFactory();
-        jobFactory.setKernel( this.kernel );
+        //jobFactory.setKernel( this.kernel );
         jobFactory.setRubyRuntimePool( this.runtimePool );
 
         StdSchedulerFactory factory = new StdSchedulerFactory( props );

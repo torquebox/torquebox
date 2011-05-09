@@ -31,9 +31,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.jboss.dependency.spi.ControllerContext;
-import org.jboss.dependency.spi.ControllerState;
-import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
 import org.jruby.exceptions.RaiseException;
 import org.torquebox.rack.core.RackEnvironmentImpl;
@@ -53,12 +50,8 @@ public class RackFilter implements Filter {
     private ServletContext servletContext;
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        Kernel kernel = (Kernel) filterConfig.getServletContext().getAttribute( KERNEL_NAME );
         String rackAppPoolName = filterConfig.getInitParameter( RACK_APP_POOL_INIT_PARAM );
-        ControllerContext entry = kernel.getController().getContext( rackAppPoolName, ControllerState.START );
-        if (entry != null) {
-            this.rackAppPool = (RackApplicationPool) entry.getTarget();
-        }
+        this.rackAppPool = null;
 
         if (this.rackAppPool == null) {
             throw new ServletException( "Unable to obtain Rack application pool '" + rackAppPoolName + "'" );
