@@ -80,26 +80,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.metadata</groupId>
-      <artifactId>jboss-metadata-war</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-kernel</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-client-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
@@ -107,11 +87,6 @@
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-common-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.web</groupId>
-      <artifactId>jbossweb</artifactId>
       <scope>provided</scope>
     </dependency>
 

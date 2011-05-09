@@ -16,31 +16,6 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-impl</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.reloaded</groupId>
-      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-api</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.shrinkwrap</groupId>
-      <artifactId>shrinkwrap-impl-base</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-test-support</artifactId>
       <version>${project.version}</version>

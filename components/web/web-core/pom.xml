@@ -63,21 +63,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.web</groupId>
-      <artifactId>jbossweb</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-kernel</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-aop-mc-int</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquebox-vfs</artifactId>
       <version>${project.version}</version>

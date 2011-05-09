@@ -97,8 +97,9 @@
     <module>parent</module>
     <module>build-support</module>
     <module>components</module>
-    <module>containers</module>
+<!--
     <module>clients</module>
+-->
     <module>assemblage</module>
     <module>system</module>
   </modules>

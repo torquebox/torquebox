@@ -28,16 +28,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-kernel</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-client-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <scope>provided</scope>

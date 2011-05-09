@@ -24,31 +24,6 @@
       <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-kernel</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.cl</groupId>
-      <artifactId>jboss-classloading-vfs</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-core-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-system</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.bootstrap</groupId>
-      <artifactId>jboss-bootstrap-impl-mc</artifactId>
-      <scope>provided</scope>
-    </dependency>
   </dependencies>
 
   <build> 

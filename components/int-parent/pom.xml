@@ -14,14 +14,6 @@
   <name>TorqueBox Integration Parent</name>
   <description />
 
-  <dependencies>
-    <dependency>
-      <groupId>org.jboss.scanning</groupId>
-      <artifactId>scanning-plugins</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-  
   <build> 
     <plugins>
       <plugin>

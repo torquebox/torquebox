@@ -59,31 +59,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-kernel</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-aop-mc-int</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.aop</groupId>
-      <artifactId>jboss-aop</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-client-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.yaml</groupId>
       <artifactId>snakeyaml</artifactId>
       <scope>provided</scope>
@@ -103,21 +78,6 @@
       <artifactId>quartz</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.slf4j</groupId>
-      <artifactId>slf4j-jboss-logging</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>logkit</groupId>
-      <artifactId>logkit</artifactId>
-      <scope>provided</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>jboss-as-cluster</artifactId>
-      <scope>provided</scope>
-    </dependency>    
   </dependencies>
 
   <build> 

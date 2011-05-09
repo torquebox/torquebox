@@ -55,26 +55,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-client-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.deployers</groupId>
-      <artifactId>jboss-deployers-vfs-spi</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
@@ -97,30 +77,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.jbossas</groupId>
-      <artifactId>weld-int-deployer</artifactId>
-      <version>${version.jbossas}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-vdf-test-support</artifactId>
       <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.kernel</groupId>
-      <artifactId>jboss-aop-mc-int</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.aop</groupId>
-      <artifactId>jboss-aop</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.reloaded</groupId>
-      <artifactId>jboss-reloaded-vdf-bootstrap-minimal</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
