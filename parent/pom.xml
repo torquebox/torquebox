@@ -3,9 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.jboss.as</groupId>
-    <artifactId>jboss-as-parent</artifactId>
-    <version>7.0.0.Beta3</version>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>6-beta-1</version>
     <relativePath />
   </parent>
 
@@ -95,7 +95,6 @@
     
   <dependencyManagement>
     <dependencies>
-<!--
       <dependency>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-parent</artifactId>
@@ -103,7 +102,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
--->
 
       <dependency>
         <groupId>org.hornetq</groupId>
