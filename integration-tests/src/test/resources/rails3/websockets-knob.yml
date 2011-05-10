@@ -1,0 +1,13 @@
+---
+application:
+  RAILS_ROOT: ${basedir}/apps/rails3/websocket_demo
+  RAILS_ENV: development
+web:
+  context: /websocket_demo
+websockets:
+  context: /stomp
+  port: 61614
+  handler: EchoMessageProcessor
+
+ruby:
+  version: ${ruby.compat.version}
