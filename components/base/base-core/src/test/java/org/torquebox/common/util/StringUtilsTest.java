@@ -22,6 +22,7 @@ package org.torquebox.common.util;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.torquebox.core.util.StringUtils;
 
 public class StringUtilsTest {
 

@@ -25,10 +25,10 @@ import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.common.reflect.ReflectionHelper;
-import org.torquebox.interp.core.RubyComponentResolver;
-import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
-import org.torquebox.interp.core.SharedRubyRuntimePool;
+import org.torquebox.core.runtime.RubyComponentResolver;
+import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
+import org.torquebox.core.runtime.SharedRubyRuntimePool;
+import org.torquebox.core.util.ReflectionHelper;
 import org.torquebox.test.AbstractTorqueBoxTestCase;
 
 public class RubyServiceProxyTest extends AbstractTorqueBoxTestCase {

@@ -31,7 +31,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.auth.UsersRolesAuthenticator;
 import org.torquebox.base.metadata.AuthMetaData;
 import org.torquebox.base.metadata.AuthMetaData.Config;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
 public class AuthenticatorDeployer extends AbstractDeployer {

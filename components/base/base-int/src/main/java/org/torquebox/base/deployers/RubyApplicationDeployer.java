@@ -5,9 +5,9 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.RubyApplication;
-import org.torquebox.RubyApplicationMBean;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplication;
+import org.torquebox.core.app.RubyApplicationMBean;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.jmx.JMXUtils;
 

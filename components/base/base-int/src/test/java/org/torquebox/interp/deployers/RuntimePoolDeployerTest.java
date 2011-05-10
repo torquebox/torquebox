@@ -30,12 +30,12 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.interp.core.DefaultRubyRuntimePool;
-import org.torquebox.interp.core.SharedRubyRuntimePool;
-import org.torquebox.interp.metadata.PoolMetaData;
-import org.torquebox.interp.spi.RubyRuntimeFactory;
-import org.torquebox.interp.spi.RubyRuntimePool;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.pool.PoolMetaData;
+import org.torquebox.core.runtime.DefaultRubyRuntimePool;
+import org.torquebox.core.runtime.RubyRuntimeFactory;
+import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.runtime.SharedRubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 

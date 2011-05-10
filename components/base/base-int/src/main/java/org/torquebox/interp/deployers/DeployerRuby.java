@@ -20,7 +20,7 @@
 package org.torquebox.interp.deployers;
 
 import org.jruby.Ruby;
-import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.core.runtime.RubyRuntimeFactory;
 
 public class DeployerRuby {
 

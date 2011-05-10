@@ -1,0 +1,144 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-modules-parent</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+    <relativePath>../parent/pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-core</artifactId>
+  <packaging>jar</packaging>
+  <name>TorqueBox Core Module</name>
+  <description />
+
+  <dependencies>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-base</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-vfs</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-complete</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+<!--
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+-->
+
+  </dependencies>
+
+  <build>
+    <resources> 
+      <resource> 
+        <directory>src/main/resources</directory> 
+      </resource> 
+      <resource> 
+        <directory>src/main/java</directory> 
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.rb</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource> 
+      <resource> 
+        <directory>src/main/ruby</directory> 
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources> 
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
+    <plugins> 
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <gemHome>${project.build.directory}/rubygems</gemHome>
+          <gemPath>${project.build.directory}/rubygems</gemPath>
+          <fork>true</fork>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemProperties>
+            <property>
+              <name>log4j.configuration</name>
+              <value>test-log4j.xml</value>
+            </property>
+            <property>
+              <name>test.version.torquebox</name>
+              <value>${project.version}</value>
+            </property>
+            <property>
+              <name>test.version.jbossas</name>
+              <value>${version.jbossas}</value>
+            </property>
+            <property>
+              <name>test.version.jruby</name>
+              <value>${version.jruby}</value>
+            </property>
+            <property>
+              <name>gem.path</name>
+              <value>${project.build.directory}/rubygems</value>
+            </property>
+          </systemProperties>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>run-specs</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>assemble-module</id>
+            <phase>package</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

@@ -27,7 +27,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class RubyYamlParsingDeployerTest extends AbstractDeployerTestCase {

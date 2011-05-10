@@ -30,10 +30,10 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.common.util.StringUtils;
-import org.torquebox.interp.core.RubyComponentResolver;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.runtime.RubyComponentResolver;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
+import org.torquebox.core.util.StringUtils;
 import org.torquebox.mc.AttachmentUtils;
 
 public abstract class AbstractRubyComponentDeployer extends AbstractDeployer {

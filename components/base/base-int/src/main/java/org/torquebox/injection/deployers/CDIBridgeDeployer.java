@@ -8,7 +8,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.weld.integration.deployer.DeployersUtils;
 import org.jboss.weld.integration.deployer.env.BootstrapInfo;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.injection.cdi.CDIBridge;
 import org.torquebox.mc.AttachmentUtils;
 

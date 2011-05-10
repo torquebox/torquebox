@@ -24,7 +24,7 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 
 public class RubyApplicationRecognizer extends AbstractRecognizer {
 

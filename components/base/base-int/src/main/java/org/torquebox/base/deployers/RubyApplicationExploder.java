@@ -30,7 +30,7 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileVisitor;
 import org.jboss.vfs.VisitorAttributes;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 
 public class RubyApplicationExploder extends AbstractDeployer {
 

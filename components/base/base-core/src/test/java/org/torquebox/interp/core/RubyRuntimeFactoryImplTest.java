@@ -35,7 +35,8 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.torquebox.interp.spi.RuntimeInitializer;
+import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
+import org.torquebox.core.runtime.RuntimeInitializer;
 
 public class RubyRuntimeFactoryImplTest {
 

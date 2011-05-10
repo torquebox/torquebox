@@ -69,8 +69,6 @@
     <module>int-parent</module>
     <module>gem-parent</module>
 
-    <module>vfs</module>
-
     <module>base</module>
 
     <module>web</module>

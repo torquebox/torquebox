@@ -23,7 +23,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.TorqueBoxMetaData;
+import org.torquebox.core.TorqueBoxMetaData;
 
 public class MergedTorqueBoxMetaDataDeployer extends AbstractDeployer {
 

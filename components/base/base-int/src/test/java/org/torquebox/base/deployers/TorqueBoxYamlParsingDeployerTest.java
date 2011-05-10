@@ -27,7 +27,7 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.base.metadata.TorqueBoxMetaData;
+import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class TorqueBoxYamlParsingDeployerTest extends AbstractDeployerTestCase {

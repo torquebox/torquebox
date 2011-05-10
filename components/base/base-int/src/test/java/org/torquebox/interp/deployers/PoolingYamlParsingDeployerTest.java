@@ -27,7 +27,7 @@ import java.util.Set;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.interp.metadata.PoolMetaData;
+import org.torquebox.core.pool.PoolMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class PoolingYamlParsingDeployerTest extends AbstractDeployerTestCase {

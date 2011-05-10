@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
-import org.torquebox.interp.metadata.PoolMetaData;
+import org.torquebox.core.pool.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 
 /**

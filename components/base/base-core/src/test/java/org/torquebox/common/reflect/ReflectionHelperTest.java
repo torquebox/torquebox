@@ -29,6 +29,7 @@ import org.jruby.RubyClass;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.core.util.ReflectionHelper;
 
 public class ReflectionHelperTest {
 

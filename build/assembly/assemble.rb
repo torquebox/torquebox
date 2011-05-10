@@ -51,7 +51,7 @@ class Assembler
     clean()
     prepare()
     lay_down_jboss()
-    install_module( :base )
+    install_module( :core )
   end
 end
 

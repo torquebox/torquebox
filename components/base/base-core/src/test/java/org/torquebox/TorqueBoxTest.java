@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import org.jruby.Ruby;
 import org.junit.Test;
+import org.torquebox.core.TorqueBox;
 
 public class TorqueBoxTest {
     

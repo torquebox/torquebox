@@ -29,8 +29,8 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.interp.metadata.RubyLoadPathMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.core.runtime.RubyLoadPathMetaData;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
 /**
  * <pre>

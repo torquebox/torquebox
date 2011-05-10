@@ -21,9 +21,9 @@ package org.torquebox.services;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.common.reflect.ReflectionHelper;
-import org.torquebox.interp.core.RubyComponentResolver;
-import org.torquebox.interp.spi.RubyRuntimePool;
+import org.torquebox.core.runtime.RubyComponentResolver;
+import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.util.ReflectionHelper;
 
 public class RubyServiceProxy implements RubyServiceProxyMBean {
     

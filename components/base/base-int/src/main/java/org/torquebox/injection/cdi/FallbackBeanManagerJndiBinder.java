@@ -16,7 +16,7 @@ import org.jboss.reloaded.naming.service.NameSpaces;
 import org.jboss.weld.integration.deployer.DeployersUtils;
 import org.jboss.weld.integration.util.IdFactory;
 import org.jboss.weld.integration.util.JndiUtils;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 
 /** Binds the CDI BeanManager in cases where an application is not recognized as a JavaEE app.
  * 

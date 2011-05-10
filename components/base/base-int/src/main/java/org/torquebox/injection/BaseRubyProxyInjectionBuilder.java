@@ -8,6 +8,7 @@ import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.logging.Logger;
+import org.torquebox.core.injection.InjectionRegistry;
 import org.torquebox.mc.AttachmentUtils;
 
 public class BaseRubyProxyInjectionBuilder {

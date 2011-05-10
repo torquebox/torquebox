@@ -11,7 +11,7 @@ import org.jruby.ast.Node;
 import org.jruby.ast.NodeType;
 import org.jruby.ast.StrNode;
 import org.jruby.ast.types.INameNode;
-import org.torquebox.interp.analysis.DefaultNodeVisitor;
+import org.torquebox.core.analysis.DefaultNodeVisitor;
 
 public class InjectionVisitor extends DefaultNodeVisitor {
 

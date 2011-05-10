@@ -35,12 +35,12 @@ import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig.CompileMode;
 
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.runtime.RubyLoadPathMetaData;
+import org.torquebox.core.runtime.RubyRuntimeFactory;
+import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
-import org.torquebox.interp.metadata.RubyLoadPathMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
-import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.mc.AttachmentUtils;
 
 /**

@@ -22,6 +22,8 @@ package org.torquebox.interp.core;
 import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
+import org.torquebox.core.runtime.VFSLoadService;
 import org.torquebox.test.mc.vfs.AbstractVFSTestCase;
 
 public class VFSLoadServiceWithRuntimeTest extends AbstractVFSTestCase {

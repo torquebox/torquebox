@@ -23,8 +23,8 @@ import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.interp.metadata.PoolMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.pool.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.services.ServiceMetaData;
 

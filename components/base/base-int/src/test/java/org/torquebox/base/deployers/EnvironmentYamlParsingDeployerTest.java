@@ -28,7 +28,7 @@ import java.util.Map;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class EnvironmentYamlParsingDeployerTest extends AbstractDeployerTestCase {

@@ -15,6 +15,22 @@
   <description />
 
   <dependencies>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-server</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build> 

@@ -13,13 +13,13 @@ import org.jruby.exceptions.RaiseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 import org.torquebox.injection.cdi.CDIInjectable;
 import org.torquebox.injection.cdi.CDIInjectableHandler;
 import org.torquebox.injection.jndi.JNDIInjectable;
 import org.torquebox.injection.jndi.JNDIInjectableHandler;
 import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.injection.mc.MCBeanInjectableHandler;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData.Version;
 
 public class InjectionAnalyzerTest {
     

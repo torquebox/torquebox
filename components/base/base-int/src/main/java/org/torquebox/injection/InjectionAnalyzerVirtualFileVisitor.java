@@ -8,7 +8,7 @@ import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileVisitor;
 import org.jboss.vfs.VisitorAttributes;
 
-import org.torquebox.interp.metadata.RubyRuntimeMetaData.Version;
+import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 
 public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
     

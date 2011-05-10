@@ -31,8 +31,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class BaseRubyRuntimeDeployerTest extends AbstractDeployerTestCase {

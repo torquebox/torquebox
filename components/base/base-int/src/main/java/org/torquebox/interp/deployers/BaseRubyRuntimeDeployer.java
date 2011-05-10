@@ -26,9 +26,9 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.interp.metadata.RubyLoadPathMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.runtime.RubyLoadPathMetaData;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
 public class BaseRubyRuntimeDeployer extends AbstractDeployer {
 

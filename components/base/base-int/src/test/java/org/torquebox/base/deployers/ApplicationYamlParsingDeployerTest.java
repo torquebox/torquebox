@@ -26,8 +26,8 @@ import java.net.URL;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.base.metadata.TorqueBoxMetaData;
+import org.torquebox.core.TorqueBoxMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class ApplicationYamlParsingDeployerTest extends AbstractDeployerTestCase {

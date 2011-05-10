@@ -9,7 +9,7 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.weld.integration.deployer.DeployersUtils;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.injection.cdi.FallbackBeanManagerJndiBinder;
 
 /** Deployer that notices a Weld bootstrap, and wires up our FallbackBeanManagerJndiBinder 

@@ -31,9 +31,9 @@ import org.jruby.RubyInstanceConfig.CompileMode;
 import org.junit.Before;
 import org.junit.Test;
 
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
-import org.torquebox.interp.spi.RubyRuntimeFactory;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.runtime.RubyRuntimeFactory;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 

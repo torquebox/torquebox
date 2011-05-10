@@ -32,6 +32,8 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.torquebox.core.runtime.RubyComponentResolver;
+import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
 
 public class RubyComponentResolverTest {
 

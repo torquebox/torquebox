@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.interp.analysis.ScriptAnalyzer;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData.Version;
+import org.torquebox.core.analysis.ScriptAnalyzer;
+import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 
 public class InjectionAnalyzer extends ScriptAnalyzer {
 
