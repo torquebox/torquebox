@@ -1,0 +1,17 @@
+Usage:
+  rails generate websockets_client [options]
+
+Runtime options:
+  -f, [--force]    # Overwrite files that already exist
+  -p, [--pretend]  # Run but do not make any changes
+  -s, [--skip]     # Skip files that already exist
+  -q, [--quiet]    # Suppress status output
+
+Description:
+    Generates the websockets javascript client library for this app.
+
+Example:
+    rails generate websockets_client
+
+    This will create:
+        public/javascripts/torquebox_ws_client.js

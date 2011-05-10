@@ -31,17 +31,14 @@ import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.jboss.logging.Logger;
-
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-
 import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 
 public class RubyMessageProcessor implements RubyMessageProcessorMBean {
 
-    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RubyMessageProcessor.class );
 
     public RubyMessageProcessor() {

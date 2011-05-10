@@ -9,4 +9,6 @@ topics:
   /topics/tbyaml/foo:
   /topics/tbyaml/bar:
 
+websockets:
+  handler: TorqueBoxFooClass
 
