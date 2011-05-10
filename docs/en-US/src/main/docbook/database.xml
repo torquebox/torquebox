@@ -70,4 +70,26 @@
   <para>No changes to your application's database configuration is required.
   You still specify the correct driver name for the database, such as
   <code>postgresql</code> or <code>sqlite3</code>.</para>
+
+  <section>
+    <title>Using DataMapper</title>
+    <para>
+      Not everyone uses ActiveRecord to connect to a database.  TorqueBox
+      also works well with DataMapper, and you don't have to do anything special.
+      A Gemfile for an application which uses DataMapper to connect to a PostgreSQL
+      database looks like this.
+      <screen>
+gem 'data_mapper', '~>1.1'
+gem 'dm-core', '~>1.1'
+gem 'dm-postgres-adapter', '~>1.1'
+gem 'dm-migrations', '~>1.1'
+gem 'dm-timestamps', '~>1.1'
+gem 'dm-observer', '~>1.1'
+      </screen>
+      Initializing DataMapper is unchanged.
+      <screen>
+DataMapper.setup(:default, 'postgres://user:pass@localhost/databasename')
+      </screen>
+    </para>
+  </section>
 </chapter>
