@@ -1,3 +1,4 @@
+require 'torquebox-messaging'
 
 class HaJob 
 
@@ -11,6 +12,7 @@ class HaJob
     File.open( touchfile, 'w' ) do |f|
       f.puts( "Updated #{Time.now}" )
     end
+    TorqueBox::Messaging::Queue.new('/queues/backchannel').publish('release')
   end
 
 end

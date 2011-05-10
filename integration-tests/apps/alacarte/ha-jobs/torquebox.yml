@@ -1,3 +1,6 @@
+queues:
+  /queues/backchannel:
+    durable: false
 
 jobs:
   job.one:

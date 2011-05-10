@@ -7,7 +7,7 @@ describe "messaging rack test" do
 
   it "should receive a ham biscuit" do
     visit "/messaging-rails/message/queue?text=ham+biscuit"
-    result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 2000)
+    result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 120_000)
     result.should == "result=ham biscuit"
   end
 
