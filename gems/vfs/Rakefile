@@ -1,0 +1,188 @@
+
+require 'open3'
+require 'rake/gempackagetask'
+
+
+TEST_DATA_IN  = File.dirname(__FILE__) + '/test-data'
+TEST_DATA_OUT = File.dirname(__FILE__) + '/target/test-data'
+
+DEP_JARS_DIR = File.dirname(__FILE__) + '/target/dependencies'
+
+BIN_DIR      = File.dirname(__FILE__) + '/bin'
+
+TARGET_DIR   = File.dirname(__FILE__) + '/target'
+JRUBY_DIR    = TARGET_DIR + '/jruby'
+
+SPECS = [
+  'core',
+  'core/dir',
+  'core/file', 
+  'core/io',
+  #'core/kernel/at_exit_spec.rb',
+  'core/kernel',
+]
+
+desc "Prepare test-data"
+task 'test:data:prepare'=>[ TEST_DATA_OUT ]
+
+task 'check:dependencies' do
+  fail( "** Dependencies not found\n** Please run 'mvn install'" ) if Dir[ "#{DEP_JARS_DIR}" ].empty?
+end
+
+file TEST_DATA_OUT do
+
+  puts "preparing test-data"
+
+  FileUtils.rm_rf( TEST_DATA_OUT )
+  FileUtils.mkdir_p( TEST_DATA_OUT )
+
+  paths = Dir[ TEST_DATA_IN + '/**/*' ] + Dir[ TEST_DATA_IN + '/**/.*' ]
+  paths.sort!{|l,r| r.length <=> l.length}
+  #paths = paths.collect{|e| e[ TEST_DATA_IN.length..-1] }
+
+  paths.each do |path|
+    subpath = path[ TEST_DATA_IN.length..-1 ]
+    if ( File.directory?( path ) )
+      if ( path =~ /\.jar$/ )
+        puts "replace dir with real jar for #{subpath}"
+        Dir.chdir( "#{TEST_DATA_OUT}/#{subpath}" ) do 
+          cmd = "jar cvf #{TEST_DATA_OUT}/#{subpath}.tmp ."
+          puts cmd
+          `#{cmd}`
+        end
+        FileUtils.rm_rf "#{TEST_DATA_OUT}/#{subpath}"
+        FileUtils.mv "#{TEST_DATA_OUT}/#{subpath}.tmp", "#{TEST_DATA_OUT}/#{subpath}"
+      end
+    else
+      FileUtils.mkdir_p "#{TEST_DATA_OUT}/#{File.dirname(subpath)}"
+      FileUtils.cp path, "#{TEST_DATA_OUT}/#{subpath}"
+    end
+  end
+end
+
+
+desc "Run all examples"
+#task 'spec'=>[ 'test:data:prepare' ] do
+#task 'spec', :key do |t, args|
+task 'spec', :key, :needs=>[ 'check:dependencies', TEST_DATA_OUT ] do |t, args|
+  jar_dir = File.dirname(__FILE__) + '/target/dependencies'
+  jars = Dir[ "#{jar_dir}/*.jar" ]
+
+  args.with_defaults( :key=>'*' )
+  spec_files = FileList["specs/**/#{args[:key]}_spec.rb"]
+
+  puts "running #{spec_files}"
+  cmd = "jruby -J-classpath #{jars.join(':')} -S spec #{spec_files}" 
+  puts cmd
+  run3( cmd )
+end
+
+
+version = ENV['project.version'] || ENV['VERSION'] || '1.0.0'
+
+if ( version =~ /^([0-9]+)\.([0-9]+)\.([0-9]+)(\..*)?/ )
+  PROJECT_VERSION="#{$1}.#{$2}.#{$3}"
+end
+
+task 'maven:package'=>[ :package ]
+
+task 'jruby:prepare'=>[ 'jruby:checkout' ] do
+  Dir.chdir( JRUBY_DIR ) do
+    run3( "ant jar" )
+    run3( "ant install-dev-gems" )
+  end
+end
+
+task 'novfs' do
+  ENV['NOVFS']='true'
+end
+
+task '19' do
+  ENV['19']='true'
+end
+
+task 'rubyspec' => [ 'check:dependencies', 'rubyspec:prepare' ] do
+  classpath = Dir[ "#{DEP_JARS_DIR}/*.jar" ].join(':')
+
+  cmd = [ 'jruby' ]
+
+  if ( ENV['19'] )
+    cmd << "--1.9"
+  end
+  
+  unless ( ENV['NOVFS'] )
+    cmd << "-J-classpath #{classpath}"
+  end
+
+  cmd << './mspec/bin/mspec'
+  cmd << 'ci'
+  cmd << '--verbose'
+  cmd << '--debug'
+  if ( ENV['19'] )
+    cmd << "--config jruby.1.9.mspec"
+  else
+    cmd << "--config jruby.1.8.mspec" 
+  end
+  cmd << "-t #{JRUBY_DIR}/bin/jruby" 
+
+  unless( ENV['NOVFS'] )
+    cmd << "-T-I#{File.dirname(__FILE__)}/lib"
+    cmd << '-T-rvfs' 
+  end
+  
+  cmd << '--format html'
+  cmd << "--output #{File.dirname(__FILE__)}/target/rubyspec#{ ENV['NOVFS'] ? '-novfs' : '' }#{ ENV['19'] ? '-19' : '' }.html"
+  cmd << SPECS.collect{|e| "ruby/#{e}"}
+  #cmd << SPECS
+  cmd.flatten!
+  Dir.chdir( JRUBY_DIR + '/spec' ) do 
+    run3( cmd.join(' ') )
+  end
+end
+
+task 'rubyspec:novfs'=>['rubyspec:prepare'] do
+  ENV['NOVFS']='true'
+  Rake::Task[ 'rubyspec' ].invoke
+  ENV['NOVFS']=nil
+end
+
+directory TARGET_DIR
+
+file JRUBY_DIR do
+  cmd = "git clone git://github.com/jruby/jruby.git #{JRUBY_DIR}"
+  run3(cmd)
+  Dir.chdir( JRUBY_DIR ) do
+    run3( "git checkout 1.6.0" )
+  end
+end
+
+task 'jruby:checkout'=>[ JRUBY_DIR ]
+
+desc 'Prepare RubySpec for running'
+task 'rubyspec:prepare'=>[ 'jruby:prepare' ] do
+  Dir.chdir( JRUBY_DIR ) do
+    run3( 'ant fetch-stable-specs' )
+  end
+end
+  
+
+def run3(cmd)
+  puts "Running:\n  #{cmd}"
+  r = Open3.popen3( cmd ) do |stdin, stdout, stderr|
+    stdin.close
+    stdout_thr = Thread.new(stdout) {|stdout_io|
+      while ( ! ( c = stdout_io.getc ).nil? )
+        putc c
+      end
+      stdout_io.close
+    }
+    stderr_thr = Thread.new(stderr) {|stderr_io|
+      while ( ! ( c = stderr_io.getc ).nil? )
+        putc c
+      end
+      stderr_io.close
+    }
+    stdout_thr.join
+    stderr_thr.join
+  end
+end

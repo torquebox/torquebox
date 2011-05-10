@@ -4,26 +4,14 @@
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
     <version>1.0.1-SNAPSHOT</version>
-    <relativePath>../parent/</relativePath>
+    <relativePath>../../parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-build-support</artifactId>
-  <packaging>pom</packaging>
-  <name>TorqueBox Build Support</name>
-  <description />
-
-  <modules>
-
-    <module>module-support</module>
-    <module>javadoc-support</module>
-
-    <module>test-support</module>
-    <module>vdf-test-support</module>
-    <module>ruby-test-support</module>
-
-  </modules>
-
+  <artifactId>torquebox-module-support</artifactId>
+  <packaging>jar</packaging>
+  <name>TorqueBox Module Build Support</name>
+  <description></description>
 
 </project>

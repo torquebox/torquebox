@@ -1,0 +1,4 @@
+A filename may have #'s in it.
+
+But a URI may have no more than one, and if present, is expected to
+indicate a "fragment".
