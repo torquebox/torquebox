@@ -83,7 +83,8 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     private Executor executor;
     private FillTask<T> fillTask;
-    
+    private boolean running = false;
+
     // TODO: Use this!
     private DrainTask<T> drainTask;
 
@@ -150,29 +151,40 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     protected void fillInstance() throws Exception {
-        T instance = this.factory.createInstance( this.pool.getName() );
-        this.pool.fillInstance( instance );
+        synchronized(pool) {
+            if (this.running) {
+                T instance = this.factory.createInstance( this.pool.getName() );
+                this.pool.fillInstance( instance );
+            }
+        }
     }
 
     protected void drainInstance() throws Exception {
-        T instance = this.pool.drainInstance();
-        this.factory.destroyInstance( instance );
+        synchronized(this.pool) {
+            T instance = this.pool.drainInstance();
+            this.factory.destroyInstance( instance );
+        }
     }
 
     public void start() {
-        if (this.executor == null) {
-            this.executor = Executors.newSingleThreadExecutor();
-        }
-        for (int i = 0; i < this.minInstances; ++i) {
-            this.executor.execute( this.fillTask );
+        synchronized(pool) {
+            if (this.executor == null) {
+                this.executor = Executors.newSingleThreadExecutor();
+            }
+            this.running = true;
+            for (int i = 0; i < this.minInstances; ++i) {
+                this.executor.execute( this.fillTask );
+            }
         }
     }
 
     public void stop() {
-        int poolSize = pool.size();
-        
-        for ( int i = 0 ; i < poolSize ; ++i ) {
-            this.executor.execute( this.drainTask );
+        synchronized(this.pool) {
+            int poolSize = pool.size();
+            this.running = false;
+            for ( int i = 0 ; i < poolSize ; ++i ) {
+                this.executor.execute( this.drainTask );
+            }
         }
 
     }

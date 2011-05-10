@@ -21,6 +21,7 @@ package org.torquebox.common.pool;
 
 import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
+import org.torquebox.common.spi.DeferrablePool;
 import org.torquebox.common.spi.Pool;
 
 /**
@@ -37,7 +38,7 @@ import org.torquebox.common.spi.Pool;
  * @param <T>
  *            The poolable resource.
  */
-public class SharedPool<T> implements Pool<T> {
+public class SharedPool<T> implements Pool<T>, DeferrablePool {
     
     protected Logger log = Logger.getLogger( getClass() );
     
@@ -49,6 +50,8 @@ public class SharedPool<T> implements Pool<T> {
 
     /** Optional factory to create the initial instance. */
     private InstanceFactory<T> factory;
+
+    private boolean deferred = true;
 
     /**
      * Construct.
@@ -133,6 +136,20 @@ public class SharedPool<T> implements Pool<T> {
         return this.factory;
     }
 
+    public synchronized void startPool() throws Exception {
+        startPool( false );
+    }
+
+    public synchronized void startPool(boolean ignored) throws Exception {
+        if (this.instance == null) {
+            this.instance = factory.createInstance( getName() );
+        }
+    }
+
+    public boolean isDeferred() {
+        return this.deferred;
+    }
+
     /**
      * Create the pool.
      * 
@@ -147,8 +164,11 @@ public class SharedPool<T> implements Pool<T> {
         if (this.factory == null) {
             throw new IllegalArgumentException( "Neither an instance nor an instance-factory provided." );
         }
-
-        this.instance = factory.createInstance( getName() );
+        if (!this.deferred) {
+            startPool();
+        } else {
+            log.debug( "Deferring start for " + getName() + " runtime pool." );
+        }
     }
 
     /**
@@ -174,6 +194,9 @@ public class SharedPool<T> implements Pool<T> {
 
     @Override
     public T borrowInstance(long timeout) throws Exception {
+        if (this.instance == null) {
+            startPool();
+        }
         return this.instance;
     }
 

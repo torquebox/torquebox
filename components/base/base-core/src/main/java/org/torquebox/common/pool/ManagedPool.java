@@ -24,14 +24,17 @@ import java.util.Set;
 
 import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
+import org.torquebox.common.spi.DeferrablePool;
 import org.torquebox.common.spi.Pool;
 
-public class ManagedPool<T> implements Pool<T> {
+public class ManagedPool<T> implements Pool<T>, DeferrablePool {
     
     private Logger log = Logger.getLogger( this.getClass() );
 
     private SimplePool<T> pool;
     private PoolManager<T> poolManager;
+    private boolean deferred = true;
+    private boolean started = false;
 
     public ManagedPool(InstanceFactory<T> factory) {
         this( factory, 1, 1 );
@@ -43,6 +46,93 @@ public class ManagedPool<T> implements Pool<T> {
         this.pool.addListener( this.poolManager );
     }
     
+    public synchronized void startPool() throws InterruptedException {
+        startPool( true );
+    }
+
+    public synchronized void startPool(boolean waitForFill) throws InterruptedException {
+        if (!this.started) {
+            this.poolManager.start();
+            this.started = true;
+            if (waitForFill) {
+                this.poolManager.waitForMinimumFill();
+            }
+        }
+    }
+
+    public void start() throws InterruptedException {
+        if (!this.deferred) {
+            startPool();
+        } else {
+            log.debug( "Deferring start for " + getName() + " runtime pool." );
+        }
+    }
+    
+    public synchronized void stop() throws InterruptedException {
+        if (this.started) {
+            this.poolManager.stop();
+            this.started = false;
+            this.poolManager.waitForEmpty();
+        }
+    }
+
+    @Override
+    public T borrowInstance() throws Exception {
+        if (!this.started) {
+            startPool();
+        }
+        return this.pool.borrowInstance();
+    }
+
+    @Override
+    public T borrowInstance(long timeout) throws Exception {
+        if (!this.started) {
+            startPool();
+        }
+        return this.pool.borrowInstance( timeout );
+    }
+
+    @Override
+    public void releaseInstance(T instance) {
+        this.pool.releaseInstance( instance );
+    }
+
+    public boolean isStarted() {
+        return this.started;
+    }
+
+    public boolean isDeferred() {
+        return this.deferred;
+    }
+
+    public void setDeferred(boolean deferred) {
+        this.deferred = deferred;
+    }
+
+    public int getSize() {
+        return size();
+    }
+    
+    public int getBorrowed() {
+        return borrowedSize();
+    }
+    
+    public int getAvailable() {
+        return availableSize();
+    }
+    
+    protected Set<T> getAllInstances() {
+        return this.pool.getAllInstances();
+    }
+    
+    protected Set<T> getBorrowedInstances() {
+        return this.pool.getBorrowedInstances();
+    }
+    
+    protected Set<T> getAvailableInstances() {
+        return this.pool.getAvailableInstances();
+    }
+
     public void setName(String name) {
         this.pool.setName( name );
     }
@@ -69,55 +159,6 @@ public class ManagedPool<T> implements Pool<T> {
 
     public InstanceFactory<T> getInstanceFactory() {
         return this.poolManager.getInstanceFactory();
-    }
-
-    public void start() throws InterruptedException {
-        this.poolManager.start();
-        this.poolManager.waitForMinimumFill();
-    }
-    
-    public void stop() throws InterruptedException {
-        this.poolManager.stop();
-        this.poolManager.waitForEmpty();
-    }
-
-    @Override
-    public T borrowInstance() throws Exception {
-        return this.pool.borrowInstance();
-    }
-
-    @Override
-    public T borrowInstance(long timeout) throws Exception {
-        return this.pool.borrowInstance( timeout );
-    }
-
-    @Override
-    public void releaseInstance(T instance) {
-        this.pool.releaseInstance( instance );
-    }
-    
-    public int getSize() {
-        return size();
-    }
-    
-    public int getBorrowed() {
-        return borrowedSize();
-    }
-    
-    public int getAvailable() {
-        return availableSize();
-    }
-    
-    protected Set<T> getAllInstances() {
-        return this.pool.getAllInstances();
-    }
-    
-    protected Set<T> getBorrowedInstances() {
-        return this.pool.getBorrowedInstances();
-    }
-    
-    protected Set<T> getAvailableInstances() {
-        return this.pool.getAvailableInstances();
     }
 
     int size() {

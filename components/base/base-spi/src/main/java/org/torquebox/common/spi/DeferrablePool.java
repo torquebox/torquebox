@@ -17,24 +17,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.base.deployers;
+package org.torquebox.common.spi;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
+public interface DeferrablePool {
 
-public class DeploymentNotifier extends AbstractDeployer {
+    boolean isDeferred();
 
-    public DeploymentNotifier() {
-        setStage( DeploymentStages.INSTALLED );
-        setInput( RubyApplicationMetaData.class );
-    }
-
-    @Override
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        log.info( "Fully deployed (with deferred runtime pools): " + unit.getName() );
-    }
+    void startPool(boolean waitForFill) throws Exception;
 
 }

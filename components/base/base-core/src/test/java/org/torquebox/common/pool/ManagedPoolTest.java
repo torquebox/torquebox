@@ -36,10 +36,26 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         this.factory = new StringInstanceFactory();
     }
 
+
+    @Test
+    public void testDeferredPoolShouldDefer() throws Exception {
+        ManagedPool<String> pool = new ManagedPool<String>( this.factory, 5, 10 );
+        pool.start();
+        assertEquals( false, pool.isStarted() );
+    }
+
+    public void testNonDeferredPoolShouldNotDefer() throws Exception {
+        ManagedPool<String> pool = new ManagedPool<String>( this.factory, 5, 10 );
+        pool.setDeferred( false );
+        pool.start();
+        assertEquals( true, pool.isStarted() );
+        pool.stop();
+    }
+
     @Test
     public void testInitializeMinimumInstances() throws Exception {
         ManagedPool<String> pool = new ManagedPool<String>( this.factory, 5, 10 );
-        pool.start();
+        pool.startPool();
 
         while (pool.size() < 5) {
             Thread.sleep( 500 );
@@ -58,7 +74,7 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
     @Test
     public void testGrowWithinBounds() throws Exception {
         ManagedPool<String> pool = new ManagedPool<String>( this.factory, 5, 10 );
-        pool.start();
+        pool.startPool();
         pool.waitForInitialFill();
 
         Set<String> instances = new HashSet<String>();
@@ -103,11 +119,12 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         ManagedPool<String> pool = new ManagedPool<String>( this.factory );
         pool.setMinimumInstances( 5 );
         pool.setMaximumInstances( 10 );
+        pool.setDeferred( false );
         growToBounds( pool );
     }
 
     private void growToBounds(ManagedPool<String> pool) throws Exception {
-        pool.start();
+        pool.startPool();
         pool.waitForInitialFill();
 
         Set<String> instances = new HashSet<String>();
