@@ -1,4 +1,5 @@
-require 'torquebox/messaging/message_processor'
+require 'torquebox-messaging'
+
 
 class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
 
@@ -11,6 +12,7 @@ class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
     File.open( touchfile, 'w' ) do |f|
       f.puts( "#{body[:tstamp]} // #{body[:cheese]}" )
     end
+    TorqueBox::Messaging::Queue.new('/queues/backchannel').publish('release')
   end
 
 end

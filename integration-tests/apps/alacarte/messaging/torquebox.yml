@@ -2,6 +2,8 @@
 queues:
   /queues/simple_queue:
     durable: false
+  /queues/backchannel:
+    durable: false
 
 messaging:
   /queues/simple_queue: SimpleProcessor

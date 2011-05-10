@@ -14,7 +14,9 @@ describe "messaging alacarte rack test" do
     tstamp = Time.now
     queue = TorqueBox::Messaging::Queue.new('/queues/simple_queue')
     queue.publish( { :tstamp=>tstamp, :cheese=>"gouda" } )
-    sleep(2)
+    backchannel = TorqueBox::Messaging::Queue.new('/queues/backchannel')
+    release = backchannel.receive(:timeout => 120_000)
+    release.should == 'release'
     touchfile.should exist
     content = File.read( touchfile ).strip
     content.should eql( "#{tstamp} // gouda" )
