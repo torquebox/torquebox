@@ -10,9 +10,9 @@ shared_examples_for "rails backgroundable tests" do
   it "should reload the model in the task runtime" do
     visit "#{@context}/widgets"
     page.should have_content( 'it worked' )
-    @response.receive(:timeout => 100_000).should == 'response 0'
-    @response.receive(:timeout => 100_000).should == 'response 1'
-    @response.receive(:timeout => 100_000).should == 'response 2'
+    @response.receive(:timeout => 120_000).should == 'response 0'
+    @response.receive(:timeout => 120_000).should == 'response 1'
+    @response.receive(:timeout => 120_000).should == 'response 2'
   end
 
 end
