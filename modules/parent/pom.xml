@@ -177,9 +177,11 @@
                   </goals>
                   <configuration>
                     <script>
-                      require 'fileutils'
+                      load '${project.basedir}/../../build/assembly/lib/assembly_tool.rb'
                       module_name = '${project.artifactId}'
                       module_name.gsub!(/torquebox-/, '' )
+                      AssemblyTool.install_module( module_name, '${project.basedir}/target/${project.artifactId}-module' )
+
                       module_dest_dir = %Q(${project.basedir}/../../build/assembly/target/stage/jboss-as/modules/org/torquebox/#{module_name}/main)
 
                       puts %Q(installing to #{module_dest_dir})
