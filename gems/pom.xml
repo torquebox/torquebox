@@ -18,6 +18,7 @@
     <module>parent</module>
     <module>vfs</module>
     <module>base</module>
+    <module>web</module>
   </modules>
 
 </project>

@@ -20,7 +20,7 @@
 package org.torquebox.test.ruby;
 
 import org.jruby.Ruby;
-import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
+import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
 
 public class TestRubyFactory {
 
@@ -32,7 +32,6 @@ public class TestRubyFactory {
         } else {
             factory.setGemPath( "target/rubygems" );
         }
-        System.err.println( "gem.path is " + factory.getGemPath() );
         factory.setUseJRubyHomeEnvVar( false );
 
         Ruby ruby = factory.createInstance( "test" );

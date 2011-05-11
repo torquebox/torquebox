@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-core</artifactId>
+      <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>

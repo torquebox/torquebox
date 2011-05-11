@@ -2,9 +2,9 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>gem-parent</artifactId>
+    <artifactId>gems-parent</artifactId>
     <version>1.0.1-SNAPSHOT</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
