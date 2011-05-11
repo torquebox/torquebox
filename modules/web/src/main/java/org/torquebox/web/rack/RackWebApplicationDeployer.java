@@ -80,6 +80,10 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
         
+        if ( rackAppMetaData == null ) {
+            return;
+        }
+        
         WarMetaData warMetaData = unit.getAttachment( WarMetaData.ATTACHMENT_KEY );
         
         if ( warMetaData == null ) {

@@ -23,9 +23,9 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         String deploymentName = phaseContext.getDeploymentUnit().getName();
         log.info( "deploy!: " + deploymentName );
-
+        
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-
+        
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
 
@@ -39,8 +39,21 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             }
             
             Module module = unit.getAttachment( Attachments.MODULE );
+            
+            log.info(  "MODULE: " + module  );
+            log.info(  "MODULE-CLASSLOADER: " + module.getClassLoader() );
+            
+            ClassLoader cl = getClass().getClassLoader();
+            
+            try {
+                Class<?> nodeClass = cl.loadClass( "org.jruby.ast.Node" );
+                log.info( "org.jruby.ast.Node ===> " + nodeClass );
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
 
-            factory.setClassLoader( module.getClassLoader() );
+            //factory.setClassLoader( module.getClassLoader() );
+            factory.setClassLoader( cl );
             // TODO What's the AS7 kernel?
             //factory.setKernel( this.kernel );
             factory.setLoadPaths( loadPaths );
@@ -79,7 +92,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
         log.info( "undeploy!: " + context );
     }
     
-    private boolean useJRubyHomeEnvVar = false;
+    private boolean useJRubyHomeEnvVar = true;
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 

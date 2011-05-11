@@ -60,8 +60,8 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
         context.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 20, new EnvironmentYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RubyRuntimeFactoryDeployer() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 10, new RuntimePoolDeployer() );
+        context.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
+        context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
         
         log.info( "Added deployment processors" );
     }

@@ -143,7 +143,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         return this.useJRubyHomeEnvVar;
     }
 
-
     /**
      * Set the interpreter classloader.
      * 
@@ -237,6 +236,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
+        config.setLoader( this.classLoader );
         config.setClassCache( getClassCache() );
         config.setLoadServiceCreator( new VFSLoadServiceCreator() );
         if (this.rubyVersion != null) {
@@ -248,12 +248,18 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         String jrubyHome = this.jrubyHome;
 
+        log.info( "PRE: " + jrubyHome );
         if (jrubyHome == null) {
 
             jrubyHome = System.getProperty( "jruby.home" );
+            log.info( "PROP: " + jrubyHome );
+            
+            log.info(  "Use ENV?: " + this.useJRubyHomeEnvVar );
+            log.info(  "ENV ignore prop" + System.getProperty( "jruby_home.env.ignore" ));
 
             if (jrubyHome == null && this.useJRubyHomeEnvVar && !"true".equals( System.getProperty( "jruby_home.env.ignore" ) )) {
                 jrubyHome = System.getenv( "JRUBY_HOME" );
+                log.info( "ENV: " + jrubyHome );
                 if (jrubyHome != null) {
                     if (!new File( jrubyHome ).exists()) {
                         jrubyHome = null;
@@ -263,16 +269,20 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
             if (jrubyHome == null) {
                 String jbossHome = System.getProperty( "jboss.home" );
+                log.info( "RELATIVE (jboss.home): " + jbossHome );
 
                 if (jbossHome != null) {
                     File candidatePath = new File( jbossHome, "../jruby" );
                     if (candidatePath.exists() && candidatePath.isDirectory()) {
                         jrubyHome = candidatePath.getAbsolutePath();
+                        log.info( "RELATIVE: " + jrubyHome );
                     }
                 }
 
             }
         }
+        
+        log.info( "AFTER: " + jrubyHome );
 
         if (jrubyHome == null) {
             jrubyHome = RubyInstanceConfig.class.getResource( "/META-INF/jruby.home" ).toURI().getSchemeSpecificPart();
@@ -305,6 +315,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             }
         }
 
+        log.info( "JRUBY_HOME: " + jrubyHome );
         if (jrubyHome != null) {
             config.setJRubyHome( jrubyHome );
         }
@@ -319,7 +330,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         }
 
         config.setLoadPaths( loadPath );
-        
+
         long startTime = logRuntimeCreationStart( config, contextInfo );
 
         Ruby runtime = null;
@@ -337,52 +348,55 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
             performRuntimeInitialization( runtime );
         } catch (Exception ex) {
+            ex.printStackTrace();
             log.error( "Failed to initialize runtime: ", ex );
         } finally {
             if (runtime != null) {
                 this.undisposed.add( runtime );
             }
-            
+
             logRuntimeCreationComplete( config, contextInfo, startTime );
         }
 
         return runtime;
     }
-    
+
     private long logRuntimeCreationStart(RubyInstanceConfig config, String contextInfo) {
-        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ")" );
+        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo )
+                + ")" );
         return System.currentTimeMillis();
     }
-    
+
     private void logRuntimeCreationComplete(RubyInstanceConfig config, String contextInfo, long startTime) {
         long elapsedMillis = System.currentTimeMillis() - startTime;
         double elapsedSeconds = Math.floor( (elapsedMillis * 1.0) / 10.0 ) / 100;
-        log.info( "Created ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ") in " + elapsedSeconds + "s" );
+        log.info( "Created ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo )
+                + ") in " + elapsedSeconds + "s" );
     }
-    
+
     protected String getFullContext(String contextInfo) {
         String fullContext = null;
-        
-        if ( this.applicationName != null ) {
+
+        if (this.applicationName != null) {
             fullContext = "app: " + this.applicationName;
         }
-        
-        if ( contextInfo != null ) {
-            if ( fullContext != null ) {
+
+        if (contextInfo != null) {
+            if (fullContext != null) {
                 fullContext += ", ";
             } else {
                 fullContext = "";
             }
-            
+
             fullContext += "context: " + contextInfo;
         }
-        
-        if ( fullContext == null ) {
+
+        if (fullContext == null) {
             fullContext = "";
         } else {
             fullContext = ", " + fullContext;
         }
-        
+
         return fullContext;
     }
 
@@ -394,7 +408,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     }
 
     private void performRuntimeInitialization(Ruby runtime) {
-        runtime.evalScriptlet( "require %q(org/torquebox/interp/core/runtime_initialization)\n" );
+        runtime.evalScriptlet( "require %q(org/torquebox/core/runtime/runtime_initialization)\n" );
         defineVersions( runtime );
         setApplicationName( runtime );
 
@@ -422,7 +436,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         runtime.evalScriptlet( "require %q(torquebox/kernel)" );
         RubyModule torqueBoxKernelModule = runtime.getClassFromPath( "TorqueBox::Kernel" );
         // TODO Replace with MSC version
-        //JavaEmbedUtils.invokeMethod( runtime, torqueBoxKernelModule, "kernel=", new Object[] { this.kernel }, void.class );
+        // JavaEmbedUtils.invokeMethod( runtime, torqueBoxKernelModule,
+        // "kernel=", new Object[] { this.kernel }, void.class );
     }
 
     protected Map<String, String> createEnvironment() {
@@ -452,6 +467,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         if (this.applicationEnvironment != null) {
             env.putAll( this.applicationEnvironment );
         }
+        log.info( "ENV: " + env );
         return env;
     }
 
@@ -515,7 +531,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     public List<String> getLoadPaths() {
         return this.loadPaths;
     }
-    
+
     public void create() {
         this.classCache = new ClassCache<Script>( getClassLoader() );
     }
@@ -523,13 +539,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     public synchronized void destroy() {
         Set<Ruby> toDispose = new HashSet<Ruby>();
         toDispose.addAll( this.undisposed );
-        
-        for (Ruby ruby : toDispose ) {
+
+        for (Ruby ruby : toDispose) {
             destroyInstance( ruby );
         }
         this.undisposed.clear();
     }
-    
+
     public ClassCache getClassCache() {
         return this.classCache;
     }

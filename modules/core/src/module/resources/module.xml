@@ -28,6 +28,12 @@
         <resource-root path="${project.artifactId}-${project.version}.jar"/>
         <resource-root path="jruby-complete-${version.jruby}.jar"/>
     </resources>
+    <exports>
+      <include-set>
+        <path name="org/jruby/"/>
+        <path name="org/jruby/ast/"/>
+      </include-set>
+    </exports>
 
     <dependencies>
         <module name="javax.api"/>
