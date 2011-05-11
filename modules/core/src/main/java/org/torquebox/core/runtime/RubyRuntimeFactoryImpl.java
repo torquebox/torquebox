@@ -236,7 +236,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
-        config.setLoader( this.classLoader );
+        config.setLoader( getClassLoader() );
         config.setClassCache( getClassCache() );
         config.setLoadServiceCreator( new VFSLoadServiceCreator() );
         if (this.rubyVersion != null) {
