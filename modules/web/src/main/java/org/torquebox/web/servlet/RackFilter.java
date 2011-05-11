@@ -20,6 +20,7 @@
 package org.torquebox.web.servlet;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceRegistry;
 import org.jruby.exceptions.RaiseException;
 import org.torquebox.web.rack.RackApplication;
 import org.torquebox.web.rack.RackApplicationPool;
@@ -52,7 +55,37 @@ public class RackFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
         System.err.println( "INIT RACK FILTER: " + filterConfig );
         String rackAppPoolName = filterConfig.getInitParameter( RACK_APP_POOL_INIT_PARAM );
-        this.rackAppPool = null;
+        System.err.println( "pool name: " + rackAppPoolName );
+        Enumeration<String> names = filterConfig.getInitParameterNames();
+        System.err.println( "FILTER INIT PARAMS" );
+        while ( names.hasMoreElements() ) {
+            String name = names.nextElement();
+            System.err.println( "name: " + name );
+            System.err.println( "value: " + filterConfig.getInitParameter( name ) );
+        }
+        
+        System.err.println( "CONTEXT INIT PARAMS" );
+        names = filterConfig.getServletContext().getInitParameterNames();
+        while ( names.hasMoreElements() ) {
+            String name = names.nextElement();
+            System.err.println( "name: " + name );
+            System.err.println( "value: " + filterConfig.getServletContext().getInitParameter( name ) );
+        }
+        
+        
+        System.err.println( "CONTEXT ATTRIBUTES" );
+        names = filterConfig.getServletContext().getAttributeNames();
+        while ( names.hasMoreElements() ) {
+            String name = names.nextElement();
+            System.err.println( "name: " + name );
+            System.err.println( "value: " + filterConfig.getServletContext().getAttribute( name ) );
+        }
+        
+        ServiceRegistry registry = (ServiceRegistry) filterConfig.getServletContext().getAttribute( "service.registry" );
+        
+        System.err.println( "Registry: " + registry );
+        
+        this.rackAppPool = (RackApplicationPool) registry.getService( ServiceName.parse( rackAppPoolName ) );
 
         if (this.rackAppPool == null) {
             throw new ServletException( "Unable to obtain Rack application pool '" + rackAppPoolName + "'" );

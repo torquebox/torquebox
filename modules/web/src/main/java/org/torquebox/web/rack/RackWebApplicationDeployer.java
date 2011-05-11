@@ -25,10 +25,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.web.deployment.ServletContextAttribute;
 import org.jboss.as.web.deployment.WarMetaData;
 import org.jboss.metadata.javaee.spec.EmptyMetaData;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
@@ -41,6 +43,7 @@ import org.jboss.metadata.web.spec.FiltersMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
+import org.torquebox.web.as.WebServices;
 import org.torquebox.web.servlet.RackFilter;
 
 /**
@@ -108,7 +111,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
             warMetaData.setJbossWebMetaData( jbossWebMetaData );
         }
 
-        setUpRackFilter( rackAppMetaData, jbossWebMetaData );
+        setUpRackFilter( unit, rackAppMetaData, jbossWebMetaData );
         setUpStaticResourceServlet( rackAppMetaData, jbossWebMetaData );
         ensureSomeServlet( rackAppMetaData, jbossWebMetaData );
         try {
@@ -117,6 +120,11 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         } catch (Exception e) {
             throw new DeploymentUnitProcessingException( e );
         }
+        
+        ServletContextAttribute serviceRegistryValue = new ServletContextAttribute("service.registry", unit.getServiceRegistry() );
+        unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, serviceRegistryValue );
+        
+        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, WebServices.rackApplicationPoolName( unit.getName() ) );
 
         /*
          * RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(
@@ -128,7 +136,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
          */
     }
 
-    protected void setUpRackFilter(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+    protected void setUpRackFilter(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
         FilterMetaData rackFilter = new FilterMetaData();
         rackFilter.setId( RACK_FILTER_NAME );
         rackFilter.setFilterClass( RackFilter.class.getName() );
@@ -137,7 +145,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
         ParamValueMetaData rackAppFactory = new ParamValueMetaData();
         rackAppFactory.setParamName( RackFilter.RACK_APP_POOL_INIT_PARAM );
-        rackAppFactory.setParamValue( rackAppMetaData.getRackApplicationPoolName() );
+        rackAppFactory.setParamValue( WebServices.rackApplicationPoolName( unit.getName() ).getCanonicalName() );
         initParams.add( rackAppFactory );
 
         rackFilter.setInitParam( initParams );
