@@ -61,10 +61,10 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
     public static final String RACK_FILTER_NAME = "torquebox.rack";
 
     public static final String STATIC_RESROUCE_SERVLET_NAME = "torquebox.static";
-    public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.rack.core.servlet.StaticResourceServlet";
+    public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.web.servlet.StaticResourceServlet";
 
     public static final String FIVE_HUNDRED_SERVLET_NAME = "torquebox.500";
-    public static final String FIVE_HUNDRED_SERVLET_CLASS_NAME = "org.torquebox.rack.core.servlet.FiveHundredServlet";
+    public static final String FIVE_HUNDRED_SERVLET_CLASS_NAME = "org.torquebox.web.servlet.FiveHundredServlet";
 
     public static final String LOCALHOST_MBEAN_NAME = "jboss.web:host=localhost,type=Host";
 
