@@ -43,7 +43,8 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             log.info(  "MODULE: " + module  );
             log.info(  "MODULE-CLASSLOADER: " + module.getClassLoader() );
             
-            ClassLoader cl = getClass().getClassLoader();
+            //ClassLoader cl = getClass().getClassLoader();
+            ClassLoader cl = module.getClassLoader();
             
             try {
                 Class<?> nodeClass = cl.loadClass( "org.jruby.ast.Node" );
