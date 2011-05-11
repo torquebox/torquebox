@@ -25,13 +25,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.as.ee.structure.DeploymentType;
+import org.jboss.as.ee.structure.DeploymentTypeMarker;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.as.web.deployment.ServletContextAttribute;
+import org.jboss.as.web.deployment.TldsMetaData;
 import org.jboss.as.web.deployment.WarMetaData;
+import org.jboss.logging.Logger;
 import org.jboss.metadata.javaee.spec.EmptyMetaData;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
 import org.jboss.metadata.web.jboss.JBossServletMetaData;
@@ -41,6 +46,7 @@ import org.jboss.metadata.web.spec.FilterMappingMetaData;
 import org.jboss.metadata.web.spec.FilterMetaData;
 import org.jboss.metadata.web.spec.FiltersMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
+import org.jboss.metadata.web.spec.TldMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 import org.torquebox.web.as.WebServices;
@@ -76,18 +82,24 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
 
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
 
         if (rackAppMetaData == null) {
             return;
         }
+        
+        log.info( "Marking as WAR" );
+        DeploymentTypeMarker.setType( DeploymentType.WAR, unit );
+        WarMetaData warMetaData = new WarMetaData();
 
-        WarMetaData warMetaData = unit.getAttachment( WarMetaData.ATTACHMENT_KEY );
-
-        if (warMetaData == null) {
-            warMetaData = new WarMetaData();
-        }
+        final TldsMetaData tldsMetaData = new TldsMetaData();
+        List<TldMetaData> sharedTldsMetaData = Collections.emptyList();
+        tldsMetaData.setSharedTlds( sharedTldsMetaData );
+        unit.putAttachment( TldsMetaData.ATTACHMENT_KEY, tldsMetaData );
+        unit.putAttachment( WarMetaData.ATTACHMENT_KEY, warMetaData );
+        unit.addToAttachmentList( Attachments.RESOURCE_ROOTS, resourceRoot );
 
         WebMetaData webMetaData = warMetaData.getWebMetaData();
 
@@ -258,5 +270,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         // TODO Auto-generated method stub
 
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 
 }

@@ -25,6 +25,7 @@ import org.torquebox.web.rack.RackApplicationRecognizer;
 import org.torquebox.web.rack.RackRuntimeProcessor;
 import org.torquebox.web.rack.RackWebApplicationDeployer;
 import org.torquebox.web.rack.WebRuntimePoolProcessor;
+import org.torquebox.web.rack.WebYamlParsingProcessor;
 
 class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -60,7 +61,8 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         log.info( "Adding deployment processors" );
         
         context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 10, new RackWebApplicationDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 10, new WebYamlParsingProcessor() );
+        context.addDeploymentProcessor( Phase.PARSE, 20, new RackWebApplicationDeployer() );
         
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new WebDependenciesProcessor() );
         

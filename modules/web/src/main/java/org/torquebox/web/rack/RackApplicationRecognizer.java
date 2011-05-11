@@ -19,21 +19,13 @@
 
 package org.torquebox.web.rack;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.jboss.as.ee.structure.DeploymentType;
-import org.jboss.as.ee.structure.DeploymentTypeMarker;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ResourceRoot;
-import org.jboss.as.web.deployment.TldsMetaData;
-import org.jboss.as.web.deployment.WarMetaData;
 import org.jboss.logging.Logger;
-import org.jboss.metadata.web.spec.TldMetaData;
 import org.jboss.vfs.VirtualFile;
 
 public class RackApplicationRecognizer implements DeploymentUnitProcessor {
@@ -57,16 +49,6 @@ public class RackApplicationRecognizer implements DeploymentUnitProcessor {
                 rackAppMetaData.setRackUpScriptLocation( DEFAULT_RACKUP_PATH );
                 unit.putAttachment( RackApplicationMetaData.ATTACHMENT_KEY, rackAppMetaData );
             }
-            log.info( "Marking as WAR" );
-            DeploymentTypeMarker.setType( DeploymentType.WAR, unit );
-            WarMetaData warMetaData = new WarMetaData();
-
-            final TldsMetaData tldsMetaData = new TldsMetaData();
-            List<TldMetaData> sharedTldsMetaData = Collections.emptyList();
-            tldsMetaData.setSharedTlds( sharedTldsMetaData );
-            unit.putAttachment( TldsMetaData.ATTACHMENT_KEY, tldsMetaData );
-            unit.putAttachment( WarMetaData.ATTACHMENT_KEY, warMetaData );
-            unit.addToAttachmentList( Attachments.RESOURCE_ROOTS, resourceRoot );
         }
     }
 
