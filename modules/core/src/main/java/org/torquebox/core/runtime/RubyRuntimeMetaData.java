@@ -81,7 +81,6 @@ public class RubyRuntimeMetaData {
      * Construct.
      */
     public RubyRuntimeMetaData() {
-
     }
 
     /**

@@ -17,28 +17,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.rack.deployers;
+package org.torquebox.web.rack;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.logging.Logger;
 
-public class RackApplicationDefaultsDeployer extends AbstractDeployer {
+public class RackApplicationDefaultsProcessor implements DeploymentUnitProcessor {
 
     public static final String DEFAULT_HOST = "localhost";
     public static final String DEFAULT_CONTEXT_PATH = "/";
     public static final String DEFAULT_STATIC_PATH_PREFIX = "public/";
 
-    public RackApplicationDefaultsDeployer() {
-        setStage( DeploymentStages.PRE_REAL );
-        setInput( RackApplicationMetaData.class );
-        addOutput( RackApplicationMetaData.class );
+    public RackApplicationDefaultsProcessor() {
     }
 
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        RackApplicationMetaData metadata = unit.getAttachment( RackApplicationMetaData.class );
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        
+        RackApplicationMetaData metadata = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        
+        if ( metadata == null ) {
+            return;
+        }
+        
+        log.info( "Deploying rack defaults" );
+        
         if (metadata.getHosts().isEmpty()) {
             metadata.addHost( DEFAULT_HOST );
         }
@@ -51,4 +58,11 @@ public class RackApplicationDefaultsDeployer extends AbstractDeployer {
             metadata.setStaticPathPrefix( DEFAULT_STATIC_PATH_PREFIX );
         }
     }
+
+    @Override
+    public void undeploy(DeploymentUnit context) {
+        // TODO Auto-generated method stub
+    }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 }

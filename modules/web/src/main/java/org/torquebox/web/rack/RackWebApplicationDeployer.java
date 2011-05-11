@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.rack.deployers;
+package org.torquebox.web.rack;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,10 +25,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentException;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.web.deployment.WarMetaData;
 import org.jboss.metadata.javaee.spec.EmptyMetaData;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
@@ -42,11 +44,8 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rack.core.WebHost;
-import org.torquebox.rack.core.servlet.RackFilter;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.web.servlet.RackFilter;
 
 /**
  * <pre>
@@ -58,7 +57,7 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
  * Makes the JBossWebMetaData depend on the RackApplicationPool, and sets up
  * Java servlet filters to delegate to the Rack application
  */
-public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
+public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
     public static final String RACK_FILTER_NAME = "torquebox.rack";
 
@@ -73,45 +72,48 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
     public static final String EXPANDED_WAR_URL_ATTACHMENT_NAME = "org.jboss.web.expandedWarURL";
 
     public RackWebApplicationDeployer() {
-        super(RackApplicationMetaData.class);
-        addInput(RubyApplicationMetaData.class);
-        addInput(WebMetaData.class);
-        addInput(JBossWebMetaData.class);
-        addOutput(WebMetaData.class);
-        addOutput(JBossWebMetaData.class);
-        setStage(DeploymentStages.DESCRIBE);
-        setRelativeOrder(1000);
     }
 
     @Override
-    public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
-        WebMetaData webMetaData = unit.getAttachment(WebMetaData.class);
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        
+        WarMetaData warMetaData = unit.getAttachment( WarMetaData.ATTACHMENT_KEY );
+        
+        if ( warMetaData == null ) {
+            warMetaData = new WarMetaData();
+        }
+        
+        WebMetaData webMetaData = warMetaData.getWebMetaData();
 
         if (webMetaData == null) {
             webMetaData = new WebMetaData();
             webMetaData.setDistributable(new EmptyMetaData());
-            unit.addAttachment(WebMetaData.class, webMetaData);
+            warMetaData.setWebMetaData( webMetaData );
         }
 
         setUpRackFilter(rackAppMetaData, webMetaData);
         setUpStaticResourceServlet(rackAppMetaData, webMetaData);
         ensureSomeServlet(rackAppMetaData, webMetaData);
         try {
-            JBossWebMetaData jbossWebMetaData = setUpHostAndContext(unit, rackAppMetaData, webMetaData);
+            JBossWebMetaData jbossWebMetaData = setUpHostAndContext(unit, rackAppMetaData, warMetaData, webMetaData);
             setUpPoolDependency(rackAppMetaData, jbossWebMetaData);
         } catch (Exception e) {
-            throw new DeploymentException(e);
+            throw new DeploymentUnitProcessingException( e );
         }
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
         
+        /*
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         try {
             URL docBaseUrl = rubyAppMetaData.getRoot().toURL();
             unit.addAttachment(EXPANDED_WAR_URL_ATTACHMENT_NAME, docBaseUrl, URL.class);
         } catch (MalformedURLException e) {
             throw new DeploymentException(e);
         }
-
+        */
     }
 
     protected void setUpRackFilter(RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) {
@@ -204,13 +206,13 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         }
     }
 
-    protected JBossWebMetaData setUpHostAndContext(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) throws Exception {
+    protected JBossWebMetaData setUpHostAndContext(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WarMetaData warMetaData, WebMetaData webMetaData) throws Exception {
 
-        JBossWebMetaData jbossWebMetaData = unit.getAttachment(JBossWebMetaData.class);
+        JBossWebMetaData jbossWebMetaData = warMetaData.getJbossWebMetaData();
 
         if (jbossWebMetaData == null) {
             jbossWebMetaData = new JBossWebMetaData();
-            unit.addAttachment(JBossWebMetaData.class, jbossWebMetaData);
+            warMetaData.setJbossWebMetaData( jbossWebMetaData );
             if (webMetaData.getDistributable() != null) {
                 jbossWebMetaData.setDistributable(webMetaData.getDistributable());
                 ReplicationConfig repCfg = new ReplicationConfig();
@@ -222,6 +224,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
 
         jbossWebMetaData.setContextRoot(rackAppMetaData.getContextPath());
 
+        /*
         if (!rackAppMetaData.getHosts().isEmpty()) {
             jbossWebMetaData.setVirtualHosts(rackAppMetaData.getHosts());
             List<String> depends = jbossWebMetaData.getDepends();
@@ -231,6 +234,7 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
             }
             depends.add(AttachmentUtils.beanName(unit, WebHost.class));
         }
+        */
 
         return jbossWebMetaData;
 
@@ -245,6 +249,13 @@ public class RackWebApplicationDeployer extends AbstractSimpleVFSRealDeployer<Ra
         }
         
         depends.add(rackAppMetaData.getRackApplicationPoolName());
+    }
+
+
+    @Override
+    public void undeploy(DeploymentUnit context) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

@@ -1,4 +1,4 @@
-package org.torquebox.core.as;
+package org.torquebox.web.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
@@ -18,13 +18,15 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
-import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
-import org.torquebox.core.app.RubyApplicationRecognizer;
-import org.torquebox.core.pool.RuntimePoolDeployer;
-import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
+import org.torquebox.web.rack.RackApplicationDefaultsProcessor;
+import org.torquebox.web.rack.RackApplicationFactoryDeployer;
+import org.torquebox.web.rack.RackApplicationPoolDeployer;
+import org.torquebox.web.rack.RackApplicationRecognizer;
+import org.torquebox.web.rack.RackRuntimeProcessor;
+import org.torquebox.web.rack.RackWebApplicationDeployer;
+import org.torquebox.web.rack.WebRuntimePoolProcessor;
 
-class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
+class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
     /** {@inheritDoc} */
     @Override
@@ -57,11 +59,15 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     protected void addDeploymentProcessors(final BootOperationContext context) {
         log.info( "Adding deployment processors" );
         
-        context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 20, new EnvironmentYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RubyRuntimeFactoryDeployer() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 10, new RuntimePoolDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
+        
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new RackRuntimeProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
+        
+        context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RackApplicationDefaultsProcessor() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 100, new RackWebApplicationDeployer() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 110, new RackApplicationFactoryDeployer() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationPoolDeployer() );
         
         log.info( "Added deployment processors" );
     }
@@ -92,7 +98,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         return subsystem;
     }
 
-    static final CoreSubsystemAdd ADD_INSTANCE = new CoreSubsystemAdd();
-    static final Logger log = Logger.getLogger( "org.torquebox.core.as" );
+    static final WebSubsystemAdd ADD_INSTANCE = new WebSubsystemAdd();
+    static final Logger log = Logger.getLogger( "org.torquebox.web.as" );
 
 }

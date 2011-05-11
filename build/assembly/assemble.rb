@@ -52,6 +52,7 @@ class Assembler
     prepare()
     lay_down_jboss()
     install_module( :core )
+    install_module( :web )
   end
 end
 

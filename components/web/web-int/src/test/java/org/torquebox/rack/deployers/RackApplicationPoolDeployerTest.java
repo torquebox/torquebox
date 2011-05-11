@@ -35,6 +35,7 @@ import org.torquebox.rack.core.RackApplicationPoolImpl;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.rack.spi.RackApplicationPool;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
+import org.torquebox.web.rack.RackApplicationPoolDeployer;
 
 public class RackApplicationPoolDeployerTest extends AbstractDeployerTestCase {
 

@@ -17,30 +17,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.rack.deployers;
+package org.torquebox.web.rack;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.deployer.AbstractSimpleVFSRealDeployer;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
-
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.injection.BaseRubyProxyInjectionBuilder;
-import org.torquebox.injection.Injectable;
-import org.torquebox.injection.InjectionAnalyzer;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.rack.core.RackApplicationFactoryImpl;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
-import org.torquebox.rack.spi.RackApplicationFactory;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.web.as.WebServices;
 
 /**
  * <pre>
@@ -50,7 +41,7 @@ import org.torquebox.rack.spi.RackApplicationFactory;
  * </pre>
  * 
  */
-public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeployer<RackApplicationMetaData> {
+public class RackApplicationFactoryDeployer implements DeploymentUnitProcessor {
 
     public static final String SYNTHETIC_CONFIG_RU_NAME = "torquebox-synthetic-config.ru";
 
@@ -61,17 +52,12 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
         }
     };
 
-    private InjectionAnalyzer injectionAnalyzer;
+    //private InjectionAnalyzer injectionAnalyzer;
 
     public RackApplicationFactoryDeployer() {
-        super( RackApplicationMetaData.class );
-        addRequiredInput( RubyApplicationMetaData.class );
-        addOutput( RackApplicationMetaData.class );
-        addOutput( BeanMetaData.class );
-        setStage( DeploymentStages.PRE_DESCRIBE );
-        setRelativeOrder( 500 );
     }
 
+    /*
     public void setInjectionAnalyzer(InjectionAnalyzer injectionAnalyzer) {
         this.injectionAnalyzer = injectionAnalyzer;
     }
@@ -79,35 +65,49 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
     public InjectionAnalyzer getInjectionAnalyzer() {
         return this.injectionAnalyzer;
     }
+    */
+
 
     @Override
-    public void deploy(VFSDeploymentUnit unit, RackApplicationMetaData rackAppMetaData) throws DeploymentException {
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-        try {
-            String beanName = AttachmentUtils.beanName( unit, RackApplicationFactory.class );
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        String deploymentName = unit.getName();
 
-            BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RackApplicationFactoryImpl.class.getName() );
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
 
-            builder.addPropertyMetaData( "rackUpScript", rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
-
-            VirtualFile rackUpScriptLocation = rackAppMetaData.getRackUpScriptFile( rubyAppMetaData.getRoot() );
-
-            if (rackUpScriptLocation == null) {
-                rackUpScriptLocation = rubyAppMetaData.getRoot().getChild( SYNTHETIC_CONFIG_RU_NAME );
-            }
-            builder.addPropertyMetaData( "rackUpFile", rackUpScriptLocation );
-
-            setUpInjections( unit, builder, rubyAppMetaData.getRoot(), rackUpScriptLocation );
-
-            AttachmentUtils.attach( unit, builder.getBeanMetaData() );
-
-            rackAppMetaData.setRackApplicationFactoryName( beanName );
-
-        } catch (Exception e) {
-            throw new DeploymentException( e );
+        if (rackAppMetaData == null) {
+            return;
         }
-    }
 
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+
+        RackApplicationFactoryImpl factory = new RackApplicationFactoryImpl();
+        try {
+            factory.setRackUpScript( rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
+        } catch (IOException e) {
+            throw new DeploymentUnitProcessingException( e );
+        }
+
+        VirtualFile rackUpScriptLocation = rackAppMetaData.getRackUpScriptFile( rubyAppMetaData.getRoot() );
+        
+        if (rackUpScriptLocation == null) {
+            rackUpScriptLocation = rubyAppMetaData.getRoot().getChild( SYNTHETIC_CONFIG_RU_NAME );
+        }
+        
+        factory.setRackUpFile( rackUpScriptLocation );
+        
+        RackApplicationFactoryService service = new RackApplicationFactoryService( factory );
+        
+        ServiceName name = WebServices.rackApplicationFactoryName( deploymentName );
+        ServiceBuilder<RackApplicationFactory> builder = phaseContext.getServiceTarget().addService( name, service );
+        //builder.addDependency( WebServices.rackApplicationFactoryName( deploymentName ), RackApplicationFactory.class, service.getRackApplicationFactoryInjector() );
+        builder.setInitialMode( Mode.ON_DEMAND );
+        // setUpInjections(...)
+        builder.install();
+    }
+    
+
+    /*
     public void setUpInjections(DeploymentUnit unit, BeanMetaDataBuilder beanBuilder, VirtualFile rackRoot, VirtualFile rackUpScriptLocation) throws Exception {
 
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.class );
@@ -135,5 +135,12 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
         BaseRubyProxyInjectionBuilder injectionBuilder = new BaseRubyProxyInjectionBuilder( unit, beanBuilder );
         injectionBuilder.injectInjectionRegistry( injectables );
+    }
+    */
+
+    @Override
+    public void undeploy(DeploymentUnit context) {
+        // TODO Auto-generated method stub
+
     }
 }

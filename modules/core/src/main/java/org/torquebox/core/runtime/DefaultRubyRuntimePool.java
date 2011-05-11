@@ -48,6 +48,9 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
     public DefaultRubyRuntimePool(RubyRuntimeFactory factory) {
         super( factory );
     }
+    
+    public DefaultRubyRuntimePool() {
+    }
 
     @Override
     public Ruby borrowRuntime() throws Exception {

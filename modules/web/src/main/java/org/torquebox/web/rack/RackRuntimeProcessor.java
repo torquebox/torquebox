@@ -17,22 +17,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.rack.deployers;
+package org.torquebox.web.rack;
 
 import java.net.MalformedURLException;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.interp.metadata.RubyLoadPathMetaData;
-import org.torquebox.interp.metadata.RubyRuntimeMetaData;
-import org.torquebox.interp.spi.RuntimeInitializer;
-import org.torquebox.rack.core.RackRuntimeInitializer;
-import org.torquebox.rack.metadata.RackApplicationMetaData;
+import org.jboss.as.server.deployment.DeploymentException;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.logging.Logger;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.runtime.RubyLoadPathMetaData;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
+import org.torquebox.core.runtime.RuntimeInitializer;
 
 /**
  * <pre>
@@ -43,40 +41,36 @@ import org.torquebox.rack.metadata.RackApplicationMetaData;
  * 
  * Create the ruby runtime metadata from the rack metadata
  */
-public class RackRuntimeDeployer extends AbstractDeployer {
+public class RackRuntimeProcessor implements DeploymentUnitProcessor {
 
-    public RackRuntimeDeployer() {
-        setStage( DeploymentStages.PRE_DESCRIBE );
-        setInput( RackApplicationMetaData.class );
-        addRequiredInput( RubyApplicationMetaData.class );
-        addOutput( RubyRuntimeMetaData.class );
-
-        setRelativeOrder( 1000 );
+    public RackRuntimeProcessor() {
     }
 
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        if (unit instanceof VFSDeploymentUnit) {
-            deploy( (VFSDeploymentUnit) unit );
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        log.info(  "DEPLOY: " + unit );
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        
+        if ( rubyAppMetaData == null ) {
+            return;
         }
-    }
-
-    public void deploy(VFSDeploymentUnit unit) throws DeploymentException {
-        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(  RubyRuntimeMetaData.class );
+        
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(  RubyRuntimeMetaData.ATTACHMENT_KEY );
         
         if ( runtimeMetaData != null && runtimeMetaData.getRuntimeType() != null ) {
             log.warn( "Ruby runtime already configured as " + runtimeMetaData.getRuntimeType() + ": " + unit );
             return;
         }
 
-        log.debug( "Deploying rack ruby runtime: " + unit );
+        log.info( "Deploying rack ruby runtime: " + unit );
 
         if (runtimeMetaData == null) {
             runtimeMetaData = new RubyRuntimeMetaData();
-            unit.addAttachment(  RubyRuntimeMetaData.class, runtimeMetaData );
+            unit.putAttachment(  RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
         }
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.class );
+        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
 
         runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
@@ -85,11 +79,19 @@ public class RackRuntimeDeployer extends AbstractDeployer {
         try {
             runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot().toURL() ) );
         } catch (MalformedURLException e) {
-            throw new DeploymentException( e );
+            throw new DeploymentUnitProcessingException( e );
         }
 
         RuntimeInitializer initializer = new RackRuntimeInitializer( rubyAppMetaData, rackAppMetaData );
         runtimeMetaData.setRuntimeInitializer( initializer );
     }
+
+
+    @Override
+    public void undeploy(org.jboss.as.server.deployment.DeploymentUnit context) {
+        
+    }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 
 }

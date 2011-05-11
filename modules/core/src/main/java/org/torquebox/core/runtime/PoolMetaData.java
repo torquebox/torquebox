@@ -19,6 +19,12 @@
 
 package org.torquebox.core.runtime;
 
+import java.util.List;
+
+import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.AttachmentList;
+import org.jboss.as.server.deployment.module.ModuleDependency;
+
 /**
  * Ruby interpreter pool configuration.
  * 
@@ -57,6 +63,8 @@ public class PoolMetaData {
     public enum PoolType {
         NON_SHARED, SHARED, GLOBAL,
     }
+
+    public static final AttachmentKey<AttachmentList<PoolMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList(PoolMetaData.class);
 
     /** Name of the pool. */
     private String name;

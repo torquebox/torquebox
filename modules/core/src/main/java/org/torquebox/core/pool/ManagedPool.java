@@ -30,6 +30,9 @@ public class ManagedPool<T> implements Pool<T> {
     private SimplePool<T> pool;
     private PoolManager<T> poolManager;
 
+    public ManagedPool() {
+    }
+    
     public ManagedPool(InstanceFactory<T> factory) {
         this( factory, 1, 1 );
     }
@@ -64,6 +67,10 @@ public class ManagedPool<T> implements Pool<T> {
         return this.poolManager.getMaximumInstances();
     }
 
+    public void setInstanceFactory(InstanceFactory<T> instanceFactory) {
+        this.poolManager.setInstanceFactory( instanceFactory );
+    }
+    
     public InstanceFactory<T> getInstanceFactory() {
         return this.poolManager.getInstanceFactory();
     }

@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.pool.PoolMetaData;
+import org.torquebox.core.pool.RuntimePoolDeployer;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimePool;

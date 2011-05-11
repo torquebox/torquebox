@@ -25,11 +25,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 
 public class RackApplicationMetaData {
 
+    public static final AttachmentKey<RackApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create(RackApplicationMetaData.class);
+    
     public RackApplicationMetaData() {
 
     }

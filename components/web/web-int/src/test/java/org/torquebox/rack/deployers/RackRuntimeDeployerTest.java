@@ -33,6 +33,7 @@ import org.torquebox.interp.metadata.RubyRuntimeMetaData;
 import org.torquebox.rack.core.RackRuntimeInitializer;
 import org.torquebox.rack.metadata.RackApplicationMetaData;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
+import org.torquebox.web.rack.RackRuntimeDeployer;
 
 public class RackRuntimeDeployerTest extends AbstractDeployerTestCase {
 
