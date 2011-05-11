@@ -144,8 +144,8 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
         List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
         ParamValueMetaData rackAppFactory = new ParamValueMetaData();
-        rackAppFactory.setParamName( RackFilter.RACK_APP_POOL_INIT_PARAM );
-        rackAppFactory.setParamValue( WebServices.rackApplicationPoolName( unit.getName() ).getCanonicalName() );
+        rackAppFactory.setParamName( RackFilter.RACK_APP_DEPLOYMENT_INIT_PARAM );
+        rackAppFactory.setParamValue( unit.getName() );
         initParams.add( rackAppFactory );
 
         rackFilter.setInitParam( initParams );

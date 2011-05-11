@@ -36,6 +36,7 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 import org.jruby.exceptions.RaiseException;
+import org.torquebox.web.as.WebServices;
 import org.torquebox.web.rack.RackApplication;
 import org.torquebox.web.rack.RackApplicationPool;
 import org.torquebox.web.rack.RackEnvironmentImpl;
@@ -46,7 +47,7 @@ public class RackFilter implements Filter {
 
     private static final String KERNEL_NAME = "jboss.kernel:service=Kernel";
 
-    public static final String RACK_APP_POOL_INIT_PARAM = "torquebox.rack.app.pool.name";
+    public static final String RACK_APP_DEPLOYMENT_INIT_PARAM = "torquebox.rack.app.deployment.name";
 
     private RackApplicationPool rackAppPool;
 
@@ -54,8 +55,8 @@ public class RackFilter implements Filter {
 
     public void init(FilterConfig filterConfig) throws ServletException {
         System.err.println( "INIT RACK FILTER: " + filterConfig );
-        String rackAppPoolName = filterConfig.getInitParameter( RACK_APP_POOL_INIT_PARAM );
-        System.err.println( "pool name: " + rackAppPoolName );
+        String rackAppDeploymentName = filterConfig.getInitParameter( RACK_APP_DEPLOYMENT_INIT_PARAM );
+        System.err.println( "deployment name: " + rackAppDeploymentName );
         Enumeration<String> names = filterConfig.getInitParameterNames();
         System.err.println( "FILTER INIT PARAMS" );
         while ( names.hasMoreElements() ) {
@@ -85,10 +86,12 @@ public class RackFilter implements Filter {
         
         System.err.println( "Registry: " + registry );
         
-        this.rackAppPool = (RackApplicationPool) registry.getService( ServiceName.parse( rackAppPoolName ) );
+        ServiceName rackAppServiceName = WebServices.rackApplicationPoolName( rackAppDeploymentName );
+        System.err.println( "Service name: " + rackAppServiceName );
+        this.rackAppPool = (RackApplicationPool) registry.getService( rackAppServiceName ).getValue();
 
         if (this.rackAppPool == null) {
-            throw new ServletException( "Unable to obtain Rack application pool '" + rackAppPoolName + "'" );
+            throw new ServletException( "Unable to obtain Rack application pool '" + rackAppDeploymentName + "'" );
         }
 
         this.servletContext = filterConfig.getServletContext();
