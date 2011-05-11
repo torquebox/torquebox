@@ -11,6 +11,5 @@ class Something
 
   def foo
     @backchannel.publish Thread.current.object_id
-    sleep(1) 
   end
 end

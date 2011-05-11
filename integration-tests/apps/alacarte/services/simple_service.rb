@@ -1,3 +1,4 @@
+require 'torquebox-messaging'
 
 class SimpleService 
   include TorqueBox::Injectors
@@ -19,23 +20,14 @@ class SimpleService
   def spawn_thread()
     puts "spawn_thread"
     @thread = Thread.new do
-      while @should_run 
-        loop_once
-        sleep( 1 )
-      end
+      loop_once while @should_run 
     end
   end
 
   def loop_once
     if ( @webserver && @something && @polish )
       @logger.info "Looping once"
-      basedir = ENV['BASEDIR']
-      basedir = basedir.gsub( %r(\\:), ':' )
-      basedir.gsub!( %r(\\\\), '\\' )
-      touchfile = File.join( basedir, 'target', 'touchfile.txt' )
-      File.open( touchfile, 'w' ) do |f|
-        f.puts( "Updated #{Time.now}" )
-      end
+      TorqueBox::Messaging::Queue.new( '/queue/response' ).publish( 'done' )
     end
   end
 

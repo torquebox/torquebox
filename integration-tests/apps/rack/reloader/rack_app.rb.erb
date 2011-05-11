@@ -10,12 +10,7 @@ class RackApp
       "<div id='success'><%= version %></div>",
     ]
 
-    version_yml = YAML.load( File.read( 'version.yml' ) )
-    version = version_yml['version']
-    version_yml['version'] = version + 1
-    File.open( 'version.yml', 'w' ) do |f|
-      f.write YAML.dump( version_yml )
-    end
+    version = env['QUERY_STRING']
     
     template = ERB.new( File.read( 'rack_app.rb.erb' ) )
     puts "rewriting app"
