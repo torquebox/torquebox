@@ -1,4 +1,4 @@
-package org.torquebox.core.runtime;
+package org.torquebox.core.as.services;
 
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
@@ -7,6 +7,8 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
+import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.runtime.SharedRubyRuntimePool;
 
 public class SharedRubyRuntimeInstancePoolService implements Service<RubyRuntimePool> {
 

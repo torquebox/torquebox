@@ -32,14 +32,14 @@ import org.jboss.msc.service.ServiceName;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.as.services.DefaultRubyRuntimePoolService;
+import org.torquebox.core.as.services.SharedRubyRuntimeFactoryPoolService;
 import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.DefaultRubyRuntimePoolMBean;
-import org.torquebox.core.runtime.DefaultRubyRuntimePoolService;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.core.runtime.SharedRubyRuntimeFactoryPoolService;
 import org.torquebox.core.runtime.SharedRubyRuntimePool;
 
 /**

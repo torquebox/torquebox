@@ -53,12 +53,12 @@ public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader
     @Override
     public void readElement(final XMLExtendedStreamReader reader, final List<ModelNode> list) throws XMLStreamException {
         log.info( "readElement" );
+        requireNoAttributes(reader);
+        requireNoContent(reader);
+        
         final ModelNode address = new ModelNode();
         address.add(SUBSYSTEM, CoreExtension.SUBSYSTEM_NAME);
         address.protect();
-        
-        requireNoAttributes(reader);
-        requireNoContent(reader);
 
         list.add(CoreSubsystemAdd.createOperation(address));
         log.info( "done readElement" );

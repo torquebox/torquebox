@@ -21,6 +21,8 @@ public class CoreExtension implements Extension {
                 CoreSubsystemAdd.ADD_INSTANCE,
                 CoreSubsystemProviders.SUBSYSTEM_ADD,
                 false );
+        
+        registration.registerXMLElementWriter(CoreSubsystemParser.getInstance());
 
         log.info( "Initialized TorqueBox Core Subsystem" );
     }

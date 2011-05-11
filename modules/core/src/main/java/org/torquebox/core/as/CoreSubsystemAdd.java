@@ -34,6 +34,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         subModel.setEmptyObject();
         
         if (!handleBootContext( context, resultHandler )) {
+            log.info( "Signal complete on non-boot task." );
             resultHandler.handleResultComplete();
         }
         log.info( "Added subsystem: " + context );
@@ -74,6 +75,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
                 log.info( "Executing boot task" );
                 addDeploymentProcessors( bootContext );
                 resultHandler.handleResultComplete();
+                log.info( "signally completeness" );
                 log.info( "Executed boot task" );
             }
         };

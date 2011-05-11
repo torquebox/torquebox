@@ -21,6 +21,7 @@ public class WebExtension implements Extension {
                 WebSubsystemAdd.ADD_INSTANCE,
                 WebSubsystemProviders.SUBSYSTEM_ADD,
                 false );
+        registration.registerXMLElementWriter(WebSubsystemParser.getInstance());
     }
 
     @Override
