@@ -1,5 +1,0 @@
-/queues/test:
-  durable: false
-
-/queues/results:
-  durable: false
