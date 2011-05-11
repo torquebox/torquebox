@@ -36,7 +36,7 @@ describe "task concurrency" do
   
   def task_responses
     response = []
-    4.times do
+    20.times do
       response << @backchannel.receive(:timeout => 120_000)
     end
     response
