@@ -158,33 +158,35 @@
       <id>assemblage-present</id>
       <activation>
         <file>
-          <exists>./../../../assemblage/assembly/target/stage/</exists>
+          <exists>../../build/assembly/target/stage/</exists>
         </file>
       </activation>
       <build>
         <pluginManagement>
           <plugins>
             <plugin>
-              <artifactId>maven-dependency-plugin</artifactId>
+              <groupId>de.saumya.mojo</groupId>
+              <artifactId>jruby-maven-plugin</artifactId>
               <executions>
                 <execution>
-                  <id>install-common-jar</id>
+                  <id>install-module</id>
                   <inherited>true</inherited>
                   <phase>install</phase>
                   <goals>
-                    <goal>copy</goal>
+                    <goal>jruby</goal>
                   </goals>
                   <configuration>
-                    <artifactItems>
-                      <artifactItem>
-                        <groupId>${project.groupId}</groupId>
-                        <artifactId>${project.artifactId}</artifactId>
-                        <version>${project.version}</version>
-                        <type>jar</type>
-                        <outputDirectory>${project.basedir}/../../../assemblage/assembly/target/stage/torquebox-${project.version}/jboss/common/${common.dir.name}/</outputDirectory>
-                        <overWrite>true</overWrite>
-                      </artifactItem>
-                    </artifactItems>
+                    <script>
+                      require 'fileutils'
+                      module_name = '${project.artifactId}'
+                      module_name.gsub!(/torquebox-/, '' )
+                      module_dest_dir = %Q(${project.basedir}/../../build/assembly/target/stage/jboss-as/modules/org/torquebox/#{module_name}/main)
+
+                      puts %Q(installing to #{module_dest_dir})
+                      FileUtils.rm_rf    module_dest_dir
+                      FileUtils.mkdir_p  File.dirname( module_dest_dir )
+                      FileUtils.cp_r    '${project.basedir}/target/${project.artifactId}-module', module_dest_dir
+                    </script>
                   </configuration>
                 </execution>
               </executions>

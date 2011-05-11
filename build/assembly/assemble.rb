@@ -6,8 +6,13 @@ require 'rexml/document'
 class Assembler 
   def initialize() 
     @base_dir  = File.expand_path( File.dirname(__FILE__) )
-    @jboss_zip = @base_dir + '/jboss-7.0.x.zip'
-    @build_dir = @base_dir + '/target/assembly'
+
+    @jboss_zip = @base_dir + '/zipfiles/jboss-7.0.x.zip'
+    @jruby_zip = @base_dir + '/zipfiles/jruby-bin-1.6.1.zip'
+
+    @build_dir = @base_dir  + '/target/stage'
+    @jboss_dir = @build_dir + '/jboss-as'
+    @jruby_dir = @build_dir + '/jruby'
   end
 
   def clean()
@@ -21,7 +26,16 @@ class Assembler
   def lay_down_jboss
     Dir.chdir( @build_dir ) do 
       puts `unzip -q #{@jboss_zip}`
-      @jboss_dir = File.expand_path( Dir[ 'jboss-*' ].first )
+      original_dir= File.expand_path( Dir[ 'jboss-*' ].first )
+      FileUtils.mv original_dir, @jboss_dir
+    end
+  end
+
+  def lay_down_jruby
+    Dir.chdir( @build_dir ) do
+      puts `unzip -q #{@jruby_zip}`
+      original_dir= File.expand_path( Dir[ 'jruby-*' ].first )
+      FileUtils.mv original_dir, @jruby_dir
     end
   end
 
@@ -50,6 +64,7 @@ class Assembler
   def assemble() 
     clean()
     prepare()
+    lay_down_jruby()
     lay_down_jboss()
     install_module( :core )
     install_module( :web )
