@@ -5,3 +5,6 @@ jobs:
     description: My Job is simple 
     cron: '*/1 * * * * ?'
 
+queues:
+  /queue/response:
+    durable: false

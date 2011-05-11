@@ -2,3 +2,7 @@
 services:
   SimpleService:
     color: blue
+
+queues:
+  /queue/response:
+    durable: false
