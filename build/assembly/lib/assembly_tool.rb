@@ -1,5 +1,7 @@
 require 'fileutils'
 require 'rexml/document'
+require 'rubygems'
+require 'rubygems/installer'
 
 class AssemblyTool
 
@@ -14,6 +16,17 @@ class AssemblyTool
     @build_dir = @base_dir  + '/target/stage'
     @jboss_dir = @build_dir + '/jboss-as'
     @jruby_dir = @build_dir + '/jruby'
+  end
+
+  def install_gem(gem)
+    if ( File.exist?( gem ) ) 
+      opts = {
+        :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
+        :wrapper     => true
+      }
+      installer = Gem::Installer.new( gem, opts )
+      installer.install
+    end
   end
 
   def self.install_module(name, path)

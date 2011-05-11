@@ -76,12 +76,20 @@ class Assembler
     end
   end
 
+  def install_gems
+    Dir[ @tool.base_dir + '/../../gems/*/target/*.gem' ].each do |gem_package|
+      puts "Install gem: #{gem_package}"
+      @tool.install_gem( gem_package )
+    end
+  end
+
   def assemble() 
-    #clean()
-    prepare()
-    lay_down_jruby()
-    lay_down_jboss()
+    #clean
+    prepare
+    lay_down_jruby
+    lay_down_jboss
     install_modules
+    install_gems
   end
 end
 

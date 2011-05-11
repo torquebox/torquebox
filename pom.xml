@@ -98,6 +98,7 @@
     <module>build-support</module>
     <module>modules</module>
     <module>gems</module>
+    <module>build</module>
 <!--
     <module>components</module>
     <module>clients</module>

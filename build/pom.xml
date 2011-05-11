@@ -14,6 +14,21 @@
   <packaging>pom</packaging>
   <name>TorqueBox Build Aggregator</name>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-modules</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-gems</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+    </dependency>
+  </dependencies>
+
   <modules>
     <module>assembly</module>
   </modules>
