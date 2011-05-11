@@ -32,6 +32,9 @@
 
   <bean name="TasksDeployer" class="org.torquebox.messaging.deployers.TasksDeployer"/> 
   <bean name="TasksYamlParsingDeployer" class="org.torquebox.messaging.deployers.TasksYamlParsingDeployer"/>
+  
+  <bean name="WebSocketsYamlParsingDeployer" class="org.torquebox.messaging.deployers.WebSocketsYamlParsingDeployer" />
+  <bean name="WebSocketsProcessorDeployer" class="org.torquebox.messaging.deployers.WebSocketsProcessorDeployer" />
 
   <bean name="RailsTasksScanningDeployer" class="org.torquebox.messaging.deployers.TasksScanningDeployer">
     <property name="suffixFilter">_task.rb</property>
