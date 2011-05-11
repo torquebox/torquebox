@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-parent</artifactId>
+    <version>1.0.1-SNAPSHOT</version>
+    <relativePath>../../parent/pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.torquebox</groupId>
+  <artifactId>torquebox-build-assembly</artifactId>
+  <packaging>pom</packaging>
+  <name>TorqueBox Build Assembly</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-build</artifactId>
+      <version>${version.jbossas}</version>
+      <type>zip</type>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jruby</groupId>
+      <artifactId>jruby-dist</artifactId>
+      <classifier>bin</classifier>
+      <type>zip</type>
+      <version>${version.jruby}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>perform-assembly</id>
+            <inherited>true</inherited>
+            <phase>package</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <file>bin/assemble.rb</file>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

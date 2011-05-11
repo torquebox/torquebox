@@ -2,6 +2,9 @@ require 'fileutils'
 require 'rexml/document'
 
 class AssemblyTool
+
+  attr_accessor :base_dir
+
   def initialize() 
     @base_dir  = File.expand_path( File.dirname(__FILE__) + '/..' )
 
@@ -18,13 +21,11 @@ class AssemblyTool
   end
  
   def install_module(name, path)
-    puts "installing #{name} from #{path} into #{@jboss_dir}"
+    puts "Installing #{name} from #{path}"
     Dir.chdir( @jboss_dir ) do 
       dest_dir = Dir.pwd + "/modules/org/torquebox/#{name}/main"
-      puts "dest: #{dest_dir}"
       FileUtils.rm_rf dest_dir
       FileUtils.mkdir_p File.dirname( dest_dir )
-      puts "copy from: #{path}"
       FileUtils.cp_r path, dest_dir
     end
     add_extension( name ) 
