@@ -25,12 +25,12 @@ public class TorqueBoxDependenciesProcessor implements DeploymentUnitProcessor {
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
         if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
-            addDepdenency( moduleSpecification, moduleLoader, TORQUEBOX_CORE_ID );
-            addDepdenency( moduleSpecification, moduleLoader, JBOSS_VFS_ID );
+            addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CORE_ID );
+            addDependency( moduleSpecification, moduleLoader, JBOSS_VFS_ID );
         }
     }
 
-    private void addDepdenency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
+    private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
         moduleSpecification.addDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
     }
 
