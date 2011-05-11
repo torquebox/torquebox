@@ -50,6 +50,7 @@ public class RackFilter implements Filter {
     private ServletContext servletContext;
 
     public void init(FilterConfig filterConfig) throws ServletException {
+        System.err.println( "INIT RACK FILTER: " + filterConfig );
         String rackAppPoolName = filterConfig.getInitParameter( RACK_APP_POOL_INIT_PARAM );
         this.rackAppPool = null;
 

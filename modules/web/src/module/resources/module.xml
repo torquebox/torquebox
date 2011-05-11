@@ -28,6 +28,12 @@
         <resource-root path="${project.artifactId}-${project.version}.jar"/>
     </resources>
 
+    <exports>
+      <include-set>
+        <path name="org/torquebox/web/servlet"/>
+      </include-set>
+    </exports>
+
     <dependencies>
         <module name="javax.api"/>
         <module name="javax.servlet.api"/>

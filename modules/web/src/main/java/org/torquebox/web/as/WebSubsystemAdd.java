@@ -60,12 +60,12 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         log.info( "Adding deployment processors" );
         
         context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
+        context.addDeploymentProcessor( Phase.PARSE, 10, new RackWebApplicationDeployer() );
         
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new RackRuntimeProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RackApplicationDefaultsProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 100, new RackWebApplicationDeployer() );
         context.addDeploymentProcessor( Phase.POST_MODULE, 110, new RackApplicationFactoryDeployer() );
         context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationPoolDeployer() );
         

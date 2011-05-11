@@ -32,16 +32,13 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.web.deployment.WarMetaData;
 import org.jboss.metadata.javaee.spec.EmptyMetaData;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
+import org.jboss.metadata.web.jboss.JBossServletMetaData;
+import org.jboss.metadata.web.jboss.JBossServletsMetaData;
 import org.jboss.metadata.web.jboss.JBossWebMetaData;
-import org.jboss.metadata.web.jboss.ReplicationConfig;
-import org.jboss.metadata.web.jboss.ReplicationGranularity;
-import org.jboss.metadata.web.jboss.ReplicationTrigger;
 import org.jboss.metadata.web.spec.FilterMappingMetaData;
 import org.jboss.metadata.web.spec.FilterMetaData;
 import org.jboss.metadata.web.spec.FiltersMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
-import org.jboss.metadata.web.spec.ServletMetaData;
-import org.jboss.metadata.web.spec.ServletsMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 import org.torquebox.web.servlet.RackFilter;
@@ -76,178 +73,165 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
-        
-        if ( rackAppMetaData == null ) {
+
+        if (rackAppMetaData == null) {
             return;
         }
-        
+
         WarMetaData warMetaData = unit.getAttachment( WarMetaData.ATTACHMENT_KEY );
-        
-        if ( warMetaData == null ) {
+
+        if (warMetaData == null) {
             warMetaData = new WarMetaData();
         }
-        
+
         WebMetaData webMetaData = warMetaData.getWebMetaData();
 
         if (webMetaData == null) {
             webMetaData = new WebMetaData();
-            webMetaData.setDistributable(new EmptyMetaData());
+            webMetaData.setDistributable( new EmptyMetaData() );
             warMetaData.setWebMetaData( webMetaData );
         }
-        
+
         Map<String, WebFragmentMetaData> webFragmentsMetaData = warMetaData.getWebFragmentsMetaData();
-        
-        if ( webFragmentsMetaData == null ) {
+
+        if (webFragmentsMetaData == null) {
             webFragmentsMetaData = new HashMap<String, WebFragmentMetaData>();
             warMetaData.setWebFragmentsMetaData( webFragmentsMetaData );
         }
 
-        setUpRackFilter(rackAppMetaData, webMetaData);
-        setUpStaticResourceServlet(rackAppMetaData, webMetaData);
-        ensureSomeServlet(rackAppMetaData, webMetaData);
+        JBossWebMetaData jbossWebMetaData = warMetaData.getJbossWebMetaData();
+        
+        if ( jbossWebMetaData == null ) {
+            jbossWebMetaData = new JBossWebMetaData();
+            warMetaData.setJbossWebMetaData( jbossWebMetaData );
+        }
+
+        setUpRackFilter( rackAppMetaData, jbossWebMetaData );
+        setUpStaticResourceServlet( rackAppMetaData, jbossWebMetaData );
+        ensureSomeServlet( rackAppMetaData, jbossWebMetaData );
         try {
-            JBossWebMetaData jbossWebMetaData = setUpHostAndContext(unit, rackAppMetaData, warMetaData, webMetaData);
-            setUpPoolDependency(rackAppMetaData, jbossWebMetaData);
+            setUpHostAndContext( unit, rackAppMetaData, warMetaData, jbossWebMetaData );
+            setUpPoolDependency( rackAppMetaData, jbossWebMetaData );
         } catch (Exception e) {
             throw new DeploymentUnitProcessingException( e );
         }
 
-        
         /*
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
-        try {
-            URL docBaseUrl = rubyAppMetaData.getRoot().toURL();
-            unit.addAttachment(EXPANDED_WAR_URL_ATTACHMENT_NAME, docBaseUrl, URL.class);
-        } catch (MalformedURLException e) {
-            throw new DeploymentException(e);
-        }
-        */
+         * RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(
+         * RubyApplicationMetaData.ATTACHMENT_KEY ); try { URL docBaseUrl =
+         * rubyAppMetaData.getRoot().toURL();
+         * unit.addAttachment(EXPANDED_WAR_URL_ATTACHMENT_NAME, docBaseUrl,
+         * URL.class); } catch (MalformedURLException e) { throw new
+         * DeploymentException(e); }
+         */
     }
 
-    protected void setUpRackFilter(RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) {
+    protected void setUpRackFilter(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
         FilterMetaData rackFilter = new FilterMetaData();
-        rackFilter.setId(RACK_FILTER_NAME);
-        rackFilter.setFilterClass(RackFilter.class.getName());
-        rackFilter.setFilterName(RACK_FILTER_NAME);
+        rackFilter.setId( RACK_FILTER_NAME );
+        rackFilter.setFilterClass( RackFilter.class.getName() );
+        rackFilter.setFilterName( RACK_FILTER_NAME );
 
         List<ParamValueMetaData> initParams = new ArrayList<ParamValueMetaData>();
         ParamValueMetaData rackAppFactory = new ParamValueMetaData();
-        rackAppFactory.setParamName(RackFilter.RACK_APP_POOL_INIT_PARAM);
-        rackAppFactory.setParamValue(rackAppMetaData.getRackApplicationPoolName());
-        initParams.add(rackAppFactory);
+        rackAppFactory.setParamName( RackFilter.RACK_APP_POOL_INIT_PARAM );
+        rackAppFactory.setParamValue( rackAppMetaData.getRackApplicationPoolName() );
+        initParams.add( rackAppFactory );
 
-        rackFilter.setInitParam(initParams);
+        rackFilter.setInitParam( initParams );
 
-        FiltersMetaData filters = webMetaData.getFilters();
+        FiltersMetaData filters = jbossWebMetaData.getFilters();
 
         if (filters == null) {
             filters = new FiltersMetaData();
-            webMetaData.setFilters(filters);
+            jbossWebMetaData.setFilters( filters );
         }
 
-        filters.add(rackFilter);
+        filters.add( rackFilter );
 
         FilterMappingMetaData filterMapping = new FilterMappingMetaData();
-        filterMapping.setFilterName(RACK_FILTER_NAME);
-        filterMapping.setUrlPatterns(Collections.singletonList("*"));
+        filterMapping.setFilterName( RACK_FILTER_NAME );
+        filterMapping.setUrlPatterns( Collections.singletonList( "*" ) );
 
-        List<FilterMappingMetaData> filterMappings = webMetaData.getFilterMappings();
+        List<FilterMappingMetaData> filterMappings = jbossWebMetaData.getFilterMappings();
 
         if (filterMappings == null) {
             filterMappings = new ArrayList<FilterMappingMetaData>();
-            webMetaData.setFilterMappings(filterMappings);
+            jbossWebMetaData.setFilterMappings( filterMappings );
         }
 
-        filterMappings.add(filterMapping);
+        filterMappings.add( filterMapping );
 
     }
 
-    protected void setUpStaticResourceServlet(RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) {
-        ServletsMetaData servlets = webMetaData.getServlets();
+    protected void setUpStaticResourceServlet(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+        JBossServletsMetaData servlets = jbossWebMetaData.getServlets();
         if (servlets == null) {
-            servlets = new ServletsMetaData();
-            webMetaData.setServlets(servlets);
+            servlets = new JBossServletsMetaData();
+            jbossWebMetaData.setServlets( servlets );
         }
 
-        List<ServletMappingMetaData> servletMappings = webMetaData.getServletMappings();
+        List<ServletMappingMetaData> servletMappings = jbossWebMetaData.getServletMappings();
         if (servletMappings == null) {
             servletMappings = new ArrayList<ServletMappingMetaData>();
-            webMetaData.setServletMappings(servletMappings);
+            jbossWebMetaData.setServletMappings( servletMappings );
         }
 
         if (rackAppMetaData.getStaticPathPrefix() != null) {
-            ServletMetaData staticServlet = new ServletMetaData();
-            staticServlet.setServletClass(STATIC_RESOURCE_SERVLET_CLASS_NAME);
-            staticServlet.setServletName(STATIC_RESROUCE_SERVLET_NAME);
-            staticServlet.setId(STATIC_RESROUCE_SERVLET_NAME);
+            JBossServletMetaData staticServlet = new JBossServletMetaData();
+            staticServlet.setServletClass( STATIC_RESOURCE_SERVLET_CLASS_NAME );
+            staticServlet.setServletName( STATIC_RESROUCE_SERVLET_NAME );
+            staticServlet.setId( STATIC_RESROUCE_SERVLET_NAME );
 
             ParamValueMetaData resourceRootParam = new ParamValueMetaData();
-            resourceRootParam.setParamName("resource.root");
-            resourceRootParam.setParamValue(rackAppMetaData.getStaticPathPrefix());
-            staticServlet.setInitParam(Collections.singletonList(resourceRootParam));
-            servlets.add(staticServlet);
+            resourceRootParam.setParamName( "resource.root" );
+            resourceRootParam.setParamValue( rackAppMetaData.getStaticPathPrefix() );
+            staticServlet.setInitParam( Collections.singletonList( resourceRootParam ) );
+            servlets.add( staticServlet );
 
             ServletMappingMetaData staticMapping = new ServletMappingMetaData();
-            staticMapping.setServletName(STATIC_RESROUCE_SERVLET_NAME);
-            staticMapping.setUrlPatterns(Collections.singletonList("/*"));
+            staticMapping.setServletName( STATIC_RESROUCE_SERVLET_NAME );
+            staticMapping.setUrlPatterns( Collections.singletonList( "/*" ) );
 
-            servletMappings.add(staticMapping);
+            servletMappings.add( staticMapping );
         }
     }
 
-    protected void ensureSomeServlet(RackApplicationMetaData rackAppMetaData, WebMetaData webMetaData) {
-        ServletsMetaData servlets = webMetaData.getServlets();
+    protected void ensureSomeServlet(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+        JBossServletsMetaData servlets = jbossWebMetaData.getServlets();
 
         if (servlets.isEmpty()) {
-            ServletMetaData fiveHundredServlet = new ServletMetaData();
-            fiveHundredServlet.setServletClass(FIVE_HUNDRED_SERVLET_CLASS_NAME);
-            fiveHundredServlet.setServletName(FIVE_HUNDRED_SERVLET_NAME);
-            fiveHundredServlet.setId(FIVE_HUNDRED_SERVLET_NAME);
-            servlets.add(fiveHundredServlet);
+            JBossServletMetaData fiveHundredServlet = new JBossServletMetaData();
+            fiveHundredServlet.setServletClass( FIVE_HUNDRED_SERVLET_CLASS_NAME );
+            fiveHundredServlet.setServletName( FIVE_HUNDRED_SERVLET_NAME );
+            fiveHundredServlet.setId( FIVE_HUNDRED_SERVLET_NAME );
+            servlets.add( fiveHundredServlet );
 
             ServletMappingMetaData fiveHundredMapping = new ServletMappingMetaData();
-            fiveHundredMapping.setServletName(FIVE_HUNDRED_SERVLET_NAME);
-            fiveHundredMapping.setUrlPatterns(Collections.singletonList("/*"));
+            fiveHundredMapping.setServletName( FIVE_HUNDRED_SERVLET_NAME );
+            fiveHundredMapping.setUrlPatterns( Collections.singletonList( "/*" ) );
 
-            List<ServletMappingMetaData> servletMappings = webMetaData.getServletMappings();
-            servletMappings.add(fiveHundredMapping);
+            List<ServletMappingMetaData> servletMappings = jbossWebMetaData.getServletMappings();
+            servletMappings.add( fiveHundredMapping );
         }
     }
 
-    protected JBossWebMetaData setUpHostAndContext(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WarMetaData warMetaData, WebMetaData webMetaData) throws Exception {
-
-        JBossWebMetaData jbossWebMetaData = warMetaData.getJbossWebMetaData();
-
-        if (jbossWebMetaData == null) {
-            jbossWebMetaData = new JBossWebMetaData();
-            warMetaData.setJbossWebMetaData( jbossWebMetaData );
-            if (webMetaData.getDistributable() != null) {
-                jbossWebMetaData.setDistributable(webMetaData.getDistributable());
-                ReplicationConfig repCfg = new ReplicationConfig();
-                repCfg.setReplicationGranularity(ReplicationGranularity.SESSION);
-                repCfg.setReplicationTrigger(ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET);
-                jbossWebMetaData.setReplicationConfig(repCfg);
-            }
-        }
-
-        jbossWebMetaData.setContextRoot(rackAppMetaData.getContextPath());
+    protected void setUpHostAndContext(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WarMetaData warMetaData, JBossWebMetaData jbossWebMetaData)
+            throws Exception {
 
         /*
-        if (!rackAppMetaData.getHosts().isEmpty()) {
-            jbossWebMetaData.setVirtualHosts(rackAppMetaData.getHosts());
-            List<String> depends = jbossWebMetaData.getDepends();
-            if (depends == null) {
-                depends = new ArrayList<String>();
-                jbossWebMetaData.setDepends(depends);
-            }
-            depends.add(AttachmentUtils.beanName(unit, WebHost.class));
+        if (jbossWebMetaData.getDistributable() != null) {
+            jbossWebMetaData.setDistributable( jbossWebMetaData.getDistributable() );
+            ReplicationConfig repCfg = new ReplicationConfig();
+            repCfg.setReplicationGranularity( ReplicationGranularity.SESSION );
+            repCfg.setReplicationTrigger( ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET );
+            jbossWebMetaData.setReplicationConfig( repCfg );
         }
         */
 
-        return jbossWebMetaData;
-
+        jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
     }
 
     protected void setUpPoolDependency(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
@@ -255,17 +239,16 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
         if (depends == null) {
             depends = new ArrayList<String>();
-            jbossWebMetaData.setDepends(depends);
+            jbossWebMetaData.setDepends( depends );
         }
-        
-        depends.add(rackAppMetaData.getRackApplicationPoolName());
-    }
 
+        depends.add( rackAppMetaData.getRackApplicationPoolName() );
+    }
 
     @Override
     public void undeploy(DeploymentUnit context) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

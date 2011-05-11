@@ -27,6 +27,8 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.web.as.WebServices;
 
 /**
@@ -62,7 +64,7 @@ public class RackApplicationPoolDeployer implements DeploymentUnitProcessor {
         
         ServiceName name = WebServices.rackApplicationPoolName( deploymentName );
         ServiceBuilder<RackApplicationPool> builder = phaseContext.getServiceTarget().addService( name, service );
-        //builder.addDependency( WebServices.rackApplicationFactoryName( deploymentName ), service.getRackApplicationFactory() );
+        builder.addDependency( CoreServices.runtimePoolName( deploymentName, "web" ), RubyRuntimePool.class, service.getRubyRuntimePoolInjector() );
         builder.addDependency( WebServices.rackApplicationFactoryName( deploymentName ), RackApplicationFactory.class, service.getRackApplicationFactoryInjector() );
         builder.setInitialMode( Mode.ON_DEMAND );
         builder.install();
