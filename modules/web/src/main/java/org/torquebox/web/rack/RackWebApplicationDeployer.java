@@ -19,13 +19,12 @@
 
 package org.torquebox.web.rack;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.jboss.as.server.deployment.DeploymentException;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -43,8 +42,8 @@ import org.jboss.metadata.web.spec.FiltersMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMetaData;
 import org.jboss.metadata.web.spec.ServletsMetaData;
+import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
-import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.web.servlet.RackFilter;
 
 /**
@@ -96,6 +95,13 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
             webMetaData = new WebMetaData();
             webMetaData.setDistributable(new EmptyMetaData());
             warMetaData.setWebMetaData( webMetaData );
+        }
+        
+        Map<String, WebFragmentMetaData> webFragmentsMetaData = warMetaData.getWebFragmentsMetaData();
+        
+        if ( webFragmentsMetaData == null ) {
+            webFragmentsMetaData = new HashMap<String, WebFragmentMetaData>();
+            warMetaData.setWebFragmentsMetaData( webFragmentsMetaData );
         }
 
         setUpRackFilter(rackAppMetaData, webMetaData);
