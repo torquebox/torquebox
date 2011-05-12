@@ -48,7 +48,7 @@ public class ServicesExtension implements Extension {
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        
+        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), ServicesSubsystemParser.getInstance());
     }
     
     public static final String SUBSYSTEM_NAME = "torquebox-services";
