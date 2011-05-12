@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>rubygems</groupId>
-  <artifactId>torquebox-base</artifactId>
+  <artifactId>torquebox-core</artifactId>
   <packaging>java-gem</packaging>
-  <name>TorqueBox Base Gem</name>
+  <name>TorqueBox Core Gem</name>
   <description />
 
   <dependencies>

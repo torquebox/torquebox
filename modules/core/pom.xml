@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>torquebox-base</artifactId>
+      <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
       <scope>provided</scope>

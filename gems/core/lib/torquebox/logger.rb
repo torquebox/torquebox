@@ -4,6 +4,7 @@ module TorqueBox
 
     def initialize name = nil
       category = name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox"
+      puts "Category #{category}"
       @logger = org.jboss.logging::Logger.getLogger( category.to_s.gsub('::','.') )
     end
 

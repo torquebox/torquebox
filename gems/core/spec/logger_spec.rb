@@ -12,6 +12,7 @@ describe TorqueBox::Logger do
 
   it "should support the various boolean methods" do
     logger = TorqueBox::Logger.new
+   
     logger.trace?.should be_false
     logger.debug?.should be_false
     logger.info?.should be_false

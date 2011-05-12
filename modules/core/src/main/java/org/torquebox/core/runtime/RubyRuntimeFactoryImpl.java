@@ -428,7 +428,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     private void prepareRuntime(Ruby runtime) {
         runtime.getLoadService().require( "rubygems" );
         runtime.evalScriptlet( "require %q(torquebox-vfs)" );
-        runtime.evalScriptlet( "require %q(torquebox-base)" );
+        runtime.evalScriptlet( "require %q(torquebox-core)" );
         injectKernel( runtime );
     }
 
