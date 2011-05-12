@@ -4,7 +4,279 @@
 <chapter id="web">
   <title>Web Applications</title>
 
-  <para>TorqueBox supports any and all Rack-based web application frameworks.</para>
+  <para>
+    TorqueBox supports any and all Rack-based web application
+    frameworks, including Ruby On Rails and Sinatra, among others.
+    TorqueBox aims to be unobtrusive, requiring no unusual packaging
+    of your app (e.g. no war files), and unless it depends on obscure
+    native gems, no modifications whatsoever.
+  </para>
+
+  <para>
+    So why deploy your Ruby web app on TorqueBox?  Because you get
+    cool enterprisey features that every non-trivial app will need
+    eventually if it's successful at all.  Let's go over a few.
+  </para>
+
+  <section>
+    <title>Performance</title>
+    <para>
+      TorqueBox runs on JRuby, one of the fastest Ruby interpreters
+      available.  Because JRuby runs on the Java Virtual Machine, your
+      app runs on real OS threads, so if your app supports
+      multi-threaded invocations, you will make the most of your
+      hardware resources.
+    </para>
+
+    <para>
+      Of course, running on the JVM has a drawback: "native" gems that
+      rely upon machine-specific compiled code do not function with
+      JRuby and TorqueBox. You must replace these gems with pure-Ruby
+      or pure-Java implementations. Some native gems using FFI are
+      usable within TorqueBox.  Fortunately, gems that won't run on
+      JRuby are becoming more and more rare.
+    </para>
+  </section>
+
+  <section>
+    <title>Deployment</title>
+    <para>
+      Most successful web apps evolve to the point that passively
+      responding to HTTP requests is not enough.  Before you know it,
+      you may need background processes, scheduled jobs, messaging,
+      and active daemons all in support of your web app.
+    </para>
+    <para>
+      With TorqueBox these things are an integral part of your app and
+      as such, they share its life cycle. When your application is
+      deployed under TorqueBox, so are your scheduled jobs, background
+      tasks, services, etc. It's simply a matter of editing a single
+      <filename>torquebox.yml</filename> configuration file within
+      your app.  This will make your operations staff very happy!
+    </para>
+    <para>
+      For more details, please see <xref linkend="deployment" />.
+    </para>
+  </section>
+
+  <section>
+    <title>Clustering</title>
+    <para>
+      Clustering TorqueBox nodes is trivially easy:
+
+      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all</command> </screen>
+
+      And when those nodes are behind the <ulink
+      url="http://www.jboss.org/mod_cluster">JBoss mod_cluster Apache
+      module</ulink>, you get automatic, dynamic configuration of
+      workers, server-side load factor calculation, and fine-grained
+      application lifecycle control.
+    </para>
+    <para>
+      But even without mod_cluster, TorqueBox clustering provides
+      automatic web session replication and distributed caching, not
+      to mention automatic load-balancing of message delivery,
+      enabling smart distribution of any background processes spawned
+      by your web app.
+    </para>
+  </section>
+
+  <section>
+    <title>Sessions</title>
+
+    <para>By using the TorqueBox application-server-based session
+    store, your application gets the benefits of clusterable sessions
+    without having to setup and maintain a database.  When clustered,
+    session state is automatically replicated throughout an <ulink
+    url="http://infinispan.org">Infinispan</ulink> data grid.</para>
+
+    <para>Additionally, by using the TorqueBox session store, your application
+    can communicate between both the Java and Ruby sides through the HTTP
+    session. Where possible, elemental scalar attributes of the Ruby session
+    are synchronized to similar attributes in the Java session, and
+    vice-versa.</para>
+
+    <para>For complex objects, they are retained in a Ruby hash, and
+    serialized as a blob into a single attribute of the Java session.</para>
+
+    <para>When copying between the Ruby and Java sessions, attributes will be
+    retained under symbol keys in the ruby session, and string keys in the
+    Java session.</para>
+
+    <para>The supported scalar types are <type>numerics</type>,
+    <type>strings</type>, <type>booleans</type> and <type>nil</type>.</para>
+  </section>
+
+  <section id="caching">
+    <title>Caching</title>
+
+    <para>
+      TorqueBox provides an implementation of the <ulink
+      url="http://guides.rubyonrails.org/caching_with_rails.html">Rails
+      3.x <code>ActiveSupport::Cache::Store</code></ulink> that
+      exposes your application to the sexy <ulink
+      url="http://infinispan.org">Infinispan</ulink> data grid.
+    </para>
+
+    <para>
+      Backed by Infinispan,
+      <code>ActiveSupport::Cache::TorqueBoxStore</code> supports all
+      the options of the existing Rails implementations, including the
+      advanced features of <code>MemCacheStore</code>, along with a
+      few more to control how data replication occurs amongst the
+      nodes in a cluster.
+    </para>
+
+    <para>
+      Although it does depend on the <code>ActiveSupport</code> Rails
+      3 gem, it may be used in any Rack-based application or any
+      TorqueBox service, task or job that requires sophisticated
+      caching.
+    </para>
+
+    <section id="caching-clustering-modes">
+      <title>Clustering Modes</title>
+
+      <para>Infinispan offers a number of clustering modes that determine what
+      happens when an entry is written to the cache.</para>
+
+      <formalpara>
+        <title>Local</title>
+
+        <para>This is the default mode when TorqueBox runs non-clustered,
+        roughly equivalent to the Rails <code>MemoryStore</code>
+        implementation, though it has some advantages over a simple memory
+        store, e.g. write-through/write-behind persistence, JTA/XA support,
+        MVCC-based concurency, and JMX manageability.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Invalidation</title>
+
+        <para>This is the default mode when TorqueBox runs clustered, i.e.
+        <code>JBOSS_CONF=all</code>. No data is actually shared among the
+        nodes in this mode. Instead, notifications are sent to all nodes when
+        data changes, causing them to evict their stale copies of the updated
+        entry. This mode works very well for Rails' fragment and action
+        caching.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Replicated</title>
+
+        <para>In this mode, entries added to any cache instance will be copied
+        to all other cache instances in the cluster, and can then be retrieved
+        locally from any instance. This mode is probably impractical for
+        clusters of any significant size. Infinispan recommends 10 as a
+        reasonable upper bound on the number of replicated nodes.</para>
+      </formalpara>
+
+      <formalpara>
+        <title>Distributed</title>
+
+        <para>This mode enables Infinispan clusters to achieve "linear
+        scalability". Cache entries are copied to a fixed number of cluster
+        nodes (2, by default) regardless of the cluster size. Distribution
+        uses a consistent hashing algorithm to determine which nodes will
+        store a given entry.</para>
+      </formalpara>
+    </section>
+
+    <section id="caching-options">
+      <title><code>ActiveSupport::Cache::TorqueBoxStore</code> options</title>
+
+      <para>The TorqueBox cache store supports the following options:</para>
+
+      <table>
+        <title>Cache store options</title>
+
+        <tgroup cols="3">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Option</entry>
+
+              <entry>Default</entry>
+
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>:mode</parameter></entry>
+
+              <entry><parameter>:invalidation</parameter></entry>
+
+              <entry>Any of the following will result in
+              <emphasis>replicated</emphasis> mode: <itemizedlist>
+              <listitem>
+                <para><parameter>:r</parameter></para>
+              </listitem>
+
+              <listitem>
+                <para><parameter>:repl</parameter></para>
+              </listitem>
+
+              <listitem>
+                <para><parameter>:replicated</parameter></para>
+              </listitem>
+
+              <listitem>
+                <para><parameter>:replication</parameter></para>
+              </listitem>
+              </itemizedlist> Any of the following will result in
+              <emphasis>distributed</emphasis> mode: <itemizedlist>
+              <listitem>
+                <para><parameter>:d</parameter></para>
+              </listitem>
+
+              <listitem>
+                <para><parameter>:dist</parameter></para>
+              </listitem>
+
+              <listitem>
+                <para><parameter>:distributed</parameter></para>
+              </listitem>
+
+              <listitem>
+                <para><parameter>:distribution</parameter></para>
+              </listitem>
+              </itemizedlist> Any other value for
+              <parameter>:mode</parameter> will result in
+              <emphasis>invalidation</emphasis> when clustered and
+              <emphasis>local</emphasis> otherwise.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:sync</parameter></entry>
+
+              <entry>false</entry>
+
+              <entry>The coordination between nodes in a cluster can happen
+              either synchronously (slower writes) or asynchronously (faster
+              writes).</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:name</parameter></entry>
+
+              <entry>{the application's name}</entry>
+
+              <entry>The <parameter>:name</parameter> option enables you to
+              create multiple cache stores in your app, each with different
+              options. It's also a way you can configure multiple apps to
+              share the same cache store.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+  </section>
+
+  <section>
+    <title>Ruby Web Frameworks</title>
 
   <section id="rack">
     <title>Rack</title>
@@ -29,22 +301,11 @@
           { 'Content-Type' =&gt; 'text/html' }, 
           'Hello World'
         ] }
-      run app</programlisting></para>
-
-      <para>To deploy your application, please see <xref linkend="deployment" />
-      and <xref linkend="deployment-descriptors" />.</para>
+run app</programlisting></para>
 
       <para>The directory containing the <filename>config.ru</filename> is
       considered the current working directory, and is included in the load
       path.</para>
-    </section>
-
-    <section id="rack-frameworks">
-      <title>Rack Frameworks</title>
-
-      <para>Many Rack-compatible frameworks and components work right out of the
-      box. Various Rack "middleware" may be used, and frameworks such as Sinatra
-      run without surprise or modification.</para>
     </section>
 
     <section id="rack-api">
@@ -226,8 +487,6 @@
       not need to be restarted to see changes in models, views or controllers
       reflected.</para>
 
-      <para>To deploy your application, please see <xref linkend="deployment" />
-      and <xref linkend="deployment-descriptors" />.</para>
     </section>
 
     <section id="rails-2-vs-3">
@@ -367,7 +626,7 @@ gem 'jdbc-sqlite3'</programlisting></para>
           contents vary depending on the version of Rails your application
           uses.</para>
 
-          <para>In both cases, your application should rely upon the
+          <para>In both cases, your application should require the
           <package>torquebox</package> RubyGem, which provides the
           implementation.</para>
 
@@ -377,276 +636,181 @@ gem 'jdbc-sqlite3'</programlisting></para>
           <formalpara>
             <title>Rails 2.x</title>
 
-            <para>To use the application-server's session storage mechanism,
-            your application's config/initializers/session_store.rb should
-            contain only the following:</para>
+            <para>
+              In <filename>config/initializers/session_store.rb</filename>
+            </para>
           </formalpara>
 
-          <screen>ActionController::Base.session_store = TorqueBox::Session::ServletStore</screen>
+          <screen>ActionController::Base.session_store = :torquebox_store</screen>
 
           <formalpara>
             <title>Rails 3.x</title>
 
-            <para>To use the application-server's session storage mechanism,
-            your application's
-            <filename>config/initializers/session_store.rb</filename> should
-            contain a variation of the following, adjusted for your
-            application's name:</para>
+            <para>
+              In
+              <filename>config/initializers/session_store.rb</filename>
+              (adjust for your application's name)
+            </para>
           </formalpara>
 
-          <screen><replaceable>MyApp</replaceable>::Application.config.session_store TorqueBox::Session::ServletStore</screen>
+          <screen><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store</screen>
         </section>
       </section>
 
-      <section id="replace-native-gems">
-        <title>Eliminate or replace "native" Gems</title>
-
-        <para>"Native" gems that rely upon machine-specific compiled code do not
-        function with JRuby and TorqueBox. You must replaced these gems with
-        pure-Ruby or pure-Java implementations. Some native gems using FFI are
-        usable within TorqueBox.</para>
-      </section>
     </section>
 
-    <section id="using-as-sessions">
-      <title>Using Application-Server Sessions</title>
+    <section id="rails-cache-configuration">
+      <title>Caching Configuration</title>
 
-      <para>By using the TorqueBox application-server-based session store, your
-      application gets the benefits of clusterable sessions without having to
-      setup and maintain a database.</para>
+      <para>You configure the TorqueBox cache store the same way you would any
+      other Rails cache store, but we recommend setting it in
+      <filename>config/application.rb</filename> because it will adapt to
+      whichever environment it finds itself. Regardless of its configuration,
+      it will <emphasis>always</emphasis> fallback to local mode when run in a
+      non-clustered, even non-TorqueBox, environment.</para>
 
-      <para>Additionally, by using the TorqueBox session store, your application
-      can communicate between both the Java and Ruby sides through the HTTP
-      session. Where possible, elemental scalar attributes of the Ruby session
-      are synchronized to similar attributes in the Java session, and
-      vice-versa.</para>
+      <para>In whatever context you use the cache store, you must include the
+      <package>torquebox</package> RubyGem, which provides the
+      implementation.</para>
 
-      <para>For complex objects, they are retained in a Ruby hash, and
-      serialized as a blob into a single attribute of the Java session.</para>
-
-      <para>When copying between the Ruby and Java sessions, attributes will be
-      retained under symbol keys in the ruby session, and string keys in the
-      Java session.</para>
-
-      <para>The supported scalar types are <type>numerics</type>,
-      <type>strings</type>, <type>booleans</type> and <type>nil</type>.</para>
-    </section>
-
-    <section id="caching">
-      <title>Caching with <code>TorqueBoxStore</code></title>
-
-      <para>TorqueBox provides an implementation of the <ulink
-      url="http://guides.rubyonrails.org/caching_with_rails.html">Rails 3.x
-      <code>ActiveSupport::Cache::Store</code></ulink> that exposes your
-      application to the sexy <ulink
-      url="http://torquebox.org">Infinispan</ulink> data grid.</para>
-
-      <para>Backed by Infinispan,
-      <code>ActiveSupport::Cache::TorqueBoxStore</code> supports all the options
-      of the existing Rails implementations, including the advanced features of
-      <code>MemCacheStore</code>, along with a couple more to control how data
-      replication occurs amongst the nodes in a cluster.</para>
-
-      <para>Although it does depend on the <code>ActiveSupport</code> Rails 3
-      gem, it may be used in any Rack-based application or any TorqueBox
-      service, task or job that requires sophisticated caching.</para>
-
-      <section id="caching-clustering-modes">
-        <title>Clustering Modes</title>
-
-        <para>Infinispan offers a number of clustering modes that determine what
-        happens when an entry is written to the cache.</para>
-
-        <formalpara>
-          <title>Local</title>
-
-          <para>This is the default mode when TorqueBox runs non-clustered,
-          roughly equivalent to the Rails <code>MemoryStore</code>
-          implementation, though it has some advantages over a simple memory
-          store, e.g. write-through/write-behind persistence, JTA/XA support,
-          MVCC-based concurency, and JMX manageability.</para>
-        </formalpara>
-
-        <formalpara>
-          <title>Invalidation</title>
-
-          <para>This is the default mode when TorqueBox runs clustered, i.e.
-          <code>JBOSS_CONF=all</code>. No data is actually shared among the
-          nodes in this mode. Instead, notifications are sent to all nodes when
-          data changes, causing them to evict their stale copies of the updated
-          entry. This mode works very well for Rails' fragment and action
-          caching.</para>
-        </formalpara>
-
-        <formalpara>
-          <title>Replicated</title>
-
-          <para>In this mode, entries added to any cache instance will be copied
-          to all other cache instances in the cluster, and can then be retrieved
-          locally from any instance. This mode is probably impractical for
-          clusters of any significant size. Infinispan recommends 10 as a
-          reasonable upper bound on the number of replicated nodes.</para>
-        </formalpara>
-
-        <formalpara>
-          <title>Distributed</title>
-
-          <para>This mode enables Infinispan clusters to achieve "linear
-          scalability". Cache entries are copied to a fixed number of cluster
-          nodes (2, by default) regardless of the cluster size. Distribution
-          uses a consistent hashing algorithm to determine which nodes will
-          store a given entry.</para>
-        </formalpara>
-      </section>
-
-      <section id="cache-store-configuration">
-        <title>Configuration</title>
-
-        <para>You configure the TorqueBox cache store the same way you would any
-        other Rails cache store, but we recommend setting it in
-        <filename>config/application.rb</filename> because it will adapt to
-        whichever environment it finds itself. Regardless of its configuration,
-        it will <emphasis>always</emphasis> fallback to local mode when run in a
-        non-clustered, even non-TorqueBox, environment.</para>
-
-        <para>In whatever context you use the cache store, you must include the
-        <package>torquebox</package> RubyGem, which provides the
-        implementation.</para>
-
-        <para><programlisting language="ruby">module YourApp
+      <para><programlisting language="ruby">module YourApp
   class Application &lt; Rails::Application
 <emphasis>
     config.cache_store = :torque_box_store
 </emphasis>
   end
 end
-        </programlisting></para>
+      </programlisting></para>
 
-        <para>Using this symbolized form causes Rails to load the
-        appropriate Ruby file for you.  Alternatively, you may load the
-        file yourself and then refer to the fully-qualified class name.
-        This is required when using the
-        <classname>TorqueBoxStore</classname> outside of Rails, e.g. in
-        a Sinatra app.</para>
+      <para>
+        Using this symbolized form causes Rails to load the
+        appropriate Ruby file for you.  Alternatively, you may load
+        the file yourself and then refer to the fully-qualified class
+        name,
+        <filename>ActiveSupport::Cache::TorqueBoxStore</filename>.
+      </para>
 
-        <para><programlisting language="ruby">require 'active_support/cache/torque_box_store'
-class SinatraCache &lt; Sinatra::Base
-  set :cache, ActiveSupport::Cache::TorqueBoxStore.new
-end
-        </programlisting></para>
+      <para>By default, the <code>TorqueBoxStore</code> will be in
+      <emphasis>asynchronous invalidation</emphasis> mode when clustered
+      (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode when
+      not. But you can certainly override the defaults:</para>
 
-        <para>By default, the <code>TorqueBoxStore</code> will be in
-        <emphasis>asynchronous invalidation</emphasis> mode when clustered
-        (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode when
-        not. But you can certainly override the defaults:</para>
+      <para><programlisting language="ruby">
+        config.cache_store = :torque_box_store, {:mode =&gt; :distributed, :sync =&gt; true}
+      </programlisting></para>
 
-        <para><programlisting language="ruby">
-          config.cache_store = :torque_box_store, {:mode =&gt; :distributed, :sync =&gt; true}
-        </programlisting></para>
+      <para>You can even create multiple cache stores in your app, each
+      potentially in a different clustering mode. You should use the
+      <code>:name</code> option to identify any additional caches you create,
+      e.g.</para>
 
-        <para>You can even create multiple cache stores in your app, each
-        potentially in a different clustering mode. You should use the
-        <code>:name</code> option to identify any additional caches you create,
-        e.g.</para>
-
-        <para><programlisting language="ruby">
+      <para><programlisting language="ruby">
     COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
                                                         :mode =&gt; :replicated, 
                                                         :sync =&gt; true)
-        </programlisting></para>
-      </section>
-
-      <section id="caching-options">
-        <title><code>TorqueBoxStore</code> options</title>
-
-        <para>The TorqueBox cache store supports the following options:</para>
-
-        <table>
-          <title>Cache store options</title>
-
-          <tgroup cols="3">
-            <colspec align="left" />
-
-            <thead>
-              <row>
-                <entry>Option</entry>
-
-                <entry>Default</entry>
-
-                <entry>Description</entry>
-              </row>
-            </thead>
-
-            <tbody>
-              <row>
-                <entry><parameter>:mode</parameter></entry>
-
-                <entry><parameter>:invalidation</parameter></entry>
-
-                <entry>Any of the following will result in
-                <emphasis>replicated</emphasis> mode: <itemizedlist>
-                <listitem>
-                  <para><parameter>:r</parameter></para>
-                </listitem>
-
-                <listitem>
-                  <para><parameter>:repl</parameter></para>
-                </listitem>
-
-                <listitem>
-                  <para><parameter>:replicated</parameter></para>
-                </listitem>
-
-                <listitem>
-                  <para><parameter>:replication</parameter></para>
-                </listitem>
-                </itemizedlist> Any of the following will result in
-                <emphasis>distributed</emphasis> mode: <itemizedlist>
-                <listitem>
-                  <para><parameter>:d</parameter></para>
-                </listitem>
-
-                <listitem>
-                  <para><parameter>:dist</parameter></para>
-                </listitem>
-
-                <listitem>
-                  <para><parameter>:distributed</parameter></para>
-                </listitem>
-
-                <listitem>
-                  <para><parameter>:distribution</parameter></para>
-                </listitem>
-                </itemizedlist> Any other value for
-                <parameter>:mode</parameter> will result in
-                <emphasis>invalidation</emphasis> when clustered and
-                <emphasis>local</emphasis> otherwise.</entry>
-              </row>
-
-              <row>
-                <entry><parameter>:sync</parameter></entry>
-
-                <entry>false</entry>
-
-                <entry>The coordination between nodes in a cluster can happen
-                either synchronously (slower writes) or asynchronously (faster
-                writes).</entry>
-              </row>
-
-              <row>
-                <entry><parameter>:name</parameter></entry>
-
-                <entry>{the application's name}</entry>
-
-                <entry>The <parameter>:name</parameter> option enables you to
-                create multiple cache stores in your app, each with different
-                options. It's also a way you can configure multiple apps to
-                share the same cache store.</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table>
-      </section>
+      </programlisting></para>
     </section>
+
+    <section>
+      <title>Logging</title>
+      <para>
+        By default, Rails logs where you would expect, but it's
+        possible to tap into the JBoss log system for more
+        sophisticated logging.  For more information, see <xref
+        linkend="torquebox-logger" />.
+      </para>
+    </section>
+  </section>
+
+  <section id="sinatra">
+    <title>Sinatra</title>
+
+    <para>
+      <ulink url="http://www.sinatrarb.com/">Sinatra</ulink> is a very
+      simple DSL for creating web applications.  And all the TorqueBox
+      features available to Rails apps, e.g. clustering, session
+      replication, and caching, will work for Sinatra app just as
+      well.
+    </para>
+
+    <section>
+      <title>Sessions</title>
+      <para>
+        Because the TorqueBox session store is Rack compliant, you
+        configure it the same way you would any other session store in
+        Sinatra.
+      </para>
+
+      <para><programlisting language="ruby">require 'sinatra''
+require 'torquebox'
+
+class SinatraSessions &lt; Sinatra::Base
+
+  <emphasis>use TorqueBox::Session::ServletStore</emphasis>
+
+  get '/foo' do
+    session[:message] = 'Hello World!'
+    redirect '/bar'
+  end
+
+  get '/bar' do
+    session[:message]   # => 'Hello World!'
+  end
+
+end
+      </programlisting></para>
+    </section>
+
+    <section id="sinatra-cache-configuration">
+      <title>Caching Configuration</title>
+
+      <para>
+        Because the TorqueBox cache store is derived from
+        <code>ActiveSupport::Cache::Store</code>, you must include
+        <filename>activesupport-3.x</filename> in your Sinatra
+        app.
+      </para>
+
+      <para>In whatever context you use the cache store, you must include the
+      <package>torquebox</package> RubyGem, which provides the
+      implementation.</para>
+
+      <para><programlisting language="ruby">require 'active_support/cache/torque_box_store'
+class SinatraCache &lt; Sinatra::Base
+  set :cache, ActiveSupport::Cache::TorqueBoxStore.new
+end
+      </programlisting></para>
+
+      <para>By default, the <code>TorqueBoxStore</code> will be in
+      <emphasis>asynchronous invalidation</emphasis> mode when clustered
+      (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode when
+      not. But you can certainly override the defaults:</para>
+
+      <para><programlisting language="ruby">
+  set :cache, ActiveSupport::Cache::TorqueBoxStore.new(:mode =&gt; :distributed, :sync =&gt; true)
+      </programlisting></para>
+
+      <para>You can even create multiple cache stores in your app, each
+      potentially in a different clustering mode. You should use the
+      <code>:name</code> option to identify any additional caches you create,
+      e.g.</para>
+
+      <para><programlisting language="ruby">
+    COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
+                                                        :mode =&gt; :replicated, 
+                                                        :sync =&gt; true)
+      </programlisting></para>
+    </section>
+
+    <section>
+      <title>Logging</title>
+      <para>
+        By default, Sinatra log support is minimal, sending most
+        errors to stdout or stderr.  For more sophisticated logging,
+        see <xref linkend="torquebox-logger" />.
+      </para>
+    </section>
+  </section>
+
   </section>
 </chapter>
