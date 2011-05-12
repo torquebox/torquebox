@@ -2,27 +2,36 @@ require 'fileutils'
 require 'rexml/document'
 require 'rubygems'
 require 'rubygems/installer'
+require 'rubygems/indexer'
 
 class AssemblyTool
 
   attr_accessor :base_dir
+  attr_accessor :build_dir
+
+  attr_accessor :torquebox_dir
+  attr_accessor :gem_repo_dir
+
+  attr_accessor :jboss_dir
+  attr_accessor :jruby_dir
 
   def initialize() 
     @base_dir  = File.expand_path( File.dirname(__FILE__) + '/..' )
 
-    @jboss_zip = @base_dir + '/zipfiles/jboss-7.0.x.zip'
-    @jruby_zip = @base_dir + '/zipfiles/jruby-bin-1.6.1.zip'
-
     @build_dir = @base_dir  + '/target/stage'
-    @jboss_dir = @build_dir + '/jboss-as'
-    @jruby_dir = @build_dir + '/jruby'
+
+    @torquebox_dir = @build_dir  + '/torquebox'
+    @gem_repo_dir  = @build_dir  + '/gem-repo'
+
+    @jboss_dir = @torquebox_dir + '/jboss-as'
+    @jruby_dir = @torquebox_dir + '/jruby'
   end
 
   def self.install_gem(gem)
-     AssemblyTool.new().install_gem( gem )
+     AssemblyTool.new().install_gem( gem, true )
   end
   
-  def install_gem(gem)
+  def install_gem(gem, update_index=false)
     puts "Installing #{gem}"
     if ( File.exist?( gem ) ) 
       opts = {
@@ -31,7 +40,19 @@ class AssemblyTool
       }
       installer = Gem::Installer.new( gem, opts )
       installer.install
+ 
+      FileUtils.mkdir_p gem_repo_dir + '/gems'
+      FileUtils.cp gem, gem_repo_dir + '/gems'
+      update_gem_repo_index if update_index
     end
+  end
+
+  def update_gem_repo_index
+    puts "Updating index" 
+    opts = {
+    }
+    indexer = Gem::Indexer.new( gem_repo_dir )
+    indexer.generate_index
   end
 
   def self.install_module(name, path)

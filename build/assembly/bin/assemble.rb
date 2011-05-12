@@ -7,11 +7,20 @@ require 'fileutils'
 require 'rexml/document'
 
 class Assembler 
+
+  attr_accessor :tool
+  attr_accessor :jboss_zip
+  attr_accessor :jruby_zip
+
+  attr_accessor :torquebox_version
+  attr_accessor :jboss_version
+  attr_accessor :jruby_version
+
+  attr_accessor :m2_repo
+
   def initialize() 
     @tool = AssemblyTool.new
     determine_versions
-
-    #@base_dir  = File.expand_path( File.dirname(__FILE__) )
 
     @m2_repo   = nil 
     if ( ENV['M2_REPO'] ) 
@@ -23,71 +32,67 @@ class Assembler
     puts "Maven repo: #{@m2_repo}"
     @jboss_zip = @m2_repo + "/org/jboss/as/jboss-as-build/#{@jboss_version}/jboss-as-build-#{@jboss_version}.zip"
     @jruby_zip = @m2_repo + "/org/jruby/jruby-dist/#{@jruby_version}/jruby-dist-#{@jruby_version}-bin.zip"
-
-    #puts "JBoss bundle: #{@jboss_zip}"
-    #puts "JRuby bundle: #{@jruby_zip}"
-
-    @build_dir  = @tool.base_dir  + '/target/stage'
-    @jboss_dir = @build_dir + '/jboss-as'
-    @jruby_dir = @build_dir + '/jruby'
   end
 
   def determine_versions
-    doc = REXML::Document.new( File.read( @tool.base_dir + '/../../parent/pom.xml' ) )
-    @jboss_version = doc.get_elements( "project/properties/version.jbossas" ).first.text
-    @jruby_version = doc.get_elements( "project/properties/version.jruby" ).first.text
-    puts "JBoss version: #{@jboss_version}" 
-    puts "JRuby version: #{@jruby_version}"
+    doc = REXML::Document.new( File.read( tool.base_dir + '/../../parent/pom.xml' ) )
+    @torquebox_version = doc.get_elements( "project/version" ).first.text
+    @jboss_version     = doc.get_elements( "project/properties/version.jbossas" ).first.text
+    @jruby_version     = doc.get_elements( "project/properties/version.jruby" ).first.text
+    puts "TorqueBox.... #{@torquebox_version}" 
+    puts "JBoss........ #{@jboss_version}" 
+    puts "JRuby........ #{@jruby_version}"
     #puts doc
   end
 
   def clean()
-    FileUtils.rm_rf   @build_dir
+    FileUtils.rm_rf   tool.build_dir
   end
 
   def prepare()
-    FileUtils.mkdir_p @build_dir
+    FileUtils.mkdir_p tool.torquebox_dir
+    FileUtils.mkdir_p tool.gem_repo_dir
   end
 
   def lay_down_jboss
-    if File.exist?( @jboss_dir ) 
+    if File.exist?( tool.jboss_dir ) 
       #puts "JBoss already laid down"
     else
       puts "Laying down JBoss"
-      Dir.chdir( @build_dir ) do 
-        `unzip -q #{@jboss_zip}`
+      Dir.chdir( File.dirname( tool.jboss_dir ) ) do 
+        `unzip -q #{jboss_zip}`
         original_dir= File.expand_path( Dir[ 'jboss-*' ].first )
-        FileUtils.mv original_dir, @jboss_dir
+        FileUtils.mv original_dir, tool.jboss_dir
       end
     end
   end
 
   def lay_down_jruby
-    if ( File.exist?( @jruby_dir ) )
+    if ( File.exist?( tool.jruby_dir ) )
       #puts "JRuby already laid down" 
     else
       puts "Laying down JRuby" 
-      Dir.chdir( @build_dir ) do
-        `unzip -q #{@jruby_zip}`
+      Dir.chdir( File.dirname( tool.jruby_dir ) ) do
+        `unzip -q #{jruby_zip}`
         original_dir= File.expand_path( Dir[ 'jruby-*' ].first )
-        FileUtils.mv original_dir, @jruby_dir
+        FileUtils.mv original_dir, tool.jruby_dir
       end
     end
   end
 
   def install_modules
-    Dir[ @tool.base_dir + '/../../modules/*/target/*-module/' ].each do |module_dir|
+    Dir[ tool.base_dir + '/../../modules/*/target/*-module/' ].each do |module_dir|
       module_name = File.basename( module_dir, '-module' ).gsub( /torquebox-/, '' )
-      #puts "Install module: #{module_name}"
-      @tool.install_module( module_name, module_dir )
+      tool.install_module( module_name, module_dir )
     end
   end
 
   def install_gems
-    Dir[ @tool.base_dir + '/../../gems/*/target/*.gem' ].each do |gem_package|
+    Dir[ tool.base_dir + '/../../gems/*/target/*.gem' ].each do |gem_package|
       puts "Install gem: #{gem_package}"
-      @tool.install_gem( gem_package )
+      tool.install_gem( gem_package )
     end
+    tool.update_gem_repo_index
   end
 
   def assemble() 
