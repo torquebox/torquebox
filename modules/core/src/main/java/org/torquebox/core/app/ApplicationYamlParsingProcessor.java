@@ -36,9 +36,9 @@ import org.torquebox.core.AbstractSplitYamlParsingProcessor;
  * content dir
  * 
  */
-public class ApplicationYamlParsingDeployer extends AbstractSplitYamlParsingProcessor {
+public class ApplicationYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
-    public ApplicationYamlParsingDeployer() {
+    public ApplicationYamlParsingProcessor() {
         setSectionName( "application" );
         setSupportsStandalone( false );
     }
