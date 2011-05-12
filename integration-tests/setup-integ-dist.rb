@@ -3,11 +3,9 @@ require 'fileutils'
 
 assembly_dir = File.expand_path( ARGV[0] )
 output_dir   = File.expand_path( ARGV[1] )
-root_war     = File.expand_path( ARGV[2] )
 
 puts "assembly from... #{assembly_dir}"
 puts "output to....... #{output_dir}"
-puts "ROOT.war from... #{root_war}"
 
 if ( assembly_dir == output_dir )
   puts "*** Setting up integration tests against assembly, NOT A COPY."
@@ -57,8 +55,3 @@ end
 
 FileUtils.rm_rf( Dir["#{output_dir}/jboss/server/default/log/*"] )
 
-# Necessary for Arquillian...
-if ( ! File.exists?( "#{output_dir}/jboss/server/default/deploy/ROOT.war" ) ) 
-  puts "*** Installing ROOT.war"
-  FileUtils.cp( root_war, "#{output_dir}/jboss/server/default/deploy/" )
-end

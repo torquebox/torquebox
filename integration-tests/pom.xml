@@ -18,7 +18,7 @@
     <version.haml>~&gt;3.0</version.haml>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
     <version.sinatra>1.2.3</version.sinatra>
-    <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
+    <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <max.heap>1024m</max.heap>
     <jboss.lazy>false</jboss.lazy>
@@ -184,7 +184,7 @@
     <profile>
       <id>inplace</id>
       <properties>
-        <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
+        <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
         <integ.dist.dir>${assembly.dir}</integ.dist.dir>
       </properties>
     </profile>
@@ -397,7 +397,7 @@
             <configuration>
               <jrubyFork>false</jrubyFork>
               <file>setup-integ-dist.rb</file>
-              <args>${assembly.dir} ${integ.dist.dir} ${project.basedir}/etc/ROOT.war</args>
+              <args>${assembly.dir} ${integ.dist.dir}</args>
             </configuration>
           </execution>
         </executions>
