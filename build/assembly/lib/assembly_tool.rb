@@ -23,7 +23,7 @@ class AssemblyTool
     @torquebox_dir = @build_dir  + '/torquebox'
     @gem_repo_dir  = @build_dir  + '/gem-repo'
 
-    @jboss_dir = @torquebox_dir + '/jboss-as'
+    @jboss_dir = @torquebox_dir + '/jboss'
     @jruby_dir = @torquebox_dir + '/jruby'
   end
 
