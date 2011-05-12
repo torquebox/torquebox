@@ -5,24 +5,20 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.yaml.snakeyaml.Yaml;
 
 public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
+    public static final String TORQUEBOX_YAML_FILE = "torquebox.yml";
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        VirtualFile root = resourceRoot.getRoot();
-        
-        VirtualFile file = getFile(root);
+        VirtualFile file = getMetaDataFile( unit, TORQUEBOX_YAML_FILE );
         
         if ( file != null ) {
             try {
@@ -36,7 +32,7 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
     }
     
     @SuppressWarnings("unchecked")
-    static TorqueBoxMetaData parse(VirtualFile file) throws IOException {
+    public static TorqueBoxMetaData parse(VirtualFile file) throws IOException {
         log.info( "parsing: " + file );
 
         Yaml yaml = new Yaml();
@@ -54,22 +50,6 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
             }
         }
     }
-
-    private VirtualFile getFile(VirtualFile root) {
-        VirtualFile f = root.getChild( "torquebox.yml" );
-        if ( f.exists() ) {
-            return f;
-        }
-        
-        f = root.getChild( "config/torquebox.yml" );
-        
-        if ( f.exists() ) {
-            return f;
-        }
-        
-        return null;
-    }
-
     
     private static final Logger log = Logger.getLogger( "org.torquebox.core" );
 

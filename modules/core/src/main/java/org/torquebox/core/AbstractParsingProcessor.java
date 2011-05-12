@@ -38,13 +38,13 @@ public abstract class AbstractParsingProcessor implements DeploymentUnitProcesso
     }
 
     protected VirtualFile getMetaDataFile(final DeploymentUnit unit, final String fileName) {
-        final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        final VirtualFile root = resourceRoot.getRoot();
-
-        for (int i = 0; i < METADATA_LOCATIONS.length; ++i) {
-            final VirtualFile file = root.getChild( METADATA_LOCATIONS[i] + fileName );
-            if (file.exists()) {
-                return file;
+        for (ResourceRoot each : allRoots( unit ) ) {
+            VirtualFile root = each.getRoot();            
+            for (int i = 0; i < METADATA_LOCATIONS.length; ++i) {
+                final VirtualFile file = root.getChild( METADATA_LOCATIONS[i] + fileName );
+                if (file.exists()) {
+                    return file;
+                }
             }
         }
 
@@ -52,29 +52,36 @@ public abstract class AbstractParsingProcessor implements DeploymentUnitProcesso
     }
 
     protected List<VirtualFile> getMetaDataFileBySuffix(final DeploymentUnit unit, final String suffix) {
-        final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        final VirtualFile root = resourceRoot.getRoot();
-
         final List<VirtualFile> files = new ArrayList<VirtualFile>();
-        for (int i = 0; i < METADATA_LOCATIONS.length; ++i) {
-            final VirtualFile file = root.getChild( METADATA_LOCATIONS[i] );
-            try {
-                List<VirtualFile> matches = file.getChildren( new VirtualFileFilter() {
-                    @Override
-                    public boolean accepts(VirtualFile file) {
-                        return file.getName().endsWith( suffix );
-                    }
-                } );
+        for (ResourceRoot each : allRoots( unit ) ) {
+            VirtualFile root = each.getRoot();            
+            for (int i = 0; i < METADATA_LOCATIONS.length; ++i) {
+                final VirtualFile file = root.getChild( METADATA_LOCATIONS[i] );
+                try {
+                    List<VirtualFile> matches = file.getChildren( new VirtualFileFilter() {
+                            @Override
+                            public boolean accepts(VirtualFile file) {
+                                return file.getName().endsWith( suffix );
+                            }
+                        } );
                 files.addAll( matches );
-            } catch (IOException e) {
-                // TODO
-                // ignore?
+                } catch (IOException e) {
+                    // TODO
+                    // ignore?
+                }
             }
         }
 
         return files;
     }
     
+    protected List<ResourceRoot> allRoots(final DeploymentUnit unit) {
+        final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
+        final List<ResourceRoot> roots = unit.getAttachmentList( Attachments.RESOURCE_ROOTS );
+        roots.add( resourceRoot );
+
+        return roots;
+    }
 
     @Override
     public void undeploy(DeploymentUnit context) {
