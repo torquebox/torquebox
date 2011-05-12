@@ -268,7 +268,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             }
 
             if (jrubyHome == null) {
-                String jbossHome = System.getProperty( "jboss.home" );
+                String jbossHome = System.getProperty( "jboss.home.dir" );
                 log.info( "RELATIVE (jboss.home): " + jbossHome );
 
                 if (jbossHome != null) {
