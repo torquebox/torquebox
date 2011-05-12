@@ -78,9 +78,11 @@ public abstract class AbstractParsingProcessor implements DeploymentUnitProcesso
     protected List<ResourceRoot> allRoots(final DeploymentUnit unit) {
         final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         final List<ResourceRoot> roots = unit.getAttachmentList( Attachments.RESOURCE_ROOTS );
-        roots.add( resourceRoot );
+        List<ResourceRoot> combinedRoots = new ArrayList<ResourceRoot>();
+        combinedRoots.add( resourceRoot );
+        combinedRoots.addAll( roots );
 
-        return roots;
+        return combinedRoots;
     }
 
     @Override
