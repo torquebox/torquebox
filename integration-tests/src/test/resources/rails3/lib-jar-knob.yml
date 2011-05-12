@@ -1,9 +1,0 @@
----
-application:
-  RAILS_ROOT: ${basedir}/apps/rails3/lib-jar
-  RAILS_ENV: development
-web:
-  context: /lib-jar
-
-ruby:
-  version: ${ruby.compat.version}

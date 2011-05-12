@@ -19,8 +19,18 @@ end
 
 describe "rails 2 backgroundable tests" do
   mutable_app 'rails2/backgroundable_reload'
-  deploy "rails2/backgroundable_reload-knob.yml"
   it_should_behave_like "rails backgroundable tests"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../target/apps/rails2/backgroundable_reload
+      RAILS_ENV: development
+    web:
+      context: /backgroundable_reload
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   before(:each) do
     @model_path = File.join( MUTABLE_APP_BASE_PATH, 'rails2', 'backgroundable_reload', 'app', 'models', 'widget.rb' )
@@ -30,8 +40,18 @@ end
 
 describe "rails 3 backgroundable tests" do
   mutable_app 'rails3/backgroundable_reload'
-  deploy "rails3/backgroundable_reload-knob.yml"
   it_should_behave_like "rails backgroundable tests"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../target/apps/rails3/backgroundable_reload
+      RAILS_ENV: development
+    web:
+      context: /backgroundable_reload3
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   before(:each) do
     @model_path = File.join( MUTABLE_APP_BASE_PATH, 'rails3', 'backgroundable_reload', 'app', 'models', 'widget.rb' )

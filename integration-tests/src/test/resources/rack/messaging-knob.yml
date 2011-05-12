@@ -1,8 +1,0 @@
----
-application:
-  root: ${basedir}/apps/rack/messaging
-web:
-  context: /messaging-rack
-
-ruby:
-  version: ${ruby.compat.version}

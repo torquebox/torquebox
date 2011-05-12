@@ -4,7 +4,17 @@ require 'set'
 
 describe "task concurrency" do
 
-  deploy "rack/task-concurrency-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/task-concurrency
+      env: development
+    web:
+      context: /task-concurrency
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   shared_examples_for "concurrent processors" do
     before(:each) do

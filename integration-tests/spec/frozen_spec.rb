@@ -4,7 +4,17 @@ describe "frozen gems" do
 
   GEM_NAMES = %w{ railties activesupport actionpack activerecord actionmailer activeresource }
 
-  deploy "rails2/frozen-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails2/frozen
+      RAILS_ENV: development
+    web:
+      context: /frozen-rails
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should include all required gems in its vendor directory" do
     visit "/frozen-rails"

@@ -2,7 +2,18 @@ require 'spec_helper'
 
 describe "archived rackup files don't have to reside at the root" do
 
-  deploy "rack/norootrackup-archive-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    --- 
+    application: 
+      RACK_ROOT: #{File.dirname(__FILE__)}/../apps/rack/norootrackup.knob
+      RACK_ENV: development
+    web: 
+      rackup: foobar/config.ru
+      context: /norootrackuparchive
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should be happy" do
     visit "/norootrackuparchive"

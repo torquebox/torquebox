@@ -1,9 +1,0 @@
----
-application:
-  RACK_ROOT: ${basedir}/apps/rack/pwd-jar
-  RACK_ENV: development
-web:
-  context: /pwd-jar
-
-ruby:
-  version: ${ruby.compat.version}

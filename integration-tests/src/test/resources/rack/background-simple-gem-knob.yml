@@ -1,9 +1,0 @@
----
-application:
-  root: ${basedir}/apps/rack/background-simple-gem
-  env: development
-web:
-  context: /background
-
-ruby:
-  version: ${ruby.compat.version}

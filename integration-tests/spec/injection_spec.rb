@@ -2,7 +2,31 @@ require 'spec_helper'
 
 describe "rails3 injection test" do
 
-  deploy "rails3/injection-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails3/injection
+      RAILS_ENV: development
+    web:
+      context: injection
+    queues:
+      /queues/injection_service:
+        durable: false
+      /queues/injection_job:
+        durable: false
+      /queues/injection_task:
+        durable: false
+    services:
+      InjectionService:
+    jobs:
+      injection_job:
+        job: InjectionJob
+        cron: '* * * * * ?'
+        description: Test injection from a job
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should work for services defined in app/services" do
     visit "/injection/service"

@@ -30,11 +30,28 @@ shared_examples_for "basic rails2 tests" do
 end
 
 describe "basic backwards compatibility" do
-  deploy "rails2/basic-rails.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails2/basic
+      RAILS_ENV: development
+    web:
+      context: /basic-rails
+  END
   it_should_behave_like "basic rails2 tests"
 end
 describe "basic knob compatibility" do
-  deploy "rails2/basic-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails2/basic
+      RAILS_ENV: development
+    web:
+      context: /basic-rails
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
   it_should_behave_like "basic rails2 tests"
 end
 describe "basic archive backwards compatibility" do

@@ -5,7 +5,19 @@ require 'torquebox-messaging'
 
 describe "messaging alacarte rack test" do
 
-  deploy "alacarte/messaging-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/messaging
+      env: development
+    
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+
+  END
 
   it "should work" do
     touchfile = Pathname.new( "./target/messaging-touchfile.txt" )

@@ -1,9 +1,0 @@
----
-application:
-  RAILS_ROOT: ${basedir}/target/apps/rails3/backgroundable_reload
-  RAILS_ENV: development
-web:
-  context: /backgroundable_reload3
-
-ruby:
-  version: ${ruby.compat.version}

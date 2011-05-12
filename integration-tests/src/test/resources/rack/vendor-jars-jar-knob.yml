@@ -1,9 +1,0 @@
----
-application:
-  RACK_ROOT: ${basedir}/apps/rack/vendor-jars-jar
-  RACK_ENV: development
-web:
-  context: /vendor-jars-jar
-
-ruby:
-  version: ${ruby.compat.version}
