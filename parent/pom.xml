@@ -28,6 +28,14 @@
 
   <profiles>
     <profile>
+      <id>tests-enabled</id>
+      <activation>
+        <property>
+          <name>!maven.test.skip</name>
+        </property>
+      </activation>
+    </profile>
+    <profile>
       <id>bees</id>
       <activation>
         <activeByDefault>false</activeByDefault>

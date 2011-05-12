@@ -14,15 +14,22 @@
   <name>TorqueBox Web Module</name>
   <description />
 
-  <dependencies>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-ruby-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>provided</scope>
-    </dependency>
+  <profiles>
+    <profile>
+      <id>tests-enabled</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.torquebox</groupId>
+          <artifactId>torquebox-ruby-dependencies</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+          <scope>provided</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
+  <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
