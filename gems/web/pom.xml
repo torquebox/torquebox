@@ -11,7 +11,7 @@
   <groupId>rubygems</groupId>
   <artifactId>torquebox-web</artifactId>
   <packaging>java-gem</packaging>
-  <name>TorqueBox Base Gem</name>
+  <name>TorqueBox Web Gem</name>
   <description />
 
   <dependencies>

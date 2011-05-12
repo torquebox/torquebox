@@ -1,7 +1,30 @@
 require 'fileutils'
 require 'rexml/document'
 require 'rubygems'
+
 require 'rubygems/installer'
+
+begin
+  puts "about to require builder"
+  gem 'builder', '3.0.0'
+  puts "did it work?"
+rescue Gem::LoadError=> e
+  puts e
+  puts "Installing builder gem"
+  require 'rubygems/commands/install_command'
+  installer = Gem::Commands::InstallCommand.new
+  installer.options[:args] = [ 'builder' ]
+  installer.options[:version] = '3.0.0'
+  installer.options[:generate_rdoc] = false
+  installer.options[:generate_ri] = false
+  puts installer.options.inspect
+  begin
+    installer.execute
+  rescue Gem::SystemExitException=>e2
+    puts e2
+  end
+end
+puts "done!"
 require 'rubygems/indexer'
 
 class AssemblyTool
