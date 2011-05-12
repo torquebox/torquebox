@@ -65,44 +65,6 @@
     <plugins>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
-        <artifactId>gem-maven-plugin</artifactId>
-        <configuration>
-          <includeDependencies>true</includeDependencies>
-        </configuration>
-        <executions>
-          <execution>
-            <id>default-package</id>
-          </execution>
-          <execution>
-            <id>default-install</id>
-            <phase>install</phase>
-          </execution>
-          <execution>
-            <id>install-gem-into-assemblage</id>
-            <phase>install</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
-        <artifactId>rspec-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>run-specs</id>
-            <configuration>
-              <fork>true</fork>
-              <systemProperties>
-                <property>
-                  <name>log4j.configuration</name>
-                  <value>test-log4j.xml</value>
-                </property>
-              </systemProperties>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>de.saumya.mojo</groupId>
         <artifactId>jruby-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -121,26 +83,20 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>install-common-jar</id>
-            <phase>none</phase>
+            <id>run-specs</id>
           </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
           <execution>
-            <id>install-vfs-jars-for-rubyspec</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <stripVersion>true</stripVersion>
-              <outputDirectory>${project.basedir}/target/dependencies/</outputDirectory>
-              <overWriteReleases>false</overWriteReleases>
-              <overWriteSnapshots>false</overWriteSnapshots>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <includeArtifactIds>jboss-vfs,jboss-logging,jboss-logmanager,jboss-logmanager-log4j,log4j</includeArtifactIds>
-            </configuration>
+            <id>install-module</id>
           </execution>
         </executions>
       </plugin>

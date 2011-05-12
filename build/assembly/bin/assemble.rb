@@ -13,7 +13,14 @@ class Assembler
 
     #@base_dir  = File.expand_path( File.dirname(__FILE__) )
 
-    @m2_repo   = ENV['HOME'] + '/.m2/repository'
+    @m2_repo   = nil 
+    if ( ENV['M2_REPO'] ) 
+      @m2_repo = ENV['M2_REPO']
+    else
+      @m2_repo   = ENV['HOME'] + '/.m2/repository'
+    end
+
+    puts "Maven repo: #{@m2_repo}"
     @jboss_zip = @m2_repo + "/org/jboss/as/jboss-as-build/#{@jboss_version}/jboss-as-build-#{@jboss_version}.zip"
     @jruby_zip = @m2_repo + "/org/jruby/jruby-dist/#{@jruby_version}/jruby-dist-#{@jruby_version}-bin.zip"
 

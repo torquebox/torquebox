@@ -18,7 +18,12 @@ class AssemblyTool
     @jruby_dir = @build_dir + '/jruby'
   end
 
+  def self.install_gem(gem)
+     AssemblyTool.new().install_gem( gem )
+  end
+  
   def install_gem(gem)
+    puts "Installing #{gem}"
     if ( File.exist?( gem ) ) 
       opts = {
         :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
