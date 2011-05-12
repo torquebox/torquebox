@@ -434,8 +434,40 @@
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
+
+          <execution>
+            <id>install-upstart-files</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>rubygems</includeGroupIds>
+              <includeArtifactIds>torquebox-rake-support</includeArtifactIds>
+              <includeTypes>torquebox.conf</includeTypes>
+              <outputDirectory>${stage.dir}/share/init</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+
+          <execution>
+            <id>install-Rakefile</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration> 
+              <includeGroupIds>rubygems</includeGroupIds>
+              <includeArtifactIds>torquebox-rake-support</includeArtifactIds>
+              <includeTypes>Rakefile</includeTypes>
+              <outputDirectory>${stage.dir}/share</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+
         </executions>
       </plugin>
+
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
