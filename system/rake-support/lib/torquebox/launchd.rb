@@ -21,36 +21,21 @@
 require 'torquebox/deploy_utils'
 
 module TorqueBox
-  module Upstart
+  module Launchd
     class << self
 
-      def init_dir
-        File.join( TorqueBox::DeployUtils.sys_root, 'etc', 'init' )
-      end
-
-      def init_script
-        File.join( TorqueBox::DeployUtils.torquebox_home, 'share', 'init', 'torquebox.conf' )
-      end
-
-      def init_torquebox
-        File.join( init_dir, 'torquebox.conf' )
-      end
-
-      def copy_init_script
-        if File.writable?( init_dir )
-          FileUtils.cp( init_script, init_dir )
-        else
-          puts "Cannot write upstart configuration to #{init_dir}. You'll need to copy #{init_script} to #{init_dir} yourself."
-        end
+      def plist_dir
+        # TODO
       end
 
       def check_install
         TorqueBox::DeployUtils.check_opt_torquebox
-        raise "#{init_torquebox} not installed in #{init_dir}" unless ( File.exist?( init_torquebox ) )
-        puts "TorqueBox init scripts OK: #{init_torquebox}"
+        # raise "#{init_torquebox} not installed in #{init_dir}" unless ( File.exist?( init_torquebox ) )
+        # puts "TorqueBox init scripts OK: #{init_torquebox}"
       end
 
     end
   end
 end
+
 
