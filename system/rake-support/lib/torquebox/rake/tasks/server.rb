@@ -31,4 +31,39 @@ namespace :torquebox do
     TorqueBox::DeployUtils.run_server
   end
 
+  desc "Install TorqueBox as an upstart service"
+  task :upstart=>[ :check ] do
+
+    opt_dir = "/opt"
+    unless File.exist? opt_dir
+      if !File.writable?( '/' )
+        puts "Cannot write to /. Upstart expects /opt/torquebox to point to your torquebox installation."
+      else
+        puts "Creating #{opt_dir}"
+        Dir.new( opt_dir )
+      end
+    end
+
+    tb_link = File.join( opt_dir, "torquebox" ) 
+    unless File.exist?( tb_link )
+      if File.writable?( opt_dir )
+        puts "Symlinking #{tb_link} to #{TorqueBox::DeployUtils.torquebox_home}"
+        File.symlink( TorqueBox::DeployUtils.torquebox_home, File.join( '/', 'opt', 'torquebox' ) )
+      else
+        puts "Cannot write to /opt. Upstart expects /opt/torquebox to point to #{TorqueBox::DeployUtils.torquebox_home}"
+      end
+    end
+
+    init_dir  = "/etc/init"
+    conf_file = File.join( TorqueBox::DeployUtils.torquebox_home, 'share', 'torquebox.conf' )
+    if File.writable?( init_dir )
+      FileUtils.cp( conf_file, init_dir )
+    else
+      puts "Cannot write upstart configuration to #{init_dir}. You'll need to copy #{conf_file} to #{init_dir} yourself."
+    end
+
+    puts "Done!"
+    puts "Ensure that you have a 'torquebox' user with ownership or write permissions of /opt/torquebox"
+  end
+
 end
