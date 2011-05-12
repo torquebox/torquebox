@@ -21,7 +21,11 @@ package org.torquebox.web.rails;
 
 import java.util.regex.Pattern;
 
+import org.jboss.as.server.deployment.AttachmentKey;
+
 public class RailsApplicationMetaData {
+    
+    public static final AttachmentKey<RailsApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create(RailsApplicationMetaData.class);
 
     public RailsApplicationMetaData() {
     }

@@ -26,6 +26,8 @@ import org.torquebox.web.rack.RackRuntimeProcessor;
 import org.torquebox.web.rack.RackWebApplicationDeployer;
 import org.torquebox.web.rack.WebRuntimePoolProcessor;
 import org.torquebox.web.rack.WebYamlParsingProcessor;
+import org.torquebox.web.rails.RailsApplicationRecognizer;
+import org.torquebox.web.rails.RailsRuntimeProcessor;
 
 class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -61,12 +63,14 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         log.info( "Adding deployment processors" );
         
         context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 10, new WebYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 20, new RackWebApplicationDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 10, new RailsApplicationRecognizer() );
+        context.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );
+        context.addDeploymentProcessor( Phase.PARSE, 40, new RackWebApplicationDeployer() );
         
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new WebDependenciesProcessor() );
         
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new RackRuntimeProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new RailsRuntimeProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 10, new RackRuntimeProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RackApplicationDefaultsProcessor() );
