@@ -17,6 +17,8 @@
 
 require 'rake'
 require 'torquebox/deploy_utils'
+require 'torquebox/upstart'
+
 
 namespace :torquebox do
   desc "Check your installation of the TorqueBox server"
@@ -31,39 +33,37 @@ namespace :torquebox do
     TorqueBox::DeployUtils.run_server
   end
 
-  desc "Install TorqueBox as an upstart service"
-  task :upstart=>[ :check ] do
-
-    opt_dir = "/opt"
-    unless File.exist? opt_dir
-      if !File.writable?( '/' )
-        puts "Cannot write to /. Upstart expects /opt/torquebox to point to your torquebox installation."
-      else
-        puts "Creating #{opt_dir}"
-        Dir.new( opt_dir )
-      end
+  namespace :upstart do
+    desc "Check if TorqueBox is installed as an upstart service"
+    task :check=>[ 'torquebox:check' ] do
+      TorqueBox::Upstart.check_install
+      puts "TorqueBox is installed as an upstart service at #{TorqueBox::Upstart.opt_torquebox}"
     end
 
-    tb_link = File.join( opt_dir, "torquebox" ) 
-    unless File.exist?( tb_link )
-      if File.writable?( opt_dir )
-        puts "Symlinking #{tb_link} to #{TorqueBox::DeployUtils.torquebox_home}"
-        File.symlink( TorqueBox::DeployUtils.torquebox_home, File.join( '/', 'opt', 'torquebox' ) )
-      else
-        puts "Cannot write to /opt. Upstart expects /opt/torquebox to point to #{TorqueBox::DeployUtils.torquebox_home}"
-      end
+    desc "Install TorqueBox as an upstart service"
+    task :install=>[ 'torquebox:check' ] do
+      TorqueBox::Upstart.create_symlink
+      TorqueBox::Upstart.copy_init_script
+      puts "Done! Ensure that you have a 'torquebox' user with ownership or write permissions of /opt/torquebox"
     end
 
-    init_dir  = "/etc/init"
-    conf_file = File.join( TorqueBox::DeployUtils.torquebox_home, 'share', 'torquebox.conf' )
-    if File.writable?( init_dir )
-      FileUtils.cp( conf_file, init_dir )
-    else
-      puts "Cannot write upstart configuration to #{init_dir}. You'll need to copy #{conf_file} to #{init_dir} yourself."
+    desc "Start TorqueBox when running as an upstart service"
+    task :start=>[ :check ] do
+      TorqueBox::DeployUtils.exec_command( 'start torquebox' )
     end
 
-    puts "Done!"
-    puts "Ensure that you have a 'torquebox' user with ownership or write permissions of /opt/torquebox"
+    desc "Stop TorqueBox when running as an upstart service"
+    task :stop=>[ :check ] do
+      TorqueBox::DeployUtils.exec_command( 'stop torquebox' )
+    end
+
+    desc "Restart TorqueBox when running as an upstart service"
+    task :restart=>[ :check ] do
+      TorqueBox::DeployUtils.exec_command( 'restart torquebox' )
+    end
+
   end
-
 end
+
+
+

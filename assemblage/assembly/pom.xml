@@ -242,6 +242,20 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>torquebox-rake-support</artifactId>
+      <type>torquebox.conf</type>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-rake-support</artifactId>
+      <type>Rakefile</type>
+      <version>${project.version}</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>torquebox-capistrano-support</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
@@ -460,7 +474,7 @@
               <includeGroupIds>rubygems</includeGroupIds>
               <includeArtifactIds>torquebox-rake-support</includeArtifactIds>
               <includeTypes>Rakefile</includeTypes>
-              <outputDirectory>${stage.dir}/share</outputDirectory>
+              <outputDirectory>${stage.dir}</outputDirectory>
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
@@ -558,7 +572,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>rename-rails-template</id>
+            <id>rename-share-files</id>
             <phase>package</phase>
             <goals>
               <goal>run</goal>
@@ -566,6 +580,8 @@
             <configuration>
               <tasks>
                 <move file="${stage.dir}/share/rails/torquebox-rake-support.template.rb" tofile="${stage.dir}/share/rails/template.rb" />
+                <move file="${stage.dir}/share/init/torquebox-rake-support.torquebox.conf" tofile="${stage.dir}/share/init/torquebox.conf" />
+                <move file="${stage.dir}/torquebox-rake-support.Rakefile" tofile="${stage.dir}/Rakefile" />
               </tasks>
             </configuration>
           </execution>
