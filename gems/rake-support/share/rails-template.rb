@@ -19,7 +19,7 @@ if ( Rails::VERSION::MAJOR == 2 )
     <<-INIT
 # Configure the TorqueBox Servlet-based session store.
 # Provides for server-based, in-memory, cluster-compatible sessions.
-( ActionController::Base.session_store = TorqueBox::Session::ServletStore ) if defined?(TorqueBox::Session::ServletStore)
+ActionController::Base.session_store = :torquebox_store
     INIT
   end
 else
@@ -28,7 +28,7 @@ else
     <<-INIT
 # Configure the TorqueBox Servlet-based session store.
 # Provides for server-based, in-memory, cluster-compatible sessions
-#{app_const}.config.session_store TorqueBox::Session::ServletStore if defined?(TorqueBox::Session::ServletStore)
+#{app_const}.config.session_store :torquebox_store
     INIT
   end
 end

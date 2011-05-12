@@ -1,2 +1,2 @@
 
-require 'action_dispatch/session/torque_box_store'
+require 'torquebox/session/servlet_store'
