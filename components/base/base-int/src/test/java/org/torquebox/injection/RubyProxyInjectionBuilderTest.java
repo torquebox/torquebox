@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.injection.InjectionRegistry;
 import org.torquebox.core.injection.RubyInjectionProxy;
+import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;

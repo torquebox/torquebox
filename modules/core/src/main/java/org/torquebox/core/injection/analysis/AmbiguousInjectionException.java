@@ -1,4 +1,4 @@
-package org.torquebox.injection;
+package org.torquebox.core.injection.analysis;
 
 import org.jruby.runtime.PositionAware;
 

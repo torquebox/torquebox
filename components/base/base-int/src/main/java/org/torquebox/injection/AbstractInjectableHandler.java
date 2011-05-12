@@ -10,6 +10,7 @@ import org.jruby.ast.NodeType;
 import org.jruby.ast.StrNode;
 import org.jruby.ast.SymbolNode;
 import org.jruby.ast.VCallNode;
+import org.torquebox.core.injection.analysis.InjectableHandler;
 
 public abstract class AbstractInjectableHandler implements InjectableHandler {
 

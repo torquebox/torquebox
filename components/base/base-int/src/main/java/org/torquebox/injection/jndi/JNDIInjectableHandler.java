@@ -1,8 +1,8 @@
 package org.torquebox.injection.jndi;
 
 import org.jruby.ast.Node;
+import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.injection.AbstractInjectableHandler;
-import org.torquebox.injection.Injectable;
 
 /** Handles naming injections.
  * 

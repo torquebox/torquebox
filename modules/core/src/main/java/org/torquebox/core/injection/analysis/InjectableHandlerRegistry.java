@@ -1,11 +1,9 @@
-package org.torquebox.injection;
+package org.torquebox.core.injection.analysis;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeSet;
 
-import org.jboss.beans.metadata.api.annotations.Install;
-import org.jboss.beans.metadata.api.annotations.Uninstall;
 import org.jboss.logging.Logger;
 import org.jruby.ast.Node;
 
@@ -19,14 +17,12 @@ public class InjectableHandlerRegistry {
     public InjectableHandlerRegistry() {
     }
     
-    @Install
     public void addInjectableHandler(InjectableHandler handler) {
         log.info( "Registering injectable handler: " + handler.getType() + " - " + handler );
         this.registry.put( handler.getType(), handler );
         this.handlersByPriority.add(  handler  );
     }
     
-    @Uninstall
     public InjectableHandler removeInjectableHandler(InjectableHandler handler) {
         log.info( "Unregistering injectable handler: " + handler.getType() + " - " + handler );
         this.handlersByPriority.remove( handler );

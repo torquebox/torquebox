@@ -11,6 +11,8 @@ import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.injection.analysis.Injectable;
+import org.torquebox.core.injection.analysis.InjectionAnalyzer;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 

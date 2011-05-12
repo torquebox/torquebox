@@ -3,8 +3,8 @@ package org.torquebox.injection.cdi;
 import org.jruby.ast.ArrayNode;
 import org.jruby.ast.Node;
 import org.jruby.ast.NodeType;
+import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.injection.AbstractInjectableHandler;
-import org.torquebox.injection.Injectable;
 
 
 /** CDI injection handler.

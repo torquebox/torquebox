@@ -31,6 +31,7 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 
 import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.injection.analysis.InjectionAnalyzer;
 import org.torquebox.core.runtime.RubyComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.core.util.StringUtils;

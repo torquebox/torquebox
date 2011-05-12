@@ -1,10 +1,11 @@
-package org.torquebox.injection;
+package org.torquebox.core.injection.analysis;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
+import org.jboss.msc.inject.InjectionException;
 import org.jruby.ast.ArrayNode;
 import org.jruby.ast.FCallNode;
 import org.jruby.ast.Node;

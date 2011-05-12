@@ -3,6 +3,7 @@ package org.torquebox.injection;
 import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
+import org.torquebox.core.injection.analysis.Injectable;
 
 public class SimpleNamedInjectable implements Injectable {
     

@@ -1,4 +1,4 @@
-package org.torquebox.injection;
+package org.torquebox.core.injection.analysis;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import java.util.List;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileVisitor;
 import org.jboss.vfs.VisitorAttributes;
-
 import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 
 public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
