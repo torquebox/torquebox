@@ -92,10 +92,30 @@ shared_examples_for "session handling" do
 end
 
 describe "rails2 sessions" do
-  deploy "rails2/basic-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails2/basic
+      RAILS_ENV: development
+    web:
+      context: /basic-rails
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
   it_should_behave_like "session handling"
 end
 describe "rails3 sessions" do
-  deploy "rails3/basic-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails3/basic
+      RAILS_ENV: development
+    web:
+      context: /basic-rails
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
   it_should_behave_like "session handling"
 end

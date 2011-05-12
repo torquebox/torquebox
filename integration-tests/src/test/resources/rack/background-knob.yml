@@ -1,9 +1,0 @@
----
-application:
-  root: ${basedir}/apps/rack/background
-  env: development
-web:
-  context: /background
-
-ruby:
-  version: ${ruby.compat.version}

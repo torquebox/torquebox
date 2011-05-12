@@ -1,9 +1,0 @@
----
-application:
-  RACK_ROOT: ${basedir}/apps/rack/lib-jar
-  RACK_ENV: development
-web:
-  context: /lib-jar
-
-ruby:
-  version: ${ruby.compat.version}

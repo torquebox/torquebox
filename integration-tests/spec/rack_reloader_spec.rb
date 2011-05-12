@@ -3,7 +3,17 @@ require 'set'
 
 describe "rack reloading" do
   mutable_app 'rack/reloader'
-  deploy 'rack/reloader-knob.yml'
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RACK_ROOT: #{File.dirname(__FILE__)}/../target/apps/rack/reloader
+      RACK_ENV: development
+    web:
+      context: /reloader-rack
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should reload" do
     visit "/reloader-rack?0"

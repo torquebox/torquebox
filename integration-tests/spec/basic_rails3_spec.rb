@@ -2,7 +2,17 @@ require 'spec_helper'
 
 describe "basic rails3 test" do
 
-  deploy "rails3/basic-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails3/basic
+      RAILS_ENV: development
+    web:
+      context: /basic-rails
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should do a basic get" do
     visit "/basic-rails"

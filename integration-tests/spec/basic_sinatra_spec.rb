@@ -2,7 +2,17 @@ require 'spec_helper'
 
 describe "basic sinatra test" do
 
-  deploy "sinatra/basic-sinatra-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RACK_ROOT: #{File.dirname(__FILE__)}/../apps/sinatra/basic
+      RACK_ENV: development
+    web:
+      context: /basic-sinatra
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should work" do
     visit "/basic-sinatra"

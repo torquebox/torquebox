@@ -3,7 +3,17 @@ require 'fileutils'
 
 describe "basic production" do
 
-  deploy "rails2/basic-production-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails2/basic
+      RAILS_ENV: production
+    web:
+      context: /basic-production-rails
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should work" do
     visit "/basic-production-rails"

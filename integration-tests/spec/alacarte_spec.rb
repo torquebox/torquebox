@@ -15,11 +15,35 @@ shared_examples_for "alacarte" do
 end
 
 describe "jobs alacarte" do
-  deploy "alacarte/jobs-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/jobs
+      env: development
+    
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+    
   it_should_behave_like "alacarte"
 end
 
 describe "services alacarte" do
-  deploy "alacarte/services-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/services
+      env: development
+    
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
   it_should_behave_like "alacarte"
 end

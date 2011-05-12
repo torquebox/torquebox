@@ -3,7 +3,17 @@ require 'base64'
 
 describe "authentication" do
 
-  deploy "rack/basic-auth-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RACK_ROOT: #{File.dirname(__FILE__)}/../apps/rack/basic_auth
+      RACK_ENV: development
+    web:
+      context: /basic-auth
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should work for HTTP basic authentication" do
     credentials = "bmcwhirt@redhat.com:swordfish";

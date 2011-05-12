@@ -2,7 +2,15 @@ require 'spec_helper'
 
 describe "sinatra queues test" do
 
-  deploy "sinatra/queues-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/sinatra/queues
+    web:
+      context: /uppercaser
+    
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
 
   it "should scream toby crawley" do
     visit "/uppercaser/up/toby+crawley"

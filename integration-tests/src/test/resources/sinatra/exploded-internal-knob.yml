@@ -1,6 +1,0 @@
-application:
-  root: ${basedir}/apps/sinatra/override
-web:
-  foo: barf
-ruby:
-  version: ${ruby.compat.version}

@@ -1,9 +1,0 @@
----
-application:
-  RACK_ROOT: ${basedir}/apps/rack/basic_auth
-  RACK_ENV: development
-web:
-  context: /basic-auth
-
-ruby:
-  version: ${ruby.compat.version}
