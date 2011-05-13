@@ -46,7 +46,7 @@ public class ComponentClass implements ComponentInstantiator {
     
     public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
         RubyModule rubyClass = getComponentClass( runtime );
-        IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( runtime, this.className, "new", initParams, IRubyObject.class );
+        IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( runtime, rubyClass, "new", initParams, IRubyObject.class );
         return component;
     }
     
