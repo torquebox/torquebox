@@ -57,8 +57,10 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
                 throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
             }
 
+            unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
+
             ResourceRoot appRoot = new ResourceRoot( root, null );
-            unit.putAttachment(Attachments.DEPLOYMENT_ROOT, appRoot);
+            unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
         }
