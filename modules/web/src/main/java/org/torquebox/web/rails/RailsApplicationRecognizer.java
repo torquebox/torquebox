@@ -23,11 +23,11 @@ import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.FileLocatingProcessor;
 
-public class RailsApplicationRecognizer implements DeploymentUnitProcessor {
+public class RailsApplicationRecognizer extends FileLocatingProcessor {
     
     public static final String DEFAULT_BOOT_RB_PATH = "config/boot.rb";
 
@@ -52,16 +52,7 @@ public class RailsApplicationRecognizer implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit unit) {
 
     }
-    
-    protected static boolean hasAnyOf(VirtualFile root, String... paths) {
-        for (String path : paths) {
-            if (root.getChild( path ).exists()) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
+        
     static boolean isRailsApplication(VirtualFile file) {
         boolean result = hasAnyOf( file, DEFAULT_BOOT_RB_PATH );
         return result;

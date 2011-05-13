@@ -23,12 +23,12 @@ import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.FileLocatingProcessor;
 
-public class RackApplicationRecognizer implements DeploymentUnitProcessor {
+public class RackApplicationRecognizer extends FileLocatingProcessor {
 
     public static final String DEFAULT_RACKUP_PATH = "config.ru";
 
@@ -41,7 +41,7 @@ public class RackApplicationRecognizer implements DeploymentUnitProcessor {
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
 
-        if (isRubyApplication( root )) {
+        if (isRackApplication( root )) {
             RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
 
             if (rackAppMetaData == null) {
@@ -57,16 +57,8 @@ public class RackApplicationRecognizer implements DeploymentUnitProcessor {
 
     }
 
-    protected static boolean hasAnyOf(VirtualFile root, String... paths) {
-        for (String path : paths) {
-            if (root.getChild( path ).exists()) {
-                return true;
-            }
-        }
-        return false;
-    }
 
-    static boolean isRubyApplication(VirtualFile file) {
+     static boolean isRackApplication(VirtualFile file) {
         boolean result = hasAnyOf( file, DEFAULT_RACKUP_PATH );
         return result;
     }

@@ -4,12 +4,12 @@ import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.FileLocatingProcessor;
 
-public class RubyApplicationRecognizer implements DeploymentUnitProcessor {
+public class RubyApplicationRecognizer extends FileLocatingProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -34,15 +34,6 @@ public class RubyApplicationRecognizer implements DeploymentUnitProcessor {
     static boolean isRubyApplication(VirtualFile file) {
         boolean result = hasAnyOf( file, "torquebox.yml", "config/torquebox.yml", "config.ru", "config/environment.rb", "Rakefile", "Gemfile", ".bundle/config", "vendor/rails" );
         return result;
-    }
-
-    protected static boolean hasAnyOf(VirtualFile root, String... paths) {
-        for (String path : paths) {
-            if (root.getChild( path ).exists()) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

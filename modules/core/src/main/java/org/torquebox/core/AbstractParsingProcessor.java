@@ -19,72 +19,26 @@
 
 package org.torquebox.core;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VirtualFile;
-import org.jboss.vfs.VirtualFileFilter;
 
-public abstract class AbstractParsingProcessor implements DeploymentUnitProcessor {
+public abstract class AbstractParsingProcessor extends FileLocatingProcessor {
 
     private static final String[] METADATA_LOCATIONS = new String[] { "", "config/" };
 
     public AbstractParsingProcessor() {
     }
 
-    protected VirtualFile getMetaDataFile(final DeploymentUnit unit, final String fileName) {
-        for (ResourceRoot each : allRoots( unit ) ) {
-            VirtualFile root = each.getRoot();            
-            for (int i = 0; i < METADATA_LOCATIONS.length; ++i) {
-                final VirtualFile file = root.getChild( METADATA_LOCATIONS[i] + fileName );
-                if (file.exists()) {
-                    return file;
-                }
-            }
-        }
-
-        return null;
+    protected VirtualFile getMetaDataFile(final VirtualFile root, final String fileName) {
+        return getFile( root, fileName, METADATA_LOCATIONS );
     }
 
-    protected List<VirtualFile> getMetaDataFileBySuffix(final DeploymentUnit unit, final String suffix) {
-        final List<VirtualFile> files = new ArrayList<VirtualFile>();
-        for (ResourceRoot each : allRoots( unit ) ) {
-            VirtualFile root = each.getRoot();            
-            for (int i = 0; i < METADATA_LOCATIONS.length; ++i) {
-                final VirtualFile file = root.getChild( METADATA_LOCATIONS[i] );
-                try {
-                    List<VirtualFile> matches = file.getChildren( new VirtualFileFilter() {
-                            @Override
-                            public boolean accepts(VirtualFile file) {
-                                return file.getName().endsWith( suffix );
-                            }
-                        } );
-                files.addAll( matches );
-                } catch (IOException e) {
-                    // TODO
-                    // ignore?
-                }
-            }
-        }
-
-        return files;
+    protected List<VirtualFile> getMetaDataFileBySuffix(final VirtualFile root, final String suffix) {
+        return getFilesBySuffix( root, suffix, METADATA_LOCATIONS );
     }
     
-    protected List<ResourceRoot> allRoots(final DeploymentUnit unit) {
-        final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        final List<ResourceRoot> roots = unit.getAttachmentList( Attachments.RESOURCE_ROOTS );
-        List<ResourceRoot> combinedRoots = new ArrayList<ResourceRoot>();
-        combinedRoots.add( resourceRoot );
-        combinedRoots.addAll( roots );
-
-        return combinedRoots;
-    }
-
     @Override
     public void undeploy(DeploymentUnit context) {
         // TODO Auto-generated method stub

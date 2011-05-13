@@ -28,7 +28,6 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.server.deployment.SubDeploymentMarker;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
@@ -40,32 +39,26 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit(); 
-        log.info("TOBY: called - phaseContext " + phaseContext );
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
         try {
-            List<VirtualFile> files = getFiles( unit );
-
-            for (VirtualFile appKnobYml : files) {
-
-                TorqueBoxMetaData metaData = TorqueBoxYamlParsingProcessor.parse( appKnobYml );
-                VirtualFile root = metaData.getApplicationRootFile();
-
-                if (root == null) {
-                    throw new DeploymentUnitProcessingException( "No application root specified" );
-                }
-
-                if ( ! root.exists() ) {
-                    throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
-                }
-
-                RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
-                rubyAppMetaData.setRoot( root );
-                unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-                
-                 ResourceRoot appRoot = new ResourceRoot( root, null );
-                 SubDeploymentMarker.mark( appRoot );
-                 unit.addToAttachmentList( Attachments.RESOURCE_ROOTS, appRoot );
+            VirtualFile appKnobYml = getFile( unit );
+            if (appKnobYml == null) {
+                return;
             }
+
+            TorqueBoxMetaData metaData = TorqueBoxYamlParsingProcessor.parse( appKnobYml );
+            VirtualFile root = metaData.getApplicationRootFile();
+
+            if (root == null) {
+                throw new DeploymentUnitProcessingException( "No application root specified" );
+            }
+
+            if ( ! root.exists() ) {
+                throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
+            }
+
+            ResourceRoot appRoot = new ResourceRoot( root, null );
+            unit.putAttachment(Attachments.DEPLOYMENT_ROOT, appRoot);
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
         }
@@ -74,24 +67,29 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
     @Override
     public void undeploy(DeploymentUnit context) {}
 
-    protected List<VirtualFile> getFiles(DeploymentUnit unit) throws IOException {
+    protected VirtualFile getFile(DeploymentUnit unit) throws DeploymentUnitProcessingException, IOException {
         List<VirtualFile> matches = new ArrayList<VirtualFile>();
 
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
-        log.info("TOBY: root is " + root );
 
         matches = root.getChildren( this.knobFilter );
 
-        for (VirtualFile each : matches) {
-            if (each.getName().endsWith( "-rails.yml" )) {
-                log.warn( "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + each );
-            } else if (each.getName().endsWith( "-rack.yml" )) {
-                log.warn( "Usage of -rack.yml is deprecated, please rename to -knob.yml: " + each );
+        if (matches.size() > 1) {
+            throw new DeploymentUnitProcessingException( "Multiple application yaml files found in " + root );
+        }
+
+        VirtualFile file = null;
+        if (matches.size() == 1) {
+            file = matches.get( 0 );
+            if (file.getName().endsWith( "-rails.yml" )) {
+                log.warn( "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + file );
+            } else if (file.getName().endsWith( "-rack.yml" )) {
+                log.warn( "Usage of -rack.yml is deprecated, please rename to -knob.yml: " + file );
             }
         }
 
-        return matches;
+        return file;
     }
 
     private VirtualFileFilter knobFilter = (new VirtualFileFilter() {

@@ -60,7 +60,7 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
         log.info( "Adding deployment processors" );
-        
+       
         context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
         context.addDeploymentProcessor( Phase.PARSE, 10, new RailsApplicationRecognizer() );
         context.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.Attachments;
-import org.jboss.as.server.deployment.DeploymentException;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -113,10 +112,10 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
         }
 
         if (data == null && isSupportsStandalone()) {
-            VirtualFile metaDataFile = getMetaDataFile( unit, getFileName() );
+            VirtualFile metaDataFile = getMetaDataFile( root, getFileName() );
 
             if ((metaDataFile == null || !metaDataFile.exists()) && this.supportsSuffix) {
-                List<VirtualFile> matches = getMetaDataFileBySuffix( unit, "-" + getFileName() );
+                List<VirtualFile> matches = getMetaDataFileBySuffix( root, "-" + getFileName() );
                 if (!matches.isEmpty()) {
                     if (matches.size() > 1) {
                         log.warn( "Multiple matches: " + matches );
