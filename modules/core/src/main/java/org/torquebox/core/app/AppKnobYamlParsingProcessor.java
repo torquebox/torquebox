@@ -40,30 +40,37 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        TorqueBoxMetaData metaData = null;
+        VirtualFile root = null;
+
         try {
             VirtualFile appKnobYml = getFile( unit );
             if (appKnobYml == null) {
                 return;
             }
-
-            TorqueBoxMetaData metaData = TorqueBoxYamlParsingProcessor.parse( appKnobYml );
-            VirtualFile root = metaData.getApplicationRootFile();
-
+            metaData = TorqueBoxYamlParsingProcessor.parse( appKnobYml );
+            root = metaData.getApplicationRootFile();
+            
             if (root == null) {
                 throw new DeploymentUnitProcessingException( "No application root specified" );
             }
-
+            
             if ( ! root.exists() ) {
                 throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
             }
-
-            unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
-
-            ResourceRoot appRoot = new ResourceRoot( root, null );
-            unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
         }
+
+        unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
+
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        rubyAppMetaData.setRoot( root );
+        rubyAppMetaData.setEnvironmentName( metaData.getApplicationEnvironment() );
+        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+
+        ResourceRoot appRoot = new ResourceRoot( root, null );
+        unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
     }
 
     @Override
