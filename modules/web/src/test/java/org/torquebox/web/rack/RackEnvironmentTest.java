@@ -34,14 +34,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
-import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.jruby.RubyHash;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
 
-public class RackEnvironmentImplTest extends AbstractRubyTestCase {
+public class RackEnvironmentTest extends AbstractRubyTestCase {
 
     private Ruby ruby;
 
@@ -55,8 +54,8 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
     public void testEnvironment() throws Exception {
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
         String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
-        assertNotNull( rackApp );
+        //RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+        //assertNotNull( rackApp );
 
         final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
@@ -87,7 +86,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 
         // Map<String, Object> javaEnv = (Map<String, Object>)
         // rubyEnv.toJava(Map.class);
-        RackEnvironment env = new RackEnvironmentImpl( ruby, servletContext, servletRequest );
+        RackEnvironment env = new RackEnvironment( ruby, servletContext, servletRequest );
         RubyHash envHash = env.getEnv();
         assertNotNull( envHash );
 
@@ -116,8 +115,8 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
     public void testAnotherEnvironment() throws Exception {
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
         String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
-        assertNotNull( rackApp );
+        //RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+        //assertNotNull( rackApp );
 
         final ServletContext servletContext = mock( ServletContext.class );
         final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
@@ -148,7 +147,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
 
         // Map<String, Object> javaEnv = (Map<String, Object>)
         // rubyEnv.toJava(Map.class);
-        RackEnvironment env = new RackEnvironmentImpl( ruby, servletContext, servletRequest );
+        RackEnvironment env = new RackEnvironment( ruby, servletContext, servletRequest );
         RubyHash envHash = env.getEnv();
         assertNotNull( envHash );
 
@@ -182,7 +181,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
         when( servletRequest.getInputStream() ).thenReturn( inputStream );
         when( servletRequest.getContentLength() ).thenReturn( -1 );
 
-        RackEnvironment env = new RackEnvironmentImpl( ruby, servletContext, servletRequest );
+        RackEnvironment env = new RackEnvironment( ruby, servletContext, servletRequest );
         RubyHash envHash = env.getEnv();
         assertNotNull( envHash );
         assertNull( envHash.get( "CONTENT_LENGTH" ) );

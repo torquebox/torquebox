@@ -1,5 +1,6 @@
 package org.torquebox.core.as;
 
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 
 public class CoreServices {
@@ -15,8 +16,8 @@ public class CoreServices {
         return RUNTIME.append("factory").append( deploymentName );
     }
     
-    public static ServiceName runtimePoolName(final String deploymentName, final String poolName) {
-        return RUNTIME.append("pool").append( deploymentName ).append( poolName );
+    public static ServiceName runtimePoolName(DeploymentUnit unit, final String poolName) {
+        return unit.getServiceName().append("runtime-pool").append( poolName );
     }
 
 }

@@ -18,9 +18,8 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
 import org.torquebox.web.rack.RackApplicationDefaultsProcessor;
-import org.torquebox.web.rack.RackApplicationFactoryDeployer;
-import org.torquebox.web.rack.RackApplicationPoolDeployer;
 import org.torquebox.web.rack.RackApplicationRecognizer;
 import org.torquebox.web.rack.RackRuntimeProcessor;
 import org.torquebox.web.rack.RackWebApplicationDeployer;
@@ -74,8 +73,8 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RackApplicationDefaultsProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 110, new RackApplicationFactoryDeployer() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationPoolDeployer() );
+        
+        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
         
         log.info( "Added deployment processors" );
     }

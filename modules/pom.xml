@@ -14,20 +14,10 @@
   <packaging>pom</packaging>
   <name>TorqueBox Modules</name>
 
-  <profiles>
-    <profile>
-      <id>tests-enabled</id>
-      <modules>
-        <module>ruby-dependencies</module>
-      </modules>
-    </profile>
-  </profiles>
   <modules>
     <module>parent</module>
 
-<!--
     <module>ruby-dependencies</module>
--->
 
     <module>core</module>
     <module>services</module>

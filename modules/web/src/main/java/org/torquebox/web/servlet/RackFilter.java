@@ -20,7 +20,6 @@
 package org.torquebox.web.servlet;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -35,63 +34,39 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
+import org.jruby.Ruby;
 import org.jruby.exceptions.RaiseException;
-import org.torquebox.web.as.WebServices;
-import org.torquebox.web.rack.RackApplication;
-import org.torquebox.web.rack.RackApplicationPool;
-import org.torquebox.web.rack.RackEnvironmentImpl;
+import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.component.RubyComponent;
+import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.web.component.RackApplicationComponent;
+import org.torquebox.web.rack.RackEnvironment;
 
 public class RackFilter implements Filter {
 
     private static final Logger log = Logger.getLogger( RackFilter.class );
 
-    private static final String KERNEL_NAME = "jboss.kernel:service=Kernel";
-
     public static final String RACK_APP_DEPLOYMENT_INIT_PARAM = "torquebox.rack.app.deployment.name";
 
-    private RackApplicationPool rackAppPool;
-
+    private ComponentResolver componentResolver;
+    private RubyRuntimePool runtimePool;
     private ServletContext servletContext;
 
     public void init(FilterConfig filterConfig) throws ServletException {
-        System.err.println( "INIT RACK FILTER: " + filterConfig );
-        String rackAppDeploymentName = filterConfig.getInitParameter( RACK_APP_DEPLOYMENT_INIT_PARAM );
-        System.err.println( "deployment name: " + rackAppDeploymentName );
-        Enumeration<String> names = filterConfig.getInitParameterNames();
-        System.err.println( "FILTER INIT PARAMS" );
-        while ( names.hasMoreElements() ) {
-            String name = names.nextElement();
-            System.err.println( "name: " + name );
-            System.err.println( "value: " + filterConfig.getInitParameter( name ) );
-        }
-        
-        System.err.println( "CONTEXT INIT PARAMS" );
-        names = filterConfig.getServletContext().getInitParameterNames();
-        while ( names.hasMoreElements() ) {
-            String name = names.nextElement();
-            System.err.println( "name: " + name );
-            System.err.println( "value: " + filterConfig.getServletContext().getInitParameter( name ) );
-        }
-        
-        
-        System.err.println( "CONTEXT ATTRIBUTES" );
-        names = filterConfig.getServletContext().getAttributeNames();
-        while ( names.hasMoreElements() ) {
-            String name = names.nextElement();
-            System.err.println( "name: " + name );
-            System.err.println( "value: " + filterConfig.getServletContext().getAttribute( name ) );
-        }
         
         ServiceRegistry registry = (ServiceRegistry) filterConfig.getServletContext().getAttribute( "service.registry" );
         
-        System.err.println( "Registry: " + registry );
+        ServiceName componentResolverServiceName  = (ServiceName) filterConfig.getServletContext().getAttribute( "component.resolver.service-name" );
+        this.componentResolver =  (ComponentResolver) registry.getService( componentResolverServiceName ).getValue();
+        if (this.componentResolver == null) {
+            throw new ServletException( "Unable to obtain Rack component resolver: " + componentResolverServiceName );
+        }
         
-        ServiceName rackAppServiceName = WebServices.rackApplicationPoolName( rackAppDeploymentName );
-        System.err.println( "Service name: " + rackAppServiceName );
-        this.rackAppPool = (RackApplicationPool) registry.getService( rackAppServiceName ).getValue();
-
-        if (this.rackAppPool == null) {
-            throw new ServletException( "Unable to obtain Rack application pool '" + rackAppDeploymentName + "'" );
+        ServiceName runtimePoolServiceName = (ServiceName) filterConfig.getServletContext().getAttribute( "runtime.pool.service-name" );
+        this.runtimePool =  (RubyRuntimePool) registry.getService( runtimePoolServiceName ).getValue();
+        
+        if ( this.runtimePool == null ) {
+            throw new ServletException( "Unable to obtain runtime pool: " + runtimePoolServiceName );
         }
 
         this.servletContext = filterConfig.getServletContext();
@@ -134,13 +109,14 @@ public class RackFilter implements Filter {
     }
 
     protected void doRack(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        RackApplication rackApp = null;
+        RackEnvironment rackEnv = null;
 
-        RackEnvironmentImpl rackEnv = null;
-
+        Ruby runtime = null;
+        RackApplicationComponent rackApp;
         try {
-            rackApp = borrowRackApplication();
-            rackEnv = new RackEnvironmentImpl( rackApp.getRuby(), servletContext, request );
+            runtime = this.runtimePool.borrowRuntime();
+            rackApp = (RackApplicationComponent) this.componentResolver.resolve( runtime );
+            rackEnv = new RackEnvironment( runtime, servletContext, request );
             rackApp.call( rackEnv ).respond( response );
         } catch (RaiseException e) {
             log.error( "Error invoking Rack filter", e );
@@ -154,19 +130,9 @@ public class RackFilter implements Filter {
                 rackEnv.close();
             }
 
-            if (rackApp != null) {
-                releaseRackApplication( rackApp );
-                rackApp = null;
+            if (runtime != null) {
+                this.runtimePool.returnRuntime( runtime );
             }
         }
     }
-
-    private RackApplication borrowRackApplication() throws Exception {
-        return this.rackAppPool.borrowApplication();
-    }
-
-    private void releaseRackApplication(RackApplication rackApp) {
-        this.rackAppPool.releaseApplication( rackApp );
-    }
-
 }

@@ -91,7 +91,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
             SharedRubyRuntimeFactoryPoolService service = new SharedRubyRuntimeFactoryPoolService( pool );
 
-            ServiceName name = CoreServices.runtimePoolName( deploymentName, pool.getName() );
+            ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
             builder.addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
             builder.install();
@@ -104,7 +104,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
             DefaultRubyRuntimePoolService service = new DefaultRubyRuntimePoolService( pool );
 
-            ServiceName name = CoreServices.runtimePoolName( deploymentName, pool.getName() );
+            ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
             builder.addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
             builder.install();

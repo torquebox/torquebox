@@ -49,6 +49,7 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.TldMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
+import org.torquebox.core.as.CoreServices;
 import org.torquebox.web.as.WebServices;
 import org.torquebox.web.servlet.RackFilter;
 
@@ -136,16 +137,13 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         ServletContextAttribute serviceRegistryValue = new ServletContextAttribute("service.registry", unit.getServiceRegistry() );
         unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, serviceRegistryValue );
         
-        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, WebServices.rackApplicationPoolName( unit.getName() ) );
-
-        /*
-         * RubyApplicationMetaData rubyAppMetaData = unit.getAttachment(
-         * RubyApplicationMetaData.ATTACHMENT_KEY ); try { URL docBaseUrl =
-         * rubyAppMetaData.getRoot().toURL();
-         * unit.addAttachment(EXPANDED_WAR_URL_ATTACHMENT_NAME, docBaseUrl,
-         * URL.class); } catch (MalformedURLException e) { throw new
-         * DeploymentException(e); }
-         */
+        ServletContextAttribute componentResolverNameValue = new ServletContextAttribute("component.resolver.service-name", WebServices.rackApplicationComponentResolver( unit  ) );
+        unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, componentResolverNameValue );
+        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, WebServices.rackApplicationComponentResolver( unit ) );
+        
+        ServletContextAttribute runtimePoolNameValue = new ServletContextAttribute("runtime.pool.service-name", CoreServices.runtimePoolName( unit, "web" ) );
+        unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, runtimePoolNameValue );
+        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, CoreServices.runtimePoolName( unit, "web"  ) );
     }
 
     protected void setUpRackFilter(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
