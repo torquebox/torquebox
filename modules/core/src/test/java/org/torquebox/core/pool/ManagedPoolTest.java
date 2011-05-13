@@ -150,6 +150,7 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         assertEquals( 0, pool.size() );
     }
 
+    /*
     @Test
     public void testGrowToBoundsLoop() throws Exception {
         for (int i = 0; i < 40; ++i) {
@@ -157,5 +158,6 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         }
 
     }
+    */
 
 }

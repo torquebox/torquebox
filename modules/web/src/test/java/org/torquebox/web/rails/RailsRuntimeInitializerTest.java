@@ -35,6 +35,7 @@ import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
@@ -59,7 +60,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
     @Test
     public void testInitializeWithGems() throws Exception {
-        String railsRootStr = pwd() + "/src/test/rails/ballast";
+        String railsRootStr = pwd() + "/src/test/faux-rails2";
 
         railsRootStr = railsRootStr.replaceAll( "\\\\", "/" );
         String vfsRailsRootStr = toVfsPath( railsRootStr );
@@ -72,47 +73,23 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
         RubyClass objectClass = (RubyClass) ruby.getClassFromPath( "Object" );
 
-        IRubyObject rubyRailsRoot = objectClass.getConstant( "RAILS_ROOT" );
+        IRubyObject envConst = objectClass.getConstant( "ENV" );
+        
+        String rubyRailsRoot = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ROOT" }, String.class );
         assertNotNull( rubyRailsRoot );
-        assertNotNil( rubyRailsRoot );
+        assertEquals( vfsRailsRootStr, rubyRailsRoot );
 
-        assertEquals( vfsRailsRootStr, rubyRailsRoot.toString() );
-
-        IRubyObject rubyRailsEnv = objectClass.getConstant( "RAILS_ENV" );
+        String rubyRailsEnv = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ENV" }, String.class );
         assertNotNull( rubyRailsEnv );
-        assertNotNil( rubyRailsEnv );
-        assertEquals( "development", rubyRailsEnv.toString() );
+        assertEquals( "development", rubyRailsEnv );
     }
 
-    @Test(expected = RaiseException.class)
-    public void testUnknownModelsAreCorrectlyIdentified() throws Exception {
-        String railsRootStr = System.getProperty( "user.dir" ) + "/src/test/rails/ballast";
-        VirtualFile railsRoot = VFS.getChild( railsRootStr );
-
-        RailsRuntimeInitializer initializer = create( railsRoot, "development" );
-
-        initializer.initialize( ruby );
-
-        String script = "class Foo; def self.fetch(); NoSuchModel; end; end; Foo.fetch";
-        ruby.evalScriptlet( script );
-    }
 
     @Test
-    public void testModelsAreLoadable() throws Exception {
-        String railsRootStr = System.getProperty( "user.dir" ) + "/src/test/rails/ballast";
-        VirtualFile railsRoot = VFS.getChild( railsRootStr );
-
-        RailsRuntimeInitializer initializer = create( railsRoot, "development" );
-
-        initializer.initialize( ruby );
-
-        RubyModule bookModel = ruby.getClassFromPath( "Book" );
-        assertNotNil( bookModel );
-    }
-
-    @Test
+    @Ignore
+    // TODO move this to integ test?
     public void testOpenSSL_HMAC_digest() throws Exception {
-        String railsRootStr = System.getProperty( "user.dir" ) + "/src/test/rails/ballast";
+        String railsRootStr = pwd() + "/src/test/faux-rails2";
         VirtualFile railsRoot = VFS.getChild( railsRootStr );
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
@@ -125,8 +102,8 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void testAutoloadPathsAvailableAsRubyConstant() throws Exception {
-        String path = System.getProperty( "user.dir" ) + "/src/test/rails/ballast";
-        VirtualFile root = VFS.getChild( path );
+        String railsRootStr = pwd() + "/src/test/faux-rails2";
+        VirtualFile root = VFS.getChild( railsRootStr );
 
         RailsRuntimeInitializer initializer = create( root, "development" );
         initializer.addAutoloadPath( "path1" );
@@ -143,20 +120,31 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         assertTrue( paths.size() == 2 );
         assertTrue( paths.contains( "path1" ) );
         assertTrue( paths.contains( "path2" ) );
-
-        String load_paths = "" + ruby.evalScriptlet( "ActiveSupport::Dependencies.load_paths.join(',')" );
-        assertTrue( load_paths.endsWith( ",path1,path2" ) );
     }
     
     @Test
     public void testRails3() throws Exception {
-        String railsRootStr = System.getProperty( "user.dir" ) + "/src/test/rails/ballast3";
+        String railsRootStr = pwd() + "/src/test/faux-rails3";
+        
+        railsRootStr = railsRootStr.replaceAll( "\\\\", "/" );
+        String vfsRailsRootStr = toVfsPath( railsRootStr );
+        
         VirtualFile railsRoot = VFS.getChild( railsRootStr );
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
         initializer.initialize( ruby ); 
-    
-        assertEquals( "vfs:" + railsRoot.getPathName(), ruby.evalScriptlet( "Rails.root" ).toString() );
+        
+        RubyClass objectClass = (RubyClass) ruby.getObject();
+
+        IRubyObject envConst = objectClass.getConstant( "ENV" );
+        
+        String rubyRailsRoot = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ROOT" }, String.class );
+        assertNotNull( rubyRailsRoot );
+        assertEquals( vfsRailsRootStr, rubyRailsRoot );
+
+        String rubyRailsEnv = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ENV" }, String.class );
+        assertNotNull( rubyRailsEnv );
+        assertEquals( "development", rubyRailsEnv );
     }
 
     private RailsRuntimeInitializer create(VirtualFile root, String env) {
