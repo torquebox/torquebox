@@ -37,8 +37,10 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.torquebox.services.ServicesDeployer;
 import org.torquebox.services.ServicesRuntimePoolProcessor;
 import org.torquebox.services.ServicesYamlParsingProcessor;
+import org.torquebox.services.component.ServicesComponentResolverInstaller;
 
 public class ServicesSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -75,6 +77,8 @@ public class ServicesSubsystemAdd implements ModelAddOperationHandler, BootOpera
         
         context.addDeploymentProcessor( Phase.PARSE, 30, new ServicesYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new ServicesRuntimePoolProcessor() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new ServicesComponentResolverInstaller() );
+        context.addDeploymentProcessor( Phase.INSTALL, 0, new ServicesDeployer() );
         
         log.info( "Added deployment processors" );
     }
