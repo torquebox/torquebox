@@ -24,6 +24,7 @@ import org.torquebox.core.app.AppKnobYamlParsingProcessor;
 import org.torquebox.core.app.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
 import org.torquebox.core.app.RubyApplicationRecognizer;
+import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
 import org.torquebox.core.pool.RuntimePoolDeployer;
 import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
@@ -54,7 +55,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         return true;
     }
 
-    protected void addDeploymentProcessors(final BootOperationContext context) {
+    protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
         context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppKnobYamlParsingProcessor() );
 
         context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
@@ -63,17 +64,13 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         context.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
 
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new TorqueBoxDependenciesProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, this.injectionIndexingProcessor );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new InjectionIndexingProcessor( registry ) );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
         context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
     }
 
-    protected void addCoreServices(final RuntimeTaskContext context) {
-        addInjectionServices( context );
-    }
-
-    protected void addInjectionServices(final RuntimeTaskContext context) {
-        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, this.injectionIndexingProcessor.getInjectableHandlerRegistry() )
+    protected void addCoreServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
+        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
           .setInitialMode( Mode.PASSIVE )
           .install();
     }
@@ -82,8 +79,9 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         return new RuntimeTask() {
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                addDeploymentProcessors( bootContext );
-                addCoreServices( context );
+                InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
+                addDeploymentProcessors( bootContext, registry );
+                addCoreServices( context, registry );
                 resultHandler.handleResultComplete();
             }
         };
@@ -104,10 +102,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     }
 
     public CoreSubsystemAdd() {
-        this.injectionIndexingProcessor = new InjectionIndexingProcessor();
     }
-
-    private InjectionIndexingProcessor injectionIndexingProcessor;
 
     static final CoreSubsystemAdd ADD_INSTANCE = new CoreSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.core.as" );

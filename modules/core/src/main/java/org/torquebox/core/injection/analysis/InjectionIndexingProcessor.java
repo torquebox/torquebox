@@ -14,8 +14,9 @@ import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
 public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
     
-    public InjectionIndexingProcessor() {
-        
+    public InjectionIndexingProcessor(InjectableHandlerRegistry registry) {
+        this.registry = registry;
+        this.injectionAnalyzer = new InjectionAnalyzer( this.registry );
     }
 
     @Override
@@ -79,17 +80,13 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
     }
     
     protected synchronized InjectionAnalyzer getAnalyzer() {
-        if ( this.injectionAnalyzer == null ) {
-            this.injectionAnalyzer = new InjectionAnalyzer( this.registry );
-        }
-        
         return this.injectionAnalyzer;
     }
     
     private static final Logger log = Logger.getLogger( "org.torquebox.core.injection.analysis" );
     
     
-    private InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
+    private InjectableHandlerRegistry registry;
     private InjectionAnalyzer injectionAnalyzer;
 
 }
