@@ -30,13 +30,13 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
         
-        if ( index == null ) {
-            index = new InjectionIndex();
-            unit.putAttachment( InjectionIndex.ATTACHMENT_KEY, index );
-        }
-        
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
+        
+        if ( index == null ) {
+            index = new InjectionIndex( root );
+            unit.putAttachment( InjectionIndex.ATTACHMENT_KEY, index );
+        }
         
         InjectionAnalyzer analyzer = getAnalyzer();
         
@@ -45,6 +45,7 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         for ( VirtualFile each : root.getChildren() ) {
             if ( shouldProcess( each  ) ) {
                 try {
+                    log.info(  "SCAN: " + each  );
                     analyzer.analyzeRecursively( index, each, runtimeMetaData.getVersion() );
                 } catch (IOException e) {
                     log.error( "Error processing file: " + each );
@@ -54,7 +55,7 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         
         long elapsed = System.currentTimeMillis() - startTime;
         
-        log.info(  "Injection scanning took " + elapsed + "ms" );
+        log.info(  "Injection scanning took " + elapsed + "ms: " + index );
         
     }
     

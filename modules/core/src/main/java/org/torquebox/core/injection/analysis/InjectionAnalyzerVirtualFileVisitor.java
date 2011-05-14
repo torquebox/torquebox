@@ -9,6 +9,7 @@ import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 
 public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
     
+    
     public InjectionAnalyzerVirtualFileVisitor(InjectionIndex index, InjectionAnalyzer analyzer, Version rubyVersion) {
         this.index       = index;
         this.analyzer    = analyzer;
@@ -18,7 +19,7 @@ public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
 
     @Override
     public VisitorAttributes getAttributes() {
-        return VisitorAttributes.LEAVES_ONLY;
+        return InjectionAnalyzerVirtualFileVisitor.ATTRIBUTES;
     }
 
     @Override
@@ -45,5 +46,19 @@ public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
     private InjectionAnalyzer analyzer;
     private Version rubyVersion;
     private InjectionRubyByteCodeVisitor byteCodeVisitor;
+    
+    private static final VisitorAttributes ATTRIBUTES = new VisitorAttributes() {
+
+        @Override
+        public boolean isLeavesOnly() {
+            return true;
+        }
+
+        @Override
+        public boolean isIncludeRoot() {
+            return true;
+        }
+        
+    };
 
 }

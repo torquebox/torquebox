@@ -2,6 +2,7 @@ package org.torquebox.core.component;
 
 import java.util.Map;
 
+import org.jboss.msc.inject.Injector;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 
@@ -89,9 +90,14 @@ public class ComponentResolver {
         wrappedComponent.setRubyComponent( rubyComponent );
         return wrappedComponent;
     }
+    
+    public Injector<Object> getInjector(String key) {
+        return this.injections.getInjector( key );
+    }
 
     private Class<? extends AbstractRubyComponent> wrapperClass;
 
+    private Injections injections = new Injections();
     private ComponentInstantiator componentInstantiator;
     private String componentName;
     private Object[] initializeParams;

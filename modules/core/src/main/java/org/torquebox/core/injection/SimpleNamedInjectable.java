@@ -2,7 +2,7 @@ package org.torquebox.core.injection;
 
 import org.torquebox.core.injection.analysis.Injectable;
 
-public class SimpleNamedInjectable implements Injectable {
+public abstract class SimpleNamedInjectable implements Injectable {
     
     private String type;
     private String name;
