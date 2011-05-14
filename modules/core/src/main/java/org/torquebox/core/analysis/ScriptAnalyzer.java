@@ -3,17 +3,16 @@ package org.torquebox.core.analysis;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.ast.Node;
 import org.jruby.ast.visitor.NodeVisitor;
 import org.jruby.parser.LocalStaticScope;
-import org.jruby.parser.ParserSupport;
 import org.jruby.parser.StaticScope;
 import org.jruby.runtime.DynamicScope;
 import org.jruby.runtime.scope.ManyVarsDynamicScope;
-
 import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 
 public class ScriptAnalyzer {
@@ -22,9 +21,6 @@ public class ScriptAnalyzer {
     private Ruby ruby19;
 
     public ScriptAnalyzer() {
-    }
-
-    public void create() {
         createRuby18();
         createRuby19();
     }
@@ -32,12 +28,14 @@ public class ScriptAnalyzer {
     protected void createRuby18() {
         RubyInstanceConfig config = new RubyInstanceConfig();
         config.setCompatVersion( CompatVersion.RUBY1_8 );
+        config.setLoader( this.getClass().getClassLoader() );
         this.ruby18 = Ruby.newInstance( config );
     }
     
     protected void createRuby19() {
         RubyInstanceConfig config = new RubyInstanceConfig();
         config.setCompatVersion( CompatVersion.RUBY1_9 );
+        config.setLoader( this.getClass().getClassLoader() );
         this.ruby19 = Ruby.newInstance( config );
     }
 
@@ -57,6 +55,23 @@ public class ScriptAnalyzer {
             this.ruby19.tearDown( false );
         }
     }
+    
+    public Object analyze(VirtualFile file, AnalyzingVisitor visitor, Version rubyVersion) throws IOException {
+        if ( ! file.exists() ) {
+            return null;
+        }
+        InputStream in = null;
+        
+        try {
+            in = file.openStream();
+            analyze( file.getPathName(), in, visitor, rubyVersion );
+        } finally {
+            if ( in != null ) {
+                in.close();
+            }
+        }
+        return visitor.getResult();
+    }
 
     public Object analyze(String filename, InputStream in, NodeVisitor visitor, Version rubyVersion) throws IOException {
         StringBuffer script = new StringBuffer();
@@ -75,6 +90,10 @@ public class ScriptAnalyzer {
         StaticScope staticScope = new LocalStaticScope( null );
         DynamicScope scope = new ManyVarsDynamicScope( staticScope );
         Ruby analyzingRuby = null;
+        
+        System.err.println( "RUBY VERSION: " + rubyVersion + " // " + rubyVersion.hashCode() );
+        System.err.println( "RUBY 1.8: " + Version.V1_8 + " // " + Version.V1_8.hashCode() + " // " + Version.V1_8.equals(  rubyVersion ) );
+        System.err.println( "RUBY 1.9: " + Version.V1_9 + " // " + Version.V1_9.hashCode() + " // " + Version.V1_9.equals(  rubyVersion ) );
         
         if ( rubyVersion.equals(  Version.V1_8 )) {
             analyzingRuby = this.ruby18;

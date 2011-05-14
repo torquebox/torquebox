@@ -1,8 +1,9 @@
 package org.torquebox.core.injection.analysis;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 import org.jboss.msc.inject.InjectionException;
@@ -12,11 +13,11 @@ import org.jruby.ast.Node;
 import org.jruby.ast.NodeType;
 import org.jruby.ast.StrNode;
 import org.jruby.ast.types.INameNode;
-import org.torquebox.core.analysis.DefaultNodeVisitor;
+import org.torquebox.core.analysis.AnalyzingVisitor;
 
-public class InjectionVisitor extends DefaultNodeVisitor {
+public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
 
-    public InjectionVisitor(InjectionAnalyzer analyzer) {
+    public InjectionRubyByteCodeVisitor(InjectionAnalyzer analyzer) {
         this.analyzer = analyzer;
     }
 
@@ -109,11 +110,16 @@ public class InjectionVisitor extends DefaultNodeVisitor {
         return this.analyzer;
     }
 
-    public List<Injectable> getInjectables() {
+    public Set<Injectable> getInjectables() {
         if (!this.markerSeen) {
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
         return this.injectables;
+    }
+    
+    public void reset() {
+        this.markerSeen = false;
+        this.injectables.clear();
     }
 
     private static final String INJECTION_PREFIX = "inject_";
@@ -122,5 +128,10 @@ public class InjectionVisitor extends DefaultNodeVisitor {
     private InjectionAnalyzer analyzer;
     private boolean markerSeen = false;
 
-    private List<Injectable> injectables = new ArrayList<Injectable>();
+    private Set<Injectable> injectables = new HashSet<Injectable>();
+
+    @Override
+    public Object getResult() {
+        return getInjectables();
+    }
 }

@@ -18,12 +18,17 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceBuilder;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.app.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.AppKnobYamlParsingProcessor;
 
 import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
 import org.torquebox.core.app.RubyApplicationRecognizer;
+import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
+import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
+import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
+import org.torquebox.core.injection.jndi.JNDIInjectableHandler;
 import org.torquebox.core.pool.RuntimePoolDeployer;
 import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
 
@@ -35,7 +40,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         log.info( "Adding subsystem: " + context );
         final ModelNode subModel = context.getSubModel();
         subModel.setEmptyObject();
-        
+
         if (!handleBootContext( context, resultHandler )) {
             log.info( "Signal complete on non-boot task." );
             resultHandler.handleResultComplete();
@@ -62,18 +67,34 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         log.info( "Adding deployment processors" );
 
         context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppKnobYamlParsingProcessor() );
-        
+
         context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
         context.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 20, new ApplicationYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
-        
+
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new TorqueBoxDependenciesProcessor() );
-        
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, this.injectionIndexingProcessor );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
         context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
-        
+
         log.info( "Added deployment processors" );
+    }
+
+    protected void addCoreServices(final RuntimeTaskContext context) {
+        addInjectionServices( context );
+    }
+
+    protected void addInjectionServices(final RuntimeTaskContext context) {
+        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, this.injectionIndexingProcessor.getInjectableHandlerRegistry() )
+                .install();
+        addInjectableHandler( context, new JNDIInjectableHandler() );
+    }
+
+    protected void addInjectableHandler(final RuntimeTaskContext context, final AbstractInjectableHandler handler) {
+        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "jndi" ), handler )
+                .addDependency( CoreServices.INJECTABLE_HANDLER_REGISTRY, InjectableHandlerRegistry.class, handler.getInjectableHandlerRegistryInjector() )
+                .install();
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
@@ -82,6 +103,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
                 log.info( "Executing boot task" );
                 addDeploymentProcessors( bootContext );
+                addCoreServices( context );
                 resultHandler.handleResultComplete();
                 log.info( "signally completeness" );
                 log.info( "Executed boot task" );
@@ -102,6 +124,12 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         subsystem.get( OP_ADDR ).set( address );
         return subsystem;
     }
+
+    public CoreSubsystemAdd() {
+        this.injectionIndexingProcessor = new InjectionIndexingProcessor();
+    }
+
+    private InjectionIndexingProcessor injectionIndexingProcessor;
 
     static final CoreSubsystemAdd ADD_INSTANCE = new CoreSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.core.as" );

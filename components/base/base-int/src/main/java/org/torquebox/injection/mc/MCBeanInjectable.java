@@ -1,6 +1,6 @@
 package org.torquebox.injection.mc;
 
-import org.torquebox.injection.SimpleNamedInjectable;
+import org.torquebox.core.injection.SimpleNamedInjectable;
 
 public class MCBeanInjectable extends SimpleNamedInjectable {
     

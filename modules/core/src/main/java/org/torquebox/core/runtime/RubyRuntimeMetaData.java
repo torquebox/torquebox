@@ -69,7 +69,7 @@ public class RubyRuntimeMetaData {
     private Map<String, String> environment;
 
     /** Version of Ruby to use. */
-    private Version version;
+    private Version version = Version.V1_8;
 
     /** JRuby JIT compile mode to use. */
     private CompileMode compileMode;

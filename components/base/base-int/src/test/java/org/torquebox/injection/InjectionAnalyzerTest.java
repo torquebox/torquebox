@@ -17,11 +17,11 @@ import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionAnalyzer;
 import org.torquebox.core.injection.analysis.InvalidInjectionTypeException;
+import org.torquebox.core.injection.jndi.JNDIInjectable;
+import org.torquebox.core.injection.jndi.JNDIInjectableHandler;
 import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 import org.torquebox.injection.cdi.CDIInjectable;
 import org.torquebox.injection.cdi.CDIInjectableHandler;
-import org.torquebox.injection.jndi.JNDIInjectable;
-import org.torquebox.injection.jndi.JNDIInjectableHandler;
 import org.torquebox.injection.mc.MCBeanInjectable;
 import org.torquebox.injection.mc.MCBeanInjectableHandler;
 

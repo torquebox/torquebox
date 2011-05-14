@@ -5,9 +5,13 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.Service;
+import org.jboss.msc.service.StartContext;
+import org.jboss.msc.service.StartException;
+import org.jboss.msc.service.StopContext;
 import org.jruby.ast.Node;
 
-public class InjectableHandlerRegistry {
+public class InjectableHandlerRegistry implements Service<InjectableHandlerRegistry> {
     
     private static final Logger log = Logger.getLogger( InjectableHandlerRegistry.class );
 
@@ -42,6 +46,19 @@ public class InjectableHandlerRegistry {
         }
         
         return null;
+    }
+
+    @Override
+    public InjectableHandlerRegistry getValue() throws IllegalStateException, IllegalArgumentException {
+        return this;
+    }
+
+    @Override
+    public void start(StartContext context) throws StartException {
+    }
+
+    @Override
+    public void stop(StopContext context) {
     }
     
 }

@@ -1,5 +1,7 @@
 package org.torquebox.core.analysis;
 
 
-public class AnalyzingVisitor extends DefaultNodeVisitor {
+public abstract class AnalyzingVisitor extends DefaultNodeVisitor {
+    
+    public abstract Object getResult();
 }

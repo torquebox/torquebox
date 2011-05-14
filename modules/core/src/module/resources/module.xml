@@ -30,8 +30,9 @@
     </resources>
     <exports>
       <include-set>
-        <path name="org/jruby/"/>
-        <path name="org/jruby/ast/"/>
+        <path name="org/jruby"/>
+        <path name="org/jruby/ast"/>
+        <path name="org/jruby/libraries"/>
       </include-set>
     </exports>
 

@@ -1,8 +1,15 @@
-package org.torquebox.injection;
+package org.torquebox.core.injection.analysis;
 
 import java.util.Stack;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.inject.InjectionException;
+import org.jboss.msc.inject.Injector;
+import org.jboss.msc.service.Service;
+import org.jboss.msc.service.StartContext;
+import org.jboss.msc.service.StartException;
+import org.jboss.msc.service.StopContext;
+import org.jboss.msc.value.InjectedValue;
 import org.jruby.ast.ArrayNode;
 import org.jruby.ast.CallNode;
 import org.jruby.ast.Node;
@@ -10,9 +17,8 @@ import org.jruby.ast.NodeType;
 import org.jruby.ast.StrNode;
 import org.jruby.ast.SymbolNode;
 import org.jruby.ast.VCallNode;
-import org.torquebox.core.injection.analysis.InjectableHandler;
 
-public abstract class AbstractInjectableHandler implements InjectableHandler {
+public abstract class AbstractInjectableHandler implements InjectableHandler, Service<InjectableHandler> {
 
     private Logger log = Logger.getLogger( this.getClass() );
     private String type;
@@ -42,6 +48,8 @@ public abstract class AbstractInjectableHandler implements InjectableHandler {
     public void setRecognitionPriority(int priority) {
         this.recognitionPriority = priority;
     }
+    
+
 
     protected static String getString(Node node) {
         String str = null;
@@ -89,5 +97,37 @@ public abstract class AbstractInjectableHandler implements InjectableHandler {
 
         return name.toString();
     }
+    
+    
+    @Override
+    public AbstractInjectableHandler getValue() throws IllegalStateException, IllegalArgumentException {
+        return this;
+    }
+
+    @Override
+    public void start(StartContext context) throws StartException {
+        
+    }
+
+    @Override
+    public void stop(StopContext context) {
+        
+    }
+    
+    public Injector<InjectableHandlerRegistry> getInjectableHandlerRegistryInjector() {
+        return new Injector<InjectableHandlerRegistry>() {
+            @Override
+            public void inject(InjectableHandlerRegistry registry) throws InjectionException {
+                registry.addInjectableHandler( AbstractInjectableHandler.this );
+            }
+
+            @Override
+            public void uninject() {
+            }
+            
+        };
+    }
+    
+    public InjectedValue<InjectableHandlerRegistry> injectableHandlerRegistryInjection = new InjectedValue<InjectableHandlerRegistry>();
 
 }

@@ -1,8 +1,11 @@
-package org.torquebox.injection.jndi;
+package org.torquebox.core.injection.jndi;
 
+import org.jboss.msc.service.StartContext;
+import org.jboss.msc.service.StartException;
+import org.jboss.msc.service.StopContext;
 import org.jruby.ast.Node;
+import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
-import org.torquebox.injection.AbstractInjectableHandler;
 
 /** Handles naming injections.
  * 
@@ -32,5 +35,7 @@ public class JNDIInjectableHandler extends AbstractInjectableHandler {
         return (str != null) && str.startsWith(  "java:" );
         
     }
+
+
     
 }

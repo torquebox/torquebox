@@ -1,8 +1,8 @@
 package org.torquebox.injection.mc;
 
 import org.jruby.ast.Node;
+import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
-import org.torquebox.injection.AbstractInjectableHandler;
 
 public class MCBeanInjectableHandler extends AbstractInjectableHandler {
     
