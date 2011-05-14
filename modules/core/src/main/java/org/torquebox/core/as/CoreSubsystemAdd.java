@@ -19,6 +19,8 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.app.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.AppKnobYamlParsingProcessor;
@@ -26,6 +28,7 @@ import org.torquebox.core.app.AppKnobYamlParsingProcessor;
 import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
 import org.torquebox.core.app.RubyApplicationRecognizer;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
+import org.torquebox.core.injection.analysis.InjectableHandler;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
 import org.torquebox.core.injection.jndi.JNDIInjectableHandler;
@@ -38,15 +41,12 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     /** {@inheritDoc} */
     @Override
     public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        log.info( "Adding subsystem: " + context );
         final ModelNode subModel = context.getSubModel();
         subModel.setEmptyObject();
 
         if (!handleBootContext( context, resultHandler )) {
-            log.info( "Signal complete on non-boot task." );
             resultHandler.handleResultComplete();
         }
-        log.info( "Added subsystem: " + context );
         return compensatingResult( operation );
     }
 
@@ -57,16 +57,12 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         }
 
         final BootOperationContext context = (BootOperationContext) operationContext;
-        log.info( "Handling boot context: " + context );
 
         context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        log.info( "Handled boot context: " + context );
         return true;
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        log.info( "Adding deployment processors" );
-
         context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppKnobYamlParsingProcessor() );
 
         context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
@@ -78,8 +74,6 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, this.injectionIndexingProcessor );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
         context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
-
-        log.info( "Added deployment processors" );
     }
 
     protected void addCoreServices(final RuntimeTaskContext context) {
@@ -88,14 +82,19 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
 
     protected void addInjectionServices(final RuntimeTaskContext context) {
         context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, this.injectionIndexingProcessor.getInjectableHandlerRegistry() )
-                .install();
+          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "jndi" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
+          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "service" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
+          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "queue" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
+          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "topic" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
+          .setInitialMode( Mode.PASSIVE )
+          .install();
         addInjectableHandler( context, new JNDIInjectableHandler() );
         addInjectableHandler( context, new ServiceInjectableHandler() );
     }
 
     protected void addInjectableHandler(final RuntimeTaskContext context, final AbstractInjectableHandler handler) {
         context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY.append( handler.getType() ), handler )
-                .addDependency( CoreServices.INJECTABLE_HANDLER_REGISTRY, InjectableHandlerRegistry.class, handler.getInjectableHandlerRegistryInjector() )
+                .setInitialMode( Mode.ACTIVE )
                 .install();
     }
 
@@ -103,12 +102,9 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         return new RuntimeTask() {
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                log.info( "Executing boot task" );
                 addDeploymentProcessors( bootContext );
                 addCoreServices( context );
                 resultHandler.handleResultComplete();
-                log.info( "signally completeness" );
-                log.info( "Executed boot task" );
             }
         };
     }

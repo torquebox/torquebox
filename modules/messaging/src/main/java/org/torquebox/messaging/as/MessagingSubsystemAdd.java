@@ -1,4 +1,4 @@
-package org.torquebox.web.as;
+package org.torquebox.messaging.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
@@ -15,27 +15,22 @@ import org.jboss.as.controller.RuntimeTask;
 import org.jboss.as.controller.RuntimeTaskContext;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
-import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
-import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
-import org.torquebox.web.rack.RackApplicationDefaultsProcessor;
-import org.torquebox.web.rack.RackApplicationRecognizer;
-import org.torquebox.web.rack.RackRuntimeProcessor;
-import org.torquebox.web.rack.RackWebApplicationDeployer;
-import org.torquebox.web.rack.WebRuntimePoolProcessor;
-import org.torquebox.web.rack.WebYamlParsingProcessor;
-import org.torquebox.web.rails.RailsApplicationRecognizer;
-import org.torquebox.web.rails.RailsRuntimeProcessor;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
+import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
+import org.torquebox.messaging.injection.QueueInjectableHandler;
 
-class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
+class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
     /** {@inheritDoc} */
     @Override
     public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
         final ModelNode subModel = context.getSubModel();
         subModel.setEmptyObject();
-        
+
         if (!handleBootContext( context, resultHandler )) {
             resultHandler.handleResultComplete();
         }
@@ -55,20 +50,21 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 10, new RailsApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 40, new RackWebApplicationDeployer() );
-        
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new WebDependenciesProcessor() );
-        
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new RailsRuntimeProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 10, new RackRuntimeProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
-        
-        context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RackApplicationDefaultsProcessor() );
-        
-        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
+        // context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
+    }
+
+    protected void addMessagingServices(final RuntimeTaskContext context) {
+        addInjectionServices( context );
+    }
+
+    protected void addInjectionServices(final RuntimeTaskContext context) {
+        addInjectableHandler( context, new QueueInjectableHandler() );
+    }
+
+    protected void addInjectableHandler(final RuntimeTaskContext context, final AbstractInjectableHandler handler) {
+        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY.append( handler.getType() ), handler )
+                .setInitialMode( Mode.ACTIVE )
+                .install();
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
@@ -76,6 +72,7 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
                 addDeploymentProcessors( bootContext );
+                addMessagingServices( context );
                 resultHandler.handleResultComplete();
             }
         };
@@ -95,7 +92,10 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         return subsystem;
     }
 
-    static final WebSubsystemAdd ADD_INSTANCE = new WebSubsystemAdd();
-    static final Logger log = Logger.getLogger( "org.torquebox.web.as" );
+    public MessagingSubsystemAdd() {
+    }
+
+    static final MessagingSubsystemAdd ADD_INSTANCE = new MessagingSubsystemAdd();
+    static final Logger log = Logger.getLogger( "org.torquebox.messaging.as" );
 
 }

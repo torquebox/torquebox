@@ -91,10 +91,6 @@ public class ScriptAnalyzer {
         DynamicScope scope = new ManyVarsDynamicScope( staticScope );
         Ruby analyzingRuby = null;
         
-        System.err.println( "RUBY VERSION: " + rubyVersion + " // " + rubyVersion.hashCode() );
-        System.err.println( "RUBY 1.8: " + Version.V1_8 + " // " + Version.V1_8.hashCode() + " // " + Version.V1_8.equals(  rubyVersion ) );
-        System.err.println( "RUBY 1.9: " + Version.V1_9 + " // " + Version.V1_9.hashCode() + " // " + Version.V1_9.equals(  rubyVersion ) );
-        
         if ( rubyVersion.equals(  Version.V1_8 )) {
             analyzingRuby = this.ruby18;
         } else if ( rubyVersion.equals( Version.V1_9 ) ) {

@@ -32,10 +32,6 @@ public abstract class AbstractInjectableHandler implements InjectableHandler, Se
         this.type = type;
     }
 
-    public void start() {
-        log.info( "Starting" );
-    }
-
     @Override
     public String getType() {
         return this.type;
@@ -106,28 +102,11 @@ public abstract class AbstractInjectableHandler implements InjectableHandler, Se
 
     @Override
     public void start(StartContext context) throws StartException {
-        
     }
 
     @Override
     public void stop(StopContext context) {
         
     }
-    
-    public Injector<InjectableHandlerRegistry> getInjectableHandlerRegistryInjector() {
-        return new Injector<InjectableHandlerRegistry>() {
-            @Override
-            public void inject(InjectableHandlerRegistry registry) throws InjectionException {
-                registry.addInjectableHandler( AbstractInjectableHandler.this );
-            }
-
-            @Override
-            public void uninject() {
-            }
-            
-        };
-    }
-    
-    public InjectedValue<InjectableHandlerRegistry> injectableHandlerRegistryInjection = new InjectedValue<InjectableHandlerRegistry>();
 
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.inject.InjectionException;
+import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -21,18 +23,29 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
     public InjectableHandlerRegistry() {
     }
     
+    public Injector<InjectableHandler> getHandlerRegistrationInjector() {
+        return new Injector<InjectableHandler>() {
+            @Override
+            public void inject(final InjectableHandler handler) throws InjectionException {
+                if ( handler == null ) {
+                    return;
+                }
+                InjectableHandlerRegistry.this.addInjectableHandler( handler );
+            }
+
+            @Override
+            public void uninject() {
+                
+            }
+            
+        };
+    }
+    
     public void addInjectableHandler(InjectableHandler handler) {
-        log.info( "Registering injectable handler: " + handler.getType() + " - " + handler );
         this.registry.put( handler.getType(), handler );
         this.handlersByPriority.add(  handler  );
     }
     
-    public InjectableHandler removeInjectableHandler(InjectableHandler handler) {
-        log.info( "Unregistering injectable handler: " + handler.getType() + " - " + handler );
-        this.handlersByPriority.remove( handler );
-        return this.registry.remove( handler.getType() );
-    }
-
     public InjectableHandler getHandler(String type) {
         return this.registry.get( type );
     }

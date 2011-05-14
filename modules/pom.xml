@@ -20,6 +20,7 @@
     <module>core</module>
     <module>services</module>
     <module>web</module>
+    <module>messaging</module>
   </modules>
 
 </project>

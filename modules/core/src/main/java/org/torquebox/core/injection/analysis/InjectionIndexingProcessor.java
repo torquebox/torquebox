@@ -45,7 +45,6 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         for ( VirtualFile each : root.getChildren() ) {
             if ( shouldProcess( each  ) ) {
                 try {
-                    log.info(  "SCAN: " + each  );
                     analyzer.analyzeRecursively( index, each, runtimeMetaData.getVersion() );
                 } catch (IOException e) {
                     log.error( "Error processing file: " + each );
@@ -55,8 +54,7 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         
         long elapsed = System.currentTimeMillis() - startTime;
         
-        log.info(  "Injection scanning took " + elapsed + "ms: " + index );
-        
+        log.info(  "Injection scanning took " + elapsed + "ms");
     }
     
     protected boolean shouldProcess(VirtualFile dir) {

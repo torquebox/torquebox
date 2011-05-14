@@ -23,9 +23,6 @@ public class InjectionRegistry {
         return new Injector<Object>() {
             @Override
             public void inject(Object value) throws InjectionException {
-                System.err.println( "COMPONENT INJECTION: " + value );
-                System.err.println( "COMPONENT INJECTION ref: " + ((ManagedReferenceFactory)value).getReference() );
-                System.err.println( "COMPONENT INJECTION ref.instance: " + ((ManagedReferenceFactory)value).getReference().getInstance() );
                 InjectionRegistry.this.injections.put( key, value );
             }
 

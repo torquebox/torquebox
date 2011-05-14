@@ -41,21 +41,8 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             
             Module module = unit.getAttachment( Attachments.MODULE );
             
-            log.info(  "MODULE: " + module  );
-            log.info(  "MODULE-CLASSLOADER: " + module.getClassLoader() );
+            factory.setClassLoader( module.getClassLoader() );
             
-            //ClassLoader cl = getClass().getClassLoader();
-            ClassLoader cl = module.getClassLoader();
-            
-            try {
-                Class<?> nodeClass = cl.loadClass( "org.jruby.ast.Node" );
-                log.info( "org.jruby.ast.Node ===> " + nodeClass );
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-            //factory.setClassLoader( module.getClassLoader() );
-            factory.setClassLoader( cl );
             // TODO What's the AS7 kernel?
             //factory.setKernel( this.kernel );
             factory.setLoadPaths( loadPaths );

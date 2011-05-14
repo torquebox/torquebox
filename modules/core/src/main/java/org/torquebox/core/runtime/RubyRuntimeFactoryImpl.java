@@ -50,7 +50,7 @@ import org.jruby.util.ClassCache;
  */
 public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
-    private static final Logger log = Logger.getLogger( RubyRuntimeFactoryImpl.class );
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 
     /** Re-usable initializer. */
     private RuntimeInitializer initializer;
@@ -248,18 +248,12 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
         String jrubyHome = this.jrubyHome;
 
-        log.info( "PRE: " + jrubyHome );
         if (jrubyHome == null) {
 
             jrubyHome = System.getProperty( "jruby.home" );
-            log.info( "PROP: " + jrubyHome );
-            
-            log.info(  "Use ENV?: " + this.useJRubyHomeEnvVar );
-            log.info(  "ENV ignore prop" + System.getProperty( "jruby_home.env.ignore" ));
 
             if (jrubyHome == null && this.useJRubyHomeEnvVar && !"true".equals( System.getProperty( "jruby_home.env.ignore" ) )) {
                 jrubyHome = System.getenv( "JRUBY_HOME" );
-                log.info( "ENV: " + jrubyHome );
                 if (jrubyHome != null) {
                     if (!new File( jrubyHome ).exists()) {
                         jrubyHome = null;
@@ -269,20 +263,16 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
             if (jrubyHome == null) {
                 String jbossHome = System.getProperty( "jboss.home.dir" );
-                log.info( "RELATIVE (jboss.home): " + jbossHome );
 
                 if (jbossHome != null) {
                     File candidatePath = new File( jbossHome, "../jruby" );
                     if (candidatePath.exists() && candidatePath.isDirectory()) {
                         jrubyHome = candidatePath.getAbsolutePath();
-                        log.info( "RELATIVE: " + jrubyHome );
                     }
                 }
 
             }
         }
-        
-        log.info( "AFTER: " + jrubyHome );
 
         if (jrubyHome == null) {
             jrubyHome = RubyInstanceConfig.class.getResource( "/META-INF/jruby.home" ).toURI().getSchemeSpecificPart();
@@ -315,7 +305,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
             }
         }
 
-        log.info( "JRUBY_HOME: " + jrubyHome );
         if (jrubyHome != null) {
             config.setJRubyHome( jrubyHome );
         }
@@ -467,7 +456,6 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         if (this.applicationEnvironment != null) {
             env.putAll( this.applicationEnvironment );
         }
-        log.info( "ENV: " + env );
         return env;
     }
 

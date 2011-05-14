@@ -23,8 +23,6 @@ public class CoreExtension implements Extension {
                 false );
         
         registration.registerXMLElementWriter(CoreSubsystemParser.getInstance());
-
-        log.info( "Initialized TorqueBox Core Subsystem" );
     }
 
     @Override

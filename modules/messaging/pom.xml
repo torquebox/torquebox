@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-web</artifactId>
+  <artifactId>torquebox-messaging</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Web Module</name>
+  <name>TorqueBox Messaging Module</name>
   <description />
 
   <dependencies>
@@ -19,28 +19,6 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-web</artifactId>
-      <version>${project.version}</version>
-      <type>gem</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.web</groupId>
-      <artifactId>jbossweb</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-web</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -56,6 +34,12 @@
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-ee</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
