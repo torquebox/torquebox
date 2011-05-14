@@ -29,6 +29,7 @@ import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
 import org.torquebox.core.injection.jndi.JNDIInjectableHandler;
+import org.torquebox.core.injection.msc.ServiceInjectableHandler;
 import org.torquebox.core.pool.RuntimePoolDeployer;
 import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
 
@@ -89,10 +90,11 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, this.injectionIndexingProcessor.getInjectableHandlerRegistry() )
                 .install();
         addInjectableHandler( context, new JNDIInjectableHandler() );
+        addInjectableHandler( context, new ServiceInjectableHandler() );
     }
 
     protected void addInjectableHandler(final RuntimeTaskContext context, final AbstractInjectableHandler handler) {
-        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "jndi" ), handler )
+        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY.append( handler.getType() ), handler )
                 .addDependency( CoreServices.INJECTABLE_HANDLER_REGISTRY, InjectableHandlerRegistry.class, handler.getInjectableHandlerRegistryInjector() )
                 .install();
     }

@@ -29,9 +29,7 @@ public class JNDIInjectableHandler extends AbstractInjectableHandler {
     public boolean recognizes(Node argsNode) {
         String str = getString( argsNode );
         
-        //return (str != null) && str.startsWith(  "java:" );
-        return true;
-        
+        return (str != null) && str.startsWith(  "java:" );
     }
 
 

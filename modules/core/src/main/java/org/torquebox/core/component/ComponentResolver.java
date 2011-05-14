@@ -33,11 +33,14 @@ public class ComponentResolver {
     }
 
     protected IRubyObject createComponent(final Ruby runtime) {
-        // TODO injections
+        prepareInjections(runtime);
         IRubyObject rubyComponent = this.componentInstantiator.newInstance( runtime, this.initializeParams );
         return rubyComponent;
     }
 
+    protected void prepareInjections(final Ruby runtime) {
+        this.injectionRegistry.merge( runtime );
+    }
     public void setComponentName(String componentName) {
         this.componentName = componentName;
     }
@@ -92,12 +95,12 @@ public class ComponentResolver {
     }
     
     public Injector<Object> getInjector(String key) {
-        return this.injections.getInjector( key );
+        return this.injectionRegistry.getInjector( key );
     }
 
     private Class<? extends AbstractRubyComponent> wrapperClass;
 
-    private Injections injections = new Injections();
+    private InjectionRegistry injectionRegistry = new InjectionRegistry();
     private ComponentInstantiator componentInstantiator;
     private String componentName;
     private Object[] initializeParams;

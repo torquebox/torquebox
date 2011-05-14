@@ -12,7 +12,7 @@ public class AbstractRubyComponent implements RubyComponent {
         this.rubyComponent = rubyComponent;
     }
     
-    public void applyInjections(Injections injections) {
+    public void applyInjections(InjectionRegistry injections) {
         
     }
     
