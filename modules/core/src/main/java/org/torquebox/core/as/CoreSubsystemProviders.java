@@ -51,9 +51,9 @@ public class CoreSubsystemProviders {
             injector.get(TAIL_COMMENT_ALLOWED).set(true);
             injector.get(NAMESPACE).set(Namespace.CURRENT.getUriString());
             
-            injector.get("attributes", "class", TYPE).set(ModelType.STRING);
-            injector.get("attributes", "class", DESCRIPTION).set(bundle.getString("torquebox-core.injector"));
-            injector.get("attributes", "class", REQUIRED).set(true);
+            injector.get("attributes", "module", TYPE).set(ModelType.STRING);
+            injector.get("attributes", "module", DESCRIPTION).set(bundle.getString("torquebox-core.injector"));
+            injector.get("attributes", "module", REQUIRED).set(true);
             
             return injector;
         }

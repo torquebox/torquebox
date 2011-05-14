@@ -3,6 +3,8 @@ package org.torquebox.core.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 
+import java.util.ServiceLoader;
+
 import org.jboss.as.controller.ModelAddOperationHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -36,25 +38,16 @@ public class InjectableHandlerAdd implements ModelAddOperationHandler {
 
                     System.err.println( "Registry ---> " + registry );
 
-                    String handlerClassName = operation.get( "attributes", "class" ).asString();
                     String handlerModuleIdentifierStr = operation.get( "attributes", "module" ).asString();
                     ModuleIdentifier handlerModuleIdentifier = ModuleIdentifier.create( handlerModuleIdentifierStr );
 
-                    System.err.println( "CLASS NAME: " + handlerClassName );
                     try {
-                        System.err.println( "Caller module: " + handlerModuleIdentifier );
-                        Class<InjectableHandler> handlerClass = (Class<InjectableHandler>) Module.loadClassFromCallerModuleLoader( handlerModuleIdentifier, handlerClassName );
-                        System.err.println( "CLASS: " + handlerClass );
-                        InjectableHandler handler = handlerClass.newInstance();
-                        registry.addInjectableHandler( handler );
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    catch (ModuleLoadException e) {
-                        e.printStackTrace();
-                    } catch (InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                        ServiceLoader<InjectableHandler> serviceLoader = Module.loadServiceFromCallerModuleLoader( handlerModuleIdentifier, InjectableHandler.class );
+                        for (InjectableHandler eachHandler : serviceLoader) {
+                            registry.addInjectableHandler( eachHandler );
+                        }
+                    } catch (ModuleLoadException e) {
+                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -63,17 +56,15 @@ public class InjectableHandlerAdd implements ModelAddOperationHandler {
         return null;
     }
 
-    public static ModelNode createOperation(ModelNode address, String type, String moduleName, String className) {
+    public static ModelNode createOperation(ModelNode address, String moduleName) {
         System.err.println( "ADDRESS: " + address + "  // " + address.getClass() );
 
-        ModelNode injectionAddress = address.clone().add( "injector", type );
+        ModelNode injectionAddress = address.clone().add( "injector", moduleName );
         System.err.println( "INJECTION ADDRESS: " + injectionAddress + " // " + injectionAddress.getClass() );
 
         final ModelNode op = new ModelNode();
         op.get( OP_ADDR ).set( injectionAddress );
         op.get( OP ).set( "add" );
-        op.get( "attributes", "type" ).set( type );
-        op.get( "attributes", "class" ).set( className );
         op.get( "attributes", "module" ).set( moduleName );
         System.err.println( "operation: " + op );
         return op;

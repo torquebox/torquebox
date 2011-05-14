@@ -41,7 +41,6 @@ import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
 import org.torquebox.core.as.CoreExtension;
 import org.torquebox.core.as.InjectableHandlerAdd;
-import org.torquebox.messaging.injection.QueueInjectableHandler;
 
 public class MessagingSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
@@ -67,8 +66,7 @@ public class MessagingSubsystemParser implements XMLStreamConstants, XMLElementR
         core.add(SUBSYSTEM, CoreExtension.SUBSYSTEM_NAME);
         core.protect();
         
-        list.add(InjectableHandlerAdd.createOperation(core, "queue", Module.getCallerModule().getIdentifier().getName(), QueueInjectableHandler.class.getName() ) );
-        //list.add(InjectableHandlerAdd.createOperation(core, "queue", "goober"));
+        list.add(InjectableHandlerAdd.createOperation(core, Module.getCallerModule().getIdentifier().getName() ) );
 
         list.add(MessagingSubsystemAdd.createOperation(address));
     }

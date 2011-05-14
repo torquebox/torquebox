@@ -65,8 +65,7 @@ public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader
 
         list.add(CoreSubsystemAdd.createOperation(address));
         
-        list.add(InjectableHandlerAdd.createOperation(address, "jndi", Module.getCallerModule().getIdentifier().getName(), JNDIInjectableHandler.class.getName() ));
-        list.add(InjectableHandlerAdd.createOperation(address, "service", Module.getCallerModule().getIdentifier().getName(), ServiceInjectableHandler.class.getName() ));
+        list.add(InjectableHandlerAdd.createOperation(address, Module.getCallerModule().getIdentifier().getName() ) );
         
         log.info( "done readElement" );
     }

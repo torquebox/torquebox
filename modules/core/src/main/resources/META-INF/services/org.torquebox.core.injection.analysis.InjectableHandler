@@ -1,0 +1,2 @@
+org.torquebox.core.injection.jndi.JNDIInjectableHandler
+org.torquebox.core.injection.msc.ServiceInjectableHandler
