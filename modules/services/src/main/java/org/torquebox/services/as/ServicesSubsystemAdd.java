@@ -47,14 +47,12 @@ public class ServicesSubsystemAdd implements ModelAddOperationHandler, BootOpera
     /** {@inheritDoc} */
     @Override
     public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        log.info( "Adding subsystem: " + context );
         final ModelNode subModel = context.getSubModel();
         subModel.setEmptyObject();
         
         if (!handleBootContext( context, resultHandler )) {
             resultHandler.handleResultComplete();
         }
-        log.info( "Added subsystem: " + context );
         return compensatingResult( operation );
     }
     
@@ -65,32 +63,25 @@ public class ServicesSubsystemAdd implements ModelAddOperationHandler, BootOpera
         }
 
         final BootOperationContext context = (BootOperationContext) operationContext;
-        log.info( "Handling boot context: " + context );
-
         context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        log.info( "Handled boot context: " + context );
         return true;
     }
     
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        log.info( "Adding deployment processors" );
         
         context.addDeploymentProcessor( Phase.PARSE, 30, new ServicesYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new ServicesRuntimePoolProcessor() );
         context.addDeploymentProcessor( Phase.POST_MODULE, 120, new ServicesComponentResolverInstaller() );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new ServicesDeployer() );
         
-        log.info( "Added deployment processors" );
     }
     
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
         return new RuntimeTask() {
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                log.info( "Executing boot task" );
                 addDeploymentProcessors( bootContext );
                 resultHandler.handleResultComplete();
-                log.info( "Executed boot task" );
             }
         };
     }

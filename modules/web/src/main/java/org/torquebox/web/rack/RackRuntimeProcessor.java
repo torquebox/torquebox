@@ -49,7 +49,6 @@ public class RackRuntimeProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        log.info(  "DEPLOY: " + unit );
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
         
@@ -63,8 +62,6 @@ public class RackRuntimeProcessor implements DeploymentUnitProcessor {
             log.warn( "Ruby runtime already configured as " + runtimeMetaData.getRuntimeType() + ": " + unit );
             return;
         }
-
-        log.info( "Deploying rack ruby runtime: " + unit );
 
         if (runtimeMetaData == null) {
             runtimeMetaData = new RubyRuntimeMetaData();

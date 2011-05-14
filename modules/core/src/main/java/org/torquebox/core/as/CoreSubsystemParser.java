@@ -39,8 +39,6 @@ import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
-import org.torquebox.core.injection.jndi.JNDIInjectableHandler;
-import org.torquebox.core.injection.msc.ServiceInjectableHandler;
 
 public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
@@ -55,7 +53,6 @@ public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader
 
     @Override
     public void readElement(final XMLExtendedStreamReader reader, final List<ModelNode> list) throws XMLStreamException {
-        log.info( "readElement" );
         requireNoAttributes(reader);
         requireNoContent(reader);
         
@@ -64,10 +61,7 @@ public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader
         address.protect();
 
         list.add(CoreSubsystemAdd.createOperation(address));
-        
-        list.add(InjectableHandlerAdd.createOperation(address, Module.getCallerModule().getIdentifier().getName() ) );
-        
-        log.info( "done readElement" );
+        list.add(InjectableHandlerAdd.createOperation(address, CoreExtension.SUBSYSTEM_NAME, Module.getCallerModule().getIdentifier().getName() ) );
     }
 
     @Override
@@ -77,6 +71,7 @@ public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader
     }
 
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.as" );
 
 }

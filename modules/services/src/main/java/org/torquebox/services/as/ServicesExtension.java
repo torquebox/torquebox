@@ -42,8 +42,6 @@ public class ServicesExtension implements Extension {
                 false );
         
         registration.registerXMLElementWriter(ServicesSubsystemParser.getInstance());
-
-        log.info( "Initialized TorqueBox Services Subsystem" );
     }
 
     @Override

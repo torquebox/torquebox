@@ -66,7 +66,7 @@ public class MessagingSubsystemParser implements XMLStreamConstants, XMLElementR
         core.add(SUBSYSTEM, CoreExtension.SUBSYSTEM_NAME);
         core.protect();
         
-        list.add(InjectableHandlerAdd.createOperation(core, Module.getCallerModule().getIdentifier().getName() ) );
+        list.add(InjectableHandlerAdd.createOperation(core, MessagingExtension.SUBSYSTEM_NAME, Module.getCallerModule().getIdentifier().getName() ) );
 
         list.add(MessagingSubsystemAdd.createOperation(address));
     }

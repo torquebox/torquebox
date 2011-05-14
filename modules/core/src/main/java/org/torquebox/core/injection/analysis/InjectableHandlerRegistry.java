@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.TreeSet;
 
 import org.jboss.logging.Logger;
-import org.jboss.msc.inject.InjectionException;
-import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
@@ -15,34 +13,11 @@ import org.jruby.ast.Node;
 
 public class InjectableHandlerRegistry implements Service<InjectableHandlerRegistry> {
     
-    private static final Logger log = Logger.getLogger( InjectableHandlerRegistry.class );
-
-    private Map<String, InjectableHandler> registry = new HashMap<String, InjectableHandler>();
-    private TreeSet<InjectableHandler> handlersByPriority = new TreeSet<InjectableHandler>( InjectableHandler.RECOGNITION_PRIORITY );
 
     public InjectableHandlerRegistry() {
     }
     
-    public Injector<InjectableHandler> getHandlerRegistrationInjector() {
-        return new Injector<InjectableHandler>() {
-            @Override
-            public void inject(final InjectableHandler handler) throws InjectionException {
-                if ( handler == null ) {
-                    return;
-                }
-                InjectableHandlerRegistry.this.addInjectableHandler( handler );
-            }
-
-            @Override
-            public void uninject() {
-                
-            }
-            
-        };
-    }
-    
     public void addInjectableHandler(InjectableHandler handler) {
-        System.err.println( "REGISTRY ADDED: " + handler );
         this.registry.put( handler.getType(), handler );
         this.handlersByPriority.add(  handler  );
     }
@@ -75,4 +50,9 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
     public void stop(StopContext context) {
     }
     
+    @SuppressWarnings("unused")
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.injection.analysis" );
+
+    private Map<String, InjectableHandler> registry = new HashMap<String, InjectableHandler>();
+    private TreeSet<InjectableHandler> handlersByPriority = new TreeSet<InjectableHandler>( InjectableHandler.RECOGNITION_PRIORITY );
 }

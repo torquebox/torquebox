@@ -23,7 +23,6 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         String deploymentName = phaseContext.getDeploymentUnit().getName();
-        log.info( "deploy!: " + deploymentName );
         
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         

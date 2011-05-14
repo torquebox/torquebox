@@ -37,7 +37,6 @@ public class RailsRuntimeProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        log.info(  "DEPLOY: " + unit );
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
         RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.ATTACHMENT_KEY );
@@ -52,8 +51,6 @@ public class RailsRuntimeProcessor implements DeploymentUnitProcessor {
             log.warn( "Ruby runtime already configured as " + runtimeMetaData.getRuntimeType() + ": " + unit );
             return;
         }
-        
-        log.info( "Deploying rails ruby runtime: " + unit );
         
         if (runtimeMetaData == null) {
             runtimeMetaData = new RubyRuntimeMetaData();
