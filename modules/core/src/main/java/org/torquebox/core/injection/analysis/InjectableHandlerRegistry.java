@@ -42,6 +42,7 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
     }
     
     public void addInjectableHandler(InjectableHandler handler) {
+        System.err.println( "REGISTRY ADDED: " + handler );
         this.registry.put( handler.getType(), handler );
         this.handlersByPriority.add(  handler  );
     }

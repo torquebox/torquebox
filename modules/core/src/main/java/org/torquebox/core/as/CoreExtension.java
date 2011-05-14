@@ -4,6 +4,7 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 
 import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
+import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ModelNodeRegistration;
@@ -22,6 +23,13 @@ public class CoreExtension implements Extension {
                 CoreSubsystemProviders.SUBSYSTEM_ADD,
                 false );
         
+        ModelNodeRegistration injector = subsystem.registerSubModel( PathElement.pathElement( "injector" ), CoreSubsystemProviders.INJECTOR );
+        
+        injector.registerOperationHandler( "add",
+                InjectableHandlerAdd.ADD_INSTANCE,
+                CoreSubsystemProviders.INJECTOR_ADD,
+                false );
+        
         registration.registerXMLElementWriter(CoreSubsystemParser.getInstance());
     }
 
@@ -29,7 +37,6 @@ public class CoreExtension implements Extension {
     public void initializeParsers(ExtensionParsingContext context) {
         context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), CoreSubsystemParser.getInstance());
     }
-    
     
     public static final String SUBSYSTEM_NAME = "torquebox-core";
     static final Logger log = Logger.getLogger( "org.torquebox.core.as" );

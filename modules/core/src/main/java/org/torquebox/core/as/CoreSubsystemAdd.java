@@ -18,21 +18,13 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.core.app.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.AppKnobYamlParsingProcessor;
-
+import org.torquebox.core.app.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
 import org.torquebox.core.app.RubyApplicationRecognizer;
-import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
-import org.torquebox.core.injection.analysis.InjectableHandler;
-import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
-import org.torquebox.core.injection.jndi.JNDIInjectableHandler;
-import org.torquebox.core.injection.msc.ServiceInjectableHandler;
 import org.torquebox.core.pool.RuntimePoolDeployer;
 import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
 
@@ -42,7 +34,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     @Override
     public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
         final ModelNode subModel = context.getSubModel();
-        subModel.setEmptyObject();
+        subModel.get( "injector" ).setEmptyObject();
 
         if (!handleBootContext( context, resultHandler )) {
             resultHandler.handleResultComplete();
@@ -82,20 +74,8 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
 
     protected void addInjectionServices(final RuntimeTaskContext context) {
         context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, this.injectionIndexingProcessor.getInjectableHandlerRegistry() )
-          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "jndi" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
-          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "service" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
-          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "queue" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
-          .addDependency( DependencyType.OPTIONAL, CoreServices.INJECTABLE_HANDLER_REGISTRY.append( "topic" ), InjectableHandler.class, this.injectionIndexingProcessor.getInjectableHandlerRegistry().getHandlerRegistrationInjector() )
           .setInitialMode( Mode.PASSIVE )
           .install();
-        addInjectableHandler( context, new JNDIInjectableHandler() );
-        addInjectableHandler( context, new ServiceInjectableHandler() );
-    }
-
-    protected void addInjectableHandler(final RuntimeTaskContext context, final AbstractInjectableHandler handler) {
-        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY.append( handler.getType() ), handler )
-                .setInitialMode( Mode.ACTIVE )
-                .install();
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {

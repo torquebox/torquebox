@@ -20,7 +20,6 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
-import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.messaging.injection.QueueInjectableHandler;
 
 class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
@@ -31,7 +30,9 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
         final ModelNode subModel = context.getSubModel();
         subModel.setEmptyObject();
 
-        if (!handleBootContext( context, resultHandler )) {
+        if (context instanceof BootOperationContext) {
+            handleBootContext( context, resultHandler );
+        } else {
             resultHandler.handleResultComplete();
         }
         return compensatingResult( operation );
@@ -50,21 +51,11 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        // context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
+        // context.addDeploymentProcessor( Phase.INSTALL, 10, new
+        // RuntimePoolDeployer() );
     }
 
     protected void addMessagingServices(final RuntimeTaskContext context) {
-        addInjectionServices( context );
-    }
-
-    protected void addInjectionServices(final RuntimeTaskContext context) {
-        addInjectableHandler( context, new QueueInjectableHandler() );
-    }
-
-    protected void addInjectableHandler(final RuntimeTaskContext context, final AbstractInjectableHandler handler) {
-        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY.append( handler.getType() ), handler )
-                .setInitialMode( Mode.ACTIVE )
-                .install();
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {

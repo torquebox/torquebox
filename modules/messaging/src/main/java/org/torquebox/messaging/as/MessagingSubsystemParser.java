@@ -34,10 +34,14 @@ import javax.xml.stream.XMLStreamException;
 import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.modules.Module;
 import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
+import org.torquebox.core.as.CoreExtension;
+import org.torquebox.core.as.InjectableHandlerAdd;
+import org.torquebox.messaging.injection.QueueInjectableHandler;
 
 public class MessagingSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
@@ -58,6 +62,13 @@ public class MessagingSubsystemParser implements XMLStreamConstants, XMLElementR
         final ModelNode address = new ModelNode();
         address.add(SUBSYSTEM, MessagingExtension.SUBSYSTEM_NAME);
         address.protect();
+        
+        final ModelNode core = new ModelNode();
+        core.add(SUBSYSTEM, CoreExtension.SUBSYSTEM_NAME);
+        core.protect();
+        
+        list.add(InjectableHandlerAdd.createOperation(core, "queue", Module.getCallerModule().getIdentifier().getName(), QueueInjectableHandler.class.getName() ) );
+        //list.add(InjectableHandlerAdd.createOperation(core, "queue", "goober"));
 
         list.add(MessagingSubsystemAdd.createOperation(address));
     }

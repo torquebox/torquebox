@@ -34,10 +34,13 @@ import javax.xml.stream.XMLStreamException;
 import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.modules.Module;
 import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
+import org.torquebox.core.injection.jndi.JNDIInjectableHandler;
+import org.torquebox.core.injection.msc.ServiceInjectableHandler;
 
 public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
@@ -61,6 +64,10 @@ public class CoreSubsystemParser implements XMLStreamConstants, XMLElementReader
         address.protect();
 
         list.add(CoreSubsystemAdd.createOperation(address));
+        
+        list.add(InjectableHandlerAdd.createOperation(address, "jndi", Module.getCallerModule().getIdentifier().getName(), JNDIInjectableHandler.class.getName() ));
+        list.add(InjectableHandlerAdd.createOperation(address, "service", Module.getCallerModule().getIdentifier().getName(), ServiceInjectableHandler.class.getName() ));
+        
         log.info( "done readElement" );
     }
 
