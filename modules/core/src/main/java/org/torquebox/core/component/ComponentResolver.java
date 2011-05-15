@@ -12,7 +12,7 @@ public class ComponentResolver {
 
     }
 
-    public RubyComponent resolve(final Ruby runtime) throws InstantiationException, IllegalAccessException {
+    public RubyComponent resolve(final Ruby runtime) throws Exception {
         final ComponentRegistry registry = ComponentRegistry.getRegistryFor( runtime );
         IRubyObject rubyComponent = null;
 
@@ -32,13 +32,13 @@ public class ComponentResolver {
         return wrapComponent( rubyComponent );
     }
 
-    protected IRubyObject createComponent(final Ruby runtime) {
+    protected IRubyObject createComponent(final Ruby runtime) throws Exception {
         prepareInjections(runtime);
         IRubyObject rubyComponent = this.componentInstantiator.newInstance( runtime, this.initializeParams );
         return rubyComponent;
     }
 
-    protected void prepareInjections(final Ruby runtime) {
+    protected void prepareInjections(final Ruby runtime) throws Exception {
         this.injectionRegistry.merge( runtime );
     }
     public void setComponentName(String componentName) {

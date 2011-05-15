@@ -1,5 +1,7 @@
 package org.torquebox.core.injection;
 
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.injection.analysis.Injectable;
 
 public abstract class SimpleNamedInjectable implements Injectable {
@@ -32,6 +34,10 @@ public abstract class SimpleNamedInjectable implements Injectable {
     
     public String toString() {
         return "[" + getClass().getName() + ": " + this.name + "]";
+    }
+    
+    protected ServiceName wrapWithConverter(DeploymentPhaseContext context, ServiceName serviceName) {
+        return serviceName;
     }
 
 

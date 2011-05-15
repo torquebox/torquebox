@@ -20,6 +20,8 @@
     <module>vfs</module>
 
     <module>core</module>
+    <module>naming</module>
+    <module>messaging</module>
     <module>web</module>
   </modules>
 

@@ -1,5 +1,6 @@
 package org.torquebox.core.injection.msc;
 
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.injection.SimpleNamedInjectable;
 
@@ -15,7 +16,7 @@ public class ServiceInjectable extends SimpleNamedInjectable {
     }
 
     @Override
-    public ServiceName getServiceName() {
+    public ServiceName getServiceName(DeploymentPhaseContext context) {
         return ServiceName.parse( getName() );
     }
 

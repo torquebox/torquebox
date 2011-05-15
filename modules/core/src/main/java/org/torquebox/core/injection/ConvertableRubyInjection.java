@@ -4,6 +4,6 @@ import org.jruby.Ruby;
 
 public interface ConvertableRubyInjection {
 
-    Object convert(Ruby ruby);
+    Object convert(Ruby ruby) throws Exception;
 
 }

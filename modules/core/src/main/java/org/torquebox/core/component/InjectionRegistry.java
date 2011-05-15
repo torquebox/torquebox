@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.jboss.as.naming.ManagedReferenceFactory;
-import org.jboss.as.naming.ValueManagedObject;
 import org.jboss.msc.inject.InjectionException;
 import org.jboss.msc.inject.Injector;
 import org.jruby.Ruby;
@@ -14,11 +12,11 @@ import org.jruby.javasupport.JavaEmbedUtils;
 import org.torquebox.core.injection.ConvertableRubyInjection;
 
 public class InjectionRegistry {
-    
+
     public InjectionRegistry() {
-        
+
     }
-    
+
     public Injector<Object> getInjector(final String key) {
         return new Injector<Object>() {
             @Override
@@ -30,16 +28,16 @@ public class InjectionRegistry {
             public void uninject() {
                 InjectionRegistry.this.injections.remove( key );
             }
-            
+
         };
     }
-    
-    public void merge(Ruby ruby) {
+
+    public void merge(Ruby ruby) throws Exception {
         RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
         JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getConvertedRegistry( ruby ) }, void.class );
     }
 
-    protected Map<String, Object> getConvertedRegistry(Ruby ruby) {
+    protected Map<String, Object> getConvertedRegistry(Ruby ruby) throws Exception {
         Map<String, Object> convertedRegistry = new HashMap<String, Object>();
 
         for (String key : this.injections.keySet()) {
@@ -48,12 +46,12 @@ public class InjectionRegistry {
 
         return convertedRegistry;
     }
-    
+
     public Object getUnconverted(String key) {
         return this.injections.get( key );
     }
 
-    protected Object convert(Ruby ruby, Object object) {
+    protected Object convert(Ruby ruby, Object object) throws Exception {
         if (object instanceof ConvertableRubyInjection) {
             return ((ConvertableRubyInjection) object).convert( ruby );
         }
@@ -61,6 +59,6 @@ public class InjectionRegistry {
     }
 
     public static final String TORQUEBOX_REGISTRY_CLASS_NAME = "TorqueBox::Registry";
-    
-    private Map<String,Object> injections = new ConcurrentHashMap<String,Object>();
+
+    private Map<String, Object> injections = new ConcurrentHashMap<String, Object>();
 }
