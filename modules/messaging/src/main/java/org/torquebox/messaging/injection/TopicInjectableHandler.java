@@ -4,19 +4,19 @@ import org.jruby.ast.Node;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
 
-/** Handles MSC service injections.
+/** Handles topic service injections.
  * 
- * Priority: 4,000
+ * Priority: 5,000
  * 
  * @author Bob McWhirter
  */
-public class QueueInjectableHandler extends AbstractInjectableHandler {
+public class TopicInjectableHandler extends AbstractInjectableHandler {
     
-    public static final String TYPE = "queue";
+    public static final String TYPE = "topic";
 
-    public QueueInjectableHandler() {
+    public TopicInjectableHandler() {
         super( TYPE );
-        setRecognitionPriority( 4 * 1000 );
+        setRecognitionPriority( 5 * 1000 );
     }
 
     @Override
@@ -28,7 +28,7 @@ public class QueueInjectableHandler extends AbstractInjectableHandler {
     @Override
     public boolean recognizes(Node argsNode) {
         String str = getString( argsNode );
-        return str.startsWith( "queue" ) || str.contains( "/queue" );
+        return str.startsWith( "topic" ) || str.contains( "/topic" );
     }
 
 
