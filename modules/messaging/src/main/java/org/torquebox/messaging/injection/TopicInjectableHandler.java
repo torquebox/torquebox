@@ -28,7 +28,7 @@ public class TopicInjectableHandler extends AbstractInjectableHandler {
     @Override
     public boolean recognizes(Node argsNode) {
         String str = getString( argsNode );
-        return str.startsWith( "topic" ) || str.contains( "/topic" );
+        return ( str != null ) && ( str.startsWith( "topic" ) || str.contains( "/topic" ) );
     }
 
 

@@ -1,4 +1,4 @@
-package org.torquebox.core.as;
+package org.torquebox.cdi.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
@@ -15,29 +15,20 @@ import org.jboss.as.controller.RuntimeTask;
 import org.jboss.as.controller.RuntimeTaskContext;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
-import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceController.Mode;
-import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.core.app.AppKnobYamlParsingProcessor;
-import org.torquebox.core.app.ApplicationYamlParsingProcessor;
-import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
-import org.torquebox.core.app.RubyApplicationRecognizer;
-import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
-import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
-import org.torquebox.core.pool.RuntimePoolDeployer;
-import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
 
-class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
+class CDISubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
     /** {@inheritDoc} */
     @Override
     public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
         final ModelNode subModel = context.getSubModel();
-        subModel.get( "injector" ).setEmptyObject();
+        subModel.setEmptyObject();
 
-        if (!handleBootContext( context, resultHandler )) {
+        if (context instanceof BootOperationContext) {
+            handleBootContext( context, resultHandler );
+        } else {
             resultHandler.handleResultComplete();
         }
         return compensatingResult( operation );
@@ -55,33 +46,20 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         return true;
     }
 
-    protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
-        context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppKnobYamlParsingProcessor() );
-
-        context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 20, new ApplicationYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
-
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new InjectionIndexingProcessor( registry ) );
-        context.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
-        context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
+    protected void addDeploymentProcessors(final BootOperationContext context) {
+        // context.addDeploymentProcessor( Phase.INSTALL, 10, new
+        // RuntimePoolDeployer() );
     }
 
-    protected void addCoreServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
-        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
-          .setInitialMode( Mode.PASSIVE )
-          .install();
+    protected void addCDIServices(final RuntimeTaskContext context) {
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
         return new RuntimeTask() {
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
-                addDeploymentProcessors( bootContext, registry );
-                addCoreServices( context, registry );
+                addDeploymentProcessors( bootContext );
+                addCDIServices( context );
                 resultHandler.handleResultComplete();
             }
         };
@@ -101,10 +79,10 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         return subsystem;
     }
 
-    public CoreSubsystemAdd() {
+    public CDISubsystemAdd() {
     }
 
-    static final CoreSubsystemAdd ADD_INSTANCE = new CoreSubsystemAdd();
-    static final Logger log = Logger.getLogger( "org.torquebox.core.as" );
+    static final CDISubsystemAdd ADD_INSTANCE = new CDISubsystemAdd();
+    static final Logger log = Logger.getLogger( "org.torquebox.messaging.as" );
 
 }

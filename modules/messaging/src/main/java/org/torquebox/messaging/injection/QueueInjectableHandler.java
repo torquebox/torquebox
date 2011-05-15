@@ -28,7 +28,7 @@ public class QueueInjectableHandler extends AbstractInjectableHandler {
     @Override
     public boolean recognizes(Node argsNode) {
         String str = getString( argsNode );
-        return str.startsWith( "queue" ) || str.contains( "/queue" );
+        return (str != null ) && ( str.startsWith( "queue" ) || str.contains( "/queue" ) );
     }
 
 

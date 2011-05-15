@@ -12,7 +12,7 @@ import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
 import org.torquebox.core.app.RubyApplicationMetaData;
 
-public class TorqueBoxDependenciesProcessor implements DeploymentUnitProcessor {
+public class CoreDependenciesProcessor implements DeploymentUnitProcessor {
     
     private static ModuleIdentifier TORQUEBOX_CORE_ID = ModuleIdentifier.create("org.torquebox.core");
     private static ModuleIdentifier JBOSS_VFS_ID = ModuleIdentifier.create("org.jboss.vfs");

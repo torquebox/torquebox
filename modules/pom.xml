@@ -22,6 +22,8 @@
     <module>web</module>
     <module>messaging</module>
     <module>jobs</module>
+
+    <module>cdi</module>
   </modules>
 
 </project>
