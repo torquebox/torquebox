@@ -15,6 +15,7 @@ import org.jboss.as.controller.RuntimeTask;
 import org.jboss.as.controller.RuntimeTaskContext;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 
@@ -47,8 +48,7 @@ class CDISubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        // context.addDeploymentProcessor( Phase.INSTALL, 10, new
-        // RuntimePoolDeployer() );
+        context.addDeploymentProcessor( Phase.STRUCTURE, 200, new CDIStructureProcessor() );
     }
 
     protected void addCDIServices(final RuntimeTaskContext context) {

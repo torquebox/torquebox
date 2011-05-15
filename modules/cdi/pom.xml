@@ -21,6 +21,11 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-weld</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>
