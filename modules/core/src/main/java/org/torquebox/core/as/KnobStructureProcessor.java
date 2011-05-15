@@ -49,6 +49,7 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
             
             for (String scanRoot : SCAN_ROOTS) {
                 for (VirtualFile child : getJarFiles( root.getChild( scanRoot ) )) {
+                    log.info( "Add jar: " + child );
                     final Closeable closable = child.isFile() ? mount( child, false ) : null;
                     final MountHandle mountHandle = new MountHandle( closable );
                     final ResourceRoot childResource = new ResourceRoot( child, mountHandle );
@@ -58,10 +59,10 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
                 }
             }
             
-            ModuleIdentifier deploymentModuleIdentifier = unit.getAttachment( Attachments.MODULE_IDENTIFIER );
-            ModuleIdentifier jarsModuleIdentifier = ModuleIdentifier.create( deploymentModuleIdentifier.getName() + "-jars" );
-            AdditionalModuleSpecification jarsModule = new AdditionalModuleSpecification( jarsModuleIdentifier, children );
-            unit.addToAttachmentList( Attachments.ADDITIONAL_MODULES, jarsModule );
+            //ModuleIdentifier deploymentModuleIdentifier = unit.getAttachment( Attachments.MODULE_IDENTIFIER );
+            //ModuleIdentifier jarsModuleIdentifier = ModuleIdentifier.create( deploymentModuleIdentifier.getName() + "-jars" );
+            //AdditionalModuleSpecification jarsModule = new AdditionalModuleSpecification( jarsModuleIdentifier, children );
+            //unit.addToAttachmentList( Attachments.ADDITIONAL_MODULES, jarsModule );
         } catch (IOException e) {
             log.error( "Error processing jars", e );
         }

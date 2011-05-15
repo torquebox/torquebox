@@ -16,6 +16,7 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.jboss.weld.literal.AnyLiteral;
 
 public class CDIInjectableService implements Service<Object> {
 
@@ -33,28 +34,38 @@ public class CDIInjectableService implements Service<Object> {
         WeldContainer container = this.weldContainerInjector.getValue();
         BeanManager beanManager = container.getBeanManager();
 
-        Set<Bean<?>> beans = beanManager.getBeans( this.type );
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( type.getClassLoader() );
+            Set<Bean<?>> beans = beanManager.getBeans( this.type, AnyLiteral.INSTANCE );
 
-        if (beans.size() > 1) {
-            Set<Bean<?>> modifiableBeans = new HashSet<Bean<?>>();
-            modifiableBeans.addAll( beans );
-            // Ambiguous dependency may occur if a resource has subclasses
-            // Therefore we remove those beans
-            for (Iterator<Bean<?>> iterator = modifiableBeans.iterator(); iterator.hasNext();) {
-                Bean<?> bean = iterator.next();
-                if (!bean.getBeanClass().equals( this.type ) && !bean.isAlternative()) {
-                    // remove Beans that have clazz in their type closure
-                    // but
-                    // not as a base class
-                    iterator.remove();
+            System.err.println( "BEANS: " + beans );
+
+            if (beans.size() > 1) {
+                Set<Bean<?>> modifiableBeans = new HashSet<Bean<?>>();
+                modifiableBeans.addAll( beans );
+                // Ambiguous dependency may occur if a resource has subclasses
+                // Therefore we remove those beans
+                for (Iterator<Bean<?>> iterator = modifiableBeans.iterator(); iterator.hasNext();) {
+                    Bean<?> bean = iterator.next();
+                    if (!bean.getBeanClass().equals( this.type ) && !bean.isAlternative()) {
+                        // remove Beans that have clazz in their type closure
+                        // but
+                        // not as a base class
+                        iterator.remove();
+                    }
                 }
+                beans = modifiableBeans;
             }
-            beans = modifiableBeans;
-        }
 
-        Bean<?> bean = beanManager.resolve( beans );
-        CreationalContext<?> creationContext = beanManager.createCreationalContext( bean );
-        this.bean = beanManager.getReference( bean, type, creationContext );
+            Bean<?> bean = beanManager.resolve( beans );
+
+            System.err.println( "RESOLVED: " + bean );
+            CreationalContext<?> creationContext = beanManager.createCreationalContext( bean );
+            this.bean = beanManager.getReference( bean, type, creationContext );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
 
     @Override
