@@ -48,7 +48,7 @@ class CDISubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        context.addDeploymentProcessor( Phase.STRUCTURE, 200, new CDIStructureProcessor() );
+        context.addDeploymentProcessor( Phase.STRUCTURE, Phase.STRUCTURE_MODULE_IDENTIFIERS + 100, new CDIStructureProcessor() );
     }
 
     protected void addCDIServices(final RuntimeTaskContext context) {

@@ -11,6 +11,6 @@ public interface Injectable {
     String getKey();
     boolean isGeneric();
     
-    ServiceName getServiceName(DeploymentPhaseContext phaseContext);
+    ServiceName getServiceName(DeploymentPhaseContext phaseContext) throws Exception;
 
 }
