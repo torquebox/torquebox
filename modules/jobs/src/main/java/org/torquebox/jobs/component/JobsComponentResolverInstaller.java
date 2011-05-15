@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.services;
+package org.torquebox.jobs.component;
 
 import java.util.List;
 
@@ -29,34 +29,39 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
-import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.component.ComponentClass;
 import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.services.as.ServicesServices;
+import org.torquebox.core.component.ComponentResolverService;
+import org.torquebox.jobs.ScheduledJobMetaData;
+import org.torquebox.jobs.as.JobsServices;
 
-public class ServicesDeployer implements DeploymentUnitProcessor {
+public class JobsComponentResolverInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
+        List<ScheduledJobMetaData> allScheduledJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
         
-        for (ServiceMetaData serviceMetaData : allServiceMetaData) {
-            deploy( phaseContext, serviceMetaData );
+        for (ScheduledJobMetaData jobMetaData : allScheduledJobMetaData) {
+            deploy( phaseContext, jobMetaData );
         }
     }
     
-    protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData serviceMetaData) {
+    protected void deploy(DeploymentPhaseContext phaseContext, ScheduledJobMetaData jobMetaData) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        ServiceName serviceName = ServicesServices.serviceRubyService( unit, serviceMetaData.getClassName() );
-        RubyService service = new RubyService();
+        ComponentClass instantiator = new ComponentClass();
+        instantiator.setClassName( jobMetaData.getRubyClassName() );
         
-        log.info( "Installing Services proxy: " + serviceName );
-        RubyServiceProxy serviceProxy = new RubyServiceProxy( service );
-        ServiceBuilder<RubyService> builder = phaseContext.getServiceTarget().addService( serviceName, serviceProxy );
-        builder.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() ), ComponentResolver.class, serviceProxy.getComponentResolverInjector() );
-        builder.addDependency( CoreServices.runtimePoolName( unit, "services" ), RubyRuntimePool.class, serviceProxy.getRubyRuntimePoolInjector() );
+        ServiceName serviceName = JobsServices.jobComponentResolverName( unit, jobMetaData.getRubyClassName() );
+        ComponentResolver resolver = new ComponentResolver();
+        resolver.setComponentInstantiator( instantiator );
+        resolver.setComponentName( serviceName.getCanonicalName() );
+        resolver.setComponentWrapperClass( JobsComponent.class );
+                
+        log.info( "Installing Jobs component resolver: " + serviceName );
+        ComponentResolverService service = new ComponentResolverService( resolver );
+        ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();
     }
@@ -66,6 +71,6 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
 
     }
     
-    private static final Logger log = Logger.getLogger( "org.torquebox.services" );
+    private static final Logger log = Logger.getLogger( "org.torquebox.jobs.component" );
 
 }

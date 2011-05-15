@@ -116,6 +116,15 @@ public class PoolMetaData {
         }
     }
 
+    public static PoolMetaData extractNamedMetaData(List<PoolMetaData> list, String name) {
+    	 for ( PoolMetaData each : list ) {
+             if ( each.getName().equals( name ) ) {
+            	 return each;
+             }
+         }
+    	 return null;
+    }
+    
     /**
      * Retrieve the name of the pool.
      * 

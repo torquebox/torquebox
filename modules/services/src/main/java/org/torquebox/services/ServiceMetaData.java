@@ -26,7 +26,7 @@ import org.jboss.as.server.deployment.AttachmentList;
 
 public class ServiceMetaData {
     
-    public static final AttachmentKey<AttachmentList<ServiceMetaData>> ATTACHMENT_KEY = AttachmentKey.createList(ServiceMetaData.class);
+    public static final AttachmentKey<AttachmentList<ServiceMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList(ServiceMetaData.class);
     
     private String className;
     private Map<String, Object> parameters;

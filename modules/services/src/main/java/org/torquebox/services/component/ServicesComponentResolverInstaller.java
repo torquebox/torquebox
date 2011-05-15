@@ -40,7 +40,7 @@ public class ServicesComponentResolverInstaller implements DeploymentUnitProcess
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENT_KEY );
+        List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
         
         for (ServiceMetaData serviceMetaData : allServiceMetaData) {
             deploy( phaseContext, serviceMetaData );

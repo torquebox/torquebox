@@ -45,7 +45,7 @@ public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProces
                 serviceMetaData.setRequiresSingleton( requiresSingleton );
                 serviceMetaData.setClassName( service  );
                 serviceMetaData.setParameters( params );
-                unit.addToAttachmentList( ServiceMetaData.ATTACHMENT_KEY, serviceMetaData );
+                unit.addToAttachmentList( ServiceMetaData.ATTACHMENTS_KEY, serviceMetaData );
             }
         }
     }

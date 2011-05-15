@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.services;
+package org.torquebox.jobs;
 
 import java.util.List;
 
@@ -25,31 +25,41 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.runtime.PoolMetaData;
 
-public class ServicesRuntimePoolProcessor implements DeploymentUnitProcessor {
+/**
+ * <pre>
+ * Stage: DESCRIBE
+ *    In: EnvironmentMetaData, PoolMetaData, ScheduledJobMetaData
+ *   Out: PoolMetaData
+ * </pre>
+ * 
+ * Ensures that pool metadata for jobs is available
+ */
+public class JobsRuntimePoolProcessor implements DeploymentUnitProcessor {
 
-    @Override
-    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
-        if ( ! unit.hasAttachment( ServiceMetaData.ATTACHMENTS_KEY ) ) {
+	public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+		DeploymentUnit unit = phaseContext.getDeploymentUnit();
+
+		List<ScheduledJobMetaData> jobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY ); 
+        if (jobMetaData.isEmpty()) {
             return;
         }
         
         List<PoolMetaData> allMetaData = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
-        PoolMetaData poolMetaData = PoolMetaData.extractNamedMetaData( allMetaData, "services" );
+        PoolMetaData jobsPool = PoolMetaData.extractNamedMetaData( allMetaData, "jobs" );
         
-        if ( poolMetaData == null ) {
-            poolMetaData = new PoolMetaData("services");
-            poolMetaData.setShared();
-            unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
+        if (jobsPool == null) {
+            RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+            boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
+            jobsPool = devMode ? new PoolMetaData( "jobs", 1, 2 ) : new PoolMetaData( "jobs" );
+            unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, jobsPool );
         }
     }
-
-    @Override
+    
     public void undeploy(DeploymentUnit unit) {
-
-    }
+		
+    }	
 
 }

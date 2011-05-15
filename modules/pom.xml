@@ -21,6 +21,7 @@
     <module>services</module>
     <module>web</module>
     <module>messaging</module>
+    <module>jobs</module>
   </modules>
 
 </project>

@@ -20,8 +20,5 @@ public class AbstractRubyComponent implements RubyComponent {
         return JavaEmbedUtils.invokeMethod(  this.rubyComponent.getRuntime(), this.rubyComponent, method, args, Object.class );
     }
     
-    private ComponentResolver componentResolver;
     private IRubyObject rubyComponent;
-
-
 }

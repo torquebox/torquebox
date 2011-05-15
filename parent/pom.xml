@@ -277,7 +277,8 @@
     <version.jbossas>7.0.0.Beta3</version.jbossas>
     <version.jbossas.package>6.0.x</version.jbossas.package>
     <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
-    <version.org.quartz-scheduler>1.8.3</version.org.quartz-scheduler>
+    <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
+    <version.org.slf4j>1.5.10</version.org.slf4j>
 
     <version.hornetq>2.0.0.GA</version.hornetq>
     <version.netty>3.1.5.GA</version.netty>

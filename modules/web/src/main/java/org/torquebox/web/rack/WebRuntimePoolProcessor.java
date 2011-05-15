@@ -19,15 +19,7 @@ public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
         }
         
         List<PoolMetaData> allMetaData = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
-        
-        PoolMetaData poolMetaData = null;
-        
-        for ( PoolMetaData each : allMetaData ) {
-            if ( each.getName().equals( "web" ) ) {
-                poolMetaData = each;
-                break;
-            }
-        }
+        PoolMetaData poolMetaData = PoolMetaData.extractNamedMetaData( allMetaData, "web" );
         
         if ( poolMetaData == null ) {
             poolMetaData = new PoolMetaData("web");
