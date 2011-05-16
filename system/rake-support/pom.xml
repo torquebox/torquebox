@@ -2,9 +2,9 @@
 
   <parent>
     <groupId>org.torquebox</groupId>
-    <artifactId>torquebox-parent</artifactId>
+    <artifactId>gems-parent</artifactId>
     <version>2.0.0-SNAPSHOT</version>
-    <relativePath>../../parent/pom.xml</relativePath>
+    <relativePath>../../gems/parent/pom.xml</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -39,39 +39,16 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-gem</id>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
-
-  <profiles>
-    <profile>
-      <id>assemblage-present</id>
-      <activation>
-        <file>
-          <exists>./../../assemblage/assembly/target/stage/</exists>
-        </file>
-      </activation>
-      <build>
-        <plugins> 
-          <plugin>
-            <groupId>de.saumya.mojo</groupId>
-            <artifactId>gem-maven-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>install-gems</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>install</goal>
-                </goals>
-                <configuration>
-                  <gemPath>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemPath>
-                  <gemHome>${project.basedir}/../../assemblage/assembly/target/stage/torquebox-${project.version}/jruby/lib/ruby/gems/1.8</gemHome>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
 
 </project>
