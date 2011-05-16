@@ -23,6 +23,7 @@
     <module>naming</module>
     <module>messaging</module>
     <module>web</module>
+    <module>torquebox</module>
   </modules>
 
 </project>
