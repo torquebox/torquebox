@@ -23,6 +23,8 @@ require 'rubygems/indexer'
 
 class AssemblyTool
 
+  attr_accessor :src_dir
+
   attr_accessor :base_dir
   attr_accessor :build_dir
 
@@ -33,6 +35,8 @@ class AssemblyTool
   attr_accessor :jruby_dir
 
   def initialize() 
+    @src_dir   = File.expand_path( File.dirname(__FILE__) + '/../../..' )
+
     @base_dir  = File.expand_path( File.dirname(__FILE__) + '/..' )
 
     @build_dir = @base_dir  + '/target/stage'
