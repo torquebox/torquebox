@@ -17,6 +17,9 @@
 
 require 'rake'
 require 'torquebox/deploy_utils'
+require 'torquebox/upstart'
+require 'torquebox/launchd'
+
 
 namespace :torquebox do
   desc "Check your installation of the TorqueBox server"
@@ -31,4 +34,67 @@ namespace :torquebox do
     TorqueBox::DeployUtils.run_server
   end
 
+  namespace :launchd do
+    desc "Check if TorqueBox is installed as a launchd daemon"
+    task :check=>[ 'torquebox:check' ] do
+      TorqueBox::Launchd.check_install
+      puts "Launchd tasks not done yet. Try again with a later build."
+    end
+
+    desc "Install TorqueBox as an launchd daemon"
+    task :install=>[ 'torquebox:check' ] do
+      TorqueBox::DeployUtils.create_symlink
+      puts "Launchd tasks not done yet. Try again with a later build."
+    end
+
+    desc "Start TorqueBox when running as a launchd daemon"
+    task :start=>[ :check ] do
+      puts "Launchd tasks not done yet. Try again with a later build."
+    end
+
+    desc "Stop TorqueBox when running as an launchd daemon"
+    task :stop=>[ :check ] do
+      puts "Launchd tasks not done yet. Try again with a later build."
+    end
+
+    desc "Restart TorqueBox when running as an launchd daemon"
+    task :restart=>[ :check ] do
+      puts "Launchd tasks not done yet. Try again with a later build."
+    end
+
+  end
+
+  namespace :upstart do
+    desc "Check if TorqueBox is installed as an upstart service"
+    task :check=>[ 'torquebox:check' ] do
+      TorqueBox::Upstart.check_install
+      puts "TorqueBox is installed as an upstart service at #{TorqueBox::Upstart.opt_torquebox}"
+    end
+
+    desc "Install TorqueBox as an upstart service"
+    task :install=>[ 'torquebox:check' ] do
+      TorqueBox::DeployUtils.create_symlink
+      TorqueBox::Upstart.copy_init_script
+      puts "Done! Ensure that you have a 'torquebox' user with ownership or write permissions of /opt/torquebox"
+    end
+
+    desc "Start TorqueBox when running as an upstart service"
+    task :start=>[ :check ] do
+      TorqueBox::DeployUtils.exec_command( 'start torquebox' )
+    end
+
+    desc "Stop TorqueBox when running as an upstart service"
+    task :stop=>[ :check ] do
+      TorqueBox::DeployUtils.exec_command( 'stop torquebox' )
+    end
+
+    desc "Restart TorqueBox when running as an upstart service"
+    task :restart=>[ :check ] do
+      TorqueBox::DeployUtils.exec_command( 'restart torquebox' )
+    end
+
+  end
 end
+
+
+

@@ -1,0 +1,5 @@
+
+# Top level server-only rake file. 
+# Provides rake tasks unrelated to a specific app
+
+require 'torquebox/rake/tasks/server'

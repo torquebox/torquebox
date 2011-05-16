@@ -32,7 +32,14 @@
                 <artifact>
                   <file>share/rails-template.rb</file>
                   <type>template.rb</type>
-                  <classifier />
+                </artifact>
+                <artifact>
+                  <file>share/torquebox.conf</file>
+                  <type>torquebox.conf</type>
+                </artifact>
+                <artifact>
+                  <file>share/Rakefile</file>
+                  <type>Rakefile</type>
                 </artifact>
               </artifacts>
             </configuration>

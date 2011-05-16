@@ -107,6 +107,11 @@ class Assembler
     tool.update_gem_repo_index
   end
 
+  def install_share
+    # torquebox-rake-support gem needs this
+    puts "TODO: Need to install share dir for torquebox-rake-support"
+  end
+
   def assemble() 
     #clean
     prepare
@@ -114,6 +119,7 @@ class Assembler
     lay_down_jboss
     install_modules
     install_gems
+    intsall_share
   end
 end
 

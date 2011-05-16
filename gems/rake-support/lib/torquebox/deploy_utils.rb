@@ -44,6 +44,20 @@ module TorqueBox
         ENV['TORQUEBOX_CONF'] || ENV['JBOSS_CONF'] || 'default'
       end
 
+      # TODO: This is not windows friendly, is it?
+      def sys_root
+        '/'
+      end
+
+      # Used by upstart and launchd
+      def opt_dir
+        File.join( sys_root, 'opt' )
+      end
+
+      def opt_torquebox
+        File.join( opt_dir, 'torquebox' )
+      end
+
       def server_dir
         File.join("#{jboss_home}","server", "#{jboss_conf}" )
       end
@@ -80,6 +94,11 @@ module TorqueBox
       def check_server
         matching = Dir[ "#{deployers_dir}/torquebox*deployer*" ]
         raise "No TorqueBox deployer installed in #{deployers_dir}" if ( matching.empty? )
+      end
+
+      def check_opt_torquebox
+        raise "TorqueBox not installed in #{opt_torquebox}" unless ( File.exist?( opt_torquebox ) )
+        puts "TorqueBox install OK: #{opt_torquebox}"
       end
 
       def run_command_line
@@ -211,6 +230,31 @@ module TorqueBox
         properties_file
       end
       
+      # TODO: This is not windows friendly
+      def create_symlink
+        unless File.exist? opt_dir
+          success = true
+          if !File.writable?( sys_root )
+            puts "Cannot write to #{sys_root}. Please ensure #{opt_torquebox} points to your torquebox installation."
+            success = false
+          else
+            puts "Creating #{opt_dir}"
+            Dir.new( opt_dir )
+          end
+        end
+
+        unless File.exist?( opt_torquebox )
+          if File.writable?( opt_dir )
+            puts "Linking #{opt_torquebox} to #{torquebox_home}"
+            File.symlink( torquebox_home, opt_torquebox )
+          else
+            puts "Cannot link #{opt_torquebox} to #{torquebox_home}"
+            success = false
+          end
+        end
+        success
+      end
+
       def exec_command(cmd)
         IO.popen4( cmd ) do |pid, stdin, stdout, stderr|
           stdin.close
@@ -238,3 +282,4 @@ module TorqueBox
     end
   end
 end
+
