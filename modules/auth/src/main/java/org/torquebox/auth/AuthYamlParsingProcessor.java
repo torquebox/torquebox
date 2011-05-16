@@ -22,11 +22,11 @@ public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
 		Map<String, Object> data = (Map<String, Object>) dataObject;
 
         if (data != null) {
-        	for(String name: data.keySet()) {        	    
+        	for( String name: data.keySet() ) {
         		@SuppressWarnings("unchecked")
-				String domain   = ((Map<String, String>) data.get(name)).get("domain");    		
+				String domain = ( (Map<String, String>) data.get(name) ).get("domain");    		
         		AuthMetaData metaData = new AuthMetaData();
-        		metaData.addAuthentication(name, domain);
+        		metaData.addAuthentication( name, domain );
                 unit.addToAttachmentList( AuthMetaData.ATTACHMENT_KEY, metaData );
         	}
         }
