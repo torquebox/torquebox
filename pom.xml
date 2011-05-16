@@ -99,7 +99,7 @@
 
   <modules>
     <module>parent</module>
-    <module>build-support</module>
+    <module>support</module>
     <module>modules</module>
     <module>gems</module>
     <module>build</module>

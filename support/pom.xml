@@ -11,7 +11,7 @@
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-build-support</artifactId>
   <packaging>pom</packaging>
-  <name>TorqueBox Build Support</name>
+  <name>TorqueBox Support Packages</name>
   <description />
 
   <modules>
