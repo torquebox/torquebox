@@ -10,33 +10,48 @@ import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class DefaultRubyRuntimePoolService implements Service<RubyRuntimePool>{
+public class DefaultRubyRuntimePoolStartService implements Service<RubyRuntimePool> {
 
-    public DefaultRubyRuntimePoolService(DefaultRubyRuntimePool pool) {
+    public DefaultRubyRuntimePoolStartService(DefaultRubyRuntimePool pool) {
         this.pool = pool;
     }
-    
+
     @Override
     public RubyRuntimePool getValue() throws IllegalStateException, IllegalArgumentException {
         return pool;
     }
 
     @Override
-    public void start(StartContext context) throws StartException {
-        this.pool.setInstanceFactory( this.runtimeFactoryInjector.getValue() );
+    public void start(final StartContext context) throws StartException {
+        context.asynchronous();
+        context.execute( new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    DefaultRubyRuntimePoolStartService.this.pool.start();
+                    context.complete();
+                } catch (InterruptedException e) {
+                    context.failed( new StartException( e ) );
+                }
+            }
+        } );
     }
 
     @Override
     public void stop(StopContext context) {
+        try {
+            this.pool.stop();
+        } catch (InterruptedException e) {
+            // swallow
+        }
         this.pool.setInstanceFactory( null );
     }
-    
+
     public Injector<RubyRuntimeFactory> getRubyRuntimeFactoryInjector() {
         return this.runtimeFactoryInjector;
     }
-    
+
     private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
     private DefaultRubyRuntimePool pool;
-
 
 }

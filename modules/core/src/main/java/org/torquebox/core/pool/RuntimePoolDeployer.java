@@ -29,11 +29,13 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.as.services.DefaultRubyRuntimePoolService;
+import org.torquebox.core.as.services.DefaultRubyRuntimePoolStartService;
 import org.torquebox.core.as.services.SharedRubyRuntimeFactoryPoolService;
 import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
@@ -70,22 +72,8 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, PoolMetaData poolMetaData) {
         log.info( "Deploying runtime pool: " + poolMetaData );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         String deploymentName = unit.getName();
 
-        /*
-         * if (poolMetaData.isGlobal()) { SharedRubyRuntimePool pool = new
-         * SharedRubyRuntimePool(); pool.setName( poolMetaData.getName() );
-         * 
-         * String instanceName = poolMetaData.getInstanceName(); if
-         * (instanceName == null) { try { Ruby runtime = unit.getAttachment(
-         * DeployerRuby.class ).getRuby(); builder.addConstructorParameter(
-         * Ruby.class.getName(), runtime ); } catch (Exception e) { throw new
-         * DeploymentException( e ); } } else { ValueMetaData runtimeInjection =
-         * builder.createInject( instanceName );
-         * builder.addConstructorParameter( Ruby.class.getName(),
-         * runtimeInjection ); } } else
-         */
         if (poolMetaData.isShared()) {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();
             pool.setName( poolMetaData.getName() );
@@ -108,10 +96,16 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             DefaultRubyRuntimePoolService service = new DefaultRubyRuntimePoolService( pool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
-            ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
-            builder.addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
-            builder.install();
+            phaseContext.getServiceTarget().addService( name, service )
+                .addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
+                .install();
+            
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
+            
+            phaseContext.getServiceTarget().addService( name.append( "START" ), new DefaultRubyRuntimePoolStartService( pool ) )
+                .addDependency( name )
+                .setInitialMode( Mode.PASSIVE )
+                .install();
         }
     }
 
