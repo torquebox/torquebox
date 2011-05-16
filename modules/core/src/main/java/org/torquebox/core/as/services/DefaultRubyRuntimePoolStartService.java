@@ -44,7 +44,6 @@ public class DefaultRubyRuntimePoolStartService implements Service<RubyRuntimePo
         } catch (InterruptedException e) {
             // swallow
         }
-        this.pool.setInstanceFactory( null );
     }
 
     public Injector<RubyRuntimeFactory> getRubyRuntimeFactoryInjector() {
