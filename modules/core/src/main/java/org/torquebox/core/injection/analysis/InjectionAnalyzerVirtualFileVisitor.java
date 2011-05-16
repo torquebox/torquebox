@@ -59,6 +59,11 @@ public class InjectionAnalyzerVirtualFileVisitor implements VirtualFileVisitor {
             return true;
         }
         
+        @Override
+        public boolean isRecurse(VirtualFile file) {
+            return true;
+        }
+        
     };
 
 }
