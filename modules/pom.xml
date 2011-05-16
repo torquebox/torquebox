@@ -24,6 +24,7 @@
     <module>jobs</module>
 
     <module>cdi</module>
+    <module>auth</module>
   </modules>
 
 </project>

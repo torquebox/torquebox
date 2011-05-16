@@ -119,7 +119,7 @@ class Assembler
     lay_down_jboss
     install_modules
     install_gems
-    intsall_share
+    install_share
   end
 end
 
