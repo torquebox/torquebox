@@ -22,7 +22,6 @@
     <module>client-parent</module>
     <module>naming</module>
     <module>messaging</module>
-    <module>torquebox</module>
   </modules>
 
 </project>
