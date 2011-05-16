@@ -23,37 +23,65 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.inject.Injector;
+import org.jboss.msc.service.Service;
+import org.jboss.msc.service.StartContext;
+import org.jboss.msc.service.StartException;
+import org.jboss.msc.service.StopContext;
+import org.jboss.msc.value.InjectedValue;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class JobScheduler  {
+public class JobScheduler implements Service<JobScheduler> {
 
 	public JobScheduler(String name) {
 		this.name = name;
 	}
 	
+	@Override	
+	public JobScheduler getValue() throws IllegalStateException, IllegalArgumentException {
+		return this;
+	}	
+
+	@Override
+	public void start(final StartContext context) throws StartException {
+		context.asynchronous();
+	        
+		context.execute(new Runnable() {
+			public void run() {
+				try {
+					JobScheduler.this.start();
+					context.complete();
+            	} catch (Exception e) {
+            		context.failed( new StartException( e ) );
+            	}
+            }
+        });
+    }
+
+    @Override
+    public void stop(StopContext context) {
+    	try {
+    		this.scheduler.shutdown( true );
+    	} catch (SchedulerException ex) {
+		log.warn( "An error occured stopping scheduler for " + this.name, ex );
+    	}
+    }
+	   
     public void start() throws IOException, SchedulerException {
         Properties props = new Properties();
         props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
         props.setProperty( StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName() );
 
         RubyJobProxyFactory jobFactory = new RubyJobProxyFactory();
-        jobFactory.setRubyRuntimePool( this.rubyRuntimePool );
+        jobFactory.setRubyRuntimePool( this.rubyRuntimePoolInjector.getValue() );
 
         StdSchedulerFactory factory = new StdSchedulerFactory( props );
         this.scheduler = factory.getScheduler();
         this.scheduler.setJobFactory( jobFactory );
         this.scheduler.start();
-    }
-
-    public void stop() {
-    	try {
-    		this.scheduler.shutdown( true );
-    	} catch (SchedulerException ex) {
-    		log.warn( "An error occured stopping scheduler for " + this.name, ex );
-    	}
     }
 
     public String getName() {
@@ -63,14 +91,15 @@ public class JobScheduler  {
     public Scheduler getScheduler() {
         return this.scheduler;
     }
-    
-    public void setRubyRuntimePool(RubyRuntimePool pool) {
-    	this.rubyRuntimePool = pool;
+       
+    public Injector<RubyRuntimePool> getRubyRuntimePoolInjector() {
+        return this.rubyRuntimePoolInjector;
     }
     
     private String name;
     private Scheduler scheduler;
-    private RubyRuntimePool rubyRuntimePool;
+        
+    private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
     
 	private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 }

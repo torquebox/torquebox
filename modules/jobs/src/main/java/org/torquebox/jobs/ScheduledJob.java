@@ -22,13 +22,20 @@ package org.torquebox.jobs;
 import java.text.ParseException;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.inject.Injector;
+import org.jboss.msc.service.Service;
+import org.jboss.msc.service.StartContext;
+import org.jboss.msc.service.StartException;
+import org.jboss.msc.service.StopContext;
+import org.jboss.msc.value.InjectedValue;
 import org.quartz.CronTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
+import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class ScheduledJob implements ScheduledJobMBean {
+public class ScheduledJob implements Service<ScheduledJob>, ScheduledJobMBean {
     public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
 	
     public ScheduledJob(String group, String name, String description, String cronExpression, boolean singleton, String rubyClassName, String rubyRequirePath) {
@@ -41,6 +48,38 @@ public class ScheduledJob implements ScheduledJobMBean {
     	this.rubyRequirePath = rubyRequirePath;
     }
     
+    @Override
+    public ScheduledJob getValue() throws IllegalStateException, IllegalArgumentException {
+        return this;
+    }
+
+    @Override
+    public void start(final StartContext context) throws StartException {
+        context.asynchronous();
+        
+        context.execute(new Runnable() {
+            public void run() {
+                try {
+                    ScheduledJob.this.start();
+                    context.complete();
+                } catch (Exception e) {
+                    context.failed( new StartException( e ) );
+                }
+            }
+        });
+    }
+
+    @Override
+    public void stop(StopContext context) {
+    	try {
+    		this.jobSchedulerInjector.getValue().getScheduler().unscheduleJob( getTriggerName(), this.group );
+    	} catch (SchedulerException ex) {
+    		log.warn( "An error occurred stoping job " + this.name, ex );
+    	} 
+    	this.jobDetail = null;
+    }
+   
+   
     public synchronized void start() throws ParseException, SchedulerException {
         this.jobDetail = new JobDetail();
 
@@ -61,7 +100,7 @@ public class ScheduledJob implements ScheduledJobMBean {
         }
 
         CronTrigger trigger = new CronTrigger( getTriggerName(), this.group, this.cronExpression );
-        jobSheduler.getScheduler().scheduleJob( jobDetail, trigger );
+        this.jobSchedulerInjector.getValue().getScheduler().scheduleJob( jobDetail, trigger );
     }
 
     private String getTriggerName() {
@@ -69,12 +108,7 @@ public class ScheduledJob implements ScheduledJobMBean {
     }
 
     public synchronized void stop() {
-    	try {
-    		jobSheduler.getScheduler().unscheduleJob( getTriggerName(), this.group );
-    	} catch (SchedulerException ex) {
-    		log.warn( "An error occurred stoping job " + this.name, ex );
-    	} 
-    	this.jobDetail = null;
+    	
     }
     
     public synchronized boolean isStarted() {
@@ -145,14 +179,22 @@ public class ScheduledJob implements ScheduledJobMBean {
         return this.runtimePool;
     }
 
-    public void setJobScheduler(JobScheduler scheduler) {
-        this.jobSheduler = scheduler;
+    public Injector<ComponentResolver> getComponentResolverInjector() {
+        return this.componentResolverInjector;
     }
-
-    public JobScheduler getJobScheduler() {
-        return this.jobSheduler;
+   
+    public Injector<RubyRuntimePool> getRubyRuntimePoolInjector() {
+        return this.rubyRuntimePoolInjector;
     }
-
+   
+    public Injector<JobScheduler> getJobSchedulerInjector() {
+        return this.jobSchedulerInjector;
+    }
+   
+    private InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
+    private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
+    private InjectedValue<JobScheduler> jobSchedulerInjector = new InjectedValue<JobScheduler>();
+    
     private String group;
     private String name;
     private String description;
@@ -164,8 +206,7 @@ public class ScheduledJob implements ScheduledJobMBean {
     private String cronExpression;
 
     private RubyRuntimePool runtimePool;
-    private JobScheduler jobSheduler;
-
+    
     private JobDetail jobDetail;
     private boolean singleton;
 

@@ -28,7 +28,7 @@ public class JobsServices {
     }
     
     public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
-    public static final ServiceName SERVICES = TORQUEBOX.append( "jobs" );
+    public static final ServiceName JOBS = TORQUEBOX.append( "jobs" );
     
     public static ServiceName jobComponentResolverName(DeploymentUnit unit, String jobClass) {
         return unit.getServiceName().append( "component_resolver" ).append( jobClass );

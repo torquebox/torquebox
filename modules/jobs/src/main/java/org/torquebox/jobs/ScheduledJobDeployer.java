@@ -74,16 +74,15 @@ public class ScheduledJobDeployer implements DeploymentUnitProcessor {
         		metaData.getRubyClassName(),
         		metaData.getRubyRequirePath()
         );
-        ScheduledJobProxy proxy = new ScheduledJobProxy( job );
-
+        
         ServiceName serviceName = JobsServices.jobName( unit, metaData.getName() );
         
         log.info( "Deploying Job: " + serviceName );
         
-        ServiceBuilder<ScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, proxy );
-        builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, proxy.getRubyRuntimePoolInjector() );
-        builder.addDependency( JobsServices.jobComponentResolverName(unit, metaData.getRubyClassName()), ComponentResolver.class, proxy.getComponentResolverInjector() );
-        builder.addDependency( JobsServices.jobSchedulerName(unit, metaData.isSingleton()), JobScheduler.class, proxy.getJobSchedulerInjector() );
+        ServiceBuilder<ScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
+        builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
+        builder.addDependency( JobsServices.jobComponentResolverName(unit, metaData.getRubyClassName()), ComponentResolver.class, job.getComponentResolverInjector() );
+        builder.addDependency( JobsServices.jobSchedulerName(unit, metaData.isSingleton()), JobScheduler.class, job.getJobSchedulerInjector() );
         
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();
