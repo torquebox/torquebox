@@ -109,9 +109,8 @@ class Assembler
 
   def install_share
     # torquebox-rake-support gem needs this
-    puts "TODO: Need to install share dir for torquebox-rake-support"
     puts "Installing share"
-    
+
     FileUtils.cp File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'Rakefile' ), tool.torquebox_dir
 
     init_dir = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'init' ) )
