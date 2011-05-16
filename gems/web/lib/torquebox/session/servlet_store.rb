@@ -15,9 +15,9 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module ActionDispatch
+module TorqueBox
   module Session
-    class TorqueBoxStore 
+    class ServletStore 
       
       RAILS_SESSION_KEY = '__current_rails_session'
       
@@ -111,6 +111,4 @@ module ActionDispatch
   end
 end
 
-# This assignment allows :torquebox_store to work as a symbol
-ActionDispatch::Session::TorqueboxStore = ActionDispatch::Session::TorqueBoxStore 
 

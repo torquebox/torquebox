@@ -20,6 +20,7 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.app.AppJarScanningProcessor;
 import org.torquebox.core.app.AppKnobYamlParsingProcessor;
 import org.torquebox.core.app.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
@@ -57,7 +58,8 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
 
     protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
         context.addDeploymentProcessor( Phase.STRUCTURE, 10, new KnobStructureProcessor() );
-        context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppKnobYamlParsingProcessor() );
+        context.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
+        context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );
 
         context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
         context.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
