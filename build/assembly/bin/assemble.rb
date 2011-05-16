@@ -81,8 +81,14 @@ class Assembler
   end
 
   def install_modules
-    Dir[ tool.base_dir + '/../../modules/*/target/*-module/' ].each do |module_dir|
-      module_name = File.basename( module_dir, '-module' ).gsub( /torquebox-/, '' )
+    modules = Dir[ tool.base_dir + '/../../modules/*/target/*-module/' ].map do |module_dir|
+      [ File.basename( module_dir, '-module' ).gsub( /torquebox-/, '' ), module_dir ]
+    end
+
+    # Ensure core module is first
+    modules.unshift ( modules.assoc( "core" ) ).uniq!
+
+    modules.each do |module_name, module_dir|
       tool.install_module( module_name, module_dir )
     end
   end
