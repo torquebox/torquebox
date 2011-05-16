@@ -57,7 +57,7 @@ public class TopicDeployer implements DeploymentUnitProcessor {
 
     protected void deploy(DeploymentPhaseContext phaseContext, TopicMetaData topic) {
         final JMSTopicService service = new JMSTopicService(topic.getName(), new String[] { topic.getBindName() } );
-        final ServiceName serviceName = JMSServices.JMS_TOPIC_BASE.append( topic.getName() );
+        final ServiceName serviceName = phaseContext.getDeploymentUnit().getServiceName().append( JMSServices.JMS_TOPIC_BASE ).append( topic.getName() );
         phaseContext.getServiceTarget().addService(serviceName, service)
                 .addDependency(JMSServices.JMS_MANAGER, JMSServerManager.class, service.getJmsServer())
                 .setInitialMode(Mode.ACTIVE)
