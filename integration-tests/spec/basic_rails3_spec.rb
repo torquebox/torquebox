@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "basic rack test" do
+describe "basic rails3 test" do
 
   deploy "rails3/basic-knob.yml"
 
