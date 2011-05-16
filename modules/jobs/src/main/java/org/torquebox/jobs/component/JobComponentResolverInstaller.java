@@ -35,7 +35,7 @@ import org.torquebox.core.component.ComponentResolverService;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.jobs.as.JobsServices;
 
-public class JobsComponentResolverInstaller implements DeploymentUnitProcessor {
+public class JobComponentResolverInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -52,12 +52,13 @@ public class JobsComponentResolverInstaller implements DeploymentUnitProcessor {
         
         ComponentClass instantiator = new ComponentClass();
         instantiator.setClassName( jobMetaData.getRubyClassName() );
+        instantiator.setRequirePath( jobMetaData.getRubyRequirePath() );
         
-        ServiceName serviceName = JobsServices.jobComponentResolverName( unit, jobMetaData.getRubyClassName() );
+        ServiceName serviceName = JobsServices.jobComponentResolver( unit, jobMetaData.getRubyClassName() );
         ComponentResolver resolver = new ComponentResolver();
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
-        resolver.setComponentWrapperClass( JobsComponent.class );
+        resolver.setComponentWrapperClass( JobComponent.class );
                 
         log.info( "Installing Jobs component resolver: " + serviceName );
         ComponentResolverService service = new ComponentResolverService( resolver );
@@ -68,7 +69,7 @@ public class JobsComponentResolverInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(DeploymentUnit unit) {
-
+    	
     }
     
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs.component" );

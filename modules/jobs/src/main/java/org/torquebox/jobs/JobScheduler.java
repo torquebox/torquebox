@@ -32,6 +32,7 @@ import org.jboss.msc.value.InjectedValue;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
+import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
 public class JobScheduler implements Service<JobScheduler> {
@@ -75,15 +76,19 @@ public class JobScheduler implements Service<JobScheduler> {
         props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
         props.setProperty( StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName() );
 
-        RubyJobProxyFactory jobFactory = new RubyJobProxyFactory();
+        this.jobFactory = new RubyJobProxyFactory();
         jobFactory.setRubyRuntimePool( this.rubyRuntimePoolInjector.getValue() );
 
         StdSchedulerFactory factory = new StdSchedulerFactory( props );
         this.scheduler = factory.getScheduler();
-        this.scheduler.setJobFactory( jobFactory );
+        this.scheduler.setJobFactory( this.jobFactory );
         this.scheduler.start();
     }
 
+    public void addComponentResolver(String rubyClass, ComponentResolver resolver) {
+    	this.jobFactory.addComponentResolver( rubyClass, resolver );
+    }
+    
     public String getName() {
         return this.name;
     }
@@ -98,7 +103,8 @@ public class JobScheduler implements Service<JobScheduler> {
     
     private String name;
     private Scheduler scheduler;
-        
+    private RubyJobProxyFactory jobFactory;
+    
     private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
     
 	private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );

@@ -21,7 +21,7 @@ package org.torquebox.jobs.component;
 
 import org.torquebox.core.component.AbstractRubyComponent;
 
-public class JobsComponent extends AbstractRubyComponent {
+public class JobComponent extends AbstractRubyComponent {
     
     public void run() {
         __call__( "run" );

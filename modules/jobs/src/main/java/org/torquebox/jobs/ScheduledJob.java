@@ -91,16 +91,14 @@ public class ScheduledJob implements Service<ScheduledJob>, ScheduledJobMBean {
 
         JobDataMap jobData = jobDetail.getJobDataMap();
 	        
-        //we need to figure out how to get the component resolver over to the factory
-        jobData.put(  RubyJobProxyFactory.COMPONENT_RESOLVER_NAME, getComponentResolverName() );
-
         jobData.put( RubyJobProxyFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName );
-        if ((this.rubyRequirePath != null) && (!this.rubyRequirePath.trim().equals( "" ))) {
-            jobData.put( RubyJobProxyFactory.RUBY_REQUIRE_PATH_KEY, this.rubyRequirePath );
-        }
-
+        
         CronTrigger trigger = new CronTrigger( getTriggerName(), this.group, this.cronExpression );
-        this.jobSchedulerInjector.getValue().getScheduler().scheduleJob( jobDetail, trigger );
+        
+        JobScheduler jobScheduler = this.jobSchedulerInjector.getValue();
+        
+        jobScheduler.addComponentResolver( this.rubyClassName, this.componentResolverInjector.getValue() );
+        jobScheduler.getScheduler().scheduleJob( jobDetail, trigger );
     }
 
     private String getTriggerName() {

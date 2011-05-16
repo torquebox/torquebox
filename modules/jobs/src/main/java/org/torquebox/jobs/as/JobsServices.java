@@ -30,15 +30,15 @@ public class JobsServices {
     public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
     public static final ServiceName JOBS = TORQUEBOX.append( "jobs" );
     
-    public static ServiceName jobComponentResolverName(DeploymentUnit unit, String jobClass) {
+    public static ServiceName jobComponentResolver(DeploymentUnit unit, String jobClass) {
         return unit.getServiceName().append( "component_resolver" ).append( jobClass );
     }
     
-    public static ServiceName jobName(DeploymentUnit unit, String jobName) {
+    public static ServiceName scheduledJob(DeploymentUnit unit, String jobName) {
         return unit.getServiceName().append( "scheduled_job" ).append( jobName );
     }
     
-    public static ServiceName jobSchedulerName(DeploymentUnit unit, boolean singleton) {
+    public static ServiceName jobScheduler(DeploymentUnit unit, boolean singleton) {
         ServiceName name = unit.getServiceName().append( "jobs" );
         if (singleton) {
         	name = name.append( "singleton" );

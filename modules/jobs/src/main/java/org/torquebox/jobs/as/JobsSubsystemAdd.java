@@ -41,7 +41,7 @@ import org.torquebox.jobs.JobSchedulerDeployer;
 import org.torquebox.jobs.JobsRuntimePoolProcessor;
 import org.torquebox.jobs.JobsYamlParsingProcessor;
 import org.torquebox.jobs.ScheduledJobDeployer;
-import org.torquebox.jobs.component.JobsComponentResolverInstaller;
+import org.torquebox.jobs.component.JobComponentResolverInstaller;
 
 public class JobsSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -78,7 +78,7 @@ public class JobsSubsystemAdd implements ModelAddOperationHandler, BootOperation
         
         context.addDeploymentProcessor( Phase.PARSE, 30, new JobsYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobsComponentResolverInstaller() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobComponentResolverInstaller() );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerDeployer() );
         context.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobDeployer() );
         

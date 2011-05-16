@@ -20,37 +20,41 @@
 package org.torquebox.jobs;
 
 import org.jboss.logging.Logger;
-import org.jruby.javasupport.JavaEmbedUtils;
-import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.Ruby;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
+import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.jobs.component.JobComponent;
 
 public class RubyJobProxy implements Job, StatefulJob {
 
-	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
-
-    private RubyRuntimePool runtimePool;
-    private IRubyObject component;
-
-    public RubyJobProxy(RubyRuntimePool runtimePool, IRubyObject component) {
+    public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver) {
         this.runtimePool = runtimePool;
-        this.component = component;
+        this.resolver = resolver;
     }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        try {
-        	//FIXME use the component resolver
-            Object jobResult = JavaEmbedUtils.invokeMethod( component.getRuntime(), component, "run", EMPTY_OBJECT_ARRAY, Object.class );
-            context.setResult( jobResult );
-        } finally {
-            this.runtimePool.returnRuntime( component.getRuntime() );
-        }
+    	 Ruby ruby = null;
+         try {
+             ruby = this.runtimePool.borrowRuntime();
+             JobComponent job = (JobComponent)resolver.resolve( ruby );
+             job.run();
+         } catch (Exception e) {
+        	 throw new JobExecutionException( e );
+         } finally {
+        	 if (ruby != null) {
+        		 this.runtimePool.returnRuntime( ruby );
+        	 }
+         }
     }
-    
+
+    private RubyRuntimePool runtimePool;
+    private ComponentResolver resolver;
+
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
     
 

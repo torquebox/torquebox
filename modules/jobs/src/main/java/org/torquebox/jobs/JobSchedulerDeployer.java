@@ -35,7 +35,7 @@ import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.as.JobsServices;
 
 /**
- * Creates a RubyScheduler bean if there are any job meta data
+ * Creates a JobScheduler service if there are any job meta data
  */
 public class JobSchedulerDeployer implements DeploymentUnitProcessor {
 
@@ -101,11 +101,11 @@ public class JobSchedulerDeployer implements DeploymentUnitProcessor {
     
     private void buildScheduler(DeploymentPhaseContext phaseContext, boolean singleton) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        ServiceName serviceName = JobsServices.jobSchedulerName( unit, singleton );
+        ServiceName serviceName = JobsServices.jobScheduler( unit, singleton );
         
         log.info( "Installing Job Scheduler: " + serviceName );
         
-        JobScheduler scheduler = new JobScheduler( "RubyScheduler$" + unit.getName() );
+        JobScheduler scheduler = new JobScheduler( "JobScheduler$" + unit.getName() );
                 
         ServiceBuilder<JobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );

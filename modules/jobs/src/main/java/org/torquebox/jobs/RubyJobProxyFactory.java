@@ -19,6 +19,9 @@
 
 package org.torquebox.jobs;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.logging.Logger;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -30,54 +33,29 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
 public class RubyJobProxyFactory implements JobFactory {
-
     public static final String RUBY_CLASS_NAME_KEY = "torquebox.ruby.class.name";
-    public static final String RUBY_REQUIRE_PATH_KEY = "torquebox.ruby.require.path";
-    public static final String COMPONENT_RESOLVER_NAME = "torquebox.ruby.component.resolver.name";
-
-    private RubyRuntimePool runtimePool;
-
-    public RubyJobProxyFactory() {
+       
+    @Override
+    public Job newJob(TriggerFiredBundle bundle) throws SchedulerException {
+        JobDetail jobDetail = bundle.getJobDetail();
+        JobDataMap jobDataMap = jobDetail.getJobDataMap();
+        
+        ComponentResolver resolver = this.componentResolvers.get( jobDataMap.get( RUBY_CLASS_NAME_KEY ) );
+        RubyJobProxy rubyJob = new RubyJobProxy( this.runtimePool, resolver );
+       
+        return rubyJob;
     }
-
+    
+    public void addComponentResolver(String rubyClassName, ComponentResolver resolver) {
+    	this.componentResolvers.put( rubyClassName, resolver );
+    }
+    
     public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
         this.runtimePool = runtimePool;
     }
 
-    public RubyRuntimePool getRubyRuntimePool() {
-        return this.runtimePool;
-    }
-    
-
-    @Override
-    public Job newJob(TriggerFiredBundle bundle) throws SchedulerException {
-        RubyJobProxy rubyJob = null;
-
-        JobDetail jobDetail = bundle.getJobDetail();
-        JobDataMap jobDataMap = jobDetail.getJobDataMap();
-        
-        log.info( "TOBY: I'd create a job if only I had a component resolver");
-//        RubyComponentResolver resolver = getComponentResolver( jobDataMap.getString( RubyJobProxyFactory.COMPONENT_RESOLVER_NAME ) );
-//        
-//        Ruby ruby = null;
-//        try {
-//            ruby = this.runtimePool.borrowRuntime();
-//            IRubyObject rubyObject = resolver.resolve( ruby );
-//            rubyJob = new RubyJobProxy( this.runtimePool, rubyObject );
-//        } catch (Exception e) {
-//            if (ruby != null) {
-//                this.runtimePool.returnRuntime( ruby );
-//            }
-//            throw new SchedulerException( e );
-//        }
-
-        return rubyJob;
-    }
-    
-    // TODO Fix me!
-    protected ComponentResolver getComponentResolver(String name) {
-        return null;
-    }
+    private RubyRuntimePool runtimePool;
+    private Map<String, ComponentResolver> componentResolvers = new HashMap<String, ComponentResolver>();
 
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 }
