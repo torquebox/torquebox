@@ -21,4 +21,14 @@
 #require 'torquebox/messaging/message_processor'
 #require 'torquebox/messaging/backgroundable'
 
-require 'torquebox/messaging/core'
+
+require 'torquebox/messaging/connection_factory'
+require 'torquebox/messaging/connection'
+require 'torquebox/messaging/session'
+require 'torquebox/messaging/message'
+require 'torquebox/messaging/destination'
+require 'torquebox/messaging/queue'
+require 'torquebox/messaging/topic'
+require 'torquebox/messaging/live_destination'
+require 'torquebox/messaging/live_queue'
+require 'torquebox/messaging/live_topic'
