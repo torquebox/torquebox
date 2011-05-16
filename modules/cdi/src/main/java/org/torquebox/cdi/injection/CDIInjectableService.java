@@ -17,6 +17,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jboss.weld.literal.AnyLiteral;
+import org.jboss.weld.manager.BeanManagerImpl;
 
 public class CDIInjectableService implements Service<Object> {
 
@@ -35,6 +36,8 @@ public class CDIInjectableService implements Service<Object> {
         BeanManager beanManager = container.getBeanManager();
 
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        System.err.println( "lookup type: " + this.type );
+        System.err.println( "BEAN MANAGER: " + ((BeanManagerImpl)beanManager).getBeans() );
         try {
             Thread.currentThread().setContextClassLoader( type.getClassLoader() );
             Set<Bean<?>> beans = beanManager.getBeans( this.type, AnyLiteral.INSTANCE );

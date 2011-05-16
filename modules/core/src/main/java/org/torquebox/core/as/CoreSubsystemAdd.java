@@ -56,7 +56,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
-        context.addDeploymentProcessor( Phase.STRUCTURE, Phase.STRUCTURE_MODULE_IDENTIFIERS + 10, new KnobStructureProcessor() );
+        context.addDeploymentProcessor( Phase.STRUCTURE, 10, new KnobStructureProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppKnobYamlParsingProcessor() );
 
         context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
