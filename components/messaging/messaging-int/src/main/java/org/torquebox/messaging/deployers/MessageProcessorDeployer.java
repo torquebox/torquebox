@@ -35,14 +35,14 @@ import org.torquebox.injection.AbstractRubyComponentDeployer;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.mc.jmx.JMXUtils;
+import org.torquebox.messaging.AbstractDestinationMetaData;
+import org.torquebox.messaging.MessageProcessorMetaData;
+import org.torquebox.messaging.QueueMetaData;
 import org.torquebox.messaging.core.AbstractManagedDestination;
 import org.torquebox.messaging.core.ManagedQueue;
 import org.torquebox.messaging.core.ManagedTopic;
 import org.torquebox.messaging.core.RubyMessageProcessor;
 import org.torquebox.messaging.core.RubyMessageProcessorMBean;
-import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
-import org.torquebox.messaging.metadata.MessageProcessorMetaData;
-import org.torquebox.messaging.metadata.QueueMetaData;
 
 /**
  * <pre>

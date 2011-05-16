@@ -25,7 +25,7 @@ import org.jboss.vfs.VirtualFile;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.interp.deployers.AbstractRubyScanningDeployer;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.metadata.TaskMetaData;
+import org.torquebox.messaging.TaskMetaData;
 
 /**
  * <pre>

@@ -8,11 +8,11 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.common.util.StringUtils;
 import org.torquebox.injection.jndi.JNDIInjectable;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.messaging.AbstractDestinationMetaData;
+import org.torquebox.messaging.QueueMetaData;
 import org.torquebox.messaging.core.AbstractManagedDestination;
 import org.torquebox.messaging.core.ManagedQueue;
 import org.torquebox.messaging.core.ManagedTopic;
-import org.torquebox.messaging.metadata.AbstractDestinationMetaData;
-import org.torquebox.messaging.metadata.QueueMetaData;
 
 public class DestinationInjectable extends JNDIInjectable {
     

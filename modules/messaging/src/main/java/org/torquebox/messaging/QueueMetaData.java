@@ -17,33 +17,35 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.metadata;
+package org.torquebox.messaging;
 
-public class AbstractDestinationMetaData {
+import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.AttachmentList;
 
-    private String name;
-    private String bindName;
-    public AbstractDestinationMetaData() {
+public class QueueMetaData extends AbstractDestinationMetaData {
+    
+    public static AttachmentKey<AttachmentList<QueueMetaData>> ATTACHMENT_KEY = AttachmentKey.createList( QueueMetaData.class );
+
+    private boolean durable = true;
+
+    public QueueMetaData() {
 
     }
 
-    public AbstractDestinationMetaData(String name) {
-        this.name = name;
+    public QueueMetaData(String name) {
+        super( name );
     }
 
-    public String getName() {
-        return this.name;
+    public String toString() {
+        return "[QueueMetaData: name=" + getName() + "]";
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDurable(boolean durable) {
+        this.durable = durable;
     }
 
-    public String getBindName() {
-        return this.bindName;
+    public boolean isDurable() {
+        return this.durable;
     }
 
-    public void setBindName(String bindName) {
-        this.bindName = bindName;
-    }
 }

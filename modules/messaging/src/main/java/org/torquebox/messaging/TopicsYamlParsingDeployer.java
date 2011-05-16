@@ -17,14 +17,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.deployers;
+package org.torquebox.messaging;
 
 import java.util.Map;
 
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.metadata.TopicMetaData;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.torquebox.core.AbstractSplitYamlParsingProcessor;
 
 /**
  * <pre>
@@ -35,21 +34,20 @@ import org.torquebox.messaging.metadata.TopicMetaData;
  * 
  * Creates TopicMetaData instances from topics.yml
  */
-public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
+public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingProcessor {
 
     public TopicsYamlParsingDeployer() {
         setSectionName( "topics" );
         setSupportsSuffix( true );
-        addOutput( TopicMetaData.class );
     }
 
     @SuppressWarnings("unchecked")
-    public void parse(VFSDeploymentUnit unit, Object baseData) throws Exception {
-        Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) baseData;
+    public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
+        Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) dataObject;
 
         for (String topicName : data.keySet()) {
             TopicMetaData topicMetaData = new TopicMetaData( topicName );
-            AttachmentUtils.multipleAttach( unit, topicMetaData, topicName );
+            unit.addToAttachmentList( TopicMetaData.ATTACHMENT_KEY, topicMetaData );
         }
     }
 

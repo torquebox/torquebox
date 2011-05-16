@@ -17,11 +17,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.metadata;
+package org.torquebox.messaging;
 
-import org.torquebox.common.util.StringUtils;
+import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.AttachmentList;
+import org.torquebox.core.util.StringUtils;
 
 public class TaskMetaData {
+    
+    public static AttachmentKey<AttachmentList<TaskMetaData>> ATTACHMENT_KEY = AttachmentKey.createList( TaskMetaData.class );
 
     private String rubyClassName;
     private String location;

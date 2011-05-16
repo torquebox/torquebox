@@ -30,8 +30,8 @@ import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.mc.AttachmentUtils;
+import org.torquebox.messaging.TopicMetaData;
 import org.torquebox.messaging.core.ManagedTopic;
-import org.torquebox.messaging.metadata.TopicMetaData;
 
 /**
  * <pre>

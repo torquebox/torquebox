@@ -29,7 +29,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.base.deployers.TorqueBoxYamlParsingDeployer;
-import org.torquebox.messaging.metadata.TopicMetaData;
+import org.torquebox.messaging.TopicMetaData;
+import org.torquebox.messaging.TopicsYamlParsingDeployer;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class TopicsYamlParsingDeployerTest extends AbstractDeployerTestCase {

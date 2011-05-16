@@ -26,7 +26,7 @@ import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.interp.metadata.PoolMetaData;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.metadata.MessageProcessorMetaData;
+import org.torquebox.messaging.MessageProcessorMetaData;
 
 /**
  * <pre>

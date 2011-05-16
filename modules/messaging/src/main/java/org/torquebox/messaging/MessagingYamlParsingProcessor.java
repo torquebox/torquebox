@@ -17,39 +17,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.deployers;
+package org.torquebox.messaging;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
-import org.torquebox.common.util.StringUtils;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.MessageProcessorMetaData;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.logging.Logger;
+import org.torquebox.core.AbstractSplitYamlParsingProcessor;
+import org.torquebox.core.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * <pre>
- * Stage: PARSE
- *    In: messaging.yml
- *   Out: MessageProcessorMetaData
- * </pre>
- * 
- * Creates MessageProcessorMetaData instances from messaging.yml
+ * Creates ScheduledJobMetaData instances from jobs.yml
  */
-public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
+public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
-    public MessagingYamlParsingDeployer() {
+    public MessagingYamlParsingProcessor() {
         setSectionName( "messaging" );
     }
 
-    @Override
-    public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-        for (MessageProcessorMetaData metadata : Parser.parse( dataObj )) {
-            AttachmentUtils.multipleAttach( unit, metadata, metadata.getName() );
+    public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
+        try {
+            for (MessageProcessorMetaData metadata : Parser.parse( dataObject )) {
+                unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY, metadata );
+            }
+        } catch (Exception e) {
+            throw new DeploymentUnitProcessingException( e );
         }
     }
 
@@ -126,4 +123,6 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingDeploy
         }
 
     }
+
+    private static final Logger log = Logger.getLogger( "org.torquebox.messaging" );
 }

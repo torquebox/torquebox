@@ -17,16 +17,36 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.metadata;
+package org.torquebox.messaging;
 
-public class TopicMetaData extends AbstractDestinationMetaData {
+public class AbstractDestinationMetaData {
 
-    public TopicMetaData() {
+    private String name;
+    private String bindName;
+    public AbstractDestinationMetaData() {
 
     }
 
-    public TopicMetaData(String name) {
-        super( name );
+    public AbstractDestinationMetaData(String name) {
+        this.name = name;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getBindName() {
+        if ( this.bindName == null ) {
+            return this.name;
+        }
+        return this.bindName;
+    }
+
+    public void setBindName(String bindName) {
+        this.bindName = bindName;
+    }
 }

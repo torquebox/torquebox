@@ -18,6 +18,11 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.torquebox.messaging.MessagingYamlParsingProcessor;
+import org.torquebox.messaging.QueueDeployer;
+import org.torquebox.messaging.QueuesYamlParsingDeployer;
+import org.torquebox.messaging.TopicDeployer;
+import org.torquebox.messaging.TopicsYamlParsingDeployer;
 
 class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -48,7 +53,16 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
+         
+         context.addDeploymentProcessor( Phase.PARSE, 10, new MessagingYamlParsingProcessor() );
+         
+         context.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingDeployer() );
+         context.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingDeployer() );
+         
          context.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new MessagingDependenciesProcessor() );
+         
+         context.addDeploymentProcessor( Phase.POST_MODULE, 11, new QueueDeployer() );
+         context.addDeploymentProcessor( Phase.POST_MODULE, 12, new TopicDeployer() );
     }
 
     protected void addMessagingServices(final RuntimeTaskContext context) {

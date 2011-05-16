@@ -28,7 +28,7 @@ import java.util.Set;
 import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
 import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.metadata.TaskMetaData;
+import org.torquebox.messaging.TaskMetaData;
 import org.yaml.snakeyaml.Yaml;
 
 /**

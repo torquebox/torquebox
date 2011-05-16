@@ -27,9 +27,9 @@ import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.metadata.MessageProcessorMetaData;
-import org.torquebox.messaging.metadata.QueueMetaData;
-import org.torquebox.messaging.metadata.TaskMetaData;
+import org.torquebox.messaging.MessageProcessorMetaData;
+import org.torquebox.messaging.QueueMetaData;
+import org.torquebox.messaging.TaskMetaData;
 
 /**
  * <pre>
