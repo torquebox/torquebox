@@ -19,7 +19,7 @@ module TorqueBox
         end
 
         def with_new_session(transacted=true, ack_mode=Session::AUTO_ACK, &block)
-          session = create_session( transacted, ack_mode )
+          session = self.create_session( transacted, ack_mode )
           begin
             result = block.call( session )
           ensure
@@ -28,8 +28,8 @@ module TorqueBox
           return result
         end
 
-        def create_session(transacted, ack_mode)
-          Session.new( @jms_session.create_session( transacted, Session.canonical_ack_mode( ack_mode ) )
+        def create_session(transacted=true, ack_mode=Session::AUTO_ACK)
+          Session.new( @jms_connection.create_session( transacted, Session.canonical_ack_mode( ack_mode ) ) )
         end
       end
 

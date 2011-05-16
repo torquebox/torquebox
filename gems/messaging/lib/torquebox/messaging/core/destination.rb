@@ -9,7 +9,7 @@ module TorqueBox
           @jms_destination = jms_destination
         end
         def to_s
-          "[Destination: jms_destination=#{jms_destination}]"
+          jms_destination.name
         end
       end
     end

@@ -11,17 +11,21 @@ module TorqueBox
 
         def publish_and_receive(message, options={})
           result = nil
-          connection_factory.with_new_session do |session|
-            result = session.publish_and_receive(name, message,
-                                                 normalize_options(options))
+          connection_factory.with_new_connection do |connection|
+            connection.with_new_session do |session|
+              result = session.publish_and_receive(destination, message,
+                                                   normalize_options(options))
+            end
           end
           result
         end
   
         def receive_and_publish(options={}, &block)
-          connection_factory.with_new_session do |session|
-            session.receive_and_publish(name, normalize_options(options), &block)
-            session.commit if session.transacted?
+          connection_factory.with_new_connection do |connection|
+            connection.with_new_session do |session|
+              session.receive_and_publish(destination, normalize_options(options), &block)
+              session.commit if session.transacted?
+            end
           end
         end
 

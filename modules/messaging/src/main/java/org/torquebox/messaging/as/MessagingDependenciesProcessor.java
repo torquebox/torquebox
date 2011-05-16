@@ -15,6 +15,7 @@ import org.torquebox.core.app.RubyApplicationMetaData;
 public class MessagingDependenciesProcessor implements DeploymentUnitProcessor {
     
     private static ModuleIdentifier TORQUEBOX_MESSAGING_ID = ModuleIdentifier.create("org.torquebox.messaging");
+    private static ModuleIdentifier HORNETQ_ID = ModuleIdentifier.create("org.hornetq");
     private static ModuleIdentifier JBOSS_VFS_ID = ModuleIdentifier.create("org.jboss.vfs");
 
     @Override
@@ -26,6 +27,7 @@ public class MessagingDependenciesProcessor implements DeploymentUnitProcessor {
 
         if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_MESSAGING_ID );
+            addDependency( moduleSpecification, moduleLoader, HORNETQ_ID );
             addDependency( moduleSpecification, moduleLoader, JBOSS_VFS_ID );
         }
     }

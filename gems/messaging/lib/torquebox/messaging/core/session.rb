@@ -15,8 +15,20 @@ module TorqueBox
           @jms_session = jms_session
         end
 
+        def transacted?
+          @jms_session.transacted?
+        end
+
+        def close
+          @jms_session.close
+        end
+
+        def commit
+          @jms_session.commit
+        end
+
         def publish(destination, payload, options={})
-          producer    = @jms_session.create_producer( destination )
+          producer    = @jms_session.create_producer( destination.jms_destination )
           message     = Message.new( @jms_session.create_text_message, payload )
 
           message.populate_message_headers(options)
@@ -36,7 +48,7 @@ module TorqueBox
           decode = options.fetch(:decode, true)
           timeout = options.fetch(:timeout, 0)
           selector = options.fetch(:selector, nil)
-          consumer = create_consumer( destination, selector )
+          consumer = @jms_session.create_consumer( destination.jms_destination, selector )
           begin
             jms_message = consumer.receive( timeout )
             if jms_message
@@ -64,10 +76,10 @@ module TorqueBox
           options[:properties] ||= {}
           options[:properties]["synchronous"] = "true"
           wrapped_message = { :timeout => options[:timeout], :message => message }
-          jms_message = publish(destination, wrapped_message, options)
+          message = publish(destination, wrapped_message, options)
           commit if transacted?
       
-          options[:selector] = "JMSCorrelationID='#{jms_message.jms_message_id}'"
+          options[:selector] = "JMSCorrelationID='#{message.jms_message.jms_message_id}'"
           response = receive(destination, options)
           commit if transacted?
       

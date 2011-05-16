@@ -15,12 +15,9 @@ import org.jboss.as.controller.RuntimeTask;
 import org.jboss.as.controller.RuntimeTaskContext;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceController.Mode;
-import org.torquebox.core.as.CoreServices;
-import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
-import org.torquebox.messaging.injection.QueueInjectableHandler;
 
 class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -51,8 +48,7 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        // context.addDeploymentProcessor( Phase.INSTALL, 10, new
-        // RuntimePoolDeployer() );
+         context.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new MessagingDependenciesProcessor() );
     }
 
     protected void addMessagingServices(final RuntimeTaskContext context) {

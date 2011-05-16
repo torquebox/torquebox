@@ -15,7 +15,7 @@ module TorqueBox
   
         def publish(message, options = {})
           with_new_session do |session|
-            session.publish name, message, normalize_options(options)
+            session.publish destination, message, normalize_options(options)
             session.commit if session.transacted?
           end
         end
@@ -29,8 +29,27 @@ module TorqueBox
           return result
         end
 
+        def normalize_options(options)
+          if options.has_key?(:persistent)
+            options[:delivery_mode] =
+              options.delete(:persistent) ? javax.jms::DeliveryMode.PERSISTENT : javax.jms::DeliveryMode.NON_PERSISTENT
+          end
+  
+          if options.has_key?(:priority)
+            if PRIORITY_MAP[options[:priority]]
+              options[:priority] = PRIORITY_MAP[options[:priority]]
+            elsif (0..9) === options[:priority].to_i
+            options[:priority] = options[:priority].to_i
+            else
+              raise ArgumentError.new(":priority must in the range 0..9, or one of #{PRIORITY_MAP.keys.collect {|k| ":#{k}"}.join(',')}")
+            end
+          end
+  
+          options
+        end
+
         def to_s 
-          "[LiveDestination: connection_factory=#{connection_factory}, destination=#{destination}]"
+          destination.to_s
         end
 
       end

@@ -1,4 +1,6 @@
 
+require 'base64'
+
 module TorqueBox
   module Messaging
     module Core
@@ -43,7 +45,7 @@ module TorqueBox
           if message.is_a? String
             @jms_message.text = message
           else
-            self.set_string_property( 'torquebox_encoding', 'base64' )
+            @jms_message.set_string_property( 'torquebox_encoding', 'base64' )
             marshalled = Marshal.dump( message )
             encoded = Base64.encode64( marshalled )
             @jms_message.text = encoded
