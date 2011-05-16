@@ -46,6 +46,13 @@
       <version>1.1.1</version>
     </dependency>
 
+    <!-- NFC -->
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xerces</artifactId>
+      <version>2.4.0</version>
+    </dependency>
+
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
