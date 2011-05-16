@@ -86,7 +86,7 @@ class Assembler
     end
 
     # Ensure core module is first
-    modules.unshift ( modules.assoc( "core" ) ).uniq!
+    modules.unshift( modules.assoc( "core" ) ).uniq!
 
     modules.each do |module_name, module_dir|
       tool.install_module( module_name, module_dir )
@@ -94,9 +94,15 @@ class Assembler
   end
 
   def install_gems
-    Dir[ tool.base_dir + '/../../gems/*/target/*.gem' ].each do |gem_package|
-      puts "Install gem: #{gem_package}"
-      tool.install_gem( gem_package )
+    # Install gems in order specified by modules in gems/pom.xml
+    gem_pom = REXML::Document.new( File.read( tool.base_dir + '/../../gems/pom.xml' ) )
+    gem_dirs = gem_pom.get_elements( "project/modules/module" ).map { |m| m.text }
+
+    gem_dirs.each do |gem_dir|
+      Dir[ tool.base_dir + '/../../gems/' + gem_dir + '/target/*.gem' ].each do |gem_package|
+        puts "Install gem: #{gem_package}"
+        tool.install_gem( gem_package )
+      end
     end
     tool.update_gem_repo_index
   end
