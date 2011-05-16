@@ -10,6 +10,20 @@ module TorqueBox
           @jms_connection_factory = jms_connection_factory
         end
 
+        def with_new_conection(&block)
+          connection = create_connection
+          begin
+            result = block.call( connection )
+          ensure
+            connection.close
+          end
+          return result
+        end
+
+        def create_connection()
+          Connection.new( @jms_connection_factory.create_connection )
+        end
+
         def to_s
           "[ConnectionFactory: jms_connection_factory=#{jms_connection_factory}]"
         end
