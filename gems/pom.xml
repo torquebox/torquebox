@@ -22,6 +22,7 @@
     <module>core</module>
     <module>naming</module>
     <module>messaging</module>
+    <module>rake-support</module>
     <module>web</module>
     <module>torquebox</module>
   </modules>
