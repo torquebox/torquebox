@@ -32,6 +32,7 @@ import org.jboss.msc.service.ServiceName;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.as.services.DefaultRubyRuntimePoolService;
 import org.torquebox.core.as.services.SharedRubyRuntimeFactoryPoolService;
 import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
@@ -95,6 +96,8 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
             builder.addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
             builder.install();
+            
+            unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
         } else {
             DefaultRubyRuntimePool pool = new DefaultRubyRuntimePool();
 
@@ -108,6 +111,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
             builder.addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
             builder.install();
+            unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
         }
     }
 

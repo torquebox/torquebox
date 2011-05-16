@@ -8,6 +8,7 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.FileLocatingProcessor;
+import org.torquebox.core.as.DeploymentNotifier;
 
 public class RubyApplicationRecognizer extends FileLocatingProcessor {
 
@@ -29,6 +30,7 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
         }
 
         unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+        unit.putAttachment( DeploymentNotifier.DEPLOYMENT_TIME_ATTACHMENT_KEY, System.currentTimeMillis() );
     }
 
     static boolean isRubyApplication(VirtualFile file) {

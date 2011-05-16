@@ -14,6 +14,7 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.component.BaseRubyComponentDeployer;
 import org.torquebox.core.component.ComponentEval;
 import org.torquebox.core.component.ComponentResolver;
@@ -56,6 +57,9 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         builder.setInitialMode( Mode.ON_DEMAND );
         addInjections( phaseContext, resolver, builder );
         builder.install();
+        
+        // Add to our notifier's watch list
+        unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
     }
     
 
