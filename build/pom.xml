@@ -33,4 +33,13 @@
     <module>assembly</module>
   </modules>
 
+  <profiles>
+    <profile>
+      <id>dist</id>
+      <modules>
+        <module>dist</module>
+      </modules>
+    </profile>
+  </profiles>
+
 </project>
