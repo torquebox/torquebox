@@ -48,7 +48,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
-      <version>0.0.6</version>
+      <version>0.1.1</version>
       <type>gem</type>
     </dependency>
 
@@ -133,14 +133,6 @@
     </dependency>
 
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-messaging-container</artifactId>
-      <type>gem</type>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <version>${version.jruby}</version>
@@ -149,18 +141,6 @@
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-ruby-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-spi</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-core</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
