@@ -16,7 +16,7 @@ public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
 
 	@Override
 	protected void parse(DeploymentUnit unit, Object dataObject) throws Exception {
-        log.info( "parsing: " + dataObject );
+        log.warn( "parsing: " + dataObject );
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> data = (Map<String, Object>) dataObject;
@@ -24,11 +24,15 @@ public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
         if (data != null) {
         	for( String name: data.keySet() ) {
         		@SuppressWarnings("unchecked")
-				String domain = ( (Map<String, String>) data.get(name) ).get("domain");    		
+				String domain = ( (Map<String, String>) data.get(name) ).get("domain");
+        		log.info("Loading auth configuration for " + name + ":" + domain);
         		AuthMetaData metaData = new AuthMetaData();
         		metaData.addAuthentication( name, domain );
                 unit.addToAttachmentList( AuthMetaData.ATTACHMENT_KEY, metaData );
         	}
+        }
+        else {
+        	log.warn("No jaas auth configured. Moving on.");
         }
 	}
 	
