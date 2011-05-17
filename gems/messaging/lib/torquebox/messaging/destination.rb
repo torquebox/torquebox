@@ -25,11 +25,14 @@ module TorqueBox
       end
 
       def with_new_session(transacted=true, ack_mode=Session::AUTO_ACK, &block)
+        result = nil
         connection_factory.with_new_connection do |connection|
           connection.with_new_session( transacted, ack_mode ) do |session|
-            return block.call(session)
+            result = block.call(session)
           end
         end
+        
+        result
       end
       
       def normalize_options(options)
