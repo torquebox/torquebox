@@ -23,24 +23,11 @@ public class SharedRubyRuntimeFactoryPoolService implements Service<RubyRuntimeP
 
     @Override
     public void start(final StartContext context) throws StartException {
-        context.asynchronous();
         this.pool.setInstanceFactory( factoryInjector.getValue() );
-        context.execute( new Runnable() {
-            public void run() {
-                try {
-                    SharedRubyRuntimeFactoryPoolService.this.pool.create();
-                    context.complete();
-                } catch (Exception e) {
-                    context.failed( new StartException( e ) );
-                }
-            }
-        } );
-
     }
 
     @Override
     public void stop(StopContext context) {
-        this.pool.destroy();
         this.pool.setInstanceFactory( null );
     }
 

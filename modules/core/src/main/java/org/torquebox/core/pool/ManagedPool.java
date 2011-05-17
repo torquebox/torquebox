@@ -31,6 +31,7 @@ public class ManagedPool<T> implements Pool<T> {
     private PoolManager<T> poolManager;
 
     public ManagedPool() {
+        this( null, 1, 1);
     }
     
     public ManagedPool(InstanceFactory<T> factory) {

@@ -19,30 +19,21 @@
 
 package org.torquebox.messaging.deployers;
 
+import java.util.List;
 import java.util.Set;
 
-import org.jboss.beans.metadata.plugins.builder.BeanMetaDataBuilderFactory;
-import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.ValueMetaData;
-import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
-import org.jboss.dependency.spi.ControllerState;
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.common.util.StringUtils;
-import org.torquebox.injection.AbstractRubyComponentDeployer;
-import org.torquebox.interp.spi.RubyRuntimePool;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.mc.jmx.JMXUtils;
+import org.hibernate.validator.metadata.BeanMetaData;
+import org.jboss.as.server.deployment.DeploymentException;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.util.StringUtils;
 import org.torquebox.messaging.AbstractDestinationMetaData;
 import org.torquebox.messaging.MessageProcessorMetaData;
 import org.torquebox.messaging.QueueMetaData;
-import org.torquebox.messaging.core.AbstractManagedDestination;
-import org.torquebox.messaging.core.ManagedQueue;
-import org.torquebox.messaging.core.ManagedTopic;
-import org.torquebox.messaging.core.RubyMessageProcessor;
-import org.torquebox.messaging.core.RubyMessageProcessorMBean;
 
 /**
  * <pre>
@@ -52,16 +43,11 @@ import org.torquebox.messaging.core.RubyMessageProcessorMBean;
  * </pre>
  * 
  */
-public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
+public class MessageProcessorDeployer implements DeploymentUnitProcessor {
 
     private String demand;
 
     public MessageProcessorDeployer() {
-        setStage( DeploymentStages.REAL );
-        addInput( MessageProcessorMetaData.class );
-        addRequiredInput( RubyApplicationMetaData.class );
-        addOutput( BeanMetaData.class );
-        setRelativeOrder( 1000 );
     }
 
     public void setDemand(String demand) {
@@ -73,15 +59,16 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
     }
 
     @Override
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        Set<? extends MessageProcessorMetaData> allMetaData = unit.getAllMetaData( MessageProcessorMetaData.class );
+    public void deploy(DeploymentPhaseContext context) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = context.getDeploymentUnit();
+        List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY );
 
         for (MessageProcessorMetaData each : allMetaData) {
             deploy( unit, each );
         }
     }
 
-    protected void deploy(DeploymentUnit unit, MessageProcessorMetaData metaData) throws DeploymentException {
+    protected void deploy(DeploymentUnit unit, MessageProcessorMetaData metaData) throws DeploymentUnitProcessingException {
 
         String simpleName = metaData.getDestinationName() + "." + metaData.getRubyClassName();
         String beanName = AttachmentUtils.beanName( unit, RubyMessageProcessor.class, simpleName );

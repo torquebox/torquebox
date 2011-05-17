@@ -29,7 +29,7 @@ public class SharedPoolTest {
     public void testNoInstanceOrFactory() throws Exception {
         SharedPool<String> pool = new SharedPool<String>();
 
-        pool.create();
+        pool.start();
     }
 
     @Test
@@ -38,7 +38,7 @@ public class SharedPoolTest {
 
         SharedPool<String> pool = new SharedPool<String>( instance );
 
-        pool.create();
+        pool.start();
 
         for (int i = 0; i < 100; ++i) {
             assertEquals( instance, pool.borrowInstance() );
@@ -52,7 +52,7 @@ public class SharedPoolTest {
         SharedPool<String> pool = new SharedPool<String>();
         pool.setInstance( instance );
 
-        pool.create();
+        pool.start();
 
         for (int i = 0; i < 100; ++i) {
             assertEquals( instance, pool.borrowInstance() );
@@ -65,7 +65,7 @@ public class SharedPoolTest {
 
         SharedPool<String> pool = new SharedPool<String>( new MockInstanceFactory( instance ) );
 
-        pool.create();
+        pool.start();
 
         for (int i = 0; i < 100; ++i) {
             assertEquals( instance, pool.borrowInstance() );
@@ -80,7 +80,7 @@ public class SharedPoolTest {
 
         pool.setInstanceFactory( new MockInstanceFactory( instance ) );
 
-        pool.create();
+        pool.start();
 
         for (int i = 0; i < 100; ++i) {
             assertEquals( instance, pool.borrowInstance() );

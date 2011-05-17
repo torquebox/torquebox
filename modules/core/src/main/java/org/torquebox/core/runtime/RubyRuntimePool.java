@@ -35,4 +35,7 @@ public interface RubyRuntimePool {
     Set<String> getAllRuntimeNames();
     
     String getName();
+    
+    void start() throws Exception;
+    void stop() throws InterruptedException;
 }

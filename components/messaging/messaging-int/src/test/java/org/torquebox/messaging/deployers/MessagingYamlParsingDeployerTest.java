@@ -33,6 +33,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.messaging.MessageProcessorMetaData;
+import org.torquebox.messaging.MessagingYamlParsingDeployer;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class MessagingYamlParsingDeployerTest extends AbstractDeployerTestCase {

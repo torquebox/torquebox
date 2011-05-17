@@ -10,9 +10,9 @@ import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class DefaultRubyRuntimePoolStartService implements Service<RubyRuntimePool> {
+public class RubyRuntimePoolStartService implements Service<RubyRuntimePool> {
 
-    public DefaultRubyRuntimePoolStartService(DefaultRubyRuntimePool pool) {
+    public RubyRuntimePoolStartService(RubyRuntimePool pool) {
         this.pool = pool;
     }
 
@@ -28,9 +28,9 @@ public class DefaultRubyRuntimePoolStartService implements Service<RubyRuntimePo
             @Override
             public void run() {
                 try {
-                    DefaultRubyRuntimePoolStartService.this.pool.start();
+                    RubyRuntimePoolStartService.this.pool.start();
                     context.complete();
-                } catch (InterruptedException e) {
+                } catch (Exception e) {
                     context.failed( new StartException( e ) );
                 }
             }
@@ -51,6 +51,6 @@ public class DefaultRubyRuntimePoolStartService implements Service<RubyRuntimePo
     }
 
     private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
-    private DefaultRubyRuntimePool pool;
+    private RubyRuntimePool pool;
 
 }
