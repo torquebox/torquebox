@@ -22,9 +22,15 @@ package org.torquebox.jobs.component;
 import org.torquebox.core.component.AbstractRubyComponent;
 
 public class JobComponent extends AbstractRubyComponent {
-    
+
     public void run() {
-        __call__( "run" );
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader() );
+            __call__( "run" );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
-    
+
 }

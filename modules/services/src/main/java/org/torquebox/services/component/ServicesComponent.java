@@ -22,13 +22,25 @@ package org.torquebox.services.component;
 import org.torquebox.core.component.AbstractRubyComponent;
 
 public class ServicesComponent extends AbstractRubyComponent {
-    
+
     public void start() {
-        __call__( "start" );
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader() );
+            __call__( "start" );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
-    
+
     public void stop() {
-        __call__( "stop" );
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader() );
+            __call__( "stop" );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
 
 }

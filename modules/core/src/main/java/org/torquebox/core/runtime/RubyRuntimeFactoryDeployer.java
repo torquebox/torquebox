@@ -40,6 +40,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             
             Module module = unit.getAttachment( Attachments.MODULE );
             
+            log.info( "Initializing ruby with classloader: " + module );
             factory.setClassLoader( module.getClassLoader() );
             
             // TODO What's the AS7 kernel?
@@ -66,7 +67,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             }
 
             RubyRuntimeFactoryService service = new RubyRuntimeFactoryService( factory );
-            ServiceName name = CoreServices.runtimeFactoryName( deploymentName );
+            ServiceName name = CoreServices.runtimeFactoryName( unit );
             ServiceBuilder<RubyRuntimeFactory> builder = phaseContext.getServiceTarget().addService( name, service );
             log.info( "installing factory service for unit" );
             builder.install();

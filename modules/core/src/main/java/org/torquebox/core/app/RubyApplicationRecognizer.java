@@ -19,8 +19,10 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
         VirtualFile root = resourceRoot.getRoot();
 
         if (!isRubyApplication( root )) {
+            System.err.println( "NOT A RUBY APP" );
             return;
         }
+        System.err.println( "MARK AS RUBY APP" );
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData == null) {
@@ -28,8 +30,9 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
             rubyAppMetaData.setRoot( root );
             unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
         }
+        
+        System.err.println( "Ruby App Meta: " + rubyAppMetaData );
 
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
         unit.putAttachment( DeploymentNotifier.DEPLOYMENT_TIME_ATTACHMENT_KEY, System.currentTimeMillis() );
     }
 

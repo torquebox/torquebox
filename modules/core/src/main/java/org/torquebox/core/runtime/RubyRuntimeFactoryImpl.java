@@ -160,15 +160,18 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
      */
     public ClassLoader getClassLoader() {
         if (this.classLoader != null) {
+            log.info(  "Using configured classload: " + this.classLoader );
             return this.classLoader;
         }
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
         if (cl != null) {
+            log.info(  "using TCCL" );
             return cl;
         }
 
+        log.info( "Using our own classloader" );
         return getClass().getClassLoader();
     }
 
@@ -237,7 +240,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         config.setLoader( getClassLoader() );
-        config.setClassCache( getClassCache() );
+        //config.setClassCache( getClassCache() );
         config.setLoadServiceCreator( new VFSLoadServiceCreator() );
         if (this.rubyVersion != null) {
             config.setCompatVersion( this.rubyVersion );
@@ -346,6 +349,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
             logRuntimeCreationComplete( config, contextInfo, startTime );
         }
+        
+        log.info( "Resulting ruby has CL: " + runtime.getJRubyClassLoader() );
 
         return runtime;
     }

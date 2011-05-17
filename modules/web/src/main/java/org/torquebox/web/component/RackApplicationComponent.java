@@ -6,13 +6,19 @@ import org.torquebox.web.rack.RackEnvironment;
 import org.torquebox.web.rack.RackResponse;
 
 public class RackApplicationComponent extends AbstractRubyComponent {
-    
+
     public RackApplicationComponent() {
-        
+
     }
-    
+
     public RackResponse call(RackEnvironment env) {
-        return new RackResponse( (IRubyObject) __call__( "call", env.getEnv() ) );
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader() );
+            return new RackResponse( (IRubyObject) __call__( "call", env.getEnv() ) );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
 
 }

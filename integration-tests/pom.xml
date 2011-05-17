@@ -141,6 +141,18 @@
     </dependency>
 
     <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hornetq</groupId>
+      <artifactId>hornetq-jms</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-ruby-test-support</artifactId>
       <version>${project.version}</version>

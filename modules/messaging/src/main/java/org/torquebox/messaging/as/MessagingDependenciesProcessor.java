@@ -16,6 +16,7 @@ public class MessagingDependenciesProcessor implements DeploymentUnitProcessor {
     
     private static ModuleIdentifier TORQUEBOX_MESSAGING_ID = ModuleIdentifier.create("org.torquebox.messaging");
     private static ModuleIdentifier HORNETQ_ID = ModuleIdentifier.create("org.hornetq");
+    private static ModuleIdentifier JAVAX_JMS_ID = ModuleIdentifier.create("javax.jms.api");
     private static ModuleIdentifier JBOSS_VFS_ID = ModuleIdentifier.create("org.jboss.vfs");
 
     @Override
@@ -25,8 +26,11 @@ public class MessagingDependenciesProcessor implements DeploymentUnitProcessor {
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
+        System.err.println( "Should we add messaging deps?" );
         if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
+            System.err.println( "YES!" );
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_MESSAGING_ID );
+            addDependency( moduleSpecification, moduleLoader, JAVAX_JMS_ID );
             addDependency( moduleSpecification, moduleLoader, HORNETQ_ID );
             addDependency( moduleSpecification, moduleLoader, JBOSS_VFS_ID );
         }

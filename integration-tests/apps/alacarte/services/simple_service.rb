@@ -5,7 +5,7 @@ class SimpleService
 
   def initialize(opts={})
     puts "init"
-    @webserver  = inject_mc('jboss.web:service=WebServer')
+    #@webserver  = inject_mc('jboss.web:service=WebServer')
     @something  = inject( org.torquebox.ThingOne )
     @polish     = inject( Java::pl.softwaremine.ThingThree )
     @logger     = TorqueBox::Logger.new(self.class)

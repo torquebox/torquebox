@@ -82,7 +82,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
-            builder.addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
+            builder.addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
             builder.install();
             
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
@@ -102,7 +102,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             phaseContext.getServiceTarget().addService( name, service )
-                .addDependency( CoreServices.runtimeFactoryName( deploymentName ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
+                .addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
                 .install();
             
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );

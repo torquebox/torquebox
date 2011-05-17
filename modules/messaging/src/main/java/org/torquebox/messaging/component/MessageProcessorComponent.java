@@ -12,11 +12,15 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
     }
 
     public void process(Message message) {
-        //require( "torquebox/messaging/message_processor");
-        //require( "torquebox/messaging/task");
-        RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
-        Object wrappedMessage = __call__( messageWrapperClass, "new", message );
-        __call__( "process!", wrappedMessage );
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader() );
+            RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
+            Object wrappedMessage = __call__( messageWrapperClass, "new", message );
+            __call__( "process!", wrappedMessage );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
 
 }

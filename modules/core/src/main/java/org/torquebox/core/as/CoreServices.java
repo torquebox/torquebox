@@ -16,12 +16,12 @@ public class CoreServices {
     public static final ServiceName INJECTABLE_HANDLER_REGISTRY   = INJECTION.append( "injectable-handler-registry" );
     
     
-    public static ServiceName runtimeFactoryName(final String deploymentName) {
-        return RUNTIME.append("factory").append( deploymentName );
+    public static ServiceName runtimeFactoryName(final DeploymentUnit unit) {
+        return unit.getServiceName().append( RUNTIME ).append("factory");
     }
     
     public static ServiceName runtimePoolName(DeploymentUnit unit, final String poolName) {
-        return unit.getServiceName().append("runtime-pool").append( poolName );
+        return unit.getServiceName().append( RUNTIME).append("pool").append( poolName );
     }
     
  

@@ -78,7 +78,7 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
         context.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingDeployer() );
         context.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningDeployer() );
 
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new MessagingDependenciesProcessor() );
+        context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
 
         context.addDeploymentProcessor( Phase.POST_MODULE, 7, new MessagingInjectablesProcessor() );
 
