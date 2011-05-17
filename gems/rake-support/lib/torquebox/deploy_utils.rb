@@ -80,7 +80,15 @@ module TorqueBox
       end
 
       def deployers_dir
-        File.join("#{server_dir}","deployers")
+        raise "Deployers directory no longer relevant"
+      end
+
+      def modules_dir
+        File.join( jboss_home, 'modules' )
+      end
+
+      def torquebox_modules_dir
+        File.join( modules_dir, 'org', 'torquebox' )
       end
 
       def archive_name(root=Dir.pwd)
@@ -92,8 +100,8 @@ module TorqueBox
       end
 
       def check_server
-        matching = Dir[ "#{deployers_dir}/torquebox*deployer*" ]
-        raise "No TorqueBox deployer installed in #{deployers_dir}" if ( matching.empty? )
+        matching = Dir[ "#{jboss_dir}/torquebox*deployer*" ]
+        raise "No TorqueBox modules installed in #{deployers_dir}" if ( matching.empty? )
       end
 
       def check_opt_torquebox
