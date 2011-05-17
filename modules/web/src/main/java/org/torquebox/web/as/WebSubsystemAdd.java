@@ -60,17 +60,16 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
         context.addDeploymentProcessor( Phase.PARSE, 10, new RailsApplicationRecognizer() );
         context.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 40, new RackWebApplicationDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 40, new RailsVersionProcessor() );
+        context.addDeploymentProcessor( Phase.PARSE, 50, new RailsRackProcessor() );
+        context.addDeploymentProcessor( Phase.PARSE, 60, new RackApplicationDefaultsProcessor() );
+        context.addDeploymentProcessor( Phase.PARSE, 70, new RackWebApplicationDeployer() );
         context.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
         
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 1, new WebDependenciesProcessor() );
         
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 200, new RailsVersionProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 210, new RailsRackProcessor() );
-        
-        context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RackApplicationDefaultsProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
     }
