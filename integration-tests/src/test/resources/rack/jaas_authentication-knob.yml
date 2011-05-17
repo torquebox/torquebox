@@ -1,0 +1,10 @@
+---
+application:
+  root: ${basedir}/apps/rack/jaas
+  env: development
+web:
+  context: /authentication
+
+ruby:
+  version: ${ruby.compat.version}
+
