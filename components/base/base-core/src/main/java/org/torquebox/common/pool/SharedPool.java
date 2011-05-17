@@ -21,7 +21,6 @@ package org.torquebox.common.pool;
 
 import org.jboss.logging.Logger;
 import org.torquebox.common.spi.InstanceFactory;
-import org.torquebox.common.spi.DeferrablePool;
 import org.torquebox.common.spi.Pool;
 
 /**
@@ -38,7 +37,7 @@ import org.torquebox.common.spi.Pool;
  * @param <T>
  *            The poolable resource.
  */
-public class SharedPool<T> implements Pool<T>, DeferrablePool {
+public class SharedPool<T> implements Pool<T> {
     
     protected Logger log = Logger.getLogger( getClass() );
     
@@ -166,8 +165,23 @@ public class SharedPool<T> implements Pool<T>, DeferrablePool {
         }
         if (!this.deferred) {
             startPool();
+        } else if (this.name.equals( "web" )) {
+            // Start the web pool via a thread. This is a hack, 
+            // but is only for 1.1. All this goes away in 2.0
+            log.info( "Starting " + this.name + " runtime pool asynchronously" );
+            final SharedPool pool = this;
+            Thread initThread = new Thread() {
+                    public void run() {
+                        try {
+                            pool.startPool( false );
+                        } catch(Exception ex) {
+                            log.error( "Failed to start pool", ex );
+                        }
+                    }
+                };
+            initThread.start();
         } else {
-            log.debug( "Deferring start for " + getName() + " runtime pool." );
+            log.info( "Deferring start for " + this.name + " runtime pool." );
         }
     }
 

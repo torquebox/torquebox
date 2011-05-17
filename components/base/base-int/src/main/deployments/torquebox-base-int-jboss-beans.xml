@@ -67,14 +67,6 @@
     <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
   </bean>
 
-  <!-- This deployer 'warms up' any deferred runtime pools by filling them before they are needed. It
-       adds complexity, however, and will warm up pools that may never be used (messaging for Backgroundable
-       when Backgroundable isn't used anywhere comes to mind). I'm commenting it out for now until 
-       we decide what to do with it (see TORQUE-383)
-  <bean name="DeferredPoolInitializer"           class="org.torquebox.interp.deployers.DeferredPoolInitializer">
-    <property name="kernel"><inject bean="jboss.kernel:service=Kernel"/></property>
-  </bean>
-  -->
   <bean name="PoolingYamlParsingDeployer"        class="org.torquebox.interp.deployers.PoolingYamlParsingDeployer"/>
   <bean name="RuntimePoolDeployer"               class="org.torquebox.interp.deployers.RuntimePoolDeployer"/>
 
