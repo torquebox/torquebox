@@ -1,11 +1,9 @@
 require 'torquebox/messaging/destination'
+require 'torquebox/messaging/connection_factory'
 
 module TorqueBox
   module Messaging
     class Topic < Destination
-      def initialize(jms_topic)
-        super
-      end
 
       def to_s
         "[Topic: #{super}]"

@@ -3,10 +3,10 @@ module TorqueBox
   module Messaging
     class ConnectionFactory
 
-      attr_reader :jms_connection_factory
+      attr_reader :internal_connection_factory
 
-      def initialize(jms_connection_factory)
-        @jms_connection_factory = jms_connection_factory
+      def initialize(internal_connection_factory = null)
+        @internal_connection_factory = internal_connection_factory
       end
 
       def with_new_connection(&block)
@@ -21,11 +21,23 @@ module TorqueBox
       end
 
       def create_connection()
-        Connection.new( @jms_connection_factory.create_connection )
+        if !@internal_connection_factory
+          # try to connect to HornetQ directly - this currently
+          # assumes localhost, and the default AS7 HQ Netty port of 5445
+          connect_opts = { org.hornetq.core.remoting.impl.netty.TransportConstants::PORT_PROP_NAME => 5445 }
+          transport_config =
+            org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory", 
+                                                            connect_opts)
+          @internal_connection_factory =
+            org.hornetq.api.jms.HornetQJMSClient.createConnectionFactory( transport_config )
+        end
+        
+        Connection.new( @internal_connection_factory.create_connection )
       end
 
+
       def to_s
-        "[ConnectionFactory: jms_connection_factory=#{jms_connection_factory}]"
+        "[ConnectionFactory: internal_connection_factory=#{internal_connection_factory}]"
       end
 
     end

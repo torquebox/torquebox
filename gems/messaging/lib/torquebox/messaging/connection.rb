@@ -28,7 +28,8 @@ module TorqueBox
       end
 
       def create_session(transacted=true, ack_mode=Session::AUTO_ACK)
-        Session.new( @jms_connection.create_session( transacted, Session.canonical_ack_mode( ack_mode ) ) )
+        session = @jms_connection.create_session( transacted, Session.canonical_ack_mode( ack_mode ) )
+        session.is_a?( Java::OrgHornetqJmsClient::HornetQSession ) ? HornetQSession.new( session ) : Session.new( session )
       end
 
     end
