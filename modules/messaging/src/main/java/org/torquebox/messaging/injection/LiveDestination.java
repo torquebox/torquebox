@@ -27,7 +27,7 @@ public class LiveDestination implements ConvertableRubyInjection {
     public Object convert(Ruby ruby) throws Exception {
         ruby.evalScriptlet( "require %q(torquebox-messaging)" );
         RubyModule destinationClass = ruby.getClassFromPath( "TorqueBox::Messaging::" + getType() );
-        Object destination = JavaEmbedUtils.invokeMethod( ruby, destinationClass, "new", new Object[] { this.connectionFactory, this.destination }, Object.class );
+        Object destination = JavaEmbedUtils.invokeMethod( ruby, destinationClass, "new", new Object[] { this.destination, this.connectionFactory }, Object.class );
         return destination;
     }
     
