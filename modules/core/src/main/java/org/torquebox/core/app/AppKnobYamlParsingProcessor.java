@@ -19,6 +19,7 @@
 
 package org.torquebox.core.app;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,8 +29,11 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.server.deployment.module.MountHandle;
 import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.as.server.deployment.module.TempFileProviderService;
 import org.jboss.logging.Logger;
+import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
 import org.torquebox.core.TorqueBoxMetaData;
@@ -42,6 +46,7 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         TorqueBoxMetaData metaData = null;
         VirtualFile root = null;
+        ResourceRoot appRoot = null;
 
         try {
             VirtualFile appKnobYml = getFile( unit );
@@ -58,6 +63,15 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
             if ( ! root.exists() ) {
                 throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
             }
+            
+            if (root.exists() && !root.isDirectory()) {
+                // Expand the referenced root if it's not a directory (ie .knob archive)
+                final Closeable closable = VFS.mountZipExpanded( root, root, TempFileProviderService.provider() );
+                final MountHandle mountHandle = new MountHandle( closable );
+                appRoot = new ResourceRoot( root, mountHandle );
+            } else {
+                appRoot = new ResourceRoot( root, null );
+            }
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
         }
@@ -68,8 +82,7 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
         rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( metaData.getApplicationEnvironment() );
         unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-
-        ResourceRoot appRoot = new ResourceRoot( root, null );
+        
         unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
     }
 
