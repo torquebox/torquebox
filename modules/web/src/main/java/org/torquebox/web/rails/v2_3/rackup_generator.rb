@@ -15,7 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'org/torquebox/rails/web/v2_3/dispatcher'
+require 'org/torquebox/web/rails/v2_3/dispatcher'
 
 module TorqueBox
   module Rails

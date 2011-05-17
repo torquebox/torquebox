@@ -1,4 +1,4 @@
-require 'torquebox/messaging/javax_jms_text_message'
+#require 'torquebox/messaging/javax_jms_text_message'
 
 module TorqueBox
   module Messaging

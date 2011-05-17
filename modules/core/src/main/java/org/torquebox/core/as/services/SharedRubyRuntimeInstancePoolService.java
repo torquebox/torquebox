@@ -24,16 +24,10 @@ public class SharedRubyRuntimeInstancePoolService implements Service<RubyRuntime
     @Override
     public void start(StartContext context) throws StartException {
         this.pool.setInstance( this.rubyInjector.getValue() );
-        try {
-            this.pool.create();
-        } catch (Exception e) {
-            context.failed( new StartException(e) );
-        }
     }
 
     @Override
     public void stop(StopContext context) {
-        this.pool.destroy();
         this.pool.setInstance( null );
     }
     

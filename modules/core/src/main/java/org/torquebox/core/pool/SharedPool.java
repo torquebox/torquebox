@@ -36,9 +36,9 @@ import org.jboss.logging.Logger;
  *            The poolable resource.
  */
 public class SharedPool<T> implements Pool<T> {
-    
+
     protected Logger log = Logger.getLogger( getClass() );
-    
+
     /** Name of the pool. */
     private String name = "anonymous-pool";
 
@@ -137,7 +137,7 @@ public class SharedPool<T> implements Pool<T> {
      * @throws Exception
      *             if an error occurs starting the pool.
      */
-    public void create() throws Exception {
+    public synchronized void start() throws Exception {
         if (this.instance != null) {
             return;
         }
@@ -147,12 +147,13 @@ public class SharedPool<T> implements Pool<T> {
         }
 
         this.instance = factory.createInstance( getName() );
+        this.notifyAll();
     }
 
     /**
      * Destroy the pool.
      */
-    public void destroy() {
+    public synchronized void stop() {
         if (this.factory != null && this.instance != null) {
             this.factory.destroyInstance( this.instance );
         }
@@ -171,7 +172,16 @@ public class SharedPool<T> implements Pool<T> {
     }
 
     @Override
-    public T borrowInstance(long timeout) throws Exception {
+    public synchronized T borrowInstance(long timeout) throws Exception {
+        long remaining = timeout;
+        while (this.instance == null) {
+            long startWait = System.currentTimeMillis();
+            this.wait( timeout );
+            remaining = remaining - (System.currentTimeMillis() - startWait );
+            if ( remaining <= 0 ) {
+                break;
+            }
+        }
         return this.instance;
     }
 

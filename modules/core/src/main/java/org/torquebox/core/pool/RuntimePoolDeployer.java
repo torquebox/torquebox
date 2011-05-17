@@ -35,7 +35,7 @@ import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.as.services.DefaultRubyRuntimePoolService;
-import org.torquebox.core.as.services.DefaultRubyRuntimePoolStartService;
+import org.torquebox.core.as.services.RubyRuntimePoolStartService;
 import org.torquebox.core.as.services.SharedRubyRuntimeFactoryPoolService;
 import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
@@ -86,6 +86,11 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             builder.install();
             
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
+            
+            phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
+            .addDependency( name )
+            .setInitialMode( Mode.PASSIVE )
+            .install();
         } else {
             DefaultRubyRuntimePool pool = new DefaultRubyRuntimePool();
 
@@ -102,7 +107,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
             
-            phaseContext.getServiceTarget().addService( name.append( "START" ), new DefaultRubyRuntimePoolStartService( pool ) )
+            phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
                 .addDependency( name )
                 .setInitialMode( Mode.PASSIVE )
                 .install();

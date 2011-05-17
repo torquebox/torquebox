@@ -18,9 +18,7 @@
 #require 'torquebox/messaging/client'
 #require 'torquebox/messaging/task'
 #require 'torquebox/messaging/destination'
-#require 'torquebox/messaging/message_processor'
 #require 'torquebox/messaging/backgroundable'
-
 
 require 'torquebox/messaging/connection_factory'
 require 'torquebox/messaging/connection'
@@ -32,3 +30,5 @@ require 'torquebox/messaging/topic'
 require 'torquebox/messaging/live_destination'
 require 'torquebox/messaging/live_queue'
 require 'torquebox/messaging/live_topic'
+
+require 'torquebox/messaging/message_processor'

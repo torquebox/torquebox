@@ -26,7 +26,9 @@ import org.torquebox.web.rack.RackWebApplicationDeployer;
 import org.torquebox.web.rack.WebRuntimePoolProcessor;
 import org.torquebox.web.rack.WebYamlParsingProcessor;
 import org.torquebox.web.rails.RailsApplicationRecognizer;
+import org.torquebox.web.rails.RailsRackProcessor;
 import org.torquebox.web.rails.RailsRuntimeProcessor;
+import org.torquebox.web.rails.RailsVersionProcessor;
 
 class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -65,6 +67,8 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new RailsRuntimeProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 10, new RackRuntimeProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 200, new RailsVersionProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 210, new RailsRackProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 0, new RackApplicationDefaultsProcessor() );
         
