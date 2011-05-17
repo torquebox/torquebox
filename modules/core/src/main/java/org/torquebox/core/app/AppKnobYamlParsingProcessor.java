@@ -64,7 +64,7 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 
         unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
 
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( unit.getName() );
         rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( metaData.getApplicationEnvironment() );
         unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );

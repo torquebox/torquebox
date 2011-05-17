@@ -5,6 +5,8 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 
+import javax.jms.ConnectionFactory;
+
 import org.jboss.as.controller.BasicOperationResult;
 import org.jboss.as.controller.ModelAddOperationHandler;
 import org.jboss.as.controller.OperationContext;
@@ -13,19 +15,31 @@ import org.jboss.as.controller.OperationResult;
 import org.jboss.as.controller.ResultHandler;
 import org.jboss.as.controller.RuntimeTask;
 import org.jboss.as.controller.RuntimeTaskContext;
+import org.jboss.as.ee.naming.ContextNames;
+import org.jboss.as.naming.ManagedReferenceFactory;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.torquebox.core.injection.jndi.ManagedReferenceInjectableService;
+import org.torquebox.messaging.ApplicationNamingContextBindingProcessor;
+import org.torquebox.messaging.BackgroundableDeployer;
 import org.torquebox.messaging.MessageProcessorDeployer;
+import org.torquebox.messaging.MessagingInjectablesProcessor;
 import org.torquebox.messaging.MessagingRuntimePoolDeployer;
 import org.torquebox.messaging.MessagingYamlParsingProcessor;
 import org.torquebox.messaging.QueueDeployer;
 import org.torquebox.messaging.QueuesYamlParsingDeployer;
+import org.torquebox.messaging.TasksDeployer;
+import org.torquebox.messaging.TasksScanningDeployer;
+import org.torquebox.messaging.TasksYamlParsingDeployer;
 import org.torquebox.messaging.TopicDeployer;
 import org.torquebox.messaging.TopicsYamlParsingDeployer;
 import org.torquebox.messaging.component.MessageProcessorComponentResolverInstaller;
+import org.torquebox.messaging.injection.RubyConnectionFactoryService;
 
 class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -56,22 +70,51 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-         
-         context.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingDeployer() );
-         context.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingDeployer() );
-         context.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
-         
-         context.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new MessagingDependenciesProcessor() );
-         
-         context.addDeploymentProcessor( Phase.POST_MODULE, 11, new QueueDeployer() );
-         context.addDeploymentProcessor( Phase.POST_MODULE, 12, new TopicDeployer() );
-         context.addDeploymentProcessor( Phase.POST_MODULE, 20, new MessagingRuntimePoolDeployer() );
-         
-        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new MessageProcessorComponentResolverInstaller() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 220, new MessageProcessorDeployer() );
+
+        context.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
+
+        context.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningDeployer() );
+
+        context.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new MessagingDependenciesProcessor() );
+
+        context.addDeploymentProcessor( Phase.POST_MODULE, 7, new MessagingInjectablesProcessor() );
+
+        context.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new BackgroundableDeployer() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksDeployer() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 320, new MessagingRuntimePoolDeployer() );
+
+        context.addDeploymentProcessor( Phase.INSTALL, 120, new MessageProcessorComponentResolverInstaller() );
+        context.addDeploymentProcessor( Phase.INSTALL, 220, new MessageProcessorDeployer() );
+        context.addDeploymentProcessor( Phase.INSTALL, 221, new QueueDeployer() );
+        context.addDeploymentProcessor( Phase.INSTALL, 222, new TopicDeployer() );
     }
 
     protected void addMessagingServices(final RuntimeTaskContext context) {
+        addRubyConnectionFactory( context );
+    }
+
+    protected void addRubyConnectionFactory(final RuntimeTaskContext context) {
+
+        ServiceName managedFactoryServiceName = MessagingServices.RUBY_CONNECTION_FACTORY.append( "manager" );
+
+        ManagedReferenceInjectableService managementService = new ManagedReferenceInjectableService();
+        context.getServiceTarget().addService( managedFactoryServiceName, managementService )
+                .addDependency( getJMSConnectionFactoryServiceName(), ManagedReferenceFactory.class, managementService.getManagedReferenceFactoryInjector() )
+                .install();
+
+        RubyConnectionFactoryService service = new RubyConnectionFactoryService();
+        context.getServiceTarget().addService( MessagingServices.RUBY_CONNECTION_FACTORY, service )
+                .addDependency( managedFactoryServiceName, ConnectionFactory.class, service.getConnectionFactoryInjector() )
+                .setInitialMode( Mode.ON_DEMAND )
+                .install();
+    }
+
+    protected ServiceName getJMSConnectionFactoryServiceName() {
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {

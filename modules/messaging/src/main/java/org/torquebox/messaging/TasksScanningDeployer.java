@@ -17,15 +17,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.deployers;
+package org.torquebox.messaging;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.as.server.deployment.AttachmentList;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.common.util.StringUtils;
-import org.torquebox.interp.deployers.AbstractRubyScanningDeployer;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.TaskMetaData;
+import org.torquebox.core.AbstractScanningDeployer;
+import org.torquebox.core.util.StringUtils;
 
 /**
  * <pre>
@@ -35,33 +35,38 @@ import org.torquebox.messaging.TaskMetaData;
  * </pre>
  * 
  */
-public class TasksScanningDeployer extends AbstractRubyScanningDeployer {
+public class TasksScanningDeployer extends AbstractScanningDeployer {
 
     public TasksScanningDeployer() {
-        addInput( TaskMetaData.class );
-        addOutput( TaskMetaData.class );
+        addPath( "app/tasks/" );
+        addPath( "tasks/" );
+        setSuffixFilter( "_task.rb" );
     }
 
     @Override
-    protected void deploy(VFSDeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentException {
+    protected void deploy(DeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentUnitProcessingException {
         String rubyClassName = StringUtils.pathToClassName( relativePath, ".rb" );
-        TaskMetaData taskMetaData = getTaskMetaData(unit, rubyClassName);
+        TaskMetaData taskMetaData = getOrCreateTaskMetaData( unit, rubyClassName );
 
         String simpleLocation = parentPath + relativePath.substring( 0, relativePath.length() - 3 );
 
         taskMetaData.setLocation( simpleLocation );
         taskMetaData.setRubyClassName( rubyClassName );
 
-        AttachmentUtils.multipleAttach( unit, taskMetaData, simpleLocation );
+        unit.addToAttachmentList( TaskMetaData.ATTACHMENT_KEY, taskMetaData );
     }
 
-    protected TaskMetaData getTaskMetaData(VFSDeploymentUnit unit, String rubyClassName) {
-        for (TaskMetaData each : unit.getAllMetaData( TaskMetaData.class )) {
-            if (rubyClassName.equals( each.getRubyClassName() )) {
-                return each;
+    protected TaskMetaData getOrCreateTaskMetaData(DeploymentUnit unit, String rubyClassName) {
+        AttachmentList<TaskMetaData> allMetaData = unit.getAttachment( TaskMetaData.ATTACHMENT_KEY );
+        if (allMetaData != null) {
+            for (TaskMetaData each : allMetaData) {
+                if (rubyClassName.equals( each.getRubyClassName() )) {
+                    return each;
+                }
             }
         }
-        
+
         return new TaskMetaData();
     }
+
 }

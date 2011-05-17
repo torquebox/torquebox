@@ -17,19 +17,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.deployers;
+package org.torquebox.messaging;
 
+import java.util.List;
 import java.util.Set;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.torquebox.base.metadata.RubyApplicationMetaData;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.MessageProcessorMetaData;
-import org.torquebox.messaging.QueueMetaData;
-import org.torquebox.messaging.TaskMetaData;
+import org.jboss.as.server.deployment.DeploymentException;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.torquebox.core.app.RubyApplicationMetaData;
 
 /**
  * <pre>
@@ -40,43 +38,48 @@ import org.torquebox.messaging.TaskMetaData;
  *
  * Tasks are really sugar-frosted queues
  */
-public class TasksDeployer extends AbstractDeployer {
+public class TasksDeployer implements DeploymentUnitProcessor {
 
     public TasksDeployer() {
-        setStage( DeploymentStages.DESCRIBE );
-
-        setInput( RubyApplicationMetaData.class );
-        addInput( MessageProcessorMetaData.class );
-        addInput( TaskMetaData.class );
-
-        addOutput( MessageProcessorMetaData.class );
-        addOutput( QueueMetaData.class );
     }
 
     @Override
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        Set<? extends TaskMetaData> allTasks = unit.getAllMetaData( TaskMetaData.class );
+    
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        
+        if ( appMetaData == null ) {
+            return;
+        }
+        
+        List<TaskMetaData> allTasks = unit.getAttachmentList( TaskMetaData.ATTACHMENT_KEY);
 
         for (TaskMetaData each : allTasks) {
-            deploy( unit, each );
+            deploy( phaseContext, unit, appMetaData, each );
         }
     }
 
-    protected void deploy(DeploymentUnit unit, TaskMetaData task) throws DeploymentException {
-        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.class );
-        String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + task.getQueueSuffix();
+    protected void deploy(DeploymentPhaseContext phaseContext, DeploymentUnit unit, RubyApplicationMetaData appMetaData, TaskMetaData task) throws DeploymentUnitProcessingException {
+        String queueName = "queue/" + appMetaData.getApplicationName() + "-tasks" + task.getQueueSuffix();
 
         if (task.getConcurrency() > 0) {
+            System.err.println( "task queue: " + queueName );
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );
-            AttachmentUtils.multipleAttach( unit, queue, queue.getName() );
+            unit.addToAttachmentList( QueueMetaData.ATTACHMENT_KEY, queue );
 
             MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
             processorMetaData.setDestinationName( queueName );
             processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
             processorMetaData.setConcurrency( task.getConcurrency() );
-            AttachmentUtils.multipleAttach( unit, processorMetaData, processorMetaData.getName() );
+            unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY, processorMetaData );
         }
+    }
+
+    @Override
+    public void undeploy(DeploymentUnit context) {
+        
     }
 
 }

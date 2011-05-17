@@ -24,7 +24,7 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData == null) {
-            rubyAppMetaData = new RubyApplicationMetaData();
+            rubyAppMetaData = new RubyApplicationMetaData( unit.getName() );
             rubyAppMetaData.setRoot( root );
             unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
         }

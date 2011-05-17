@@ -2,11 +2,16 @@ package org.torquebox.core.component;
 
 import java.util.Map;
 
+import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.msc.inject.Injector;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.core.injection.analysis.Injectable;
 
 public class ComponentResolver {
+    
+    public static AttachmentKey<AttachmentList<Injectable>> ADDITIONAL_INJECTABLES = AttachmentKey.createList( Injectable.class );
 
     public ComponentResolver() {
 

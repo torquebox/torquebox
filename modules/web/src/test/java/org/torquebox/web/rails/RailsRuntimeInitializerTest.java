@@ -148,8 +148,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
     }
 
     private RailsRuntimeInitializer create(VirtualFile root, String env) {
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
-        rubyAppMetaData.setApplicationName( "app_name" );
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
         rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( env );
 

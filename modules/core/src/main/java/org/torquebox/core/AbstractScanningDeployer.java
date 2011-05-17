@@ -17,33 +17,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.interp.deployers;
+package org.torquebox.core;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.deployers.spi.DeploymentException;
-import org.jboss.deployers.spi.deployer.DeploymentStages;
-import org.jboss.deployers.spi.deployer.helpers.AbstractDeployer;
-import org.jboss.deployers.structure.spi.DeploymentUnit;
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
+import org.jboss.as.server.deployment.Attachments;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
 import org.jboss.vfs.VisitorAttributes;
 import org.jboss.vfs.util.SuffixMatchFilter;
 
-public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
+public abstract class AbstractScanningDeployer implements DeploymentUnitProcessor {
 
-    private ArrayList<String> paths;
+    private ArrayList<String> paths = new ArrayList<String>();
     private VirtualFileFilter filter;
 
-    public AbstractRubyScanningDeployer() {
-        setStage( DeploymentStages.PARSE );
+    public AbstractScanningDeployer() {
     }
 
-    public void setPaths(ArrayList<String> paths) {
-        this.paths = paths;
+    public void addPath(String path) {
+        this.paths.add(  path  );
     }
 
     public ArrayList<String> getPaths() {
@@ -62,18 +62,15 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
         return this.filter;
     }
 
-    public void deploy(DeploymentUnit unit) throws DeploymentException {
-        if (!(unit instanceof VFSDeploymentUnit)) {
-            throw new DeploymentException( "Deployment unit must be a VFSDeploymentUnit" );
-        }
-
-        deploy( (VFSDeploymentUnit) unit );
-    }
-
-    protected void deploy(VFSDeploymentUnit unit) throws DeploymentException {
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
+        
+        VirtualFile root = resourceRoot.getRoot();
+        
         try {
             for (String path : this.paths) {
-                VirtualFile scanRoot = unit.getRoot().getChild( path );
+                VirtualFile scanRoot = root.getChild( path );
 
                 if (scanRoot == null || !scanRoot.exists()) {
                     continue;
@@ -95,10 +92,14 @@ public abstract class AbstractRubyScanningDeployer extends AbstractDeployer {
                 }
             }
         } catch (IOException e) {
-            throw new DeploymentException( e );
+            throw new DeploymentUnitProcessingException( e );
         }
     }
 
-    protected abstract void deploy(VFSDeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentException;
+    protected abstract void deploy(DeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentUnitProcessingException;
+    
+    @Override
+    public void undeploy(DeploymentUnit context) {
+    }
 
 }

@@ -47,6 +47,7 @@ module TorqueBox
 
   def self.application_name=(application_name)
     @application_name = application_name
+    ENV['TORQUEBOX_APP_NAME'] = application_name
   end
 
   def self.application_name()

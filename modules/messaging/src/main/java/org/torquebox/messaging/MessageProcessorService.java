@@ -89,6 +89,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
 
     @Override
     public void onMessage(Message message) {
+        log.info(  "onMessage! " + message );
         Ruby ruby = null;
         try {
             ruby = getRubyRuntimePool().borrowRuntime();

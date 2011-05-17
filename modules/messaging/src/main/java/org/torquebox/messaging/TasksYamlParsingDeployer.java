@@ -17,18 +17,15 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.messaging.deployers;
+package org.torquebox.messaging;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.jboss.deployers.vfs.spi.structure.VFSDeploymentUnit;
-import org.torquebox.base.deployers.AbstractSplitYamlParsingDeployer;
-import org.torquebox.mc.AttachmentUtils;
-import org.torquebox.messaging.TaskMetaData;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.torquebox.core.AbstractSplitYamlParsingProcessor;
 import org.yaml.snakeyaml.Yaml;
 
 /**
@@ -40,25 +37,23 @@ import org.yaml.snakeyaml.Yaml;
  * 
  * Creates TaskMetaData instances from messaging.yml
  */
-public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
+public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingProcessor {
 
     public TasksYamlParsingDeployer() {
-        addInput( TaskMetaData.class );
-        addOutput( TaskMetaData.class );
         setSectionName( "tasks" );
     }
 
     @Override
-    public void parse(VFSDeploymentUnit unit, Object dataObj) throws Exception {
-        for (TaskMetaData metadata : Parser.parse( dataObj, unit.getAllMetaData( TaskMetaData.class ) )) {
-            AttachmentUtils.multipleAttach( unit, metadata, metadata.getName() );
+    public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
+        for (TaskMetaData metaData : Parser.parse( dataObj, unit.getAttachmentList( TaskMetaData.ATTACHMENT_KEY ) ) ) {
+            unit.addToAttachmentList( TaskMetaData.ATTACHMENT_KEY, metaData );
         }
     }
 
     public static class Parser {
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        static List<TaskMetaData> parse(Object data, Set<? extends TaskMetaData> existingTasks) throws Exception {
+        static List<TaskMetaData> parse(Object data, List<? extends TaskMetaData> existingTasks) throws Exception {
             List<TaskMetaData> result = null;
 
             if (data instanceof String) {
@@ -74,27 +69,28 @@ public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingDeployer {
             return result;
         }
 
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        static List<TaskMetaData> parseTasks( Map<String, Map>tasks, Set existingTasks) {
+        static List<TaskMetaData> parseTasks( Map<String, Map>tasks, List<? extends TaskMetaData> existingTasks) {
             List<TaskMetaData> result = new ArrayList<TaskMetaData>();
 
             for (String rubyClassName :  tasks.keySet()) {
-                result.add( createTaskMetaData( rubyClassName, tasks.get( rubyClassName ), existingTasks ) );
+                result.add( createOrUpdateTaskMetaData( rubyClassName, tasks.get( rubyClassName ), existingTasks ) );
             }
             
             return result;
         }
 
         @SuppressWarnings("rawtypes")
-        static TaskMetaData createTaskMetaData(String rubyClassName, Map options, Set<? extends TaskMetaData> existingTasks) {
-            if (options == null)
+        static TaskMetaData createOrUpdateTaskMetaData(String rubyClassName, Map options, List<? extends TaskMetaData> existingTasks) {
+            if (options == null) {
                 options = Collections.EMPTY_MAP;
+            }
 
             TaskMetaData task = null;
 
             for (TaskMetaData each : existingTasks) {
                 if (rubyClassName.equals( each.getSimpleName() )) {
                     task = each; 
+                    break;
                 }
             }
             if (task == null) {

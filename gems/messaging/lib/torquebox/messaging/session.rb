@@ -26,6 +26,10 @@ module TorqueBox
         @jms_session.commit
       end
 
+      def queue_for(name)
+        Queue.new( @jms_session.create_queue( name ) )
+      end
+
       def publish(destination, payload, options={})
         producer    = @jms_session.create_producer( remote_destination( destination ) )
         message     = Message.new( @jms_session.create_text_message, payload )

@@ -26,9 +26,9 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 
 public class RubyApplicationMetaData {
-    
-    public static final AttachmentKey<RubyApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create(RubyApplicationMetaData.class);
-    
+
+    public static final AttachmentKey<RubyApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create( RubyApplicationMetaData.class );
+
     public static final String DEFAULT_ENVIRONMENT_NAME = "development";
 
     private VirtualFile root;
@@ -36,13 +36,22 @@ public class RubyApplicationMetaData {
     private String environmentName;
     private Map<String, String> environment;
     private boolean archive = false;
-	private Map<String, Map<String, String>> authenticationConfig;
+    private Map<String, Map<String, String>> authenticationConfig;
 
-    public RubyApplicationMetaData() {
+    public RubyApplicationMetaData(String applicationName) {
+        this.applicationName = sanitize( applicationName );
     }
-    
+
+    private String sanitize(String name) {
+        int lastDot = name.lastIndexOf( "." );
+        if (lastDot >= 0) {
+            name = name.substring( 0, lastDot );
+        }
+        return name.replaceAll( "\\.", "-" );
+    }
+
     public void applyDefaults() {
-        if ( environmentName == null ) {
+        if (environmentName == null) {
             this.environmentName = DEFAULT_ENVIRONMENT_NAME;
         }
     }
@@ -82,12 +91,7 @@ public class RubyApplicationMetaData {
         this.root = root;
         this.archive = true;
     }
-    
-    public void setApplicationName(String applicationName) {
-        applicationName = applicationName.replaceAll( "\\.trq$", "" );
-        this.applicationName = applicationName;
-    }
-    
+
     public String getApplicationName() {
         return this.applicationName;
     }
@@ -117,16 +121,17 @@ public class RubyApplicationMetaData {
     }
 
     public String toString() {
-        return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "\n  environment=" + this.environment + "]";
+        return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "\n  environment="
+                + this.environment + "]";
     }
 
-	public Map<String, Map<String, String>> getAuthenticationConfig() {
-		return this.authenticationConfig;
-	}
+    public Map<String, Map<String, String>> getAuthenticationConfig() {
+        return this.authenticationConfig;
+    }
 
-	public void setAuthenticationConfig(
-			Map<String, Map<String, String>> authConfig) {
-		this.authenticationConfig = authConfig;
-	}
+    public void setAuthenticationConfig(
+            Map<String, Map<String, String>> authConfig) {
+        this.authenticationConfig = authConfig;
+    }
 
 }

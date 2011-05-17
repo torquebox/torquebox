@@ -10,6 +10,7 @@ public class MessagingServices {
     }
 
     public static final ServiceName MESSAGING = CoreServices.TORQUEBOX.append( "messaging" );
+    public static final ServiceName RUBY_CONNECTION_FACTORY = MESSAGING.append(  "ruby-connection-factory" );
 
     public static ServiceName messageProcessor(DeploymentUnit unit, String processorName) {
         return unit.getServiceName().append( MESSAGING ).append(  processorName );
@@ -18,5 +19,6 @@ public class MessagingServices {
     public static ServiceName messageProcessorComponentResolver(DeploymentUnit unit, String processorName) {
         return unit.getServiceName().append( MESSAGING ).append(  processorName ).append( "resolver" );
     }
+    
     
 }

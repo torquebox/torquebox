@@ -31,9 +31,8 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 
     @Test
     public void testInitializer() throws Exception {
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData();
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
         RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
-        rubyAppMetaData.setApplicationName( "app_name" );
         rubyAppMetaData.setRoot( VFS.getChild( "/myapp" ) );
         rubyAppMetaData.setEnvironmentName( "test" );
         rackAppMetaData.setContextPath( "/mycontext" );
@@ -56,10 +55,10 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
         assertEquals( "/mycontext", baseUri );
 
         String appName = (String) ruby.evalScriptlet( "ENV['TORQUEBOX_APP_NAME']" ).toJava( String.class );
-        assertEquals( "app_name", appName );
+        assertEquals( "test-app", appName );
 
         appName = (String) ruby.evalScriptlet( "TORQUEBOX_APP_NAME" ).toJava( String.class );
-        assertEquals( "app_name", appName );
+        assertEquals( "test-app", appName );
 
     }
 }

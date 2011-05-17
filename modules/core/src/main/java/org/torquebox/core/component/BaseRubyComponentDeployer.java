@@ -3,6 +3,7 @@ package org.torquebox.core.component;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -22,6 +23,17 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         Set<Injectable> injectables = index.getInjectablesFor( getInjectionPathPrefixes( phaseContext ) );
 
         for (Injectable injectable : injectables) {
+            try {
+                ServiceName serviceName = injectable.getServiceName( phaseContext );
+                builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
+            } catch (Exception e) {
+                throw new DeploymentUnitProcessingException( e );
+            }
+        }
+
+        AttachmentList<Injectable> additionalInjectables = unit.getAttachment( ComponentResolver.ADDITIONAL_INJECTABLES );
+
+        for (Injectable injectable : additionalInjectables) {
             try {
                 ServiceName serviceName = injectable.getServiceName( phaseContext );
                 builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );

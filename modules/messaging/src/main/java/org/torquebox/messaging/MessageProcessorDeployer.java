@@ -81,6 +81,8 @@ public class MessageProcessorDeployer implements DeploymentUnitProcessor {
             service.setMessageSelector( metaData.getMessageSelector() );
             service.setDurable( metaData.getDurable() );
             
+            System.err.println( "----> " + baseServiceName + " wired to " + metaData.getDestinationName() );
+            
             phaseContext.getServiceTarget().addService( baseServiceName.append( "" + i ), service )
                 .addDependency( MessagingServices.messageProcessorComponentResolver( unit, name ), ComponentResolver.class, service.getComponentResolverInjector() )
                 .addDependency( getConnectionFactoryServiceName(), ManagedReferenceFactory.class, service.getConnectionFactoryInjector() )

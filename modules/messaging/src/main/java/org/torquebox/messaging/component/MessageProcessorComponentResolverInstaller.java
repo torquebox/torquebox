@@ -35,7 +35,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         }
 
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        VirtualFile root = resourceRoot.getRoot();
         
         for ( MessageProcessorMetaData each : allMetaData ) {
             deploy( phaseContext, each);

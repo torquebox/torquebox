@@ -33,6 +33,7 @@
         <path name="org/jruby"/>
         <path name="org/jruby/ast"/>
         <path name="org/jruby/libraries"/>
+        <path name="org/torquebox/core/util"/>
       </include-set>
     </exports>
 

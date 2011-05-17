@@ -22,6 +22,7 @@
 
 package org.torquebox.messaging;
 
+import java.util.Arrays;
 import java.util.Map;
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.as.naming.MockContext;
@@ -66,12 +67,17 @@ class JMSQueueService implements Service<Void> {
         try {
             MockContext.pushBindingTrap();
             try {
+                System.err.println( "About to create queue: " + queueName );
+                System.err.println( "JNDI : " + Arrays.asList( jndi ));
                 jmsManager.createQueue(false, queueName, selectorString, durable, jndi);
+                System.err.println( "Done did create queue: " + queueName );
             } finally {
                 final ServiceTarget target = context.getChildTarget();
                 final Map<String, Object> bindings = MockContext.popTrappedBindings();
+                System.err.println( "BINDINGS: " + bindings );
                 for(Map.Entry<String, Object> binding : bindings.entrySet()) {
                     final BinderService binderService = new BinderService(binding.getKey());
+                    System.err.println( "BINDER: " + binding.getKey());
                     target.addService(ContextNames.JAVA_CONTEXT_SERVICE_NAME.append(binding.getKey()), binderService)
                         .addDependency(ContextNames.JAVA_CONTEXT_SERVICE_NAME, NamingStore.class, binderService.getNamingStoreInjector())
                         .addInjection(binderService.getManagedObjectInjector(), new ValueManagedObject(Values.immediateValue(binding.getValue())))
