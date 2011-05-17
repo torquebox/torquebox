@@ -26,5 +26,6 @@ require 'torquebox/messaging/message'
 require 'torquebox/messaging/destination'
 require 'torquebox/messaging/queue'
 require 'torquebox/messaging/topic'
+
 require 'torquebox/messaging/message_processor'
 require 'torquebox/messaging/task'
