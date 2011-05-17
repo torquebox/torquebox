@@ -212,9 +212,8 @@ public class RubyMessageProcessor implements RubyMessageProcessorMBean {
             Ruby ruby = null;
 
             try {
-                ruby = getRubyRuntimePool().borrowRuntime();
-                IRubyObject processor = instantiateProcessor( ruby );
                 processMessage( processor, message );
+                __call__( "process!", message );
                 if (session.getTransacted()) {
                     session.commit();
                 }

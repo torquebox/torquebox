@@ -49,6 +49,7 @@ public class MessagingYamlParsingDeployer extends AbstractSplitYamlParsingProces
     public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
         try {
             for (MessageProcessorMetaData each : Parser.parse( dataObject )) {
+                System.err.println( "PARSED: " + each );
                 unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY, each );
             }
         } catch (Exception e) {

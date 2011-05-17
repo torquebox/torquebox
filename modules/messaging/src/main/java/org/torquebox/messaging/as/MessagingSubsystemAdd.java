@@ -18,12 +18,14 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.torquebox.messaging.MessageProcessorDeployer;
 import org.torquebox.messaging.MessagingRuntimePoolDeployer;
 import org.torquebox.messaging.MessagingYamlParsingProcessor;
 import org.torquebox.messaging.QueueDeployer;
 import org.torquebox.messaging.QueuesYamlParsingDeployer;
 import org.torquebox.messaging.TopicDeployer;
 import org.torquebox.messaging.TopicsYamlParsingDeployer;
+import org.torquebox.messaging.component.MessageProcessorComponentResolverInstaller;
 
 class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -55,8 +57,6 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
          
-         context.addDeploymentProcessor( Phase.PARSE, 10, new MessagingYamlParsingProcessor() );
-         
          context.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingDeployer() );
          context.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingDeployer() );
          context.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
@@ -66,6 +66,9 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
          context.addDeploymentProcessor( Phase.POST_MODULE, 11, new QueueDeployer() );
          context.addDeploymentProcessor( Phase.POST_MODULE, 12, new TopicDeployer() );
          context.addDeploymentProcessor( Phase.POST_MODULE, 20, new MessagingRuntimePoolDeployer() );
+         
+        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new MessageProcessorComponentResolverInstaller() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 220, new MessageProcessorDeployer() );
     }
 
     protected void addMessagingServices(final RuntimeTaskContext context) {

@@ -87,9 +87,18 @@ public class ComponentResolver {
     public Class<? extends AbstractRubyComponent> getComponentWrapperClass() {
         return this.wrapperClass;
     }
+    
+    public void setComponentWrapperOptions(Map<String,Object> componentWrapperOptions) {
+        this.componentWrapperOptions = componentWrapperOptions;
+    }
+    
+    public Map<String,Object> getComponentWrapperOptions() {
+        return this.componentWrapperOptions;
+    }
 
     protected RubyComponent wrapComponent(IRubyObject rubyComponent) throws InstantiationException, IllegalAccessException {
         AbstractRubyComponent wrappedComponent = this.wrapperClass.newInstance();
+        wrappedComponent.setOptions( this.componentWrapperOptions );
         wrappedComponent.setRubyComponent( rubyComponent );
         return wrappedComponent;
     }
@@ -99,6 +108,7 @@ public class ComponentResolver {
     }
 
     private Class<? extends AbstractRubyComponent> wrapperClass;
+    private Map<String, Object> componentWrapperOptions;
 
     private InjectionRegistry injectionRegistry = new InjectionRegistry();
     private ComponentInstantiator componentInstantiator;
