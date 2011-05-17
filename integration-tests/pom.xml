@@ -153,6 +153,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.netty</groupId>
+      <artifactId>netty</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-ruby-test-support</artifactId>
       <version>${project.version}</version>
@@ -280,6 +286,18 @@
                   <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                   <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
                   <installArgs>rails -v ${version.rails2} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-arel-motherbludgeoner</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>arel -v ${version.arel} --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
               <execution>
