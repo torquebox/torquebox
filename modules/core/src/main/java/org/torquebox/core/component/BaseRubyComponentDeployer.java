@@ -8,6 +8,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.injection.analysis.Injectable;
@@ -19,9 +20,14 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
             throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
+        
+        if ( index == null ) {
+            log.warn( "No injection index for " + phaseContext + " //  + resolver " );
+            return;
+        }
 
         Set<Injectable> injectables = index.getInjectablesFor( getInjectionPathPrefixes( phaseContext ) );
-
+        
         for (Injectable injectable : injectables) {
             try {
                 ServiceName serviceName = injectable.getServiceName( phaseContext );
@@ -44,5 +50,7 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
     }
 
     protected abstract List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext);
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.component.injection" );
 
 }

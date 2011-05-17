@@ -43,6 +43,10 @@ public class RubyApplicationMetaData {
     }
 
     private String sanitize(String name) {
+        int lastSlash = name.lastIndexOf( "/" );
+        if ( lastSlash >= 0 ) {
+            name = name.substring( lastSlash+1 );
+        }
         int lastDot = name.lastIndexOf( "." );
         if (lastDot >= 0) {
             name = name.substring( 0, lastDot );

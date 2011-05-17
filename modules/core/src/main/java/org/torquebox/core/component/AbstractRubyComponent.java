@@ -28,6 +28,9 @@ public class AbstractRubyComponent implements RubyComponent {
         this.rubyComponent = rubyComponent;
     }
     
+    protected void require(String feature) {
+        this.rubyComponent.getRuntime().evalScriptlet( "require %q(" + feature + ")" );
+    }
     protected Object __call__(Object target, String method, Object...args) {
         return JavaEmbedUtils.invokeMethod(  this.rubyComponent.getRuntime(), target, method, args, Object.class );
     }
