@@ -18,11 +18,26 @@ require 'spec_helper'
 
 describe "jaas authentication tests" do
 
-  deploy "rack/jaas_authentication-knob.yml"
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      RACK_ROOT: #{File.dirname(__FILE__)}/../apps/rack/jaas
+      env: development
 
-  it "should authenticate"
-#    visit "/authenticat"
-#    page.should have_content('it worked')
-#  end
+    web:
+      context: /authentication
+
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+
+    auth:
+      torquebox:
+        domain: spec
+  END
+
+  it "should authenticate" do
+    visit "/authentication"
+    page.should have_content('it worked')
+  end
 
 end

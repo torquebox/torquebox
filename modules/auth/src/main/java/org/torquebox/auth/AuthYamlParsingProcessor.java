@@ -16,7 +16,7 @@ public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
 
 	@Override
 	protected void parse(DeploymentUnit unit, Object dataObject) throws Exception {
-        log.warn( "parsing: " + dataObject );
+        log.info( "parsing: " + dataObject );
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> data = (Map<String, Object>) dataObject;
@@ -32,7 +32,7 @@ public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
         	}
         }
         else {
-        	log.warn("No jaas auth configured. Moving on.");
+        	log.info("No jaas auth configured. Moving on.");
         }
 	}
 	

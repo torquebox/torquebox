@@ -1,5 +1,5 @@
 
-require 'org/torquebox/auth/authentication'
+#require 'org/torquebox/auth/authentication'
 
 app = lambda { |env| 
   puts "Invoking app"

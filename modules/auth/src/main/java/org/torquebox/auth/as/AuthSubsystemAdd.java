@@ -54,8 +54,8 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
         log.info( "Adding torquebox-auth deployment processors" );
-        /*
         context.addDeploymentProcessor( Phase.PARSE, 0, new AuthYamlParsingProcessor() );
+        /*
         context.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new AuthDeployer() );
         */
