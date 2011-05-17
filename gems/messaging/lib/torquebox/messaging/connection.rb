@@ -14,7 +14,7 @@ module TorqueBox
       end
 
       def close
-        @jms_connection.start
+        @jms_connection.close
       end
 
       def with_new_session(transacted=true, ack_mode=Session::AUTO_ACK, &block)
