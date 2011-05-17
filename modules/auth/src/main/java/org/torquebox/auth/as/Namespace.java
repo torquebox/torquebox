@@ -33,7 +33,7 @@ public enum Namespace {
     // must be first
     UNKNOWN(null),
 
-    TORQUEBOX_AUTH_1_0("urn:jboss:domain:torquebox-web:1.0");
+    TORQUEBOX_AUTH_1_0("urn:jboss:domain:torquebox-auth:1.0");
 
     /**
      * The current namespace version.
