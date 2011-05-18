@@ -4,7 +4,7 @@ require 'rubygems'
 
 require 'rubygems/installer'
 
-begin
+=begin
   gem 'builder', '3.0.0'
 rescue Gem::LoadError=> e
   puts "Installing builder gem"
@@ -18,8 +18,7 @@ rescue Gem::LoadError=> e
     installer.execute
   rescue Gem::SystemExitException=>e2
   end
-end
-require 'rubygems/indexer'
+=end
 
 class AssemblyTool
 
@@ -33,6 +32,25 @@ class AssemblyTool
 
   attr_accessor :jboss_dir
   attr_accessor :jruby_dir
+
+  def require_rubygems_indexer
+    begin
+      gem 'builder', '3.0.0'
+    rescue Gem::LoadError=> e
+      puts "Installing builder gem"
+      require 'rubygems/commands/install_command'
+      installer = Gem::Commands::InstallCommand.new
+      installer.options[:args] = [ 'builder' ]
+      installer.options[:version] = '3.0.0'
+      installer.options[:generate_rdoc] = false
+      installer.options[:generate_ri] = false
+      begin
+        installer.execute
+      rescue Gem::SystemExitException=>e2
+      end
+    end
+    require 'rubygems/indexer'
+  end
 
   def initialize() 
     @src_dir   = File.expand_path( File.dirname(__FILE__) + '/../../..' )
@@ -70,6 +88,7 @@ class AssemblyTool
 
   def update_gem_repo_index
     puts "Updating index" 
+    require_rubygems_indexer()
     opts = {
     }
     indexer = Gem::Indexer.new( gem_repo_dir )
