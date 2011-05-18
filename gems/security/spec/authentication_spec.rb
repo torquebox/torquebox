@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'torquebox/kernel'
-require 'torquebox/security'
+require 'torquebox/security/authentication'
 
 describe TorqueBox::Authentication do
  it "should provide a default authenticator" do
