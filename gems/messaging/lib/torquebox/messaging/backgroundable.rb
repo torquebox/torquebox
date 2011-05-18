@@ -100,13 +100,16 @@ module TorqueBox
       end
 
       module Util
-        QUEUE_NAME = "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/backgroundable"
-
+        extend TorqueBox::Injectors
+        
+        QUEUE_NAME = "queue/#{ENV['TORQUEBOX_APP_NAME']}-tasks-backgroundable"
+        
         class << self
           def publish_message(receiver, method, args, options = { })
-            Queue.new(QUEUE_NAME).publish({:receiver => receiver, :method => method, :args => args}, options)
-          rescue javax.naming.NameNotFoundException => ex
-            raise RuntimeError.new("The backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")
+            queue = Queue.new(QUEUE_NAME, inject('connection-factory'))
+            queue.publish({:receiver => receiver, :method => method, :args => args}, options)
+          rescue javax.jms.InvalidDestinationException => ex
+            raise RuntimeError.new("The Backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")
           end
 
           def instance_methods_include?(klass, method)

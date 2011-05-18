@@ -5,9 +5,9 @@ module TorqueBox
     attr_accessor :connection
     
     class Connection
-      def initialize(jms_connection, remote)
+      def initialize(jms_connection, hornetq_direct)
         @jms_connection = jms_connection
-        @remote = remote
+        @hornetq_direct = hornetq_direct
       end
 
       def start
@@ -30,7 +30,7 @@ module TorqueBox
 
       def create_session(transacted=true, ack_mode=Session::AUTO_ACK)
         session = @jms_connection.create_session( transacted, Session.canonical_ack_mode( ack_mode ) )
-        @remote ? HornetQSession.new( session ) : Session.new( session )
+        @hornetq_direct ? HornetQSession.new( session ) : Session.new( session )
       end
 
     end

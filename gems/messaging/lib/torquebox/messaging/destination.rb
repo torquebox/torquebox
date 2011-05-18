@@ -4,7 +4,7 @@ module TorqueBox
 
       attr_reader :connection_factory
       attr_reader :jms_destination
-
+      
       def initialize(destination, connection_factory = nil)
         @jms_destination        = destination
         @connection_factory     = ConnectionFactory.new( connection_factory )

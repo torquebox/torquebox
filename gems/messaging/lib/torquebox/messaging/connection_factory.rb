@@ -5,6 +5,11 @@ module TorqueBox
     class ConnectionFactory
 
       attr_reader :internal_connection_factory
+      
+      def self.new(internal_connection_factory = nil)
+        return internal_connection_factory if internal_connection_factory.is_a?( ConnectionFactory )
+        super
+      end
 
       def initialize(internal_connection_factory = null)
         @internal_connection_factory = internal_connection_factory
@@ -34,7 +39,7 @@ module TorqueBox
             org.hornetq.api.jms.HornetQJMSClient.createConnectionFactory( transport_config )
           @hornetq_direct = true
         end
-        
+
         Connection.new( @internal_connection_factory.create_connection, @hornetq_direct )
       end
 

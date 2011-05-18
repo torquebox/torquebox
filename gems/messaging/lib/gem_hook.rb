@@ -16,7 +16,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 #require 'torquebox/messaging/client'
-#require 'torquebox/messaging/backgroundable'
 
 require 'torquebox/messaging/connection_factory'
 require 'torquebox/messaging/connection'
@@ -29,3 +28,4 @@ require 'torquebox/messaging/topic'
 
 require 'torquebox/messaging/message_processor'
 require 'torquebox/messaging/task'
+require 'torquebox/messaging/backgroundable'

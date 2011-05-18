@@ -31,7 +31,7 @@ module TorqueBox
       end
 
       def publish(destination, payload, options={})
-        producer    = @jms_session.create_producer( remote_destination( destination ) )
+        producer    = @jms_session.create_producer( java_destination( destination ) )
         message     = Message.new( @jms_session.create_text_message, payload )
 
         message.populate_message_headers(options)
@@ -51,7 +51,7 @@ module TorqueBox
         decode = options.fetch(:decode, true)
         timeout = options.fetch(:timeout, 0)
         selector = options.fetch(:selector, nil)
-        consumer = @jms_session.create_consumer( remote_destination( destination ), selector )
+        consumer = @jms_session.create_consumer( java_destination( destination ), selector )
         begin
           jms_message = consumer.receive( timeout )
           if jms_message
@@ -117,8 +117,15 @@ module TorqueBox
         commit if transacted?
       end
 
-      def remote_destination(destination)
-        destination.jms_destination
+      def java_destination(destination)
+        java_destination = destination.jms_destination
+        
+        unless java_destination.is_a?( javax.jms.Destination )
+          meth = destination.is_a?( Queue ) ? :create_queue : :create_topic
+          java_destination = @jms_session.send( meth, java_destination )
+        end
+        
+        java_destination
       end
       
       def self.canonical_ack_mode(ack_mode)
