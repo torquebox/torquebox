@@ -30,6 +30,12 @@
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.picketbox</groupId>
+      <artifactId>picketbox-bare</artifactId>
+      <version>3.0.0.Final</version>
+    </dependency>
+    
     <!-- <dependency> -->
     <!--   <groupId>org.jboss</groupId> -->
     <!--   <artifactId>jboss-vfs</artifactId> -->

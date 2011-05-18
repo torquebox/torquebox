@@ -24,15 +24,15 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 
-//import java.security.Principal;
-//import org.jboss.security.AuthenticationManager;
-//import org.jboss.security.SecurityContext;
-//import org.picketbox.factories.SecurityFactory;
+import java.security.Principal;
+import org.jboss.security.AuthenticationManager;
+import org.jboss.security.SecurityContext;
+import org.picketbox.factories.SecurityFactory;
 
-public class Authenticator implements Service<Authenticator>{
+public class Authenticator implements Service<Authenticator> {
     private String authDomain;
-//    private SecurityContext securityContext;
-//    private AuthenticationManager authenticationManager;
+    private SecurityContext securityContext;
+    private AuthenticationManager authenticationManager;
     private static final Logger log = Logger.getLogger( "org.torquebox.auth" );
 
 
@@ -45,10 +45,9 @@ public class Authenticator implements Service<Authenticator>{
     }
 
     public boolean authenticate(String name, String pass) {
-//        Principal principal = getPrincipal(name);
-//        Object credential = new String(pass);
-//        return this.authenticationManager.isValid(principal, credential);
-    	return true;
+        Principal principal = getPrincipal(name);
+        Object credential = new String(pass);
+        return this.authenticationManager.isValid(principal, credential);
     }
 
 	@Override
@@ -73,8 +72,8 @@ public class Authenticator implements Service<Authenticator>{
 
 	protected void start() {
         log.info("Starting TorqueBox authenticator.");
-//      this.securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
-//      this.authenticationManager = securityContext.getAuthenticationManager();
+      this.securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
+      this.authenticationManager = securityContext.getAuthenticationManager();
         log.info("TorqueBox authenticator started.");
 	}
 
@@ -83,11 +82,11 @@ public class Authenticator implements Service<Authenticator>{
 		// TODO destroy/release authenticationManager and securityContext
 	}
 
-//    private Principal getPrincipal(final String name) {
-//        return new Principal() {
-//            public String getName() {
-//                return name;
-//            }
-//        };
-//    }}
+    private Principal getPrincipal(final String name) {
+        return new Principal() {
+            public String getName() {
+                return name;
+            }
+        };
+    }
 }
