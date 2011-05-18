@@ -430,7 +430,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     }
 
     private void injectServiceRegistry(Ruby runtime) {
-        runtime.evalScriptlet( "require %q(torquebox/kernel)" );
+        runtime.evalScriptlet( "require %q(torquebox/service_registry)" );
         RubyModule torqueBoxServiceRegistry = runtime.getClassFromPath( "TorqueBox::ServiceRegsitry" );
         JavaEmbedUtils.invokeMethod( runtime, torqueBoxServiceRegistry, "service_registry=", new Object[] { this.serviceRegistry }, void.class );
     }
