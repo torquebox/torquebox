@@ -247,6 +247,7 @@
 
     <version.rails2>2.3.11</version.rails2>
     <version.rails3>3.0.5</version.rails3>
+    <version.arel>2.0.9</version.arel>
 
     <version.ar.jdbc>0.9.7</version.ar.jdbc>
     <version.ar.sqlite3>0.9.7</version.ar.sqlite3>

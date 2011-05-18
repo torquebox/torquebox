@@ -53,6 +53,18 @@
                 </configuration>
               </execution>
               <execution>
+                <id>install-arel</id>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <phase>install</phase>
+                <configuration>
+                  <args>-S gem install arel -v ${version.arel} --no-rdoc --no-ri</args>
+                  <gemHome>./../target/rubygems</gemHome>
+                  <gemPath>./../target/rubygems</gemPath>
+                </configuration>
+              </execution>
+             <execution>
                 <id>install-rails3</id>
                 <goals>
                   <goal>jruby</goal>

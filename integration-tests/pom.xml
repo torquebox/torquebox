@@ -289,6 +289,18 @@
                 </configuration>
               </execution>
               <execution>
+                <id>install-arel-motherbludgeoner</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>arel -v ${version.arel} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
                 <id>install-rails3</id>
                 <phase>test-compile</phase>
                 <goals>
