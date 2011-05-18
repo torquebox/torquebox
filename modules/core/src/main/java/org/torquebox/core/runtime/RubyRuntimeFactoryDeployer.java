@@ -31,7 +31,6 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
 
         if (rubyAppMetaData != null && runtimeMetaData != null) {
             RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( runtimeMetaData.getRuntimeInitializer() );
-            factory.setServiceRegistry(phaseContext.getServiceRegistry());
 
             List<String> loadPaths = new ArrayList<String>();
 
@@ -44,8 +43,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             log.info( "Initializing ruby with classloader: " + module );
             factory.setClassLoader( module.getClassLoader() );
             
-            // TODO What's the AS7 kernel?
-            //factory.setKernel( this.kernel );
+            factory.setServiceRegistry(phaseContext.getServiceRegistry());
             factory.setLoadPaths( loadPaths );
             factory.setApplicationName( rubyAppMetaData.getApplicationName() );
             factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
