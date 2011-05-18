@@ -19,7 +19,6 @@
 
 package org.torquebox.auth.as;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 
 public class AuthServices {
@@ -30,8 +29,8 @@ public class AuthServices {
     public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
     public static final ServiceName AUTHENTICATION = TORQUEBOX.append( "authentication" );
     
-    public static ServiceName authenticationService(DeploymentUnit unit, String name ) {
-        return unit.getServiceName().append(AUTHENTICATION).append( name );
+    public static ServiceName authenticationService(String appName, String name) {
+    	return ServiceName.of( appName ).append( AUTHENTICATION ).append( name );
     }
 
 }

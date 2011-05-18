@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceRegistry;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
@@ -93,6 +94,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
 
     /** JRuby compile mode. */
     private CompileMode compileMode;
+
+	private ServiceRegistry serviceRegistry;
 
     /**
      * Construct.
@@ -423,15 +426,13 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         runtime.getLoadService().require( "rubygems" );
         runtime.evalScriptlet( "require %q(torquebox-vfs)" );
         runtime.evalScriptlet( "require %q(torquebox-core)" );
-        injectKernel( runtime );
+        injectServiceRegistry( runtime );
     }
 
-    private void injectKernel(Ruby runtime) {
+    private void injectServiceRegistry(Ruby runtime) {
         runtime.evalScriptlet( "require %q(torquebox/kernel)" );
-        RubyModule torqueBoxKernelModule = runtime.getClassFromPath( "TorqueBox::Kernel" );
-        // TODO Replace with MSC version
-        // JavaEmbedUtils.invokeMethod( runtime, torqueBoxKernelModule,
-        // "kernel=", new Object[] { this.kernel }, void.class );
+        RubyModule torqueBoxServiceRegistry = runtime.getClassFromPath( "TorqueBox::ServiceRegsitry" );
+        JavaEmbedUtils.invokeMethod( runtime, torqueBoxServiceRegistry, "service_registry=", new Object[] { this.serviceRegistry }, void.class );
     }
 
     protected Map<String, String> createEnvironment() {
@@ -543,4 +544,11 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
         return this.classCache;
     }
 
+	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+		this.serviceRegistry = serviceRegistry;
+	}
+	
+	public ServiceRegistry getServiceRegistry() {
+		return this.serviceRegistry;
+	}
 }

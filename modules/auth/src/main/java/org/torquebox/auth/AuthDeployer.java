@@ -33,7 +33,7 @@ public class AuthDeployer implements DeploymentUnitProcessor {
                 if ( authMetaData != null ) {
                     Collection<Config> authConfigs = authMetaData.getConfigurations();
                     for ( Config config : authConfigs ) {
-                        installAuthenticator(unit, phaseContext, config);
+                        installAuthenticator(phaseContext, config);
                     }
                 }
             }
@@ -53,11 +53,11 @@ public class AuthDeployer implements DeploymentUnitProcessor {
         return this.applicationName;
     }
 
-    private void installAuthenticator(DeploymentUnit unit, DeploymentPhaseContext phaseContext, Config config) {
+    private void installAuthenticator(DeploymentPhaseContext phaseContext, Config config) {
         String name     = config.getName();
         String domain   = config.getDomain();
         if (name != null && domain != null) {
-            ServiceName serviceName = AuthServices.authenticationService( unit, name );
+            ServiceName serviceName = AuthServices.authenticationService( this.getApplicationName(), name );
             log.info( "Deploying Authenticator: " + serviceName );
             Authenticator authenticator = new Authenticator();
             authenticator.setAuthDomain(domain);
