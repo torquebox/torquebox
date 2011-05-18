@@ -5,8 +5,6 @@ require 'torquebox/deploy_utils'
 knob_path = TorqueBox::DeployUtils.create_archive( "basic-rails2.knob", 
                                                    File.join( File.dirname( __FILE__ ), "../apps/rails2/basic" ),
                                                    File.join( File.dirname( __FILE__ ), "../target/" ) )
-old_path = knob_path.sub(/knob$/, 'rails')
-FileUtils.cp( knob_path, old_path )
 
 shared_examples_for "basic rails2 tests" do
 
@@ -29,17 +27,6 @@ shared_examples_for "basic rails2 tests" do
 
 end
 
-describe "basic backwards compatibility" do
-  deploy <<-END.gsub(/^ {4}/,'')
-    ---
-    application:
-      RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails2/basic
-      RAILS_ENV: development
-    web:
-      context: /basic-rails
-  END
-  it_should_behave_like "basic rails2 tests"
-end
 describe "basic knob compatibility" do
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -52,10 +39,6 @@ describe "basic knob compatibility" do
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
-  it_should_behave_like "basic rails2 tests"
-end
-describe "basic archive backwards compatibility" do
-  deploy old_path
   it_should_behave_like "basic rails2 tests"
 end
 describe "basic archive knob compatibility" do
