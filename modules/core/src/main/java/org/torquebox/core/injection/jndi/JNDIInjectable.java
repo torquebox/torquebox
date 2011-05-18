@@ -25,10 +25,14 @@ public class JNDIInjectable extends SimpleNamedInjectable {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( getName() );
     }
 
+    protected boolean serviceIsAlreadyWrapped(DeploymentPhaseContext context, ServiceName serviceName) {
+    	return (context.getServiceRegistry().getService( serviceName ) != null);
+    }
+    
     protected ServiceName wrapWithManager(DeploymentPhaseContext context, ServiceName serviceName) {
         ServiceName managementServiceName = context.getDeploymentUnit().getServiceName().append( serviceName ).append( "manager" );
         
-        if ( context.getServiceRegistry().getService( managementServiceName ) != null ){
+        if (serviceIsAlreadyWrapped( context, managementServiceName )) {
             return managementServiceName;
         }
 

@@ -19,7 +19,6 @@
 
 package org.torquebox.jobs.component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.server.deployment.Attachments;
@@ -60,7 +59,7 @@ public class JobComponentResolverInstaller extends BaseRubyComponentDeployer {
         instantiator.setRequirePath( jobMetaData.getRubyRequirePath() );
 
         ServiceName serviceName = JobsServices.jobComponentResolver( unit, jobMetaData.getRubyClassName() );
-        ComponentResolver resolver = new ComponentResolver();
+        ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( JobComponent.class );
@@ -78,7 +77,7 @@ public class JobComponentResolverInstaller extends BaseRubyComponentDeployer {
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
 
-        final List<String> prefixes = new ArrayList<String>();
+        final List<String> prefixes = defaultInjectionPathPrefixes();
 
         if (requirePath != null) {
             final DeploymentUnit unit = phaseContext.getDeploymentUnit();
@@ -91,9 +90,6 @@ public class JobComponentResolverInstaller extends BaseRubyComponentDeployer {
                 prefixes.add( sourcePath );
             }
         }
-
-        prefixes.add( "lib/" );
-        prefixes.add( "app/models/" );
 
         return prefixes;
     }

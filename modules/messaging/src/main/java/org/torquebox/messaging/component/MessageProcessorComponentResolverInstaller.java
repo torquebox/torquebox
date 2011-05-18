@@ -1,7 +1,5 @@
 package org.torquebox.messaging.component;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.server.deployment.Attachments;
@@ -34,8 +32,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
             return;
         }
 
-        ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-
         for (MessageProcessorMetaData each : allMetaData) {
             deploy( phaseContext, each );
 
@@ -54,7 +50,7 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         instantiator.setRequirePath( metaData.getRubyRequirePath() );
 
         ServiceName serviceName = MessagingServices.messageProcessorComponentResolver( unit, metaData.getName() );
-        ComponentResolver resolver = new ComponentResolver();
+        ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( MessageProcessorComponent.class );
@@ -71,7 +67,7 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
 
-        final List<String> prefixes = new ArrayList<String>();
+        final List<String> prefixes = defaultInjectionPathPrefixes();
 
         if (requirePath != null) {
 
@@ -85,8 +81,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
                 prefixes.add( sourcePath );
             }
         }
-
-        prefixes.add( "lib/" );
 
         return prefixes;
     }

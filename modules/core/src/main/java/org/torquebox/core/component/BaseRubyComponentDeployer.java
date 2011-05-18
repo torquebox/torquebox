@@ -1,5 +1,6 @@
 package org.torquebox.core.component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.core.injection.analysis.InjectionIndex;
 
@@ -87,6 +89,25 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         return null;
     }
 
+    
+    protected ComponentResolver createComponentResolver(DeploymentUnit unit) {
+    	RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+    	boolean alwaysReload = false;
+    	if (appMetaData != null) {
+    		alwaysReload = appMetaData.isDevelopmentMode();
+    	}
+    	
+    	return new ComponentResolver( alwaysReload );
+    }
+    
+    protected List<String> defaultInjectionPathPrefixes() {
+    	List<String> defaults = new ArrayList<String>();
+    	defaults.add( "app/models/" );
+    	defaults.add( "lib/" );
+    	
+    	return defaults;
+    }
+    
     private static final Logger log = Logger.getLogger( "org.torquebox.core.component.injection" );
 
 }

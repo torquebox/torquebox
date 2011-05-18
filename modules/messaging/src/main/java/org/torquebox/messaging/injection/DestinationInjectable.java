@@ -25,7 +25,12 @@ public class DestinationInjectable extends JNDIInjectable {
     }
 
     protected ServiceName wrapWithLiveDestination(DeploymentPhaseContext context, ServiceName connectionFactoryServiceName, ServiceName destinationServiceName) {
-        ServiceName liveDestinationServiceName = destinationServiceName.append( "live" );
+    	ServiceName liveDestinationServiceName = destinationServiceName.append( "live" );
+    	
+        if (serviceIsAlreadyWrapped( context, liveDestinationServiceName )) {
+            return liveDestinationServiceName;
+        }
+        
         LiveDestinationService liveDestinationService = new LiveDestinationService();
         context.getServiceTarget().addService( liveDestinationServiceName, liveDestinationService )
             .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )

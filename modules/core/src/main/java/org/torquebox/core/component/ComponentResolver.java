@@ -13,8 +13,8 @@ public class ComponentResolver {
     
     public static AttachmentKey<AttachmentList<Injectable>> ADDITIONAL_INJECTABLES = AttachmentKey.createList( Injectable.class );
 
-    public ComponentResolver() {
-
+    public ComponentResolver(boolean alwaysReload) {
+    	this.alwaysReload = alwaysReload;
     }
 
     public RubyComponent resolve(final Ruby runtime) throws Exception {
@@ -23,6 +23,10 @@ public class ComponentResolver {
 
         if (!this.alwaysReload) {
             rubyComponent = registry.lookup( this.componentName );
+        } else {
+        	// not yet sure this is needed - reloading is broken with and without the next two lines
+        	runtime.evalScriptlet( "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
+        	runtime.evalScriptlet( "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
         }
 
         if (rubyComponent == null) {

@@ -46,7 +46,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         }
 
         ServiceName serviceName = WebServices.rackApplicationComponentResolver( unit );
-        ComponentResolver resolver = new ComponentResolver();
+        ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( RackApplicationComponent.class );
@@ -67,10 +67,9 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
         
-        List<String> prefixes = new ArrayList<String>();
+        List<String> prefixes = defaultInjectionPathPrefixes();
         prefixes.add(  rackAppMetaData.getRackUpScriptLocation() );
-        prefixes.add( "lib/" );
-        prefixes.add( "app/models/" );
+        
         return prefixes;
     }
 

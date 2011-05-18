@@ -62,7 +62,7 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
         log.info( "Services component resolver: " + serviceMetaData.getRubyRequirePath() );
 
         ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() );
-        ComponentResolver resolver = new ComponentResolver();
+        ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( ServicesComponent.class );
@@ -88,7 +88,7 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
 
-        final List<String> prefixes = new ArrayList<String>();
+        final List<String> prefixes = defaultInjectionPathPrefixes();
 
         if (requirePath != null) {
 
@@ -102,9 +102,6 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
                 prefixes.add( sourcePath );
             }
         }
-
-        prefixes.add( "lib/" );
-        prefixes.add( "app/models/" );
 
         return prefixes;
     }
