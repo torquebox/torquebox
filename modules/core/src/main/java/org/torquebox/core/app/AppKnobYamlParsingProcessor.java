@@ -94,6 +94,10 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
+        
+        if (this.knobFilter.accepts( root )) {
+            return root;
+        }
 
         matches = root.getChildren( this.knobFilter );
 

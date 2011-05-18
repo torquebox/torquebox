@@ -15,6 +15,7 @@ import org.jboss.as.controller.RuntimeTask;
 import org.jboss.as.controller.RuntimeTaskContext;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
@@ -58,6 +59,8 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
+        ServerEnvironment environment = context.getController().getServerEnvironment();
+        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new AKnobRootMountProcessor( environment ) );
         context.addDeploymentProcessor( Phase.STRUCTURE, 10, new KnobStructureProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );
