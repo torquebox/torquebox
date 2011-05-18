@@ -35,23 +35,25 @@ else
       end
     else
       puts "*** Syncing to integ-dist by rsync"
-      cmd = [ 'rsync -a . --relative',
-	      '--include jboss/server/default',
-              "--exclude 'apps/*'",
-	      '--exclude default/deploy/*.yml',
-	      '--exclude default/deploy/*.knob',
-	      '--exclude default/data',
-	      '--exclude default/work',
-	      '--exclude default/log',
-	      '--exclude default/tmp',
-	      '--exclude jboss/server/*',
-	      '--exclude jruby/share/ri',
-	      '--exclude jruby/lib/ruby/gems/1.8/doc',
+      cmd = [ 'rsync -v -a . --relative',
+	      '--include jboss/modules',
+	      '--include jboss/standalone',
+              #"--exclude 'apps/*'",
+	      #'--exclude default/deploy/*.yml',
+	      #'--exclude default/deploy/*.knob',
+	      #'--exclude default/data',
+	      #'--exclude default/work',
+	      #'--exclude default/log',
+	      #'--exclude default/tmp',
+	      #'--exclude jboss/server/*',
+	      #'--exclude jruby/share/ri',
+	      #'--exclude jruby/lib/ruby/gems/1.8/doc',
 	      output_dir ].join( ' ' )
+      puts cmd
       puts `#{cmd}` 
     end
   end
 end
 
-FileUtils.rm_rf( Dir["#{output_dir}/jboss/server/default/log/*"] )
+FileUtils.rm_rf( Dir["#{output_dir}/jboss/standalone/log/*"] )
 

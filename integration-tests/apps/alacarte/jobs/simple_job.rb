@@ -1,10 +1,11 @@
-require 'torquebox-messaging'
-
 class SimpleJob
+
+  include TorqueBox::Injectors
   
   def run() 
-    $stderr.puts "Job executing!"
-    TorqueBox::Messaging::Queue.new( '/queue/response' ).publish( 'done' )
+    queue = inject( 'queue/response' )
+    $stderr.puts "Job executing! queue is #{queue}"
+    queue.publish( 'done' )
   end
 
 end

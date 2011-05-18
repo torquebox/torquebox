@@ -3,7 +3,10 @@ require 'torquebox-messaging'
 
 class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
 
+  include TorqueBox::Injectors
+
   def on_message(body)
+    puts ENV.inspect
     basedir = ENV['BASEDIR']
     basedir = basedir.gsub( %r(\\:), ':' )
     basedir.gsub!( %r(\\\\), '\\' )
@@ -12,7 +15,9 @@ class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
     File.open( touchfile, 'w' ) do |f|
       f.puts( "#{body[:tstamp]} // #{body[:cheese]}" )
     end
-    TorqueBox::Messaging::Queue.new('/queues/backchannel').publish('release')
+
+    queue = inject( 'queue/backchannel' )
+    queue.publish('release')
   end
 
 end

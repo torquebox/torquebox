@@ -32,6 +32,13 @@
 
 
   <dependencies>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-build-assembly</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>runtime</scope>
+    </dependency>
     <!-- Akephalos needs HtmlUnit 2.8 (and nekohtml 1.9.14) -->
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>

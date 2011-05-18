@@ -24,9 +24,9 @@ describe "messaging alacarte rack test" do
     FileUtils.rm_rf( touchfile )
 
     tstamp = Time.now
-    queue = TorqueBox::Messaging::Queue.new('/queues/simple_queue')
+    queue = TorqueBox::Messaging::Queue.new('queue/simple_queue')
     queue.publish( { :tstamp=>tstamp, :cheese=>"gouda" } )
-    backchannel = TorqueBox::Messaging::Queue.new('/queues/backchannel')
+    backchannel = TorqueBox::Messaging::Queue.new('queue/backchannel')
     release = backchannel.receive(:timeout => 120_000)
     release.should == 'release'
     touchfile.should exist
