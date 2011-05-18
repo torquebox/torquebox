@@ -1,3 +1,4 @@
+require 'java'
 
 module TorqueBox
   module Messaging
@@ -25,7 +26,7 @@ module TorqueBox
         if !@internal_connection_factory
           # try to connect to HornetQ directly - this currently
           # assumes localhost, and the default AS7 HQ Netty port of 5445
-          connect_opts = { org.hornetq.core.remoting.impl.netty.TransportConstants::PORT_PROP_NAME => 5445 }
+          connect_opts = { org.hornetq.core.remoting.impl.netty.TransportConstants::PORT_PROP_NAME => 5445.to_java( java.lang.Integer ) }
           transport_config =
             org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory", 
                                                             connect_opts)
