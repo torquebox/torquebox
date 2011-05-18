@@ -23,8 +23,7 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>torquebox-security</artifactId>
-      <version>${project.version}</version>
+      <artifactId>rspec</artifactId>
       <type>gem</type>
       <scope>test</scope>
     </dependency>

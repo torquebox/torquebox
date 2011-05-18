@@ -135,6 +135,14 @@
     </dependency>
 
     <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-security</artifactId>
+      <type>gem</type>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <version>${version.jruby}</version>
