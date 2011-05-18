@@ -102,7 +102,7 @@ module TorqueBox
       module Util
         extend TorqueBox::Injectors
         
-        QUEUE_NAME = "queue/#{ENV['TORQUEBOX_APP_NAME']}-tasks-backgroundable"
+        QUEUE_NAME = "queue/#{ENV['TORQUEBOX_APP_NAME']}-tasks-torquebox-backgroundable"
         
         class << self
           def publish_message(receiver, method, args, options = { })
