@@ -1,8 +1,8 @@
 package org.torquebox.auth;
 
 import java.util.Collection;
+import java.util.List;
 
-import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -23,12 +23,12 @@ public class AuthDeployer implements DeploymentUnitProcessor {
 		
 		// We need the application name to name our bean with
         RubyApplicationMetaData appMetaData = unit.getAttachment(RubyApplicationMetaData.ATTACHMENT_KEY);
-        String applicationName = appMetaData.getApplicationName();
-        this.setApplicationName(applicationName);
+        if (appMetaData != null) {
+            String applicationName = appMetaData.getApplicationName();
+            this.setApplicationName(applicationName);
 
-        // Install authenticators for every domain
-        AttachmentList<AuthMetaData> allMetaData = unit.getAttachment(AuthMetaData.ATTACHMENT_KEY);
-        if (allMetaData != null) {
+            // Install authenticators for every domain
+            List<AuthMetaData> allMetaData = unit.getAttachmentList(AuthMetaData.ATTACHMENT_KEY);
             for( AuthMetaData authMetaData: allMetaData ) {
                 if ( authMetaData != null ) {
                     Collection<Config> authConfigs = authMetaData.getConfigurations();
@@ -37,9 +37,6 @@ public class AuthDeployer implements DeploymentUnitProcessor {
                     }
                 }
             }
-        }
-        else {
-        	log.info("No authentication configured. Skipping deployment.");
         }
 	}
 
