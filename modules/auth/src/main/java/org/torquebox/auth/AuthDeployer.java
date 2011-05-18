@@ -28,13 +28,18 @@ public class AuthDeployer implements DeploymentUnitProcessor {
 
         // Install authenticators for every domain
         AttachmentList<AuthMetaData> allMetaData = unit.getAttachment(AuthMetaData.ATTACHMENT_KEY);
-        for( AuthMetaData authMetaData: allMetaData ) {
-            if ( authMetaData != null ) {
-                Collection<Config> authConfigs = authMetaData.getConfigurations();
-                for ( Config config : authConfigs ) {
-                    installAuthenticator(unit, phaseContext, config);
+        if (allMetaData != null) {
+            for( AuthMetaData authMetaData: allMetaData ) {
+                if ( authMetaData != null ) {
+                    Collection<Config> authConfigs = authMetaData.getConfigurations();
+                    for ( Config config : authConfigs ) {
+                        installAuthenticator(unit, phaseContext, config);
+                    }
                 }
             }
+        }
+        else {
+        	log.info("No authentication configured. Skipping deployment.");
         }
 	}
 
