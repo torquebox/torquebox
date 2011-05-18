@@ -16,7 +16,6 @@ describe "exposing app name to rack app" do
 
   it "set the constant and env var" do
     visit "/app_name"
-    puts "JC:", page.source
     page.should have_content('constant:exposing_app_name_to_rack_app|env:exposing_app_name_to_rack_app')
   end
 end
