@@ -28,6 +28,10 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
         if ( file != null ) {
             try {
                 TorqueBoxMetaData metaData = parse( file );
+                TorqueBoxMetaData externalMetaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
+                if ( externalMetaData != null ) {
+                    metaData = externalMetaData.overlayOnto( metaData );
+                }
                 unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
             } catch (IOException e) {
                 throw new DeploymentUnitProcessingException( e );
