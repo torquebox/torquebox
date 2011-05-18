@@ -12,13 +12,7 @@ public class RackApplicationComponent extends AbstractRubyComponent {
     }
 
     public RackResponse call(RackEnvironment env) {
-        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader() );
-            return new RackResponse( (IRubyObject) __call__( "call", env.getEnv() ) );
-        } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
-        }
+    	return new RackResponse( (IRubyObject) _callRubyMethod( "call", env.getEnv() ) );
     }
 
 }

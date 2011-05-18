@@ -24,13 +24,7 @@ import org.torquebox.core.component.AbstractRubyComponent;
 public class JobComponent extends AbstractRubyComponent {
 
     public void run() {
-        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader() );
-            __call__( "run" );
-        } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
-        }
+    	_callRubyMethod( "run" );
     }
 
 }

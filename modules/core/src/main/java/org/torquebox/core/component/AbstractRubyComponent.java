@@ -28,15 +28,18 @@ public class AbstractRubyComponent implements RubyComponent {
         this.rubyComponent = rubyComponent;
     }
     
-    protected void require(String feature) {
-        this.rubyComponent.getRuntime().evalScriptlet( "require %q(" + feature + ")" );
-    }
-    protected Object __call__(Object target, String method, Object...args) {
-        return JavaEmbedUtils.invokeMethod(  this.rubyComponent.getRuntime(), target, method, args, Object.class );
+    protected Object _callRubyMethod(Object target, String method, Object...args) {
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader().getParent() );
+            return JavaEmbedUtils.invokeMethod( this.rubyComponent.getRuntime(), target, method, args, Object.class );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
     
-    protected Object __call__(String method, Object...args) {
-        return JavaEmbedUtils.invokeMethod(  this.rubyComponent.getRuntime(), this.rubyComponent, method, args, Object.class );
+    protected Object _callRubyMethod(String method, Object...args) {
+    	return _callRubyMethod( this.rubyComponent, method, args );
     }
     
     protected RubyModule getClass(String path) {
