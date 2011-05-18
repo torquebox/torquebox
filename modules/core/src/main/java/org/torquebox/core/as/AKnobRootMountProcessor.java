@@ -26,7 +26,6 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.api.ServerDeploymentRepository;
-import org.torquebox.core.TorqueBox;
 
 /**
  * Replace the ServerDeploymentRepository with our own that understands -knob.yml files
@@ -50,7 +49,7 @@ public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
             return;
         }
         
-        if (!deploymentUnit.getName().matches( TorqueBox.EXTERNAL_DESCRIPTOR_REGEX )) {
+        if (!deploymentUnit.getName().endsWith( "-knob.yml" )) {
             return;
         }
         

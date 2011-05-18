@@ -36,7 +36,6 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
-import org.torquebox.core.TorqueBox;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
 
@@ -121,7 +120,9 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 
     private VirtualFileFilter knobFilter = (new VirtualFileFilter() {
             public boolean accepts(VirtualFile file) {
-                return file.getName().matches( TorqueBox.EXTERNAL_DESCRIPTOR_REGEX );
+                return file.getName().endsWith( "-knob.yml" ) ||
+                    file.getName().endsWith( "-rails.yml" ) ||
+                    file.getName().endsWith( "-rack.yml" );
             }
         });
 
