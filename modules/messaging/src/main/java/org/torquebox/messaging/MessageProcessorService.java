@@ -47,20 +47,18 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
                 ManagedReferenceFactory destinationManagedReferenceFactory = MessageProcessorService.this.destinationInjector.getValue();
                 ManagedReference destinationManagedReference = destinationManagedReferenceFactory.getReference();
                 Destination destination = (Destination) destinationManagedReference.getInstance();
-                
+
                 try {
                     MessageProcessorService.this.connection = connectionFactory.createConnection();
+                    log.info( "Created JMS connection: " + connection );
                     MessageProcessorService.this.session = connection.createSession( true, Session.AUTO_ACKNOWLEDGE );
 
                     if (MessageProcessorService.this.durable && destination instanceof Topic) {
-                        MessageProcessorService.this.consumer = MessageProcessorService.this.session.createDurableSubscriber( (Topic) destination,
-                                                            getName(),
-                                                            getMessageSelector(),
-                                                            false );
+                        MessageProcessorService.this.consumer = MessageProcessorService.this.session.createDurableSubscriber( (Topic) destination, getName(),
+                                getMessageSelector(), false );
                     } else {
                         if (MessageProcessorService.this.durable && !(destination instanceof Topic)) {
-                            log.warn( "Durable set for processor " + getName() + ", but "
-                                    + destination + " is not a topic - ignoring." );
+                            log.warn( "Durable set for processor " + getName() + ", but " + destination + " is not a topic - ignoring." );
                         }
                         MessageProcessorService.this.consumer = MessageProcessorService.this.session.createConsumer( destination, getMessageSelector() );
                     }
@@ -76,11 +74,11 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
                     if (connectionFactoryManagedReference != null) {
                         connectionFactoryManagedReference.release();
                     }
-                    
-                    if ( destinationManagedReference != null ) {
+
+                    if (destinationManagedReference != null) {
                         destinationManagedReference.release();
                     }
-                    
+
                 }
             }
         } );
@@ -89,7 +87,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        log.info(  "onMessage! " + message );
+        log.info( "onMessage! " + message );
         Ruby ruby = null;
         try {
             ruby = getRubyRuntimePool().borrowRuntime();
@@ -124,6 +122,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
 
     @Override
     public void stop(StopContext context) {
+        log.info( "Shutting down JMS connection et al: " + connection );
         try {
             this.consumer.close();
         } catch (JMSException e) {
@@ -191,7 +190,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     private static final Logger log = Logger.getLogger( "org.torquebox.message" );
 
     private ClassLoader classLoader;
-    
+
     private final InjectedValue<RubyRuntimePool> runtimePoolInjector = new InjectedValue<RubyRuntimePool>();
     private final InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
     private final InjectedValue<ManagedReferenceFactory> connectionFactoryInjector = new InjectedValue<ManagedReferenceFactory>();

@@ -55,7 +55,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.ON_DEMAND );
-        addInjections( phaseContext, resolver, builder );
+        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext ), builder );
         builder.install();
         
         // Add to our notifier's watch list
@@ -63,7 +63,6 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
     }
     
 
-    @Override
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
@@ -71,7 +70,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         List<String> prefixes = new ArrayList<String>();
         prefixes.add(  rackAppMetaData.getRackUpScriptLocation() );
         prefixes.add( "lib/" );
-        prefixes.add( "app/" );
+        prefixes.add( "app/models/" );
         return prefixes;
     }
 

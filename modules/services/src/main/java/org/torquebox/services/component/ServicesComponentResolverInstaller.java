@@ -22,13 +22,17 @@ package org.torquebox.services.component;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.component.BaseRubyComponentDeployer;
 import org.torquebox.core.component.ComponentClass;
 import org.torquebox.core.component.ComponentResolver;
@@ -42,54 +46,67 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
-        
+
         for (ServiceMetaData serviceMetaData : allServiceMetaData) {
             deploy( phaseContext, serviceMetaData );
         }
     }
-    
+
     protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData serviceMetaData) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         ComponentClass instantiator = new ComponentClass();
         instantiator.setClassName( serviceMetaData.getClassName() );
-        instantiator.setRequirePath(serviceMetaData.getRubyRequirePath());
-        
+        instantiator.setRequirePath( serviceMetaData.getRubyRequirePath() );
+
         log.info( "Services component resolver: " + serviceMetaData.getRubyRequirePath() );
-        
+
         ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() );
         ComponentResolver resolver = new ComponentResolver();
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( ServicesComponent.class );
         resolver.setInitializeParams( serviceMetaData.getParameters() );
-        
+
         log.info( "Installing Services component resolver: " + serviceName );
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );
-        addInjections( phaseContext, resolver, builder );
+        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, serviceMetaData.getRubyRequirePath() ), builder );
         builder.install();
+        
+        // Add to our notifier's watch list
+        unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
     }
 
     @Override
     public void undeploy(DeploymentUnit unit) {
 
     }
-    
+
     private static final Logger log = Logger.getLogger( "org.torquebox.services.component" );
 
-	@Override
-	protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext) {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
-        
-        List<String> prefixes = new ArrayList<String>();
-        for (ServiceMetaData each : allServiceMetaData) {
-            prefixes.add( each.getRubyRequirePath() );
-            prefixes.add( "lib/" );
+    protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
+
+        final List<String> prefixes = new ArrayList<String>();
+
+        if (requirePath != null) {
+
+            final DeploymentUnit unit = phaseContext.getDeploymentUnit();
+            final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
+            final VirtualFile root = resourceRoot.getRoot();
+
+            final String sourcePath = searchForSourceFile( root, requirePath, true, true, "app/processors", "lib" );
+
+            if (sourcePath != null) {
+                prefixes.add( sourcePath );
+            }
         }
+
+        prefixes.add( "lib/" );
+        prefixes.add( "app/models/" );
+
         return prefixes;
-	}
+    }
 
 }

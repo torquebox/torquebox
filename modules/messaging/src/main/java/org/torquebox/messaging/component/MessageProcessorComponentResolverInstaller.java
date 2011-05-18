@@ -29,25 +29,25 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY );
-        
-        if ( allMetaData == null || allMetaData.isEmpty() ) {
+
+        if (allMetaData == null || allMetaData.isEmpty()) {
             return;
         }
 
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        
-        for ( MessageProcessorMetaData each : allMetaData ) {
-            deploy( phaseContext, each);
-            
+
+        for (MessageProcessorMetaData each : allMetaData) {
+            deploy( phaseContext, each );
+
         }
     }
-    
+
     protected void deploy(DeploymentPhaseContext phaseContext, MessageProcessorMetaData metaData) throws DeploymentUnitProcessingException {
-        
-        log.info(  "DEPLOY: " + metaData  );
-        
+
+        log.info( "DEPLOY: " + metaData );
+
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         ComponentClass instantiator = new ComponentClass();
 
         instantiator.setClassName( metaData.getRubyClassName() );
@@ -58,33 +58,38 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( MessageProcessorComponent.class );
-        
+
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.ON_DEMAND );
-        addInjections( phaseContext, resolver, builder );
+        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, metaData.getRubyRequirePath() ), builder );
         builder.install();
-        
+
         // Add to our notifier's watch list
         unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
     }
-    
 
-    @Override
-    protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext) {
-        
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY );
-        
-        List<String> prefixes = new ArrayList<String>();
-        
-        for ( MessageProcessorMetaData each : allMetaData ) {
-            prefixes.add( each.getRubyRequirePath() );
-            prefixes.add( "lib/" );
+    protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
+
+        final List<String> prefixes = new ArrayList<String>();
+
+        if (requirePath != null) {
+
+            final DeploymentUnit unit = phaseContext.getDeploymentUnit();
+            final ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
+            final VirtualFile root = resourceRoot.getRoot();
+
+            final String sourcePath = searchForSourceFile( root, requirePath, true, true, "app/tasks", "app/processors", "lib" );
+
+            if (sourcePath != null) {
+                prefixes.add( sourcePath );
+            }
         }
+
+        prefixes.add( "lib/" );
+
         return prefixes;
     }
-
 
     protected String getCode(String rackupScript) {
         return "require %q(rack)\nRack::Builder.new{(\n" + rackupScript + "\n)}.to_app";
@@ -92,7 +97,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 

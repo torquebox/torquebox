@@ -109,7 +109,7 @@ public class JobSchedulerDeployer implements DeploymentUnitProcessor {
                 
         ServiceBuilder<JobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );
-        builder.setInitialMode( Mode.PASSIVE );
+        builder.setInitialMode( Mode.ACTIVE );
         
         if (singleton) {
         	//FIXME builder.addDependency( "jboss.ha:service=HASingletonDeployer,type=Barrier" );
