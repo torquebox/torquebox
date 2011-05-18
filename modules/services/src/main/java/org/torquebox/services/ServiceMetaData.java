@@ -29,6 +29,7 @@ public class ServiceMetaData {
     public static final AttachmentKey<AttachmentList<ServiceMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList(ServiceMetaData.class);
     
     private String className;
+	private String rubyRequirePath;
     private Map<String, Object> parameters;
     private boolean requiresSingleton;
 
@@ -59,5 +60,13 @@ public class ServiceMetaData {
     public boolean isRequiresSingleton() {
         return this.requiresSingleton;
     }
+
+	public void setRubyRequirePath(String rubyRequirePath) {
+		this.rubyRequirePath = rubyRequirePath;
+	}
+	
+	public String getRubyRequirePath() {
+		return this.rubyRequirePath;
+	}
 
 }

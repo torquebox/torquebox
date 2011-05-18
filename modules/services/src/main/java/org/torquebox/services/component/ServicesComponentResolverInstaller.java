@@ -19,23 +19,24 @@
 
 package org.torquebox.services.component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
-import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
+import org.torquebox.core.component.BaseRubyComponentDeployer;
 import org.torquebox.core.component.ComponentClass;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
 import org.torquebox.services.ServiceMetaData;
 import org.torquebox.services.as.ServicesServices;
 
-public class ServicesComponentResolverInstaller implements DeploymentUnitProcessor {
+public class ServicesComponentResolverInstaller extends BaseRubyComponentDeployer {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -47,11 +48,14 @@ public class ServicesComponentResolverInstaller implements DeploymentUnitProcess
         }
     }
     
-    protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData serviceMetaData) {
+    protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData serviceMetaData) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
         ComponentClass instantiator = new ComponentClass();
         instantiator.setClassName( serviceMetaData.getClassName() );
+        instantiator.setRequirePath(serviceMetaData.getRubyRequirePath());
+        
+        log.info( "Services component resolver: " + serviceMetaData.getRubyRequirePath() );
         
         ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() );
         ComponentResolver resolver = new ComponentResolver();
@@ -64,6 +68,7 @@ public class ServicesComponentResolverInstaller implements DeploymentUnitProcess
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );
+        addInjections( phaseContext, resolver, builder );
         builder.install();
     }
 
@@ -73,5 +78,18 @@ public class ServicesComponentResolverInstaller implements DeploymentUnitProcess
     }
     
     private static final Logger log = Logger.getLogger( "org.torquebox.services.component" );
+
+	@Override
+	protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext) {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        List<ServiceMetaData> allServiceMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
+        
+        List<String> prefixes = new ArrayList<String>();
+        for (ServiceMetaData each : allServiceMetaData) {
+            prefixes.add( each.getRubyRequirePath() );
+            prefixes.add( "lib/" );
+        }
+        return prefixes;
+	}
 
 }

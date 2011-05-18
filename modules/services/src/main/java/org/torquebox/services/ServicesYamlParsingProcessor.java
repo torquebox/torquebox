@@ -24,6 +24,7 @@ import java.util.Map;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.torquebox.core.AbstractSplitYamlParsingProcessor;
+import org.torquebox.core.util.StringUtils;
 
 public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
     
@@ -45,6 +46,8 @@ public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProces
                 serviceMetaData.setRequiresSingleton( requiresSingleton );
                 serviceMetaData.setClassName( service  );
                 serviceMetaData.setParameters( params );
+                serviceMetaData.setRubyRequirePath( StringUtils.underscore( service.trim() ) );
+
                 unit.addToAttachmentList( ServiceMetaData.ATTACHMENTS_KEY, serviceMetaData );
             }
         }

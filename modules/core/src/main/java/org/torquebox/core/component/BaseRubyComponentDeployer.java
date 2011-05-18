@@ -28,6 +28,8 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
 
         Set<Injectable> injectables = index.getInjectablesFor( getInjectionPathPrefixes( phaseContext ) );
         
+        log.info( "INJECTABLES: " + injectables );
+        
         for (Injectable injectable : injectables) {
             try {
                 ServiceName serviceName = injectable.getServiceName( phaseContext );
