@@ -71,23 +71,21 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-<!--
       <modules>
         <module>integration-tests</module>
       </modules>
--->
     </profile>
     <profile>
       <id>dist</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-<!--
       <modules>
+<!--
         <module>dist</module>
         <module>docs</module>
-      </modules>
 -->
+      </modules>
     </profile>
     <profile>
       <id>19</id>

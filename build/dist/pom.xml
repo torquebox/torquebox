@@ -14,6 +14,21 @@
   <name>TorqueBox Build Distribution</name>
   <description />
 
+  <profiles>
+    <profile>
+      <id>integ</id>
+      <dependencies>
+        <dependency>
+          <groupId>org.torquebox</groupId>
+          <artifactId>torquebox-integration-tests</artifactId>
+          <version>${project.version}</version>
+          <type>pom</type>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
 
   <dependencies>
     <dependency>
