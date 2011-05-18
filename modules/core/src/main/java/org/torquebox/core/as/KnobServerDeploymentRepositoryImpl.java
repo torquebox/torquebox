@@ -27,6 +27,7 @@ import org.jboss.as.server.deployment.api.ServerDeploymentRepository;
 import org.jboss.as.server.deployment.impl.ServerDeploymentRepositoryImpl;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.TorqueBox;
 
 /**
  * Custom ServerDeploymentRepository implementation that handles mounting
@@ -43,7 +44,7 @@ public class KnobServerDeploymentRepositoryImpl extends ServerDeploymentReposito
 
     @Override
     public Closeable mountDeploymentContent(String name, String runtimeName, byte[] deploymentHash, VirtualFile mountPoint, boolean mountExpanded) throws IOException {
-        if (name.endsWith( "-knob.yml" )) {
+        if (name.matches( TorqueBox.EXTERNAL_DESCRIPTOR_REGEX )) {
             final File content = getDeploymentContentFile(deploymentHash);
             return VFS.mountReal( content, mountPoint );
         } else {

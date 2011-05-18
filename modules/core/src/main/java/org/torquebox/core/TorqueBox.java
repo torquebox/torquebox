@@ -31,6 +31,8 @@ import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
 import org.torquebox.core.runtime.RuntimeInitializer;
 
 public class TorqueBox implements TorqueBoxMBean {
+    
+    public static final String EXTERNAL_DESCRIPTOR_REGEX = "(-knob.yml|-rails.yml|-rack.yml)$";
 
     private static final Logger log = Logger.getLogger( TorqueBox.class );
 
