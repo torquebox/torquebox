@@ -1,5 +1,5 @@
 
-require 'torquebox/security'
+require 'torquebox-security'
 
 app = lambda { |env| 
   puts "Invoking app"
