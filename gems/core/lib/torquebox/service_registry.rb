@@ -18,26 +18,22 @@
 module TorqueBox
   class ServiceRegistry
 
-#    def self.service_registry=(service_registry)
-#      @service_registry = service_registry 
-#      blocks.keys.each do |name|
-#        blocks.delete(name).each do |block|
-#          lookup name, &block
-#        end
-#      end
-#      @service_registry
-#    end
-#
-#    def self.service_name(name)
-#      ServiceName.of(name)
-#    end
-#
-#    # blocks are not allowed on the method named :[]
-#    def self.[](name)
-#      self.lookup(name)
-#    end
-#
-#    def self.lookup(name, &block)
+    def self.service_registry=(service_registry)
+      @service_registry = service_registry 
+      blocks.keys.each do |name|
+        blocks.delete(name).each do |block|
+          lookup name, &block
+        end
+      end
+      @service_registry
+    end
+
+    # blocks are not allowed on the method named :[]
+    def self.[](name)
+      self.lookup(name)
+    end
+
+    def self.lookup(name, &block)
 #      if @service_registry.nil?
 #        self.blocks[name] << block
 #        nil
@@ -50,12 +46,12 @@ module TorqueBox
 #          entry.getTarget()
 #        end
 #      end
-#    end
-#
-#    def self.blocks
-#      @blocks ||= Hash.new{|h, k| h[k] = []}
-#    end
-#
+    end
+
+    def self.blocks
+      @blocks ||= Hash.new{|h, k| h[k] = []}
+    end
+
   end
 
 end
