@@ -90,7 +90,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         if (rackAppMetaData == null) {
             return;
         }
-        
+
         log.info( "Marking as WAR" );
         DeploymentTypeMarker.setType( DeploymentType.WAR, unit );
         WarMetaData warMetaData = new WarMetaData();
@@ -118,8 +118,8 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         }
 
         JBossWebMetaData jbossWebMetaData = warMetaData.getJbossWebMetaData();
-        
-        if ( jbossWebMetaData == null ) {
+
+        if (jbossWebMetaData == null) {
             jbossWebMetaData = new JBossWebMetaData();
             warMetaData.setJbossWebMetaData( jbossWebMetaData );
         }
@@ -133,17 +133,20 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         } catch (Exception e) {
             throw new DeploymentUnitProcessingException( e );
         }
-        
-        ServletContextAttribute serviceRegistryValue = new ServletContextAttribute("service.registry", unit.getServiceRegistry() );
+
+        jbossWebMetaData.setVirtualHosts( rackAppMetaData.getHosts() );
+
+        ServletContextAttribute serviceRegistryValue = new ServletContextAttribute( "service.registry", unit.getServiceRegistry() );
         unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, serviceRegistryValue );
-        
-        ServletContextAttribute componentResolverNameValue = new ServletContextAttribute("component.resolver.service-name", WebServices.rackApplicationComponentResolver( unit  ) );
+
+        ServletContextAttribute componentResolverNameValue = new ServletContextAttribute( "component.resolver.service-name",
+                WebServices.rackApplicationComponentResolver( unit ) );
         unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, componentResolverNameValue );
         unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, WebServices.rackApplicationComponentResolver( unit ) );
-        
-        ServletContextAttribute runtimePoolNameValue = new ServletContextAttribute("runtime.pool.service-name", CoreServices.runtimePoolName( unit, "web" ) );
+
+        ServletContextAttribute runtimePoolNameValue = new ServletContextAttribute( "runtime.pool.service-name", CoreServices.runtimePoolName( unit, "web" ) );
         unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, runtimePoolNameValue );
-        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, CoreServices.runtimePoolName( unit, "web"  ) );
+        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, CoreServices.runtimePoolName( unit, "web" ) );
     }
 
     protected void setUpRackFilter(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
@@ -240,14 +243,14 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
             throws Exception {
 
         /*
-        if (jbossWebMetaData.getDistributable() != null) {
-            jbossWebMetaData.setDistributable( jbossWebMetaData.getDistributable() );
-            ReplicationConfig repCfg = new ReplicationConfig();
-            repCfg.setReplicationGranularity( ReplicationGranularity.SESSION );
-            repCfg.setReplicationTrigger( ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET );
-            jbossWebMetaData.setReplicationConfig( repCfg );
-        }
-        */
+         * if (jbossWebMetaData.getDistributable() != null) {
+         * jbossWebMetaData.setDistributable(
+         * jbossWebMetaData.getDistributable() ); ReplicationConfig repCfg = new
+         * ReplicationConfig(); repCfg.setReplicationGranularity(
+         * ReplicationGranularity.SESSION ); repCfg.setReplicationTrigger(
+         * ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET );
+         * jbossWebMetaData.setReplicationConfig( repCfg ); }
+         */
 
         jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
     }
@@ -268,7 +271,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         // TODO Auto-generated method stub
 
     }
-    
+
     private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 
 }

@@ -18,6 +18,7 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.torquebox.web.VirtualHostInstaller;
 import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
 import org.torquebox.web.rack.RackApplicationDefaultsProcessor;
 import org.torquebox.web.rack.RackApplicationRecognizer;
@@ -72,6 +73,7 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
+        context.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
