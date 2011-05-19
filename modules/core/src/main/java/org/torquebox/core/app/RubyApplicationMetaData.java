@@ -51,6 +51,10 @@ public class RubyApplicationMetaData {
         if (lastDot >= 0) {
             name = name.substring( 0, lastDot );
         }
+        int lastKnob = name.lastIndexOf( "-knob" );
+        if (lastKnob >= 0) {
+            name = name.substring( 0, lastKnob );
+        }
         return name.replaceAll( "\\.", "-" );
     }
 
