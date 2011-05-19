@@ -104,6 +104,7 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
     	List<String> defaults = new ArrayList<String>();
     	defaults.add( "app/models/" );
     	defaults.add( "lib/" );
+    	defaults.add( "." ); // this is a special case, and will ONLY match files in the app root
     	
     	return defaults;
     }

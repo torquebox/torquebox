@@ -11,7 +11,8 @@ import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.vfs.VirtualFile;
 
 public class InjectionIndex {
-    
+	public static final AttachmentKey<InjectionIndex> ATTACHMENT_KEY = AttachmentKey.create(InjectionIndex.class);
+	
     public InjectionIndex(VirtualFile root) {
         this.root = root;
     }
@@ -27,6 +28,22 @@ public class InjectionIndex {
        existing.addAll(  injectables );
     }
     
+    public Set<Injectable> getInjectablesFor(List<String> pathPrefixes) {
+        Set<Injectable> injectables = new HashSet<Injectable>();
+        
+        for ( Entry<String, Set<Injectable>> entry : this.index.entrySet() ) {
+            for ( String prefix : pathPrefixes ) {
+            	String key = entry.getKey();
+            	// root ('.') is a special case - only files in the root are matched
+                if ( key.startsWith( prefix ) ||
+                		(".".equals( prefix ) && !key.contains( "/" ))) {	
+                    injectables.addAll( entry.getValue() );
+                }
+            }
+        }
+        return injectables;
+    }
+    
     public String toString() {
         return this.index.toString();
     }
@@ -34,18 +51,4 @@ public class InjectionIndex {
     private final VirtualFile root;
     private final Map<String,Set<Injectable>> index = new HashMap<String,Set<Injectable>>();
     
-    public static final AttachmentKey<InjectionIndex> ATTACHMENT_KEY = AttachmentKey.create(InjectionIndex.class);
-
-    public Set<Injectable> getInjectablesFor(List<String> pathPrefixes) {
-        Set<Injectable> injectables = new HashSet<Injectable>();
-        
-        for ( Entry<String, Set<Injectable>> entry : this.index.entrySet() ) {
-            for ( String prefix : pathPrefixes ) {
-                if ( entry.getKey().startsWith( prefix ) ) {
-                    injectables.addAll( entry.getValue() );
-                }
-            }
-        }
-        return injectables;
-    }
 }

@@ -1,7 +1,6 @@
 package org.torquebox.web.component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.server.deployment.Attachments;

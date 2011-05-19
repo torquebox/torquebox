@@ -1,0 +1,6 @@
+queues:
+  queue/foreground:
+    durable: false
+
+  queue/background:
+    durable: false

@@ -16,8 +16,8 @@ describe "backgroundable tests" do
   END
 
   before(:each) do
-    @foreground = TorqueBox::Messaging::Queue.new("/queues/foreground")
-    @background = TorqueBox::Messaging::Queue.new("/queues/background")
+    @foreground = TorqueBox::Messaging::Queue.new("queue/foreground")
+    @background = TorqueBox::Messaging::Queue.new("queue/background")
   end
 
   it "should wait asynchronously" do

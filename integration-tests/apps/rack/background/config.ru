@@ -1,3 +1,3 @@
-require 'rack_app.rb'
+require 'rack_app'
 use Rack::Reloader
 run RackApp.new 
