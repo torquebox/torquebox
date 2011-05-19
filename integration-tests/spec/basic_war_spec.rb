@@ -6,7 +6,7 @@ describe "basic war" do
 
   it "should work" do
     visit "/node-info"
-    puts page.body
+    page.should have_content( 'JBoss-Cloud node info' )
   end
 
 end
