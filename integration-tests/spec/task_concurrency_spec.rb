@@ -26,7 +26,7 @@ describe "task concurrency" do
       visit path
       page.should have_content('tasks fired')
       responses = Set.new
-      20.times do
+      100.times do
         responses << @backchannel.receive(:timeout => 120_000)
       end
       responses.size.should > 1
