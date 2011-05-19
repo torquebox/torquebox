@@ -22,7 +22,6 @@ package org.torquebox.messaging;
 import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.AbstractScanningDeployer;
 import org.torquebox.core.util.StringUtils;
@@ -46,18 +45,21 @@ public class TasksScanningDeployer extends AbstractScanningDeployer {
     @Override
     protected void deploy(DeploymentUnit unit, VirtualFile file, String parentPath, String relativePath) throws DeploymentUnitProcessingException {
         String rubyClassName = StringUtils.pathToClassName( relativePath, ".rb" );
-        TaskMetaData taskMetaData = getOrCreateTaskMetaData( unit, rubyClassName );
+        TaskMetaData taskMetaData = existingTaskMetaData( unit, rubyClassName );
 
+        if (taskMetaData == null) {
+        	taskMetaData = new TaskMetaData();
+        	unit.addToAttachmentList( TaskMetaData.ATTACHMENTS_KEY, taskMetaData );	
+        }
+        
         String simpleLocation = parentPath + relativePath.substring( 0, relativePath.length() - 3 );
 
         taskMetaData.setLocation( simpleLocation );
         taskMetaData.setRubyClassName( rubyClassName );
-
-        unit.addToAttachmentList( TaskMetaData.ATTACHMENT_KEY, taskMetaData );
     }
-
-    protected TaskMetaData getOrCreateTaskMetaData(DeploymentUnit unit, String rubyClassName) {
-        AttachmentList<TaskMetaData> allMetaData = unit.getAttachment( TaskMetaData.ATTACHMENT_KEY );
+    
+    protected TaskMetaData existingTaskMetaData(DeploymentUnit unit, String rubyClassName) {
+    	AttachmentList<TaskMetaData> allMetaData = unit.getAttachment( TaskMetaData.ATTACHMENTS_KEY );
         if (allMetaData != null) {
             for (TaskMetaData each : allMetaData) {
                 if (rubyClassName.equals( each.getRubyClassName() )) {
@@ -65,8 +67,8 @@ public class TasksScanningDeployer extends AbstractScanningDeployer {
                 }
             }
         }
-
-        return new TaskMetaData();
+        
+        return null;
     }
 
 }

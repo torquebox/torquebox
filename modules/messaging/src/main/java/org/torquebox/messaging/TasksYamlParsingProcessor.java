@@ -37,16 +37,16 @@ import org.yaml.snakeyaml.Yaml;
  * 
  * Creates TaskMetaData instances from messaging.yml
  */
-public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingProcessor {
+public class TasksYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
-    public TasksYamlParsingDeployer() {
+    public TasksYamlParsingProcessor() {
         setSectionName( "tasks" );
     }
 
     @Override
     public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
-        for (TaskMetaData metaData : Parser.parse( dataObj, unit.getAttachmentList( TaskMetaData.ATTACHMENT_KEY ) ) ) {
-            unit.addToAttachmentList( TaskMetaData.ATTACHMENT_KEY, metaData );
+        for (TaskMetaData metaData : Parser.parse( dataObj, unit.getAttachmentList( TaskMetaData.ATTACHMENTS_KEY ) ) ) {
+            unit.addToAttachmentList( TaskMetaData.ATTACHMENTS_KEY, metaData );
         }
     }
 
@@ -66,41 +66,41 @@ public class TasksYamlParsingDeployer extends AbstractSplitYamlParsingProcessor 
             } else if (data instanceof Map) {
                 result = parseTasks( (Map<String, Map>)data, existingTasks );
             } 
-            return result;
-        }
-
-        static List<TaskMetaData> parseTasks( Map<String, Map>tasks, List<? extends TaskMetaData> existingTasks) {
-            List<TaskMetaData> result = new ArrayList<TaskMetaData>();
-
-            for (String rubyClassName :  tasks.keySet()) {
-                result.add( createOrUpdateTaskMetaData( rubyClassName, tasks.get( rubyClassName ), existingTasks ) );
-            }
             
             return result;
         }
 
         @SuppressWarnings("rawtypes")
-        static TaskMetaData createOrUpdateTaskMetaData(String rubyClassName, Map options, List<? extends TaskMetaData> existingTasks) {
-            if (options == null) {
-                options = Collections.EMPTY_MAP;
-            }
+        static List<TaskMetaData> parseTasks( Map<String, Map>tasks, List<? extends TaskMetaData> existingTasks) {
+            List<TaskMetaData> result = new ArrayList<TaskMetaData>();
 
-            TaskMetaData task = null;
+            for (String rubyClassName :  tasks.keySet()) {
+            	TaskMetaData task = existingTaskMetaData( rubyClassName, existingTasks );
+            	
+            	Map options = tasks.get( rubyClassName );
+            	
+            	if (task == null) {
+            		task = new TaskMetaData();
+            		task.setRubyClassName( rubyClassName );
+            		result.add( task ); 
+            	}
 
-            for (TaskMetaData each : existingTasks) {
-                if (rubyClassName.equals( each.getSimpleName() )) {
-                    task = each; 
-                    break;
-                }
-            }
-            if (task == null) {
-                task = new TaskMetaData();
-                task.setRubyClassName( rubyClassName );
+            	if (options != null) {
+            		task.setConcurrency( (Integer)options.get( "concurrency") );
+            	}
             }
             
-            task.setConcurrency( (Integer)options.get( "concurrency") );
-
-            return task;
+            return result;
+        }
+        
+        static TaskMetaData existingTaskMetaData(String rubyClassName, List<? extends TaskMetaData> existingTasks) {
+        	for (TaskMetaData each : existingTasks) {
+        		if (rubyClassName.equals( each.getSimpleName() )) {
+        			return each;
+                }
+            }
+             
+            return null;
         }
 
     }

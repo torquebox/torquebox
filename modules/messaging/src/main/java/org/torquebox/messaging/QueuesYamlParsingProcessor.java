@@ -34,9 +34,9 @@ import org.torquebox.core.AbstractSplitYamlParsingProcessor;
  * 
  * Creates QueueMetaData instances from queues.yml
  */
-public class QueuesYamlParsingDeployer extends AbstractSplitYamlParsingProcessor {
+public class QueuesYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
-    public QueuesYamlParsingDeployer() {
+    public QueuesYamlParsingProcessor() {
         setSectionName( "queues" );
         setSupportsSuffix( true );
     }

@@ -26,16 +26,16 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.core.injection.jndi.ManagedReferenceInjectableService;
 import org.torquebox.messaging.ApplicationNamingContextBindingProcessor;
-import org.torquebox.messaging.BackgroundableDeployer;
+import org.torquebox.messaging.BackgroundablePresetsDeployer;
 import org.torquebox.messaging.MessageProcessorDeployer;
 import org.torquebox.messaging.MessagingInjectablesProcessor;
 import org.torquebox.messaging.MessagingRuntimePoolDeployer;
 import org.torquebox.messaging.MessagingYamlParsingProcessor;
 import org.torquebox.messaging.QueueDeployer;
-import org.torquebox.messaging.QueuesYamlParsingDeployer;
+import org.torquebox.messaging.QueuesYamlParsingProcessor;
 import org.torquebox.messaging.TasksDeployer;
 import org.torquebox.messaging.TasksScanningDeployer;
-import org.torquebox.messaging.TasksYamlParsingDeployer;
+import org.torquebox.messaging.TasksYamlParsingProcessor;
 import org.torquebox.messaging.TopicDeployer;
 import org.torquebox.messaging.TopicsYamlParsingDeployer;
 import org.torquebox.messaging.component.MessageProcessorComponentResolverInstaller;
@@ -71,19 +71,18 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
 
-        context.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingDeployer() );
+    	context.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingDeployer() );
         context.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
-
-        context.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningDeployer() );
 
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
 
         context.addDeploymentProcessor( Phase.POST_MODULE, 7, new MessagingInjectablesProcessor() );
-
         context.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new BackgroundableDeployer() );
+        
         context.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksDeployer() );
         context.addDeploymentProcessor( Phase.POST_MODULE, 320, new MessagingRuntimePoolDeployer() );
 

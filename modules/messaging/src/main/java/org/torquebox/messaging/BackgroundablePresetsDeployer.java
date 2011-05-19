@@ -37,9 +37,9 @@ import org.torquebox.core.app.RubyApplicationMetaData;
  * backgroundable options, the TMD will still be available for TasksDeployer to
  * handle.
  */
-public class BackgroundableDeployer implements DeploymentUnitProcessor {
+public class BackgroundablePresetsDeployer implements DeploymentUnitProcessor {
 
-    public BackgroundableDeployer() {
+    public BackgroundablePresetsDeployer() {
     }
 
     @Override
@@ -56,7 +56,7 @@ public class BackgroundableDeployer implements DeploymentUnitProcessor {
         task.setQueueSuffix( "-torquebox-backgroundable" );
         task.setSimpleName( "Backgroundable" );
 
-        unit.addToAttachmentList( TaskMetaData.ATTACHMENT_KEY, task );
+        unit.addToAttachmentList( TaskMetaData.ATTACHMENTS_KEY, task );
     }
 
     @Override

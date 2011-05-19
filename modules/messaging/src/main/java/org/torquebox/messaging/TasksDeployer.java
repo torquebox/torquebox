@@ -53,7 +53,7 @@ public class TasksDeployer implements DeploymentUnitProcessor {
             return;
         }
         
-        List<TaskMetaData> allTasks = unit.getAttachmentList( TaskMetaData.ATTACHMENT_KEY);
+        List<TaskMetaData> allTasks = unit.getAttachmentList( TaskMetaData.ATTACHMENTS_KEY);
 
         for (TaskMetaData each : allTasks) {
             deploy( phaseContext, unit, appMetaData, each );
@@ -62,7 +62,7 @@ public class TasksDeployer implements DeploymentUnitProcessor {
 
     protected void deploy(DeploymentPhaseContext phaseContext, DeploymentUnit unit, RubyApplicationMetaData appMetaData, TaskMetaData task) throws DeploymentUnitProcessingException {
         String queueName = "queue/" + appMetaData.getApplicationName() + "-tasks" + task.getQueueSuffix();
-
+        
         if (task.getConcurrency() > 0) {
             System.err.println( "task queue: " + queueName );
             QueueMetaData queue = new QueueMetaData();

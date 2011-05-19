@@ -29,7 +29,7 @@ public class QueueMetaData extends AbstractDestinationMetaData {
     private boolean durable = true;
 
     public QueueMetaData() {
-
+  
     }
 
     public QueueMetaData(String name) {

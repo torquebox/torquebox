@@ -25,7 +25,7 @@ import org.torquebox.core.util.StringUtils;
 
 public class TaskMetaData {
     
-    public static AttachmentKey<AttachmentList<TaskMetaData>> ATTACHMENT_KEY = AttachmentKey.createList( TaskMetaData.class );
+    public static AttachmentKey<AttachmentList<TaskMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( TaskMetaData.class );
 
     private String rubyClassName;
     private String location;
@@ -34,7 +34,7 @@ public class TaskMetaData {
     private String simpleName;
 
     public TaskMetaData() {
-
+    
     }
 
     public String getName() {
