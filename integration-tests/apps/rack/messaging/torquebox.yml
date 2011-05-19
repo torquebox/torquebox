@@ -5,5 +5,13 @@ queues:
   /queues/results:
     durable: false
 
+topics:
+  /topics/test:
+    durable: false
+
+  /topics/results:
+    durable: false
+
 messaging:
-  /queues/test: TestConsumer
+  /queues/test: TestQueueConsumer
+  /topics/test: TestTopicConsumer

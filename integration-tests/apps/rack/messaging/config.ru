@@ -9,7 +9,8 @@ class RackApp
     puts env.inspect
     msg = env['QUERY_STRING']
     queue = inject('/queues/test')
-    queue.publish(msg)
+    topic = inject('/topics/test')
+    msg.include?('topic') ? topic.publish(msg) : queue.publish(msg)
     [200, { 'Content-Type' => 'text/html' }, "<div id='success'>it worked</div>"] 
   end
 end

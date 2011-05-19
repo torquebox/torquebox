@@ -20,4 +20,13 @@ describe "messaging rack test" do
     result.should == "result=ham-biscuit"
   end
 
+  it "should receive a topic ham biscuit" do
+    receive_thread = Thread.new {
+      result = TorqueBox::Messaging::Topic.new('/topics/results').receive(:timeout => 30_000)
+      result.should == "result=topic-ham-biscuit"
+    }
+    visit "/messaging-rack/?topic-ham-biscuit"
+    receive_thread.join
+  end
+
 end
