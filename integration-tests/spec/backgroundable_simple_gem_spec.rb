@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'torquebox-messaging'
 
-describe "backgroundable tests" do
+describe "backgroundable simple gem tests" do
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -9,7 +9,7 @@ describe "backgroundable tests" do
       root: #{File.dirname(__FILE__)}/../apps/rack/background-simple-gem
       env: development
     web:
-      context: /background
+      context: /background_simple_gem
     
     ruby:
       version: #{RUBY_VERSION[0,3]}
@@ -21,7 +21,7 @@ describe "backgroundable tests" do
   end
 
   it "should wait asynchronously" do
-    visit "/background"
+    visit "/background_simple_gem"
     page.should have_content('it worked')
     @background.publish "release"
     result = @foreground.receive(:timeout => 25000)
@@ -29,7 +29,7 @@ describe "backgroundable tests" do
   end
 
   it "should properly handle backgrounded methods on reloaded classes" do
-    visit "/background?redefine=1"
+    visit "/background_simple_gem?redefine=1"
     page.should have_content('it worked')
     @background.publish "release"
     result = @foreground.receive(:timeout => 25000)
