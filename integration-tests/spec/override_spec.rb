@@ -73,7 +73,7 @@ end
 
 describe "archived internal" do
   before(:each) do
-    @home = /^vfs:.*\/override.knob.*\/contents$/
+    @home = /^vfs:.*\/override.knob.*$/
   end
   deploy <<-END.gsub(/^ {4}/,'')
     application:
@@ -109,7 +109,7 @@ end
 
 describe "archived external" do
   before(:each) do
-    @home = /^vfs:.*\/override.knob.*\/contents$/
+    @home = /^vfs:.*\/override.knob.*$/
   end
   deploy <<-END.gsub(/^ {4}/,'')
     application:
