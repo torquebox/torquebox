@@ -1,9 +1,9 @@
 
 queues:
-  queue/simple_queue:
+  /queue/simple_queue:
     durable: false
-  queue/backchannel:
+  /queue/backchannel:
     durable: false
 
 messaging:
-  queue/simple_queue: SimpleProcessor
+  /queue/simple_queue: SimpleProcessor

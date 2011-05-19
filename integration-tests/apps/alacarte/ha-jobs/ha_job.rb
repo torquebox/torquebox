@@ -16,7 +16,7 @@ class HaJob
       f.puts( "Updated #{Time.now}" )
     end
 
-    queue = inject('queue/backchannel')
+    queue = inject('/queue/backchannel')
     queue.publish('release')
   end
 

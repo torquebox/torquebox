@@ -1,5 +1,5 @@
 class Widget < ActiveRecord::Base
-  import TorqueBox::Injectors
+  include TorqueBox::Injectors
   
   def foo(call_count)
     @responseq = inject('/queues/response')

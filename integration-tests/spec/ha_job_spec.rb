@@ -24,7 +24,7 @@ describe "HA jobs test" do
   end
 
   it "should work" do
-    release = TorqueBox::Messaging::Queue.new('queue/backchannel').receive( :timeout => 120_000 )
+    release = TorqueBox::Messaging::Queue.new('/queue/backchannel').receive( :timeout => 120_000 )
     release.should == 'release'
     @touchfile.should exist
   end

@@ -32,7 +32,7 @@ class SimpleService
     puts "loop_once"
     if ( @something && @polish )
       @logger.info "Looping once"
-      response_queue = inject( 'queue/response' )
+      response_queue = inject( '/queue/response' )
       @logger.info "Sending notice to queue #{response_queue}"
       response_queue.publish( 'done' )
       @logger.info "Sent and sleep"
