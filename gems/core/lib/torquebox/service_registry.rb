@@ -15,6 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+
 module TorqueBox
   class ServiceRegistry
 
@@ -34,22 +35,27 @@ module TorqueBox
     end
 
     def self.lookup(name, &block)
-#      if @service_registry.nil?
-#        self.blocks[name] << block
-#        nil
-#      else
-#        entry = @service_registry.getRegistry().findEntry(name)      
-#        return nil unless entry
-#        if block_given?
-#          yield entry.getTarget()
-#        else
-#          entry.getTarget()
-#        end
-#      end
+      if @service_registry.nil?
+        self.blocks[name] << block
+        nil
+      else
+        name = TorqueBox::ServiceRegistry.service_name_for( name ) if name.is_a? String
+        entry = @service_registry.getService( name )
+        return nil unless entry
+        if block_given?
+          yield entry.getValue()
+        else
+          entry.getValue()
+        end
+      end
     end
 
     def self.blocks
       @blocks ||= Hash.new{|h, k| h[k] = []}
+    end
+
+    def self.service_name_for( name )
+      Java::org.jboss.msc.service.ServiceName.parse( name )
     end
 
   end

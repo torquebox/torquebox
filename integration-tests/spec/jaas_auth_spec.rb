@@ -31,8 +31,8 @@ describe "jaas authentication tests" do
       version: #{RUBY_VERSION[0,3]}
 
     auth:
-      torquebox:
-        domain: spec
+      test-jaas:
+        domain: myappdomain
   END
 
   it "should authenticate with proper credentials" do

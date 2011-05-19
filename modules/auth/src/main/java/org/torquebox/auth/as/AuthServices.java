@@ -30,7 +30,7 @@ public class AuthServices {
     public static final ServiceName AUTHENTICATION = TORQUEBOX.append( "authentication" );
     
     public static ServiceName authenticationService(String appName, String name) {
-    	return ServiceName.of( appName ).append( AUTHENTICATION ).append( name );
+    	return AUTHENTICATION.append( appName ).append( name );
     }
 
 }
