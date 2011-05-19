@@ -20,7 +20,9 @@ module TorqueBox
 
       def receive(options = {})
         with_new_session do |session|
-          session.receive self, options
+          result = session.receive self, options
+          session.commit if session.transacted?
+          result
         end
       end
 
