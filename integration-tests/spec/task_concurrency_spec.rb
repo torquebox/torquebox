@@ -18,7 +18,7 @@ describe "task concurrency" do
 
   shared_examples_for "concurrent processors" do
     before(:each) do
-      @backchannel = TorqueBox::Messaging::Queue.new("/queues/backchannel")
+      @backchannel = TorqueBox::Messaging::Queue.new("queue/backchannel")
     end
 
     it "should have concurrent processors" do

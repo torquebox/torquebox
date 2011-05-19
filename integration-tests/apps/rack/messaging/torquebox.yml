@@ -1,9 +1,9 @@
 queues:
-  /queues/test:
+  queue/test:
     durable: false
 
-  /queues/results:
+  queue/results:
     durable: false
 
 messaging:
-  /queues/test: TestConsumer
+  queue/test: TestConsumer

@@ -1,4 +1,4 @@
 queues:
-  /queues/response:
+  queue/response:
     durable: false
 

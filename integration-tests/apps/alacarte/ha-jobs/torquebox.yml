@@ -1,5 +1,5 @@
 queues:
-  /queue/backchannel:
+  queue/backchannel:
     durable: false
 
 jobs:

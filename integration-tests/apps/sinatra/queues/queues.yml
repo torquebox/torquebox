@@ -1,8 +1,8 @@
-/queues/requests:
+queue/requests:
   durable: false
 
-/queues/responses:
+queue/responses:
   durable: false
 
-/queues/jobs:
+queue/jobs:
   durable: false

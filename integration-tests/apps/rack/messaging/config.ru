@@ -1,14 +1,17 @@
 require 'torquebox-core'
 require 'torquebox-messaging'
 
-extend TorqueBox::Injectors
+class RackApp
+  include TorqueBox::Injectors
+  
+  def call(env)
+    puts "Invoking app"
+    puts env.inspect
+    msg = env['QUERY_STRING']
+    queue = inject('queue/test')
+    queue.publish(msg)
+    [200, { 'Content-Type' => 'text/html' }, "<div id='success'>it worked</div>"] 
+  end
+end
 
-app = lambda { |env| 
-  puts "Invoking app"
-  puts env.inspect
-  msg = env['QUERY_STRING']
-  queue = inject('queues/test')
-  queue.publish(msg)
-  [200, { 'Content-Type' => 'text/html' }, "<div id='success'>it worked</div>"] 
-}
-run app
+run RackApp.new

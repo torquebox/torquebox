@@ -16,7 +16,7 @@ describe "messaging rack test" do
 
   it "should receive a ham biscuit" do
     visit "/messaging-rack/?ham-biscuit"
-    result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 120_000)
+    result = TorqueBox::Messaging::Queue.new('queue/results').receive(:timeout => 120_000)
     result.should == "result=ham-biscuit"
   end
 

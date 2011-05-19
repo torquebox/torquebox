@@ -2,7 +2,7 @@ class InjectionService
   include TorqueBox::Injectors
 
   def start
-    queue = inject('/queues/injection_service')
+    queue = inject('queue/injection_service')
     queue.publish('it worked')
   end
 end
