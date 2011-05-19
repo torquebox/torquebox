@@ -68,6 +68,8 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         
         List<String> prefixes = defaultInjectionPathPrefixes();
         prefixes.add(  rackAppMetaData.getRackUpScriptLocation() );
+        prefixes.add( "app/controllers/" );
+        prefixes.add( "app/helpers/" );
         
         return prefixes;
     }
