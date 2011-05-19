@@ -10,11 +10,11 @@ describe "rails3 injection test" do
     web:
       context: injection
     queues:
-      queue/injection_service:
+      /queues/injection_service:
         durable: false
-      queue/injection_job:
+      /queues/injection_job:
         durable: false
-      queue/injection_task:
+      /queues/injection_task:
         durable: false
     services:
       InjectionService:

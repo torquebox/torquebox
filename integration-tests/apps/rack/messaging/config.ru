@@ -8,7 +8,7 @@ class RackApp
     puts "Invoking app"
     puts env.inspect
     msg = env['QUERY_STRING']
-    queue = inject('queue/test')
+    queue = inject('/queues/test')
     queue.publish(msg)
     [200, { 'Content-Type' => 'text/html' }, "<div id='success'>it worked</div>"] 
   end

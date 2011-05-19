@@ -5,7 +5,7 @@ class JobQueuePublisher
   include TorqueBox::Injectors
 
   def initialize
-    @queue = inject( 'queue/jobs' )
+    @queue = inject( '/queues/jobs' )
   end
   def run
     @queue.publish "employment!"

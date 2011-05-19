@@ -4,7 +4,7 @@ require 'torquebox-messaging'
 shared_examples_for "rails backgroundable tests" do
 
   before(:each) do
-    @response = TorqueBox::Messaging::Queue.new( "queue/response" )
+    @response = TorqueBox::Messaging::Queue.new( "/queues/response" )
   end
 
   it "should reload the model in the task runtime" do

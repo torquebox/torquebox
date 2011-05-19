@@ -1,2 +1,2 @@
-queue/foobar:
+/queues/foobar:
   durable: false
