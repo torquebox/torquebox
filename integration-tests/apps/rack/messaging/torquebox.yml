@@ -9,9 +9,6 @@ topics:
   /topics/test:
     durable: false
 
-  /topics/results:
-    durable: false
-
 messaging:
   /queues/test: TestQueueConsumer
   /topics/test: TestTopicConsumer

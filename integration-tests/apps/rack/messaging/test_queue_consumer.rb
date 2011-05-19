@@ -5,7 +5,7 @@ class TestQueueConsumer < TorqueBox::Messaging::MessageProcessor
 
   def on_message(body)
     puts "on_message: #{body}"
-    inject('/queues/results').publish( "result=#{body}" )
+    inject('/queues/results').publish( "#{self.class.name}=#{body}" )
   end
 
 end
