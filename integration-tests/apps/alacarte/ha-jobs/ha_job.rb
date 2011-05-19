@@ -10,15 +10,13 @@ class HaJob
     basedir = ENV['BASEDIR']
     basedir = basedir.gsub( %r(\\:), ':' )
     basedir.gsub!( %r(\\\\), '\\' )
-    $stderr.puts "BASEDIR #{basedir}"
     touchfile = File.join( basedir,  'target', 'hajobs-touchfile.txt' )
-    File.open( touchfile, 'w' ) do |f|
-      f.puts( "Updated #{Time.now}" )
+      File.open( touchfile, 'w' ) do |f|
+        f.puts( "Updated #{Time.now}" )
     end
 
     queue = inject('/queue/backchannel')
-    queue.publish('release')
+    queue.publish(touchfile)
   end
-
+  
 end
-

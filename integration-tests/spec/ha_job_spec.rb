@@ -18,15 +18,17 @@ describe "HA jobs test" do
       version: #{RUBY_VERSION[0,3]}
   END
 
-  before do
-    @touchfile = Pathname.new( "./target/hajobs-touchfile.txt" )
-    FileUtils.rm_rf( @touchfile )
+  describe "in a cluster" do
+    it "should work (when we can figure out how to test in a cluster, and actually have HASingleton and clustering support)" 
   end
-
-  it "should work" do
-    release = TorqueBox::Messaging::Queue.new('/queue/backchannel').receive( :timeout => 120_000 )
-    release.should == 'release'
-    @touchfile.should exist
+  
+  describe "standalone" do
+    it "should still work" do
+      filename = TorqueBox::Messaging::Queue.new('/queue/backchannel').receive( :timeout => 120_000 )
+      filename.should_not be_nil
+      Pathname.new( filename ).should exist
+      FileUtils.rm_rf( filename ) if filename
+    end
   end
 
 end
