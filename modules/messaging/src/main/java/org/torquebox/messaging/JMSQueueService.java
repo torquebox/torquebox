@@ -23,7 +23,9 @@
 package org.torquebox.messaging;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.as.naming.MockContext;
 import org.jboss.as.naming.NamingStore;
@@ -76,9 +78,10 @@ class JMSQueueService implements Service<Void> {
                 final Map<String, Object> bindings = MockContext.popTrappedBindings();
                 System.err.println( "BINDINGS: " + bindings );
                 for(Map.Entry<String, Object> binding : bindings.entrySet()) {
-                    final BinderService binderService = new BinderService(binding.getKey());
-                    System.err.println( "BINDER: " + binding.getKey());
-                    target.addService(ContextNames.JAVA_CONTEXT_SERVICE_NAME.append(binding.getKey()), binderService)
+                    String bindingKey = bindingKeyFromBrokenMockContext( binding.getKey() );
+                    final BinderService binderService = new BinderService( bindingKey );
+                    System.err.println( "BINDER: " + bindingKey );
+                    target.addService(ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( bindingKey ), binderService)
                         .addDependency(ContextNames.JAVA_CONTEXT_SERVICE_NAME, NamingStore.class, binderService.getNamingStoreInjector())
                         .addInjection(binderService.getManagedObjectInjector(), new ValueManagedObject(Values.immediateValue(binding.getValue())))
                         .setInitialMode(ServiceController.Mode.ACTIVE)
@@ -87,6 +90,23 @@ class JMSQueueService implements Service<Void> {
             }
         } catch (Exception e) {
             throw new StartException("failed to create queue", e);
+        }
+    }
+    
+    protected String bindingKeyFromBrokenMockContext(String key) {
+        List<String> jndiList = Arrays.asList( this.jndi );
+        if (jndiList.contains( key )) {
+            // Key given back matches one of our JNDI bindings passed in
+            // so it wasn't munged
+            return key;
+        } else {
+            // The key given back to us was not in our original JNDI bindings,
+            // check to see if MockContext stripped a leading slash off
+            if (jndiList.contains( "/" + key )) {
+                return "/" + key;
+            } else {
+                return key;
+            }
         }
     }
 
