@@ -53,6 +53,10 @@ public class MessagingRuntimePoolDeployer implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext context) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = context.getDeploymentUnit();
+        
+        if ( ! unit.hasAttachment( MessageProcessorMetaData.ATTACHMENT_KEY ) ) {
+            return;
+        }
 
         List<PoolMetaData> pools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
 
