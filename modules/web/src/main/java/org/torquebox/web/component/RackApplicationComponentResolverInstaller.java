@@ -49,6 +49,8 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( RackApplicationComponent.class );
+        // Let Rack / Rails handle reloading for the web stack
+        resolver.setAlwaysReload( false );
         
         log.info( "Installing Rack app component resolver: " + serviceName );
         ComponentResolverService service = new ComponentResolverService( resolver );
