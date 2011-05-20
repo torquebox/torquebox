@@ -25,6 +25,7 @@ class SessioningController < ApplicationController
     session[:a_fixnum] = 42
     session[:a_string] = "swordfish"
     session[:a_boolean] = true
+    session['a_string_key'] = "tacos"
 
     redirect_to :action=>:display_session
   end

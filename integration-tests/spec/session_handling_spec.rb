@@ -76,6 +76,8 @@ shared_examples_for "session handling" do
     find('#a_string_java').text.should == 'swordfish'
     find('#a_boolean_ruby').text.should == 'true'
     find('#a_boolean_java').text.should == 'true'
+    find('#a_string_key_ruby').text.should == 'tacos'
+    find('#a_string_key_java').text.should == 'tacos'
   end
 
   it "should reset and restore" do
