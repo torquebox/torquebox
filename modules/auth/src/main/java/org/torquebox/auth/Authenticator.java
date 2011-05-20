@@ -24,15 +24,24 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 
+import java.io.IOException;
 import java.security.Principal;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.callback.UnsupportedCallbackException;
+
 import org.jboss.security.AuthenticationManager;
 import org.jboss.security.SecurityContext;
+import org.jboss.security.plugins.JBossAuthenticationManager;
 import org.picketbox.factories.SecurityFactory;
 
 public class Authenticator implements Service<Authenticator> {
-    private String authDomain;
-//    private SecurityContext securityContext;
-//    private AuthenticationManager authenticationManager;
+	public static final String TORQUEBOX_AUTH_DOMAIN = "torquebox";
+
+	private String authDomain;
+    private SecurityContext securityContext;
+    private AuthenticationManager authenticationManager;
     private static final Logger log = Logger.getLogger( "org.torquebox.auth" );
 
 
@@ -47,8 +56,8 @@ public class Authenticator implements Service<Authenticator> {
     public boolean authenticate(String name, String pass) {
         Principal principal = getPrincipal(name);
         Object credential = new String(pass);
-//        return this.authenticationManager.isValid(principal, credential);
-        return true;
+        return this.authenticationManager.isValid(principal, credential);
+        //return true;
     }
 
 	@Override
@@ -73,14 +82,29 @@ public class Authenticator implements Service<Authenticator> {
 
 	protected void start() {
         log.info("Starting TorqueBox authenticator.");
+    	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-//	        this.securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
-//	        this.authenticationManager = securityContext.getAuthenticationManager();
+        	Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
+        	if (this.getAuthDomain() == Authenticator.TORQUEBOX_AUTH_DOMAIN) {
+        		// Install a TorqueBox-specific callback handler for anything in the torquebox domain
+        		AuthenticationManager authenticationManager = 
+        			new JBossAuthenticationManager(this.getAuthDomain(), new CallbackHandler() {					
+					@Override
+					public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+					}
+				});
+        		// Bind this bitch to JNDI
+        	}
+        	this.securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
+        	this.authenticationManager = securityContext.getAuthenticationManager();
 	        log.info("TorqueBox authenticator started.");
         } catch (Exception e) {
         	log.error("Unable to initialize TorqueBox security subsystem. " + e.getLocalizedMessage());
         	e.printStackTrace();
+        } finally {
+        	Thread.currentThread().setContextClassLoader( originalClassLoader);
         }
+      
 	}
 
 	@Override
