@@ -14,4 +14,7 @@ class RootController < ApplicationController
     puts "Called thing_one() -> #{@use_me} #{@use_me.class} #{@use_me.java_class.name}"
   end
 
+  def environment
+  end
+
 end

@@ -6,7 +6,6 @@ describe "basic rails3 test" do
     ---
     application:
       RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails3/basic
-      RAILS_ENV: development
     web:
       context: /basic-rails
     
@@ -31,6 +30,11 @@ describe "basic rails3 test" do
   it "should support injection" do
     visit "/basic-rails/root/injectiontest"
     find('#success').text.should == 'taco'
+  end
+
+  it "should default to development environment" do
+    visit "/basic-rails/root/environment"
+    find('#success').text.should == 'development'
   end
 
 end
