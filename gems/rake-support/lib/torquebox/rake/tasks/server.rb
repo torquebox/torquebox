@@ -35,29 +35,29 @@ namespace :torquebox do
   end
 
   namespace :launchd do
-    desc "Check if TorqueBox is installed as a launchd daemon"
+#    desc "Check if TorqueBox is installed as a launchd daemon"
     task :check=>[ 'torquebox:check' ] do
       TorqueBox::Launchd.check_install
       puts "Launchd tasks not done yet. Try again with a later build."
     end
 
-    desc "Install TorqueBox as an launchd daemon"
+#    desc "Install TorqueBox as an launchd daemon"
     task :install=>[ 'torquebox:check' ] do
       TorqueBox::DeployUtils.create_symlink
       puts "Launchd tasks not done yet. Try again with a later build."
     end
 
-    desc "Start TorqueBox when running as a launchd daemon"
+#    desc "Start TorqueBox when running as a launchd daemon"
     task :start=>[ :check ] do
       puts "Launchd tasks not done yet. Try again with a later build."
     end
 
-    desc "Stop TorqueBox when running as an launchd daemon"
+#    desc "Stop TorqueBox when running as an launchd daemon"
     task :stop=>[ :check ] do
       puts "Launchd tasks not done yet. Try again with a later build."
     end
 
-    desc "Restart TorqueBox when running as an launchd daemon"
+#    desc "Restart TorqueBox when running as an launchd daemon"
     task :restart=>[ :check ] do
       puts "Launchd tasks not done yet. Try again with a later build."
     end
