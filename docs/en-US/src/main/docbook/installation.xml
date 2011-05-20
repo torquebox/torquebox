@@ -146,9 +146,36 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
     
     <screen><prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh</command></screen>
 
-    <para>Alternatively, the <filename>torquebox-rake-support</filename> gem provides a <command>torquebox:run</command> task:</para>
+    <para>Alternatively, the top-level <filename>$TORQUEBOX_HOME/Rakefile</filename> provides a few rake tasks to help with deployment and installation.</para>
 
-    <screen><prompt>$</prompt> <command>jruby -S rake torquebox:run</command></screen>
+    <screen><prompt>$</prompt> <command>cd $TORQUEBOX_HOME; jruby -S rake -T</command>
+(in /opt/torquebox)
+rake torquebox:check            # Check your installation of the TorqueBox ...
+rake torquebox:run              # Run TorqueBox server
+rake torquebox:upstart:check    # Check if TorqueBox is installed as an ups...
+rake torquebox:upstart:install  # Install TorqueBox as an upstart service
+rake torquebox:upstart:restart  # Restart TorqueBox when running as an upst...
+rake torquebox:upstart:start    # Start TorqueBox when running as an upstar...
+rake torquebox:upstart:stop     # Stop TorqueBox when running as an upstart...
+    </screen>
+
+    <itemizedlist>
+      <listitem><command>torquebox:check</command>: Check your TorqueBox installation</listitem>
+      <listitem><command>torquebox:run</command>: Run TorqueBox</listitem>
+      <listitem><command>torquebox:upstart:check</command>: Check if TorqueBox is installed as an upstart service</listitem>
+      <listitem><command>torquebox:upstart:install</command>: Install TorqueBox as an upstart service</listitem>
+      <listitem><command>torquebox:upstart:restart</command>: Restart TorqueBox when it is running as an upstart service</listitem>
+      <listitem><command>torquebox:upstart:start</command>: Start TorqueBox when it is installed as an upstart service</listitem>
+      <listitem><command>torquebox:upstart:stop</command>: Stop TorqueBox when it is installed as an upstart service</listitem>
+    </itemizedlist>
+
+    <para>
+      Note: The <command>upstart:install</command> task makes a couple of assumptions you need to take into account. 
+      <itemizedlist>
+        <listitem>You must have a 'torquebox' user on your system.</listitem>
+        <listitem>The rake task attempts to create a symlink from $TORQUEBOX_HOME to /opt/torquebox. Run the task as a user with sufficient permissions so that this does not fail.</listitem>
+      </itemizedlist>
+    </para>
 
   </section>
 </chapter>
