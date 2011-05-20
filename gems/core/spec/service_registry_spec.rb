@@ -1,31 +1,31 @@
 
-require 'torquebox/kernel'
+require 'torquebox/service_registry'
 
-describe TorqueBox::Kernel do
+describe TorqueBox::ServiceRegistry do
 
   it "should return nil lookup if registry unavailable" do
-    TorqueBox::ServiceRegistry.service_registry = nil
-    TorqueBox::Kernel.lookup('foo').should be_nil
+    TorqueBox::ServiceRegistry.lookup('foo').should be_nil
   end
 
   it "should return value from registry" do
     @registry["foo"] = "bar"
-    TorqueBox::Kernel.lookup("foo").should eql("bar")
+    TorqueBox::ServiceRegistry.service_registry = @service_registry
+    TorqueBox::ServiceRegistry.lookup("foo").should eql("bar")
   end
 
   it "should yield value from from block when registry contains key" do
     @registry["foo"] = "bar"
-    TorqueBox::Kernel.lookup("foo") {|x| "baz" }.should eql("baz")
+    TorqueBox::ServiceRegistry.service_registry = @service_registry
+    TorqueBox::ServiceRegistry.lookup("foo") {|x| "baz" }.should eql("baz")
   end
 
   it "should defer block execution if registry unavailable" do
-    TorqueBox::ServiceRegistry.service_registry = nil
     @registry["foo"] = "bar"
-    TorqueBox::Kernel.lookup("foo") { |foo| @foo = foo }.should be_nil
-    TorqueBox::Kernel.blocks.should_not be_empty
+    TorqueBox::ServiceRegistry.lookup("foo") { |foo| @foo = foo }.should be_nil
+    TorqueBox::ServiceRegistry.blocks.should_not be_empty
     @foo = nil
     TorqueBox::ServiceRegistry.service_registry = @service_registry
-    TorqueBox::Kernel.blocks.should be_empty
+    TorqueBox::ServiceRegistry.blocks.should be_empty
     @foo.should eql("bar")
   end
 
@@ -41,7 +41,6 @@ describe TorqueBox::Kernel do
       service.stub!(:getValue).and_return(@registry[name])
       service
     }
-    TorqueBox::ServiceRegistry.service_registry = @service_registry
   end
-
+  
 end

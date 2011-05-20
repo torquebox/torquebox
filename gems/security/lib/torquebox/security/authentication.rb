@@ -19,15 +19,22 @@ module TorqueBox
   module Authentication
     def self.[](name)
       return nil unless torquebox_context
-      puts "Looking up authentication context #{torquebox_context}-authentication-#{name}"
-      Authenticator.new(::TorqueBox::Kernel.lookup(torquebox_context + "-authentication-" + name))
+      puts "Looking up authentication context #{service_name( name )}"
+      Authenticator.new( ::TorqueBox::ServiceRegistry.lookup( service_name( name ) ) )
     end
 
     def self.default
       self['default']
     end
 
-    private
+    def self.service_name(domain)
+      "#{service_prefix}.#{torquebox_context}.#{domain}"
+    end
+
+    def self.service_prefix
+      "torquebox.authentication"
+    end
+
     def self.torquebox_context
       puts "ERROR: TorqueBox application context not available" unless ENV['TORQUEBOX_APP_NAME']
       ENV['TORQUEBOX_APP_NAME']

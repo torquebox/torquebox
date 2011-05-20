@@ -4,12 +4,12 @@ require 'torquebox/security/authentication'
 
 describe TorqueBox::Authentication do
  it "should provide a default authenticator" do
-   TorqueBox::Kernel.should_receive(:lookup).with 'myapp-authentication-default'
+   TorqueBox::ServiceRegistry.should_receive(:lookup).with 'torquebox.authentication.myapp.default'
    TorqueBox::Authentication.default
  end
 
  it "should allow authenticators to be looked up by name" do
-   TorqueBox::Kernel.should_receive(:lookup).with 'myapp-authentication-namedthing'
+   TorqueBox::ServiceRegistry.should_receive(:lookup).with 'torquebox.authentication.myapp.namedthing'
    TorqueBox::Authentication['namedthing']
  end
 
