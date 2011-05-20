@@ -32,8 +32,8 @@
     </dependency>
     <dependency>
       <groupId>org.picketbox</groupId>
-      <artifactId>picketbox-bare</artifactId>
-      <version>3.0.0.Final</version>
+      <artifactId>picketbox</artifactId>
+      <version>4.0.0.Alpha4</version>
     </dependency>
     
     <!-- <dependency> -->
