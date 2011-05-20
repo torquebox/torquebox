@@ -22,6 +22,7 @@ package org.torquebox.interp.core;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -92,7 +93,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     private Map<String, String> applicationEnvironment;
 
     /** Undisposed runtimes created by this factory. */
-    private Set<Ruby> undisposed = new HashSet<Ruby>();
+    private Set<Ruby> undisposed = Collections.synchronizedSet( new HashSet<Ruby>() );
 
     /** Ruby compatibility version. */
     private CompatVersion rubyVersion;
@@ -257,7 +258,7 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     /**
      * Create a new instance of a fully-initialized runtime.
      */
-    public synchronized Ruby createInstance(String contextInfo) throws Exception {
+    public Ruby createInstance(String contextInfo) throws Exception {
 
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
