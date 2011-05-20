@@ -1,7 +1,10 @@
 package org.torquebox.core.injection.analysis;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 
 import org.jboss.logging.Logger;
@@ -35,6 +38,16 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
         }
         
         return null;
+    }
+    
+    public Set<Injectable> getPredeterminedInjectables() {
+        Set<Injectable> injectables = new HashSet<Injectable>();
+        for (InjectableHandler each : this.handlersByPriority ) {
+            if ( each instanceof PredeterminedInjectableHandler ) {
+                injectables.addAll( ((PredeterminedInjectableHandler)each).getInjectables());
+            }
+        }
+        return injectables;
     }
 
     @Override

@@ -19,7 +19,8 @@ import org.torquebox.core.injection.analysis.InjectionIndex;
 
 public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcessor {
 
-    protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes, ServiceBuilder<ComponentResolver> builder)
+    protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
+            ServiceBuilder<ComponentResolver> builder)
             throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
@@ -31,8 +32,6 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
 
         Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
 
-        log.info( "INJECTABLES: " + injectables );
-
         for (Injectable injectable : injectables) {
             try {
                 ServiceName serviceName = injectable.getServiceName( phaseContext );
@@ -43,13 +42,15 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         }
 
         AttachmentList<Injectable> additionalInjectables = unit.getAttachment( ComponentResolver.ADDITIONAL_INJECTABLES );
-
-        for (Injectable injectable : additionalInjectables) {
-            try {
-                ServiceName serviceName = injectable.getServiceName( phaseContext );
-                builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
-            } catch (Exception e) {
-                throw new DeploymentUnitProcessingException( e );
+        
+        if (additionalInjectables != null) {
+            for (Injectable injectable : additionalInjectables) {
+                try {
+                    ServiceName serviceName = injectable.getServiceName( phaseContext );
+                    builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
+                } catch (Exception e) {
+                    throw new DeploymentUnitProcessingException( e );
+                }
             }
         }
     }
@@ -57,10 +58,10 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
     protected String searchForSourceFile(VirtualFile root, String requirePath, boolean searchRoot, boolean searchAppDirRoots, String... roots) {
 
         final String filePath = requirePath + ".rb";
-        
-        if ( searchRoot ) {
+
+        if (searchRoot) {
             final VirtualFile candidate = root.getChild( filePath );
-            if ( candidate.exists() ) {
+            if (candidate.exists()) {
                 return candidate.getPathNameRelativeTo( root );
             }
         }
@@ -89,26 +90,26 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         return null;
     }
 
-    
     protected ComponentResolver createComponentResolver(DeploymentUnit unit) {
-    	RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
-    	boolean alwaysReload = false;
-    	if (appMetaData != null) {
-    		alwaysReload = appMetaData.isDevelopmentMode();
-    	}
-    	
-    	return new ComponentResolver( alwaysReload );
+        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        boolean alwaysReload = false;
+        if (appMetaData != null) {
+            alwaysReload = appMetaData.isDevelopmentMode();
+        }
+
+        return new ComponentResolver( alwaysReload );
     }
-    
+
     protected List<String> defaultInjectionPathPrefixes() {
-    	List<String> defaults = new ArrayList<String>();
-    	defaults.add( "app/models/" );
-    	defaults.add( "lib/" );
-    	defaults.add( "." ); // this is a special case, and will ONLY match files in the app root
-    	
-    	return defaults;
+        List<String> defaults = new ArrayList<String>();
+        defaults.add( "app/models/" );
+        defaults.add( "lib/" );
+        defaults.add( "." ); // this is a special case, and will ONLY match
+                             // files in the app root
+
+        return defaults;
     }
-    
+
     private static final Logger log = Logger.getLogger( "org.torquebox.core.component.injection" );
 
 }

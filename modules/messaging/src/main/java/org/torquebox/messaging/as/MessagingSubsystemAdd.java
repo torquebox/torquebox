@@ -80,7 +80,7 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
 
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
 
-        context.addDeploymentProcessor( Phase.POST_MODULE, 7, new MessagingInjectablesProcessor() );
+        //context.addDeploymentProcessor( Phase.POST_MODULE, 7, new MessagingInjectablesProcessor() );
         context.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksDeployer() );
