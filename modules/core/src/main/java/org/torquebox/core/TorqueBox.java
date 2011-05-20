@@ -27,7 +27,7 @@ import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
-import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
+import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RuntimeInitializer;
 
 public class TorqueBox implements TorqueBoxMBean {
@@ -37,7 +37,7 @@ public class TorqueBox implements TorqueBoxMBean {
     private Properties properties = new Properties();
 
     private String gemPath;
-    private RubyRuntimeFactoryImpl factory;
+    private RubyRuntimeFactory factory;
     private Ruby globalRuby;
 
     public TorqueBox() {
@@ -87,7 +87,7 @@ public class TorqueBox implements TorqueBoxMBean {
     }
     
     protected void createRubyRuntimeFactory() {
-        this.factory = new RubyRuntimeFactoryImpl();
+        this.factory = new RubyRuntimeFactory();
         this.factory.setGemPath( getGemPath() );
         this.factory.create();
     }

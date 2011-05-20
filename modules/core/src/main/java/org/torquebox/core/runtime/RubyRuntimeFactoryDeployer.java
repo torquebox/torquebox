@@ -30,7 +30,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData != null && runtimeMetaData != null) {
-            RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( runtimeMetaData.getRuntimeInitializer() );
+            RubyRuntimeFactory factory = new RubyRuntimeFactory( runtimeMetaData.getRuntimeInitializer() );
 
             List<String> loadPaths = new ArrayList<String>();
 
