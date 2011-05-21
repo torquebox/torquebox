@@ -19,24 +19,31 @@
 
 package org.torquebox.core.as;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.server.deployment.api.ServerDeploymentRepository;
+import org.jboss.as.server.deployment.module.ModuleSpecification;
+import org.jboss.as.server.deployment.module.MountHandle;
+import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
 
 /**
- * Replace the ServerDeploymentRepository with our own that understands -knob.yml files
- * for -knob.yml deployments.
+ * Replace the ServerDeploymentRepository with our own that understands
+ * -knob.yml files for -knob.yml deployments.
  * 
- * Note: We need the "A" prefix to sort before DeploymentRootMountProcessor because
- * both have a priority of 0 in Phase.STRUCTURE
+ * Note: We need the "A" prefix to sort before DeploymentRootMountProcessor
+ * because both have a priority of 0 in Phase.STRUCTURE
  * 
  */
 public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
-    
+
     public AKnobRootMountProcessor(ServerEnvironment environment) {
         this.environment = environment;
     }
@@ -44,32 +51,36 @@ public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
-        
-        if(deploymentUnit.getAttachment( Attachments.DEPLOYMENT_ROOT ) != null) {
+
+        if (deploymentUnit.getAttachment( Attachments.DEPLOYMENT_ROOT ) != null) {
             return;
         }
-        
+
         if (!deploymentUnit.getName().endsWith( "-knob.yml" )) {
             return;
         }
-        
-        final ServerDeploymentRepository originalRepository = deploymentUnit.getAttachment( Attachments.SERVER_DEPLOYMENT_REPOSITORY );
-        if(originalRepository == null) {
-            throw new DeploymentUnitProcessingException( "No deployment repository available." );
+
+        VirtualFile root = deploymentUnit.getAttachment( Attachments.DEPLOYMENT_CONTENTS );
+
+        String deploymentName = deploymentUnit.getName();
+        //System.err.println( "NAME [" + deploymentName + "]" );
+        VirtualFile realRoot = root.getChild( deploymentName );
+        try {
+            Closeable closeable = VFS.mountReal( root.getPhysicalFile(), realRoot );
+            MountHandle handle = new MountHandle( closeable );
+            ResourceRoot expandedResourceRoot = new ResourceRoot( realRoot, handle );
+            deploymentUnit.putAttachment( Attachments.DEPLOYMENT_ROOT, expandedResourceRoot );
+            deploymentUnit.putAttachment( Attachments.MODULE_SPECIFICATION, new ModuleSpecification() );
+        } catch (IOException e) {
+            throw new DeploymentUnitProcessingException( e );
         }
-        
-        KnobServerDeploymentRepositoryImpl knobRepository =
-            new KnobServerDeploymentRepositoryImpl( originalRepository, environment.getServerDeployDir(), environment.getServerSystemDeployDir() );
-        
-        // Replace the ServerDeploymentRepository with our own that knows how to deploy loose -knob.yml files
-        deploymentUnit.putAttachment( Attachments.SERVER_DEPLOYMENT_REPOSITORY, knobRepository );
     }
 
     @Override
     public void undeploy(DeploymentUnit context) {
 
     }
-    
+
     private ServerEnvironment environment;
 
 }

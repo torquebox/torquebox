@@ -49,9 +49,9 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
             final ServerDeploymentRepository serverDeploymentRepository = unit.getAttachment(Attachments.SERVER_DEPLOYMENT_REPOSITORY);
             final String deploymentName = unit.getName();
             final String deploymentRuntimeName = unit.getAttachment(Attachments.RUNTIME_NAME);
-            final byte[] deploymentHash = unit.getAttachment(Attachments.DEPLOYMENT_HASH);
+            //final byte[] deploymentHash = unit.getAttachment(Attachments.DEPLOYMENT_HASH);
             
-            final Closeable closable = serverDeploymentRepository.mountDeploymentContent(deploymentName, deploymentRuntimeName, deploymentHash, root, true);
+            final Closeable closable = serverDeploymentRepository.mountDeploymentContent(deploymentName, deploymentRuntimeName, root, root, true);
             final MountHandle mountHandle = new MountHandle( closable );
             
             ResourceRoot expandedResourceRoot = new ResourceRoot( root, mountHandle );
