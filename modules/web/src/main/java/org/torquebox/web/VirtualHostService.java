@@ -22,19 +22,14 @@
 
 package org.torquebox.web;
 
-import org.apache.catalina.Host;
-import org.apache.catalina.Valve;
 import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.valves.AccessLogValve;
-import org.apache.catalina.valves.ExtendedAccessLogValve;
+import org.jboss.as.web.VirtualHost;
 import org.jboss.as.web.WebServer;
-import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
-import org.jboss.web.rewrite.RewriteValve;
 
 
 /**
@@ -42,19 +37,17 @@ import org.jboss.web.rewrite.RewriteValve;
  *
  * @author Emanuel Muckenhuber
  */
-public class VirtualHostService implements Service<Host> {
+public class VirtualHostService implements Service<VirtualHost> {
 
     private final String name;
     private final String[] aliases;
     private String defaultWebModule;
-    private ModelNode accessLog;
-    private ModelNode rewrite;
 
     private final InjectedValue<String> tempPathInjector = new InjectedValue<String>();
     private final InjectedValue<String> accessLogPathInjector = new InjectedValue<String>();
     private final InjectedValue<WebServer> webServer = new InjectedValue<WebServer>();
 
-    private Host host;
+    private VirtualHost host;
 
     public VirtualHostService(String name, String[] aliases) {
         this.name = name;
@@ -78,20 +71,20 @@ public class VirtualHostService implements Service<Host> {
         } catch(Exception e) {
             throw new StartException(e);
         }
-        this.host = host;
+        this.host = new VirtualHost( host, false );
     }
 
     /** {@inheritDoc} */
     public synchronized void stop(StopContext context) {
-        final Host host = this.host;
+        final VirtualHost host = this.host;
         this.host = null;
         final WebServer server = webServer.getValue();
-        server.removeHost(host);
+        server.removeHost(host.getHost());
     }
 
     /** {@inheritDoc} */
-    public synchronized Host getValue() throws IllegalStateException {
-        final Host host = this.host;
+    public synchronized VirtualHost getValue() throws IllegalStateException {
+        final VirtualHost host = this.host;
         if(host == null) {
             throw new IllegalStateException();
         }
