@@ -36,6 +36,7 @@
         <module name="org.jboss.as.ee"/>
         <module name="org.jboss.as.server"/>
         <module name="org.jboss.as.weld"/>
+        <module name="org.jboss.as.naming"/>
         <module name="org.jboss.weld.core"/>
         <module name="org.jboss.modules"/>
         <module name="org.jboss.msc"/>
