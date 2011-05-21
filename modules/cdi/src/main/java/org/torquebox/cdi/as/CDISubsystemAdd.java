@@ -50,7 +50,6 @@ class CDISubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
         context.addDeploymentProcessor( Phase.STRUCTURE, 11, new CDIStructureProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 11, new CDIDependencyProcessor() );
         context.addDeploymentProcessor( Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, new HackWeldBeanManagerServiceProcessor() );
     }
 

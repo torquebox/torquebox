@@ -62,14 +62,18 @@ public class HackWeldBeanManagerServiceProcessor implements DeploymentUnitProces
         // deploymentUnit.getAttachment(
         // org.jboss.as.ee.component.Attachments.EE_MODULE_DESCRIPTION );
         if (!WeldDeploymentMarker.isPartOfWeldDeployment( topLevelDeployment )) {
+            System.err.println( "HACK: is not marked as weld deployment?" );
             return;
         }
         // hack to set up a java:comp binding for jar deployments as well as
         // wars
         RubyApplicationMetaData rubyAppMetaData = deploymentUnit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         if (rubyAppMetaData == null) {
+            System.err.println( "HACK: Is not ruby app" );
             return;
         }
+
+        System.err.println( "HACK: Is a ruby app" );
 
         // if (moduleDescription == null) {
         // return;
@@ -86,19 +90,24 @@ public class HackWeldBeanManagerServiceProcessor implements DeploymentUnitProces
 
         // add the BeanManager service
         final ServiceName beanManagerServiceName = BeanManagerService.serviceName( deploymentUnit );
-        if ( phaseContext.getServiceRegistry().getService( beanManagerServiceName ) != null ) {
+        if (phaseContext.getServiceRegistry().getService( beanManagerServiceName ) != null) {
+            System.err.println( "HACK: beanmanager already exists! " + beanManagerServiceName );
             return;
         }
-        
+
         final ServiceName weldServiceName = topLevelDeployment.getServiceName().append( WeldService.SERVICE_NAME );
 
         BeanManagerService beanManagerService = new BeanManagerService( rootBda.getId() );
+        System.err.println( "HACK: install beanmanager: " + beanManagerServiceName );
         serviceTarget.addService( beanManagerServiceName, beanManagerService ).addDependency( weldServiceName,
                     WeldContainer.class, beanManagerService.getWeldContainer() ).install();
 
         // bind the bean manager to JNDI
-        //final ServiceName moduleContextServiceName = ContextNames.contextServiceNameOfApplication( rubyAppMetaData.getApplicationName() );
-        //bindBeanManager( serviceTarget, beanManagerServiceName, moduleContextServiceName );
+        // final ServiceName moduleContextServiceName =
+        // ContextNames.contextServiceNameOfApplication(
+        // rubyAppMetaData.getApplicationName() );
+        // bindBeanManager( serviceTarget, beanManagerServiceName,
+        // moduleContextServiceName );
 
         // bind the bm into java:comp for all components that require it
         /*
