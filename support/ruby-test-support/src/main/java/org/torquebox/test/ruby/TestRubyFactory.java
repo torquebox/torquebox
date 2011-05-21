@@ -20,12 +20,12 @@
 package org.torquebox.test.ruby;
 
 import org.jruby.Ruby;
-import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
+import org.torquebox.core.runtime.RubyRuntimeFactory;
 
 public class TestRubyFactory {
 
     public static Ruby createRuby() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
+        RubyRuntimeFactory factory = new RubyRuntimeFactory();
 
         if (System.getProperty( "gem.path" ) != null) {
             factory.setGemPath( System.getProperty( "gem.path" ) );
