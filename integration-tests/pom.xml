@@ -66,12 +66,14 @@
       <type>gem</type>
     </dependency>
 
+<!--
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
       <version>0.1.7</version>
       <type>gem</type>
     </dependency>
+-->
 
 
     <dependency>
@@ -267,6 +269,18 @@
             <groupId>de.saumya.mojo</groupId>
             <artifactId>gem-maven-plugin</artifactId>
             <executions>
+              <execution>
+                <id>install-torquespec</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>./target/rubygems/</gemHome>
+                  <gemPath>./target/rubygems/</gemPath>
+                  <installArgs>./gems/torquespec-0.1.7.gem --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
               <execution>
                 <id>install-jruby-openssl</id>
                 <phase>test-compile</phase>
