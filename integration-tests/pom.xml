@@ -276,9 +276,9 @@
                   <goal>install</goal>
                 </goals>
                 <configuration>
-                  <gemHome>./target/rubygems/</gemHome>
-                  <gemPath>./target/rubygems/</gemPath>
-                  <installArgs>./gems/torquespec-0.1.7.gem --no-rdoc --no-ri</installArgs>
+                  <gemHome>${project.basedir}/target/rubygems/</gemHome>
+                  <gemPath>${project.basedir}/target/rubygems/</gemPath>
+                  <installArgs>${project.basedir}/gems/torquespec-0.1.7.gem --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
               <execution>
