@@ -3,7 +3,7 @@ package org.torquebox.messaging.injection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
-import org.jboss.as.ee.naming.ContextNames;
+import org.jboss.as.naming.deployment.ContextNames;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.injection.jndi.JNDIInjectable;

@@ -20,26 +20,19 @@
 package org.torquebox.messaging;
 
 import java.util.List;
-import java.util.Set;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-
-import org.hibernate.validator.metadata.BeanMetaData;
-import org.jboss.as.ee.naming.ContextNames;
 import org.jboss.as.naming.ManagedReferenceFactory;
-import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.naming.deployment.ContextNames;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.core.util.StringUtils;
 import org.torquebox.messaging.as.MessagingServices;
 
 /**

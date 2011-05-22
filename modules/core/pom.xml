@@ -51,6 +51,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-naming</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
 <!--
     <dependency>
       <groupId>rubygems</groupId>

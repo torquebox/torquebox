@@ -29,7 +29,7 @@ import java.util.Map;
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.as.naming.MockContext;
 import org.jboss.as.naming.NamingStore;
-import org.jboss.as.naming.ValueManagedObject;
+import org.jboss.as.naming.ValueManagedReferenceFactory;
 import org.jboss.as.naming.deployment.ContextNames;
 import org.jboss.as.naming.service.BinderService;
 import org.jboss.logging.Logger;
@@ -44,7 +44,7 @@ import org.jboss.msc.value.Values;
 
 /**
  * Service responsible for creating and destroying a {@code javax.jms.Queue}.
- *
+ * 
  * @author Emanuel Muckenhuber
  */
 class JMSQueueService implements Service<Void> {
@@ -70,29 +70,29 @@ class JMSQueueService implements Service<Void> {
             MockContext.pushBindingTrap();
             try {
                 System.err.println( "About to create queue: " + queueName );
-                System.err.println( "JNDI : " + Arrays.asList( jndi ));
-                jmsManager.createQueue(false, queueName, selectorString, durable, jndi);
+                System.err.println( "JNDI : " + Arrays.asList( jndi ) );
+                jmsManager.createQueue( false, queueName, selectorString, durable, jndi );
                 System.err.println( "Done did create queue: " + queueName );
             } finally {
                 final ServiceTarget target = context.getChildTarget();
                 final Map<String, Object> bindings = MockContext.popTrappedBindings();
                 System.err.println( "BINDINGS: " + bindings );
-                for(Map.Entry<String, Object> binding : bindings.entrySet()) {
+                for (Map.Entry<String, Object> binding : bindings.entrySet()) {
                     String bindingKey = bindingKeyFromBrokenMockContext( binding.getKey() );
                     final BinderService binderService = new BinderService( bindingKey );
                     System.err.println( "BINDER: " + bindingKey );
-                    target.addService(ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( bindingKey ), binderService)
-                        .addDependency(ContextNames.JAVA_CONTEXT_SERVICE_NAME, NamingStore.class, binderService.getNamingStoreInjector())
-                        .addInjection(binderService.getManagedObjectInjector(), new ValueManagedObject(Values.immediateValue(binding.getValue())))
-                        .setInitialMode(ServiceController.Mode.ACTIVE)
-                        .install();
+                    target.addService( ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( bindingKey ), binderService )
+                            .addDependency( ContextNames.JAVA_CONTEXT_SERVICE_NAME, NamingStore.class, binderService.getNamingStoreInjector() )
+                            .addInjection( binderService.getManagedObjectInjector(), new ValueManagedReferenceFactory( Values.immediateValue( binding.getValue() ) ) )
+                            .setInitialMode( ServiceController.Mode.ACTIVE )
+                            .install();
                 }
             }
         } catch (Exception e) {
-            throw new StartException("failed to create queue", e);
+            throw new StartException( "failed to create queue", e );
         }
     }
-    
+
     protected String bindingKeyFromBrokenMockContext(String key) {
         List<String> jndiList = Arrays.asList( this.jndi );
         if (jndiList.contains( key )) {
@@ -114,9 +114,9 @@ class JMSQueueService implements Service<Void> {
     public synchronized void stop(StopContext context) {
         final JMSServerManager jmsManager = jmsServer.getValue();
         try {
-            jmsManager.destroyQueue(queueName);
+            jmsManager.destroyQueue( queueName );
         } catch (Exception e) {
-            Logger.getLogger("org.jboss.messaging").warnf(e ,"failed to destroy jms queue: %s", queueName);
+            Logger.getLogger( "org.jboss.messaging" ).warnf( e, "failed to destroy jms queue: %s", queueName );
         }
     }
 
