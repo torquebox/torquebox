@@ -297,6 +297,19 @@
 
   <repositories>
     <repository>
+      <id>jboss-as-snapshots</id>
+      <name>JBoss AS Snapshots</name>
+      <url>http://torquebox.org/2x/jboss-as-repo</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
       <id>rubygems-proxy</id>
       <name>Rubygems Proxy</name>
       <url>http://rubygems-proxy.torquebox.org/releases</url>
@@ -305,7 +318,7 @@
         <enabled>true</enabled>
       </releases>
       <snapshots>
-        <enabled>fale</enabled>
+        <enabled>false</enabled>
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
