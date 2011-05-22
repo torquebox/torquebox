@@ -22,6 +22,8 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        
+        System.err.println( "Unit name: " + unit.getName() );
 
         if (!unit.getName().endsWith( ".knob" )) {
             return;
@@ -42,6 +44,7 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
         VirtualFile root = resourceRoot.getRoot();
         
         if (resourceRoot.getMountHandle() != null) {
+            System.err.println( "Closing previous ResourceRoot before remounting" );
             VFSUtils.safeClose( resourceRoot.getMountHandle() );
         }
         
@@ -50,8 +53,10 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
             final String deploymentName = unit.getName();
             final String deploymentRuntimeName = unit.getAttachment(Attachments.RUNTIME_NAME);
             //final byte[] deploymentHash = unit.getAttachment(Attachments.DEPLOYMENT_HASH);
+            System.err.println( "CONTENTS: " + unit.getAttachment( Attachments.DEPLOYMENT_CONTENTS  ));
             
-            final Closeable closable = serverDeploymentRepository.mountDeploymentContent(deploymentName, deploymentRuntimeName, root, root, true);
+            System.err.println( "Remounting expanded: " + root );
+            final Closeable closable = serverDeploymentRepository.mountDeploymentContent(deploymentName, deploymentRuntimeName, unit.getAttachment( Attachments.DEPLOYMENT_CONTENTS ), root, true);
             final MountHandle mountHandle = new MountHandle( closable );
             
             ResourceRoot expandedResourceRoot = new ResourceRoot( root, mountHandle );
