@@ -41,7 +41,7 @@ module TorqueBox
       end
 
       def jboss_conf
-        ENV['TORQUEBOX_CONF'] || ENV['JBOSS_CONF'] || 'default'
+        ENV['TORQUEBOX_CONF'] || ENV['JBOSS_CONF'] || 'standalone'
       end
 
       # TODO: This is not windows friendly, is it?
@@ -59,15 +59,15 @@ module TorqueBox
       end
 
       def server_dir
-        File.join("#{jboss_home}","server", "#{jboss_conf}" )
+        File.join("#{jboss_home}","#{jboss_conf}" )
       end
 
       def config_dir
-        File.join("#{server_dir}","conf")
+        File.join("#{server_dir}","configuration")
       end
 
       def properties_dir
-        File.join("#{config_dir}","props")
+        config_dir
       end
 
       def deploy_dir
@@ -76,7 +76,7 @@ module TorqueBox
           return d
         end
 
-        File.join( "#{server_dir}", "deploy" )
+        File.join( "#{server_dir}", "deployments" )
       end
 
       def deployers_dir
