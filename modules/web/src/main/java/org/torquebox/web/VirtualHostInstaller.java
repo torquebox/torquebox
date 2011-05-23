@@ -10,6 +10,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.services.path.AbstractPathService;
 import org.jboss.as.web.WebServer;
 import org.jboss.as.web.WebSubsystemServices;
+import org.jboss.as.web.WebVirtualHostService;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.web.rack.RackApplicationMetaData;
 
@@ -45,7 +46,7 @@ public class VirtualHostInstaller implements DeploymentUnitProcessor {
         
         String[] aliases = hosts.toArray( EMPTY_STRING_ARRAY );
         
-        VirtualHostService service = new VirtualHostService( name, aliases );
+        WebVirtualHostService service = new WebVirtualHostService( name, aliases, false );
         
         phaseContext.getServiceTarget().addService( serviceName, service )
            .addDependency(AbstractPathService.pathNameOf(TEMP_DIR), String.class, service.getTempPathInjector())
