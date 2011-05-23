@@ -85,10 +85,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         return prefixes;
     }
 
-    protected String getCode(String rackupScript) {
-        return "require %q(rack)\nRack::Builder.new{(\n" + rackupScript + "\n)}.to_app";
-    }
-
     @Override
     public void undeploy(DeploymentUnit context) {
 
