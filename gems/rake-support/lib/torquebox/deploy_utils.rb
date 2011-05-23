@@ -100,8 +100,8 @@ module TorqueBox
       end
 
       def check_server
-        matching = Dir[ "#{jboss_home}/torquebox*deployer*" ]
-        raise "No TorqueBox modules installed in #{deployers_dir}" if ( matching.empty? )
+        raise "No TorqueBox modules installed in #{deployers_dir}" unless File.exist?( torquebox_modules_dir )
+        puts "TorqueBox installation appears OK"
       end
 
       def check_opt_torquebox
@@ -110,10 +110,10 @@ module TorqueBox
       end
 
       def run_command_line
-        cmd = Config::CONFIG['host_os'] =~ /mswin/ ? "bin\\run" : "/bin/sh bin/run.sh"
+        cmd = Config::CONFIG['host_os'] =~ /mswin/ ? "bin\\standalone" : "/bin/sh bin/standalone.sh"
         options = ENV['JBOSS_OPTS']
-        cmd += " -b 0.0.0.0" unless /((^|\s)-b\s|(^|\s)--host=)/ =~ options
-        "#{cmd} -c #{jboss_conf} #{options}"
+#        cmd += " -b 0.0.0.0" unless /((^|\s)-b\s|(^|\s)--host=)/ =~ options
+        "#{cmd} #{options}"
       end
 
       def run_server
