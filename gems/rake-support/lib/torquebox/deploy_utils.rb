@@ -198,6 +198,9 @@ module TorqueBox
         File.open( deployment, 'w' ) do |file|
           YAML.dump( deployment_descriptor, file )
         end
+        dodeploy_file = File.join( DeployUtils.deploy_dir, "#{name}" )
+        dodeploy_file.gsub!( "-knob.yml", ".dodeploy" )
+        FileUtils.touch( dodeploy_file )
         [name, dest_dir]
       end
 
@@ -219,6 +222,9 @@ module TorqueBox
 
       def write_credentials(user_data)
         properties_file = "#{properties_dir}/torquebox-users.properties"
+        roles_file      = "#{properties_dir}/torquebox-roles.properties"
+        FileUtils.touch( properties_file ) unless File.exist?( properties_file )
+        FileUtils.touch( roles_file ) unless File.exist?( roles_file )
         users = File.readlines( properties_file ).inject( {} ) do |accum, line|
           user, pass = line.split( '=' )
           accum[user] = pass
