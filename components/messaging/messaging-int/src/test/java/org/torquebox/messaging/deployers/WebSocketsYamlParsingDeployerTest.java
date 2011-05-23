@@ -36,109 +36,115 @@ import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
 
 public class WebSocketsYamlParsingDeployerTest extends AbstractDeployerTestCase {
 
-    private TorqueBoxYamlParsingDeployer globalDeployer;
-    private WebSocketsYamlParsingDeployer webSocketDeployer;
+	private TorqueBoxYamlParsingDeployer globalDeployer;
+	private WebSocketsYamlParsingDeployer webSocketDeployer;
 
-    @Before
-    public void setUpDeployer() throws Throwable {
-        this.webSocketDeployer = new WebSocketsYamlParsingDeployer();
-        addDeployer( this.webSocketDeployer );
+	@Before
+	public void setUpDeployer() throws Throwable {
+		this.webSocketDeployer = new WebSocketsYamlParsingDeployer();
+		addDeployer( this.webSocketDeployer );
 
-        this.globalDeployer = new TorqueBoxYamlParsingDeployer();
-        addDeployer( this.globalDeployer );
-    }
+		this.globalDeployer = new TorqueBoxYamlParsingDeployer();
+		addDeployer( this.globalDeployer );
+	}
 
-    @Test
-    public void testEmptyYaml() throws Exception {
-        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/empty-websockets.yml" );
-        String deploymentName = addDeployment( config.toURI().toURL(), "websockets.yml" );
+	@Test
+	public void testEmptyYaml() throws Exception {
+		File config = new File( System.getProperty( "user.dir" ), "src/test/resources/empty-websockets.yml" );
+		String deploymentName = addDeployment( config.toURI().toURL(), "websockets.yml" );
 
-        processDeployments( true );
+		processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
-        Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
+		DeploymentUnit unit = getDeploymentUnit( deploymentName );
+		Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
 
-        assertTrue( allMetaData.isEmpty() );
+		assertTrue( allMetaData.isEmpty() );
 
-        undeploy( deploymentName );
-    }
+		undeploy( deploymentName );
+	}
 
-    @Test
-    public void testJunkYaml() throws Exception {
-        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/junk-websockets.yml" );
-        String deploymentName = addDeployment( config.toURI().toURL(), "websockets.yml" );
+	@Test
+	public void testJunkYaml() throws Exception {
+		File config = new File( System.getProperty( "user.dir" ), "src/test/resources/junk-websockets.yml" );
+		String deploymentName = addDeployment( config.toURI().toURL(), "websockets.yml" );
 
-        processDeployments( true );
+		processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
-        Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
+		DeploymentUnit unit = getDeploymentUnit( deploymentName );
+		Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
 
-        assertTrue( allMetaData.isEmpty() );
+		assertTrue( allMetaData.isEmpty() );
 
-        undeploy( deploymentName );
-    }
+		undeploy( deploymentName );
+	}
 
-    @Test
-    public void testValidYaml() throws Exception {
-        File config = new File( System.getProperty( "user.dir" ), "src/test/resources/valid-websockets.yml" );
-        String deploymentName = addDeployment( config.toURI().toURL(), "websockets.yml" );
+	@Test
+	public void testValidYaml() throws Exception {
+		File config = new File( System.getProperty( "user.dir" ), "src/test/resources/valid-websockets.yml" );
+		String deploymentName = addDeployment( config.toURI().toURL(), "websockets.yml" );
 
-        processDeployments( true );
+		processDeployments( true );
 
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
-        Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
+		DeploymentUnit unit = getDeploymentUnit( deploymentName );
+		Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
 
-        assertFalse( allMetaData.isEmpty() );
-        assertEquals( 1, allMetaData.size() );
+		assertFalse( allMetaData.isEmpty() );
+		assertEquals( 1, allMetaData.size() );
 
-        WebSocketMetaData data = allMetaData.iterator().next();
-        assertEquals(data.getContext(), "/websockets");
-        assertEquals(data.getPort(), 40101);
-        assertEquals(data.getHandler(), "FooClass");
-        undeploy( deploymentName );
-    }
+		WebSocketMetaData data = allMetaData.iterator().next();
+		assertEquals( data.getContext(), "/websockets" );
+		assertEquals( data.getPort(), 40101 );
+		assertEquals( data.getHandler(), "FooClass" );
+		assertTrue( data.getRubyConfig() != null );
+		assertEquals( data.getRubyConfig().size(), 2 );
+		assertTrue( data.getRubyConfig().get( "prop1" ).equals( "foo" ) );
+		assertTrue( data.getRubyConfig().get( "prop2" ).equals( "bar" ) );
 
-    @Test
-    public void testTorqueBoxYml() throws Exception {
-        String deploymentName = addDeployment( getClass().getResource( "/valid-torquebox.yml" ), "torquebox.yml" );
+		undeploy( deploymentName );
+	}
 
-        processDeployments( true );
+	@Test
+	public void testTorqueBoxYml() throws Exception {
+		String deploymentName = addDeployment( getClass().getResource( "/valid-torquebox.yml" ), "torquebox.yml" );
 
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
-        Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
+		processDeployments( true );
 
-        assertFalse( allMetaData.isEmpty() );
-        assertEquals( 1, allMetaData.size() );
-        
-        WebSocketMetaData data = allMetaData.iterator().next();
-        assertEquals(data.getContext(), WebSocketMetaData.DEFAULT_CONTEXT);
-        assertEquals(data.getPort(), WebSocketMetaData.DEFAULT_PORT);
-        assertEquals(data.getHandler(), "TorqueBoxFooClass");
+		DeploymentUnit unit = getDeploymentUnit( deploymentName );
+		Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
 
-        undeploy( deploymentName );
-    }
+		assertFalse( allMetaData.isEmpty() );
+		assertEquals( 1, allMetaData.size() );
 
-    @Test
-    public void testTorqueBoxYmlWins() throws Exception {
-        JavaArchive jar = createJar( "mystuff.jar" );
-        jar.addResource( getClass().getResource( "/valid-websockets.yml" ), "/META-INF/websockets.yml" );
-        jar.addResource( getClass().getResource( "/valid-torquebox.yml" ), "/META-INF/torquebox.yml" );
-        String deploymentName = addDeployment( createJarFile( jar ) );
+		WebSocketMetaData data = allMetaData.iterator().next();
+		assertEquals( data.getContext(), WebSocketMetaData.DEFAULT_CONTEXT );
+		assertEquals( data.getPort(), WebSocketMetaData.DEFAULT_PORT );
+		assertEquals( data.getHandler(), "TorqueBoxFooClass" );
+		assertTrue( data.getRubyConfig() == null );
 
-        processDeployments( true );
+		undeploy( deploymentName );
+	}
 
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
-        Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
+	@Test
+	public void testTorqueBoxYmlWins() throws Exception {
+		JavaArchive jar = createJar( "mystuff.jar" );
+		jar.addResource( getClass().getResource( "/valid-websockets.yml" ), "/META-INF/websockets.yml" );
+		jar.addResource( getClass().getResource( "/valid-torquebox.yml" ), "/META-INF/torquebox.yml" );
+		String deploymentName = addDeployment( createJarFile( jar ) );
 
-        assertFalse( allMetaData.isEmpty() );
-        assertEquals( 1, allMetaData.size() );
-        
-        WebSocketMetaData data = allMetaData.iterator().next();
-        assertEquals(data.getContext(), WebSocketMetaData.DEFAULT_CONTEXT);
-        assertEquals(data.getPort(), WebSocketMetaData.DEFAULT_PORT);
-        assertEquals(data.getHandler(), "TorqueBoxFooClass");
+		processDeployments( true );
 
-        undeploy( deploymentName );
-    }
+		DeploymentUnit unit = getDeploymentUnit( deploymentName );
+		Set<? extends WebSocketMetaData> allMetaData = unit.getAllMetaData( WebSocketMetaData.class );
+
+		assertFalse( allMetaData.isEmpty() );
+		assertEquals( 1, allMetaData.size() );
+
+		WebSocketMetaData data = allMetaData.iterator().next();
+		assertEquals( data.getContext(), WebSocketMetaData.DEFAULT_CONTEXT );
+		assertEquals( data.getPort(), WebSocketMetaData.DEFAULT_PORT );
+		assertEquals( data.getHandler(), "TorqueBoxFooClass" );
+
+		undeploy( deploymentName );
+	}
 
 }

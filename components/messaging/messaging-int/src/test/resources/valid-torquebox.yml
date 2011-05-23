@@ -11,4 +11,5 @@ topics:
 
 websockets:
   handler: TorqueBoxFooClass
-
+stomp:
+  port: 61613

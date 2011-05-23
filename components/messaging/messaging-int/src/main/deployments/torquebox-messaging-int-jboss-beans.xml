@@ -34,7 +34,12 @@
   <bean name="TasksYamlParsingDeployer" class="org.torquebox.messaging.deployers.TasksYamlParsingDeployer"/>
   
   <bean name="WebSocketsYamlParsingDeployer" class="org.torquebox.messaging.deployers.WebSocketsYamlParsingDeployer" />
-  <bean name="WebSocketsProcessorDeployer" class="org.torquebox.messaging.deployers.WebSocketsProcessorDeployer" />
+  <bean name="WebSocketsProcessorDeployer" class="org.torquebox.messaging.deployers.WebSocketsProcessorDeployer">
+	<property name="injectionAnalyzer"><inject bean="RubyInjectionAnalyzer"/></property>  
+  </bean>
+  
+  <bean name="StompYamlParsingDeployer" class="org.torquebox.messaging.deployers.StompYamlParsingDeployer" />
+  <bean name="StompProcessorDeployer" class="org.torquebox.messaging.deployers.StompProcessorDeployer" />
 
   <bean name="RailsTasksScanningDeployer" class="org.torquebox.messaging.deployers.TasksScanningDeployer">
     <property name="suffixFilter">_task.rb</property>

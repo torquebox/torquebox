@@ -1,3 +1,6 @@
 context: '/websockets'
 port: 40101
 handler: FooClass
+rubyConfig:
+   prop1 : foo
+   prop2 : bar

@@ -8,6 +8,151 @@
 	var Stomp = {};
 	var TorqueBox = {};
 	TorqueBox.WebSockets = {};
+	TorqueBox.WebSockets.Assembly = {};
+	
+
+	TorqueBox.WebSockets.Types = {
+		
+		any		: 0,
+		generic : 1,
+		
+		registerMediaType: function(mediaName, mediaType) {
+			this[mediaName] = mediaType;
+			return this[mediaName];
+		}
+		
+	};
+
+	TorqueBox.WebSockets.Commands = {
+		handshake : 0x01,
+		handshake_response : 0x02,
+		normal : 0x03
+	};
+
+	TorqueBox.WebSockets.State = {
+		disconnected : 0,
+		handshake : 1,
+		ready : 2
+	};
+	
+	TorqueBox.WebSockets.Frame = function(type, command, data) {
+		this.type = type || TorqueBox.WebSockets.Types.generic;
+		this.command = command || TorqueBox.WebSockets.Commands.normal;
+		this.data = data;
+		return this;
+	}
+	
+	TorqueBox.WebSockets.Assembly.decode = function(message) {
+		return new TorqueBox.WebSockets.Frame(
+				message.charCodeAt(0), 
+				message.charCodeAt(1),
+				message.substring(2));
+	};
+	
+	TorqueBox.WebSockets.Assembly.encode = function(frame) {
+		var encodedFrame = [ String.fromCharCode(frame.type),String.fromCharCode(frame.command), frame.data ].join('');
+		return encodedFrame;
+	};
+
+	TorqueBox.WebSockets.client = function(id, url) {
+
+		var uuid = id;
+		var websocket = null;
+		var state = TorqueBox.WebSockets.State.disconnected;
+		var log = window.console;
+		var listeners = {};
+
+		var onopen = function(event) {
+			state = TorqueBox.WebSockets.State.handshake;
+			log.debug("Sending UUID handshake " + uuid);
+			var frame = new TorqueBox.WebSockets.Frame(TorqueBox.WebSockets.Types.generic, 
+					TorqueBox.WebSockets.Commands.handshake,
+					uuid);
+			this.send(TorqueBox.WebSockets.Assembly.encode(frame));
+		};
+		
+		var onerror = function(error, event) {
+			raise('THERE IS AN ERROR');
+		};
+		
+		this.addEventListener = function(event, type, callback, scopeObject) {
+			if (!listeners[event]) listeners[event] = [];
+			listeners[event].push({
+				mediaType: type,
+				fn: callback,
+				scope: scopeObject || this
+			});
+		};
+
+		this.connect = function() {
+			var that = this;
+			websocket = new WebSocket(url);
+			websocket.onmessage = function(message) {
+				onmessage(message, that);
+			}
+			websocket.onclose = function() {
+				onclose(that);
+			};
+			websocket.onerror = onerror;
+			websocket.onopen = onopen;
+		};
+		
+		this.notifyListeners = function(event, type, arguments) {
+			var evtListeners = listeners[event];
+			for (var i = 0; i < evtListeners.length; i++) {
+				if (evtListeners[i].mediaType == type || evtListeners[i].mediaType == TorqueBox.WebSockets.Types.any)
+					evtListeners[i].fn.apply(evtListeners[i].scope, arguments);
+			}
+		};
+
+		var onmessage = function(message, client) {
+			var frame = TorqueBox.WebSockets.Assembly.decode(message.data);
+			if (state == TorqueBox.WebSockets.State.handshake) {
+				if (frame.data != uuid) {
+					client.onerror("UUID received from server does not match generated UUID.");
+					websocket.close();
+				} // end if
+				state = TorqueBox.WebSockets.State.ready;
+				client.onready();
+			} else {
+				client.notifyListeners('onmessage', frame.type, [message]);
+			}
+		};
+		
+		var onclose = function(client) {
+			client.state = TorqueBox.WebSockets.State.disconnected;
+			client.onclose();
+		}
+
+		this.send = function(frame) {
+			if (state != TorqueBox.WebSockets.State.ready) {
+				this.onerror("The websocket client is not ready!");
+			}
+			var message = TorqueBox.WebSockets.Assembly.encode(frame);
+			websocket.send(message);
+		}
+
+		this.close = function() {
+			websocket.close();
+		};
+
+		this.onready = function() {
+		};
+
+		this.onclose = function() {
+		};
+
+		this.onerror = function(error) {
+			log.error(error);
+			if (state != TorqueBox.WebSockets.State.ready) {
+				log.error("Closing web socket, since we haven't completed the handshake yet.");
+				websocket.close(); // start again if we haven't completed the handshake.
+			}
+		};
+
+	};	
+
+	Stomp.mediaType = TorqueBox.WebSockets.Types.registerMediaType('stomp', 0x02);
 
 	Stomp.frame = function(command, headers, body) {
 		return {
@@ -67,35 +212,32 @@
 		return Stomp.frame(command, headers, body).toString() + '\0';
 	};
 
-	Stomp.client = function(url) {
+	Stomp.client = function(name, url) {
 
-		var that, ws, login, passcode;
+		var that, login, passcode;
+		var ws = null;
 		var counter = 0; // used to index subscribers
 		// subscription callbacks indexed by subscriber's ID
 		var subscriptions = {};
 		var listeners = {};
-
-		debug = function(str) {
-			if (that.debug) {
-				that.debug(str);
-			}
-		};
 		
+		var log = window.console;
+
 		var notifyListeners = function(event, arguments) {
 			var ocListeners = listeners[event];
 			if (ocListeners) {
-				for (var i = 0; i < ocListeners.length; i++) {
+				for ( var i = 0; i < ocListeners.length; i++) {
 					ocListeners[i].fn.apply(ocListeners[i].scope, arguments);
 				}
 			} // end if (listeners are defined)
 		}
 
-		onmessage = function(evt) {
-			debug('<<< ' + evt.data);
-			var frame = Stomp.unmarshal(evt.data);
+		onmessage = function(event) {
+			var tbFrame = TorqueBox.WebSockets.Assembly.decode(event.data);
+			log.debug('<<< ' + tbFrame.data);
+			var frame = Stomp.unmarshal(tbFrame.data);
 			if (frame.command === "CONNECTED") {
-				notifyListeners('onconnect', [frame]);
-				// that.connectCallback(frame);
+				notifyListeners('onconnect', [ frame ]);
 			} else if (frame.command === "MESSAGE") {
 				var onreceive = subscriptions[frame.headers.subscription];
 				if (onreceive) {
@@ -104,37 +246,49 @@
 			} else if (frame.command === "RECEIPT" && that.onreceipt) {
 				that.onreceipt(frame);
 			} else if (frame.command === "ERROR" && that.onerror) {
-				notifyListeners('onerror', [frame]);
-			}
+				notifyListeners('onerror', [ frame ]);
+			} else if (frame.command == "DISCONNECTED")
+				alert('disconnected');
 		};
 
 		transmit = function(command, headers, body) {
 			var out = Stomp.marshal(command, headers, body);
-			debug(">>> " + out);
-			ws.send(out);
+			log.debug(">>> " + out);
+			var frame = new TorqueBox.WebSockets.Frame();
+			frame.type = Stomp.mediaType;
+			frame.data = out;
+			ws.send(frame);
 		};
 
 		that = {};
-		
+
 		that.addEventListener = function(event, callback, scopeObject) {
-			if (!listeners[event]) listeners[event] = [];
+			if (!listeners[event])
+				listeners[event] = [];
 			listeners[event].push({
-				scope: scopeObject || this,
-				fn: callback
+				scope : scopeObject || this,
+				fn : callback
 			});
+		}
+		
+		that.close = function() {
+			ws.close();
 		}
 
 		that.connect = function(login_, passcode_) {
-			debug("Opening Web Socket...");
-			ws = new WebSocket(url);
-			ws.onmessage = onmessage;
+			log.debug("Opening Web Socket...");
+			ws = new TorqueBox.WebSockets.client(name, url);
+			ws.addEventListener('onmessage', Stomp.mediaType, onmessage);
+			ws.addEventListener('ondisconnect', Stomp.mediaType, function() {
+				this.close();
+			});
 			ws.onclose = function() {
-				var msg = "Whoops! Lost connection to " + url;
-				debug(msg);
-				notifyListeners('onerror', [msg]);
+				var msg = "Disconnected from STOMP server.";
+				log.debug(msg);
+				notifyListeners('onerror', [ msg ]);
 			};
-			ws.onopen = function() {
-				debug('Web Socket Opened...');
+			ws.onready = function() {
+				log.debug("Web socket opened... connecting to STOMP server.")
 				transmit("CONNECT", {
 					login : login,
 					passcode : passcode
@@ -142,14 +296,11 @@
 			};
 			login = login_;
 			passcode = passcode_;
+			ws.connect();
 		};
 
 		that.disconnect = function(disconnectCallback) {
 			transmit("DISCONNECT");
-			ws.close();
-			if (disconnectCallback) {
-				disconnectCallback();
-			}
 		};
 
 		that.send = function(destination, headers, body) {
@@ -199,47 +350,6 @@
 			transmit("ACK", headers);
 		};
 		return that;
-	};
-	
-	TorqueBox.WebSockets.client = function(name, url) {
-		
-		var stompClient = new Stomp.client(url);
-		var applicationName = name;
-		
-		var outboundQueue 	= "jms.queue./queues/websockets_" + applicationName + "_out";
-		var inboundQueue 	= "jms.queue./queues/websockets_" + applicationName + "_in";
-		
-		var postConnect = function(frame) {
-			stompClient.subscribe(outboundQueue, this.onmessage, {});
-			this.onconnect(frame);
-		};
-		
-		stompClient.debug = function(msg) {
-			window.console.debug(msg);
-		};		
-		
-		this.connect = function(login, password) {
-			stompClient.connect(login, password);
-			stompClient.addEventListener('onconnect', postConnect, this);
-		};
-			
-		this.close = function() {
-			stompClient.unsubscribe(outboundQueue);
-			stompClient.disconnect(this.onclose);
-		};
-			
-		this.onconnect = function() { };
-		this.onmessage = function(msg) {	};
-		this.onclose = function() { };
-			
-		this.onerror = function(error) {
-			window.console.error(error);
-		};
-			
-		this.send = function(body) {
-			stompClient.send(inboundQueue, {}, body);
-		};
-		
 	};
 
 	window.Stomp = Stomp;

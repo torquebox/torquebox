@@ -1,0 +1,14 @@
+%h1 Login
+	 
+= form_for @user_session, :url => {:action => "create"} do |f|
+	%div
+		= f.label :username
+		= f.text_field :username
+	%div
+		= f.label :password
+		= f.password_field :password
+	%div
+		= f.check_box :remember_me
+		= f.label :remember_me
+	%div
+		= f.submit "Login"

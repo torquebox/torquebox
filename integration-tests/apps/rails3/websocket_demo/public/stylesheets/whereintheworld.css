@@ -1,0 +1,98 @@
+
+body {
+	font: 14px/1.4em "Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
+}
+
+.header { font-size: 2.5em; margin-left: 20px; height: 50px; background: url(../images/knob-world.png) no-repeat top left; }
+.header .text { font-family: Lucida Grande,Arial,Helvetica,sans-serif; margin-left: 50px; margin-top: 10px; padding: 10px; }
+.widget-header { font-size: 0.8em; padding: 5px; }
+
+.dashboard {
+	width: 95%;
+	border: 2px solid;
+	padding: 10px;
+	margin: 10px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.narrow, div.wide {
+	float: left;
+	vertical-align: top;
+}
+
+div.narrow { width: 40%; }
+div.wide { width: 60%; }
+div.widewrapper { margin-left: 5px; }
+
+div.content {
+	display :block;
+	width:100%;
+	height:100%;
+}
+
+.wrapper { overflow: auto; min-height: 400px; max-height: 400px;}
+
+.container {
+	border: 1px solid #000000;
+	float: left;
+	padding: 10px;
+	margin: 10px;
+}
+
+#tweets-container { max-height: 300px; }
+
+#tweets-container .ui-selecting { background: #FECA40; }
+#tweets-container .ui-selected {  background: #F39814; color: white; }
+
+#tweets-container { list-style-type: none; margin: 0; padding: 0; width: 100%; }
+#tweets-container li { margin-bottom: 0.4em; margin-top: 0.2em; padding: 0.4em; font-size: 12px; }
+
+#tweets-container div.userid { font-weight: bold; font-size: 0.9em; width: 50%;}
+#tweets-container div.text { clear: both;  }
+#tweets-container div.time { width: 50%; text-align: right; }
+#tweets-container div.avatar-wrapper { float: left; }
+#tweets-container div.avatar { height: 50px; width: 50px; margin: 2px; border: 1px solid; }
+#tweets-container div.tweet-container { float: left; width: 80%; }
+#tweets-container div.userid, #tweets-container div.time { float: left; }
+
+.tweet-actions { text-align: right; }
+
+#map {
+	width: 50%;
+	height: 50%;
+}
+
+#map-container {
+	width: 100%;
+	height: 300px;
+}
+
+#status {
+	width: 30%;
+	height: 30%;
+}
+
+#tasks {
+	width: 50%;
+	height: 30%;
+}
+
+#tasks-container { min-height: 300px; overflow: auto; }
+#tasks-table { width: 100%; }
+#tasks-table_wrapper .fg-toolbar { font-size: 0.8em; }
+div.dataTables_wrapper .ui-widget-header { font-weight:normal; }
+.dataTables_wrapper .ui-toolbar { padding: 5px; }
+.dataTables_length { float: left; width: 40%; }
+.dataTables_filter { float: right; width: 60%; text-align: right; }
+.dataTables_info { float: left; width: 50%; }
+.dataTables_paginate { float: right; }
+.paging_full_numbers .ui-button { cursor: pointer; margins: 0; padding: 2px 6px; }
+table.display thead th { cursor: pointer; font-size: 0.8em; }
+th.owner { width: 15%; }
+th.state { width: 15%; }
+th.userid { width: 15%; }
+th.tweet { width: 40%; }
+th.owner { width: 15%; }
+
+#events-container { vertical-align: top; max-height: 100px; overflow: auto; padding: 10px; }

@@ -19,7 +19,6 @@
 
 package org.torquebox.common.pool;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.jboss.logging.Logger;

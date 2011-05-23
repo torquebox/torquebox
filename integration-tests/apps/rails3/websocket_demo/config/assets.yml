@@ -1,0 +1,23 @@
+compress_assets: on
+gzip_assets: on
+
+javascripts:
+  common:
+      - public/javascripts/jquery-1.5.1.min.js
+      - public/javascripts/jquery-ui-1.8.13.custom.min.js
+      - public/javascripts/jquery.dataTables.js
+      - public/javascripts/jquery.dateFormat-1.0.js      
+  whereintheworld:
+      - public/javascripts/dashboard.js
+      - public/javascripts/dashboard/store.js      
+      - public/javascripts/dashboard/tweets-widget.js
+      - public/javascripts/dashboard/map-widget.js
+      - public/javascripts/dashboard/tasks-widget.js
+      - public/javascripts/dashboard/events-widget.js
+      - public/javascripts/torquebox_ws_client.js
+          
+stylesheets:
+  common:
+      - public/stylesheets/jquery-ui-1.8.13.custom.css
+  whereintheworld:
+      - public/stylesheets/whereintheworld.css

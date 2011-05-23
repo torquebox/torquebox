@@ -20,3 +20,4 @@ release.properties
 TAGS
 Gemfile.lock
 .rakeTasks
+.DS_Store
