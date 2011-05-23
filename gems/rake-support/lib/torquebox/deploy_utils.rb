@@ -198,25 +198,33 @@ module TorqueBox
         File.open( deployment, 'w' ) do |file|
           YAML.dump( deployment_descriptor, file )
         end
-        dodeploy_file = File.join( DeployUtils.deploy_dir, "#{name}" )
-        dodeploy_file.gsub!( "-knob.yml", ".dodeploy" )
-        FileUtils.touch( dodeploy_file )
+        FileUtils.touch( dodeploy_file( name ) )
         [name, dest_dir]
       end
 
       def deploy_archive(archive_path = nil, dest_dir = deploy_dir)
         archive_path ||= File.join( Dir.pwd, archive_name )
         FileUtils.cp( archive_path, dest_dir )
-        [File.basename( archive_path ), dest_dir]
+        archive = File.basename( archive_path )
+        FileUtils.touch( dodeploy_file( archive ) )
+        [archive, dest_dir]
+      end
+
+      def dodeploy_file( name )
+        File.join( DeployUtils.deploy_dir, "#{name}" ) + ".dodeploy"
+      end
+
+      def deployed_file( name )
+        File.join( DeployUtils.deploy_dir, "#{name}" ) + ".deployed"
       end
 
       def undeploy(name = deployment_name, from_dir = deploy_dir)
-        deployment = File.join( from_dir, name )
-        if File.exists?( deployment )
-          FileUtils.rm_rf( deployment )
+        deployment = File.join( name ) 
+        if File.exists?( deployed_file( deployment ) )
+          FileUtils.rm_rf( deployed_file( deployment ) )
           [name, from_dir]
         else
-          nil
+          puts "Can't undeploy #{deployed_file( deployment )}. It does not appear to be deployed."
         end
       end
 
