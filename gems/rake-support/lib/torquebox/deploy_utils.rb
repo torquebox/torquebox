@@ -100,7 +100,7 @@ module TorqueBox
       end
 
       def check_server
-        matching = Dir[ "#{jboss_dir}/torquebox*deployer*" ]
+        matching = Dir[ "#{jboss_home}/torquebox*deployer*" ]
         raise "No TorqueBox modules installed in #{deployers_dir}" if ( matching.empty? )
       end
 
