@@ -2,10 +2,6 @@ require 'spec_helper'
 require 'fileutils'
 require 'torquebox/deploy_utils'
 
-knob_path = TorqueBox::DeployUtils.create_archive( "basic-rails2.knob", 
-                                                   File.join( File.dirname( __FILE__ ), "../apps/rails2/basic" ),
-                                                   File.join( File.dirname( __FILE__ ), "../target/" ) )
-
 shared_examples_for "basic rails2 tests" do
 
   it "should return a basic page" do
@@ -42,6 +38,8 @@ describe "basic knob compatibility" do
   it_should_behave_like "basic rails2 tests"
 end
 describe "basic archive knob compatibility" do
-  deploy knob_path
+  deploy TorqueBox::DeployUtils.create_archive( "basic-rails2.knob", 
+                                                File.join( File.dirname( __FILE__ ), "../apps/rails2/basic" ),
+                                                TorqueSpec.knob_root )
   it_should_behave_like "basic rails2 tests"
 end

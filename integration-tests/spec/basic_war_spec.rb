@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe "basic war" do
 
-  deploy "node-info.war"
+  deploy File.join(File.dirname(__FILE__), "../target/test-classes/node-info.war")
 
   it "should work" do
     visit "/node-info"

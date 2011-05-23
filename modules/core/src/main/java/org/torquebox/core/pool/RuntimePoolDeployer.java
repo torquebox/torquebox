@@ -72,7 +72,6 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, PoolMetaData poolMetaData) {
         log.info( "Deploying runtime pool: " + poolMetaData );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        String deploymentName = unit.getName();
 
         if (poolMetaData.isShared()) {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();
@@ -81,6 +80,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             SharedRubyRuntimeFactoryPoolService service = new SharedRubyRuntimeFactoryPoolService( pool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
+
             ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
             builder.addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
             builder.install();
@@ -95,16 +95,16 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             DefaultRubyRuntimePool pool = new DefaultRubyRuntimePool();
 
             pool.setName( poolMetaData.getName() );
-            pool.setMinimumInstances( poolMetaData.getMaximumSize() );
+            pool.setMinimumInstances( poolMetaData.getMinimumSize() );
             pool.setMaximumInstances( poolMetaData.getMaximumSize() );
-
+            
             DefaultRubyRuntimePoolService service = new DefaultRubyRuntimePoolService( pool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             phaseContext.getServiceTarget().addService( name, service )
                 .addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
                 .install();
-            
+
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
             
             phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
