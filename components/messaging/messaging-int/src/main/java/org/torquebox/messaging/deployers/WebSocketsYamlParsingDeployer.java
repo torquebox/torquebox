@@ -41,6 +41,7 @@ public class WebSocketsYamlParsingDeployer extends AbstractSplitYamlParsingDeplo
 	public WebSocketsYamlParsingDeployer() {
 		setSectionName( "websockets" );
 		addOutput( WebSocketMetaData.class );
+		setRelativeOrder( 5000 );
 	}
 
 	@SuppressWarnings("unchecked")
@@ -53,7 +54,9 @@ public class WebSocketsYamlParsingDeployer extends AbstractSplitYamlParsingDeplo
 		if (data.containsKey( "port" ))
 			ws.setPort( (Integer) data.get( "port" ) );
 		if (!data.containsKey( "handler" ))
-			throw new DeploymentException("Must specify a handler for websockets.");
+			throw new DeploymentException( "Must specify a handler for websockets." );
+		if (data.containsKey( "rubyConfig" ))
+			ws.setRubyConfig( (Map<String, Object>) data.get( "rubyConfig" ) );
 		ws.setHandler( (String) data.get( "handler" ) );
 		AttachmentUtils.multipleAttach( unit, ws, ws.getContext() );
 		log.info( "Done parsing websockets information." );

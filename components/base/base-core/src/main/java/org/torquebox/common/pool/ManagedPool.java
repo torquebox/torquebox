@@ -19,12 +19,11 @@
 
 package org.torquebox.common.pool;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.jboss.logging.Logger;
-import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.DeferrablePool;
+import org.torquebox.common.spi.InstanceFactory;
 import org.torquebox.common.spi.Pool;
 
 public class ManagedPool<T> implements Pool<T>, DeferrablePool {

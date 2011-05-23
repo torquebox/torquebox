@@ -1,0 +1,30 @@
+.dashboard
+	.narrow
+		.wrapper
+			.ui-widget-header.ui-corner-tl.ui-corner-tr.widget-header Tweets
+			%ul#tweets-container
+			&nbsp;
+		.ui-widget-header.ui-corner-tl.ui-corner-tr.widget-header Status
+		%table						
+			%tr
+				%td
+					%input#connect{:type => 'checkbox'}
+					%label{:for => 'connect'} Connect
+				%td.action
+					%input.subscription#tweets-subscription{:type => 'checkbox'}
+						%label{:for => 'tweets-subscription'} Tweets
+				%td.action
+					%input.subscription#users-subscription{:type => 'checkbox'}
+						%label{:for => 'users-subscription'} Users
+				%td.action
+					%input.subscription#workflow-subscription{:type => 'checkbox'}
+						%label{:for => 'workflow-subscription'} Workflow
+		.ui-widget-header.ui-corner-tl.ui-corner-tr.widget-header Events
+		%div#events-container
+	.wide
+		.widewrapper
+			.ui-widget-header.ui-corner-tl.ui-corner-tr.widget-header Map
+			%div#map-container
+			%div#tasks-container
+				%table.display#tasks-table{:cellpadding => 0, :cellspacing => 0, :border => 0}			
+	%div{:style => 'clear: both'}

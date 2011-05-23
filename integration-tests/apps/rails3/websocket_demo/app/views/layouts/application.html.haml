@@ -1,0 +1,16 @@
+!!!
+%html
+	%head
+		%title= "Where in the world is TorqueBox?"
+		= include_javascripts :common, :whereintheworld
+		%script{:type=> 'text/javascript', :src => "http://maps.google.com/maps/api/js?sensor=false"}
+		- if current_user
+			:javascript
+				WhereInTheWorld.user = '#{current_user.username}';
+		= include_stylesheets :common, :whereintheworld
+	%body
+		.header#header
+			= render :partial => "layouts/header"
+		.content#content= yield
+		.footer#footer
+			= render :partial => "layouts/footer"

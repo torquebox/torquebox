@@ -5,7 +5,7 @@ application:
 web:
   context: /websocket_demo
 websockets:
-  context: /stomp
+  context: /websockets
   port: 61614
   handler: EchoMessageProcessor
 

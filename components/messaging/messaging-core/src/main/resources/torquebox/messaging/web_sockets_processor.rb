@@ -1,25 +1,19 @@
-require 'torquebox/messaging/message_processor'
 
 module TorqueBox
   module Messaging
-    class WebSocketsProcessor < MessageProcessor
+    class WebSocketsProcessor
     
-      attr :send_queue
-    
-      def initialize(params)
-  	    @send_queue = TorqueBox::Messaging::Queue.new "/queues/websockets_#{params['applicationName']}_out"
+      def initialize(params = {})
       end
     
       def close
         on_close
       end
+      
+      def on_message(data)
+      end
     
-      def send(payload)
-        begin
-          @send_queue.publish(payload)
-        rescue => e
-          on_error(e)
-        end
+      def send(data)
       end
       
       def on_close
