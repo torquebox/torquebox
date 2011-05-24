@@ -18,6 +18,7 @@
     <version.haml>~&gt;3.0</version.haml>
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
     <version.sinatra>1.2.3</version.sinatra>
+    <version.old_rack>1.1.0</version.old_rack>
     <assembly.dir>${project.basedir}/../assemblage/assembly/target/stage/torquebox-${project.version}</assembly.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <max.heap>1024m</max.heap>
@@ -358,6 +359,18 @@
                   <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                   <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
                   <installArgs>mail -v 2.2.14 --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-old-rack</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>rack -v ${version.old_rack} --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
             </executions>
