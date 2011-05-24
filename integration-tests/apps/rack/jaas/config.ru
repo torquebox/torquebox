@@ -11,6 +11,8 @@ app = lambda { |env|
 
   req = Rack::Request.new(env)
   if req.path_info == "/success"
+    message = "it worked" if authenticator.authenticate('scott', 'scott')
+  elsif req.path_info == "/guest"
     message = "it worked" if authenticator.authenticate('guest', nil)
   else
     message = "it failed" unless authenticator.authenticate('foo', 'bar') 

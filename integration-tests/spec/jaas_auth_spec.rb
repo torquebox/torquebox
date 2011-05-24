@@ -35,14 +35,19 @@ describe "jaas authentication tests" do
         domain: torquebox
   END
 
-  it "should authenticate with proper credentials" do
-    visit "/authentication/success"
-    page.should have_content('it worked')
-  end
+  it "should authenticate with proper credentials"# do
+    #visit "/authentication/success"
+    #page.should have_content('it worked')
+  #end
 
-  it "should not authenticate with improper credentials" do
-    visit "/authentication/failure"
-    page.should have_content('it failed')
-  end
+  it "should authenticate as guest"# do
+    #visit "/authentication/guest"
+    #page.should have_content('it worked')
+  #end
+
+  it "should not authenticate with improper credentials"# do
+    #visit "/authentication/failure"
+    #page.should have_content('it failed')
+  #end
 
 end

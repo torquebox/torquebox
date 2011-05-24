@@ -46,7 +46,7 @@ public class AuthDeployer implements DeploymentUnitProcessor {
             this.setApplicationName(applicationName);
 
             // TODO: Only create this service if the 'torquebox' domain is specified
-            buildTorqueBoxDomain(phaseContext);
+//            buildTorqueBoxDomain(phaseContext);
             
             // Install authenticators for every domain
             List<AuthMetaData> allMetaData = unit.getAttachmentList(AuthMetaData.ATTACHMENT_KEY);
