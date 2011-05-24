@@ -87,7 +87,6 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
 
     @Override
     public void onMessage(Message message) {
-        log.info( "onMessage! " + message );
         Ruby ruby = null;
         try {
             ruby = getRubyRuntimePool().borrowRuntime();
@@ -123,18 +122,9 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     @Override
     public void stop(StopContext context) {
         log.info( "Shutting down JMS connection et al: " + connection );
+        
         try {
-            this.consumer.close();
-        } catch (JMSException e) {
-            log.error( "Error closing consumer connection", e );
-        }
-        try {
-            this.session.close();
-        } catch (JMSException e) {
-            log.error( "Error closing consumer session", e );
-        }
-        try {
-            this.connection.stop();
+            this.connection.close();
         } catch (JMSException e) {
             log.error( "Error stopping consumer connection", e );
         }
