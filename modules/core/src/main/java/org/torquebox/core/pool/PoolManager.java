@@ -149,30 +149,38 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     protected void fillInstance() throws Exception {
-        T instance = this.factory.createInstance( this.pool.getName() );
-        this.pool.fillInstance( instance );
+    	synchronized (this.pool) {
+    		T instance = this.factory.createInstance( this.pool.getName() );
+    		this.pool.fillInstance( instance );
+    	}
     }
 
     protected void drainInstance() throws Exception {
-        T instance = this.pool.drainInstance();
-        this.factory.destroyInstance( instance );
+    	synchronized (this.pool) {
+          T instance = this.pool.drainInstance();
+          this.factory.destroyInstance( instance );
+    	}
     }
 
     public void start() {
-        if (this.executor == null) {
-            this.executor = Executors.newSingleThreadExecutor();
-        }
-        for (int i = 0; i < this.minInstances; ++i) {
-            this.executor.execute( this.fillTask );
-        }
+    	synchronized (this.pool) {
+          if (this.executor == null) {
+              this.executor = Executors.newSingleThreadExecutor();
+          }
+          for (int i = 0; i < this.minInstances; ++i) {
+              this.executor.execute( this.fillTask );
+          }
+    	}
     }
 
     public void stop() {
-        int poolSize = pool.size();
+    	synchronized (this.pool) {
+    		int poolSize = pool.size();
         
-        for ( int i = 0 ; i < poolSize ; ++i ) {
-            this.executor.execute( this.drainTask );
-        }
+    		for ( int i = 0 ; i < poolSize ; ++i ) {
+    			this.executor.execute( this.drainTask );
+    		}
+    	}
 
     }
 
