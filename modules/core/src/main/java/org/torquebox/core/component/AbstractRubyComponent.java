@@ -38,7 +38,7 @@ public class AbstractRubyComponent implements RubyComponent {
         }
     }
     
-    protected Object _callRubyMethod(String method, Object...args) {
+    public Object _callRubyMethod(String method, Object...args) {
     	return _callRubyMethod( this.rubyComponent, method, args );
     }
     

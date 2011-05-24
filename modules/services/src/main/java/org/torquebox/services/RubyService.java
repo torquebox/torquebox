@@ -51,6 +51,10 @@ public class RubyService {
     public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
         this.runtimePool = runtimePool;
     }
+    
+    public ServicesComponent getComponent() {
+        return this.servicesComponent;
+    }
 
     private ComponentResolver resolver;
     private RubyRuntimePool runtimePool;
