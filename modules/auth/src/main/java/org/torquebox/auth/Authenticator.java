@@ -18,22 +18,15 @@
  */
 package org.torquebox.auth;
 
+import java.security.Principal;
+
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-
-import java.io.IOException;
-import java.security.Principal;
-
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
-
 import org.jboss.security.AuthenticationManager;
 import org.jboss.security.SecurityContext;
-import org.jboss.security.plugins.JBossAuthenticationManager;
 import org.picketbox.factories.SecurityFactory;
 
 public class Authenticator implements Service<Authenticator> {
@@ -55,7 +48,7 @@ public class Authenticator implements Service<Authenticator> {
 
     public boolean authenticate(String name, String pass) {
         Principal principal = getPrincipal(name);
-        Object credential = new String(pass);
+        Object credential = pass == null ? null : new String(pass);
         return this.authenticationManager.isValid(principal, credential);
         //return true;
     }
@@ -85,16 +78,6 @@ public class Authenticator implements Service<Authenticator> {
     	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
         	Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
-        	if (this.getAuthDomain() == Authenticator.TORQUEBOX_AUTH_DOMAIN) {
-        		// Install a TorqueBox-specific callback handler for anything in the torquebox domain
-        		AuthenticationManager authenticationManager = 
-        			new JBossAuthenticationManager(this.getAuthDomain(), new CallbackHandler() {					
-					@Override
-					public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-					}
-				});
-        		// Bind this bitch to JNDI
-        	}
         	this.securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
         	this.authenticationManager = securityContext.getAuthenticationManager();
 	        log.info("TorqueBox authenticator started.");

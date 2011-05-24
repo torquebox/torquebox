@@ -32,7 +32,7 @@ describe "jaas authentication tests" do
 
     auth:
       test-jaas:
-        domain: myappdomain
+        domain: torquebox
   END
 
   it "should authenticate with proper credentials" do
