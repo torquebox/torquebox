@@ -28,9 +28,9 @@ import org.jboss.msc.value.InjectedValue;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class RubyServiceProxy implements Service<RubyService> {
+public class RubyServiceCreate implements Service<RubyService> {
     
-    public RubyServiceProxy(RubyService service) {
+    public RubyServiceCreate(RubyService service) {
         this.service = service;
     }
 
@@ -49,7 +49,7 @@ public class RubyServiceProxy implements Service<RubyService> {
         context.execute(new Runnable() {
             public void run() {
                 try {
-                    RubyServiceProxy.this.service.start();
+                    RubyServiceCreate.this.service.create();
                     context.complete();
                 } catch (Exception e) {
                     context.failed( new StartException( e ) );
@@ -60,7 +60,7 @@ public class RubyServiceProxy implements Service<RubyService> {
 
     @Override
     public void stop(StopContext context) {
-        this.service.stop();
+        this.service.destroy();
     }
     
     public Injector<ComponentResolver> getComponentResolverInjector() {

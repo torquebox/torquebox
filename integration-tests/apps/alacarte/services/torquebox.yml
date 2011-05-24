@@ -6,3 +6,5 @@ services:
 queues:
   /queue/response:
     durable: false
+  /queue/next_response:
+    durable: false

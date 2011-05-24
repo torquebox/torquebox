@@ -49,16 +49,24 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData serviceMetaData) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        ServiceName serviceName = ServicesServices.serviceRubyService( unit, serviceMetaData.getClassName() );
+        ServiceName serviceCreateName = ServicesServices.serviceCreateRubyService( unit, serviceMetaData.getClassName() );
+        ServiceName serviceStartName = ServicesServices.serviceStartRubyService( unit, serviceMetaData.getClassName() );
         RubyService service = new RubyService();
         
-        log.info( "Installing Services proxy: " + serviceName );
-        RubyServiceProxy serviceProxy = new RubyServiceProxy( service );
-        ServiceBuilder<RubyService> builder = phaseContext.getServiceTarget().addService( serviceName, serviceProxy );
-        builder.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() ), ComponentResolver.class, serviceProxy.getComponentResolverInjector() );
-        builder.addDependency( CoreServices.runtimePoolName( unit, "services" ), RubyRuntimePool.class, serviceProxy.getRubyRuntimePoolInjector() );
-        builder.setInitialMode( Mode.PASSIVE );
-        builder.install();
+        log.info( "Installing Service: " + serviceCreateName );
+        RubyServiceCreate serviceCreate = new RubyServiceCreate( service );
+        ServiceBuilder<RubyService> builderCreate = phaseContext.getServiceTarget().addService( serviceCreateName, serviceCreate );
+        builderCreate.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() ), ComponentResolver.class, serviceCreate.getComponentResolverInjector() );
+        builderCreate.addDependency( CoreServices.runtimePoolName( unit, "services" ), RubyRuntimePool.class, serviceCreate.getRubyRuntimePoolInjector() );
+        builderCreate.setInitialMode( Mode.PASSIVE );
+        builderCreate.install();
+        
+        log.info( "Installing Service: " + serviceStartName );
+        RubyServiceStart serviceStart = new RubyServiceStart();
+        ServiceBuilder<RubyService> builderStart = phaseContext.getServiceTarget().addService( serviceStartName, serviceStart );
+        builderStart.addDependency( serviceCreateName, RubyService.class, serviceStart.getRubyServiceInjector() );
+        builderStart.setInitialMode( Mode.PASSIVE );
+        builderStart.install();
     }
 
     @Override

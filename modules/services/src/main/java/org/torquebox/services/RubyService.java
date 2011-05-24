@@ -26,21 +26,24 @@ import org.torquebox.services.component.ServicesComponent;
 
 public class RubyService {
     
-    public void start() throws Exception {
+    public void create() throws Exception {
         this.runtime = this.runtimePool.borrowRuntime();
         this.servicesComponent = (ServicesComponent) this.resolver.resolve( runtime );
+    }
+    
+    public void start() {
         this.servicesComponent.start();
     }
     
     public void stop() {
-        try {
-            if (this.servicesComponent != null) {
-                this.servicesComponent.stop();
-            }
-        } finally {
-            if (this.runtime != null) {
-                this.runtimePool.returnRuntime( runtime );
-            }
+        if (this.servicesComponent != null) {
+            this.servicesComponent.stop();
+        }
+    }
+    
+    public void destroy() {
+        if (this.runtime != null) {
+            this.runtimePool.returnRuntime( runtime );
         }
     }
     

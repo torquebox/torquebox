@@ -34,7 +34,11 @@ public class ServicesServices {
         return unit.getServiceName().append( "component_resolver" ).append( serviceClass );
     }
     
-    public static ServiceName serviceRubyService(DeploymentUnit unit, String serviceClass ) {
+    public static ServiceName serviceCreateRubyService(DeploymentUnit unit, String serviceClass ) {
+        return unit.getServiceName().append( "service " ).append( serviceClass ).append( "create" );
+    }
+    
+    public static ServiceName serviceStartRubyService(DeploymentUnit unit, String serviceClass ) {
         return unit.getServiceName().append( "service" ).append( serviceClass );
     }
 

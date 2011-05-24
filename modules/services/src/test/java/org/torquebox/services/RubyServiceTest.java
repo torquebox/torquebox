@@ -52,6 +52,7 @@ public class RubyServiceTest {
         this.componentClass.setClassName( "TestService" );
         this.componentClass.setRequirePath( "org/torquebox/services/test_service" );
 
+        service.create();
         service.start();
         Boolean started = (Boolean) service.getComponent()._callRubyMethod( "started?" );
         assertTrue( started.booleanValue() );
@@ -59,6 +60,7 @@ public class RubyServiceTest {
         service.stop();
         started = (Boolean) service.getComponent()._callRubyMethod( "started?" );
         assertFalse( started.booleanValue() );
+        service.destroy();
     }
     
     @Test
@@ -67,10 +69,12 @@ public class RubyServiceTest {
         this.componentClass.setRequirePath( "org/torquebox/services/test_service" );
         this.componentResolver.setInitializeParams( ruby.evalScriptlet( "{'foo'=>42}" ).convertToHash() );
 
+        service.create();
         service.start();
         Long foo = (Long) service.getComponent()._callRubyMethod( "[]", new Object[] { "foo" } );
         assertEquals( new Long( 42 ), foo );
         service.stop();
+        service.destroy();
     }
     
     @Test
@@ -78,10 +82,13 @@ public class RubyServiceTest {
         this.componentClass.setClassName( "NoStartService" );
         this.componentClass.setRequirePath( "org/torquebox/services/no_start_service" );
         
+        service.create();
+        
         // Will throw an exception if we try to call start on the Ruby object
         service.start();
         
         service.stop();
+        service.destroy();
     }
     
     @Test
@@ -89,9 +96,12 @@ public class RubyServiceTest {
         this.componentClass.setClassName( "NoStopService" );
         this.componentClass.setRequirePath( "org/torquebox/services/no_stop_service" );
         
+        service.create();
         service.start();
         // Will throw an exception if we try to call stop on the Ruby object
         service.stop();
+        
+        service.destroy();
     }
     
     protected Ruby createRuby() throws Exception {
