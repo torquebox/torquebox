@@ -27,7 +27,6 @@ import org.torquebox.core.runtime.RubyRuntimePool;
 
 public class MessageProcessorGroup implements Service<MessageProcessorGroup>, MessageProcessorGroupMBean {
 
-
     public MessageProcessorGroup(ServiceRegistry registry, ServiceName baseServiceName, ClassLoader classLoader, String destinationName) {
         this.serviceRegistry = registry;
         this.baseServiceName = baseServiceName;
@@ -39,24 +38,24 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     public MessageProcessorGroup getValue() throws IllegalStateException, IllegalArgumentException {
         return this;
     }
-    
+
     public synchronized void start() throws Exception {
-        for ( ServiceName eachName : this.services ) {
+        for (ServiceName eachName : this.services) {
             ServiceController<?> each = this.serviceRegistry.getService( eachName );
             each.setMode( Mode.ACTIVE );
         }
     }
-    
+
     public synchronized void stop() throws Exception {
-        for ( ServiceName eachName : this.services ) {
+        for (ServiceName eachName : this.services) {
             ServiceController<?> each = this.serviceRegistry.getService( eachName );
             each.setMode( Mode.NEVER );
         }
     }
-    
+
     @Override
     public String getDestinationName() {
-        return this.destination.toString();
+        return this.destinationName;
     }
 
     @Override
@@ -80,6 +79,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
 
                 try {
                     MessageProcessorGroup.this.connection = connectionFactory.createConnection();
+                    MessageProcessorGroup.this.connection.start();
                 } catch (JMSException e) {
                     context.failed( new StartException( e ) );
                 } finally {
@@ -98,17 +98,17 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                         destinationManagedReference.release();
                     }
                 }
-                
+
                 ServiceTarget target = context.getChildTarget();
-                
-                for ( int i = 0 ; i < MessageProcessorGroup.this.concurrency ; ++i ) {
+
+                for (int i = 0; i < MessageProcessorGroup.this.concurrency; ++i) {
                     MessageProcessorService service = new MessageProcessorService( MessageProcessorGroup.this );
                     ServiceName serviceName = baseServiceName.append( "" + i );
                     target.addService( serviceName, service )
-                        .install();
-                    services.add(  serviceName );
+                            .install();
+                    services.add( serviceName );
                 }
-                
+
                 context.complete();
 
             }
@@ -116,7 +116,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
         } );
 
     }
-    
 
     @Override
     public void stop(StopContext context) {
@@ -128,7 +127,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
         }
 
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -136,11 +135,11 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     public String getName() {
         return this.name;
     }
-    
+
     public void setConcurrency(int concurrency) {
         this.concurrency = concurrency;
     }
-    
+
     public int getConcurrency() {
         return this.concurrency;
     }
@@ -176,19 +175,19 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     public Injector<ComponentResolver> getComponentResolverInjector() {
         return this.componentResolverInjector;
     }
-    
+
     public Connection getConnection() {
         return this.connection;
     }
-    
+
     public Destination getDestination() {
         return this.destination;
     }
-    
+
     public RubyRuntimePool getRubyRuntimePool() {
         return this.runtimePoolInjector.getValue();
     }
-    
+
     public ComponentResolver getComponentResolver() {
         return this.componentResolverInjector.getValue();
     }
@@ -199,13 +198,13 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private ClassLoader classLoader;
     private Connection connection;
     private Destination destination;
-    
+
     private ServiceName baseServiceName;
 
     private String name;
     private String messageSelector;
     private boolean durable;
-    
+
     private int concurrency;
     private List<ServiceName> services = new ArrayList<ServiceName>();
 
@@ -215,9 +214,5 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private final InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
 
     private static final Logger log = Logger.getLogger( "org.torquebox.message" );
-
-
-
-
 
 }
