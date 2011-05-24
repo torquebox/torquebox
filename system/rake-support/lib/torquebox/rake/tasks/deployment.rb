@@ -21,7 +21,7 @@ require 'torquebox/deploy_utils'
 namespace :torquebox do
 
   desc "Deploy the app in the current directory"
-  task :deploy, :context_path, :needs =>['torquebox:check'] do |t, args|
+  task :deploy, [:context_path] => ['torquebox:check'] do |t, args|
     descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor( :context_path => args[:context_path] )
     deployment_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml( descriptor )    
   
