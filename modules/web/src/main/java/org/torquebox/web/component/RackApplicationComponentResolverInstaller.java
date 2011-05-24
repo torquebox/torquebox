@@ -13,6 +13,7 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.component.BaseRubyComponentDeployer;
 import org.torquebox.core.component.ComponentEval;
@@ -27,9 +28,10 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
 
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
 
-        if (rackAppMetaData == null) {
+        if (rubyAppMetaData == null || rackAppMetaData == null) {
             return;
         }
 
@@ -38,7 +40,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
 
         ComponentEval instantiator = new ComponentEval();
         try {
-            instantiator.setCode( getCode( rackAppMetaData.getRackUpScript( root ) ) );
+            instantiator.setCode( getCode( rackAppMetaData.getRackUpScript( root ), rubyAppMetaData.getRoot() ) );
             instantiator.setLocation( rackAppMetaData.getRackUpScriptFile( root ).toURL().toString() );
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
@@ -77,8 +79,20 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
     }
 
 
-    protected String getCode(String rackupScript) {
-        return "require %q(rack)\nRack::Builder.new{(\n" + rackupScript + "\n)}.to_app";
+    protected String getCode(String rackUpScript, VirtualFile root) {
+        StringBuilder code = new StringBuilder();
+        if (usesBundler( root )) {
+            code.append( "require %q(bundler/setup)\n" );
+        }
+        code.append( "require %q(rack)\n" );
+        code.append( "Rack::Builder.new{(\n" );
+        code.append( rackUpScript );
+        code.append( "\n)}.to_app" );
+        return code.toString();
+    }
+    
+    protected boolean usesBundler(VirtualFile root) {
+        return root.getChild( "Gemfile" ).exists();
     }
 
     @Override
