@@ -44,6 +44,9 @@ public class RubyApplicationDeployer implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         
+        if ( rubyAppMetaData == null ) {
+            return;
+        }
         
         String mbeanName = ObjectNameFactory.create( "torquebox.apps", new Hashtable<String, String>() {
             {
