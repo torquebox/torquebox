@@ -37,12 +37,10 @@ public class RubyJobProxyFactory implements JobFactory {
        
     @Override
     public Job newJob(TriggerFiredBundle bundle) throws SchedulerException {
-        log.info( "Something fired: " + bundle );
-        JobDetail jobDetail = bundle.getJobDetail();
+    	JobDetail jobDetail = bundle.getJobDetail();
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
         
         ComponentResolver resolver = this.componentResolvers.get( jobDataMap.get( RUBY_CLASS_NAME_KEY ) );
-        log.info( "dispatch to resolver: " + resolver );
         RubyJobProxy rubyJob = new RubyJobProxy( this.runtimePool, resolver );
        
         return rubyJob;
