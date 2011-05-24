@@ -111,35 +111,35 @@ class AssemblyTool
     add_subsystem( name ) 
   end
 
-  def add_extension(name)
+  def modify_standalone_xml
     Dir.chdir( @jboss_dir ) do
       doc = REXML::Document.new( File.read( 'standalone/configuration/standalone.xml' ) )
 
-      extensions = doc.root.get_elements( 'extensions' ).first
-      previous_extension = extensions.get_elements( "extension[@module='org.torquebox.#{name}']" )
-      if ( previous_extension.empty? )
-        extensions.add_element( 'extension', 'module'=>"org.torquebox.#{name}" )
-      end
-
+      yield doc
+      
       open( 'standalone/configuration/standalone.xml', 'w' ) do |f|
         doc.write( f, 4 )
       end
     end
   end
+  
+  def add_extension(name)
+    modify_standalone_xml do |doc|
+      extensions = doc.root.get_elements( 'extensions' ).first
+      previous_extension = extensions.get_elements( "extension[@module='org.torquebox.#{name}']" )
+      if ( previous_extension.empty? )
+        extensions.add_element( 'extension', 'module'=>"org.torquebox.#{name}" )
+      end
+    end
+  end
 
   def add_subsystem(name)
-    Dir.chdir( @jboss_dir ) do
-      doc = REXML::Document.new( File.read( 'standalone/configuration/standalone.xml' ) )
-
+    modify_standalone_xml do |doc|
       profile = doc.root.get_elements( 'profile' ).first
       previous_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:torquebox-#{name}:1.0']" )
   
       if ( previous_subsystem.empty? )
         profile.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:torquebox-#{name}:1.0" )
-      end
-  
-      open( 'standalone/configuration/standalone.xml', 'w' ) do |f|
-        doc.write( f, 4 )
       end
     end
 

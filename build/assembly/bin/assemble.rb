@@ -120,6 +120,15 @@ class Assembler
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'rails', 'template.rb' ), rails_dir )
   end
 
+  def disable_welcome_root
+    puts "disabling default root"
+    
+    @tool.modify_standalone_xml do |doc|
+      element = doc.root.get_elements("//virtual-server[@name='localhost']").first
+      element.attributes['enable-welcome-root'] = 'false' if element.attributes['enable-welcome-root'] == 'true'
+    end
+  end
+
   def assemble() 
     #clean
     prepare
@@ -128,6 +137,7 @@ class Assembler
     install_modules
     install_gems
     install_share
+    disable_welcome_root
   end
 end
 
