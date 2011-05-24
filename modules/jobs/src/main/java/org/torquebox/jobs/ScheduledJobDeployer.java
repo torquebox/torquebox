@@ -19,8 +19,14 @@
 
 package org.torquebox.jobs;
 
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.management.MBeanServer;
+
+import org.jboss.as.jmx.MBeanRegistrationService;
+import org.jboss.as.jmx.MBeanServerService;
+import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -29,8 +35,10 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.as.JobsServices;
 
@@ -62,7 +70,7 @@ public class ScheduledJobDeployer implements DeploymentUnitProcessor {
 
     }
     
-    protected void deploy(DeploymentPhaseContext phaseContext, ScheduledJobMetaData metaData) throws DeploymentUnitProcessingException {
+    protected void deploy(DeploymentPhaseContext phaseContext, final ScheduledJobMetaData metaData) throws DeploymentUnitProcessingException {
     	DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
         ScheduledJob job = new ScheduledJob( 
@@ -90,11 +98,21 @@ public class ScheduledJobDeployer implements DeploymentUnitProcessor {
         
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();
+        
+        final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
     
-        //FIXME JMX!
-//        String mbeanName = JMXUtils.jmxName( "torquebox.jobs", rubyAppMetaData.getApplicationName() ).with( "name", metaData.getName() ).name();
-//        String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + ScheduledJobMBean.class.getName() + ".class)";
-//        beanBuilder.addAnnotation( jmxAnno );
+        String mbeanName = ObjectNameFactory.create( "torquebox.jobs", new Hashtable<String, String>() {
+            {
+                put( "app", rubyAppMetaData.getApplicationName() );
+                put( "name", metaData.getName() );
+            }
+        } ).toString();
+
+        MBeanRegistrationService<ScheduledJobMBean> mbeanService = new MBeanRegistrationService<ScheduledJobMBean>( mbeanName );
+        phaseContext.getServiceTarget().addService( serviceName.append( "mbean" ), mbeanService )
+                .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                .addDependency( serviceName, ScheduledJobMBean.class, mbeanService.getValueInjector() )
+                .install();
 
     }
 
