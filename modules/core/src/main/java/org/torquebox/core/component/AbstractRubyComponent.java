@@ -6,6 +6,7 @@ import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.core.util.ReflectionHelper;
 
 public class AbstractRubyComponent implements RubyComponent {
     
@@ -40,6 +41,20 @@ public class AbstractRubyComponent implements RubyComponent {
     
     public Object _callRubyMethod(String method, Object...args) {
     	return _callRubyMethod( this.rubyComponent, method, args );
+    }
+    
+    protected Object _callRubyMethodIfDefined(Object target, String method, Object...args) {
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader().getParent() );
+            return ReflectionHelper.callIfPossible( this.rubyComponent.getRuntime(), target, method, args );
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
+    }
+    
+    public Object _callRubyMethodIfDefined(String method, Object...args) {
+        return _callRubyMethodIfDefined( this.rubyComponent, method, args );
     }
     
     protected RubyModule getClass(String path) {

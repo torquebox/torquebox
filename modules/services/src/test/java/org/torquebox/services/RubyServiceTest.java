@@ -73,6 +73,27 @@ public class RubyServiceTest {
         service.stop();
     }
     
+    @Test
+    public void testOnlyCallsStartIfDefined() throws Exception {
+        this.componentClass.setClassName( "NoStartService" );
+        this.componentClass.setRequirePath( "org/torquebox/services/no_start_service" );
+        
+        // Will throw an exception if we try to call start on the Ruby object
+        service.start();
+        
+        service.stop();
+    }
+    
+    @Test
+    public void testOnlyCallsStopIfDefined() throws Exception {
+        this.componentClass.setClassName( "NoStopService" );
+        this.componentClass.setRequirePath( "org/torquebox/services/no_stop_service" );
+        
+        service.start();
+        // Will throw an exception if we try to call stop on the Ruby object
+        service.stop();
+    }
+    
     protected Ruby createRuby() throws Exception {
         RubyRuntimeFactory factory = new RubyRuntimeFactory();
 
