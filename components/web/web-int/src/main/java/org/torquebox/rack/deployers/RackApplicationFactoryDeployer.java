@@ -88,6 +88,7 @@ public class RackApplicationFactoryDeployer extends AbstractSimpleVFSRealDeploye
 
             BeanMetaDataBuilder builder = BeanMetaDataBuilder.createBuilder( beanName, RackApplicationFactoryImpl.class.getName() );
 
+            builder.addPropertyMetaData( "rackRoot", rubyAppMetaData.getRoot() );
             builder.addPropertyMetaData( "rackUpScript", rackAppMetaData.getRackUpScript( rubyAppMetaData.getRoot() ) );
 
             VirtualFile rackUpScriptLocation = rackAppMetaData.getRackUpScriptFile( rubyAppMetaData.getRoot() );

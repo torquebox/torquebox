@@ -52,7 +52,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
     public void testEnvironment() throws Exception {
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
         String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ), VFS.getChild( "/test/path/") );
         assertNotNull( rackApp );
 
         final ServletContext servletContext = mock( ServletContext.class );
@@ -113,7 +113,7 @@ public class RackEnvironmentImplTest extends AbstractRubyTestCase {
     public void testAnotherEnvironment() throws Exception {
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
         String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ), VFS.getChild( "/test/path/") );
         assertNotNull( rackApp );
 
         final ServletContext servletContext = mock( ServletContext.class );

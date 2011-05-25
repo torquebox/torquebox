@@ -51,8 +51,8 @@ public class RackApplicationImpl implements RackApplication {
      * @param rackUpScript
      *            The rackup script.
      */
-    public RackApplicationImpl(Ruby ruby, String rackUpScript, VirtualFile rackUpScriptLocation) throws Exception {
-        this.rubyApp = rackUp( ruby, rackUpScript, rackUpScriptLocation );
+    public RackApplicationImpl(Ruby ruby, String rackUpScript, VirtualFile rackUpScriptLocation, VirtualFile rackRoot) throws Exception {
+        this.rubyApp = rackUp( ruby, rackUpScript, rackUpScriptLocation, rackRoot );
     }
 
     /**
@@ -61,10 +61,21 @@ public class RackApplicationImpl implements RackApplication {
      * @param script
      *            The rackup script.
      */
-    private IRubyObject rackUp(Ruby ruby, String script, VirtualFile rackUpScriptLocation) throws Exception {
-        String fullScript = "require %q(rack)\nRack::Builder.new{(\n" + script + "\n)}.to_app";
-        IRubyObject app = ruby.executeScript( fullScript, rackUpScriptLocation.toURL().toString() );
+    private IRubyObject rackUp(Ruby ruby, String script, VirtualFile rackUpScriptLocation, VirtualFile rackRoot) throws Exception {
+        StringBuilder fullScript = new StringBuilder();
+        if (usesBundler( rackRoot )) {
+            fullScript.append( "require %q(bundler/setup)\n" );
+        }
+        fullScript.append( "require %q(rack)\n" );
+        fullScript.append( "Rack::Builder.new{(\n" );
+        fullScript.append( script );
+        fullScript.append( "\n)}.to_app" );
+        IRubyObject app = ruby.executeScript( fullScript.toString(), rackUpScriptLocation.toURL().toString() );
         return app;
+    }
+
+    protected boolean usesBundler(VirtualFile rackRoot) {
+        return rackRoot.getChild( "Gemfile" ).exists();
     }
 
     protected IRubyObject getRubyApplication() {

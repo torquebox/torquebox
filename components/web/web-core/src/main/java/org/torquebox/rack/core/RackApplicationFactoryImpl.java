@@ -37,14 +37,16 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
     
     private String rackUpScript;
     private VirtualFile rackUpFile;
+    private VirtualFile rackRoot;
     private InjectionRegistry injectionRegistry;
 
     public RackApplicationFactoryImpl() {
     }
     
-    public RackApplicationFactoryImpl(String rackUpScript, VirtualFile rackUpScriptLocation) {
+    public RackApplicationFactoryImpl(String rackUpScript, VirtualFile rackUpScriptLocation, VirtualFile rackRoot) {
         this.rackUpScript = rackUpScript;
         this.rackUpFile = rackUpScriptLocation;
+        this.rackRoot = rackRoot;
     }
     
     public void setRackUpScript(String rackUpScript) {
@@ -63,6 +65,14 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
         return this.rackUpFile;
     }
 
+    public void setRackRoot(VirtualFile rackRoot) {
+        this.rackRoot = rackRoot;
+    }
+
+    public VirtualFile getRackRoot() {
+        return this.rackRoot;
+    }
+
     public RackApplication createRackApplication(Ruby ruby) throws Exception {
 
         IRubyObject rubyRackApp = null;
@@ -75,7 +85,7 @@ public class RackApplicationFactoryImpl implements RackApplicationFactory, RubyI
 
         if ((rubyRackApp == null) || (rubyRackApp.isNil())) {
             mergeInjections( ruby );
-            rackApp = new RackApplicationImpl( ruby, rackUpScript, rackUpFile );
+            rackApp = new RackApplicationImpl( ruby, rackUpScript, rackUpFile, rackRoot );
             rubyRackApp = JavaEmbedUtils.javaToRuby( ruby, rackApp );
             torqueboxModule.setConstant( "TORQUEBOX_RACK_APP", rubyRackApp );
         } else {

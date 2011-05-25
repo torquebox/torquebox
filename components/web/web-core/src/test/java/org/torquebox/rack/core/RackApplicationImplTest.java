@@ -36,7 +36,7 @@ public class RackApplicationImplTest extends AbstractRubyTestCase {
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
 
         String rackup = "run Proc.new {|env| [200, {'Content-Type' => 'text/html'}, env.inspect]}";
-        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ) );
+        RackApplicationImpl rackApp = new RackApplicationImpl( ruby, rackup, VFS.getChild( "/test/path/config.ru" ), VFS.getChild( "/test/path/") );
         IRubyObject rubyApp = rackApp.getRubyApplication();
         assertNotNil( rubyApp );
     }

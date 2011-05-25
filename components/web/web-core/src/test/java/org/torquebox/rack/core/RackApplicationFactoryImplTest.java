@@ -21,6 +21,7 @@ package org.torquebox.rack.core;
 
 import static org.junit.Assert.*;
 
+import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.junit.Test;
@@ -32,7 +33,9 @@ public class RackApplicationFactoryImplTest extends AbstractRubyTestCase {
     @Test
     public void testSingleRackup_OneRuntime() throws Exception {
         String rackUpScript = "lambda(){|env|puts env}";
-        RackApplicationFactoryImpl appFactory = new RackApplicationFactoryImpl( rackUpScript, VFS.getChild( "/path/to/rackup.ru" ) );
+        VirtualFile rackUpFile = VFS.getChild( "/path/to/rackup.ru" );
+        VirtualFile rackRoot = VFS.getChild( "/path/to/" );
+        RackApplicationFactoryImpl appFactory = new RackApplicationFactoryImpl( rackUpScript, rackUpFile, rackRoot );
 
         Ruby ruby = createRuby();
         ruby.evalScriptlet( "RACK_ROOT='/test/app'\n" );
@@ -46,7 +49,9 @@ public class RackApplicationFactoryImplTest extends AbstractRubyTestCase {
     @Test
     public void testSingleRackup_TwoRuntimes() throws Exception {
         String rackUpScript = "lambda(){|env|puts env}";
-        RackApplicationFactoryImpl appFactory = new RackApplicationFactoryImpl( rackUpScript, VFS.getChild( "/path/to/rackup.ru" ) );
+        VirtualFile rackUpFile = VFS.getChild( "/path/to/rackup.ru" );
+        VirtualFile rackRoot = VFS.getChild( "/path/to/" );
+        RackApplicationFactoryImpl appFactory = new RackApplicationFactoryImpl( rackUpScript, rackUpFile, rackRoot );
 
         Ruby ruby1 = createRuby();
         ruby1.evalScriptlet( "RACK_ROOT='/test/app'\n" );
