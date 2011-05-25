@@ -23,6 +23,14 @@ public class CoreServices {
     public static ServiceName runtimePoolName(DeploymentUnit unit, final String poolName) {
         return unit.getServiceName().append( RUNTIME).append("pool").append( poolName );
     }
+
+    public static ServiceName serviceRegistryName(DeploymentUnit unit) {
+        return unit.getServiceName().append( CORE ).append( "service-registry" );
+    }
+    
+    public static ServiceName serviceTargetName(DeploymentUnit unit) {
+        return unit.getServiceName().append( CORE ).append( "service-target" );
+    }
     
  
 }

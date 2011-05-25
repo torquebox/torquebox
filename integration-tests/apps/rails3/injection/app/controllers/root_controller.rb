@@ -19,4 +19,11 @@ class RootController < ApplicationController
     @message = queue.receive(:timeout => 60000)
     render 'injection.html.erb'
   end
+
+
+  def predetermined
+    @service_registry = inject( 'service-registry' )
+    @service_target   = inject( 'service-target' )
+    render 'predetermined.html.erb'
+  end
 end

@@ -43,4 +43,11 @@ describe "rails3 injection test" do
     page.should have_content('it worked')
   end
 
+  it "should work for predetermined injectables" do
+    visit "/injection/predetermined"
+    #page.should have_content('it worked')
+    find( '#service-registry' ).text.should eql( "true" )
+    find( '#service-target' ).text.should   eql( "true" )
+  end
+
 end

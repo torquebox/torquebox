@@ -16,7 +16,7 @@ public class ServiceInjectableHandler extends AbstractInjectableHandler {
 
     public ServiceInjectableHandler() {
         super( TYPE );
-        setRecognitionPriority( 100 * 1000 );
+        setRecognitionPriority( 9000 * 1000 );
     }
 
     @Override
