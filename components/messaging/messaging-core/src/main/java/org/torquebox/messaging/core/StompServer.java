@@ -35,6 +35,10 @@ public class StompServer {
 	private RemotingServiceImpl remotingService;
 
 	private JMSServerManager server;
+	
+	public int getPort() {
+		return port;
+	}
 
 	@SuppressWarnings("unchecked")
 	public void onInstall() throws Exception {

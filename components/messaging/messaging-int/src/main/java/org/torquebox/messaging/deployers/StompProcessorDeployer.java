@@ -27,8 +27,8 @@ public class StompProcessorDeployer extends AbstractDeployer {
 		if (allMetaData.isEmpty())
 			return;
 		StompMetaData metaData = allMetaData.iterator().next();
-		String beanName = AttachmentUtils.beanName( unit, StompServer.class );
-		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( beanName, StompServer.class.getName() );
+		BeanMetaDataBuilder builder = BeanMetaDataBuilderFactory.createBuilder( "torquebox.StompServer",
+				StompServer.class.getName() );
 		builder.addPropertyMetaData( "port", metaData.getPort() );
 		builder.addPropertyMetaData( "server", builder.createInject( "JMSServerManager" ) );
 

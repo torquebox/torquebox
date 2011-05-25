@@ -2,12 +2,17 @@
 application:
   RAILS_ROOT: ${basedir}/apps/rails3/websocket_demo
   RAILS_ENV: development
+services:
+  TwitterStreamService:
+    username: foo
+    password: bar
 web:
   context: /websocket_demo
 websockets:
   context: /websockets
   port: 61614
   handler: EchoMessageProcessor
-
+stomp:
+  port: 61613
 ruby:
   version: ${ruby.compat.version}
