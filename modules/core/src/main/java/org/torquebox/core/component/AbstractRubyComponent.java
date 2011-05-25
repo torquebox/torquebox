@@ -13,6 +13,10 @@ public class AbstractRubyComponent implements RubyComponent {
     public AbstractRubyComponent() {
     }
     
+    public AbstractRubyComponent(IRubyObject rubyComponent) {
+        this.rubyComponent = rubyComponent;
+    }
+    
     public void setOptions(Map<String,Object> options) {
         this.options = options;
     }
@@ -25,7 +29,7 @@ public class AbstractRubyComponent implements RubyComponent {
         return this.options.get( name );
     }
     
-    void setRubyComponent(IRubyObject rubyComponent) {
+    public void setRubyComponent(IRubyObject rubyComponent) {
         this.rubyComponent = rubyComponent;
     }
     

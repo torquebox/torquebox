@@ -1,4 +1,0 @@
-
-class MockBody < Array
-  
-end
