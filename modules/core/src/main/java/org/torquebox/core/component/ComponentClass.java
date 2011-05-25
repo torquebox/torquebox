@@ -56,5 +56,9 @@ public class ComponentClass implements ComponentInstantiator {
 
         }
     }
+    
+    public String toString() {
+        return this.className;
+    }
 
 }

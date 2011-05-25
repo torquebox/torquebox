@@ -19,8 +19,14 @@
 
 package org.torquebox.services;
 
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.management.MBeanServer;
+
+import org.jboss.as.jmx.MBeanRegistrationService;
+import org.jboss.as.jmx.MBeanServerService;
+import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -29,9 +35,12 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.value.ImmediateValue;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.util.StringUtils;
 import org.torquebox.services.as.ServicesServices;
 
 public class ServicesDeployer implements DeploymentUnitProcessor {
@@ -46,7 +55,7 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         }
     }
     
-    protected void deploy(DeploymentPhaseContext phaseContext, ServiceMetaData serviceMetaData) {
+    protected void deploy(DeploymentPhaseContext phaseContext, final ServiceMetaData serviceMetaData) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
         ServiceName serviceCreateName = ServicesServices.serviceCreateRubyService( unit, serviceMetaData.getClassName() );
@@ -67,6 +76,20 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         builderStart.addDependency( serviceCreateName, RubyService.class, serviceStart.getRubyServiceInjector() );
         builderStart.setInitialMode( Mode.PASSIVE );
         builderStart.install();
+        
+        final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        
+        String mbeanName = ObjectNameFactory.create( "torquebox.services", new Hashtable<String, String>() {
+            {
+                put( "app", rubyAppMetaData.getApplicationName() );
+                put( "name", StringUtils.underscore( serviceMetaData.getClassName() ) );
+            }
+        } ).toString();
+
+        MBeanRegistrationService<RubyServiceMBean> mbeanService = new MBeanRegistrationService<RubyServiceMBean>( mbeanName, new ImmediateValue<RubyServiceMBean>( service ) );
+        phaseContext.getServiceTarget().addService( serviceStartName.append( "mbean" ), mbeanService )
+                .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                .install(); 
     }
 
     @Override

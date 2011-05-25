@@ -24,40 +24,66 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.services.component.ServicesComponent;
 
-public class RubyService {
-    
+public class RubyService implements RubyServiceMBean {
+
     public void create() throws Exception {
         this.runtime = this.runtimePool.borrowRuntime();
         this.servicesComponent = (ServicesComponent) this.resolver.resolve( runtime );
     }
-    
+
     public void start() {
         this.servicesComponent.start();
+        this.started = true;
     }
-    
+
     public void stop() {
         if (this.servicesComponent != null) {
             this.servicesComponent.stop();
         }
     }
-    
+
     public void destroy() {
         if (this.runtime != null) {
             this.runtimePool.returnRuntime( runtime );
         }
     }
-    
+
+    @Override
+    public boolean isStarted() {
+        return this.started;
+    }
+
+    @Override
+    public boolean isStopped() {
+        return !isStarted();
+    }
+
+    @Override
+    public String getRubyClassName() {
+        return resolver.getComponentInstantiator().toString();
+    }
+
+    @Override
+    public String getStatus() throws Exception {
+        if (isStarted()) {
+            return "STARTED";
+        }
+        return "STOPPED";
+    }
+
     public void setComponentResolver(ComponentResolver resolver) {
         this.resolver = resolver;
     }
-    
+
     public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
         this.runtimePool = runtimePool;
     }
-    
+
     public ServicesComponent getComponent() {
         return this.servicesComponent;
     }
+
+    private boolean started;
 
     private ComponentResolver resolver;
     private RubyRuntimePool runtimePool;
