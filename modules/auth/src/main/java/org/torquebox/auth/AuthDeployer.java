@@ -1,32 +1,18 @@
 package org.torquebox.auth;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.security.auth.login.AppConfigurationEntry;
-import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
-import javax.security.auth.login.Configuration;
-
-import org.jboss.as.security.ModulesMap;
-import org.jboss.as.security.plugins.SecurityDomainContext;
-import org.jboss.as.security.service.JaasConfigurationService;
 import org.jboss.as.security.service.SecurityDomainService;
-import org.jboss.as.security.service.SecurityManagementService;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
-import org.jboss.msc.service.ServiceController;
-import org.jboss.msc.service.ServiceTarget;
-import org.jboss.security.ISecurityManagement;
-import org.jboss.security.auth.login.AuthenticationInfo;
-import org.jboss.security.config.ApplicationPolicy;
 import org.torquebox.auth.AuthMetaData.Config;
 import org.torquebox.auth.as.AuthServices;
 import org.torquebox.auth.as.AuthSubsystemAdd;
