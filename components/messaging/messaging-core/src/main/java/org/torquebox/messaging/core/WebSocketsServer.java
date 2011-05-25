@@ -30,6 +30,12 @@ import org.jboss.netty.handler.codec.http.websocket.WebSocketFrame;
 import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 import org.jboss.netty.util.VirtualExecutorService;
 
+/**
+ * The Netty-based web sockets server.
+ * 
+ * @author mdobozy
+ * 
+ */
 public class WebSocketsServer {
 
 	private static final Logger log = Logger.getLogger( WebSocketsServer.class );
@@ -65,7 +71,6 @@ public class WebSocketsServer {
 
 	public void onUninstall() {
 		log.info( "Stopping TorqueBox web sockets server." );
-		// TODO: shut 'er down.
 	}
 
 	public void registerMediaHandler(int mediaType, Class<? extends WebSocketsMediaUpstreamHandler> handler,
@@ -115,6 +120,11 @@ public class WebSocketsServer {
 
 	}
 
+	/**
+	 * Provides the Netty websocket pipeline factory.
+	 * @author mdobozy
+	 *
+	 */
 	private class WebSocketsPipelineFactory implements ChannelPipelineFactory {
 
 		@Override
@@ -169,6 +179,7 @@ public class WebSocketsServer {
 				TorqueBoxFrame frame = new TorqueBoxFrame( contentType, TorqueBoxFrame.NORMAL_COMMAND, data );
 				Channel channel = ctx.getChannel();
 				ChannelPipeline pipeline = channel.getPipeline();
+
 				if (contentType == TorqueBoxFrame.DEFAULT_MEDIA_TYPE) {
 					if (pipeline.get( "uuid-handler" ) == null) {
 						String uuid = connections.get( ctx.getChannel().getId() );

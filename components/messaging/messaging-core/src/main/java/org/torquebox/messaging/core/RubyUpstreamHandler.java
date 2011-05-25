@@ -11,6 +11,11 @@ import org.torquebox.interp.core.RubyComponentResolver;
 import org.torquebox.interp.spi.RubyRuntimePool;
 import org.torquebox.messaging.core.WebSocketsServer.TorqueBoxFrame;
 
+/**
+ * Upstream handler for vanilla websocket traffic. Receives a message and tries to invoke the proper Ruby handler.
+ * @author mdobozy
+ *
+ */
 public class RubyUpstreamHandler extends SimpleChannelUpstreamHandler {
 
 	private static final Logger log = Logger.getLogger( RubyUpstreamHandler.class );
@@ -29,7 +34,6 @@ public class RubyUpstreamHandler extends SimpleChannelUpstreamHandler {
 		log.info( unitName + " ruby handler installed." );
 	}
 
-	// TODO: Need to handle binary data?
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
 		if (e.getMessage() instanceof TorqueBoxFrame) {
