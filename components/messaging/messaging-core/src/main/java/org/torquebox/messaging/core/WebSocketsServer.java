@@ -42,10 +42,17 @@ public class WebSocketsServer {
 
 	private ServerBootstrap bootstrap;
 
+	/**
+	 * A map of connections for the web socket server. The key is the ID of the connection (as provided by Netty), and
+	 * the value is the UUID of the app requesting the connection.
+	 */
 	private Map<Integer, String> connections;
 
 	private String context;
 
+	/**
+	 * Each media handler corresponds to a type of media sent over the websockets transport - STOMP, etc.
+	 */
 	private Map<Integer, MediaHandlerMetaData> mediaHandlers;
 
 	private VirtualExecutorService parentExecutor;
@@ -54,6 +61,11 @@ public class WebSocketsServer {
 
 	private ExecutorService threadPool;
 
+	/**
+	 * Each UUID handler here corresponds to an application, which is identified by a UUID. This is necessary
+	 * because we can have multiple apps serviced by the same TB instance, and if a web socket request comes in, we 
+	 * need to know which RubyComponentResolver to use to find it.
+	 */
 	private Map<String, ChannelUpstreamHandler> uuidHandlers;
 
 	public String getContext() {
@@ -100,6 +112,12 @@ public class WebSocketsServer {
 		NioServerSocketChannelFactory factory = new NioServerSocketChannelFactory( parentExecutor, workerExecutor );
 		bootstrap = new ServerBootstrap( factory );
 
+		/**
+		 * TODO: This code needs to be fixed. What we need is a conditional
+		 * dependency on torquebox.StompServer for WebSocketsServer - that is,
+		 * if StompServer is defined, then the deployment of WebSocketsServer
+		 * should depend on it.
+		 */
 		Map<String, Object> configs = new HashMap<String, Object>( 3 );
 		configs.put( "host", "localhost" );
 		configs.put( "port", 61613 );
@@ -110,8 +128,8 @@ public class WebSocketsServer {
 
 	public static class MediaHandlerMetaData {
 
-		private Class<? extends WebSocketsMediaUpstreamHandler> mediaHandler;
 		private Map<String, Object> configuration;
+		private Class<? extends WebSocketsMediaUpstreamHandler> mediaHandler;
 
 		public MediaHandlerMetaData(Class<? extends WebSocketsMediaUpstreamHandler> handler, Map<String, Object> configs) {
 			this.mediaHandler = handler;
@@ -120,25 +138,63 @@ public class WebSocketsServer {
 
 	}
 
-	/**
-	 * Provides the Netty websocket pipeline factory.
-	 * @author mdobozy
-	 *
-	 */
-	private class WebSocketsPipelineFactory implements ChannelPipelineFactory {
+	public static class TorqueBoxFrame {
 
-		@Override
-		public ChannelPipeline getPipeline() throws Exception {
-			ChannelPipeline pipeline = new DefaultChannelPipeline();
-			pipeline.addLast( "decoder", new HttpRequestDecoder() );
-			pipeline.addLast( "aggregator", new HttpChunkAggregator( 65536 ) );
-			pipeline.addLast( "encoder", new HttpResponseEncoder() );
-			pipeline.addLast( "websockets-handler", new WebSocketsServerHandler() );
-			pipeline.addLast( "torquebox-encoder", new TorqueBoxFrameEncoder() );
-			pipeline.addLast( "torquebox-frame-handler", new TorqueBoxFrameHandler() );
-			return pipeline;
+		public static byte DEFAULT_MEDIA_TYPE = 0x01;
+
+		public static byte HANDSHAKE_COMMAND = 0x01;
+		public static byte HANDSHAKE_RESPONSE_COMMAND = 0x02;
+		public static byte NORMAL_COMMAND = 0x03;
+
+		private byte command;
+		private byte[] data;
+		private byte type;
+
+		public TorqueBoxFrame(byte type, byte command, byte[] data) {
+			this.type = type;
+			this.command = command;
+			this.data = data;
 		}
 
+		public byte getCommand() {
+			return command;
+		}
+
+		public byte[] getData() {
+			return data;
+		}
+
+		public byte getType() {
+			return type;
+		}
+
+	}
+
+	/**
+	 * Transforms a TorqueBoxFrame into a WebSocketFrame.
+	 * 
+	 * @author mdobozy
+	 * 
+	 */
+	private class TorqueBoxFrameEncoder extends OneToOneEncoder {
+
+		@Override
+		protected Object encode(ChannelHandlerContext ctx, Channel channel, Object msg) throws Exception {
+			Object msgToReturn = msg;
+			if (msg instanceof TorqueBoxFrame) {
+				TorqueBoxFrame frame = (TorqueBoxFrame) msg;
+				byte[] data = frame.getData();
+				WebSocketFrame wsFrame = new DefaultWebSocketFrame();
+
+				ChannelBuffer buffer = channel.getConfig().getBufferFactory().getBuffer( data.length + 2 );
+				buffer.writeByte( frame.getType() );
+				buffer.writeByte( frame.getCommand() );
+				buffer.writeBytes( data );
+				wsFrame.setData( 0, buffer );
+				msgToReturn = wsFrame;
+			}
+			return msgToReturn;
+		}
 	}
 
 	/**
@@ -186,7 +242,8 @@ public class WebSocketsServer {
 						log.debug( "Looking for handler for UUID " + uuid );
 						ChannelUpstreamHandler rubyHandler = uuidHandlers.get( uuid );
 						channel.getPipeline().addLast( "uuid-handler", rubyHandler );
-					} // end if (we don't have a ruby handler defined for this channel yet)
+					} // end if (we don't have a ruby handler defined for this
+						// channel yet)
 					ChannelEvent event = new UpstreamMessageEvent( channel, frame, channel.getRemoteAddress() );
 					ctx.sendUpstream( event );
 				} else if (channel.getPipeline().get( "media-handler" ) == null) {
@@ -216,60 +273,23 @@ public class WebSocketsServer {
 	}
 
 	/**
-	 * Transforms a TorqueBoxFrame into a WebSocketFrame.
+	 * Provides the Netty websocket pipeline factory.
 	 * 
 	 * @author mdobozy
 	 * 
 	 */
-	private class TorqueBoxFrameEncoder extends OneToOneEncoder {
+	private class WebSocketsPipelineFactory implements ChannelPipelineFactory {
 
 		@Override
-		protected Object encode(ChannelHandlerContext ctx, Channel channel, Object msg) throws Exception {
-			Object msgToReturn = msg;
-			if (msg instanceof TorqueBoxFrame) {
-				TorqueBoxFrame frame = (TorqueBoxFrame) msg;
-				byte[] data = frame.getData();
-				WebSocketFrame wsFrame = new DefaultWebSocketFrame();
-
-				ChannelBuffer buffer = channel.getConfig().getBufferFactory().getBuffer( data.length + 2 );
-				buffer.writeByte( frame.getType() );
-				buffer.writeByte( frame.getCommand() );
-				buffer.writeBytes( data );
-				wsFrame.setData( 0, buffer );
-				msgToReturn = wsFrame;
-			}
-			return msgToReturn;
-		}
-	}
-
-	public static class TorqueBoxFrame {
-
-		public static byte DEFAULT_MEDIA_TYPE = 0x01;
-
-		public static byte HANDSHAKE_COMMAND = 0x01;
-		public static byte HANDSHAKE_RESPONSE_COMMAND = 0x02;
-		public static byte NORMAL_COMMAND = 0x03;
-
-		private byte type;
-		private byte command;
-		private byte[] data;
-
-		public TorqueBoxFrame(byte type, byte command, byte[] data) {
-			this.type = type;
-			this.command = command;
-			this.data = data;
-		}
-
-		public byte getCommand() {
-			return command;
-		}
-
-		public byte getType() {
-			return type;
-		}
-
-		public byte[] getData() {
-			return data;
+		public ChannelPipeline getPipeline() throws Exception {
+			ChannelPipeline pipeline = new DefaultChannelPipeline();
+			pipeline.addLast( "decoder", new HttpRequestDecoder() );
+			pipeline.addLast( "aggregator", new HttpChunkAggregator( 65536 ) );
+			pipeline.addLast( "encoder", new HttpResponseEncoder() );
+			pipeline.addLast( "websockets-handler", new WebSocketsServerHandler() );
+			pipeline.addLast( "torquebox-encoder", new TorqueBoxFrameEncoder() );
+			pipeline.addLast( "torquebox-frame-handler", new TorqueBoxFrameHandler() );
+			return pipeline;
 		}
 
 	}
