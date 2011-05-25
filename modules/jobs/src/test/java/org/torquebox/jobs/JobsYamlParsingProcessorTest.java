@@ -1,43 +1,24 @@
-/*
- * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
- * 
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- * 
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
-
-package org.torquebox.jobs.deployers;
+package org.torquebox.jobs;
 
 import static org.junit.Assert.*;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Set;
 
-import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.jobs.metadata.ScheduledJobMetaData;
-import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
+import org.torquebox.core.TorqueBoxYamlParsingProcessor;
 
-public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
+public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 
-    private JobsYamlParsingDeployer deployer;
+    private TorqueBoxYamlParsingProcessor deployer1;
+    private JobsYamlParsingProcessor deployer2;
 
     @Before
-    public void setUp() throws Throwable {
-        this.deployer = new JobsYamlParsingDeployer();
-        addDeployer( this.deployer );
+    public void setUp() {
+        this.deployer1 = new TorqueBoxYamlParsingProcessor();
+        this.deployer2 = new JobsYamlParsingProcessor();
     }
 
     /** Ensure that an empty jobs.yml causes no problems. */
@@ -45,17 +26,15 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
     public void testEmptyJobsYml() throws Exception {
         URL jobsYml = getClass().getResource( "empty.yml" );
 
-        String deploymentName = addDeployment( jobsYml, "jobs.yml" );
-        processDeployments( true );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", jobsYml );
 
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        this.deployer1.deploy( phaseContext );
+        this.deployer2.deploy( phaseContext );
 
-        assertNotNull( unit );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+        List<ScheduledJobMetaData> allMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
-        Set<? extends ScheduledJobMetaData> allJobMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
-
-        assertNotNull( allJobMetaData );
-        assertTrue( allJobMetaData.isEmpty() );
+        assertTrue( allMetaData.isEmpty() );
     }
 
     /** Ensure that a valid jobs.yml attaches metadata. */
@@ -63,14 +42,14 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
     public void testValidJobsYml() throws Exception {
         URL jobsYml = getClass().getResource( "valid-jobs.yml" );
 
-        String deploymentName = addDeployment( jobsYml, "jobs.yml" );
-        processDeployments( true );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", jobsYml );
 
-        DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        this.deployer1.deploy( phaseContext );
+        this.deployer2.deploy( phaseContext );
 
-        assertNotNull( unit );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
 
-        Set<? extends ScheduledJobMetaData> allJobMetaData = unit.getAllMetaData( ScheduledJobMetaData.class );
+        List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
         assertNotNull( allJobMetaData );
         assertEquals( 3, allJobMetaData.size() );
@@ -92,7 +71,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals( "MyOtherJobClass", jobTwo.getRubyClassName() );
         assertFalse( jobTwo.isSingleton() );
         assertNotNull( jobTwo.getGroup() );
-        
+
         ScheduledJobMetaData jobThree = getJobMetaData( allJobMetaData, "job.three" );
         assertNotNull( jobThree );
         assertEquals( "job.three", jobThree.getName() );
@@ -100,7 +79,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
         assertEquals( "01 01 01 15 * ?", jobThree.getCronExpression() );
         assertEquals( "SingletonJobClass", jobThree.getRubyClassName() );
         assertTrue( jobThree.isSingleton() );
-        assertNotNull( jobTwo.getGroup() );        
+        assertNotNull( jobTwo.getGroup() );
 
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
         assertEquals( jobOne.getGroup(), jobThree.getGroup() );
@@ -115,7 +94,7 @@ public class JobsYamlParsingDeployerTest extends AbstractDeployerTestCase {
      *            The search name
      * @return The found metadata, or null if no matching are found.
      */
-    protected ScheduledJobMetaData getJobMetaData(Set<? extends ScheduledJobMetaData> allJobMetaData, String name) {
+    protected ScheduledJobMetaData getJobMetaData(List<ScheduledJobMetaData> allJobMetaData, String name) {
         for (ScheduledJobMetaData each : allJobMetaData) {
             if (each.getName().equals( name )) {
                 return each;

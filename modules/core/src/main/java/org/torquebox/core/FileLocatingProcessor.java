@@ -30,6 +30,9 @@ import org.jboss.vfs.VirtualFileFilter;
 public abstract class FileLocatingProcessor implements DeploymentUnitProcessor {
 
     protected VirtualFile getFile(final VirtualFile root, final String fileName, String[] locations) {
+        if ( root.getName().equals( fileName) ) {
+            return root;
+        }
         for (int i = 0; i < locations.length; i++) {
             final VirtualFile file = root.getChild( locations[i] + fileName );
             if (file.exists()) {
