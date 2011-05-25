@@ -1,4 +1,5 @@
 require 'java'
+require 'torquebox/messaging/connection'
 
 module TorqueBox
   module Messaging

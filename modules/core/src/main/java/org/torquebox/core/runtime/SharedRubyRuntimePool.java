@@ -42,7 +42,7 @@ import org.torquebox.core.pool.SharedPool;
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
  */
-public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool, BasicRubyRuntimePoolMBean {
+public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRuntimePool, SharedRubyRuntimePoolMBean {
 
     public SharedRubyRuntimePool() {
         

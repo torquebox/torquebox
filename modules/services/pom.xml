@@ -15,63 +15,17 @@
   <description />
 
   <dependencies>
-    <!-- <dependency> -->
-    <!--   <groupId>org.torquebox</groupId> -->
-    <!--   <artifactId>torquebox-ruby-dependencies</artifactId> -->
-    <!--   <version>${project.version}</version> -->
-    <!--   <type>pom</type> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    <!-- <dependency> -->
-    <!--   <groupId>rubygems</groupId> -->
-    <!--   <artifactId>torquebox-web</artifactId> -->
-    <!--   <version>${project.version}</version> -->
-    <!--   <type>gem</type> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jboss.web</groupId> -->
-    <!--   <artifactId>jbossweb</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jboss.as</groupId> -->
-    <!--   <artifactId>jboss-as-web</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jboss.spec.javax.servlet</groupId> -->
-    <!--   <artifactId>jboss-servlet-api_3.0_spec</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jboss</groupId> -->
-    <!--   <artifactId>jboss-vfs</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jruby</groupId> -->
-    <!--   <artifactId>jruby-complete</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jboss.logging</groupId> -->
-    <!--   <artifactId>jboss-logging</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.torquebox</groupId> -->
-    <!--   <artifactId>torquebox-ruby-test-support</artifactId> -->
-    <!--   <version>${project.version}</version> -->
-    <!--   <scope>test</scope> -->
-    <!-- </dependency> -->
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-jmx</artifactId>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build>

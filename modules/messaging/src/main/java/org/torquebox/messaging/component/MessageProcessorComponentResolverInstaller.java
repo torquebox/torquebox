@@ -1,7 +1,13 @@
 package org.torquebox.messaging.component;
 
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.management.MBeanServer;
+
+import org.jboss.as.jmx.MBeanRegistrationService;
+import org.jboss.as.jmx.MBeanServerService;
+import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -12,6 +18,7 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.component.BaseRubyComponentDeployer;
 import org.torquebox.core.component.ComponentClass;
@@ -38,7 +45,7 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         }
     }
 
-    protected void deploy(DeploymentPhaseContext phaseContext, MessageProcessorMetaData metaData) throws DeploymentUnitProcessingException {
+    protected void deploy(DeploymentPhaseContext phaseContext, final MessageProcessorMetaData metaData) throws DeploymentUnitProcessingException {
 
         log.info( "DEPLOY: " + metaData );
 
@@ -63,6 +70,8 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
         // Add to our notifier's watch list
         unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, serviceName );
+        
+
     }
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {

@@ -19,8 +19,15 @@
 
 package org.torquebox.core.pool;
 
+import java.util.Hashtable;
 import java.util.List;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
+import org.jboss.as.jmx.MBeanRegistrationService;
+import org.jboss.as.jmx.MBeanServerService;
+import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.deployment.DeploymentException;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -42,6 +49,7 @@ import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.DefaultRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
+import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.runtime.SharedRubyRuntimePool;
 
@@ -69,9 +77,10 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
         }
     }
 
-    protected void deploy(DeploymentPhaseContext phaseContext, PoolMetaData poolMetaData) {
+    protected void deploy(DeploymentPhaseContext phaseContext, final PoolMetaData poolMetaData) {
         log.info( "Deploying runtime pool: " + poolMetaData );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
         if (poolMetaData.isShared()) {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();
@@ -84,33 +93,60 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
             builder.addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
             builder.install();
-            
+
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
-            
+
             phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
-            .addDependency( name )
-            .setInitialMode( Mode.PASSIVE )
-            .install();
+                    .addDependency( name )
+                    .setInitialMode( Mode.PASSIVE )
+                    .install();
+
+            String mbeanName = ObjectNameFactory.create( "torquebox.pools", new Hashtable<String, String>() {
+                {
+                    put( "app", rubyAppMetaData.getApplicationName() );
+                    put( "name", poolMetaData.getName() );
+                }
+            } ).toString();
+
+            MBeanRegistrationService<BasicRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<BasicRubyRuntimePoolMBean>( mbeanName );
+            phaseContext.getServiceTarget().addService( name.append( "mbean" ), mbeanService )
+                    .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                    .addDependency( name, BasicRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
+                    .install();
+
         } else {
             DefaultRubyRuntimePool pool = new DefaultRubyRuntimePool();
 
             pool.setName( poolMetaData.getName() );
             pool.setMinimumInstances( poolMetaData.getMinimumSize() );
             pool.setMaximumInstances( poolMetaData.getMaximumSize() );
-            
+
             DefaultRubyRuntimePoolService service = new DefaultRubyRuntimePoolService( pool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             phaseContext.getServiceTarget().addService( name, service )
-                .addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
-                .install();
+                    .addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
+                    .install();
 
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
-            
+
             phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
-                .addDependency( name )
-                .setInitialMode( Mode.PASSIVE )
-                .install();
+                    .addDependency( name )
+                    .setInitialMode( Mode.PASSIVE )
+                    .install();
+            
+            String mbeanName = ObjectNameFactory.create( "torquebox.pools", new Hashtable<String, String>() {
+                {
+                    put( "app", rubyAppMetaData.getApplicationName() );
+                    put( "name", poolMetaData.getName() );
+                }
+            } ).toString();
+            
+            MBeanRegistrationService<DefaultRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<DefaultRubyRuntimePoolMBean>( mbeanName );
+            phaseContext.getServiceTarget().addService( name.append( "mbean" ), mbeanService )
+                    .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                    .addDependency( name, DefaultRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
+                    .install();
         }
     }
 

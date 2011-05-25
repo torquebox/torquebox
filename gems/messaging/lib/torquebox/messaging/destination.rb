@@ -1,15 +1,24 @@
+require 'torquebox/messaging/session'
+require 'torquebox/messaging/connection_factory'
+
 module TorqueBox
   module Messaging
     class Destination
 
       attr_reader :connection_factory
-      attr_reader :jms_destination
+      attr_reader :name
       
-      def initialize(destination, connection_factory = nil)
-        @jms_destination        = destination
-        @connection_factory     = ConnectionFactory.new( connection_factory )
-      end
+      PRIORITY_MAP = {
+          :low => 1,
+          :normal => 4,
+          :high => 7,
+          :critical => 9
+      }
 
+      def initialize(destination, connection_factory = nil)
+        @name                = destination
+        @connection_factory  = ConnectionFactory.new( connection_factory )
+      end
 
       def publish(message, options = {})
         with_new_session do |session|
@@ -37,6 +46,15 @@ module TorqueBox
         result
       end
       
+      def start
+        raise "TODO: runtime creation of queues needs to be supported"
+      end
+      alias_method :create, :start
+
+      def destroy
+        raise "TODO: runtime destruction of queues needs to be supported"
+      end
+
       def normalize_options(options)
         if options.has_key?(:persistent)
           options[:delivery_mode] =
@@ -57,7 +75,7 @@ module TorqueBox
       end
 
       def to_s 
-        jms_destination.to_s
+        name
       end
 
     end
