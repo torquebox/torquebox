@@ -16,7 +16,7 @@
 
 require 'spec_helper'
 
-describe "jaas authentication tests" do
+describe "jaas" do
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -31,23 +31,35 @@ describe "jaas authentication tests" do
       version: #{RUBY_VERSION[0,3]}
 
     auth:
-      test-jaas:
+      global:
         domain: torquebox
+      local:
+        domain: torquebox-jaas
   END
 
-  it "should authenticate with proper credentials" do
-    visit "/authentication/success"
+  it "should authenticate against 'torquebox' with proper credentials" do
+    visit "/authentication/torquebox-global-success"
     page.should have_content('it worked')
   end
 
-  it "should authenticate as guest" do
-    visit "/authentication/guest"
+  it "should authenticate against 'torquebox' as guest" do
+    visit "/authentication/torquebox-global-guest"
     page.should have_content('it worked')
   end
 
-  it "should not authenticate with improper credentials" do
-    visit "/authentication/failure"
-    page.should have_content('it failed')
+  it "should not authenticate against 'torquebox' with improper credentials" do
+    visit "/authentication/torquebox-global-failure"
+    page.should have_content('it worked')
   end
+
+  it "should authenticate against 'torquebox-jaas' with proper credentials" #do
+#    visit "/authentication/torquebox-local-success"
+#    page.should have_content('it worked')
+#  end
+
+  it "should not authenticate against 'torquebox-jaas' with improper credentials" #do
+#    visit "/authentication/torquebox-local-failure"
+#    page.should have_content('it worked')
+#  end
 
 end

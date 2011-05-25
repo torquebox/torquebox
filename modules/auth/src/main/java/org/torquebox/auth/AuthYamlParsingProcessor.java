@@ -24,10 +24,10 @@ public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
         if (data != null) {
         	for( String name: data.keySet() ) {
         		@SuppressWarnings("unchecked")
-				String domain = ( (Map<String, String>) data.get(name) ).get("domain");
-        		log.info("Loading auth configuration for " + name + ":" + domain);
+				Map<String, Object> config = (Map<String, Object>) data.get(name);
+        		log.info("Loading auth configuration for " + name + ":" + config.get("domain"));
         		AuthMetaData metaData = new AuthMetaData();
-        		metaData.addAuthentication( name, domain );
+        		metaData.addAuthentication( name, config );
                 unit.addToAttachmentList( AuthMetaData.ATTACHMENT_KEY, metaData );
         	}
         }

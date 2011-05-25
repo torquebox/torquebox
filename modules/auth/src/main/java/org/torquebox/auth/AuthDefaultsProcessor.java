@@ -24,7 +24,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.torquebox.auth.AuthMetaData.Config;
+import org.torquebox.auth.AuthMetaData.TorqueBoxAuthConfig;
 
 public class AuthDefaultsProcessor implements DeploymentUnitProcessor {
 
@@ -42,14 +42,10 @@ public class AuthDefaultsProcessor implements DeploymentUnitProcessor {
 
         for ( AuthMetaData authMetaData: allMetaData ) {
             // Set defaults for any values that weren't explicitly specified in the YAML
-            for ( Config config: authMetaData.getConfigurations() ) {
+            for ( TorqueBoxAuthConfig config: authMetaData.getConfigurations() ) {
                 if ( blank( config.getDomain() ) ) {
                     log.info( "No domain specified. Configuring using default: " + DEFAULT_DOMAIN );
                     config.setDomain( DEFAULT_DOMAIN );
-                }
-                if ( blank( config.getName() ) ) {
-                	log.info( "No name specified. Configuring using default: " + DEFAULT_NAME );
-                    config.setName( DEFAULT_NAME );
                 }
             }
         }
@@ -60,9 +56,7 @@ public class AuthDefaultsProcessor implements DeploymentUnitProcessor {
 		// No-op
 	}
 	
-    public static final String DEFAULT_NAME     = "default";
-    public static final String DEFAULT_STRATEGY = "file";
-    public static final String DEFAULT_DOMAIN   = "torquebox-auth";
+    public static final String DEFAULT_DOMAIN   = "torquebox";
     static final Logger log = Logger.getLogger( "org.torquebox.auth" );
 
 

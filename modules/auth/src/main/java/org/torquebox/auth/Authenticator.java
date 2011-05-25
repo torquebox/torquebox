@@ -50,7 +50,14 @@ public class Authenticator implements Service<Authenticator> {
         Principal principal = getPrincipal(name);
         Object credential = pass == null ? null : new String(pass);
         return this.authenticationManager.isValid(principal, credential);
-        //return true;
+    }
+    
+    public AuthenticationManager getAuthenticationManager() {
+    	return this.authenticationManager;
+    }
+    
+    public SecurityContext getSecurityContext() {
+    	return this.securityContext;
     }
 
 	@Override

@@ -105,7 +105,6 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
 		
 		// TODO: Can we feed usernames/passwords into the options hash?
 		Map<String, Object> options = new HashMap<String, Object>();
-		// TODO: Create/Use torquebox login module
 		AppConfigurationEntry entry = new AppConfigurationEntry(ModulesMap.AUTHENTICATION_MAP.get("Simple"), LoginModuleControlFlag.REQUIRED, options);
 		authenticationInfo.addAppConfigurationEntry(entry);
 		applicationPolicy.setAuthenticationInfo(authenticationInfo);
@@ -136,6 +135,4 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
 	public static final String TORQUEBOX_DOMAIN = "torquebox";
     static final AuthSubsystemAdd ADD_INSTANCE = new AuthSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.auth.as" );
-	
-
 }

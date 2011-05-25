@@ -11,37 +11,37 @@ public class AuthMetaData {
 	
     public static final AttachmentKey<AttachmentList<AuthMetaData>> ATTACHMENT_KEY = AttachmentKey.createList(AuthMetaData.class);
 
-    private Map<String, Config> configs = new HashMap<String, Config>();
+    private Map<String, TorqueBoxAuthConfig> configs = new HashMap<String, TorqueBoxAuthConfig>();
 
-    public void addAuthentication(String name, String domain) {
-        Config configItem = new Config();
-        configItem.setName(name);
-        configItem.setDomain(domain);
+    public void addAuthentication(String name, Map<String, Object> config) {
+    	if (name == null) { throw new RuntimeException("Cannot configure unnamed authentication domain."); }
+        TorqueBoxAuthConfig configItem = new TorqueBoxAuthConfig(name, config);
         configs.put(name, configItem);
     }
 
-    public Collection<Config> getConfigurations() {
+    public Collection<TorqueBoxAuthConfig> getConfigurations() {
         return this.configs.values();
     }
 
-    public class Config {
+    public class TorqueBoxAuthConfig {
         private String name;
-        private String domain;
+        private Map<String, Object> config;
 
-        public void setName(String name) {
-            this.name = name;
+        public TorqueBoxAuthConfig(String name, Map<String,Object> config) {
+        	this.name = name;
+        	this.config = config;
         }
-
+        
         public String getName() {
             return name;
         }
 
-        public void setDomain(String domain) {
-            this.domain = domain;
-        }
-
         public String getDomain() {
-            return domain;
+            return (String) this.config.get("domain");
+        }
+        
+        public void setDomain(String domain) {
+        	this.config.put("domain", domain);
         }
     }
 
