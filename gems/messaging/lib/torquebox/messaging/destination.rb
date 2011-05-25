@@ -1,9 +1,12 @@
+require 'torquebox/injectors'
 require 'torquebox/messaging/session'
 require 'torquebox/messaging/connection_factory'
 
 module TorqueBox
   module Messaging
     class Destination
+
+      include TorqueBox::Injectors
 
       attr_reader :connection_factory
       attr_reader :name
@@ -15,7 +18,7 @@ module TorqueBox
           :critical => 9
       }
 
-      def initialize(destination, connection_factory = nil)
+      def initialize(destination, connection_factory = inject( 'connection-factory' ))
         @name                = destination
         @connection_factory  = ConnectionFactory.new( connection_factory )
       end

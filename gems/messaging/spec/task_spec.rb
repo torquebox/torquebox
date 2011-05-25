@@ -5,7 +5,6 @@ class MyTestTask < TorqueBox::Messaging::Task
   attr_accessor :payload
 end
 
-=begin
 describe TorqueBox::Messaging::Task do
 
   it "should send payload correctly" do
@@ -65,4 +64,3 @@ describe TorqueBox::Messaging::Task do
 
   end
 end
-=end

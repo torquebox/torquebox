@@ -15,7 +15,6 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/injectors'
 require 'torquebox/messaging/destination'
 
 module TorqueBox
@@ -23,24 +22,16 @@ module TorqueBox
 
     class Task
 
-      extend TorqueBox::Injectors
-
-      def self.queue_name
-        suffix = org.torquebox.core.util.StringUtils.underscore(name[0...-4])
-        "queue/#{ENV['TORQUEBOX_APP_NAME']}-tasks-#{suffix}"
+      def self.queue_name( name = self.name[0...-4] )
+        suffix = org.torquebox.core.util.StringUtils.underscore(name)
+        "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/tasks/#{suffix}"
       end
 
       def self.async(method, payload = {}, options = {})
-        connection_factory = inject( 'connection-factory' ) 
         message = {:method => method, :payload => payload}
-        connection_factory.with_new_connection do |connection|
-          connection.with_new_session do |session|
-            queue = session.queue_for( queue_name )
-            puts "publishing to #{queue} with #{message}"
-            session.publish( queue, message, options )
-            session.commit
-          end
-        end
+        Queue.new(queue_name).publish message, options
+      rescue javax.naming.NameNotFoundException => ex
+        raise RuntimeError.new("The queue for #{self.name} is not available. Did you disable it by setting its concurrency to 0?")
       end
 
       def process!(message)
