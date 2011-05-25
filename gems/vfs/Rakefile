@@ -127,7 +127,7 @@ task 'rubyspec' => [ 'check:dependencies', 'rubyspec:prepare' ] do
 
   unless( ENV['NOVFS'] )
     cmd << "-T-I#{File.dirname(__FILE__)}/lib"
-    cmd << '-T-rvfs' 
+    cmd << '-T-rtorquebox/vfs' 
   end
   
   cmd << '--format html'
@@ -152,7 +152,7 @@ file JRUBY_DIR do
   cmd = "git clone git://github.com/jruby/jruby.git #{JRUBY_DIR}"
   run3(cmd)
   Dir.chdir( JRUBY_DIR ) do
-    run3( "git checkout 1.6.0" )
+    run3( "git checkout 1.6.2" )
   end
 end
 
