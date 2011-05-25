@@ -105,7 +105,7 @@ module TorqueBox
         
         class << self
           def publish_message(receiver, method, args, options = { })
-            queue = Queue.new( TorqueBox::Messaging::Task.queue_name("torquebox-backgroundable") )
+            queue = Queue.new( TorqueBox::Messaging::Task.queue_name("torquebox_backgroundable") )
             queue.publish({:receiver => receiver, :method => method, :args => args}, options)
           rescue javax.jms.InvalidDestinationException => ex
             raise RuntimeError.new("The Backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")

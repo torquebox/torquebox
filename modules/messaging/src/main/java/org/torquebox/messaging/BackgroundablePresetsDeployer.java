@@ -53,7 +53,7 @@ public class BackgroundablePresetsDeployer implements DeploymentUnitProcessor {
 
         task.setRubyClassName( "TorqueBox::Messaging::BackgroundableProcessor" );
         task.setLocation( "torquebox/messaging/backgroundable_processor" );
-        task.setQueueSuffix( "-torquebox-backgroundable" );
+        task.setQueueSuffix( "torquebox_backgroundable" );
         task.setSimpleName( "Backgroundable" );
 
         unit.addToAttachmentList( TaskMetaData.ATTACHMENTS_KEY, task );
