@@ -38,6 +38,7 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.torquebox.jobs.JobSchedulerDeployer;
+import org.torquebox.jobs.JobsLoadPathProcessor;
 import org.torquebox.jobs.JobsRuntimePoolProcessor;
 import org.torquebox.jobs.JobsYamlParsingProcessor;
 import org.torquebox.jobs.ScheduledJobDeployer;
@@ -77,6 +78,7 @@ public class JobsSubsystemAdd implements ModelAddOperationHandler, BootOperation
         log.info( "Adding deployment processors" );
         
         context.addDeploymentProcessor( Phase.PARSE, 30, new JobsYamlParsingProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new JobsLoadPathProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
         context.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobComponentResolverInstaller() );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerDeployer() );

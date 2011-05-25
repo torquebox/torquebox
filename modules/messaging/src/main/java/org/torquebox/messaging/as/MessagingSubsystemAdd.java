@@ -28,6 +28,7 @@ import org.torquebox.core.injection.jndi.ManagedReferenceInjectableService;
 import org.torquebox.messaging.ApplicationNamingContextBindingProcessor;
 import org.torquebox.messaging.BackgroundablePresetsDeployer;
 import org.torquebox.messaging.MessageProcessorDeployer;
+import org.torquebox.messaging.MessagingLoadPathProcessor;
 import org.torquebox.messaging.MessagingRuntimePoolDeployer;
 import org.torquebox.messaging.MessagingYamlParsingProcessor;
 import org.torquebox.messaging.QueueDeployer;
@@ -78,6 +79,8 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
         context.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningDeployer() );
 
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
+        
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new MessagingLoadPathProcessor() );
 
         //context.addDeploymentProcessor( Phase.POST_MODULE, 7, new MessagingInjectablesProcessor() );
         context.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );

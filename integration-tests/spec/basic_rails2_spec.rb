@@ -35,8 +35,15 @@ describe "basic knob compatibility" do
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
+  
   it_should_behave_like "basic rails2 tests"
+
+  it "should be able to autoload from TB path conventions" do
+    visit "/basic-rails/autoload"
+    page.find('#success').should_not be_nil
+  end
 end
+
 describe "basic archive knob compatibility" do
   deploy TorqueBox::DeployUtils.create_archive( "basic-rails2.knob", 
                                                 File.join( File.dirname( __FILE__ ), "../apps/rails2/basic" ),

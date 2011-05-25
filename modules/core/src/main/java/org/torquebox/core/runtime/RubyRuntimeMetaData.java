@@ -19,6 +19,8 @@
 
 package org.torquebox.core.runtime;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +141,18 @@ public class RubyRuntimeMetaData {
      */
     public void appendLoadPath(RubyLoadPathMetaData loadPath) {
         loadPaths.add( loadPath );
+    }
+    
+    /**
+     * Append an element to the {@code LOAD_PATH} relative to the baseDir.
+     * 
+     * @param loadPath
+     *            The relative path element to append
+     */
+    public void appendLoadPath(String loadPath) throws MalformedURLException {
+        URL url = getBaseDir().getChild( loadPath ).toURL();
+        RubyLoadPathMetaData loadPathMetaData = new RubyLoadPathMetaData( url );
+        loadPaths.add( loadPathMetaData );
     }
 
     /**
