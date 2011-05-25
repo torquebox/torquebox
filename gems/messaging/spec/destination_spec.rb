@@ -1,24 +1,21 @@
 
-#require 'torquebox-container-foundation'
-#require 'torquebox-naming-container'
-#require 'torquebox-messaging-container'
-#require 'torquebox/messaging/destination'
+require 'torquebox/messaging/queue'
+require 'torquebox/messaging/topic'
+require 'torquebox/kernel'
 
-=begin
 describe TorqueBox::Messaging::Destination do
 
   it "should return its name for to_s" do
     queue = TorqueBox::Messaging::Queue.new("/queues/foo")
     queue.name.should == "/queues/foo"
-    queue.to_s.should == queue.name
     topic = TorqueBox::Messaging::Topic.new("/topics/bar")
     topic.name.should == "/topics/bar"
-    topic.to_s.should == topic.name
   end
 
   %w{ create start }.each do |method|
 
     it "should create a queue on #{method}" do
+      pending("Queues cannot yet start and stop dynamically")
       server = mock("server")
       server.should_receive(:createQueue)
       server.should_receive(:destroyQueue).with("my_queue")
@@ -31,6 +28,7 @@ describe TorqueBox::Messaging::Destination do
     end
 
     it "should create a topic on #{method}" do
+      pending("Topics cannot yet start and stop dynamically")
       server = mock("server")
       server.should_receive(:createTopic)
       server.should_receive(:destroyTopic).with("my_topic")
@@ -48,8 +46,8 @@ describe TorqueBox::Messaging::Destination do
     before(:each) do
       @session = mock('session')
       @session.stub(:transacted?).and_return(false)
-      TorqueBox::Messaging::Client.stub(:connect).and_yield(@session)
       @queue = TorqueBox::Messaging::Queue.new('foo')
+      @queue.stub(:with_new_session).and_yield(@session)
     end
 
     context "normalizing options" do
@@ -96,84 +94,10 @@ describe TorqueBox::Messaging::Destination do
   end
 
 
-  describe "message selectors" do
-    before(:each) do
-      @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
-      @container.enable( TorqueBox::Messaging::MessageBroker )
-      @container.start
-      @queue = TorqueBox::Messaging::Queue.new "/queues/selector_test"
-      @queue.start
-    end
-
-    after(:each) do
-      @queue.destroy
-      @container.stop
-    end
-
-    {
-      true => 'prop = true',
-      true => 'prop <> false',
-      5 => 'prop = 5',
-      5 => 'prop > 4',
-      5.5 => 'prop = 5.5',
-      5.5 => 'prop < 6',
-      'string' => "prop = 'string'"
-    }.each do |value, selector|
-      it "should be able to select with property set to #{value} using selector '#{selector}'" do
-        @queue.publish value.to_s, :properties => { :prop => value }
-        message = @queue.receive(:timeout => 1000, :selector => selector)
-        message.should == value.to_s
-      end
-    end
-    
-  end
-  
-  describe "browse" do
-    before(:each) do
-      @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
-      @container.enable( TorqueBox::Messaging::MessageBroker )
-      @container.start
-    end
-
-    after(:each) do
-      @container.stop
-    end
-
-    it "should allow enumeration of the messages" do
-      queue = TorqueBox::Messaging::Queue.new "/queues/browseable"
-      queue.start
-      queue.publish "howdy"
-      queue.first.text.should == 'howdy'
-      queue.destroy
-    end
-
-    it "should accept a selector" do
-      queue = TorqueBox::Messaging::Queue.new "/queues/browseable", {}, :selector => 'blurple > 5'
-      queue.start
-      queue.publish "howdy", :properties => {:blurple => 5}
-      queue.publish "ahoyhoy", :properties => {:blurple => 6}
-      queue.first.text.should == 'ahoyhoy'
-      queue.detect { |m| m.text == 'howdy' }.should be_nil
-      queue.destroy
-      
-    end
-  end
-  
   describe "sending and receiving" do
-    before(:each) do
-      @container = TorqueBox::Container::Foundation.new
-      @container.enable( TorqueBox::Naming::NamingService ) {|config| config.export=false}
-      @container.enable( TorqueBox::Messaging::MessageBroker )
-      @container.start
-    end
-
-    after(:each) do
-      @container.stop
-    end
 
     it "should be able to publish to and receive from a queue" do
+      pending("Queues cannot yet start and stop dynamically")
       queue = TorqueBox::Messaging::Queue.new "/queues/foo"
       queue.start
 
@@ -185,6 +109,7 @@ describe TorqueBox::Messaging::Destination do
     end
 
     it "should publish to multiple topic consumers" do
+      pending("Topics cannot yet start and stop dynamically")
       topic = TorqueBox::Messaging::Topic.new "/topics/foo"
       topic.start
       threads, count = [], 10
@@ -204,6 +129,7 @@ describe TorqueBox::Messaging::Destination do
 
     context "synchronous messaging" do
       it "should return value of block given to receive_and_publish" do
+        pending("Queues cannot yet start and stop dynamically")
         queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
         queue.start
 
@@ -218,6 +144,7 @@ describe TorqueBox::Messaging::Destination do
       end
 
       it "should return request message if no block given" do
+        pending("Queues cannot yet start and stop dynamically")
         queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
         queue.start
 
@@ -232,6 +159,7 @@ describe TorqueBox::Messaging::Destination do
       end
 
       it "should not mess up with multiple consumers" do
+        pending("Queues cannot yet start and stop dynamically")
         queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
         queue.start
 
@@ -254,6 +182,7 @@ describe TorqueBox::Messaging::Destination do
       end
 
       it "should allow a selector to be passed" do
+        pending("Queues cannot yet start and stop dynamically")
         queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
         queue.start
 
@@ -284,6 +213,7 @@ describe TorqueBox::Messaging::Destination do
 
     context "destination not ready" do
       it "should block on publish until queue is ready" do
+        pending("Queues cannot yet start and stop dynamically")
         queue = TorqueBox::Messaging::Queue.new "/queues/not_ready"
         # Start the queue in a separate thread after a delay
         setup_thread = Thread.new {
@@ -300,6 +230,7 @@ describe TorqueBox::Messaging::Destination do
       end
 
       it "should block on receive until topic is ready" do
+        pending("Topics cannot yet start and stop dynamically")
         topic = TorqueBox::Messaging::Topic.new "/topics/not_ready"
         # Start the topic in a separate thread after a delay
         setup_thread = Thread.new {
@@ -317,10 +248,9 @@ describe TorqueBox::Messaging::Destination do
         queue = TorqueBox::Messaging::Queue.new "/queues/not_ready"
         lambda {
           queue.publish "something", :startup_timeout => 200
-        }.should raise_error(javax.naming.NameNotFoundException)
+        }.should raise_error
       end
     end
   end
 
 end
-=end

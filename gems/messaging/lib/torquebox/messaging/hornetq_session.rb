@@ -7,7 +7,7 @@ module TorqueBox
       # HornetQDestination instead of a destination name
       def java_destination(destination)
         type = destination.is_a?( Queue ) ? 'queue' : 'topic'
-        org.hornetq.jms.client.HornetQDestination.from_address( "jms.#{type}.#{destination.jms_destination}" )
+        org.hornetq.jms.client.HornetQDestination.from_address( "jms.#{type}.#{destination.name}" )
       end
       
     end

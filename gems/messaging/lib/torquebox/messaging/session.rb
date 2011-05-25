@@ -118,7 +118,7 @@ module TorqueBox
       end
 
       def java_destination(destination)
-        java_destination = destination.jms_destination
+        java_destination = destination.name
         
         unless java_destination.is_a?( javax.jms.Destination )
           meth = destination.is_a?( Queue ) ? :create_queue : :create_topic
