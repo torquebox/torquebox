@@ -68,7 +68,7 @@ public class TaskMetaData {
                 baseQueueName = baseQueueName.substring( 0, baseQueueName.length() - 4 );
             }
             baseQueueName = StringUtils.underscore( baseQueueName );
-            this.queueSuffix = "-" + baseQueueName;
+            this.queueSuffix = baseQueueName;
         }
         return this.queueSuffix;
     }
