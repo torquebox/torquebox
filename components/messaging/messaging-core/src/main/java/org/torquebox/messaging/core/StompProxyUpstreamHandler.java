@@ -22,8 +22,10 @@ import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.torquebox.messaging.core.WebSocketsServer.TorqueBoxFrame;
 
 /**
- * The purpose of this handler is to proxy websocket traffic to the STOMP
- * acceptor running on HornetQ.
+ * This netty upstream handler is designed to proxy any websocket based STOMP
+ * traffic to the HornetQ's netty-based STOMP acceptor.
+ * 
+ * Based upon the Netty proxy server example.
  * 
  * @author mdobozy
  * 
@@ -98,8 +100,7 @@ public class StompProxyUpstreamHandler extends SimpleChannelUpstreamHandler impl
 					synchronized (trafficLock) {
 						outboundChannel.write( msg );
 						// If outboundChannel is saturated, do not read until
-						// notified in
-						// OutboundHandler.channelInterestChanged().
+						// notified in OutboundHandler.channelInterestChanged().
 						if (!outboundChannel.isWritable()) {
 							e.getChannel().setReadable( false );
 						}
@@ -126,11 +127,11 @@ public class StompProxyUpstreamHandler extends SimpleChannelUpstreamHandler impl
 	private ChannelFuture initProxy(ChannelHandlerContext ctx, ChannelEvent e) throws Exception {
 
 		if (outboundChannel == null) {
-			
+
 			// Suspend incoming traffic until connected to the remote host.
 			final Channel inboundChannel = e.getChannel();
-			inboundChannel.setReadable( false );			
-			
+			inboundChannel.setReadable( false );
+
 			// Start the connection attempt.
 			ExecutorService executor = Executors.newCachedThreadPool();
 			ClientSocketChannelFactory factory = new NioClientSocketChannelFactory( executor, executor );
@@ -154,7 +155,7 @@ public class StompProxyUpstreamHandler extends SimpleChannelUpstreamHandler impl
 				}
 			} );
 			return f;
-		} // end if
+		}
 		return null;
 	}
 

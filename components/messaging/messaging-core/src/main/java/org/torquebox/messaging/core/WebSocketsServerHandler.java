@@ -42,6 +42,7 @@ import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameEncoder;
 import org.jboss.netty.util.CharsetUtil;
 
 /**
+ * @author mdobozy Based on Trustin Lee's example WebSocketServerListener.
  * @author <a href="http://www.jboss.org/netty/">The Netty Project</a>
  * @author <a href="http://gleamynode.net/">Trustin Lee</a>
  *

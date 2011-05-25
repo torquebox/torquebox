@@ -21,6 +21,11 @@ import org.hornetq.spi.core.remoting.Acceptor;
 import org.hornetq.spi.core.remoting.BufferHandler;
 import org.jboss.logging.Logger;
 
+/**
+ * MC container for the STOMP acceptor provided by HornetQ.
+ * @author mdobozy
+ *
+ */
 public class StompServer {
 
 	private static final Logger log = Logger.getLogger( StompServer.class );
@@ -65,7 +70,6 @@ public class StompServer {
 
 	public void onUninstall() {
 		log.info( "Stopping HornetQ STOMP acceptor." );
-		// TODO: do we need any cleanup here?
 	}
 	
 	public void setPort(int port) {
