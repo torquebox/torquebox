@@ -8,7 +8,7 @@ import org.torquebox.core.injection.SimpleNamedInjectable;
 public class ServiceInjectable extends SimpleNamedInjectable {
     
     public ServiceInjectable(String name, boolean generic) {
-        this( "jndi", name, generic );
+        this( "service", name, generic );
     }
     
     protected ServiceInjectable(String type, String name, boolean generic) {
