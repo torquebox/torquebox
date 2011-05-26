@@ -10,14 +10,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.jobs.as.JobsServices;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
+import org.torquebox.test.as.MockDeploymentPhaseContext;
+import org.torquebox.test.as.MockDeploymentUnit;
+import org.torquebox.test.as.MockServiceBuilder;
 
 public class ScheduledJobDeployerTest extends AbstractDeploymentProcessorTestCase {
     
-    private ScheduledJobDeployer deployer;
-
     @Before
     public void setUp() {
-        this.deployer = new ScheduledJobDeployer();
+        addDeployer( new ScheduledJobDeployer() );
     }
     
 
@@ -26,7 +28,7 @@ public class ScheduledJobDeployerTest extends AbstractDeploymentProcessorTestCas
     public void testEmptyDeployment() throws Exception {
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         
-        this.deployer.deploy(  phaseContext );
+        deploy(  phaseContext );
         
         Collection<MockServiceBuilder<?>> allBuilders = phaseContext.getMockServiceTarget().getMockServiceBuilders();
         assertNotNull( allBuilders );
@@ -53,7 +55,7 @@ public class ScheduledJobDeployerTest extends AbstractDeploymentProcessorTestCas
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
         unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
         
-        this.deployer.deploy( phaseContext );
+        deploy( phaseContext );
 
         ServiceName jobServiceName = JobsServices.scheduledJob( unit, "job.one" );
         

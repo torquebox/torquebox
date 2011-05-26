@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-vdf-test-support</artifactId>
+  <artifactId>torquebox-as-test-support</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox VDF Testing Support</name>
+  <name>TorqueBox JBoss AS Integration Testing Support</name>
   <description />
 
   <dependencies>
@@ -29,6 +29,11 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-server</artifactId>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

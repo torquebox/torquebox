@@ -1,4 +1,4 @@
-package org.torquebox.jobs;
+package org.torquebox.test.as;
 
 import java.io.Closeable;
 import java.io.File;

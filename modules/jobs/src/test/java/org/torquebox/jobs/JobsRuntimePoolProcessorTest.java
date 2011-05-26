@@ -9,14 +9,13 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.runtime.PoolMetaData;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTestCase {
 
-    private JobsRuntimePoolProcessor deployer;
-
     @Before
     public void setUpDeployer() throws Throwable {
-        this.deployer = new JobsRuntimePoolProcessor();
+        addDeployer( new JobsRuntimePoolProcessor() );
     }
 
     /** Ensure an existing pool definition is accepted as-is. */
@@ -30,7 +29,7 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
         jobsPoolMetaData.setShared();
         
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, jobsPoolMetaData );
-        this.deployer.deploy( phaseContext );
+        deploy( phaseContext );
         
         List<PoolMetaData> allPools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
         assertEquals( 1, allPools.size() );
@@ -54,7 +53,7 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, jobsPoolMetaData );
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, new ScheduledJobMetaData() );
         
-        this.deployer.deploy( phaseContext );
+        deploy( phaseContext );
         
         List<PoolMetaData> allPools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
         assertEquals( 1, allPools.size() );
@@ -71,7 +70,7 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
         DeploymentPhaseContext phaseContext = createPhaseContext();
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        this.deployer.deploy( phaseContext );
+        deploy( phaseContext );
         
         List<PoolMetaData> allPools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
         assertEquals( 0, allPools.size() );
@@ -89,7 +88,7 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
         
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, new ScheduledJobMetaData() );
         
-        this.deployer.deploy( phaseContext );
+        deploy( phaseContext );
         
         List<PoolMetaData> allPools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
         assertEquals( 1, allPools.size() );

@@ -8,14 +8,16 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.torquebox.jobs.as.JobsServices;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
+import org.torquebox.test.as.MockDeploymentPhaseContext;
+import org.torquebox.test.as.MockDeploymentUnit;
+import org.torquebox.test.as.MockServiceBuilder;
 
 public class JobSchedulerDeployerTest extends AbstractDeploymentProcessorTestCase {
     
-    private JobSchedulerDeployer deployer;
-
     @Before
     public void setUp() {
-        this.deployer = new JobSchedulerDeployer();
+        addDeployer( new JobSchedulerDeployer() );
     }
     
     /** Ensure that given no jobs, a scheduler is not deployed. */
@@ -23,7 +25,8 @@ public class JobSchedulerDeployerTest extends AbstractDeploymentProcessorTestCas
     public void testNoJobsNoScheduler() throws Exception {
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        this.deployer.deploy( phaseContext );
+        
+        deploy( phaseContext );
 
         ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
@@ -41,7 +44,7 @@ public class JobSchedulerDeployerTest extends AbstractDeploymentProcessorTestCas
         ScheduledJobMetaData jobMeta = new ScheduledJobMetaData();
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMeta );
         
-        this.deployer.deploy( phaseContext );
+        deploy( phaseContext );
 
         ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
@@ -67,7 +70,7 @@ public class JobSchedulerDeployerTest extends AbstractDeploymentProcessorTestCas
         jobMeta.setSingleton( true );
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMeta );
         
-        this.deployer.deploy( phaseContext );
+        deploy( phaseContext );
 
         ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, true );
         MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );

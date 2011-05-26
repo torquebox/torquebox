@@ -4,21 +4,20 @@ import static org.junit.Assert.*;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
+import org.torquebox.test.as.MockDeploymentPhaseContext;
+import org.torquebox.test.as.MockDeploymentUnit;
 
 public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 
-    private TorqueBoxYamlParsingProcessor deployer1;
-    private JobsYamlParsingProcessor deployer2;
-
     @Before
     public void setUp() {
-        this.deployer1 = new TorqueBoxYamlParsingProcessor();
-        this.deployer2 = new JobsYamlParsingProcessor();
+        addDeployer( new TorqueBoxYamlParsingProcessor() );
+        addDeployer( new JobsYamlParsingProcessor() );
     }
 
     /** Ensure that an empty jobs.yml causes no problems. */
@@ -28,8 +27,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", jobsYml );
 
-        this.deployer1.deploy( phaseContext );
-        this.deployer2.deploy( phaseContext );
+        deploy( phaseContext );
 
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
         List<ScheduledJobMetaData> allMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
@@ -44,8 +42,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", jobsYml );
 
-        this.deployer1.deploy( phaseContext );
-        this.deployer2.deploy( phaseContext );
+        deploy( phaseContext );
 
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
 
