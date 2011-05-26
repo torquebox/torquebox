@@ -35,6 +35,8 @@ describe "jaas" do
         domain: torquebox
       local:
         domain: torquebox-jaas
+        credentials:
+          scott: tiger
   END
 
   it "should authenticate against 'torquebox' with proper credentials" do
@@ -52,14 +54,14 @@ describe "jaas" do
     page.should have_content('it worked')
   end
 
-  it "should authenticate against 'torquebox-jaas' with proper credentials" #do
-#    visit "/authentication/torquebox-local-success"
-#    page.should have_content('it worked')
-#  end
+  it "should authenticate against 'torquebox-jaas' with proper credentials" do
+    visit "/authentication/torquebox-local-success"
+    page.should have_content('it worked')
+  end
 
-  it "should not authenticate against 'torquebox-jaas' with improper credentials" #do
-#    visit "/authentication/torquebox-local-failure"
-#    page.should have_content('it worked')
-#  end
+  it "should not authenticate against 'torquebox-jaas' with improper credentials" do
+    visit "/authentication/torquebox-local-failure"
+    page.should have_content('it worked')
+  end
 
 end

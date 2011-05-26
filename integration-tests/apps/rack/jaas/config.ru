@@ -19,10 +19,10 @@ app = lambda { |env|
     message = "it worked" unless authenticator.authenticate('foo', 'bar') 
   elsif req.path_info == "/torquebox-local-success"
     authenticator = TorqueBox::Authentication[ 'local' ]
-    message = "it worked" if authenticator.authenticate('foo', 'bar') 
+    message = "it worked" if authenticator.authenticate('scott', 'tiger') 
   elsif req.path_info == "/torquebox-local-failure"
     authenticator = TorqueBox::Authentication[ 'local' ]
-    message = "it worked" unless authenticator.authenticate('boo', 'far') 
+    message = "it worked" unless authenticator.authenticate('foo', 'bar') 
   end
   [200, { 'Content-Type' => 'text/html' }, "<div id='success' class='basic-rack #{ENV['GRIST']}'>#{message}</div>"] 
 }

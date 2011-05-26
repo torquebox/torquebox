@@ -18,6 +18,8 @@ public class AuthDependencyProcessor implements DeploymentUnitProcessor {
             .create( ModuleName.PICKETBOX.getName(),
                     ModuleName.PICKETBOX.getSlot() );
 
+    private static ModuleIdentifier TORQUEBOX_AUTH_ID = ModuleIdentifier.create("org.torquebox.auth");
+    
     @Override
     /** {@inheritDoc} */
     public void deploy(DeploymentPhaseContext phaseContext)
@@ -27,7 +29,7 @@ public class AuthDependencyProcessor implements DeploymentUnitProcessor {
         final ModuleSpecification moduleSpecification = deploymentUnit
                 .getAttachment( Attachments.MODULE_SPECIFICATION );
         moduleSpecification.addDependency( new ModuleDependency( moduleLoader,
-                PICKETBOX_ID, false, true, false ) );
+                TORQUEBOX_AUTH_ID, false, true, false ) );
     }
 
     @Override

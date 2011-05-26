@@ -45,6 +45,11 @@ public class AuthMetaData {
         public void setDomain(String domain) {
             this.config.put( "domain", domain );
         }
+
+        @SuppressWarnings("unchecked")
+        public Map<String, String> getCredentials() {
+            return (Map<String, String>) this.config.get( "credentials" );
+        }
     }
 
 }

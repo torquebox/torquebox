@@ -42,7 +42,6 @@ public class AuthDeployer implements DeploymentUnitProcessor {
         if (appMetaData != null) {
             String applicationName = appMetaData.getApplicationName();
             this.setApplicationName( applicationName );
-            this.addTorqueBoxSecurityDomainService( phaseContext );
 
             // Install authenticators for every domain
             List<AuthMetaData> allMetaData = unit.getAttachmentList( AuthMetaData.ATTACHMENT_KEY );
@@ -75,7 +74,7 @@ public class AuthDeployer implements DeploymentUnitProcessor {
         return AuthSubsystemAdd.TORQUEBOX_DOMAIN + "-" + this.getApplicationName();
     }
 
-    private void addTorqueBoxSecurityDomainService(DeploymentPhaseContext context) {
+    private void addTorqueBoxSecurityDomainService(DeploymentPhaseContext context, TorqueBoxAuthConfig config) {
         String domain = this.getTorqueBoxDomainServiceName();
         log.info( "Adding torquebox security domain: " + domain );
         final ApplicationPolicy applicationPolicy = new ApplicationPolicy( domain );
@@ -83,9 +82,11 @@ public class AuthDeployer implements DeploymentUnitProcessor {
 
         // TODO: Can we feed usernames/passwords into the options hash?
         Map<String, Object> options = new HashMap<String, Object>();
-        Map<String, String> credentials = new HashMap<String, String>();
-        credentials.put( "foo", "bar" );
-        options.put( "credentials", credentials );
+        Map<String, String> credentials = config.getCredentials();
+        if (credentials != null) {
+            log.info( "Seeding auth credentials" );
+            options.put( "credentials", credentials );
+        }
         AppConfigurationEntry entry = new AppConfigurationEntry( TorqueBoxLoginModule.class.getName(), LoginModuleControlFlag.REQUIRED, options );
         authenticationInfo.addAppConfigurationEntry( entry );
         applicationPolicy.setAuthenticationInfo( authenticationInfo );
@@ -120,6 +121,7 @@ public class AuthDeployer implements DeploymentUnitProcessor {
                     torqueboxService.setMode( Mode.ACTIVE );
             } else if (domain.equals( this.getTorqueBoxDomainServiceName() )) {
                 // activate the service
+                this.addTorqueBoxSecurityDomainService( phaseContext, config );
                 log.info( "Activating SecurityDomainService for " + domain );
                 ServiceController<?> torqueboxService = phaseContext.getServiceRegistry().getService(
                         SecurityDomainService.SERVICE_NAME.append( this.getTorqueBoxDomainServiceName() ) );
