@@ -71,8 +71,12 @@ public class AuthDeployer implements DeploymentUnitProcessor {
         return this.applicationName;
     }
 
+    private String getTorqueBoxDomainServiceName() {
+        return AuthSubsystemAdd.TORQUEBOX_DOMAIN + "-" + this.getApplicationName();
+    }
+
     private void addTorqueBoxSecurityDomainService(DeploymentPhaseContext context) {
-        String domain = AuthSubsystemAdd.TORQUEBOX_DOMAIN + "-" + this.getApplicationName();
+        String domain = this.getTorqueBoxDomainServiceName();
         log.info( "Adding torquebox security domain: " + domain );
         final ApplicationPolicy applicationPolicy = new ApplicationPolicy( domain );
         AuthenticationInfo authenticationInfo = new AuthenticationInfo( domain );
@@ -114,6 +118,14 @@ public class AuthDeployer implements DeploymentUnitProcessor {
                         SecurityDomainService.SERVICE_NAME.append( AuthSubsystemAdd.TORQUEBOX_DOMAIN ) );
                 if (torqueboxService != null)
                     torqueboxService.setMode( Mode.ACTIVE );
+            } else if (domain.equals( this.getTorqueBoxDomainServiceName() )) {
+                // activate the service
+                log.info( "Activating SecurityDomainService for " + domain );
+                ServiceController<?> torqueboxService = phaseContext.getServiceRegistry().getService(
+                        SecurityDomainService.SERVICE_NAME.append( this.getTorqueBoxDomainServiceName() ) );
+                if (torqueboxService != null) {
+                    torqueboxService.setMode( Mode.ACTIVE );
+                }
             }
             ServiceName serviceName = AuthServices.authenticationService( this.getApplicationName(), name );
             log.info( "Deploying Authenticator: " + serviceName + " for security domain: " + domain );

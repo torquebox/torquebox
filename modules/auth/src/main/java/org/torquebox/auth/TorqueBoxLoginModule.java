@@ -40,6 +40,7 @@ public class TorqueBoxLoginModule extends UsernamePasswordLoginModule {
 
     @Override
     protected String getUsersPassword() throws LoginException {
+        log.warn( "AUTHENTICATING NOW!" );
         String username = getUsername();
         String password = null;
         if (username != null) {
