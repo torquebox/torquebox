@@ -20,6 +20,7 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.torquebox.core.ArchiveDirectoryMountingProcessor;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.app.AppJarScanningProcessor;
 import org.torquebox.core.app.AppKnobYamlParsingProcessor;
@@ -85,6 +86,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new PredeterminedInjectableProcessor( registry ) );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableDeployer() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
         context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
         context.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );

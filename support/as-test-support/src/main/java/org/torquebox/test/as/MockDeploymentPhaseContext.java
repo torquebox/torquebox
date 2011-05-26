@@ -33,7 +33,7 @@ public class MockDeploymentPhaseContext extends SimpleAttachable implements Depl
     }
     
     public MockDeploymentPhaseContext(String name, URL content) throws URISyntaxException, IOException {
-        this(  new MockServiceRegistry(), "test-unit" );
+        this(  new MockServiceRegistry(), name );
         
         VirtualFile root = VFS.getChild( content.toURI() );
         File fileRoot = new File( content.getFile() );

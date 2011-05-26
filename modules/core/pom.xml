@@ -63,14 +63,12 @@
       <scope>provided</scope>
     </dependency>
 
-<!--
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>rspec</artifactId>
-      <type>gem</type>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-as-test-support</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
--->
 
   </dependencies>
 
@@ -94,11 +92,6 @@
         </includes>
       </resource>
     </resources> 
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
     <plugins> 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>

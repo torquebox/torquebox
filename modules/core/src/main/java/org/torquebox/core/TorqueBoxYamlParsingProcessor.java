@@ -13,6 +13,7 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.YAMLException;
 
 public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
     public static final String TORQUEBOX_YAML_FILE = "torquebox.yml";
@@ -33,6 +34,8 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
                     metaData = externalMetaData.overlayOnto( metaData );
                 }
                 unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
+            } catch (YAMLException e) {
+                throw new DeploymentUnitProcessingException( e );
             } catch (IOException e) {
                 throw new DeploymentUnitProcessingException( e );
             }
