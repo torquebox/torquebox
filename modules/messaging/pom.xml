@@ -65,6 +65,14 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-messaging</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+      <type>gem</type>
+    </dependency>
   </dependencies>
 
   <build>
