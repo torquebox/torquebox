@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core.app;
+package org.torquebox.core.pool;
 
 import java.util.Map;
 

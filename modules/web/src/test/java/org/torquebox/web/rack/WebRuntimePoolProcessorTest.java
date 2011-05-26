@@ -12,7 +12,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.core.app.PoolingYamlParsingProcessor;
+import org.torquebox.core.pool.PoolingYamlParsingProcessor;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 import org.torquebox.test.as.MockDeploymentPhaseContext;

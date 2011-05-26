@@ -1,4 +1,4 @@
-package org.torquebox.core.as;
+package org.torquebox.core.runtime;
 
 import java.net.MalformedURLException;
 
@@ -7,8 +7,6 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.torquebox.core.app.RubyApplicationMetaData;
-import org.torquebox.core.runtime.RubyLoadPathMetaData;
-import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
 public class BaseRubyRuntimeDeployer implements DeploymentUnitProcessor {
 
@@ -34,7 +32,7 @@ public class BaseRubyRuntimeDeployer implements DeploymentUnitProcessor {
 
         runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
-        runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.RACK );
+        runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.BARE );
 
         try {
             runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot().toURL() ) );
