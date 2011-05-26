@@ -20,7 +20,7 @@ describe "messaging alacarte rack test" do
   END
 
   it "should work" do
-    touchfile = Pathname.new( "./target/messaging-touchfile.txt" )
+    touchfile = Pathname.new( "#{File.dirname(__FILE__)}/../target/messaging-touchfile.txt" )
     FileUtils.rm_rf( touchfile )
 
     tstamp = Time.now
