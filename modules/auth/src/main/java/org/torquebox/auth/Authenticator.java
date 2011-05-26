@@ -30,13 +30,12 @@ import org.jboss.security.SecurityContext;
 import org.picketbox.factories.SecurityFactory;
 
 public class Authenticator implements Service<Authenticator> {
-	public static final String TORQUEBOX_AUTH_DOMAIN = "torquebox";
+    public static final String TORQUEBOX_AUTH_DOMAIN = "torquebox";
 
-	private String authDomain;
+    private String authDomain;
     private SecurityContext securityContext;
     private AuthenticationManager authenticationManager;
     private static final Logger log = Logger.getLogger( "org.torquebox.auth" );
-
 
     public void setAuthDomain(String domain) {
         this.authDomain = domain;
@@ -47,28 +46,28 @@ public class Authenticator implements Service<Authenticator> {
     }
 
     public boolean authenticate(String name, String pass) {
-        Principal principal = getPrincipal(name);
-        Object credential = pass == null ? null : new String(pass);
-        return this.authenticationManager.isValid(principal, credential);
+        Principal principal = getPrincipal( name );
+        Object credential = pass == null ? null : new String( pass );
+        return this.authenticationManager.isValid( principal, credential );
     }
-    
+
     public AuthenticationManager getAuthenticationManager() {
-    	return this.authenticationManager;
+        return this.authenticationManager;
     }
-    
+
     public SecurityContext getSecurityContext() {
-    	return this.securityContext;
+        return this.securityContext;
     }
 
-	@Override
-	public Authenticator getValue() throws IllegalStateException, IllegalArgumentException {
-		return this;
-	}
+    @Override
+    public Authenticator getValue() throws IllegalStateException, IllegalArgumentException {
+        return this;
+    }
 
-	@Override
-	public void start(final StartContext context) throws StartException {
+    @Override
+    public void start(final StartContext context) throws StartException {
         context.asynchronous();
-        context.execute(new Runnable() {
+        context.execute( new Runnable() {
             public void run() {
                 try {
                     Authenticator.this.start();
@@ -77,30 +76,30 @@ public class Authenticator implements Service<Authenticator> {
                     context.failed( new StartException( e ) );
                 }
             }
-        });
-	}
+        } );
+    }
 
-	protected void start() {
-        log.info("Starting TorqueBox authenticator.");
-    	ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+    protected void start() {
+        log.info( "Starting TorqueBox authenticator." );
+        ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-        	Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
-        	this.securityContext = SecurityFactory.establishSecurityContext(this.getAuthDomain());
-        	this.authenticationManager = securityContext.getAuthenticationManager();
-	        log.info("TorqueBox authenticator started.");
+            Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
+            this.securityContext = SecurityFactory.establishSecurityContext( this.getAuthDomain() );
+            this.authenticationManager = securityContext.getAuthenticationManager();
+            log.info( "TorqueBox authenticator started." );
         } catch (Exception e) {
-        	log.error("Unable to initialize TorqueBox security subsystem. " + e.getLocalizedMessage());
-        	e.printStackTrace();
+            log.error( "Unable to initialize TorqueBox security subsystem. " + e.getLocalizedMessage() );
+            e.printStackTrace();
         } finally {
-        	Thread.currentThread().setContextClassLoader( originalClassLoader);
+            Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
-      
-	}
 
-	@Override
-	public void stop(StopContext context) {
-		// TODO destroy/release authenticationManager and securityContext
-	}
+    }
+
+    @Override
+    public void stop(StopContext context) {
+        // TODO destroy/release authenticationManager and securityContext
+    }
 
     private Principal getPrincipal(final String name) {
         return new Principal() {

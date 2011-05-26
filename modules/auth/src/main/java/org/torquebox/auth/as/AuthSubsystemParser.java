@@ -17,39 +17,38 @@ import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
 
-public class AuthSubsystemParser  implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
+public class AuthSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
     private static final AuthSubsystemParser INSTANCE = new AuthSubsystemParser();
 
     public static AuthSubsystemParser getInstance() {
         return INSTANCE;
     }
-    
+
     private AuthSubsystemParser() {
-	}
+    }
 
-
-	@Override
-	public void writeContent(XMLExtendedStreamWriter writer,
-			SubsystemMarshallingContext context) throws XMLStreamException {
-        context.startSubsystemElement(Namespace.CURRENT.getUriString(), false);
+    @Override
+    public void writeContent(XMLExtendedStreamWriter writer,
+            SubsystemMarshallingContext context) throws XMLStreamException {
+        context.startSubsystemElement( Namespace.CURRENT.getUriString(), false );
         writer.writeEndElement();
-}
+    }
 
-	@Override
-	public void readElement(XMLExtendedStreamReader reader, List<ModelNode> list)
-			throws XMLStreamException {
+    @Override
+    public void readElement(XMLExtendedStreamReader reader, List<ModelNode> list)
+            throws XMLStreamException {
         log.info( "torquebox-auth begin readElement" );
-        requireNoAttributes(reader);
-        requireNoContent(reader);
-        
+        requireNoAttributes( reader );
+        requireNoContent( reader );
+
         final ModelNode address = new ModelNode();
-        address.add(SUBSYSTEM, AuthExtension.SUBSYSTEM_NAME);
+        address.add( SUBSYSTEM, AuthExtension.SUBSYSTEM_NAME );
         address.protect();
 
-        list.add(AuthSubsystemAdd.createOperation(address));
+        list.add( AuthSubsystemAdd.createOperation( address ) );
         log.info( "torquebox-auth end readElement" );
-	}
+    }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.auth.as" );
 }

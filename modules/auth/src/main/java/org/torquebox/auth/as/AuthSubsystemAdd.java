@@ -40,7 +40,7 @@ import org.torquebox.auth.AuthDefaultsProcessor;
 import org.torquebox.auth.AuthDeployer;
 import org.torquebox.auth.AuthYamlParsingProcessor;
 
-public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler{
+public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
     /** {@inheritDoc} */
     @Override
@@ -48,7 +48,7 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
         log.info( "Adding torquebox-auth subsystem: " + context );
         final ModelNode subModel = context.getSubModel();
         subModel.setEmptyObject();
-        
+
         if (!handleBootContext( context, resultHandler )) {
             resultHandler.handleResultComplete();
         }
@@ -84,7 +84,7 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
                 log.info( "Executing torquebox-auth boot task" );
                 addDeploymentProcessors( bootContext );
-                addTorqueBoxSecurityDomainService(context);
+                addTorqueBoxSecurityDomainService( context );
                 resultHandler.handleResultComplete();
                 log.info( "Executed torquebox-auth boot task" );
             }
@@ -98,32 +98,33 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
         return new BasicOperationResult( compensatingOperation );
     }
 
-	protected void addTorqueBoxSecurityDomainService(RuntimeTaskContext context) {
-		log.info( "Adding 'torquebox' security domain." );
-		final ApplicationPolicy applicationPolicy = new ApplicationPolicy(TORQUEBOX_DOMAIN);
-		AuthenticationInfo authenticationInfo = new AuthenticationInfo(TORQUEBOX_DOMAIN);
-		
-		// TODO: Can we feed usernames/passwords into the options hash?
-		Map<String, Object> options = new HashMap<String, Object>();
-		AppConfigurationEntry entry = new AppConfigurationEntry(ModulesMap.AUTHENTICATION_MAP.get("Simple"), LoginModuleControlFlag.REQUIRED, options);
-		authenticationInfo.addAppConfigurationEntry(entry);
-		applicationPolicy.setAuthenticationInfo(authenticationInfo);
-		
-		// TODO: Do we need to bother with a JSSESecurityDomain? Null in this case may be OK
-		// TODO: Null cache type?
-		final SecurityDomainService securityDomainService = new SecurityDomainService(TORQUEBOX_DOMAIN, applicationPolicy, null, null); 
-		final ServiceTarget target = context.getServiceTarget();
-		
-		ServiceBuilder<SecurityDomainContext> builder = target
-		.addService(SecurityDomainService.SERVICE_NAME.append(TORQUEBOX_DOMAIN), securityDomainService)
-		.addDependency(SecurityManagementService.SERVICE_NAME, ISecurityManagement.class,
-		        securityDomainService.getSecurityManagementInjector())
-		.addDependency(JaasConfigurationService.SERVICE_NAME, Configuration.class,
-		        securityDomainService.getConfigurationInjector());
-		
-		builder.setInitialMode(Mode.ON_DEMAND).install();
-		log.info( "Finished adding 'torquebox' security domain." );
-	}
+    protected void addTorqueBoxSecurityDomainService(RuntimeTaskContext context) {
+        log.info( "Adding 'torquebox' security domain." );
+        final ApplicationPolicy applicationPolicy = new ApplicationPolicy( TORQUEBOX_DOMAIN );
+        AuthenticationInfo authenticationInfo = new AuthenticationInfo( TORQUEBOX_DOMAIN );
+
+        // TODO: Can we feed usernames/passwords into the options hash?
+        Map<String, Object> options = new HashMap<String, Object>();
+        AppConfigurationEntry entry = new AppConfigurationEntry( ModulesMap.AUTHENTICATION_MAP.get( "Simple" ), LoginModuleControlFlag.REQUIRED, options );
+        authenticationInfo.addAppConfigurationEntry( entry );
+        applicationPolicy.setAuthenticationInfo( authenticationInfo );
+
+        // TODO: Do we need to bother with a JSSESecurityDomain? Null in this
+        // case may be OK
+        // TODO: Null cache type?
+        final SecurityDomainService securityDomainService = new SecurityDomainService( TORQUEBOX_DOMAIN, applicationPolicy, null, null );
+        final ServiceTarget target = context.getServiceTarget();
+
+        ServiceBuilder<SecurityDomainContext> builder = target
+                .addService( SecurityDomainService.SERVICE_NAME.append( TORQUEBOX_DOMAIN ), securityDomainService )
+                .addDependency( SecurityManagementService.SERVICE_NAME, ISecurityManagement.class,
+                        securityDomainService.getSecurityManagementInjector() )
+                .addDependency( JaasConfigurationService.SERVICE_NAME, Configuration.class,
+                        securityDomainService.getConfigurationInjector() );
+
+        builder.setInitialMode( Mode.ON_DEMAND ).install();
+        log.info( "Finished adding 'torquebox' security domain." );
+    }
 
     static ModelNode createOperation(ModelNode address) {
         final ModelNode subsystem = new ModelNode();
@@ -132,7 +133,7 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
         return subsystem;
     }
 
-	public static final String TORQUEBOX_DOMAIN = "torquebox";
+    public static final String TORQUEBOX_DOMAIN = "torquebox";
     static final AuthSubsystemAdd ADD_INSTANCE = new AuthSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.auth.as" );
 }

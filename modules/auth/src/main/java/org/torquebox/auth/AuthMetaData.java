@@ -8,15 +8,17 @@ import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
 
 public class AuthMetaData {
-	
-    public static final AttachmentKey<AttachmentList<AuthMetaData>> ATTACHMENT_KEY = AttachmentKey.createList(AuthMetaData.class);
+
+    public static final AttachmentKey<AttachmentList<AuthMetaData>> ATTACHMENT_KEY = AttachmentKey.createList( AuthMetaData.class );
 
     private Map<String, TorqueBoxAuthConfig> configs = new HashMap<String, TorqueBoxAuthConfig>();
 
     public void addAuthentication(String name, Map<String, Object> config) {
-    	if (name == null) { throw new RuntimeException("Cannot configure unnamed authentication domain."); }
-        TorqueBoxAuthConfig configItem = new TorqueBoxAuthConfig(name, config);
-        configs.put(name, configItem);
+        if (name == null) {
+            throw new RuntimeException( "Cannot configure unnamed authentication domain." );
+        }
+        TorqueBoxAuthConfig configItem = new TorqueBoxAuthConfig( name, config );
+        configs.put( name, configItem );
     }
 
     public Collection<TorqueBoxAuthConfig> getConfigurations() {
@@ -27,21 +29,21 @@ public class AuthMetaData {
         private String name;
         private Map<String, Object> config;
 
-        public TorqueBoxAuthConfig(String name, Map<String,Object> config) {
-        	this.name = name;
-        	this.config = config;
+        public TorqueBoxAuthConfig(String name, Map<String, Object> config) {
+            this.name = name;
+            this.config = config;
         }
-        
+
         public String getName() {
             return name;
         }
 
         public String getDomain() {
-            return (String) this.config.get("domain");
+            return (String) this.config.get( "domain" );
         }
-        
+
         public void setDomain(String domain) {
-        	this.config.put("domain", domain);
+            this.config.put( "domain", domain );
         }
     }
 

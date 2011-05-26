@@ -22,16 +22,15 @@ package org.torquebox.auth.as;
 import org.jboss.msc.service.ServiceName;
 
 public class AuthServices {
-	
+
     private AuthServices() {
     }
-    
+
     public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
     public static final ServiceName AUTHENTICATION = TORQUEBOX.append( "authentication" );
-    
+
     public static ServiceName authenticationService(String appName, String name) {
-    	return AUTHENTICATION.append( appName ).append( name );
+        return AUTHENTICATION.append( appName ).append( name );
     }
 
 }
-

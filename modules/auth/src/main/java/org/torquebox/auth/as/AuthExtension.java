@@ -11,8 +11,8 @@ import org.jboss.logging.Logger;
 
 public class AuthExtension implements Extension {
 
-	@Override
-	public void initialize(ExtensionContext context) {
+    @Override
+    public void initialize(ExtensionContext context) {
         log.info( "Initializing TorqueBox Auth Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
         final ModelNodeRegistration subsystem = registration.registerSubsystemModel( AuthSubsystemProviders.SUBSYSTEM );
@@ -21,16 +21,16 @@ public class AuthExtension implements Extension {
                 AuthSubsystemAdd.ADD_INSTANCE,
                 AuthSubsystemProviders.SUBSYSTEM_ADD,
                 false );
-        
-        registration.registerXMLElementWriter(AuthSubsystemParser.getInstance());
+
+        registration.registerXMLElementWriter( AuthSubsystemParser.getInstance() );
 
         log.info( "Initialized TorqueBox Auth Subsystem" );
-	}
+    }
 
-	@Override
-	public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), AuthSubsystemParser.getInstance());
-	}
+    @Override
+    public void initializeParsers(ExtensionParsingContext context) {
+        context.setSubsystemXmlMapping( Namespace.CURRENT.getUriString(), AuthSubsystemParser.getInstance() );
+    }
 
     public static final String SUBSYSTEM_NAME = "torquebox-auth";
     static final Logger log = Logger.getLogger( "org.torquebox.auth.as" );

@@ -12,43 +12,46 @@ import org.jboss.logging.Logger;
 import org.jboss.security.auth.spi.UsernamePasswordLoginModule;
 
 /**
- * A simple login module used by torquebox-appname security domains.
- * Usernames and passwords are specified in torquebox.yml
+ * A simple login module used by torquebox-appname security domains. Usernames
+ * and passwords are specified in torquebox.yml
+ * 
  * @author lanceball
- *
+ * 
  */
 public class TorqueBoxLoginModule extends UsernamePasswordLoginModule {
-	
-	private Map<String, String> users = new HashMap<String, String>();
-	private Group[] roleSets = new Group[0];
 
-	@Override
-	public void initialize(Subject subject, CallbackHandler callbackHandler,
-			Map<String, ?> sharedState, Map<String, ?> options) {
-		super.initialize(subject, callbackHandler, sharedState, options);
-		log.warn("INITIALIZING TorqueBoxLoginModule");
-		@SuppressWarnings("unchecked")
-		Map<String, String> users = (Map<String, String>) options.get("credentials");
-		if (users != null) { 
-			this.users.putAll(users); 
-			log.warn(">>>>> Added users");
-		} else {
-			log.warn(">>>>> No usernames/passwords found");
-		}
-	}
+    private Map<String, String> users = new HashMap<String, String>();
+    private Group[] roleSets = new Group[0];
 
-	@Override
-	protected String getUsersPassword() throws LoginException {
-      String username = getUsername();
-      String password = null;
-      if (username != null) { password = users.get(username); }
-      return password;
-	}
+    @Override
+    public void initialize(Subject subject, CallbackHandler callbackHandler,
+            Map<String, ?> sharedState, Map<String, ?> options) {
+        super.initialize( subject, callbackHandler, sharedState, options );
+        log.warn( "INITIALIZING TorqueBoxLoginModule" );
+        @SuppressWarnings("unchecked")
+        Map<String, String> users = (Map<String, String>) options.get( "credentials" );
+        if (users != null) {
+            this.users.putAll( users );
+            log.warn( ">>>>> Added users" );
+        } else {
+            log.warn( ">>>>> No usernames/passwords found" );
+        }
+    }
 
-	@Override
-	protected Group[] getRoleSets() throws LoginException {
-		return roleSets;
-	}
+    @Override
+    protected String getUsersPassword() throws LoginException {
+        String username = getUsername();
+        String password = null;
+        if (username != null) {
+            password = users.get( username );
+        }
+        return password;
+    }
+
+    @Override
+    protected Group[] getRoleSets() throws LoginException {
+        return roleSets;
+    }
 
     static final Logger log = Logger.getLogger( "org.torquebox.auth" );
 }

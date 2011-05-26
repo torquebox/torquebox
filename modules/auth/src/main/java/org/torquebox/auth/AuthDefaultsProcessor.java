@@ -28,40 +28,40 @@ import org.torquebox.auth.AuthMetaData.TorqueBoxAuthConfig;
 
 public class AuthDefaultsProcessor implements DeploymentUnitProcessor {
 
-	@Override
-	public void deploy(DeploymentPhaseContext phaseContext)
-			throws DeploymentUnitProcessingException {
-		DeploymentUnit unit = phaseContext.getDeploymentUnit();
-		
-		// Only initialize defaults if there already is an auth subsection
-		if  ( !unit.hasAttachment( AuthMetaData.ATTACHMENT_KEY ) ) {
-			return;
-		}
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext)
+            throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-		AttachmentList<AuthMetaData> allMetaData = unit.getAttachment( AuthMetaData.ATTACHMENT_KEY );
+        // Only initialize defaults if there already is an auth subsection
+        if (!unit.hasAttachment( AuthMetaData.ATTACHMENT_KEY )) {
+            return;
+        }
 
-        for ( AuthMetaData authMetaData: allMetaData ) {
-            // Set defaults for any values that weren't explicitly specified in the YAML
-            for ( TorqueBoxAuthConfig config: authMetaData.getConfigurations() ) {
-                if ( blank( config.getDomain() ) ) {
+        AttachmentList<AuthMetaData> allMetaData = unit.getAttachment( AuthMetaData.ATTACHMENT_KEY );
+
+        for (AuthMetaData authMetaData : allMetaData) {
+            // Set defaults for any values that weren't explicitly specified in
+            // the YAML
+            for (TorqueBoxAuthConfig config : authMetaData.getConfigurations()) {
+                if (blank( config.getDomain() )) {
                     log.info( "No domain specified. Configuring using default: " + DEFAULT_DOMAIN );
                     config.setDomain( DEFAULT_DOMAIN );
                 }
             }
         }
-	}
+    }
 
-	@Override
-	public void undeploy(DeploymentUnit arg0) {
-		// No-op
-	}
-	
-    public static final String DEFAULT_DOMAIN   = "torquebox";
+    @Override
+    public void undeploy(DeploymentUnit arg0) {
+        // No-op
+    }
+
+    public static final String DEFAULT_DOMAIN = "torquebox";
     static final Logger log = Logger.getLogger( "org.torquebox.auth" );
 
-
     private boolean blank(String s) {
-        return (s == null || s.equals(""));
+        return (s == null || s.equals( "" ));
     }
 
 }

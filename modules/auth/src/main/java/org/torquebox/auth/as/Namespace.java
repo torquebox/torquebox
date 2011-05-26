@@ -27,7 +27,7 @@ import java.util.Map;
 
 /**
  * @author lball@redhat.com
- *
+ * 
  */
 public enum Namespace {
     // must be first
@@ -48,7 +48,7 @@ public enum Namespace {
 
     /**
      * Get the URI of this namespace.
-     *
+     * 
      * @return the URI
      */
     public String getUriString() {
@@ -61,13 +61,14 @@ public enum Namespace {
         final Map<String, Namespace> map = new HashMap<String, Namespace>();
         for (Namespace namespace : values()) {
             final String name = namespace.getUriString();
-            if (name != null) map.put(name, namespace);
+            if (name != null)
+                map.put( name, namespace );
         }
         MAP = map;
     }
 
     public static Namespace forUri(String uri) {
-        final Namespace element = MAP.get(uri);
+        final Namespace element = MAP.get( uri );
         return element == null ? UNKNOWN : element;
     }
 }
