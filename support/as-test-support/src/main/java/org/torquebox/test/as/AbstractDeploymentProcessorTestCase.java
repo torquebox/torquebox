@@ -8,9 +8,10 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.junit.Before;
+import org.torquebox.test.AbstractTorqueBoxTestCase;
 
 
-public abstract class AbstractDeploymentProcessorTestCase {
+public abstract class AbstractDeploymentProcessorTestCase extends AbstractTorqueBoxTestCase {
     
     private List<DeploymentUnitProcessor> deployers = new ArrayList<DeploymentUnitProcessor>();
     
@@ -19,7 +20,11 @@ public abstract class AbstractDeploymentProcessorTestCase {
         this.deployers.clear();
     }
     
-    protected void addDeployer(DeploymentUnitProcessor deployer) {
+    protected void prependDeployer(DeploymentUnitProcessor deployer) {
+        this.deployers.add( 0, deployer );
+    }
+    
+    protected void appendDeployer(DeploymentUnitProcessor deployer) {
         this.deployers.add(  deployer  );
     }
     

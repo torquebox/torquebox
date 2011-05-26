@@ -19,7 +19,7 @@ public class ScheduledJobDeployerTest extends AbstractDeploymentProcessorTestCas
     
     @Before
     public void setUp() {
-        addDeployer( new ScheduledJobDeployer() );
+        appendDeployer( new ScheduledJobDeployer() );
     }
     
 

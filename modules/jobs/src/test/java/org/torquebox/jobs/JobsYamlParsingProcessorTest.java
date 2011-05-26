@@ -16,8 +16,8 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
     @Before
     public void setUp() {
-        addDeployer( new TorqueBoxYamlParsingProcessor() );
-        addDeployer( new JobsYamlParsingProcessor() );
+        appendDeployer( new TorqueBoxYamlParsingProcessor() );
+        appendDeployer( new JobsYamlParsingProcessor() );
     }
 
     /** Ensure that an empty jobs.yml causes no problems. */

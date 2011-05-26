@@ -17,7 +17,7 @@ public class JobSchedulerDeployerTest extends AbstractDeploymentProcessorTestCas
     
     @Before
     public void setUp() {
-        addDeployer( new JobSchedulerDeployer() );
+        appendDeployer( new JobSchedulerDeployer() );
     }
     
     /** Ensure that given no jobs, a scheduler is not deployed. */

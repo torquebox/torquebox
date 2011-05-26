@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<deployment xmlns="urn:jboss:bean-deployer:2.0">
-	<bean name="rack-factory" class="org.torquebox.rack.core.RackApplicationFactoryImpl">
-	  <property name="rackUpScript">
-	    lambda{|env| puts env}
-	  </property>
-	</bean>
-</deployment>

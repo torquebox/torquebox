@@ -1,0 +1,5 @@
+
+pooling:
+  web:
+    min: 2
+    max: 4

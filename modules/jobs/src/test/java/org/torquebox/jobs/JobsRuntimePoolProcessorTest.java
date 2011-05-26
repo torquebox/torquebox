@@ -15,7 +15,7 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
 
     @Before
     public void setUpDeployer() throws Throwable {
-        addDeployer( new JobsRuntimePoolProcessor() );
+        appendDeployer( new JobsRuntimePoolProcessor() );
     }
 
     /** Ensure an existing pool definition is accepted as-is. */

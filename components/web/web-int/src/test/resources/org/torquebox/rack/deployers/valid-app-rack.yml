@@ -1,3 +1,0 @@
-application:
-  RACK_ROOT: /tmp/nonexistantpathfortorqueboxtest
-  RACK_ENV: test
