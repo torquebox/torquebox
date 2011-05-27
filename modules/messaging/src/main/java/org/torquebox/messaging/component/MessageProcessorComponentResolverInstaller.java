@@ -33,7 +33,7 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
 
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY );
+        List<MessageProcessorMetaData> allMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
 
         if (allMetaData == null || allMetaData.isEmpty()) {
             return;

@@ -1,0 +1,22 @@
+messaging:
+  /simple: Simple
+
+  /array:
+    - One
+    - Two: &foo
+        filter: "x > 18"
+        config:
+          x: ex
+          y: why
+    - Three
+    
+  /hash:
+    A:
+    B:
+      filter: "y < 18"
+      config:
+        h: ache
+        i: eye
+      concurrency: 3
+    Two:
+      <<: *foo

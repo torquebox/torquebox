@@ -26,10 +26,18 @@ public class MockDeploymentPhaseContext extends SimpleAttachable implements Depl
     private MockDeploymentUnit deploymentUnit;
     private MockServiceTarget serviceTarget;
     private MockServiceRegistry serviceRegistry;
+    private MountHandle mountHandle;
     
     
     public MockDeploymentPhaseContext() {
         this(  new MockServiceRegistry(), "test-unit" );
+    }
+    
+    public void close() {
+        if ( this.mountHandle != null ) {
+            this.mountHandle.close();
+            this.mountHandle = null;
+        }
     }
     
     public MockDeploymentPhaseContext(String name, URL content) throws URISyntaxException, IOException {
@@ -38,7 +46,7 @@ public class MockDeploymentPhaseContext extends SimpleAttachable implements Depl
         VirtualFile root = VFS.getChild( content.toURI() );
         File fileRoot = new File( content.getFile() );
         Closeable handle = VFS.mountReal( fileRoot, root.getChild(  name  ) );
-        MountHandle mountHandle = new MountHandle( handle );
+        this.mountHandle = new MountHandle( handle );
         ResourceRoot resourceRoot = new ResourceRoot( root, mountHandle );
         this.deploymentUnit.putAttachment( Attachments.DEPLOYMENT_ROOT, resourceRoot );
     }

@@ -26,7 +26,7 @@ import org.jboss.as.server.deployment.AttachmentList;
 
 public class MessageProcessorMetaData {
     
-    public static AttachmentKey<AttachmentList<MessageProcessorMetaData>> ATTACHMENT_KEY = AttachmentKey.createList( MessageProcessorMetaData.class );
+    public static AttachmentKey<AttachmentList<MessageProcessorMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( MessageProcessorMetaData.class );
 
     private String rubyClassName;
     private String rubyRequirePath;

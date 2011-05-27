@@ -67,13 +67,13 @@ public class TasksDeployer implements DeploymentUnitProcessor {
             System.err.println( "task queue: " + queueName );
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );
-            unit.addToAttachmentList( QueueMetaData.ATTACHMENT_KEY, queue );
+            unit.addToAttachmentList( QueueMetaData.ATTACHMENTS_KEY, queue );
 
             MessageProcessorMetaData processorMetaData = new MessageProcessorMetaData();
             processorMetaData.setDestinationName( queueName );
             processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
             processorMetaData.setConcurrency( task.getConcurrency() );
-            unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY, processorMetaData );
+            unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY, processorMetaData );
         }
     }
 

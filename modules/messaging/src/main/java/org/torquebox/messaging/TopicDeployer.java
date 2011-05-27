@@ -47,7 +47,7 @@ public class TopicDeployer implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENT_KEY );
+        List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENTS_KEY );
 
         for (TopicMetaData each : allMetaData) {
             deploy( phaseContext, each );

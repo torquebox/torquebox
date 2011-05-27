@@ -37,7 +37,7 @@ import org.torquebox.messaging.TasksDeployer;
 import org.torquebox.messaging.TasksScanningDeployer;
 import org.torquebox.messaging.TasksYamlParsingProcessor;
 import org.torquebox.messaging.TopicDeployer;
-import org.torquebox.messaging.TopicsYamlParsingDeployer;
+import org.torquebox.messaging.TopicsYamlParsingProcessor;
 import org.torquebox.messaging.component.MessageProcessorComponentResolverInstaller;
 import org.torquebox.messaging.injection.RubyConnectionFactoryService;
 
@@ -73,7 +73,7 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
 
     	context.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsDeployer() );
         context.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingDeployer() );
+        context.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningDeployer() );

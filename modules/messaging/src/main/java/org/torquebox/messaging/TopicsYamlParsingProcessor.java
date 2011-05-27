@@ -34,9 +34,9 @@ import org.torquebox.core.AbstractSplitYamlParsingProcessor;
  * 
  * Creates TopicMetaData instances from topics.yml
  */
-public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingProcessor {
+public class TopicsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
-    public TopicsYamlParsingDeployer() {
+    public TopicsYamlParsingProcessor() {
         setSectionName( "topics" );
         setSupportsSuffix( true );
     }
@@ -47,7 +47,7 @@ public class TopicsYamlParsingDeployer extends AbstractSplitYamlParsingProcessor
 
         for (String topicName : data.keySet()) {
             TopicMetaData topicMetaData = new TopicMetaData( topicName );
-            unit.addToAttachmentList( TopicMetaData.ATTACHMENT_KEY, topicMetaData );
+            unit.addToAttachmentList( TopicMetaData.ATTACHMENTS_KEY, topicMetaData );
         }
     }
 

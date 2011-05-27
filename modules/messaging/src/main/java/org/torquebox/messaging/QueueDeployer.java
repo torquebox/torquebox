@@ -47,7 +47,7 @@ public class QueueDeployer implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENT_KEY );
+        List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
 
         for (QueueMetaData each : allMetaData) {
             deploy( phaseContext, each );

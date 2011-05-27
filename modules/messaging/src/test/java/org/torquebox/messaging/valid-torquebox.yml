@@ -8,5 +8,3 @@ queues:
 topics:
   /topics/tbyaml/foo:
   /topics/tbyaml/bar:
-
-

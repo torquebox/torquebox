@@ -24,7 +24,7 @@ import org.jboss.as.server.deployment.AttachmentList;
 
 public class QueueMetaData extends AbstractDestinationMetaData {
     
-    public static AttachmentKey<AttachmentList<QueueMetaData>> ATTACHMENT_KEY = AttachmentKey.createList( QueueMetaData.class );
+    public static AttachmentKey<AttachmentList<QueueMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( QueueMetaData.class );
 
     private boolean durable = true;
 

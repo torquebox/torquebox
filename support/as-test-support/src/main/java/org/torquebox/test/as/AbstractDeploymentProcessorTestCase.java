@@ -7,6 +7,7 @@ import java.util.List;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.junit.After;
 import org.junit.Before;
 import org.torquebox.test.AbstractTorqueBoxTestCase;
 
@@ -15,9 +16,20 @@ public abstract class AbstractDeploymentProcessorTestCase extends AbstractTorque
     
     private List<DeploymentUnitProcessor> deployers = new ArrayList<DeploymentUnitProcessor>();
     
+    private List<MockDeploymentPhaseContext> contexts = new ArrayList<MockDeploymentPhaseContext>();
+    
     @Before
     public void clearDeployers() {
         this.deployers.clear();
+    }
+    
+    @After
+    public void closeAllContexts() {
+        for ( MockDeploymentPhaseContext each : this.contexts ) {
+            each.close();
+        }
+        
+        this.contexts.clear();
     }
     
     protected void prependDeployer(DeploymentUnitProcessor deployer) {
@@ -35,11 +47,15 @@ public abstract class AbstractDeploymentProcessorTestCase extends AbstractTorque
     }
     
     protected MockDeploymentPhaseContext createPhaseContext() throws Exception {
-        return new MockDeploymentPhaseContext();
+        MockDeploymentPhaseContext context = new MockDeploymentPhaseContext();
+        this.contexts.add(  context  );
+        return context;
     }
     
     protected MockDeploymentPhaseContext createPhaseContext(String name, URL url) throws Exception {
-        return new MockDeploymentPhaseContext( name, url );
+        MockDeploymentPhaseContext context = new MockDeploymentPhaseContext( name, url );
+        this.contexts.add(  context  );
+        return context;
     }
 
 }

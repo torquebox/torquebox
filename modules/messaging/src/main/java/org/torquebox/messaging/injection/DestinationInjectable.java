@@ -10,8 +10,8 @@ import org.torquebox.core.injection.jndi.JNDIInjectable;
 
 public class DestinationInjectable extends JNDIInjectable {
     
-    public DestinationInjectable(String name, boolean generic) {
-        super( name, generic );
+    public DestinationInjectable(String type, String name, boolean generic) {
+        super( type, name, generic );
     }
 
     @Override

@@ -22,7 +22,7 @@ public class TopicInjectableHandler extends AbstractInjectableHandler {
     @Override
     public Injectable handle(Node node, boolean generic) {
         String name = getString( node );
-        return new DestinationInjectable( name, generic );
+        return new DestinationInjectable( "topic", name, generic );
     }
 
     @Override

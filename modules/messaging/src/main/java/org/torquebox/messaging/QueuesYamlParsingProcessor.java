@@ -56,7 +56,7 @@ public class QueuesYamlParsingProcessor extends AbstractSplitYamlParsingProcesso
             	queueMetaData.setDurable((Boolean) queueOptions.get("durable"));
             } 
             
-            unit.addToAttachmentList( QueueMetaData.ATTACHMENT_KEY, queueMetaData); 
+            unit.addToAttachmentList( QueueMetaData.ATTACHMENTS_KEY, queueMetaData); 
         }
     }
 

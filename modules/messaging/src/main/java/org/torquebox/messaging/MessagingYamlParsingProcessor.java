@@ -43,7 +43,7 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
     public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
         try {
             for (MessageProcessorMetaData metadata : Parser.parse( dataObject )) {
-                unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENT_KEY, metadata );
+                unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY, metadata );
             }
         } catch (Exception e) {
             throw new DeploymentUnitProcessingException( e );

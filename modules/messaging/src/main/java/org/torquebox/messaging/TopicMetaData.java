@@ -24,7 +24,7 @@ import org.jboss.as.server.deployment.AttachmentList;
 
 public class TopicMetaData extends AbstractDestinationMetaData {
 
-    public static AttachmentKey<AttachmentList<TopicMetaData>> ATTACHMENT_KEY = AttachmentKey.createList( TopicMetaData.class );
+    public static AttachmentKey<AttachmentList<TopicMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( TopicMetaData.class );
     
     public TopicMetaData() {
 
