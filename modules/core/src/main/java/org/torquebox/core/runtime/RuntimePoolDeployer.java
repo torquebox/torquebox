@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core.pool;
+package org.torquebox.core.runtime;
 
 import java.util.Hashtable;
 import java.util.List;
@@ -44,14 +44,6 @@ import org.torquebox.core.as.DeploymentNotifier;
 import org.torquebox.core.as.services.DefaultRubyRuntimePoolService;
 import org.torquebox.core.as.services.RubyRuntimePoolStartService;
 import org.torquebox.core.as.services.SharedRubyRuntimeFactoryPoolService;
-import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
-import org.torquebox.core.runtime.DefaultRubyRuntimePool;
-import org.torquebox.core.runtime.DefaultRubyRuntimePoolMBean;
-import org.torquebox.core.runtime.PoolMetaData;
-import org.torquebox.core.runtime.RubyRuntimeFactory;
-import org.torquebox.core.runtime.RubyRuntimeMetaData;
-import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.core.runtime.SharedRubyRuntimePool;
 
 /**
  * <pre>

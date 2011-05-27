@@ -36,9 +36,9 @@ import org.torquebox.core.injection.PredeterminedInjectableProcessor;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
 import org.torquebox.core.pool.PoolingYamlParsingProcessor;
-import org.torquebox.core.pool.RuntimePoolDeployer;
 import org.torquebox.core.runtime.BaseRubyRuntimeDeployer;
 import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
+import org.torquebox.core.runtime.RuntimePoolDeployer;
 
 class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 

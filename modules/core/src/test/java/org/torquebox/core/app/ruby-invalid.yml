@@ -1,0 +1,3 @@
+ruby:
+  version: 2.7
+  compile_mode: blarg
