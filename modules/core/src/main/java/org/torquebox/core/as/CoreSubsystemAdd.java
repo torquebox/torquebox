@@ -1,9 +1,13 @@
 package org.torquebox.core.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.Properties;
+
+import javax.management.MBeanServer;
 
 import org.jboss.as.controller.BasicOperationResult;
 import org.jboss.as.controller.ModelAddOperationHandler;
@@ -13,6 +17,9 @@ import org.jboss.as.controller.OperationResult;
 import org.jboss.as.controller.ResultHandler;
 import org.jboss.as.controller.RuntimeTask;
 import org.jboss.as.controller.RuntimeTaskContext;
+import org.jboss.as.jmx.MBeanRegistrationService;
+import org.jboss.as.jmx.MBeanServerService;
+import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.ServerEnvironment;
@@ -20,7 +27,13 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ValueService;
+import org.jboss.msc.value.ImmediateValue;
+import org.torquebox.TorqueBox;
+import org.torquebox.TorqueBoxMBean;
 import org.torquebox.core.ArchiveDirectoryMountingProcessor;
+import org.torquebox.core.GlobalRuby;
+import org.torquebox.core.GlobalRubyMBean;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.app.AppJarScanningProcessor;
 import org.torquebox.core.app.AppKnobYamlParsingProcessor;
@@ -95,19 +108,88 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     }
 
     protected void addCoreServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
+        addTorqueBoxService( context, registry );
+        addGlobalRubyServices( context, registry );
+        addInjectionServices( context, registry );
+    }
+
+    protected void addTorqueBoxService(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
+        InputStream propsStream = getClass().getClassLoader().getResourceAsStream( "org/torquebox/torquebox.properties" );
+        Properties props = new Properties();
+        if (propsStream != null) {
+            try {
+                props.load( propsStream );
+            } catch (IOException e) {
+                log.warn( "Unable to read torquebox.properties" );
+            } finally {
+                try {
+                    propsStream.close();
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+        
+        String version = props.getProperty( "version", "unknown" );
+        String revision = props.getProperty( "build.revision" );
+        String buildNumber = props.getProperty( "build.number" );
+        String buildUser = props.getProperty( "build.user" );
+        TorqueBox torqueBox = new TorqueBox( version, revision, buildNumber, buildUser );
+        
+        context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
+            .setInitialMode( Mode.ACTIVE )
+            .install();
+        
+        String mbeanName = ObjectNameFactory.create( "torquebox", new Hashtable<String, String>() {
+            {
+                put( "type", "version" );
+            }
+        } ).toString();
+
+        MBeanRegistrationService<TorqueBoxMBean> mbeanService = new MBeanRegistrationService<TorqueBoxMBean>( mbeanName );
+        context.getServiceTarget().addService( CoreServices.TORQUEBOX.append( "mbean" ), mbeanService )
+                .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                .addDependency( CoreServices.TORQUEBOX, TorqueBoxMBean.class, mbeanService.getValueInjector() )
+                .setInitialMode( Mode.PASSIVE )
+                .install();
+    }
+
+    protected void addGlobalRubyServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
+        context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY, new GlobalRuby() )
+                .setInitialMode( Mode.ACTIVE )
+                .install();
+
+        String mbeanName = ObjectNameFactory.create( "torquebox", new Hashtable<String, String>() {
+            {
+                put( "type", "runtime" );
+            }
+        } ).toString();
+
+        MBeanRegistrationService<GlobalRubyMBean> mbeanService = new MBeanRegistrationService<GlobalRubyMBean>( mbeanName );
+        context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY.append( "mbean" ), mbeanService )
+                .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                .addDependency( CoreServices.GLOBAL_RUBY, GlobalRubyMBean.class, mbeanService.getValueInjector() )
+                .install();
+    }
+
+    protected void addInjectionServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
         context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
-          .setInitialMode( Mode.PASSIVE )
-          .install();
+                .setInitialMode( Mode.PASSIVE )
+                .install();
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
         return new RuntimeTask() {
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
-                addDeploymentProcessors( bootContext, registry );
-                addCoreServices( context, registry );
-                resultHandler.handleResultComplete();
+                try {
+                    InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
+                    addCoreServices( context, registry );
+                    addDeploymentProcessors( bootContext, registry );
+                    resultHandler.handleResultComplete();
+                } catch (Exception e) {
+                    throw new OperationFailedException( e, null );
+                }
             }
         };
     }

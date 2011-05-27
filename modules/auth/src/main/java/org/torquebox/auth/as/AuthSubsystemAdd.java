@@ -45,14 +45,12 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
     /** {@inheritDoc} */
     @Override
     public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        log.info( "Adding torquebox-auth subsystem: " + context );
         final ModelNode subModel = context.getSubModel();
         subModel.setEmptyObject();
 
         if (!handleBootContext( context, resultHandler )) {
             resultHandler.handleResultComplete();
         }
-        log.info( "Added torquebox-auth subsystem: " + context );
         return compensatingResult( operation );
     }
 
@@ -63,31 +61,25 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
         }
 
         final BootOperationContext context = (BootOperationContext) operationContext;
-        log.info( "Handling torquebox-auth boot context: " + context );
 
         context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        log.info( "Handled torquebox-auth boot context: " + context );
         return true;
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context) {
-        log.info( "Adding torquebox-auth deployment processors" );
         context.addDeploymentProcessor( Phase.PARSE, 0, new AuthYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new AuthDependencyProcessor() );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new AuthDeployer() );
-        log.info( "Added torquebox-auth deployment processors" );
     }
 
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
         return new RuntimeTask() {
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                log.info( "Executing torquebox-auth boot task" );
                 addDeploymentProcessors( bootContext );
                 addTorqueBoxSecurityDomainService( context );
                 resultHandler.handleResultComplete();
-                log.info( "Executed torquebox-auth boot task" );
             }
         };
     }
@@ -100,7 +92,6 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
     }
 
     protected void addTorqueBoxSecurityDomainService(RuntimeTaskContext context) {
-        log.info( "Adding 'torquebox' security domain." );
         final ApplicationPolicy applicationPolicy = new ApplicationPolicy( TORQUEBOX_DOMAIN );
         AuthenticationInfo authenticationInfo = new AuthenticationInfo( TORQUEBOX_DOMAIN );
 
@@ -124,7 +115,6 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
                         securityDomainService.getConfigurationInjector() );
 
         builder.setInitialMode( Mode.ON_DEMAND ).install();
-        log.info( "Finished adding 'torquebox' security domain." );
     }
 
     static ModelNode createOperation(ModelNode address) {

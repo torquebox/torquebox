@@ -31,7 +31,6 @@ public class TorqueBoxMetaData {
     
     public static final AttachmentKey<TorqueBoxMetaData> ATTACHMENT_KEY = AttachmentKey.create(TorqueBoxMetaData.class);
 
-    public static final String EXTERNAL = TorqueBoxMetaData.class.getName() + "$external";
     private Map<String, Object> data;
 
     public TorqueBoxMetaData(Map<String, Object> data) {

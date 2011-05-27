@@ -107,6 +107,16 @@
         <artifactId>jruby-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>generate-build-info</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <file>./bin/generate-build-info.rb</file>
+            </configuration>
+          </execution>
+          <execution>
             <id>install-module</id>
           </execution>
         </executions>
