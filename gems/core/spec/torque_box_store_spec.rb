@@ -7,22 +7,7 @@ include ActiveSupport::Cache
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do
-
-    # Mock a JBoss MicroContainer kernel backed by a simple member Hash,
-    # @registry, that holds the fixtures for the tests.
-    TorqueBox::Kernel.kernel = nil
-    @registry = {}
-    registry = mock("registry")
-    registry.stub!(:findEntry).and_return { |name| 
-      entry = mock("entry")
-      entry.stub!(:getTarget).and_return(@registry[name])
-      entry
-    }
-    @kernel = mock("kernel")
-    @kernel.stub!(:getRegistry).and_return(registry)
-
     @cache = ActiveSupport::Cache::TorqueBoxStore.new()
-    # @cache.logger = Logger.new(STDOUT)
   end
 
   describe "basics" do

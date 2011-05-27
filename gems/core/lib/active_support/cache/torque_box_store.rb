@@ -118,7 +118,7 @@ module ActiveSupport
       end
 
       def manager
-        @manager ||= TorqueBox::Kernel.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
+        @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
       end
                        
       def reconfigure(mode=clustering_mode)
