@@ -1,7 +1,7 @@
 
 require 'torquebox/messaging/queue'
 require 'torquebox/messaging/topic'
-require 'torquebox/kernel'
+require 'torquebox/service_registry'
 
 describe TorqueBox::Messaging::Destination do
 
@@ -12,34 +12,26 @@ describe TorqueBox::Messaging::Destination do
     topic.name.should == "/topics/bar"
   end
 
-  %w{ create start }.each do |method|
+  it "should start and stop a queue" do
+    server = mock("server")
+    server.should_receive(:createQueue)
+    server.should_receive(:destroyQueue).with("my_queue")
+    TorqueBox::ServiceRegistry.stub!(:lookup).with("JMSServerManager").and_yield(server)
 
-    it "should create a queue on #{method}" do
-      pending("Queues cannot yet start and stop dynamically")
-      server = mock("server")
-      server.should_receive(:createQueue)
-      server.should_receive(:destroyQueue).with("my_queue")
-      TorqueBox::Kernel.stub!(:lookup).with("JMSServerManager").and_yield(server)
+    queue = TorqueBox::Messaging::Queue.start( "my_queue" )
+    queue.name.should == "my_queue"
+    queue.stop
+  end
 
-      queue = TorqueBox::Messaging::Queue.new("my_queue")
-      queue.name.should eql("my_queue")
-      queue.send method
-      queue.destroy
-    end
+  it "should start and stop a topic" do
+    server = mock("server")
+    server.should_receive(:createTopic)
+    server.should_receive(:destroyTopic).with("my_topic")
+    TorqueBox::ServiceRegistry.stub!(:lookup).with("JMSServerManager").and_yield(server)
 
-    it "should create a topic on #{method}" do
-      pending("Topics cannot yet start and stop dynamically")
-      server = mock("server")
-      server.should_receive(:createTopic)
-      server.should_receive(:destroyTopic).with("my_topic")
-      TorqueBox::Kernel.stub!(:lookup).with("JMSServerManager").and_yield(server)
-
-      topic = TorqueBox::Messaging::Topic.new("my_topic")
-      topic.name.should eql("my_topic")
-      topic.send method
-      topic.destroy
-    end
-
+    topic = TorqueBox::Messaging::Topic.start( "my_topic" )
+    topic.name.should == "my_topic"
+    topic.stop
   end
 
   describe "publish" do
@@ -104,7 +96,7 @@ describe TorqueBox::Messaging::Destination do
       queue.publish "howdy"
       message = queue.receive
 
-      queue.destroy
+      queue.stop
       message.should eql( "howdy" )
     end
 
@@ -123,7 +115,7 @@ describe TorqueBox::Messaging::Destination do
       topic.publish "howdy"
       threads.each {|t| t.join}
 
-      topic.destroy
+      topic.stop
       msgs.to_a.should eql( ["howdy"] * count )
     end
 
@@ -139,7 +131,7 @@ describe TorqueBox::Messaging::Destination do
         message = queue.publish_and_receive "ping", :timeout => 10000
         response_thread.join
 
-        queue.destroy
+        queue.stop
         message.should eql( "PING" )
       end
 
@@ -154,7 +146,7 @@ describe TorqueBox::Messaging::Destination do
         message = queue.publish_and_receive "ping", :timeout => 10000
         response_thread.join
 
-        queue.destroy
+        queue.stop
         message.should eql( "ping" )
       end
 
@@ -177,7 +169,7 @@ describe TorqueBox::Messaging::Destination do
         end
         response_threads.each { |thread| thread.join }
 
-        queue.destroy
+        queue.stop
         message.should eql( "PING" )
       end
 
@@ -207,7 +199,7 @@ describe TorqueBox::Messaging::Destination do
         # Drain any remaining messages off the queue
         2.times { queue.receive(:timeout => 10) }
 
-        queue.destroy
+        queue.stop
       end
     end
 
@@ -225,7 +217,7 @@ describe TorqueBox::Messaging::Destination do
         message = queue.receive
 
         setup_thread.join
-        queue.destroy
+        queue.stop
         message.should eql( "something" )
       end
 
@@ -240,7 +232,7 @@ describe TorqueBox::Messaging::Destination do
         message = topic.receive :timeout => 200
 
         setup_thread.join
-        topic.destroy
+        topic.stop
         message.should be_nil
       end
 

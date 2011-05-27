@@ -1,9 +1,26 @@
 require 'torquebox/messaging/destination'
 require 'torquebox/messaging/connection_factory'
+require 'torquebox/service_registry'
 
 module TorqueBox
   module Messaging
     class Queue < Destination
+
+      def self.start( name, options={} )
+        selector = options.fetch( :selector, "" )
+        durable  = options.fetch( :durable, true )
+        jndi     = options.fetch( :jndi, [] )
+        TorqueBox::ServiceRegistry.lookup("JMSServerManager") do |server|
+          server.createQueue( false, name, selector, durable, jndi )
+        end
+        new( name )
+      end
+
+      def stop
+        TorqueBox::ServiceRegistry.lookup("JMSServerManager") do |server|
+          server.destroyQueue( name )
+        end
+      end
 
       def publish_and_receive(message, options={})
         result = nil

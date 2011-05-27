@@ -49,15 +49,6 @@ module TorqueBox
         result
       end
       
-      def start
-        raise "TODO: runtime creation of queues needs to be supported"
-      end
-      alias_method :create, :start
-
-      def destroy
-        raise "TODO: runtime destruction of queues needs to be supported"
-      end
-
       def normalize_options(options)
         if options.has_key?(:persistent)
           options[:delivery_mode] =
