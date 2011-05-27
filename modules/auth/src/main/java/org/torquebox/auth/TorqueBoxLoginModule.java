@@ -27,20 +27,18 @@ public class TorqueBoxLoginModule extends UsernamePasswordLoginModule {
     public void initialize(Subject subject, CallbackHandler callbackHandler,
             Map<String, ?> sharedState, Map<String, ?> options) {
         super.initialize( subject, callbackHandler, sharedState, options );
-        log.warn( "INITIALIZING TorqueBoxLoginModule" );
+        log.info( "Initializing TorqueBoxLoginModule" );
         @SuppressWarnings("unchecked")
         Map<String, String> users = (Map<String, String>) options.get( "credentials" );
         if (users != null) {
             this.users.putAll( users );
-            log.warn( ">>>>> Added users" );
         } else {
-            log.warn( ">>>>> No usernames/passwords found" );
+            log.warn( "TorqueBoxLoginModule: No usernames/passwords provided." );
         }
     }
 
     @Override
     protected String getUsersPassword() throws LoginException {
-        log.warn( "AUTHENTICATING NOW!" );
         String username = getUsername();
         String password = null;
         if (username != null) {
