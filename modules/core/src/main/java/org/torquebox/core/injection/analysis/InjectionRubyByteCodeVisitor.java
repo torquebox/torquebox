@@ -28,7 +28,6 @@ public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
         if (!this.markerSeen && (callName.equals( "include" ) || callName.equals( "extend" ))) {
             String includedName = getConstString( ((ArrayNode) node.getArgsNode()).get( 0 ) );
             if (includedName.equals( TORQUEBOX_MARKER_MODULE )) {
-                System.err.println( "MARK" );
                 this.markerSeen = true;
             }
         } else {

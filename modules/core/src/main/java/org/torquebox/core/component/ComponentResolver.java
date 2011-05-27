@@ -116,7 +116,7 @@ public class ComponentResolver {
         return this.injectionRegistry.getInjector( key );
     }
 
-    private Class<? extends AbstractRubyComponent> wrapperClass;
+    private Class<? extends AbstractRubyComponent> wrapperClass = AbstractRubyComponent.class;
     private Map<String, Object> componentWrapperOptions;
 
     private InjectionRegistry injectionRegistry = new InjectionRegistry();

@@ -33,6 +33,10 @@ public class AbstractRubyComponent implements RubyComponent {
         this.rubyComponent = rubyComponent;
     }
     
+    public IRubyObject getRubyComponent() {
+        return this.rubyComponent;
+    }
+    
     protected Object _callRubyMethod(Object target, String method, Object...args) {
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {

@@ -1,25 +1,4 @@
-/*
- * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
- * 
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
- * the License, or (at your option) any later version.
- * 
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
-
-package org.torquebox.interp.core;
-
-import static org.junit.Assert.*;
+package org.torquebox.core.runtime;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -28,21 +7,19 @@ import java.util.Map;
 
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
-import org.jruby.RubyString;
 import org.jruby.RubyInstanceConfig.CompileMode;
+import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
-
-import org.junit.Ignore;
 import org.junit.Test;
 
-import org.torquebox.core.runtime.RubyRuntimeFactoryImpl;
-import org.torquebox.core.runtime.RuntimeInitializer;
+import static org.junit.Assert.*;
 
-public class RubyRuntimeFactoryImplTest {
+public class RubyRuntimeFactoryTest {
+    
 
     @Test
     public void testExplicitClassLoader() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
+        RubyRuntimeFactory factory = new RubyRuntimeFactory();
         ClassLoader cl = new URLClassLoader( new URL[] {} );
         factory.setClassLoader( cl );
         assertSame( cl, factory.getClassLoader() );
@@ -50,7 +27,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testContextClassLoader() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
+        RubyRuntimeFactory factory = new RubyRuntimeFactory();
         ClassLoader cl = new URLClassLoader( new URL[] {} );
         Thread.currentThread().setContextClassLoader( cl );
         assertSame( cl, factory.getClassLoader() );
@@ -58,7 +35,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testNullInitializerIsAllowed() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
@@ -67,7 +44,7 @@ public class RubyRuntimeFactoryImplTest {
     @Test
     public void testInitializerIsUsed() throws Exception {
         MockRuntimeInitializer initializer = new MockRuntimeInitializer();
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( initializer );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( initializer );
         factory.setUseJRubyHomeEnvVar( false );
 
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -79,7 +56,7 @@ public class RubyRuntimeFactoryImplTest {
     @Test
     public void testOpenSSL_HMAC_digest() throws Exception {
         MockRuntimeInitializer initializer = new MockRuntimeInitializer();
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( initializer );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( initializer );
         factory.setUseJRubyHomeEnvVar( false );
 
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -92,7 +69,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testRubyDefault() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
@@ -101,7 +78,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testRuby18() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setRubyVersion( CompatVersion.RUBY1_8 );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -111,7 +88,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testRuby19() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setRubyVersion( CompatVersion.RUBY1_9 );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -122,7 +99,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testCompileModeDefault() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
@@ -131,7 +108,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testCompileModeDefault19() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setRubyVersion( CompatVersion.RUBY1_9 );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -142,7 +119,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testCompileModeJIT() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setCompileMode( CompileMode.JIT );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -152,7 +129,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testCompileModeFORCE() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setCompileMode( CompileMode.FORCE );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -162,7 +139,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testCompileModeOFF() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( null );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setCompileMode( CompileMode.OFF );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
@@ -173,7 +150,7 @@ public class RubyRuntimeFactoryImplTest {
     @Test
     public void testApplicationEnvironment() throws Exception {
         MockRuntimeInitializer initializer = new MockRuntimeInitializer();
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl( initializer );
+        RubyRuntimeFactory factory = new RubyRuntimeFactory( initializer );
         Map<String, String> env = new HashMap<String, String>();
         env.put( "CHEESE", "taco" );
         factory.setApplicationEnvironment( env );
@@ -184,7 +161,7 @@ public class RubyRuntimeFactoryImplTest {
 
     @Test
     public void testVersionsDefined() throws Exception {
-        RubyRuntimeFactoryImpl factory = new RubyRuntimeFactoryImpl();
+        RubyRuntimeFactory factory = new RubyRuntimeFactory();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
 
         IRubyObject torqueboxVersion = ruby.evalScriptlet( "TorqueBox.version" );
