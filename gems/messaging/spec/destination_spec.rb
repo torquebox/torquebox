@@ -90,8 +90,7 @@ describe TorqueBox::Messaging::Destination do
 
     it "should be able to publish to and receive from a queue" do
       pending("Queues cannot yet start and stop dynamically")
-      queue = TorqueBox::Messaging::Queue.new "/queues/foo"
-      queue.start
+      queue = TorqueBox::Messaging::Queue.start "/queues/foo"
 
       queue.publish "howdy"
       message = queue.receive
@@ -102,10 +101,8 @@ describe TorqueBox::Messaging::Destination do
 
     it "should publish to multiple topic consumers" do
       pending("Topics cannot yet start and stop dynamically")
-      topic = TorqueBox::Messaging::Topic.new "/topics/foo"
-      topic.start
+      topic = TorqueBox::Messaging::Topic.start "/topics/foo"
       threads, count = [], 10
-
       # Use a threadsafe "array"
       msgs = java.util.Collections.synchronizedList( [] )
 
@@ -122,8 +119,7 @@ describe TorqueBox::Messaging::Destination do
     context "synchronous messaging" do
       it "should return value of block given to receive_and_publish" do
         pending("Queues cannot yet start and stop dynamically")
-        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
-        queue.start
+        queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
 
         response_thread = Thread.new {
           queue.receive_and_publish( :timeout => 10000 ) { |msg| msg.upcase }
@@ -137,8 +133,7 @@ describe TorqueBox::Messaging::Destination do
 
       it "should return request message if no block given" do
         pending("Queues cannot yet start and stop dynamically")
-        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
-        queue.start
+        queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
 
         response_thread = Thread.new {
           queue.receive_and_publish( :timeout => 10000 )
@@ -152,8 +147,7 @@ describe TorqueBox::Messaging::Destination do
 
       it "should not mess up with multiple consumers" do
         pending("Queues cannot yet start and stop dynamically")
-        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
-        queue.start
+        queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
 
         thread_count = 3
         response_threads = (1..thread_count).map do
@@ -175,8 +169,7 @@ describe TorqueBox::Messaging::Destination do
 
       it "should allow a selector to be passed" do
         pending("Queues cannot yet start and stop dynamically")
-        queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"
-        queue.start
+        queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
 
         response_thread = Thread.new {
           queue.receive_and_publish( :timeout => 10000,
@@ -210,7 +203,7 @@ describe TorqueBox::Messaging::Destination do
         # Start the queue in a separate thread after a delay
         setup_thread = Thread.new {
           sleep( 0.2 )
-          queue.start
+          TorqueBox::Messaging::Queue.start "/queues/not_ready"
         }
         # The queue will not be ready when we call the publish method
         queue.publish "something"
@@ -226,7 +219,7 @@ describe TorqueBox::Messaging::Destination do
         topic = TorqueBox::Messaging::Topic.new "/topics/not_ready"
         # Start the topic in a separate thread after a delay
         setup_thread = Thread.new {
-          topic.start
+          TorqueBox::Messaging::Topic.start "/topics/not_ready"
         }
         # The topic will not be ready when we call the receive method
         message = topic.receive :timeout => 200
