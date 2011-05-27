@@ -136,6 +136,8 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         String buildUser = props.getProperty( "build.user" );
         TorqueBox torqueBox = new TorqueBox( version, revision, buildNumber, buildUser );
         
+        torqueBox.dump( log );
+        
         context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
             .setInitialMode( Mode.ACTIVE )
             .install();
