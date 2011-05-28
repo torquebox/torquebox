@@ -7,6 +7,7 @@ include ActiveSupport::Cache
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do
+    TorqueBox::ServiceRegistry.service_registry = nil
     @cache = ActiveSupport::Cache::TorqueBoxStore.new()
   end
 
