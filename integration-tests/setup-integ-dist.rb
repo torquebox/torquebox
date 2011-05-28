@@ -35,19 +35,11 @@ else
       end
     else
       puts "*** Syncing to integ-dist by rsync"
-      cmd = [ 'rsync -a . --relative',
+      cmd = [ 'rsync -av . --relative',
               '--include jboss/modules',
               '--include jboss/standalone',
-              #"--exclude 'apps/*'",
-              #'--exclude default/deploy/*.yml',
-              #'--exclude default/deploy/*.knob',
-              #'--exclude default/data',
-              #'--exclude default/work',
-              #'--exclude default/log',
-              #'--exclude default/tmp',
-              #'--exclude jboss/server/*',
-              #'--exclude jruby/share/ri',
-              #'--exclude jruby/lib/ruby/gems/1.8/doc',
+              '--exclude jruby/share/ri',
+              '--exclude jruby/lib/ruby/gems/1.8/doc',
               output_dir ].join( ' ' )
       puts cmd
       puts `#{cmd}` 
