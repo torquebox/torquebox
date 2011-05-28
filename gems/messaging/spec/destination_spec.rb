@@ -16,7 +16,7 @@ describe TorqueBox::Messaging::Destination do
     server = mock("server")
     server.should_receive(:createQueue)
     server.should_receive(:destroyQueue).with("my_queue")
-    TorqueBox::ServiceRegistry.stub!(:lookup).with("JMSServerManager").and_yield(server)
+    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.jms.manager").and_yield(server)
 
     queue = TorqueBox::Messaging::Queue.start( "my_queue" )
     queue.name.should == "my_queue"
@@ -27,7 +27,7 @@ describe TorqueBox::Messaging::Destination do
     server = mock("server")
     server.should_receive(:createTopic)
     server.should_receive(:destroyTopic).with("my_topic")
-    TorqueBox::ServiceRegistry.stub!(:lookup).with("JMSServerManager").and_yield(server)
+    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.jms.manager").and_yield(server)
 
     topic = TorqueBox::Messaging::Topic.start( "my_topic" )
     topic.name.should == "my_topic"

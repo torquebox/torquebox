@@ -32,36 +32,35 @@ describe "messaging rack test" do
     receive_thread.join
   end
 
-end
-
-describe "message selectors" do
-  before(:each) do
-    @queue = TorqueBox::Messaging::Queue.new "/queues/selector_test"
-    # @queue.start
-  end
-
-  after(:each) do
-    # @queue.destroy
-  end
-
-  {
-    true => 'prop = true',
-    true => 'prop <> false',
-    5 => 'prop = 5',
-    5 => 'prop > 4',
-    5.5 => 'prop = 5.5',
-    5.5 => 'prop < 6',
-    'string' => "prop = 'string'"
-  }.each do |value, selector|
-    it "should be able to select with property set to #{value} using selector '#{selector}'" do
-      pending("Need to be able to start/stop externally first")
-      @queue.publish value.to_s, :properties => { :prop => value }
-      message = @queue.receive(:timeout => 1000, :selector => selector)
-      message.should == value.to_s
+  context "message selectors" do
+    before(:each) do
+      @queue = TorqueBox::Messaging::Queue.new "/queues/selectors"
+      visit "/messaging-rack/start?#{@queue.name}"
     end
+
+    after(:each) do
+      visit "/messaging-rack/stop?#{@queue.name}"
+    end
+
+    {
+      'prop = true' => true,
+      'prop <> false' => true,
+      'prop = 5' => 5,
+      'prop > 4' => 5,
+      'prop = 5.5' => 5.5,
+      'prop < 6' => 5.5,
+      "prop = 'string'" => 'string'
+    }.each do |selector, value|
+      it "should be able to select with property set to #{value} using selector '#{selector}'" do
+        @queue.publish value.to_s, :properties => { :prop => value }
+        message = @queue.receive(:timeout => 1000, :selector => selector)
+        message.should == value.to_s
+      end
+    end
+    
   end
-  
 end
+
 
 describe "browse" do
   before(:each) do

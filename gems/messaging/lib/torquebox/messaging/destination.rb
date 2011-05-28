@@ -24,17 +24,21 @@ module TorqueBox
       end
 
       def publish(message, options = {})
-        with_new_session do |session|
-          session.publish self, message, normalize_options(options)
-          session.commit if session.transacted?
+        wait_for_destination(options[:startup_timeout]) do
+          with_new_session do |session|
+            session.publish self, message, normalize_options(options)
+            session.commit if session.transacted?
+          end
         end
       end
 
       def receive(options = {})
-        with_new_session do |session|
-          result = session.receive self, options
-          session.commit if session.transacted?
-          result
+        wait_for_destination(options[:startup_timeout]) do
+          with_new_session do |session|
+            result = session.receive self, options
+            session.commit if session.transacted?
+            result
+          end
         end
       end
 
@@ -45,10 +49,25 @@ module TorqueBox
             result = block.call(session)
           end
         end
-        
         result
       end
       
+      def wait_for_destination(timeout=nil, &block)
+        timeout ||= 30000 # 30s default
+        start = Time.now
+        begin
+          block.call
+        rescue javax.naming.NameNotFoundException => ex
+          elapsed = (Time.now - start) * 1000
+          if elapsed > timeout
+            raise ex
+          else
+            sleep(0.1)
+            retry
+          end
+        end
+      end
+
       def normalize_options(options)
         if options.has_key?(:persistent)
           options[:delivery_mode] =

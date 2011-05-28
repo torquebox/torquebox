@@ -8,16 +8,16 @@ module TorqueBox
 
       def self.start( name, options={} )
         selector = options.fetch( :selector, "" )
-        durable  = options.fetch( :durable, true )
-        jndi     = options.fetch( :jndi, [] )
-        TorqueBox::ServiceRegistry.lookup("JMSServerManager") do |server|
+        durable  = options.fetch( :durable,  true )
+        jndi     = options.fetch( :jndi,     nil )
+        TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
           server.createQueue( false, name, selector, durable, jndi )
         end
         new( name )
       end
 
       def stop
-        TorqueBox::ServiceRegistry.lookup("JMSServerManager") do |server|
+        TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
           server.destroyQueue( name )
         end
       end
