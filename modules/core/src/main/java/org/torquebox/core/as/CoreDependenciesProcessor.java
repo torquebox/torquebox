@@ -14,6 +14,7 @@ import org.torquebox.core.app.RubyApplicationMetaData;
 
 public class CoreDependenciesProcessor implements DeploymentUnitProcessor {
     
+    private static ModuleIdentifier TORQUEBOX_BOOTSTRAP_ID = ModuleIdentifier.create("org.torquebox.bootstrap");
     private static ModuleIdentifier TORQUEBOX_CORE_ID = ModuleIdentifier.create("org.torquebox.core");
     private static ModuleIdentifier JBOSS_VFS_ID = ModuleIdentifier.create("org.jboss.vfs");
     private static ModuleIdentifier JBOSS_MSC_ID = ModuleIdentifier.create("org.jboss.msc");
@@ -26,6 +27,7 @@ public class CoreDependenciesProcessor implements DeploymentUnitProcessor {
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
         if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
+            //addDependency( moduleSpecification, moduleLoader, TORQUEBOX_BOOTSTRAP_ID );
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CORE_ID );
             addDependency( moduleSpecification, moduleLoader, JBOSS_VFS_ID );
             addDependency( moduleSpecification, moduleLoader, JBOSS_MSC_ID );

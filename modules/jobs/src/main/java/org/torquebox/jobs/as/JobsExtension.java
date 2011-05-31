@@ -27,11 +27,13 @@ import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ModelNodeRegistration;
 import org.jboss.logging.Logger;
+import org.torquebox.core.as.AbstractBootstrappableExtension;
 
-public class JobsExtension implements Extension {
+public class JobsExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initialize(ExtensionContext context) {
+        bootstrap();
         log.info( "Initializing TorqueBox jobs Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
         final ModelNodeRegistration subsystem = registration.registerSubsystemModel( JobsSubsystemProviders.SUBSYSTEM );

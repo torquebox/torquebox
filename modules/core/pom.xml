@@ -16,6 +16,12 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-bootstrap</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
@@ -37,7 +43,7 @@
     <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.logging</groupId>

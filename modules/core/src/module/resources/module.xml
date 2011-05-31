@@ -26,18 +26,28 @@
 
     <resources>
         <resource-root path="${project.artifactId}-${project.version}.jar"/>
+<!--
         <resource-root path="jruby-complete-${version.jruby}.jar"/>
+-->
     </resources>
+
     <exports>
       <include-set>
         <path name="org/jruby"/>
+        <path name="org/jruby/**"/>
         <path name="org/jruby/ast"/>
         <path name="org/jruby/libraries"/>
+        <path name="org/yaml"/>
+        <path name="org/yaml/**"/>
+        <path name="org/yaml/snakeyaml"/>
+        <path name="org/yaml/snakeyaml/error"/>
         <path name="org/torquebox/core/util"/>
+        <path name="org/torquebox/bootstrap/as"/>
       </include-set>
     </exports>
 
     <dependencies>
+        <module name="org.torquebox.bootstrap" export="true"/>
         <module name="javax.api"/>
         <module name="org.jboss.staxmapper"/>
         <module name="org.jboss.as.controller"/>

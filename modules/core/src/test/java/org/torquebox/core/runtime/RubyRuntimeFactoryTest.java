@@ -1,5 +1,7 @@
 package org.torquebox.core.runtime;
 
+import static org.junit.Assert.*;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -10,42 +12,55 @@ import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.junit.After;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class RubyRuntimeFactoryTest {
-    
+
+    private RubyRuntimeFactory factory;
+
+    @After
+    public void destroyFactory() {
+        if (factory != null) {
+            this.factory.destroy();
+            this.factory = null;
+        }
+
+    }
 
     @Test
     public void testExplicitClassLoader() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory();
+        factory = new RubyRuntimeFactory();
         ClassLoader cl = new URLClassLoader( new URL[] {} );
         factory.setClassLoader( cl );
+        factory.create();
         assertSame( cl, factory.getClassLoader() );
     }
 
     @Test
     public void testContextClassLoader() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory();
+        factory = new RubyRuntimeFactory();
         ClassLoader cl = new URLClassLoader( new URL[] {} );
         Thread.currentThread().setContextClassLoader( cl );
+        factory.create();
         assertSame( cl, factory.getClassLoader() );
     }
 
     @Test
     public void testNullInitializerIsAllowed() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        factory.create();
         assertNotNull( ruby );
     }
 
     @Test
     public void testInitializerIsUsed() throws Exception {
         MockRuntimeInitializer initializer = new MockRuntimeInitializer();
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( initializer );
+        factory = new RubyRuntimeFactory( initializer );
         factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
 
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
 
@@ -56,8 +71,9 @@ public class RubyRuntimeFactoryTest {
     @Test
     public void testOpenSSL_HMAC_digest() throws Exception {
         MockRuntimeInitializer initializer = new MockRuntimeInitializer();
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( initializer );
+        factory = new RubyRuntimeFactory( initializer );
         factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
 
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
 
@@ -69,8 +85,9 @@ public class RubyRuntimeFactoryTest {
 
     @Test
     public void testRubyDefault() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertFalse( ruby.is1_9() );
@@ -78,9 +95,10 @@ public class RubyRuntimeFactoryTest {
 
     @Test
     public void testRuby18() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setRubyVersion( CompatVersion.RUBY1_8 );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertFalse( ruby.is1_9() );
@@ -88,19 +106,21 @@ public class RubyRuntimeFactoryTest {
 
     @Test
     public void testRuby19() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setRubyVersion( CompatVersion.RUBY1_9 );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertTrue( ruby.is1_9() );
-        assertEquals( "1.9.2", ((RubyString)ruby.evalScriptlet( "RUBY_VERSION" )).toString() );
+        assertEquals( "1.9.2", ((RubyString) ruby.evalScriptlet( "RUBY_VERSION" )).toString() );
     }
 
     @Test
     public void testCompileModeDefault() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
@@ -108,9 +128,10 @@ public class RubyRuntimeFactoryTest {
 
     @Test
     public void testCompileModeDefault19() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setRubyVersion( CompatVersion.RUBY1_9 );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertTrue( ruby.is1_9() );
@@ -119,9 +140,10 @@ public class RubyRuntimeFactoryTest {
 
     @Test
     public void testCompileModeJIT() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setCompileMode( CompileMode.JIT );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertEquals( CompileMode.JIT, ruby.getInstanceConfig().getCompileMode() );
@@ -129,9 +151,10 @@ public class RubyRuntimeFactoryTest {
 
     @Test
     public void testCompileModeFORCE() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setCompileMode( CompileMode.FORCE );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
@@ -139,9 +162,10 @@ public class RubyRuntimeFactoryTest {
 
     @Test
     public void testCompileModeOFF() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( null );
+        factory = new RubyRuntimeFactory( null );
         factory.setUseJRubyHomeEnvVar( false );
         factory.setCompileMode( CompileMode.OFF );
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
@@ -150,18 +174,20 @@ public class RubyRuntimeFactoryTest {
     @Test
     public void testApplicationEnvironment() throws Exception {
         MockRuntimeInitializer initializer = new MockRuntimeInitializer();
-        RubyRuntimeFactory factory = new RubyRuntimeFactory( initializer );
+        factory = new RubyRuntimeFactory( initializer );
         Map<String, String> env = new HashMap<String, String>();
         env.put( "CHEESE", "taco" );
         factory.setApplicationEnvironment( env );
         Map<String, String> env2 = factory.createEnvironment();
+        factory.create();
         assertNotNull( env2.get( "CHEESE" ) );
         assertEquals( env.get( "CHEESE" ), env2.get( "CHEESE" ) );
     }
 
     @Test
     public void testVersionsDefined() throws Exception {
-        RubyRuntimeFactory factory = new RubyRuntimeFactory();
+        factory = new RubyRuntimeFactory();
+        factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
 
         IRubyObject torqueboxVersion = ruby.evalScriptlet( "TorqueBox.version" );

@@ -9,53 +9,49 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-auth</artifactId>
+  <artifactId>torquebox-bootstrap</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Auth Module</name>
+  <name>TorqueBox Bootstrap Module</name>
   <description />
 
   <dependencies>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-bootstrap</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-core</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.picketbox</groupId>
-      <artifactId>picketbox</artifactId>
-      <version>4.0.0.Beta3</version>
+      <groupId>org.jboss.modules</groupId>
+      <artifactId>jboss-modules</artifactId>
+      <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-security</artifactId>
-      <version>7.0.0.Beta4-SNAPSHOT</version>
-    </dependency>
-    
-    <!-- <dependency> -->
-    <!--   <groupId>org.jboss</groupId> -->
-    <!--   <artifactId>jboss-vfs</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jruby</groupId> -->
-    <!--   <artifactId>jruby-complete</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
-    <!-- <dependency> -->
-    <!--   <groupId>org.jboss.logging</groupId> -->
-    <!--   <artifactId>jboss-logging</artifactId> -->
-    <!--   <scope>provided</scope> -->
-    <!-- </dependency> -->
   </dependencies>
 
   <build>
+    <resources> 
+      <resource> 
+        <directory>src/main/resources</directory> 
+      </resource> 
+      <resource> 
+        <directory>src/main/java</directory> 
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.rb</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource> 
+      <resource> 
+        <directory>src/main/ruby</directory> 
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources> 
     <plugins> 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>

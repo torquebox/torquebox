@@ -19,8 +19,10 @@
 
 package org.torquebox.core.runtime;
 
-import java.io.File;
+import java.io.Closeable;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,6 +46,7 @@ import org.jruby.RubyModule;
 import org.jruby.ast.executable.Script;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
+import org.torquebox.bootstrap.JRubyHomeLocator;
 import org.torquebox.core.pool.InstanceFactory;
 
 /**
@@ -97,7 +100,9 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     /** JRuby compile mode. */
     private CompileMode compileMode;
 
-	private ServiceRegistry serviceRegistry;
+    private ServiceRegistry serviceRegistry;
+
+    private Closeable mountedJRubyHome;
 
     /**
      * Construct.
@@ -165,14 +170,14 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
      */
     public ClassLoader getClassLoader() {
         if (this.classLoader != null) {
-            log.info(  "Using configured classload: " + this.classLoader );
+            log.info( "Using configured classload: " + this.classLoader );
             return this.classLoader;
         }
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
         if (cl != null) {
-            log.info(  "using TCCL" );
+            log.info( "using TCCL" );
             return cl;
         }
 
@@ -245,7 +250,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         config.setLoader( getClassLoader() );
-        //config.setClassCache( getClassCache() );
+        // config.setClassCache( getClassCache() );
         config.setLoadServiceCreator( new VFSLoadServiceCreator() );
         if (this.rubyVersion != null) {
             config.setCompatVersion( this.rubyVersion );
@@ -257,59 +262,10 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         String jrubyHome = this.jrubyHome;
 
         if (jrubyHome == null) {
-
-            jrubyHome = System.getProperty( "jruby.home" );
-
-            if (jrubyHome == null && this.useJRubyHomeEnvVar && !"true".equals( System.getProperty( "jruby_home.env.ignore" ) )) {
-                jrubyHome = System.getenv( "JRUBY_HOME" );
-                if (jrubyHome != null) {
-                    if (!new File( jrubyHome ).exists()) {
-                        jrubyHome = null;
-                    }
-                }
-            }
+            jrubyHome = JRubyHomeLocator.determineJRubyHome();
 
             if (jrubyHome == null) {
-                String jbossHome = System.getProperty( "jboss.home.dir" );
-
-                if (jbossHome != null) {
-                    File candidatePath = new File( jbossHome, "../jruby" );
-                    if (candidatePath.exists() && candidatePath.isDirectory()) {
-                        jrubyHome = candidatePath.getAbsolutePath();
-                    }
-                }
-
-            }
-        }
-
-        if (jrubyHome == null) {
-            jrubyHome = RubyInstanceConfig.class.getResource( "/META-INF/jruby.home" ).toURI().getSchemeSpecificPart();
-
-            if (jrubyHome.startsWith( "file:" ) && jrubyHome.contains( "!/" )) {
-                int slashLoc = jrubyHome.indexOf( '/' );
-                int bangLoc = jrubyHome.indexOf( '!' );
-
-                String jarPath = jrubyHome.substring( slashLoc, bangLoc );
-
-                String extraPath = jrubyHome.substring( bangLoc + 1 );
-
-                VirtualFile vfsJar = VFS.getChild( jarPath );
-
-                if (vfsJar.exists()) {
-                    if (!vfsJar.isDirectory()) {
-                        ScheduledExecutorService executor = Executors.newScheduledThreadPool( 1 );
-                        TempFileProvider tempFileProvider = TempFileProvider.create( "jruby.home", executor );
-                        VFS.mountZip( vfsJar, vfsJar, tempFileProvider );
-                    }
-
-                    if (vfsJar.isDirectory()) {
-                        VirtualFile vfsJrubyHome = vfsJar.getChild( extraPath );
-                        if (vfsJrubyHome.exists()) {
-                            jrubyHome = vfsJrubyHome.toURL().toExternalForm();
-                        }
-                    }
-                }
-
+                jrubyHome = attemptMountJRubyHomeFromClassPath();
             }
         }
 
@@ -354,10 +310,41 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
             logRuntimeCreationComplete( config, contextInfo, startTime );
         }
-        
-        log.info( "Resulting ruby has CL: " + runtime.getJRubyClassLoader() );
+
 
         return runtime;
+    }
+
+    private String attemptMountJRubyHomeFromClassPath() throws URISyntaxException, IOException {
+        String internalJRubyHome = RubyInstanceConfig.class.getResource( "/META-INF/jruby.home" ).toURI().getSchemeSpecificPart();
+
+        if (internalJRubyHome.startsWith( "file:" ) && internalJRubyHome.contains( "!/" )) {
+            int slashLoc = internalJRubyHome.indexOf( '/' );
+            int bangLoc = internalJRubyHome.indexOf( '!' );
+
+            String jarPath = internalJRubyHome.substring( slashLoc, bangLoc );
+
+            String extraPath = internalJRubyHome.substring( bangLoc + 1 );
+
+            VirtualFile vfsJar = VFS.getChild( jarPath );
+
+            if (vfsJar.exists()) {
+                if (!vfsJar.isDirectory()) {
+                    ScheduledExecutorService executor = Executors.newScheduledThreadPool( 1 );
+                    TempFileProvider tempFileProvider = TempFileProvider.create( "jruby.home", executor );
+                    this.mountedJRubyHome = VFS.mountZip( vfsJar, vfsJar, tempFileProvider );
+                }
+
+                if (vfsJar.isDirectory()) {
+                    VirtualFile vfsJrubyHome = vfsJar.getChild( extraPath );
+                    if (vfsJrubyHome.exists()) {
+                        return vfsJrubyHome.toURL().toExternalForm();
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private long logRuntimeCreationStart(RubyInstanceConfig config, String contextInfo) {
@@ -539,17 +526,25 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             destroyInstance( ruby );
         }
         this.undisposed.clear();
+        if (this.mountedJRubyHome != null) {
+            try {
+                this.mountedJRubyHome.close();
+            } catch (IOException e) {
+                // ignore
+            }
+            this.mountedJRubyHome = null;
+        }
     }
 
     public ClassCache getClassCache() {
         return this.classCache;
     }
 
-	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
-		this.serviceRegistry = serviceRegistry;
-	}
-	
-	public ServiceRegistry getServiceRegistry() {
-		return this.serviceRegistry;
-	}
+    public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+        this.serviceRegistry = serviceRegistry;
+    }
+
+    public ServiceRegistry getServiceRegistry() {
+        return this.serviceRegistry;
+    }
 }

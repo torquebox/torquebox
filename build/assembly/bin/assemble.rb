@@ -85,8 +85,11 @@ class Assembler
       [ File.basename( module_dir, '-module' ).gsub( /torquebox-/, '' ), module_dir ]
     end
 
-    # Ensure core module is first
+    # Ensure core module is first-ish
     modules.unshift( modules.assoc( "core" ) ).uniq!
+
+    # Ensure boot module is first
+    modules.unshift( modules.assoc( "bootstrap" ) ).uniq!
 
     modules.each do |module_name, module_dir|
       tool.install_module( module_name, module_dir )
