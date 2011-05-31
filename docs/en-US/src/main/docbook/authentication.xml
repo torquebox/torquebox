@@ -15,12 +15,15 @@
   </para>
   <para>
     TorqueBox applications can authenticate against any security
-    policy that you have specified in your JBoss login
+    policy that you have specified in your JBoss login-config.xml
     configuration. To learn more about how JBoss security works and is
     configured, refer to <ulink
     url="http://www.jboss.org/jbossas/docs/6-x/Core-Documentation/security.html">the
     JBoss documentation</ulink>. The TorqueBox integration, however,
     makes authenticating against a corporate JAAS data store trivial.
+    NOTE: With AS7, security configuration moves to standalone/configuration/standalone.xml.
+    Documentation is still being written for AS7, so stay tuned for additional
+    links.
   </para>
 
   <section id="security-domains">
@@ -67,6 +70,43 @@ auth:
     </para>
   </section>
 
+  <section id="authentication-default-domains">
+    <title>TorqueBox Domains</title>
+    <para>
+      In addition to the security domains specified in your JBoss configuration files, TorqueBox
+      also makes two torquebox-specific security domains available to your applications.
+      The <code>torquebox</code> domain uses a <code>SimpleServerLoginModule</code>
+      for authentication.
+    </para>
+    <para>
+      The <code>SimpleServerLoginModule</code> login algorithm is: if
+      password is null, authenticate the user and assign an identity of "guest"
+      and a role of "guest".  else if password is equal to the user name,
+      assign an identity equal to the username and both "user" and "guest"
+      roles else authentication fails.
+    </para>
+    <para>
+      To use the <code>torquebox</code> domain, specify this in your torquebox.yml.
+      <screen> auth:
+  default:
+    domain: torquebox </screen>
+    </para>
+    <para>
+      In addition to the <code>torquebox</code> security domain, an application specific
+      domain - <code>torquebox-appname</code> is automatically created when your app is deployed.
+      This security domain allows you to specify username/password pairs inside your torquebox.yml
+      file.  Users are authenticated against whatever usernames and passwords you have configured.
+      For example:
+
+      <screen>auth:
+  default:
+    domain: torquebox-myapp
+    credentials:
+      john: johnspassword
+      alice: alicespassword</screen>
+    </para>
+  </section>
+
   <section id="authentication-ruby-api">
     <title>Ruby API</title>
     <para>
@@ -96,7 +136,7 @@ auth:
     <para>
       <screen>
 require 'torquebox'
-require 'org/torquebox/auth/authentication'
+require 'torquebox-security'
 
 module MyApp
   module Authentication
