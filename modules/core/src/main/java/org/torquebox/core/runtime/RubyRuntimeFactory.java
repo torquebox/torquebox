@@ -262,7 +262,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         String jrubyHome = this.jrubyHome;
 
         if (jrubyHome == null) {
-            jrubyHome = JRubyHomeLocator.determineJRubyHome();
+            jrubyHome = JRubyHomeLocator.determineJRubyHome( this.useJRubyHomeEnvVar );
 
             if (jrubyHome == null) {
                 jrubyHome = attemptMountJRubyHomeFromClassPath();

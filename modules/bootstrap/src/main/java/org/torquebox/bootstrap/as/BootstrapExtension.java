@@ -32,7 +32,7 @@ public class BootstrapExtension implements Extension {
         final ModelNodeRegistration subsystem = registration.registerSubsystemModel( BootstrapSubsystemProviders.SUBSYSTEM );
         registration.registerXMLElementWriter( BootstrapSubsystemParser.getInstance() );
 
-        String jrubyHome = JRubyHomeLocator.determineJRubyHome();
+        String jrubyHome = JRubyHomeLocator.determineJRubyHome(true);
 
         if (jrubyHome == null) {
             log.fatal( "Unable to find a JRuby Home" );

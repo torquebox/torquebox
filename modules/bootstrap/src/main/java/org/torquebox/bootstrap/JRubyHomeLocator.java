@@ -1,11 +1,10 @@
 package org.torquebox.bootstrap;
 
 import java.io.File;
-import java.net.URL;
 
 public class JRubyHomeLocator {
 
-    public static String determineJRubyHome() {
+    public static String determineJRubyHome(boolean useEnvVar) {
         String jrubyHome = null;
 
         jrubyHome = jrubyHomeViaSysProp();
@@ -14,19 +13,21 @@ public class JRubyHomeLocator {
             return jrubyHome;
         }
 
-        jrubyHome = jrubyHomeViaEnv();
+        if (useEnvVar) {
+            jrubyHome = jrubyHomeViaEnv();
+
+            if (jrubyHome != null) {
+                return jrubyHome;
+            }
+        }
+
+        jrubyHome = jrubyHomeRelativeToJBossHome();
 
         if (jrubyHome != null) {
             return jrubyHome;
         }
 
-        jrubyHome = jrubyHomeRelativeToJBossHome();
-        
-        if ( jrubyHome != null ) {
-            return jrubyHome;
-        }
-        
-        //return jrubyHomeViaClasspath();
+        // return jrubyHomeViaClasspath();
         return null;
     }
 
