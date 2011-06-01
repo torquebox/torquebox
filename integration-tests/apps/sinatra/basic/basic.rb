@@ -3,6 +3,7 @@ require 'rubygems'
 require 'sinatra'
 
 get '/' do
+  headers 'Biscuit' => 'Gravy'
   erb :index
 end
 
