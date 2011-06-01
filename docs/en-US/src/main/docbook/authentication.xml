@@ -29,20 +29,45 @@
   <section id="security-domains">
     <title>Security Domains</title>
     <para>
-      The JBoss Application Server provides security policy functionality that allows
-      application developers to authenticate against one of many named and configured 
-      security policies.  We refer to these policy names as "domains".
-      TorqueBox ships with a simple authentication domain, named <code>torquebox-auth</code> 
-      pre-configured in the Application Server.  The <code>torquebox-auth</code> domain
-      authenticates against a simple users properties file found in
-      <code>$TORQUEBOX_HOME/jboss/server/default/conf/props/torquebox-users.properties</code>.  
-      There is no need, however, to edit this file directly. To add a new username and
-      password to the security domain, use our rake task:
-      <screen>rake torquebox:auth:adduser CREDENTIALS=user:pass</screen>
-      The <code>torquebox-auth</code> domain is loaded and configured by default when your 
-      application is deployed.  To authenticate 
-      against a different security domain, for example <code>jmx-console</code>, configure 
-      this in your deployment descriptor as described in the YAML Configuration section.
+      The JBoss Application Server allows application developers to
+      authenticate against any of the JAAS security policies configured in the AS.
+      In addition, TorqueBox adds TorqueBox-specific security policies to the AS when
+      your application is deployed.  We refer to these JAAS policy names as
+      "domains".  TorqueBox ships with a simple authentication domain, named
+      <code>torquebox</code>.  The <code>torquebox</code> domain uses a
+      <code>SimpleServerLoginModule</code> for authentication.
+    </para>
+    <para>
+      The <code>SimpleServerLoginModule</code> login algorithm is: if
+      password is null, authenticate the user and assign an identity of "guest"
+      and a role of "guest".  else if password is equal to the user name,
+      assign an identity equal to the username and both "user" and "guest"
+      roles else authentication fails.
+    </para>
+    <para>
+      To use the <code>torquebox</code> domain, specify this in your torquebox.yml.
+      <screen>auth:
+  default:
+    domain: torquebox </screen>
+
+      The <code>torquebox</code> domain is deployed on demand only if your application
+      specifies it in the configuration file.  However, note that JAAS security domains
+      are available to all applications deployed within the AS.  
+    </para>
+    <para>
+      In addition to the <code>torquebox</code> security domain, an application specific
+      domain - <code>torquebox-appname</code> is initialized when your application is deployed.
+      This domain allows you to specify username/password pairs inside your torquebox.yml
+      file.  Users are authenticated against whatever usernames and passwords you have configured.
+      For example:
+
+      <screen>auth:
+  default:
+    domain: torquebox-myapp
+    credentials:
+      john: johnspassword
+      alice: alicespassword</screen>
+    
     </para>
   </section>
 
@@ -67,43 +92,6 @@ auth:
       A handle to the HornetQ authentication domain is now available to you with:
       <screen>authenticator = TorqueBox::Authentication.default</screen> and the JMX authentication
       domain can be obtained with: <screen>authenticator = TorqueBox::Authentication['jmx']</screen>
-    </para>
-  </section>
-
-  <section id="authentication-default-domains">
-    <title>TorqueBox Domains</title>
-    <para>
-      In addition to the security domains specified in your JBoss configuration files, TorqueBox
-      also makes two torquebox-specific security domains available to your applications.
-      The <code>torquebox</code> domain uses a <code>SimpleServerLoginModule</code>
-      for authentication.
-    </para>
-    <para>
-      The <code>SimpleServerLoginModule</code> login algorithm is: if
-      password is null, authenticate the user and assign an identity of "guest"
-      and a role of "guest".  else if password is equal to the user name,
-      assign an identity equal to the username and both "user" and "guest"
-      roles else authentication fails.
-    </para>
-    <para>
-      To use the <code>torquebox</code> domain, specify this in your torquebox.yml.
-      <screen> auth:
-  default:
-    domain: torquebox </screen>
-    </para>
-    <para>
-      In addition to the <code>torquebox</code> security domain, an application specific
-      domain - <code>torquebox-appname</code> is automatically created when your app is deployed.
-      This security domain allows you to specify username/password pairs inside your torquebox.yml
-      file.  Users are authenticated against whatever usernames and passwords you have configured.
-      For example:
-
-      <screen>auth:
-  default:
-    domain: torquebox-myapp
-    credentials:
-      john: johnspassword
-      alice: alicespassword</screen>
     </para>
   </section>
 
