@@ -38,6 +38,11 @@ describe "basic sinatra test" do
     find('#success').should have_content("you posted something")
   end
 
+  it "should allow headers through (JRUBY-5839, TORQUE-430)" do
+    visit "/basic-sinatra"
+    page.response_headers['Biscuit'].should == 'Gravy'
+  end
+  
   it "should test Sir Postalot" do
     500.times do |i|
       print '.' if (i % 10 == 0)
