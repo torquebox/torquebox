@@ -18,6 +18,15 @@ module TorqueBox
           :critical => 9
       }
 
+      def _dump(depth)
+        return self.name.queue_name if self.name.respond_to?( :queue_name )
+        self.name.to_s
+      end
+
+      def self._load(str)
+       self.new( str )
+      end
+
       def initialize(destination, connection_factory = inject( 'connection-factory' ))
         @name                = destination
         @connection_factory  = ConnectionFactory.new( connection_factory )

@@ -37,7 +37,7 @@ module TorqueBox
             org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory", 
                                                             connect_opts)
           @internal_connection_factory =
-            org.hornetq.api.jms.HornetQJMSClient.createConnectionFactory( transport_config )
+            org.hornetq.api.jms.HornetQJMSClient.createConnectionFactoryWithoutHA( org.hornetq.api.jms::JMSFactoryType::CF, transport_config )
           @hornetq_direct = true
         end
 
