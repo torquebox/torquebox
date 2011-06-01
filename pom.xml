@@ -25,6 +25,15 @@
     <url>http://github.com/torquebox/torquebox-release</url>
   </scm>
 
+  <modules>
+    <module>parent</module>
+    <module>support</module>
+    <module>modules</module>
+    <module>gems</module>
+    <module>build</module>
+    <module>system</module>
+  </modules>
+
   <build>
     <plugins>
       <plugin>
@@ -81,10 +90,7 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <modules>
-<!--
-        <module>dist</module>
         <module>docs</module>
--->
       </modules>
     </profile>
     <profile>
@@ -94,19 +100,5 @@
       </activation>
     </profile>
   </profiles>
-
-  <modules>
-    <module>parent</module>
-    <module>support</module>
-    <module>modules</module>
-    <module>gems</module>
-    <module>build</module>
-<!--
-    <module>components</module>
-    <module>clients</module>
-    <module>assemblage</module>
--->
-    <module>system</module>
-  </modules>
 
 </project>
