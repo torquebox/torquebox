@@ -3,6 +3,7 @@ require 'rexml/document'
 require 'rubygems'
 
 require 'rubygems/installer'
+require 'rubygems/dependency_installer'
 
 =begin
   gem 'builder', '3.0.0'
@@ -72,18 +73,21 @@ class AssemblyTool
   
   def install_gem(gem, update_index=false)
     puts "Installing #{gem}"
-    if ( File.exist?( gem ) ) 
-      opts = {
-        :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
-        :wrapper     => true
-      }
+    opts = {
+      :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
+      :wrapper     => true
+    }
+    if ( File.exist?( gem ) )
       installer = Gem::Installer.new( gem, opts )
       installer.install
- 
       FileUtils.mkdir_p gem_repo_dir + '/gems'
       FileUtils.cp gem, gem_repo_dir + '/gems'
-      update_gem_repo_index if update_index
+    else
+      installer = Gem::DependencyInstaller.new( opts )
+      installer.install( gem )
     end
+
+    update_gem_repo_index if update_index
   end
 
   def update_gem_repo_index

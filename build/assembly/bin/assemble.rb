@@ -104,6 +104,10 @@ class Assembler
         tool.install_gem( gem_package )
       end
     end
+
+    # Additionally install rack and bundler gems
+    tool.install_gem( 'rack' )
+    tool.install_gem( 'bundler' )
     tool.update_gem_repo_index
   end
 
