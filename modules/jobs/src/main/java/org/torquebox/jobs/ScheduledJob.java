@@ -71,12 +71,7 @@ public class ScheduledJob implements Service<ScheduledJob>, ScheduledJobMBean {
 
     @Override
     public void stop(StopContext context) {
-    	try {
-    		this.jobSchedulerInjector.getValue().getScheduler().unscheduleJob( getTriggerName(), this.group );
-    	} catch (SchedulerException ex) {
-    		log.warn( "An error occurred stoping job " + this.name, ex );
-    	} 
-    	this.jobDetail = null;
+    	stop();
     }
    
    
@@ -101,14 +96,20 @@ public class ScheduledJob implements Service<ScheduledJob>, ScheduledJobMBean {
         jobScheduler.getScheduler().scheduleJob( jobDetail, trigger );
     }
 
+    public synchronized void stop() {
+    	try {
+    		this.jobSchedulerInjector.getValue().getScheduler().unscheduleJob( getTriggerName(), this.group );
+    	} catch (SchedulerException ex) {
+    		log.warn( "An error occurred stoping job " + this.name, ex );
+    	} 
+    	this.jobDetail = null;	
+    }
+    
+
     private String getTriggerName() {
         return this.name + ".trigger";
     }
 
-    public synchronized void stop() {
-    	
-    }
-    
     public synchronized boolean isStarted() {
         return this.jobDetail != null;
     }

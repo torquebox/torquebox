@@ -59,6 +59,7 @@ public class RubyApplicationDeployer implements DeploymentUnitProcessor {
         RubyApplication application = new RubyApplication();
         application.setEnvironmentName( rubyAppMetaData.getEnvironmentName() );
         application.setRootPath( rubyAppMetaData.getRootPath() );
+        application.setName( rubyAppMetaData.getApplicationName() );
         
         MBeanRegistrationService<RubyApplicationMBean> mbeanService = new MBeanRegistrationService<RubyApplicationMBean>( mbeanName, new ImmediateValue<RubyApplicationMBean>( application ) );
         phaseContext.getServiceTarget().addService( serviceName.append( "mbean" ), mbeanService )

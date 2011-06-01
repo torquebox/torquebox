@@ -44,6 +44,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
             ServiceController<?> each = this.serviceRegistry.getService( eachName );
             each.setMode( Mode.ACTIVE );
         }
+        this.running = true;
     }
 
     public synchronized void stop() throws Exception {
@@ -51,6 +52,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
             ServiceController<?> each = this.serviceRegistry.getService( eachName );
             each.setMode( Mode.NEVER );
         }
+        this.running = false;
     }
 
     @Override
@@ -60,7 +62,10 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
 
     @Override
     public String getStatus() {
-        return null;
+        if (this.running) {
+        	return "STARTED";
+        }
+        return "STOPPED";
     }
 
     @Override
@@ -109,6 +114,8 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                     services.add( serviceName );
                 }
 
+                MessageProcessorGroup.this.running = true;
+                
                 context.complete();
 
             }
@@ -204,7 +211,8 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private String name;
     private String messageSelector;
     private boolean durable;
-
+    private boolean running = false;
+    
     private int concurrency;
     private List<ServiceName> services = new ArrayList<ServiceName>();
 

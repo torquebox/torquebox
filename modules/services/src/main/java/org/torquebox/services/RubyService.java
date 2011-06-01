@@ -40,6 +40,7 @@ public class RubyService implements RubyServiceMBean {
         if (this.servicesComponent != null) {
             this.servicesComponent.stop();
         }
+        this.started = false;
     }
 
     public void destroy() {
