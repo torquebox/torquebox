@@ -1,6 +1,5 @@
-package org.torquebox.security.auth.as;
+package org.torquebox.security.as;
 
-import org.jboss.as.security.ModuleName;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -12,13 +11,9 @@ import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
 
-public class AuthDependencyProcessor implements DeploymentUnitProcessor {
+public class SecurityDependencyProcessor implements DeploymentUnitProcessor {
 
-    public static final ModuleIdentifier PICKETBOX_ID = ModuleIdentifier
-            .create( ModuleName.PICKETBOX.getName(),
-                    ModuleName.PICKETBOX.getSlot() );
-
-    private static ModuleIdentifier TORQUEBOX_AUTH_ID = ModuleIdentifier.create("org.torquebox.auth");
+    private static ModuleIdentifier TORQUEBOX_SECURITY_ID = ModuleIdentifier.create("org.torquebox.security");
     
     @Override
     /** {@inheritDoc} */
@@ -26,10 +21,9 @@ public class AuthDependencyProcessor implements DeploymentUnitProcessor {
             throws DeploymentUnitProcessingException {
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
-        final ModuleSpecification moduleSpecification = deploymentUnit
-                .getAttachment( Attachments.MODULE_SPECIFICATION );
+        final ModuleSpecification moduleSpecification = deploymentUnit.getAttachment( Attachments.MODULE_SPECIFICATION );
         moduleSpecification.addDependency( new ModuleDependency( moduleLoader,
-                TORQUEBOX_AUTH_ID, false, true, false ) );
+                TORQUEBOX_SECURITY_ID, false, true, false ) );
     }
 
     @Override

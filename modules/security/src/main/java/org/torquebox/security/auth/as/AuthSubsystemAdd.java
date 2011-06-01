@@ -36,6 +36,7 @@ import org.jboss.msc.service.ServiceTarget;
 import org.jboss.security.ISecurityManagement;
 import org.jboss.security.auth.login.AuthenticationInfo;
 import org.jboss.security.config.ApplicationPolicy;
+import org.torquebox.security.as.SecurityDependencyProcessor;
 import org.torquebox.security.auth.AuthDefaultsProcessor;
 import org.torquebox.security.auth.AuthDeployer;
 import org.torquebox.security.auth.AuthYamlParsingProcessor;
@@ -69,7 +70,7 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
     protected void addDeploymentProcessors(final BootOperationContext context) {
         context.addDeploymentProcessor( Phase.PARSE, 0, new AuthYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new AuthDependencyProcessor() );
+        context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new SecurityDependencyProcessor() );
         context.addDeploymentProcessor( Phase.INSTALL, 0, new AuthDeployer() );
     }
 
@@ -125,6 +126,6 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
     }
 
     public static final String TORQUEBOX_DOMAIN = "torquebox";
-    static final AuthSubsystemAdd ADD_INSTANCE = new AuthSubsystemAdd();
+    public static final AuthSubsystemAdd ADD_INSTANCE = new AuthSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.auth.as" );
 }

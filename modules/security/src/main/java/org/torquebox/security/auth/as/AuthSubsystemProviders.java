@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 
 import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.dmr.ModelNode;
+import org.torquebox.security.as.Namespace;
 
 public class AuthSubsystemProviders {
 
@@ -34,7 +35,7 @@ public class AuthSubsystemProviders {
         }
     };
 
-    static final DescriptionProvider SUBSYSTEM_ADD = new DescriptionProvider() {
+    public static final DescriptionProvider SUBSYSTEM_ADD = new DescriptionProvider() {
         @Override
         public ModelNode getModelDescription(Locale locale) {
             final ResourceBundle bundle = getResourceBundle( locale );

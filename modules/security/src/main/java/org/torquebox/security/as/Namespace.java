@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.security.auth.as;
+package org.torquebox.security.as;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +33,12 @@ public enum Namespace {
     // must be first
     UNKNOWN(null),
 
-    TORQUEBOX_AUTH_1_0("urn:jboss:domain:torquebox-security:1.0");
+    TORQUEBOX_SECURITY_1_0("urn:jboss:domain:torquebox-security:1.0");
 
     /**
      * The current namespace version.
      */
-    public static final Namespace CURRENT = TORQUEBOX_AUTH_1_0;
+    public static final Namespace CURRENT = TORQUEBOX_SECURITY_1_0;
 
     private final String name;
 

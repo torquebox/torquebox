@@ -16,6 +16,8 @@ import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
+import org.torquebox.security.as.Namespace;
+import org.torquebox.security.as.SecurityExtension;
 
 public class AuthSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
@@ -43,7 +45,7 @@ public class AuthSubsystemParser implements XMLStreamConstants, XMLElementReader
         requireNoContent( reader );
 
         final ModelNode address = new ModelNode();
-        address.add( SUBSYSTEM, AuthExtension.SUBSYSTEM_NAME );
+        address.add( SUBSYSTEM, SecurityExtension.AUTHENTICATION_SUBSYSTEM_NAME );
         address.protect();
 
         list.add( AuthSubsystemAdd.createOperation( address ) );
