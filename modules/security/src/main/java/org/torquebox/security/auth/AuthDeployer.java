@@ -1,4 +1,4 @@
-package org.torquebox.auth;
+package org.torquebox.security.auth;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,10 +26,10 @@ import org.jboss.msc.service.ServiceTarget;
 import org.jboss.security.ISecurityManagement;
 import org.jboss.security.auth.login.AuthenticationInfo;
 import org.jboss.security.config.ApplicationPolicy;
-import org.torquebox.auth.AuthMetaData.TorqueBoxAuthConfig;
-import org.torquebox.auth.as.AuthServices;
-import org.torquebox.auth.as.AuthSubsystemAdd;
 import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.security.auth.AuthMetaData.TorqueBoxAuthConfig;
+import org.torquebox.security.auth.as.AuthServices;
+import org.torquebox.security.auth.as.AuthSubsystemAdd;
 
 public class AuthDeployer implements DeploymentUnitProcessor {
 

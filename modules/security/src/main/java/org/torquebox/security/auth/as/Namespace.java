@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.auth.as;
+package org.torquebox.security.auth.as;
 
 import java.util.HashMap;
 import java.util.Map;

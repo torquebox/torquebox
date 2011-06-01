@@ -1,4 +1,4 @@
-package org.torquebox.auth.as;
+package org.torquebox.security.auth.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;

@@ -16,7 +16,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.torquebox.auth;
+package org.torquebox.security.auth;
 
 import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -24,7 +24,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.torquebox.auth.AuthMetaData.TorqueBoxAuthConfig;
+import org.torquebox.security.auth.AuthMetaData.TorqueBoxAuthConfig;
 
 public class AuthDefaultsProcessor implements DeploymentUnitProcessor {
 

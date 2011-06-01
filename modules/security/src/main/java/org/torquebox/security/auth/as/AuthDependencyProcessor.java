@@ -1,4 +1,4 @@
-package org.torquebox.auth.as;
+package org.torquebox.security.auth.as;
 
 import org.jboss.as.security.ModuleName;
 import org.jboss.as.server.deployment.Attachments;

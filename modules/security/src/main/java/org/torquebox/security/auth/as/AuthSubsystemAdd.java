@@ -1,4 +1,4 @@
-package org.torquebox.auth.as;
+package org.torquebox.security.auth.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
@@ -36,9 +36,9 @@ import org.jboss.msc.service.ServiceTarget;
 import org.jboss.security.ISecurityManagement;
 import org.jboss.security.auth.login.AuthenticationInfo;
 import org.jboss.security.config.ApplicationPolicy;
-import org.torquebox.auth.AuthDefaultsProcessor;
-import org.torquebox.auth.AuthDeployer;
-import org.torquebox.auth.AuthYamlParsingProcessor;
+import org.torquebox.security.auth.AuthDefaultsProcessor;
+import org.torquebox.security.auth.AuthDeployer;
+import org.torquebox.security.auth.AuthYamlParsingProcessor;
 
 public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 

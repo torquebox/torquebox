@@ -9,9 +9,9 @@
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox-auth</artifactId>
+  <artifactId>torquebox-security</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Auth Module</name>
+  <name>TorqueBox Security Module</name>
   <description />
 
   <dependencies>

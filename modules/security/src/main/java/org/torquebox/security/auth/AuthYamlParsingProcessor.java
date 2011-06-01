@@ -1,4 +1,4 @@
-package org.torquebox.auth;
+package org.torquebox.security.auth;
 
 import java.util.Map;
 
