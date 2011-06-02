@@ -33,6 +33,17 @@
   </modules>
 
   <profiles>
+
+    <profile>
+      <id>19</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <ruby.compat.version>1.9</ruby.compat.version>
+      </properties>
+    </profile>
+
     <profile>
       <id>bees</id>
       <activation>
@@ -65,6 +76,31 @@
     </profile>
 
     <profile>
+      <!-- To deploy incremental builds to our incremental repo, for 1.8 builds only (see incremental-19 below) -->
+      <id>incremental</id>
+      <properties>
+        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/incremental</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/incremental</jboss.snapshots.repo.url>
+      </properties>
+    </profile>
+
+    <profile>
+      <!-- Disables deployment of 1.9 artifacts during incremental builds. -->
+      <id>incremental-19</id>
+      <activation>
+        <property>
+          <name>ruby.compat.version</name>
+          <value>1.9</value>
+        </property>
+      </activation>
+      <properties>
+        <jboss.releases.repo.url>file:///${user.dir}/target/m2repo/releases</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>file:///${user.dir}/target/m2repo/snapshots</jboss.snapshots.repo.url>
+      </properties>
+    </profile>
+
+
+    <profile>
       <id>integ</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -79,16 +115,6 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-    </profile>
-
-    <profile>
-      <id>19</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <properties>
-        <ruby.compat.version>1.9</ruby.compat.version>
-      </properties>
     </profile>
 
     <profile>
