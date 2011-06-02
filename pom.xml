@@ -310,13 +310,8 @@
     <version.rspec>2.3.0</version.rspec>
 
     <version.jbossas>7.x.incremental.13</version.jbossas>
-
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
-
-    <version.hornetq>2.0.0.GA</version.hornetq>
-    <version.netty>3.1.5.GA</version.netty>
-    <version.jms>1.1</version.jms>
   </properties>
 
   <repositories>
