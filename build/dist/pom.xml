@@ -90,7 +90,6 @@
               <gemPath>./target/rubygems</gemPath>
             </configuration>
           </execution>
-<!--
           <execution>
             <id>generate-build-metadata</id>
             <phase>package</phase>
@@ -98,31 +97,9 @@
               <goal>jruby</goal>
             </goals>
             <configuration>
-              <gemHome>./target/rubygems</gemHome>
-              <gemPath>./target/rubygems</gemPath>
-              <script>
-                puts 'building /target/build-metadata.json'
-                require 'java'
-                require 'rubygems'
-                require 'json'
-                require '${basedir}/..//assembly/target/stage/torquebox/jboss/common/torquebox/torquebox-base-core.jar'
-                
-                prop_stream = org.torquebox.TorqueBox.java_class.resource_as_stream( 'torquebox.properties' )
-                props = java.util.Properties.new
-                props.load( prop_stream ) if prop_stream
-                metadata = {}
-                metadata['build_revision'] = props['build.revision']
-                metadata['build_number'] = props['build.number']
-                metadata['build_time'] = Time.now.to_i
-                dist_file = './target/torquebox-dist-bin.zip'
-                metadata['dist_size'] = File.size( dist_file )
-                File.open('./target/build-metadata.json', 'w') do |f|
-                  f.write( metadata.to_json )
-                end
-              </script>
+              <file>bin/generate_build_metadata.rb</file>
             </configuration>
           </execution>
--->
         </executions>
       </plugin>
     </plugins>

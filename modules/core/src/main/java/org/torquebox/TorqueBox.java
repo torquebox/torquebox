@@ -1,36 +1,45 @@
 package org.torquebox;
 
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import org.torquebox.core.util.BuildInfo;
 
 public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
 
-    public TorqueBox(String version, String revision, String buildNumber, String buildUser) {
-        this.version = version;
-        this.revision = revision;
-        this.buildNumber = buildNumber;
-        this.buildUser = buildUser;
+	public TorqueBox() {
+		this.buildInfo = new BuildInfo();	
     }
     
     public String getVersion() {
-        return this.version;
+    	return this.buildInfo.get( "TorqueBox", "version" );
     }
     
     public String getRevision() {
-        return this.revision;
+    	return this.buildInfo.get( "TorqueBox", "build.revision" );
     }
     
     public String getBuildNumber() {
-        return this.buildNumber;
-    }
+    	return this.buildInfo.get( "TorqueBox", "build.number" );
+        }
     
     public String getBuildUser() {
-        return this.buildUser;
+    	return this.buildInfo.get( "TorqueBox", "build.user" );
     }
 
+    public List<String> getComponentNames() {
+    	return this.buildInfo.getComponentNames();
+    }
+    
+    public Map<String, String> getComponentBuildInfo(String componentName) {
+    	return this.buildInfo.getComponentInfo( componentName );
+    }
+    
     @Override
     public TorqueBox getValue() throws IllegalStateException, IllegalArgumentException {
         return this;
@@ -41,7 +50,7 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
     }
     
     public void dump(Logger log) {
-        log.info( "Welcome to TorqueBox AS - http://torquebox.org/" );
+    	log.info( "Welcome to TorqueBox AS - http://torquebox.org/" );
         log.info( "  version...... " + getVersion() );
         String buildNo = getBuildNumber();
         if (buildNo != null && !buildNo.trim().equals( "" )) {
@@ -59,8 +68,6 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
         
     }
     
-    private String version;
-    private String revision;
-    private String buildNumber;
-    private String buildUser;
+    private BuildInfo buildInfo;
+    
 }

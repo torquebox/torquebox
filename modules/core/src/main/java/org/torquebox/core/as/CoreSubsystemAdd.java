@@ -1,11 +1,11 @@
 package org.torquebox.core.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Hashtable;
-import java.util.Properties;
 
 import javax.management.MBeanServer;
 
@@ -27,8 +27,6 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.jboss.msc.service.ValueService;
-import org.jboss.msc.value.ImmediateValue;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.core.ArchiveDirectoryMountingProcessor;
@@ -113,29 +111,9 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         addInjectionServices( context, registry );
     }
 
+    
     protected void addTorqueBoxService(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
-        InputStream propsStream = getClass().getClassLoader().getResourceAsStream( "org/torquebox/torquebox.properties" );
-        Properties props = new Properties();
-        if (propsStream != null) {
-            try {
-                props.load( propsStream );
-            } catch (IOException e) {
-                log.warn( "Unable to read torquebox.properties" );
-            } finally {
-                try {
-                    propsStream.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-        }
-        
-        String version = props.getProperty( "version", "unknown" );
-        String revision = props.getProperty( "build.revision" );
-        String buildNumber = props.getProperty( "build.number" );
-        String buildUser = props.getProperty( "build.user" );
-        TorqueBox torqueBox = new TorqueBox( version, revision, buildNumber, buildUser );
-        
+    	TorqueBox torqueBox = new TorqueBox();
         torqueBox.dump( log );
         
         context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
