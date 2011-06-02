@@ -2,22 +2,22 @@
 
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>org.jboss</groupId>
+    <artifactId>jboss-parent</artifactId>
+    <version>6-beta-1</version>
+  </parent>
+
   <groupId>org.torquebox</groupId>
-  <artifactId>torquebox</artifactId>
+  <artifactId>torquebox-parent</artifactId>
   <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>TorqueBox</name>
+  <name>TorqueBox Parent</name>
   <url>http://www.torquebox.org/</url>
-  <inceptionYear>2008</inceptionYear>
-  <organization>
-    <name>Red Hat, Inc.</name>
-    <url>http://redhat.com</url>
-  </organization>
 
   <description>
-    The TorqueBox Ruby Application Platform
+    The TorqueBox Parent POM
   </description>
-
 
   <scm>
     <connection>scm:git:git://github.com/torquebox/torquebox-release.git</connection>
@@ -26,35 +26,21 @@
   </scm>
 
   <modules>
-    <module>parent</module>
     <module>support</module>
     <module>modules</module>
     <module>gems</module>
     <module>build</module>
-    <module>system</module>
   </modules>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <autoVersionSubmodules>true</autoVersionSubmodules>
-          <localCheckout>true</localCheckout>
-          <preparationGoals>install</preparationGoals>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
   <profiles>
+    <profile>
+      <id>tests-enabled</id>
+      <activation>
+        <property>
+          <name>!maven.test.skip</name>
+        </property>
+      </activation>
+    </profile>
     <profile>
       <id>bees</id>
       <activation>
@@ -63,6 +49,16 @@
       <properties>
         <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
+      </properties>
+    </profile>
+    <profile>
+      <id>bees-staging</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/staging</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/staging</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
@@ -80,25 +76,508 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <modules>
-        <module>integration-tests</module>
-      </modules>
     </profile>
     <profile>
       <id>dist</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
-      <modules>
-        <module>docs</module>
-      </modules>
+    </profile>
+    <profile>
+      <id>ci</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+    </profile>
+    <profile>
+      <id>experimental</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
     </profile>
     <profile>
       <id>19</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
+      <properties>
+        <ruby.compat.version>1.9</ruby.compat.version>
+      </properties>
+    </profile>
+    <profile>
+      <id>windows-can't-dance-with-19</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <ruby.compat.version>1.8</ruby.compat.version>
+      </properties>
     </profile>
   </profiles>
+    
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.jboss.as</groupId>
+        <artifactId>jboss-as-parent</artifactId>
+        <version>${version.jbossas}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
 
+      <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-jms-client</artifactId>
+        <version>${version.org.hornetq.hornetq-jms}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.hornetq</groupId>
+        <artifactId>hornetq-logging</artifactId>
+        <version>${version.org.hornetq.hornetq-jms}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.quartz-scheduler</groupId>
+        <artifactId>quartz</artifactId>
+        <version>${version.org.quartz-scheduler}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${version.org.slf4j}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>org.jruby</groupId>
+        <artifactId>jruby-complete</artifactId>
+        <version>${version.jruby}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${version.snakeyaml}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${version.junit}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>${version.mockito}</version> 
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-all</artifactId>
+        <version>${version.hamcrest}</version>
+      </dependency>
+
+
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbc-adapter</artifactId>
+        <version>${version.ar.jdbc}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbcsqlite3-adapter</artifactId>
+        <version>${version.ar.sqlite3}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbcpostgresql-adapter</artifactId>
+        <version>${version.ar.postgresql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>activerecord-jdbcmysql-adapter</artifactId>
+        <version>${version.ar.mysql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>jdbc-sqlite3</artifactId>
+        <version>${version.jdbc.sqlite3}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>jdbc-postgres</artifactId>
+        <version>${version.jdbc.postgresql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>jdbc-mysql</artifactId>
+        <version>${version.jdbc.mysql}</version>
+        <classifier>java</classifier>
+        <type>gem</type>
+      </dependency>
+
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rspec</artifactId>
+        <version>${version.rspec}</version>
+        <type>gem</type>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rake</artifactId>
+        <version>${version.rake}</version>
+        <type>gem</type>
+      </dependency>
+      <dependency>
+        <groupId>rubygems</groupId>
+        <artifactId>rubyzip</artifactId>
+        <version>${version.rubyzip}</version>
+        <type>gem</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.jruby</groupId>
+        <artifactId>jruby-bin</artifactId>
+        <version>${version.jruby}</version>
+        <type>zip</type>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.jbossas</groupId>
+        <artifactId>jboss-as-distribution</artifactId>
+        <version>${version.jbossas}</version>
+        <type>zip</type>
+      </dependency>
+
+
+    </dependencies>
+  </dependencyManagement>
+
+  <properties>
+    <ruby.compat.version>1.8</ruby.compat.version>
+    <version.jruby-maven-plugins>0.27.0-SNAPSHOT</version.jruby-maven-plugins> 
+    <version.junit>4.7</version.junit>
+    <version.jmock>2.5.1</version.jmock>
+    <version.mockito>1.8.4</version.mockito>
+    <version.hamcrest>1.1</version.hamcrest>
+
+    <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
+
+    <version.jruby>1.6.2</version.jruby>
+    <version.snakeyaml>1.5</version.snakeyaml>
+    <version.rack>1.1.0</version.rack>
+
+    <version.rails2>2.3.11</version.rails2>
+    <version.rails3>3.0.5</version.rails3>
+    <version.arel>2.0.9</version.arel>
+
+    <version.ar.jdbc>0.9.7</version.ar.jdbc>
+    <version.ar.sqlite3>0.9.7</version.ar.sqlite3>
+    <version.ar.mysql>0.9.7</version.ar.mysql>
+    <version.ar.postgresql>0.9.7</version.ar.postgresql>
+
+    <version.jdbc.sqlite3>3.6.3.054</version.jdbc.sqlite3>
+    <version.jdbc.mysql>5.0.4</version.jdbc.mysql>
+    <version.jdbc.postgresql>8.4.701</version.jdbc.postgresql>
+
+    <version.rake>0.8.7</version.rake>
+    <version.rubyzip>0.9.4</version.rubyzip>
+    <version.rspec>2.3.0</version.rspec>
+
+<!--
+    <version.jbossas>7.0.0.Beta3</version.jbossas>
+-->
+    <version.jbossas>7.0.0.Beta4-SNAPSHOT</version.jbossas>
+
+    <version.jbossas.package>6.0.x</version.jbossas.package>
+    <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
+    <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
+    <version.org.slf4j>1.5.10</version.org.slf4j>
+
+    <version.hornetq>2.0.0.GA</version.hornetq>
+    <version.netty>3.1.5.GA</version.netty>
+    <version.jms>1.1</version.jms>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>jboss-as-snapshots</id>
+      <name>JBoss AS Snapshots</name>
+      <url>http://torquebox.org/2x/jboss-as-repo</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>rubygems-proxy</id>
+      <name>Rubygems Proxy</name>
+      <url>http://rubygems-proxy.torquebox.org/releases</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>rubygems-releases</id>
+      <name>RubyGems Releases (Official)</name>
+      <url>http://gems.saumya.de/releases</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>fale</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <!-- Plugin Repositories -->
+  <pluginRepositories>
+    <pluginRepository>
+      <id>sonatype-snapshots</id>
+      <name>Sonatype Snapshots Repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <extensions>
+      <extension>
+        <groupId>org.apache.maven.wagon</groupId>
+        <artifactId>wagon-webdav-jackrabbit</artifactId>
+        <version>1.0-beta-7</version>
+      </extension>
+    </extensions>
+
+    <finalName>${project.artifactId}</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource> 
+        <directory>src/main/java</directory> 
+        <includes>
+          <include>**/*.rb</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource> 
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>default-push</id>
+            <goals><goal>push</goal></goals>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <configuration>
+          <instrumentation>
+            <includes>
+              <include>org/torquebox/**/*.class</include>
+            </includes>
+          </instrumentation>
+          <formats>
+            <format>html</format>
+            <format>xml</format>
+          </formats>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>cobertura-maven-plugin</artifactId>
+          <version>2.4</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.sonar</groupId>
+          <artifactId>sonar-maven3-plugin</artifactId>
+          <version>2.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.2</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jboss.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>2.3</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jboss.maven.plugins</groupId>
+          <artifactId>maven-jdocbook-plugin</artifactId>
+          <!--<version>2.1.2</version>-->
+          <version>2.3.3</version>
+          <extensions>true</extensions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <followSymLinks>false</followSymLinks>
+          </configuration>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>2.6.1</version>
+          <configuration>
+            <stylesheetfile>${project.build.directory}/site/apidocs/stylesheet.css</stylesheetfile>
+            <docfilessubdirs>true</docfilessubdirs>
+            <resourcesArtifacts>
+              <resourcesArtifact>
+                <groupId>org.torquebox</groupId>
+                <artifactId>torquebox-javadoc-support</artifactId>
+                <version>${project.version}</version>
+              </resourcesArtifact>
+            </resourcesArtifacts>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>gem-maven-plugin</artifactId>
+          <version>${version.jruby-maven-plugins}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <jrubyVersion>${version.jruby}</jrubyVersion>
+            <jrubyArgs>-Xmx768m</jrubyArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>jruby-maven-plugin</artifactId>
+          <version>${version.jruby-maven-plugins}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <jrubyVersion>${version.jruby}</jrubyVersion>
+            <jrubyArgs>-Xmx768m</jrubyArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>rake-maven-plugin</artifactId>
+          <version>${version.jruby-maven-plugins}</version>
+          <extensions>true</extensions>
+          <configuration>
+            <jrubyVersion>${version.jruby}</jrubyVersion>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>de.saumya.mojo</groupId>
+          <artifactId>rspec-maven-plugin</artifactId>
+          <version>${version.jruby-maven-plugins}</version>
+          <executions>
+            <execution>
+              <id>run-specs</id>
+              <phase>test</phase>
+              <goals>
+                <goal>test</goal>
+              </goals>
+              <configuration>
+                <inherit>true</inherit>
+                <gemArgs>--backtrace</gemArgs>
+                <verbose>false</verbose>
+                <jrubyVersion>${version.jruby}</jrubyVersion>
+                <jrubySwitches>--${ruby.compat.version}</jrubySwitches>
+                <gemHome>${project.build.directory}/rubygems</gemHome>
+                <gemPath>${project.build.directory}/rubygems</gemPath>
+                <fork>true</fork>
+                <systemProperties>
+                  <property>
+                    <name>log4j.configuration</name>
+                    <value>test-log4j.xml</value>
+                  </property>
+                </systemProperties>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
