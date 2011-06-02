@@ -34,14 +34,6 @@
 
   <profiles>
     <profile>
-      <id>tests-enabled</id>
-      <activation>
-        <property>
-          <name>!maven.test.skip</name>
-        </property>
-      </activation>
-    </profile>
-    <profile>
       <id>bees</id>
       <activation>
         <activeByDefault>false</activeByDefault>
@@ -71,30 +63,24 @@
         <jboss.snapshots.repo.url>file:///${user.dir}/target/m2repo/snapshots</jboss.snapshots.repo.url>
       </properties>
     </profile>
+
     <profile>
       <id>integ</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
+      <modules>
+        <module>integration-tests</module>
+      </modules>
     </profile>
+
     <profile>
       <id>dist</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
     </profile>
-    <profile>
-      <id>ci</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-    </profile>
-    <profile>
-      <id>experimental</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-    </profile>
+
     <profile>
       <id>19</id>
       <activation>
@@ -104,6 +90,7 @@
         <ruby.compat.version>1.9</ruby.compat.version>
       </properties>
     </profile>
+
     <profile>
       <id>windows-can't-dance-with-19</id>
       <activation>

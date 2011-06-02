@@ -35,7 +35,7 @@ class Assembler
   end
 
   def determine_versions
-    doc = REXML::Document.new( File.read( tool.base_dir + '/../../parent/pom.xml' ) )
+    doc = REXML::Document.new( File.read( tool.base_dir + '/../../pom.xml' ) )
     @torquebox_version = doc.get_elements( "project/version" ).first.text
     @jboss_version     = doc.get_elements( "project/properties/version.jbossas" ).first.text
     @jruby_version     = doc.get_elements( "project/properties/version.jruby" ).first.text

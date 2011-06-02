@@ -7,7 +7,7 @@ class BuildInfo
   end
 
   def determine_versions
-    path = File.dirname( __FILE__ ) + '/../../../parent/pom.xml' 
+    path = File.dirname( __FILE__ ) + '/../../../pom.xml' 
     doc = REXML::Document.new( File.read( path ) )
 
     @version  = doc.get_elements( "project/version" ).first.text
