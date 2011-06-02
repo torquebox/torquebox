@@ -479,6 +479,10 @@
               <name>jboss.lazy</name>
               <value>${jboss.lazy}</value>
             </property>
+            <property>
+              <name>jruby.home</name>
+              <value>${integ.dist.dir}/jruby</value>
+            </property>
           </systemProperties>
         </configuration>
         <executions>
@@ -494,6 +498,10 @@
                 <property>
                   <name>jboss.lazy</name>
                   <value>${jboss.lazy}</value>
+                </property>
+                <property>
+                  <name>jruby.home</name>
+                  <value>${integ.dist.dir}/jruby</value>
                 </property>
               </systemProperties>
             </configuration>

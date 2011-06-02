@@ -261,13 +261,20 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
         String jrubyHome = this.jrubyHome;
 
+        log.info( "A jrubyHome=" + jrubyHome );
+
         if (jrubyHome == null) {
+            log.info( "B jrubyHome=" + jrubyHome );
             jrubyHome = JRubyHomeLocator.determineJRubyHome( this.useJRubyHomeEnvVar );
+            log.info( "C jrubyHome=" + jrubyHome );
 
             if (jrubyHome == null) {
+                log.info( "D jrubyHome=" + jrubyHome );
                 jrubyHome = attemptMountJRubyHomeFromClassPath();
+                log.info( "E jrubyHome=" + jrubyHome );
             }
         }
+        log.info( "F jrubyHome=" + jrubyHome );
 
         if (jrubyHome != null) {
             config.setJRubyHome( jrubyHome );
@@ -310,7 +317,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
             logRuntimeCreationComplete( config, contextInfo, startTime );
         }
-
 
         return runtime;
     }
@@ -450,6 +456,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         if (this.applicationEnvironment != null) {
             env.putAll( this.applicationEnvironment );
         }
+        
+        log.info( "Environment: " + env );
         return env;
     }
 

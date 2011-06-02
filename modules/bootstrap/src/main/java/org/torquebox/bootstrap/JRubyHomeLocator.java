@@ -36,7 +36,10 @@ public class JRubyHomeLocator {
 
         jrubyHome = ifExists( System.getenv( "JRUBY_HOME" ) );
 
+        System.err.println( "env jrubyHome: " + jrubyHome );
+
         if (jrubyHome != null) {
+            System.err.println( "env jrubyHome.abs: " + jrubyHome.getAbsolutePath() );
             return jrubyHome.getAbsolutePath();
         }
 
@@ -48,7 +51,10 @@ public class JRubyHomeLocator {
 
         jrubyHome = ifExists( System.getProperty( "jruby.home" ) );
 
+        System.err.println( "prop jrubyHome: " + jrubyHome );
+
         if (jrubyHome != null && !"true".equals( System.getProperty( "jruby_home.env.ignore" ) )) {
+            System.err.println( "prop jrubyHome.abs: " + jrubyHome.getAbsolutePath() );
             return jrubyHome.getAbsolutePath();
         }
 

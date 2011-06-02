@@ -7,6 +7,7 @@ require 'jmx4r'
 TorqueSpec.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
 TorqueSpec.max_heap = java.lang::System.getProperty( 'max.heap' )
 TorqueSpec.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
+TorqueSpec.jvm_args = "-Djruby.home=#{java.lang::System.getProperty( 'jruby.home' )} -Dgem.path=default"
 
 TorqueSpec.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'knobs' ) )
 FileUtils.mkdir_p(TorqueSpec.knob_root) unless File.exist?(TorqueSpec.knob_root)

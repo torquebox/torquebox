@@ -39,6 +39,8 @@ public class BootstrapExtension implements Extension {
             return;
         }
         
+        log.info( "===> " + jrubyHome );
+        
         System.setProperty( "jruby.home", jrubyHome );
 
         File libDir = new File( jrubyHome, "lib" );
