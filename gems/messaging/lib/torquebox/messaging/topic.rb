@@ -7,7 +7,7 @@ module TorqueBox
     class Topic < Destination
 
       def self.start( name, options={} )
-        jndi = options.fetch( :jndi, [] )
+        jndi = options.fetch( :jndi, [].to_java(:string) )
         TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
           server.createTopic( false, name, jndi )
         end

@@ -3,6 +3,11 @@ require 'torquebox/messaging/queue'
 require 'torquebox/messaging/topic'
 require 'torquebox/service_registry'
 
+java_import org.mockito.ArgumentCaptor
+java_import org.mockito.Matchers
+java_import org.mockito.Mockito
+java_import org.hornetq.jms.server.impl.JMSServerManagerImpl
+
 describe TorqueBox::Messaging::Destination do
 
   it "should return its name for to_s" do
@@ -13,25 +18,32 @@ describe TorqueBox::Messaging::Destination do
   end
 
   it "should start and stop a queue" do
-    server = mock("server")
-    server.should_receive(:createQueue)
-    server.should_receive(:destroyQueue).with("my_queue")
+    server = Mockito.mock(JMSServerManagerImpl.java_class)
     TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.jms.manager").and_yield(server)
 
     queue = TorqueBox::Messaging::Queue.start( "my_queue" )
     queue.name.should == "my_queue"
     queue.stop
+
+    Mockito.verify(server).createQueue(Matchers.anyBoolean,
+                                       Matchers.eq("my_queue"),
+                                       Matchers.anyString,
+                                       Matchers.anyBoolean)
+    Mockito.verify(server).destroyQueue("my_queue")
   end
 
   it "should start and stop a topic" do
-    server = mock("server")
-    server.should_receive(:createTopic)
-    server.should_receive(:destroyTopic).with("my_topic")
+    server = Mockito.mock(JMSServerManagerImpl.java_class)
     TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.jms.manager").and_yield(server)
 
     topic = TorqueBox::Messaging::Topic.start( "my_topic" )
     topic.name.should == "my_topic"
     topic.stop
+
+    Mockito.verify(server).createTopic(Matchers.anyBoolean,
+                                       Matchers.eq("my_topic"))
+
+    Mockito.verify(server).destroyTopic("my_topic")
   end
 
   describe "publish" do
