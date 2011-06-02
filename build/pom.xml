@@ -17,13 +17,13 @@
   <dependencies>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-modules</artifactId>
+      <artifactId>torquebox-modules-parent</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-gems</artifactId>
+      <artifactId>torquebox-gems-parent</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
     </dependency>
