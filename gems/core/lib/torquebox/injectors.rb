@@ -20,13 +20,14 @@ require 'torquebox/registry'
 module TorqueBox
   module Injectors
 
-    def inject something
+    def __inject__(something)
       TorqueBox::Registry[something.to_s]
     end
-
+    alias_method :inject, :__inject__
+    
     %w{ mc cdi jndi queue topic }.each do |type|
       define_method("inject_#{type}".to_sym) do |key|
-        inject(key)
+        __inject__(key)
       end
     end
 

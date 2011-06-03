@@ -23,8 +23,8 @@ require 'torquebox/messaging/ext/javax_jms_queue_browser'
 module TorqueBox
   module Messaging
     class Destination
-      include Enumerable
       include TorqueBox::Injectors
+      include Enumerable
 
       
       attr_reader :connection_factory
@@ -47,7 +47,7 @@ module TorqueBox
        self.new( str )
       end
 
-      def initialize(destination, connection_factory = inject( 'connection-factory' ))
+      def initialize(destination, connection_factory = __inject__( 'connection-factory' ))
         @name                = destination
         @connection_factory  = ConnectionFactory.new( connection_factory )
       end

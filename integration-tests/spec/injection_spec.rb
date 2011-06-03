@@ -16,6 +16,8 @@ describe "rails3 injection test" do
         durable: false
       /queues/injection_task:
         durable: false
+      /queues/injection_enumerable:
+        durable: false
     services:
       InjectionService:
     jobs:
@@ -45,9 +47,18 @@ describe "rails3 injection test" do
 
   it "should work for predetermined injectables" do
     visit "/injection/predetermined"
-    #page.should have_content('it worked')
     find( '#service-registry' ).text.should eql( "true" )
     find( '#service-target' ).text.should   eql( "true" )
+  end
+
+  it "should work for calls to __inject__" do
+    visit "/injection/alt_inject"
+    page.should have_content('it worked')
+  end
+
+  it "should work for Enumerables" do
+    visit "/injection/enumerable"
+    page.should have_content('it worked')
   end
 
 end
