@@ -54,7 +54,7 @@
                 </goals>
                 <configuration>
                   <file>bin/publish-gem-repo.rb</file>
-                  <args>private-settings.xml ${env.BUILD_NUMBER} ../assembly/target/stage/gem-repo</args>
+                  <args>/private/torquebox/private-settings.xml ${env.BUILD_NUMBER} ../assembly/target/stage/gem-repo</args>
                 </configuration>
               </execution>
               <execution>
@@ -65,7 +65,7 @@
                 </goals>
                 <configuration>
                   <file>bin/publish-distribution.rb</file>
-                  <args>private-settings.xml ${env.BUILD_NUMBER} ../dist/target/torquebox-dist-bin.zip</args>
+                  <args>/private/torquebox/private-settings.xml ${env.BUILD_NUMBER} ../dist/target/torquebox-dist-bin.zip</args>
                 </configuration>
               </execution>
             </executions>
