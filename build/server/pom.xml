@@ -1,0 +1,92 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.torquebox</groupId>
+    <artifactId>torquebox-build</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>rubygems</groupId>
+  <artifactId>torquebox-server</artifactId>
+  <packaging>java-gem</packaging>
+  <name>TorqueBox Server Gem</name>
+  <description />
+
+  <dependencies>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>thor</artifactId>
+      <version>[0.14.0,0.15.0)</version>
+      <type>gem</type>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-assembly-for-gem</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/lib/jboss</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../assembly/target/stage/torquebox/jboss</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <configuration>
+          <jrubyJvmArgs>-Xmx768m</jrubyJvmArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-gem</id>
+            <inherited>true</inherited>
+            <phase>install</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                load '${project.basedir}/../assembly/lib/assembly_tool.rb'
+                ext = '.gem'
+                ext = ( ( 'java-gem' == '${project.packaging}' ) ? '-java.gem' : '.gem' )
+                safe_version = '${project.version}'.gsub(/-SNAPSHOT/, '')
+                AssemblyTool.copy_gem_to_repo( %Q(${project.basedir}/target/${project.artifactId}-#{safe_version}#{ext}) )
+              </script>
+              <jrubyJvmArgs>-Xmx768m</jrubyJvmArgs>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

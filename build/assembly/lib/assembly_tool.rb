@@ -70,7 +70,11 @@ class AssemblyTool
   def self.install_gem(gem)
      AssemblyTool.new().install_gem( gem, true )
   end
-  
+
+  def self.copy_gem_to_repo(gem)
+    AssemblyTool.new().copy_gem_to_repo( gem, true )
+  end
+
   def install_gem(gem, update_index=false)
     puts "Installing #{gem}"
     opts = {
@@ -80,13 +84,16 @@ class AssemblyTool
     if ( File.exist?( gem ) )
       installer = Gem::Installer.new( gem, opts )
       installer.install
-      FileUtils.mkdir_p gem_repo_dir + '/gems'
-      FileUtils.cp gem, gem_repo_dir + '/gems'
+      copy_gem_to_repo(gem, update_index)
     else
       installer = Gem::DependencyInstaller.new( opts )
       installer.install( gem )
     end
+  end
 
+  def copy_gem_to_repo(gem, update_index=false)
+    FileUtils.mkdir_p gem_repo_dir + '/gems'
+    FileUtils.cp gem, gem_repo_dir + '/gems'
     update_gem_repo_index if update_index
   end
 
