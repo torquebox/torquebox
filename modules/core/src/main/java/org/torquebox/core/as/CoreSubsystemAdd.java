@@ -5,6 +5,7 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 
+import java.io.IOException;
 import java.util.Hashtable;
 
 import javax.management.MBeanServer;
@@ -105,14 +106,14 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         context.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationDeployer() );
     }
 
-    protected void addCoreServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
+    protected void addCoreServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) throws Exception {
         addTorqueBoxService( context, registry );
         addGlobalRubyServices( context, registry );
         addInjectionServices( context, registry );
     }
 
     
-    protected void addTorqueBoxService(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
+    protected void addTorqueBoxService(final RuntimeTaskContext context, InjectableHandlerRegistry registry) throws IOException {
     	TorqueBox torqueBox = new TorqueBox();
         torqueBox.dump( log );
         

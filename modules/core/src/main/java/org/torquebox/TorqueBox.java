@@ -1,5 +1,6 @@
 package org.torquebox;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,7 @@ import org.torquebox.core.util.BuildInfo;
 
 public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
 
-    public TorqueBox() {
+    public TorqueBox() throws IOException {
         this.buildInfo = new BuildInfo();
     }
 

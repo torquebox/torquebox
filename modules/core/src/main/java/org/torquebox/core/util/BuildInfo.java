@@ -9,38 +9,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.jboss.logging.Logger;
-
 public class BuildInfo {
 
-    public BuildInfo() {
+    public BuildInfo() throws IOException {
         InputStream buildInfoStream = getClass().getClassLoader().getResourceAsStream( "org/torquebox/torquebox.properties" );
         Properties props = new Properties();
 
-        try {
-            props.load( buildInfoStream );
-        } catch (IOException e) {
-            log.error( "Failed to read torquebox.properties: ", e );
-        } finally {
-            if (buildInfoStream != null) {
-                try {
-                    buildInfoStream.close();
-                } catch (IOException e) {
-                    // really?
-                }
-            }
-        }
+        props.load( buildInfoStream );
 
-        for(Object each: Collections.list( props.propertyNames() )) {
-            String[] parts = ((String)each).split( "\\.", 2 );
+        for (Object each : Collections.list( props.propertyNames() )) {
+            String[] parts = ((String) each).split( "\\.", 2 );
             Map<String, String> componentInfo = buildInfo.get( parts[0] );
 
             if (componentInfo == null) {
                 componentInfo = new HashMap<String, String>();
-                buildInfo.put(parts[0], componentInfo);
+                buildInfo.put( parts[0], componentInfo );
             }
 
-            componentInfo.put( parts[1], props.getProperty( (String)each ) );
+            componentInfo.put( parts[1], props.getProperty( (String) each ) );
         }
     }
 
@@ -61,7 +47,5 @@ public class BuildInfo {
     }
 
     private Map<String, Map<String, String>> buildInfo = new HashMap<String, Map<String, String>>();
-
-    static Logger log = Logger.getLogger( "org.torquebox.core.util" );
 
 }
