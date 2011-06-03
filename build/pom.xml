@@ -41,6 +41,12 @@
         <module>dist</module>
       </modules>
     </profile>
+    <profile>
+      <id>incremental</id>
+      <modules>
+        <module>incremental</module>
+      </modules>
+    </profile>
   </profiles>
 
 </project>
