@@ -32,7 +32,7 @@ public class InjectionVisitor extends DefaultNodeVisitor {
             InjectableHandler handler = null;
 
             boolean generic = false;
-            if (callName.equals( "inject" )) {
+            if (isValidInjectCall( node )) {
                 Node argsNode = node.getArgsNode();
                 handler = this.analyzer.getInjectableHandlerRegistry().getHandler( argsNode );
 
@@ -58,6 +58,14 @@ public class InjectionVisitor extends DefaultNodeVisitor {
         return null;
     }
 
+    protected boolean isValidInjectCall(FCallNode node) {
+        String callName = node.getName();
+
+        //check to make sure it's not a call to Enumerable#inject (it should have a block (iter) in that case)
+        return ("inject".equals( callName ) && null == node.getIterNode()) || 
+            "__inject__".equals( callName );
+    }
+    
     protected static String getString(Node node) {
         String str = null;
 
