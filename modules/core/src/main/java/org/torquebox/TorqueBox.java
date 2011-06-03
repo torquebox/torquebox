@@ -12,62 +12,90 @@ import org.torquebox.core.util.BuildInfo;
 
 public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
 
-	public TorqueBox() {
-		this.buildInfo = new BuildInfo();	
+    public TorqueBox() {
+        this.buildInfo = new BuildInfo();
     }
-    
+
     public String getVersion() {
-    	return this.buildInfo.get( "TorqueBox", "version" );
+        return this.buildInfo.get( "TorqueBox", "version" );
     }
-    
+
     public String getRevision() {
-    	return this.buildInfo.get( "TorqueBox", "build.revision" );
+        return this.buildInfo.get( "TorqueBox", "build.revision" );
     }
-    
+
     public String getBuildNumber() {
-    	return this.buildInfo.get( "TorqueBox", "build.number" );
-        }
-    
+        return this.buildInfo.get( "TorqueBox", "build.number" );
+    }
+
     public String getBuildUser() {
-    	return this.buildInfo.get( "TorqueBox", "build.user" );
+        return this.buildInfo.get( "TorqueBox", "build.user" );
     }
 
     public List<String> getComponentNames() {
-    	return this.buildInfo.getComponentNames();
+        return this.buildInfo.getComponentNames();
     }
-    
+
     public Map<String, String> getComponentBuildInfo(String componentName) {
-    	return this.buildInfo.getComponentInfo( componentName );
+        return this.buildInfo.getComponentInfo( componentName );
     }
-    
+
     @Override
-    public TorqueBox getValue() throws IllegalStateException, IllegalArgumentException {
+        public TorqueBox getValue() throws IllegalStateException, IllegalArgumentException {
         return this;
     }
 
     @Override
-    public void start(StartContext context) throws StartException {
+        public void start(StartContext context) throws StartException {
     }
-    
+
     public void dump(Logger log) {
-    	log.info( "Welcome to TorqueBox AS - http://torquebox.org/" );
-        log.info( "  version...... " + getVersion() );
+        log.info( "Welcome to TorqueBox AS - http://torquebox.org/" );
+        log.info( formatOutput( "version", getVersion() ) );
         String buildNo = getBuildNumber();
         if (buildNo != null && !buildNo.trim().equals( "" )) {
-            log.info( "  build........ " + getBuildNumber() );
+            log.info( formatOutput( "build", getBuildNumber() ) );
         } else if (getVersion().contains( "SNAPSHOT" )) {
-            log.info( "  build........ development (" + getBuildUser() + ")" );
+            log.info( formatOutput( "build", "development (" + getBuildUser() + ")" ) );
         } else {
-            log.info( "  build........ official" );
+            log.info( formatOutput( "build", "official" ) );
         }
-        log.info( "  revision..... " + getRevision() );
+        log.info( formatOutput( "revision", getRevision() ) );
+
+        List<String> otherCompoments = this.buildInfo.getComponentNames();
+        otherCompoments.remove( "TorqueBox" );
+        log.info( "  featuring:" );
+        for(String name: otherCompoments) {
+            String version = this.buildInfo.get( name, "version" );
+            if (version != null) {
+                log.info( formatOutput( " " + name, version ) );
+            }
+        }
+
     }
 
     @Override
-    public void stop(StopContext context) {
-        
+        public void stop(StopContext context) {
+
     }
-    
+
+    private String formatOutput(String label, String value) {
+
+        StringBuffer output = new StringBuffer( "  " );
+        output.append( label );
+        int length = output.length();
+        if (length < 20) {
+            for(int i = 0; i < 20 - length; i++) {
+                output.append(  '.' );
+            }
+        }
+
+        output.append( ' ' );
+        output.append( value );
+
+        return output.toString();
+    }
+
     private BuildInfo buildInfo;
-    
+
 }
