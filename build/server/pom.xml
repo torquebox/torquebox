@@ -45,7 +45,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/lib/jboss</outputDirectory>
+              <outputDirectory>${basedir}/target/torquebox-server/jboss</outputDirectory>
               <resources>
                 <resource>
                   <directory>${basedir}/../assembly/target/stage/torquebox/jboss</directory>
@@ -60,6 +60,7 @@
         <artifactId>gem-maven-plugin</artifactId>
         <configuration>
           <jrubyJvmArgs>-Xmx768m</jrubyJvmArgs>
+          <extraFiles>jboss/**/*</extraFiles>
         </configuration>
       </plugin>
       <plugin>

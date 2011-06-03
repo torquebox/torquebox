@@ -31,7 +31,7 @@ class TorqueBoxCommand < Thor
 
   no_tasks {
     def jboss_home
-      File.join(File.dirname(__FILE__), '..', 'lib', 'jboss')
+      File.join(File.dirname(__FILE__), '..', 'jboss')
     end
 
     def jruby_home
