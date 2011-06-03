@@ -31,6 +31,14 @@ class DAV
     puts "#{file} #{status} #{url}"
   end
 
+  def delete(url)
+    status, message = curl(
+      '--request DELETE',
+      "--header 'Content-Type: text/xml; charset=\"utf-8\"'",
+      url
+    )
+  end
+
   def curl(*args)
     cmd = "curl -v -s -u#{@username}:#{@password} #{args.join(' ')}"
     response = ''

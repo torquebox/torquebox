@@ -23,6 +23,10 @@ class Uploader
     @dav.mkcol( BASE_URL )
     repo_url = BASE_URL + "/#{build_number}"
     @dav.mkcol( repo_url )
+
+    latest_repo_url = BASE_URL + "/LATEST/"
+    @dav.delete( latest_repo_url )
+    @dav.mkcol( latest_repo_url )
     
     Dir.chdir( repo_dir ) do
       Find.find( '.' ) do |entry|   
@@ -30,8 +34,10 @@ class Uploader
         begin
           if ( File.directory?( entry ) ) 
             @dav.mkcol( repo_url + "/#{path}" ) unless entry == '.'
+            @dav.mkcol( latest_repo_url + "/#{path}" ) unless entry == '.'
           else
             @dav.put( repo_url + "/#{path}", entry )
+            @dav.put( latest_repo_url + "/#{path}", entry )
           end
         rescue => e
           puts e
