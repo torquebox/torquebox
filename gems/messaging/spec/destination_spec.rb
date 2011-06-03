@@ -97,6 +97,30 @@ describe TorqueBox::Messaging::Destination do
     end
   end
 
+  describe "message enumeration" do
+
+    it "should allow enumeration of the messages" do
+      pending("Queues cannot yet start and stop dynamically")
+      queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
+
+      queue.publish "howdy"
+      queue.first.text.should == 'howdy'
+      queue.destroy
+    end
+
+    it "should accept a selector" do
+      pending("Queues cannot yet start and stop dynamically")
+      queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
+      queue.enumerable_options = { :selector => 'blurple > 5' }
+
+      queue.publish "howdy", :properties => {:blurple => 5}
+      queue.publish "ahoyhoy", :properties => {:blurple => 6}
+      queue.first.text.should == 'ahoyhoy'
+      queue.detect { |m| m.text == 'howdy' }.should be_nil
+      queue.destroy
+      
+    end
+  end
 
   describe "sending and receiving" do
 

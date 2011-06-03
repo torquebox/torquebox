@@ -117,6 +117,10 @@ module TorqueBox
         commit if transacted?
       end
 
+      def create_browser(*args)
+        jms_session.create_browser( *args )
+      end
+      
       def java_destination(destination)
         java_destination = destination.name
         
