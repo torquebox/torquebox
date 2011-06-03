@@ -30,7 +30,7 @@ class Assembler
     end
 
     puts "Maven repo: #{@m2_repo}"
-    @jboss_zip = @m2_repo + "/org/jboss/as/jboss-as-build/#{@jboss_version}/jboss-as-build-#{@jboss_version}.zip"
+    @jboss_zip = @m2_repo + "/org/jboss/as/jboss-as-dist/#{@jboss_version}/jboss-as-dist-#{@jboss_version}.zip"
     @jruby_zip = @m2_repo + "/org/jruby/jruby-dist/#{@jruby_version}/jruby-dist-#{@jruby_version}-bin.zip"
   end
 

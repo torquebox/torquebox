@@ -23,7 +23,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
+      <groupId>rubygems</groupId>
       <artifactId>torquebox-server</artifactId>
       <version>${project.version}</version>
       <type>pom</type>

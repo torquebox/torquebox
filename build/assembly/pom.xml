@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-build</artifactId>
+      <artifactId>jboss-as-dist</artifactId>
       <version>${version.jbossas}</version>
       <type>zip</type>
       <scope>provided</scope>
