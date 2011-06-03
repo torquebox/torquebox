@@ -22,16 +22,60 @@ require 'torquebox-rake-support'
 
 class TorqueBoxCommand < Thor
 
-  desc "start", "Start TorqueBox"
+  map "run" => "start"
+  desc "run", "Run TorqueBox"
   def start
-    ENV['JBOSS_HOME'] = jboss_home
-    ENV['JBOSS_OPTS'] = "-Djruby.home=#{jruby_home}"
+    setup_environment
     TorqueBox::DeployUtils.run_server
   end
 
+  desc "deploy ROOT", "Deploy an application to TorqueBox"
+  long_desc <<-EOS
+    Deploy an application to TorqueBox. The ROOT argument should point to either
+    a directory containing the application you want to deploy, a -knob.yml file,
+    a .knob archive, or any Java deployable artifact (.war, .ear, etc).
+  EOS
+  method_option :context_path, :type => :string, :desc => "Context Path (ex: /, /my_app)"
+  method_option :env, :type => :string, :desc => "Application Environment (ex: development, test, production)"
+  def deploy(root)
+    setup_environment
+    root = File.expand_path(root)
+    opts = {:root => root}.merge(options)
+    descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor(opts)
+    deployment_name = TorqueBox::DeployUtils.deployment_name(root)
+    deployed_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml(descriptor, deployment_name)
+    puts "Deployed: #{deployed_name}"
+    puts "    into: #{deploy_dir}"
+  end
+
+  desc "undeploy ROOT", "Undeploy an application from TorqueBox"
+  def undeploy(root)
+    setup_environment
+    root = File.expand_path(root)
+    deployment_name = TorqueBox::DeployUtils.deployment_name(root)
+    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy(deployment_name)
+
+    if deploy_name
+      puts "Undeployed: #{deploy_name}"
+      puts "      from: #{deploy_dir}"
+    else
+      puts "Nothing to undeploy"
+    end
+  end
+
   no_tasks {
+    def setup_environment
+      ENV['TORQUEBOX_HOME'] = torquebox_home
+      ENV['JBOSS_HOME'] = jboss_home
+      ENV['JBOSS_OPTS'] = "-Djruby.home=#{jruby_home}"
+    end
+
+    def torquebox_home
+      File.join(File.dirname(__FILE__), '..')
+    end
+
     def jboss_home
-      File.join(File.dirname(__FILE__), '..', 'jboss')
+      File.join(torquebox_home, 'jboss')
     end
 
     def jruby_home
