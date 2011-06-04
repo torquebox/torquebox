@@ -29,6 +29,13 @@
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-docs-en_US</artifactId>
+      <version>${project.version}</version>
+      <type>pom</type>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <profiles>
@@ -53,19 +60,8 @@
                   <goal>jruby</goal>
                 </goals>
                 <configuration>
-                  <file>bin/publish-gem-repo.rb</file>
-                  <args>/private/torquebox/private-settings.xml ${env.BUILD_NUMBER} ../assembly/target/stage/gem-repo</args>
-                </configuration>
-              </execution>
-              <execution>
-                <id>publish-distribution</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>jruby</goal>
-                </goals>
-                <configuration>
-                  <file>bin/publish-distribution.rb</file>
-                  <args>/private/torquebox/private-settings.xml ${env.BUILD_NUMBER} ../dist/target/torquebox-dist-bin.zip</args>
+                  <file>bin/publish-incrementals.rb</file>
+                  <args>/private/torquebox/private-settings.xml ${env.BUILD_NUMBER}</args>
                 </configuration>
               </execution>
             </executions>

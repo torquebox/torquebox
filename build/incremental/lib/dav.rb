@@ -28,7 +28,6 @@ class DAV
       file,
       url
     )
-    puts "#{file} #{status} #{url}"
   end
 
   def delete(url)
@@ -57,7 +56,6 @@ class DAV
       end
       stdout_thr.join
       stderr_thr.join
-      #puts error
     end
     lines = error.split( "\n" ).find{|e| e =~ /^< HTTP\/1.1/}
     status_line = error.split( "\n" ).find{|e| e =~ /^< HTTP\/1.1/}.first

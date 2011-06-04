@@ -113,6 +113,9 @@
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
+      <modules>
+        <module>docs</module>
+      </modules>
     </profile>
 
     <profile>
