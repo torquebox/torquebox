@@ -76,27 +76,15 @@
     </profile>
 
     <profile>
-      <id>incremental</id>
-      <properties>
-        <publish.incremental>true</publish.incremental>
-      </properties>
-    </profile>
-
-<!--
-    <profile>
-      <id>incremental-19</id>
+      <id>full</id>
       <activation>
-        <property>
-          <name>ruby.compat.version</name>
-          <value>1.9</value>
-        </property>
+        <activeByDefault>false</activeByDefault>
       </activation>
-      <properties>
-        <publish.incremental>false</publish.incremental>
-      </properties>
+      <modules>
+        <module>integration-tests</module>
+        <module>docs</module>
+      </modules>
     </profile>
--->
-
 
     <profile>
       <id>integ</id>
