@@ -24,3 +24,4 @@ Otherwise, see:
 Once your repositories are configured, simply type:
 
     mvn install
+
