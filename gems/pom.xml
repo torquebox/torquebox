@@ -20,9 +20,12 @@
     <module>core</module>
     <module>naming</module>
     <module>messaging</module>
-    <module>rake-support</module>
     <module>security</module>
     <module>web</module>
+
+    <module>rake-support</module>
+    <module>capistrano-support</module>
+
     <module>torquebox</module>
   </modules>
 
