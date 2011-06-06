@@ -15,8 +15,20 @@ import org.jruby.ast.StrNode;
 import org.jruby.ast.types.INameNode;
 import org.torquebox.core.analysis.AnalyzingVisitor;
 
+/**
+ * Ruby byte-code visitor for injection analysis.
+ * 
+ * @author Bob McWhirter
+ * @author Toby Crawley
+ */
 public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
 
+    /**
+     * Construct with an analyzer.
+     * 
+     * @param analyzer
+     *            The analyzer.
+     */
     public InjectionRubyByteCodeVisitor(InjectionAnalyzer analyzer) {
         this.analyzer = analyzer;
     }
@@ -61,13 +73,21 @@ public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
     }
 
     protected boolean isValidInjectCall(FCallNode node) {
-    	String callName = node.getName();
-    	
-    	//check to make sure it's not a call to Enumerable#inject (it should have a block (iter) in that case)
-    	return ("inject".equals( callName ) && null == node.getIterNode()) || 
-    		"__inject__".equals( callName );
+        String callName = node.getName();
+
+        // check to make sure it's not a call to Enumerable#inject (it should
+        // have a block (iter) in that case)
+        return ("inject".equals( callName ) && null == node.getIterNode()) ||
+                "__inject__".equals( callName );
     }
-    
+
+    /**
+     * Convenience method to try real hard to convert an AST node into a String.
+     * 
+     * @param node
+     *            The node.
+     * @return The string, if possible, otherwise <code>null</code>.
+     */
     protected static String getString(Node node) {
         String str = null;
 
@@ -83,6 +103,13 @@ public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
         return str;
     }
 
+    /**
+     * Attempt to treat the argument node as a tree describing a ruby constant,
+     * and extract it into a String.
+     * 
+     * @param node The constant AST root.
+     * @return The string flavor of the constant.
+     */
     protected static String getConstString(Node node) {
         Stack<String> stack = new Stack<String>();
 
@@ -124,7 +151,7 @@ public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
         }
         return this.injectables;
     }
-    
+
     public void reset() {
         this.markerSeen = false;
         this.injectables.clear();

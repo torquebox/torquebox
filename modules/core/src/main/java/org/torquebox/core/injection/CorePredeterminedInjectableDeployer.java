@@ -11,27 +11,39 @@ import org.jboss.msc.value.ImmediateValue;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 
+/**
+ * Processor which publishes the <code>ServiceRegistry</code> and
+ * <code>ServiceTarget</code> for each deployment for later used by injections.
+ * 
+ * @see ServiceRegistryInjectable
+ * @see ServiceTargetInjectable
+ * @see CorePredeterminedInjectableHandler
+ * 
+ * @author Bob McWhirter
+ */
 public class CorePredeterminedInjectableDeployer implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
-        if ( ! unit.hasAttachment(  RubyApplicationMetaData.ATTACHMENT_KEY ) ) {
+
+        if (!unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
             return;
         }
-        
+
         ServiceTarget serviceTarget = phaseContext.getServiceTarget();
         ServiceRegistry serviceRegistry = unit.getServiceRegistry();
-        
-        serviceTarget.addService(  CoreServices.serviceRegistryName( unit ), new ValueService<ServiceRegistry>( new ImmediateValue<ServiceRegistry>(serviceRegistry ) ) ).install();
-        serviceTarget.addService(  CoreServices.serviceTargetName( unit ), new ValueService<ServiceTarget>( new ImmediateValue<ServiceTarget>(serviceTarget ) ) ).install();
-        
+
+        serviceTarget.addService( CoreServices.serviceRegistryName( unit ), new ValueService<ServiceRegistry>( new ImmediateValue<ServiceRegistry>( serviceRegistry ) ) )
+                .install();
+        serviceTarget.addService( CoreServices.serviceTargetName( unit ), new ValueService<ServiceTarget>( new ImmediateValue<ServiceTarget>( serviceTarget ) ) )
+                .install();
+
     }
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        
+
     }
 
 }

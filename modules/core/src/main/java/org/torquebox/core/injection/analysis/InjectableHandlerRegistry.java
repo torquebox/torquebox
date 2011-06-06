@@ -1,6 +1,5 @@
 package org.torquebox.core.injection.analysis;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,9 +13,21 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jruby.ast.Node;
 
+/** Registry of handlers for the content of inject(...) calls.
+ * 
+ * <p>Handlers are added to the registry through the Java service loader
+ * mechanism.</p>
+ * 
+ * <p>To add a handler, package it in a jar with file named 
+ * <code>META-INF/org.torquebox.core.injection.analysis.InjectableHandler</code>
+ * whose contents is the names (1 per line) of {@link InjectableHandler} implementations.</p>
+ * 
+ * @see InjectableHandler
+ * 
+ * @author Bob McWhirter
+ */
 public class InjectableHandlerRegistry implements Service<InjectableHandlerRegistry> {
     
-
     public InjectableHandlerRegistry() {
     }
     
@@ -25,10 +36,20 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
         this.handlersByPriority.add(  handler  );
     }
     
+    /** Retrieve a handler by its registered type.
+     * 
+     * @param type The type.
+     * @return The handler, or <code>null</code> if none match the type.
+     */
     public InjectableHandler getHandler(String type) {
         return this.registry.get( type );
     }
 
+    /** Retrieve a handler by its compatibility with the argument.
+     * 
+     * @param argsNode The argument AST.
+     * @return The handler or <code>null</code> if none are compatible.
+     */
     public InjectableHandler getHandler(Node argsNode) {
         
         for ( InjectableHandler each : this.handlersByPriority ) {
@@ -40,6 +61,10 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
         return null;
     }
     
+    /** Retrieve the full set of predetermined <code>Injectable</code>.
+     * 
+     * @return The predetermined injectables.
+     */
     public Set<Injectable> getPredeterminedInjectables() {
         Set<Injectable> injectables = new HashSet<Injectable>();
         for (InjectableHandler each : this.handlersByPriority ) {
@@ -66,6 +91,9 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.injection.analysis" );
 
+    /** The underlying registry, by name. */
     private Map<String, InjectableHandler> registry = new HashMap<String, InjectableHandler>();
+    
+    /** The handlers, sorted by priority. */
     private TreeSet<InjectableHandler> handlersByPriority = new TreeSet<InjectableHandler>( InjectableHandler.RECOGNITION_PRIORITY );
 }
