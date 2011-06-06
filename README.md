@@ -8,7 +8,7 @@ Building
 
 Install the project using the provided settings.xml:
 
-    mvn -s build-support/settings.xml install
+    mvn -s build/settings.xml install
 
 If you will be building the project often, you'll want to
 create/modify your own ~/.m2/settings.xml file.
