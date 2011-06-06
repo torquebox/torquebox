@@ -6,6 +6,12 @@ import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.injection.SimpleNamedInjectable;
 import org.torquebox.services.as.ServicesServices;
 
+/** Injectable for Ruby services.
+ * 
+ * @see ServiceInjectableHandler
+ * 
+ * @author Bob McWhirter
+ */
 public class ServiceInjectable extends SimpleNamedInjectable {
 
     public ServiceInjectable(String name) {

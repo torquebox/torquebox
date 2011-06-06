@@ -1,10 +1,9 @@
-package org.torquebox.core.as.services;
+package org.torquebox.core.runtime;
 
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 
 public class RubyRuntimeFactoryService implements Service<RubyRuntimeFactory>{

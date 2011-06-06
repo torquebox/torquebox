@@ -16,7 +16,6 @@ import org.jruby.CompatVersion;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
-import org.torquebox.core.as.services.RubyRuntimeFactoryService;
 
 public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
 

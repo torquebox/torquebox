@@ -6,6 +6,11 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.injection.SimpleNamedInjectable;
 
+/**
+ * Injectable for JNDI-discovered items.
+ * 
+ * @author Bob McWhirter
+ */
 public class JNDIInjectable extends SimpleNamedInjectable {
 
     public JNDIInjectable(String name, boolean generic) {
@@ -26,20 +31,20 @@ public class JNDIInjectable extends SimpleNamedInjectable {
     }
 
     protected boolean serviceIsAlreadyWrapped(DeploymentPhaseContext context, ServiceName serviceName) {
-    	return (context.getServiceRegistry().getService( serviceName ) != null);
+        return (context.getServiceRegistry().getService( serviceName ) != null);
     }
-    
+
     protected ServiceName wrapWithManager(DeploymentPhaseContext context, ServiceName serviceName) {
         ServiceName managementServiceName = context.getDeploymentUnit().getServiceName().append( serviceName ).append( "manager" );
-        
+
         if (serviceIsAlreadyWrapped( context, managementServiceName )) {
             return managementServiceName;
         }
 
         ManagedReferenceInjectableService managementService = new ManagedReferenceInjectableService();
         context.getServiceTarget().addService( managementServiceName, managementService )
-            .addDependency( serviceName, ManagedReferenceFactory.class, managementService.getManagedReferenceFactoryInjector() )
-            .install();
+                .addDependency( serviceName, ManagedReferenceFactory.class, managementService.getManagedReferenceFactoryInjector() )
+                .install();
 
         return managementServiceName;
 

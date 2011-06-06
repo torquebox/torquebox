@@ -4,14 +4,15 @@ import org.jruby.ast.Node;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
 
-/** Handles topic service injections.
+/**
+ * Handler for injecting Ruby services into other consumers.
  * 
- * Priority: 5,000
+ * @see ServiceInjectable
  * 
  * @author Bob McWhirter
  */
 public class ServiceInjectableHandler extends AbstractInjectableHandler {
-    
+
     public static final String TYPE = "service";
 
     public ServiceInjectableHandler() {
@@ -28,9 +29,7 @@ public class ServiceInjectableHandler extends AbstractInjectableHandler {
     @Override
     public boolean recognizes(Node argsNode) {
         String str = getString( argsNode );
-        return ( str != null ) && ( str.startsWith( "service:" ) );
+        return (str != null) && (str.startsWith( "service:" ));
     }
 
-
-    
 }

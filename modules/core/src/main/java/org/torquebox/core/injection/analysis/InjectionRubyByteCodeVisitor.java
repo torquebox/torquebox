@@ -13,7 +13,7 @@ import org.jruby.ast.Node;
 import org.jruby.ast.NodeType;
 import org.jruby.ast.StrNode;
 import org.jruby.ast.types.INameNode;
-import org.torquebox.core.analysis.AnalyzingVisitor;
+import org.torquebox.core.analysis.DefaultNodeVisitor;
 
 /**
  * Ruby byte-code visitor for injection analysis.
@@ -21,7 +21,7 @@ import org.torquebox.core.analysis.AnalyzingVisitor;
  * @author Bob McWhirter
  * @author Toby Crawley
  */
-public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
+public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
 
     /**
      * Construct with an analyzer.
@@ -165,8 +165,4 @@ public class InjectionRubyByteCodeVisitor extends AnalyzingVisitor {
 
     private Set<Injectable> injectables = new HashSet<Injectable>();
 
-    @Override
-    public Object getResult() {
-        return getInjectables();
-    }
 }

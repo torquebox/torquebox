@@ -4,9 +4,17 @@ import org.jruby.ast.Node;
 import org.torquebox.core.injection.analysis.AbstractInjectableHandler;
 import org.torquebox.core.injection.analysis.Injectable;
 
-/** Handles naming injections.
+/** 
+ * Handler for JNDI injectables.
  * 
- * Priority: 10,000
+ * <p>
+ * This handler matches injections that are strings beginning with <code>java:</code>,
+ * such as:
+ * </p>
+ * 
+ * <pre>
+ *   inject( 'java:comp/env/whatever' )
+ * </pre>
  * 
  * @author Bob McWhirter
  */

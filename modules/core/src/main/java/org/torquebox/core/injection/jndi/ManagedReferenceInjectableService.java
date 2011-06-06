@@ -9,6 +9,14 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 
+/** Service which handles lifecycle for <code>ManagedReference</code>-based
+ * injections.
+ * 
+ * <p>This service obtains the reference before injection, and releases
+ * it after un-injection, when the application is underployed.</p>
+ * 
+ * @author Bob McWhirter
+ */
 public class ManagedReferenceInjectableService implements Service<Object> {
 
     public ManagedReferenceInjectableService() {

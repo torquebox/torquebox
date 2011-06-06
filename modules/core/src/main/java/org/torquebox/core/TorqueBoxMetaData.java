@@ -26,17 +26,42 @@ import java.util.Set;
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.app.ApplicationYamlParsingProcessor;
+import org.torquebox.core.app.RubyYamlParsingProcessor;
+import org.torquebox.core.pool.PoolingYamlParsingProcessor;
 
+/** Generalized opaque holder of <code>torquebox.yml</code>-specified metadata.
+ * 
+ * <p>
+ * Once <code>torquebox.yml</code> has been parsed, each top-level section and its
+ * associated un-casted value block are added to the TorqueBoxMetaData for use by
+ * other, more-specific deployment processors.
+ * </p>
+ * 
+ * @see TorqueBoxYamlParsingProcessor
+ * @see RubyYamlParsingProcessor
+ * @see ApplicationYamlParsingProcessor
+ * @see PoolingYamlParsingProcessor
+ */
 public class TorqueBoxMetaData {
     
     public static final AttachmentKey<TorqueBoxMetaData> ATTACHMENT_KEY = AttachmentKey.create(TorqueBoxMetaData.class);
 
     private Map<String, Object> data;
 
+    /** Construct with parsed YAML results.
+     * 
+     * @param data The data, keyed by section name.
+     */
     public TorqueBoxMetaData(Map<String, Object> data) {
         this.data = normalizeSectionNames( data );
     }
     
+    /**
+     * Normalize section names, since some drift has occurred.
+     * @param data
+     * @return
+     */
     private Map<String, Object> normalizeSectionNames(Map<String, Object> data) {
         Map<String, Object> normalized = new HashMap<String, Object>();
         
