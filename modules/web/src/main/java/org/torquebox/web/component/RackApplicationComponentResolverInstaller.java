@@ -74,6 +74,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         prefixes.add(  rackAppMetaData.getRackUpScriptLocation() );
         prefixes.add( "app/controllers/" );
         prefixes.add( "app/helpers/" );
+        prefixes.add( "." );
         
         return prefixes;
     }

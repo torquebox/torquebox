@@ -22,6 +22,7 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
     protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
             ServiceBuilder<ComponentResolver> builder)
             throws DeploymentUnitProcessingException {
+        System.err.println( "Adding injections from: " + injectionPathPrefixes );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
 
@@ -31,6 +32,8 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         }
 
         Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
+        
+        System.err.println( "====> " + injectables );
 
         for (Injectable injectable : injectables) {
             try {
@@ -104,7 +107,7 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         List<String> defaults = new ArrayList<String>();
         defaults.add( "app/models/" );
         defaults.add( "lib/" );
-        defaults.add( "." ); // this is a special case, and will ONLY match
+        //defaults.add( "." ); // this is a special case, and will ONLY match
                              // files in the app root
 
         return defaults;

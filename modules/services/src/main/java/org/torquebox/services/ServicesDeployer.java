@@ -42,6 +42,7 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.util.StringUtils;
 import org.torquebox.services.as.ServicesServices;
+import org.torquebox.services.injection.InjectableService;
 
 public class ServicesDeployer implements DeploymentUnitProcessor {
 
@@ -76,6 +77,12 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         builderStart.addDependency( serviceCreateName, RubyService.class, serviceStart.getRubyServiceInjector() );
         builderStart.setInitialMode( Mode.PASSIVE );
         builderStart.install();
+        
+        InjectableService injectableService = new InjectableService( service );
+        phaseContext.getServiceTarget().addService( ServicesServices.serviceInjectableService( unit, serviceMetaData.getClassName() ), injectableService )
+            .addDependencies( serviceStartName )
+            .setInitialMode( Mode.ON_DEMAND )
+            .install();
         
         final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         

@@ -32,7 +32,9 @@ public class InjectableHandlerRegistry implements Service<InjectableHandlerRegis
     public InjectableHandler getHandler(Node argsNode) {
         
         for ( InjectableHandler each : this.handlersByPriority ) {
+            System.err.println( "test: " + each );
             if ( each.recognizes( argsNode ) ) {
+                System.err.println( "MATCH" );
                 return each;
             }
         }

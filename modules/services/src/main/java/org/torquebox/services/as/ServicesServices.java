@@ -41,5 +41,9 @@ public class ServicesServices {
     public static ServiceName serviceStartRubyService(DeploymentUnit unit, String serviceClass ) {
         return unit.getServiceName().append( "service" ).append( serviceClass );
     }
+    
+    public static ServiceName serviceInjectableService(DeploymentUnit unit, String serviceClass ) {
+        return serviceStartRubyService( unit, serviceClass ).append(  "injectable" );
+    }
 
 }
