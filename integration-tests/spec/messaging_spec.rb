@@ -62,31 +62,35 @@ describe "messaging rack test" do
 end
 
 
-describe "browse" do
-  before(:each) do
-  end
+remote_describe "browse" do
 
-  after(:each) do
-  end
+  deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/messaging
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+    services:
+      TorqueSpec::Daemon:
+        argv: #{ARGV.map{|x|File.expand_path(x)}.inspect}
+    environment:
+      RUBYLIB: #{TorqueSpec.rubylib}
+  END
 
   it "should allow enumeration of the messages" do
-    pending("Need to be able to start/stop externally first")
-    queue = TorqueBox::Messaging::Queue.new "/queues/browseable"
-    queue.start
+    queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
     queue.publish "howdy"
     queue.first.text.should == 'howdy'
-    queue.destroy
+    queue.stop
   end
 
   it "should accept a selector" do
-    pending("Need to be able to start/stop externally first")
-    queue = TorqueBox::Messaging::Queue.new "/queues/browseable", {}, :selector => 'blurple > 5'
-    queue.start
+    queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
+    queue.enumerable_options = { :selector => 'blurple > 5' }
     queue.publish "howdy", :properties => {:blurple => 5}
     queue.publish "ahoyhoy", :properties => {:blurple => 6}
     queue.first.text.should == 'ahoyhoy'
     queue.detect { |m| m.text == 'howdy' }.should be_nil
-    queue.destroy
+    queue.stop
     
   end
 end
