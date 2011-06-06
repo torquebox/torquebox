@@ -51,9 +51,11 @@ public class ServicesSubsystemParser implements XMLStreamConstants, XMLElementRe
 
     @Override
     public void readElement(final XMLExtendedStreamReader reader, final List<ModelNode> list) throws XMLStreamException {
-        log.info( "readElement" );
+        
         requireNoAttributes(reader);
         requireNoContent(reader);
+        
+        // Activate the services subsystem
         
         final ModelNode address = new ModelNode();
         address.add(SUBSYSTEM, ServicesExtension.SUBSYSTEM_NAME);
@@ -61,13 +63,13 @@ public class ServicesSubsystemParser implements XMLStreamConstants, XMLElementRe
 
         list.add(ServicesSubsystemAdd.createOperation(address));
         
+        // Tell the core that we've got injectable-handlers to add.
+        
         final ModelNode core = new ModelNode();
         core.add(SUBSYSTEM, CoreExtension.SUBSYSTEM_NAME);
         core.protect();
         
         list.add(InjectableHandlerAdd.createOperation(core, ServicesExtension.SUBSYSTEM_NAME, Module.getCallerModule().getIdentifier().getName() ) );
-
-        log.info( "done readElement" );
     }
 
     @Override

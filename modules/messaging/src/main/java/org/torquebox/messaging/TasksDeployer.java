@@ -64,7 +64,6 @@ public class TasksDeployer implements DeploymentUnitProcessor {
         String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + "/tasks/" + task.getQueueSuffix();
         
         if (task.getConcurrency() > 0) {
-            System.err.println( "task queue: " + queueName );
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );
             unit.addToAttachmentList( QueueMetaData.ATTACHMENTS_KEY, queue );

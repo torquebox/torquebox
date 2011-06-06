@@ -63,7 +63,6 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         ServiceName serviceStartName = ServicesServices.serviceStartRubyService( unit, serviceMetaData.getClassName() );
         RubyService service = new RubyService();
         
-        log.info( "Installing Service: " + serviceCreateName );
         RubyServiceCreate serviceCreate = new RubyServiceCreate( service );
         ServiceBuilder<RubyService> builderCreate = phaseContext.getServiceTarget().addService( serviceCreateName, serviceCreate );
         builderCreate.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() ), ComponentResolver.class, serviceCreate.getComponentResolverInjector() );
@@ -71,7 +70,6 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         builderCreate.setInitialMode( Mode.PASSIVE );
         builderCreate.install();
         
-        log.info( "Installing Service: " + serviceStartName );
         RubyServiceStart serviceStart = new RubyServiceStart();
         ServiceBuilder<RubyService> builderStart = phaseContext.getServiceTarget().addService( serviceStartName, serviceStart );
         builderStart.addDependency( serviceCreateName, RubyService.class, serviceStart.getRubyServiceInjector() );

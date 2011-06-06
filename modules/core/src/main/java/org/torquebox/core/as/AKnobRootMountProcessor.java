@@ -44,8 +44,7 @@ import org.jboss.vfs.VirtualFile;
  */
 public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
 
-    public AKnobRootMountProcessor(ServerEnvironment environment) {
-        this.environment = environment;
+    public AKnobRootMountProcessor() {
     }
 
     @Override
@@ -63,7 +62,6 @@ public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
         VirtualFile root = deploymentUnit.getAttachment( Attachments.DEPLOYMENT_CONTENTS );
 
         String deploymentName = deploymentUnit.getName();
-        //System.err.println( "NAME [" + deploymentName + "]" );
         VirtualFile realRoot = root.getChild( deploymentName );
         try {
             Closeable closeable = VFS.mountReal( root.getPhysicalFile(), realRoot );
@@ -80,7 +78,5 @@ public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
 
     }
-
-    private ServerEnvironment environment;
 
 }

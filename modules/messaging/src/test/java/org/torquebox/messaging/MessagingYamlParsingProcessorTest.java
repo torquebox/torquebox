@@ -114,8 +114,6 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
     private List< MessageProcessorMetaData> getMetaData(String filename) throws Exception {
         URL torqueboxYml = getClass().getResource( filename );
         
-        System.err.println( "URL: " + torqueboxYml );
-        
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", torqueboxYml );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
         

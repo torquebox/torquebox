@@ -26,9 +26,7 @@ public class MessagingDependenciesProcessor implements DeploymentUnitProcessor {
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
-        System.err.println( "Should we add messaging deps?" );
         if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
-            System.err.println( "YES!" );
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_MESSAGING_ID );
             addDependency( moduleSpecification, moduleLoader, JAVAX_JMS_ID );
             addDependency( moduleSpecification, moduleLoader, HORNETQ_ID );

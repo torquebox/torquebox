@@ -58,7 +58,6 @@ public class QueueDeployer implements DeploymentUnitProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, QueueMetaData queue) {
         final JMSQueueService service = new JMSQueueService(queue.getName(), null, queue.isDurable(), new String[] { queue.getBindName() } );
         final ServiceName serviceName = phaseContext.getDeploymentUnit().getServiceName().append( MessagingServices.JBOSS_MESSAGING.append("jms","queue" ) ).append( queue.getName() );
-        System.err.println( "install queue: " + serviceName  + " bind to " + queue.getName() );
         phaseContext.getServiceTarget().addService(serviceName, service)
                 .addDependency(MessagingServices.JBOSS_MESSAGING.append(  "jms", "manager"), JMSServerManager.class, service.getJmsServer())
                 .setInitialMode(Mode.ACTIVE)
@@ -67,7 +66,6 @@ public class QueueDeployer implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 

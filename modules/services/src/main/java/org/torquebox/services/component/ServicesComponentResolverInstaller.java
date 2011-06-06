@@ -59,8 +59,6 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
         instantiator.setClassName( serviceMetaData.getClassName() );
         instantiator.setRequirePath( serviceMetaData.getRubyRequirePath() );
 
-        log.info( "Services component resolver: " + serviceMetaData.getRubyRequirePath() );
-
         ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() );
         ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
@@ -68,7 +66,6 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
         resolver.setComponentWrapperClass( ServicesComponent.class );
         resolver.setInitializeParams( serviceMetaData.getParameters() );
 
-        log.info( "Installing Services component resolver: " + serviceName );
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );

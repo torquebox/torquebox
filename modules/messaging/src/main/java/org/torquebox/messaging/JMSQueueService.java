@@ -69,18 +69,13 @@ class JMSQueueService implements Service<Void> {
         try {
             MockContext.pushBindingTrap();
             try {
-                System.err.println( "About to create queue: " + queueName );
-                System.err.println( "JNDI : " + Arrays.asList( jndi ) );
                 jmsManager.createQueue( false, queueName, selectorString, durable, jndi );
-                System.err.println( "Done did create queue: " + queueName );
             } finally {
                 final ServiceTarget target = context.getChildTarget();
                 final Map<String, Object> bindings = MockContext.popTrappedBindings();
-                System.err.println( "BINDINGS: " + bindings );
                 for (Map.Entry<String, Object> binding : bindings.entrySet()) {
                     String bindingKey = bindingKeyFromBrokenMockContext( binding.getKey() );
                     final BinderService binderService = new BinderService( bindingKey );
-                    System.err.println( "BINDER: " + bindingKey );
                     target.addService( ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( bindingKey ), binderService )
                             .addDependency( ContextNames.JAVA_CONTEXT_SERVICE_NAME, NamingStore.class, binderService.getNamingStoreInjector() )
                             .addInjection( binderService.getManagedObjectInjector(), new ValueManagedReferenceFactory( Values.immediateValue( binding.getValue() ) ) )

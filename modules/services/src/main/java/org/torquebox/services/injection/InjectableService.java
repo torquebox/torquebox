@@ -15,20 +15,17 @@ public class InjectableService implements Service<IRubyObject> {
 
     @Override
     public IRubyObject getValue() throws IllegalStateException, IllegalArgumentException {
-        System.err.println( "getValue() --> " + this.rubyService );
         return this.rubyService;
     }
 
     @Override
     public void start(StartContext context) throws StartException {
-        System.err.println( "START" );
         this.rubyService = this.service.getComponent().getRubyComponent();
-        System.err.println( " Ruby service ---> " + this.rubyService );
     }
 
     @Override
     public void stop(StopContext context) {
-        
+        this.rubyService = null;
     }
 
     private RubyService service;

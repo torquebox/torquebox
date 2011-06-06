@@ -22,8 +22,6 @@ public class DeploymentNotifierInstaller implements DeploymentUnitProcessor {
         
         List<ServiceName> serviceNames = unit.getAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY );
         
-        System.err.println( "WAITING ON: " + serviceNames );
-        
         phaseContext.getServiceTarget().addService( unit.getServiceName().append( "notifier" ), new DeploymentNotifier( unit ) )
             .addDependencies( serviceNames )
             .setInitialMode( Mode.PASSIVE )

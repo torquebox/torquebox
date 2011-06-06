@@ -79,8 +79,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
-        ServerEnvironment environment = context.getController().getServerEnvironment();
-        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new AKnobRootMountProcessor( environment ) );
+        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new AKnobRootMountProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 10, new KnobStructureProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );

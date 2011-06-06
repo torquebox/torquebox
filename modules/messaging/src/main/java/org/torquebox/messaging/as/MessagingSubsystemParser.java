@@ -58,17 +58,21 @@ public class MessagingSubsystemParser implements XMLStreamConstants, XMLElementR
         requireNoAttributes(reader);
         requireNoContent(reader);
         
+        // Activate the messaging subsystem.
+        
         final ModelNode address = new ModelNode();
         address.add(SUBSYSTEM, MessagingExtension.SUBSYSTEM_NAME);
         address.protect();
+
+        list.add(MessagingSubsystemAdd.createOperation(address));
+        
+        // Tell the core that we've got injectable-handlers to add.
         
         final ModelNode core = new ModelNode();
         core.add(SUBSYSTEM, CoreExtension.SUBSYSTEM_NAME);
         core.protect();
         
         list.add(InjectableHandlerAdd.createOperation(core, MessagingExtension.SUBSYSTEM_NAME, Module.getCallerModule().getIdentifier().getName() ) );
-
-        list.add(MessagingSubsystemAdd.createOperation(address));
     }
 
     @Override

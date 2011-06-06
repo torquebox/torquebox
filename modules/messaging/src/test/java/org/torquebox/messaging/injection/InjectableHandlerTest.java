@@ -64,8 +64,6 @@ public class InjectableHandlerTest {
         
         Set<Injectable> injectables = this.visitor.getInjectables();
         
-        System.err.println( injectables );
-
         assertEquals( 3, injectables.size() );
 
         assertContains( injectables, JNDIInjectable.class, "jndi", "java:/comp/whatever", "java:/comp/whatever" );

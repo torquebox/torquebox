@@ -58,69 +58,35 @@ public class HackWeldBeanManagerServiceProcessor implements DeploymentUnitProces
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final DeploymentUnit topLevelDeployment = deploymentUnit.getParent() == null ? deploymentUnit : deploymentUnit.getParent();
         final ServiceTarget serviceTarget = phaseContext.getServiceTarget();
-        // final EEModuleDescription moduleDescription =
-        // deploymentUnit.getAttachment(
-        // org.jboss.as.ee.component.Attachments.EE_MODULE_DESCRIPTION );
+        
         if (!WeldDeploymentMarker.isPartOfWeldDeployment( topLevelDeployment )) {
-            System.err.println( "HACK: is not marked as weld deployment?" );
             return;
         }
-        // hack to set up a java:comp binding for jar deployments as well as
-        // wars
+        
         RubyApplicationMetaData rubyAppMetaData = deploymentUnit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         if (rubyAppMetaData == null) {
-            System.err.println( "HACK: Is not ruby app" );
             return;
         }
 
-        System.err.println( "HACK: Is a ruby app" );
-
-        // if (moduleDescription == null) {
-        // return;
-        // }
         BeanDeploymentArchiveImpl rootBda = deploymentUnit.getAttachment( WeldAttachments.DEPLOYMENT_ROOT_BEAN_DEPLOYMENT_ARCHIVE );
         if (rootBda == null) {
-            // this archive is not actually a bean archive.
-            // then use the top level root bda
             rootBda = topLevelDeployment.getAttachment( WeldAttachments.DEPLOYMENT_ROOT_BEAN_DEPLOYMENT_ARCHIVE );
         }
         if (rootBda == null) {
             throw new RuntimeException( "Could not find BeanManager for deployment " + deploymentUnit.getName() );
         }
 
-        // add the BeanManager service
         final ServiceName beanManagerServiceName = BeanManagerService.serviceName( deploymentUnit );
         if (phaseContext.getServiceRegistry().getService( beanManagerServiceName ) != null) {
-            System.err.println( "HACK: beanmanager already exists! " + beanManagerServiceName );
             return;
         }
 
         final ServiceName weldServiceName = topLevelDeployment.getServiceName().append( WeldService.SERVICE_NAME );
 
         BeanManagerService beanManagerService = new BeanManagerService( rootBda.getId() );
-        System.err.println( "HACK: install beanmanager: " + beanManagerServiceName );
         serviceTarget.addService( beanManagerServiceName, beanManagerService ).addDependency( weldServiceName,
                     WeldContainer.class, beanManagerService.getWeldContainer() ).install();
 
-        // bind the bean manager to JNDI
-        // final ServiceName moduleContextServiceName =
-        // ContextNames.contextServiceNameOfApplication(
-        // rubyAppMetaData.getApplicationName() );
-        // bindBeanManager( serviceTarget, beanManagerServiceName,
-        // moduleContextServiceName );
-
-        // bind the bm into java:comp for all components that require it
-        /*
-         * for (ComponentDescription component :
-         * moduleDescription.getComponentDescriptions()) { if
-         * (component.getNamingMode() == ComponentNamingMode.CREATE) { final
-         * ServiceName compContextServiceName =
-         * ContextNames.contextServiceNameOfComponent(
-         * moduleDescription.getApplicationName(),
-         * moduleDescription.getModuleName(), component.getComponentName() );
-         * bindBeanManager( serviceTarget, beanManagerServiceName,
-         * compContextServiceName ); } }
-         */
         deploymentUnit.addToAttachmentList( Attachments.SETUP_ACTIONS, new WeldContextSetup() );
     }
 

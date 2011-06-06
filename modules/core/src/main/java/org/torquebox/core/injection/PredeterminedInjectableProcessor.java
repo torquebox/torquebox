@@ -21,7 +21,6 @@ public class PredeterminedInjectableProcessor implements DeploymentUnitProcessor
 
         if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
             for (Injectable each : this.registry.getPredeterminedInjectables()) {
-                System.err.println( "Adding predetermined injectable: " + each );
                 unit.addToAttachmentList( ComponentResolver.ADDITIONAL_INJECTABLES, each );
             }
         }

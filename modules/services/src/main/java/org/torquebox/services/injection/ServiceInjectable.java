@@ -20,7 +20,6 @@ public class ServiceInjectable extends SimpleNamedInjectable {
     public ServiceName getServiceName(DeploymentPhaseContext phaseContext) throws Exception {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         ServiceName serviceName = ServicesServices.serviceInjectableService( unit, getName() );
-        System.err.println( "ServiceName ===> " + serviceName );
         return serviceName;
     }
     

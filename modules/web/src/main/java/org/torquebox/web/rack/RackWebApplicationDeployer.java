@@ -241,17 +241,6 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
     protected void setUpHostAndContext(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WarMetaData warMetaData, JBossWebMetaData jbossWebMetaData)
             throws Exception {
-
-        /*
-         * if (jbossWebMetaData.getDistributable() != null) {
-         * jbossWebMetaData.setDistributable(
-         * jbossWebMetaData.getDistributable() ); ReplicationConfig repCfg = new
-         * ReplicationConfig(); repCfg.setReplicationGranularity(
-         * ReplicationGranularity.SESSION ); repCfg.setReplicationTrigger(
-         * ReplicationTrigger.SET_AND_NON_PRIMITIVE_GET );
-         * jbossWebMetaData.setReplicationConfig( repCfg ); }
-         */
-
         jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
     }
 
@@ -268,7 +257,6 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 
