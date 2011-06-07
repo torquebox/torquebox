@@ -561,6 +561,7 @@
               <configuration>
                 <inherit>true</inherit>
                 <gemArgs>--backtrace</gemArgs>
+                <args>${spec}</args>
                 <verbose>false</verbose>
                 <jrubyVersion>${version.jruby}</jrubyVersion>
                 <jrubySwitches>--${ruby.compat.version}</jrubySwitches>
