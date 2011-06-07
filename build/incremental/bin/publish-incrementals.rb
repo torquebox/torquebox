@@ -76,7 +76,7 @@ class Publisher
   end
 
   def copy_to_latest()
-    dav_remote_cp_r( build_base_url, latest_base_url )
+    dav_remote_cp_r( build_base_url + '/', latest_base_url )
   end
 
   def html_docs_path()
