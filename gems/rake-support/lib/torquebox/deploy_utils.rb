@@ -219,12 +219,25 @@ module TorqueBox
       end
 
       def undeploy(name = deployment_name, from_dir = deploy_dir)
-        deployment = File.join( name ) 
-        if File.exists?( deployed_file( deployment ) )
-          FileUtils.rm_rf( deployed_file( deployment ) )
+        deployment = File.join( from_dir, name )
+        undeployed = false
+        if File.exists?( dodeploy_file( name ) )
+          FileUtils.rm_rf( dodeploy_file( name ) )
+          undeployed = true
+        end
+        if File.exists?( deployed_file( name ) )
+          FileUtils.rm_rf( deployed_file( name ) )
+          undeployed = true
+        end
+        if File.exists?( deployment )
+          FileUtils.rm_rf( deployment )
+          undeployed = true
+        end
+
+        if undeployed
           [name, from_dir]
         else
-          puts "Can't undeploy #{deployed_file( deployment )}. It does not appear to be deployed."
+          puts "Can't undeploy #{deployment}. It does not appear to be deployed."
         end
       end
 
