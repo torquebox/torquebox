@@ -29,8 +29,8 @@ module TorqueBox
       
       attr_reader :connection_factory
       attr_reader :name
-      attr_reader :enumerable_options
-      attr_reader :connect_options
+      attr_accessor :enumerable_options
+      attr_accessor :connect_options
 
       PRIORITY_MAP = {
           :low => 1,
