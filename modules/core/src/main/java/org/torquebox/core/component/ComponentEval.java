@@ -20,8 +20,6 @@
 package org.torquebox.core.component;
 
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 
 public class ComponentEval implements ComponentInstantiator {
@@ -50,7 +48,14 @@ public class ComponentEval implements ComponentInstantiator {
     }
     
     public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
-        return runtime.executeScript( this.code, this.location );
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader( runtime.getJRubyClassLoader().getParent() );
+            IRubyObject component = runtime.executeScript( this.code, this.location );
+            return component;
+        } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
+        }
     }
     
     
