@@ -112,23 +112,16 @@
             <executions>
               <execution>
                 <id>dist-javadocs</id>
-                <phase>package</phase>
                 <goals>
                   <goal>javadoc</goal>
                 </goals>
+                <phase>package</phase>
                 <configuration>
+                  <inherit>false</inherit>
                   <aggregate>true</aggregate>
-                  <stylesheetfile>${project.build.directory}/site/apidocs/stylesheet.css</stylesheetfile>
+                  <stylesheetfile>${project.basedir}/support/javadoc-support/stylesheet/stylesheet.css</stylesheetfile>
+                  <javadocDirectory>${project.basedir}/support/javadoc-support/resources/</javadocDirectory>
                   <docfilessubdirs>true</docfilessubdirs>
-<!--
-                  <resourcesArtifacts>
-                    <resourcesArtifact>
-                      <groupId>org.torquebox</groupId>
-                      <artifactId>torquebox-javadoc-support</artifactId>
-                      <version>${project.version}</version>
-                    </resourcesArtifact>
-                  </resourcesArtifacts>
--->
                 </configuration>
               </execution>
             </executions>
