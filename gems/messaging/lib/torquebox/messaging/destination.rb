@@ -106,10 +106,10 @@ module TorqueBox
         start = Time.now
         begin
           block.call
-        rescue javax.naming.NameNotFoundException => ex
+        rescue javax.naming.NameNotFoundException, javax.jms.JMSException
           elapsed = (Time.now - start) * 1000
           if elapsed > timeout
-            raise ex
+            raise
           else
             sleep(0.1)
             retry
