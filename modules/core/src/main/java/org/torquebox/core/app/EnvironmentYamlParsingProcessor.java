@@ -26,8 +26,6 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.torquebox.core.AbstractSplitYamlParsingProcessor;
 
-import com.allen_sauer.gwt.log.client.Log;
-
 /**
  * <pre>
  * Stage: PARSE
