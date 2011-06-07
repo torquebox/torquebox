@@ -29,8 +29,9 @@ module TorqueBox
       
       attr_reader :connection_factory
       attr_reader :name
-      attr_writer :enumerable_options
-      
+      attr_reader :enumerable_options
+      attr_reader :connect_options
+
       PRIORITY_MAP = {
           :low => 1,
           :normal => 4,
@@ -50,6 +51,8 @@ module TorqueBox
       def initialize(destination, connection_factory = __inject__( 'connection-factory' ))
         @name                = destination
         @connection_factory  = ConnectionFactory.new( connection_factory )
+        @connect_options     = {}
+        @enumerable_options  = {}
       end
 
       def publish(message, options = {})
@@ -85,9 +88,12 @@ module TorqueBox
         end
       end
 
-      def with_new_session(transacted=true, ack_mode=Session::AUTO_ACK, &block)
+      def with_new_session(&block)
+        transacted = connect_options.fetch( :transacted, true )
+        ack_mode = connect_options.fetch( :ack_mode, Session::AUTO_ACK )
+        
         result = nil
-        connection_factory.with_new_connection do |connection|
+        connection_factory.with_new_connection( connect_options[:client_id] ) do |connection|
           connection.with_new_session( transacted, ack_mode ) do |session|
             result = block.call(session)
           end

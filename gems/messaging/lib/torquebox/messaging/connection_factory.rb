@@ -34,8 +34,9 @@ module TorqueBox
         @hornetq_direct = false
       end
 
-      def with_new_connection(&block)
+      def with_new_connection(client_id = nil, &block)
         connection = create_connection
+        connection.client_id = client_id
         connection.start
         begin
           result = block.call( connection )

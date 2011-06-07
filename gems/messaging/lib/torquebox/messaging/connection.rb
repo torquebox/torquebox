@@ -18,7 +18,7 @@
 module TorqueBox
   module Messaging
 
-    attr_accessor :connection
+    attr_accessor :jms_connection
     
     class Connection
       def initialize(jms_connection, hornetq_direct)
@@ -34,6 +34,14 @@ module TorqueBox
         @jms_connection.close
       end
 
+      def client_id
+        @jms_connection.client_id
+      end
+
+      def client_id=(client_id)
+        @jms_connection.client_id = client_id
+      end
+      
       def with_new_session(transacted=true, ack_mode=Session::AUTO_ACK, &block)
         session = self.create_session( transacted, ack_mode )
         begin
@@ -46,7 +54,7 @@ module TorqueBox
 
       def create_session(transacted=true, ack_mode=Session::AUTO_ACK)
         session = @jms_connection.create_session( transacted, Session.canonical_ack_mode( ack_mode ) )
-        @hornetq_direct ? HornetQSession.new( session ) : Session.new( session )
+        @hornetq_direct ? HornetQSession.new( session, self ) : Session.new( session, self )
       end
 
     end
