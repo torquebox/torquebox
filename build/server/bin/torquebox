@@ -71,7 +71,7 @@ class TorqueBoxCommand < Thor
     end
 
     def torquebox_home
-      File.join(File.dirname(__FILE__), '..')
+      File.expand_path(File.join(File.dirname(__FILE__), '..'))
     end
 
     def jboss_home
@@ -79,7 +79,7 @@ class TorqueBoxCommand < Thor
     end
 
     def jruby_home
-      java.lang.System.getProperty('jruby.home')
+      File.expand_path(java.lang.System.getProperty('jruby.home'))
     end
   }
 
