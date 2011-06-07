@@ -63,6 +63,15 @@ class TorqueBoxCommand < Thor
     end
   end
 
+  desc "cli", "Run the JBoss AS7 CLI"
+  def cli
+    setup_environment
+    windows_path = File.join(jboss_home, "bin\\jboss-admin")
+    unix_path = "/bin/sh #{File.join(jboss_home, 'bin/jboss-admin.sh')}"
+    command = Config::CONFIG['host_os'] =~ /mswin/ ? windows_path : unix_path
+    exec command
+  end
+
   no_tasks {
     def setup_environment
       ENV['TORQUEBOX_HOME'] = torquebox_home
