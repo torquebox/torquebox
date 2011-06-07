@@ -71,7 +71,7 @@ remote_describe "browse" do
       version: #{RUBY_VERSION[0,3]}
     services:
       TorqueSpec::Daemon:
-        argv: #{ARGV.map{|x|File.expand_path(x)}.inspect}
+        argv: #{TorqueSpec.specs}
     environment:
       RUBYLIB: #{TorqueSpec.rubylib}
   END
