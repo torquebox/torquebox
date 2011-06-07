@@ -68,9 +68,9 @@ class Publisher
 
   def publish_all()
     dav_mkdir_p( build_base_url )
-    #publish_distribution()
-    #publish_documentation()
-    #publish_gem_repo()
+    publish_distribution()
+    publish_documentation()
+    publish_gem_repo()
 
     copy_to_latest()
   end
