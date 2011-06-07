@@ -201,6 +201,29 @@ describe TorqueBox::Messaging::Destination do
       msgs.to_a.should eql( ["howdy"] * count )
     end
 
+    context "durable topic receive" do
+      it "should be durable" do
+        topic = TorqueBox::Messaging::Topic.new "/topics/foo", :client_id => 'blarg'
+        topic.start
+
+        topic.receive :durable => true, :timeout => 1
+        topic.publish 'biscuit'
+        response = topic.receive :durable => true, :timeout => 1
+        response.should == 'biscuit'
+
+        topic.destroy
+      end
+
+      it "should raise if client_id is not set" do
+        topic = TorqueBox::Messaging::Topic.new "/topics/foo"
+        topic.start
+
+        lambda { topic.receive :durable => true, :timeout => 1 }.should raise_error(ArgumentError)
+
+        topic.destroy
+      end
+    end
+    
     context "synchronous messaging" do
       it "should return value of block given to receive_and_publish" do
         queue = TorqueBox::Messaging::Queue.new "/queues/publish_and_receive"

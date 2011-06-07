@@ -46,7 +46,15 @@ module javax.jms::Session
     timeout = options.fetch(:timeout, 0)
     selector = options.fetch(:selector, nil)
     destination = lookup_destination( destination_name )
-    consumer = createConsumer( destination, selector )
+    if options[:durable] && destination.class.name =~ /Topic/
+      raise ArgumentError.new( "You must set the :client_id via Topic.new's connect_options to use :durable" ) unless connection.client_id
+      consumer = createDurableSubscriber( destination,
+                                          options.fetch(:subscriber_name, 'subscriber-1'),
+                                          selector,
+                                          false )
+    else
+      consumer = createConsumer( destination, selector )      
+    end
     jms_message = consumer.receive( timeout )
     if jms_message
       decode ? jms_message.decode : jms_message

@@ -437,9 +437,23 @@ require 'torquebox-messaging'
               <entry>Indicates whether the underlying session is in
               <emphasis>transacted</emphasis> mode.</entry>
             </row>
+
+            <row>
+              <entry><parameter>:client_id</parameter></entry>
+
+              <entry></entry>
+
+              <entry>A string to uniquely indentify the connecting client. Optional unless
+              you are using the <varname>:durable</varname> option with 
+              <methodname>receive</methodname> on a <classname>Topic</classname>.</entry>
+            </row>
           </tbody>
         </tgroup>
       </table>
+
+      <para>You can also set these options via the <methodname>connect_options</methodname>
+      on the destination object.</para>
+
 
       <para>Though sometimes convenient, these methods are fairly low-level
       and higher-level abstractions such as <link
@@ -727,6 +741,19 @@ message = topic.receive
                 ready on initial app startup, in milliseconds. On a very slow
                 machine this may need to be increased from the
                 default.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:durable</parameter></entry>
+
+                <entry>false</entry>
+
+                <entry>Specifies that the connection to a topic should be durable. 
+                This causes any messages that arrive on the topic to be queued. If
+                false, messages that arrive on the topic when a <methodname>receive</methodname>
+                is not waiting will be discarded. If <parameter>true</parameter>, you must
+                also supply a <varname>:client_id</varname> in the connect options for the
+                Topic. This option is ignored for Queues.</entry>
               </row>
             </tbody>
           </tgroup>

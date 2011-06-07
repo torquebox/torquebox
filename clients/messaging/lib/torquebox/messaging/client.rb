@@ -56,6 +56,7 @@ module TorqueBox
         TorqueBox::Naming.connect( naming_host, naming_port ) do |context|
           connection_factory = context['/ConnectionFactory']
           connection = connection_factory.createConnection
+          connection.client_id = options[:client_id]
           session = connection.createSession( transacted, canonical_ack_mode( ack_mode ) )
           connection.start
           session.naming_context = context
