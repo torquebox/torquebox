@@ -67,6 +67,7 @@ class DAV
 
   def curl(*args)
     cmd = "curl -v -s -u#{@username}:#{@password} #{args.join(' ')}"
+    puts "CMD: #{args.join(' ')}"
     response = ''
     error    = ''
     Open3.popen3( cmd ) do |stdin, stdout, stderr|
