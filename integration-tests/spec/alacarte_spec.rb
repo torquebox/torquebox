@@ -46,4 +46,12 @@ describe "services alacarte" do
   END
 
   it_should_behave_like "alacarte"
+
+  it "should have its init params" do
+    responseq = TorqueBox::Messaging::Queue.new( '/queue/init_params' )
+    response = responseq.receive( :timeout => 120_000 )
+    
+    response['color'].should == 'blue'
+    response['an_array'].to_a.should == %w{ one two } 
+  end
 end
