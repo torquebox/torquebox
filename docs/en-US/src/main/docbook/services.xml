@@ -35,7 +35,7 @@
 
       <para><programlisting>class MyService
   def initialize(opts={})
-    @name = opts[:name]
+    @name = opts['name']
   end
 
   def start
