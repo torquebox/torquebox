@@ -24,6 +24,7 @@ import javax.jms.ConnectionFactory;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.injection.ConvertableRubyInjection;
 
 public class RubyConnectionFactory implements ConvertableRubyInjection {
@@ -34,7 +35,10 @@ public class RubyConnectionFactory implements ConvertableRubyInjection {
     
     @Override
     public Object convert(Ruby ruby) throws Exception {
-        ruby.evalScriptlet( "require %q(torquebox-messaging)" );
+        IRubyObject gemRequired = ruby.evalScriptlet( "begin; require %q(torquebox-messaging); true; rescue LoadError; false; end" );
+        if (!gemRequired.isTrue()) {
+            return null;
+        }
         RubyModule connectionFactoryClass = ruby.getClassFromPath( "TorqueBox::Messaging::ConnectionFactory" );
         Object destination = JavaEmbedUtils.invokeMethod( ruby, connectionFactoryClass, "new", new Object[] { this.connectionFactory }, Object.class );
         return destination;

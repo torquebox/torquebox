@@ -25,6 +25,7 @@ import javax.jms.Destination;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.injection.ConvertableRubyInjection;
 
 public class LiveDestination implements ConvertableRubyInjection {
@@ -44,7 +45,10 @@ public class LiveDestination implements ConvertableRubyInjection {
     
     @Override
     public Object convert(Ruby ruby) throws Exception {
-        ruby.evalScriptlet( "require %q(torquebox-messaging)" );
+        IRubyObject gemRequired = ruby.evalScriptlet( "begin; require %q(torquebox-messaging); true; rescue LoadError; false; end" );
+        if (!gemRequired.isTrue()) {
+            return null;
+        }
         RubyModule destinationClass = ruby.getClassFromPath( "TorqueBox::Messaging::" + getType() );
         Object destination = JavaEmbedUtils.invokeMethod( ruby, destinationClass, "new", new Object[] { this.destination, this.connectionFactory }, Object.class );
         return destination;
