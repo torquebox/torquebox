@@ -21,7 +21,6 @@ describe "File extensions for VFS" do
   end
 
   it "should not report a file is there when it's not" do
-    # this fails due to the existence of the spec/ dir
     File.exists?(".rspec").should be_false
   end
 
