@@ -208,7 +208,7 @@ describe TorqueBox::Messaging::Destination do
 
         topic.receive :durable => true, :timeout => 1
         topic.publish 'biscuit'
-        response = topic.receive :durable => true, :timeout => 1
+        response = topic.receive :durable => true, :timeout => 10_000
         response.should == 'biscuit'
 
         topic.destroy
