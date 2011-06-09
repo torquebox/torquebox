@@ -69,9 +69,11 @@ remote_describe "in-container messaging tests" do
       root: #{File.dirname(__FILE__)}/../apps/rack/messaging
     ruby:
       version: #{RUBY_VERSION[0,3]}
+      compile_mode: off
     services:
       TorqueSpec::Daemon:
-        argv: #{TorqueSpec.specs}
+        argv: #{TorqueSpec.argv}
+        pwd:  #{Dir.pwd}
     environment:
       RUBYLIB: #{TorqueSpec.rubylib}
   END
