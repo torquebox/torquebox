@@ -21,14 +21,14 @@ package org.torquebox.web.as;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
+import org.torquebox.core.as.CoreServices;
 
 public class WebServices {
 
     private WebServices() {
     }
 
-    public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
-    public static final ServiceName WEB       = TORQUEBOX.append( "web" );
+    public static final ServiceName WEB       = CoreServices.TORQUEBOX.append( "web" );
     public static final ServiceName RACK      = WEB.append( "rack" );
     
     public static ServiceName rackApplicationFactoryName(final String name) {
