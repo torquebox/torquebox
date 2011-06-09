@@ -20,6 +20,10 @@ describe "File extensions for VFS" do
     File.exists?(vfs_path("/nothingtoseehere")).should be_false
   end
 
+  it "should not report a file is there when it's not" do
+    File.exists?(".rspec").should be_false
+  end
+
   describe "expand_path" do
     it "should handle relative non-vfs path" do
       File.expand_path("../foo", "/tmp/bar").should == "#{absolute_prefix}/tmp/foo"

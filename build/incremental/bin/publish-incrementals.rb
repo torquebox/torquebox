@@ -42,6 +42,14 @@ class Publisher
     @dav.put( url, file )
   end
 
+  def dav_rm_rf(url)
+    @dav.delete( url )
+  end
+
+  def dav_remote_cp_r(src, dest)
+    puts @dav.copy( src + '/', dest + '/', :infinity ).inspect
+  end
+
   def dav_put_r(root_url, root_dir)
     Dir.chdir( root_dir ) do 
       Find.find( '.' ) do |entry|
@@ -60,10 +68,15 @@ class Publisher
 
   def publish_all()
     dav_mkdir_p( build_base_url )
-    dav_mkdir_p( latest_base_url )
     publish_distribution()
     publish_documentation()
     publish_gem_repo()
+
+    copy_to_latest()
+  end
+
+  def copy_to_latest()
+    dav_remote_cp_r( build_base_url, latest_base_url )
   end
 
   def html_docs_path()
@@ -76,6 +89,10 @@ class Publisher
 
   def epub_path()
     Dir[ ( ENV['M2_REPO'] || ( ENV['HOME'] + '/.m2/repository' ) ) + '/org/torquebox/torquebox-docs-en_US/*/torquebox-docs-en_US-*.epub' ].first
+  end
+
+  def javadocs_path()
+    File.dirname(__FILE__) + '/../../../target/site/apidocs'
   end
 
   def dist_path()
@@ -91,33 +108,23 @@ class Publisher
   end
 
   def publish_documentation()
+    dav_mkdir_p( build_base_url + '/javadocs' )
+    dav_put_r( build_base_url + '/javadocs', javadocs_path )
     dav_put( build_base_url + '/torquebox-docs.epub', epub_path )
-    dav_put( latest_base_url + '/torquebox-docs.epub', epub_path )
-
     dav_put( build_base_url + '/torquebox-docs.pdf', pdf_doc_path )
-    dav_put( latest_base_url + '/torquebox-docs.pdf', pdf_doc_path )
-
-
     dav_mkdir_p( build_base_url + '/html-docs' )
-    dav_mkdir_p( latest_base_url + '/html-docs' )
-
     dav_put_r( build_base_url + '/html-docs', html_docs_path )
-    dav_put_r( latest_base_url + '/html-docs', html_docs_path )
   end
 
   def publish_distribution()
     dav_put( build_base_url + "/#{File.basename( json_metadata_path ) }", json_metadata_path )
-    dav_put( latest_base_url + "/#{File.basename( json_metadata_path ) }", json_metadata_path )
 
     dav_put( build_base_url  + "/#{File.basename( dist_path ) }", dist_path )
-    dav_put( latest_base_url + "/#{File.basename( dist_path ) }", dist_path )
   end
 
   def publish_gem_repo()
     dav_mkdir_p( build_gem_repo_url )
-    dav_mkdir_p( latest_gem_repo_url )
     dav_put_r( build_gem_repo_url, gem_repo_path )
-    dav_put_r( latest_gem_repo_url, gem_repo_path )
   end
 
 end
