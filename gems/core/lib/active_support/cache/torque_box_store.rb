@@ -134,6 +134,7 @@ module ActiveSupport
       end
 
       def manager
+        # TODO: This name should be ServiceName.JBOSS.append("infinispan", "web")
         @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
       end
                        
