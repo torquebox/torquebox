@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.catalina.Manager;
 import org.apache.catalina.Session;
 import org.jboss.as.web.VirtualHost;
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
@@ -35,6 +37,14 @@ public class WebSocketContext {
         return this.resolver;
     }
     
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+    
+    public Manager getManager() {
+        return this.manager;
+    }
+    
     public WebSocketProcessorComponent createComponent(Session session) throws Exception {
         Ruby runtime = this.runtimePool.borrowRuntime();
         WebSocketProcessorComponent component = (WebSocketProcessorComponent) this.resolver.resolve( runtime );
@@ -60,7 +70,10 @@ public class WebSocketContext {
     }
     
     public Session findSession(String sessionId) throws IOException {
-        return this.host.getHost().getManager().findSession( sessionId );
+        log.info( "manager: " + this.manager );
+        Session session = manager.findSession( sessionId );
+        log.info( "session: " + session );
+        return session;
     }
     
     public String getContextPath() {
@@ -75,7 +88,11 @@ public class WebSocketContext {
         this.server.unregisterContext( this );
     }
     
+    private static final Logger log = Logger.getLogger( "org.torquebox.web.websockets" );
+    
     private WebSocketsServer server;
+    
+    private Manager manager;
     
     private VirtualHost host;
     private String contextPath;

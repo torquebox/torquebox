@@ -47,6 +47,7 @@
         <module name="org.jboss.vfs"/>
         <module name="org.jboss.metadata"/>
         <module name="org.jboss.as.web"/>
+        <module name="org.jboss.netty"/>
         <module name="org.torquebox.core"/>
     </dependencies>
 </module>

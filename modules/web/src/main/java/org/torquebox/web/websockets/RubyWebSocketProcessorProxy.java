@@ -1,5 +1,6 @@
 package org.torquebox.web.websockets;
 
+import org.jboss.logging.Logger;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -31,6 +32,7 @@ public class RubyWebSocketProcessorProxy extends SimpleChannelUpstreamHandler {
 
     @Override
     public void messageReceived(ChannelHandlerContext channelContext, MessageEvent event) throws Exception {
+        log.info(  "on_message java netty -> " + channelContext + "  " + event  );
         if (event.getMessage() instanceof WebSocketFrame) {
             Object response = this.component.handleMessage( channelContext, event );
             if (response != null) {
@@ -41,5 +43,6 @@ public class RubyWebSocketProcessorProxy extends SimpleChannelUpstreamHandler {
         }
     }
 
+    private static final Logger log = Logger.getLogger( "org.torquebox.web.websockets.protocol" );
     private WebSocketProcessorComponent component;
 }

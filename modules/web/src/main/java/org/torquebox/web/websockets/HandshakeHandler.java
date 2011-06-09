@@ -16,11 +16,11 @@
 
 package org.torquebox.web.websockets;
 
-import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.catalina.Session;
+import org.jboss.logging.Logger;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFuture;
@@ -44,7 +44,6 @@ import org.jboss.netty.handler.codec.http.HttpVersion;
 import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameDecoder;
 import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameEncoder;
 import org.jboss.netty.util.CharsetUtil;
-import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.web.websockets.component.WebSocketProcessorComponent;
 
 /**
@@ -65,10 +64,14 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         Object msg = e.getMessage();
         if (msg instanceof HttpRequest) {
             handleHttpRequest( ctx, (HttpRequest) msg );
+        } else {
+            super.messageReceived( ctx, e );
         }
+        
     }
 
     private void handleHttpRequest(ChannelHandlerContext channelContext, HttpRequest request) throws Exception {
+        log.info( "handleHttpRequest - " + request );
         // Allow only GET methods.
         if (request.getMethod() != HttpMethod.GET) {
             sendHttpResponse( channelContext, request, new DefaultHttpResponse( HttpVersion.HTTP_1_1, HttpResponseStatus.FORBIDDEN ) );
@@ -76,6 +79,7 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         }
 
         if (isWebSocketsUpgradeRequest( request )) {
+            log.info( "is upgrade to WebSockets" );
             WebSocketContext context = this.contextRegistry.findContext( request.getHeader( "Host" ), request.getUri() );
 
             // Serve the WebSocket handshake request.
@@ -96,9 +100,9 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
                 // Upgrade the connection and send the handshake response.
                 ChannelPipeline pipeline = channelContext.getChannel().getPipeline();
                 reconfigureUpstream( pipeline );
+                addContextHandler( channelContext, context, pipeline );
                 channelContext.getChannel().write( response );
                 reconfigureDownstream( pipeline );
-                addContextHandler( channelContext, context, pipeline );
                 return;
             }
         }
@@ -115,13 +119,14 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
     protected void reconfigureDownstream(ChannelPipeline pipeline) {
         pipeline.replace( "http-encoder", "websockets-encoder", new WebSocketFrameEncoder() );
     }
-    
+
     protected void addContextHandler(ChannelHandlerContext channelContext, WebSocketContext context, ChannelPipeline pipeline) throws Exception {
         String sessionId = (String) channelContext.getAttachment();
         Session session = context.findSession( sessionId );
         WebSocketProcessorComponent component = context.createComponent( session );
         pipeline.addLast( "connection-handler", new RubyWebSocketProcessorProxy( component ) );
-        channelContext.sendUpstream( new UpstreamChannelStateEvent( channelContext.getChannel(), ChannelState.CONNECTED, channelContext.getChannel().getRemoteAddress() ) );
+        UpstreamChannelStateEvent connectEvent = new UpstreamChannelStateEvent( channelContext.getChannel(), ChannelState.CONNECTED, channelContext.getChannel().getRemoteAddress() );
+        channelContext .sendUpstream( connectEvent );
     }
 
     protected boolean isWebSocketsUpgradeRequest(HttpRequest request) {
@@ -191,6 +196,7 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         return "ws://" + req.getHeader( HttpHeaders.Names.HOST ) + context.getContextPath();
     }
 
+    private static final Logger log = Logger.getLogger( "org.torquebox.web.websockets.protocol" );
     private ContextRegistry contextRegistry;
 
 }

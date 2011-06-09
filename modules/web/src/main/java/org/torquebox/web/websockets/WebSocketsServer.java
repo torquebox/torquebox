@@ -20,6 +20,7 @@ public class WebSocketsServer {
 
     public WebSocketsServer(int port) {
         this.contextRegistry = new ContextRegistry();
+        this.port = port;
     }
 
     public int getPort() {
@@ -44,8 +45,8 @@ public class WebSocketsServer {
 
     public void start() {
         ServerBootstrap bootstrap = createServerBootstrap();
-        this.channel = bootstrap.bind( new InetSocketAddress( port ) );
-        log.info( "Initialization complete." );
+        this.channel = bootstrap.bind( new InetSocketAddress( this.port ) );
+        log.info( "WebSockets server on port: " + this.port );
     }
     
     protected ServerBootstrap createServerBootstrap() {

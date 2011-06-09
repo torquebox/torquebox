@@ -19,10 +19,7 @@
 
 package org.torquebox.web.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
 
 import org.jboss.as.controller.BasicOperationResult;
 import org.jboss.as.controller.ModelAddOperationHandler;
@@ -52,6 +49,7 @@ import org.torquebox.web.rails.RailsRackProcessor;
 import org.torquebox.web.rails.RailsRuntimeProcessor;
 import org.torquebox.web.rails.RailsVersionProcessor;
 import org.torquebox.web.websockets.WebSocketContextInstaller;
+import org.torquebox.web.websockets.WebSocketsRuntimePoolProcessor;
 import org.torquebox.web.websockets.WebSocketsServerService;
 import org.torquebox.web.websockets.WebSocketsServices;
 import org.torquebox.web.websockets.WebSocketsYamlParsingProcessor;
@@ -99,6 +97,7 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 1, new WebDependenciesProcessor() );
         
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 101, new WebSocketsRuntimePoolProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, new RailsAutoloadPathProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
