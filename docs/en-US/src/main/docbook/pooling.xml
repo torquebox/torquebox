@@ -25,10 +25,6 @@
       <listitem>
         <para>Shared</para>
       </listitem>
-
-      <listitem>
-        <para>Global</para>
-      </listitem>
     </itemizedlist>
 
     <formalpara>
@@ -56,16 +52,6 @@
       where the application is considered threadsafe. An application's
       threadsafety may be affected by both framework code and deployment
       factors. These issues are discussed below.</para>
-    </formalpara>
-
-    <formalpara>
-      <title>Global pool</title>
-
-      <para>The global pool is a special instance of a shared pool. Advanced
-      applications may take advantage of multiple subsystems, each of which
-      has its own pool. To effectively have subsystems share the same pool,
-      the global pool may be used. Use of the global pool requires extreme
-      care, and should not be undertaken lightly.</para>
     </formalpara>
   </section>
 
@@ -198,6 +184,7 @@
 
       <example>
         <title>Configuring a bounded pool</title>
+
         <para><programlisting>pooling:
   web:
     min: 3
@@ -213,6 +200,7 @@
 
       <example>
         <title>Configuring a shared pool</title>
+
         <para><programlisting>pooling:
   web: shared</programlisting></para>
       </example>
@@ -226,9 +214,10 @@
 
       <example>
         <title>Configuring a global pool</title>
+
         <para><programlisting>pooling:
   web: global</programlisting></para>
-        </example>
+      </example>
     </section>
 
     <section id="pooling-yaml-examples">
@@ -247,10 +236,10 @@ pooling:
   messaging:
     min: 1
     max: 2
-  web: shared</programlisting>The following is the implicit default configuration for an
-        application deployed in <code>development</code> mode.</para>
+  web: shared</programlisting>The following is the implicit default
+        configuration for an application deployed in <code>development</code>
+        mode.</para>
       </example>
-
 
       <example id="pooling-yaml-examples-non-devmode">
         <title>Default non-development-mode pooling</title>
@@ -261,8 +250,8 @@ pooling:
 pooling:
   jobs: shared
   messaging: shared
-  web: shared</programlisting>The following is the implicit default configuration for an
-        application deployed in a mode other than
+  web: shared</programlisting>The following is the implicit default
+        configuration for an application deployed in a mode other than
         <code>development</code>.</para>
       </example>
     </section>
