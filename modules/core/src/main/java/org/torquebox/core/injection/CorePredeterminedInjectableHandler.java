@@ -44,6 +44,7 @@ public class CorePredeterminedInjectableHandler extends PredeterminedInjectableH
         setRecognitionPriority( 500 * 1000 );
         addInjectable( "service-registry", ServiceRegistryInjectable.INSTANCE );
         addInjectable( "service-target", ServiceTargetInjectable.INSTANCE );
+        addInjectable( "deployment-unit", DeploymentUnitInjectable.INSTANCE );
     }
 
 }

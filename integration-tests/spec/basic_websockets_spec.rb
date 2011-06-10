@@ -12,13 +12,20 @@ describe "basic websockets test" do
   
   it "should be deployable" do
     visit( '/websockets' )
+    page.find("#success")[:class].should == 'websockets'
+
+    ws_url = page.find("#endpoint-echo").text
+
+    ws_url.should_not be_empty
+
     outbound = [
       'touched by his noodly appendage',
       'france is bacon',
     ]
     inbound = []
 
-    WebSocketClient.create( 'ws://localhost:8081/websockets/' ) do |client|
+    #WebSocketClient.create( 'ws://localhost:8081/websockets/' ) do |client|
+    WebSocketClient.create( ws_url ) do |client|
       client.on_message do |message|
         puts "received: #{message}"
         inbound << message

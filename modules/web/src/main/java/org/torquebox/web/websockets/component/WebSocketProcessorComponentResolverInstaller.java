@@ -72,19 +72,11 @@ public class WebSocketProcessorComponentResolverInstaller extends BaseRubyCompon
             return;
         }
         
-        List<WebSocketMetaData> allMetaData = unit.getAttachmentList( WebSocketMetaData.ATTACHMENTS_KEY );
-        
-        for ( WebSocketMetaData each : allMetaData ) {
-            
-        }
-        ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        VirtualFile root = resourceRoot.getRoot();
-
         ComponentClass instantiator = new ComponentClass();
         instantiator.setClassName( webSocketMetaData.getRubyClassName() );
         instantiator.setRequirePath( webSocketMetaData.getRequirePath() );
 
-        ServiceName serviceName = WebSocketsServices.webSocketProcessorComponentResolver( unit, webSocketMetaData.getContextPath() );
+        ServiceName serviceName = WebSocketsServices.webSocketProcessorComponentResolver( unit, webSocketMetaData.getName() );
         ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );

@@ -1,16 +1,7 @@
 
-class EchoProcessor
+class EchoProcessor < TorqueBox::WebSockets::Processor
 
   def initialize()
-  end
-
-  def session=(session)
-    puts "handed session #{session}"
-    @session = session
-  end
-
-  def session() 
-    @session
   end
 
   def start()

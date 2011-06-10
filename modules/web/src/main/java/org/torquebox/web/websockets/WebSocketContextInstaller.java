@@ -60,9 +60,17 @@ public class WebSocketContextInstaller implements DeploymentUnitProcessor {
         if ( ! contextPath.endsWith( "/" ) ) {
             contextPath = contextPath + "/";
         }
+        
+        URLRegistry urlRegistry = unit.getAttachment( URLRegistry.ATTACHMENT_KEY );
+        
+        if ( urlRegistry == null ) {
+            urlRegistry = new URLRegistry();
+            unit.putAttachment( URLRegistry.ATTACHMENT_KEY, urlRegistry );
+        }
 
-        ServiceName serviceName = WebSocketsServices.webSocketContext( unit, socketContext );
-        WebSocketContextService service = new WebSocketContextService( contextPath );
+        String contextName = webSocketMetaData.getName();
+        ServiceName serviceName = WebSocketsServices.webSocketContext( unit, contextName );
+        WebSocketContextService service = new WebSocketContextService( urlRegistry, contextName, contextPath );
 
         phaseContext
                 .getServiceTarget()
@@ -70,7 +78,7 @@ public class WebSocketContextInstaller implements DeploymentUnitProcessor {
                 .addDependency( WebSocketsServices.WEB_SOCKETS_SERVER, WebSocketsServer.class, service.getServerInjector() )
                 .addDependency( WebSubsystemServices.JBOSS_WEB.append(unit.getName()), Context.class, service.getContextInjector() )
                 .addDependency( getHostServiceName( unit ), VirtualHost.class, service.getHostInjector() )
-                .addDependency( WebSocketsServices.webSocketProcessorComponentResolver( unit, socketContext ), ComponentResolver.class, service.getComponentResolverInjector() )
+                .addDependency( WebSocketsServices.webSocketProcessorComponentResolver( unit, contextName ), ComponentResolver.class, service.getComponentResolverInjector() )
                 .addDependency( CoreServices.runtimePoolName( unit, "websockets" ), RubyRuntimePool.class, service.getRuntimePoolInjector() )
                 .setInitialMode( Mode.ACTIVE )
                 .install();

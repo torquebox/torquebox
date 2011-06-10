@@ -7,8 +7,12 @@ public class WebSocketMetaData {
     
     public static final AttachmentKey<AttachmentList<WebSocketMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( WebSocketMetaData.class );
     
-    public WebSocketMetaData() {
-        
+    public WebSocketMetaData(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return this.name;
     }
     
     public void setContextPath(String contextPath) {
@@ -35,6 +39,7 @@ public class WebSocketMetaData {
         return this.requirePath;
     }
     
+    private String name;
     private String contextPath;
     private String rubyClassName;
     private String requirePath;

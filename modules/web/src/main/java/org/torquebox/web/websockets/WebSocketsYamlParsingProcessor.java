@@ -15,20 +15,27 @@ public class WebSocketsYamlParsingProcessor extends AbstractSplitYamlParsingProc
     protected void parse(DeploymentUnit unit, Object baseData) throws Exception {
         Map<String, Map<String, Object>> data = (Map<String, Map<String, Object>>) baseData;
 
-        for (String contextPath : data.keySet()) {
-            WebSocketMetaData metaData = parse( contextPath, data.get( contextPath ) );
+        for (String name : data.keySet()) {
+            WebSocketMetaData metaData = parse( name, data.get( name ) );
             unit.addToAttachmentList( WebSocketMetaData.ATTACHMENTS_KEY, metaData );
         }
     }
 
-    protected WebSocketMetaData parse(String contextPath, Map<String, Object> contextData) throws Exception {
-        WebSocketMetaData webSocketMetaData = new WebSocketMetaData();
+    protected WebSocketMetaData parse(String name, Map<String, Object> contextData) throws Exception {
+        WebSocketMetaData webSocketMetaData = new WebSocketMetaData(name);
+        
+        String contextPath = (String) contextData.get( "context" );
+        
+        if ( contextPath == null || contextPath.trim().equals( "" ) ) {
+            throw new Exception( "Websocket 'context' parameter is required for context: " + name );
+        }
+        
         webSocketMetaData.setContextPath( contextPath );
         
         String rubyClassName = (String) contextData.get( "class" );
         
         if ( rubyClassName == null || rubyClassName.trim().equals( "" ) ) {
-            throw new Exception( "Websocket 'class' parameter is required for context: " + contextPath );
+            throw new Exception( "Websocket 'class' parameter is required for context: " + name );
         }
         
         webSocketMetaData.setRubyClassName( rubyClassName );

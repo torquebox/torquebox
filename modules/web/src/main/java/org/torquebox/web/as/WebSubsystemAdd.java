@@ -48,6 +48,7 @@ import org.torquebox.web.rails.RailsAutoloadPathProcessor;
 import org.torquebox.web.rails.RailsRackProcessor;
 import org.torquebox.web.rails.RailsRuntimeProcessor;
 import org.torquebox.web.rails.RailsVersionProcessor;
+import org.torquebox.web.websockets.URLRegistryInstaller;
 import org.torquebox.web.websockets.WebSocketContextInstaller;
 import org.torquebox.web.websockets.WebSocketsRuntimePoolProcessor;
 import org.torquebox.web.websockets.WebSocketsServerService;
@@ -104,6 +105,7 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         context.addDeploymentProcessor( Phase.POST_MODULE, 220, new WebSocketProcessorComponentResolverInstaller() );
         context.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
         context.addDeploymentProcessor( Phase.INSTALL, 3100, new WebSocketContextInstaller( "localhost"  ) );
+        context.addDeploymentProcessor( Phase.INSTALL, 4100, new URLRegistryInstaller() );
     }
 
     protected void addWebServices(RuntimeTaskContext context) {
