@@ -15,18 +15,14 @@
 #
 
 require 'spec_helper'
+require 'torquebox-security'
 
-describe "jaas" do
+remote_describe "jaas" do
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
     application:
-      RACK_ROOT: #{File.dirname(__FILE__)}/../apps/rack/jaas
-      env: development
-
-    web:
-      context: /authentication
-
+      root: #{TorqueSpec.app_root}
     ruby:
       version: #{RUBY_VERSION[0,3]}
 
@@ -40,28 +36,28 @@ describe "jaas" do
   END
 
   it "should authenticate against 'torquebox' with proper credentials" do
-    visit "/authentication/torquebox-global-success"
-    page.should have_content('it worked')
+    authenticator = TorqueBox::Authentication[ 'global' ]
+    authenticator.authenticate('scott', 'scott').should be_true
   end
 
   it "should authenticate against 'torquebox' as guest" do
-    visit "/authentication/torquebox-global-guest"
-    page.should have_content('it worked')
+    authenticator = TorqueBox::Authentication[ 'global' ]
+    authenticator.authenticate('guest', nil).should be_true
   end
 
   it "should not authenticate against 'torquebox' with improper credentials" do
-    visit "/authentication/torquebox-global-failure"
-    page.should have_content('it worked')
+    authenticator = TorqueBox::Authentication[ 'global' ]
+    authenticator.authenticate('foo', 'bar').should be_false
   end
 
   it "should authenticate against 'torquebox-jaas' with proper credentials" do
-    visit "/authentication/torquebox-local-success"
-    page.should have_content('it worked')
+    authenticator = TorqueBox::Authentication[ 'local' ]
+    authenticator.authenticate('scott', 'tiger').should be_true
   end
 
   it "should not authenticate against 'torquebox-jaas' with improper credentials" do
-    visit "/authentication/torquebox-local-failure"
-    page.should have_content('it worked')
+    authenticator = TorqueBox::Authentication[ 'local' ]
+    authenticator.authenticate('foo', 'bar').should be_false
   end
 
 end
