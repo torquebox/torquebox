@@ -1,4 +1,4 @@
 
 websockets:
   /:
-    class: SimpleProcessor
+    class: EchoProcessor

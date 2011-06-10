@@ -1,5 +1,5 @@
 
-class SimpleProcessor
+class EchoProcessor
 
   def initialize()
   end
@@ -33,7 +33,7 @@ class SimpleProcessor
 
   def on_message(msg)
     puts "received #{msg}"
-    "OKAY!"
+    "ECHO:#{msg}"
   end
 
   

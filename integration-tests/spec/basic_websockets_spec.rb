@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'web_socket_client'
+require 'websocket_client'
 
 describe "basic websockets test" do
 
@@ -12,6 +12,35 @@ describe "basic websockets test" do
   
   it "should be deployable" do
     visit( '/websockets' )
+    outbound = [
+      'touched by his noodly appendage',
+      'france is bacon',
+    ]
+    inbound = []
+
+    WebSocketClient.create( 'ws://localhost:8081/websockets/' ) do |client|
+      client.on_message do |message|
+        puts "received: #{message}"
+        inbound << message
+      end
+     
+      client.connect
+
+     
+      outbound.each do |e|  
+        client.send( e )
+      end
+      sleep(1)
+    end
+
+    puts inbound.inspect
+
+    inbound.should_not be_empty
+
+    outbound.each do |e|
+      inbound.should include( "ECHO:#{e}" )
+    end
+
   end
 
 end
