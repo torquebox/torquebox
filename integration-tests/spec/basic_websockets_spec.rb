@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'web_socket_client'
 
 describe "basic websockets test" do
 
@@ -14,3 +15,4 @@ describe "basic websockets test" do
   end
 
 end
+

@@ -6,6 +6,7 @@ import org.jboss.netty.channel.DefaultChannelPipeline;
 import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
+import org.torquebox.web.websockets.protocol.HandshakeHandler;
 
 /**
  * Provides the Netty websocket pipeline factory.
