@@ -21,3 +21,4 @@ TAGS
 Gemfile.lock
 .rakeTasks
 .repository
+.DS_Store

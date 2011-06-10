@@ -14,9 +14,19 @@
   <section id="configuring-jboss">
     <title>Configuring</title>
 
-    <para>JBoss has a very simple way of representing server configurations.
-    Each directory beneath <filename>server/</filename> denotes a single
-    configuration <emphasis>profile</emphasis>.</para>
+    <para>JBoss folder structure now has expressive changes since previous
+    releases, the most visible comes to folder structure and runtime modes:
+    <emphasis role="bold">domain</emphasis> and <emphasis
+    role="bold">standalone mode<emphasis>. In this release of Torquebox, just
+    standalone mode is available, domain mode support will come to the next
+    releases.</emphasis></emphasis></para>
+
+    <para><emphasis role="bold"><emphasis role="bold"><emphasis>Now in JBoss,
+    all server configuration profile is concentrated <emphasis>in</emphasis>
+    <emphasis><filename>standalone/configuration</filename></emphasis><emphasis>
+    path</emphasis> through </emphasis>standalone.xml<emphasis> file, making
+    admin tasks more easier to maintenance.
+    </emphasis></emphasis></emphasis></para>
 
     <para><mediaobject>
         <imageobject>
