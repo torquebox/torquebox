@@ -17,7 +17,6 @@
   <modules>
 
     <module>module-support</module>
-    <module>javadoc-support</module>
 
     <module>test-support</module>
     <module>ruby-test-support</module>

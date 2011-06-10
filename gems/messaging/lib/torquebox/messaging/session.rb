@@ -1,3 +1,19 @@
+# Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+# 
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 2.1 of
+# the License, or (at your option) any later version.
+# 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 module TorqueBox
   module Messaging
@@ -9,9 +25,11 @@ module TorqueBox
       DUPS_OK_ACK = javax.jms::Session::DUPS_OK_ACKNOWLEDGE
 
       attr_accessor :jms_session
-
-      def initialize(jms_session)
+      attr_accessor :connection
+      
+      def initialize(jms_session, connection)
         @jms_session = jms_session
+        @connection = connection
       end
 
       def transacted?
@@ -50,8 +68,18 @@ module TorqueBox
       def receive(destination, options={})
         decode = options.fetch(:decode, true)
         timeout = options.fetch(:timeout, 0)
-        selector = options.fetch(:selector, nil)
-        consumer = @jms_session.create_consumer( java_destination( destination ), selector )
+        selector = options[:selector]
+        
+        java_destination = java_destination( destination )
+        if options[:durable] && java_destination.class.name =~ /Topic/
+      raise ArgumentError.new( "You must set the :client_id via Topic.new's connect_options to use :durable" ) unless connection.client_id
+          consumer = @jms_session.createDurableSubscriber( java_destination,
+                                                           options.fetch(:subscriber_name, 'subscriber-1'),
+                                                           selector,
+                                                           false )
+        else
+          consumer = @jms_session.createConsumer( java_destination, selector )      
+        end
         begin
           jms_message = consumer.receive( timeout )
           if jms_message

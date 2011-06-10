@@ -41,9 +41,6 @@ import org.jruby.Ruby;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.as.DeploymentNotifier;
-import org.torquebox.core.as.services.DefaultRubyRuntimePoolService;
-import org.torquebox.core.as.services.RubyRuntimePoolStartService;
-import org.torquebox.core.as.services.SharedRubyRuntimeFactoryPoolService;
 
 /**
  * <pre>

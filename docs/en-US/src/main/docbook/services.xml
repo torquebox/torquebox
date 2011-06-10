@@ -34,8 +34,8 @@
       (<filename>my_service.rb</filename>)</title>
 
       <para><programlisting>class MyService
-  def intialize(opts={})
-    @name = opts[:name]
+  def initialize(opts={})
+    @name = opts['name']
   end
 
   def start

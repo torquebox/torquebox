@@ -1,15 +1,15 @@
 # Copyright 2008-2011 Red Hat, Inc, and individual contributors.
-#
+# 
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation; either version 2.1 of
 # the License, or (at your option) any later version.
-#
+# 
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # Lesser General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU Lesser General Public
 # License along with this software; if not, write to the Free
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -219,12 +219,25 @@ module TorqueBox
       end
 
       def undeploy(name = deployment_name, from_dir = deploy_dir)
-        deployment = File.join( name ) 
-        if File.exists?( deployed_file( deployment ) )
-          FileUtils.rm_rf( deployed_file( deployment ) )
+        deployment = File.join( from_dir, name )
+        undeployed = false
+        if File.exists?( dodeploy_file( name ) )
+          FileUtils.rm_rf( dodeploy_file( name ) )
+          undeployed = true
+        end
+        if File.exists?( deployed_file( name ) )
+          FileUtils.rm_rf( deployed_file( name ) )
+          undeployed = true
+        end
+        if File.exists?( deployment )
+          FileUtils.rm_rf( deployment )
+          undeployed = true
+        end
+
+        if undeployed
           [name, from_dir]
         else
-          puts "Can't undeploy #{deployed_file( deployment )}. It does not appear to be deployed."
+          puts "Can't undeploy #{deployment}. It does not appear to be deployed."
         end
       end
 

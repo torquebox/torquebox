@@ -261,20 +261,13 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
         String jrubyHome = this.jrubyHome;
 
-        log.info( "A jrubyHome=" + jrubyHome );
-
         if (jrubyHome == null) {
-            log.info( "B jrubyHome=" + jrubyHome );
             jrubyHome = JRubyHomeLocator.determineJRubyHome( this.useJRubyHomeEnvVar );
-            log.info( "C jrubyHome=" + jrubyHome );
 
             if (jrubyHome == null) {
-                log.info( "D jrubyHome=" + jrubyHome );
                 jrubyHome = attemptMountJRubyHomeFromClassPath();
-                log.info( "E jrubyHome=" + jrubyHome );
             }
         }
-        log.info( "F jrubyHome=" + jrubyHome );
 
         if (jrubyHome != null) {
             config.setJRubyHome( jrubyHome );
@@ -301,7 +294,14 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             prepareRuntime( runtime );
 
             if (this.initializer != null) {
-                this.initializer.initialize( runtime );
+                ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+                try {
+                    Thread.currentThread().setContextClassLoader( runtime.getJRubyClassLoader().getParent() );
+                    this.initializer.initialize( runtime );
+                } finally {
+                    Thread.currentThread().setContextClassLoader( originalCl );
+                }
+
             } else {
                 log.warn( "No initializer set for runtime" );
             }
@@ -456,7 +456,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         if (this.applicationEnvironment != null) {
             env.putAll( this.applicationEnvironment );
         }
-        
+
         log.info( "Environment: " + env );
         return env;
     }

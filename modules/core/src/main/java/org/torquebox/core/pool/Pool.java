@@ -24,8 +24,7 @@ package org.torquebox.core.pool;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
- * @param <T>
- *            The instance type.
+ * @param <T> The instance type.
  */
 public interface Pool<T> {
 
@@ -33,19 +32,16 @@ public interface Pool<T> {
      * Borrow an instance from the pool.
      * 
      * @return The borrowed instance.
-     * @throws Exception
-     *             if an error occurs.
+     * @throws Exception if an error occurs.
      */
     T borrowInstance() throws Exception;
 
     /**
      * Borrow an instance from the pool.
      * 
-     * @param timeout
-     *            Wait time to acquire instance.
+     * @param timeout Wait time to acquire instance.
      * @return The borrowed instance.
-     * @throws Exception
-     *             if an error occurs.
+     * @throws Exception if an error occurs.
      */
     T borrowInstance(long timeout) throws Exception;
 

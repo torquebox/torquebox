@@ -1,4 +1,4 @@
-# Copyright 2011 Red Hat, Inc, and individual contributors.
+# Copyright 2008-2011 Red Hat, Inc, and individual contributors.
 # 
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
@@ -14,7 +14,6 @@
 # License along with this software; if not, write to the Free
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-
 
 # Helpers for upstart rake tasks
 
