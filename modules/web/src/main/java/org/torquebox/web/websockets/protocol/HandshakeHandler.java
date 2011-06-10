@@ -1,29 +1,29 @@
 /*
- * Copyright 2010 Red Hat, Inc.
- *
- * Red Hat licenses this file to you under the Apache License, version 2.0
- * (the "License"); you may not use this file except in compliance with the
- * License.  You may obtain a copy of the License at:
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations
- * under the License.
+ * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+ * 
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ * 
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
 package org.torquebox.web.websockets.protocol;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.catalina.Session;
 import org.jboss.logging.Logger;
-import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -49,14 +49,21 @@ import org.torquebox.web.websockets.WebSocketContext;
 import org.torquebox.web.websockets.component.WebSocketProcessorComponent;
 
 /**
- * @author mdobozy Based on Trustin Lee's example WebSocketServerListener.
- * @author <a href="http://www.jboss.org/netty/">The Netty Project</a>
- * @author <a href="http://gleamynode.net/">Trustin Lee</a>
+ * Multi-verison handshake handler for the web-sockets protocol family.
  * 
- * @version $Rev: 2314 $, $Date: 2010-06-22 09:02:27 +0200 (Mar, 22 jui 2010) $
+ * @see Handshake
+ * 
+ * @author Trustin Lee
+ * @author Michael Dobozy
+ * @author Bob McWhirter
  */
 public class HandshakeHandler extends SimpleChannelUpstreamHandler {
 
+    /**
+     * Construct.
+     * 
+     * @param contextRegistry The context registry.
+     */
     public HandshakeHandler(ContextRegistry contextRegistry) {
         this.contextRegistry = contextRegistry;
         this.handshakes.add( new Handshake_Ietf00() );
@@ -74,8 +81,15 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
 
     }
 
-    private void handleHttpRequest(ChannelHandlerContext channelContext, HttpRequest request) throws Exception {
-        log.info( "handle HTTP: " + request  );
+    /**
+     * Handle initial HTTP portion of the handshake.
+     * 
+     * @param channelContext
+     * @param request
+     * @throws Exception
+     */
+    protected void handleHttpRequest(ChannelHandlerContext channelContext, HttpRequest request) throws Exception {
+        log.info( "handle HTTP: " + request );
         if (isWebSocketsUpgradeRequest( request )) {
             log.info( "Processo websockets upgrade" );
             WebSocketContext context = this.contextRegistry.findContext( request.getHeader( "Host" ), request.getUri() );
@@ -86,8 +100,8 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
                 if (handshake != null) {
 
                     HttpResponse response = handshake.generateResponse( context, request );
-                    
-                    log.info(  "content: " + response.getContent() );
+
+                    log.info( "content: " + response.getContent() );
                     response.addHeader( Names.UPGRADE, Values.WEBSOCKET );
                     response.addHeader( Names.CONNECTION, Values.UPGRADE );
 
@@ -109,6 +123,13 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         sendHttpResponse( channelContext, request, new DefaultHttpResponse( HttpVersion.HTTP_1_1, HttpResponseStatus.FORBIDDEN ) );
     }
 
+    /**
+     * Locate a matching handshake version.
+     * 
+     * @param request The HTTP request.
+     * @return The matching handshake, otherwise <code>null</code> if none
+     *         match.
+     */
     protected Handshake findHandshake(HttpRequest request) {
         for (Handshake handshake : this.handshakes) {
             log.info( "Test handshake: " + handshake );
@@ -120,17 +141,35 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         return null;
     }
 
+    /**
+     * Remove HTTP handlers, replace with web-socket handlers.
+     * 
+     * @param pipeline The pipeline to reconfigure.
+     */
     protected void reconfigureUpstream(ChannelPipeline pipeline) {
         log.info( "reconfiguring upstream pipeline" );
         pipeline.remove( "http-aggregator" );
         pipeline.replace( "http-decoder", "websockets-decoder", new WebSocketFrameDecoder() );
     }
 
+    /**
+     * Remove HTTP handlers, replace with web-socket handlers
+     * 
+     * @param pipeline The pipeline to reconfigure.
+     */
     protected void reconfigureDownstream(ChannelPipeline pipeline) {
         log.info( "reconfiguring downstream pipeline" );
         pipeline.replace( "http-encoder", "websockets-encoder", new WebSocketFrameEncoder() );
     }
 
+    /**
+     * Attach handler bound to a user's session and a specific context.
+     * 
+     * @param channelContext The Netty channel context.
+     * @param context The web-socket context.
+     * @param pipeline The pipeline.
+     * @throws Exception If an error occurs creating the handler.
+     */
     protected void addContextHandler(ChannelHandlerContext channelContext, WebSocketContext context, ChannelPipeline pipeline) throws Exception {
         log.info( "attaching context handler to pipeline" );
         String sessionId = (String) channelContext.getAttachment();
@@ -140,6 +179,13 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         pipeline.addLast( "connection-handler", proxy );
     }
 
+    /**
+     * Determine if this request represents a web-socket upgrade request.
+     * 
+     * @param request The request to inspect.
+     * @return <code>true</code> if this request is indeed a web-socket upgrade
+     *         request, otherwise <code>false</code>.
+     */
     protected boolean isWebSocketsUpgradeRequest(HttpRequest request) {
         return (Values.UPGRADE.equalsIgnoreCase( request.getHeader( Names.CONNECTION ) ) && Values.WEBSOCKET.equalsIgnoreCase( request.getHeader( Names.UPGRADE ) ));
     }

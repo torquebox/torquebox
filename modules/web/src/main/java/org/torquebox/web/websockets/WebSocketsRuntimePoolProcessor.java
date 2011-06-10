@@ -27,6 +27,21 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.torquebox.core.runtime.PoolMetaData;
 
+/** Deploys the default web-sockets runtime pool if required.
+ * 
+ * <p>
+ * While settings from the <code>pooling</code> section of a <code>torquebox.yml</code>
+ * are respected, this deployer ensures that a <code>websockets</code> runtime pool
+ * is deployed if an application contains any web-socket endpoints.
+ * </p>
+ * 
+ * <p>
+ * By default, a shared pool is created, causing all processors for all connections
+ * to share a single Ruby interpreter.  This assumes thread-safe code.  Be careful.
+ * </p>
+ * 
+ * @author Bob McWhirter
+ */
 public class WebSocketsRuntimePoolProcessor implements DeploymentUnitProcessor {
 
     @Override

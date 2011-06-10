@@ -117,9 +117,9 @@ public class WebSocketProcessorComponentResolverInstaller extends BaseRubyCompon
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.websockets.component" );
 }

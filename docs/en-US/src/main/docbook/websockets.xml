@@ -92,15 +92,17 @@ websockets:
     class: EchoProcessor
   time:
     context: /time
-    class: TimeProcessor</programlisting><note>
-            <para>Currently no initialization parameters are passed to the
-            processors. This should be fixed.</para>
-          </note>In the above example, the
+    class: TimeProcessor</programlisting>In the above example, the
         <classname>EchoProcessor</classname> will handle WebSocket requests to
         <filename>/myapp/echo</filename>, while the
         <classname>TimeProcessor</classname> will handle requests to
         <filename>/myapp/time</filename>.</para>
       </example></para>
+
+    <note>
+      <para>Currently no initialization parameters are passed to the
+      processors. This should be fixed.</para>
+    </note>
   </section>
 
   <section>
