@@ -64,13 +64,6 @@ end
 
 remote_describe "in-container messaging tests" do
 
-  deploy <<-END.gsub(/^ {4}/,'')
-    application:
-      root: #{File.dirname(__FILE__)}/../apps/rack/messaging
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-  END
-
   describe "message enumeration" do
     it "should allow enumeration of the messages" do
       queue = TorqueBox::Messaging::Queue.start "/queues/browseable"

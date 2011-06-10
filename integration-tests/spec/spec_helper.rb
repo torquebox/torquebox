@@ -1,5 +1,8 @@
 require 'torquespec'
 require 'fileutils'
+TorqueSpec.local {
+  require 'spec_helper_integ'
+}
 
 TorqueSpec.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
 TorqueSpec.max_heap = java.lang::System.getProperty( 'max.heap' )
@@ -20,6 +23,3 @@ def mutable_app(path)
   FileUtils.cp_r( File.join( File.dirname( __FILE__ ), '..', 'apps', path ), dest_path )
 end
 
-unless ENV['TORQUEBOX_APP_NAME']
-  require 'spec_helper_integ'
-end
