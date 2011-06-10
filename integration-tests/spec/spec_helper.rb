@@ -1,5 +1,6 @@
 require 'torquespec'
 require 'fileutils'
+require 'torquebox-rake-support'
 
 TorqueSpec.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
 TorqueSpec.max_heap = java.lang::System.getProperty( 'max.heap' )

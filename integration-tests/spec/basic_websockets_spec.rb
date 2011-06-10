@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'websocket_client'
+#require 'websocket_client'
 
 describe "basic websockets test" do
 
