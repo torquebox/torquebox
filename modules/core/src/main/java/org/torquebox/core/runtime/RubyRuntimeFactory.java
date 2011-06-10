@@ -457,7 +457,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             env.putAll( this.applicationEnvironment );
         }
 
-        log.info( "Environment: " + env );
         return env;
     }
 
