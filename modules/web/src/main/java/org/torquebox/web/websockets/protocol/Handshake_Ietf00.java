@@ -22,7 +22,6 @@ import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names;
-import org.jboss.netty.handler.codec.http.HttpHeaders.Values;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.jboss.netty.handler.codec.http.HttpResponseStatus;
@@ -55,18 +54,34 @@ public class Handshake_Ietf00 extends Handshake {
         // Calculate the answer of the challenge.
         String key1 = request.getHeader( Names.SEC_WEBSOCKET_KEY1 );
         String key2 = request.getHeader( Names.SEC_WEBSOCKET_KEY2 );
-        int a = (int) (Long.parseLong( key1.replaceAll( "[^0-9]", "" ) ) / key1.replaceAll( "[^ ]", "" ).length());
-        int b = (int) (Long.parseLong( key2.replaceAll( "[^0-9]", "" ) ) / key2.replaceAll( "[^ ]", "" ).length());
-        long c = request.getContent().readLong();
-
-        ChannelBuffer input = ChannelBuffers.buffer( 16 );
-        input.writeInt( a );
-        input.writeInt( b );
-        input.writeLong( c );
-
-        ChannelBuffer output = ChannelBuffers.wrappedBuffer( MessageDigest.getInstance( "MD5" ).digest( input.array() ) );
-        response.setContent( output );
+        long a = solve( key1 );
+        long b = solve( key2 );
+        
+        byte[] c = new byte[8];
+        request.getContent().readBytes( c );
+        
+        
+        ChannelBuffer input = ChannelBuffers.buffer( 64 );
+        input.writeBytes( ("" + a).getBytes() );
+        input.writeBytes( ("" + b).getBytes() );
+        input.writeBytes( c );
+        
+        byte[] inputArray = input.array();
+        
+        int len = input.readableBytes();
+        MessageDigest digester = MessageDigest.getInstance( "MD5" );
+        digester.update(  inputArray, 0, len );
+        byte[] hash = digester.digest();
+        response.setContent( ChannelBuffers.wrappedBuffer( hash ) );
         
         return response;
+    }
+    
+    protected long solve(String key) {
+        String digitsOnly = key.replaceAll( "[^0-9]", "" );
+        long digits = Long.parseLong( digitsOnly );
+        long spaces = key.replaceAll( "[^ ]", "" ).length();
+        long solution = digits / spaces;
+        return solution;
     }
 }

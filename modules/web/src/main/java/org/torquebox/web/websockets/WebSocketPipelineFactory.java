@@ -24,12 +24,12 @@ class WebSocketPipelineFactory implements ChannelPipelineFactory {
     public ChannelPipeline getPipeline() throws Exception {
         ChannelPipeline pipeline = new DefaultChannelPipeline();
         
-        //pipeline.addLast(  "debug-A", new DebugHandler( "A" )  );
+        //pipeline.addLast(  "debug-A", new DebugHandler( "BORDER" )  );
         pipeline.addLast( "http-decoder", new HttpRequestDecoder() );
         pipeline.addLast( "http-aggregator", new HttpChunkAggregator( 65536 ) );
         pipeline.addLast( "http-encoder", new HttpResponseEncoder() );
         pipeline.addLast( "http-session-id-decoder", new HttpSessionIdDecoder() );
-        //pipeline.addLast(  "debug-B", new DebugHandler( "B" )  );
+        //pipeline.addLast(  "debug-B", new DebugHandler( "TAIL" )  );
         
         pipeline.addLast( "websockets-handshake", new HandshakeHandler( this.contextRegistry ) );
         //pipeline.addLast(  "debug-C", new DebugHandler( "C" )  );

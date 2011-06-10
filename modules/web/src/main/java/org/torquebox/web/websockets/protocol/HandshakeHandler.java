@@ -75,7 +75,9 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
     }
 
     private void handleHttpRequest(ChannelHandlerContext channelContext, HttpRequest request) throws Exception {
+        log.info( "handle HTTP: " + request  );
         if (isWebSocketsUpgradeRequest( request )) {
+            log.info( "Processo websockets upgrade" );
             WebSocketContext context = this.contextRegistry.findContext( request.getHeader( "Host" ), request.getUri() );
             if (context != null) {
 
@@ -84,6 +86,8 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
                 if (handshake != null) {
 
                     HttpResponse response = handshake.generateResponse( context, request );
+                    
+                    log.info(  "content: " + response.getContent() );
                     response.addHeader( Names.UPGRADE, Values.WEBSOCKET );
                     response.addHeader( Names.CONNECTION, Values.UPGRADE );
 
