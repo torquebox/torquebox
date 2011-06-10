@@ -1,0 +1,5 @@
+
+websockets:
+  echo:
+    context: /echo
+    class: EchoProcessor

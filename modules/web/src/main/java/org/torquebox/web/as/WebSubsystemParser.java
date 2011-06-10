@@ -19,9 +19,8 @@
 
 package org.torquebox.web.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+import static org.jboss.as.controller.parsing.ParseUtils.*;
 
 import java.util.List;
 
@@ -55,7 +54,7 @@ public class WebSubsystemParser implements XMLStreamConstants, XMLElementReader<
         
         requireNoAttributes(reader);
         requireNoContent(reader);
-
+        
         list.add(WebSubsystemAdd.createOperation(address));
     }
 

@@ -1,5 +1,6 @@
 require 'torquespec'
 require 'fileutils'
+require 'torquebox-rake-support'
 TorqueSpec.local {
   require 'spec_helper_integ'
 }

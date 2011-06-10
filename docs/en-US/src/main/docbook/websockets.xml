@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="websockets">
+  <title>WebSockets support</title>
+
+  <para>TorqueBox supports the in-flux WebSockets specifications which allows
+  very modern browsers (and other clients) to break out of the HTTP
+  request/response cycle, and perform full-duplex communications.</para>
+
+  <para>While WebSockets is similar to TCP sockets, they are inherently
+  slightly more message- or frame-oriented. Due to this, creating server-side
+  components to process WebSocket connections is fairly simple and
+  straight-forward.</para>
+
+  <section>
+    <title>Defining a processor</title>
+
+    <para>Each WebSocket connection created by each client results in a
+    dedicated <classname>WebSocketProcessor</classname> instance on the server
+    to service that connection for its duration. TorqueBox provides a
+    superclass you may use, but it is not required. The only method your class
+    must implement is <methodname>on_message(...)</methodname>, which
+    processes one inbound frame from the connection. Any non-nil return value
+    will be sent back to the client. If your class (or a superclass)
+    implements a method named session=, your processor may have the
+    opportunity to participate in the underlying HTTP session. This
+    functionality requires that the WebSocket client being used passes
+    session-identifying cookies.</para>
+
+    <para><example>
+        <title>Simple "echo" WebSocket processor</title>
+
+        <para><programlisting>class EchoProcessor
+  def on_message(message)
+    message
+  end
+end</programlisting></para>
+      </example></para>
+
+    <para>To take advantage of HTTP session access, either implement
+    <methodname>session=(</methodname>) or subclass
+    TorqueBox::WebSockets::Processor, and access the session using the
+    <methodname>session()</methodname> method. The session may be nil. </para>
+
+    <para><note>
+        <para>Currently, the session provided is a
+        <classname>javax.servlet.http.HttpSession</classname>, not a
+        friendly-wrapped Rack-like session.</para>
+      </note></para>
+
+    <para><example>
+        <title>WebSocket processor using session</title>
+
+        <para><programlisting>class FancyProcessor &lt; TorqueBox::WebSockets::Processor
+  def on_message(message)
+    name = session.getAttribute('username')
+    "Thanks, #{name}!"
+  end
+end</programlisting></para>
+      </example></para>
+
+    <para>By default, processor classes are placed under
+    <filename>app/websockets/</filename>, but this is not required as long as
+    they may be found somewhere on your application's load path.</para>
+  </section>
+
+  <section>
+    <title>Deployment of WebSocket processors</title>
+
+    <para>As with most things, WebSocket processors are wired up in your
+    applicaiton through the <filename>torquebox.yml</filename> configuration
+    file. WebSockets are configured under a top-level section named
+    <classname>websockets</classname>. </para>
+
+    <para>Within the websockets section, a section for each handler is denoted
+    with a <parameter>name</parameter>, and includes
+    <parameter>context</parameter> and a <parameter>class</parameter> name.
+    The context is relative to your application's web context. WebSocket
+    processors participate fully in your application's web-based virtual-host
+    configuration and context, and simply add to it.</para>
+
+    <para><example>
+        <title>Configuration of WebSocket processors in
+        <filename>torquebox.yml</filename></title>
+
+        <para><programlisting>web:
+  context: /myapp
+websockets:
+  echo:
+    context: /echo
+    class: EchoProcessor
+  time:
+    context: /time
+    class: TimeProcessor</programlisting><note>
+            <para>Currently no initialization parameters are passed to the
+            processors. This should be fixed.</para>
+          </note>In the above example, the
+        <classname>EchoProcessor</classname> will handle WebSocket requests to
+        <filename>/myapp/echo</filename>, while the
+        <classname>TimeProcessor</classname> will handle requests to
+        <filename>/myapp/time</filename>.</para>
+      </example></para>
+  </section>
+
+  <section>
+    <title>Integrating WebSockets with your web application</title>
+
+    <para>The underlying WebSockets server runs on a different port than
+    typical web traffic (port 8081 by default). Given that the ultimate
+    WebSocket URL involves the WebSocket server's port, your application's
+    context and each processor's context, TorqueBox provides an integration
+    helper.</para>
+
+    <para>From your web application, it's useful to generate or otherwise
+    communicate a particular endpoint URL to the prospective client. To create
+    these endpoint URLs, you may use the
+    <classname>TorqueBox::WebSockets</classname>
+    <methodname>lookup(...)</methodname> method from your views or
+    controllers.</para>
+
+    <para><example>
+        <title>Using TorqueBox::WebSockets to lookup endpoint URLs</title>
+
+        <para><programlisting>@echo_endpoint_url = TorqueBox::WebSockets.lookup( "echo" )</programlisting></para>
+      </example>In the default case, this would return a URL similar to
+    <code>ws://myhost.com:8081/myapp/echo</code>.</para>
+  </section>
+</chapter>

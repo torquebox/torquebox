@@ -154,6 +154,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.jboss</groupId>
+        <artifactId>netty</artifactId>
+        <version>${version.netty}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.hornetq</groupId>
         <artifactId>hornetq-jms-client</artifactId>
         <version>${version.org.hornetq.hornetq-jms}</version>
@@ -298,6 +304,8 @@
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
     <version.hamcrest>1.1</version.hamcrest>
+
+    <version.netty>3.2.1.Final</version.netty>
 
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 

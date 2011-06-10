@@ -19,10 +19,7 @@
 
 package org.torquebox.messaging.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
 
 import javax.jms.ConnectionFactory;
 
@@ -132,7 +129,7 @@ class MessagingSubsystemAdd implements ModelAddOperationHandler, BootOperationHa
                 .setInitialMode( Mode.ON_DEMAND )
                 .install();
     }
-
+    
     protected ServiceName getJMSConnectionFactoryServiceName() {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
     }

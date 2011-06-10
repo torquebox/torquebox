@@ -74,6 +74,13 @@
       <type>gem</type>
     </dependency>
 
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>websocket-client</artifactId>
+      <version>0.1.2</version>
+      <type>gem</type>
+    </dependency>
+
 
     <dependency>
       <groupId>rubygems</groupId>
