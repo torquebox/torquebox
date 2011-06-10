@@ -41,17 +41,17 @@ module TorqueBox
       path = path.to_s
       return path if ( path =~ %r(^vfs:) )
       cur = path
+      trim_size = cur.length
       while ( cur != '.' && cur != '/' )
         if ( ::File.exist_without_vfs?( cur ) )
-
-          child_path = path[cur.length..-1]
-
+          child_path = path[trim_size..-1]
           if ( cur[-1,1] == '/' )
             cur = cur[0..-2]
           end
           return TorqueBox::VFS.resolve_path_url( cur ), child_path
         end
         cur = ::File.dirname( cur )
+        trim_size = cur.length
         cur << '/' unless cur[-1,1] == '/'
       end
       nil

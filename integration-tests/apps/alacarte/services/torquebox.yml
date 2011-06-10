@@ -2,9 +2,14 @@
 services:
   SimpleService:
     color: blue
+    an_array:
+      - one
+      - two
 
 queues:
   /queue/response:
     durable: false
   /queue/next_response:
+    durable: false
+  /queue/init_params:
     durable: false
