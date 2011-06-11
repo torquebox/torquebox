@@ -79,6 +79,7 @@ public class WebSocketProcessorComponentResolverInstaller extends BaseRubyCompon
         ServiceName serviceName = WebSocketsServices.webSocketProcessorComponentResolver( unit, webSocketMetaData.getName() );
         ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
+        resolver.setInitializeParams( webSocketMetaData.getRubyConfig() );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( WebSocketProcessorComponent.class );
         

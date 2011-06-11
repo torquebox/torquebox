@@ -19,6 +19,8 @@
 
 package org.torquebox.web.websockets;
 
+import java.util.Map;
+
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
 
@@ -72,10 +74,19 @@ public class WebSocketMetaData {
     public String getRequirePath() {
         return this.requirePath;
     }
+    
+    public void setRubyConfig(Map<String,Object> rubyConfig) {
+        this.rubyConfig = rubyConfig;
+    }
+    
+    public Map<String,Object> getRubyConfig() {
+        return this.rubyConfig;
+    }
 
     private String name;
     private String contextPath;
     private String rubyClassName;
     private String requirePath;
+    private Map<String,Object> rubyConfig;
 
 }

@@ -1,7 +1,9 @@
 
 class EchoProcessor < TorqueBox::WebSockets::Processor
 
-  def initialize()
+  def initialize(opts={})
+    #puts "initialize echo with #{opts.inspect}"
+    @prefix = opts['prefix'] || 'ECHO'
   end
 
   def start()
@@ -23,9 +25,7 @@ class EchoProcessor < TorqueBox::WebSockets::Processor
 
   def on_message(msg)
     puts "received #{msg}"
-    send "ECHO:#{msg}"
+    send "#{@prefix}:#{msg}"
   end
-
-  
 
 end

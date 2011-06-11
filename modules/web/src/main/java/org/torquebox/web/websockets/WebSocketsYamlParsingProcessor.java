@@ -63,6 +63,9 @@ public class WebSocketsYamlParsingProcessor extends AbstractSplitYamlParsingProc
         
         webSocketMetaData.setRequirePath( requirePath );
         
+        Map<String,Object> config = (Map<String, Object>) contextData.get( "config" );
+        webSocketMetaData.setRubyConfig( config );
+        
         return webSocketMetaData;
     }
 
