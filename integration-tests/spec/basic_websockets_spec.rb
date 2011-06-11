@@ -24,17 +24,22 @@ describe "basic websockets test" do
     ]
     inbound = []
 
-    #WebSocketClient.create( 'ws://localhost:8081/websockets/' ) do |client|
+    puts "Creating client to #{ws_url}"
     WebSocketClient.create( ws_url ) do |client|
       client.on_message do |message|
         puts "received: #{message}"
         inbound << message
       end
+
+      puts "Connecting client"
      
       client.connect
 
+      puts "Connected client"
+
      
       outbound.each do |e|  
+        puts "Sending #{e}"
         client.send( e )
       end
       sleep(1)

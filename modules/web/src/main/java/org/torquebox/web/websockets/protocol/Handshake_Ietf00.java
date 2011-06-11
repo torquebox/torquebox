@@ -81,7 +81,7 @@ public class Handshake_Ietf00 extends Handshake {
         MessageDigest digester = MessageDigest.getInstance( "MD5" );
         digester.update( inputArray, 0, len );
         byte[] hash = digester.digest();
-        response.setContent( ChannelBuffers.wrappedBuffer( hash ) );
+        response.setContent( ChannelBuffers.wrappedBuffer( ChannelBuffers.wrappedBuffer( hash ), ChannelBuffers.wrappedBuffer( new byte[]{ '\r', '\n' } ) ) );
 
         return response;
     }
