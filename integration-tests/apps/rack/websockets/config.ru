@@ -6,6 +6,7 @@ app = lambda { |env|
   echo_endpoint        = TorqueBox::WebSockets.lookup('echo')
   echo_french_endpoint = TorqueBox::WebSockets.lookup('echo-french')
   time_endpoint        = TorqueBox::WebSockets.lookup('time')
+  session_endpoint     = TorqueBox::WebSockets.lookup('session')
 
   session = env['servlet_request'].session
   session.setAttribute( 'food', "tacos" )
@@ -17,6 +18,7 @@ app = lambda { |env|
     "  <div class='endpoint' id='endpoint-echo'>#{echo_endpoint}</div>" +
     "  <div class='endpoint' id='endpoint-echo-french'>#{echo_french_endpoint}</div>" +
     "  <div class='endpoint' id='endpoint-time'>#{time_endpoint}</div>" +
+    "  <div class='endpoint' id='endpoint-session'>#{session_endpoint};jsessionid=#{session.getId()}</div>" +
     "</div>"
   ] 
 }

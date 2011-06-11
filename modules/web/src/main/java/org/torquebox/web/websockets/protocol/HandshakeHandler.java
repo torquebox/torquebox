@@ -48,6 +48,7 @@ import org.jboss.netty.handler.codec.http.websocket.WebSocketFrameEncoder;
 import org.jboss.netty.util.CharsetUtil;
 import org.torquebox.web.websockets.ContextRegistry;
 import org.torquebox.web.websockets.RubyWebSocketProcessorProxy;
+import org.torquebox.web.websockets.SessionDecodedEvent;
 import org.torquebox.web.websockets.WebSocketContext;
 import org.torquebox.web.websockets.component.WebSocketProcessorComponent;
 
@@ -71,6 +72,15 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         this.contextRegistry = contextRegistry;
         this.handshakes.add( new Handshake_Ietf00() );
         this.handshakes.add( new Handshake_Hixie75() );
+    }
+
+    @Override
+    public void handleUpstream(ChannelHandlerContext channelContext, ChannelEvent event) throws Exception {
+        if ( event instanceof SessionDecodedEvent ) {
+            log.info(  "Received session-decode: " + event );
+            this.sessionId = ((SessionDecodedEvent)event).getSessionId();
+        }
+        super.handleUpstream( channelContext, event );
     }
 
     @Override
@@ -180,8 +190,9 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
      */
     protected void addContextHandler(ChannelHandlerContext channelContext, WebSocketContext context, ChannelPipeline pipeline) throws Exception {
         log.info( "attaching context handler to pipeline" );
-        String sessionId = (String) channelContext.getAttachment();
-        Session session = context.findSession( sessionId );
+        log.info( "SESSION ID: " + this.sessionId );
+        Session session = context.findSession( this.sessionId );
+        log.info( "SESSION: " + session );
         WebSocketProcessorComponent component = context.createComponent( session );
         RubyWebSocketProcessorProxy proxy = new RubyWebSocketProcessorProxy( component );
         pipeline.addLast( "connection-handler", proxy );
@@ -222,6 +233,7 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.web.websockets.protocol" );
+    private String sessionId;
     private ContextRegistry contextRegistry;
     private List<Handshake> handshakes = new ArrayList<Handshake>();
 

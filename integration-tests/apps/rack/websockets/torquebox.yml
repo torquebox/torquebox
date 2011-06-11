@@ -11,3 +11,6 @@ websockets:
   time:
     context: /time
     class: TimeProcessor
+  session:
+    context: /session
+    class: SessionProcessor

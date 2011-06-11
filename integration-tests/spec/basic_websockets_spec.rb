@@ -63,8 +63,8 @@ describe "basic websockets test" do
     ws_url.should_not be_empty
 
     outbound = [
-      'touched by his noodly appendage',
-      'france is bacon',
+      'yo dawg, I heard you liked a socket in your socket',
+      'it went *okay*',
     ]
     inbound = []
 
@@ -108,7 +108,6 @@ describe "basic websockets test" do
 
     inbound = []
 
-    puts "Creating client to #{ws_url}"
     WebSocketClient.create( ws_url ) do |client|
       client.on_message do |message|
         puts "received: #{message}"
@@ -131,6 +130,35 @@ describe "basic websockets test" do
 
     inbound.size.should eql(1)
 
+  end
+
+  it "should be able to throw sessions across with a matrix parameter" do
+    visit( '/websockets' )
+    page.find("#success")[:class].should == 'websockets'
+
+    ws_url = page.find("#endpoint-session").text
+    ws_url.should_not be_empty
+
+    inbound = []
+
+    puts "Connect to #{ws_url}"
+    WebSocketClient.create( ws_url ) do |client|
+      client.on_message do |message|
+        puts "received: #{message}"
+        inbound << message
+      end
+
+      puts "Connecting client"
+      client.connect
+
+      puts "Connected client"
+      sleep(1)
+    end
+
+    puts inbound.inspect
+
+    inbound.size.should eql(1)
+    inbound.first.should eql( "tacos" )
   end
 
 end

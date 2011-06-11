@@ -19,39 +19,106 @@
 
 package org.torquebox.web.websockets;
 
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.handler.codec.http.Cookie;
+import org.jboss.netty.handler.codec.http.CookieDecoder;
+import org.jboss.netty.handler.codec.http.HttpHeaders.Names;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 
 /**
- * <b>NOT YET IMPLEMENTED</b> Decodes the HTTP session from the HTTP portion of the handshake.
- * 
- * <p><b>NOT YET IMPLEMENTED</b></p>
+ * Decodes the HTTP session from the HTTP portion of the handshake.
  * 
  * <p>
- * Decodes the session for the new WebSockets connection.  It scans for the
+ * Decodes the session for the new WebSockets connection. It scans for the
  * session in either an HTTP cookie, or passed through a <i>matrix parameter</i>
  * on the connection URL.
  * </p>
- * 
- * <p><b>NOT YET IMPLEMENTED</b></p>
  * 
  * @author Bob McWhirter
  */
 public class HttpSessionIdDecoder extends SimpleChannelUpstreamHandler {
 
+    public static final String DEFAULT_SESSION_COOKIE_NAME = "JSESSIONID";
+    public static final String JSESSIONID = "JSESSIONID";
+
+    public HttpSessionIdDecoder() {
+        this( DEFAULT_SESSION_COOKIE_NAME );
+    }
+
+    public HttpSessionIdDecoder(String sessionCookieName) {
+        this.sessionCookieName = sessionCookieName;
+    }
+
     @Override
     public void messageReceived(ChannelHandlerContext channelContext, MessageEvent e) throws Exception {
         if (e.getMessage() instanceof HttpRequest) {
-            String sessionId = decodeSessionId( (HttpRequest) e.getMessage() );
-            channelContext.setAttachment( sessionId );
+            String sessionId = decodeSessionIdFromCookie( (HttpRequest) e.getMessage() );
+            if (sessionId == null) {
+                sessionId = decodeSessionIdFromMatrix( (HttpRequest) e.getMessage() );
+            }
+            if ( sessionId != null ) {
+                channelContext.sendUpstream( new SessionDecodedEvent( channelContext.getChannel(), sessionId ) );
+            }
         }
         super.messageReceived( channelContext, e );
     }
 
-    protected String decodeSessionId(HttpRequest message) {
+    protected String decodeSessionIdFromCookie(HttpRequest message) {
+        String cookieHeader = message.getHeader( Names.COOKIE );
+        if (cookieHeader == null || cookieHeader.trim().equals( "" )) {
+            return null;
+        }
+        CookieDecoder decoder = new CookieDecoder();
+        Set<Cookie> cookies = decoder.decode( cookieHeader );
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equalsIgnoreCase( this.sessionCookieName )) {
+                return cookie.getValue();
+            }
+        }
         return null;
     }
 
+    protected String decodeSessionIdFromMatrix(HttpRequest message) {
+        String uri = message.getUri();
+
+        int loc = uri.indexOf( ";" );
+
+        if (loc < 0) {
+            return null;
+        }
+
+        String matrix = uri.substring( loc + 1 );
+        
+        loc = matrix.indexOf(  "?"  );
+        
+        if ( loc >= 0 ) {
+            matrix = matrix.substring( 0, loc );
+        }
+        
+        StringTokenizer nameValuePairs = new StringTokenizer( matrix, "&" );
+
+        while (nameValuePairs.hasMoreTokens()) {
+            String nameValuePair = nameValuePairs.nextToken();
+
+            int equalsLoc = nameValuePair.indexOf( "=" );
+
+            if (equalsLoc >= 0) {
+                String name = nameValuePair.substring( 0, equalsLoc );
+
+                if (name.equalsIgnoreCase( JSESSIONID ) || name.equalsIgnoreCase( this.sessionCookieName )) {
+                    String value = nameValuePair.substring( equalsLoc + 1 );
+                    return value;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String sessionCookieName;
 }

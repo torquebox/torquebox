@@ -87,8 +87,19 @@ public class ContextRegistry {
      * @return The matching <code>WebSocketContext</code> if any match the given inputs, otherwise <code>null</code>.
      */
     public WebSocketContext findContext(String host, String uri) {
-        log.info( "Find context: " + makeKey( host, uri ) );
-        return this.registry.get( makeKey( host, uri ) );
+        String simpleUri = uri;
+        int loc = simpleUri.indexOf( ";" );
+        if ( loc >= 0 ) {
+            simpleUri = simpleUri.substring( 0, loc );
+        }
+        
+        loc = simpleUri.indexOf( "?" );
+        if ( loc >= 0 ) {
+            simpleUri = simpleUri.substring( 0, loc );
+        }
+        
+        log.info( "Find context: " + makeKey( host, simpleUri ) );
+        return this.registry.get( makeKey( host, simpleUri ) );
     }
 
     /**
