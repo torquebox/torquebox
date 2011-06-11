@@ -21,11 +21,6 @@ remote_describe "jaas" do
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
-    application:
-      root: #{TorqueSpec.app_root}
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-
     auth:
       global:
         domain: torquebox
