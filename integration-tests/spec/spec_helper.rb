@@ -24,3 +24,6 @@ def mutable_app(path)
   FileUtils.cp_r( File.join( File.dirname( __FILE__ ), '..', 'apps', path ), dest_path )
 end
 
+# Because DRb requires ObjectSpace and 1.9 disables it
+require 'jruby'
+JRuby.objectspace = true
