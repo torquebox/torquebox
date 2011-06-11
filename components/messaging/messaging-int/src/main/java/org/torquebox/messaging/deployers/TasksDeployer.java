@@ -75,6 +75,7 @@ public class TasksDeployer extends AbstractDeployer {
             processorMetaData.setDestinationName( queueName );
             processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
             processorMetaData.setConcurrency( task.getConcurrency() );
+            processorMetaData.setMessageSelector( "JMSCorrelationID IS NULL" );
             AttachmentUtils.multipleAttach( unit, processorMetaData, processorMetaData.getName() );
         }
     }

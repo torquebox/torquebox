@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/destination'
+require 'torquebox/messaging/future_result'
 
 module TorqueBox
   module Messaging
@@ -104,7 +105,15 @@ module TorqueBox
 
         class << self
           def publish_message(receiver, method, args, options = { })
-            Queue.new(QUEUE_NAME).publish({:receiver => receiver, :method => method, :args => args}, options)
+            queue = Queue.new(QUEUE_NAME)
+            future = FutureResult.new( queue )
+            queue.publish({:receiver => receiver,
+                            :future_id => future.correlation_id,
+                            :future_queue => QUEUE_NAME,
+                            :method => method,
+                            :args => args}, options)
+
+            future
           rescue javax.naming.NameNotFoundException => ex
             raise RuntimeError.new("The backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")
           end

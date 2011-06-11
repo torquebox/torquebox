@@ -16,6 +16,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/destination'
+require 'torquebox/messaging/future_responder'
+require 'torquebox/messaging/future_result'
 
 module TorqueBox
   module Messaging
@@ -28,15 +30,26 @@ module TorqueBox
       end
 
       def self.async(method, payload = {}, options = {})
-        message = {:method => method, :payload => payload}
-        Queue.new(queue_name).publish message, options
+        queue = Queue.new(queue_name)
+        future = FutureResult.new( queue )
+        message = {
+          :method => method,
+          :payload => payload,
+          :future_id => future.correlation_id,
+          :future_queue => queue_name
+        }
+        queue.publish( message, options )
+
+        future
       rescue javax.naming.NameNotFoundException => ex
         raise RuntimeError.new("The queue for #{self.name} is not available. Did you disable it by setting its concurrency to 0?")
       end
 
       def process!(message)
         hash = message.decode
-        self.send hash[:method].to_sym, hash[:payload]
+        FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id] ).respond do
+          self.send hash[:method].to_sym, hash[:payload]
+        end
       end
 
     end
