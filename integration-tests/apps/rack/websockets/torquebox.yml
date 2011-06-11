@@ -3,3 +3,6 @@ websockets:
   echo:
     context: /echo
     class: EchoProcessor
+  time:
+    context: /time
+    class: TimeProcessor

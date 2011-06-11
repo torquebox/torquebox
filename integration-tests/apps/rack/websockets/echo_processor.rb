@@ -8,13 +8,12 @@ class EchoProcessor < TorqueBox::WebSockets::Processor
     puts "starting"
   end
 
-  def connected(channel)
+  def connected()
     puts "connected to #{channel}"
-    puts "Session is #{session}"
-    #puts "  foo is #{session.getAttribute('food')}"
+    nil
   end
 
-  def disconnected(channel)
+  def disconnected()
     puts "disconnected from #{channel}"
   end
 
@@ -24,7 +23,7 @@ class EchoProcessor < TorqueBox::WebSockets::Processor
 
   def on_message(msg)
     puts "received #{msg}"
-    "ECHO:#{msg}"
+    send "ECHO:#{msg}"
   end
 
   

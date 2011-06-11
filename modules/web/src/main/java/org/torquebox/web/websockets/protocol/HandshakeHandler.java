@@ -25,13 +25,16 @@ import java.util.List;
 import org.apache.catalina.Session;
 import org.jboss.logging.Logger;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.ChannelEvent;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelPipeline;
+import org.jboss.netty.channel.ChannelState;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.channel.UpstreamChannelStateEvent;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpHeaders.Names;
@@ -111,8 +114,8 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
                     addContextHandler( channelContext, context, pipeline );
 
                     channelContext.getChannel().write( response );
-
                     reconfigureDownstream( pipeline );
+                    forwardConnectEventUpstream( channelContext );
 
                     return;
                 }
@@ -121,6 +124,11 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
 
         // Send an error page otherwise.
         sendHttpResponse( channelContext, request, new DefaultHttpResponse( HttpVersion.HTTP_1_1, HttpResponseStatus.FORBIDDEN ) );
+    }
+
+    protected void forwardConnectEventUpstream(ChannelHandlerContext channelContext) {
+        ChannelEvent connectEvent = new UpstreamChannelStateEvent( channelContext.getChannel(), ChannelState.CONNECTED, channelContext.getChannel().getRemoteAddress() );
+        channelContext.sendUpstream( connectEvent );
     }
 
     /**

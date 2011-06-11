@@ -21,6 +21,7 @@ package org.torquebox.web.websockets.component;
 
 import org.apache.catalina.Session;
 import org.jboss.logging.Logger;
+import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -42,7 +43,7 @@ public class WebSocketProcessorComponent extends AbstractRubyComponent {
     public WebSocketContext getWebSocketContext() {
         return this.context;
     }
-
+    
     public void setSession(Session session) {
         this.session = session;
     }
@@ -53,11 +54,14 @@ public class WebSocketProcessorComponent extends AbstractRubyComponent {
 
     public void channelConnected(ChannelHandlerContext channelContext, ChannelStateEvent event) {
         _callIfDefined_WithSession( "start" );
-        _callIfDefined_WithSession( "connected", event.getChannel() );
+        _callIfDefined_WithSession( "channel=", event.getChannel() );
+        _callIfDefined_WithSession( "connected" );
     }
 
     public void channelDisconnected(ChannelHandlerContext channelContext, ChannelStateEvent event) {
-        _callIfDefined_WithSession( "disconnected", event.getChannel() );
+        log.info(  "channelDisconnected(" + channelContext + ", " + event + ")"  );
+        _callIfDefined_WithSession( "disconnected" );
+        _callIfDefined_WithSession( "channel=", new Object[] { null } );
         _callIfDefined_WithSession( "stop" );
     }
 
@@ -106,5 +110,4 @@ public class WebSocketProcessorComponent extends AbstractRubyComponent {
     private static final Logger log = Logger.getLogger( "org.torquebox.web.websockets" );
     private WebSocketContext context;
     private Session session;
-
 }
