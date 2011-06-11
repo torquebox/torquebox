@@ -16,6 +16,8 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/queue'
+require 'torquebox/messaging/future_result'
+require 'torquebox/messaging/task'
 require 'torquebox/injectors'
 
 module TorqueBox
@@ -105,8 +107,16 @@ module TorqueBox
         
         class << self
           def publish_message(receiver, method, args, options = { })
-            queue = Queue.new( TorqueBox::Messaging::Task.queue_name("torquebox_backgroundable") )
-            queue.publish({:receiver => receiver, :method => method, :args => args}, options)
+            queue_name = Task.queue_name( "torquebox_backgroundable" )
+            queue = Queue.new( queue_name )
+            future = FutureResult.new( queue )
+            queue.publish( {:receiver => receiver,
+                             :future_id => future.correlation_id,
+                             :future_queue => queue_name,
+                             :method => method,
+                             :args => args}, options )
+            
+            future
           rescue javax.jms.InvalidDestinationException => ex
             raise RuntimeError.new("The Backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")
           end

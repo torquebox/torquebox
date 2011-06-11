@@ -17,12 +17,15 @@
 
 require 'torquebox/messaging/message_processor'
 require 'torquebox/messaging/const_missing'
+require 'torquebox/messaging/future_responder'
 
 module TorqueBox
   module Messaging
     class BackgroundableProcessor < MessageProcessor
       def on_message(hash)
-        hash[:receiver].send(hash[:method], *hash[:args])
+        FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id] ).respond do
+          hash[:receiver].send(hash[:method], *hash[:args])
+        end
       end
     end
   end

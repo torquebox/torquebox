@@ -102,7 +102,7 @@ module TorqueBox
       end
 
       def wait_for_destination(timeout=nil, &block)
-        timeout ||= 30000 # 30s default
+        timeout ||= 30_000 # 30s default
         start = Time.now
         begin
           block.call

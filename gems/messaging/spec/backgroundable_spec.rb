@@ -62,6 +62,7 @@ describe TorqueBox::Messaging::Backgroundable do
       @queue = mock('queue')
       @queue.stub(:publish)
       TorqueBox::Messaging::Queue.stub(:new).and_return(@queue)
+      TorqueBox::Messaging::FutureResult.stub(:unique_id).and_return('1234')
     end
 
     it "should put a message on the queue" do
@@ -69,9 +70,20 @@ describe TorqueBox::Messaging::Backgroundable do
       MyTestModel.new.an_async_action(nil, nil)
     end
 
-    it "should include the receiver, sync method, and args" do
+    it "should return a future" do
+      result = MyTestModel.new.an_async_action(nil, nil)
+      result.is_a?(TorqueBox::Messaging::FutureResult).should be_true
+    end
+    
+    it "should include the proper options in the message" do
       object = MyTestModel.new
-      @queue.should_receive(:publish).with({:receiver => object, :method => '__sync_an_async_action', :args => [:a, :b]}, { })
+      @queue.should_receive(:publish).with({
+                                             :receiver => object,
+                                             :future_id => '1234',
+                                             :future_queue => "/queues/torquebox//tasks/torquebox_backgroundable",
+                                             :method => '__sync_an_async_action',
+                                             :args => [:a, :b]
+                                           }, { })
       object.an_async_action(:a, :b) 
     end
     
@@ -99,21 +111,27 @@ describe TorqueBox::Messaging::Backgroundable do
 
     it "should queue any method called on it" do
       @queue.should_receive(:publish).with({:receiver => anything,
-                                           :method => :foo,
-                                             :args => anything}, { })
+                                             :method => :foo,
+                                             :args => anything,
+                                             :future_id => anything,
+                                             :future_queue => anything}, { })
       @object.background.foo 
     end
 
     it "should queue the receiver" do
       @queue.should_receive(:publish).with({:receiver => @object,
-                                           :method => anything,
-                                             :args => anything}, { })
+                                             :method => anything,
+                                             :args => anything,
+                                             :future_id => anything,
+                                             :future_queue => anything}, { })
       @object.background.foo 
     end
 
     it "should queue the args" do
       @queue.should_receive(:publish).with({:receiver => anything,
-                                           :method => anything,
+                                             :method => anything,
+                                             :future_id => anything,
+                                             :future_queue => anything,
                                              :args => [1,2]}, {})
       @object.background.foo(1,2) 
     end
@@ -131,8 +149,10 @@ describe TorqueBox::Messaging::Backgroundable do
 
     it "should pass through any options" do
       @queue.should_receive(:publish).with({:receiver => anything,
-                                           :method => anything,
-                                             :args => anything},
+                                             :method => anything,
+                                             :args => anything,
+                                             :future_id => anything,
+                                             :future_queue => anything},
                                            {:ttl => 1})
       @object.background(:ttl => 1).foo
     end
