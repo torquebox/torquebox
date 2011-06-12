@@ -19,20 +19,25 @@
 
 package org.torquebox.web.websockets;
 
+import org.apache.catalina.Session;
 import org.jboss.logging.Logger;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.jboss.netty.handler.codec.http.websocket.WebSocketFrame;
+import org.jruby.Ruby;
+import org.jruby.RubyModule;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.torquebox.web.websockets.component.WebSocketProcessorComponent;
 
 /**
  * Bridge between Netty and the Java side of the Ruby handler.
  * 
- * <p>This handler is attached to the tail of the Netty channel
- * pipeline to dispatch {@link WebSocketFrame}s to the underlying
- * component.</p>
+ * <p>
+ * This handler is attached to the tail of the Netty channel pipeline to
+ * dispatch {@link WebSocketFrame}s to the underlying component.
+ * </p>
  * 
  * @author Michael Dobozy
  * @author Bob McWhirter
@@ -40,44 +45,104 @@ import org.torquebox.web.websockets.component.WebSocketProcessorComponent;
  */
 public class RubyWebSocketProcessorProxy extends SimpleChannelUpstreamHandler {
 
-    
-    /** Construct around a component.
+    /**
+     * Construct around a session and component.
      * 
      * @param component
      */
-    public RubyWebSocketProcessorProxy(WebSocketProcessorComponent component) {
+    public RubyWebSocketProcessorProxy(Session session, WebSocketProcessorComponent component) {
+        this.session = session;
         this.component = component;
+    }
+
+    protected Object getRubySession() {
+
+        Ruby ruby = this.component.getRubyComponent().getRuntime();
+
+        if (this.session != null) {
+            RubyModule servletStoreClass = ruby.getClassFromPath( "TorqueBox::Session::ServletStore" );
+            this.rubySession = JavaEmbedUtils.invokeMethod( ruby, servletStoreClass, "load_session_data", new Object[] { this.session }, Object.class );
+        } else {
+            RubyModule sessionDataClass = ruby.getClassFromPath( "TorqueBox::Session::SessionData" );
+            this.rubySession = JavaEmbedUtils.invokeMethod( ruby, sessionDataClass, "new", new Object[] {}, Object.class );
+        }
+
+        return this.rubySession;
+    }
+
+    protected void commitSession() {
+        if (this.session != null) {
+            System.err.println( "Committing session" );
+            Ruby ruby = this.component.getRubyComponent().getRuntime();
+            RubyModule servletStoreClass = ruby.getClassFromPath( "TorqueBox::Session::ServletStore" );
+            JavaEmbedUtils.invokeMethod( ruby, servletStoreClass, "store_session_data", new Object[] { this.session, this.rubySession }, void.class );
+            System.err.println( "Committed session" );
+        }
+    }
+
+    protected void beginSessionAccess() {
+        if (this.session != null) {
+            this.session.access();
+        }
+    }
+
+    protected void endSessionAccess() {
+        if (this.session != null) {
+            this.session.endAccess();
+        }
     }
 
     @Override
     public void channelConnected(ChannelHandlerContext channelContext, ChannelStateEvent event) throws Exception {
-        this.component.channelConnected( channelContext, event );
+        this.component.start();
+        beginSessionAccess();
+        try {
+            this.component.setChannel( event.getChannel() );
+            this.component.setSession( getRubySession() );
+            this.component.connected();
+            commitSession();
+        } finally {
+            endSessionAccess();
+        }
         super.channelConnected( channelContext, event );
     }
 
     @Override
     public void channelDisconnected(ChannelHandlerContext channelContext, ChannelStateEvent event) throws Exception {
         try {
-            this.component.channelDisconnected( channelContext, event );
-            super.channelDisconnected( channelContext, event );
+            beginSessionAccess();
+            try {
+                this.component.disconnected();
+                this.component.setSession( null );
+                commitSession();
+            } finally {
+                endSessionAccess();
+            }
         } finally {
             this.component.dispose();
         }
+        super.channelDisconnected( channelContext, event );
     }
 
     @Override
     public void messageReceived(ChannelHandlerContext channelContext, MessageEvent event) throws Exception {
-        log.info( "on_message java netty -> " + channelContext + "  " + event );
         if (event.getMessage() instanceof WebSocketFrame) {
-            Object response = this.component.handleMessage( channelContext, event );
-            if (response != null) {
-                event.getChannel().write( response );
-                return;
+            String message = ((WebSocketFrame) event.getMessage()).getTextData();
+            beginSessionAccess();
+            try {
+                this.component.on_message( message );
+                commitSession();
+            } finally {
+                endSessionAccess();
             }
-            super.messageReceived( channelContext, event );
         }
+        super.messageReceived( channelContext, event );
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.web.websockets.protocol" );
+
+    private Session session;
+    private Object rubySession;
+
     private WebSocketProcessorComponent component;
 }

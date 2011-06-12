@@ -22,11 +22,6 @@ package org.torquebox.web.websockets.component;
 import org.apache.catalina.Session;
 import org.jboss.logging.Logger;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.handler.codec.http.websocket.DefaultWebSocketFrame;
-import org.jboss.netty.handler.codec.http.websocket.WebSocketFrame;
 import org.torquebox.core.component.AbstractRubyComponent;
 import org.torquebox.web.websockets.WebSocketContext;
 
@@ -43,69 +38,43 @@ public class WebSocketProcessorComponent extends AbstractRubyComponent {
     public WebSocketContext getWebSocketContext() {
         return this.context;
     }
+
+    public void setSession(Object session) {
+        _callRubyMethodIfDefined( "session=", session );
+    }
     
-    public void setSession(Session session) {
-        this.session = session;
+    public Object getSession() {
+        return _callRubyMethodIfDefined( "session" );
+    }
+    
+    public void setChannel(Channel channel) {
+        _callRubyMethodIfDefined( "channel=", channel );
     }
 
-    public Session getSession() {
-        return this.session;
+    public void start() {
+        _callRubyMethodIfDefined( "start" );
     }
 
-    public void channelConnected(ChannelHandlerContext channelContext, ChannelStateEvent event) {
-        _callIfDefined_WithSession( "start" );
-        _callIfDefined_WithSession( "channel=", event.getChannel() );
-        _callIfDefined_WithSession( "connected" );
+    public void stop() {
+        _callRubyMethodIfDefined( "start" );
     }
 
-    public void channelDisconnected(ChannelHandlerContext channelContext, ChannelStateEvent event) {
-        log.info(  "channelDisconnected(" + channelContext + ", " + event + ")"  );
-        _callIfDefined_WithSession( "disconnected" );
-        _callIfDefined_WithSession( "channel=", new Object[] { null } );
-        _callIfDefined_WithSession( "stop" );
+    public void connected() {
+        _callRubyMethodIfDefined( "connected" );
+    }
+
+    public void disconnected() {
+        _callRubyMethodIfDefined( "disconnected" );
+    }
+    
+    public void on_message(String message) {
+       _callRubyMethodIfDefined( "on_message", new Object[] { message } );
     }
 
     public void dispose() {
         this.context.releaseComponent( this );
     }
 
-    // TODO: Handle binary vs text conversions
-    public WebSocketFrame handleMessage(ChannelHandlerContext channelContext, MessageEvent event) {
-        log.info(  "on_message java component -> " + channelContext + "  " + event  );
-        WebSocketFrame frame = (WebSocketFrame) event.getMessage();
-        String message = frame.getTextData();
-        Object response = _callIfDefined_WithSession( "on_message", message );
-
-        if (response != null) {
-            return new DefaultWebSocketFrame( response.toString() );
-        }
-        return null;
-    }
-
-    protected Object _callIfDefined_WithSession(String method, Object... args) {
-        Object result = null;
-
-        try {
-            if (this.session != null) {
-                session.access();
-                log.info( "setting session" );
-                _callRubyMethodIfDefined( "session=", this.session.getSession() );
-                log.info( "completed setting session" );
-            }
-            log.info( "calling " + method );
-            result = _callRubyMethodIfDefined( method, args );
-            log.info( "called " + method );
-        } finally {
-            if (this.session != null) {
-                log.info( "unsetting session" );
-                _callRubyMethodIfDefined( "session=", new Object[] { null } );
-                log.info( "completed unsetting session" );
-                session.endAccess();
-            }
-        }
-
-        return result;
-    }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.web.websockets" );
     private WebSocketContext context;

@@ -24,28 +24,18 @@ describe "basic websockets test" do
     ]
     inbound = []
 
-    puts "Creating client to #{ws_url}"
     WebSocketClient.create( ws_url ) do |client|
       client.on_message do |message|
-        puts "received: #{message}"
         inbound << message
       end
 
-      puts "Connecting client"
-     
       client.connect
 
-      puts "Connected client"
-
-     
       outbound.each do |e|  
-        puts "Sending #{e}"
         client.send( e )
       end
       sleep(1)
     end
-
-    puts inbound.inspect
 
     inbound.should_not be_empty
 
@@ -68,28 +58,18 @@ describe "basic websockets test" do
     ]
     inbound = []
 
-    puts "Creating client to #{ws_url}"
     WebSocketClient.create( ws_url ) do |client|
       client.on_message do |message|
-        puts "received: #{message}"
         inbound << message
       end
 
-      puts "Connecting client"
-
       client.connect
 
-      puts "Connected client"
-
-
       outbound.each do |e|
-        puts "Sending #{e}"
         client.send( e )
       end
       sleep(1)
     end
-
-    puts inbound.inspect
 
     inbound.should_not be_empty
 
@@ -110,23 +90,13 @@ describe "basic websockets test" do
 
     WebSocketClient.create( ws_url ) do |client|
       client.on_message do |message|
-        puts "received: #{message}"
         inbound << message
       end
 
-      client.on_disconnect do
-        puts "DISCONNECTED!"
-      end
-
-      puts "Connecting client"
-
       client.connect
 
-      puts "Connected client"
-      sleep(5)
+      sleep(2)
     end
-
-    puts inbound.inspect
 
     inbound.size.should eql(1)
 
@@ -141,24 +111,46 @@ describe "basic websockets test" do
 
     inbound = []
 
-    puts "Connect to #{ws_url}"
     WebSocketClient.create( ws_url ) do |client|
       client.on_message do |message|
-        puts "received: #{message}"
         inbound << message
       end
 
-      puts "Connecting client"
       client.connect
 
-      puts "Connected client"
       sleep(1)
     end
 
-    puts inbound.inspect
+    inbound.size.should eql(1)
+    inbound.first.should eql( "tacos" )
+  end
+
+  it "should be able to set attributes in the session and be visible in the subsequent web requests" do
+    visit( '/websockets' )
+    page.find("#success")[:class].should == 'websockets'
+    page.find("#food").text.should == 'tacos'
+
+    ws_url = page.find("#endpoint-session").text
+    ws_url.should_not be_empty
+
+    inbound = []
+
+    WebSocketClient.create( ws_url ) do |client|
+      client.on_message do |message|
+        inbound << message
+      end
+
+      client.connect
+      sleep(1)
+    end
 
     inbound.size.should eql(1)
     inbound.first.should eql( "tacos" )
+
+
+    visit( '/websockets' )
+    page.find("#food").text.should == 'beef'
+
   end
 
 end

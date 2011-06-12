@@ -116,7 +116,6 @@ public class WebSocketContext {
         Ruby runtime = this.runtimePool.borrowRuntime();
         WebSocketProcessorComponent component = (WebSocketProcessorComponent) this.resolver.resolve( runtime );
         component.setWebSocketContext( this );
-        component.setSession( session );
         return component;
     }
 

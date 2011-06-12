@@ -194,7 +194,7 @@ public class HandshakeHandler extends SimpleChannelUpstreamHandler {
         Session session = context.findSession( this.sessionId );
         log.info( "SESSION: " + session );
         WebSocketProcessorComponent component = context.createComponent( session );
-        RubyWebSocketProcessorProxy proxy = new RubyWebSocketProcessorProxy( component );
+        RubyWebSocketProcessorProxy proxy = new RubyWebSocketProcessorProxy( session, component );
         pipeline.addLast( "connection-handler", proxy );
     }
 
