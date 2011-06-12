@@ -26,6 +26,7 @@ import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
 import org.torquebox.web.websockets.protocol.HandshakeHandler;
+import org.torquebox.web.websockets.protocol.OrderlyCloseHandler;
 
 /**
  * Factory for the initial web-socket pipeline factory.
@@ -57,12 +58,17 @@ class WebSocketPipelineFactory implements ChannelPipelineFactory {
     public ChannelPipeline getPipeline() throws Exception {
         ChannelPipeline pipeline = new DefaultChannelPipeline();
 
+        //pipeline.addLast( "debug-a", new DebugHandler( "border" ) );
         pipeline.addLast( "http-decoder", new HttpRequestDecoder() );
         pipeline.addLast( "http-aggregator", new HttpChunkAggregator( 65536 ) );
+        //pipeline.addLast( "debug-b", new DebugHandler( "http-decoded" ) );
         pipeline.addLast( "http-encoder", new HttpResponseEncoder() );
         pipeline.addLast( "http-session-id-decoder", new HttpSessionIdDecoder() );
+        //pipeline.addLast( "debug-c", new DebugHandler( "pre-handshake" ) );
 
         pipeline.addLast( "websockets-handshake", new HandshakeHandler( this.contextRegistry ) );
+        pipeline.addLast( "orderly-close", new OrderlyCloseHandler() );
+        //pipeline.addLast( "debug-d", new DebugHandler( "post-handshake" ) );
 
         return pipeline;
     }
