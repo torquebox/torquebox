@@ -74,9 +74,9 @@
     <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh</command> </screen></para>
 
     <para>Permanent runtime configuration of JBoss should go in
-    <filename>bin/run.conf</filename>. For example, your application may
-    require more memory (RAM) than the default allocated. Edit
-    <filename>run.conf</filename> to increase the value of
+    <filename>bin/standalone.conf</filename>. For example, your application
+    may require more memory (RAM) than the default allocated. Edit
+    <filename>standalone.conf</filename> to increase the value of
     <option>-Xmx</option> to something reasonable.</para>
 
     <para>Though <xref linkend="capistrano-support" /> doesn't strictly
