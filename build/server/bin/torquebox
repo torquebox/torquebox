@@ -23,7 +23,7 @@ require 'torquebox/server'
 
 class TorqueBoxCommand < Thor
 
-  TASK_ORDER = %w(deploy undeploy start cli help)
+  TASK_ORDER = %w(deploy undeploy start cli env help)
 
   map "run" => "start"
   desc "run", "Run TorqueBox"
@@ -75,10 +75,23 @@ class TorqueBoxCommand < Thor
     exec command
   end
 
+  desc "env [VARIABLE]", "Display TorqueBox environment variables"
+  def env(variable=nil)
+    setup_environment
+    env_keys = %w(TORQUEBOX_HOME JBOSS_HOME JRUBY_HOME)
+    if variable.nil?
+      env_keys.each { |key| shell.say "#{key}=#{ENV[key]}" }
+    else
+      key = env_keys.find { |key| variable.downcase == key.downcase }
+      shell.say(ENV[key]) unless key.nil?
+    end
+  end
+
   no_tasks {
     def setup_environment
       ENV['TORQUEBOX_HOME'] = TorqueBox::Server.torquebox_home
       ENV['JBOSS_HOME'] = TorqueBox::Server.jboss_home
+      ENV['JRUBY_HOME'] = TorqueBox::Server.jruby_home
       ENV['JBOSS_OPTS'] = "-Djruby.home=#{TorqueBox::Server.jruby_home}"
     end
 
