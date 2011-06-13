@@ -22,7 +22,6 @@ package org.torquebox.core.as;
 import java.io.Closeable;
 import java.io.IOException;
 
-import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -32,6 +31,7 @@ import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.as.server.deployment.module.MountHandle;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VFS;
+import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
 
 /**
@@ -76,7 +76,11 @@ public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(DeploymentUnit context) {
-
+        final ResourceRoot resourceRoot = context.removeAttachment(Attachments.DEPLOYMENT_ROOT);
+        if (resourceRoot != null) {
+            final Closeable mountHandle = resourceRoot.getMountHandle();
+            VFSUtils.safeClose(mountHandle);
+        }
     }
 
 }
