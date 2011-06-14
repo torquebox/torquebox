@@ -36,6 +36,7 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -118,5 +119,72 @@
         </pluginManagement>
       </build>
     </profile>
+
+    <profile>
+      <id>dist</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>yard</artifactId>
+          <version>0.7.1</version>
+          <type>gem</type>
+          <scope>compile</scope>
+        </dependency>
+        
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>maruku</artifactId>
+          <version>0.6.0</version>
+          <type>gem</type>
+          <scope>compile</scope>
+        </dependency>
+      </dependencies>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>gem-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>install-yard</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>initialize</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>install-maruku</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>initialize</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>jruby-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>dist-yardocs</id>
+                <inherited>false</inherited>
+                <phase>package</phase>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <configuration>
+                  <file>bin/run-yard.rb</file>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 </project>
