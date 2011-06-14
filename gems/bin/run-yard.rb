@@ -1,8 +1,29 @@
+def force_require(gem_name, version)
+  begin
+    gem gem_name, version
+  rescue Gem::LoadError=> e
+    puts "Installing #{gem_name} gem v#{version}"
+    require 'rubygems/commands/install_command'
+    installer = Gem::Commands::InstallCommand.new
+    installer.options[:args] = [ gem_name ]
+    installer.options[:version] = version
+    installer.options[:generate_rdoc] = false
+    installer.options[:generate_ri] = false
+    begin
+      installer.execute
+    rescue Gem::SystemExitException=>e2
+    end
+  end
+
+  require gem_name
+end
+
 require 'rubygems'
-require 'yard'
+force_require 'yard', '0.7.1'
+force_require 'maruku', '0.6.0'
 
 FILES = "*/lib/**/*.rb"
-OUTPUT_DIR = "target/yardoc/"
+OUTPUT_DIR = "target/yardocs/"
 
 OPTIONS = [
            "--title", "TorqueBox Gems Documentation",
