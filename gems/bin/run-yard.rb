@@ -11,16 +11,16 @@ def force_require(gem_name, version)
     installer.options[:generate_ri] = false
     begin
       installer.execute
-      Gem.clear_paths
     rescue Gem::SystemExitException=>e2
     end
+    Gem.clear_paths
   end
 
   require gem_name
 end
 
 require 'rubygems'
-force_require 'yard', '0.7.1'
+force_require 'yard', '0.7.2'
 force_require 'maruku', '0.6.0'
 
 FILES = "*/lib/**/*.rb"
