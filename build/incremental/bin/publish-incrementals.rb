@@ -91,6 +91,10 @@ class Publisher
     Dir[ ( ENV['M2_REPO'] || ( ENV['HOME'] + '/.m2/repository' ) ) + '/org/torquebox/torquebox-docs-en_US/*/torquebox-docs-en_US-*.epub' ].first
   end
 
+  def yardocs_path
+    File.dirname(__FILE__) + '/../../../gems/target/yardocs'
+  end
+  
   def javadocs_path()
     File.dirname(__FILE__) + '/../../../target/site/apidocs'
   end
@@ -110,6 +114,8 @@ class Publisher
   def publish_documentation()
     dav_mkdir_p( build_base_url + '/javadocs' )
     dav_put_r( build_base_url + '/javadocs', javadocs_path )
+    dav_mkdir_p( build_base_url + '/yardocs' )
+    dav_put_r( build_base_url + '/yardocs', yardocs_path )
     dav_put( build_base_url + '/torquebox-docs.epub', epub_path )
     dav_put( build_base_url + '/torquebox-docs.pdf', pdf_doc_path )
     dav_mkdir_p( build_base_url + '/html-docs' )
