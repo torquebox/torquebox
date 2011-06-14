@@ -11,6 +11,7 @@ def force_require(gem_name, version)
     installer.options[:generate_ri] = false
     begin
       installer.execute
+      Gem.clear_paths
     rescue Gem::SystemExitException=>e2
     end
   end
