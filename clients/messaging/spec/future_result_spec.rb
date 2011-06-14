@@ -10,12 +10,13 @@ class FutureResult
 end
 
 describe TorqueBox::Messaging::FutureResult do
+  
+  before(:each) do
+    @queue = mock( Queue )
+    @future = FutureResult.new( @queue )
+  end
 
   describe "#result" do
-    before(:each) do
-      @queue = mock( Queue )
-      @future = FutureResult.new( @queue )
-    end
 
     it "should raise if it fails to start before timeout" do
       @future.stub(:receive)
@@ -32,7 +33,7 @@ describe TorqueBox::Messaging::FutureResult do
       @future.stub(:receive)
       @future.started = true
       @future.error = ArgumentError.new
-      lambda { @future.result( 1 ) }.should raise_error(ArgumentError )
+      lambda { @future.result( 1 ) }.should raise_error( ArgumentError )
     end
 
     it "should return the result if complete" do
@@ -45,5 +46,14 @@ describe TorqueBox::Messaging::FutureResult do
 
   end
 
+  describe "#method_missing" do
 
+    it "should delegate to #result" do
+      @result = mock(:result)
+      @future.should_receive(:result).and_return(@result)
+      @result.should_receive(:blah)
+      @future.blah
+    end
+    
+  end
 end
