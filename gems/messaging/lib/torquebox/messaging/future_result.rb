@@ -1,31 +1,68 @@
- module TorqueBox
+# Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+# 
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 2.1 of
+# the License, or (at your option) any later version.
+# 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
+module TorqueBox
   module Messaging
+    # A FutureResult encapsulates the result of a long running
+    # process, and is used in conjunction with a {FutureResponder}. 
     class FutureResult
 
+      # Returns the remote error (if any)
       attr_reader :error
       attr_reader :correlation_id
-      
-      def initialize(response_queue, correlation_id = self.class.unique_id)
+      attr_accessor :default_result_timeout
+
+      # @param [TorqueBox::Messaging::Queue] response_queue The queue
+      #   where response messages are to be received.
+      # @param [Hash] options Additional options
+      # @option options [String] :correlation_id (FutureResult.unique_id) The correlation_id used on
+      #   the messages to uniquely identify the call they are for.
+      # @option options [Integer] :default_result_timeout (30_000) The timeout
+      #   used by default for the receive call. The processing must at
+      #   least start before the timeout expires, and finish before 2x
+      #   this timeout.
+      def initialize(response_queue, options = { })
         @queue = response_queue
-        @correlation_id = correlation_id
+        @correlation_id = options[:correlation_id] || self.class.unique_id
+        @default_result_timeout = options[:default_result_timeout] || 30_000
       end
 
       def started?
         receive unless @started
         @started
       end
-      
+
       def complete?
         receive unless @complete || @error
         @complete
       end
-      
+
       def error?
         receive unless @complete || @error
         !!@error
       end
 
-      def result(timeout = 0)
+      # Attempts to return the remote result.
+      # @param [Integer] timeout The processing must at least start
+      #   before the timeout expires, and finish before 2x this timeout.
+      # @raise [TimeoutException] if the timeout expires when
+      #   receiving the result
+      # @return the remote result
+      def result(timeout = default_result_timeout)
         receive( timeout ) unless @started
         raise TimeoutException.new( "timeout expired waiting for processing to start" ) unless @started
         receive( timeout ) unless @complete || @error
@@ -34,14 +71,21 @@
         @result
       end
 
+      # Delegates to {#result} with the default timeout.
+      def method_missing(method, *args, &block)
+        result.send( method, *args, &block )
+      end
+
+      # @return [String] a unique id useful for correlating a
+      #   result to its call
       def self.unique_id
         java.util.UUID.randomUUID.to_s
       end
-      
+
       protected
       def receive(timeout = 1)
         response = @queue.receive( :timeout => timeout, :selector => "JMSCorrelationID = '#{@correlation_id}'" )
-        
+
         if response
           @started = true
           @complete = response.has_key?( :result )
