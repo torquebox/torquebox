@@ -41,7 +41,7 @@ public class SecurityDependencyProcessor implements DeploymentUnitProcessor {
         final DeploymentUnit deploymentUnit = phaseContext.getDeploymentUnit();
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
         final ModuleSpecification moduleSpecification = deploymentUnit.getAttachment( Attachments.MODULE_SPECIFICATION );
-        moduleSpecification.addDependency( new ModuleDependency( moduleLoader,
+        moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader,
                 TORQUEBOX_SECURITY_ID, false, true, false ) );
     }
 
