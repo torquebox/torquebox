@@ -22,17 +22,30 @@ require 'torquebox/injectors'
 
 module TorqueBox
   module Messaging
+
+    # Backgroundable provides mechanism for executing an object's
+    # methods asynchronously.
     module Backgroundable
       def self.included(base)
         base.extend(ClassMethods)
       end
 
+      # Allows you to background any method that has not been marked
+      # as a backgrounded method via {ClassMethods#always_background}.
+      # @param [Hash] options that are passed through to
+      #   {TorqueBox::Messaging::Destination#publish}
+      # @return [FutureResult]
       def background(options = { })
         BackgroundProxy.new(self, options)
       end
 
       module ClassMethods
 
+        # Marks methods to always be backgrounded. Takes one or more
+        # method symbols, and an optional options hash as the final
+        # argument. The options allow you to set publish options for
+        # each call.
+        # see TorqueBox::Messaging::Destination#publish
         def always_background(*methods)
           options = methods.last.is_a?(Hash) ? methods.pop : {}
           @__backgroundable_methods ||= {}
