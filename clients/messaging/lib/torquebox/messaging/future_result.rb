@@ -56,6 +56,15 @@ module TorqueBox
         !!@error
       end
 
+      # Returns the latest response from the remote processor, if
+      # any. Status reporting is optional, and must be handled by the
+      # processed task itself.
+      # @see FutureResponder#status
+      def status
+        receive unless @complete || @error
+        @status
+      end
+      
       # Attempts to return the remote result.
       # @param [Integer] timeout The processing must at least start
       #   before the timeout expires, and finish before 2x this timeout.
@@ -88,9 +97,10 @@ module TorqueBox
 
         if response
           @started = true
+          @status = response[:status] if response.has_key?( :status )
           @complete = response.has_key?( :result )
-          @result = response[:result]
-          @error = response[:error]
+          @result ||= response[:result]
+          @error ||= response[:error]
         end
       end
 

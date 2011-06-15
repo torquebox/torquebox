@@ -36,9 +36,15 @@ module TorqueBox
 
       # Signal that processing has started.
       def started
-        publish( :started => true )
+        publish( :started => true, :priority => :low )
       end
 
+      # Report the current status back to the client. The status value
+      # is application specific.
+      def status(status)
+        publish( :status => status )
+      end
+      
       # Signal that processing has completed.
       # @param The result of the operation.
       def complete(result)
@@ -50,15 +56,26 @@ module TorqueBox
       def error(error)
         publish( :error => error, :priority => :high )
       end
-
-      # Handles started/complete/error for you around the given block.
+      
+      # Handles started/complete/error for you around the given
+      # block. The current responder is avaiable inside the block via
+      # {.current}, which is useful for sending {#status} messages.
       def respond
         started
+        Thread.current[:future_responder] = self
         complete( yield )
       rescue Exception => e
         error( e )
+        puts e
+        puts e.backtrace.join( "\n" )
       end
-      
+
+      # Convenience method that returns the thread local
+      # responder. Only valid inside a block passed to {#respond}.
+      def self.current
+        Thread.current[:future_responder]
+      end
+
       protected
       def publish(message)
         @queue.publish( message, :correlation_id => @correlation_id, :ttl => @message_ttl )
