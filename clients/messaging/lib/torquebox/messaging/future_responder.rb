@@ -41,19 +41,19 @@ module TorqueBox
 
       # Report the current status back to the client. The status value
       # is application specific.
-      def status(status)
+      def status=(status)
         publish( :status => status )
       end
       
       # Signal that processing has completed.
       # @param The result of the operation.
-      def complete(result)
+      def result=(result)
         publish( :result => result, :priority => :high )
       end
 
       # Signal that an error occurred during processing.
       # @param [Exception] The error!
-      def error(error)
+      def error=(error)
         publish( :error => error, :priority => :high )
       end
       
@@ -63,10 +63,10 @@ module TorqueBox
       def respond
         started
         Thread.current[:future_responder] = self
-        complete( yield )
+        self.result = yield 
       rescue Exception => e
-        error( e )
-        puts e
+        self.error = e
+        puts "FutureResponder#respond: An error occured: ", e
         puts e.backtrace.join( "\n" )
       end
 
@@ -76,6 +76,13 @@ module TorqueBox
         Thread.current[:future_responder]
       end
 
+      # Convenience method that allows you to send a status message 
+      # via the {.current} responder. Only valid inside a block passed
+      # to {#respond}.
+      def self.status=(status)
+        current.status = status
+      end
+      
       protected
       def publish(message)
         @queue.publish( message, :correlation_id => @correlation_id, :ttl => @message_ttl )
