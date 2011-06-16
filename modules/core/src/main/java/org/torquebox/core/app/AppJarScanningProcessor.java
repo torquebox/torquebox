@@ -58,8 +58,6 @@ public class AppJarScanningProcessor implements DeploymentUnitProcessor {
 
         try {
 
-            List<ResourceRoot> children = new ArrayList<ResourceRoot>();
-            
             for (String scanRoot : SCAN_ROOTS) {
                 for (VirtualFile child : getJarFiles( root.getChild( scanRoot ) )) {
                     log.info( "Add jar: " + child );
@@ -68,14 +66,9 @@ public class AppJarScanningProcessor implements DeploymentUnitProcessor {
                     final ResourceRoot childResource = new ResourceRoot( child, mountHandle );
                     ModuleRootMarker.mark(childResource);
                     unit.addToAttachmentList( Attachments.RESOURCE_ROOTS, childResource );
-                    children.add( childResource );
                 }
             }
-            
-            //ModuleIdentifier deploymentModuleIdentifier = unit.getAttachment( Attachments.MODULE_IDENTIFIER );
-            //ModuleIdentifier jarsModuleIdentifier = ModuleIdentifier.create( deploymentModuleIdentifier.getName() + "-jars" );
-            //AdditionalModuleSpecification jarsModule = new AdditionalModuleSpecification( jarsModuleIdentifier, children );
-            //unit.addToAttachmentList( Attachments.ADDITIONAL_MODULES, jarsModule );
+
         } catch (IOException e) {
             log.error( "Error processing jars", e );
         }
