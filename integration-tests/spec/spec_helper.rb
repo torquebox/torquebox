@@ -9,7 +9,7 @@ TorqueSpec.configure do |config|
   config.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
   config.max_heap = java.lang::System.getProperty( 'max.heap' )
   config.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
-  config.jvm_args += " -Djruby.home=#{java.lang::System.getProperty( 'jruby.home' )}"
+  config.jvm_args += " -Dgem.path=default"
   config.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'knobs' ) )
 end
 FileUtils.mkdir_p(TorqueSpec.knob_root) unless File.exist?(TorqueSpec.knob_root)
