@@ -143,7 +143,7 @@ module TorqueBox
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        logger.warn "No caching will occur" if logger
+          puts "No caching will occur" 
         result
       end
 
