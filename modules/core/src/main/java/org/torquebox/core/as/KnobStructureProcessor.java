@@ -28,7 +28,6 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.api.ServerDeploymentRepository;
-import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.as.server.deployment.module.MountHandle;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VFSUtils;
@@ -45,9 +44,6 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
         }
         
         KnobDeploymentMarker.applyMark( unit );
-        
-        ModuleSpecification moduleSpec = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
-        moduleSpec.setChildFirst( true );
 
         // Until AS7-810 is implemented, we need to unmount and remount the root .knob
         // so it's mounted expanded

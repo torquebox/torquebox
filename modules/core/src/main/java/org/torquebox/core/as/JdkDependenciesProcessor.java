@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.as;
+package org.torquebox.core.as;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -26,36 +26,75 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ModuleDependency;
 import org.jboss.as.server.deployment.module.ModuleSpecification;
-import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
-import org.torquebox.web.rack.RackApplicationMetaData;
+import org.torquebox.core.app.RubyApplicationMetaData;
 
-public class WebDependenciesProcessor implements DeploymentUnitProcessor {
+/**
+ * Ensure all JavaSE APIs are made available to deployments. This is
+ * hopefully a temporary hack until AS7 does the same upstream.
+ * 
+ * @author Ben Browning
+ *
+ */
+public class JdkDependenciesProcessor implements DeploymentUnitProcessor {
     
-    private static ModuleIdentifier TORQUEBOX_WEB_ID = ModuleIdentifier.create("org.torquebox.web");
-    private static ModuleIdentifier NETTY_ID = ModuleIdentifier.create("org.jboss.netty");
+    private static String[] JAVA_SE_MODULE_IDS = new String[] {
+        "javax.activation.api",
+        "javax.annotation.api",
+        "javax.api",
+        "javax.ejb.api",
+        "javax.el.api",
+        "javax.enterprise.api",
+        "javax.enterprise.deploy.api",
+        "javax.faces.api",
+        "javax.inject.api",
+        "javax.interceptor.api",
+        "javax.jms.api",
+        "javax.jws.api",
+        "javax.mail.api",
+        "javax.persistence.api",
+        "javax.resource.api",
+        "javax.rmi.api",
+        "javax.security.auth.message.api",
+        "javax.security.jacc.api",
+        "javax.servlet.api",
+        "javax.servlet.jsp.api",
+        "javax.servlet.jstl.api",
+        "javax.transaction.api",
+        "javax.validation.api",
+        "javax.ws.rs.api",
+        "javax.wsdl4j.api",
+        "javax.xml.bind.api",
+        "javax.xml.jaxp-provider",
+        "javax.xml.registry.api",
+        "javax.xml.rpc.api",
+        "javax.xml.soap.api",
+        "javax.xml.stream.api",
+        "javax.xml.ws.api",
+        "org.omg.api"
+    };
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
-        final ModuleLoader moduleLoader = Module.getBootModuleLoader();
+        final ModuleLoader moduleLoader = unit.getAttachment( Attachments.SERVICE_MODULE_LOADER );
 
-        if (unit.hasAttachment( RackApplicationMetaData.ATTACHMENT_KEY )) {
-            addDependency( moduleSpecification, moduleLoader, TORQUEBOX_WEB_ID );
-            addDependency( moduleSpecification, moduleLoader, NETTY_ID );
+        if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
+            for (String moduleIdentifier : JAVA_SE_MODULE_IDS) {
+                addDependency( moduleSpecification, moduleLoader, ModuleIdentifier.create( moduleIdentifier ) );
+            }
         }
     }
-
+    
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
         moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
     }
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 
