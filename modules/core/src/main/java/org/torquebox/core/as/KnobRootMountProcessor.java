@@ -35,16 +35,12 @@ import org.jboss.vfs.VFSUtils;
 import org.jboss.vfs.VirtualFile;
 
 /**
- * Replace the ServerDeploymentRepository with our own that understands
- * -knob.yml files for -knob.yml deployments.
- * 
- * Note: We need the "A" prefix to sort before DeploymentRootMountProcessor
- * because both have a priority of 0 in Phase.STRUCTURE
+ * Handle mounting -knob.yml files and marking them as a DEPLOYMENT_ROOT
  * 
  */
-public class AKnobRootMountProcessor implements DeploymentUnitProcessor {
+public class KnobRootMountProcessor implements DeploymentUnitProcessor {
 
-    public AKnobRootMountProcessor() {
+    public KnobRootMountProcessor() {
     }
 
     @Override

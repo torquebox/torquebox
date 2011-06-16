@@ -19,19 +19,11 @@
 
 package org.torquebox.core.as;
 
-import java.io.Closeable;
-import java.io.IOException;
-
-import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.server.deployment.api.ServerDeploymentRepository;
-import org.jboss.as.server.deployment.module.MountHandle;
-import org.jboss.as.server.deployment.module.ResourceRoot;
-import org.jboss.vfs.VFSUtils;
-import org.jboss.vfs.VirtualFile;
+import org.jboss.as.server.deployment.MountExplodedMarker;
 
 public class KnobStructureProcessor implements DeploymentUnitProcessor {
 
@@ -44,30 +36,8 @@ public class KnobStructureProcessor implements DeploymentUnitProcessor {
         }
         
         KnobDeploymentMarker.applyMark( unit );
-
-        // Until AS7-810 is implemented, we need to unmount and remount the root .knob
-        // so it's mounted expanded
-        remountExpanded( unit );
-    }
-    
-    protected void remountExpanded(DeploymentUnit unit) throws DeploymentUnitProcessingException {
-        ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        VirtualFile root = resourceRoot.getRoot();
-        
-        if (resourceRoot.getMountHandle() != null) {
-            VFSUtils.safeClose( resourceRoot.getMountHandle() );
-        }
-        
-        try {
-            final ServerDeploymentRepository serverDeploymentRepository = unit.getAttachment(Attachments.SERVER_DEPLOYMENT_REPOSITORY);
-            final Closeable closable = serverDeploymentRepository.mountDeploymentContent(unit.getAttachment( Attachments.DEPLOYMENT_CONTENTS ), root, true);
-            final MountHandle mountHandle = new MountHandle( closable );
-            
-            ResourceRoot expandedResourceRoot = new ResourceRoot( root, mountHandle );
-            unit.putAttachment( Attachments.DEPLOYMENT_ROOT, expandedResourceRoot );
-        } catch (IOException e) {
-            throw new DeploymentUnitProcessingException( e );
-        }
+        // Tell AS to treat .knob files as archives and mount them exploded
+        MountExplodedMarker.setMountExploded( unit );
     }
 
     @Override

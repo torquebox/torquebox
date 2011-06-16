@@ -14,11 +14,11 @@ import org.junit.Test;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 import org.torquebox.test.as.MockDeploymentPhaseContext;
 
-public class AKnobRootMountProcessorTest extends AbstractDeploymentProcessorTestCase {
+public class KnobRootMountProcessorTest extends AbstractDeploymentProcessorTestCase {
     
     @Before
     public void setUpDeployer() throws Throwable {
-        appendDeployer( new AKnobRootMountProcessor() );
+        appendDeployer( new KnobRootMountProcessor() );
     }
     
     @Test
