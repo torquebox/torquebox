@@ -31,13 +31,13 @@
 
   <modules>
     <module>assembly</module>
-    <module>server</module>
   </modules>
 
   <profiles>
     <profile>
       <id>full</id>
       <modules>
+        <module>server</module>
         <module>dist</module>
         <module>incremental</module>
       </modules>
@@ -45,6 +45,7 @@
     <profile>
       <id>dist</id>
       <modules>
+        <module>server</module>
         <module>dist</module>
       </modules>
     </profile>
