@@ -17,7 +17,7 @@
     <para>JBoss folder structure now has expressive changes since previous
     releases, the most visible comes to folder structure and runtime modes:
     <emphasis role="bold">domain</emphasis> and <emphasis
-    role="bold">standalone mode<emphasis>. In this release of Torquebox, just
+    role="bold">standalone<emphasis>. In this release of Torquebox, just
     standalone mode is available, domain mode support will come to the next
     releases.</emphasis></emphasis></para>
 
@@ -35,14 +35,13 @@
         </imageobject>
       </mediaobject></para>
 
-    <para>TorqueBox provides two: <emphasis>default</emphasis> and
-    <emphasis>all</emphasis>. A stock JBoss distribution will come with
-    others, as you see above, and of course you're free to create your own
-    custom profiles.</para>
+    <para>TorqueBox uses default mode from standalone runtime. A stock JBoss
+    distribution will come with others, as you see above, custom profiles will
+    come up in the next releases.</para>
 
     <para>Some libraries and config files are common to all server
     configurations. To conserve disk space, these are kept in the
-    <filename>common/</filename> directory. This is, in fact, where the
+    <filename>modules/</filename> directory. This is, in fact, where the
     TorqueBox deployers reside.</para>
 
     <para>All configuration profiles have a common structure, and usually
@@ -69,20 +68,15 @@
     <title>Running</title>
 
     <para>The <filename>$JBOSS_HOME/bin/</filename> directory contains the
-    main JBoss entry point, <filename>run.sh</filename> (or
-    <filename>run.bat</filename>), along with its config file,
-    <filename>run.conf</filename>. Running the JBoss server is simple:
-    <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh</command> </screen>
-    By default, the <filename>default</filename> configuration profile is
-    used. Use the <option>-c</option> option to specify a different
-    configuration. For example, to put JBoss in "clustered" mode: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all</command> </screen>
-    You may set Java system properties using the <option>-D</option> option.
-    Pass <option>-h</option> for a list of all the available options.</para>
+    main JBoss entry point, <filename>standalone.sh</filename> (or
+    <filename>standalone.bat</filename>), along with its config file,
+    <filename>standalone.conf</filename>. Running the JBoss server is simple:
+    <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh</command> </screen></para>
 
     <para>Permanent runtime configuration of JBoss should go in
-    <filename>bin/run.conf</filename>. For example, your application may
-    require more memory (RAM) than the default allocated. Edit
-    <filename>run.conf</filename> to increase the value of
+    <filename>bin/standalone.conf</filename>. For example, your application
+    may require more memory (RAM) than the default allocated. Edit
+    <filename>standalone.conf</filename> to increase the value of
     <option>-Xmx</option> to something reasonable.</para>
 
     <para>Though <xref linkend="capistrano-support" /> doesn't strictly
