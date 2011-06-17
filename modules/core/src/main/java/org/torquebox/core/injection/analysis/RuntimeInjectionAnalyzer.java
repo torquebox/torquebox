@@ -1,9 +1,13 @@
 package org.torquebox.core.injection.analysis;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceController.State;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 import org.jboss.msc.service.ServiceTarget;
@@ -11,7 +15,6 @@ import org.jruby.RubyProc;
 import org.torquebox.core.component.InjectionRegistry;
 
 public class RuntimeInjectionAnalyzer {
-
 
     public RuntimeInjectionAnalyzer(ServiceRegistry serviceRegistry, ServiceTarget serviceTarget, DeploymentUnit deploymentUnit, InjectionAnalyzer analyzer) {
         this.serviceRegistry = serviceRegistry;
@@ -29,22 +32,26 @@ public class RuntimeInjectionAnalyzer {
             this.analyzer.analyze( proc, visitor );
             Set<Injectable> injectables = visitor.getInjectables();
             InjectionRegistry registry = new InjectionRegistry();
-            for (Injectable each : injectables) {
-                ServiceName eachName = each.getServiceName( this.serviceTarget, this.deploymentUnit );
-                System.err.println( "SERVICE_NAME: " + eachName );
-                ServiceController<?> controller = this.serviceRegistry.getRequiredService( eachName );
-                System.err.println( "SERVICE_CONTROLLER: " + controller );
-                Object injectedValue = null;
-                ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-                try {
-                    Thread.currentThread().setContextClassLoader( proc.getRuntime().getJRubyClassLoader().getParent() );
-                    injectedValue = controller.getValue();   
-                    System.err.println( "SERVICE_VALUE: " + injectedValue );
-                    System.err.println( "KEY: " + each.getKey() );
-                    registry.getInjector( each.getKey() ).inject( injectedValue );
-                } finally {
-                    Thread.currentThread().setContextClassLoader( originalCl );
+            ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+            ClassLoader appCl = proc.getRuntime().getJRubyClassLoader().getParent();
+            List<RuntimeInjectionListener> waitingListeners = new ArrayList<RuntimeInjectionListener>();
+            try {
+                Thread.currentThread().setContextClassLoader( appCl );
+                for (Injectable each : injectables) {
+                    ServiceName eachName = each.getServiceName( this.serviceTarget, this.deploymentUnit );
+                    ServiceController<?> controller = this.serviceRegistry.getRequiredService( eachName );
+                    if (controller.getState() == State.UP) {
+                        Object injectedValue = controller.getValue();
+                        registry.getInjector( each.getKey() ).inject( injectedValue );
+                    } else {
+                        RuntimeInjectionListener listener = new RuntimeInjectionListener( registry, each.getKey(), appCl );
+                        controller.addListener( listener );
+                        controller.setMode( Mode.ACTIVE );
+                        waitingListeners.add( listener );
+                    }
                 }
+            } finally {
+                Thread.currentThread().setContextClassLoader( originalCl );
             }
             registry.merge( proc.getRuntime() );
         }

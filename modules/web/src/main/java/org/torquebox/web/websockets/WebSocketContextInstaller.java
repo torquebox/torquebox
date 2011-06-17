@@ -106,7 +106,7 @@ public class WebSocketContextInstaller implements DeploymentUnitProcessor {
                 .addDependency( WebSubsystemServices.JBOSS_WEB.append(unit.getName()), Context.class, service.getContextInjector() )
                 .addDependency( getHostServiceName( unit ), VirtualHost.class, service.getHostInjector() )
                 .addDependency( WebSocketsServices.webSocketProcessorComponentResolver( unit, contextName ), ComponentResolver.class, service.getComponentResolverInjector() )
-                .addDependency( CoreServices.runtimePoolName( unit, "websockets" ), RubyRuntimePool.class, service.getRuntimePoolInjector() )
+                .addDependency( CoreServices.runtimePoolName( unit, "websockets" ).append(  "START" ), RubyRuntimePool.class, service.getRuntimePoolInjector() )
                 .setInitialMode( Mode.ACTIVE )
                 .install();
     }
