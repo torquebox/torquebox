@@ -24,16 +24,18 @@ import java.util.Set;
 import org.jboss.logging.Logger;
 
 public class ManagedPool<T> implements Pool<T> {
-    
+
     private Logger log = Logger.getLogger( this.getClass() );
 
     private SimplePool<T> pool;
     private PoolManager<T> poolManager;
+    private boolean deferred = true;
+    private boolean started = false;
 
     public ManagedPool() {
         this( null, 1, 1);
     }
-    
+
     public ManagedPool(InstanceFactory<T> factory) {
         this( factory, 1, 1 );
     }
@@ -43,15 +45,15 @@ public class ManagedPool<T> implements Pool<T> {
         this.poolManager = new PoolManager<T>( this.pool, factory, minInstances, maxInstances );
         this.pool.addListener( this.poolManager );
     }
-    
+
     public void setName(String name) {
         this.pool.setName( name );
     }
-    
+
     public String getName() {
         return this.pool.getName();
     }
-    
+
     public void setMinimumInstances(int minInstances) {
         this.poolManager.setMinimumInstances( minInstances );
     }
@@ -71,56 +73,108 @@ public class ManagedPool<T> implements Pool<T> {
     public void setInstanceFactory(InstanceFactory<T> instanceFactory) {
         this.poolManager.setInstanceFactory( instanceFactory );
     }
-    
+
     public InstanceFactory<T> getInstanceFactory() {
         return this.poolManager.getInstanceFactory();
     }
 
-    public void start() throws InterruptedException {
-        this.poolManager.start();
-        this.poolManager.waitForMinimumFill();
+    public synchronized void startPool() throws InterruptedException {
+        startPool( true );
     }
-    
+
+    public synchronized void startPool(boolean waitForFill) throws InterruptedException {
+        if (!this.started) {
+            this.poolManager.start();
+            this.started = true;
+            if (waitForFill) {
+                this.poolManager.waitForMinimumFill();
+            }
+        }
+    }
+
+    public void start() throws InterruptedException {
+        if (!this.deferred) {
+            startPool();
+        } else if ("web".equals( getName() )) {
+            // FIXME: Start the web pool via a thread. This is a hack
+            log.info( "Starting " + getName() + " runtime pool asynchronously." );
+            Thread initThread = new Thread() {
+                public void run() {
+                    try {
+                        ManagedPool.this.startPool( false );
+                    } catch(Exception ex) {
+                        log.error( "Failed to start pool", ex );
+                    }
+                }
+            };
+            initThread.start();
+        } else {
+            log.info( "Deferring start for " + getName() + " runtime pool." );
+        }
+    }
+
     public void stop() throws InterruptedException {
-        this.poolManager.stop();
-        this.poolManager.waitForEmpty();
+        if (this.started) {
+            this.poolManager.stop();
+            this.started = false;
+            this.poolManager.waitForEmpty();
+        }
     }
 
     @Override
     public T borrowInstance() throws Exception {
+        if (!this.started) {
+            startPool();
+        }
         return this.pool.borrowInstance();
     }
 
     @Override
     public T borrowInstance(long timeout) throws Exception {
+        if (!this.started) {
+            startPool();
+        }
         return this.pool.borrowInstance( timeout );
     }
+
 
     @Override
     public void releaseInstance(T instance) {
         this.pool.releaseInstance( instance );
     }
-    
+
+    public boolean isStarted() {
+        return this.started;
+    }
+
+    public boolean isDeferred() {
+        return this.deferred;
+    }
+
+    public void setDeferred(boolean deferred) {
+        this.deferred = deferred;
+    }
+
     public int getSize() {
         return size();
     }
-    
+
     public int getBorrowed() {
         return borrowedSize();
     }
-    
+
     public int getAvailable() {
         return availableSize();
     }
-    
+
     protected Set<T> getAllInstances() {
         return this.pool.getAllInstances();
     }
-    
+
     protected Set<T> getBorrowedInstances() {
         return this.pool.getBorrowedInstances();
     }
-    
+
     protected Set<T> getAvailableInstances() {
         return this.pool.getAvailableInstances();
     }
