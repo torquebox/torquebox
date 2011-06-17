@@ -120,7 +120,7 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
         for (String name : otherCompoments) {
             String version = this.buildInfo.get( name, "version" );
             if (version != null) {
-                log.info( formatOutput( " " + name, version ) );
+                log.info( formatOutput( "  " + name, version ) );
             }
         }
 
