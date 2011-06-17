@@ -35,10 +35,11 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should accept and return ruby objects" do
-    time = Time.new
-    @cache.put('time', time).should be_true
-    @cache.get('time').should == time
-    @cache.get('time').class.name.should == 'Time'
+    heffalump = Heffalump.new(100, 'snuffle')
+    @cache.put('heffalump', heffalump).should be_true
+    rheffalump = @cache.get('heffalump')
+    rheffalump.name.should == heffalump.name
+    rheffalump.id.should == heffalump.id
   end
 
   it "should return all keys" do
@@ -70,3 +71,11 @@ describe TorqueBox::Infinispan::Cache do
   end
 end
 
+class Heffalump
+  attr_accessor :id, :name
+  
+  def initialize(id=1, name=:default)
+    @id = id
+    @name = name
+  end
+end

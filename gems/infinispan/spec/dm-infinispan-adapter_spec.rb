@@ -15,19 +15,20 @@
 #
 
 require File.dirname(__FILE__) + '/spec_helper'
+require 'dm-core'
 
 describe DataMapper::Adapters::InfinispanAdapter do
-  before :all do
-    @adapter = DataMapper.setup(:default, :adapter   => 'infinispan',
-                                          :hostname  => 'localhost',
-                                          :port      => 1978)
-  end
 
-  it "should behave like an adapter" do
-    pending "making the dm built-in tests work" do
-      it_should_behave_like 'An Adapter'
-    end
+  before :all do
+    @adapter = DataMapper.setup(:default, :adapter => 'infinispan')
   end
+  
+
+  #it "should behave like an adapter" do
+    #pending "making the dm built-in tests work" do
+#      it_should_behave_like 'An Adapter'
+    #end
+  #end
 
 end
 

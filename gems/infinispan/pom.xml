@@ -61,6 +61,12 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>json</artifactId>
+      <type>gem</type>
+      <version>1.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
       <scope>test</scope>
