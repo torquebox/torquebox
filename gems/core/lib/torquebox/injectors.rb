@@ -20,6 +20,10 @@ require 'torquebox/registry'
 module TorqueBox
   module Injectors
 
+    def self.analyze_and_inject(&block)
+      inject( 'runtime-injection-analyzer' ).analyze_and_inject( block )
+    end
+
     def __inject__(something)
       TorqueBox::Registry[something.to_s]
     end

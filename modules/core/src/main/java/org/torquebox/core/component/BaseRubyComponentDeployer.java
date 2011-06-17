@@ -53,7 +53,7 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
 
         for (Injectable injectable : injectables) {
             try {
-                ServiceName serviceName = injectable.getServiceName( phaseContext );
+                ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
                 builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
             } catch (Exception e) {
                 throw new DeploymentUnitProcessingException( e );
@@ -65,7 +65,7 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         if (additionalInjectables != null) {
             for (Injectable injectable : additionalInjectables) {
                 try {
-                    ServiceName serviceName = injectable.getServiceName( phaseContext );
+                    ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
                     builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
                 } catch (Exception e) {
                     throw new DeploymentUnitProcessingException( e );

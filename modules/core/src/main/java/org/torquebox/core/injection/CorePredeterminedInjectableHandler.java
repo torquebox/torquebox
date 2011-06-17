@@ -19,6 +19,7 @@
 
 package org.torquebox.core.injection;
 
+import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.injection.analysis.PredeterminedInjectableHandler;
 
 /**
@@ -45,6 +46,7 @@ public class CorePredeterminedInjectableHandler extends PredeterminedInjectableH
         addInjectable( "service-registry", ServiceRegistryInjectable.INSTANCE );
         addInjectable( "service-target", ServiceTargetInjectable.INSTANCE );
         addInjectable( "deployment-unit", DeploymentUnitInjectable.INSTANCE );
+        addInjectable( "runtime-injection-analyzer", RuntimeInjectionAnalyzerInjectable.INSTANCE );
     }
 
 }

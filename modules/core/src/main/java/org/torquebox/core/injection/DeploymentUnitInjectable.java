@@ -19,10 +19,10 @@
 
 package org.torquebox.core.injection;
 
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceTarget;
 
 /**
  * Predetermined injectable which provides the actual <code>DeploymentUnit</code> for each
@@ -44,8 +44,7 @@ public class DeploymentUnitInjectable extends SimpleNamedInjectable {
     }
 
     @Override
-    public ServiceName getServiceName(DeploymentPhaseContext phaseContext) throws Exception {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+    public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) throws Exception {
         return unit.getServiceName();
     }
 

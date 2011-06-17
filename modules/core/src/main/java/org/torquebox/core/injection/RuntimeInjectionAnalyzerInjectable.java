@@ -17,34 +17,34 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.services.injection;
+package org.torquebox.core.injection;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
-import org.torquebox.core.injection.SimpleNamedInjectable;
-import org.torquebox.services.as.ServicesServices;
+import org.torquebox.core.as.CoreServices;
 
-/** Injectable for Ruby services.
+/**
+ * Predetermined injectable which provides a runtime-capable injection analyzer.
  * 
- * @see ServiceInjectableHandler
+ * <p>This injectable provides <code>runtime-injection-analyzer</code> injectable for each 
+ * deployment.  It may be used to add injectables at runtime based on analyzing ruby blocks.
+ * 
+ * @see Service
  * 
  * @author Bob McWhirter
  */
-public class ServiceInjectable extends SimpleNamedInjectable {
+public class RuntimeInjectionAnalyzerInjectable extends SimpleNamedInjectable {
 
-    public ServiceInjectable(String name) {
-        super( "service", name, false );
-    }
-    
-    public String getKey() {
-        return "service:" + getName();
+    public RuntimeInjectionAnalyzerInjectable() {
+        super( "runtime-injection-analyzer", "runtime-injection-analyzer", false );
     }
 
     @Override
     public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) throws Exception {
-        ServiceName serviceName = ServicesServices.serviceInjectableService( unit, getName() );
-        return serviceName;
+        return CoreServices.runtimeInjectionAnalyzerName( unit );
     }
-    
+
+    public static final RuntimeInjectionAnalyzerInjectable INSTANCE = new RuntimeInjectionAnalyzerInjectable();
 }

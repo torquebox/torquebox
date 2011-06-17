@@ -45,8 +45,7 @@ public class ServiceTargetInjectable extends SimpleNamedInjectable {
     }
 
     @Override
-    public ServiceName getServiceName(DeploymentPhaseContext phaseContext) throws Exception {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+    public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) throws Exception {
         return CoreServices.serviceTargetName( unit );
     }
 

@@ -25,10 +25,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.List;
 import java.util.Set;
 
+import org.jruby.Ruby;
+import org.jruby.RubyProc;
+import org.jruby.ast.Node;
 import org.jruby.exceptions.RaiseException;
+import org.jruby.runtime.Block;
+import org.jruby.runtime.BlockBody;
+import org.jruby.runtime.InterpretedBlock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -146,29 +151,19 @@ public class InjectionAnalyzerTest {
         Set<Injectable> injectables = this.visitor.getInjectables();
         
         assertEquals( 3, injectables.size() );
-
-        /*
-        assertTrue( injectables.get( 0 ) instanceof MCBeanInjectable );
-        assertEquals( "mc", injectables.get( 0 ).getType() );
-        assertEquals(
-                "jboss.web:service=WebServer", injectables.get( 0 ).getName() );
-        assertEquals( "jboss.web:service=WebServer", injectables.get( 0
-                ).getKey() );
-
-        assertTrue( injectables.get( 1 ) instanceof JNDIInjectable );
-        assertEquals( "jndi", injectables.get( 1 ).getType() );
-        assertEquals(
-                "java:/comp/whatever", injectables.get( 1 ).getName() );
-        assertEquals(
-                "java:/comp/whatever", injectables.get( 1 ).getKey() );
-
-        assertTrue( injectables.get( 2 ) instanceof CDIInjectable );
-        assertEquals( "cdi", injectables.get( 2 ).getType() );
-        assertEquals(
-                "com.mycorp.mypackage.MyThing", injectables.get( 2 ).getName() );
-        assertEquals( "Java::ComMycorpMypackage::MyThing", injectables.get( 2
-                ).getKey() );
-                */
+    }
+    
+    @Test
+    public void testProcAnalysis() throws Exception {
+        Ruby ruby = Ruby.newInstance();
+        
+        RubyProc proc = (RubyProc) ruby.evalScriptlet( "Proc.new do |arg1, arg2|\n  inject('/queues/foo')\nend");
+        this.visitor.assumeMarkerSeen();
+        analyzer.analyze( proc, this.visitor );
+        
+        Set<Injectable> injectables = this.visitor.getInjectables();
+        
+        System.err.println( injectables );
     }
     
     protected void assertContains(Set<Injectable> actual, Class injectableClass, String type, String name, String key) {

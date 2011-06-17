@@ -52,5 +52,9 @@ public class CoreServices {
         return unit.getServiceName().append( CORE ).append( "service-target" );
     }
     
+    public static ServiceName runtimeInjectionAnalyzerName(DeploymentUnit unit) {
+        return unit.getServiceName().append( INJECTION ).append( "runtime-injection-analyzer" );
+    }
+    
  
 }
