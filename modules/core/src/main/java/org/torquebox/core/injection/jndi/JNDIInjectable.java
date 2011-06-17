@@ -22,7 +22,9 @@ package org.torquebox.core.injection.jndi;
 import org.jboss.as.naming.ManagedReferenceFactory;
 import org.jboss.as.naming.deployment.ContextNames;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceTarget;
 import org.torquebox.core.injection.SimpleNamedInjectable;
 
 /**
@@ -41,27 +43,27 @@ public class JNDIInjectable extends SimpleNamedInjectable {
     }
 
     @Override
-    public ServiceName getServiceName(DeploymentPhaseContext context) {
-        return wrapWithManager( context, getServiceNameInternal() );
+    public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) {
+        return wrapWithManager( serviceTarget, unit, getServiceNameInternal() );
     }
 
     protected ServiceName getServiceNameInternal() {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( getName() );
     }
 
-    protected boolean serviceIsAlreadyWrapped(DeploymentPhaseContext context, ServiceName serviceName) {
-        return (context.getServiceRegistry().getService( serviceName ) != null);
+    protected boolean serviceIsAlreadyWrapped(DeploymentUnit unit, ServiceName serviceName) {
+        return (unit.getServiceRegistry().getService( serviceName ) != null);
     }
 
-    protected ServiceName wrapWithManager(DeploymentPhaseContext context, ServiceName serviceName) {
-        ServiceName managementServiceName = context.getDeploymentUnit().getServiceName().append( serviceName ).append( "manager" );
+    protected ServiceName wrapWithManager(ServiceTarget serviceTarget, DeploymentUnit unit, ServiceName serviceName) {
+        ServiceName managementServiceName = unit.getServiceName().append( serviceName ).append( "manager" );
 
-        if (serviceIsAlreadyWrapped( context, managementServiceName )) {
+        if (serviceIsAlreadyWrapped( unit, managementServiceName )) {
             return managementServiceName;
         }
 
         ManagedReferenceInjectableService managementService = new ManagedReferenceInjectableService();
-        context.getServiceTarget().addService( managementServiceName, managementService )
+        serviceTarget.addService( managementServiceName, managementService )
                 .addDependency( serviceName, ManagedReferenceFactory.class, managementService.getManagedReferenceFactoryInjector() )
                 .install();
 

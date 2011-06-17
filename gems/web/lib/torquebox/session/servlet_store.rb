@@ -27,23 +27,23 @@ module TorqueBox
       end 
       
       def call(env)
-        load_session(env)
+        ServletStore.load_session(env)
         status, headers, body = @app.call(env)
-        commit_session(env, status, headers, body)
+        ServletStore.commit_session(env, status, headers, body)
         return [ status, headers, body ]
       end
       
-      def load_session(env)
+      def self.load_session(env)
         env['rack.session'] = load_session_data( env['java.servlet_request'].getSession(true) )
         env['rack.session.options' ] = {}
       end
       
-      def commit_session(env, status, headers, body) 
+      def self.commit_session(env, status, headers, body) 
         session_data = env['rack.session' ]        
-        store_session_data( env['java.servlet_request'].getSession(true), session_data )
+        ServletStore.store_session_data( env['java.servlet_request'].getSession(true), session_data )
       end
       
-      def load_session_data(session)
+      def self.load_session_data(session)
         session_data = SessionData.new
         session_data.java_session = session
         session.getAttributeNames.each do |key|
@@ -57,14 +57,16 @@ module TorqueBox
             session_data[key] = session.getAttribute(key)
           end
         end
+        puts "LOADED #{session_data.inspect}"
         symbolize_keys!(session_data)
         initial_keys = session_data.keys
         session_data[:session_id] = session.getId()
         session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
+        puts "RETURN #{session_data.inspect}"
         session_data
       end
 
-      def symbolize_keys!(session_data)
+      def self.symbolize_keys!(session_data)
         symbol_keys = session_data[ SYMBOL_KEYS ] || []
         keys = session_data.keys
         keys.each do |key|
@@ -74,7 +76,7 @@ module TorqueBox
         end
       end
       
-      def store_session_data(session, session_data)
+      def self.store_session_data(session, session_data)
         hash = session_data.dup
         # java session shouldn't be marshalled
         hash.java_session = nil if hash.respond_to?(:java_session=)
@@ -91,10 +93,12 @@ module TorqueBox
           if ( String === key )
             case value
               when String, Numeric, true, false, nil
+                puts "SET #{key} = #{value}"
                 session.setAttribute( key, value )
                 true
             else
               if value.respond_to?(:java_object)
+                puts "SET #{key} = #{value}"
                 session.setAttribute( key, value )
                 true
               else

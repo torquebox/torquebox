@@ -26,11 +26,14 @@ import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
+import org.jruby.RubyProc;
 import org.jruby.ast.Node;
 import org.jruby.ast.visitor.NodeVisitor;
 import org.jruby.parser.LocalStaticScope;
 import org.jruby.parser.StaticScope;
+import org.jruby.runtime.BlockBody;
 import org.jruby.runtime.DynamicScope;
+import org.jruby.runtime.InterpretedBlock;
 import org.jruby.runtime.scope.ManyVarsDynamicScope;
 import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 
@@ -47,7 +50,7 @@ public class ScriptAnalyzer {
 
     /** Cached ruby 1.8 interpreter. */
     private Ruby ruby18;
-    
+
     /** Cached ruby 1.9 interpreter. */
     private Ruby ruby19;
 
@@ -116,12 +119,14 @@ public class ScriptAnalyzer {
         analyze( filename, script.toString(), visitor, rubyVersion );
     }
 
-    /** Analyze a script, given a visitor and Ruby interpreter version.
+    /**
+     * Analyze a script, given a visitor and Ruby interpreter version.
      * 
      * @param filename The name of the file for <code>__FILE__</code>.
      * @param script The contents of the script to analyze.
      * @param visitor The visitor to apply to the Ruby AST.
-     * @param rubyVersion The version of Ruby interpreter to use during analysis.
+     * @param rubyVersion The version of Ruby interpreter to use during
+     *            analysis.
      * @return The result provided by the specific <code>NodeVisitor</code>.
      */
     public void analyze(String filename, String script, NodeVisitor visitor, Version rubyVersion) {
@@ -137,5 +142,24 @@ public class ScriptAnalyzer {
 
         Node result = analyzingRuby.parseEval( script, filename, scope, 0 );
         result.accept( visitor );
+    }
+
+    /**
+     * Analyze a script, given a visitor and Ruby interpreter version.
+     * 
+     * @param filename The name of the file for <code>__FILE__</code>.
+     * @param script The contents of the script to analyze.
+     * @param visitor The visitor to apply to the Ruby AST.
+     * @param rubyVersion The version of Ruby interpreter to use during
+     *            analysis.
+     * @return The result provided by the specific <code>NodeVisitor</code>.
+     */
+    public void analyze(RubyProc proc, NodeVisitor visitor) {
+        BlockBody body = proc.getBlock().getBody();
+        if (body instanceof InterpretedBlock) {
+            Node result = ((InterpretedBlock)body).getBodyNode();
+            result.accept( visitor );
+        }
+
     }
 }

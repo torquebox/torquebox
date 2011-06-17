@@ -23,8 +23,9 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.jboss.as.naming.deployment.ContextNames;
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceTarget;
 import org.torquebox.core.injection.jndi.JNDIInjectable;
 
 public class DestinationInjectable extends JNDIInjectable {
@@ -34,24 +35,24 @@ public class DestinationInjectable extends JNDIInjectable {
     }
 
     @Override
-    public ServiceName getServiceName(DeploymentPhaseContext context) {
-        ServiceName destinationServiceName = wrapWithManager( context, getDestinationServiceName() );
-        ServiceName connectionFactoryServiceName = wrapWithManager( context, getConnectionFactoryServiceName() );
+    public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) {
+        ServiceName destinationServiceName = wrapWithManager( serviceTarget, unit, getDestinationServiceName() );
+        ServiceName connectionFactoryServiceName = wrapWithManager( serviceTarget, unit, getConnectionFactoryServiceName() );
         
-        ServiceName liveDestinationServiceName = wrapWithLiveDestination( context, connectionFactoryServiceName, destinationServiceName );
+        ServiceName liveDestinationServiceName = wrapWithLiveDestination( serviceTarget, unit, connectionFactoryServiceName, destinationServiceName );
         
         return liveDestinationServiceName;
     }
 
-    protected ServiceName wrapWithLiveDestination(DeploymentPhaseContext context, ServiceName connectionFactoryServiceName, ServiceName destinationServiceName) {
+    protected ServiceName wrapWithLiveDestination(ServiceTarget serviceTarget, DeploymentUnit unit, ServiceName connectionFactoryServiceName, ServiceName destinationServiceName) {
     	ServiceName liveDestinationServiceName = destinationServiceName.append( "live" );
     	
-        if (serviceIsAlreadyWrapped( context, liveDestinationServiceName )) {
+        if (serviceIsAlreadyWrapped( unit, liveDestinationServiceName )) {
             return liveDestinationServiceName;
         }
         
         LiveDestinationService liveDestinationService = new LiveDestinationService();
-        context.getServiceTarget().addService( liveDestinationServiceName, liveDestinationService )
+        serviceTarget.addService( liveDestinationServiceName, liveDestinationService )
             .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
             .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
             .install();

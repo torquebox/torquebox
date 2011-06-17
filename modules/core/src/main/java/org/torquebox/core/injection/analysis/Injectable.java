@@ -19,8 +19,9 @@
 
 package org.torquebox.core.injection.analysis;
 
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceTarget;
 
 /**
  * Injectable item which translates to an acceptable MSC {@link ServiceName}.
@@ -66,10 +67,11 @@ public interface Injectable {
      * Retrieve the MSC <code>ServiceName</code> of the actual underlying
      * injectable asset.
      * 
-     * @param phaseContext The deployment context.
+     * @param serviceTarget The service target if the injectable needs to create new services.
+     * @param unit The deployment unit.
      * @return The <code>ServiceName</code> of the injectable item.
      * @throws Exception
      */
-    ServiceName getServiceName(DeploymentPhaseContext phaseContext) throws Exception;
+    ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit) throws Exception;
 
 }

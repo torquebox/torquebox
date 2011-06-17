@@ -28,7 +28,14 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.Service;
+import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ValueService;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.value.ImmediateValue;
+import org.jboss.msc.value.Value;
 import org.jboss.vfs.VirtualFile;
+import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
 /**
@@ -61,6 +68,8 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         if (runtimeMetaData == null) {
             return;
         }
+        
+        deployRuntimeInjectionAnalyzer( phaseContext ); 
 
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
 
@@ -89,6 +98,17 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         long elapsed = System.currentTimeMillis() - startTime;
 
         log.info( "Injection scanning took " + elapsed + "ms" );
+    }
+
+    private void deployRuntimeInjectionAnalyzer(DeploymentPhaseContext phaseContext) {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        
+        ServiceName serviceName = CoreServices.runtimeInjectionAnalyzerName( unit );
+        RuntimeInjectionAnalyzer runtimeAnalyzer = new RuntimeInjectionAnalyzer( phaseContext.getServiceRegistry(), phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit(), this.injectionAnalyzer );
+        Service<RuntimeInjectionAnalyzer> service = new ValueService<RuntimeInjectionAnalyzer>( new ImmediateValue<RuntimeInjectionAnalyzer>( runtimeAnalyzer ) );
+        
+        phaseContext.getServiceTarget().addService( serviceName, service ).install();
+        
     }
 
     protected boolean shouldProcess(VirtualFile dir) {

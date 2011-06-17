@@ -32,44 +32,10 @@ describe "messaging rack test" do
     receive_thread.join
   end
 
-  context "message selectors" do
-    before(:each) do
-      @queue = TorqueBox::Messaging::Queue.new "/queues/selectors"
-      visit "/messaging-rack/start?#{@queue.name}"
-    end
-
-    after(:each) do
-      visit "/messaging-rack/stop?#{@queue.name}"
-    end
-
-    {
-      'prop = true' => true,
-      'prop <> false' => true,
-      'prop = 5' => 5,
-      'prop > 4' => 5,
-      'prop = 5.5' => 5.5,
-      'prop < 6' => 5.5,
-      "prop = 'string'" => 'string'
-    }.each do |selector, value|
-      it "should be able to select with property set to #{value} using selector '#{selector}'" do
-        @queue.publish value.to_s, :properties => { :prop => value }
-        message = @queue.receive(:timeout => 1000, :selector => selector)
-        message.should == value.to_s
-      end
-    end
-    
-  end
 end
 
 
 remote_describe "in-container messaging tests" do
-
-  deploy <<-END.gsub(/^ {4}/,'')
-    application:
-      root: #{File.dirname(__FILE__)}/../apps/rack/messaging
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-  END
 
   describe "message enumeration" do
     it "should allow enumeration of the messages" do
@@ -88,6 +54,33 @@ remote_describe "in-container messaging tests" do
       queue.detect { |m| m.text == 'howdy' }.should be_nil
       queue.stop
     end
+  end
+
+  context "message selectors" do
+    before(:each) do
+      @queue = TorqueBox::Messaging::Queue.start "/queues/selectors"
+    end
+
+    after(:each) do
+      @queue.stop
+    end
+
+    {
+      'prop = true' => true,
+      'prop <> false' => true,
+      'prop = 5' => 5,
+      'prop > 4' => 5,
+      'prop = 5.5' => 5.5,
+      'prop < 6' => 5.5,
+      "prop = 'string'" => 'string'
+    }.each do |selector, value|
+      it "should be able to select with property set to #{value} using selector '#{selector}'" do
+        @queue.publish value.to_s, :properties => { :prop => value }
+        message = @queue.receive(:timeout => 1000, :selector => selector)
+        message.should == value.to_s
+      end
+    end
+    
   end
 
   describe "sending and receiving" do

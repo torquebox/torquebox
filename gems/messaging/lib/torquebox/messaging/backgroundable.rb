@@ -16,21 +16,36 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/queue'
+require 'torquebox/messaging/future_result'
+require 'torquebox/messaging/task'
 require 'torquebox/injectors'
 
 module TorqueBox
   module Messaging
+
+    # Backgroundable provides mechanism for executing an object's
+    # methods asynchronously.
     module Backgroundable
       def self.included(base)
         base.extend(ClassMethods)
       end
 
+      # Allows you to background any method that has not been marked
+      # as a backgrounded method via {ClassMethods#always_background}.
+      # @param [Hash] options that are passed through to
+      #   {TorqueBox::Messaging::Destination#publish}
+      # @return [FutureResult]
       def background(options = { })
         BackgroundProxy.new(self, options)
       end
 
       module ClassMethods
 
+        # Marks methods to always be backgrounded. Takes one or more
+        # method symbols, and an optional options hash as the final
+        # argument. The options allow you to set publish options for
+        # each call.
+        # see TorqueBox::Messaging::Destination#publish
         def always_background(*methods)
           options = methods.last.is_a?(Hash) ? methods.pop : {}
           @__backgroundable_methods ||= {}
@@ -105,8 +120,16 @@ module TorqueBox
         
         class << self
           def publish_message(receiver, method, args, options = { })
-            queue = Queue.new( TorqueBox::Messaging::Task.queue_name("torquebox_backgroundable") )
-            queue.publish({:receiver => receiver, :method => method, :args => args}, options)
+            queue_name = Task.queue_name( "torquebox_backgroundable" )
+            queue = Queue.new( queue_name )
+            future = FutureResult.new( queue )
+            queue.publish( {:receiver => receiver,
+                             :future_id => future.correlation_id,
+                             :future_queue => queue_name,
+                             :method => method,
+                             :args => args}, options )
+            
+            future
           rescue javax.jms.InvalidDestinationException => ex
             raise RuntimeError.new("The Backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")
           end

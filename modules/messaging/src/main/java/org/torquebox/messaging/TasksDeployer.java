@@ -62,7 +62,7 @@ public class TasksDeployer implements DeploymentUnitProcessor {
 
     protected void deploy(DeploymentPhaseContext phaseContext, DeploymentUnit unit, RubyApplicationMetaData appMetaData, TaskMetaData task) throws DeploymentUnitProcessingException {
         String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + "/tasks/" + task.getQueueSuffix();
-        
+                
         if (task.getConcurrency() > 0) {
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );
@@ -72,6 +72,7 @@ public class TasksDeployer implements DeploymentUnitProcessor {
             processorMetaData.setDestinationName( queueName );
             processorMetaData.setRubyClassName( task.getRubyClassName(), task.getLocation() );
             processorMetaData.setConcurrency( task.getConcurrency() );
+            processorMetaData.setMessageSelector( "JMSCorrelationID IS NULL" );
             unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY, processorMetaData );
         }
     }

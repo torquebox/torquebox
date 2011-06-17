@@ -17,3 +17,6 @@
 
 require 'action_dispatch/session/torque_box_store'
 require 'action_controller/session/torque_box_store'
+
+require 'torquebox/web_sockets'
+require 'torquebox/web_sockets/processor'

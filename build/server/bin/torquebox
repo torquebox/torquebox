@@ -1,26 +1,29 @@
 #!/usr/bin/env ruby
 
-#
-# Copyright 2011 Red Hat, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
+# Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+# 
+# This is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 2.1 of
+# the License, or (at your option) any later version.
+# 
+# This software is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+# 
+# You should have received a copy of the GNU Lesser General Public
+# License along with this software; if not, write to the Free
+# Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'java'
 require 'thor'
 require 'torquebox-rake-support'
+require 'torquebox/server'
 
 class TorqueBoxCommand < Thor
+
+  TASK_ORDER = %w(deploy undeploy start cli env help)
 
   map "run" => "start"
   desc "run", "Run TorqueBox"
@@ -66,29 +69,57 @@ class TorqueBoxCommand < Thor
   desc "cli", "Run the JBoss AS7 CLI"
   def cli
     setup_environment
-    windows_path = File.join(jboss_home, "bin\\jboss-admin")
-    unix_path = "/bin/sh #{File.join(jboss_home, 'bin/jboss-admin.sh')}"
+    windows_path = File.join(TorqueBox::Server.jboss_home, "bin\\jboss-admin")
+    unix_path = "/bin/sh #{File.join(TorqueBox::Server.jboss_home, 'bin/jboss-admin.sh')}"
     command = Config::CONFIG['host_os'] =~ /mswin/ ? windows_path : unix_path
     exec command
   end
 
+  desc "env [VARIABLE]", "Display TorqueBox environment variables"
+  def env(variable=nil)
+    setup_environment
+    env_keys = %w(TORQUEBOX_HOME JBOSS_HOME JRUBY_HOME)
+    if variable.nil?
+      env_keys.each { |key| shell.say "#{key}=#{ENV[key]}" }
+    else
+      key = env_keys.find { |key| variable.downcase == key.downcase }
+      shell.say(ENV[key]) unless key.nil?
+    end
+  end
+
   no_tasks {
     def setup_environment
-      ENV['TORQUEBOX_HOME'] = torquebox_home
-      ENV['JBOSS_HOME'] = jboss_home
-      ENV['JBOSS_OPTS'] = "-Djruby.home=#{jruby_home}"
+      ENV['TORQUEBOX_HOME'] = TorqueBox::Server.torquebox_home
+      ENV['JBOSS_HOME'] = TorqueBox::Server.jboss_home
+      ENV['JRUBY_HOME'] = TorqueBox::Server.jruby_home
+      ENV['JBOSS_OPTS'] = "-Djruby.home=#{TorqueBox::Server.jruby_home}"
     end
 
-    def torquebox_home
-      File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    end
+    class << self
+      # Override all_tasks and help methods in Thor to print options
+      # out in the order we prefer
+      alias_method :all_tasks_from_super, :all_tasks
 
-    def jboss_home
-      File.join(torquebox_home, 'jboss')
-    end
+      def all_tasks
+        super_tasks = all_tasks_from_super
+        tasks = Thor::CoreExt::OrderedHash.new
+        TASK_ORDER.each do |task|
+          tasks[task] = super_tasks[task] unless super_tasks[task].nil?
+        end
+        tasks.merge(super_tasks)
+      end
 
-    def jruby_home
-      File.expand_path(java.lang.System.getProperty('jruby.home'))
+      def help(shell, subcommand = false)
+        list = printable_tasks(true, subcommand)
+        Thor::Util.thor_classes_in(self).each do |klass|
+          list += klass.printable_tasks(false)
+        end
+
+        shell.say "Tasks:"
+        shell.print_table(list, :ident => 2, :truncate => true)
+        shell.say
+        class_options_help(shell)
+      end
     end
   }
 

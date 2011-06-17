@@ -39,15 +39,6 @@ public class SharedPool<T> implements Pool<T> {
 
     protected Logger log = Logger.getLogger( getClass() );
 
-    /** Name of the pool. */
-    private String name = "anonymous-pool";
-
-    /** The shared instance. */
-    private T instance;
-
-    /** Optional factory to create the initial instance. */
-    private InstanceFactory<T> factory;
-
     /**
      * Construct.
      */
@@ -131,6 +122,28 @@ public class SharedPool<T> implements Pool<T> {
         return this.factory;
     }
 
+    public synchronized void startPool() throws Exception {
+        if (this.instance == null) {
+            this.instance = factory.createInstance( getName() );
+        }
+    }
+
+    public boolean isDeferredUntilRequested() {
+        return this.deferUntilRequested;
+    }
+
+    public void setDeferUntilRequested(boolean deferUntilRequested) {
+        this.deferUntilRequested = deferUntilRequested;
+    }
+
+    public boolean isStartAsynchronously() {
+        return startAsynchronously;
+    }
+
+    public void setStartAsynchronously(boolean startAsynchronously) {
+        this.startAsynchronously = startAsynchronously;
+    }
+    
     /**
      * Create the pool.
      * 
@@ -145,9 +158,23 @@ public class SharedPool<T> implements Pool<T> {
         if (this.factory == null) {
             throw new IllegalArgumentException( "Neither an instance nor an instance-factory provided." );
         }
-
-        this.instance = factory.createInstance( getName() );
-        this.notifyAll();
+        if (!this.deferUntilRequested && !this.startAsynchronously) {
+            startPool();
+        } else if (this.startAsynchronously) {
+            log.info( "Starting " + this.name + " runtime pool asynchronously" );
+            Thread initThread = new Thread() {
+                public void run() {
+                    try {
+                        SharedPool.this.startPool();
+                    } catch(Exception ex) {
+                        log.error( "Failed to start pool", ex );
+                    }
+                }
+            };
+            initThread.start();
+        } else {
+            log.info( "Deferring start for " + this.name + " runtime pool." );
+        }
     }
 
     /**
@@ -173,6 +200,10 @@ public class SharedPool<T> implements Pool<T> {
 
     @Override
     public synchronized T borrowInstance(long timeout) throws Exception {
+        if (this.instance == null) {
+            startPool();
+        }
+
         long remaining = timeout;
         while (this.instance == null) {
             long startWait = System.currentTimeMillis();
@@ -182,7 +213,21 @@ public class SharedPool<T> implements Pool<T> {
                 break;
             }
         }
+        
         return this.instance;
     }
+    
+    /** Name of the pool. */
+    private String name = "anonymous-pool";
+
+    /** The shared instance. */
+    private T instance;
+
+    /** Optional factory to create the initial instance. */
+    private InstanceFactory<T> factory;
+
+    private boolean deferUntilRequested = true;
+    
+    private boolean startAsynchronously = false;
 
 }

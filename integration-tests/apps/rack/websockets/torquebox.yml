@@ -1,0 +1,16 @@
+
+websockets:
+  echo:
+    context: /echo
+    class: EchoProcessor
+  echo-french:
+    context: /echo-french
+    class: EchoProcessor
+    config:
+      prefix: L'ECHO
+  time:
+    context: /time
+    class: TimeProcessor
+  session:
+    context: /session
+    class: SessionProcessor

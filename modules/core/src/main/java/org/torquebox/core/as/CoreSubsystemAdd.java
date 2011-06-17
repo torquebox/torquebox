@@ -42,7 +42,6 @@ import org.jboss.as.jmx.MBeanServerService;
 import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.BootOperationContext;
 import org.jboss.as.server.BootOperationHandler;
-import org.jboss.as.server.ServerEnvironment;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
@@ -98,8 +97,8 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
     }
 
     protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
-        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new AKnobRootMountProcessor() );
-        context.addDeploymentProcessor( Phase.STRUCTURE, 10, new KnobStructureProcessor() );
+        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
+        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobStructureProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
         context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );
 
@@ -114,6 +113,7 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         context.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeDeployer() );
 
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
+        context.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new PredeterminedInjectableProcessor( registry ) );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableDeployer() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );

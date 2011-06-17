@@ -19,8 +19,9 @@
 
 package org.torquebox.messaging.injection;
 
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceTarget;
 import org.torquebox.core.injection.SimpleNamedInjectable;
 import org.torquebox.messaging.as.MessagingServices;
 
@@ -31,7 +32,7 @@ public class ConnectionFactoryInjectable extends SimpleNamedInjectable {
     }
 
     @Override
-    public ServiceName getServiceName(DeploymentPhaseContext phaseContext) throws Exception {
+    public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit) throws Exception {
         return MessagingServices.RUBY_CONNECTION_FACTORY;
     }
     

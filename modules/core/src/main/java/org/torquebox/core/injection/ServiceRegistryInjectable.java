@@ -19,10 +19,11 @@
 
 package org.torquebox.core.injection;
 
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
+import org.jboss.msc.service.ServiceTarget;
 import org.torquebox.core.as.CoreServices;
 
 /**
@@ -46,8 +47,7 @@ public class ServiceRegistryInjectable extends SimpleNamedInjectable {
     }
 
     @Override
-    public ServiceName getServiceName(DeploymentPhaseContext phaseContext) throws Exception {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+    public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) throws Exception {
         return CoreServices.serviceRegistryName( unit );
     }
 

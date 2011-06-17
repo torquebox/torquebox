@@ -34,6 +34,7 @@ import org.torquebox.web.rack.RackApplicationMetaData;
 public class WebDependenciesProcessor implements DeploymentUnitProcessor {
     
     private static ModuleIdentifier TORQUEBOX_WEB_ID = ModuleIdentifier.create("org.torquebox.web");
+    private static ModuleIdentifier NETTY_ID = ModuleIdentifier.create("org.jboss.netty");
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -44,11 +45,12 @@ public class WebDependenciesProcessor implements DeploymentUnitProcessor {
 
         if (unit.hasAttachment( RackApplicationMetaData.ATTACHMENT_KEY )) {
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_WEB_ID );
+            addDependency( moduleSpecification, moduleLoader, NETTY_ID );
         }
     }
 
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
-        moduleSpecification.addDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
+        moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.junit.After;
@@ -62,6 +63,12 @@ public abstract class AbstractDeploymentProcessorTestCase extends AbstractTorque
     protected void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         for ( DeploymentUnitProcessor each : this.deployers ) {
             each.deploy( phaseContext );
+        }
+    }
+    
+    protected void undeploy(DeploymentUnit unit) {
+        for ( DeploymentUnitProcessor each : this.deployers ) {
+            each.undeploy( unit );
         }
     }
     

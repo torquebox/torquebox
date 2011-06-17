@@ -110,7 +110,7 @@ module TorqueBox
       end
 
       def run_command_line
-        cmd = Config::CONFIG['host_os'] =~ /mswin/ ? "bin\\standalone" : "/bin/sh bin/standalone.sh"
+        cmd = Config::CONFIG['host_os'] =~ /mswin/ ? "#{jboss_home}\\bin\\standalone.bat" : "/bin/sh bin/standalone.sh"
         options = ENV['JBOSS_OPTS']
 #        cmd += " -b 0.0.0.0" unless /((^|\s)-b\s|(^|\s)--host=)/ =~ options
         "#{cmd} #{options}"

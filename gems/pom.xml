@@ -21,6 +21,7 @@
     <module>naming</module>
     <module>messaging</module>
     <module>security</module>
+    <module>infinispan</module>
     <module>web</module>
 
     <module>rake-support</module>
@@ -36,6 +37,7 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -118,5 +120,34 @@
         </pluginManagement>
       </build>
     </profile>
+
+    <profile>
+      <id>dist</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>jruby-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>dist-yardocs</id>
+                <inherited>false</inherited>
+                <phase>package</phase>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <configuration>
+                  <file>bin/run-yard.rb</file>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
   </profiles>
 </project>

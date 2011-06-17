@@ -154,6 +154,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.jboss</groupId>
+        <artifactId>netty</artifactId>
+        <version>${version.netty}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.hornetq</groupId>
         <artifactId>hornetq-jms-client</artifactId>
         <version>${version.org.hornetq.hornetq-jms}</version>
@@ -299,6 +305,8 @@
     <version.mockito>1.8.4</version.mockito>
     <version.hamcrest>1.1</version.hamcrest>
 
+    <version.netty>3.2.1.Final</version.netty>
+
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 
     <version.jruby>1.6.2</version.jruby>
@@ -322,7 +330,7 @@
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.3.0</version.rspec>
 
-    <version.jbossas>7.x.incremental.16</version.jbossas>
+    <version.jbossas>7.x.incremental.30</version.jbossas>
 
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>

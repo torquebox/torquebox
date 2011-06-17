@@ -19,10 +19,7 @@
 
 package org.torquebox.web.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
 
 import org.jboss.as.controller.BasicOperationResult;
 import org.jboss.as.controller.ModelAddOperationHandler;
@@ -37,6 +34,7 @@ import org.jboss.as.server.BootOperationHandler;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.web.VirtualHostInstaller;
 import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
 import org.torquebox.web.rack.RackApplicationDefaultsProcessor;
@@ -50,6 +48,13 @@ import org.torquebox.web.rails.RailsAutoloadPathProcessor;
 import org.torquebox.web.rails.RailsRackProcessor;
 import org.torquebox.web.rails.RailsRuntimeProcessor;
 import org.torquebox.web.rails.RailsVersionProcessor;
+import org.torquebox.web.websockets.URLRegistryInstaller;
+import org.torquebox.web.websockets.WebSocketContextInstaller;
+import org.torquebox.web.websockets.WebSocketsRuntimePoolProcessor;
+import org.torquebox.web.websockets.WebSocketsServerService;
+import org.torquebox.web.websockets.WebSocketsServices;
+import org.torquebox.web.websockets.WebSocketsYamlParsingProcessor;
+import org.torquebox.web.websockets.component.WebSocketProcessorComponentResolverInstaller;
 
 class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
 
@@ -88,19 +93,33 @@ class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler 
         context.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
         context.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
         
+        context.addDeploymentProcessor( Phase.PARSE, 1200, new WebSocketsYamlParsingProcessor() );
+        
         context.addDeploymentProcessor( Phase.DEPENDENCIES, 1, new WebDependenciesProcessor() );
         
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
+        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 101, new WebSocketsRuntimePoolProcessor() );
         context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, new RailsAutoloadPathProcessor() );
         
         context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
+        context.addDeploymentProcessor( Phase.POST_MODULE, 220, new WebSocketProcessorComponentResolverInstaller() );
         context.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
+        context.addDeploymentProcessor( Phase.INSTALL, 3100, new WebSocketContextInstaller( "localhost"  ) );
+        context.addDeploymentProcessor( Phase.INSTALL, 4100, new URLRegistryInstaller() );
     }
 
+    protected void addWebServices(RuntimeTaskContext context) {
+        WebSocketsServerService service = new WebSocketsServerService();
+        context.getServiceTarget().addService( WebSocketsServices.WEB_SOCKETS_SERVER, service )
+            .setInitialMode( Mode.ON_DEMAND )
+            .install();
+    }
+    
     protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
         return new RuntimeTask() {
             @Override
             public void execute(RuntimeTaskContext context) throws OperationFailedException {
+                addWebServices(context);
                 addDeploymentProcessors( bootContext );
                 resultHandler.handleResultComplete();
             }
