@@ -39,12 +39,12 @@ public class RuntimeInjectionAnalyzer {
                 try {
                     Thread.currentThread().setContextClassLoader( proc.getRuntime().getJRubyClassLoader().getParent() );
                     injectedValue = controller.getValue();   
+                    System.err.println( "SERVICE_VALUE: " + injectedValue );
+                    System.err.println( "KEY: " + each.getKey() );
+                    registry.getInjector( each.getKey() ).inject( injectedValue );
                 } finally {
                     Thread.currentThread().setContextClassLoader( originalCl );
                 }
-                System.err.println( "SERVICE_VALUE: " + injectedValue );
-                System.err.println( "KEY: " + each.getKey() );
-                registry.getInjector( each.getKey() ).inject( injectedValue );
             }
             registry.merge( proc.getRuntime() );
         }
