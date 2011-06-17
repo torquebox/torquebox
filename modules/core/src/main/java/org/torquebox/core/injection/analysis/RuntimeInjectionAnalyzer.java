@@ -34,7 +34,14 @@ public class RuntimeInjectionAnalyzer {
                 System.err.println( "SERVICE_NAME: " + eachName );
                 ServiceController<?> controller = this.serviceRegistry.getRequiredService( eachName );
                 System.err.println( "SERVICE_CONTROLLER: " + controller );
-                Object injectedValue = controller.getValue();
+                Object injectedValue = null;
+                ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
+                try {
+                    Thread.currentThread().setContextClassLoader( proc.getRuntime().getJRubyClassLoader().getParent() );
+                    injectedValue = controller.getValue();   
+                } finally {
+                    Thread.currentThread().setContextClassLoader( originalCl );
+                }
                 System.err.println( "SERVICE_VALUE: " + injectedValue );
                 System.err.println( "KEY: " + each.getKey() );
                 registry.getInjector( each.getKey() ).inject( injectedValue );
