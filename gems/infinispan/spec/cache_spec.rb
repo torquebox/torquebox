@@ -17,7 +17,7 @@
 require File.dirname(__FILE__) + '/spec_helper'
 
 describe TorqueBox::Infinispan::Cache do
-  before :all do
+  before :each do
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
@@ -25,9 +25,48 @@ describe TorqueBox::Infinispan::Cache do
     @cache.name.should == 'foo-cache'
   end
 
-  it "should have a cache mode" do
-    @cache.should respond_to( :clustering_mode) 
+  it "should respond to clustering_mode" do
+    @cache.should respond_to( :clustering_mode ) 
   end
 
+  it "should accept and return strings" do
+    @cache.put('foo', 'bar').should be_true
+    @cache.get('foo').should == 'bar'
+  end
+
+  it "should accept and return ruby objects" do
+    time = Time.new
+    @cache.put('time', time).should be_true
+    @cache.get('time').should == time
+    @cache.get('time').class.name.should == 'Time'
+  end
+
+  it "should return all keys" do
+    @cache.put('one', 1)
+    @cache.put('two', 2)
+    @cache.put('three', 3)
+    keys = @cache.keys
+    keys.length.should == 3
+    keys.include?('one').should be_true
+    keys.include?('two').should be_true
+    keys.include?('three').should be_true
+  end
+
+  it "should allow removal of a key/value" do
+    @cache.put('foo', 'bar')
+    @cache.keys.length.should == 1
+    @cache.remove('foo').should be_true
+    @cache.keys.length.should == 0
+  end
+
+  it "should only insert on put_if_absent if the key is not already in the cache" do
+    @cache.put_if_absent('foo', 'bar').should be_true
+    @cache.put_if_absent('foo', 'foobar')
+    @cache.get('foo').should == 'bar'
+  end
+
+  it "should clear" do
+    @cache.clear.should be_true
+  end
 end
 
