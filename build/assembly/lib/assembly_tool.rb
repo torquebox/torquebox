@@ -95,6 +95,7 @@ class AssemblyTool
   def install_gem(gem, update_index=false)
     puts "Installing #{gem}"
     opts = {
+      :bin_dir => @jruby_dir + '/bin',
       :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
       :wrapper     => true
     }
