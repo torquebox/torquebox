@@ -66,23 +66,6 @@ public class PoolMetaData {
 
     public static final AttachmentKey<AttachmentList<PoolMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList(PoolMetaData.class);
 
-    /** Name of the pool. */
-    private String name;
-
-    /** Type of pool. */
-    private PoolType poolType;
-
-    /** Minimum size of the pool. */
-    private int minimumSize;
-
-    /** Maximum size of the pool. */
-    private int maximumSize;
-
-    /** Name of the instance-factory to use if non-global. */
-    private String instanceFactoryName;
-
-    private String instanceName;
-
     /**
      * Named SHARED
      */
@@ -250,6 +233,23 @@ public class PoolMetaData {
         return (this.poolType == PoolType.GLOBAL);
     }
 
+    
+    public boolean isDeferUntilRequested() {
+        return deferUntilRequested;
+    }
+
+    public void setDeferUntilRequested(boolean deferUntilRequested) {
+        this.deferUntilRequested = deferUntilRequested;
+    }
+
+    public boolean isStartAsynchronously() {
+        return startInAsynchronously;
+    }
+
+    public void setStartAsynchronously(boolean startInAsynchronously) {
+        this.startInAsynchronously = startInAsynchronously;
+    }
+
     public String toString() {
         if (this.poolType == PoolType.NON_SHARED) {
             return "[PoolMetaData: name=" + this.name + " min=" + this.minimumSize + " max=" + this.maximumSize + "]";
@@ -258,4 +258,24 @@ public class PoolMetaData {
         }
     }
 
+    /** Name of the pool. */
+    private String name;
+
+    /** Type of pool. */
+    private PoolType poolType;
+
+    /** Minimum size of the pool. */
+    private int minimumSize;
+
+    /** Maximum size of the pool. */
+    private int maximumSize;
+
+    /** Name of the instance-factory to use if non-global. */
+    private String instanceFactoryName;
+
+    private String instanceName;
+    
+    private boolean deferUntilRequested = true;
+    
+    private boolean startInAsynchronously = false;
 }

@@ -46,7 +46,7 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
     @Test
     public void testNonDeferredPoolShouldNotDefer() throws Exception {
         ManagedPool<String> pool = new ManagedPool<String>( this.factory, 5, 10 );
-        pool.setDeferred( false );
+        pool.setDeferUntilRequested( false );
         pool.start();
         assertEquals( true, pool.isStarted() );
         pool.stop();

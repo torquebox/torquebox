@@ -39,17 +39,6 @@ public class SharedPool<T> implements Pool<T> {
 
     protected Logger log = Logger.getLogger( getClass() );
 
-    /** Name of the pool. */
-    private String name = "anonymous-pool";
-
-    /** The shared instance. */
-    private T instance;
-
-    /** Optional factory to create the initial instance. */
-    private InstanceFactory<T> factory;
-
-    private boolean deferred = true;
-
     /**
      * Construct.
      */
@@ -139,10 +128,22 @@ public class SharedPool<T> implements Pool<T> {
         }
     }
 
-    public boolean isDeferred() {
-        return this.deferred;
+    public boolean isDeferredUntilRequested() {
+        return this.deferUntilRequested;
     }
 
+    public void setDeferUntilRequested(boolean deferUntilRequested) {
+        this.deferUntilRequested = deferUntilRequested;
+    }
+
+    public boolean isStartAsynchronously() {
+        return startAsynchronously;
+    }
+
+    public void setStartAsynchronously(boolean startAsynchronously) {
+        this.startAsynchronously = startAsynchronously;
+    }
+    
     /**
      * Create the pool.
      * 
@@ -157,10 +158,9 @@ public class SharedPool<T> implements Pool<T> {
         if (this.factory == null) {
             throw new IllegalArgumentException( "Neither an instance nor an instance-factory provided." );
         }
-        if (!this.deferred) {
+        if (!this.deferUntilRequested && !this.startAsynchronously) {
             startPool();
-        } else if (this.name.equals( "web" )) {
-            // FIXME: Start the web pool via a thread. This is a hack
+        } else if (this.startAsynchronously) {
             log.info( "Starting " + this.name + " runtime pool asynchronously" );
             Thread initThread = new Thread() {
                 public void run() {
@@ -216,5 +216,18 @@ public class SharedPool<T> implements Pool<T> {
         
         return this.instance;
     }
+    
+    /** Name of the pool. */
+    private String name = "anonymous-pool";
+
+    /** The shared instance. */
+    private T instance;
+
+    /** Optional factory to create the initial instance. */
+    private InstanceFactory<T> factory;
+
+    private boolean deferUntilRequested = true;
+    
+    private boolean startAsynchronously = false;
 
 }

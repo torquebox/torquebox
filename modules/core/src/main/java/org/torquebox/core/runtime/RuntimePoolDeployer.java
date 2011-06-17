@@ -74,7 +74,9 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
         if (poolMetaData.isShared()) {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();
             pool.setName( poolMetaData.getName() );
-
+            pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
+            pool.setStartAsynchronously( poolMetaData.isStartAsynchronously() );
+            
             SharedRubyRuntimeFactoryPoolService service = new SharedRubyRuntimeFactoryPoolService( pool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
@@ -109,7 +111,9 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             pool.setName( poolMetaData.getName() );
             pool.setMinimumInstances( poolMetaData.getMinimumSize() );
             pool.setMaximumInstances( poolMetaData.getMaximumSize() );
-
+            pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
+            pool.setStartAsynchronously( poolMetaData.isStartAsynchronously() );
+        
             DefaultRubyRuntimePoolService service = new DefaultRubyRuntimePoolService( pool );
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );

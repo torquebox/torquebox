@@ -25,13 +25,6 @@ import org.jboss.logging.Logger;
 
 public class ManagedPool<T> implements Pool<T> {
 
-    private Logger log = Logger.getLogger( this.getClass() );
-
-    private SimplePool<T> pool;
-    private PoolManager<T> poolManager;
-    private boolean deferred = true;
-    private boolean started = false;
-
     public ManagedPool() {
         this( null, 1, 1);
     }
@@ -93,10 +86,9 @@ public class ManagedPool<T> implements Pool<T> {
     }
 
     public void start() throws InterruptedException {
-        if (!this.deferred) {
+        if (!this.deferUntilRequested && !this.startAsynchronously) {
             startPool();
-        } else if ("web".equals( getName() )) {
-            // FIXME: Start the web pool via a thread. This is a hack
+        } else if (this.startAsynchronously) {
             log.info( "Starting " + getName() + " runtime pool asynchronously." );
             Thread initThread = new Thread() {
                 public void run() {
@@ -147,14 +139,22 @@ public class ManagedPool<T> implements Pool<T> {
         return this.started;
     }
 
-    public boolean isDeferred() {
-        return this.deferred;
+    public boolean isDeferredUntilRequested() {
+        return this.deferUntilRequested;
     }
 
-    public void setDeferred(boolean deferred) {
-        this.deferred = deferred;
+    public void setDeferUntilRequested(boolean deferUntilRequested) {
+        this.deferUntilRequested = deferUntilRequested;
     }
 
+    public boolean isStartAsynchronously() {
+        return startAsynchronously;
+    }
+
+    public void setStartAsynchronously(boolean startAsynchronously) {
+        this.startAsynchronously = startAsynchronously;
+    }
+    
     public int getSize() {
         return size();
     }
@@ -195,4 +195,14 @@ public class ManagedPool<T> implements Pool<T> {
         this.poolManager.waitForMinimumFill();
     }
 
+    
+    private Logger log = Logger.getLogger( this.getClass() );
+
+    private SimplePool<T> pool;
+    private PoolManager<T> poolManager;
+    private boolean deferUntilRequested = true;
+    private boolean startAsynchronously = false;
+    private boolean started = false;
+    
+    
 }
