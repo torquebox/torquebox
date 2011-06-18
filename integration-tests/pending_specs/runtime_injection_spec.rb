@@ -20,21 +20,25 @@ remote_describe 'runtime injection' do
   include TorqueBox::Injectors
 
   it "should be able to grab the runtime analyzer" do
-    pending("need to figure out why this occasionally fails weirdly")
+    #pending("need to figure out why this occasionally fails weirdly")
     analyzer = inject( 'runtime-injection-analyzer' ) 
     analyzer.should_not be_nil
   end
 
   it "should be able to perform analysis at runtime" do
-    pending("need to figure out why this occasionally fails weirdly")
     analyzer = inject( 'runtime-injection-analyzer' ) 
     analyzer.should_not be_nil
     inject( 'service:SimpleService' ).should be_nil
+    inject( '/queue/container_queue' ).should be_nil
     analyzer.analyze_and_inject do 
       inject( 'service:SimpleService' )
+      inject( '/queue/container_queue' )
     end
     inject( 'service:SimpleService' ).should_not be_nil
+    inject( '/queue/container_queue' ).should_not be_nil
   end
 
+  it "should deploy" do
+  end
 
 end

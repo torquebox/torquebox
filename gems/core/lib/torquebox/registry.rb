@@ -17,14 +17,23 @@
 
 module TorqueBox
   class Registry
+    MUTEX = Mutex.new
     
     class << self
       def merge!(hash)
-        registry.merge!(hash)
+        MUTEX.synchronize do
+          registry.merge!(hash)
+        end
       end
+
       def [](key)
-        registry[key]
+        value = nil
+        MUTEX.synchronize do
+          value = registry[key]
+        end
+        return value
       end
+
       def registry
         @registry ||= {}
       end

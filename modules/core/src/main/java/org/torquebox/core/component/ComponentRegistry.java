@@ -31,22 +31,26 @@ public class ComponentRegistry {
 
     public static ComponentRegistry getRegistryFor(Ruby runtime) {
         IRubyObject rubyRegistry = null;
-        try {
-            rubyRegistry = runtime.getObject().getConstant( TORQUEBOX_COMPONENT_REGISTRY );
-        } catch (RaiseException e) {
+        synchronized (runtime) {
+            try {
+                rubyRegistry = runtime.getObject().getConstant( TORQUEBOX_COMPONENT_REGISTRY );
+            } catch (RaiseException e) {
+                e.printStackTrace();
+            }
+
+            ComponentRegistry javaRegistry = null;
+
+            if (rubyRegistry == null || rubyRegistry.isNil()) {
+                javaRegistry = new ComponentRegistry( runtime );
+                rubyRegistry = JavaEmbedUtils.javaToRuby( runtime, javaRegistry );
+                runtime.getObject().setConstant( TORQUEBOX_COMPONENT_REGISTRY, rubyRegistry );
+                System.err.println( "DEFINE COMPONENT_REGISTRY for " + runtime + " by " + Thread.currentThread() );
+            } else {
+                javaRegistry = (ComponentRegistry) JavaEmbedUtils.rubyToJava( rubyRegistry );
+            }
+
+            return javaRegistry;
         }
-
-        ComponentRegistry javaRegistry = null;
-
-        if (rubyRegistry == null || rubyRegistry.isNil()) {
-            javaRegistry = new ComponentRegistry( runtime );
-            rubyRegistry = JavaEmbedUtils.javaToRuby( runtime, javaRegistry );
-            runtime.getObject().setConstant( TORQUEBOX_COMPONENT_REGISTRY, rubyRegistry );
-        } else {
-            javaRegistry = (ComponentRegistry) JavaEmbedUtils.rubyToJava( rubyRegistry );
-        }
-
-        return javaRegistry;
     }
 
     private ComponentRegistry(Ruby runtime) {

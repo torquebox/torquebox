@@ -66,7 +66,7 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         RubyServiceCreate serviceCreate = new RubyServiceCreate( service );
         ServiceBuilder<RubyService> builderCreate = phaseContext.getServiceTarget().addService( serviceCreateName, serviceCreate );
         builderCreate.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() ), ComponentResolver.class, serviceCreate.getComponentResolverInjector() );
-        builderCreate.addDependency( CoreServices.runtimePoolName( unit, "services" ).append(  "START" ), RubyRuntimePool.class, serviceCreate.getRubyRuntimePoolInjector() );
+        builderCreate.addDependency( CoreServices.runtimePoolName( unit, "services" ), RubyRuntimePool.class, serviceCreate.getRubyRuntimePoolInjector() );
         builderCreate.setInitialMode( Mode.PASSIVE );
         builderCreate.install();
         

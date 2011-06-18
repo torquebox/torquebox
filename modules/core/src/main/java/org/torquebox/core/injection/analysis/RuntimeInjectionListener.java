@@ -6,7 +6,7 @@ import java.util.concurrent.FutureTask;
 
 import org.jboss.msc.service.AbstractServiceListener;
 import org.jboss.msc.service.ServiceController;
-import org.torquebox.core.component.InjectionRegistry;
+import org.jboss.msc.service.ServiceController.State;
 
 public class RuntimeInjectionListener extends AbstractServiceListener<Object> {
 
@@ -16,35 +16,46 @@ public class RuntimeInjectionListener extends AbstractServiceListener<Object> {
         }
     };
 
-    RuntimeInjectionListener(InjectionRegistry registry, String key, ClassLoader classLoader) {
-        this.registry = registry;
+    RuntimeInjectionListener(ServiceController<?> controller, String key) {
+        this.controller = controller;
         this.key = key;
-        this.classLoader = classLoader;
+    }
+
+    String getKey() {
+        return this.key;
     }
 
     @Override
     public void serviceStarted(ServiceController<? extends Object> controller) {
-        System.err.println( "DELAYED INJECTION AVOIDING RACISM: " + controller.getValue() );
-        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-
-        try {
-            Thread.currentThread().setContextClassLoader( this.classLoader );
-            this.registry.getInjector( this.key ).inject( controller.getValue() );
-        } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
-        }
-        this.lock.run();
+        notifyAsInjectable();
         controller.removeListener( this );
     }
 
-    public void waitForInjectionToOccur() throws InterruptedException, ExecutionException {
+    void notifyAsInjectable() {
+        this.lock.run();
+    }
+
+    public void waitForInjectableness() throws InterruptedException, ExecutionException {
+        if (isUp()) {
+            return;
+        }
         this.lock.get();
+    }
+
+    public boolean isUp() {
+        return (controller.getState() == State.UP);
+    }
+
+    public Object getValue() {
+        return this.controller.getValue();
+    }
+
+    public String toString() {
+        return "[RuntimeInjectionListener: controller=" + this.controller + "; state=" + this.controller.getState() + "]";
     }
 
     private FutureTask<Void> lock = new FutureTask<Void>( NO_OP );
 
-    private ClassLoader classLoader;
-
-    private InjectionRegistry registry;
+    private ServiceController<?> controller;
     private String key;
 }

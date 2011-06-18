@@ -34,21 +34,28 @@ public class RuntimeInjectionAnalyzer {
             InjectionRegistry registry = new InjectionRegistry();
             ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
             ClassLoader appCl = proc.getRuntime().getJRubyClassLoader().getParent();
-            List<RuntimeInjectionListener> waitingListeners = new ArrayList<RuntimeInjectionListener>();
             try {
+                List<RuntimeInjectionListener> waitingListeners = new ArrayList<RuntimeInjectionListener>();
                 Thread.currentThread().setContextClassLoader( appCl );
                 for (Injectable each : injectables) {
                     ServiceName eachName = each.getServiceName( this.serviceTarget, this.deploymentUnit );
                     ServiceController<?> controller = this.serviceRegistry.getRequiredService( eachName );
+                    System.err.println( eachName + " state -> " + controller.getState() );
                     if (controller.getState() == State.UP) {
                         Object injectedValue = controller.getValue();
                         registry.getInjector( each.getKey() ).inject( injectedValue );
                     } else {
-                        RuntimeInjectionListener listener = new RuntimeInjectionListener( registry, each.getKey(), appCl );
+                        RuntimeInjectionListener listener = new RuntimeInjectionListener( controller, each.getKey() );
                         controller.addListener( listener );
                         controller.setMode( Mode.ACTIVE );
                         waitingListeners.add( listener );
                     }
+                }
+                for (RuntimeInjectionListener each : waitingListeners) {
+                    each.waitForInjectableness();
+                    Object value = each.getValue();
+                    System.err.println( each + " +====> " + value );
+                    registry.getInjector( each.getKey() ).inject( value );
                 }
             } finally {
                 Thread.currentThread().setContextClassLoader( originalCl );

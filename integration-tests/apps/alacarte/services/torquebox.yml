@@ -13,3 +13,5 @@ queues:
     durable: false
   /queue/init_params:
     durable: false
+  /queue/container_queue:
+    durable: false

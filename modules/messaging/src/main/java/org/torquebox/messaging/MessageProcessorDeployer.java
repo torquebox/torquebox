@@ -84,7 +84,7 @@ public class MessageProcessorDeployer implements DeploymentUnitProcessor {
             .addDependency( MessagingServices.messageProcessorComponentResolver( unit, name ), ComponentResolver.class, service.getComponentResolverInjector() )
             .addDependency( getConnectionFactoryServiceName(), ManagedReferenceFactory.class, service.getConnectionFactoryInjector() )
             .addDependency( getDestinationServiceName( metaData.getDestinationName() ), ManagedReferenceFactory.class, service.getDestinationInjector() )
-            .addDependency( CoreServices.runtimePoolName( unit, "messaging" ).append( "START" ), RubyRuntimePool.class, service.getRuntimePoolInjector() )
+            .addDependency( CoreServices.runtimePoolName( unit, "messaging" ), RubyRuntimePool.class, service.getRuntimePoolInjector() )
             .setInitialMode( Mode.ACTIVE )
             .install();
         

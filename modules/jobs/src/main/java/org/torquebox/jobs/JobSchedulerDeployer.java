@@ -108,7 +108,7 @@ public class JobSchedulerDeployer implements DeploymentUnitProcessor {
         JobScheduler scheduler = new JobScheduler( "JobScheduler$" + unit.getName() );
                 
         ServiceBuilder<JobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
-        builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ).append( "START"), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );
+        builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );
         builder.setInitialMode( Mode.ACTIVE );
         
         if (singleton) {
