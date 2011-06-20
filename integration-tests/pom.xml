@@ -98,7 +98,19 @@
           <groupId>rubygems</groupId>
           <artifactId>ffi</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>nokogiri</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>nokogiri</artifactId>
+      <version>1.5.0.beta.4</version>
+      <type>gem</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
