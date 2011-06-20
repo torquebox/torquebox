@@ -64,6 +64,7 @@
       <artifactId>json</artifactId>
       <type>gem</type>
       <version>1.5.2</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
