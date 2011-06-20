@@ -72,6 +72,10 @@ module TorqueBox
         __put(key, value, expires, :put_if_absent_async)
       end
 
+      def replace(key, original, new)
+        cache.replace( key, encode(original), encode(new) )
+      end
+
       # Delete an entry from the cache 
       def remove(key)
         cache.removeAsync( key ) && true

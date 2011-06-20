@@ -16,6 +16,7 @@
 
 require File.dirname(__FILE__) + '/spec_helper'
 require 'dm-core'
+require 'dm-core/spec/shared/adapter_spec'
 
 describe DataMapper::Adapters::InfinispanAdapter do
 
@@ -24,11 +25,11 @@ describe DataMapper::Adapters::InfinispanAdapter do
   end
   
 
-  #it "should behave like an adapter" do
-    #pending "making the dm built-in tests work" do
-#      it_should_behave_like 'An Adapter'
-    #end
-  #end
+  it "should behave like an adapter" do
+    pending "making the dm built-in tests work" do
+      it_should_behave_like 'An Adapter'
+    end
+  end
 
 end
 

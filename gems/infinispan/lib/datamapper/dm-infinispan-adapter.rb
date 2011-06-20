@@ -32,27 +32,26 @@ module DataMapper::Adapters
 
     def create( resources )
       resources.each do |resource|
-        resource.id = next_id
-        key = key( resource )
-        @cache.put( key, serialize( resource ) )
+        initialize_serial( resource, increment(resource) )
+        @cache.put( key( resource ), serialize( resource ) )
       end
     end
 
     def read( query )
       # TODO: This is not really acceptable at all
-      model = query.model
       records = []
       @cache.keys.each do |key|
         value = @cache.get(key)
         records << deserialize(value) if value
       end
-      query.filter_records(records)
+      records = query.filter_records(records)
+      records
     end
 
     def update( attributes, collection )
       attributes = attributes_as_fields(attributes)
       collection.each do |resource|
-        attributes = resource.attributes(:field).merge(attributes)
+        resource.attributes(:field).merge(attributes)
         @cache.put( key(resource), serialize(resource) )
       end
     end
@@ -64,8 +63,8 @@ module DataMapper::Adapters
     end
 
     private
-    def next_id(length = 10)
-      Digest::SHA1.hexdigest(Time.now.to_s + rand(1000000000).to_s)[1..length].to_i
+    def next_id(resource)
+      Digest::SHA1.hexdigest(Time.now.to_i + rand(1000000000).to_s)[1..length].to_i
     end
 
     def key( resource )
@@ -85,7 +84,32 @@ module DataMapper::Adapters
     def deserialize(string)
       JSON.parse(string)
     end
-  end
 
+    def increment(resource, amount = 1)
+      key = resource.model
+      current = @cache.get( key )
+      if current.nil?
+        @cache.put( key, serialized_value_type(amount) )
+        return amount
+      else
+        value = deserialize(current)[:value].to_i
+        new_value = value+amount
+        if @cache.replace( key, current, serialized_value_type(new_value) )
+          return new_value
+        else
+          raise "Concurrent modification, old value was #{value} new value #{new_value}"
+        end
+      end
+    end
+
+    # Decrement an integer value in the cache; return new value
+    def decrement(name, amount = 1)
+      increment( name, -amount )
+    end
+
+    def serialized_value_type(value)
+      serialize({:value => value})
+    end
+  end
 end
 

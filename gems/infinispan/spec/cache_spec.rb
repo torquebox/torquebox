@@ -69,6 +69,19 @@ describe TorqueBox::Infinispan::Cache do
   it "should clear" do
     @cache.clear.should be_true
   end
+
+  it "should replace existing values" do
+    pending "figuring out wtf is going on" do
+      key = 'thekey'
+      current_value = '{value:1}'
+      new_value     = '{value:2}'
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, current_value, new_value)
+  #    @cache.put(key, new_value)
+      @cache.get(key).should == new_value
+    end
+  end
 end
 
 class Heffalump
