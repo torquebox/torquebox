@@ -116,9 +116,6 @@ class Dir
     private
 
     def glob_one(pattern, flags=0, &block)
-
-      is_absolute_vfs = false
-
       #str_pattern = "#{pattern}"
       str_pattern = pattern.to_str
 
@@ -135,23 +132,15 @@ class Dir
       base = base_segments.join( '/' )
 
       base.gsub!( /\\(.)/, '\1' )
-
-      #if ( base.empty? || ( ::File.exist_without_vfs?( base ) && ! Java::OrgJbossVirtualPluginsContextJar::JarUtils.isArchive( base ) ) )
-      #if ( base.empty? || ( ::File.exist_without_vfs?( base ) ) )
-        #puts "doing FS glob"
-        #paths = glob_before_vfs( str_pattern, flags, &block )
-        #return paths
-      #end
-
       #puts "base= #{base}"
-
+      
       vfs_url, child_path = TorqueBox::VFS.resolve_within_archive( base )
       #puts "vfs_url=#{vfs_url}"
       #puts "child_path=#{child_path}"
 
       return []       if vfs_url.nil?
       #puts "segments.size==base_segments.size? #{segments.size == base_segments.size}"
-      return [ base ] if segments.size == base_segments.size
+      return [ base ] if segments.size == base_segments.size && File.exists?( base )
 
       matcher_segments = segments - base_segments
       matcher = matcher_segments.join( '/' )

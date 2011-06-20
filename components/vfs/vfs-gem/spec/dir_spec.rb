@@ -79,6 +79,11 @@ describe "Dir extensions for VFS" do
         items.should include( "#{prefix}/dotfiles/.four" )
       end
 
+      it "should not find non-existent files" do
+        items = Dir.glob( "#{prefix}/home/larry/not-there.txt" )
+        items.should be_empty
+      end
+
       it "should allow globbing without any special globbing characters on normal files" do
         items = Dir.glob( "#{prefix}/home/larry" )
         items.should_not be_empty
