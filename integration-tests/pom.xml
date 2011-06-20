@@ -75,7 +75,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
-      <version>0.3.5</version>
+      <version>0.3.7</version>
       <type>gem</type>
     </dependency>
 
