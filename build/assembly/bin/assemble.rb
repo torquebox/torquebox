@@ -60,7 +60,7 @@ class Assembler
     else
       puts "Laying down JBoss"
       Dir.chdir( File.dirname( tool.jboss_dir ) ) do 
-        `unzip -q #{jboss_zip}`
+        `jar xf #{jboss_zip}`
         original_dir= File.expand_path( Dir[ 'jboss-*' ].first )
         FileUtils.mv original_dir, tool.jboss_dir
       end
@@ -73,7 +73,7 @@ class Assembler
     else
       puts "Laying down JRuby" 
       Dir.chdir( File.dirname( tool.jruby_dir ) ) do
-        `unzip -q #{jruby_zip}`
+        `jar xf #{jruby_zip}`
         original_dir= File.expand_path( Dir[ 'jruby-*' ].first )
         FileUtils.mv original_dir, tool.jruby_dir
       end
@@ -81,7 +81,7 @@ class Assembler
   end
 
   def install_modules
-    modules = Dir[ tool.base_dir + '/../../modules/*/target/*-module/' ].map do |module_dir|
+    modules = Dir[ tool.base_dir + '/../../modules/*/target/*-module' ].map do |module_dir|
       [ File.basename( module_dir, '-module' ).gsub( /torquebox-/, '' ), module_dir ]
     end
 

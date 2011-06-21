@@ -117,11 +117,12 @@
             </goals>
             <configuration>
               <script>
-                load '${project.basedir}/../assembly/lib/assembly_tool.rb'
+                basedir = '${project.basedir}'.gsub('\\', '/')
+                load %Q(#{basedir}/../assembly/lib/assembly_tool.rb)
                 ext = '.gem'
                 ext = ( ( 'java-gem' == '${project.packaging}' ) ? '-java.gem' : '.gem' )
                 safe_version = '${project.version}'.gsub(/-SNAPSHOT/, '')
-                AssemblyTool.copy_gem_to_repo( %Q(${project.basedir}/target/${project.artifactId}-#{safe_version}#{ext}) )
+                AssemblyTool.copy_gem_to_repo( %Q(#{basedir}/target/${project.artifactId}-#{safe_version}#{ext}) )
               </script>
               <jrubyJvmArgs>-Xmx768m</jrubyJvmArgs>
             </configuration>
