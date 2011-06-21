@@ -23,8 +23,8 @@ module TorqueBox
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
 
-      def initialize(options = {})
-        @options = options
+      def initialize(opts = {})
+        @options = opts
         cache
       end
 
@@ -147,7 +147,7 @@ module TorqueBox
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-          puts "No caching will occur" 
+        puts "No caching will occur" 
         result
       end
 

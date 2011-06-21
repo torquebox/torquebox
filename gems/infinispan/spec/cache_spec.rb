@@ -35,7 +35,7 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should accept and return ruby objects" do
-    heffalump = Heffalump.new(100, 'snuffle')
+    heffalump = Snuffleuffagus.new(100, 'snuffle')
     @cache.put('heffalump', heffalump).should be_true
     rheffalump = @cache.get('heffalump')
     rheffalump.name.should == heffalump.name
@@ -82,8 +82,8 @@ describe TorqueBox::Infinispan::Cache do
   
   it "should replace existing ruby object values" do
       key = 'thekey'
-      current_value = Heffalump.new(1, 'foo')
-      new_value     = Heffalump.new(2, 'bar')
+      current_value = Snuffleuffagus.new(1, 'foo')
+      new_value     = Snuffleuffagus.new(2, 'bar')
       @cache.put(key, current_value)
       @cache.get(key).should == current_value
       @cache.replace(key, current_value, new_value)
@@ -102,8 +102,8 @@ describe TorqueBox::Infinispan::Cache do
 
   it "should not replace existing ruby object values if the expected value is different" do
       key = 'thekey'
-      current_value = Heffalump.new(1, 'foo')
-      new_value     = Heffalump.new(2, 'bar')
+      current_value = Snuffleuffagus.new(1, 'foo')
+      new_value     = Snuffleuffagus.new(2, 'bar')
       @cache.put(key, current_value)
       @cache.get(key).should == current_value
       @cache.replace(key, 'something else', new_value)
@@ -111,7 +111,7 @@ describe TorqueBox::Infinispan::Cache do
   end
 end
 
-class Heffalump
+class Snuffleuffagus
   attr_accessor :id, :name
   
   def initialize(id=1, name=:default)
