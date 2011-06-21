@@ -106,11 +106,12 @@
                   </goals>
                   <configuration>
                     <script>
-                      load '${project.basedir}/../../build/assembly/lib/assembly_tool.rb'
+                      basedir = '${project.basedir}'.gsub('\\', '/')
+                      load %Q(#{basedir}/../../build/assembly/lib/assembly_tool.rb)
                       ext = '.gem'
                       ext = ( ( 'java-gem' == '${project.packaging}' ) ? '-java.gem' : '.gem' )
                       safe_version = '${project.version}'.gsub(/-SNAPSHOT/, '')
-                      AssemblyTool.install_gem( %Q(${project.basedir}/target/${project.artifactId}-#{safe_version}#{ext}) )
+                      AssemblyTool.install_gem( %Q(#{basedir}/target/${project.artifactId}-#{safe_version}#{ext}) )
                     </script>
                   </configuration>
                 </execution>
