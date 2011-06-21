@@ -35,7 +35,7 @@ public class ComponentRegistry {
             try {
                 rubyRegistry = runtime.getObject().getConstant( TORQUEBOX_COMPONENT_REGISTRY );
             } catch (RaiseException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
 
             ComponentRegistry javaRegistry = null;
