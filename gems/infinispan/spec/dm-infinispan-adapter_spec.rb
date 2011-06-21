@@ -25,11 +25,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
   end
   
 
-  it "should behave like an adapter" do
-    pending "making the dm built-in tests work" do
-      it_should_behave_like 'An Adapter'
-    end
-  end
+  it_should_behave_like 'An Adapter'
 
 end
 

@@ -72,8 +72,8 @@ module TorqueBox
         __put(key, value, expires, :put_if_absent_async)
       end
 
-      def replace(key, original, new)
-        cache.replace( key, encode(original), encode(new) )
+      def replace(key, original_value, new_value)
+        cache.replace( key, encode(original_value), encode(new_value) )
       end
 
       # Delete an entry from the cache 
@@ -84,11 +84,11 @@ module TorqueBox
       private
 
       def encode(value)
-        Marshal.dump(value).to_java_bytes
+        Marshal.dump(value)
       end
 
       def decode(value)
-        value && Marshal.load(String.from_java_bytes(value))
+        value && Marshal.load(value)
       end
 
       def options 
@@ -160,6 +160,13 @@ module TorqueBox
           args << expires_in << SECONDS
         end
         cache.send( *args ) && true
+      end
+    end
+
+    class Entry
+      attr_accessor :value
+      def initialize(value) 
+        @value = value
       end
     end
   end

@@ -26,7 +26,8 @@ module DataMapper::Adapters
       super
       opts = {:name => name}
       opts.merge! options
-      @cache = TorqueBox::Infinispan::Cache.new( opts )
+      @cache  = TorqueBox::Infinispan::Cache.new( opts )
+      @models = TorqueBox::Infinispan::Cache.new( :name => name.to_s + "/models" )
     end
 
 
@@ -82,33 +83,24 @@ module DataMapper::Adapters
     end
 
     def deserialize(string)
-      JSON.parse(string)
+      return JSON.parse(string) 
     end
 
     def increment(resource, amount = 1)
-      key = resource.model
-      current = @cache.get( key )
-      if current.nil?
-        @cache.put( key, serialized_value_type(amount) )
-        return amount
+      key = resource.model.name + ".index"
+      current = @models.get( key )
+      @models.put(key, amount) and return amount if current.nil?
+      new_value = current+amount
+      if @models.replace( key, current, new_value )
+        return new_value
       else
-        value = deserialize(current)[:value].to_i
-        new_value = value+amount
-        if @cache.replace( key, current, serialized_value_type(new_value) )
-          return new_value
-        else
-          raise "Concurrent modification, old value was #{value} new value #{new_value}"
-        end
+        raise "Concurrent modification, old value was #{value} new value #{new_value}"
       end
     end
 
     # Decrement an integer value in the cache; return new value
     def decrement(name, amount = 1)
       increment( name, -amount )
-    end
-
-    def serialized_value_type(value)
-      serialize({:value => value})
     end
   end
 end

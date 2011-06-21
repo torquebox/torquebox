@@ -70,17 +70,44 @@ describe TorqueBox::Infinispan::Cache do
     @cache.clear.should be_true
   end
 
-  it "should replace existing values" do
-    pending "figuring out wtf is going on" do
+  it "should replace existing string values" do
       key = 'thekey'
       current_value = '{value:1}'
       new_value     = '{value:2}'
       @cache.put(key, current_value)
       @cache.get(key).should == current_value
       @cache.replace(key, current_value, new_value)
-  #    @cache.put(key, new_value)
       @cache.get(key).should == new_value
-    end
+  end
+  
+  it "should replace existing ruby object values" do
+      key = 'thekey'
+      current_value = Heffalump.new(1, 'foo')
+      new_value     = Heffalump.new(2, 'bar')
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, current_value, new_value)
+      @cache.get(key).name.should == new_value.name
+  end
+
+  it "should not replace existing string values if the expected value is different" do
+      key = 'thekey'
+      current_value = '{value:1}'
+      new_value     = '{value:2}'
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, 'something else', new_value)
+      @cache.get(key).should == current_value
+  end
+
+  it "should not replace existing ruby object values if the expected value is different" do
+      key = 'thekey'
+      current_value = Heffalump.new(1, 'foo')
+      new_value     = Heffalump.new(2, 'bar')
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, 'something else', new_value)
+      @cache.get(key).should == current_value
   end
 end
 
@@ -90,5 +117,9 @@ class Heffalump
   def initialize(id=1, name=:default)
     @id = id
     @name = name
+  end
+
+  def ==(other)
+    (@id == other.id) && (@name == other.name)
   end
 end
