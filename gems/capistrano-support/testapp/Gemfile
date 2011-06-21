@@ -31,10 +31,11 @@ gem 'rails', '3.0.3'
 # group :development, :test do
 #   gem 'webrat'
 # end
-gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
-gem "jdbc-sqlite3"
-gem "jruby-openssl"
-
+platforms :jruby do
+  gem "activerecord-jdbc-adapter", "0.9.7", :require => "jdbc_adapter"
+  gem "jdbc-sqlite3"
+  gem "jruby-openssl"
+end
 group :development do
   gem "torquebox-rake-support"
 end
