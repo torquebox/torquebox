@@ -75,7 +75,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
-      <version>0.3.5</version>
+      <version>0.3.8</version>
       <type>gem</type>
     </dependency>
 
@@ -98,7 +98,19 @@
           <groupId>rubygems</groupId>
           <artifactId>ffi</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>nokogiri</artifactId>
+        </exclusion>
       </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>nokogiri</artifactId>
+      <version>1.5.0.beta.4</version>
+      <type>gem</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -325,18 +337,6 @@
                 </configuration>
               </execution>
               <execution>
-                <id>install-arel-motherbludgeoner</id>
-                <phase>test-compile</phase>
-                <goals>
-                  <goal>install</goal>
-                </goals>
-                <configuration>
-                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
-                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-                  <installArgs>arel -v ${version.arel} --no-rdoc --no-ri</installArgs>
-                </configuration>
-              </execution>
-              <execution>
                 <id>install-rails3</id>
                 <phase>test-compile</phase>
                 <goals>
@@ -382,18 +382,6 @@
                   <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                   <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
                   <installArgs>sinatra -v ${version.sinatra} --no-rdoc --no-ri</installArgs>
-                </configuration>
-              </execution>
-              <execution>
-                <id>install-mail-wtf</id>
-                <phase>test-compile</phase>
-                <goals>
-                  <goal>install</goal>
-                </goals>
-                <configuration>
-                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
-                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-                  <installArgs>mail -v 2.2.14 --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
               <execution>

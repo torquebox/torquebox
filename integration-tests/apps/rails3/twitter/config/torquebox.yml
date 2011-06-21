@@ -1,0 +1,10 @@
+messaging:
+  tweets:                             # queue name
+    TweetProcessor:                   # processor class name
+      filter: "language = 'java'"     # JMS message selector
+
+jobs:
+  tweet_remover:
+    job:  TweetRemover
+    cron: '*/30 * * * * ?'
+

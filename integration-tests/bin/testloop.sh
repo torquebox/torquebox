@@ -16,7 +16,7 @@ for (( ; ; ))
 do
   i=$((i+1))
   echo "Loop $i"
-  mvn test -Dtest=*$*
+  $*
   if [ $? != 0 ] 
   then
     echo "Failure!"   

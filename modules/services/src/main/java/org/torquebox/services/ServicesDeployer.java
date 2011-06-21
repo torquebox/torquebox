@@ -79,7 +79,7 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         InjectableService injectableService = new InjectableService( service );
         phaseContext.getServiceTarget().addService( ServicesServices.serviceInjectableService( unit, serviceMetaData.getClassName() ), injectableService )
             .addDependencies( serviceStartName )
-            .setInitialMode( Mode.ACTIVE )
+            .setInitialMode( Mode.PASSIVE )
             .install();
         
         final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );

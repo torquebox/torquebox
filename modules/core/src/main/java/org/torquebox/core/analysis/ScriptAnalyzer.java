@@ -33,6 +33,7 @@ import org.jruby.parser.LocalStaticScope;
 import org.jruby.parser.StaticScope;
 import org.jruby.runtime.BlockBody;
 import org.jruby.runtime.DynamicScope;
+import org.jruby.runtime.Interpreted19Block;
 import org.jruby.runtime.InterpretedBlock;
 import org.jruby.runtime.scope.ManyVarsDynamicScope;
 import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
@@ -156,9 +157,14 @@ public class ScriptAnalyzer {
      */
     public void analyze(RubyProc proc, NodeVisitor visitor) {
         BlockBody body = proc.getBlock().getBody();
-        if (body instanceof InterpretedBlock) {
+        if (body instanceof InterpretedBlock ) {
             Node result = ((InterpretedBlock)body).getBodyNode();
             result.accept( visitor );
+        } else if ( body instanceof Interpreted19Block ) {
+            Node result = ((Interpreted19Block)body).getBody();
+            result.accept( visitor );
+        } else {
+            System.err.println( "Unable to analyze: " + body.getClass() );
         }
 
     }

@@ -1,4 +1,6 @@
+puts "requiring torquebox-messaging"
 require 'torquebox-messaging'
+puts "required torquebox-messaging"
 
 class SimpleService
 
