@@ -48,6 +48,7 @@ import org.torquebox.TorqueBoxMBean;
 import org.torquebox.core.ArchiveDirectoryMountingProcessor;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.GlobalRubyMBean;
+import org.torquebox.core.TorqueBoxRbProcessor;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.app.AppJarScanningProcessor;
 import org.torquebox.core.app.AppKnobYamlParsingProcessor;
@@ -103,7 +104,8 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );
 
         processorTarget.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 5, new TorqueBoxYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxRbProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 20, new ApplicationYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 35, new PoolingYamlParsingProcessor() );

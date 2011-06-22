@@ -80,7 +80,7 @@ public class AuthSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, new AuthYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 15, new AuthYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new SecurityDependencyProcessor() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new AuthDeployer() );

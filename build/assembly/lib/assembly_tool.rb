@@ -101,19 +101,15 @@ class AssemblyTool
   def install_gem(gem, update_index=false)
     puts "Installing #{gem}"
     opts = {
-      :bin_dir => @jruby_dir + '/bin',
+      :bin_dir     => @jruby_dir + '/bin',
       :env_shebang => true,
       :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
-      :wrapper     => true
+      :wrappers    => true
     }
-    if ( File.exist?( gem ) )
-      installer = Gem::Installer.new( gem, opts )
-      installer.install
-      copy_gem_to_repo(gem, update_index)
-    else
-      installer = Gem::DependencyInstaller.new( opts )
-      installer.install( gem )
-    end
+
+    installer = Gem::DependencyInstaller.new( opts )
+    installer.install( gem )
+    copy_gem_to_repo(gem, update_index) if File.exist?( gem )
   end
 
   def copy_gem_to_repo(gem, update_index=false)

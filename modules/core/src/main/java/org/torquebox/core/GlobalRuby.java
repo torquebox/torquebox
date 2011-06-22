@@ -77,6 +77,10 @@ public class GlobalRuby implements GlobalRubyMBean, Service<GlobalRuby> {
      * @return The result of evaluating the script, in its native form.
      */
     public Object evaluate(String script) throws Exception {
+        while (this.runtime == null) {
+            Thread.sleep( 50 );
+        }
+        
         return this.runtime.evalScriptlet( script );
     }
 

@@ -52,7 +52,11 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
     }
 
     static boolean isRubyApplication(VirtualFile file) {
-        boolean result = hasAnyOf( file, "torquebox.yml", "config/torquebox.yml", "config.ru", "config/environment.rb", "Rakefile", "Gemfile", ".bundle/config", "vendor/rails" );
+        boolean result = hasAnyOf( file, 
+                    "torquebox.rb", "config/torquebox.rb",
+                    "torquebox.yml", "config/torquebox.yml", 
+                    "config.ru", "config/environment.rb", 
+                    "Rakefile", "Gemfile", ".bundle/config", "vendor/rails" );
         return result;
     }
 
