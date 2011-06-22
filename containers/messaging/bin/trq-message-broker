@@ -4,6 +4,8 @@ dev_lib_dir = File.dirname(__FILE__) + '/../target/org.torquebox.torquebox-namin
 
 require 'rubygems'
 
+puts %x{ gem env }
+
 # Require torquebox-vfs but unset the VFS protocol handlers because
 # VFSUtils.toURI(url) has bugs when used outside of AS on Windows
 require 'torquebox-vfs'
