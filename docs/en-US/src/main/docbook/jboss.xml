@@ -39,9 +39,10 @@
     distribution will come with others, as you see above, custom profiles will
     come up in the next releases.</para>
 
-    <para>Some libraries and config files are common to all server
-    configurations. To conserve disk space, these are kept in the
-    <filename>modules/</filename> directory.</para>
+    <para>JBoss AS 7 comes with a modular architecture, libraries common to
+    all server configurations are kept under the <filename>modules/</filename>
+    directory and configuration files are stored inside
+    <literal>standalone/configuration</literal>/ folder.</para>
 
     <para>All configuration profiles have a common structure, and usually
     include the following directories: <filename>conf/</filename>,
