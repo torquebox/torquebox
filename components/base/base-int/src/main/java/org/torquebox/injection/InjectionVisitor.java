@@ -88,6 +88,9 @@ public class InjectionVisitor extends DefaultNodeVisitor {
 
         while (cur != null) {
 
+        	if ( ! ( cur instanceof INameNode ) ) {
+        		return "";
+        	}
             stack.push( ((INameNode) cur).getName() );
 
             List<Node> children = cur.childNodes();
