@@ -46,23 +46,22 @@
 
     <para>The standalone mode have a common structure, and usually include the
     following directories: <literal>configuration/</literal>,
-    <literal>data/</literal>, <literal>deployments/</literal>,
-    <literal>lib/</literal>, <literal>log/</literal> and
-    <literal>tmp/</literal>. In general, it isn't a good idea to remove
-    anything from these directories that you didn't put there yourself.</para>
+    <literal>deployments/</literal> and <literal>lib/</literal>. In general,
+    it isn't a good idea to remove anything from these directories that you
+    didn't put there yourself.</para>
 
     <para><mediaobject>
         <imageobject>
-          <imagedata align="center" fileref="images/jboss-server.png"
+          <imagedata align="center" fileref="images/jboss-standalone-mode.png"
                      format="PNG" />
         </imageobject>
       </mediaobject></para>
 
     <para>In addition, some directories are created automatically at runtime,
-    as needed: <filename>tmp/</filename>, <filename>work/</filename>,
-    <filename>data/</filename>, and <filename>log/</filename>. Though not
-    typically necessary, you may safely delete these when the server is not
-    running to clear its persistent state.</para>
+    as needed: <filename>tmp/</filename>, <filename>data/</filename>, and
+    <filename>log/</filename>. Though not typically necessary, you may safely
+    delete these when the server is not running to clear its persistent
+    state.</para>
   </section>
 
   <section id="running-jboss">
