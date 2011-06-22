@@ -88,7 +88,7 @@
   <section id="deploying-to-jboss">
     <title>Deploying</title>
 
-    <para>Each server configuration has a <filename>deploy/</filename>
+    <para>Each runtime mode has a <literal>deployments/</literal>
     subdirectory, the contents of which determine the applications and
     services JBoss runs. These apps and services are represented as archives,
     "exploded" folders, or text files called "deployment descriptors". JBoss
