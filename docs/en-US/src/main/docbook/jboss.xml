@@ -41,8 +41,7 @@
 
     <para>Some libraries and config files are common to all server
     configurations. To conserve disk space, these are kept in the
-    <filename>modules/</filename> directory. This is, in fact, where the
-    TorqueBox deployers reside.</para>
+    <filename>modules/</filename> directory.</para>
 
     <para>All configuration profiles have a common structure, and usually
     include the following directories: <filename>conf/</filename>,
