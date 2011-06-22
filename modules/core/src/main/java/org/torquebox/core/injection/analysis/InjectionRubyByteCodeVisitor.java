@@ -136,9 +136,13 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
         Node cur = node;
 
         while (cur != null) {
+            
+            if ( ! ( cur instanceof INameNode) ) {
+                return "";
+            }
 
             stack.push( ((INameNode) cur).getName() );
-
+            
             List<Node> children = cur.childNodes();
             if (children == null || children.isEmpty()) {
                 break;
