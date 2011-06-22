@@ -110,24 +110,32 @@ module TorqueBox
       end
 
       def run_command_line
-        cmd = Config::CONFIG['host_os'] =~ /mswin/ ? "#{jboss_home}\\bin\\standalone.bat" : "/bin/sh bin/standalone.sh"
         options = ENV['JBOSS_OPTS']
-#        cmd += " -b 0.0.0.0" unless /((^|\s)-b\s|(^|\s)--host=)/ =~ options
-        "#{cmd} #{options}"
+        if windows?
+          cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
+        else
+          cmd = "/bin/sh bin/standalone.sh"
+        end
+        [cmd, options]
       end
 
       def run_server
         Dir.chdir(jboss_home) do
-          old_trap = trap("INT") do
-            puts "caught SIGINT, shutting down"
-          end
           # don't send the gemfile from the current app, instead let
           # bundler suss it out itself for each deployed
           # app. Otherwise, they'll end up sharing this Gemfile, which
-          # is probably not what we want.          
-          ENV.delete('BUNDLE_GEMFILE') 
-          exec_command(run_command_line)
-          trap("INT", old_trap )
+          # is probably not what we want.
+          ENV.delete('BUNDLE_GEMFILE')
+
+          if windows?
+            exec *run_command_line
+          else
+            old_trap = trap("INT") do
+              puts "caught SIGINT, shutting down"
+            end
+            exec_command(run_command_line.join(' '))
+            trap("INT", old_trap)
+          end
         end
       end
 
@@ -313,6 +321,9 @@ module TorqueBox
 
       end
 
+      def windows?
+        Config::CONFIG['host_os'] =~ /mswin/
+      end
 
     end
   end
