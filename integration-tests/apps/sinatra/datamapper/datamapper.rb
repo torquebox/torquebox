@@ -20,4 +20,4 @@ end
 DataMapper.setup(:default, :adapter=>'infinispan')
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize
-DataMapper.auto_upgrade!
+# DataMapper.auto_upgrade!

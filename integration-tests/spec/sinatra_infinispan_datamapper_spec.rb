@@ -14,12 +14,10 @@ describe "sinatra with dm-infinispan-adapter" do
 
   END
 
-  pending "jc3's brilliant fix" do
-    it "should work" do
-      visit "/sinatra-datamapper"
-      puts "PAGE: #{page.body}"
-      page.should have_content('It Works!')
-    end
+  it "should work, according to lanceball" do
+    visit "/sinatra-datamapper"
+    puts "", "PAGE: #{page.body}"
+    page.should have_content('It Works!')
   end
 
 end
