@@ -14,10 +14,17 @@ describe "sinatra with dm-infinispan-adapter" do
 
   END
 
-  it "should work, according to lanceball" do
+  it "should work" do
     visit "/sinatra-datamapper"
-    puts "", "PAGE: #{page.body}"
     page.should have_content('It Works!')
+  end
+
+  it "should list widgets" do
+    visit "/sinatra-datamapper/muppets"
+    page.should have_content('Muppet Count: 3')
+    page.should have_content('Muppet 1: Big Bird')
+    page.should have_content('Muppet 2: Snuffleupagus')
+    page.should have_content('Muppet 3: Cookie Monster')
   end
 
 end
