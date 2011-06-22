@@ -220,6 +220,29 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- end for dm-infinispan-adapter tests -->
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dm-core</artifactId>
+      <version>1.1.0</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>addressable</artifactId>
+      <type>gem</type>
+      <version>2.2.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>json</artifactId>
+      <type>gem</type>
+      <version>1.5.2</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- end for dm-infinispan-adapter tests -->
   </dependencies>
 
   <profiles>

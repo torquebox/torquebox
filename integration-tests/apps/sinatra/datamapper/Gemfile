@@ -1,0 +1,6 @@
+source "http://rubygems.org"
+gem "sinatra"
+gem "haml"
+gem "torquebox"
+gem "dm-core", "1.1.0"
+gem "json", "1.5.2"
