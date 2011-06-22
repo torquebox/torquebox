@@ -19,6 +19,8 @@
     <version.jboss-server-manager>1.0.3.GA</version.jboss-server-manager>
     <version.sinatra>1.2.3</version.sinatra>
     <version.old_rack>1.1.0</version.old_rack>
+    <version.dm_core>1.1.0</version.dm_core>
+    <version.json>1.5.2</version.json>
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <max.heap>1024m</max.heap>
@@ -220,29 +222,22 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- end for dm-infinispan-adapter tests -->
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>dm-core</artifactId>
-      <version>1.1.0</version>
       <type>gem</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>addressable</artifactId>
-      <type>gem</type>
-      <version>2.2.6</version>
+      <version>${version.dm_core}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>json</artifactId>
       <type>gem</type>
-      <version>1.5.2</version>
+      <version>${version.json}</version>
       <scope>test</scope>
     </dependency>
-    <!-- end for dm-infinispan-adapter tests -->
+
+
   </dependencies>
 
   <profiles>
@@ -419,6 +414,33 @@
                   <installArgs>rack -v ${version.old_rack} --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
+
+              <!-- begin: dm-infinispan-adapter tests -->
+              <execution>
+                <id>install-dm-core</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>dm-core -v ${version.dm_core} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-json</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>json -v ${version.json} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <!-- end: dm-infinispan-adapter tests -->
             </executions>
           </plugin>
         </plugins>
