@@ -35,10 +35,11 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should accept and return ruby objects" do
-    time = Time.new
-    @cache.put('time', time).should be_true
-    @cache.get('time').should == time
-    @cache.get('time').class.name.should == 'Time'
+    heffalump = Snuffleuffagus.new(100, 'snuffle')
+    @cache.put('heffalump', heffalump).should be_true
+    rheffalump = @cache.get('heffalump')
+    rheffalump.name.should == heffalump.name
+    rheffalump.id.should == heffalump.id
   end
 
   it "should return all keys" do
@@ -68,5 +69,57 @@ describe TorqueBox::Infinispan::Cache do
   it "should clear" do
     @cache.clear.should be_true
   end
+
+  it "should replace existing string values" do
+      key = 'thekey'
+      current_value = '{value:1}'
+      new_value     = '{value:2}'
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, current_value, new_value)
+      @cache.get(key).should == new_value
+  end
+  
+  it "should replace existing ruby object values" do
+      key = 'thekey'
+      current_value = Snuffleuffagus.new(1, 'foo')
+      new_value     = Snuffleuffagus.new(2, 'bar')
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, current_value, new_value)
+      @cache.get(key).name.should == new_value.name
+  end
+
+  it "should not replace existing string values if the expected value is different" do
+      key = 'thekey'
+      current_value = '{value:1}'
+      new_value     = '{value:2}'
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, 'something else', new_value)
+      @cache.get(key).should == current_value
+  end
+
+  it "should not replace existing ruby object values if the expected value is different" do
+      key = 'thekey'
+      current_value = Snuffleuffagus.new(1, 'foo')
+      new_value     = Snuffleuffagus.new(2, 'bar')
+      @cache.put(key, current_value)
+      @cache.get(key).should == current_value
+      @cache.replace(key, 'something else', new_value)
+      @cache.get(key).should == current_value
+  end
 end
 
+class Snuffleuffagus
+  attr_accessor :id, :name
+  
+  def initialize(id=1, name=:default)
+    @id = id
+    @name = name
+  end
+
+  def ==(other)
+    (@id == other.id) && (@name == other.name)
+  end
+end

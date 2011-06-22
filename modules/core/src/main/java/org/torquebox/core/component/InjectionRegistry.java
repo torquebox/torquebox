@@ -52,8 +52,10 @@ public class InjectionRegistry {
     }
 
     public void merge(Ruby ruby) throws Exception {
-        RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
-        JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getConvertedRegistry( ruby ) }, void.class );
+        synchronized (ruby) {
+            RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
+            JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getConvertedRegistry( ruby ) }, void.class );
+        }
     }
 
     protected Map<String, Object> getConvertedRegistry(Ruby ruby) throws Exception {

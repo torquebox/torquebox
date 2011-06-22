@@ -1,0 +1,21 @@
+%h1 Tweets
+
+%h3 Total tweets
+
+%p= @total
+
+%h3 Last 20 tweets
+
+%table
+  %tr
+    %th ID
+    %th Username
+    %th Message
+
+  = @tweets.each do |tweet|
+    %tr
+      %td= tweet.id
+      %td
+        %strong= tweet.username
+      %td= tweet.message
+

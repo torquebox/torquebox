@@ -17,9 +17,12 @@ describe "sinatra queues test" do
     page.should have_content('TOBY CRAWLEY')
   end
 
-  it "should be employed" do
-    visit "/uppercaser/job"
-    page.should have_content('employment!')
+  remote_describe "jobs check" do
+    include TorqueBox::Injectors
+    it "should be employed" do
+      msg = inject('/queues/jobs').receive(:timeout => 25000)
+      msg.should == "employment!"
+    end
   end
 
 end

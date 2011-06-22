@@ -144,7 +144,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, componentResolverNameValue );
         unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, WebServices.rackApplicationComponentResolver( unit ) );
 
-        ServletContextAttribute runtimePoolNameValue = new ServletContextAttribute( "runtime.pool.service-name", CoreServices.runtimePoolName( unit, "web" ) );
+        ServletContextAttribute runtimePoolNameValue = new ServletContextAttribute( "runtime.pool.service-name", CoreServices.runtimePoolName( unit, "web" ));
         unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, runtimePoolNameValue );
         unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, CoreServices.runtimePoolName( unit, "web" ) );
     }
