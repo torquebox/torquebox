@@ -119,9 +119,7 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should persist the data with a configured directory" do
-    chars = ('a'..'z').to_a + ('A'..'Z').to_a
-    dir_string = (0...20).collect { chars[Kernel.rand(chars.length)] }.join
-    configured_dir = File.join( File.dirname(__FILE__), '..', dir_string )
+    configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
     FileUtils.mkdir( configured_dir )
     cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => configured_dir.to_s )
     cache.put('foo', 'bar')

@@ -35,7 +35,7 @@ module DataMapper::Adapters
 
     def create( resources )
       resources.each do |resource|
-        initialize_serial( resource, increment(resource) )
+        initialize_serial( resource, increment( index_for( resource ) ) )
         cache.put( key( resource ), serialize( resource ) )
       end
     end
@@ -96,10 +96,13 @@ module DataMapper::Adapters
       return JSON.parse(string) 
     end
 
-    def increment(resource, amount = 1)
-      key = resource.model.name + ".index"
+    def index_for( resource )
+      resource.model.name + ".index"
+    end
+
+    def increment( key, amount = 1 )
       current = metadata_cache.get( key )
-      metadata_cache.put(key, amount) and return amount if current.nil?
+      metadata_cache.put( key, amount ) and return amount if current.nil?
       new_value = current+amount
       if metadata_cache.replace( key, current, new_value )
         return new_value
