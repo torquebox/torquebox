@@ -60,7 +60,7 @@ public class InjectableHandlerAdd extends AbstractAddStepHandler {
                                   ServiceVerificationHandler verificationHandler,
                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
         
-        InjectableHandlerRegistry registry = (InjectableHandlerRegistry) context.getServiceRegistry( false )
+        InjectableHandlerRegistry registry = (InjectableHandlerRegistry) context.getServiceRegistry( true )
                 .getRequiredService( CoreServices.INJECTABLE_HANDLER_REGISTRY ).getValue();
         
         try {
