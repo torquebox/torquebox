@@ -104,15 +104,9 @@
 
     <para>In manual deploy mode the scanner will rely on addition or removal
     of a marker file suffix. To understand a little further about deployment
-    marker suffix, take a look at marker files section from <ulink
+    method, take a look at marker files section from <ulink
     url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-DeploymentCommands">administrator
-    guide.</ulink><ulink
-    url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-DeploymentCommands"><ulink
-    url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-DeploymentCommands"></ulink></ulink></para>
-
-    <para>JBoss constantly monitors changes to this directory, hot-deploying
-    an artifact when it's added, undeploying it when it's removed, and
-    "bouncing" (redeploying) it when it's changed.</para>
+    guide.</ulink></para>
 
     <para><mediaobject>
         <imageobject>
