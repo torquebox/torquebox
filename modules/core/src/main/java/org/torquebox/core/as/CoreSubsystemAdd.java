@@ -89,7 +89,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         }, OperationContext.Stage.RUNTIME );
         
         try {
-            addCoreServices( newControllers, context, registry );
+            addCoreServices( context, verificationHandler, newControllers, registry );
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
@@ -124,22 +124,25 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationDeployer() );
     }
 
-    protected void addCoreServices(List<ServiceController<?>> newControllers, final OperationContext context,
+    protected void addCoreServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
+                                   List<ServiceController<?>> newControllers, 
                                    InjectableHandlerRegistry registry) throws Exception {
-        addTorqueBoxService( newControllers, context, registry );
-        addGlobalRubyServices( newControllers, context, registry );
-        addInjectionServices( newControllers, context, registry );
+        addTorqueBoxService( context, verificationHandler, newControllers, registry );
+        addGlobalRubyServices( context, verificationHandler, newControllers, registry );
+        addInjectionServices( context, verificationHandler, newControllers, registry );
     }
 
     
-    protected void addTorqueBoxService(List<ServiceController<?>> newControllers, final OperationContext context,
+    protected void addTorqueBoxService(final OperationContext context, ServiceVerificationHandler verificationHandler,
+                                       List<ServiceController<?>> newControllers,
                                        InjectableHandlerRegistry registry) throws IOException {
     	TorqueBox torqueBox = new TorqueBox();
         torqueBox.dump( log );
         
-        context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
+        newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
             .setInitialMode( Mode.ACTIVE )
-            .install();
+            .addListener( verificationHandler )
+            .install() );
         
         String mbeanName = ObjectNameFactory.create( "torquebox", new Hashtable<String, String>() {
             {
@@ -148,18 +151,21 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         } ).toString();
 
         MBeanRegistrationService<TorqueBoxMBean> mbeanService = new MBeanRegistrationService<TorqueBoxMBean>( mbeanName );
-        newControllers.add(context.getServiceTarget().addService( CoreServices.TORQUEBOX.append( "mbean" ), mbeanService )
+        newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX.append( "mbean" ), mbeanService )
                 .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( CoreServices.TORQUEBOX, TorqueBoxMBean.class, mbeanService.getValueInjector() )
+                .addListener( verificationHandler )
                 .setInitialMode( Mode.PASSIVE )
-                .install());
+                .install() );
     }
 
-    protected void addGlobalRubyServices(List<ServiceController<?>> newControllers, final OperationContext context,
+    protected void addGlobalRubyServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
+                                         List<ServiceController<?>> newControllers,
                                          InjectableHandlerRegistry registry) {
-        context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY, new GlobalRuby() )
+        newControllers.add( context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY, new GlobalRuby() )
+                .addListener( verificationHandler )
                 .setInitialMode( Mode.ACTIVE )
-                .install();
+                .install() );
 
         String mbeanName = ObjectNameFactory.create( "torquebox", new Hashtable<String, String>() {
             {
@@ -168,17 +174,20 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         } ).toString();
 
         MBeanRegistrationService<GlobalRubyMBean> mbeanService = new MBeanRegistrationService<GlobalRubyMBean>( mbeanName );
-        newControllers.add(context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY.append( "mbean" ), mbeanService )
+        newControllers.add( context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY.append( "mbean" ), mbeanService )
                 .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( CoreServices.GLOBAL_RUBY, GlobalRubyMBean.class, mbeanService.getValueInjector() )
-                .install());
+                .addListener( verificationHandler )
+                .install() );
     }
 
-    protected void addInjectionServices(List<ServiceController<?>> newControllers, final OperationContext context,
+    protected void addInjectionServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
+                                        List<ServiceController<?>> newControllers,
                                         InjectableHandlerRegistry registry) {
-        newControllers.add(context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
+        newControllers.add( context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
+                .addListener( verificationHandler )
                 .setInitialMode( Mode.PASSIVE )
-                .install());
+                .install() );
     }
 
     static ModelNode createOperation(ModelNode address) {
