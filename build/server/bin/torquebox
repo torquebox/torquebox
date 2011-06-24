@@ -69,10 +69,14 @@ class TorqueBoxCommand < Thor
   desc "cli", "Run the JBoss AS7 CLI"
   def cli
     setup_environment
-    windows_path = File.join(TorqueBox::Server.jboss_home, "bin\\jboss-admin")
-    unix_path = "/bin/sh #{File.join(TorqueBox::Server.jboss_home, 'bin/jboss-admin.sh')}"
-    command = Config::CONFIG['host_os'] =~ /mswin/ ? windows_path : unix_path
-    exec command
+    options = "--connect"
+    if Config::CONFIG['host_os'] =~ /mswin/
+      path = File.join(TorqueBox::Server.jboss_home, "bin\\jboss-admin")
+      exec(path, options)
+    else
+      path = "/bin/sh #{File.join(TorqueBox::Server.jboss_home, 'bin/jboss-admin.sh')}"
+      exec "#{path} #{options}"
+    end
   end
 
   desc "env [VARIABLE]", "Display TorqueBox environment variables"

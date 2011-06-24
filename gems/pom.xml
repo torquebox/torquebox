@@ -105,6 +105,7 @@
                     <goal>jruby</goal>
                   </goals>
                   <configuration>
+                    <jrubyJvmArgs>-Xmx768m</jrubyJvmArgs>
                     <script>
                       basedir = '${project.basedir}'.gsub('\\', '/')
                       load %Q(#{basedir}/../../build/assembly/lib/assembly_tool.rb)
