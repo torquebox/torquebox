@@ -24,25 +24,27 @@ module DataMapper::Adapters
 
     def initialize( name, options )
       super
-      opts = {:name => name}
-      opts.merge! options
-      @cache  = TorqueBox::Infinispan::Cache.new( opts )
-      @models = TorqueBox::Infinispan::Cache.new( :name => name.to_s + "/models" )
+      @options         = options.dup
+      @options[:name]  = name.to_s
+      @metadata        = @options.dup
+      @metadata[:name] = name.to_s + "/metadata"
+      @cache           = TorqueBox::Infinispan::Cache.new( @options )
+      @metadata_cache  = TorqueBox::Infinispan::Cache.new( @metadata )
     end
 
 
     def create( resources )
       resources.each do |resource|
         initialize_serial( resource, increment(resource) )
-        @cache.put( key( resource ), serialize( resource ) )
+        cache.put( key( resource ), serialize( resource ) )
       end
     end
 
     def read( query )
       # TODO: This is not really acceptable at all
       records = []
-      @cache.keys.each do |key|
-        value = @cache.get(key)
+      cache.keys.each do |key|
+        value = cache.get(key)
         records << deserialize(value) if value
       end
       records = query.filter_records(records)
@@ -53,17 +55,25 @@ module DataMapper::Adapters
       attributes = attributes_as_fields(attributes)
       collection.each do |resource|
         resource.attributes(:field).merge(attributes)
-        @cache.put( key(resource), serialize(resource) )
+        cache.put( key(resource), serialize(resource) )
       end
     end
 
     def delete( collection )
       collection.each do |resource|
-        @cache.remove( key(resource) )
+        cache.remove( key(resource) )
       end
     end
 
     private
+    def cache
+      @cache
+    end
+
+    def metadata_cache
+      @metadata_cache
+    end
+
     def next_id(resource)
       Digest::SHA1.hexdigest(Time.now.to_i + rand(1000000000).to_s)[1..length].to_i
     end
@@ -88,10 +98,10 @@ module DataMapper::Adapters
 
     def increment(resource, amount = 1)
       key = resource.model.name + ".index"
-      current = @models.get( key )
-      @models.put(key, amount) and return amount if current.nil?
+      current = metadata_cache.get( key )
+      metadata_cache.put(key, amount) and return amount if current.nil?
       new_value = current+amount
-      if @models.replace( key, current, new_value )
+      if metadata_cache.replace( key, current, new_value )
         return new_value
       else
         raise "Concurrent modification, old value was #{value} new value #{new_value}"
