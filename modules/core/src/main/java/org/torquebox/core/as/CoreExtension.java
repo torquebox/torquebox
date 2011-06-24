@@ -19,13 +19,13 @@
 
 package org.torquebox.core.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ModelNodeRegistration;
+import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 
 public class CoreExtension extends AbstractBootstrappableExtension {
@@ -37,14 +37,14 @@ public class CoreExtension extends AbstractBootstrappableExtension {
         
         log.info( "Initializing TorqueBox Core Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ModelNodeRegistration subsystem = registration.registerSubsystemModel( CoreSubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CoreSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
                 CoreSubsystemAdd.ADD_INSTANCE,
                 CoreSubsystemProviders.SUBSYSTEM_ADD,
                 false );
 
-        ModelNodeRegistration injector = subsystem.registerSubModel( PathElement.pathElement( "injector" ), CoreSubsystemProviders.INJECTOR );
+        ManagementResourceRegistration injector = subsystem.registerSubModel( PathElement.pathElement( "injector" ), CoreSubsystemProviders.INJECTOR );
 
         injector.registerOperationHandler( "add",
                 InjectableHandlerAdd.ADD_INSTANCE,

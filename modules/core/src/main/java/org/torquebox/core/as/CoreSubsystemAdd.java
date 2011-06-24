@@ -22,29 +22,26 @@ package org.torquebox.core.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.management.MBeanServer;
 
-import org.jboss.as.controller.BasicOperationResult;
-import org.jboss.as.controller.ModelAddOperationHandler;
+import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
-import org.jboss.as.controller.RuntimeTask;
-import org.jboss.as.controller.RuntimeTaskContext;
+import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.jmx.MBeanRegistrationService;
 import org.jboss.as.jmx.MBeanServerService;
 import org.jboss.as.jmx.ObjectNameFactory;
-import org.jboss.as.server.BootOperationContext;
-import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.server.AbstractDeploymentChainStep;
+import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
@@ -70,68 +67,73 @@ import org.torquebox.core.runtime.BaseRubyRuntimeDeployer;
 import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
 import org.torquebox.core.runtime.RuntimePoolDeployer;
 
-class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
-
-    /** {@inheritDoc} */
+class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
+    
     @Override
-    public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        final ModelNode subModel = context.getSubModel();
-        subModel.get( "injector" ).setEmptyObject();
-
-        if (!handleBootContext( context, resultHandler )) {
-            resultHandler.handleResultComplete();
+    protected void populateModel(ModelNode operation, ModelNode model) {
+        model.get( "injector" ).setEmptyObject();
+    }
+    
+    @Override
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+                                   ServiceVerificationHandler verificationHandler,
+                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
+        
+        final InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
+        
+        context.addStep( new AbstractDeploymentChainStep() {
+            @Override
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                addDeploymentProcessors( processorTarget, registry );
+            }
+        }, OperationContext.Stage.RUNTIME );
+        
+        try {
+            addCoreServices( newControllers, context, registry );
+        } catch (Exception e) {
+            throw new OperationFailedException( e, null );
         }
-        return compensatingResult( operation );
+        
     }
 
-    protected boolean handleBootContext(final OperationContext operationContext, final ResultHandler resultHandler) {
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, final InjectableHandlerRegistry registry) {
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobStructureProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );
 
-        if (!(operationContext instanceof BootOperationContext)) {
-            return false;
-        }
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 20, new ApplicationYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 35, new PoolingYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 36, new RubyYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RubyApplicationDefaultsProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new RubyApplicationExploder() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeDeployer() );
 
-        final BootOperationContext context = (BootOperationContext) operationContext;
-
-        context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        return true;
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new PredeterminedInjectableProcessor( registry ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationDeployer() );
     }
 
-    protected void addDeploymentProcessors(final BootOperationContext context, final InjectableHandlerRegistry registry) {
-        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
-        context.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobStructureProcessor() );
-        context.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );
-
-        context.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 20, new ApplicationYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 35, new PoolingYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 36, new RubyYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 40, new RubyApplicationDefaultsProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 100, new RubyApplicationExploder() );
-        context.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeDeployer() );
-
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new PredeterminedInjectableProcessor( registry ) );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableDeployer() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
-        context.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
-        context.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
-        context.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );
-        context.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationDeployer() );
-    }
-
-    protected void addCoreServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) throws Exception {
-        addTorqueBoxService( context, registry );
-        addGlobalRubyServices( context, registry );
-        addInjectionServices( context, registry );
+    protected void addCoreServices(List<ServiceController<?>> newControllers, final OperationContext context,
+                                   InjectableHandlerRegistry registry) throws Exception {
+        addTorqueBoxService( newControllers, context, registry );
+        addGlobalRubyServices( newControllers, context, registry );
+        addInjectionServices( newControllers, context, registry );
     }
 
     
-    protected void addTorqueBoxService(final RuntimeTaskContext context, InjectableHandlerRegistry registry) throws IOException {
+    protected void addTorqueBoxService(List<ServiceController<?>> newControllers, final OperationContext context,
+                                       InjectableHandlerRegistry registry) throws IOException {
     	TorqueBox torqueBox = new TorqueBox();
         torqueBox.dump( log );
         
@@ -146,14 +148,15 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         } ).toString();
 
         MBeanRegistrationService<TorqueBoxMBean> mbeanService = new MBeanRegistrationService<TorqueBoxMBean>( mbeanName );
-        context.getServiceTarget().addService( CoreServices.TORQUEBOX.append( "mbean" ), mbeanService )
+        newControllers.add(context.getServiceTarget().addService( CoreServices.TORQUEBOX.append( "mbean" ), mbeanService )
                 .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( CoreServices.TORQUEBOX, TorqueBoxMBean.class, mbeanService.getValueInjector() )
                 .setInitialMode( Mode.PASSIVE )
-                .install();
+                .install());
     }
 
-    protected void addGlobalRubyServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
+    protected void addGlobalRubyServices(List<ServiceController<?>> newControllers, final OperationContext context,
+                                         InjectableHandlerRegistry registry) {
         context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY, new GlobalRuby() )
                 .setInitialMode( Mode.ACTIVE )
                 .install();
@@ -165,39 +168,17 @@ class CoreSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler
         } ).toString();
 
         MBeanRegistrationService<GlobalRubyMBean> mbeanService = new MBeanRegistrationService<GlobalRubyMBean>( mbeanName );
-        context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY.append( "mbean" ), mbeanService )
+        newControllers.add(context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY.append( "mbean" ), mbeanService )
                 .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( CoreServices.GLOBAL_RUBY, GlobalRubyMBean.class, mbeanService.getValueInjector() )
-                .install();
+                .install());
     }
 
-    protected void addInjectionServices(final RuntimeTaskContext context, InjectableHandlerRegistry registry) {
-        context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
+    protected void addInjectionServices(List<ServiceController<?>> newControllers, final OperationContext context,
+                                        InjectableHandlerRegistry registry) {
+        newControllers.add(context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
                 .setInitialMode( Mode.PASSIVE )
-                .install();
-    }
-
-    protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
-        return new RuntimeTask() {
-            @Override
-            public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                try {
-                    InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
-                    addCoreServices( context, registry );
-                    addDeploymentProcessors( bootContext, registry );
-                    resultHandler.handleResultComplete();
-                } catch (Exception e) {
-                    throw new OperationFailedException( e, null );
-                }
-            }
-        };
-    }
-
-    protected BasicOperationResult compensatingResult(ModelNode operation) {
-        final ModelNode compensatingOperation = new ModelNode();
-        compensatingOperation.get( OP ).set( REMOVE );
-        compensatingOperation.get( OP_ADDR ).set( operation.get( OP_ADDR ) );
-        return new BasicOperationResult( compensatingOperation );
+                .install());
     }
 
     static ModelNode createOperation(ModelNode address) {

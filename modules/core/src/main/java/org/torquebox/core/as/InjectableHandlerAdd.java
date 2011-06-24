@@ -22,54 +22,61 @@ package org.torquebox.core.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 
+import java.util.List;
 import java.util.ServiceLoader;
 
-import org.jboss.as.controller.ModelAddOperationHandler;
+import org.jboss.as.controller.AbstractAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
-import org.jboss.as.controller.RuntimeTask;
-import org.jboss.as.controller.RuntimeTaskContext;
+import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
+import org.jboss.msc.service.ServiceController;
 import org.torquebox.core.injection.analysis.InjectableHandler;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 
-public class InjectableHandlerAdd implements ModelAddOperationHandler {
+public class InjectableHandlerAdd extends AbstractAddStepHandler {
 
     public InjectableHandlerAdd() {
     }
-
+    
     @Override
-    public OperationResult execute(final OperationContext operationContext, final ModelNode operation, ResultHandler resultHandler) throws OperationFailedException {
-        if (operationContext.getRuntimeContext() != null) {
-            operationContext.getRuntimeContext().setRuntimeTask( new RuntimeTask() {
-                @Override
-                public void execute(final RuntimeTaskContext context) throws OperationFailedException {
-
-                    InjectableHandlerRegistry registry = (InjectableHandlerRegistry) context.getServiceRegistry()
-                            .getRequiredService( CoreServices.INJECTABLE_HANDLER_REGISTRY ).getValue();
-
-                    String handlerModuleIdentifierStr = operation.get( "attributes", "module" ).asString();
-                    ModuleIdentifier handlerModuleIdentifier = ModuleIdentifier.create( handlerModuleIdentifierStr );
-
-                    try {
-                        ServiceLoader<InjectableHandler> serviceLoader = Module.loadServiceFromCallerModuleLoader( handlerModuleIdentifier, InjectableHandler.class );
-                        for (InjectableHandler eachHandler : serviceLoader) {
-                            operationContext.getSubModel().get( eachHandler.getType() ).setEmptyObject();
-                            registry.addInjectableHandler( eachHandler );
-                        }
-                    } catch (ModuleLoadException e) {
-                        log.error(  "Unable to add injectable-handlers for: " + handlerModuleIdentifierStr, e );
-                    }
-                }
-            } );
+    protected void populateModel(ModelNode operation, ModelNode model) {
+        try {
+            for (InjectableHandler eachHandler : getInjectableHandlers( operation )) {
+                model.get( eachHandler.getType() ).setEmptyObject();
+            }
+        } catch (ModuleLoadException e) {
+            log.error( "Unable to add injectable handlers to model", e );
         }
-        return null;
+        
+    }
+    
+    @Override
+    protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model,
+                                  ServiceVerificationHandler verificationHandler,
+                                  List<ServiceController<?>> newControllers) throws OperationFailedException {
+        
+        InjectableHandlerRegistry registry = (InjectableHandlerRegistry) context.getServiceRegistry( false )
+                .getRequiredService( CoreServices.INJECTABLE_HANDLER_REGISTRY ).getValue();
+        
+        try {
+            for (InjectableHandler eachHandler : getInjectableHandlers( operation )) {
+                registry.addInjectableHandler( eachHandler );
+            }
+        } catch (ModuleLoadException e) {
+            log.error( "Unable to add injectable handlers to registry", e );
+        }
+        
+    }
+    
+    protected ServiceLoader<InjectableHandler> getInjectableHandlers(ModelNode operation) throws ModuleLoadException {
+        String handlerModuleIdentifierStr = operation.get( "attributes", "module" ).asString();
+        ModuleIdentifier handlerModuleIdentifier = ModuleIdentifier.create( handlerModuleIdentifierStr );
+        return Module.loadServiceFromCallerModuleLoader( handlerModuleIdentifier, InjectableHandler.class );
     }
 
     public static ModelNode createOperation(ModelNode address, String subsystemName, String moduleName) {
