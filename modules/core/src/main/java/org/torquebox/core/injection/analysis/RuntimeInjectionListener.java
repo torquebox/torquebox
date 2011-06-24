@@ -7,6 +7,8 @@ import java.util.concurrent.FutureTask;
 import org.jboss.msc.service.AbstractServiceListener;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.State;
+import org.jboss.msc.service.ServiceController.Substate;
+import org.jboss.msc.service.ServiceController.Transition;
 
 public class RuntimeInjectionListener extends AbstractServiceListener<Object> {
 
@@ -26,9 +28,11 @@ public class RuntimeInjectionListener extends AbstractServiceListener<Object> {
     }
 
     @Override
-    public void serviceStarted(ServiceController<? extends Object> controller) {
-        notifyAsInjectable();
-        controller.removeListener( this );
+    public void transition(ServiceController<? extends Object> controller, Transition transition) {
+        if (transition.getAfter() == Substate.UP) {
+            notifyAsInjectable();
+            controller.removeListener( this );
+        }
     }
 
     void notifyAsInjectable() {
