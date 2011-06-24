@@ -92,9 +92,27 @@
     subdirectory, the contents of which determine the applications and
     services JBoss runs. These apps and services are represented as archives,
     "exploded" folders, or text files called "deployment descriptors". JBoss
-    constantly monitors changes to this directory, hot-deploying an artifact
-    when it's added, undeploying it when it's removed, and "bouncing"
-    (redeploying) it when it's changed.</para>
+    deployment scanner comes with meaningful changes, operating in two
+    different modes: <emphasis role="bold">auto-deploy</emphasis> and
+    <emphasis role="bold">manual deploy</emphasis>.</para>
+
+    <para>Auto-deploy mode like in previous releases of AS, at every time that
+    timestamp changes, content will be deployed. The scanner will place a
+    marker file suffix with "<literal>.deployed</literal>" status, in case of
+    content deletion, the scanner will not trigger undeployment
+    process.</para>
+
+    <para>In manual deploy mode the scanner will rely on addition or removal
+    of a marker file suffix. To understand a little further about deployment
+    marker suffix, take a look at marker files section from <ulink
+    url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-DeploymentCommands">administrator
+    guide.</ulink><ulink
+    url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-DeploymentCommands"><ulink
+    url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-DeploymentCommands"></ulink></ulink></para>
+
+    <para>JBoss constantly monitors changes to this directory, hot-deploying
+    an artifact when it's added, undeploying it when it's removed, and
+    "bouncing" (redeploying) it when it's changed.</para>
 
     <para><mediaobject>
         <imageobject>
