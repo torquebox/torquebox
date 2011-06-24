@@ -32,7 +32,7 @@ import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ModelNodeRegistration;
+import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleClassLoader;
@@ -48,7 +48,7 @@ public class BootstrapExtension implements Extension {
     public void initialize(ExtensionContext context) {
         log.info( "Bootstrapping TorqueBox" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ModelNodeRegistration subsystem = registration.registerSubsystemModel( BootstrapSubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( BootstrapSubsystemProviders.SUBSYSTEM );
         registration.registerXMLElementWriter( BootstrapSubsystemParser.getInstance() );
 
         String jrubyHome = JRubyHomeLocator.determineJRubyHome(true);

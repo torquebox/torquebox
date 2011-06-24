@@ -29,6 +29,7 @@ import org.jboss.msc.service.BatchServiceTarget;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceListener;
+import org.jboss.msc.service.ServiceListener.Inheritance;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.jboss.msc.value.Value;
@@ -142,6 +143,21 @@ public class MockServiceTarget implements ServiceTarget {
     @Override
     public BatchServiceTarget batchTarget() {
         return null;
+    }
+
+    @Override
+    public ServiceTarget addListener(Inheritance inheritance, ServiceListener<Object> listener) {
+        return this;
+    }
+
+    @Override
+    public ServiceTarget addListener(Inheritance inheritance, ServiceListener<Object>... listeners) {
+        return this;
+    }
+
+    @Override
+    public ServiceTarget addListener(Inheritance inheritance, Collection<ServiceListener<Object>> listeners) {
+        return this;
     }
 
 }

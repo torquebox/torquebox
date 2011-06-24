@@ -19,8 +19,10 @@
 
 package org.torquebox.test.as;
 
+import org.jboss.as.controller.PathElement;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.SimpleAttachable;
+import org.jboss.dmr.ModelNode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 
@@ -57,6 +59,11 @@ public class MockDeploymentUnit extends SimpleAttachable implements DeploymentUn
 
     @Override
     public ServiceRegistry getServiceRegistry() {
+        return null;
+    }
+
+    @Override
+    public ModelNode createDeploymentSubModel(String subsystemName, PathElement address) {
         return null;
     }
 

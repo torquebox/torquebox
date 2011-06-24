@@ -22,14 +22,14 @@ package org.torquebox.test.as;
 import java.util.Collection;
 
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Location;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceListener;
+import org.jboss.msc.service.ServiceListener.Inheritance;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistryException;
-import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.value.Value;
 
 public class MockServiceBuilder<T> implements ServiceBuilder<T> {
@@ -64,16 +64,6 @@ public class MockServiceBuilder<T> implements ServiceBuilder<T> {
     }
 
     @Override
-    public ServiceBuilder<T> setLocation() {
-        return this;
-    }
-
-    @Override
-    public ServiceBuilder<T> setLocation(Location location) {
-        return this;
-    }
-
-    @Override
     public ServiceBuilder<T> setInitialMode(Mode mode) {
         return this;
     }
@@ -89,22 +79,12 @@ public class MockServiceBuilder<T> implements ServiceBuilder<T> {
     }
 
     @Override
-    public ServiceBuilder<T> addOptionalDependencies(ServiceName... dependencies) {
-        return this;
-    }
-
-    @Override
     public ServiceBuilder<T> addDependencies(Iterable<ServiceName> dependencies) {
         return this;
     }
 
     @Override
     public ServiceBuilder<T> addDependencies(org.jboss.msc.service.ServiceBuilder.DependencyType dependencyType, Iterable<ServiceName> dependencies) {
-        return this;
-    }
-
-    @Override
-    public ServiceBuilder<T> addOptionalDependencies(Iterable<ServiceName> dependencies) {
         return this;
     }
 
@@ -119,22 +99,12 @@ public class MockServiceBuilder<T> implements ServiceBuilder<T> {
     }
 
     @Override
-    public ServiceBuilder<T> addOptionalDependency(ServiceName dependency) {
-        return this;
-    }
-
-    @Override
     public ServiceBuilder<T> addDependency(ServiceName dependency, Injector<Object> target) {
         return this;
     }
 
     @Override
     public ServiceBuilder<T> addDependency(org.jboss.msc.service.ServiceBuilder.DependencyType dependencyType, ServiceName dependency, Injector<Object> target) {
-        return this;
-    }
-
-    @Override
-    public ServiceBuilder<T> addOptionalDependency(ServiceName dependency, Injector<Object> target) {
         return this;
     }
 
@@ -146,11 +116,6 @@ public class MockServiceBuilder<T> implements ServiceBuilder<T> {
     @Override
     public <I> ServiceBuilder<T> addDependency(org.jboss.msc.service.ServiceBuilder.DependencyType dependencyType, ServiceName dependency, Class<I> type,
             Injector<I> target) {
-        return this;
-    }
-
-    @Override
-    public <I> ServiceBuilder<T> addOptionalDependency(ServiceName dependency, Class<I> type, Injector<I> target) {
         return this;
     }
 
@@ -188,6 +153,21 @@ public class MockServiceBuilder<T> implements ServiceBuilder<T> {
     public ServiceController<T> install() throws ServiceRegistryException, IllegalStateException {
         this.serviceTarget.install( this );
         return null;
+    }
+
+    @Override
+    public ServiceBuilder<T> addListener(Inheritance inheritance, ServiceListener<? super T> listener) {
+        return this;
+    }
+
+    @Override
+    public ServiceBuilder<T> addListener(Inheritance inheritance, ServiceListener<? super T>... listeners) {
+        return this;
+    }
+
+    @Override
+    public ServiceBuilder<T> addListener(Inheritance inheritance, Collection<? extends ServiceListener<? super T>> listeners) {
+        return this;
     }
 
 }
