@@ -27,5 +27,29 @@ describe DataMapper::Adapters::InfinispanAdapter do
 
   it_should_behave_like 'An Adapter'
 
+  describe "with persistence" do
+    before :all do
+      @configured_dir  = File.join( File.dirname(__FILE__), '..', random_string )
+      @default_dir     = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
+      FileUtils.mkdir( @configured_dir )
+    end
+
+    it "should store data in a configured directory" do
+      DataMapper.setup(:default, :adapter => 'infinispan', :persist => @configured_dir.to_s )
+      Heffalump.create
+      File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
+    end
+
+    it "should store data in a default directory" do
+      DataMapper.setup(:default, :adapter => 'infinispan', :persist => true )
+      Heffalump.create
+      File.exist?( @default_dir ).should be_true
+    end
+
+    after :all do
+      FileUtils.rm_rf( @configured_dir )
+      FileUtils.rm_rf( @default_dir )
+    end
+  end
 end
 

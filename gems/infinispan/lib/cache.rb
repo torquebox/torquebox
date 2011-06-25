@@ -138,7 +138,14 @@ module TorqueBox
       def local
         # workaround common problem running infinispan in web containers (see FAQ)
         java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
-        manager = org.infinispan.manager.DefaultCacheManager.new()
+        config  = org.infinispan.config.Configuration.new.fluent
+        if options[:persist]
+          store = org.infinispan.loaders.file.FileCacheStoreConfig.new
+          store.purge_on_startup( false )
+          store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
+          config.loaders.add_cache_loader( store )
+        end
+        manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
       rescue
         puts "Unable to obtain local cache: #{$!}"

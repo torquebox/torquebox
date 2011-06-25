@@ -109,6 +109,24 @@ describe TorqueBox::Infinispan::Cache do
       @cache.replace(key, 'something else', new_value)
       @cache.get(key).should == current_value
   end
+
+  it "should persist the data with a default directory" do
+    cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => true )
+    cache.put('foo', 'bar')
+    default_dir = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
+    File.exist?(default_dir).should be_true
+    FileUtils.rm_rf(default_dir)
+  end
+
+  it "should persist the data with a configured directory" do
+    configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
+    FileUtils.mkdir( configured_dir )
+    cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => configured_dir.to_s )
+    cache.put('foo', 'bar')
+    File.exist?("#{configured_dir.to_s}/___defaultcache").should be_true
+    FileUtils.rm_rf( configured_dir )
+  end
+
 end
 
 class Snuffleuffagus
