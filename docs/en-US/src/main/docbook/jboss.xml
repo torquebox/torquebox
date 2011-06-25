@@ -96,11 +96,11 @@
     different modes: <emphasis role="bold">auto-deploy</emphasis> and
     <emphasis role="bold">manual deploy</emphasis>.</para>
 
-    <para>Auto-deploy mode like in previous releases of AS, at every time that
-    timestamp changes, content will be deployed. The scanner will place a
-    marker file suffix with "<literal>.deployed</literal>" status, in case of
-    content deletion, the scanner will not trigger undeployment
-    process.</para>
+    <para>Auto-deploy mode works like in previous releases of AS, at every
+    time that timestamp changes, content will be deployed. The scanner take
+    responsability to place a marker file suffix with
+    "<literal>.deployed</literal>" status, in case of content deletion, the
+    scanner will not trigger undeployment process automatically.</para>
 
     <para>In manual deploy mode the scanner will rely on addition or removal
     of a marker file suffix. To understand a little further about deployment
@@ -111,7 +111,7 @@
     <para><mediaobject>
         <imageobject>
           <imagedata align="center" fileref="images/jboss-deploy.png"
-                     format="PNG" scale="70" />
+                     format="PNG" scale="100" />
         </imageobject>
       </mediaobject></para>
 
