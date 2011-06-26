@@ -23,7 +23,7 @@
 
     <para>Now in JBoss, all server configuration is concentrated in two
     runtime modes: <emphasis>standalone</emphasis> and
-    <emphasis>domain</emphasis>. Administrative tasks comes to be easier to
+    <emphasis>domain</emphasis>. Administrative tasks come to be easier to
     maintain, eliminating complexity of multiple configuration folders and
     descriptors.</para>
 
