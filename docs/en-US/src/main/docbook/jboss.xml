@@ -17,9 +17,10 @@
     <para>JBoss folder structure now has expressive changes since previous
     releases, the most visible comes to folder structure and runtime modes:
     <emphasis role="bold">domain</emphasis> and <emphasis
-    role="bold">standalone<emphasis>. In this release of Torquebox, just
-    standalone mode is available, domain mode support will come to the next
-    releases.</emphasis></emphasis></para>
+      role="bold">standalone.</emphasis> In this release of
+    Torquebox, just standalone mode is available, domain mode support will
+    come to the next
+    releases.</para>
 
     <para><emphasis role="bold"><emphasis role="bold"><emphasis>Now in JBoss,
     all server configuration is concentrated <emphasis>in</emphasis> 2 runtime
@@ -145,7 +146,7 @@
     JMX and more! It is <emphasis>WAY</emphasis> beyond the scope of this
     document to explain those rules, but by default you will see INFO messages
     on the console (the shell where you start JBoss) and persistently written
-    to <filename>log/server.log</filename>. </para>
+    to <filename>log/server.log</filename>.</para>
 
     <para>Any messages written to <constant>stdout</constant> or
     <constant>stderr</constant> will also be displayed on the console and
