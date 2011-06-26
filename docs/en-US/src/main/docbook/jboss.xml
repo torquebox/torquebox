@@ -115,18 +115,18 @@
         </imageobject>
       </mediaobject></para>
 
-    <para>TorqueBox also provides an additional deploy directory at
-    <filename>$TORQUEBOX_HOME/apps/</filename> that is scanned from all server
-    configurations, and any deployment descriptors or archives found there are
-    loaded after the <filename>deploy/</filename> directory within the server
-    configuration. This prevents your application from being loaded before all
-    of the JBoss components have been deployed, and segregates your
-    applications from the JBoss plumbing.</para>
+    <para>With introduction of <emphasis role="bold">knob</emphasis> file
+    concept TorqueBox became more technology-agnostic, it's possible now to
+    deploy any combination of components: web, messaging, jobs and services.
+    Application files doesn't have as requirement anymore to stay in a
+    specific directory, JBoss scanner will do all the job looking at knob
+    files reference inside <literal>/standalone/deployments</literal>
+    folder.</para>
 
     <para>TorqueBox provides Rake tasks to create and copy a deployment
     descriptor for your Ruby application to
-    <filename>$TORQUEBOX_HOME/apps/</filename>. For more details, see <xref
-    linkend="deployment" /> and <xref
+    <filename>$TORQUEBOX_HOME/standalone/deployments/</filename>. For more
+    details, see <xref linkend="deployment" /> and <xref
     linkend="deployment-descriptors" />.</para>
   </section>
 
