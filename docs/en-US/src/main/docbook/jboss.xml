@@ -17,16 +17,15 @@
     <para>JBoss folder structure now has expressive changes since previous
     releases, the most visible comes to folder structure and runtime modes:
     <emphasis role="bold">domain</emphasis> and <emphasis
-      role="bold">standalone.</emphasis> In this release of
-    Torquebox, just standalone mode is available, domain mode support will
-    come to the next
+    role="bold">standalone.</emphasis> In this release of Torquebox, just
+    standalone mode is supported, domain mode support will come to the next
     releases.</para>
 
-    <para><emphasis role="bold"><emphasis role="bold"><emphasis>Now in JBoss,
-    all server configuration is concentrated <emphasis>in</emphasis> 2 runtime
-    modes <emphasis><filename>standalone/</filename></emphasis><emphasis> and
-    <literal>domain/</literal></emphasis>, making admin tasks more easier to
-    maintenance. </emphasis></emphasis></emphasis></para>
+    <para>Now in JBoss, all server configuration is concentrated in two
+    runtime modes: <emphasis>standalone</emphasis> and
+    <emphasis>domain</emphasis>. Administrative tasks comes to be easier to
+    maintain, eliminating complexity of multiple configuration folders and
+    descriptors.</para>
 
     <para><mediaobject>
         <imageobject>
@@ -45,7 +44,7 @@
     <literal>standalone/configuration</literal>/ folder through <emphasis
     role="bold">standalone.xml</emphasis>.</para>
 
-    <para>The standalone mode have a common structure, and usually include the
+    <para>The standalone mode has a common structure, and usually include the
     following directories: <literal>configuration/</literal>,
     <literal>deployments/</literal> and <literal>lib/</literal>. In general,
     it isn't a good idea to remove anything from these directories that you
