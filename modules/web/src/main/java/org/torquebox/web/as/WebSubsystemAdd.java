@@ -19,21 +19,22 @@
 
 package org.torquebox.web.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 
-import org.jboss.as.controller.BasicOperationResult;
-import org.jboss.as.controller.ModelAddOperationHandler;
+import java.util.List;
+
+import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
-import org.jboss.as.controller.RuntimeTask;
-import org.jboss.as.controller.RuntimeTaskContext;
-import org.jboss.as.server.BootOperationContext;
-import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.server.AbstractDeploymentChainStep;
+import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.web.VirtualHostInstaller;
 import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
@@ -56,81 +57,61 @@ import org.torquebox.web.websockets.WebSocketsServices;
 import org.torquebox.web.websockets.WebSocketsYamlParsingProcessor;
 import org.torquebox.web.websockets.component.WebSocketProcessorComponentResolverInstaller;
 
-class WebSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
-
-    /** {@inheritDoc} */
+class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
+    
     @Override
-    public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        final ModelNode subModel = context.getSubModel();
-        subModel.setEmptyObject();
-        
-        if (!handleBootContext( context, resultHandler )) {
-            resultHandler.handleResultComplete();
-        }
-        return compensatingResult( operation );
-    }
-
-    protected boolean handleBootContext(final OperationContext operationContext, final ResultHandler resultHandler) {
-
-        if (!(operationContext instanceof BootOperationContext)) {
-            return false;
-        }
-
-        final BootOperationContext context = (BootOperationContext) operationContext;
-
-        context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        return true;
-    }
-
-    protected void addDeploymentProcessors(final BootOperationContext context) {
-        context.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 10, new RailsApplicationRecognizer() );
-        context.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 40, new RailsVersionProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 50, new RailsRackProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 60, new RackApplicationDefaultsProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 70, new RackWebApplicationDeployer() );
-        context.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
-        
-        context.addDeploymentProcessor( Phase.PARSE, 1200, new WebSocketsYamlParsingProcessor() );
-        
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 1, new WebDependenciesProcessor() );
-        
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 101, new WebSocketsRuntimePoolProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, new RailsAutoloadPathProcessor() );
-        
-        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 220, new WebSocketProcessorComponentResolverInstaller() );
-        context.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
-        context.addDeploymentProcessor( Phase.INSTALL, 3100, new WebSocketContextInstaller( "localhost"  ) );
-        context.addDeploymentProcessor( Phase.INSTALL, 4100, new URLRegistryInstaller() );
-    }
-
-    protected void addWebServices(RuntimeTaskContext context) {
-        WebSocketsServerService service = new WebSocketsServerService();
-        context.getServiceTarget().addService( WebSocketsServices.WEB_SOCKETS_SERVER, service )
-            .setInitialMode( Mode.ON_DEMAND )
-            .install();
+    protected void populateModel(ModelNode operation, ModelNode model) {
+        model.setEmptyObject();
     }
     
-    protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
-        return new RuntimeTask() {
+    @Override
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+                                   ServiceVerificationHandler verificationHandler,
+                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
+        
+        context.addStep( new AbstractDeploymentChainStep() {
             @Override
-            public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                addWebServices(context);
-                addDeploymentProcessors( bootContext );
-                resultHandler.handleResultComplete();
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                addDeploymentProcessors( processorTarget );
             }
-        };
+        }, OperationContext.Stage.RUNTIME );
+        
+        addWebServices( context, verificationHandler, newControllers );
     }
 
-    protected BasicOperationResult compensatingResult(ModelNode operation) {
-        final ModelNode compensatingOperation = new ModelNode();
-        compensatingOperation.get( OP ).set( REMOVE );
-        compensatingOperation.get( OP_ADDR ).set( operation.get( OP_ADDR ) );
-        return new BasicOperationResult( compensatingOperation );
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new RailsApplicationRecognizer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RailsVersionProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 50, new RailsRackProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 60, new RackApplicationDefaultsProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 70, new RackWebApplicationDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
+        
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 1200, new WebSocketsYamlParsingProcessor() );
+        
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 1, new WebDependenciesProcessor() );
+        
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 101, new WebSocketsRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, new RailsAutoloadPathProcessor() );
+        
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, new WebSocketProcessorComponentResolverInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 3100, new WebSocketContextInstaller( "localhost"  ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 4100, new URLRegistryInstaller() );
+    }
+
+    protected void addWebServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
+                                  List<ServiceController<?>> newControllers) {
+        WebSocketsServerService service = new WebSocketsServerService();
+        newControllers.add( context.getServiceTarget().addService( WebSocketsServices.WEB_SOCKETS_SERVER, service )
+            .setInitialMode( Mode.ON_DEMAND )
+            .addListener( verificationHandler )
+            .install() );
     }
 
     static ModelNode createOperation(ModelNode address) {

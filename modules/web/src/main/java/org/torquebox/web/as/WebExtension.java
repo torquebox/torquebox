@@ -19,12 +19,12 @@
 
 package org.torquebox.web.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ModelNodeRegistration;
+import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 import org.torquebox.core.as.AbstractBootstrappableExtension;
 
@@ -35,7 +35,7 @@ public class WebExtension extends AbstractBootstrappableExtension {
         bootstrap();
         log.info( "Initializing TorqueBox Web Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ModelNodeRegistration subsystem = registration.registerSubsystemModel( WebSubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( WebSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
                 WebSubsystemAdd.ADD_INSTANCE,
