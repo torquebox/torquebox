@@ -19,12 +19,12 @@
 
 package org.torquebox.cdi.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ModelNodeRegistration;
+import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 import org.torquebox.core.as.AbstractBootstrappableExtension;
 
@@ -35,7 +35,7 @@ public class CDIExtension extends AbstractBootstrappableExtension {
         bootstrap();
         log.info( "Initializing TorqueBox CDI Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ModelNodeRegistration subsystem = registration.registerSubsystemModel( CDISubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CDISubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
                 CDISubsystemAdd.ADD_INSTANCE,

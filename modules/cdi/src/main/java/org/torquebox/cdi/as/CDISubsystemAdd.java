@@ -22,75 +22,50 @@ package org.torquebox.cdi.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 
-import org.jboss.as.controller.BasicOperationResult;
-import org.jboss.as.controller.ModelAddOperationHandler;
+import java.util.List;
+
+import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
-import org.jboss.as.controller.RuntimeTask;
-import org.jboss.as.controller.RuntimeTaskContext;
-import org.jboss.as.server.BootOperationContext;
-import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.server.AbstractDeploymentChainStep;
+import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceController;
 import org.torquebox.cdi.HackWeldBeanManagerServiceProcessor;
 
-class CDISubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
-
-    /** {@inheritDoc} */
+class CDISubsystemAdd extends AbstractBoottimeAddStepHandler {
+    
     @Override
-    public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        final ModelNode subModel = context.getSubModel();
-        subModel.setEmptyObject();
-
-        if (context instanceof BootOperationContext) {
-            handleBootContext( context, resultHandler );
-        } else {
-            resultHandler.handleResultComplete();
-        }
-        return compensatingResult( operation );
+    protected void populateModel(ModelNode operation, ModelNode model) {
+        model.setEmptyObject();
     }
 
-    protected boolean handleBootContext(final OperationContext operationContext, final ResultHandler resultHandler) {
-
-        if (!(operationContext instanceof BootOperationContext)) {
-            return false;
-        }
-
-        final BootOperationContext context = (BootOperationContext) operationContext;
-
-        context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        return true;
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 11, new CDIStructureProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, new HackWeldBeanManagerServiceProcessor() );
     }
-
-    protected void addDeploymentProcessors(final BootOperationContext context) {
-        context.addDeploymentProcessor( Phase.STRUCTURE, 11, new CDIStructureProcessor() );
-        context.addDeploymentProcessor( Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, new HackWeldBeanManagerServiceProcessor() );
-    }
-
-    protected void addCDIServices(final RuntimeTaskContext context) {
-    }
-
-    protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
-        return new RuntimeTask() {
+    
+    @Override
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+                                   ServiceVerificationHandler verificationHandler,
+                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
+        
+        context.addStep( new AbstractDeploymentChainStep() {
             @Override
-            public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                addDeploymentProcessors( bootContext );
-                addCDIServices( context );
-                resultHandler.handleResultComplete();
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                addDeploymentProcessors( processorTarget );
             }
-        };
+        }, OperationContext.Stage.RUNTIME );
+        
+        addCDIServices( context, verificationHandler, newControllers );
     }
 
-    protected BasicOperationResult compensatingResult(ModelNode operation) {
-        final ModelNode compensatingOperation = new ModelNode();
-        compensatingOperation.get( OP ).set( REMOVE );
-        compensatingOperation.get( OP_ADDR ).set( operation.get( OP_ADDR ) );
-        return new BasicOperationResult( compensatingOperation );
+    protected void addCDIServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
+                                  List<ServiceController<?>> newControllers) {
     }
 
     static ModelNode createOperation(ModelNode address) {
