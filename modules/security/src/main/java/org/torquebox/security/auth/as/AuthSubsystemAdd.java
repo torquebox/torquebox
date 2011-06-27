@@ -22,34 +22,31 @@ package org.torquebox.security.auth.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.security.auth.login.AppConfigurationEntry;
 import javax.security.auth.login.AppConfigurationEntry.LoginModuleControlFlag;
 import javax.security.auth.login.Configuration;
 
-import org.jboss.as.controller.BasicOperationResult;
-import org.jboss.as.controller.ModelAddOperationHandler;
+import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
-import org.jboss.as.controller.RuntimeTask;
-import org.jboss.as.controller.RuntimeTaskContext;
+import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.security.ModulesMap;
 import org.jboss.as.security.plugins.SecurityDomainContext;
 import org.jboss.as.security.service.JaasConfigurationService;
 import org.jboss.as.security.service.SecurityDomainService;
 import org.jboss.as.security.service.SecurityManagementService;
-import org.jboss.as.server.BootOperationContext;
-import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.server.AbstractDeploymentChainStep;
+import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceTarget;
 import org.jboss.security.ISecurityManagement;
@@ -60,58 +57,37 @@ import org.torquebox.security.auth.AuthDefaultsProcessor;
 import org.torquebox.security.auth.AuthDeployer;
 import org.torquebox.security.auth.AuthYamlParsingProcessor;
 
-public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
-
-    /** {@inheritDoc} */
+public class AuthSubsystemAdd extends AbstractBoottimeAddStepHandler {
+    
     @Override
-    public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        final ModelNode subModel = context.getSubModel();
-        subModel.setEmptyObject();
-
-        if (!handleBootContext( context, resultHandler )) {
-            resultHandler.handleResultComplete();
-        }
-        return compensatingResult( operation );
+    protected void populateModel(ModelNode operation, ModelNode model) {
+        model.setEmptyObject();
     }
-
-    protected boolean handleBootContext(final OperationContext operationContext, final ResultHandler resultHandler) {
-
-        if (!(operationContext instanceof BootOperationContext)) {
-            return false;
-        }
-
-        final BootOperationContext context = (BootOperationContext) operationContext;
-
-        context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        return true;
-    }
-
-    protected void addDeploymentProcessors(final BootOperationContext context) {
-        context.addDeploymentProcessor( Phase.PARSE, 0, new AuthYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
-        context.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new SecurityDependencyProcessor() );
-        context.addDeploymentProcessor( Phase.INSTALL, 0, new AuthDeployer() );
-    }
-
-    protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
-        return new RuntimeTask() {
+    
+    @Override
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+                                   ServiceVerificationHandler verificationHandler,
+                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
+        
+        context.addStep( new AbstractDeploymentChainStep() {
             @Override
-            public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                addDeploymentProcessors( bootContext );
-                addTorqueBoxSecurityDomainService( context );
-                resultHandler.handleResultComplete();
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                addDeploymentProcessors( processorTarget );
             }
-        };
+        }, OperationContext.Stage.RUNTIME );
+        
+        addTorqueBoxSecurityDomainService( context, verificationHandler, newControllers );
     }
 
-    protected BasicOperationResult compensatingResult(ModelNode operation) {
-        final ModelNode compensatingOperation = new ModelNode();
-        compensatingOperation.get( OP ).set( REMOVE );
-        compensatingOperation.get( OP_ADDR ).set( operation.get( OP_ADDR ) );
-        return new BasicOperationResult( compensatingOperation );
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, new AuthYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new SecurityDependencyProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new AuthDeployer() );
     }
 
-    protected void addTorqueBoxSecurityDomainService(RuntimeTaskContext context) {
+    protected void addTorqueBoxSecurityDomainService(final OperationContext context, ServiceVerificationHandler verificationHandler,
+                                                     List<ServiceController<?>> newControllers) {
         final ApplicationPolicy applicationPolicy = new ApplicationPolicy( TORQUEBOX_DOMAIN );
         AuthenticationInfo authenticationInfo = new AuthenticationInfo( TORQUEBOX_DOMAIN );
 
@@ -132,9 +108,10 @@ public class AuthSubsystemAdd implements ModelAddOperationHandler, BootOperation
                 .addDependency( SecurityManagementService.SERVICE_NAME, ISecurityManagement.class,
                         securityDomainService.getSecurityManagementInjector() )
                 .addDependency( JaasConfigurationService.SERVICE_NAME, Configuration.class,
-                        securityDomainService.getConfigurationInjector() );
+                        securityDomainService.getConfigurationInjector() )
+                .addListener( verificationHandler );
 
-        builder.setInitialMode( Mode.ON_DEMAND ).install();
+        newControllers.add( builder.setInitialMode( Mode.ON_DEMAND ).install() );
     }
 
     static ModelNode createOperation(ModelNode address) {

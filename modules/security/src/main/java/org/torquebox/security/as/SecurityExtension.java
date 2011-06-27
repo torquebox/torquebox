@@ -19,12 +19,12 @@
 
 package org.torquebox.security.as;
 
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.*;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ModelNodeRegistration;
+import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 import org.torquebox.core.as.AbstractBootstrappableExtension;
 import org.torquebox.security.auth.as.AuthSubsystemAdd;
@@ -42,7 +42,7 @@ public class SecurityExtension extends AbstractBootstrappableExtension {
 	private void initializeAuthentication(ExtensionContext context) {
 		log.info( "Initializing TorqueBox Auth Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( AUTHENTICATION_SUBSYSTEM_NAME );
-        final ModelNodeRegistration subsystem = registration.registerSubsystemModel( AuthSubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( AuthSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
                 AuthSubsystemAdd.ADD_INSTANCE,
