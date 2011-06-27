@@ -22,77 +22,53 @@ package org.torquebox.services.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
-import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.REMOVE;
 
-import org.jboss.as.controller.BasicOperationResult;
-import org.jboss.as.controller.ModelAddOperationHandler;
+import java.util.List;
+
+import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
-import org.jboss.as.controller.OperationResult;
-import org.jboss.as.controller.ResultHandler;
-import org.jboss.as.controller.RuntimeTask;
-import org.jboss.as.controller.RuntimeTaskContext;
-import org.jboss.as.server.BootOperationContext;
-import org.jboss.as.server.BootOperationHandler;
+import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.server.AbstractDeploymentChainStep;
+import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceController;
 import org.torquebox.services.ServicesDeployer;
 import org.torquebox.services.ServicesLoadPathProcessor;
 import org.torquebox.services.ServicesRuntimePoolProcessor;
 import org.torquebox.services.ServicesYamlParsingProcessor;
 import org.torquebox.services.component.ServicesComponentResolverInstaller;
 
-public class ServicesSubsystemAdd implements ModelAddOperationHandler, BootOperationHandler {
+public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
-    /** {@inheritDoc} */
     @Override
-    public OperationResult execute(final OperationContext context, final ModelNode operation, final ResultHandler resultHandler) {
-        final ModelNode subModel = context.getSubModel();
-        subModel.setEmptyObject();
-        
-        if (!handleBootContext( context, resultHandler )) {
-            resultHandler.handleResultComplete();
-        }
-        return compensatingResult( operation );
+    protected void populateModel(ModelNode operation, ModelNode model) {
+        model.setEmptyObject();
     }
     
-    protected boolean handleBootContext(final OperationContext operationContext, final ResultHandler resultHandler) {
-
-        if (!(operationContext instanceof BootOperationContext)) {
-            return false;
-        }
-
-        final BootOperationContext context = (BootOperationContext) operationContext;
-        context.getRuntimeContext().setRuntimeTask( bootTask( context, resultHandler ) );
-        return true;
-    }
-    
-    protected void addDeploymentProcessors(final BootOperationContext context) {
+    @Override
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+                                   ServiceVerificationHandler verificationHandler,
+                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
         
-        context.addDeploymentProcessor( Phase.PARSE, 30, new ServicesYamlParsingProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new ServicesLoadPathProcessor() );
-        context.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new ServicesRuntimePoolProcessor() );
-        context.addDeploymentProcessor( Phase.POST_MODULE, 120, new ServicesComponentResolverInstaller() );
-        context.addDeploymentProcessor( Phase.INSTALL, 0, new ServicesDeployer() );
-        
-    }
-    
-    protected RuntimeTask bootTask(final BootOperationContext bootContext, final ResultHandler resultHandler) {
-        return new RuntimeTask() {
+        context.addStep( new AbstractDeploymentChainStep() {
             @Override
-            public void execute(RuntimeTaskContext context) throws OperationFailedException {
-                addDeploymentProcessors( bootContext );
-                resultHandler.handleResultComplete();
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                addDeploymentProcessors( processorTarget );
             }
-        };
+        }, OperationContext.Stage.RUNTIME );
     }
     
-    protected BasicOperationResult compensatingResult(ModelNode operation) {
-        final ModelNode compensatingOperation = new ModelNode();
-        compensatingOperation.get( OP ).set( REMOVE );
-        compensatingOperation.get( OP_ADDR ).set( operation.get( OP_ADDR ) );
-        return new BasicOperationResult( compensatingOperation );
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
+        
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new ServicesYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new ServicesLoadPathProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new ServicesRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new ServicesComponentResolverInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new ServicesDeployer() );
+        
     }
     
     static ModelNode createOperation(ModelNode address) {

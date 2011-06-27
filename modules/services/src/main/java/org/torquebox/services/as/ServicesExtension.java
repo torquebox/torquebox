@@ -21,11 +21,10 @@ package org.torquebox.services.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 
-import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ModelNodeRegistration;
+import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 import org.torquebox.core.as.AbstractBootstrappableExtension;
 
@@ -36,7 +35,7 @@ public class ServicesExtension extends AbstractBootstrappableExtension {
         bootstrap();
         log.info( "Initializing TorqueBox Services Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ModelNodeRegistration subsystem = registration.registerSubsystemModel( ServicesSubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( ServicesSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
                 ServicesSubsystemAdd.ADD_INSTANCE,
