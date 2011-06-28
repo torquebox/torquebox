@@ -19,6 +19,21 @@ require 'torquebox/kernel'
 
 module TorqueBox
   module Infinispan
+
+    class Sequence
+      def initialize(amount = 1) 
+        @data = amount
+      end
+
+      def value
+        @data ? @data.to_i : @data
+      end
+
+      def next(amount = 1)
+        @data.to_i + amount
+      end
+    end
+
     class Cache
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
@@ -81,6 +96,26 @@ module TorqueBox
         cache.removeAsync( key ) && true
       end
 
+      def increment( sequence_name, amount = 1 )
+        current_entry = get( sequence_name )
+
+        # If we can't find the sequence in the cache, create a new one and return
+        put( sequence_name, Sequence.new(amount) ) and return amount if current_entry.nil?
+
+        # Increment the sequence, stash it, and return
+        new_value = current_entry.next( amount )
+        if replace( sequence_name, current_entry, Sequence.new(new_value) )  
+          return new_value
+        else
+          raise "Concurrent modification, old value was #{current_entry.value} new value #{new_value}"
+        end
+      end
+
+      # Decrement an integer value in the cache; return new value
+      def decrement(name, amount = 1)
+        increment( name, -amount )
+      end
+
       private
 
       def encode(value)
@@ -88,7 +123,7 @@ module TorqueBox
       end
 
       def decode(value)
-        value && Marshal.load(value)
+          value && Marshal.load(value)
       end
 
       def options 
@@ -170,12 +205,6 @@ module TorqueBox
       end
     end
 
-    class Entry
-      attr_accessor :value
-      def initialize(value) 
-        @value = value
-      end
-    end
   end
 end
 
