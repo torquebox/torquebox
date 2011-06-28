@@ -90,8 +90,7 @@ module DataMapper::Adapters
         entry.model = resource.model.name
         entry.data  = resource.attributes(:field).to_json
         entry.key   = resource.id.to_s
-#        Marshal.dump(entry).to_java_bytes
-        resource.attributes(:field).to_json # TODO: REMOVE THIS
+        entry
       else
         resource.to_json
       end
@@ -101,7 +100,7 @@ module DataMapper::Adapters
       if (value.is_a? String)
         return JSON.parse(value) 
       elsif (value.is_a? org.torquebox.web.infinispan.datamapper.Entry)
-        Marshal.load(String.from_java_bytes(value)).data
+        JSON.parse(value.data)
       else
         value
       end
