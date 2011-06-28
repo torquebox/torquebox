@@ -5,6 +5,7 @@ $: << File.dirname( __FILE__ ) + '/../lib'
 require 'assembly_tool'
 require 'fileutils'
 require 'rexml/document'
+require 'rbconfig'
 
 class Assembler 
 
@@ -60,7 +61,7 @@ class Assembler
     else
       puts "Laying down JBoss"
       Dir.chdir( File.dirname( tool.jboss_dir ) ) do 
-        `jar xf #{jboss_zip}`
+        windows? ? `jar xf #{jboss_zip}` : `unzip -q #{jboss_zip}`
         original_dir= File.expand_path( Dir[ 'jboss-*' ].first )
         FileUtils.mv original_dir, tool.jboss_dir
       end
@@ -73,11 +74,15 @@ class Assembler
     else
       puts "Laying down JRuby" 
       Dir.chdir( File.dirname( tool.jruby_dir ) ) do
-        `jar xf #{jruby_zip}`
+        windows? ? `jar xf #{jruby_zip}` : `unzip -q #{jruby_zip}`
         original_dir= File.expand_path( Dir[ 'jruby-*' ].first )
         FileUtils.mv original_dir, tool.jruby_dir
       end
     end
+  end
+
+  def rename_standalone_xml
+    tool.rename_standalone_xml
   end
 
   def install_modules
@@ -136,11 +141,16 @@ class Assembler
     end
   end
 
+  def windows?
+    Config::CONFIG['host_os'] =~ /mswin/
+  end
+
   def assemble() 
     #clean
     prepare
     lay_down_jruby
     lay_down_jboss
+    rename_standalone_xml
     install_modules
     install_gems
     install_share

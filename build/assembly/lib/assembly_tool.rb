@@ -151,6 +151,13 @@ class AssemblyTool
       end
     end
   end
+
+  def rename_standalone_xml
+    Dir.chdir( File.join( @jboss_dir, 'standalone', 'configuration' ) ) do
+      FileUtils.mv( 'standalone.xml', 'standalone-original.xml' )
+      FileUtils.mv( 'standalone-preview.xml', 'standalone.xml' )
+    end
+  end
   
   def add_extension(name)
     modify_standalone_xml do |doc|
