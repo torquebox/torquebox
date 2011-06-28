@@ -32,6 +32,10 @@ module TorqueBox
       def next(amount = 1)
         @data.to_i + amount
       end
+
+      def ==(other)
+        self.value == other.value
+      end
     end
 
     class Cache
@@ -88,7 +92,10 @@ module TorqueBox
       end
 
       def replace(key, original_value, new_value)
-        cache.replace( key, encode(original_value), encode(new_value) )
+        current = cache.get(key)
+        if decode(current) == original_value
+          cache.replace( key, current, encode(new_value) )
+        end
       end
 
       # Delete an entry from the cache 
@@ -119,11 +126,11 @@ module TorqueBox
       private
 
       def encode(value)
-        Marshal.dump(value)
+        Marshal.dump(value).to_java_bytes
       end
 
       def decode(value)
-          value && Marshal.load(value)
+        value && Marshal.load(String.from_java_bytes(value))
       end
 
       def options 

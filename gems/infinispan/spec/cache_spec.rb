@@ -128,14 +128,12 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should store java objects" do
-    pending "a solution" do
-      entry = org.torquebox.web.infinispan.datamapper.Entry.new
-      entry.model = "Snuffleuffagus"
-      entry.data  = "{color: brown}"
-      entry.key   = "Snuffleuffagus/1"
-      @cache.put(entry.key, entry)
-      @cache.get(entry.key).should_not be_nil
-    end
+    entry = org.torquebox.web.infinispan.datamapper.Entry.new
+    entry.model = "Snuffleuffagus"
+    entry.data  = "{color: brown}"
+    entry.key   = "Snuffleuffagus/1"
+    @cache.put(entry.key, entry)
+    @cache.get(entry.key).should_not be_nil
   end
 
   it "should increment a sequence" do
