@@ -155,7 +155,7 @@ class AssemblyTool
   def rename_standalone_xml
     Dir.chdir( File.join( @jboss_dir, 'standalone', 'configuration' ) ) do
       FileUtils.mv( 'standalone.xml', 'standalone-original.xml' )
-      FileUtils.mv( 'standalone-preview.xml', 'standalone.xml' )
+      FileUtils.mv( 'standalone-preview-ha.xml', 'standalone.xml' )
     end
   end
   
