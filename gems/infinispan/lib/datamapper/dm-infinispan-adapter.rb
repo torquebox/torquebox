@@ -86,7 +86,7 @@ module DataMapper::Adapters
     
     def serialize(resource)
       if resource.is_a?(DataMapper::Resource)
-        entry = Java::org::torquebox::web::infinispan::datamapper::Entry.new
+        entry = org.torquebox.web.infinispan.datamapper.Entry.new
         entry.model = resource.model.name
         entry.data  = resource.attributes(:field).to_json
         entry.key   = resource.id.to_s
@@ -100,7 +100,7 @@ module DataMapper::Adapters
     def deserialize(value)
       if (value.is_a? String)
         return JSON.parse(value) 
-      elsif (value.is_a? Java::org::torquebox::web::infinispan::datamapper::Entry)
+      elsif (value.is_a? org.torquebox.web.infinispan.datamapper.Entry)
         Marshal.load(String.from_java_bytes(value)).data
       else
         value
