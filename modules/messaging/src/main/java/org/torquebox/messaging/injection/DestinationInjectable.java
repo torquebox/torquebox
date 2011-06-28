@@ -64,7 +64,7 @@ public class DestinationInjectable extends JNDIInjectable {
     }
     
     protected ServiceName getConnectionFactoryServiceName() {
-        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "java:/ConnectionFactory" );
     }
 
 

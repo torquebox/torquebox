@@ -130,7 +130,7 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
     
     protected ServiceName getJMSConnectionFactoryServiceName() {
-        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "java:/ConnectionFactory" );
     }
 
     static ModelNode createOperation(ModelNode address) {
