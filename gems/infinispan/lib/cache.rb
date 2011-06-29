@@ -123,6 +123,10 @@ module TorqueBox
         increment( name, -amount )
       end
 
+      def ispan_cache
+        @cache
+      end
+
       private
 
       def encode(value)
