@@ -110,23 +110,6 @@ describe TorqueBox::Infinispan::Cache do
       @cache.get(key).should == current_value
   end
 
-  it "should persist the data with a default directory" do
-    cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => true )
-    cache.put('foo', 'bar')
-    default_dir = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
-    File.exist?(default_dir).should be_true
-    FileUtils.rm_rf(default_dir)
-  end
-
-  it "should persist the data with a configured directory" do
-    configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
-    FileUtils.mkdir( configured_dir )
-    cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => configured_dir.to_s )
-    cache.put('foo', 'bar')
-    File.exist?("#{configured_dir.to_s}/___defaultcache").should be_true
-    FileUtils.rm_rf( configured_dir )
-  end
-
   it "should store java objects" do
     entry = org.torquebox.web.infinispan.datamapper.Entry.new
     entry.model = "Snuffleuffagus"
@@ -139,6 +122,50 @@ describe TorqueBox::Infinispan::Cache do
   it "should increment a sequence" do
     @cache.increment("My Sequence Name", 1).should == 1
     @cache.increment("My Sequence Name", 1).should == 2
+  end
+
+  it "should increment a sequence by a user-specified amount" do
+    @cache.increment("My Sequence Name", 9).should == 9
+    @cache.increment("My Sequence Name", 9).should == 18
+  end
+
+  it "should store and retrieve false values" do
+    @cache.put('a false value', false)
+    @cache.contains_key?('a false value').should be_true
+    @cache.get('a false value').should be_false
+  end
+
+  it "should store and retrieve nil values" do
+    @cache.put('a nil value', nil)
+    @cache.contains_key?('a nil value').should be_true
+    @cache.get('a nil value').should be_nil
+  end
+
+  describe "with persistence" do
+    before(:all) do
+      @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
+      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
+      @index_dir      = File.join( File.dirname(__FILE__), '..', 'org.torquebox.web.infinispan.datamapper.Entry' )
+      FileUtils.mkdir @configured_dir 
+    end
+
+    after(:all) do
+      FileUtils.rm_rf @default_dir
+      FileUtils.rm_rf @configured_dir
+      FileUtils.rm_rf @index_dir if File.exist?( @index_dir )
+    end
+
+    it "should persist the data with a default directory" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => true )
+      cache.put('foo', 'bar')
+      File.exist?(@default_dir).should be_true
+    end
+
+    it "should persist the data with a configured directory" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => @configured_dir.to_s )
+      cache.put('foo', 'bar')
+      File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
+    end
   end
 
 end

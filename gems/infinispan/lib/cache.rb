@@ -77,6 +77,10 @@ module TorqueBox
         cache.key_set
       end
 
+      def contains_key?( key )
+        cache.contains_key( key )
+      end
+
       # Get an entry from the cache 
       def get(key)
         decode(cache.get(key))
@@ -130,11 +134,11 @@ module TorqueBox
       private
 
       def encode(value)
-        Marshal.dump(value).to_java_bytes
+        value.is_a?(java.lang.Object) ? value : Marshal.dump(value).to_java_bytes
       end
 
       def decode(value)
-        value && Marshal.load(String.from_java_bytes(value))
+        value && (value.is_a?(java.lang.Object) ? value : Marshal.load(String.from_java_bytes(value)))
       end
 
       def options 
@@ -191,10 +195,12 @@ module TorqueBox
           store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
           config.loaders.add_cache_loader( store )
         end
+#        config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
-      rescue
+      rescue Exception => e
         puts "Unable to obtain local cache: #{$!}"
+        puts e.backtrace
       end
       
       def nothing
