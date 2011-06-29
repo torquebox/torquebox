@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService;
 import org.jboss.as.ee.structure.DeploymentType;
 import org.jboss.as.ee.structure.DeploymentTypeMarker;
 import org.jboss.as.server.deployment.Attachments;
@@ -49,6 +50,7 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.TldMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
+import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.web.as.WebServices;
 import org.torquebox.web.servlet.RackFilter;
@@ -106,7 +108,10 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
         if (webMetaData == null) {
             webMetaData = new WebMetaData();
-            webMetaData.setDistributable( new EmptyMetaData() );
+            ServiceName jgroups = ChannelFactoryService.getServiceName(null);
+            if (phaseContext.getServiceRegistry().getService( jgroups ) != null) {
+              webMetaData.setDistributable( new EmptyMetaData() );
+            }
             warMetaData.setWebMetaData( webMetaData );
         }
 

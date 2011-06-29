@@ -83,7 +83,6 @@ class Assembler
 
   def update_standalone_xml
     tool.rename_standalone_xml
-    tool.install_web_cache
   end
 
   def install_modules
