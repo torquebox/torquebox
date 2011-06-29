@@ -81,8 +81,9 @@ class Assembler
     end
   end
 
-  def rename_standalone_xml
+  def update_standalone_xml
     tool.rename_standalone_xml
+    tool.install_web_cache
   end
 
   def install_modules
@@ -150,7 +151,7 @@ class Assembler
     prepare
     lay_down_jruby
     lay_down_jboss
-    rename_standalone_xml
+    update_standalone_xml
     install_modules
     install_gems
     install_share

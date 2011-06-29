@@ -155,7 +155,7 @@ class AssemblyTool
   def rename_standalone_xml
     Dir.chdir( File.join( @jboss_dir, 'standalone', 'configuration' ) ) do
       FileUtils.mv( 'standalone.xml', 'standalone-original.xml' )
-      FileUtils.mv( 'standalone-preview-ha.xml', 'standalone.xml' )
+      FileUtils.mv( 'standalone-preview.xml', 'standalone.xml' )
     end
   end
   
@@ -179,6 +179,18 @@ class AssemblyTool
       end
     end
 
+  end
+
+  def install_web_cache
+    modify_standalone_xml do |doc|
+      profile = doc.root.get_elements( 'profile' ).first
+      infinispan = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.0']" ).first
+      container = infinispan.add_element( 'cache-container', 'name' => 'web', 'default-cache' => 'local')
+      container.add_element('alias').add_text( 'standard-session-cache' )
+      local_cache = container.add_element( 'local-cache', 'name' => 'local' )
+      local_cache.add_element( 'eviction', 'strategy' => 'LRU', 'max-entries' => '10000' )
+      local_cache.add_element( 'expiration', 'max-idle' => '100000' )
+    end
   end
 
 end
