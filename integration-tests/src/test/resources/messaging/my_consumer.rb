@@ -1,6 +1,7 @@
+require 'torquebox-messaging'
 
-class MyConsumer
-  def process!(msg)
-    puts "received: #{msg.text}"
+class MyConsumer < TorqueBox::Messaging::MessageProcessor
+  def on_message(msg)
+    puts "received: #{msg}"
   end
 end
