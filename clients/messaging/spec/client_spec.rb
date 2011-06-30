@@ -79,7 +79,7 @@ describe TorqueBox::Messaging::Client do
       received_message.should eql( message )
     end
 
-    it "should identify a non-String message with a text property" do
+    it "should properly decode a non-String message" do
       received_message = nil
       TorqueBox::Messaging::Client.connect() do |session|
         session.publish( '/queues/foo', [] )
@@ -88,10 +88,9 @@ describe TorqueBox::Messaging::Client do
         session.commit
       end
       received_message.decode.should eql( [] )
-      received_message.get_string_property( 'torquebox_encoding' ).should eql( 'base64' )
     end
 
-    it "should not identify a String message with a text property" do
+    it "should properly decode a String message" do
       received_message = nil
       TorqueBox::Messaging::Client.connect() do |session|
         session.publish( '/queues/foo', "foo" )
@@ -99,9 +98,7 @@ describe TorqueBox::Messaging::Client do
         received_message = session.receive( '/queues/foo', :decode => false )
         session.commit
       end
-      received_message.text.should eql( "foo" )
       received_message.decode.should eql( "foo" )
-      received_message.get_string_property( 'torquebox_encoding' ).should be_nil
     end
 
     it "should timeout if asked" do
