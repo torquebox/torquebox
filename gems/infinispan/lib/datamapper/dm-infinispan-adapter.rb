@@ -43,7 +43,7 @@ module DataMapper::Adapters
     def read( query )
       # TODO: This is not really acceptable at all
       records = []
-      #search_manager = org.infinispan.query.Search.getSearchManager(cache.ispan_cache)
+      search_manager = org.infinispan.query.Search.getSearchManager(cache.ispan_cache)
       cache.keys.each do |key|
         value = cache.get(key)
         records << deserialize(value) if value

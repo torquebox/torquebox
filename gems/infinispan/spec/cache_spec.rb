@@ -157,13 +157,17 @@ describe TorqueBox::Infinispan::Cache do
 
     it "should persist the data with a default directory" do
       cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => true )
-      cache.put('foo', 'bar')
+      entry = org.torquebox.web.infinispan.datamapper.Entry.new
+      entry.data = "Hello world"
+      cache.put('foo', entry)
       File.exist?(@default_dir).should be_true
     end
 
     it "should persist the data with a configured directory" do
       cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => @configured_dir.to_s )
-      cache.put('foo', 'bar')
+      entry = org.torquebox.web.infinispan.datamapper.Entry.new
+      entry.data = "Hello world"
+      cache.put('foo', entry)
       File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
     end
   end

@@ -194,8 +194,8 @@ module TorqueBox
           store.purge_on_startup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
           config.loaders.add_cache_loader( store )
+          config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
-#        config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
       rescue Exception => e
