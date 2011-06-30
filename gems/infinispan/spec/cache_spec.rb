@@ -110,7 +110,7 @@ describe TorqueBox::Infinispan::Cache do
       new_value     = Snuffleuffagus.new(2, 'bar')
       @cache.put(key, current_value)
       @cache.get(key).should == current_value
-      @cache.replace(key, 'something else', new_value)
+      @cache.replace(key, new_value, new_value)
       @cache.get(key).should == current_value
   end
 
