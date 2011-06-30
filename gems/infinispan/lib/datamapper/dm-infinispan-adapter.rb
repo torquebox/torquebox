@@ -17,19 +17,22 @@ require "digest/sha1"
 require 'dm-core'
 require 'cache'
 require 'json'
+require 'datamapper/model'
 
 module DataMapper::Adapters
 
   class InfinispanAdapter < AbstractAdapter
 
+    DataMapper::Model.append_inclusions( Infinispan::Model )
+
     def initialize( name, options )
       super
-      @options         = options.dup
-      @options[:name]  = name.to_s
-      @metadata        = @options.dup
-      @metadata[:name] = name.to_s + "/metadata"
-      @cache           = TorqueBox::Infinispan::Cache.new( @options )
-      @metadata_cache  = TorqueBox::Infinispan::Cache.new( @metadata )
+      @options            = options.dup
+      @options[:name]     = name.to_s
+      @metadata           = @options.dup
+      @metadata[:name]    = name.to_s + "/metadata"
+      @cache              = TorqueBox::Infinispan::Cache.new( @options )
+      @metadata_cache     = TorqueBox::Infinispan::Cache.new( @metadata )
     end
 
 
@@ -43,7 +46,7 @@ module DataMapper::Adapters
     def read( query )
       # TODO: This is not really acceptable at all
       records = []
-      search_manager = org.infinispan.query.Search.getSearchManager(cache.ispan_cache)
+      #search_manager = org.infinispan.query.Search.getSearchManager(cache.ispan_cache)
       cache.keys.each do |key|
         value = cache.get(key)
         records << deserialize(value) if value
@@ -87,11 +90,12 @@ module DataMapper::Adapters
     
     def serialize(resource)
       if resource.is_a?(DataMapper::Resource)
-        entry = org.torquebox.web.infinispan.datamapper.Entry.new
-        entry.model = resource.model.name
-        entry.data  = resource.attributes(:field).to_json
-        entry.key   = resource.id.to_s
-        entry
+        #entry = org.torquebox.web.infinispan.datamapper.Entry.new
+        #entry.model = resource.model.name
+        #entry.data  = resource.attributes(:field).to_json
+        #entry.key   = resource.id.to_s
+        #entry
+        resource.attributes(:field).to_json
       else
         resource.to_json
       end
