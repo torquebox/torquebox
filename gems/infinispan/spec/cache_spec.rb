@@ -21,6 +21,10 @@ describe TorqueBox::Infinispan::Cache do
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
+  after :each do
+    @cache.clear
+  end
+
   it "should have a name" do
     @cache.name.should == 'foo-cache'
   end
@@ -91,7 +95,7 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should not replace existing string values if the expected value is different" do
-      key = 'thekey'
+      key = 'string key'
       current_value = '{value:1}'
       new_value     = '{value:2}'
       @cache.put(key, current_value)
@@ -101,7 +105,7 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should not replace existing ruby object values if the expected value is different" do
-      key = 'thekey'
+      key = 'ruby object key'
       current_value = Snuffleuffagus.new(1, 'foo')
       new_value     = Snuffleuffagus.new(2, 'bar')
       @cache.put(key, current_value)
