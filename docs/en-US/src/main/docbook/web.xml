@@ -52,8 +52,8 @@
     <title>Clustering</title>
 
     <para>Clustering nodes is trivially easy: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command> </screen><emphasis
-    role="bold">Note</emphasis>: TorqueBox cluster mode is under development
-    and will be supported in future releases. </para>
+    role="bold">Note</emphasis>: <emphasis>TorqueBox cluster mode is under
+    development and will be supported in future releases.</emphasis></para>
 
     <para>And when those nodes are behind the <ulink
     url="http://www.jboss.org/mod_cluster">JBoss mod_cluster Apache
