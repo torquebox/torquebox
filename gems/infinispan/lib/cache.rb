@@ -51,6 +51,10 @@ module TorqueBox
         options[:name] || TORQUEBOX_APP_NAME
       end
 
+      def search_manager
+        @search_manager ||= org.infinispan.query.Search.getSearchManager(@cache)
+      end
+
       def clustering_mode
         java_import org.infinispan.config.Configuration::CacheMode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
@@ -127,10 +131,6 @@ module TorqueBox
         increment( name, -amount )
       end
 
-      def ispan_cache
-        @cache
-      end
-
       private
 
       def encode(value)
@@ -194,7 +194,9 @@ module TorqueBox
           store.purge_on_startup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
           config.loaders.add_cache_loader( store )
-#          config.indexing.index_local_only(true).add_property('indexing', 'in memory')
+        end
+        if options[:index]
+          config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
