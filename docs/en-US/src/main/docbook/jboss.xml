@@ -71,9 +71,8 @@
     main JBoss entry point, <filename>standalone.sh</filename> (or
     <filename>standalone.bat</filename>), along with its config file,
     <filename>standalone.conf</filename>. Running the JBoss server is simple:
-    <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh</command> </screen>By
-    default, the <filename>default</filename> configuration profile is used.
-    Use the <option>--server-config</option> option to specify a different
+    <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh</command> </screen>Use
+    the <option>--server-config</option> option to specify a different
     configuration. For example, to put JBoss in "clustered" mode: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command> </screen>
     You may set Java system properties using the <option>-D</option> option.
     Pass <option>-h</option> for a list of all the available options.</para>
