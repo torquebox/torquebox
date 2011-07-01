@@ -72,7 +72,7 @@ public class ManagedPool<T> implements Pool<T> {
     }
 
     public synchronized void startPool() throws InterruptedException {
-        startPool( true );
+        startPool( false );
     }
 
     public synchronized void startPool(boolean waitForFill) throws InterruptedException {
@@ -87,13 +87,13 @@ public class ManagedPool<T> implements Pool<T> {
 
     public void start() throws InterruptedException {
         if (!this.deferUntilRequested && !this.startAsynchronously) {
-            startPool();
+            startPool( true );
         } else if (this.startAsynchronously) {
             log.info( "Starting " + getName() + " runtime pool asynchronously." );
             Thread initThread = new Thread() {
                 public void run() {
                     try {
-                        ManagedPool.this.startPool( false );
+                        ManagedPool.this.startPool();
                     } catch(Exception ex) {
                         log.error( "Failed to start pool", ex );
                     }

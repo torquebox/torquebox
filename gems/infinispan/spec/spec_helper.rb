@@ -23,4 +23,7 @@ Spec::Runner.configure do |config|
   config.include(DataMapper::Spec::PendingHelpers)
 end
 
-
+def random_string( length = 20 )
+  chars = ('a'..'z').to_a + ('A'..'Z').to_a
+  dir_string = (0...length).collect { chars[Kernel.rand(chars.length)] }.join
+end

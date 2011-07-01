@@ -41,7 +41,7 @@ remote_describe "in-container messaging tests" do
     it "should allow enumeration of the messages" do
       queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
       queue.publish "howdy"
-      queue.first.text.should == 'howdy'
+      queue.first.decode.should == 'howdy'
       queue.stop
     end
 
@@ -50,8 +50,9 @@ remote_describe "in-container messaging tests" do
       queue.enumerable_options = { :selector => 'blurple > 5' }
       queue.publish "howdy", :properties => {:blurple => 5}
       queue.publish "ahoyhoy", :properties => {:blurple => 6}
-      queue.first.text.should == 'ahoyhoy'
-      queue.detect { |m| m.text == 'howdy' }.should be_nil
+      queue.first.decode.should == 'ahoyhoy'
+      queue.detect { |m| m.decode == 'howdy' }.should be_nil
+      queue.detect { |m| m.decode == 'ahoyhoy' }.should_not be_nil
       queue.stop
     end
   end
@@ -93,6 +94,17 @@ remote_describe "in-container messaging tests" do
 
       queue.stop
       message.should eql( "howdy" )
+    end
+    
+    it "should receive a binary file correctly" do
+      queue = TorqueBox::Messaging::Queue.start "/queues/foo"
+
+      data = File.open("#{File.dirname(__FILE__)}/../src/test/resources/sample.pdf", "r") { |file| file.read }
+      queue.publish data
+      message = queue.receive
+
+      queue.stop
+      message.should eql( data )
     end
 
     it "should publish to multiple topic consumers" do
