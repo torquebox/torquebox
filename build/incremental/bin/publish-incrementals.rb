@@ -112,8 +112,10 @@ class Publisher
   end
 
   def publish_documentation()
-    dav_mkdir_p( build_base_url + '/javadocs' )
-    dav_put_r( build_base_url + '/javadocs', javadocs_path )
+    if File.exist?(javadocs_path)
+      dav_mkdir_p( build_base_url + '/javadocs' )
+      dav_put_r( build_base_url + '/javadocs', javadocs_path )
+    end
     dav_mkdir_p( build_base_url + '/yardocs' )
     dav_put_r( build_base_url + '/yardocs', yardocs_path )
     dav_put( build_base_url + '/torquebox-docs.epub', epub_path )

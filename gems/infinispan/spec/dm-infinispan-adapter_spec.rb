@@ -28,7 +28,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
   it_should_behave_like 'An Adapter'
 
   describe "with persistence" do
-    before :all do
+    before :each do
       @configured_dir  = File.join( File.dirname(__FILE__), '..', random_string )
       @default_dir     = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
       FileUtils.mkdir( @configured_dir )
@@ -46,7 +46,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
       File.exist?( @default_dir ).should be_true
     end
 
-    after :all do
+    after :each do
       FileUtils.rm_rf( @configured_dir )
       FileUtils.rm_rf( @default_dir )
     end

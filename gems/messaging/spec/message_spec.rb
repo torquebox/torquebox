@@ -67,4 +67,17 @@ describe TorqueBox::Messaging::Message do
       Message.new(jms_message).populate_message_properties properties
     end
   end
+  
+  describe "null handling" do
+    it "should decode nil as nil" do
+      Message.decode(nil).should be_nil
+      jms_message = mock('JMSMessage')
+      jms_message.should_receive(:text)
+      Message.decode(jms_message).should be_nil
+    end
+
+    it "should encode nil as nil" do
+      Message.encode(nil).should be_nil
+    end
+  end
 end

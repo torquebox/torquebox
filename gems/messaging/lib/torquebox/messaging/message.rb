@@ -55,29 +55,30 @@ module TorqueBox
         end
       end
 
-
       def encode(message)
-        if message.is_a? String
-          @jms_message.text = message
-        else
-          @jms_message.set_string_property( 'torquebox_encoding', 'base64' )
-          marshalled = Marshal.dump( message )
-          encoded = Base64.encode64( marshalled )
-          @jms_message.text = encoded
-        end
+        @jms_message.text = Message.encode(message)
       end
     
       def decode()
         Message.decode( @jms_message )
       end
 
+      def self.encode(message)
+        unless message.nil?
+          marshalled = Marshal.dump( message )
+          Base64.encode64( marshalled )
+        end
+      end
+        
       def self.decode(jms_message)
-        if jms_message.get_string_property( 'torquebox_encoding' ) == 'base64'
+        unless jms_message.nil? || jms_message.text.nil?
           serialized = Base64.decode64( jms_message.text )
           Marshal.restore( serialized )
-        else
-          jms_message.text
         end
+      end
+
+      def method_missing(*args)
+        @jms_message.send(*args)
       end
 
     end

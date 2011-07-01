@@ -19,7 +19,7 @@ module javax.jms::QueueBrowser
   include Enumerable
   
   def each(&block)
-    enumeration.each(&block)
+    enumeration.map{ |m| TorqueBox::Messaging::Message.new(m) }.each(&block)
   end
 end
 

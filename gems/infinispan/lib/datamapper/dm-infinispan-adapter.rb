@@ -17,25 +17,28 @@ require "digest/sha1"
 require 'dm-core'
 require 'cache'
 require 'json'
+require 'datamapper/model'
 
 module DataMapper::Adapters
 
   class InfinispanAdapter < AbstractAdapter
 
+    DataMapper::Model.append_inclusions( Infinispan::Model )
+
     def initialize( name, options )
       super
-      @options         = options.dup
-      @options[:name]  = name.to_s
-      @metadata        = @options.dup
-      @metadata[:name] = name.to_s + "/metadata"
-      @cache           = TorqueBox::Infinispan::Cache.new( @options )
-      @metadata_cache  = TorqueBox::Infinispan::Cache.new( @metadata )
+      @options            = options.dup
+      @options[:name]     = name.to_s
+      @metadata           = @options.dup
+      @metadata[:name]    = name.to_s + "/metadata"
+      @cache              = TorqueBox::Infinispan::Cache.new( @options )
+      @metadata_cache     = TorqueBox::Infinispan::Cache.new( @metadata )
     end
 
 
     def create( resources )
       resources.each do |resource|
-        initialize_serial( resource, increment( index_for( resource ) ) )
+        initialize_serial( resource, @metadata_cache.increment( index_for( resource ) ) )
         cache.put( key( resource ), serialize( resource ) )
       end
     end
@@ -43,6 +46,7 @@ module DataMapper::Adapters
     def read( query )
       # TODO: This is not really acceptable at all
       records = []
+      #search_manager = org.infinispan.query.Search.getSearchManager(cache.ispan_cache)
       cache.keys.each do |key|
         value = cache.get(key)
         records << deserialize(value) if value
@@ -84,37 +88,33 @@ module DataMapper::Adapters
       "#{model}/#{key}/#{resource.id}"
     end      
     
-    def serialize(resource_or_attributes)
-      if resource_or_attributes.is_a?(DataMapper::Resource)
-        resource_or_attributes.attributes(:field)
+    def serialize(resource)
+      if resource.is_a?(DataMapper::Resource)
+        #entry = org.torquebox.web.infinispan.datamapper.Entry.new
+        #entry.model = resource.model.name
+        #entry.data  = resource.attributes(:field).to_json
+        #entry.key   = resource.id.to_s
+        #entry
+        resource.attributes(:field).to_json
       else
-        resource_or_attributes
-      end.to_json
+        resource.to_json
+      end
     end
 
-    def deserialize(string)
-      return JSON.parse(string) 
+    def deserialize(value)
+      if (value.is_a? String)
+        return JSON.parse(value) 
+      elsif (value.is_a? org.torquebox.web.infinispan.datamapper.Entry)
+        JSON.parse(value.data)
+      else
+        value
+      end
     end
 
     def index_for( resource )
       resource.model.name + ".index"
     end
 
-    def increment( key, amount = 1 )
-      current = metadata_cache.get( key )
-      metadata_cache.put( key, amount ) and return amount if current.nil?
-      new_value = current+amount
-      if metadata_cache.replace( key, current, new_value )
-        return new_value
-      else
-        raise "Concurrent modification, old value was #{value} new value #{new_value}"
-      end
-    end
-
-    # Decrement an integer value in the cache; return new value
-    def decrement(name, amount = 1)
-      increment( name, -amount )
-    end
   end
 end
 

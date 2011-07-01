@@ -19,6 +19,25 @@ require 'torquebox/kernel'
 
 module TorqueBox
   module Infinispan
+
+    class Sequence
+      def initialize(amount = 1) 
+        @data = amount
+      end
+
+      def value
+        @data ? @data.to_i : @data
+      end
+
+      def next(amount = 1)
+        @data.to_i + amount
+      end
+
+      def ==(other)
+        self.value == other.value
+      end
+    end
+
     class Cache
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
@@ -58,6 +77,10 @@ module TorqueBox
         cache.key_set
       end
 
+      def contains_key?( key )
+        cache.contains_key( key )
+      end
+
       # Get an entry from the cache 
       def get(key)
         decode(cache.get(key))
@@ -73,7 +96,10 @@ module TorqueBox
       end
 
       def replace(key, original_value, new_value)
-        cache.replace( key, encode(original_value), encode(new_value) )
+        current = cache.get(key)
+        if decode(current) == original_value
+          cache.replace( key, current, encode(new_value) )
+        end
       end
 
       # Delete an entry from the cache 
@@ -81,14 +107,38 @@ module TorqueBox
         cache.removeAsync( key ) && true
       end
 
+      def increment( sequence_name, amount = 1 )
+        current_entry = get( sequence_name )
+
+        # If we can't find the sequence in the cache, create a new one and return
+        put( sequence_name, Sequence.new(amount) ) and return amount if current_entry.nil?
+
+        # Increment the sequence, stash it, and return
+        new_value = current_entry.next( amount )
+        if replace( sequence_name, current_entry, Sequence.new(new_value) )  
+          return new_value
+        else
+          raise "Concurrent modification, old value was #{current_entry.value} new value #{new_value}"
+        end
+      end
+
+      # Decrement an integer value in the cache; return new value
+      def decrement(name, amount = 1)
+        increment( name, -amount )
+      end
+
+      def ispan_cache
+        @cache
+      end
+
       private
 
       def encode(value)
-        Marshal.dump(value)
+        value.is_a?(java.lang.Object) ? value : Marshal.dump(value).to_java_bytes
       end
 
       def decode(value)
-        value && Marshal.load(value)
+        value && (value.is_a?(java.lang.Object) ? value : Marshal.load(String.from_java_bytes(value)))
       end
 
       def options 
@@ -144,11 +194,13 @@ module TorqueBox
           store.purge_on_startup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
           config.loaders.add_cache_loader( store )
+#          config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
-      rescue
+      rescue Exception => e
         puts "Unable to obtain local cache: #{$!}"
+        puts e.backtrace
       end
       
       def nothing
@@ -170,12 +222,6 @@ module TorqueBox
       end
     end
 
-    class Entry
-      attr_accessor :value
-      def initialize(value) 
-        @value = value
-      end
-    end
   end
 end
 
