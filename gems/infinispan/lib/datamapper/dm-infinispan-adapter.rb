@@ -28,8 +28,9 @@ module DataMapper::Adapters
     def initialize( name, options )
       super
       @options            = options.dup
-      @options[:name]     = name.to_s
       @metadata           = @options.dup
+      @options[:name]     = name.to_s
+      @options[:index]    = true
       @metadata[:name]    = name.to_s + "/metadata"
       @cache              = TorqueBox::Infinispan::Cache.new( @options )
       @metadata_cache     = TorqueBox::Infinispan::Cache.new( @metadata )
@@ -44,9 +45,9 @@ module DataMapper::Adapters
     end
 
     def read( query )
-      # TODO: This is not really acceptable at all
       records = []
-      #search_manager = org.infinispan.query.Search.getSearchManager(cache.ispan_cache)
+      # TODO: use the search_manager to search instead of sucking up all objects
+      search_manager = cache.search_manager
       cache.keys.each do |key|
         value = cache.get(key)
         records << deserialize(value) if value
@@ -89,26 +90,11 @@ module DataMapper::Adapters
     end      
     
     def serialize(resource)
-      if resource.is_a?(DataMapper::Resource)
-        #entry = org.torquebox.web.infinispan.datamapper.Entry.new
-        #entry.model = resource.model.name
-        #entry.data  = resource.attributes(:field).to_json
-        #entry.key   = resource.id.to_s
-        #entry
-        resource.attributes(:field).to_json
-      else
-        resource.to_json
-      end
+      resource.is_a?(DataMapper::Resource) ? resource : resource.to_json
     end
 
     def deserialize(value)
-      if (value.is_a? String)
-        return JSON.parse(value) 
-      elsif (value.is_a? org.torquebox.web.infinispan.datamapper.Entry)
-        JSON.parse(value.data)
-      else
-        value
-      end
+      value.is_a?(String) ? JSON.parse(value) : value
     end
 
     def index_for( resource )
