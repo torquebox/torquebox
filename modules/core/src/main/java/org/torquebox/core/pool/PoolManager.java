@@ -82,10 +82,10 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     private Executor executor;
     private FillTask<T> fillTask;
-    
-    // TODO: Use this!
     private DrainTask<T> drainTask;
-
+    
+    private boolean started = false;
+    
     public PoolManager(SimplePool<T> pool, InstanceFactory<T> factory, int minInstances, int maxInstances) {
         this.pool = pool;
         this.factory = factory;
@@ -149,12 +149,14 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     protected void fillInstance() throws Exception {
-    	synchronized (this.pool) {
-    		T instance = this.factory.createInstance( this.pool.getName() );
-    		this.pool.fillInstance( instance );
-    	}
+        synchronized (this.pool) {
+            if (this.started) { // don't fill an instance if we've stopped
+                T instance = this.factory.createInstance( this.pool.getName() );
+                this.pool.fillInstance( instance );
+            } 
+        }
     }
-
+        
     protected void drainInstance() throws Exception {
     	synchronized (this.pool) {
           T instance = this.pool.drainInstance();
@@ -163,24 +165,27 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     }
 
     public void start() {
-    	synchronized (this.pool) {
-          if (this.executor == null) {
-              this.executor = Executors.newSingleThreadExecutor();
-          }
-          for (int i = 0; i < this.minInstances; ++i) {
-              this.executor.execute( this.fillTask );
-          }
-    	}
+        started = true;
+        if (this.executor == null) {
+            this.executor = Executors.newSingleThreadExecutor();
+        } 
+        for (int i = 0; i < this.minInstances; ++i) {
+            this.executor.execute( this.fillTask );
+        }
+
     }
 
+
     public void stop() {
-    	synchronized (this.pool) {
-    		int poolSize = pool.size();
-        
-    		for ( int i = 0 ; i < poolSize ; ++i ) {
-    			this.executor.execute( this.drainTask );
-    		}
-    	}
+        synchronized (this.pool) {
+            started = false;
+            int poolSize = pool.size();
+
+            for ( int i = 0 ; i < poolSize ; ++i ) {
+                this.executor.execute( this.drainTask );
+            }
+
+        }
 
     }
 
