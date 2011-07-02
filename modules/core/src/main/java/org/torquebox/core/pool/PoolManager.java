@@ -151,14 +151,17 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     protected void fillInstance() throws Exception {
         synchronized (this.pool) {
             if (this.started) { // don't fill an instance if we've stopped
+                log.info( "TOBY: creating instance for " + this.pool.getName() );
                 T instance = this.factory.createInstance( this.pool.getName() );
                 this.pool.fillInstance( instance );
+                log.info( "TOBY: created instance for " + this.pool.getName() );
             } 
         }
     }
         
     protected void drainInstance() throws Exception {
     	synchronized (this.pool) {
+    	  log.info( "TOBY: draining instance from " + this.pool.getName() );  
           T instance = this.pool.drainInstance();
           this.factory.destroyInstance( instance );
     	}
@@ -178,6 +181,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     public void stop() {
         synchronized (this.pool) {
+            log.info( "TOBY: stopping pool " + this.pool.getName() );
             started = false;
             int poolSize = pool.size();
 
