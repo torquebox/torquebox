@@ -38,9 +38,11 @@ module DataMapper::Adapters
 
 
     def create( resources )
-      resources.each do |resource|
-        initialize_serial( resource, @metadata_cache.increment( index_for( resource ) ) )
-        cache.put( key( resource ), serialize( resource ) )
+      cache.transaction do
+        resources.each do |resource|
+          initialize_serial( resource, @metadata_cache.increment( index_for( resource ) ) )
+          cache.put( key( resource ), serialize( resource ) )
+        end
       end
     end
 
@@ -48,25 +50,31 @@ module DataMapper::Adapters
       records = []
       # TODO: use the search_manager to search instead of sucking up all objects
       search_manager = cache.search_manager
-      cache.keys.each do |key|
-        value = cache.get(key)
-        records << deserialize(value) if value
+      cache.transaction do
+        cache.keys.each do |key|
+          value = cache.get(key)
+          records << deserialize(value) if value
+        end
       end
       records = query.filter_records(records)
       records
     end
 
     def update( attributes, collection )
-      attributes = attributes_as_fields(attributes)
-      collection.each do |resource|
-        resource.attributes(:field).merge(attributes)
-        cache.put( key(resource), serialize(resource) )
+      cache.transaction do
+        attributes = attributes_as_fields(attributes)
+        collection.each do |resource|
+          resource.attributes(:field).merge(attributes)
+          cache.put( key(resource), serialize(resource) )
+        end
       end
     end
 
     def delete( collection )
-      collection.each do |resource|
-        cache.remove( key(resource) )
+      cache.transaction do
+        collection.each do |resource|
+          cache.remove( key(resource) )
+        end
       end
     end
 
