@@ -131,6 +131,19 @@ module TorqueBox
         increment( name, -amount )
       end
 
+      def transaction(&block)
+        tm = cache.getAdvancedCache().getTransactionManager()
+        begin
+          tm.begin
+          yield self
+          tm.commit
+        rescue Exception => e
+          tm.rollback
+          puts "[ERROR] Exception raised during transaction. Rolling back."
+          e.message
+        end
+      end
+
       private
 
       def encode(value)
@@ -189,6 +202,8 @@ module TorqueBox
         # workaround common problem running infinispan in web containers (see FAQ)
         java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
         config  = org.infinispan.config.Configuration.new.fluent
+        config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
+        
         if options[:persist]
           store = org.infinispan.loaders.file.FileCacheStoreConfig.new
           store.purge_on_startup( false )
