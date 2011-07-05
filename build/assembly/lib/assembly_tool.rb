@@ -160,7 +160,16 @@ class AssemblyTool
       end
     end
   end
-  
+
+  def increase_deployment_timeout
+    modify_standalone_xml do |doc|
+      profile = doc.root.get_elements( 'profile' ).first
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
+      scanner = subsystem.get_elements( 'deployment-scanner' ).first
+      scanner.add_attribute( 'deployment-timeout', '1200' )
+    end
+  end
+
   def add_extension(name)
     modify_standalone_xml do |doc|
       extensions = doc.root.get_elements( 'extensions' ).first

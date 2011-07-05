@@ -83,6 +83,7 @@ class Assembler
 
   def update_standalone_xml
     tool.rename_standalone_xml
+    tool.increase_deployment_timeout
   end
 
   def install_modules
