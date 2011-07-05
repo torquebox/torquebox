@@ -138,9 +138,10 @@ module TorqueBox
           yield self
           tm.commit
         rescue Exception => e
-          tm.rollback
+          tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
           puts "[ERROR] Exception raised during transaction. Rolling back."
-          e.message
+          puts "[ERROR] #{e.message}"
+          #puts e.backtrace
         end
       end
 

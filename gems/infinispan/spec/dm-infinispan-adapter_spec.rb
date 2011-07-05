@@ -56,19 +56,15 @@ describe DataMapper::Adapters::InfinispanAdapter do
     end
 
     it "should store data in a configured directory" do
-      pending "working out how to make a jruby->java class serializable" do
-        DataMapper.setup(:default, :adapter => 'infinispan', :persist => @configured_dir.to_s )
-        ::Snuffleupagus.create
-        File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
-      end
+      DataMapper.setup(:default, :adapter => 'infinispan', :persist => @configured_dir.to_s )
+      ::Snuffleupagus.create
+      File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
     end
 
     it "should store data in a default directory" do
-      pending "working out how to make a jruby->java class serializable" do
-        DataMapper.setup(:default, :adapter => 'infinispan', :persist => true )
-        ::Snuffleupagus.create
-        File.exist?( @default_dir ).should be_true
-      end
+      DataMapper.setup(:default, :adapter => 'infinispan', :persist=>true)
+      ::Snuffleupagus.create
+      File.exist?( @default_dir ).should be_true
     end
 
     after :each do
