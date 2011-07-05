@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.as.messaging.MessagingServices;
+import org.jboss.as.messaging.jms.JMSQueueService;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
