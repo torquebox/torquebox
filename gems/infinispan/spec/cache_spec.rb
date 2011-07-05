@@ -145,6 +145,27 @@ describe TorqueBox::Infinispan::Cache do
     @cache.get('a nil value').should be_nil
   end
 
+  describe "with JTA transactions" do
+
+    it "should accept transactional blocks" do
+      @cache.transaction do |cache|
+        cache.put('Frankie', 'Vallie')
+      end
+      @cache.get('Frankie').should == 'Vallie'
+    end
+
+    it "should behave like a transaction" do
+      @cache.transaction do |cache|
+        cache.put('Tommy', 'Dorsey')
+        raise "yikes!"
+        cache.put('Elvis', 'Presley')
+      end
+      @cache.get('Tommy').should be_nil
+      @cache.get('Elvis').should be_nil
+    end
+
+  end
+
   describe "with persistence" do
     before(:all) do
       @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
