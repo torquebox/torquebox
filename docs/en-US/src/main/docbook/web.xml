@@ -4,90 +4,78 @@
 <chapter id="web">
   <title>Web Applications</title>
 
-  <para>
-    TorqueBox supports any and all Rack-based web application
-    frameworks, including Ruby On Rails and Sinatra, among others.
-    TorqueBox aims to be unobtrusive, requiring no unusual packaging
-    of your app (e.g. no war files), and unless it depends on obscure
-    native gems, no modifications whatsoever.
-  </para>
+  <para>TorqueBox supports any and all Rack-based web application frameworks,
+  including Ruby On Rails and Sinatra, among others. TorqueBox aims to be
+  unobtrusive, requiring no unusual packaging of your app (e.g. no war files),
+  and unless it depends on obscure native gems, no modifications
+  whatsoever.</para>
 
-  <para>
-    So why deploy your Ruby web app on TorqueBox?  Because you get
-    cool enterprisey features that every non-trivial app will need
-    eventually if it's successful at all.  Let's go over a few.
-  </para>
+  <para>So why deploy your Ruby web app on TorqueBox? Because you get cool
+  enterprisey features that every non-trivial app will need eventually if it's
+  successful at all. Let's go over a few.</para>
 
   <section>
     <title>Performance</title>
-    <para>
-      TorqueBox runs on JRuby, one of the fastest Ruby interpreters
-      available.  Because JRuby runs on the Java Virtual Machine, your
-      app runs on real OS threads, so if your app supports
-      multi-threaded invocations, you will make the most of your
-      hardware resources.
-    </para>
 
-    <para>
-      Of course, running on the JVM has a drawback: "native" gems that
-      rely upon machine-specific compiled code do not function with
-      JRuby and TorqueBox. You must replace these gems with pure-Ruby
-      or pure-Java implementations. Some native gems using FFI are
-      usable within TorqueBox.  Fortunately, gems that won't run on
-      JRuby are becoming more and more rare.
-    </para>
+    <para>TorqueBox runs on JRuby, one of the fastest Ruby interpreters
+    available. Because JRuby runs on the Java Virtual Machine, your app runs
+    on real OS threads, so if your app supports multi-threaded invocations,
+    you will make the most of your hardware resources.</para>
+
+    <para>Of course, running on the JVM has a drawback: "native" gems that
+    rely upon machine-specific compiled code do not function with JRuby and
+    TorqueBox. You must replace these gems with pure-Ruby or pure-Java
+    implementations. Some native gems using FFI are usable within TorqueBox.
+    Fortunately, gems that won't run on JRuby are becoming more and more
+    rare.</para>
   </section>
 
   <section>
     <title>Deployment</title>
-    <para>
-      Most successful web apps evolve to the point that passively
-      responding to HTTP requests is not enough.  Before you know it,
-      you may need background processes, scheduled jobs, messaging,
-      and active daemons all in support of your web app.
-    </para>
-    <para>
-      With TorqueBox these things are an integral part of your app and
-      as such, they share its life cycle. When your application is
-      deployed under TorqueBox, so are your scheduled jobs, background
-      tasks, services, etc. It's simply a matter of editing a single
-      <filename>torquebox.yml</filename> configuration file within
-      your app.  This will make your operations staff very happy!
-    </para>
-    <para>
-      For more details, please see <xref linkend="deployment" />.
-    </para>
+
+    <para>Most successful web apps evolve to the point that passively
+    responding to HTTP requests is not enough. Before you know it, you may
+    need background processes, scheduled jobs, messaging, and active daemons
+    all in support of your web app.</para>
+
+    <para>With TorqueBox these things are an integral part of your app and as
+    such, they share its life cycle. When your application is deployed under
+    TorqueBox, so are your scheduled jobs, background tasks, services, etc.
+    It's simply a matter of editing a single
+    <filename>torquebox.yml</filename> configuration file within your app.
+    This will make your operations staff very happy!</para>
+
+    <para>For more details, please see <xref linkend="deployment" />.</para>
   </section>
 
   <section>
     <title>Clustering</title>
-    <para>
-      Clustering TorqueBox nodes is trivially easy:
 
-      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all</command> </screen>
+    <para><emphasis role="bold">Note</emphasis>: <emphasis>TorqueBox cluster
+    mode is under development and will be supported in future
+    releases.</emphasis></para>
 
-      And when those nodes are behind the <ulink
-      url="http://www.jboss.org/mod_cluster">JBoss mod_cluster Apache
-      module</ulink>, you get automatic, dynamic configuration of
-      workers, server-side load factor calculation, and fine-grained
-      application lifecycle control.
-    </para>
-    <para>
-      But even without mod_cluster, TorqueBox clustering provides
-      automatic web session replication and distributed caching, not
-      to mention automatic load-balancing of message delivery,
-      enabling smart distribution of any background processes spawned
-      by your web app.
-    </para>
+    <para>Clustering nodes is trivially easy: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command> </screen></para>
+
+    <para>And when those nodes are behind the <ulink
+    url="http://www.jboss.org/mod_cluster">JBoss mod_cluster Apache
+    module</ulink>, you get automatic, dynamic configuration of workers,
+    server-side load factor calculation, and fine-grained application
+    lifecycle control.</para>
+
+    <para>But even without mod_cluster, TorqueBox clustering provides
+    automatic web session replication and distributed caching, not to mention
+    automatic load-balancing of message delivery, enabling smart distribution
+    of any background processes spawned by your web app.</para>
   </section>
 
   <section>
     <title>Sessions</title>
 
-    <para>By using the TorqueBox application-server-based session
-    store, your application gets the benefits of clusterable sessions
-    without having to setup and maintain a database.  When clustered,
-    session state is automatically replicated throughout an <ulink
+    <para>By using the TorqueBox application-server-based session store, your
+    application gets the benefits of clusterable sessions without having to
+    setup and maintain a database. When clustered, session state is
+    automatically replicated throughout an <ulink
     url="http://infinispan.org">Infinispan</ulink> data grid.</para>
 
     <para>Additionally, by using the TorqueBox session store, your application
@@ -110,29 +98,21 @@
   <section id="caching">
     <title>Caching</title>
 
-    <para>
-      TorqueBox provides an implementation of the <ulink
-      url="http://guides.rubyonrails.org/caching_with_rails.html">Rails
-      3.x <code>ActiveSupport::Cache::Store</code></ulink> that
-      exposes your application to the sexy <ulink
-      url="http://infinispan.org">Infinispan</ulink> data grid.
-    </para>
+    <para>TorqueBox provides an implementation of the <ulink
+    url="http://guides.rubyonrails.org/caching_with_rails.html">Rails 3.x
+    <code>ActiveSupport::Cache::Store</code></ulink> that exposes your
+    application to the sexy <ulink
+    url="http://infinispan.org">Infinispan</ulink> data grid.</para>
 
-    <para>
-      Backed by Infinispan,
-      <code>ActiveSupport::Cache::TorqueBoxStore</code> supports all
-      the options of the existing Rails implementations, including the
-      advanced features of <code>MemCacheStore</code>, along with a
-      few more to control how data replication occurs amongst the
-      nodes in a cluster.
-    </para>
+    <para>Backed by Infinispan,
+    <code>ActiveSupport::Cache::TorqueBoxStore</code> supports all the options
+    of the existing Rails implementations, including the advanced features of
+    <code>MemCacheStore</code>, along with a few more to control how data
+    replication occurs amongst the nodes in a cluster.</para>
 
-    <para>
-      Although it does depend on the <code>ActiveSupport</code> Rails
-      3 gem, it may be used in any Rack-based application or any
-      TorqueBox service, task or job that requires sophisticated
-      caching.
-    </para>
+    <para>Although it does depend on the <code>ActiveSupport</code> Rails 3
+    gem, it may be used in any Rack-based application or any TorqueBox
+    service, task or job that requires sophisticated caching.</para>
 
     <section id="caching-clustering-modes">
       <title>Clustering Modes</title>
@@ -211,39 +191,39 @@
 
               <entry>Any of the following will result in
               <emphasis>replicated</emphasis> mode: <itemizedlist>
-              <listitem>
-                <para><parameter>:r</parameter></para>
-              </listitem>
+                  <listitem>
+                    <para><parameter>:r</parameter></para>
+                  </listitem>
 
-              <listitem>
-                <para><parameter>:repl</parameter></para>
-              </listitem>
+                  <listitem>
+                    <para><parameter>:repl</parameter></para>
+                  </listitem>
 
-              <listitem>
-                <para><parameter>:replicated</parameter></para>
-              </listitem>
+                  <listitem>
+                    <para><parameter>:replicated</parameter></para>
+                  </listitem>
 
-              <listitem>
-                <para><parameter>:replication</parameter></para>
-              </listitem>
-              </itemizedlist> Any of the following will result in
+                  <listitem>
+                    <para><parameter>:replication</parameter></para>
+                  </listitem>
+                </itemizedlist> Any of the following will result in
               <emphasis>distributed</emphasis> mode: <itemizedlist>
-              <listitem>
-                <para><parameter>:d</parameter></para>
-              </listitem>
+                  <listitem>
+                    <para><parameter>:d</parameter></para>
+                  </listitem>
 
-              <listitem>
-                <para><parameter>:dist</parameter></para>
-              </listitem>
+                  <listitem>
+                    <para><parameter>:dist</parameter></para>
+                  </listitem>
 
-              <listitem>
-                <para><parameter>:distributed</parameter></para>
-              </listitem>
+                  <listitem>
+                    <para><parameter>:distributed</parameter></para>
+                  </listitem>
 
-              <listitem>
-                <para><parameter>:distribution</parameter></para>
-              </listitem>
-              </itemizedlist> Any other value for
+                  <listitem>
+                    <para><parameter>:distribution</parameter></para>
+                  </listitem>
+                </itemizedlist> Any other value for
               <parameter>:mode</parameter> will result in
               <emphasis>invalidation</emphasis> when clustered and
               <emphasis>local</emphasis> otherwise.</entry>
@@ -278,312 +258,316 @@
   <section>
     <title>Ruby Web Frameworks</title>
 
-  <section id="rack">
-    <title>Rack</title>
+    <section id="rack">
+      <title>Rack</title>
 
-    <section id="rack-applications">
-      <title>Rack Applications</title>
+      <section id="rack-applications">
+        <title>Rack Applications</title>
 
-      <para>Rack is a specification which describes how web server engines can
-      integrate with additional logic written in Ruby. Rack is a akin to CGI or
-      the Java Servlets Spec in terms of goals and functionality.</para>
+        <para>Rack is a specification which describes how web server engines
+        can integrate with additional logic written in Ruby. Rack is a akin to
+        CGI or the Java Servlets Spec in terms of goals and
+        functionality.</para>
 
-      <para>TorqueBox currently supports general
-      <filename>config.ru</filename>-based applications. In your application's
-      directory, your Rack application can be booted from a file named
-      <filename>config.ru</filename> that you provide. The Ruby runtime provided
-      to your application is quite rudimentary. If you desire to use RubyGems or
-      other libraries, it is up to you to require the necessary files (for
-      instance, <code>require 'rubygems'</code>).</para>
+        <para>TorqueBox currently supports general
+        <filename>config.ru</filename>-based applications. In your
+        application's directory, your Rack application can be booted from a
+        file named <filename>config.ru</filename> that you provide. The Ruby
+        runtime provided to your application is quite rudimentary. If you
+        desire to use RubyGems or other libraries, it is up to you to require
+        the necessary files (for instance, <code>require
+        'rubygems'</code>).</para>
 
-      <para><programlisting>app = lambda{|env| [ 
+        <para><programlisting>app = lambda{|env| [ 
           200, 
           { 'Content-Type' =&gt; 'text/html' }, 
           'Hello World'
         ] }
 run app</programlisting></para>
 
-      <para>The directory containing the <filename>config.ru</filename> is
-      considered the current working directory, and is included in the load
-      path.</para>
-    </section>
-
-    <section id="rack-api">
-      <title>Rack API</title>
-
-      <para>TorqueBox aims to provide complete Ruby Rack compatibility. Please
-      refer to the Rack specification at <ulink
-      url="http://rack.rubyforge.org/doc/SPEC.html"><uri>http://rack.rubyforge.org/doc/SPEC.html</uri></ulink>
-      for more information.</para>
-
-      <para>Applications implemented by the user must simply provide an object
-      implementing a single-argument method in the form of
-      <code><methodname>call</methodname>(<parameter>env</parameter>)</code>.</para>
-
-      <table>
-        <title>Rack environment</title>
-
-        <tgroup cols="2">
-          <colspec align="left" />
-
-          <thead>
-            <row>
-              <entry>Variable</entry>
-
-              <entry>Description</entry>
-            </row>
-          </thead>
-
-          <tbody>
-            <row>
-              <entry><varname>REQUEST_METHOD</varname></entry>
-
-              <entry>The HTTP request method, such as
-              “<parameter>GET</parameter>” or “<parameter>POST</parameter>”.
-              This cannot ever be an empty string, and so is always
-              required.</entry>
-            </row>
-
-            <row>
-              <entry><varname>SCRIPT_NAME</varname></entry>
-
-              <entry>The initial portion of the request URL’s “path” that
-              corresponds to the application object, so that the application
-              knows its virtual “location”. This may be an empty string, if the
-              application corresponds to the “root” of the server.</entry>
-            </row>
-
-            <row>
-              <entry><varname>PATH_INFO</varname></entry>
-
-              <entry>The remainder of the request URL’s “path”, designating the
-              virtual “location” of the request’s target within the application.
-              This may be an empty string, if the request URL targets the
-              application root and does not have a trailing slash. This value
-              may be percent-encoded when I originating from a URL.</entry>
-            </row>
-
-            <row>
-              <entry><varname>QUERY_STRING</varname></entry>
-
-              <entry>The portion of the request URL that follows the
-              <code>?</code>, if any.</entry>
-            </row>
-
-            <row>
-              <entry><varname>SERVER_NAME</varname></entry>
-
-              <entry></entry>
-            </row>
-
-            <row>
-              <entry><varname>SERVER_PORT</varname></entry>
-
-              <entry></entry>
-            </row>
-
-            <row>
-              <entry><varname>HTTP_</varname> variables</entry>
-
-              <entry>Variables corresponding to the client-supplied HTTP request
-              headers (i.e., variables whose names begin with HTTP_). The
-              presence or absence of these variables should correspond with the
-              presence or absence of the appropriate HTTP header in the
-              request.</entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.version</varname></entry>
-
-              <entry>The Array [m, n], representing this version of
-              Rack.</entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.url_scheme</varname></entry>
-
-              <entry><parameter>http</parameter> or
-              <parameter>https</parameter>, depending on the request
-              URL.</entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.input</varname></entry>
-
-              <entry>Input stream</entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.errors</varname></entry>
-
-              <entry>Error output stream</entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.multithread</varname></entry>
-
-              <entry>Always <code>true</code></entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.multiprocess</varname></entry>
-
-              <entry>Always <code>true</code></entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.run_once</varname></entry>
-
-              <entry>Always <code>false</code></entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.session</varname></entry>
-
-              <entry></entry>
-            </row>
-
-            <row>
-              <entry><varname>rack.logger</varname></entry>
-
-              <entry><emphasis>Not implemented</emphasis></entry>
-            </row>
-
-            <row>
-              <entry><varname>java.servlet_request</varname></entry>
-
-              <entry>The underlying Java
-              <classname>HTTPServletRequest</classname></entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table>
-    </section>
-  </section>
-
-  <section id="rails">
-    <title>Ruby on Rails</title>
-
-    <section id="rails-support">
-      <title><productname>Ruby on Rails</productname> Applications</title>
-
-      <para>Ruby-on-Rails (also referred to as "RoR" or "Rails") is one of the
-      most popular Model-View-Controller (MVC) frameworks for the Ruby language.
-      It was originally created by David Heinemeier Hansson at <ulink
-      url="http://37signals.com/">37signals</ulink> during the course of
-      building many actual Ruby applications for their consulting
-      business.</para>
-
-      <para>Rails has straight-forward components representing models, views,
-      and controllers. The framework as a whole values convention over
-      configuration. It has been described as "opinionated software" in that
-      many decisions have been taken away from the end-user.</para>
-
-      <para>It is exactly the opinionated nature of Rails that allows it to be
-      considered a simple and agile framework for quickly building web-based
-      applications. Additionally, since Ruby is an interpreted language instead
-      of compiled, the assets of an application can be edited quickly, with the
-      results being immediately available. In most cases, the application does
-      not need to be restarted to see changes in models, views or controllers
-      reflected.</para>
-
-    </section>
-
-    <section id="rails-2-vs-3">
-      <title>Rails 2.3.x versus 3.x</title>
-
-      <para>TorqueBox supports both the 2.3.x and 3.x codelines of Rails. By
-      default, all utilities prefer the latest version of a given gem, which in
-      the current case is ${version.rails3}.</para>
-
-      <para>To specify a specific version of utilities such as the rails command
-      used to create applications, simply specify the version number between
-      underscores immediately following the command name.</para>
-
-      <informalexample>
-        <para><screen>$ rails _${version.rails2}_ myapp</screen></para>
-      </informalexample>
-    </section>
-
-    <section id="preparing-your-rails-application">
-      <title>Preparing your Rails application</title>
-
-      <para>While TorqueBox is 100% compatible with Ruby-on-Rails, there are a
-      few steps that must be taken to ensure success. The biggest issues to
-      contend with involve database access and native gems. The distribution
-      includes a Rails application template to make the creation or adaptation
-      of a codebase to TorqueBox easier.</para>
-
-      <section id="install-rails">
-        <title>Install Rails</title>
-
-        <para>Previous releases of TorqueBox bundled Rails but it is no longer
-        included. You'll need to install the version needed by your
-        application.</para>
-
-        <para><screen><prompt>$</prompt> <command>gem</command> <parameter>install rails</parameter></screen></para>
+        <para>The directory containing the <filename>config.ru</filename> is
+        considered the current working directory, and is included in the load
+        path.</para>
       </section>
 
-      <section id="using-the-rails-application-template">
-        <title>Using the application template</title>
+      <section id="rack-api">
+        <title>Rack API</title>
 
-        <para>You can use the included application template to setup a new Rails
-        application or modify an existing one to work with TorqueBox.</para>
+        <para>TorqueBox aims to provide complete Ruby Rack compatibility.
+        Please refer to the Rack specification at <ulink
+        url="http://rack.rubyforge.org/doc/SPEC.html"><uri>http://rack.rubyforge.org/doc/SPEC.html</uri></ulink>
+        for more information.</para>
 
-        <section id="creating-a-new-rails-application">
-          <title>Creating a new Rails application</title>
+        <para>Applications implemented by the user must simply provide an
+        object implementing a single-argument method in the form of
+        <code><methodname>call</methodname>(<parameter>env</parameter>)</code>.</para>
 
-          <para>To create a new Rails application using the template, simply use
-          the <parameter>-m</parameter> parameter when you execute the
-          <command>rails</command> command.</para>
+        <table>
+          <title>Rack environment</title>
 
-          <formalpara>
-            <title>Rails 2.3.x</title>
+          <tgroup cols="2">
+            <colspec align="left" />
 
-            <para><screen><prompt>$</prompt> <command>rails</command> <parameter>_${version.rails2}_ myapp -m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen></para>
-          </formalpara>
+            <thead>
+              <row>
+                <entry>Variable</entry>
 
-          <formalpara>
-            <title>Rails 3.x</title>
+                <entry>Description</entry>
+              </row>
+            </thead>
 
-            <para><screen><prompt>$</prompt> <command>rails</command> new <parameter>myapp -m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen></para>
-          </formalpara>
-        </section>
+            <tbody>
+              <row>
+                <entry><varname>REQUEST_METHOD</varname></entry>
 
-        <section id="applying-template-to-existing-application">
-          <title>Applying template to an existing application</title>
+                <entry>The HTTP request method, such as
+                “<parameter>GET</parameter>” or “<parameter>POST</parameter>”.
+                This cannot ever be an empty string, and so is always
+                required.</entry>
+              </row>
 
-          <para>To apply the template to an existing application, simply use the
-          <command>rails:template</command> rake task.</para>
+              <row>
+                <entry><varname>SCRIPT_NAME</varname></entry>
 
-          <para><screen><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
-        </section>
+                <entry>The initial portion of the request URL’s “path” that
+                corresponds to the application object, so that the application
+                knows its virtual “location”. This may be an empty string, if
+                the application corresponds to the “root” of the
+                server.</entry>
+              </row>
+
+              <row>
+                <entry><varname>PATH_INFO</varname></entry>
+
+                <entry>The remainder of the request URL’s “path”, designating
+                the virtual “location” of the request’s target within the
+                application. This may be an empty string, if the request URL
+                targets the application root and does not have a trailing
+                slash. This value may be percent-encoded when I originating
+                from a URL.</entry>
+              </row>
+
+              <row>
+                <entry><varname>QUERY_STRING</varname></entry>
+
+                <entry>The portion of the request URL that follows the
+                <code>?</code>, if any.</entry>
+              </row>
+
+              <row>
+                <entry><varname>SERVER_NAME</varname></entry>
+
+                <entry></entry>
+              </row>
+
+              <row>
+                <entry><varname>SERVER_PORT</varname></entry>
+
+                <entry></entry>
+              </row>
+
+              <row>
+                <entry><varname>HTTP_</varname> variables</entry>
+
+                <entry>Variables corresponding to the client-supplied HTTP
+                request headers (i.e., variables whose names begin with
+                HTTP_). The presence or absence of these variables should
+                correspond with the presence or absence of the appropriate
+                HTTP header in the request.</entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.version</varname></entry>
+
+                <entry>The Array [m, n], representing this version of
+                Rack.</entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.url_scheme</varname></entry>
+
+                <entry><parameter>http</parameter> or
+                <parameter>https</parameter>, depending on the request
+                URL.</entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.input</varname></entry>
+
+                <entry>Input stream</entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.errors</varname></entry>
+
+                <entry>Error output stream</entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.multithread</varname></entry>
+
+                <entry>Always <code>true</code></entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.multiprocess</varname></entry>
+
+                <entry>Always <code>true</code></entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.run_once</varname></entry>
+
+                <entry>Always <code>false</code></entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.session</varname></entry>
+
+                <entry></entry>
+              </row>
+
+              <row>
+                <entry><varname>rack.logger</varname></entry>
+
+                <entry><emphasis>Not implemented</emphasis></entry>
+              </row>
+
+              <row>
+                <entry><varname>java.servlet_request</varname></entry>
+
+                <entry>The underlying Java
+                <classname>HTTPServletRequest</classname></entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </section>
+    </section>
+
+    <section id="rails">
+      <title>Ruby on Rails</title>
+
+      <section id="rails-support">
+        <title><productname>Ruby on Rails</productname> Applications</title>
+
+        <para>Ruby-on-Rails (also referred to as "RoR" or "Rails") is one of
+        the most popular Model-View-Controller (MVC) frameworks for the Ruby
+        language. It was originally created by David Heinemeier Hansson at
+        <ulink url="http://37signals.com/">37signals</ulink> during the course
+        of building many actual Ruby applications for their consulting
+        business.</para>
+
+        <para>Rails has straight-forward components representing models,
+        views, and controllers. The framework as a whole values convention
+        over configuration. It has been described as "opinionated software" in
+        that many decisions have been taken away from the end-user.</para>
+
+        <para>It is exactly the opinionated nature of Rails that allows it to
+        be considered a simple and agile framework for quickly building
+        web-based applications. Additionally, since Ruby is an interpreted
+        language instead of compiled, the assets of an application can be
+        edited quickly, with the results being immediately available. In most
+        cases, the application does not need to be restarted to see changes in
+        models, views or controllers reflected.</para>
       </section>
 
-      <section id="manually-configuring-a-rails-application">
-        <title>Manually configuring an application</title>
+      <section id="rails-2-vs-3">
+        <title>Rails 2.3.x versus 3.x</title>
 
-        <section id="include-jdbc-gems">
-          <title>Include the JDBC Gems for Database Connectivity</title>
+        <para>TorqueBox supports both the 2.3.x and 3.x codelines of Rails. By
+        default, all utilities prefer the latest version of a given gem, which
+        in the current case is ${version.rails3}.</para>
 
-          <para>ActiveRecord applications deployed on TorqueBox benefit from
-          using the Java-based JDBC database drivers. These drivers are provided
-          as a handful of gems which you may include into your application
-          through <filename>config/environment.rb</filename> or a
-          <filename>Gemfile</filename>. For more information on database
-          connectivity wihtin the TorqueBox environment, please see <xref
-          linkend="database" />.</para>
+        <para>To specify a specific version of utilities such as the rails
+        command used to create applications, simply specify the version number
+        between underscores immediately following the command name.</para>
 
-          <formalpara>
-            <title>Rails 2.x</title>
+        <informalexample>
+          <para><screen>$ rails _${version.rails2}_ myapp</screen></para>
+        </informalexample>
+      </section>
 
-            <para>You simply must reference the
-            <filename>activerecord-jdbc-adapter</filename> from your
-            <filename>environment.rb</filename> within the
-            <code>Rails::Initializer.run</code> block.</para>
-          </formalpara>
+      <section id="preparing-your-rails-application">
+        <title>Preparing your Rails application</title>
 
-          <para><programlisting language="ruby">Rails::Initializer.run do |config|
+        <para>While TorqueBox is 100% compatible with Ruby-on-Rails, there are
+        a few steps that must be taken to ensure success. The biggest issues
+        to contend with involve database access and native gems. The
+        distribution includes a Rails application template to make the
+        creation or adaptation of a codebase to TorqueBox easier.</para>
+
+        <section id="install-rails">
+          <title>Install Rails</title>
+
+          <para>Previous releases of TorqueBox bundled Rails but it is no
+          longer included. You'll need to install the version needed by your
+          application.</para>
+
+          <para><screen><prompt>$</prompt> <command>gem</command> <parameter>install rails</parameter></screen></para>
+        </section>
+
+        <section id="using-the-rails-application-template">
+          <title>Using the application template</title>
+
+          <para>You can use the included application template to setup a new
+          Rails application or modify an existing one to work with
+          TorqueBox.</para>
+
+          <section id="creating-a-new-rails-application">
+            <title>Creating a new Rails application</title>
+
+            <para>To create a new Rails application using the template, simply
+            use the <parameter>-m</parameter> parameter when you execute the
+            <command>rails</command> command.</para>
+
+            <formalpara>
+              <title>Rails 2.3.x</title>
+
+              <para><screen><prompt>$</prompt> <command>rails</command> <parameter>_${version.rails2}_ myapp -m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen></para>
+            </formalpara>
+
+            <formalpara>
+              <title>Rails 3.x</title>
+
+              <para><screen><prompt>$</prompt> <command>rails</command> new <parameter>myapp -m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen></para>
+            </formalpara>
+          </section>
+
+          <section id="applying-template-to-existing-application">
+            <title>Applying template to an existing application</title>
+
+            <para>To apply the template to an existing application, simply use
+            the <command>rails:template</command> rake task.</para>
+
+            <para><screen><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
+          </section>
+        </section>
+
+        <section id="manually-configuring-a-rails-application">
+          <title>Manually configuring an application</title>
+
+          <section id="include-jdbc-gems">
+            <title>Include the JDBC Gems for Database Connectivity</title>
+
+            <para>ActiveRecord applications deployed on TorqueBox benefit from
+            using the Java-based JDBC database drivers. These drivers are
+            provided as a handful of gems which you may include into your
+            application through <filename>config/environment.rb</filename> or
+            a <filename>Gemfile</filename>. For more information on database
+            connectivity wihtin the TorqueBox environment, please see <xref
+            linkend="database" />.</para>
+
+            <formalpara>
+              <title>Rails 2.x</title>
+
+              <para>You simply must reference the
+              <filename>activerecord-jdbc-adapter</filename> from your
+              <filename>environment.rb</filename> within the
+              <code>Rails::Initializer.run</code> block.</para>
+            </formalpara>
+
+            <para><programlisting language="ruby">Rails::Initializer.run do |config|
 
 <emphasis>  config.gem "activerecord-jdbc-adapter",
              :require=&gt;'jdbc_adapter'
@@ -591,89 +575,87 @@ run app</programlisting></para>
 end
           </programlisting></para>
 
-          <para>All databases will require inclusion of the
-          <filename>activerecord-jdbc-adapter</filename>. No other gems need to
-          be required or loaded, since ActiveRecord will perform further
-          discovery on its own.</para>
+            <para>All databases will require inclusion of the
+            <filename>activerecord-jdbc-adapter</filename>. No other gems need
+            to be required or loaded, since ActiveRecord will perform further
+            discovery on its own.</para>
 
-          <formalpara>
-            <title>Rails 3.x</title>
+            <formalpara>
+              <title>Rails 3.x</title>
 
-            <para>Rails 3 uses bundler to manage the dependencies of your
-            application. To specify the requirement of the
-            <filename>activerecord-jdbc-adapter</filename> with Rails 3, simple
-            add it to your <filename>Gemfile</filename>. Additionally, any
-            specific JDBC driver your application will require should be
-            indicated.</para>
-          </formalpara>
+              <para>Rails 3 uses bundler to manage the dependencies of your
+              application. To specify the requirement of the
+              <filename>activerecord-jdbc-adapter</filename> with Rails 3,
+              simple add it to your <filename>Gemfile</filename>.
+              Additionally, any specific JDBC driver your application will
+              require should be indicated.</para>
+            </formalpara>
 
-          <para><informalexample>
-            <para><programlisting>gem 'activerecord-jdbc-adapter'
+            <para><informalexample>
+                <para><programlisting>gem 'activerecord-jdbc-adapter'
 gem 'jdbc-sqlite3'</programlisting></para>
-          </informalexample></para>
-        </section>
+              </informalexample></para>
+          </section>
 
-        <section id="configure-sessions">
-          <title>Configure Sessions</title>
+          <section id="configure-sessions">
+            <title>Configure Sessions</title>
 
-          <para>By default, both Rails 2 and Rails 3 use the simple cookie-based
-          session store, which requires no support from the server. TorqueBox
-          can leverage the cluster-compatible sessions provided by the
-          application server to keep session state on the server. The TorqueBox
-          session store requires no specific configuration of a database or
-          other technology. To use the TorqueBox session store, you must adjust
-          <filename>config/initializers/session_store.rb</filename>. The
-          contents vary depending on the version of Rails your application
-          uses.</para>
+            <para>By default, both Rails 2 and Rails 3 use the simple
+            cookie-based session store, which requires no support from the
+            server. TorqueBox can leverage the cluster-compatible sessions
+            provided by the application server to keep session state on the
+            server. The TorqueBox session store requires no specific
+            configuration of a database or other technology. To use the
+            TorqueBox session store, you must adjust
+            <filename>config/initializers/session_store.rb</filename>. The
+            contents vary depending on the version of Rails your application
+            uses.</para>
 
-          <para>In both cases, your application should require the
-          <package>torquebox</package> RubyGem, which provides the
-          implementation.</para>
+            <para>In both cases, your application should require the
+            <package>torquebox</package> RubyGem, which provides the
+            implementation.</para>
 
-          <para>When using the TorqueBox Rails application template, described
-          above, these modifications are made for you.</para>
+            <para>When using the TorqueBox Rails application template,
+            described above, these modifications are made for you.</para>
 
-          <formalpara>
-            <title>Rails 2.x</title>
+            <formalpara>
+              <title>Rails 2.x</title>
 
-            <para>
-              In <filename>config/initializers/session_store.rb</filename>
-            </para>
-          </formalpara>
+              <para>In
+              <filename>config/initializers/session_store.rb</filename></para>
+            </formalpara>
 
-          <screen>ActionController::Base.session_store = :torquebox_store</screen>
+            <screen>ActionController::Base.session_store = :torquebox_store</screen>
 
-          <formalpara>
-            <title>Rails 3.x</title>
+            <formalpara>
+              <title>Rails 3.x</title>
 
-            <para>
-              In
+              <para>In
               <filename>config/initializers/session_store.rb</filename>
-              (adjust for your application's name)
-            </para>
-          </formalpara>
+              (adjust for your application's name)</para>
+            </formalpara>
 
-          <screen><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store</screen>
+            <screen><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store</screen>
+          </section>
         </section>
       </section>
 
-    </section>
+      <section id="rails-cache-configuration">
+        <title>Caching Configuration</title>
 
-    <section id="rails-cache-configuration">
-      <title>Caching Configuration</title>
+        <para>You configure the TorqueBox cache store the same way you would
+        any other Rails cache store, but we recommend setting it in
+        <filename>config/application.rb</filename> because it will adapt to
+        whichever environment it finds itself. Regardless of its
+        configuration, it will <emphasis>always</emphasis> fallback to local
+        mode when run in a non-clustered, even non-TorqueBox,
+        environment.</para>
 
-      <para>You configure the TorqueBox cache store the same way you would any
-      other Rails cache store, but we recommend setting it in
-      <filename>config/application.rb</filename> because it will adapt to
-      whichever environment it finds itself. Regardless of its configuration,
-      it will <emphasis>always</emphasis> fallback to local mode when run in a
-      non-clustered, even non-TorqueBox, environment.</para>
+        <para>In whatever context you use the cache store, you must include
+        the <package>torquebox</package> RubyGem, which provides the
+        implementation.</para>
 
-      <para>In whatever context you use the cache store, you must include the
-      <package>torquebox</package> RubyGem, which provides the
-      implementation.</para>
-
-      <para><programlisting language="ruby">module YourApp
+        <para><programlisting language="ruby">module YourApp
   class Application &lt; Rails::Application
 <emphasis>
     config.cache_store = :torque_box_store
@@ -682,66 +664,57 @@ gem 'jdbc-sqlite3'</programlisting></para>
 end
       </programlisting></para>
 
-      <para>
-        Using this symbolized form causes Rails to load the
-        appropriate Ruby file for you.  Alternatively, you may load
-        the file yourself and then refer to the fully-qualified class
-        name,
-        <filename>ActiveSupport::Cache::TorqueBoxStore</filename>.
-      </para>
+        <para>Using this symbolized form causes Rails to load the appropriate
+        Ruby file for you. Alternatively, you may load the file yourself and
+        then refer to the fully-qualified class name,
+        <filename>ActiveSupport::Cache::TorqueBoxStore</filename>.</para>
 
-      <para>By default, the <code>TorqueBoxStore</code> will be in
-      <emphasis>asynchronous invalidation</emphasis> mode when clustered
-      (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode when
-      not. But you can certainly override the defaults:</para>
+        <para>By default, the <code>TorqueBoxStore</code> will be in
+        <emphasis>asynchronous invalidation</emphasis> mode when clustered
+        (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode
+        when not. But you can certainly override the defaults:</para>
 
-      <para><programlisting language="ruby">
+        <para><programlisting language="ruby">
         config.cache_store = :torque_box_store, {:mode =&gt; :distributed, :sync =&gt; true}
       </programlisting></para>
 
-      <para>You can even create multiple cache stores in your app, each
-      potentially in a different clustering mode. You should use the
-      <code>:name</code> option to identify any additional caches you create,
-      e.g.</para>
+        <para>You can even create multiple cache stores in your app, each
+        potentially in a different clustering mode. You should use the
+        <code>:name</code> option to identify any additional caches you
+        create, e.g.</para>
 
-      <para><programlisting language="ruby">
+        <para><programlisting language="ruby">
     COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
                                                         :mode =&gt; :replicated, 
                                                         :sync =&gt; true)
       </programlisting></para>
+      </section>
+
+      <section>
+        <title>Logging</title>
+
+        <para>By default, Rails logs where you would expect, but it's possible
+        to tap into the JBoss log system for more sophisticated logging. For
+        more information, see <xref linkend="torquebox-logger" />.</para>
+      </section>
     </section>
 
-    <section>
-      <title>Logging</title>
-      <para>
-        By default, Rails logs where you would expect, but it's
-        possible to tap into the JBoss log system for more
-        sophisticated logging.  For more information, see <xref
-        linkend="torquebox-logger" />.
-      </para>
-    </section>
-  </section>
+    <section id="sinatra">
+      <title>Sinatra</title>
 
-  <section id="sinatra">
-    <title>Sinatra</title>
+      <para><ulink url="http://www.sinatrarb.com/">Sinatra</ulink> is a very
+      simple DSL for creating web applications. And all the TorqueBox features
+      available to Rails apps, e.g. clustering, session replication, and
+      caching, will work for Sinatra app just as well.</para>
 
-    <para>
-      <ulink url="http://www.sinatrarb.com/">Sinatra</ulink> is a very
-      simple DSL for creating web applications.  And all the TorqueBox
-      features available to Rails apps, e.g. clustering, session
-      replication, and caching, will work for Sinatra app just as
-      well.
-    </para>
+      <section>
+        <title>Sessions</title>
 
-    <section>
-      <title>Sessions</title>
-      <para>
-        Because the TorqueBox session store is Rack compliant, you
+        <para>Because the TorqueBox session store is Rack compliant, you
         configure it the same way you would any other session store in
-        Sinatra.
-      </para>
+        Sinatra.</para>
 
-      <para><programlisting language="ruby">require 'sinatra''
+        <para><programlisting language="ruby">require 'sinatra''
 require 'torquebox'
 
 class SinatraSessions &lt; Sinatra::Base
@@ -754,63 +727,58 @@ class SinatraSessions &lt; Sinatra::Base
   end
 
   get '/bar' do
-    session[:message]   # => 'Hello World!'
+    session[:message]   # =&gt; 'Hello World!'
   end
 
 end
       </programlisting></para>
-    </section>
+      </section>
 
-    <section id="sinatra-cache-configuration">
-      <title>Caching Configuration</title>
+      <section id="sinatra-cache-configuration">
+        <title>Caching Configuration</title>
 
-      <para>
-        Because the TorqueBox cache store is derived from
+        <para>Because the TorqueBox cache store is derived from
         <code>ActiveSupport::Cache::Store</code>, you must include
-        <filename>activesupport-3.x</filename> in your Sinatra
-        app.
-      </para>
+        <filename>activesupport-3.x</filename> in your Sinatra app.</para>
 
-      <para>In whatever context you use the cache store, you must include the
-      <package>torquebox</package> RubyGem, which provides the
-      implementation.</para>
+        <para>In whatever context you use the cache store, you must include
+        the <package>torquebox</package> RubyGem, which provides the
+        implementation.</para>
 
-      <para><programlisting language="ruby">require 'active_support/cache/torque_box_store'
+        <para><programlisting language="ruby">require 'active_support/cache/torque_box_store'
 class SinatraCache &lt; Sinatra::Base
   set :cache, ActiveSupport::Cache::TorqueBoxStore.new
 end
       </programlisting></para>
 
-      <para>By default, the <code>TorqueBoxStore</code> will be in
-      <emphasis>asynchronous invalidation</emphasis> mode when clustered
-      (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode when
-      not. But you can certainly override the defaults:</para>
+        <para>By default, the <code>TorqueBoxStore</code> will be in
+        <emphasis>asynchronous invalidation</emphasis> mode when clustered
+        (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode
+        when not. But you can certainly override the defaults:</para>
 
-      <para><programlisting language="ruby">
+        <para><programlisting language="ruby">
   set :cache, ActiveSupport::Cache::TorqueBoxStore.new(:mode =&gt; :distributed, :sync =&gt; true)
       </programlisting></para>
 
-      <para>You can even create multiple cache stores in your app, each
-      potentially in a different clustering mode. You should use the
-      <code>:name</code> option to identify any additional caches you create,
-      e.g.</para>
+        <para>You can even create multiple cache stores in your app, each
+        potentially in a different clustering mode. You should use the
+        <code>:name</code> option to identify any additional caches you
+        create, e.g.</para>
 
-      <para><programlisting language="ruby">
+        <para><programlisting language="ruby">
     COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
                                                         :mode =&gt; :replicated, 
                                                         :sync =&gt; true)
       </programlisting></para>
-    </section>
+      </section>
 
-    <section>
-      <title>Logging</title>
-      <para>
-        By default, Sinatra log support is minimal, sending most
-        errors to stdout or stderr.  For more sophisticated logging,
-        see <xref linkend="torquebox-logger" />.
-      </para>
-    </section>
-  </section>
+      <section>
+        <title>Logging</title>
 
+        <para>By default, Sinatra log support is minimal, sending most errors
+        to stdout or stderr. For more sophisticated logging, see <xref
+        linkend="torquebox-logger" />.</para>
+      </section>
+    </section>
   </section>
 </chapter>
