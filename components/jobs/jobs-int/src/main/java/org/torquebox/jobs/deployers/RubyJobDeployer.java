@@ -22,14 +22,12 @@ package org.torquebox.jobs.deployers;
 import java.util.Set;
 
 import org.jboss.beans.metadata.spi.BeanMetaData;
-import org.jboss.beans.metadata.spi.ValueMetaData;
 import org.jboss.beans.metadata.spi.builder.BeanMetaDataBuilder;
 import org.jboss.deployers.spi.DeploymentException;
 import org.jboss.deployers.spi.deployer.DeploymentStages;
 import org.jboss.deployers.structure.spi.DeploymentUnit;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.injection.AbstractRubyComponentDeployer;
-import org.torquebox.jobs.core.RubyScheduler;
 import org.torquebox.jobs.core.ScheduledJob;
 import org.torquebox.jobs.core.ScheduledJobMBean;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
@@ -53,6 +51,7 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         addInput( ScheduledJobMetaData.class );
         addOutput( BeanMetaData.class );
         setStage( DeploymentStages.REAL );
+        setRelativeOrder( 1000 );
     }
 
     public void deploy(DeploymentUnit unit) throws DeploymentException {
@@ -81,7 +80,8 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         beanBuilder.addPropertyMetaData( "description", metaData.getDescription() );
         beanBuilder.addPropertyMetaData( "cronExpression", metaData.getCronExpression() );
         beanBuilder.addPropertyMetaData( "singleton", metaData.isSingleton() );
-
+        beanBuilder.addPropertyMetaData( "schedulerProxy", metaData.getSchedulerProxy() );
+        
         BeanMetaData resolverMetaData = createComponentResolver( unit, "jobs." + metaData.getRubyClassName(), metaData.getRubyClassName(), metaData.getRubyRequirePath(), null );
         beanBuilder.addPropertyMetaData( "componentResolverName", resolverMetaData.getName() );
         beanBuilder.addDependency( resolverMetaData.getName() );
@@ -89,15 +89,6 @@ public class RubyJobDeployer extends AbstractRubyComponentDeployer {
         String mbeanName = JMXUtils.jmxName( "torquebox.jobs", rubyAppMetaData.getApplicationName() ).with( "name", metaData.getName() ).name();
         String jmxAnno = "@org.jboss.aop.microcontainer.aspects.jmx.JMX(name=\"" + mbeanName + "\", exposedInterface=" + ScheduledJobMBean.class.getName() + ".class)";
         beanBuilder.addAnnotation( jmxAnno );
-
-        String schedulerBeanName = metaData.getRubySchedulerName();
-        if (schedulerBeanName == null) {
-        	String suffix = (metaData.isClustered() && metaData.isSingleton()) ? "Singleton" : null;
-            schedulerBeanName = AttachmentUtils.beanName( unit, RubyScheduler.class, suffix );
-        }
-        
-        ValueMetaData schedulerInjection = beanBuilder.createInject( schedulerBeanName, "scheduler" );
-        beanBuilder.addPropertyMetaData( "scheduler", schedulerInjection );
 
         BeanMetaData beanMetaData = beanBuilder.getBeanMetaData();
 

@@ -36,6 +36,7 @@ public class RubyScheduler {
 
     private String name;
     private Scheduler scheduler;
+    private SchedulerProxy schedulerProxy;
     private Kernel kernel;
     private RubyRuntimePool runtimePool;
     
@@ -67,6 +68,14 @@ public class RubyScheduler {
         return this.scheduler;
     }
 
+    public SchedulerProxy getSchedulerProxy() {
+        return schedulerProxy;
+    }
+
+    public void setSchedulerProxy(SchedulerProxy schedulerProxy) {
+        this.schedulerProxy = schedulerProxy;
+    }
+	
     public void start() throws IOException, SchedulerException {
         Properties props = new Properties();
         props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
@@ -80,9 +89,17 @@ public class RubyScheduler {
         this.scheduler = factory.getScheduler();
         this.scheduler.setJobFactory( jobFactory );
         this.scheduler.start();
+        
+        if (this.schedulerProxy != null) {
+            this.schedulerProxy.start( this.scheduler );
+        }
     }
 
     public void stop() throws SchedulerException {
+        if (this.schedulerProxy != null) {
+            this.schedulerProxy.stop();
+        }
+        
         this.scheduler.shutdown( true );
     }
 

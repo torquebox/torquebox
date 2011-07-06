@@ -19,7 +19,9 @@
 
 package org.torquebox.jobs.deployers;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Set;
@@ -31,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.base.metadata.RubyApplicationMetaData;
 import org.torquebox.jobs.core.ScheduledJob;
+import org.torquebox.jobs.core.SchedulerProxy;
 import org.torquebox.jobs.metadata.ScheduledJobMetaData;
 import org.torquebox.mc.AttachmentUtils;
 import org.torquebox.test.mc.vdf.AbstractDeployerTestCase;
@@ -68,12 +71,14 @@ public class RubyJobDeployerTest extends AbstractDeployerTestCase {
         String supportDeploymentName = addDeployment( archiveFile );
         processDeployments( true );
 
+        SchedulerProxy schedulerProxy = new SchedulerProxy();
+        
         ScheduledJobMetaData jobMetaData = new ScheduledJobMetaData();
         jobMetaData.setName( "job.one" );
         jobMetaData.setDescription( "test job" );
         jobMetaData.setRubyClassName( "TestJob" );
         jobMetaData.setCronExpression( "22 * * * * ?" );
-
+        jobMetaData.setSchedulerProxy( schedulerProxy );
         jobMetaData.setRubySchedulerName( "scheduler" );
 
         String deploymentName = createDeployment( "simple" );
@@ -95,7 +100,8 @@ public class RubyJobDeployerTest extends AbstractDeployerTestCase {
         assertEquals( "job.one", jobBean.getName() );
         assertEquals( "22 * * * * ?", jobBean.getCronExpression() );
         assertEquals( "TestJob", jobBean.getRubyClassName() );
-
+        assertEquals( schedulerProxy, jobBean.getSchedulerProxy() );
+        
         undeploy( deploymentName );
         undeploy( supportDeploymentName );
     }

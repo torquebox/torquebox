@@ -1,16 +1,16 @@
 /*
  * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
- * 
+ *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
  * published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -18,6 +18,8 @@
  */
 
 package org.torquebox.jobs.metadata;
+
+import org.torquebox.jobs.core.SchedulerProxy;
 
 public class ScheduledJobMetaData {
 
@@ -31,18 +33,19 @@ public class ScheduledJobMetaData {
     private String rubySchedulerName;
     private boolean singleton;
     private boolean clustered;
+    private SchedulerProxy schedulerProxy;
 
-	public ScheduledJobMetaData() {
+    public ScheduledJobMetaData() {
 
     }
-	
-    public boolean isSingleton() {
-		return singleton;
-	}
 
-	public void setSingleton(boolean singleton) {
-		this.singleton = singleton;
-	}	
+    public boolean isSingleton() {
+        return singleton;
+    }
+
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }
 
     public void setName(String name) {
         this.name = name;
@@ -100,11 +103,19 @@ public class ScheduledJobMetaData {
         return this.rubySchedulerName;
     }
 
-	public void setClustered(boolean b) {
-		this.clustered = b;
-	}
-	
-	public boolean isClustered() {
-		return this.clustered;
-	}
+    public void setClustered(boolean b) {
+        this.clustered = b;
+    }
+
+    public boolean isClustered() {
+        return this.clustered;
+    }
+
+    public SchedulerProxy getSchedulerProxy() {
+        return schedulerProxy;
+    }
+
+    public void setSchedulerProxy(SchedulerProxy schedulerProxy) {
+        this.schedulerProxy = schedulerProxy;
+    }
 }

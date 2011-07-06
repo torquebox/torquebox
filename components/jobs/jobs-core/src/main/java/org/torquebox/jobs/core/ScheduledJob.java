@@ -47,7 +47,7 @@ public class ScheduledJob implements ScheduledJobMBean {
     private String cronExpression;
 
     private RubyRuntimePool runtimePool;
-    private Scheduler scheduler;
+    private SchedulerProxy schedulerProxy;
 
     private JobDetail jobDetail;
     private boolean singleton;
@@ -128,12 +128,12 @@ public class ScheduledJob implements ScheduledJobMBean {
         return this.runtimePool;
     }
 
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
+    public void setSchedulerProxy(SchedulerProxy schedulerProxy) {
+        this.schedulerProxy = schedulerProxy;
     }
 
-    public Scheduler getScheduler() {
-        return this.scheduler;
+    public SchedulerProxy getSchedulerProxy() {
+        return this.schedulerProxy;
     }
 
     public synchronized void start() throws ParseException, SchedulerException {
@@ -155,7 +155,7 @@ public class ScheduledJob implements ScheduledJobMBean {
         }
 
         CronTrigger trigger = new CronTrigger( getTriggerName(), this.group, this.cronExpression );
-        scheduler.scheduleJob( jobDetail, trigger );
+        schedulerProxy.scheduleJob( getTriggerName(), jobDetail, trigger );
     }
 
     private String getTriggerName() {
@@ -163,7 +163,7 @@ public class ScheduledJob implements ScheduledJobMBean {
     }
 
     public synchronized void stop() throws SchedulerException {
-        scheduler.unscheduleJob( getTriggerName(), this.group );
+        schedulerProxy.unscheduleJob( getTriggerName() );
         this.jobDetail = null;
     }
     
