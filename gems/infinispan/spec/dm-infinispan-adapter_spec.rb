@@ -28,6 +28,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
   end
 
   after :all do
+    @adapter.stop
     FileUtils.rm_rf @snuffleupagus_index
     FileUtils.rm_rf @heffalump_index
   end

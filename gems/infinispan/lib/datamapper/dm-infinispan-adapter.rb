@@ -78,6 +78,10 @@ module DataMapper::Adapters
       end
     end
 
+    def stop
+      cache.stop
+    end
+
     private
     def cache
       @cache

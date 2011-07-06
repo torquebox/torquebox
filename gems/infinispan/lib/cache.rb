@@ -145,6 +145,10 @@ module TorqueBox
         end
       end
 
+      def stop
+        cache.stop
+      end
+
       private
 
       def encode(value)
