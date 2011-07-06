@@ -48,16 +48,8 @@ module DataMapper::Adapters
 
     def read( query )
       records = []
-      # TODO: use the search_manager to search instead of sucking up all objects
-      search_manager = cache.search_manager
-      cache.transaction do
-        cache.keys.each do |key|
-          value = cache.get(key)
-          records << deserialize(value) if value
-        end
-      end
-      records = query.filter_records(records)
-      records
+      cache.transaction { records = search( query ) }
+      query.filter_records(records)
     end
 
     def update( attributes, collection )
@@ -83,6 +75,16 @@ module DataMapper::Adapters
     end
 
     private
+    def search_manager
+      @search_manager ||= cache.search_manager
+    end
+
+    def search( query )
+      builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
+      cache_query = search_manager.get_query( builder.all.create_query, query.model.java_class )
+      cache_query.list.collect { |record| deserialize(record) }
+    end
+
     def cache
       @cache
     end
@@ -111,6 +113,15 @@ module DataMapper::Adapters
 
     def index_for( resource )
       resource.model.name + ".index"
+    end
+
+    def all_records
+      records = []
+      cache.keys.each do |key|
+        value = cache.get(key)
+        records << deserialize(value) if value
+      end
+      records
     end
 
   end
