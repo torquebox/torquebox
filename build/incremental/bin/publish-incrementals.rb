@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
 $: << File.dirname( __FILE__ ) + '/../lib'
 require 'dav'
 require 'find'
 require 'pathname'
+require 'json'
 
 class Publisher
 
@@ -14,6 +16,7 @@ class Publisher
   def initialize(credentials_path, build_number)
     @build_number = build_number
     @dav          = DAV.new( credentials_path )
+    @published_artifacts = []
   end
 
   def build_base_url
@@ -37,9 +40,10 @@ class Publisher
     @dav.mkcol( url )
   end
 
-  def dav_put(url, file)
+  def dav_put(url, file, remember = true)
     puts "put #{url}"
     @dav.put( url, file )
+    @published_artifacts << url if remember
   end
 
   def dav_rm_rf(url)
@@ -60,10 +64,12 @@ class Publisher
         if ( File.directory?( entry ) )
           dav_mkdir_p( root_url + '/' + Pathname( entry ).cleanpath )
         else
-          dav_put( root_url + '/' + Pathname( entry ).cleanpath, entry )
+          dav_put( root_url + '/' + Pathname( entry ).cleanpath, entry, false )
         end
       end
+      @published_artifacts << root_url
     end
+    
   end
 
   def publish_all()
@@ -71,7 +77,8 @@ class Publisher
     publish_distribution()
     publish_documentation()
     publish_gem_repo()
-
+    publish_artifact_list()
+    
     copy_to_latest()
   end
 
@@ -135,6 +142,11 @@ class Publisher
     dav_put_r( build_gem_repo_url, gem_repo_path )
   end
 
+  def publish_artifact_list
+    file = File.join( File.dirname( __FILE__ ), '..', 'target', 'published-artifacts.json' )
+    File.open( file, 'w' ) { |f| f << @published_artifacts.to_json }
+    dav_put( build_base_url + '/published-artifacts.json', file, false )
+  end
 end
 
 Publisher.new( ARGV[0], ARGV[1] ).publish_all

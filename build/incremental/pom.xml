@@ -54,6 +54,18 @@
             <artifactId>jruby-maven-plugin</artifactId>
             <executions>
               <execution>
+                <id>install-json</id>
+                <phase>install</phase>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <configuration>
+                  <args>-S gem install json --no-ri --no-rdoc</args>
+                  <gemHome>./target/rubygems</gemHome>
+                  <gemPath>./target/rubygems</gemPath>
+                </configuration>
+              </execution>
+              <execution>
                 <id>publish-gem-repo</id>
                 <phase>install</phase>
                 <goals>
