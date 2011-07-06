@@ -1531,83 +1531,79 @@ tasks:
     objects that allow you to monitor the progress of the asynchronous 
     processing.</para>
 
-    <section id="messaging-futures-methods">
-      <table>
-        <title>FutureResult instance methods</title>
-        
-        <tgroup cols="2">
-          <colspec align="left" />
+    <table>
+      <title>FutureResult instance methods</title>
+      <tgroup cols="2">
+        <colspec align="left" />
           
-          <thead>
-            <row>
-              <entry>Method</entry>
-              
-              <entry>Description</entry>
-            </row>
-          </thead>
-
-          <tbody>
-            <row>
-              <entry>started?</entry>
-
-              <entry>Returns <parameter>true</parameter> if the task processing has started.</entry>
-            </row>
-
-            <row>
-              <entry>complete?</entry>
-
-              <entry>Returns <parameter>true</parameter> if the task processing has completed without error. 
-              If <parameter>true</parameter>, The result is available via the <function>result</function>
-              method.</entry>
-            </row>
-
-            <row>
-              <entry>error?</entry>
-
-              <entry>Returns <parameter>true</parameter> if an error occurred during the task processing.
-              If <parameter>true</parameter>, The actual error is available via the <function>error</function>
-              method.</entry>
-            </row>
-
-            <row>
-              <entry>status</entry>
-
-              <entry>Returns the last status message returned from the task. This will only have meaning
-              if you signal status information from within your task. See the <link
-              linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
-            </row>
-
-            <row>
-              <entry>result</entry>
-
-              <entry>Returns the result of the remote processing. This method takes a 
-              <parameter>timeout</parameter> (in milliseconds), and will block for that amount of
-              time if processing has started but not completed, or up to twice that time if processing 
-              has yet to start. If no result is available after timing out, a 
-              <classname>TorqueBox::Messaging::TimeoutException</classname> is raised.
-              The <parameter>timeout</parameter> defaults to 30 seconds. The recommended pattern
-              is to wait for <function>complete?</function> to return <parameter>true</parameter>
-              before calling <function>result</function>.</entry>
-            </row>
-
-            <row>
-              <entry>method_missing</entry>
-
-              <entry>Delegates any missing methods to the <function>result</function>, using
-              the default timeout.</entry>
-            </row>
-
-            <row>
-              <entry>error</entry>
-
-              <entry>Returns the remote error object if an error occurred during
-              task processing.</entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table>
-
-    </section>
+        <thead>
+          <row>
+            <entry>Method</entry>
+            
+            <entry>Description</entry>
+          </row>
+        </thead>
+        
+        <tbody>
+          <row>
+            <entry>started?</entry>
+            
+            <entry>Returns <parameter>true</parameter> if the task processing has started.</entry>
+          </row>
+          
+          <row>
+            <entry>complete?</entry>
+            
+            <entry>Returns <parameter>true</parameter> if the task processing has completed without error. 
+            If <parameter>true</parameter>, The result is available via the <function>result</function>
+            method.</entry>
+          </row>
+          
+          <row>
+            <entry>error?</entry>
+            
+            <entry>Returns <parameter>true</parameter> if an error occurred during the task processing.
+            If <parameter>true</parameter>, The actual error is available via the <function>error</function>
+            method.</entry>
+          </row>
+          
+          <row>
+            <entry>status</entry>
+            
+            <entry>Returns the last status message returned from the task. This will only have meaning
+            if you signal status information from within your task. See the <link
+            linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
+          </row>
+          
+          <row>
+            <entry>result</entry>
+            
+            <entry>Returns the result of the remote processing. This method takes a 
+            <parameter>timeout</parameter> (in milliseconds), and will block for that amount of
+            time if processing has started but not completed, or up to twice that time if processing 
+            has yet to start. If no result is available after timing out, a 
+            <classname>TorqueBox::Messaging::TimeoutException</classname> is raised.
+            The <parameter>timeout</parameter> defaults to 30 seconds. The recommended pattern
+            is to wait for <function>complete?</function> to return <parameter>true</parameter>
+            before calling <function>result</function>.</entry>
+          </row>
+          
+          <row>
+            <entry>method_missing</entry>
+            
+            <entry>Delegates any missing methods to the <function>result</function>, using
+            the default timeout.</entry>
+          </row>
+          
+          <row>
+            <entry>error</entry>
+            
+            <entry>Returns the remote error object if an error occurred during
+            task processing.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
 
     <section id="messaging-futures-status">
       <title>Sending status notifications to the FutureResult from within the task</title>
