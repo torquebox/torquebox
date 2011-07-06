@@ -12,7 +12,7 @@
   <artifactId>torquebox-parent</artifactId>
   <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <name>TorqueBox Parent</name>
+  <name>TorqueBox</name>
   <url>http://www.torquebox.org/</url>
 
   <description>
@@ -104,30 +104,6 @@
       <modules>
         <module>docs</module>
       </modules>
-      <!-- <build> -->
-      <!--   <plugins> -->
-      <!--     <plugin> -->
-      <!--       <artifactId>maven-javadoc-plugin</artifactId> -->
-      <!--       <version>2.8</version> -->
-      <!--       <executions> -->
-      <!--         <execution> -->
-      <!--           <id>dist-javadocs</id> -->
-      <!--           <goals> -->
-      <!--             <goal>javadoc</goal> -->
-      <!--           </goals> -->
-      <!--           <phase>package</phase> -->
-      <!--           <configuration> -->
-      <!--             <inherit>false</inherit> -->
-      <!--             <aggregate>true</aggregate> -->
-      <!--             <stylesheetfile>${project.basedir}/support/javadoc-support/stylesheet/stylesheet.css</stylesheetfile> -->
-      <!--             <javadocDirectory>${project.basedir}/support/javadoc-support/resources/</javadocDirectory> -->
-      <!--             <docfilessubdirs>true</docfilessubdirs> -->
-      <!--           </configuration> -->
-      <!--         </execution> -->
-      <!--       </executions> -->
-      <!--     </plugin> -->
-      <!--   </plugins> -->
-      <!-- </build> -->
     </profile>
 
     <profile>
@@ -489,6 +465,25 @@
             <format>xml</format>
           </formats>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>dist-javadocs</id>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <phase>site</phase>
+            <configuration>
+              <inherit>false</inherit>
+              <aggregate>true</aggregate>
+              <stylesheetfile>${project.basedir}/support/javadoc-support/stylesheet/stylesheet.css</stylesheetfile>
+              <javadocDirectory>${project.basedir}/support/javadoc-support/resources/</javadocDirectory>
+              <docfilessubdirs>true</docfilessubdirs>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
 
