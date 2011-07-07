@@ -95,17 +95,37 @@ module DataMapper::Adapters
       condition = query.conditions.first
 
       #query.conditions.each do |condition|
-        puts "CONDITION TYPE: #{condition.class}"
         puts "CONDITION: #{condition.inspect}"
+        puts "CONDITION CLASS: #{condition.class}"
+        puts "CONDITION OPERANDS: #{condition.operands.inspect}" if condition.respond_to? :operands
         #puts "CONDITION VALUE: #{condition.value}"
         #puts "CONDITION SUBJECT: #{condition.subject.name}"
-        case condition.class
-        when DataMapper::Query::Conditions::EqualToComparison
-          builder.keyword.on_field(condition.subject.name).matching(condition.value.to_s).create_query
+        if condition.class == DataMapper::Query::Conditions::NotOperation
+          if condition.operands.first.class == DataMapper::Query::Conditions::EqualToComparison
+            field = condition.operands.first.subject.name
+            # Not nil means find everything that isn't nill
+            if condition.operands.first.value.nil?
+              handle_equal_to( builder, field, '?*' )
+            else
+              builder.bool.must( handle_equal_to( builder, field, condition.operands.first.value ) ).not.create_query
+            end
+          else
+            builder.all.create_query
+          end
+        elsif condition.class == DataMapper::Query::Conditions::EqualToComparison
+          handle_equal_to( builder, condition.subject.name, condition.value.to_s )
         else
           builder.all.create_query
         end
       #end
+    end
+
+    def handle_equal_to( builder, field, value )
+      if value.include?( '?' ) || value.include?( '*' )
+        builder.keyword.wildcard.on_field(field).matching(value.to_s).create_query
+      else
+        builder.keyword.on_field(field).matching(value.to_s).create_query
+      end
     end
 
     def cache
