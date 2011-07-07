@@ -80,9 +80,32 @@ module DataMapper::Adapters
     end
 
     def search( query )
-      builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
-      cache_query = search_manager.get_query( builder.all.create_query, query.model.java_class )
+      #builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
+      #cache_query = search_manager.get_query( builder.all.create_query, query.model.java_class )
+      cache_query = search_manager.get_query( build_query( query ), query.model.java_class )
       cache_query.list.collect { |record| deserialize(record) }
+    end
+
+    def build_query( query )
+      #puts query.conditions.inspect
+
+      builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
+      return builder.all.create_query if query.conditions.nil?
+
+      condition = query.conditions.first
+
+      #query.conditions.each do |condition|
+        puts "CONDITION TYPE: #{condition.class}"
+        puts "CONDITION: #{condition.inspect}"
+        #puts "CONDITION VALUE: #{condition.value}"
+        #puts "CONDITION SUBJECT: #{condition.subject.name}"
+        case condition.class
+        when DataMapper::Query::Conditions::EqualToComparison
+          builder.keyword.on_field(condition.subject.name).matching(condition.value.to_s).create_query
+        else
+          builder.all.create_query
+        end
+      #end
     end
 
     def cache
