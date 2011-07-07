@@ -80,51 +80,70 @@ module DataMapper::Adapters
     end
 
     def search( query )
-      #builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
-      #cache_query = search_manager.get_query( builder.all.create_query, query.model.java_class )
       cache_query = search_manager.get_query( build_query( query ), query.model.java_class )
       cache_query.list.collect { |record| deserialize(record) }
     end
 
     def build_query( query )
-      #puts query.conditions.inspect
-
+      puts ">>>>>>>>>>>>>>>>>>> Building query start"
       builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
-      return builder.all.create_query if query.conditions.nil?
-
-      condition = query.conditions.first
-
-      #query.conditions.each do |condition|
-        puts "CONDITION: #{condition.inspect}"
-        puts "CONDITION CLASS: #{condition.class}"
-        puts "CONDITION OPERANDS: #{condition.operands.inspect}" if condition.respond_to? :operands
-        #puts "CONDITION VALUE: #{condition.value}"
-        #puts "CONDITION SUBJECT: #{condition.subject.name}"
-        if condition.class == DataMapper::Query::Conditions::NotOperation
-          if condition.operands.first.class == DataMapper::Query::Conditions::EqualToComparison
-            field = condition.operands.first.subject.name
-            # Not nil means find everything that isn't nill
-            if condition.operands.first.value.nil?
-              handle_equal_to( builder, field, '?*' )
-            else
-              builder.bool.must( handle_equal_to( builder, field, condition.operands.first.value ) ).not.create_query
-            end
-          else
-            builder.all.create_query
-          end
-        elsif condition.class == DataMapper::Query::Conditions::EqualToComparison
-          handle_equal_to( builder, condition.subject.name, condition.value.to_s )
-        else
-          builder.all.create_query
-        end
-      #end
+      query = query.conditions.nil? ? builder.all.create_query : handle_condition( builder, query.conditions.first ) 
+      puts "LUCENE QUERY: #{query.to_s}"
+      puts ">>>>>>>>>>>>>>>>>>> Building query end"
+      query
     end
 
-    def handle_equal_to( builder, field, value )
-      if value.include?( '?' ) || value.include?( '*' )
-        builder.keyword.wildcard.on_field(field).matching(value.to_s).create_query
+    def handle_condition( builder, condition )
+      puts "CONDITION: #{condition.inspect}"
+      puts "CONDITION CLASS: #{condition.class}"
+      puts "CONDITION OPERANDS: #{condition.operands.inspect}" if condition.respond_to? :operands
+      #puts "CONDITION VALUE: #{condition.value}"
+      #puts "CONDITION SUBJECT: #{condition.subject.name}"
+      if condition.class == DataMapper::Query::Conditions::NotOperation
+        handle_not_operation( builder, condition )
+      elsif condition.class == DataMapper::Query::Conditions::EqualToComparison
+        handle_equal_to( builder, condition ) 
+      elsif condition.class == DataMapper::Query::Conditions::InclusionComparison
+        handle_inclusion( builder, condition )
+      elsif condition.class == DataMapper::Query::Conditions::RegexpComparison
+        handle_regex( builder, condition )
       else
-        builder.keyword.on_field(field).matching(value.to_s).create_query
+        builder.all.create_query
+      end
+    end
+
+    def handle_regex( builder, condition )
+      field = condition.subject.name
+      # TODO Figure out how hibernate search/lucene deal with regexp
+      value = condition.value.nil? ? "?*" : "*" + condition.value.source.gsub('/','') + "*"
+      builder.keyword.wildcard.on_field(field).matching(value).create_query
+    end
+
+    def handle_not_operation( builder, operation )
+      condition = operation.operands.first
+      if (condition.class == DataMapper::Query::Conditions::EqualToComparison && condition.value.nil?) 
+        # not nil means everything
+        everything = DataMapper::Query::Conditions::EqualToComparison.new( condition.subject, '*' )
+        handle_condition( builder, everything )
+      elsif (condition.class == DataMapper::Query::Conditions::InclusionComparison && condition.value == [])
+        builder.all.create_query
+      else
+        builder.bool.must( handle_condition( builder, condition ) ).not.create_query
+      end
+    end
+
+    def handle_inclusion( builder, condition )
+      match = condition.value.collect { |v| v }.join(' ')
+      builder.keyword.on_field( condition.subject.name ). matching( match ).create_query
+    end
+
+    def handle_equal_to( builder, condition )
+      field = condition.subject.name
+      value = condition.value.nil? ? "?*" : condition.value.to_s
+      if !value.nil? && (value.include?( '?' ) || value.include?( '*' ))
+        builder.keyword.wildcard.on_field(field).matching(value).create_query
+      else
+        builder.keyword.on_field(field).matching(value).create_query
       end
     end
 
