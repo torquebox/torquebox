@@ -40,12 +40,19 @@ module Infinispan
     end
 
     def handle_condition( builder, condition )
-      puts "CONDITION: #{condition.inspect}"
+      puts "CONDITION: #{condition.inspect} <<<>>> #{condition}"
       puts "CONDITION CLASS: #{condition.class}"
       puts "CONDITION OPERANDS: #{condition.operands.inspect}" if condition.respond_to? :operands
       #puts "CONDITION VALUE: #{condition.value}"
       #puts "CONDITION SUBJECT: #{condition.subject.name}"
-      if condition.class == DataMapper::Query::Conditions::NotOperation
+      if condition.class == DataMapper::Query::Conditions::OrOperation
+        terms = condition.operands.each do |op|
+          puts "OR OPERAND: #{op.inspect}"
+          #builder.bool.should( handle_condition builder, op )
+          builder.bool.should( handle_condition( builder, op ) )
+        end
+        builder.all.create_query
+      elsif condition.class == DataMapper::Query::Conditions::NotOperation
         handle_not_operation( builder, condition )
       elsif condition.class == DataMapper::Query::Conditions::EqualToComparison
         handle_equal_to( builder, condition ) 
@@ -66,8 +73,19 @@ module Infinispan
     end
 
     def handle_inclusion( builder, condition )
-      match = condition.value.collect { |v| v }.join(' ')
-      builder.keyword.on_field( condition.subject.name ). matching( match ).create_query
+      puts "RANGE: #{condition.value.class} #{condition.value}"
+      if condition.value.is_a? Range
+        rng = builder.range.on_field(condition.subject.name).from(condition.value.begin).to(condition.value.end)
+        condition.value.exclude_end? ? rng.exclude_limit.create_query : rng.create_query 
+      else # an Array
+        match = condition.value.collect { |v| v }.join(' ')
+        if match.empty?
+          # we should find nothing
+          builder.bool.must( builder.all.create_query ).not.create_query
+        else
+          builder.keyword.on_field( condition.subject.name ).matching( match ).create_query 
+        end
+      end
     end
 
     def handle_equal_to( builder, condition )
@@ -86,8 +104,6 @@ module Infinispan
         # not nil means everything
         everything = DataMapper::Query::Conditions::EqualToComparison.new( condition.subject, '*' )
         handle_condition( builder, everything )
-      elsif (condition.class == DataMapper::Query::Conditions::InclusionComparison && condition.value == [])
-        builder.all.create_query
       else
         builder.bool.must( handle_condition( builder, condition ) ).not.create_query
       end
