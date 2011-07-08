@@ -178,6 +178,53 @@ jobs:
     </section>
   </section>
 
+  <section id="clustered-jobs">
+    <title>Clustered Jobs</title>
+
+    <section id="jobs-running-on-every-node">
+      <title>Jobs Running on Every Node</title>
+
+      <para>By default, if a job will run on each node in a cluster 
+      where the application has been deployed.</para>
+    </section>
+
+    <section id="ha-singleton-jobs">
+      <title>High Availability Singleton Jobs</title>
+
+      <para>TorqueBox also supports high availability singleton
+      jobs. In this scenario, the job only runs on one node in
+      the cluster and if that node goes down it is automatically
+      scheduled on a new node.</para>
+
+      <para>To use high availability singleton jobs, you must
+      start TorqueBox with a JBoss profile that supports
+      clustering. In our binary distribution, this is the
+      <code>all</code> profile.</para>
+
+      <para><screen><prompt>$</prompt> JBOSS_CONF=all <command>jruby</command> <parameter>-S rake torquebox:run</parameter></screen></para>
+
+      <para>You also need to add a special <code>singleton</code> key
+      with a value of <code>true</code> to your job specification in
+      <filename>torquebox.yml</filename>. If no <code>singleton</code>
+      key is defined or it has a value of <code>false</code> the
+      job will run on every node in the cluster.</para>
+
+      <para><example>
+        <title><filename>torquebox.yml</filename></title>
+
+        <para><programlisting>jobs:
+  mail.notifier:
+    job:         Mail::Notifier
+    cron:        '0 */5 * * * ?'
+    description: Deliver queued mail notificationsa:
+    singleton: true</programlisting>This is the same
+        <filename>torquebox.yml</filename> from the example above but
+        this time <classname>mail.notifier</classname> is marked as a
+        singleton and will only run on one node in the cluster.</para>
+      </example></para>
+    </section>
+  </section>
+
   <section id="resouce-injection-with-jobs">
     <title>Resource Injection with Jobs</title>
 
