@@ -39,8 +39,10 @@ remote_describe 'in container futures tests' do
 
     it "should set the status" do
       future = @something.with_status
-      sleep(0.1) until future.started?
+      @backchannel.receive( :timeout => 120_000 ).should == 'release'
+      future.should be_started
       future.status.should == '1'
+      future.status.should == '2'
       future.status.should == '2'
       @backchannel.publish( 'finish' )
     end
