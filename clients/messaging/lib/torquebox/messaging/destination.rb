@@ -166,8 +166,18 @@ module TorqueBox
 
     class Topic
       include Destination
+      DEFAULT_SUBSCRIBER_NAME = 'subscriber-1'
+      
       def destination
         @destination ||= Java::org.torquebox.messaging.core::ManagedTopic.new
+      end
+
+      def unsubscribe(name = DEFAULT_SUBSCRIBER_NAME, options = {})
+        wait_for_destination(options[:startup_timeout]) {
+          Client.connect(@connect_options) do |session|
+            session.unsubscribe(name)
+          end
+        }
       end
     end
 

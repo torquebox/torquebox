@@ -49,7 +49,7 @@ module javax.jms::Session
     if options[:durable] && destination.class.name =~ /Topic/
       raise ArgumentError.new( "You must set the :client_id via Topic.new's connect_options to use :durable" ) unless connection.client_id
       consumer = createDurableSubscriber( destination,
-                                          options.fetch(:subscriber_name, 'subscriber-1'),
+                                          options.fetch(:subscriber_name, TorqueBox::Messaging::Topic::DEFAULT_SUBSCRIBER_NAME),
                                           selector,
                                           false )
     else
