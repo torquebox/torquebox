@@ -67,17 +67,6 @@ public class RackApplicationImpl implements RackApplication {
             fullScript.append( "require %q(bundler/setup)\n" );
         }
         fullScript.append( "require %q(rack)\n" );
- 
-        // We have to patch Rack's HeaderHash implementation when running under
-        // 1.9 mode until http://jira.codehaus.org/browse/JRUBY-5839 is fixed.
-        fullScript.append( "if RUBY_VERSION[0,3] == '1.9' && defined?(Rack) && Rack::VERSION == [1,1]\n" );
-        fullScript.append( "  class Rack::Utils::HeaderHash < Hash\n" );
-        fullScript.append( "    def each\n" );
-        fullScript.append( "      super { |k,v| yield([k, v.respond_to?(:to_ary) ? v.to_ary.join(%Q{\n}) : v]) }\n" );
-        fullScript.append( "    end\n" );
-        fullScript.append( "  end\n" );
-        fullScript.append( "end\n" );
-
         fullScript.append( "Rack::Builder.new{(\n" );
         fullScript.append( script );
         fullScript.append( "\n)}.to_app" );
