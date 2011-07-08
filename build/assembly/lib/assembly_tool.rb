@@ -51,6 +51,12 @@ class AssemblyTool
   attr_accessor :jboss_dir
   attr_accessor :jruby_dir
 
+  attr_reader :options
+
+  def modules
+    @modules ||= []
+  end
+
   def require_rubygems_indexer
     begin
       gem 'builder', '3.0.0'
@@ -70,11 +76,11 @@ class AssemblyTool
     require 'rubygems/indexer'
   end
 
-  def initialize() 
+  def initialize(options = {}) 
+    @options = options
+
     @src_dir   = File.expand_path( File.dirname(__FILE__) + '/../../..' )
-
     @base_dir  = File.expand_path( File.dirname(__FILE__) + '/..' )
-
     @build_dir = @base_dir  + '/target/stage'
 
     @torquebox_dir = @build_dir  + '/torquebox'
@@ -136,43 +142,25 @@ class AssemblyTool
       FileUtils.mkdir_p File.dirname( dest_dir )
       FileUtils.cp_r path, dest_dir
     end
-    add_extension( name ) 
-    add_subsystem( name ) 
+    modules << name
   end
 
-  def modify_standalone_xml
-    Dir.chdir( @jboss_dir ) do
-      doc = REXML::Document.new( File.read( 'standalone/configuration/standalone.xml' ) )
-
-      yield doc
-      
-      open( 'standalone/configuration/standalone.xml', 'w' ) do |f|
-        doc.write( f, 4 )
+  def increase_deployment_timeout(doc)
+    if options[:deployment_timeout]
+      profiles = doc.root.get_elements( '//profile' )
+      profiles.each do |profile|
+        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
+        unless subsystem.nil?
+          scanner = subsystem.get_elements( 'deployment-scanner' ).first
+          scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
+        end
       end
     end
   end
 
-  def rename_standalone_xml
-    Dir.chdir( File.join( @jboss_dir, 'standalone', 'configuration' ) ) do
-      if File.exists?( 'standalone-preview.xml' )
-        FileUtils.mv( 'standalone.xml', 'standalone-original.xml' )
-        FileUtils.mv( 'standalone-preview.xml', 'standalone.xml' )
-      end
-    end
-  end
-
-  def increase_deployment_timeout
-    modify_standalone_xml do |doc|
-      profile = doc.root.get_elements( 'profile' ).first
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
-      scanner = subsystem.get_elements( 'deployment-scanner' ).first
-      scanner.add_attribute( 'deployment-timeout', '1200' )
-    end
-  end
-
-  def add_extension(name)
-    modify_standalone_xml do |doc|
-      extensions = doc.root.get_elements( 'extensions' ).first
+  def add_extensions(doc)
+    extensions = doc.root.get_elements( 'extensions' ).first
+    modules.each do |name|
       previous_extension = extensions.get_elements( "extension[@module='org.torquebox.#{name}']" )
       if ( previous_extension.empty? )
         extensions.add_element( 'extension', 'module'=>"org.torquebox.#{name}" )
@@ -180,18 +168,52 @@ class AssemblyTool
     end
   end
 
-  def add_subsystem(name)
-    modify_standalone_xml do |doc|
-      profile = doc.root.get_elements( 'profile' ).first
-      previous_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:torquebox-#{name}:1.0']" )
-  
-      if ( previous_subsystem.empty? )
-        profile.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:torquebox-#{name}:1.0" )
+  def add_subsystems(doc)
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+      modules.each do |name|
+        previous_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:torquebox-#{name}:1.0']" )
+        if ( previous_subsystem.empty? )
+          profile.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:torquebox-#{name}:1.0" )
+        end
       end
     end
+  end
 
+  def set_welcome_root(doc)
+    unless options[:enable_welcome_root].nil?
+      element = doc.root.get_elements("//virtual-server[@name='localhost']").first
+      element.attributes['enable-welcome-root'] = options[:enable_welcome_root]
+    end
+  end
+
+  def backup_current_config
+    %w{ standalone domain }.each do |mode|
+      Dir.chdir( File.join( @jboss_dir, mode, 'configuration' ) ) do
+        unless File.exists?( "#{mode}-original.xml" )
+          FileUtils.cp( "#{mode}.xml", "#{mode}-original.xml" )
+        end
+      end
+    end
+  end
+
+  def transform_config(file)
+    Dir.chdir( @jboss_dir ) do
+      doc = REXML::Document.new( File.read( file ) )
+      
+      backup_current_config
+      increase_deployment_timeout(doc)
+      add_extensions(doc)
+      add_subsystems(doc)
+      set_welcome_root(doc)
+
+      output = File.join( File.dirname(file), "torquebox", File.basename(file) )
+      FileUtils.mkdir_p( File.dirname(output) )
+      open( output, 'w' ) do |f|
+        doc.write( f, 4 )
+      end
+    end
   end
 
 end
-
 

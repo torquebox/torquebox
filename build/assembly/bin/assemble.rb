@@ -20,7 +20,7 @@ class Assembler
   attr_accessor :m2_repo
 
   def initialize() 
-    @tool = AssemblyTool.new
+    @tool = AssemblyTool.new(:deployment_timeout => 1200, :enable_welcome_root => false)
     determine_versions
 
     @m2_repo   = nil 
@@ -81,11 +81,6 @@ class Assembler
     end
   end
 
-  def update_standalone_xml
-    tool.rename_standalone_xml
-    tool.increase_deployment_timeout
-  end
-
   def install_modules
     modules = Dir[ tool.base_dir + '/../../modules/*/target/*-module' ].map do |module_dir|
       [ File.basename( module_dir, '-module' ).gsub( /torquebox-/, '' ), module_dir ]
@@ -133,13 +128,11 @@ class Assembler
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'rails', 'template.rb' ), rails_dir )
   end
 
-  def disable_welcome_root
-    puts "disabling default root"
-    
-    @tool.modify_standalone_xml do |doc|
-      element = doc.root.get_elements("//virtual-server[@name='localhost']").first
-      element.attributes['enable-welcome-root'] = 'false' if element.attributes['enable-welcome-root'] == 'true'
-    end
+  def transform_configs
+    tool.transform_config('standalone/configuration/standalone-preview.xml')
+    tool.transform_config('standalone/configuration/standalone-preview-ha.xml')
+    tool.transform_config('domain/configuration/domain.xml')
+    tool.transform_config('domain/configuration/domain-preview.xml')
   end
 
   def windows?
@@ -151,11 +144,13 @@ class Assembler
     prepare
     lay_down_jruby
     lay_down_jboss
-    update_standalone_xml
     install_modules
     install_gems
     install_share
-    disable_welcome_root
+    transform_configs
+    Dir.chdir( tool.jboss_dir ) do 
+      FileUtils.cp( 'standalone/configuration/torquebox/standalone-preview.xml', 'standalone/configuration/standalone.xml' )
+    end
   end
 end
 
