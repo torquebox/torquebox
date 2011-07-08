@@ -11,6 +11,7 @@ remote_describe 'in container futures tests' do
       version: #{RUBY_VERSION[0,3]}
     queues:
       /queue/backchannel:
+        durable: false
   END
 
   shared_examples_for 'something with a future' do
