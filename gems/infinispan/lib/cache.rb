@@ -51,6 +51,10 @@ module TorqueBox
         options[:name] || TORQUEBOX_APP_NAME
       end
 
+      def search_manager
+        @search_manager ||= org.infinispan.query.Search.getSearchManager(@cache)
+      end
+
       def clustering_mode
         java_import org.infinispan.config.Configuration::CacheMode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
@@ -127,8 +131,22 @@ module TorqueBox
         increment( name, -amount )
       end
 
-      def ispan_cache
-        @cache
+      def transaction(&block)
+        tm = cache.getAdvancedCache().getTransactionManager()
+        begin
+          tm.begin
+          yield self
+          tm.commit
+        rescue Exception => e
+          tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
+          puts "[ERROR] Exception raised during transaction. Rolling back."
+          puts "[ERROR] #{e.message}"
+          #puts e.backtrace
+        end
+      end
+
+      def stop
+        cache.stop
       end
 
       private
@@ -189,12 +207,16 @@ module TorqueBox
         # workaround common problem running infinispan in web containers (see FAQ)
         java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
         config  = org.infinispan.config.Configuration.new.fluent
+        config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
+        
         if options[:persist]
           store = org.infinispan.loaders.file.FileCacheStoreConfig.new
           store.purge_on_startup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
           config.loaders.add_cache_loader( store )
-#          config.indexing.index_local_only(true).add_property('indexing', 'in memory')
+        end
+        if options[:index]
+          config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
