@@ -18,12 +18,14 @@
 require 'torquebox/messaging/destination'
 require 'torquebox/messaging/future_responder'
 require 'torquebox/messaging/future'
+require 'torquebox/messaging/future_status'
 
 module TorqueBox
   module Messaging
 
     class Task
-
+      include FutureStatus
+      
       def self.queue_name
         suffix = org.torquebox.common.util.StringUtils.underscore(name[0...-4])
         "/queues/torquebox/#{ENV['TORQUEBOX_APP_NAME']}/tasks/#{suffix}"

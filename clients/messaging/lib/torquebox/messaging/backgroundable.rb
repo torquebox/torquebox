@@ -17,12 +17,14 @@
 
 require 'torquebox/messaging/destination'
 require 'torquebox/messaging/future'
+require 'torquebox/messaging/future_status'
 
 module TorqueBox
   module Messaging
     module Backgroundable
       def self.included(base)
         base.extend(ClassMethods)
+        base.send(:include, FutureStatus)
       end
 
       def background(options = { })
