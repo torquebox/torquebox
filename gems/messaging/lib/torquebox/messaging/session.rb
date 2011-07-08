@@ -72,9 +72,9 @@ module TorqueBox
         
         java_destination = java_destination( destination )
         if options[:durable] && java_destination.class.name =~ /Topic/
-      raise ArgumentError.new( "You must set the :client_id via Topic.new's connect_options to use :durable" ) unless connection.client_id
+      raise ArgumentError.new( "You must set the :client_id via Topic's connect_options to use :durable" ) unless connection.client_id
           consumer = @jms_session.createDurableSubscriber( java_destination,
-                                                           options.fetch(:subscriber_name, 'subscriber-1'),
+                                                           options.fetch(:subscriber_name, Topic::DEFAULT_SUBSCRIBER_NAME),
                                                            selector,
                                                            false )
         else
@@ -145,6 +145,10 @@ module TorqueBox
         commit if transacted?
       end
 
+      def unsubscribe(subscriber_name = Topic::DEFAULT_SUBSCRIBER_NAME)
+        @jms_session.unsubscribe( subscriber_name )
+      end
+      
       def create_browser(*args)
         jms_session.create_browser( *args )
       end

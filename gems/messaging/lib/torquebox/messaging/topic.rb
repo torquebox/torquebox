@@ -23,6 +23,8 @@ module TorqueBox
   module Messaging
     class Topic < Destination
 
+      DEFAULT_SUBSCRIBER_NAME = 'subscriber-1'
+      
       def self.start( name, options={} )
         jndi = options.fetch( :jndi, [].to_java(:string) )
         TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
@@ -37,6 +39,14 @@ module TorqueBox
         end
       end
 
+      def unsubscribe(subscriber_name = DEFAULT_SUBSCRIBER_NAME, options = { })
+        wait_for_destination(options[:startup_timeout]) do
+          with_new_session do |session|
+            session.unsubscribe( subscriber_name )
+          end
+        end
+      end
+      
       def to_s
         "[Topic: #{super}]"
       end

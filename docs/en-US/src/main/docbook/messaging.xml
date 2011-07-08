@@ -704,10 +704,30 @@ message = topic.receive
                 also supply a <varname>:client_id</varname> in the connect options for the
                 Topic. This option is ignored for Queues.</entry>
               </row>
+              <row>
+                <entry><parameter>:subscriber_name</parameter></entry>
+
+                <entry>'subscriber-1'</entry>
+
+                <entry>Specifies the subscriber name to be used when creating a durable 
+                topic subscription. This option is ignored for Queues and for non-durable
+                receives on a Topic.</entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
+        <section id="durable-topic-unsubscribe">
+          <title>Unsubscribing a Durable Topic</title>
+          <para>If you create a durable topic subscriber by passing the <varname>:durable</varname>
+          option to the <methodname>receive</methodname> method, that subscription will remain
+          until the HornetQ Topic is shut down. If you no longer need the subscription, you
+          should unsubscribe it by calling the <methodname>unsubscribe</methodname> method
+          on the <classname>Topic</classname> object. If you provided a <varname>:subscriber_name</varname>
+          to the <methodname>receive</methodname> call, you will need to provide that
+          same name as an argument to <methodname>unsubscribe</methodname>.</para> 
+        </section>
       </section>
+
 
       <section id="synchronous-messaging">
         <title>Synchronous Messaging</title>
