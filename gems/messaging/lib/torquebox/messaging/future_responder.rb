@@ -80,7 +80,7 @@ module TorqueBox
       # via the {.current} responder. Only valid inside a block passed
       # to {#respond}.
       def self.status=(status)
-        current.status = status
+        current.status = status if current
       end
       
       protected

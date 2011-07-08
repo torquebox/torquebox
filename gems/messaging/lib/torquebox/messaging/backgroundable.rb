@@ -18,6 +18,7 @@
 require 'torquebox/messaging/queue'
 require 'torquebox/messaging/future'
 require 'torquebox/messaging/task'
+require 'torquebox/messaging/future_status'
 require 'torquebox/injectors'
 
 module TorqueBox
@@ -28,6 +29,7 @@ module TorqueBox
     module Backgroundable
       def self.included(base)
         base.extend(ClassMethods)
+        base.send(:include, FutureStatus)
       end
 
       # Allows you to background any method that has not been marked

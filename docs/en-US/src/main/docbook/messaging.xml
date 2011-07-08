@@ -1559,7 +1559,7 @@ tasks:
 
       <para>From within a task or backgrounded method invocation, you can send
       a status notification to the <classname>Future</classname> for this 
-      call by using the <function>TorqueBox::Messaging::Future.status=</function>
+      call by using the <function>future.status=</function>
       method. The status can be any marshalable object, and its semantics are 
       defined by your application.</para>
 
@@ -1575,7 +1575,7 @@ tasks:
     stuff.each_with_index do |thing, index|
       thing.process_it
       # report the % complete
-      TorqueBox::Messaging::FutureResponder.status = (index * 100)/stuff_count
+      future.status = (index * 100)/stuff_count
     end
   end
 end

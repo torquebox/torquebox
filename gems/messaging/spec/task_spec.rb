@@ -5,6 +5,10 @@ require 'torquebox/messaging/task'
 
 class MyTestTask < TorqueBox::Messaging::Task
   attr_accessor :payload
+
+  def action(payload={ })
+    future.status = 1
+  end
 end
 
 class TorqueBox::Messaging::FutureResponder
@@ -52,6 +56,13 @@ describe TorqueBox::Messaging::Task do
       task = MyTestTask.new
       task.process! message
       task.payload[:foo].should == 'bar'
+    end
+  end
+
+  describe 'the future proxy' do
+    it "should be available inside a task method" do
+      TorqueBox::Messaging::FutureResponder.should_receive(:status=).with(1)
+      MyTestTask.new.action
     end
   end
   

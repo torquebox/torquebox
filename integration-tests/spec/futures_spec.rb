@@ -35,6 +35,14 @@ remote_describe 'in container futures tests' do
       future.should_not be_complete
       future.should be_error
     end
+
+    it "should set the status" do
+      future = @something.with_status
+      sleep(0.1) until future.started?
+      future.status.should == '1'
+      future.status.should == '2'
+      @backchannel.publish( 'finish' )
+    end
   end
 
   describe 'futures from backgroundable' do
@@ -48,12 +56,8 @@ remote_describe 'in container futures tests' do
   describe 'futures from /app/tasks' do
     before(:each) do
       @something = Object.new
-      def @something.foo
-        SomeTask.async(:foo)
-      end
-
-      def @something.error
-        SomeTask.async(:error)
+      def @something.method_missing(meth)
+        SomeTask.async(meth)
       end
     end
 

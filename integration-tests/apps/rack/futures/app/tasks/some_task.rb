@@ -11,6 +11,13 @@ class SomeTask < TorqueBox::Messaging::Task
     puts 'CALLED'
     'bar'
   end
+  
+  def with_status(payload={ })
+    future.status = '1'
+    future.status = '2'
+    @backchannel.receive( :timeout => 1_000 )
+  end
+    
 
   def error(payload = { })
     @backchannel.publish( 'release' )
