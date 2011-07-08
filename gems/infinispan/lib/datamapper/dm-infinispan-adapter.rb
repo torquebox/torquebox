@@ -119,19 +119,6 @@ module DataMapper::Adapters
       builder.keyword.wildcard.on_field(field).matching(value).create_query
     end
 
-    def handle_not_operation( builder, operation )
-      condition = operation.operands.first
-      if (condition.class == DataMapper::Query::Conditions::EqualToComparison && condition.value.nil?) 
-        # not nil means everything
-        everything = DataMapper::Query::Conditions::EqualToComparison.new( condition.subject, '*' )
-        handle_condition( builder, everything )
-      elsif (condition.class == DataMapper::Query::Conditions::InclusionComparison && condition.value == [])
-        builder.all.create_query
-      else
-        builder.bool.must( handle_condition( builder, condition ) ).not.create_query
-      end
-    end
-
     def handle_inclusion( builder, condition )
       match = condition.value.collect { |v| v }.join(' ')
       builder.keyword.on_field( condition.subject.name ). matching( match ).create_query
@@ -144,6 +131,19 @@ module DataMapper::Adapters
         builder.keyword.wildcard.on_field(field).matching(value).create_query
       else
         builder.keyword.on_field(field).matching(value).create_query
+      end
+    end
+
+    def handle_not_operation( builder, operation )
+      condition = operation.operands.first
+      if (condition.class == DataMapper::Query::Conditions::EqualToComparison && condition.value.nil?) 
+        # not nil means everything
+        everything = DataMapper::Query::Conditions::EqualToComparison.new( condition.subject, '*' )
+        handle_condition( builder, everything )
+      elsif (condition.class == DataMapper::Query::Conditions::InclusionComparison && condition.value == [])
+        builder.all.create_query
+      else
+        builder.bool.must( handle_condition( builder, condition ) ).not.create_query
       end
     end
 
