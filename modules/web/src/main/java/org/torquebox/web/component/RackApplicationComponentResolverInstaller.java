@@ -105,17 +105,6 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
             code.append( "require %q(bundler/setup)\n" );
         }
         code.append( "require %q(rack)\n" );
-        
-        // We have to patch Rack's HeaderHash implementation when running under
-        // 1.9 mode until http://jira.codehaus.org/browse/JRUBY-5839 is fixed.
-        code.append( "if RUBY_VERSION[0,3] == '1.9' && defined?(Rack) && Rack::VERSION == [1,1]\n" );
-        code.append( "  class Rack::Utils::HeaderHash < Hash\n" );
-        code.append( "    def each\n" );
-        code.append( "      super { |k,v| yield([k, v.respond_to?(:to_ary) ? v.to_ary.join(%Q{\n}) : v]) }\n" );
-        code.append( "    end\n" );
-        code.append( "  end\n" );
-        code.append( "end\n" );
-    
         code.append( "Rack::Builder.new{(\n" );
         code.append( rackUpScript );
         code.append( "\n)}.to_app" );
