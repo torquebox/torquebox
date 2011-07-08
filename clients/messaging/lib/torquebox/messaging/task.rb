@@ -17,7 +17,7 @@
 
 require 'torquebox/messaging/destination'
 require 'torquebox/messaging/future_responder'
-require 'torquebox/messaging/future_result'
+require 'torquebox/messaging/future'
 
 module TorqueBox
   module Messaging
@@ -31,7 +31,7 @@ module TorqueBox
 
       def self.async(method, payload = {}, options = {})
         queue = Queue.new(queue_name)
-        future = FutureResult.new( queue )
+        future = Future.new( queue )
         message = {
           :method => method,
           :payload => payload,

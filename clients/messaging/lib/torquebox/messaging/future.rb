@@ -17,9 +17,9 @@
 
 module TorqueBox
   module Messaging
-    # A FutureResult encapsulates the result of a long running
+    # A Future encapsulates the result of a long running
     # process, and is used in conjunction with a {FutureResponder}. 
-    class FutureResult
+    class Future
 
       # Returns the remote error (if any)
       attr_reader :error
@@ -29,7 +29,7 @@ module TorqueBox
       # @param [TorqueBox::Messaging::Queue] response_queue The queue
       #   where response messages are to be received.
       # @param [Hash] options Additional options
-      # @option options [String] :correlation_id (FutureResult.unique_id) The correlation_id used on
+      # @option options [String] :correlation_id (Future.unique_id) The correlation_id used on
       #   the messages to uniquely identify the call they are for.
       # @option options [Integer] :default_result_timeout (30_000) The timeout
       #   used by default for the receive call. The processing must at

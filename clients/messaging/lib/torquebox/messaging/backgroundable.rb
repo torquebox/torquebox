@@ -16,7 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/destination'
-require 'torquebox/messaging/future_result'
+require 'torquebox/messaging/future'
 
 module TorqueBox
   module Messaging
@@ -106,7 +106,7 @@ module TorqueBox
         class << self
           def publish_message(receiver, method, args, options = { })
             queue = Queue.new(QUEUE_NAME)
-            future = FutureResult.new( queue )
+            future = Future.new( queue )
             queue.publish({:receiver => receiver,
                             :future_id => future.correlation_id,
                             :future_queue => QUEUE_NAME,

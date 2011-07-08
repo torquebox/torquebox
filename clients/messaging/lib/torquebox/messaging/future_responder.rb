@@ -18,7 +18,7 @@
 module TorqueBox
   module Messaging
     # A FutureResponder encapsulates sending the results of a long
-    # running process to a {FutureResult}.
+    # running process to a {Future}.
     class FutureResponder
 
       # @param [TorqueBox::Messaging::Queue] response_queue The queue
