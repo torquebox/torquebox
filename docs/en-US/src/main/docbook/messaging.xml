@@ -1068,7 +1068,7 @@ messaging:
 
         <para>Any of the task's methods can be invoked asynchronously by
         calling the task's class method, <function>async</function>, which
-        returns a <link linkend="messaging-futures">FutureResult</link> object
+        returns a <link linkend="messaging-futures">Future</link> object
         that can be used to monitor the status of the task processing
         and retrieve the final return value.</para>
 
@@ -1279,7 +1279,7 @@ tasks:
       on any object asynchronously. You can mark a method to always execute
       in the background, or send a method to the background on an ad hoc
       basis. Backgrounded methods return a <link 
-      linkend="messaging-futures">FutureResult</link> object
+      linkend="messaging-futures">Future</link> object
       that can be used to monitor the status of the method invocation
       and retrieve the final return value.</para>
 
@@ -1336,7 +1336,7 @@ User.always_background(:send_signup_notification)
         <function>always_background</function>, you can background it at call
         time with the <function>background</function> instance method. 
         A method called via <function>background</function> will also return 
-        a <link linkend="messaging-futures">FutureResult</link> object
+        a <link linkend="messaging-futures">Future</link> object
         that can be used to monitor the status of the method invocation
         and retrieve the final return value.</para>
 
@@ -1476,12 +1476,12 @@ tasks:
   <section id="messaging-futures">
     <title>Future Objects</title>
     <para>Both <function>Task.async</function> and methods backgrounded via 
-    <classname>Backgroundable</classname> return <classname>FutureResult</classname>
+    <classname>Backgroundable</classname> return <classname>Future</classname>
     objects that allow you to monitor the progress of the asynchronous 
     processing.</para>
 
     <table>
-      <title>FutureResult instance methods</title>
+      <title>Future instance methods</title>
       <tgroup cols="2">
         <colspec align="left" />
           
@@ -1555,11 +1555,11 @@ tasks:
     </table>
 
     <section id="messaging-futures-status">
-      <title>Sending status notifications to the FutureResult from within the task</title>
+      <title>Sending status notifications to the Future from within the task</title>
 
       <para>From within a task or backgrounded method invocation, you can send
-      a status notification to the <classname>FutureResult</classname> for this 
-      call by using the <function>TorqueBox::Messaging::FutureResult.status=</function>
+      a status notification to the <classname>Future</classname> for this 
+      call by using the <function>TorqueBox::Messaging::Future.status=</function>
       method. The status can be any marshalable object, and its semantics are 
       defined by your application.</para>
 

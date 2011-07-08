@@ -62,7 +62,7 @@ describe TorqueBox::Messaging::Backgroundable do
       @queue = mock('queue')
       @queue.stub(:publish)
       TorqueBox::Messaging::Queue.stub(:new).and_return(@queue)
-      TorqueBox::Messaging::FutureResult.stub(:unique_id).and_return('1234')
+      TorqueBox::Messaging::Future.stub(:unique_id).and_return('1234')
     end
 
     it "should put a message on the queue" do
@@ -72,7 +72,7 @@ describe TorqueBox::Messaging::Backgroundable do
 
     it "should return a future" do
       result = MyTestModel.new.an_async_action(nil, nil)
-      result.is_a?(TorqueBox::Messaging::FutureResult).should be_true
+      result.is_a?(TorqueBox::Messaging::Future).should be_true
     end
     
     it "should include the proper options in the message" do

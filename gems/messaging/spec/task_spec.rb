@@ -1,5 +1,5 @@
 require 'torquebox/messaging/future_responder'
-require 'torquebox/messaging/future_result'
+require 'torquebox/messaging/future'
 require 'torquebox/messaging/queue'
 require 'torquebox/messaging/task'
 
@@ -18,7 +18,7 @@ describe TorqueBox::Messaging::Task do
 
   describe '#async' do
     before(:each) do
-      TorqueBox::Messaging::FutureResult.stub(:unique_id).and_return('1234')
+      TorqueBox::Messaging::Future.stub(:unique_id).and_return('1234')
       @send_queue = mock('queue')
       @send_queue.stub(:publish)
       TorqueBox::Messaging::Queue.should_receive(:new).with(MyTestTask.queue_name).and_return(@send_queue)
@@ -39,7 +39,7 @@ describe TorqueBox::Messaging::Task do
 
     it "should return a future" do
       result = MyTestTask.async(:payload=)
-      result.is_a?(TorqueBox::Messaging::FutureResult).should be_true
+      result.is_a?(TorqueBox::Messaging::Future).should be_true
     end
   end
 

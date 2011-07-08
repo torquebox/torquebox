@@ -16,7 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/queue'
-require 'torquebox/messaging/future_result'
+require 'torquebox/messaging/future'
 require 'torquebox/messaging/task'
 require 'torquebox/injectors'
 
@@ -34,7 +34,7 @@ module TorqueBox
       # as a backgrounded method via {ClassMethods#always_background}.
       # @param [Hash] options that are passed through to
       #   {TorqueBox::Messaging::Destination#publish}
-      # @return [FutureResult]
+      # @return [Future]
       def background(options = { })
         BackgroundProxy.new(self, options)
       end
@@ -122,7 +122,7 @@ module TorqueBox
           def publish_message(receiver, method, args, options = { })
             queue_name = Task.queue_name( "torquebox_backgroundable" )
             queue = Queue.new( queue_name )
-            future = FutureResult.new( queue )
+            future = Future.new( queue )
             queue.publish( {:receiver => receiver,
                              :future_id => future.correlation_id,
                              :future_queue => queue_name,

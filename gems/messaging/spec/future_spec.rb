@@ -1,19 +1,19 @@
-require 'torquebox/messaging/future_result'
+require 'torquebox/messaging/future'
 
 include TorqueBox::Messaging
 
-class FutureResult
+class Future
   attr_writer :started
   attr_writer :complete
   attr_writer :error
   attr_writer :result
 end
 
-describe TorqueBox::Messaging::FutureResult do
+describe TorqueBox::Messaging::Future do
   
   before(:each) do
     @queue = mock( Queue )
-    @future = FutureResult.new( @queue )
+    @future = Future.new( @queue )
   end
 
   describe "#result" do
