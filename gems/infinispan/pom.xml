@@ -105,6 +105,9 @@
         <executions>
           <execution>
             <id>default-package</id>
+            <configuration>
+              <includeDependencies>true</includeDependencies>
+            </configuration>
           </execution>
         </executions>
       </plugin>
