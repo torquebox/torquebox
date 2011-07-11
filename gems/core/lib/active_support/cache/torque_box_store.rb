@@ -134,8 +134,7 @@ module ActiveSupport
       end
 
       def manager
-        # TODO: This name should be ServiceName.JBOSS.append("infinispan", "web")
-        @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
+        @manager ||= TorqueBox::ServiceRegistry.lookup('jboss.infinispan.web' ) rescue nil
       end
                        
       def reconfigure(mode=clustering_mode)
@@ -144,7 +143,7 @@ module ActiveSupport
         unless config.cache_mode == mode
           puts "Reconfiguring cache #{name} from #{config.cache_mode} to #{mode}"
           cache.stop
-          config.cache_mode = mode
+          config.cache_mode = mode.to_s
           manager.define_configuration(name, config)
           cache.start
         end
@@ -154,7 +153,7 @@ module ActiveSupport
       def configure(mode=clustering_mode)
         puts "Configuring cache #{name} as #{mode}"
         config = manager.default_configuration.clone
-        config.cache_mode = mode
+        config.cache_mode = mode.to_s
         manager.define_configuration(name, config)
         manager.get_cache(name)
       end
