@@ -209,7 +209,7 @@ class AssemblyTool
 
   def set_welcome_root(doc)
     unless options[:enable_welcome_root].nil?
-      element = doc.root.get_elements("//virtual-server[@name='localhost']").first
+      element = doc.root.get_elements("//virtual-server").first
       element.attributes['enable-welcome-root'] = options[:enable_welcome_root]
     end
   end
