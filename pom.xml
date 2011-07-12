@@ -325,6 +325,7 @@
 
     <version.rails2>2.3.11</version.rails2>
     <version.rails3>3.0.9</version.rails3>
+    <version.rails31>3.1.0.rc4</version.rails31>
     <version.arel>2.0.9</version.arel>
 
     <version.ar.jdbc>0.9.7</version.ar.jdbc>
