@@ -322,8 +322,7 @@
                 <configuration>
                   <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                   <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
-                  <!-- TODO: fix this to a version once 3.1 is released -->
-                  <installArgs>rails --pre --no-rdoc --no-ri</installArgs>
+                  <installArgs>rails -v ${version.rails31} --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
               <execution>
