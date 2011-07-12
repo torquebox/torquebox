@@ -75,7 +75,15 @@ class Class
           def initialize!
             require 'torquebox-web'
             require 'action_dispatch/session/torque_box_store'
-            initialize_before_torquebox!
+            begin
+              initialize_before_torquebox!
+            rescue RuntimeError => ex
+              # Rails 3.1 raises if you initialize twice, which we do
+              # (once in RailsRuntimeInitializer, and again in
+              # RackApplicationImpl). In that case, we ignore the
+              # exception. 
+              raise unless ex.message =~ /Application has been already initialized/
+            end
           end
         end
       end
