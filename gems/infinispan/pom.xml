@@ -35,7 +35,7 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-web</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.msc</groupId>
