@@ -168,6 +168,20 @@ class AssemblyTool
     end
   end
 
+  def remove_non_web_extensions(doc)
+    to_remove = %W(org.jboss.as.clustering.infinispan org.jboss.as.connector
+                   org.jboss.as.ejb3 org.jboss.as.jacorb
+                   org.jboss.as.jaxrs org.jboss.as.jpa org.jboss.as.messaging
+                   org.jboss.as.osgi org.jboss.as.sar
+                   org.jboss.as.threads org.jboss.as.webservices
+                   org.jboss.as.weld org.torquebox.cdi org.torquebox.jobs
+                   org.torquebox.messaging org.torquebox.security org.torquebox.services)
+    extensions = doc.root.get_elements( 'extensions' ).first
+    to_remove.each do |name|
+      extensions.delete_element( "extension[@module='#{name}']" )
+    end
+  end
+
   def add_subsystems(doc)
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
@@ -176,6 +190,19 @@ class AssemblyTool
         if ( previous_subsystem.empty? )
           profile.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:torquebox-#{name}:1.0" )
         end
+      end
+    end
+  end
+
+  def remove_non_web_subsystems(doc)
+    to_remove = %W(datasources ejb3 infinispan jacorb jaxrs jca jpa messaging osgi
+                   resource-adapters sar threads
+                   webservices weld torquebox-cdi torquebox-jobs
+                   torquebox-messaging torquebox-security torquebox-services)
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+      to_remove.each do |name|
+        profile.delete_element( "subsystem[@xmlns='urn:jboss:domain:#{name}:1.0']" )
       end
     end
   end
@@ -206,6 +233,10 @@ class AssemblyTool
       add_extensions(doc)
       add_subsystems(doc)
       set_welcome_root(doc)
+
+      # Uncomment to create a minimal standalone.xml
+      # remove_non_web_extensions(doc)
+      # remove_non_web_subsystems(doc)
 
       output = File.join( File.dirname(file), "torquebox", File.basename(file) )
       FileUtils.mkdir_p( File.dirname(output) )
