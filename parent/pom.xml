@@ -20,6 +20,14 @@
     The TorqueBox Parent POM
   </description>
 
+  <developers>
+    <developer>
+      <id>torquebox-team</id>
+      <name>The TorqueBox Team</name>
+      <email>torquebox-dev@torquebox.org</email>
+    </developer>
+  </developers>
+
   <scm>
     <connection>scm:git:git://github.com/torquebox/torquebox-release.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/torquebox/torquebox-release.git</developerConnection>
