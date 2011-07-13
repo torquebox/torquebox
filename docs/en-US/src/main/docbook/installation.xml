@@ -111,9 +111,11 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
     installation.</para>
 
     <para>You can also run TorqueBox using your own install of JRuby by
-    installing the TorqueBox gems. <screen><prompt>$</prompt> <command>jruby -S gem install torquebox torquebox-capistrano-support</command></screen>
+    installing the TorqueBox gems. <screen><prompt>$</prompt> <command>jruby -S gem install torquebox-server --pre --source http://torquebox.org/2x/builds/LATEST/gem-repo/</command></screen>
     You will also need to set <envar>$JRUBY_HOME</envar> to point to your
-    JRuby installation.</para>
+    JRuby installation. If you want to know more about torquebox gem, take a
+    look <ulink
+    url="http://torquebox.org/news/2011/06/10/torquebox-gem/">here.</ulink></para>
 
     <para><emphasis>Note:</emphasis> if you are going to run a non-bundled
     JRuby with a prerelease build of TorqueBox, it is recommended that you
@@ -162,56 +164,70 @@ rake torquebox:upstart:stop     # Stop TorqueBox when running as an upstart...
 
     <itemizedlist>
       <listitem>
+         
+
         <command>torquebox:check</command>
 
-        : Check your TorqueBox installation
+         : Check your TorqueBox installation 
       </listitem>
 
       <listitem>
+         
+
         <command>torquebox:run</command>
 
-        : Run TorqueBox
+         : Run TorqueBox 
       </listitem>
 
       <listitem>
+         
+
         <command>torquebox:upstart:check</command>
 
-        : Check if TorqueBox is installed as an upstart service
+         : Check if TorqueBox is installed as an upstart service 
       </listitem>
 
       <listitem>
+         
+
         <command>torquebox:upstart:install</command>
 
-        : Install TorqueBox as an upstart service
+         : Install TorqueBox as an upstart service 
       </listitem>
 
       <listitem>
+         
+
         <command>torquebox:upstart:restart</command>
 
-        : Restart TorqueBox when it is running as an upstart service
+         : Restart TorqueBox when it is running as an upstart service 
       </listitem>
 
       <listitem>
+         
+
         <command>torquebox:upstart:start</command>
 
-        : Start TorqueBox when it is installed as an upstart service
+         : Start TorqueBox when it is installed as an upstart service 
       </listitem>
 
       <listitem>
+         
+
         <command>torquebox:upstart:stop</command>
 
-        : Stop TorqueBox when it is installed as an upstart service
+         : Stop TorqueBox when it is installed as an upstart service 
       </listitem>
     </itemizedlist>
 
     <para>Note: The <command>upstart:install</command> task makes a couple of
     assumptions you need to take into account. <itemizedlist>
         <listitem>
-          You must have a 'torquebox' user on your system.
+           You must have a 'torquebox' user on your system. 
         </listitem>
 
         <listitem>
-          The rake task attempts to create a symlink from $TORQUEBOX_HOME to /opt/torquebox. Run the task as a user with sufficient permissions so that this does not fail.
+           The rake task attempts to create a symlink from $TORQUEBOX_HOME to /opt/torquebox. Run the task as a user with sufficient permissions so that this does not fail. 
         </listitem>
       </itemizedlist></para>
   </section>
