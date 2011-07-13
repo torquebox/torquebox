@@ -52,6 +52,8 @@ inside('app') {
   FileUtils.mkdir %w( tasks jobs )
 }
 
+app_constant = Rails::VERSION::MAJOR == 2 ? 'Rails::Application' : app_const
+
 # We need the app to find the rake tasks
 rakefile( 'torquebox.rake' ) do
   <<-TASK
@@ -67,7 +69,7 @@ namespace :db do
   task :load_config => :rails_env do
     require 'active_record'
     require 'activerecord-jdbc-adapter'
-    ActiveRecord::Base.configurations = Rails::Application.config.database_configuration
+    ActiveRecord::Base.configurations = #{app_constant}.config.database_configuration
   end
 end
 
