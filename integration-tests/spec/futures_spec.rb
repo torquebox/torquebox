@@ -38,6 +38,7 @@ remote_describe 'in container futures tests' do
     end
 
     it "should set the status" do
+      pending "until Toby can get it working reliably on CI"
       future = @something.with_status
       @backchannel.receive( :timeout => 120_000 ).should == 'release'
       future.should be_started
