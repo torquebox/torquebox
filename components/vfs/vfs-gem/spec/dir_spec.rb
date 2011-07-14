@@ -248,6 +248,13 @@ describe "Dir extensions for VFS" do
         items.should include( "#{prefix}/sound of music" )
       end
 
+      it "should allow for multiple single-star globbing" do
+        items = Dir.glob( "#{prefix}/home/**/*file*.txt" )
+        items.should_not be_empty
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+        items.should include( "#{prefix}/home/larry/file2.txt" )
+      end
+
       it "should allow globbing of multiple patterns via []" do
         items = []
         lambda {
