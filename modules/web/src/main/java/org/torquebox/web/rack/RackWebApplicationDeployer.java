@@ -110,7 +110,8 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
             webMetaData = new WebMetaData();
             ServiceName jgroups = ChannelFactoryService.getServiceName(null);
             if (phaseContext.getServiceRegistry().getService( jgroups ) != null) {
-              webMetaData.setDistributable( new EmptyMetaData() );
+                log.info("Marking app as distributable");
+                webMetaData.setDistributable( new EmptyMetaData() );
             }
             warMetaData.setWebMetaData( webMetaData );
         }
