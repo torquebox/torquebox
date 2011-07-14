@@ -2,7 +2,7 @@ require 'rubygems'
 require 'sinatra'
 require 'haml'
 require 'dm-core'
-require 'datamapper/dm-infinispan-adapter'
+require 'torquebox-infinispan'
 
 get '/' do 
   haml :index
