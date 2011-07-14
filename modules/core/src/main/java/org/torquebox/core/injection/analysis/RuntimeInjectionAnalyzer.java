@@ -24,7 +24,6 @@ public class RuntimeInjectionAnalyzer {
     }
 
     public Object analyzeAndInject(Object arg) throws Exception {
-        System.err.println( "Analyzing: " + arg.getClass() );
         if (arg instanceof RubyProc) {
             RubyProc proc = (RubyProc) arg;
             InjectionRubyByteCodeVisitor visitor = new InjectionRubyByteCodeVisitor( this.analyzer );
@@ -40,7 +39,6 @@ public class RuntimeInjectionAnalyzer {
                 for (Injectable each : injectables) {
                     ServiceName eachName = each.getServiceName( this.serviceTarget, this.deploymentUnit );
                     ServiceController<?> controller = this.serviceRegistry.getRequiredService( eachName );
-                    System.err.println( eachName + " state -> " + controller.getState() );
                     if (controller.getState() == State.UP) {
                         Object injectedValue = controller.getValue();
                         registry.getInjector( each.getKey() ).inject( injectedValue );
@@ -54,7 +52,6 @@ public class RuntimeInjectionAnalyzer {
                 for (RuntimeInjectionListener each : waitingListeners) {
                     each.waitForInjectableness();
                     Object value = each.getValue();
-                    System.err.println( each + " +====> " + value );
                     registry.getInjector( each.getKey() ).inject( value );
                 }
             } finally {

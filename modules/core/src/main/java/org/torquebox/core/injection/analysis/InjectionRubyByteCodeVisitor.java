@@ -54,7 +54,6 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
 
     @Override
     public Object visitFCallNode(FCallNode node) throws InjectionException {
-        System.err.println( node );
         String callName = node.getName();
 
         if (!this.markerSeen && (callName.equals( "include" ) || callName.equals( "extend" ))) {
