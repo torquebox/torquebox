@@ -40,7 +40,7 @@ module TorqueBox
       end
       
       def accepts(file)
-        matched = !!( file.path_name =~ @regexp )
+        matched = !!( @regexp =~ file.path_name.to_s )
         matched &&= file.directory? if @dirs_only
         matched
       end
