@@ -1594,6 +1594,23 @@ tasks:
             if you signal status information from within your task. See the <link
             linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
           </row>
+
+          <row>
+            <entry>status_changed?</entry>
+            
+            <entry>Returns true if the status has changed since you last called <function>status</function>. 
+            This will only have meaning if you signal status information from within your task. See the <link
+            linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
+          </row>
+
+          <row>
+            <entry>all_statuses</entry>
+            
+            <entry>Returns an array of all the statuses received by the future, which may not include all of 
+            the statuses sent if the task completes before they are all received. 
+            This will only have meaning if you signal status information from within your task. See the <link
+            linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
+          </row>
           
           <row>
             <entry>result</entry>
