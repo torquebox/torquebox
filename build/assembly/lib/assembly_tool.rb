@@ -214,6 +214,19 @@ class AssemblyTool
     end
   end
 
+  def unquote_cookie_path(doc)
+    set_system_property(doc, 'org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR', false)
+  end
+
+  def set_system_property(doc, name, value)
+    props = doc.root.elements['system-properties'] || REXML::Element.new('system-properties')
+    prop = props.elements["property[@name='#{name}']"] || REXML::Element.new('property')
+    prop.attributes['name'] = name
+    prop.attributes['value'] = value
+    props.push(prop) unless prop.parent
+    doc.root.insert_after('extensions', props) unless props.parent
+  end
+
   def backup_current_config
     %w{ standalone domain }.each do |mode|
       Dir.chdir( File.join( @jboss_dir, mode, 'configuration' ) ) do
@@ -233,6 +246,7 @@ class AssemblyTool
       add_extensions(doc)
       add_subsystems(doc)
       set_welcome_root(doc)
+      unquote_cookie_path(doc)
 
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)
