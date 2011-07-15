@@ -148,6 +148,8 @@ describe TorqueBox::Infinispan::Cache do
   describe "with JTA transactions" do
 
     it "should accept transactional blocks" do
+      pending "transaction support"
+
       @cache.transaction do |cache|
         cache.put('Frankie', 'Vallie')
       end
@@ -155,6 +157,8 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should behave like a transaction" do
+      pending "transaction support"
+
       @cache.transaction do |cache|
         cache.put('Tommy', 'Dorsey')
         raise "yikes!"
@@ -165,6 +169,8 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should handle multiple transactions" do
+      pending "transaction support"
+
       @cache.transaction do |cache|
         cache.put('Tommy', 'Dorsey')
         raise "yikes!"
