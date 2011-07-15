@@ -36,25 +36,30 @@ module TorqueBox
 
       # Signal that processing has started.
       def started
-        publish( :started => true, :priority => :low )
+        send_response(:low)
       end
 
       # Report the current status back to the client. The status value
       # is application specific.
       def status=(status)
-        publish( :status => status )
+        @status_set = true
+        @status = status
+        send_response
       end
       
       # Signal that processing has completed.
       # @param The result of the operation.
       def result=(result)
-        publish( :result => result, :priority => :high )
+        @result_set = true
+        @result = result
+        send_response :high 
       end
 
       # Signal that an error occurred during processing.
       # @param [Exception] The error!
       def error=(error)
-        publish( :error => error, :priority => :high )
+        @error = error
+        send_response :high 
       end
       
       # Handles started/complete/error for you around the given
@@ -84,8 +89,17 @@ module TorqueBox
       end
       
       protected
-      def publish(message)
-        @queue.publish( message, :correlation_id => @correlation_id, :ttl => @message_ttl )
+      def send_response(priority = :normal)
+        message = {}
+        message[:status] = @status if @status_set
+        message[:error] = @error if @error
+        message[:result] = @result if @result_set
+        @queue.publish( message,
+                        {
+                          :correlation_id => @correlation_id,
+                          :ttl => @message_ttl,
+                          :priority => priority
+                        } )
       end
     end
   end

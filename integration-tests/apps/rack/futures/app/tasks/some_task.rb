@@ -4,6 +4,7 @@ class SomeTask < TorqueBox::Messaging::Task
 
   def initialize
     @backchannel = TorqueBox::Messaging::Queue.new( '/queue/backchannel' )
+    @ack = TorqueBox::Messaging::Queue.new( '/queue/ack' )
   end
   
   def foo(payload = { })
@@ -15,10 +16,10 @@ class SomeTask < TorqueBox::Messaging::Task
   def with_status(payload={ })
     future.status = '1'
     future.status = '2'
-    sleep(3)
-    @backchannel.publish( 'release' )
-    @backchannel.receive( :timeout => 1_000 )
-
+    future.status = '3'
+    future.status = '4'
+    @ack.receive( :timeout => 10_000 )
+    'ding'
   end
     
 

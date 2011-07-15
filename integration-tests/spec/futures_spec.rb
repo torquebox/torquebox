@@ -12,13 +12,24 @@ remote_describe 'in container futures tests' do
     queues:
       /queue/backchannel:
         durable: false
+      /queue/ack:
+        durable: false
   END
 
   shared_examples_for 'something with a future' do
     before(:each) do
       @backchannel = TorqueBox::Messaging::Queue.new( '/queue/backchannel' )
+      @ack = TorqueBox::Messaging::Queue.new( '/queue/ack' )
     end
 
+    def wait_for
+      wait_time = 0
+      until yield || wait_time > 10
+        sleep(0.1)
+        wait_time += 0.1
+      end
+    end
+    
     it "should work" do
       future = @something.foo
       @backchannel.receive( :timeout => 120_000 ).should == 'release'
@@ -38,14 +49,17 @@ remote_describe 'in container futures tests' do
     end
 
     it "should set the status" do
-      pending "until Toby can get it working reliably on CI"
       future = @something.with_status
-      @backchannel.receive( :timeout => 120_000 ).should == 'release'
-      future.should be_started
-      future.status.should == '1'
-      future.status.should == '2'
-      future.status.should == '2'
-      @backchannel.publish( 'finish' )
+      wait_for { future.started? }
+      wait_for { future.status_changed? }
+      ['2', '3'].include?(future.status).should be_true
+      wait_for { future.status_changed? }
+      future.status.should == '4'
+      future.all_statuses.should == ['1', '2', '3', '4']
+      @ack.publish( 'ack' )
+      wait_for { future.complete? }
+      future.result.should == 'ding'
+      future.status.should == '4'
     end
   end
 
