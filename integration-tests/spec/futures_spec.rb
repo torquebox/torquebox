@@ -49,6 +49,7 @@ remote_describe 'in container futures tests' do
     end
 
     it "should set the status" do
+      pending 'still racist'
       future = @something.with_status
       wait_for { future.started? }
       wait_for { future.status_changed? }
