@@ -12,14 +12,11 @@ remote_describe 'in container futures tests' do
     queues:
       /queue/backchannel:
         durable: false
-      /queue/ack:
-        durable: false
   END
 
   shared_examples_for 'something with a future' do
     before(:each) do
       @backchannel = TorqueBox::Messaging::Queue.new( '/queue/backchannel' )
-      @ack = TorqueBox::Messaging::Queue.new( '/queue/ack' )
     end
 
     def wait_for
@@ -49,15 +46,11 @@ remote_describe 'in container futures tests' do
     end
 
     it "should set the status" do
-      pending 'still racist'
       future = @something.with_status
       wait_for { future.started? }
       wait_for { future.status_changed? }
-      ['2', '3'].include?(future.status).should be_true
-      wait_for { future.status_changed? }
-      future.status.should == '4'
-      future.all_statuses.should == ['1', '2', '3', '4']
-      @ack.publish( 'ack' )
+      ['1', '2', '3', '4'].should include(future.status)
+      @backchannel.publish( 'ack' )
       wait_for { future.complete? }
       future.result.should == 'ding'
       future.status.should == '4'

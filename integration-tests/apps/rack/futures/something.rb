@@ -7,7 +7,6 @@ class Something
 
   def initialize
     @backchannel = TorqueBox::Messaging::Queue.new( '/queue/backchannel' )
-    @ack = TorqueBox::Messaging::Queue.new( '/queue/ack' )
   end
   
   def foo
@@ -21,7 +20,7 @@ class Something
     future.status = '2'
     future.status = '3'
     future.status = '4'
-    @ack.receive( :timeout => 10_000 )
+    @backchannel.receive( :timeout => 10_000 )
     'ding'
   end
     
