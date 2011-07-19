@@ -110,15 +110,15 @@ describe TorqueBox::Messaging::Destination do
       @container.stop
     end
 
-    {
-      true => 'prop = true',
-      true => 'prop <> false',
-      5 => 'prop = 5',
-      5 => 'prop > 4',
-      5.5 => 'prop = 5.5',
-      5.5 => 'prop < 6',
-      'string' => "prop = 'string'"
-    }.each do |value, selector|
+    [
+      [true, 'prop = true'],
+      [true, 'prop <> false'],
+      [5, 'prop = 5'],
+      [5, 'prop > 4'],
+      [5.5, 'prop = 5.5'],
+      [5.5, 'prop < 6'],
+      ['string', "prop = 'string'"]
+    ].each do |value, selector|
       it "should be able to select with property set to #{value} using selector '#{selector}'" do
         @queue.publish value.to_s, :properties => { :prop => value }
         message = @queue.receive(:timeout => 1000, :selector => selector)
@@ -270,9 +270,9 @@ describe TorqueBox::Messaging::Destination do
         queue.start
 
         response_thread = Thread.new {
-          queue.receive_and_publish( :timeout => 10000 ) { |msg| msg.upcase }
+          queue.receive_and_publish( :timeout => 120_000 ) { |msg| msg.upcase }
         }
-        message = queue.publish_and_receive "ping", :timeout => 10000
+        message = queue.publish_and_receive "ping", :timeout => 120_000
         response_thread.join
 
         queue.destroy
@@ -284,9 +284,9 @@ describe TorqueBox::Messaging::Destination do
         queue.start
 
         response_thread = Thread.new {
-          queue.receive_and_publish( :timeout => 10000 )
+          queue.receive_and_publish( :timeout => 120_000 )
         }
-        message = queue.publish_and_receive "ping", :timeout => 10000
+        message = queue.publish_and_receive "ping", :timeout => 120_000
         response_thread.join
 
         queue.destroy
@@ -300,14 +300,14 @@ describe TorqueBox::Messaging::Destination do
         thread_count = 3
         response_threads = (1..thread_count).map do
           Thread.new {
-            queue.receive_and_publish( :timeout => 10000 ) { |msg| msg.upcase }
+            queue.receive_and_publish( :timeout => 120_000 ) { |msg| msg.upcase }
           }
         end
 
-        message = queue.publish_and_receive "ping", :timeout => 10000
+        message = queue.publish_and_receive "ping", :timeout => 120_000
         # Send extra messages to trigger all remaining response threads
         (thread_count - 1).times do
-          queue.publish_and_receive "ping", :timeout => 10000
+          queue.publish_and_receive "ping", :timeout => 120_000
         end
         response_threads.each { |thread| thread.join }
 
@@ -320,7 +320,7 @@ describe TorqueBox::Messaging::Destination do
         queue.start
 
         response_thread = Thread.new {
-          queue.receive_and_publish( :timeout => 10000,
+          queue.receive_and_publish( :timeout => 120_000,
                                      :selector => "age > 60 or tan = true" )
         }
 
@@ -332,7 +332,7 @@ describe TorqueBox::Messaging::Destination do
                                    :properties => { :age => 25 } )
         # Publish a synchronous message that should match selector
         message = queue.publish_and_receive( "wrinkled",
-                                             :timeout => 10000,
+                                             :timeout => 120_000,
                                              :properties => { :age => 65, :tan => true } )
         message.should eql( "wrinkled" )
         response_thread.join
