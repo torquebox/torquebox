@@ -16,5 +16,15 @@ describe "Pathname extensions for VFS" do
       pathname.should_receive(:realpath_without_vfs).and_return(Pathname.new("/real/path"))
       pathname.realpath.to_s.should == "/real/path"
     end
+
+    it "should not find vfs paths to be relative" do
+      pathname = Pathname.new("vfs:/tmp/test")
+      pathname.relative?.should == false
+    end
+
+    it "should find real relative paths to be relative" do
+      pathname = Pathname.new("../tmp/test")
+      pathname.relative?.should == true
+    end
   end
 end
