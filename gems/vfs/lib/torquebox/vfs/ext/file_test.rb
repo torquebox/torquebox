@@ -43,6 +43,10 @@ module FileTest
       File.writable?(filename)
     end
 
+    def size(filename)
+      File.size(filename)
+    end
+
   end
 
 end
