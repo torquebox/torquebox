@@ -66,6 +66,10 @@ module TorqueBox
         File.join("#{server_dir}","configuration")
       end
 
+      def cluster_config_file
+        File.join(config_dir, "standalone-preview-ha.xml")
+      end
+
       def properties_dir
         config_dir
       end

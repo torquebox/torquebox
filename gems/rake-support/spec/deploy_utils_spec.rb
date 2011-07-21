@@ -129,6 +129,10 @@ module TorqueBox
       it 'should be ENV["JBOSS_HOME"]/standalone/configuration' do
         TorqueBox::DeployUtils.config_dir.should == "#{ENV['JBOSS_HOME']}/standalone/configuration"
       end
+
+      it 'should be ENV["JBOSS_HOME"]/standalone/configuration/standalone-preview-ha.xml' do
+        TorqueBox::DeployUtils.cluster_config_file.should == "#{ENV['JBOSS_HOME']}/standalone/configuration/standalone-preview-ha.xml"
+      end
     end
 
 
