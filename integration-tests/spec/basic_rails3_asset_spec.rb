@@ -37,16 +37,34 @@ describe "basic rails3 asset test" do
     Capybara.app_host = @original_capy_app_host
   end
 
-  it "should work for rails3 at root context" do
-    Capybara.app_host = "http://integ-app3.torquebox.org:8080"
-    visit "/"
-    image = page.find('img')
-    image['src'].should match(/^\/images\/rails\.png/)
+  describe "root context" do
+    before(:each) do
+      Capybara.app_host = "http://integ-app3.torquebox.org:8080"
+    end
+
+    it "should generate correct asset path" do
+      visit "/"
+      image = page.find('img')
+      image['src'].should match(/^\/images\/rails\.png/)
+    end
+
+    it "should return correct Content-Type header" do
+      visit "/images/rails.png"
+      page.response_headers['Content-Type'].should == 'image/png'
+    end
   end
 
-  it "should work for rails3 at non-root context" do
-    visit "/basic-rails3-asset"
-    image = page.find('img')
-    image['src'].should match(/^\/basic-rails3-asset\/images\/rails\.png/)
+  describe "non-root context" do
+    it "should generate correct asset path" do
+      visit "/basic-rails3-asset"
+      image = page.find('img')
+      image['src'].should match(/^\/basic-rails3-asset\/images\/rails\.png/)
+    end
+
+    it "should return correct Content-Type header" do
+      visit "/basic-rails3-asset/images/rails.png"
+      page.response_headers['Content-Type'].should == 'image/png'
+    end
   end
+
 end
