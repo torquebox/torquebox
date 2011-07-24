@@ -39,6 +39,8 @@ import org.jboss.vfs.VirtualFile;
  * 
  */
 public class KnobRootMountProcessor implements DeploymentUnitProcessor {
+    
+    private Closeable knobCloseable;
 
     public KnobRootMountProcessor() {
     }
@@ -60,8 +62,8 @@ public class KnobRootMountProcessor implements DeploymentUnitProcessor {
         String deploymentName = deploymentUnit.getName();
         VirtualFile realRoot = root.getChild( deploymentName );
         try {
-            Closeable closeable = VFS.mountReal( root.getPhysicalFile(), realRoot );
-            MountHandle handle = new MountHandle( closeable );
+            knobCloseable = VFS.mountReal( root.getPhysicalFile(), realRoot );
+            MountHandle handle = new MountHandle( knobCloseable );
             ResourceRoot expandedResourceRoot = new ResourceRoot( realRoot, handle );
             deploymentUnit.putAttachment( Attachments.DEPLOYMENT_ROOT, expandedResourceRoot );
             deploymentUnit.putAttachment( Attachments.MODULE_SPECIFICATION, new ModuleSpecification() );
@@ -72,11 +74,12 @@ public class KnobRootMountProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        final ResourceRoot resourceRoot = context.removeAttachment(Attachments.DEPLOYMENT_ROOT);
-        if (resourceRoot != null) {
-            final Closeable mountHandle = resourceRoot.getMountHandle();
-            VFSUtils.safeClose(mountHandle);
-        }
+        VFSUtils.safeClose( getKnobCloseable() );
+    }
+    
+    // Exposed for testing undeploy method
+    protected Closeable getKnobCloseable() {
+        return knobCloseable;
     }
 
 }
