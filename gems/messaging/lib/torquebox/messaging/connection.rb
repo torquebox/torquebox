@@ -47,6 +47,7 @@ module TorqueBox
         begin
           result = block.call( session )
         ensure
+          session.commit if session.transacted?
           session.close
         end
         return result

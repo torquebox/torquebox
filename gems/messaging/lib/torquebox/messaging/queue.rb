@@ -50,7 +50,6 @@ module TorqueBox
       def receive_and_publish(options={}, &block)
         with_new_session do |session|
           session.receive_and_publish(self, normalize_options(options), &block)
-          session.commit if session.transacted?
         end
       end
 
