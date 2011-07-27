@@ -1,7 +1,13 @@
+##
+## This file executes only on the client side, and
+## is not shipped to the server for execution, ever.
+##
+
 require 'capybara/dsl'
 require 'akephalos'
 require 'jmx4r'
 require 'websocket_client'
+require 'stilts-stomp-client'
 
 Capybara.register_driver :akephalos do |app|
   Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)

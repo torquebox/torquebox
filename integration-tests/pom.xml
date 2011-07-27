@@ -246,6 +246,14 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>stilts-stomp-client</artifactId>
+      <version>${version.org.projectodd.stilts}</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
 
   </dependencies>
 
