@@ -15,6 +15,9 @@ import org.jboss.kernel.spi.dependency.KernelController;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.jboss.vfs.VirtualFileFilter;
+import org.jboss.vfs.VisitorAttributes;
+import org.jboss.vfs.util.SuffixMatchFilter;
 
 public class Bootstrap implements BeanMetaDataFactory {
     
@@ -24,7 +27,8 @@ public class Bootstrap implements BeanMetaDataFactory {
     private List<Object> contextNames = new ArrayList<Object>();
     private List<BeanMetaData> beans;
     private VirtualFile jrubyHome;
-
+    public static final VirtualFileFilter JAR_FILTER = new SuffixMatchFilter( ".jar", VisitorAttributes.DEFAULT );
+    
     public Bootstrap() {
     }
 
@@ -86,33 +90,22 @@ public class Bootstrap implements BeanMetaDataFactory {
         return paths;
     }
 
-    protected List<String> getJRubyRoots() throws URISyntaxException {
-        List<String> paths = new ArrayList<String>();
-
-        VirtualFile jrubyHomeLib = getJRubyHome().getChild( "lib" );
-
-        List<VirtualFile> children = jrubyHomeLib.getChildren();
-
-        for (VirtualFile child : children) {
-            if (child.getName().indexOf( "jboss" ) >= 0 || child.getName().indexOf( "log4j" ) >= 0) {
-                continue;
-            }
-            paths.add( child.toURI().toString() );
-        }
-
-        return paths;
+    protected List<String> getJRubyRoots() throws IOException, URISyntaxException {
+        return getJarFiles( getJRubyHome().getChild( "lib" ) );
     }
     
-    protected List<String> getTorqueBoxRoots() throws URISyntaxException {
-        List<String> paths = new ArrayList<String>();
+    protected List<String> getTorqueBoxRoots() throws IOException, URISyntaxException { 
+        return getJarFiles( getJBossHome().getChild( "common" ).getChild( "torquebox" ) );
+    }
+    
+    protected List<String> getJarFiles(VirtualFile dir) throws IOException, URISyntaxException {
+        List<String> jars = new ArrayList<String>();
         
-        VirtualFile torqueBoxLibDir = getJBossHome().getChild( "common" ).getChild( "torquebox" );
-
-        for (VirtualFile child : torqueBoxLibDir.getChildren()) {
-            paths.add( child.toURI().toString() );
+        for(VirtualFile each : dir.getChildren( JAR_FILTER )) {
+            jars.add(  each.toURI().toString() );
         }
         
-        return paths;
+        return jars;
     }
     
     protected VirtualFile getJBossHome() {
