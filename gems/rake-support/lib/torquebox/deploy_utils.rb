@@ -144,6 +144,11 @@ module TorqueBox
         end
       end
 
+      def run_server_clustered
+        options = "--server-config=#{cluster_config_file}"
+        cmd_path = "/bin/sh #{File.join(TorqueBox::Server.jboss_home, 'bin/standalone.sh')}"
+        exec "#{cmd_path} #{options}"
+      end
       def create_archive(archive = archive_name, app_dir = Dir.pwd, dest_dir = Dir.pwd)
         skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
 
