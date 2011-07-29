@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/destination'
+require 'torquebox/messaging/connection_factory'
 require 'torquebox/service_registry'
 
 module TorqueBox

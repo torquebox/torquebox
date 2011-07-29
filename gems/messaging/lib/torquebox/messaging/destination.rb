@@ -59,6 +59,7 @@ module TorqueBox
         wait_for_destination(options[:startup_timeout]) do
           with_new_session do |session|
             session.publish self, message, normalize_options(options)
+            session.commit if session.transacted?
           end
         end
       end
@@ -66,7 +67,9 @@ module TorqueBox
       def receive(options = {})
         wait_for_destination(options[:startup_timeout]) do
           with_new_session do |session|
-            session.receive self, options
+            result = session.receive self, options
+            session.commit if session.transacted?
+            result
           end
         end
       end
