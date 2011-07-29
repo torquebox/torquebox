@@ -35,7 +35,7 @@ else
       end
     else
       puts "*** Syncing to integ-dist by rsync"
-      cmd = [ 'rsync -a . --relative',
+      cmd = [ 'rsync -av . --relative',
               '--include jboss/modules',
               '--include jboss/standalone',
               '--exclude jruby/share/ri',
