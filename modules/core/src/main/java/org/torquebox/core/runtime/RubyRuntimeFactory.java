@@ -45,6 +45,7 @@ import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.RubyModule;
 import org.jruby.ast.executable.Script;
 import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.Constants;
 import org.jruby.util.ClassCache;
 import org.torquebox.bootstrap.JRubyHomeLocator;
 import org.torquebox.core.pool.InstanceFactory;
@@ -417,13 +418,15 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private void prepareRuntime(Ruby runtime, String contextInfo) {
-        log.info( "Disabling POSIX ENV passthrough for " + contextInfo + " runtime (TORQUE-497)" );
-        StringBuffer env_fix = new StringBuffer();
-        env_fix.append( "update_real_env_attr = org.jruby.RubyGlobal::StringOnlyRubyHash.java_class.declared_fields.find { |f| f.name == 'updateRealENV' }\n" );
-        env_fix.append( "update_real_env_attr.accessible = true\n" );
-        env_fix.append( "update_real_env_attr.set_value(ENV.to_java, false)\n" );
-        runtime.evalScriptlet( env_fix.toString() );
-        
+        if ("1.6.3".equals( Constants.VERSION )) {
+            log.info( "Disabling POSIX ENV passthrough for " + contextInfo + " runtime (TORQUE-497)" );
+            StringBuffer env_fix = new StringBuffer();
+            env_fix.append( "update_real_env_attr = org.jruby.RubyGlobal::StringOnlyRubyHash.java_class.declared_fields.find { |f| f.name == 'updateRealENV' }\n" );
+            env_fix.append( "update_real_env_attr.accessible = true\n" );
+            env_fix.append( "update_real_env_attr.set_value(ENV.to_java, false)\n" );;
+            runtime.evalScriptlet( env_fix.toString() );
+        }
+
         runtime.getLoadService().require( "rubygems" );
         runtime.evalScriptlet( "require %q(torquebox-vfs)" );
         runtime.evalScriptlet( "require %q(torquebox-core)" );
