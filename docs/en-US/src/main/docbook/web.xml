@@ -64,8 +64,15 @@
     <para>
       Clustering TorqueBox nodes is trivially easy:
 
-      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all</command> </screen>
+      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all -b 1.2.3.4</command> </screen>
 
+      The <parameter>-c all</parameter> flag tells JBoss to use the <parameter>all</parameter>
+      profile, which includes all of the components required for clustering. The
+      <parameter>-b</parameter> flag is used to specify the ip address used to bind 
+      the various JBoss services. By default, JBoss binds to localhost, which
+      will prevent your node from being seen by other members of the cluster.
+    </para>
+    <para>
       And when those nodes are behind the <ulink
       url="http://www.jboss.org/mod_cluster">JBoss mod_cluster Apache
       module</ulink>, you get automatic, dynamic configuration of
