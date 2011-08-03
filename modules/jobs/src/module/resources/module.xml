@@ -27,12 +27,11 @@
     <resources>
         <resource-root path="${project.artifactId}-${project.version}.jar"/>
         <resource-root path="quartz-${version.org.quartz-scheduler}.jar"/>
-        <resource-root path="slf4j-api-${version.org.slf4j}.jar"/>
-        <resource-root path="slf4j-log4j12-${version.org.slf4j}.jar"/>
     </resources>
 
     <dependencies>
         <module name="javax.api"/>
+        <module name="org.slf4j"/>
         <module name="org.apache.log4j"/>
         <module name="org.jboss.staxmapper"/>
         <module name="org.jboss.as.controller"/>

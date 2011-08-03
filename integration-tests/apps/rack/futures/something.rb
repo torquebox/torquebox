@@ -18,12 +18,12 @@ class Something
   def with_status
     future.status = '1'
     future.status = '2'
-    sleep(3)
-    @backchannel.publish( 'release' )
-    @backchannel.receive( :timeout => 1_000 )
+    future.status = '3'
+    future.status = '4'
+    @backchannel.receive( :timeout => 10_000 )
+    'ding'
   end
     
-
   def error
     @backchannel.publish( 'release' )
     raise Exception.new('blah')

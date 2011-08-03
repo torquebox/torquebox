@@ -20,6 +20,7 @@ require 'pathname'
 class Pathname
 
   alias_method :realpath_without_vfs, :realpath
+  alias_method :relative_without_vfs, :relative?
 
   def realpath
     vfs_path? ? expand_path : realpath_without_vfs
@@ -27,5 +28,9 @@ class Pathname
 
   def vfs_path?
     @path.to_s =~ /^vfs:/
+  end
+
+  def relative?
+    vfs_path? ? false : relative_without_vfs
   end
 end

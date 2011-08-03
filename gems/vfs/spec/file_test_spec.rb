@@ -26,6 +26,10 @@ describe "File extensions for VFS" do
     delegate_to_file(:writable?, 'file')
   end
 
+  it "should delegate to File.size" do
+    delegate_to_file(:size, 'file')
+  end
+
   def delegate_to_file(*args)
     method = args.shift
     File.should_receive(method).with(*args).and_return('value')

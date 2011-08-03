@@ -66,6 +66,10 @@ module TorqueBox
         File.join("#{server_dir}","configuration")
       end
 
+      def cluster_config_file
+        File.join(config_dir, 'torquebox', "standalone-preview-ha.xml")
+      end
+
       def properties_dir
         config_dir
       end
@@ -109,8 +113,9 @@ module TorqueBox
         puts "TorqueBox install OK: #{opt_torquebox}"
       end
 
-      def run_command_line
-        options = ENV['JBOSS_OPTS']
+      def run_command_line(clustered)
+        options = ENV['JBOSS_OPTS'] || ''
+        options = "#{options} --server-config=#{cluster_config_file}" if clustered
         if windows?
           cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
         else
@@ -119,7 +124,7 @@ module TorqueBox
         [cmd, options]
       end
 
-      def run_server
+      def run_server(clustered=false)
         Dir.chdir(jboss_home) do
           # don't send the gemfile from the current app, instead let
           # bundler suss it out itself for each deployed
@@ -128,17 +133,16 @@ module TorqueBox
           ENV.delete('BUNDLE_GEMFILE')
 
           if windows?
-            exec *run_command_line
+            exec *run_command_line(clustered)
           else
             old_trap = trap("INT") do
               puts "caught SIGINT, shutting down"
             end
-            exec_command(run_command_line.join(' '))
+            exec_command(run_command_line(clustered).join(' '))
             trap("INT", old_trap)
           end
         end
       end
-
 
       def create_archive(archive = archive_name, app_dir = Dir.pwd, dest_dir = Dir.pwd)
         skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }

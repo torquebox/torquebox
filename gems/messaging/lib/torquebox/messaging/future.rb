@@ -20,12 +20,17 @@ module TorqueBox
     # A Future encapsulates the result of a long running
     # process, and is used in conjunction with a {FutureResponder}. 
     class Future
-
+      # We can't really do no timeout - 1ms is as close as we can get.
+      NO_TIMEOUT = 1
+      
       # Returns the remote error (if any)
       attr_reader :error
       attr_reader :correlation_id
       attr_accessor :default_result_timeout
-
+      
+      # Returns all of the statuses seen by this future as an array.
+      attr_reader :all_statuses
+      
       # @param [TorqueBox::Messaging::Queue] response_queue The queue
       #   where response messages are to be received.
       # @param [Hash] options Additional options
@@ -39,6 +44,7 @@ module TorqueBox
         @queue = response_queue
         @correlation_id = options[:correlation_id] || self.class.unique_id
         @default_result_timeout = options[:default_result_timeout] || 30_000
+        @all_statuses = []
       end
 
       def started?
@@ -61,8 +67,13 @@ module TorqueBox
       # processed task itself.
       # @see FutureResponder#status
       def status
-        receive unless @complete || @error
-        @status
+        @prior_status = retrieve_status
+      end
+      
+      # Returns true if the status has changed since the last call to
+      # {#status}. 
+      def status_changed?
+        @prior_status != retrieve_status
       end
       
       # Attempts to return the remote result.
@@ -92,12 +103,20 @@ module TorqueBox
       end
 
       protected
-      def receive(timeout = 1)
+      def retrieve_status
+        receive unless @complete || @error
+        @status
+      end
+      
+      def receive(timeout = NO_TIMEOUT)
         response = @queue.receive( :timeout => timeout, :selector => "JMSCorrelationID = '#{@correlation_id}'" )
 
         if response
           @started = true
-          @status = response[:status] if response.has_key?( :status )
+          if response.has_key?( :status )
+            @status = response[:status]
+            @all_statuses << @status
+          end
           @complete = response.has_key?( :result )
           @result ||= response[:result]
           @error ||= response[:error]

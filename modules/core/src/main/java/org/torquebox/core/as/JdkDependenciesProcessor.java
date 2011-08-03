@@ -40,39 +40,7 @@ import org.torquebox.core.app.RubyApplicationMetaData;
 public class JdkDependenciesProcessor implements DeploymentUnitProcessor {
     
     private static String[] JAVA_SE_MODULE_IDS = new String[] {
-        "javax.activation.api",
-        "javax.annotation.api",
-        "javax.api",
-        "javax.ejb.api",
-        "javax.el.api",
-        "javax.enterprise.api",
-        "javax.enterprise.deploy.api",
-        "javax.faces.api",
-        "javax.inject.api",
-        "javax.interceptor.api",
-        "javax.jms.api",
-        "javax.jws.api",
-        "javax.mail.api",
-        "javax.persistence.api",
-        "javax.resource.api",
-        "javax.rmi.api",
-        "javax.security.auth.message.api",
-        "javax.security.jacc.api",
-        "javax.servlet.api",
-        "javax.servlet.jsp.api",
-        "javax.servlet.jstl.api",
-        "javax.transaction.api",
-        "javax.validation.api",
-        "javax.ws.rs.api",
-        "javax.wsdl4j.api",
-        "javax.xml.bind.api",
-        "javax.xml.jaxp-provider",
-        "javax.xml.registry.api",
-        "javax.xml.rpc.api",
-        "javax.xml.soap.api",
-        "javax.xml.stream.api",
-        "javax.xml.ws.api",
-        "org.omg.api"
+        "system"
     };
 
     @Override

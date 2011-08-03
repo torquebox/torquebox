@@ -246,6 +246,14 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>stilts-stomp-client</artifactId>
+      <version>${version.org.projectodd.stilts}</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
 
   </dependencies>
 
@@ -388,6 +396,18 @@
                 </configuration>
               </execution>
               <execution>
+                <id>install-sprockets</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>sprockets -v 2.0.0.beta.10 --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
                 <id>install-ar-jdbc</id>
                 <phase>test-compile</phase>
                 <goals>
@@ -510,7 +530,7 @@
             </goals>
             <configuration>
               <jrubyFork>false</jrubyFork>
-              <file>setup-integ-dist.rb</file>
+              <file>bin/setup-integ-dist.rb</file>
               <args>${assembly.dir} ${integ.dist.dir}</args>
             </configuration>
           </execution>

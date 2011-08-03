@@ -24,8 +24,9 @@ class Class
   alias_method :method_added_before_torquebox, :method_added
   
   def method_added(method_name)
-    recursing = caller.find{|e| e =~ /org.torquebox.web.*method_added/ }
-    unless ( recursing ) 
+    recursing = Thread.current[:doing_method_added]
+    unless ( recursing )
+      Thread.current[:doing_method_added] = true
       if ( (self.to_s == 'Rails::Configuration') && ( method_name == :set_root_path! ) )
         self.class_eval do
           def set_root_path!
@@ -89,6 +90,7 @@ class Class
         end
       end
       method_added_before_torquebox(method_name)
+      Thread.current[:doing_method_added] = false
     end # unless ( recursing )
   end # method_added
 end

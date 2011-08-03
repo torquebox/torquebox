@@ -27,9 +27,10 @@ class TorqueBoxCommand < Thor
 
   map "run" => "start"
   desc "run", "Run TorqueBox"
+  method_option :clustered, :type => :boolean, :desc => "Run TorqueBox in clustered mode"
   def start
     setup_environment
-    TorqueBox::DeployUtils.run_server
+    options.clustered ? TorqueBox::DeployUtils.run_server(:clustered) : TorqueBox::DeployUtils.run_server
   end
 
   desc "deploy ROOT", "Deploy an application to TorqueBox"
