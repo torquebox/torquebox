@@ -37,10 +37,16 @@
       <artifactId>jboss-msc</artifactId>
       <scope>provided</scope>
     </dependency>
+    <!--<dependency>-->
+      <!--<groupId>org.jboss</groupId>-->
+      <!--<artifactId>jboss-transaction-spi</artifactId>-->
+      <!--<version>7.0.0.CR1</version>-->
+      <!--<scope>provided</scope>-->
+      <!--</dependency>-->
     <dependency>
-      <groupId>org.jboss.spec.javax.transaction</groupId>
-      <artifactId>jboss-transaction-api_1.1_spec</artifactId>
-      <scope>provided</scope>
+      <groupId>org.jboss</groupId>
+      <artifactId>jboss-transaction-spi</artifactId>
+      <version>7.0.0.CR1</version>
     </dependency>
     <dependency>
       <groupId>org.jboss.marshalling</groupId>

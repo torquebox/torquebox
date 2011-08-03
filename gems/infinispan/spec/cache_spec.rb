@@ -148,8 +148,6 @@ describe TorqueBox::Infinispan::Cache do
   describe "with JTA transactions" do
 
     it "should accept transactional blocks" do
-      pending "transaction support"
-
       @cache.transaction do |cache|
         cache.put('Frankie', 'Vallie')
       end
@@ -157,8 +155,6 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should behave like a transaction" do
-      pending "transaction support"
-
       @cache.transaction do |cache|
         cache.put('Tommy', 'Dorsey')
         raise "yikes!"
@@ -169,8 +165,6 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should handle multiple transactions" do
-      pending "transaction support"
-
       @cache.transaction do |cache|
         cache.put('Tommy', 'Dorsey')
         raise "yikes!"
@@ -191,13 +185,16 @@ describe TorqueBox::Infinispan::Cache do
     before(:all) do
       @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
       @configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
+      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string )
       @index_dir      = File.join( File.dirname(__FILE__), '..', 'org.torquebox.web.infinispan.datamapper.Entry' )
       FileUtils.mkdir @configured_dir 
+      FileUtils.mkdir @date_cfg_dir 
     end
 
     after(:all) do
       FileUtils.rm_rf @default_dir
       FileUtils.rm_rf @configured_dir
+      FileUtils.rm_rf @date_cfg_dir
       FileUtils.rm_rf @index_dir if File.exist?( @index_dir )
     end
 
@@ -215,6 +212,13 @@ describe TorqueBox::Infinispan::Cache do
       entry.data = "Hello world"
       cache.put('foo', entry)
       File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
+    end
+
+    it "should persist dates with a configured directory" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => @date_cfg_dir.to_s )
+      entry = java.util.Date.new
+      cache.put('foo', entry).should be_true
+      File.exist?("#{@date_cfg_dir.to_s}/___defaultcache").should be_true
     end
   end
 

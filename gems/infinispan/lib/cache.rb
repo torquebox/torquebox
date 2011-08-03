@@ -132,7 +132,16 @@ module TorqueBox
       end
 
       def transaction(&block)
-        yield self
+        tm = cache.getAdvancedCache().getTransactionManager()
+        begin
+          tm.begin if tm
+          yield self
+          tm.commit if tm
+        rescue Exception => e
+          tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
+          puts "[ERROR] Exception raised during transaction. Rolling back."
+          puts "[ERROR] #{e.message}"
+        end
       end
 
       def stop
@@ -159,7 +168,8 @@ module TorqueBox
 
       def manager
         # TODO: This name should be ServiceName.JBOSS.append("infinispan", "web")
-        @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
+#        @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
+        @manager ||= TorqueBox::ServiceRegistry.lookup(ServiceName.JBOSS.append("infinispan", "web")) rescue nil
       end
                        
       def reconfigure(mode=clustering_mode)
@@ -178,6 +188,7 @@ module TorqueBox
       def configure(mode=clustering_mode)
         puts "Configuring cache #{name} as #{mode}"
         config = manager.default_configuration.clone
+        config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.JBossTransactionManagerLookup.new )
         config.cache_mode = mode
         manager.define_configuration(name, config)
         manager.get_cache(name)
@@ -195,8 +206,10 @@ module TorqueBox
 
       def local
         # workaround common problem running infinispan in web containers (see FAQ)
+        puts "Configuring local cache for #{name}"
         java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
         config  = org.infinispan.config.Configuration.new.fluent
+        config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
         
         if options[:persist]
           store = org.infinispan.loaders.file.FileCacheStoreConfig.new
