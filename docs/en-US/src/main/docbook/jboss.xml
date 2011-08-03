@@ -4,205 +4,159 @@
 <chapter id="jboss">
   <title>JBoss AS Crash Course</title>
 
-  <para>
-    The JBoss Application Server (AS6) is the foundation upon which
-    TorqueBox is built.  You can go a long way with TorqueBox without
-    knowing anything about the administration of JBoss AS, but for
-    advanced applications, it's worth knowing something about how AS
-    is configured and extended.  Feel free to skip this section if
-    you're just getting started with TorqueBox, and use it as a
-    reference later.
-  </para>
+  <para>The JBoss Application Server (AS6) is the foundation upon which
+  TorqueBox is built. You can go a long way with TorqueBox without knowing
+  anything about the administration of JBoss AS, but for advanced
+  applications, it's worth knowing something about how AS is configured and
+  extended. Feel free to skip this section if you're just getting started with
+  TorqueBox, and use it as a reference later.</para>
 
   <section id="configuring-jboss">
     <title>Configuring</title>
-    <para>
-      JBoss has a very simple way of representing server
-      configurations.  Each directory beneath
-      <filename>server/</filename> denotes a single configuration
-      <emphasis>profile</emphasis>.
-    </para>
-    <para><mediaobject>
-      <imageobject >
-        <imagedata align="center" fileref="images/jboss-server.png"
-                   format="PNG" />
-      </imageobject>
-    </mediaobject></para>
-    <para>
-      TorqueBox provides two: <emphasis>default</emphasis> and
-      <emphasis>all</emphasis>.  A stock JBoss distribution will come
-      with others, as you see above, and of course you're free to
-      create your own custom profiles.
-    </para>
-    <para>
-      Some libraries and config files are common to all server
-      configurations.  To conserve disk space, these are kept in the
-      <filename>common/</filename> directory.  This is, in fact, where
-      the TorqueBox deployers reside.
-    </para>
 
-    <para>
-      All configuration profiles have a common structure, and usually
-      include the following directories: <filename>conf/</filename>,
-      <filename>lib/</filename>, <filename>deployers/</filename>, and
-      <filename>deploy/</filename>.  In general, it isn't a good idea
-      to remove anything from these directories that you didn't put
-      there yourself.
-    </para>
-    <para><mediaobject>
-      <imageobject>
-        <imagedata align="center" fileref="images/jboss-default.png"
-                   format="PNG" />
-      </imageobject>
-    </mediaobject></para>
-    <para>
-      In addition, some directories are created automatically at
-      runtime, as needed: <filename>tmp/</filename>,
-      <filename>work/</filename>, <filename>data/</filename>, and
-      <filename>log/</filename>.  Though not typically necessary, you
-      may safely delete these when the server is not running to clear
-      its persistent state.
-    </para>
+    <para>JBoss has a very simple way of representing server configurations.
+    Each directory beneath <filename>server/</filename> denotes a single
+    configuration <emphasis>profile</emphasis>.</para>
 
+    <para><mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="images/jboss-server.png"
+                     format="PNG" />
+        </imageobject>
+      </mediaobject></para>
+
+    <para>TorqueBox provides two: <emphasis>default</emphasis> and
+    <emphasis>all</emphasis>. A stock JBoss distribution will come with
+    others, as you see above, and of course you're free to create your own
+    custom profiles.</para>
+
+    <para>Some libraries and config files are common to all server
+    configurations. To conserve disk space, these are kept in the
+    <filename>common/</filename> directory. This is, in fact, where the
+    TorqueBox deployers reside.</para>
+
+    <para>All configuration profiles have a common structure, and usually
+    include the following directories: <filename>conf/</filename>,
+    <filename>lib/</filename>, <filename>deployers/</filename>, and
+    <filename>deploy/</filename>. In general, it isn't a good idea to remove
+    anything from these directories that you didn't put there yourself.</para>
+
+    <para><mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="images/jboss-default.png"
+                     format="PNG" />
+        </imageobject>
+      </mediaobject></para>
+
+    <para>In addition, some directories are created automatically at runtime,
+    as needed: <filename>tmp/</filename>, <filename>work/</filename>,
+    <filename>data/</filename>, and <filename>log/</filename>. Though not
+    typically necessary, you may safely delete these when the server is not
+    running to clear its persistent state.</para>
   </section>
 
   <section id="running-jboss">
     <title>Running</title>
-    <para>
-      The <filename>$JBOSS_HOME/bin/</filename> directory contains the main JBoss
-      entry point, <filename>run.sh</filename> (or
-      <filename>run.bat</filename>), along with its config file,
-      <filename>run.conf</filename>.  Running the JBoss server is
-      simple:
 
-      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh</command> </screen>
+    <para>The <filename>$JBOSS_HOME/bin/</filename> directory contains the
+    main JBoss entry point, <filename>run.sh</filename> (or
+    <filename>run.bat</filename>), along with its config file,
+    <filename>run.conf</filename>. Running the JBoss server is simple:
+    <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh</command> </screen>
+    By default, the <filename>default</filename> configuration profile is
+    used. Use the <option>-c</option> option to specify a different
+    configuration and <option>-b</option> option to bind to another address,
+    by default JBoss binds to localhost. For example, to put JBoss in
+    "clustered" mode: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all <command>-b 1.2.3.4</command></command></screen>
+    You may set Java system properties using the <option>-D</option> option.
+    Pass <option>-h</option> for a list of all the available options.</para>
 
-      By default, the <filename>default</filename> configuration
-      profile is used.  Use the <option>-c</option> option to specify
-      a different configuration.  For example, to put JBoss in
-      "clustered" mode:
+    <para>Permanent runtime configuration of JBoss should go in
+    <filename>bin/run.conf</filename>. For example, your application may
+    require more memory (RAM) than the default allocated. Edit
+    <filename>run.conf</filename> to increase the value of
+    <option>-Xmx</option> to something reasonable.</para>
 
-      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all</command> </screen>
-
-      You may set Java system properties using the <option>-D</option>
-      option.  Pass <option>-h</option> for a list of all the
-      available options.
-    </para>
-    <para>
-      Permanent runtime configuration of JBoss should go in
-      <filename>bin/run.conf</filename>. For example, your application
-      may require more memory (RAM) than the default allocated. Edit
-      <filename>run.conf</filename> to increase the value of
-      <option>-Xmx</option> to something reasonable.
-    </para>
-    <para>
-      Though <xref linkend="capistrano-support" /> doesn't strictly
-      require it, in production you may prefer to control JBoss via a
-      Unix "init script", examples of which may be found in
-      <filename>bin/</filename>.  Feel free to tweak one for your
-      particular OS.
-    </para>
+    <para>Though <xref linkend="capistrano-support" /> doesn't strictly
+    require it, in production you may prefer to control JBoss via a Unix "init
+    script", examples of which may be found in <filename>bin/</filename>. Feel
+    free to tweak one for your particular OS.</para>
   </section>
 
   <section id="deploying-to-jboss">
     <title>Deploying</title>
-    <para>
-      Each server configuration has a <filename>deploy/</filename>
-      subdirectory, the contents of which determine the applications
-      and services JBoss runs.  These apps and services are
-      represented as archives, "exploded" folders, or text files
-      called "deployment descriptors".  JBoss constantly monitors
-      changes to this directory, hot-deploying an artifact when it's
-      added, undeploying it when it's removed, and "bouncing"
-      (redeploying) it when it's changed.
-    </para>
-    <para><mediaobject>
-      <imageobject>
-        <imagedata align="center" fileref="images/jboss-deploy.png"
-                   format="PNG" scale="70" />
-      </imageobject>
-    </mediaobject></para>
-    <para>
-      TorqueBox also provides an additional deploy directory at 
-      <filename>$TORQUEBOX_HOME/apps/</filename>
-      that is scanned from all server configurations, and any deployment
-      descriptors or archives found there are loaded after the
-      <filename>deploy/</filename> directory within the server configuration.
-      This prevents your application from being loaded before all
-      of the JBoss components have been deployed, and segregates your
-      applications from the JBoss plumbing.
-    </para>
 
-    <para>
-      TorqueBox provides Rake tasks to create and copy a deployment
-      descriptor for your Ruby application to
-      <filename>$TORQUEBOX_HOME/apps/</filename>.  For more details, see <xref
-      linkend="deployment" /> and <xref linkend="deployment-descriptors" />.
-    </para>
+    <para>Each server configuration has a <filename>deploy/</filename>
+    subdirectory, the contents of which determine the applications and
+    services JBoss runs. These apps and services are represented as archives,
+    "exploded" folders, or text files called "deployment descriptors". JBoss
+    constantly monitors changes to this directory, hot-deploying an artifact
+    when it's added, undeploying it when it's removed, and "bouncing"
+    (redeploying) it when it's changed.</para>
+
+    <para><mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="images/jboss-deploy.png"
+                     format="PNG" scale="70" />
+        </imageobject>
+      </mediaobject></para>
+
+    <para>TorqueBox also provides an additional deploy directory at
+    <filename>$TORQUEBOX_HOME/apps/</filename> that is scanned from all server
+    configurations, and any deployment descriptors or archives found there are
+    loaded after the <filename>deploy/</filename> directory within the server
+    configuration. This prevents your application from being loaded before all
+    of the JBoss components have been deployed, and segregates your
+    applications from the JBoss plumbing.</para>
+
+    <para>TorqueBox provides Rake tasks to create and copy a deployment
+    descriptor for your Ruby application to
+    <filename>$TORQUEBOX_HOME/apps/</filename>. For more details, see <xref
+    linkend="deployment" /> and <xref
+    linkend="deployment-descriptors" />.</para>
   </section>
 
   <section id="jboss-logging">
     <title>Logging</title>
-    <para>
-      Each server configuration has a <filename>log/</filename>
-      subdirectory (created at runtime, if necessary) that contains
-      the log messages generated by JBoss as determined by its
-      configuration.
-    </para>
-    <para>
-      JBoss provides a very sophisticated logging system that nobody
-      completely understands.  Logging configuration rules are
-      contained in <filename>deploy/jboss-logging.xml</filename>, in
-      which may be found example configs for categorized log message
-      routing, complex file rotation, syslog integration, SMTP
-      notifications, SNMP traps, JMS, JMX and more!  It is
-      <emphasis>WAY</emphasis> beyond the scope of this document to
-      explain those rules, but by default you will see INFO messages
-      on the console (the shell where you start JBoss) and
-      persistently written to <filename>log/server.log</filename>.
-      You can control the log level easily using the following system
-      property:
 
-      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -Djboss.server.log.threshold=DEBUG</command> </screen>
+    <para>Each server configuration has a <filename>log/</filename>
+    subdirectory (created at runtime, if necessary) that contains the log
+    messages generated by JBoss as determined by its configuration.</para>
 
-      Any messages written to <constant>stdout</constant> or
-      <constant>stderr</constant> will also be displayed on the
-      console and written to <filename>log/server.log</filename>.
-    </para>
-    
+    <para>JBoss provides a very sophisticated logging system that nobody
+    completely understands. Logging configuration rules are contained in
+    <filename>deploy/jboss-logging.xml</filename>, in which may be found
+    example configs for categorized log message routing, complex file
+    rotation, syslog integration, SMTP notifications, SNMP traps, JMS, JMX and
+    more! It is <emphasis>WAY</emphasis> beyond the scope of this document to
+    explain those rules, but by default you will see INFO messages on the
+    console (the shell where you start JBoss) and persistently written to
+    <filename>log/server.log</filename>. You can control the log level easily
+    using the following system property: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -Djboss.server.log.threshold=DEBUG</command> </screen>
+    Any messages written to <constant>stdout</constant> or
+    <constant>stderr</constant> will also be displayed on the console and
+    written to <filename>log/server.log</filename>.</para>
+
     <section id="torquebox-logger">
       <title>The <classname>TorqueBox::Logger</classname></title>
-      <para>
-        Ruby Loggers work normally inside of TorqueBox, of course, and
-        you'll find your Rails log files exactly where you expect them
-        to be.  But some users, especially those already familiar with
-        JBoss logging, may prefer for their Ruby log messages to be
-        passed to JBoss.  This is easily achieved using the
-        <classname>TorqueBox::Logger</classname>, constructed with an
-        optional "category".  For example, you may configure your
-        Rails app like so:
 
-        <screen> <code>config.logger = TorqueBox::Logger.new</code> </screen>
-
-        This results in all Rails-generated log messages passed to
-        JBoss, hence written to <filename>log/server.log</filename> in
-        the default configuration.  The category for these messages
-        will be the application's name.  You can override this by
-        passing the category name in the constructor:
-
-        <screen> <code>TorqueBox::Logger.new( "Billing" )</code> </screen>
-
-        You can also pass a class in the constructor, as is common in Java applications:
-
-        <screen> <code>@logger = TorqueBox::Logger.new( self.class )</code> </screen>
-
-        This allows you to be more strategic with your logging,
-        sending some messages to the normal Rails logs and others to
-        JBoss for more "enterprisey" processing.
-
-      </para>
+      <para>Ruby Loggers work normally inside of TorqueBox, of course, and
+      you'll find your Rails log files exactly where you expect them to be.
+      But some users, especially those already familiar with JBoss logging,
+      may prefer for their Ruby log messages to be passed to JBoss. This is
+      easily achieved using the <classname>TorqueBox::Logger</classname>,
+      constructed with an optional "category". For example, you may configure
+      your Rails app like so: <screen> <code>config.logger = TorqueBox::Logger.new</code> </screen>
+      This results in all Rails-generated log messages passed to JBoss, hence
+      written to <filename>log/server.log</filename> in the default
+      configuration. The category for these messages will be the application's
+      name. You can override this by passing the category name in the
+      constructor: <screen> <code>TorqueBox::Logger.new( "Billing" )</code> </screen>
+      You can also pass a class in the constructor, as is common in Java
+      applications: <screen> <code>@logger = TorqueBox::Logger.new( self.class )</code> </screen>
+      This allows you to be more strategic with your logging, sending some
+      messages to the normal Rails logs and others to JBoss for more
+      "enterprisey" processing.</para>
     </section>
-
   </section>
-
 </chapter>
