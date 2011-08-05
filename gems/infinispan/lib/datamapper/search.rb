@@ -21,12 +21,20 @@ module Infinispan
     def initialize(cache, deserializer)
       @cache          = cache
       @deserializer   = deserializer
-      @search_manager = cache.search_manager
+      begin
+        @search_manager = cache.search_manager
+      rescue
+        puts "[ERROR] Infinispan SearchManager not available for cache: #{cache.name}"
+      end
     end
 
     def search( query )
-      cache_query = search_manager.get_query( build_query( query ), query.model.java_class )
-      cache_query.list.collect { |record| deserialize(record) }
+      if @search_manager
+        cache_query = search_manager.get_query( build_query( query ), query.model.java_class )
+        cache_query.list.collect { |record| deserialize(record) }
+      else
+        cache.all.collect { |record| deserialize(record) }
+      end
     end
 
     private

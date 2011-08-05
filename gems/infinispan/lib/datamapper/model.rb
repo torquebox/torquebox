@@ -125,7 +125,7 @@ module Infinispan
           class_eval <<-EOT
             def  #{get_name.intern}
               d = attribute_get(:#{name} )
-              new java.util.Date( Time.mktime(d.year, d.month, d.day).to_i ) if d
+              new java.util.Date.new( Time.mktime(d.year, d.month, d.day).to_i ) if d
             end
           EOT
         elsif (type == DataMapper::Property::DateTime)
@@ -137,7 +137,7 @@ module Infinispan
           class_eval <<-EOT
             def  #{get_name.intern}
               d = attribute_get(:#{name} )
-              new java.util.Date( Time.mktime(d.year, d.month, d.day, d.hour, d.min, d.sec, 0).to_i ) if d
+              new java.util.Date.new( Time.mktime(d.year, d.month, d.day, d.hour, d.min, d.sec, 0).to_i ) if d
             end
           EOT
         elsif (type.to_s == BigDecimal || type == DataMapper::Property::Decimal)
