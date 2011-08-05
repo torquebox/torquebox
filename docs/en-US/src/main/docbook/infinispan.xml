@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter>
+  <title>Infinispan</title>
+
+  <section>
+    <title>Introduction</title>
+
+    <para>TorqueBox integrates with Infinispan a in memory data grid
+    technology built under JBoss AS 7 and 100% open source initially written
+    to Java Platform, allowing to make use of distributed cache across the
+    cluster nodes, replacing JBoss Cache. It is automatically available to you
+    with no additional configuration to start working with data grids. </para>
+
+    <para>Infinispan operates in four modes which determine how and where data
+    will be stored: local, invalidation, replication and distribution, that a
+    look here for more detailed description
+    http://torquebox.org/2x/builds/html-docs/messaging.html#messaging-intro.</para>
+  </section>
+
+  <section>
+    <title>TorqueBox Ruby Classes</title>
+
+    <para>Some description about the gems</para>
+  </section>
+  <section>
+    <title>How it works?</title>
+
+    <para>Some description about the gems</para>
+  </section>
+
+</chapter>
