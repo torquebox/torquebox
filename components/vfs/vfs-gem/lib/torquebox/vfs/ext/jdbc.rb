@@ -21,7 +21,9 @@ class Java::java.sql::DriverManager
     alias_method :register_driver_without_vfs, :registerDriver
 
     # Monkey patch getConnection so we can sort out local filesystem url's for
-    # SQLite (we need to remove the 'vfs:' from the url)
+    # SQLite (we need to remove the 'vfs:' from the url). This works
+    # for activerecord-jdbc-adapter v1.1.2 and under. For v1.1.3 and
+    # up, see web/web-core/src/main/java/org/torquebox/rails/core/boot.rb
     def getConnection(url, *params)
 
       # Remove any VFS prefix from the url (for SQLite)

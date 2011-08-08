@@ -35,6 +35,22 @@ class Class
           end 
         end
       end
+
+      # We monkey patch activerecord-jdbc-adapter here to handle
+      # sqlite vfs paths. This patch works for
+      # activerecord-jdbc-adapter v1.1.3 and up. For lower versions,
+      # see vfs/vfs-gem/lib/torquebox/vfs/ext/jdbc.rb. 
+      if self.to_s == 'ActiveRecord::ConnectionAdapters::JdbcDriver' &&
+          method_name == :connection
+        self.class_eval do
+          alias_method :connection_before_torquebox, :connection
+
+          def connection(url, user, pass)
+            connection_before_torquebox( url.sub(':vfs:', ':'), user, pass )
+          end
+        end
+      end
+      
       if ( (self.to_s == 'Rails::Initializer') && ( method_name == :set_autoload_paths ) )
         self.class_eval do
           alias_method :set_autoload_paths_before_torquebox, :set_autoload_paths            
