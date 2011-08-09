@@ -8,11 +8,11 @@ shared_examples_for "basic rack" do
   end
 
   it "should work" do
-    page.find("#success")[:class].should == 'basic-rack'
+    page.find("#success")[:class].strip.should == 'basic-rack'
   end
 
   it "should be running under the proper ruby version" do
-    page.find("#ruby-version").text.should == RUBY_VERSION
+    page.find("#ruby-version").text.strip.should == RUBY_VERSION
   end
   
 end

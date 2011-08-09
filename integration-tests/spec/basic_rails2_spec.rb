@@ -12,13 +12,21 @@ shared_examples_for "basic rails2 tests" do
   end
 
   it "should send data" do
-    visit "/basic-rails/senddata"
-    page.source.should == "this is the content"
+    if Capybara.current_driver == :browser
+      pending "because browsers apparently can't route sent data back, and instead attempts to download"
+    else
+      visit "/basic-rails/senddata"
+      page.source.should == "this is the content"
+    end
   end
-
+  
   it "should send file" do
-    visit "/basic-rails/sendfile"
-    page.source.chomp.should == "this is the contents of the file"
+    if Capybara.current_driver == :browser
+      pending "because browsers apparently can't route sent data back, and instead attempts to download"
+    else
+      visit "/basic-rails/sendfile"
+      page.source.chomp.should == "this is the contents of the file"
+    end
   end
 
 end

@@ -16,7 +16,11 @@ describe "end-to-end twitter testing" do
     visit "/tweets"
     page.should have_content( "Last 20 tweets" )
     page.find("h1").text.should == "Tweets"
-    page.find("table")[:class].should be_nil
+    if ( Capybara.current_driver == :browser )
+      page.find("table")[:class].should == ''
+    else
+      page.find("table")[:class].should be_nil
+    end
   end
 
   remote_describe "in-container tests" do

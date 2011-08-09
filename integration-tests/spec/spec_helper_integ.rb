@@ -3,17 +3,67 @@
 ## is not shipped to the server for execution, ever.
 ##
 
+require 'ostruct'
 require 'capybara/dsl'
-require 'akephalos'
 require 'jmx4r'
 require 'websocket_client'
 require 'stilts-stomp-client'
 
-Capybara.register_driver :akephalos do |app|
-  Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)
+driver_type = java.lang::System.getProperty( "driver.type" ) || 'headless'
+
+if ( driver_type == 'browser' )
+  class Cookies 
+    def initialize(manage)
+      @manage = manage
+    end
+    
+    def clear
+      @manage.delete_all_cookies()
+    end
+
+    def count
+      @manage.all_cookies.size
+    end
+
+    def [](name)
+      @manage.all_cookies.each do |cookie|
+        return OpenStruct.new( cookie ) if ( cookie[:name] == name )
+      end
+      nil
+    end
+  end
+
+  puts "using browser mode"
+  require "selenium-webdriver"
+  Capybara.register_driver :browser do |app|
+    require 'selenium/webdriver'
+    profile = Selenium::WebDriver::Firefox::Profile.new
+    #profile['general.useragent.override'] = "iPhone"
+   
+    driver = Capybara::Driver::Selenium.new(app, :profile => profile)
+    def driver.cookies
+      @cookies ||= Cookies.new( browser.manage )
+    end
+    driver
+  end
+
+  class Selenium::WebDriver::Element
+    def value
+      attribute( 'value' )
+    end
+  end
+
+  Capybara.default_driver = :browser
+else
+  puts "using headless mode"
+  require 'akephalos'
+  Capybara.register_driver :akephalos do |app|
+    Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)
+  end
+
+  Capybara.default_driver = :akephalos
 end
 
-Capybara.default_driver = :akephalos
 Capybara.app_host = "http://localhost:8080"
 Capybara.run_server = false
 

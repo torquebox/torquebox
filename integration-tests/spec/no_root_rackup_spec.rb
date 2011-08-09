@@ -19,7 +19,8 @@ describe "rackup files don't have to reside at the root" do
     visit "/norootrackup"
     root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', '/apps/rack/norootrackup' ) )
     prefix = root.start_with?("/") ? "vfs:" : "vfs:/"
-    page.source.strip.downcase.should == "RACK_ROOT=#{prefix}#{root}".downcase
+    #page.source.strip.downcase.should == "RACK_ROOT=#{prefix}#{root}".downcase
+    page.should have_content( "RACK_ROOT=#{prefix}#{root}" )
   end
 
 end
