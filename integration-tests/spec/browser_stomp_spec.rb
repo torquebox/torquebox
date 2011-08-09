@@ -25,21 +25,64 @@ describe "STOMP applications", :js=>true do
     page.execute_script <<-END
       connected = false;
       disconnected = false;
+      complete = null;
       client = Stomp.client( "ws://localhost:8675/" );
 
       client.connect( null, null, function(frame) {
         connected = true;
         client.disconnect();
         disconnected = true;
+        complete = true;
       } );
     END
-    sleep( 2 )
+    wait_for( :complete ).should_not be_nil
     page_variable( :connected ).should be_true
     page_variable( :disconnected ).should be_true
+  end
+
+  it "should be able to subscribe send and receive" do
+    visit( '/stomp-websockets/index.html' )
+    page.execute_script <<-END
+      received_message = null;
+      subscribed       = null;
+      disconnected     = null;
+
+      client = Stomp.client( "ws://localhost:8675/" );
+
+      client.connect( null, null, function(frame) {
+        client.subscribe( "/queues/foo", function(message){
+          received_message = message;
+          client.disconnect();
+          disconnected = true;
+        } );
+        subscribed = true;
+      } );
+    END
+
+    wait_for( :subscribed ).should_not be_nil
+
+    sleep( 1 )
+
+    page.execute_script <<-END
+      client.send( "/queues/foo", {}, "this is my message" )
+    END
+
+    wait_for( :disconnected ).should_not be_nil
+    message = page_variable( :received_message )
+    page_variable( :received_message )['body'].should == "this is my message"
   end
 
 end
 
 def page_variable(variable_name)
   page.evaluate_script( variable_name ) 
+end
+
+def wait_for(variable_name, timeout_seconds=15)
+  0.upto( timeout_seconds ) do
+    v = page_variable( variable_name )
+    return v unless ( v.nil? )
+    sleep( 1 )
+  end 
+  nil
 end
