@@ -9,74 +9,7 @@ require 'jmx4r'
 require 'websocket_client'
 require 'stilts-stomp-client'
 
-driver_type = java.lang::System.getProperty( "driver.type" ) || 'headless'
-
-if ( driver_type == 'browser' )
-  class Cookies 
-    def initialize(manage)
-      @manage = manage
-    end
-    
-    def clear
-      @manage.delete_all_cookies()
-    end
-
-    def count
-      @manage.all_cookies.size
-    end
-
-    def [](name)
-      @manage.all_cookies.each do |cookie|
-        return OpenStruct.new( cookie ) if ( cookie[:name] == name )
-      end
-      nil
-    end
-  end
-
-  puts "using browser mode"
-  require "selenium-webdriver"
-  Capybara.register_driver :browser do |app|
-    require 'selenium/webdriver'
-    profile = Selenium::WebDriver::Firefox::Profile.new
-    profile['network.websocket.override-security-block'] = true
-   
-    driver = Capybara::Driver::Selenium.new(app, :profile => profile)
-    def driver.cookies
-      @cookies ||= Cookies.new( browser.manage )
-    end
-    driver
-  end
-
-  class Selenium::WebDriver::Element
-    def value
-      attribute( 'value' )
-    end
-  end
-
-  Capybara.default_driver = :browser
-else
-  puts "using headless mode"
-  require 'akephalos'
-  Capybara.register_driver :akephalos do |app|
-    Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)
-  end
-
-  Capybara.default_driver = :akephalos
-end
-
-Capybara.app_host = "http://localhost:8080"
-Capybara.run_server = false
-
-RSpec.configure do |config|
-  config.include Capybara
-  config.after do
-    Capybara.reset_sessions!
-  end
-end
-
-def add_request_header(key, value)
-  page.driver.browser.send(:client).add_request_header(key, value)
-end
+require 'driver_helper'
 
 def mbean(name)
   JMX::MBean.establish_connection :command => /org.jboss.as.standalone/i

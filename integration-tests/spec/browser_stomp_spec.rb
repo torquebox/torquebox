@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'fileutils'
 require 'torquebox-messaging'
 
-describe "STOMP applications" do
+describe "STOMP applications", :js=>true do
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -21,11 +21,8 @@ describe "STOMP applications" do
   END
 
   it "should be able to connect and disconnect using stomp over websockets" do
-    pending "browser test" and return unless Capybara.current_driver == :browser
-
     visit( '/stomp-websockets/connect.html' )
     sleep( 2 )
-    #puts page.source
     page.find('#connected').text.should == 'true'
     page.find('#disconnected').text.should == 'true'
   end

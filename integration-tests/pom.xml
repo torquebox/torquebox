@@ -25,7 +25,7 @@
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <max.heap>1024m</max.heap>
     <jboss.lazy>false</jboss.lazy>
-    <driver.type>headless</driver.type>
+    <driver.type>any</driver.type>
     <ruby.compat.version>1.8</ruby.compat.version>
   </properties>
 
@@ -263,6 +263,7 @@
       <id>ci</id>
       <properties>
         <max.heap>4096m</max.heap>
+        <driver.type>headless</driver.type>
       </properties>
     </profile>
     <profile>

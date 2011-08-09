@@ -39,13 +39,9 @@ describe "basic sinatra test" do
   end
 
   
-  it "should allow headers through (JRUBY-5839, TORQUE-430)" do
-    if Capybara.current_driver == :browser
-      pending "because browsers do not allow access to response headers"
-    else
-      visit "/basic-sinatra"
-      page.response_headers['Biscuit'].should == 'Gravy'
-    end
+  it "should allow headers through (JRUBY-5839, TORQUE-430)", :browser_not_supported=>true do
+    visit "/basic-sinatra"
+    page.response_headers['Biscuit'].should == 'Gravy'
   end
   
   it "should test Sir Postalot" do

@@ -48,13 +48,9 @@ describe "basic rails3 asset test" do
       image['src'].should match(/\/images\/rails\.png/)
     end
 
-    it "should return correct Content-Type header" do
-      if Capybara.current_driver == :browser
-        pending "because browsers do not allow access to response headers"
-      else
-        visit "/images/rails.png"
-        page.response_headers['Content-Type'].should == 'image/png'
-      end
+    it "should return correct Content-Type header", :browser_not_supported=>true do
+      visit "/images/rails.png"
+      page.response_headers['Content-Type'].should == 'image/png'
     end
   end
 
@@ -65,13 +61,9 @@ describe "basic rails3 asset test" do
       image['src'].should match(/\/basic-rails3-asset\/images\/rails\.png/)
     end
 
-    it "should return correct Content-Type header" do
-      if Capybara.current_driver == :browser
-        pending "because browsers do not allow access to response headers"
-      else
-        visit "/basic-rails3-asset/images/rails.png"
-        page.response_headers['Content-Type'].should == 'image/png'
-      end
+    it "should return correct Content-Type header", :browser_not_supported=>true do
+      visit "/basic-rails3-asset/images/rails.png"
+      page.response_headers['Content-Type'].should == 'image/png'
     end
   end
 
