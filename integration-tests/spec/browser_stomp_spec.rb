@@ -21,11 +21,25 @@ describe "STOMP applications", :js=>true do
   END
 
   it "should be able to connect and disconnect using stomp over websockets" do
-    visit( '/stomp-websockets/connect.html' )
+    visit( '/stomp-websockets/index.html' )
+    page.execute_script <<-END
+      connected = false;
+      disconnected = false;
+      client = Stomp.client( "ws://localhost:8675/" );
+
+      client.connect( null, null, function(frame) {
+        connected = true;
+        client.disconnect();
+        disconnected = true;
+      } );
+    END
     sleep( 2 )
-    page.find('#connected').text.should == 'true'
-    page.find('#disconnected').text.should == 'true'
+    page_variable( :connected ).should be_true
+    page_variable( :disconnected ).should be_true
   end
 
 end
 
+def page_variable(variable_name)
+  page.evaluate_script( variable_name ) 
+end
