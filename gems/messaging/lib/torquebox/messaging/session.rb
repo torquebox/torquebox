@@ -108,11 +108,9 @@ module TorqueBox
         options[:properties]["synchronous"] = "true"
         wrapped_message = { :timeout => options[:timeout], :message => message }
         message = publish(destination, wrapped_message, options)
-        commit if transacted?
     
         options[:selector] = "JMSCorrelationID='#{message.jms_message.jms_message_id}'"
         response = receive(destination, options)
-        commit if transacted?
     
         if response
           decode ? Message.decode( response ): response
@@ -142,7 +140,6 @@ module TorqueBox
           options[:correlation_id] = request.jms_message_id
           publish(destination, response, options)
         end
-        commit if transacted?
       end
 
       def unsubscribe(subscriber_name = Topic::DEFAULT_SUBSCRIBER_NAME)

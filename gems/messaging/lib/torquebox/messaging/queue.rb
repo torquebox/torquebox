@@ -16,7 +16,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/messaging/destination'
-require 'torquebox/messaging/connection_factory'
 require 'torquebox/service_registry'
 
 module TorqueBox
@@ -51,7 +50,6 @@ module TorqueBox
       def receive_and_publish(options={}, &block)
         with_new_session do |session|
           session.receive_and_publish(self, normalize_options(options), &block)
-          session.commit if session.transacted?
         end
       end
 

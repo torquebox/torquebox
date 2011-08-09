@@ -58,7 +58,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             @Override
             public void run() {
                 try {
-                    session = group.getConnection().createSession( true, Session.AUTO_ACKNOWLEDGE );
+                    session = group.getConnection().createSession( false, Session.AUTO_ACKNOWLEDGE );
 
                     Destination destination = group.getDestination();
                     if (group.isDurable() && destination instanceof Topic) {
