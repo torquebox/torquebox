@@ -79,10 +79,11 @@
 
       By default, the <filename>default</filename> configuration
       profile is used.  Use the <option>-c</option> option to specify
-      a different configuration.  For example, to put JBoss in
-      "clustered" mode:
+      a different configuration and <option>-b</option> option to bind 
+      to another address, by default JBoss binds to localhost.  
+      For example, to put JBoss in "clustered" mode and bind to address <option>1.2.3.4</option>:
 
-      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all</command> </screen>
+      <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh -c all -b 1.2.3.4</command> </screen>
 
       You may set Java system properties using the <option>-D</option>
       option.  Pass <option>-h</option> for a list of all the
