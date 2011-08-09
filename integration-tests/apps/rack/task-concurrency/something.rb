@@ -13,5 +13,6 @@ class Something
   def foo
     puts "FOO in Something #{Thread.current.object_id}"
     @backchannel.publish Thread.current.object_id
+    nil
   end
 end

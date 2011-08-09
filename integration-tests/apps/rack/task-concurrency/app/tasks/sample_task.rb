@@ -7,5 +7,6 @@ class SampleTask < TorqueBox::Messaging::Task
     backchannel = inject("/queues/backchannel")
     puts "FOO in SampleTask #{Thread.current.object_id}"
     backchannel.publish Thread.current.object_id
+    nil
   end
 end
