@@ -24,7 +24,7 @@ describe "STOMP applications" do
     pending "browser test" and return unless Capybara.current_driver == :browser
 
     visit( '/stomp-websockets/connect.html' )
-    #sleep( 2 )
+    sleep( 2 )
     #puts page.source
     page.find('#connected').text.should == 'true'
     page.find('#disconnected').text.should == 'true'

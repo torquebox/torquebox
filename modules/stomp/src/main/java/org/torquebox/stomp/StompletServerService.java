@@ -13,7 +13,8 @@ public class StompletServerService implements Service<StompletServer> {
     }
 
     @Override
-    public StompletServer getValue() throws IllegalStateException, IllegalArgumentException {
+    public StompletServer getValue() throws IllegalStateException,
+            IllegalArgumentException {
         return this.server;
     }
 
@@ -33,7 +34,6 @@ public class StompletServerService implements Service<StompletServer> {
         } catch (Exception e) {
             // ignore, I guess.
         }
-        this.server = null;
     }
 
     private StompletServer server;
