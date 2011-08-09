@@ -38,7 +38,7 @@ if ( driver_type == 'browser' )
   Capybara.register_driver :browser do |app|
     require 'selenium/webdriver'
     profile = Selenium::WebDriver::Firefox::Profile.new
-    #profile['general.useragent.override'] = "iPhone"
+    profile['network.websocket.override-security-block'] = true
    
     driver = Capybara::Driver::Selenium.new(app, :profile => profile)
     def driver.cookies
