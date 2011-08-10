@@ -40,8 +40,11 @@ remote_describe "in-container messaging tests" do
   describe "message enumeration" do
     it "should allow enumeration of the messages" do
       queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
+      queue.count.should == 0
       queue.publish "howdy"
       queue.first.decode.should == 'howdy'
+      queue.count.should == 1
+      TorqueBox::Messaging::Queue.new("/queues/browseable").count.should == 1
       queue.stop
     end
 
