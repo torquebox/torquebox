@@ -525,7 +525,7 @@
         <executions>
           <execution>
             <id>prepare-as</id>
-            <phase>test-compile</phase>
+            <phase>compile</phase>
             <goals>
               <goal>jruby</goal>
             </goals>
