@@ -19,6 +19,7 @@ else
         FileUtils.rm_rf( "#{output_dir}/#{modules_path}" )
         FileUtils.cp_r( "./#{modules_path}", "#{output_dir}/#{modules_path}" )
       else
+        FileUtils.mkdir_p( File.dirname( output_dir ) )
         FileUtils.rm_rf( output_dir )
         FileUtils.cp_r( '.', output_dir )
       end
