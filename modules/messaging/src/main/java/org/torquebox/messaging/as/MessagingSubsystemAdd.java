@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.jms.ConnectionFactory;
 
+import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -57,32 +58,33 @@ import org.torquebox.messaging.TopicDeployer;
 import org.torquebox.messaging.TopicsYamlParsingProcessor;
 import org.torquebox.messaging.component.MessageProcessorComponentResolverInstaller;
 import org.torquebox.messaging.injection.RubyConnectionFactoryService;
+import org.torquebox.messaging.injection.RubyXaConnectionFactoryService;
 
 class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
+
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
         model.setEmptyObject();
     }
-    
+
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
-        
+
         addMessagingServices( context, verificationHandler, newControllers );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
 
-    	processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsDeployer() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
@@ -90,12 +92,13 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningDeployer() );
 
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
-        
+
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new MessagingLoadPathProcessor() );
 
-        //context.addDeploymentProcessor( Phase.POST_MODULE, 7, new MessagingInjectablesProcessor() );
+        // context.addDeploymentProcessor( Phase.POST_MODULE, 7, new
+        // MessagingInjectablesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
-        
+
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksDeployer() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 320, new MessagingRuntimePoolDeployer() );
 
@@ -106,12 +109,13 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addMessagingServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                        List<ServiceController<?>> newControllers) {
+            List<ServiceController<?>> newControllers) {
         addRubyConnectionFactory( context, verificationHandler, newControllers );
+        addRubyXaConnectionFactory( context, verificationHandler, newControllers );
     }
 
     protected void addRubyConnectionFactory(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                            List<ServiceController<?>> newControllers) {
+            List<ServiceController<?>> newControllers) {
 
         ServiceName managedFactoryServiceName = MessagingServices.RUBY_CONNECTION_FACTORY.append( "manager" );
 
@@ -128,9 +132,32 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 .setInitialMode( Mode.ON_DEMAND )
                 .install() );
     }
-    
+
+    protected void addRubyXaConnectionFactory(final OperationContext context, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) {
+
+        ServiceName managedFactoryServiceName = MessagingServices.RUBY_XA_CONNECTION_FACTORY.append( "manager" );
+
+        ManagedReferenceInjectableService managementService = new ManagedReferenceInjectableService();
+        newControllers.add( context.getServiceTarget().addService( managedFactoryServiceName, managementService )
+                .addDependency( getJMSConnectionFactoryServiceName(), ManagedReferenceFactory.class, managementService.getManagedReferenceFactoryInjector() )
+                .addListener( verificationHandler )
+                .install() );
+
+        RubyXaConnectionFactoryService service = new RubyXaConnectionFactoryService();
+        newControllers.add( context.getServiceTarget().addService( MessagingServices.RUBY_XA_CONNECTION_FACTORY, service )
+                .addDependency( managedFactoryServiceName, HornetQConnectionFactory.class, service.getConnectionFactoryInjector() )
+                .addListener( verificationHandler )
+                .setInitialMode( Mode.ON_DEMAND )
+                .install() );
+    }
+
     protected ServiceName getJMSConnectionFactoryServiceName() {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "java:/ConnectionFactory" );
+    }
+
+    protected ServiceName getXAConnectionFactoryServiceName() {
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "java:/XAConnectionFactory" );
     }
 
     static ModelNode createOperation(ModelNode address) {

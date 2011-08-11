@@ -30,6 +30,7 @@ public class MessagingServices {
 
     public static final ServiceName MESSAGING = CoreServices.TORQUEBOX.append( "messaging" );
     public static final ServiceName RUBY_CONNECTION_FACTORY = MESSAGING.append(  "ruby-connection-factory" );
+    public static final ServiceName RUBY_XA_CONNECTION_FACTORY = MESSAGING.append(  "ruby-xa-connection-factory" );
     
     public static final ServiceName WEBSOCKETS = MESSAGING.append( "websockets" );
     public static final ServiceName WEBSOCKETS_SERVER = WEBSOCKETS.append(  "server" );

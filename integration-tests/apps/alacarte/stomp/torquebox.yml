@@ -3,3 +3,6 @@ stomp:
   stomplet.one:
     route: '/queues/:queue_name'
     class: StompletOne
+  jms.stomplet:
+    route: '/jms/testQueue'
+    class: JmsStomplet

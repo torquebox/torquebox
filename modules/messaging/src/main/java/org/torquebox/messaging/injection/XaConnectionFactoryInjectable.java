@@ -19,21 +19,22 @@
 
 package org.torquebox.messaging.injection;
 
-import org.torquebox.core.injection.analysis.PredeterminedInjectableHandler;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceTarget;
+import org.torquebox.core.injection.SimpleNamedInjectable;
+import org.torquebox.messaging.as.MessagingServices;
 
-/** Handles MSC service injections.
- * 
- * Priority: 4,000
- * 
- * @author Bob McWhirter
- */
-public class MessagingPredeterminedInjectableHandler extends PredeterminedInjectableHandler {
+public class XaConnectionFactoryInjectable extends SimpleNamedInjectable {
     
-    public MessagingPredeterminedInjectableHandler() {
-        super( "messaging" );
-        setRecognitionPriority( 500 * 1000 );
-        addInjectable( "connection-factory", ConnectionFactoryInjectable.INSTANCE );
-        addInjectable( "xa-connection-factory", XaConnectionFactoryInjectable.INSTANCE );
+    public XaConnectionFactoryInjectable() {
+        super( "xa-connection-factory", "xa-connection-factory", false );
     }
 
+    @Override
+    public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit deploymentUnit) throws Exception {
+        return MessagingServices.RUBY_XA_CONNECTION_FACTORY;
+    }
+    
+    public static final XaConnectionFactoryInjectable INSTANCE = new XaConnectionFactoryInjectable();
 }

@@ -47,6 +47,7 @@ public class CorePredeterminedInjectableHandler extends PredeterminedInjectableH
         addInjectable( "service-target", ServiceTargetInjectable.INSTANCE );
         addInjectable( "deployment-unit", DeploymentUnitInjectable.INSTANCE );
         addInjectable( "runtime-injection-analyzer", RuntimeInjectionAnalyzerInjectable.INSTANCE );
+        addInjectable( "transaction-manager", TransactionManagerInjectable.INSTANCE );
     }
 
 }

@@ -68,5 +68,28 @@ describe "STOMP applications" do
     received_message.body.should eql( "this is my message" )
   end
 
+  xit "should be able to subscribe send and receive against JMS queues" do
+    client = Stilts::Stomp::Client.new( "stomp://localhost/" );
+
+    client.connect
+
+    received_message = nil
+
+    client.subscribe( "/jms/testQueue" ) do |message|
+      puts "received message #{message}"
+      received_message = message
+    end
+
+    sleep( 1 )
+
+    client.send( "/jms/testQueue", "this is my message" )
+    sleep( 1 )
+
+    client.disconnect
+
+    received_message.should_not be_nil
+    received_message.body.should eql( "this is my message" )
+  end
+
 end
 

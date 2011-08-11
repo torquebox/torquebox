@@ -15,21 +15,20 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-#require 'torquebox/messaging/client'
+module TorqueBox
+  module Messaging
 
-require 'torquebox/messaging/connection_factory'
-require 'torquebox/messaging/connection'
-require 'torquebox/messaging/session'
-require 'torquebox/messaging/hornetq_session'
-require 'torquebox/messaging/message'
-require 'torquebox/messaging/destination'
-require 'torquebox/messaging/queue'
-require 'torquebox/messaging/topic'
+    class XaSession < Session
 
-require 'torquebox/messaging/xa_connection_factory'
-require 'torquebox/messaging/xa_connection'
-require 'torquebox/messaging/xa_session'
+      def initialize(jms_session, connection)
+        super( jms_session, connection )
+      end
 
-require 'torquebox/messaging/message_processor'
-require 'torquebox/messaging/task'
-require 'torquebox/messaging/backgroundable'
+      def xa_resource
+        @jms_session.xa_resource
+      end
+
+    end
+
+  end
+end
