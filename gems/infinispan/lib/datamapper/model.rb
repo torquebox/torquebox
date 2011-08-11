@@ -76,29 +76,33 @@ module Infinispan
 
       def configure_index
         unless mapped?
-          properties().each do |prop|
-            puts "---------------property: #{prop.inspect()}"
-            add_java_property(prop) 
-          end
-
-          annotation = {
-            org.hibernate.search.annotations.Indexed => {},
-            org.hibernate.search.annotations.ProvidedId => {}
-          }
-          add_class_annotation( annotation )
-
-          # Wonder twin powers... ACTIVATE!
-          become_java!
-
-          unless java.lang.Thread.currentThread.context_class_loader.is_a? ModelClassLoader
-            java.lang.Thread.currentThread.context_class_loader = ModelClassLoader.new(java.lang.Thread.currentThread.context_class_loader)
-          end
-
-          java.lang.Thread.currentThread.context_class_loader.register( java_class )
-          
-          puts "Became Java! --> [#{java_class}]"
-          @@mapped = true
+          configure_index!
         end
+      end
+
+      def configure_index!
+        properties().each do |prop|
+          puts "---------------property: #{prop.inspect()}"
+          add_java_property(prop) 
+        end
+
+        annotation = {
+          org.hibernate.search.annotations.Indexed => {},
+          org.hibernate.search.annotations.ProvidedId => {}
+        }
+        add_class_annotation( annotation )
+
+        # Wonder twin powers... ACTIVATE!
+        become_java!
+
+        unless java.lang.Thread.currentThread.context_class_loader.is_a? ModelClassLoader
+          java.lang.Thread.currentThread.context_class_loader = ModelClassLoader.new(java.lang.Thread.currentThread.context_class_loader)
+        end
+
+        java.lang.Thread.currentThread.context_class_loader.register( java_class )
+        
+        puts "Became Java! --> [#{java_class}]"
+        @@mapped = true
       end
 
       def add_java_property(prop)
@@ -125,7 +129,7 @@ module Infinispan
           class_eval <<-EOT
             def  #{get_name.intern}
               d = attribute_get(:#{name} )
-              java.util.Date.new( Time.mktime(d.year, d.month, d.day).to_i ) if d
+              java.util.Date.new( (Time.mktime(d.year, d.month, d.day).to_i * 1000) ) if d
             end
           EOT
         elsif (type == DataMapper::Property::DateTime)
@@ -137,7 +141,7 @@ module Infinispan
           class_eval <<-EOT
             def  #{get_name.intern}
               d = attribute_get(:#{name} )
-              java.util.Date.new( Time.mktime(d.year, d.month, d.day, d.hour, d.min, d.sec, 0).to_i ) if d
+              java.util.Date.new( (Time.mktime(d.year, d.month, d.day, d.hour, d.min, d.sec, 0).to_i * 1000) ) if d
             end
           EOT
         elsif (type.to_s == BigDecimal || type == DataMapper::Property::Decimal)

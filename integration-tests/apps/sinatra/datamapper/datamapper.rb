@@ -43,9 +43,17 @@ get '/muppet/like' do
   haml :muppet
 end
 
+get '/muppet/date/range' do
+  start  = DateTime.parse((Date.today-1).to_s)
+  ending = DateTime.parse((Date.today+1).to_s)
+  result = Muppet.all(:created_at => (start..ending), :order=>:created_at.asc)
+  @snuffy = result[1]
+  haml :muppet
+end
+
 get '/muppet/delete' do
-  Muppet.find(:name=>'Snuffleupagus').destroy
-  "Hiding" unless Muppet.find(:name=>'Snuffleupagus')
+  Muppet.destroy
+  "Hiding" unless Muppet.count > 0
 end
 
 class Muppet
@@ -63,9 +71,6 @@ DataMapper.setup(:default, :adapter=>'infinispan')
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize
 
-Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.now)
-Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.now)
-Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.now)
-#Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome')
-#Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me")
-#Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom")
+Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(Date.today.to_s))
+Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse((Date.today +1).to_s))
+Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse((Date.today -1).to_s))

@@ -39,24 +39,20 @@ module Infinispan
 
     private
     def build_query( query )
-      puts ">>>>>>>>>>>>>>>>>>> Building query start"
       builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
       query = query.conditions.nil? ? builder.all.create_query : handle_condition( builder, query.conditions.first ) 
       puts "LUCENE QUERY: #{query.to_s}"
-      puts ">>>>>>>>>>>>>>>>>>> Building query end"
       query
     end
 
     def handle_condition( builder, condition )
-      puts "CONDITION: #{condition.inspect} <<<>>> #{condition}"
-      puts "CONDITION CLASS: #{condition.class}"
-      puts "CONDITION OPERANDS: #{condition.operands.inspect}" if condition.respond_to? :operands
+      #puts "CONDITION: #{condition.inspect} <<<>>> #{condition}"
+      #puts "CONDITION CLASS: #{condition.class}"
+      #puts "CONDITION OPERANDS: #{condition.operands.inspect}" if condition.respond_to? :operands
       #puts "CONDITION VALUE: #{condition.value}"
-      #puts "CONDITION SUBJECT: #{condition.subject.name}"
+      #puts "CONDITION SUBJECT: #{condition.subject.inspect}"
       if condition.class == DataMapper::Query::Conditions::OrOperation
         terms = condition.operands.each do |op|
-          puts "OR OPERAND: #{op.inspect}"
-          #builder.bool.should( handle_condition builder, op )
           builder.bool.should( handle_condition( builder, op ) )
         end
         builder.all.create_query
@@ -81,9 +77,15 @@ module Infinispan
     end
 
     def handle_inclusion( builder, condition )
-      puts "RANGE: #{condition.value.class} #{condition.value}"
+      #puts "RANGE: #{condition.value.class} #{condition.value}"
       if condition.value.is_a? Range
-        rng = builder.range.on_field(condition.subject.name).from(condition.value.begin).to(condition.value.end)
+        # TODO: Deal with Time
+        if ((condition.subject.class == DataMapper::Property::DateTime) || 
+           (condition.subject.class == DataMapper::Property::Date))
+          rng = builder.range.on_field(condition.subject.name).from(convert_date(condition.value.begin)).to(convert_date(condition.value.end))
+        else
+          rng = builder.range.on_field(condition.subject.name).from(condition.value.begin).to(condition.value.end)
+        end
         condition.value.exclude_end? ? rng.exclude_limit.create_query : rng.create_query 
       else # an Array
         match = condition.value.collect { |v| v }.join(' ')
@@ -94,6 +96,10 @@ module Infinispan
           builder.keyword.on_field( condition.subject.name ).matching( match ).create_query 
         end
       end
+    end
+
+    def convert_date(date)
+      java.util.Date.new(Time.mktime(date.year, date.month, date.day, date.hour, date.min, date.sec, 0).to_i*1000) if date
     end
 
     def handle_equal_to( builder, condition )
