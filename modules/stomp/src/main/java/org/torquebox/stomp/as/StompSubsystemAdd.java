@@ -25,6 +25,8 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_
 
 import java.util.List;
 
+import javax.transaction.TransactionManager;
+
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -32,6 +34,7 @@ import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
+import org.jboss.as.txn.TxnServices;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
@@ -80,6 +83,7 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
         StompletServerService service = new StompletServerService( server );
         
         ServiceController<StompletServer> controller = context.getServiceTarget().addService( StompServices.SERVER, service )
+            .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, service.getTransactionManagerInjector() )
             .setInitialMode( Mode.ON_DEMAND )
             .addListener( verificationHandler )
             .install();
@@ -92,6 +96,7 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 31, new StompYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new StompletLoadPathProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new StompletsRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 5, new StompDependenciesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new StompletComponentResolverInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 100, new StompletContainerDeployer() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 101, new StompletDeployer() );

@@ -32,6 +32,12 @@
       <version>${version.org.projectodd.stilts}</version>
     </dependency>
     <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-transactions</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-as-test-support</artifactId>
       <version>${project.version}</version>
