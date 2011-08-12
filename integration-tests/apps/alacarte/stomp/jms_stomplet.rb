@@ -6,6 +6,7 @@ class JmsStomplet
   def initialize()
     puts "initializing jms-stomplet"
     @connection_factory = inject( 'xa-connection-factory' )
+    @subscriptions = {}
   end
 
   def xa_resources
@@ -21,6 +22,7 @@ class JmsStomplet
   end
 
   def destroy
+    @connection.stop
     @connection.close
   end
 
@@ -36,11 +38,12 @@ class JmsStomplet
     destination = @session.jms_session.create_queue( 'testQueue' )
     consumer = @session.jms_session.create_consumer( destination.to_java )
     consumer.message_listener = MessageListener.new( subscriber )
-    puts "subscribe #{subscriber} with #{@connection_factory}"
+    @subscriptions[ subscriber ] = consumer
   end
 
   def on_unsubscribe(subscriber)
-    puts "unsubscribe to stomplet-one: #{subscriber}"
+    subscription = @subscriptions[ subscriber ]
+    subscription.close
   end
 
 
@@ -52,7 +55,6 @@ class JmsStomplet
     end
 
     def onMessage(jms_message)
-      puts "JMS---> onMessage: #{jms_message}"
       stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( @subscriber.destination, jms_message.text )
       @subscriber.send( stomp_message )
     end

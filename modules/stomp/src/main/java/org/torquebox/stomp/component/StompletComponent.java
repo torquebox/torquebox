@@ -1,9 +1,11 @@
 package org.torquebox.stomp.component;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.transaction.xa.XAResource;
 
+import org.jruby.RubyArray;
 import org.projectodd.stilts.stomp.StompException;
 import org.projectodd.stilts.stomp.StompMessage;
 import org.projectodd.stilts.stomplet.StompletConfig;
@@ -40,13 +42,16 @@ public class StompletComponent extends AbstractRubyComponent implements XAStompl
 
     @Override
     public Set<XAResource> getXAResources() {
-        System.err.println( "getXAResources()" );
+        Set<XAResource> xaResources = new HashSet<XAResource>();
         Object isXa = _callRubyMethod( getRubyComponent(), "respond_to?", "xa_resources" );
+        
         if (isXa == Boolean.TRUE) {
-            Object result = _callRubyMethodIfDefined( "xa_resources" );
-            System.err.println( "===>" + result );
-        } else {
+            RubyArray result = (RubyArray) _callRubyMethodIfDefined( "xa_resources" );
+            for ( Object resource : result ) {
+                xaResources.add( (XAResource) resource );
+            }
         }
-        return null;
+        
+        return xaResources;
     }
 }
