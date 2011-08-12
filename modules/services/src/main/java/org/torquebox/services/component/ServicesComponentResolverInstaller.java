@@ -19,7 +19,6 @@
 
 package org.torquebox.services.component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.as.server.deployment.Attachments;
@@ -59,7 +58,7 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
         instantiator.setClassName( serviceMetaData.getClassName() );
         instantiator.setRequirePath( serviceMetaData.getRubyRequirePath() );
 
-        ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() );
+        ServiceName serviceName = ServicesServices.serviceComponentResolver( unit, serviceMetaData.getName() );
         ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );

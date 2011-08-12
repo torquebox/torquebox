@@ -44,9 +44,15 @@ public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProces
                 ServiceMetaData serviceMetaData = new ServiceMetaData();
                 boolean requiresSingleton = requiresSingleton(  params );
                 serviceMetaData.setRequiresSingleton( requiresSingleton );
-                serviceMetaData.setClassName( service  );
+
+                String className = service;
+                if (params != null && params.containsKey( "service" )) {
+                    className = (String)params.remove( "service" );
+                }
+                serviceMetaData.setClassName( className );
+                serviceMetaData.setName( service );
                 serviceMetaData.setParameters( params );
-                serviceMetaData.setRubyRequirePath( StringUtils.underscore( service.trim() ) );
+                serviceMetaData.setRubyRequirePath( StringUtils.underscore( className.trim() ) );
 
                 unit.addToAttachmentList( ServiceMetaData.ATTACHMENTS_KEY, serviceMetaData );
             }

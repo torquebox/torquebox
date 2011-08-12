@@ -1,5 +1,7 @@
 services:
   ArgService:
-    foo: bar
+    singleton: true
+    config:
+      foo: bar
   
-  NoArgService:
+  FooService:

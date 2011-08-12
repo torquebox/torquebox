@@ -313,6 +313,8 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
         'ruby' => { :version => '1.9' },
         'service' => [ [ FakeConstant.new( 'AService' ), {
                            :name => 'a-service',
+                           :config => { :foo => :bar } } ],
+                       [ FakeConstant.new( 'AnotherService' ), {
                            :config => { :foo => :bar } } ] ],
         'topic' => { 'a-topic' => { :durable => true } },
         'web' => { :context => '/bacon' }
@@ -370,7 +372,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
   end
 
   it "should properly set a service" do
-    @metadata['services']['AService'].should == { 'name' => 'a-service', 'config' => { 'foo' => :bar } }
+    @metadata['services']['a-service'].should == { 'service' => 'AService', 'config' => { 'foo' => :bar } }
   end
 
   it "should properly set a topic" do

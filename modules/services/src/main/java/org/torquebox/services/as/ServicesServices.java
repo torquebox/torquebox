@@ -30,20 +30,20 @@ public class ServicesServices {
     public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
     public static final ServiceName SERVICES = TORQUEBOX.append( "services" );
     
-    public static ServiceName serviceComponentResolver(DeploymentUnit unit, String serviceClass ) {
-        return unit.getServiceName().append( "component_resolver" ).append( serviceClass );
+    public static ServiceName serviceComponentResolver(DeploymentUnit unit, String serviceName ) {
+        return unit.getServiceName().append( "component_resolver" ).append( serviceName );
     }
     
-    public static ServiceName serviceCreateRubyService(DeploymentUnit unit, String serviceClass ) {
-        return unit.getServiceName().append( "service " ).append( serviceClass ).append( "create" );
+    public static ServiceName serviceCreateRubyService(DeploymentUnit unit, String serviceName ) {
+        return unit.getServiceName().append( "service " ).append( serviceName ).append( "create" );
     }
     
-    public static ServiceName serviceStartRubyService(DeploymentUnit unit, String serviceClass ) {
-        return unit.getServiceName().append( "service" ).append( serviceClass );
+    public static ServiceName serviceStartRubyService(DeploymentUnit unit, String serviceName ) {
+        return unit.getServiceName().append( "service" ).append( serviceName );
     }
     
-    public static ServiceName serviceInjectableService(DeploymentUnit unit, String serviceClass ) {
-        return serviceStartRubyService( unit, serviceClass ).append(  "injectable" );
+    public static ServiceName serviceInjectableService(DeploymentUnit unit, String serviceName ) {
+        return serviceStartRubyService( unit, serviceName ).append(  "injectable" );
     }
 
 }

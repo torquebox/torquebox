@@ -36,11 +36,13 @@ TorqueBox.configure do
 
   ruby :version => '1.9'
 
-  service AService, :name => 'a-service', :config => { :foo => :bar }
+  service AService, :name => 'ham', :config => { :foo => :bar }
 
   service AnotherService do
-    name 'another_service'
+    name 'biscuit'
   end
+
+  service AnotherService
   
   web :context => '/torquebox-rb'
 

@@ -139,13 +139,14 @@ module TorqueBox
             end
 
           when 'service' # => services:
-            # TODO: use service name as the key once that's supported
-            # elsewhere
             entry_data.each do |klass, data|
-              # service = metadata['services'][name]
-              # service['service'] = data.delete( :class ).to_s
-              # service.merge!( data )
-              metadata['services'][klass] = data
+              name = data.delete( :name )
+              if name
+                data[:service] = klass.to_s
+              else
+                name = klass.to_s
+              end
+              metadata['services'][name] = data
             end
 
           else # <entry_name>: (handles environment, ruby, web)

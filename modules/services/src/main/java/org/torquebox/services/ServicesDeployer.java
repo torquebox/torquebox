@@ -59,13 +59,13 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, final ServiceMetaData serviceMetaData) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        ServiceName serviceCreateName = ServicesServices.serviceCreateRubyService( unit, serviceMetaData.getClassName() );
-        ServiceName serviceStartName = ServicesServices.serviceStartRubyService( unit, serviceMetaData.getClassName() );
+        ServiceName serviceCreateName = ServicesServices.serviceCreateRubyService( unit, serviceMetaData.getName() );
+        ServiceName serviceStartName = ServicesServices.serviceStartRubyService( unit, serviceMetaData.getName() );
         RubyService service = new RubyService();
         
         RubyServiceCreate serviceCreate = new RubyServiceCreate( service );
         ServiceBuilder<RubyService> builderCreate = phaseContext.getServiceTarget().addService( serviceCreateName, serviceCreate );
-        builderCreate.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getClassName() ), ComponentResolver.class, serviceCreate.getComponentResolverInjector() );
+        builderCreate.addDependency( ServicesServices.serviceComponentResolver( unit, serviceMetaData.getName() ), ComponentResolver.class, serviceCreate.getComponentResolverInjector() );
         builderCreate.addDependency( CoreServices.runtimePoolName( unit, "services" ), RubyRuntimePool.class, serviceCreate.getRubyRuntimePoolInjector() );
         builderCreate.setInitialMode( Mode.PASSIVE );
         builderCreate.install();
@@ -77,7 +77,7 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         builderStart.install();
         
         InjectableService injectableService = new InjectableService( service );
-        phaseContext.getServiceTarget().addService( ServicesServices.serviceInjectableService( unit, serviceMetaData.getClassName() ), injectableService )
+        phaseContext.getServiceTarget().addService( ServicesServices.serviceInjectableService( unit, serviceMetaData.getName() ), injectableService )
             .addDependencies( serviceStartName )
             .setInitialMode( Mode.PASSIVE )
             .install();
@@ -87,7 +87,7 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
         String mbeanName = ObjectNameFactory.create( "torquebox.services", new Hashtable<String, String>() {
             {
                 put( "app", rubyAppMetaData.getApplicationName() );
-                put( "name", StringUtils.underscore( serviceMetaData.getClassName() ) );
+                put( "name", StringUtils.underscore( serviceMetaData.getName() ) );
             }
         } ).toString();
 

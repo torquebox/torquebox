@@ -159,6 +159,7 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
         } catch (DeploymentUnitProcessingException e) {
             throw e;
         } catch (Exception e) {
+            e.printStackTrace();
             throw new DeploymentUnitProcessingException( e );
         }
     }

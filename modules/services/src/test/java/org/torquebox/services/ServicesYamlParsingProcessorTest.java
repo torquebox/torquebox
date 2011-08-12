@@ -21,6 +21,7 @@ package org.torquebox.services;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -37,34 +38,24 @@ import org.torquebox.test.as.MockDeploymentUnit;
 
 public class ServicesYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     
+    private ServicesYamlParsingProcessor deployer;
+
     @Before
     public void setUp() throws Throwable {
         appendDeployer( new TorqueBoxYamlParsingProcessor() );
-        appendDeployer( new ServicesYamlParsingProcessor() );
+        appendDeployer( this.deployer = new ServicesYamlParsingProcessor() );
     }
 
     /** Ensure that an empty services.yml causes no problems. */
     @Test
     public void testEmptyServicesYml() throws Exception {
-        URL servicesYml = getClass().getResource( "empty.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", servicesYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
-        deploy( phaseContext );
+        deployResourceAsTorqueboxYml( "empty.yml" );
     }
 
     /** Ensure that a valid services.yml attaches metadata. */
-    @Ignore
     @Test
     public void testValidServicesYml() throws Exception {
-        
-        URL servicesYml = getClass().getResource( "empty.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", servicesYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-services.yml" );
         
         List<ServiceMetaData> allMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
         
@@ -72,33 +63,61 @@ public class ServicesYamlParsingProcessorTest extends AbstractDeploymentProcesso
     }
 
     @Test
-    @Ignore
-    public void testRequiresSingletonHandlesNullParams() throws Exception {
-        //assertFalse( this.deployer.requiresSingleton( null ) );
+    public void testNamedServiceYml() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "named-service.yml" );
+        
+        List<ServiceMetaData> allMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
+        
+        assertEquals( 1, allMetaData.size() );
+        ServiceMetaData metaData = allMetaData.get( 0 );
+        
+        assertEquals( "FooService", metaData.getClassName() );
+        assertEquals( "foo_service", metaData.getName() );
     }
 
     @Test
-    @Ignore
+    public void testOneNamedServiceAndOneUnnamedServiceOfTheSameClass() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "named-and-unnamed-services.yml" );
+        
+        List<ServiceMetaData> allMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
+        
+        assertEquals( 2, allMetaData.size() );
+
+        ArrayList<String> names = new ArrayList<String>();
+
+        for(ServiceMetaData each : allMetaData) {
+            assertEquals( "FooService", each.getClassName() );
+            names.add( each.getName() );
+        }
+
+        assert( names.contains( "FooService" ) );
+        assert( names.contains( "another_foo" ) );
+    }
+
+    @Test
+    public void testRequiresSingletonHandlesNullParams() throws Exception {
+        assertFalse( this.deployer.requiresSingleton( null ) );
+    }
+
+    @Test
     public void testRequiresSingletonReturnsFalseWhenNoSingletonKey() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put( "key_other_than_singleton", "value" );
-        //assertFalse( this.deployer.requiresSingleton( params ) );
+        assertFalse( this.deployer.requiresSingleton( params ) );
     }
 
     @Test
-    @Ignore
     public void testRequiresSingletonReturnsFalseWhenSingletonKeyIsFalse() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put( "singleton", false );
-        //assertFalse( this.deployer.requiresSingleton( params ) );
+        assertFalse( this.deployer.requiresSingleton( params ) );
     }
 
     @Test
-    @Ignore
     public void testRequiresSingletonReturnsTrueWhenSingletonKeyIsTrue() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put( "singleton", true );
-        //assertTrue( this.deployer.requiresSingleton( params ) );
+        assertTrue( this.deployer.requiresSingleton( params ) );
     }
 
 }

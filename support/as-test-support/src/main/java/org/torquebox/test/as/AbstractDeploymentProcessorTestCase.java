@@ -37,7 +37,7 @@ public abstract class AbstractDeploymentProcessorTestCase extends AbstractTorque
     private List<DeploymentUnitProcessor> deployers = new ArrayList<DeploymentUnitProcessor>();
     
     private List<MockDeploymentPhaseContext> contexts = new ArrayList<MockDeploymentPhaseContext>();
-    
+
     @Before
     public void clearDeployers() {
         this.deployers.clear();
@@ -82,6 +82,17 @@ public abstract class AbstractDeploymentProcessorTestCase extends AbstractTorque
         MockDeploymentPhaseContext context = new MockDeploymentPhaseContext( name, url );
         this.contexts.add(  context  );
         return context;
+    }
+
+    protected MockDeploymentUnit deployResourceAsTorqueboxYml(String resource) throws Exception {
+        URL yml = getClass().getResource( resource );
+
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", yml );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+        
+        deploy( phaseContext );
+
+        return unit;
     }
 
 }

@@ -73,11 +73,16 @@ describe "an app using a torquebox.rb" do
     end
 
     it "should create a service with a hash" do
-      service = mbean('torquebox.services:name=a_service,app=an_app_using_a_torquebox_rb')
+      service = mbean('torquebox.services:name=ham,app=an_app_using_a_torquebox_rb')
       service.ruby_class_name.should == 'AService'
     end
 
     it "should create a service with a block" do
+      service = mbean('torquebox.services:name=biscuit,app=an_app_using_a_torquebox_rb')
+      service.ruby_class_name.should == 'AnotherService'
+    end
+
+    it "should create a service with the same class as another service" do
       service = mbean('torquebox.services:name=another_service,app=an_app_using_a_torquebox_rb')
       service.ruby_class_name.should == 'AnotherService'
     end
