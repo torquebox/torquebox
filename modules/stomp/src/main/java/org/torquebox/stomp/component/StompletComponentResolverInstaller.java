@@ -61,7 +61,7 @@ public class StompletComponentResolverInstaller extends BaseRubyComponentDeploye
         ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
-        resolver.setComponentWrapperClass( StompletComponent.class );
+        resolver.setComponentWrapperClass( XAStompletComponent.class );
 
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );

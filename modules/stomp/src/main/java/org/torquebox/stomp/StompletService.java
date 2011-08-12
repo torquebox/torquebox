@@ -11,7 +11,7 @@ import org.projectodd.stilts.stomplet.Stomplet;
 import org.projectodd.stilts.stomplet.container.SimpleStompletContainer;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.stomp.component.StompletComponent;
+import org.torquebox.stomp.component.XAStompletComponent;
 
 public class StompletService implements Service<Stomplet> {
 
@@ -40,7 +40,7 @@ public class StompletService implements Service<Stomplet> {
 
             try {
                 ComponentResolver componentResolver = this.componentResolverInjector.getValue();
-                StompletComponent stomplet = (StompletComponent) componentResolver.resolve( runtime );
+                XAStompletComponent stomplet = (XAStompletComponent) componentResolver.resolve( runtime );
 
                 SimpleStompletContainer container = containerInjector.getValue();
                 container.addStomplet( this.destinationPattern, stomplet );
