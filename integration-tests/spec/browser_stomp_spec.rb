@@ -72,6 +72,48 @@ describe "STOMP applications", :js=>true do
     page_variable( :received_message )['body'].should == "this is my message"
   end
 
+
+  it "should be able to subscribe send and receive from JMS, transactionally" do
+    visit( '/stomp-websockets/index.html' )
+    page.execute_script <<-END
+      received_message = null;
+      subscribed       = null;
+      disconnected     = null;
+
+      client = Stomp.client( "ws://localhost:8675/" );
+
+      client.connect( null, null, function(frame) {
+        client.subscribe( "/queues/foo", function(message){
+          received_message = message;
+          client.disconnect();
+          disconnected = true;
+        } );
+        subscribed = true;
+      } );
+    END
+
+    wait_for( :subscribed ).should_not be_nil
+
+    sleep( 1 )
+
+    page.execute_script <<-END
+      client.begin( 'tx-1' );
+      client.send( "/queues/foo", { transaction: 'tx-1' }, "this is my message" );
+    END
+
+    sleep( 1 )
+
+    page_variable( :received_message ).should be_nil
+
+    page.execute_script <<-END
+      client.commit( 'tx-1' );
+    END
+
+    wait_for( :disconnected ).should_not be_nil
+    message = page_variable( :received_message )
+    page_variable( :received_message )['body'].should == "this is my message"
+  end
+
 end
 
 def page_variable(variable_name)
