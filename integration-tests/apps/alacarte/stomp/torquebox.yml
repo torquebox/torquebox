@@ -1,8 +1,30 @@
+queues:
+  /jms-queues/foo:
+    durable: false
+  /jms-queues/bar:
+    durable: false
+
+topics:
+  /jms-topics/foo:
+  /jms-topics/bar:
 
 stomp:
   stomplet.one:
     route: '/queues/:queue_name'
     class: StompletOne
-  jms.stomplet:
-    route: '/jms/testQueue'
-    class: JmsStomplet
+  foo.stomplet:
+    route: '/bridge/foo'
+    class: BridgeStomplet
+    config:
+      type: queue
+      destination: /jms-queues/foo
+  bar.stomplet:
+    route: '/bridge/bar'
+    class: BridgeStomplet
+    config:
+      type: topic
+      destination: /jms-topics/bar
+       
+
+       
+

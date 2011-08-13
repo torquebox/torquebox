@@ -1,5 +1,7 @@
 package org.torquebox.stomp;
 
+import java.util.Map;
+
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
@@ -17,6 +19,14 @@ public class StompletService implements Service<Stomplet> {
 
     public StompletService() {
 
+    }
+    
+    public void setConfig(Map<String, String> config) {
+        this.config = config;
+    }
+    
+    public Map<String,String> getConfig() {
+        return this.config;
     }
 
     public void setDestinationPattern(String destinationPattern) {
@@ -43,7 +53,7 @@ public class StompletService implements Service<Stomplet> {
                 XAStompletComponent stomplet = (XAStompletComponent) componentResolver.resolve( runtime );
 
                 SimpleStompletContainer container = containerInjector.getValue();
-                container.addStomplet( this.destinationPattern, stomplet );
+                container.addStomplet( this.destinationPattern, stomplet, this.config );
             } catch (Exception e) {
                 this.poolInjector.getValue().returnRuntime( this.runtime );
                 this.runtime = null;
@@ -79,6 +89,8 @@ public class StompletService implements Service<Stomplet> {
     private InjectedValue<SimpleStompletContainer> containerInjector = new InjectedValue<SimpleStompletContainer>();
 
     private Ruby runtime;
+    private Map<String, String> config;
+
 
     private String destinationPattern;
 }

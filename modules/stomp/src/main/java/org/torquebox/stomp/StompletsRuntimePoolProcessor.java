@@ -45,7 +45,8 @@ public class StompletsRuntimePoolProcessor implements DeploymentUnitProcessor {
         
         if ( poolMetaData == null ) {
             poolMetaData = new PoolMetaData("stomplets");
-            poolMetaData.setShared();
+            poolMetaData.setMinimumSize( allMetaData.size()  );
+            poolMetaData.setMaximumSize( allMetaData.size()  );
             unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         }
     }

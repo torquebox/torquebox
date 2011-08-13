@@ -33,6 +33,7 @@ public class StompletDeployer implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
         StompletService service = new StompletService();
+        service.setConfig( stompletMetaData.getStompletConfig() );
         service.setDestinationPattern( stompletMetaData.getDestinationPattern() );
         
         phaseContext.getServiceTarget().addService( StompServices.stomplet( unit, stompletMetaData.getName() ), service )

@@ -75,14 +75,14 @@ describe "STOMP applications" do
 
     received_message = nil
 
-    client.subscribe( "/jms/testQueue" ) do |message|
+    client.subscribe( "/bridge/foo" ) do |message|
       puts "received message #{message}"
       received_message = message
     end
 
     sleep( 1 )
 
-    client.send( "/jms/testQueue", "this is my message" )
+    client.send( "/bridge/foo", "this is my message" )
 
     sleep( 1 )
 
@@ -99,7 +99,7 @@ describe "STOMP applications" do
 
     received_message = nil
 
-    client.subscribe( "/jms/testQueue" ) do |message|
+    client.subscribe( "/bridge/bar" ) do |message|
       puts "received message #{message}"
       received_message = message
     end
@@ -107,7 +107,7 @@ describe "STOMP applications" do
     sleep( 1 )
 
     tx = client.begin
-    stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( '/jms/testQueue', "this is my message" )
+    stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( '/bridge/bar', "this is my message" )
     tx.send( stomp_message )
 
     sleep( 1 )

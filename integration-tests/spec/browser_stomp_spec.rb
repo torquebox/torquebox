@@ -83,7 +83,7 @@ describe "STOMP applications", :js=>true do
       client = Stomp.client( "ws://localhost:8675/" );
 
       client.connect( null, null, function(frame) {
-        client.subscribe( "/queues/foo", function(message){
+        client.subscribe( "/bridge/foo", function(message){
           received_message = message;
           client.disconnect();
           disconnected = true;
@@ -98,7 +98,7 @@ describe "STOMP applications", :js=>true do
 
     page.execute_script <<-END
       client.begin( 'tx-1' );
-      client.send( "/queues/foo", { transaction: 'tx-1' }, "this is my message" );
+      client.send( "/bridge/foo", { transaction: 'tx-1' }, "this is my message" );
     END
 
     sleep( 1 )
