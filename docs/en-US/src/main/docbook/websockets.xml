@@ -12,8 +12,8 @@
     Raw access to WebSockets is not provided. Instead, multiplexed
     communication is supported through the layering of messaging semantics on
     top. Additionally, optional integration into other messaging systems (such
-    as JMS/HornetQ) are provided to enable advanced application architectures.
-    </para>
+    as JMS/HornetQ) are provided to enable advanced application
+    architectures.</para>
 
     <para>TorqueBox provides support for Stomplets to allow explicit control
     and design of messaging end-points, instead of simple direct bridging to
@@ -169,7 +169,7 @@
     </section>
 
     <section>
-      <title>on_message(message)</title>
+      <title><code>on_message(message)</code></title>
 
       <para>The on_message(message) method is called with a Stomp message as
       the parameter whenever a client sends a message to a destination handled
@@ -232,6 +232,20 @@ class BridgeStomplet &lt; TorqueBox::Stomp::JmsStomplet
 
 end</screen></para>
       </example></para>
+
+    <section>
+      <title>Destination and Message compatibility</title>
+
+      <para>When using the <classname>JmsStomplet</classname> to bridge STOMP
+      destinations to JMS destination, normal message-encoding occurs. This
+      allows your application to send a message to a JMS destination using
+      <classname>TorqueBox::Messaging</classname> interfaces as normal. The
+      <classname>JmsStomplet</classname> will appropriately decode the
+      messages received from the JMS destination. Likewise, any messages sent
+      by the <classname>JmsStomplet</classname> will be appropriate encoded in
+      order to be consumable by other non-STOMP
+      <classname>MessageProcessors</classname>.</para>
+    </section>
   </section>
 
   <section>
@@ -263,5 +277,27 @@ end</screen></para>
       type: topic
       destination: /jms-topics/bar</screen></para>
       </informalexample></para>
+  </section>
+
+  <section>
+    <title>Javascript Client</title>
+
+    <para>TorqueBox makes use of the Stilts framework and to implement the
+    WebSockets and STOMP stack. TorqueBox includes the Javascript client
+    provided by the Stilts distribution.</para>
+
+    <para>Place example here!</para>
+  </section>
+
+  <section>
+    <title>Other Clients (without WebSockets)</title>
+
+    <para>The Stilts distribution also includes JRuby-based clients and Java
+    clients appropriate for communicating with the TorqueBox STOMP service.
+    While STOMP is offered over WebSockets, the same service, on the same port
+    (8675) provides bare STOMP also, for clients not requiring a WebSockets
+    transport. The JRuby and Java clients can seamlessly communicate with the
+    TorqueBox STOMP server using either TCP/IP, or WebSockets as the
+    underlying transport.</para>
   </section>
 </chapter>

@@ -55,8 +55,10 @@ module TorqueBox
         destination = destination_type.to_sym == :queue ? jms_session.create_queue( destination_name ) : jms_session.create_topic( destination_name )
     
         producer    = @session.jms_session.create_producer( destination.to_java )
+
         jms_message = @session.jms_session.create_text_message
-        jms_message.text = stomp_message.content_as_string
+        jms_message.text = TorqueBox::Messaging::Message.encode( stomp_message.content_as_string )
+
         producer.send( destination, jms_message )
       end
     
@@ -68,7 +70,7 @@ module TorqueBox
         end
     
         def onMessage(jms_message)
-          stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( @subscriber.destination, jms_message.text )
+          stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( @subscriber.destination, TorqueBox::Messaging::Message.decode( jms_message ) )
           @subscriber.send( stomp_message )
         end
     
