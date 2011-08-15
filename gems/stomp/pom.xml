@@ -22,12 +22,17 @@
       <version>${project.version}</version>
       <type>gem</type>
     </dependency>
-
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquebox-messaging</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd.stilts</groupId>
+      <artifactId>stilts-stomp-client-js</artifactId>
+      <version>${version.org.projectodd.stilts}</version>
+      <type>js</type>
     </dependency>
 
     <dependency>
@@ -47,6 +52,24 @@
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-js-client</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>prepare-package</phase>
+            <configuration>
+              <includeGroupIds>org.projectodd.stilts</includeGroupIds>
+              <includeType>js</includeType>
+              <outputDirectory>target/torquebox-stomp/lib/torquebox/stomp/rack/</outputDirectory>
+              <stripVersion>true</stripVersion>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
