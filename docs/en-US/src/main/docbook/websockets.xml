@@ -259,23 +259,32 @@ end</screen></para>
     Additionally, it specifies the class of the implementation, along with
     optional configuration in the form of name/value pairs of strings.</para>
 
+    <para>STOMP supports the notion of virtuals, just as with web container.
+    By default, if your application specifies a virtual host for the web
+    portion of the configuration, the same value will be used for the STOMP
+    container. The host may be overridden, though, by specifying a
+    <parameter>host:</parameter> parameter within the
+    <parameter>stomp:</parameter> block.</para>
+
     <para><informalexample>
         <para><screen>stomp:
-  stomplet.one:
-    route: '/queues/:queue_name'
-    class: StompletOne
-  foo.stomplet:
-    route: '/bridge/foo'
-    class: BridgeStomplet
-    config:
-      type: queue
-      destination: /jms-queues/foo
-  bar.stomplet:
-    route: '/bridge/bar'
-    class: BridgeStomplet
-    config:
-      type: topic
-      destination: /jms-topics/bar</screen></para>
+  host: somehost.com
+  stomplets:
+    stomplet.one:
+      route: '/queues/:queue_name'
+      class: StompletOne
+    foo.stomplet:
+      route: '/bridge/foo'
+      class: BridgeStomplet
+      config:
+        type: queue
+        destination: /jms-queues/foo
+    bar.stomplet:
+      route: '/bridge/bar'
+      class: BridgeStomplet
+      config:
+        type: topic
+        destination: /jms-topics/bar</screen></para>
       </informalexample></para>
   </section>
 
