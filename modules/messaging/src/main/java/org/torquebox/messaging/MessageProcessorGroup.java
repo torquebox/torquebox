@@ -210,8 +210,11 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
         return this.destination;
     }
 
-    public RubyRuntimePool getRubyRuntimePool() {
-        return this.runtimePoolInjector.getValue();
+    public synchronized RubyRuntimePool getRubyRuntimePool() {
+        if (this.runtimePool == null) {
+            this.runtimePool = this.runtimePoolInjector.getValue();
+        }
+        return this.runtimePool;
     }
 
     public ComponentResolver getComponentResolver() {
@@ -220,6 +223,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
 
     private ServiceRegistry serviceRegistry;
     private String destinationName;
+    private RubyRuntimePool runtimePool;
 
     private ClassLoader classLoader;
     private Connection connection;

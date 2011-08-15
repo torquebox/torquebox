@@ -102,7 +102,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
                 try {
                     group.getRubyRuntimePool().returnRuntime( ruby );
                 } catch (Throwable ignored) {
-                    log.warn("Possible memory leak? "+ignored.getMessage());
+                    log.warn("Possible memory leak? "+ignored, ignored);
                 }
             }
         }

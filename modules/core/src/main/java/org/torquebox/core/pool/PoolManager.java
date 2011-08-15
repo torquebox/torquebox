@@ -151,19 +151,20 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     protected void fillInstance() throws Exception {
         synchronized (this.pool) {
             if (this.started) { // don't fill an instance if we've stopped
-                log.info( "TOBY: creating instance for " + this.pool.getName() );
+                log.info( "TOBY: creating instance for " + this.pool.getName() + " size="+this.pool.size() );
                 T instance = this.factory.createInstance( this.pool.getName() );
                 this.pool.fillInstance( instance );
-                log.info( "TOBY: created instance for " + this.pool.getName() );
+                log.info( "TOBY: created instance ["+instance+"] for " + this.pool.getName() + " size="+this.pool.size() );
             } 
         }
     }
         
     protected void drainInstance() throws Exception {
     	synchronized (this.pool) {
-    	  log.info( "TOBY: draining instance from " + this.pool.getName() );  
-          T instance = this.pool.drainInstance();
-          this.factory.destroyInstance( instance );
+            log.info( "TOBY: draining instance from " + this.pool.getName() + " size="+this.pool.size() );  
+            T instance = this.pool.drainInstance();
+            this.factory.destroyInstance( instance );
+            log.info( "TOBY: drained instance ["+instance+"] from " + this.pool.getName() + " size="+this.pool.size() );  
     	}
     }
 
@@ -178,19 +179,13 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     }
 
-
-    public void stop() {
-        synchronized (this.pool) {
-            log.info( "TOBY: stopping pool " + this.pool.getName() );
-            started = false;
-            int poolSize = pool.size();
-
-            for ( int i = 0 ; i < poolSize ; ++i ) {
-                this.executor.execute( this.drainTask );
-            }
-
+    public void stop() throws Exception {
+        log.info( "TOBY: stopping pool " + this.pool.getName() );
+        started = false;
+        while (pool.size() > 0) {
+            drainInstance();
         }
-
+        log.info( "TOBY: stopped pool" + this.pool.getName() );
     }
 
     public void waitForMinimumFill() throws InterruptedException {

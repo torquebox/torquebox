@@ -53,59 +53,50 @@ public class SimplePool<T> implements ManageablePool<T> {
         return borrowInstance( 0 );
     }
 
-    public T borrowInstance(long timeout) throws InterruptedException {
-        this.listeners.instanceRequested( instances.size(), availableInstances.size() );
+    public synchronized T borrowInstance(long timeout) throws InterruptedException {
         long start = System.currentTimeMillis();
-        synchronized (this.instances) {
-            while (availableInstances.isEmpty()) {
-                long remainingTime = ((timeout == 0) ? 0 : (timeout - (System.currentTimeMillis() - start)));
-                if ((timeout != 0) && (remainingTime <= 0)) {
-                    return null;
-                }
-                this.instances.wait( remainingTime );
+        this.listeners.instanceRequested( instances.size(), availableInstances.size() );
+        while (availableInstances.isEmpty()) {
+            long remainingTime = ((timeout == 0) ? 0 : (timeout - (System.currentTimeMillis() - start)));
+            if ((timeout != 0) && (remainingTime <= 0)) {
+                return null;
             }
-
-            Iterator<T> iter = this.availableInstances.iterator();
-            T instance = iter.next();
-            iter.remove();
-
-            this.borrowedInstances.add( instance );
-
-            this.listeners.instanceBorrowed( instance, instances.size(), availableInstances.size() );
-            return instance;
+            wait( remainingTime );
         }
+
+        Iterator<T> iter = this.availableInstances.iterator();
+        T instance = iter.next();
+        iter.remove();
+
+        this.borrowedInstances.add( instance );
+
+        this.listeners.instanceBorrowed( instance, instances.size(), availableInstances.size() );
+        return instance;
     }
 
     @Override
-    public void releaseInstance(T instance) {
-        synchronized (this.instances) {
-            this.borrowedInstances.remove( instance );
-            this.availableInstances.add( instance );
-            this.listeners.instanceReleased( instance, instances.size(), availableInstances.size() );
-            this.instances.notifyAll();
-        }
-
+    public synchronized void releaseInstance(T instance) {
+        this.borrowedInstances.remove( instance );
+        this.availableInstances.add( instance );
+        this.listeners.instanceReleased( instance, instances.size(), availableInstances.size() );
+        notifyAll();
     }
 
-    public void fillInstance(T instance) {
-        synchronized (this.instances) {
-            this.instances.add( instance );
-            this.availableInstances.add( instance );
-            this.instances.notifyAll();
-        }
+    public synchronized void fillInstance(T instance) {
+        this.instances.add( instance );
+        this.availableInstances.add( instance );
+        notifyAll();
     }
 
     public T drainInstance() throws Exception {
         return drainInstance( 0 );
     }
 
-    public T drainInstance(long timeout) throws Exception {
-        synchronized (this.instances) {
-            T instance = borrowInstance( timeout );
-            this.borrowedInstances.remove( instance );
-            this.instances.remove( instance );
-            return instance;
-        }
+    public synchronized T drainInstance(long timeout) throws Exception {
+        T instance = borrowInstance( timeout );
+        this.borrowedInstances.remove( instance );
+        this.instances.remove( instance );
+        return instance;
     }
     
     Set<T> getAllInstances() {
@@ -126,22 +117,16 @@ public class SimplePool<T> implements ManageablePool<T> {
         return instances;
     }
 
-    int size() {
-        synchronized (instances) {
-            return this.instances.size();
-        }
+    synchronized int size() {
+        return this.instances.size();
     }
 
-    int borrowedSize() {
-        synchronized (instances) {
-            return this.borrowedInstances.size();
-        }
+    synchronized int borrowedSize() {
+        return this.borrowedInstances.size();
     }
 
-    int availableSize() {
-        synchronized (instances) {
-            return this.availableInstances.size();
-        }
+    synchronized int availableSize() {
+        return this.availableInstances.size();
     }
 
 }
