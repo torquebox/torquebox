@@ -19,6 +19,11 @@
     and design of messaging end-points, instead of simple direct bridging to
     some other underlying messaging technology, such as a JMS broker.</para>
 
+    <para><important>
+        <para>Everything described in this chapter is in flux at this point in
+        time. Community input is sought. Provide feedback!</para>
+      </important></para>
+
     <section id="websockets-overview">
       <title>What are WebSockets?</title>
 
@@ -122,59 +127,98 @@
       </itemizedlist></para>
 
     <section>
-      <title><code>configure(config)</code></title>
+      <title>Stomplet API</title>
 
-      <para>The configure(config) method is called for each instance of the
-      Stomplet instantiated by the container. The config parameter includes
-      any name/value pairs specified in the configuration of the Stomplet for
-      a given route.</para>
+      <para></para>
 
-      <para>The configure(...) method is typically where a Stomplet would
-      acquire any resources it needs to handle subscription requests and sent
-      messages.</para>
+      <section>
+        <title><code>configure(config)</code></title>
+
+        <para>The configure(config) method is called for each instance of the
+        Stomplet instantiated by the container. The config parameter includes
+        any name/value pairs specified in the configuration of the Stomplet
+        for a given route.</para>
+
+        <para>The configure(...) method is typically where a Stomplet would
+        acquire any resources it needs to handle subscription requests and
+        sent messages.</para>
+      </section>
+
+      <section>
+        <title><code>destroy()</code></title>
+
+        <para>The <code>destroy()</code> method is called for each instance of
+        the Stomplet when the container undeploys its route. This method is
+        typically where all resources are released and connections to
+        underlying systems are terminated.</para>
+      </section>
+
+      <section>
+        <title><code>on_subscribe(subscriber)</code> and
+        <code>on_unsubscribe(subscriber)</code></title>
+
+        <para>The <code>on_subscribe(subscriber)</code> method is called when
+        a client wishes to receive messages from a destination matching the
+        Stomplet. The same instance of the subcriber parameter is passed to
+        <code>on_unsubscribe(...)</code> when the client wishes to cease
+        receiving messages and cancel that subscription.</para>
+
+        <para>The subscribe object supports a few useful methods:</para>
+
+        <para><itemizedlist>
+            <listitem>
+              <para><code>destination</code> String describing the desired
+              destination to receive messages from.</para>
+            </listitem>
+
+            <listitem>
+              <para><code>send(message)</code> Deliver a message to the client
+              through this subscription.</para>
+            </listitem>
+          </itemizedlist></para>
+      </section>
+
+      <section>
+        <title><code>on_message(message)</code></title>
+
+        <para>The on_message(message) method is called with a Stomp message as
+        the parameter whenever a client sends a message to a destination
+        handled by the Stomplet. The client does not necessarily need to have
+        previous subscribed to the destination in order to send messages to
+        it.</para>
+      </section>
     </section>
 
     <section>
-      <title><code>destroy()</code></title>
+      <title>Example</title>
 
-      <para>The <code>destroy()</code> method is called for each instance of
-      the Stomplet when the container undeploys its route. This method is
-      typically where all resources are released and connections to underlying
-      systems are terminated.</para>
-    </section>
+      <para><programlisting>require 'torquebox-stomp'
 
-    <section>
-      <title><code>on_subscribe(subscriber)</code> and
-      <code>on_unsubscribe(subscriber)</code></title>
+class SimpleBroadcastStomplet
 
-      <para>The <code>on_subscribe(subscriber)</code> method is called when a
-      client wishes to receive messages from a destination matching the
-      Stomplet. The same instance of the subcriber parameter is passed to
-      <code>on_unsubscribe(...)</code> when the client wishes to cease
-      receiving messages and cancel that subscription.</para>
+  def initialize()
+    super
+  end
 
-      <para>The subscribe object supports a few useful methods:</para>
+  def configure(stomplet_config)
+    super
+  end
 
-      <para><itemizedlist>
-          <listitem>
-            <para><code>destination</code> String describing the desired
-            destination to receive messages from.</para>
-          </listitem>
+  def on_message(stomp_message)
+    @subscribers.each do |subscriber|
+      subscriber.send( stomp_message )
+    end
+  end
 
-          <listitem>
-            <para><code>send(message)</code> Deliver a message to the client
-            through this subscription.</para>
-          </listitem>
-        </itemizedlist></para>
-    </section>
+  def on_subscribe(subscriber)
+    @subscribers &lt;&lt; subscriber
+  end
+ 
+  def on_unsubscribe(subscriber)
+    @subscribers.delete( subscriber )
+  end
 
-    <section>
-      <title><code>on_message(message)</code></title>
-
-      <para>The on_message(message) method is called with a Stomp message as
-      the parameter whenever a client sends a message to a destination handled
-      by the Stomplet. The client does not necessarily need to have previous
-      subscribed to the destination in order to send messages to it.</para>
+end</programlisting></para>
     </section>
   </section>
 
@@ -207,7 +251,7 @@
     <para><example>
         <title>Example JMS Stomplet Bridge</title>
 
-        <para><screen>require 'torquebox-stomp'
+        <para><programlisting>require 'torquebox-stomp'
 
 class BridgeStomplet &lt; TorqueBox::Stomp::JmsStomplet
 
@@ -230,7 +274,7 @@ class BridgeStomplet &lt; TorqueBox::Stomp::JmsStomplet
     subscribe_to( subscriber, @destination_name, @destination_type )
   end
 
-end</screen></para>
+end</programlisting></para>
       </example></para>
 
     <section>
@@ -267,7 +311,7 @@ end</screen></para>
     <parameter>stomp:</parameter> block.</para>
 
     <para><informalexample>
-        <para><screen>stomp:
+        <para><programlisting>stomp:
   host: somehost.com
   stomplets:
     stomplet.one:
@@ -284,7 +328,7 @@ end</screen></para>
       class: BridgeStomplet
       config:
         type: topic
-        destination: /jms-topics/bar</screen></para>
+        destination: /jms-topics/bar</programlisting></para>
       </informalexample></para>
   </section>
 
@@ -294,9 +338,144 @@ end</screen></para>
     <para>TorqueBox makes use of the Stilts framework and to implement the
     WebSockets and STOMP stack. TorqueBox includes the Javascript client
     provided by the Stilts distribution in the
-    <filename>share/javascripts/</filename> directory.</para>
+    <filename>share/javascripts/</filename> directory. The client is derived
+    from work by Jeff Mesnil.</para>
 
-    <para>Place example here!</para>
+    <section>
+      <title>Using the Javascript client</title>
+
+      <para>The Javascript STOMP client isolates your application from the
+      underlying WebSocket protocol. The Javascript client works purely in
+      terms of STOMP semantics. The client is based around callbacks.</para>
+
+      <section>
+        <title>Instantiating a client</title>
+
+        <para>The client is created using the
+        <methodname>client(...)</methodname> method of the Javascript
+        <classname>Stomp</classname> class. This method takes one parameter,
+        being the URL of the server to connect to. Creating the client does
+        not connect it.</para>
+
+        <para>By default, the STOMP server runs on port 8675 and supports
+        virtual hosts. To connect, a URL scheme of <code>ws://</code> should
+        be used.</para>
+
+        <para><informalexample>
+            <programlisting>client = Stomp.client( "ws://localhost:8675" )</programlisting>
+          </informalexample></para>
+      </section>
+
+      <section>
+        <title>Connecting the client</title>
+
+        <para>To connect the client to the STOMP server, use the connect(...)
+        method, which takes three arguments: username, password and a callback
+        function which will be invoked once the connection has been
+        established.</para>
+
+        <para>Currently the username and password parameters are
+        ignored.</para>
+
+        <para><informalexample>
+            <programlisting>client.connect( "username", "password", function() {
+    // executed once successfully connected
+} );</programlisting>
+          </informalexample>Once connected, the callback function will be
+        invoked. Other client methods should be used from within this method
+        or other callbacks.</para>
+      </section>
+
+      <section>
+        <title>Sending a message</title>
+
+        <para>Messages may be sent to any destination supported by your
+        Stomplets, even without prior subscription to the same
+        destination.</para>
+
+        <para>The client's <methodname>send(...)</methodname> method is used
+        to deliver a payload with headers to the destination.</para>
+
+        <para><informalexample>
+            <programlisting>client.send( "/some/destination", { header1: 'Header 1' }, "this is the payload" );</programlisting>
+          </informalexample>Messages sent this way will by processed by the
+        <methodname>on_message(...)</methodname> method of the Stomplet bound
+        to the destination.</para>
+      </section>
+
+      <section>
+        <title>Subscribing to destinations</title>
+
+        <para>A client can subscribe to STOMP destinations using the
+        subscribe(...) method, passing the destination and a message-handling
+        callback function as parameters. Any message delivered to the client
+        on the destination will invoke the function with the message as the
+        argument. The message provides access to the body and hash of headers,
+        along with an <methodname>ack()</methodname> method to acknowledge
+        receipt, if required.</para>
+
+        <para><informalexample>
+            <programlisting>client.subscribe( "/some/destination", function(message) {
+  // message.body 
+  // message.headers['header1']
+} );</programlisting>
+          </informalexample></para>
+      </section>
+
+      <section>
+        <title>Working with transactions</title>
+
+        <para>The STOMP protocol defines transactional semantics, and several
+        transactions may concurrently be in use at the same time.</para>
+
+        <formalpara>
+          <title>Starting a transaction</title>
+
+          <para>The <methodname>begin()</methodname> method is used to start a
+          transaction. It returns a transaction identifier which may be used
+          to associate other activities with the transaction.</para>
+        </formalpara>
+
+        <formalpara>
+          <title>Committing a transaction</title>
+
+          <para>To commit the work performed within the scope of a particular
+          transaction, the <methodname>commit(...)</methodname> method is
+          used, passing the transaction identifier provided by
+          <methodname>begin()</methodname> as the only parameter.</para>
+        </formalpara>
+
+        <formalpara>
+          <title>Aborting a transaction</title>
+
+          <para>To cancel the work performed within the scope of a particular
+          transaction, the <methodname>abort(...)</methodname> method is used,
+          passing the transaction identifier provided by
+          <methodname>begin()</methodname> as the only parameter.</para>
+        </formalpara>
+
+        <formalpara>
+          <title>Sending messages within a transaction</title>
+
+          <para>To send a message within a transaction, a
+          <parameter>transaction</parameter> header should be added, with its
+          value being the transaction identifier returned by a previous call
+          to <methodname>begin()</methodname>.</para>
+        </formalpara>
+
+        <informalexample>
+          <programlisting>tx = client.begin();
+
+client.send( "/some/destination", { transaction: tx }, "this is a transactional message" );
+
+if ( everyoneIsHappy ) {
+  client.commit( tx ); 
+} else {
+  client.abort( tx );
+}</programlisting>
+        </informalexample>
+      </section>
+    </section>
 
     <section>
       <title>Rack middleware to provide the Javascript client</title>
@@ -307,14 +486,14 @@ end</screen></para>
       <classname>TorqueBox::Stomp::StompJavascriptClientProvider</classname>
       middleware matches requests to <filename>/stilts-stomp.js</filename> and
       serves the Javascript client.<informalexample>
-          <para><screen>require 'torquebox-stomp'
+          <para><programlisting>require 'torquebox-stomp'
 
 app = lambda { |env| 
   # your app here
 }
 
 use TorqueBox::Stomp::StompJavascriptClientProvider
-run app</screen></para>
+run app</programlisting></para>
         </informalexample></para>
     </section>
   </section>
@@ -329,5 +508,22 @@ run app</screen></para>
     transport. The JRuby and Java clients can seamlessly communicate with the
     TorqueBox STOMP server using either TCP/IP, or WebSockets as the
     underlying transport.</para>
+  </section>
+
+  <section>
+    <title>Further information</title>
+
+    <para>TorqueBox uses the Stilts project to provide the WebSockets and
+    STOMP stack. The Stilts project also defines the Stomplet API. Additional
+    clients are available directly from the Stilts project. Rest assured,
+    Stilts is written by the same people who write TorqueBox.</para>
+
+    <para><uri>http://stilts.projectodd.org/</uri></para>
+
+    <para></para>
+
+    <para></para>
+
+    <para></para>
   </section>
 </chapter>
