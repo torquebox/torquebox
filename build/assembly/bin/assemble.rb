@@ -17,6 +17,8 @@ class Assembler
   attr_accessor :jboss_version
   attr_accessor :jruby_version
 
+  attr_accessor :stilts_version
+
   attr_accessor :m2_repo
 
   def initialize() 
@@ -40,9 +42,11 @@ class Assembler
     @torquebox_version = doc.get_elements( "project/version" ).first.text
     @jboss_version     = doc.get_elements( "project/properties/version.jbossas" ).first.text
     @jruby_version     = doc.get_elements( "project/properties/version.jruby" ).first.text
+    @stilts_version    = doc.get_elements( "project/properties/version.org.projectodd.stilts" ).first.text
     puts "TorqueBox.... #{@torquebox_version}" 
     puts "JBoss........ #{@jboss_version}" 
     puts "JRuby........ #{@jruby_version}"
+    puts "Stilts....... #{@stilts_version}"
     #puts doc
   end
 
@@ -121,11 +125,16 @@ class Assembler
 
     FileUtils.cp File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'Rakefile' ), tool.torquebox_dir
 
-    init_dir = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'init' ) )
+    init_dir  = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'init' ) )
     rails_dir = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'rails' ) )
+    js_dir    = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'javascript' ) )
 
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'init', 'torquebox.conf' ), init_dir )
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'rails', 'template.rb' ), rails_dir )
+
+    stomp_js = @m2_repo + "/org/projectodd/stilts/stilts-stomp-client-js/#{@stilts_version}/stilts-stomp-client-js-#{@stilts_version}.js"
+
+    FileUtils.cp( stomp_js, File.join( js_dir, 'stilts-stomp.js' ) )
   end
 
   def transform_configs

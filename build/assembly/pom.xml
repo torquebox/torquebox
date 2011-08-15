@@ -31,6 +31,13 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.projectodd.stilts</groupId>
+      <artifactId>stilts-stomp-client-js</artifactId>
+      <type>js</type>
+      <version>${version.org.projectodd.stilts}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>builder</artifactId>
       <version>3.0.0</version>
