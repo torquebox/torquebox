@@ -341,6 +341,20 @@ end</programlisting></para>
     <filename>share/javascripts/</filename> directory. The client is derived
     from work by Jeff Mesnil.</para>
 
+    <para><important>
+        <para>The Javascript relies on the browser's native support for
+        WebSockets. Many browsers have disabled WebSockets by default. Please
+        see instructions for your particular browser regarding how to enable
+        and verify WebSockets support. We currently test with Firefox
+        4.</para>
+
+        <formalpara>
+          <title>Firefox</title>
+
+          <para>https://developer.mozilla.org/en/WebSockets</para>
+        </formalpara>
+      </important></para>
+
     <section>
       <title>Using the Javascript client</title>
 
