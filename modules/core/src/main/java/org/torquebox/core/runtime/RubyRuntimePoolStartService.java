@@ -57,7 +57,7 @@ public class RubyRuntimePoolStartService implements Service<RubyRuntimePool> {
     public void stop(StopContext context) {
         try {
             this.pool.stop();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             // swallow
         }
     }

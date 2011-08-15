@@ -37,5 +37,5 @@ public interface RubyRuntimePool {
     String getName();
     
     void start() throws Exception;
-    void stop() throws InterruptedException;
+    void stop() throws Exception;
 }

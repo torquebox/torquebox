@@ -105,7 +105,7 @@ public class ManagedPool<T> implements Pool<T> {
         }
     }
 
-    public void stop() throws InterruptedException {
+    public void stop() throws Exception {
         if (this.started) {
             this.poolManager.stop();
             this.started = false;
