@@ -96,11 +96,14 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
                 if (session.getTransacted()) {
                     session.rollback();
                 }
-            } catch (JMSException ignored) {
-            }
+            } catch (JMSException ignored) {}
         } finally {
             if (ruby != null) {
-                group.getRubyRuntimePool().returnRuntime( ruby );
+                try {
+                    group.getRubyRuntimePool().returnRuntime( ruby );
+                } catch (Throwable ignored) {
+                    log.warn("Possible memory leak? "+ignored.getMessage());
+                }
             }
         }
 
