@@ -40,6 +40,8 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.projectodd.stilts.stomplet.StompletServer;
+import org.torquebox.stomp.StompApplicationDefaultsProcessor;
+import org.torquebox.stomp.StompWebAdjuster;
 import org.torquebox.stomp.StompYamlParsingProcessor;
 import org.torquebox.stomp.StompletContainerDeployer;
 import org.torquebox.stomp.StompletDeployer;
@@ -94,6 +96,8 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 31, new StompYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 1031, new StompWebAdjuster() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 1032, new StompApplicationDefaultsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new StompletLoadPathProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new StompletsRuntimePoolProcessor() );
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 5, new StompDependenciesProcessor() );

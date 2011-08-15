@@ -21,7 +21,10 @@ public class StompletContainerDeployer implements DeploymentUnitProcessor {
             return;
         }
         
+        StompApplicationMetaData stompAppMetaData = unit.getAttachment( StompApplicationMetaData.ATTACHMENT_KEY );
+        
         StompletContainerService service = new StompletContainerService();
+        service.setHosts( stompAppMetaData.getHosts() );
         
         phaseContext.getServiceTarget().addService( StompServices.container( unit ), service )
             .addDependency( StompServices.SERVER, StompletServer.class, service.getStompletServerInjector() )

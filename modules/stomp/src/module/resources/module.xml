@@ -51,7 +51,7 @@
         <module name="org.jboss.logging"/>
         <module name="org.jboss.vfs"/>
         <module name="org.torquebox.core"/>
-
+        <module name="org.torquebox.web"/>
         <module name="org.jboss.netty"/>
     </dependencies>
 </module>

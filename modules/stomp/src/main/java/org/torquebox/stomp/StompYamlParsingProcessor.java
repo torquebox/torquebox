@@ -19,6 +19,7 @@
 
 package org.torquebox.stomp;
 
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -38,23 +39,43 @@ public class StompYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
 
     @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
-        Map<String, Map<String, ?>> data = (Map<String, Map<String, ?>>) dataObject;
+        Map<String, ?> data = (Map<String, Map<String, ?>>) dataObject;
 
         log.info( "Parsing: " + data );
-        
-        for ( String name : data.keySet() ) {
-            Map<String, ?> config = data.get( name );
-            
+
+        StompApplicationMetaData stompAppMetaData = new StompApplicationMetaData();
+        unit.putAttachment( StompApplicationMetaData.ATTACHMENT_KEY, stompAppMetaData );
+
+        Object hosts = data.get( "host" );
+
+        if (hosts != null) {
+            if (hosts instanceof List) {
+                List<String> list = (List<String>) hosts;
+                for (String each : list) {
+                    stompAppMetaData.addHost( each );
+                }
+            } else {
+                stompAppMetaData.addHost( (String) hosts );
+            }
+        }
+
+        stompAppMetaData.setContextPath( (String) data.get( "context" ) );
+
+        Map<String, Map<String, ?>> stomplets = (Map<String, Map<String, ?>>) data.get( "stomplets" );
+
+        for (String name : stomplets.keySet()) {
+            Map<String, ?> config = stomplets.get( name );
+
             String destinationPattern = (String) config.get( "route" );
             String rubyClassName = (String) config.get( "class" );
             Map<String, String> stompletConfig = (Map<String, String>) config.get( "config" );
-            
+
             RubyStompletMetaData metaData = new RubyStompletMetaData( name );
             metaData.setDestinationPattern( destinationPattern );
             metaData.setRubyClassName( rubyClassName );
             metaData.setRubyRequirePath( StringUtils.underscore( rubyClassName.trim() ) );
             metaData.setStompletConfig( stompletConfig );
-            
+
             unit.addToAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY, metaData );
         }
 

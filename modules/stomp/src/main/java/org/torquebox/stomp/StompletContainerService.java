@@ -17,6 +17,10 @@ public class StompletContainerService implements Service<SimpleStompletContainer
     public StompletContainerService() {
     }
 
+    public void setHosts(List<String> hostNames) {
+        this.hostNames = hostNames;
+    }
+    
     public void addHost(String hostName) {
         this.hostNames.add( hostName );
     }
@@ -35,7 +39,9 @@ public class StompletContainerService implements Service<SimpleStompletContainer
                 }
             }
         } catch (Exception e) {
-            context.failed( new StartException( e ) );
+            //e.printStackTrace();
+            // context.failed( new StartException( e ) );
+            throw new StartException( e );
         }
     }
 

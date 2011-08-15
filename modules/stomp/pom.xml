@@ -27,6 +27,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-web</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.projectodd.stilts</groupId>
       <artifactId>stilts-stomplet-server-core</artifactId>
       <version>${version.org.projectodd.stilts}</version>
