@@ -293,9 +293,30 @@ end</screen></para>
 
     <para>TorqueBox makes use of the Stilts framework and to implement the
     WebSockets and STOMP stack. TorqueBox includes the Javascript client
-    provided by the Stilts distribution.</para>
+    provided by the Stilts distribution in the
+    <filename>share/javascripts/</filename> directory.</para>
 
     <para>Place example here!</para>
+
+    <section>
+      <title>Rack middleware to provide the Javascript client</title>
+
+      <para>The torquebox-stomp gem includes a simple Rack middleware to make
+      it easy to serve the Javascript client with your application, without
+      having to copy it into your application's source tree. The
+      <classname>TorqueBox::Stomp::StompJavascriptClientProvider</classname>
+      middleware matches requests to <filename>/stilts-stomp.js</filename> and
+      serves the Javascript client.<informalexample>
+          <para><screen>require 'torquebox-stomp'
+
+app = lambda { |env| 
+  # your app here
+}
+
+use TorqueBox::Stomp::StompJavascriptClientProvider
+run app</screen></para>
+        </informalexample></para>
+    </section>
   </section>
 
   <section>
