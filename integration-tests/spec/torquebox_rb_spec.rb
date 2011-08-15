@@ -9,18 +9,25 @@ describe "an app using a torquebox.rb" do
       visit "/torquebox-rb" 
     end
     
-    it "should be the correct environment" do
-      page.find("#success")[:class].should =~ /env-ham/
-    end
-
-    it "should have the correct environment var" do
+    it "should have the correct environment vars" do
       page.find("#success")[:class].should =~ /gravy/
+      page.find("#success")[:class].should =~ /biscuit/
     end
 
-    it "should have a pool with the proper settings" do
+    it "should have a pool specified with a hash" do
       pool = nil
       lambda { 
         pool = mbean('torquebox.pools:name=foo,app=an_app_using_a_torquebox_rb')
+      }.should_not raise_error(javax.management.InstanceNotFoundException)
+      pool.should_not be_nil
+      pool.minimum_instances.should == 0
+      pool.maximum_instances.should == 6
+    end
+    
+    it "should have a pool specified as a block" do
+      pool = nil
+      lambda { 
+        pool = mbean('torquebox.pools:name=cheddar,app=an_app_using_a_torquebox_rb')
       }.should_not raise_error(javax.management.InstanceNotFoundException)
       pool.should_not be_nil
       pool.minimum_instances.should == 0
@@ -51,16 +58,28 @@ describe "an app using a torquebox.rb" do
       job.ruby_class_name.should == 'AJob'
     end
 
-    it "should create a processor" do
+    it "should create a processor with a hash" do
       proc = mbean('torquebox.messaging.processors:name=/queue/another_queue/a_processor,app=an_app_using_a_torquebox_rb')
       proc.destination_name.should == '/queue/another-queue'
       proc.concurrency.should == 2
       proc.message_selector.should == "steak = 'salad'"
     end
 
-    it "should create a service" do
+    it "should create a processor with a block" do
+      proc = mbean('torquebox.messaging.processors:name=/queue/yet_another_queue/a_processor,app=an_app_using_a_torquebox_rb')
+      proc.destination_name.should == '/queue/yet-another-queue'
+      proc.concurrency.should == 2
+      proc.message_selector.should == "steak = 'salad'"
+    end
+
+    it "should create a service with a hash" do
       service = mbean('torquebox.services:name=a_service,app=an_app_using_a_torquebox_rb')
       service.ruby_class_name.should == 'AService'
+    end
+
+    it "should create a service with a block" do
+      service = mbean('torquebox.services:name=another_service,app=an_app_using_a_torquebox_rb')
+      service.ruby_class_name.should == 'AnotherService'
     end
 
   end

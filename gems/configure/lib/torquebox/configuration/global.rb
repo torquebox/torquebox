@@ -29,63 +29,66 @@ module TorqueBox
 
       ENTRY_MAP = lambda do
         destination_entry =
-          ThingPlusHashEntry.with_options(:allow_block => true,
-                                          :validate => {
-                                            :optional => [
-                                                          { :create => [true, false] },
-                                                          { :durable => [true, false] },
-                                                          :remote_host
-                                                         ]
-                                          })
+          ThingWithOptionsEntry.with_settings(:validate => {
+                                                :optional => [
+                                                              { :create => [true, false] },
+                                                              { :durable => [true, false] },
+                                                              :processor,
+                                                              :remote_host
+                                                             ]
+                                              })
         {
-          :authentication => ThingPlusHashEntry.with_options( :validate => {
-                                                                :required => [:domain]
+          :authentication => ThingWithOptionsEntry.with_settings( :validate => {
+                                                                    :required => [:domain]
+                                                                  }),
+          :environment => OptionsEntry,
+          :job         => ThingWithOptionsEntry.with_settings(:cumulative => true,
+                                                              :validate => {
+                                                                :required => [:cron],
+                                                                :optional => [
+                                                                              :config,
+                                                                              :name,
+                                                                              { :singleton => [true, false] }
+                                                                             ]
                                                               }),
-          :env         => ThingEntry,
-          :environment => HashEntry,
-          :job         => ThingPlusHashEntry.with_options(:validate => {
-                                                            :required => [:class, :cron],
-                                                            :optional => [
-                                                                          :config,
-                                                                          { :singleton => [true, false] }
-                                                                         ]
-                                                          }),
-          :options_for => ThingPlusHashEntry.with_options(:validate => {
-                                                            :optional => [
-                                                                          :concurrency,
-                                                                          { :disabled => [true, false] }
-                                                                         ]
-                                                          }),
-          :pool        => ThingPlusHashEntry.with_options(:validate => {
-                                                            :required => [{ :type => [:bounded, :shared] }],
-                                                            :optional => [:min, :max]
-                                                          }),
-          :processor   => ThingPlusHashEntry.with_options(:require_parent => [:queue, :topic],
-                                                          :cumulative => true,
-                                                          :validate => {
-                                                            :optional => [
-                                                                          :concurrency,
-                                                                          :config,
-                                                                          :filter
-                                                                         ]
-                                                          }),
+          :options_for => ThingWithOptionsEntry.with_settings(:validate => {
+                                                                :optional => [
+                                                                              :concurrency,
+                                                                              { :disabled => [true, false] }
+                                                                             ]
+                                                              }),
+          :pool        => ThingWithOptionsEntry.with_settings(:validate => {
+                                                                :required => [{ :type => [:bounded, :shared] }],
+                                                                :optional => [:min, :max]
+                                                              }),
+          :processor   => ThingWithOptionsEntry.with_settings(:require_parent => [:queue, :topic],
+                                                              :cumulative => true,
+                                                              :validate => {
+                                                                :optional => [
+                                                                              :concurrency,
+                                                                              :config,
+                                                                              :filter,
+                                                                              :name
+                                                                             ]
+                                                              }),
           :queue       => destination_entry,
-          :ruby        => HashEntry.with_options(:validate => {
-                                                   :optional => [{ :version => ['1.8', '1.9'] },
-                                                                 { :compile_mode => [:force, :jit, :off,
-                                                                                     'force', 'jit', 'off'] }]
-                                                 }),
-          :service     => ThingPlusHashEntry.with_options(:validate => {
-                                                            :required => [:class],
-                                                            :optional => [
-                                                                          :config,
-                                                                          { :singleton => [true, false] }
-                                                                         ]
-                                                          }),
+          :ruby        => OptionsEntry.with_settings(:validate => {
+                                                       :optional => [{ :version => ['1.8', '1.9'] },
+                                                                     { :compile_mode => [:force, :jit, :off,
+                                                                                         'force', 'jit', 'off'] }]
+                                                     }),
+          :service     => ThingWithOptionsEntry.with_settings(:cumulative => true,
+                                                              :validate => {
+                                                                :optional => [
+                                                                              :config,
+                                                                              :name,
+                                                                              { :singleton => [true, false] }
+                                                                             ]
+                                                              }),
           :topic       => destination_entry,
-          :web         => HashEntry.with_options(:validate => {
-                                                   :optional => [:context, :host, :rackup, :static]
-                                                 })
+          :web         => OptionsEntry.with_settings(:validate => {
+                                                       :optional => [:context, :host, :rackup, :static]
+                                                     })
         }
       end.call
 
@@ -93,20 +96,18 @@ module TorqueBox
       def to_metadata_hash
         metadata = Hash.new { |hash, key| hash[key] = Hash.new { |hash, key| hash[key] = { } } }
 
-        each do |entry_name, entry_data|
+        self[TorqueBox::CONFIGURATION_ROOT].each do |entry_name, entry_data|
           case entry_name
           when 'authentication' # => auth:
             entry_data.each do |name, data|
               metadata['auth'][name] = data
             end
-            
-          when 'env' # => application:env:
-            metadata['application']['env'] = entry_data
 
           when 'job' # => jobs:
-            entry_data.each do |name, data|
+            entry_data.each do |klass, data|
+              name = data.delete( :name ) || unique_name( klass.to_s, metadata['jobs'].keys )
               job = metadata['jobs'][name]
-              job['job'] = data.delete( :class ).to_s
+              job['job'] = klass.to_s
               job.merge!( data )
             end
 
@@ -131,24 +132,24 @@ module TorqueBox
             entry_data.each do |name, data|
               metadata[entry_name + 's'][name] = data unless data.delete( :create ) === false
               (data.delete( 'processor' ) || []).each do |processor|
-                processor_name, processor_options = processor
+                processor_class, processor_options = processor
                 processor_options[:concurrency] &&= processor_options[:concurrency].to_java(java.lang.Integer)
-                metadata['messaging'][name][processor_name] = processor_options
+                metadata['messaging'][name][processor_class] = processor_options
               end
             end
 
           when 'service' # => services:
             # TODO: use service name as the key once that's supported
             # elsewhere
-            entry_data.each do |name, data|
+            entry_data.each do |klass, data|
               # service = metadata['services'][name]
               # service['service'] = data.delete( :class ).to_s
               # service.merge!( data )
-              metadata['services'][data.delete( :class )] = data
+              metadata['services'][klass] = data
             end
 
           else # <entry_name>: (handles environment, ruby, web)
-            metadata[entry_name] = entry_data 
+            metadata[entry_name] = entry_data
           end
         end
 
@@ -162,6 +163,13 @@ module TorqueBox
           hashmap[key.to_s] = value
         end
         hashmap
+      end
+
+      protected
+      def unique_name(name, set, suffix = nil)
+        name = "#{name}-#{suffix}" if suffix
+        name = unique_name( name, set, suffix.to_i + 1 ) if set.include?( name )
+        name
       end
     end
   end

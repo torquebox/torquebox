@@ -38,10 +38,10 @@ module TorqueBox
         @config = config
         @entry_map = entry_map
         @parents = options.delete( :parents ) || []
-        @allow_block = options.delete( :allow_block )
         @options = options
         @line_number = find_line_number
-
+        @entry_options = { }
+        
         if options[:require_parent] && ([options[:require_parent]].flatten & @parents).empty?
           raise ConfigurationError.new( "#{@name} only allowed inside #{options[:require_parent]}", @line_number )
         end
@@ -55,14 +55,11 @@ module TorqueBox
       end
       
       def process(*args, &block)
-        @current_config = process_args( args )
-        if block_given?
-          if @allow_block
-            eval_block( &block )
-          else
-            raise ConfigurationError.new( "#{@name} is not allowed a block", @line_number )
-          end
-        end
+        process_args( args )
+        eval_block( &block ) if block_given?
+        validate_options
+        finalize_options
+        local_config
       end
 
       def process_args(unused)
@@ -70,9 +67,9 @@ module TorqueBox
         @config
       end
 
-      def validate_options(to_validate)
+      def validate_options
         if @options[:validate]
-          validator = Validator.new( @options[:validate], @name, to_validate )
+          validator = Validator.new( @options[:validate], @name, @entry_options )
           raise ConfigurationError.new( validator.message, @line_number ) unless validator.valid?
         end
       end
@@ -85,7 +82,7 @@ module TorqueBox
         FakeConstant.new( name )
       end
 
-      def self.with_options(options)
+      def self.with_settings(options)
         klass = self
         proxy = Object.new
         (class << proxy; self; end).__send__( :define_method, :new ) do |*args|
@@ -104,15 +101,29 @@ module TorqueBox
       def method_missing(method, *args, &block)
         klass = @entry_map[method]
         if klass
-          entry = klass.new( method, @current_config, @entry_map, :parents => @parents + [@name] )
+          entry = klass.new( method, @entry_options, @entry_map, :parents => @parents + [@name] )
           entry.process( *args, &block )
         else
-          super
+          add_options( method.to_sym => args.first )
         end
       end
 
+      def add_options( option )
+        @entry_options.merge!( option )
+      end
+
+      def finalize_options
+        if @options[:cumulative]
+          local_config << @entry_options
+        else
+          @entry_options = local_config.merge!( @entry_options )
+        end
+        local_config
+      end
+      
       def local_config
-        @config[@name.to_s] ||= @options[:cumulative] ? [] : {}
+        @config[@name.to_s] = [] if @options[:cumulative] && !@config[@name.to_s].is_a?(Array)
+        @config[@name.to_s] ||= {}  
       end
 
       def local_config=(value)
@@ -120,30 +131,27 @@ module TorqueBox
       end
     end
 
-    class HashEntry < Entry
+    class OptionsEntry < Entry
       def process_args(args)
-        hash = args.first
-        raise ConfigurationError.new( "'#{@name}' takes a hash (and only a hash)", @line_number ) if !hash.is_a?(Hash) || args.length != 1
-        validate_options( hash )
-        local_config.merge!( hash )
-        local_config
+        hash = args.first || { }
+        raise ConfigurationError.new( "'#{@name}' takes a hash (and only a hash)", @line_number ) if !hash.is_a?(Hash) || args.length > 1
+        add_options( hash )
       end
     end
 
-    class ThingPlusHashEntry < Entry
+    class ThingWithOptionsEntry < Entry
       def process_args(args)
-        thing, hash = args
-        hash ||= {}
-        validate_options( hash )
-        if @options[:cumulative]
-          local_config << [thing.to_s, hash]
-          hash
-        else
-          local_config[thing.to_s] = { } unless local_config[thing.to_s]
-          local_config[thing.to_s].merge!( hash )
-          local_config[thing.to_s]
-        end
+        @thing, hash = args
+        add_options( hash || {} )
+      end
 
+      def finalize_options
+        if @options[:cumulative]
+          local_config << [@thing.to_s, @entry_options]
+        else
+          local_config[@thing.to_s] = { } unless local_config[@thing.to_s]
+          @entry_options = local_config[@thing.to_s].merge!( @entry_options )
+        end
       end
     end
 

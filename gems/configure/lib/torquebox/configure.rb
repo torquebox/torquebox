@@ -18,11 +18,12 @@
 require 'torquebox/configuration'
 
 module TorqueBox
-
+  CONFIGURATION_ROOT = '<root>'
+  
   def self.configure(&block)
     config = Thread.current[:torquebox_config]
     entry_map = Thread.current[:torquebox_config_entry_map]
-    Configuration::Entry.new( '<top level>', config, entry_map, :allow_block => true ).
+    Configuration::Entry.new( CONFIGURATION_ROOT, config, entry_map, :allow_block => true ).
       process( nil, &block )
     config
   end

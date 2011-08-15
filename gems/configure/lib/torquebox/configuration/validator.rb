@@ -60,12 +60,12 @@ module TorqueBox
 
       def validate_required
         keys_for( @required ).each do |required|
-          messages << "Required option :#{required} is missing on '#{@entry}'" unless @options_to_validate.keys.include?( required )
+          messages << "Required option :#{required} is missing on '#{@entry}'" unless @options_to_validate.keys.map(&:to_s).include?( required )
         end
       end
 
       def validate_allowed
-        @options_to_validate.keys.each do |option|
+        @options_to_validate.keys.map(&:to_s).each do |option|
           messages << "Option :#{option} is not allowed on '#{@entry}'" unless keys_for( @allowed ).include?( option )
         end
       end
@@ -83,7 +83,7 @@ module TorqueBox
       
       def keys_for(ary)
         ary.collect do |value|
-          value.is_a?( Hash ) ? value.keys.first : value
+          (value.is_a?( Hash ) ? value.keys.first : value).to_s
         end
       end
     end
