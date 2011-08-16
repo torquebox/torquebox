@@ -63,6 +63,12 @@
       <version>${project.version}</version>
       <type>gem</type>
     </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-stomp</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
   </dependencies>
 
   <build>
