@@ -105,11 +105,11 @@ public class MessageProcessorDeployer implements DeploymentUnitProcessor {
     }
 
     protected ServiceName getConnectionFactoryServiceName() {
-        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "java:/ConnectionFactory" );
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
     }
 
     protected ServiceName getDestinationServiceName(String destination) {
-        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( destination );
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( DestinationUtils.getServiceName( destination ) );
     }
 
     @Override

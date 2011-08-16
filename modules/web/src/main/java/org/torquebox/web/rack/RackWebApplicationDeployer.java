@@ -19,6 +19,8 @@
 
 package org.torquebox.web.rack;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -34,9 +36,11 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.as.web.SharedTldsMetaDataBuilder;
 import org.jboss.as.web.deployment.ServletContextAttribute;
 import org.jboss.as.web.deployment.TldsMetaData;
 import org.jboss.as.web.deployment.WarMetaData;
+import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.metadata.javaee.spec.EmptyMetaData;
 import org.jboss.metadata.javaee.spec.ParamValueMetaData;
@@ -48,7 +52,6 @@ import org.jboss.metadata.web.spec.FilterMetaData;
 import org.jboss.metadata.web.spec.FiltersMetaData;
 import org.jboss.metadata.web.spec.MimeMappingMetaData;
 import org.jboss.metadata.web.spec.ServletMappingMetaData;
-import org.jboss.metadata.web.spec.TldMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 import org.jboss.msc.service.ServiceName;
@@ -97,10 +100,16 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         log.info( "Marking as WAR" );
         DeploymentTypeMarker.setType( DeploymentType.WAR, unit );
         WarMetaData warMetaData = new WarMetaData();
-
+        
         final TldsMetaData tldsMetaData = new TldsMetaData();
-        List<TldMetaData> sharedTldsMetaData = Collections.emptyList();
-        tldsMetaData.setSharedTlds( sharedTldsMetaData );
+        // HACK: Remove reflection once SharedTldsMetaDataBuilder's constructor is public
+        try {
+            Constructor<SharedTldsMetaDataBuilder> ctor = SharedTldsMetaDataBuilder.class.getDeclaredConstructor( ModelNode.class );
+            ctor.setAccessible( true );
+            tldsMetaData.setSharedTlds( ctor.newInstance( new Object[] { null } ) );
+        } catch (Exception e) {
+            throw new DeploymentUnitProcessingException( e );
+        }
         unit.putAttachment( TldsMetaData.ATTACHMENT_KEY, tldsMetaData );
         unit.putAttachment( WarMetaData.ATTACHMENT_KEY, warMetaData );
         unit.addToAttachmentList( Attachments.RESOURCE_ROOTS, resourceRoot );

@@ -61,6 +61,11 @@ public class MockDeploymentUnit extends SimpleAttachable implements DeploymentUn
     public ServiceRegistry getServiceRegistry() {
         return null;
     }
+    
+    @Override
+    public ModelNode getDeploymentSubsystemModel(String subsystemName) {
+        return null;
+    }
 
     @Override
     public ModelNode createDeploymentSubModel(String subsystemName, PathElement address) {

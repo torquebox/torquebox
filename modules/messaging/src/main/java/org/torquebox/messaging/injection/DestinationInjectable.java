@@ -27,6 +27,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.torquebox.core.injection.jndi.JNDIInjectable;
+import org.torquebox.messaging.DestinationUtils;
 
 public class DestinationInjectable extends JNDIInjectable {
     
@@ -60,11 +61,11 @@ public class DestinationInjectable extends JNDIInjectable {
     }
 
     protected ServiceName getDestinationServiceName() {
-        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( getName() );
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( DestinationUtils.getServiceName( getName() ) );
     }
     
     protected ServiceName getConnectionFactoryServiceName() {
-        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "java:/ConnectionFactory" );
+        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
     }
 
 

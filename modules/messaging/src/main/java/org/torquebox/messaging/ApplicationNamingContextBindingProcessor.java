@@ -19,8 +19,8 @@
 
 package org.torquebox.messaging;
 
-import org.jboss.as.ee.naming.RootContextService;
 import org.jboss.as.naming.deployment.ContextNames;
+import org.jboss.as.naming.service.NamingStoreService;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -38,12 +38,12 @@ public class ApplicationNamingContextBindingProcessor implements DeploymentUnitP
             return;
         }
 
-        RootContextService contextService = new RootContextService();
+        NamingStoreService contextService = new NamingStoreService();
         ServiceName contextServiceName = ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "queue" ).append( appMetaData.getApplicationName() );
         phaseContext.getServiceTarget().addService( contextServiceName, contextService )
                 .install();
         
-        RootContextService tasksService = new RootContextService();
+        NamingStoreService tasksService = new NamingStoreService();
         ServiceName tasksServiceName = contextServiceName.append(  "tasks"  );
         
         phaseContext.getServiceTarget().addService( tasksServiceName, tasksService )
