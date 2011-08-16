@@ -5,7 +5,6 @@ remote_describe 'jdk apis' do
   it "should be exposed" do
     lambda {
       javax.ejb.SessionBean
-      javax.faces.FactoryFinder
       javax.jms.Destination
       javax.mail.Address
       javax.servlet.Filter
