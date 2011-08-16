@@ -73,9 +73,15 @@ end</programlisting>This example service prints a message every second until sto
 
       <para>Services reside under a <code>services</code> key of
       <filename>torquebox.yml</filename>. Each key underneath
-      <code>services</code> references a Ruby class. Any nested
-      key/value pairs underneath the class will be passed in as
-      parameters to the service's <methodname>initialize</methodname>
+      <code>services</code> is either a unique name for the service or
+      the name of the Ruby class implementing the service. Providing a
+      unique name allows the reuse of the same Ruby class to provide
+      multiple services. If the Ruby class name is not used as the key, 
+      it must be provided using the <code>service</code> key in the 
+      key/value pairs nested underneath the service entry as 
+      options for the service. Any value assigned to the <code>config</code>
+      key underneath the service entry will be passed in as
+      the parameter to the service's <methodname>initialize</methodname>
       method.</para>
 
       <para><example>
@@ -83,12 +89,26 @@ end</programlisting>This example service prints a message every second until sto
 
         <para><programlisting>services:
   MyService:
-    name: TorqueBox User
+    config:
+      name: TorqueBox User
 
-  AnotherService:</programlisting>This deploys two services -
+  AnotherService:
+
+  ham-machine:
+    service: FoodMachine
+    config: 
+      food: ham
+  
+  biscuit-machine:
+    service: FoodMachine
+    config:
+      food: biscuit</programlisting>This deploys four services;
+        the first two using the class name as the key:
         <classname>MyService</classname> which corresponds to the
         example above and <classname>AnotherService</classname>
-        which doesn't take any initialization parameters.</para>
+        which doesn't take any initialization parameters. The
+        latter two services reuse the same class, and use a
+        unique name as the key.</para>
       </example></para>
 
       <para>Service classes should be available in Ruby's load path. For
@@ -140,7 +160,8 @@ end</programlisting>This example service prints a message every second until sto
         <para><programlisting>services:
   MyService:
     singleton: true
-    name: TorqueBox User
+    config:
+      name: TorqueBox User
 
   AnotherService:</programlisting>This is the same
         <filename>torquebox.yml</filename> from the example above but
