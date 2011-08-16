@@ -93,14 +93,6 @@
 
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>websocket-client</artifactId>
-      <version>0.2.0</version>
-      <type>gem</type>
-    </dependency>
-
-
-    <dependency>
-      <groupId>rubygems</groupId>
       <artifactId>capybara</artifactId>
       <version>0.4.0</version>
       <type>gem</type>

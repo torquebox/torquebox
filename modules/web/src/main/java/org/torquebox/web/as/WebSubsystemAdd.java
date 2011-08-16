@@ -49,13 +49,6 @@ import org.torquebox.web.rails.RailsAutoloadPathProcessor;
 import org.torquebox.web.rails.RailsRackProcessor;
 import org.torquebox.web.rails.RailsRuntimeProcessor;
 import org.torquebox.web.rails.RailsVersionProcessor;
-import org.torquebox.web.websockets.URLRegistryInstaller;
-import org.torquebox.web.websockets.WebSocketContextInstaller;
-import org.torquebox.web.websockets.WebSocketsRuntimePoolProcessor;
-import org.torquebox.web.websockets.WebSocketsServerService;
-import org.torquebox.web.websockets.WebSocketsServices;
-import org.torquebox.web.websockets.WebSocketsYamlParsingProcessor;
-import org.torquebox.web.websockets.component.WebSocketProcessorComponentResolverInstaller;
 
 class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
@@ -76,7 +69,6 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
             }
         }, OperationContext.Stage.RUNTIME );
         
-        addWebServices( context, verificationHandler, newControllers );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
@@ -90,29 +82,15 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
         
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1200, new WebSocketsYamlParsingProcessor() );
-        
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 1, new WebDependenciesProcessor() );
         
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 101, new WebSocketsRuntimePoolProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, new RailsAutoloadPathProcessor() );
         
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, new WebSocketProcessorComponentResolverInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 3100, new WebSocketContextInstaller( "localhost"  ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 4100, new URLRegistryInstaller() );
     }
 
-    protected void addWebServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                  List<ServiceController<?>> newControllers) {
-        WebSocketsServerService service = new WebSocketsServerService();
-        newControllers.add( context.getServiceTarget().addService( WebSocketsServices.WEB_SOCKETS_SERVER, service )
-            .setInitialMode( Mode.ON_DEMAND )
-            .addListener( verificationHandler )
-            .install() );
-    }
 
     static ModelNode createOperation(ModelNode address) {
         final ModelNode subsystem = new ModelNode();

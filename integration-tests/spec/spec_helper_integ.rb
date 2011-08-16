@@ -6,7 +6,6 @@
 require 'ostruct'
 require 'capybara/dsl'
 require 'jmx4r'
-require 'websocket_client'
 require 'stilts-stomp-client'
 
 require 'driver_helper'
