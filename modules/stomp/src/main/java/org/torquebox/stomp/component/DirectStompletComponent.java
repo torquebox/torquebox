@@ -14,27 +14,27 @@ public class DirectStompletComponent implements Stomplet {
     
     @Override
     public void initialize(StompletConfig config) throws StompException {
-        this.component._callRubyMethod( "configure", config );
+        this.component._callRubyMethodIfDefined( "configure", config );
     }
 
     @Override
     public void destroy() throws StompException {
-        this.component._callRubyMethod( "destroy" );
+        this.component._callRubyMethodIfDefined( "destroy" );
     }
 
     @Override
     public void onMessage(StompMessage message) throws StompException {
-        this.component._callRubyMethod( "on_message", message );
+        this.component._callRubyMethodIfDefined( "on_message", message );
     }
 
     @Override
     public void onSubscribe(Subscriber subscriber) throws StompException {
-        this.component._callRubyMethod( "on_subscribe", subscriber );
+        this.component._callRubyMethodIfDefined( "on_subscribe", subscriber );
     }
 
     @Override
     public void onUnsubscribe(Subscriber subscriber) throws StompException {
-        this.component._callRubyMethod( "on_unsubscribe", subscriber );
+        this.component._callRubyMethodIfDefined( "on_unsubscribe", subscriber );
     }
     
     private XAStompletComponent component;
