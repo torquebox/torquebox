@@ -26,8 +26,10 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.Session;
+import javax.jms.XASession;
 import javax.jms.Topic;
+import javax.transaction.TransactionManager;
+import javax.transaction.Transaction;
 
 import org.jboss.as.naming.ManagedReference;
 import org.jboss.as.naming.ManagedReferenceFactory;
@@ -58,8 +60,8 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             @Override
             public void run() {
                 try {
-                    session = group.getConnection().createSession( false, Session.AUTO_ACKNOWLEDGE );
-
+                    session = group.getConnection().createXASession();
+                    tm = group.getTransactionManager();
                     Destination destination = group.getDestination();
                     if (group.isDurable() && destination instanceof Topic) {
                         consumer = session.createDurableSubscriber( (Topic) destination, group.getName(), group.getMessageSelector(), false );
@@ -83,21 +85,20 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     @Override
     public void onMessage(Message message) {
         Ruby ruby = null;
+        Transaction transaction = null;
         try {
+            tm.begin();
+            transaction = tm.getTransaction();
+            transaction.enlistResource(session.getXAResource());
             ruby = group.getRubyRuntimePool().borrowRuntime();
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );
             component.process( message );
-            if (session.getTransacted()) {
-                session.commit();
-            }
+            transaction.commit();
         } catch (Exception e) {
             log.error( "Unexpected error in " + group.getName(), e );
-            try {
-                if (session.getTransacted()) {
-                    session.rollback();
-                }
-            } catch (JMSException ignored) {}
+            try { transaction.rollback(); } catch (Exception ignored) {}
         } finally {
+            try { tm.suspend(); } catch (Exception ignored) {}
             if (ruby != null) {
                 try {
                     group.getRubyRuntimePool().returnRuntime( ruby );
@@ -133,6 +134,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     private static final Logger log = Logger.getLogger( "org.torquebox.message" );
 
     private MessageProcessorGroup group;
-    private Session session;
+    private XASession session;
     private MessageConsumer consumer;
+    private TransactionManager tm;
 }

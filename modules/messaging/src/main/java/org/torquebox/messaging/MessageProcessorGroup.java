@@ -22,11 +22,12 @@ package org.torquebox.messaging;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
+import javax.jms.XAConnection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.transaction.TransactionManager;
 
+import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.jboss.as.naming.ManagedReference;
 import org.jboss.as.naming.ManagedReferenceFactory;
 import org.jboss.logging.Logger;
@@ -99,10 +100,10 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                 Thread.currentThread().setContextClassLoader( MessageProcessorGroup.this.classLoader );
                 ManagedReferenceFactory connectionFactoryManagedReferenceFactory = MessageProcessorGroup.this.connectionFactoryInjector.getValue();
                 ManagedReference connectionFactoryManagedReference = connectionFactoryManagedReferenceFactory.getReference();
-                ConnectionFactory connectionFactory = (ConnectionFactory) connectionFactoryManagedReference.getInstance();
+                HornetQConnectionFactory connectionFactory = (HornetQConnectionFactory) connectionFactoryManagedReference.getInstance();
 
                 try {
-                    MessageProcessorGroup.this.connection = connectionFactory.createConnection();
+                    MessageProcessorGroup.this.connection = connectionFactory.createXAConnection();
                     MessageProcessorGroup.this.connection.start();
                 } catch (JMSException e) {
                     context.failed( new StartException( e ) );
@@ -202,7 +203,11 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
         return this.componentResolverInjector;
     }
 
-    public Connection getConnection() {
+    public Injector<TransactionManager> getTransactionManagerInjector() {
+        return this.transactionManagerInjector;
+    }
+
+    public XAConnection getConnection() {
         return this.connection;
     }
 
@@ -221,12 +226,16 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
         return this.componentResolverInjector.getValue();
     }
 
+    public TransactionManager getTransactionManager() {
+        return this.transactionManagerInjector.getValue();
+    }
+
     private ServiceRegistry serviceRegistry;
     private String destinationName;
     private RubyRuntimePool runtimePool;
 
     private ClassLoader classLoader;
-    private Connection connection;
+    private XAConnection connection;
     private Destination destination;
 
     private ServiceName baseServiceName;
@@ -243,6 +252,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private final InjectedValue<ManagedReferenceFactory> destinationInjector = new InjectedValue<ManagedReferenceFactory>();
     private final InjectedValue<RubyRuntimePool> runtimePoolInjector = new InjectedValue<RubyRuntimePool>();
     private final InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
+    private final InjectedValue<TransactionManager> transactionManagerInjector = new InjectedValue<TransactionManager>();
 
     private static final Logger log = Logger.getLogger( "org.torquebox.message" );
 

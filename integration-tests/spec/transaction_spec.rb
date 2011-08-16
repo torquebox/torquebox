@@ -18,14 +18,35 @@ remote_describe "transactions testing" do
     response = nil
     thread = Thread.new {
       response = output.receive(:timeout => 1)
-      puts "JC: timed out"
     }
-    puts "JC: started thread"
     input.publish("anything")
-    puts "JC: published"
     thread.join
-    puts "JC: joined"
     response.should be_nil
-    puts "JC: done"
+  end
+
+  it "should receive a message when no error occurs" do
+    input = inject('/queue/input')
+    output = inject('/queue/output')
+    response = nil
+    thread = Thread.new {
+      response = output.receive(:timeout => 10_000)
+    }
+    input.publish("anything")
+    thread.join
+    response.should_not be_nil
+  end
+
+  it "should not receive a message when an error is tossed" do
+    pending("publishing works with XASessions")
+    input = inject('/queue/input')
+    output = inject('/queue/output')
+    response = nil
+    thread = Thread.new {
+      response = output.receive(:timeout => 10_000)
+    }
+    input.publish("This message should cause an error to be raised")
+    thread.join
+    sleep 10
+    response.should be_nil
   end
 end

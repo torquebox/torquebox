@@ -23,6 +23,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.management.MBeanServer;
+import javax.transaction.TransactionManager;
 
 import org.jboss.as.jmx.MBeanRegistrationService;
 import org.jboss.as.jmx.MBeanServerService;
@@ -36,6 +37,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.as.txn.TxnServices;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
@@ -83,6 +85,7 @@ public class MessageProcessorDeployer implements DeploymentUnitProcessor {
         phaseContext.getServiceTarget().addService( baseServiceName, service )
             .addDependency( MessagingServices.messageProcessorComponentResolver( unit, name ), ComponentResolver.class, service.getComponentResolverInjector() )
             .addDependency( getConnectionFactoryServiceName(), ManagedReferenceFactory.class, service.getConnectionFactoryInjector() )
+            .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, service.getTransactionManagerInjector() )
             .addDependency( getDestinationServiceName( metaData.getDestinationName() ), ManagedReferenceFactory.class, service.getDestinationInjector() )
             .addDependency( CoreServices.runtimePoolName( unit, "messaging" ), RubyRuntimePool.class, service.getRuntimePoolInjector() )
             .setInitialMode( Mode.ACTIVE )

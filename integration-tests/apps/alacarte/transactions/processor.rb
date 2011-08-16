@@ -8,8 +8,7 @@ class Processor < TorqueBox::Messaging::MessageProcessor
     output = inject( '/queue/output' )
     output.publish('yay!')
     raise msg if msg =~ /error/
-  rescue Exception
-    puts "JC: #{$!}", $@
   end
 
 end
+

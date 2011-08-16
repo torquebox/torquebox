@@ -156,10 +156,6 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
     }
 
-    protected ServiceName getXAConnectionFactoryServiceName() {
-        return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "XAConnectionFactory" );
-    }
-
     static ModelNode createOperation(ModelNode address) {
         final ModelNode subsystem = new ModelNode();
         subsystem.get( OP ).set( ADD );
