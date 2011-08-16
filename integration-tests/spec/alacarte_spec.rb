@@ -1,4 +1,4 @@
-ingrequire 'spec_helper'
+require 'spec_helper'
 require 'torquebox-messaging'
 
 shared_examples_for "alacarte" do
