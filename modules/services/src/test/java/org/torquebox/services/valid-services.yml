@@ -2,6 +2,7 @@ services:
   ArgService:
     singleton: true
     config:
-      foo: bar
+      ham: biscuit
   
   FooService:
+    biscuit: gravy

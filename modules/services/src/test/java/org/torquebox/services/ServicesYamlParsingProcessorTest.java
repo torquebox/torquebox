@@ -95,6 +95,36 @@ public class ServicesYamlParsingProcessorTest extends AbstractDeploymentProcesso
     }
 
     @Test
+    public void testKeyedConfig() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-services.yml" );
+        
+        List<ServiceMetaData> allMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
+        
+        HashMap<String, Object> config = new HashMap<String, Object>();
+
+        for(ServiceMetaData each : allMetaData) {
+            config.putAll( each.getParameters() );
+        }
+
+        assertEquals( "biscuit", config.get( "ham" ) );
+    }
+
+    @Test
+    public void testUnkeyedConfig() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-services.yml" );
+        
+        List<ServiceMetaData> allMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
+        
+        HashMap<String, Object> config = new HashMap<String, Object>();
+
+        for(ServiceMetaData each : allMetaData) {
+            config.putAll( each.getParameters() );
+        }
+
+        assertEquals( "gravy", config.get( "biscuit" ) );
+    }
+
+    @Test
     public void testRequiresSingletonHandlesNullParams() throws Exception {
         assertFalse( this.deployer.requiresSingleton( null ) );
     }

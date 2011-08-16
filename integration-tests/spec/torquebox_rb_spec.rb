@@ -96,12 +96,17 @@ describe "an app using a torquebox.rb" do
       auth.should_not be_nil
     end
 
-    it "should allow for multiple authentication domain" do
+    it "should allow for multiple authentication domains" do
       require 'torquebox-security'
       auth = TorqueBox::Authentication['ham']
       auth.should_not be_nil
       auth = TorqueBox::Authentication['biscuit']
       auth.should_not be_nil
+    end
+
+    it "should pass configuration to the service" do
+      response = TorqueBox::Messaging::Queue.new( '/queue/a-queue' ).receive( :timeout => 120_000 )
+      response.should == :bar
     end
   end
 end
