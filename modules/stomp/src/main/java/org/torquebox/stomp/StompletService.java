@@ -60,8 +60,7 @@ public class StompletService implements Service<Stomplet> {
                 throw e;
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            context.failed( new StartException( e ) );
+            throw new StartException( e );
         }
 
     }

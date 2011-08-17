@@ -10,7 +10,7 @@ class StompletOne
     puts "configuring stomplet-one #{stomplet_config.inspect}"
   end
 
-  def on_message(message)
+  def on_message(message, session)
     @subscribers.values.each do |sink|
       sink.send( message )
     end 

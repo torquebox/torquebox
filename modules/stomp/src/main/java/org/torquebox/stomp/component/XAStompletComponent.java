@@ -10,6 +10,7 @@ import javax.transaction.xa.XAResource;
 import org.jruby.RubyArray;
 import org.projectodd.stilts.stomp.StompException;
 import org.projectodd.stilts.stomp.StompMessage;
+import org.projectodd.stilts.stomp.spi.StompSession;
 import org.projectodd.stilts.stomplet.StompletConfig;
 import org.projectodd.stilts.stomplet.Subscriber;
 import org.projectodd.stilts.stomplet.XAStomplet;
@@ -47,7 +48,7 @@ public class XAStompletComponent extends AbstractRubyComponent implements XAStom
     }
 
     @Override
-    public void onMessage(StompMessage message) throws StompException {
+    public void onMessage(StompMessage message, StompSession session) throws StompException {
         PseudoXAStompletTransaction tx = null;
         
         if (this.resourceManager != null) {
@@ -55,16 +56,16 @@ public class XAStompletComponent extends AbstractRubyComponent implements XAStom
         }
         
         if (tx == null) {
-            this.stomplet.onMessage( message );
+            this.stomplet.onMessage( message, session );
         } else {
-            tx.addSentMessage( message );
+            tx.addSentMessage( message, session );
         }
     }
 
     @Override
     public void onSubscribe(Subscriber subscriber) throws StompException {
         String subscriberId = subscriber.getId();
-        Subscriber xaSubscriber = new SubscriberImpl( stomplet, subscriberId, subscriber.getDestination(), new PseudoXAStompletAcknowledgeableMessageSink(
+        Subscriber xaSubscriber = new SubscriberImpl( subscriber.getSession(), stomplet, subscriberId, subscriber.getDestination(), new PseudoXAStompletAcknowledgeableMessageSink(
                 this.resourceManager, subscriber ),
                 subscriber.getAckMode() );
         this.subscribers.put( subscriberId, xaSubscriber );

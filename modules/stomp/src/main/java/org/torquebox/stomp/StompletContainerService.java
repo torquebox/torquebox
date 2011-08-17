@@ -9,6 +9,7 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
+import org.projectodd.stilts.conduit.spi.StompSessionManager;
 import org.projectodd.stilts.stomplet.StompletServer;
 import org.projectodd.stilts.stomplet.container.SimpleStompletContainer;
 
@@ -28,6 +29,7 @@ public class StompletContainerService implements Service<SimpleStompletContainer
     @Override
     public void start(StartContext context) throws StartException {
         this.container = new SimpleStompletContainer();
+        StompSessionManager sessionManager = this.sessionManagerInjector.getValue();
         try {
             this.container.start();
             StompletServer server = this.serverInjector.getValue();
@@ -35,7 +37,7 @@ public class StompletContainerService implements Service<SimpleStompletContainer
                 server.setDefaultContainer( this.container );
             } else {
                 for (String each : this.hostNames) {
-                    server.registerVirtualHost( each, this.container );
+                    server.registerVirtualHost( each, this.container, sessionManager );
                 }
             }
         } catch (Exception e) {
@@ -51,9 +53,10 @@ public class StompletContainerService implements Service<SimpleStompletContainer
             StompletServer server = this.serverInjector.getValue();
             if ( this.hostNames.isEmpty() ) {
                 server.setDefaultContainer( null );
+                server.setDefaultSessionManager( null );
             } else {
                 for (String each : this.hostNames) {
-                    server.registerVirtualHost( each, this.container );
+                    server.unregisterVirtualHost( each );
                 }
             }
             this.container.stop();
@@ -71,9 +74,14 @@ public class StompletContainerService implements Service<SimpleStompletContainer
     public Injector<StompletServer> getStompletServerInjector() {
         return this.serverInjector;
     }
+    
+    public Injector<StompSessionManager> getSessionManagerInjector() {
+        return this.sessionManagerInjector;
+    }
 
-    private SimpleStompletContainer container;
     private InjectedValue<StompletServer> serverInjector = new InjectedValue<StompletServer>();
+    private InjectedValue<StompSessionManager> sessionManagerInjector = new InjectedValue<StompSessionManager>();
+    private SimpleStompletContainer container;
     private List<String> hostNames = new ArrayList<String>();;
 
 }

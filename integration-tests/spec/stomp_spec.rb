@@ -13,6 +13,9 @@ describe "STOMP applications" do
     
     environment:
       BASEDIR: #{File.dirname(__FILE__)}/..
+
+    web:
+      context: /stomp-websockets
     
     ruby:
       version: #{RUBY_VERSION[0,3]}

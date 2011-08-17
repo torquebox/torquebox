@@ -3,7 +3,7 @@ require 'spec_helper'
 require 'fileutils'
 require 'torquebox-messaging'
 
-describe "STOMP applications", :js=>true do
+describe "STOMP applications via websockets", :js=>true do
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -21,12 +21,13 @@ describe "STOMP applications", :js=>true do
   END
 
   it "should be able to connect and disconnect using stomp over websockets" do
+    visit( '/stomp-websockets/give-me-a-cookie-please' )
     visit( '/stomp-websockets/index.html' )
     page.execute_script <<-END
       connected = false;
       disconnected = false;
       complete = null;
-      client = Stomp.client( "ws://localhost:8675/" );
+      client = Stomp.client( "ws://localhost:8675/stomp-websockets/" );
 
       client.connect( null, null, function(frame) {
         connected = true;
@@ -41,13 +42,14 @@ describe "STOMP applications", :js=>true do
   end
 
   it "should be able to subscribe send and receive" do
+    visit( '/stomp-websockets/give-me-a-cookie-please' )
     visit( '/stomp-websockets/index.html' )
     page.execute_script <<-END
       received_message = null;
       subscribed       = null;
       disconnected     = null;
 
-      client = Stomp.client( "ws://localhost:8675/" );
+      client = Stomp.client( "ws://localhost:8675/stomp-websockets/" );
 
       client.connect( null, null, function(frame) {
         client.subscribe( "/queues/foo", function(message){
@@ -74,13 +76,14 @@ describe "STOMP applications", :js=>true do
 
 
   it "should be able to subscribe send and receive from JMS, transactionally" do
+    visit( '/stomp-websockets/give-me-a-cookie-please' )
     visit( '/stomp-websockets/index.html' )
     page.execute_script <<-END
       received_message = null;
       subscribed       = null;
       disconnected     = null;
 
-      client = Stomp.client( "ws://localhost:8675/" );
+      client = Stomp.client( "ws://localhost:8675/stomp-websockets/" );
 
       client.connect( null, null, function(frame) {
         client.subscribe( "/bridge/foo", function(message){
