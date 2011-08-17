@@ -25,7 +25,6 @@ module TorqueBox
     class Destination
       include TorqueBox::Injectors
       include Enumerable
-
       
       attr_reader :connection_factory
       attr_reader :name

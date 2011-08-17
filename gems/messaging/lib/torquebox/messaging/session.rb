@@ -25,11 +25,9 @@ module TorqueBox
       DUPS_OK_ACK = javax.jms::Session::DUPS_OK_ACKNOWLEDGE
 
       attr_accessor :jms_session
-      attr_accessor :connection
       
-      def initialize(jms_session, connection)
+      def initialize(jms_session)
         @jms_session = jms_session
-        @connection = connection
       end
 
       def transacted?
@@ -72,7 +70,6 @@ module TorqueBox
         
         java_destination = java_destination( destination )
         if options[:durable] && java_destination.class.name =~ /Topic/
-      raise ArgumentError.new( "You must set the :client_id via Topic's connect_options to use :durable" ) unless connection.client_id
           consumer = @jms_session.createDurableSubscriber( java_destination,
                                                            options.fetch(:subscriber_name, Topic::DEFAULT_SUBSCRIBER_NAME),
                                                            selector,

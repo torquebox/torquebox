@@ -20,10 +20,6 @@ module TorqueBox
 
     class XaSession < Session
 
-      def initialize(jms_session, connection)
-        super( jms_session, connection )
-      end
-
       def xa_resource
         @jms_session.xa_resource
       end

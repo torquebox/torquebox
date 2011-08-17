@@ -50,7 +50,7 @@ module TorqueBox
       end
 
       def create_session()
-        XaSession.new( @jms_connection.create_xa_session(), self )
+        XaSession.new( @jms_connection.create_xa_session() )
       end
 
     end
