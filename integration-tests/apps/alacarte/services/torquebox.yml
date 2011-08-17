@@ -1,10 +1,11 @@
 
 services:
   SimpleService:
-    color: blue
-    an_array:
-      - one
-      - two
+    config:
+      color: blue
+      an_array:
+        - one
+        - two
 
 queues:
   /queue/response:

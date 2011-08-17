@@ -108,5 +108,12 @@ describe "an app using a torquebox.rb" do
       response = TorqueBox::Messaging::Queue.new( '/queue/a-queue' ).receive( :timeout => 120_000 )
       response.should == :bar
     end
+
+    it "should pass configuration to the job" do
+      response = TorqueBox::Messaging::Queue.new( '/queue/job-queue' ).receive( :timeout => 120_000 )
+      response.should == 'biscuit'
+    end
+
+    
   end
 end

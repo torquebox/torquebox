@@ -19,7 +19,9 @@
 
 package org.torquebox.jobs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 
@@ -86,8 +88,6 @@ public class ScheduledJobDeployerTest extends AbstractDeploymentProcessorTestCas
         assertNotNull( jobService );
         
         ScheduledJob job = (ScheduledJob) jobService.getValue();
-        assertNotNull( job );
-        
         assertNotNull( job );
         assertEquals( "job.one", job.getName() );
         assertEquals( "22 * * * * ?", job.getCronExpression() );

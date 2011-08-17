@@ -16,8 +16,16 @@ TorqueBox.configure do
   end
 
   job AJob, :name => :a_job, :cron => '*/1 * * * * ?'
-  
+
+  job AJob do
+    cron '*/1 * * * * ?'
+    config('ham' => 'biscuit')
+  end
   queue '/queue/a-queue', :durable => false
+  
+  queue '/queue/job-queue' do
+    durable false
+  end
 
   queue '/queue/another-queue', :durable => false do
     processor AProcessor, :concurrency => 2, :filter => "steak = 'salad'", :config => { :foo => :bar }

@@ -19,6 +19,8 @@
 
 package org.torquebox.jobs;
 
+import java.util.Map;
+
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
 
@@ -86,6 +88,14 @@ public class ScheduledJobMetaData {
         return this.rubyRequirePath;
     }
 
+    public void setParameters(Map<String,Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    public Map<String,Object> getParameters() {
+        return this.parameters;
+    }
+    
     public void setRubySchedulerName(String rubySchedulerName) {
         this.rubySchedulerName = rubySchedulerName;
     }
@@ -108,7 +118,8 @@ public class ScheduledJobMetaData {
     private String cronExpression;
     private String rubyClassName;
     private String rubyRequirePath;
-
+    private Map<String, Object> parameters;
+    
     private String rubySchedulerName;
     private boolean singleton;
     private boolean clustered;

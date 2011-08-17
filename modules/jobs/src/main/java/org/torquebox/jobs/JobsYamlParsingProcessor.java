@@ -19,6 +19,7 @@
 
 package org.torquebox.jobs;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -48,6 +49,8 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             String job = (String) jobSpec.get( "job" );
             String cron = (String) jobSpec.get( "cron" );
             Object singleton = jobSpec.get("singleton");
+            Map<String, Object> params = (Map<String, Object>)jobSpec.get( "config" );
+            
             if (job == null) {
                 throw new DeploymentUnitProcessingException( "Attribute 'job' must be specified" );
             }
@@ -69,6 +72,7 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             }
             jobMetaData.setRubyClassName( job.trim() );
             jobMetaData.setCronExpression( cron.trim() );
+            jobMetaData.setParameters( params );
             jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
             jobMetaData.setSingleton( singleton == null ? false : (Boolean) singleton );
     

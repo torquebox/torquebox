@@ -4,6 +4,8 @@ jobs:
     job: MyJobClass
     description: My Job is routine
     cron: 01 * * * * ?
+    config: 
+      foo: bar
     
   job.two:
     job: MyOtherJobClass

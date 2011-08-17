@@ -58,12 +58,13 @@ public class JobComponentResolverInstaller extends BaseRubyComponentDeployer {
         instantiator.setClassName( jobMetaData.getRubyClassName() );
         instantiator.setRequirePath( jobMetaData.getRubyRequirePath() );
 
-        ServiceName serviceName = JobsServices.jobComponentResolver( unit, jobMetaData.getRubyClassName() );
+        ServiceName serviceName = JobsServices.jobComponentResolver( unit, jobMetaData.getName() );
         ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( JobComponent.class );
-
+        resolver.setInitializeParams( jobMetaData.getParameters() );
+        
         log.info( "Installing Jobs component resolver: " + serviceName );
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
