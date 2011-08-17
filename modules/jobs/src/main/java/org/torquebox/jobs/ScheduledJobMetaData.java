@@ -23,31 +23,20 @@ import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
 
 public class ScheduledJobMetaData {
-	public static final AttachmentKey<AttachmentList<ScheduledJobMetaData>> ATTACHMENTS_KEY = 
-		AttachmentKey.createList( ScheduledJobMetaData.class );
+    public static final AttachmentKey<AttachmentList<ScheduledJobMetaData>> ATTACHMENTS_KEY = 
+            AttachmentKey.createList( ScheduledJobMetaData.class );
 
-    private String group;
-    private String name;
-    private String description;
-    private String cronExpression;
-    private String rubyClassName;
-    private String rubyRequirePath;
-
-    private String rubySchedulerName;
-    private boolean singleton;
-    private boolean clustered;
-
-	public ScheduledJobMetaData() {
+    public ScheduledJobMetaData() {
 
     }
-	
-    public boolean isSingleton() {
-		return singleton;
-	}
 
-	public void setSingleton(boolean singleton) {
-		this.singleton = singleton;
-	}	
+    public boolean isSingleton() {
+        return singleton;
+    }
+
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }	
 
     public void setName(String name) {
         this.name = name;
@@ -105,11 +94,23 @@ public class ScheduledJobMetaData {
         return this.rubySchedulerName;
     }
 
-	public void setClustered(boolean b) {
-		this.clustered = b;
-	}
-	
-	public boolean isClustered() {
-		return this.clustered;
-	}
+    public void setClustered(boolean b) {
+        this.clustered = b;
+    }
+
+    public boolean isClustered() {
+        return this.clustered;
+    }
+
+    private String group;
+    private String name;
+    private String description;
+    private String cronExpression;
+    private String rubyClassName;
+    private String rubyRequirePath;
+
+    private String rubySchedulerName;
+    private boolean singleton;
+    private boolean clustered;
+
 }
