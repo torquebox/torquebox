@@ -17,10 +17,8 @@
 
 module TorqueBox
   module Messaging
-
-    attr_accessor :jms_connection
-    
     class Connection
+
       def initialize(jms_connection, hornetq_direct)
         @jms_connection = jms_connection
         @hornetq_direct = hornetq_direct

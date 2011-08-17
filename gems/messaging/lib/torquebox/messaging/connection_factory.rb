@@ -29,7 +29,7 @@ module TorqueBox
         super
       end
 
-      def initialize(internal_connection_factory = null)
+      def initialize(internal_connection_factory = nil)
         @internal_connection_factory = internal_connection_factory
         @hornetq_direct = false
       end

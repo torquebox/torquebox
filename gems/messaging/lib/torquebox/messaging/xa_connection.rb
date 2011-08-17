@@ -17,10 +17,8 @@
 
 module TorqueBox
   module Messaging
-
-    attr_accessor :jms_connection
-    
     class XaConnection
+
       def initialize(jms_connection)
         @jms_connection = jms_connection
       end
@@ -42,7 +40,7 @@ module TorqueBox
       end
       
       def with_new_session(transacted=false, ack_mode=Session::AUTO_ACK, &block)
-        session = self.create_session( transacted, ack_mode )
+        session = self.create_session()
         begin
           result = block.call( session )
         ensure
