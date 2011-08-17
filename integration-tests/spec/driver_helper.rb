@@ -31,6 +31,11 @@ class Capybara::Driver::Selenium
   def cookies
     @cookies ||= BrowserCookies.new( browser.manage );
   end
+
+  def reset!
+    @cookies.clear if @cookies
+    @cookies = nil
+  end
 end
 
 class Selenium::WebDriver::Element

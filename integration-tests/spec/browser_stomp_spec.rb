@@ -88,7 +88,6 @@ describe "STOMP applications via websockets", :js=>true do
       client.connect( null, null, function(frame) {
         client.subscribe( "/bridge/foo", function(message){
           received_message = message;
-          client.disconnect();
           disconnected = true;
         } );
         subscribed = true;
@@ -110,6 +109,12 @@ describe "STOMP applications via websockets", :js=>true do
 
     page.execute_script <<-END
       client.commit( 'tx-1' );
+    END
+
+    sleep( 1 )
+
+    page.execute_script <<-END
+      client.disconnect();
     END
 
     wait_for( :disconnected ).should_not be_nil
