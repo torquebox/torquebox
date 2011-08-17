@@ -41,6 +41,8 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
+import org.jruby.javasupport.JavaEmbedUtils;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.messaging.component.MessageProcessorComponent;
@@ -92,6 +94,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             transaction.enlistResource(session.getXAResource());
             ruby = group.getRubyRuntimePool().borrowRuntime();
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );
+            putSessionInThreadLocal( ruby );
             component.process( message );
             transaction.commit();
         } catch (Exception e) {
@@ -101,6 +104,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             try { tm.suspend(); } catch (Exception ignored) {}
             if (ruby != null) {
                 try {
+                    removeSessionFromThreadLocal( ruby );
                     group.getRubyRuntimePool().returnRuntime( ruby );
                 } catch (Throwable ignored) {
                     log.warn("Possible memory leak? "+ignored, ignored);
@@ -127,6 +131,16 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     @Override
     public Void getValue() throws IllegalStateException, IllegalArgumentException {
         return null;
+    }
+
+    protected void putSessionInThreadLocal(Ruby ruby) {
+        IRubyObject thread = ruby.evalScriptlet( "Thread.current" );
+        JavaEmbedUtils.invokeMethod( ruby, thread, "[]=", new Object[] { "session", session }, Object.class );
+    }
+
+    protected void removeSessionFromThreadLocal(Ruby ruby) {
+        IRubyObject thread = ruby.evalScriptlet( "Thread.current" );
+        JavaEmbedUtils.invokeMethod( ruby, thread, "[]=", new Object[] { "session", null }, Object.class );
     }
 
     // -------

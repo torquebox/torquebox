@@ -6,12 +6,14 @@ class Processor < TorqueBox::Messaging::MessageProcessor
 
   def on_message(msg)
     output = inject( '/queue/output' )
-    raise msg if msg =~ /error/
     if msg =~ /\s+(\d)\s+retries/
       output.publish(test_retries($1.to_i))
     else
       output.publish('yay!')
     end
+    # Important to raise the error *after* publishing messages because
+    # the error should rollback the publishes
+    raise msg if msg =~ /error/
   end
 
   def test_retries(count)

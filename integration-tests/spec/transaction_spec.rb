@@ -46,7 +46,6 @@ remote_describe "transactions testing" do
   end
 
   it "should not receive a message when an error is tossed" do
-    pending("publishing works with XASessions")
     input = inject('/queue/input')
     output = inject('/queue/output')
     response = nil
@@ -55,7 +54,6 @@ remote_describe "transactions testing" do
     }
     input.publish("This message should cause an error to be raised")
     thread.join
-    sleep 10
     response.should be_nil
   end
 end
