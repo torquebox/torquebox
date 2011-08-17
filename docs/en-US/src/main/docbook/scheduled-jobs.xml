@@ -70,6 +70,11 @@ end</programlisting></para>
         <para><programlisting>module Mail
   class Notifier
 
+    # optional, only needed if you pass config options to the job
+    def initialize(options = {})
+      @options = options
+    end
+
     def run()
 
       # perform work here
@@ -102,7 +107,10 @@ end</programlisting></para>
       <para>Within the <parameter>jobs</parameter>, a block of information is
       provided for each job. The block starts with arbitrary name for the job.
       Each block must also define the job class and the schedule
-      specification. Optionally a description may be provided.</para>
+      specification. Optionally a <parameter>description</parameter>
+      and a <parameter>config</parameter> may be provided. If you do provide
+      a <parameter>config</parameter>, its value will be passed to the initialize
+      method of the job class.</para>
 
       <para><example>
           <title>Example <filename>torquebox.yml</filename></title>
@@ -113,7 +121,9 @@ jobs:
   mail.notifier:
     job:         Mail::Notifier
     cron:        '0 */5 * * * ?'
-    description: Deliver queued mail notifications</programlisting></para>
+    description: Deliver queued mail notifications
+    config: 
+      throttle: true</programlisting></para>
         </example></para>
 
       <para>The cron attribute should contain a typical crontab-like entry. It
