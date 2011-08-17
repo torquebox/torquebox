@@ -17,6 +17,7 @@ class Something
         if "release" == @background.receive(:timeout => 25000)
           @foreground.publish "success"
         end
+        nil
       end
     end
   end
