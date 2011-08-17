@@ -100,6 +100,8 @@ module TorqueBox
                           :ttl => @message_ttl,
                           :priority => priority
                         } )
+      rescue TypeError => ex
+        puts "FutureResponder#send_response: Warning: unable to marshal #{@result.inspect}"
       end
     end
   end
