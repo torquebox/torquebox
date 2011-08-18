@@ -51,7 +51,7 @@ describe TorqueBox::Messaging::Destination do
       @session = mock('session')
       @session.stub(:transacted?).and_return(false)
       @queue = TorqueBox::Messaging::Queue.new('foo')
-      @queue.stub(:with_new_session).and_yield(@session)
+      @queue.stub(:with_session).and_yield(@session)
     end
 
     context "normalizing options" do

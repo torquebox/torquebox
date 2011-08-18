@@ -95,11 +95,11 @@ module TorqueBox
         message[:error] = @error if @error
         message[:result] = @result if @result_set
         @queue.publish( message,
-                        {
-                          :correlation_id => @correlation_id,
-                          :ttl => @message_ttl,
-                          :priority => priority
-                        } )
+                        :correlation_id => @correlation_id,
+                        :ttl => @message_ttl,
+                        :priority => priority,
+                        :new_session => true # can't be a part of the task's tx!
+                        )
       rescue TypeError => ex
         puts "FutureResponder#send_response: Warning: unable to marshal #{@result.inspect}"
       end

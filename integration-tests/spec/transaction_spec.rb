@@ -1,8 +1,7 @@
 require 'spec_helper'
 
 remote_describe "transactions testing" do
-  require 'torquebox-core'
-  include TorqueBox::Injectors
+  require 'torquebox-messaging'
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -12,49 +11,58 @@ remote_describe "transactions testing" do
       version: #{RUBY_VERSION[0,3]}
   END
 
+  before(:each) do
+    @input  = TorqueBox::Messaging::Queue.new('/queue/input')
+    @output = TorqueBox::Messaging::Queue.new('/queue/output')
+  end
+    
   it "should not hang when receive times out" do
-    input = inject('/queue/input')
-    output = inject('/queue/output')
     response = nil
     thread = Thread.new {
-      response = output.receive(:timeout => 1)
+      response = @output.receive(:timeout => 1)
     }
-    input.publish("anything")
+    @input.publish("anything")
     thread.join
     response.should be_nil
-    output.receive.should == 'yay!' # drain the queue for next test
+    @output.receive.should == 'yay!' # drain the queue for next test
   end
 
-  it "should receive a message when no error occurs" do
-    input = inject('/queue/input')
-    output = inject('/queue/output')
+  it "should publish a message when no error occurs" do
     response = nil
     thread = Thread.new {
-      response = output.receive(:timeout => 10_000)
+      response = @output.receive(:timeout => 10_000)
     }
-    input.publish("anything")
+    @input.publish("anything")
     thread.join
     response.should_not be_nil
   end
 
   it "should retry delivery when an error is tossed" do
-    input = inject('/queue/input')
-    output = inject('/queue/output')
-    input.publish("This message should trigger 5 retries")
-    response = output.receive(:timeout => 10_000)
+    @input.publish("This message should trigger 5 retries")
+    response = @output.receive(:timeout => 10_000)
     response.should match /success.*\s5\s/
   end
 
-  it "should not receive a message when an error is tossed" do
-    pending("until i can figure out how to receive messages in on_message")
-    input = inject('/queue/input')
-    output = inject('/queue/output')
+  it "should rollback published messages when an error is tossed" do
     response = nil
     thread = Thread.new {
-      response = output.receive(:timeout => 10_000)
+      response = @output.receive(:timeout => 5_000)
     }
-    input.publish("This message should cause an error to be raised")
+    @input.publish("This message should cause an error to be raised")
     thread.join
     response.should be_nil
   end
+
+  it "should receive a message in the processor's transaction" do
+    queue = TorqueBox::Messaging::Queue.start "/queue/foo"
+    begin
+      @input.publish("should receive from #{queue.name}")
+      queue.publish("release")
+      response = @output.receive(:timeout => 5_000)
+      response.should == "got release"
+    ensure
+      queue.stop
+    end
+  end
+
 end

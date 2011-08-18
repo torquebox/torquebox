@@ -5,12 +5,22 @@ class Processor < TorqueBox::Messaging::MessageProcessor
   include TorqueBox::Injectors
 
   def on_message(msg)
+    puts "JC: message is #{message.jms_message}"
     output = inject( '/queue/output' )
+    response = 'yay!'
+
     if msg =~ /\s+(\d)\s+retries/
-      output.publish(test_retries($1.to_i))
-    else
-      output.publish('yay!')
+      response = test_retries($1.to_i)
     end
+
+    if msg =~ /receive from (.*)/
+      queue = TorqueBox::Messaging::Queue.new $1
+      response = "got " + queue.receive(:timeout => 10_000)
+      puts "JC: response=#{response}"
+    end
+
+    output.publish(response)
+
     # Important to raise the error *after* publishing messages because
     # the error should rollback the publishes
     raise msg if msg =~ /error/

@@ -56,7 +56,7 @@ module TorqueBox
 
       def publish(message, options = {})
         wait_for_destination(options[:startup_timeout]) do
-          with_new_session do |session|
+          with_session(options[:new_session]) do |session|
             session.publish self, message, normalize_options(options)
           end
         end
@@ -64,7 +64,7 @@ module TorqueBox
 
       def receive(options = {})
         wait_for_destination(options[:startup_timeout]) do
-          with_new_session do |session|
+          with_session do |session|
             session.receive self, options
           end
         end
@@ -72,7 +72,7 @@ module TorqueBox
 
       def each(&block)
         wait_for_destination do
-          with_new_session do |session|
+          with_session do |session|
             destination = session.java_destination( self )
             browser = session.create_browser( destination, enumerable_options[:selector] )
             begin
@@ -84,8 +84,8 @@ module TorqueBox
         end
       end
 
-      def with_new_session
-        if Thread.current[:session] && false
+      def with_session(force_new = false)
+        if Thread.current[:session] && !force_new
           yield Session.new( Thread.current[:session] )
         else
           transacted = connect_options.fetch( :transacted, false )
