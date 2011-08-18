@@ -41,10 +41,10 @@ module TorqueBox
       # -----
       # -----
     
-      def subscribe_to(subscriber, destination_name, destination_type)
+      def subscribe_to(subscriber, destination_name, destination_type, selector=nil)
         jms_session = @session.jms_session
         destination = destination_type.to_sym == :queue ? jms_session.create_queue( destination_name ) : jms_session.create_topic( destination_name )
-        consumer = @session.jms_session.create_consumer( destination.to_java )
+        consumer = @session.jms_session.create_consumer( destination.to_java, selector )
         consumer.message_listener = MessageListener.new( subscriber )
         @subscriptions[ subscriber ] ||= []
         @subscriptions[ subscriber ] << consumer
@@ -59,6 +59,13 @@ module TorqueBox
         jms_message = @session.jms_session.create_text_message
         jms_message.text = TorqueBox::Messaging::Message.encode( stomp_message.content_as_string )
 
+        stomp_message.headers.header_names.each do |name|
+          jms_name = name.to_s.gsub( /-/, '_' )
+          header_value = stomp_message.headers[ name.to_s ]
+          puts "set on JMS #{jms_name}=#{header_value}"
+          jms_message.setStringProperty( jms_name, stomp_message.headers[ name.to_s ] )
+        end
+
         producer.send( destination, jms_message )
       end
     
@@ -71,6 +78,11 @@ module TorqueBox
     
         def onMessage(jms_message)
           stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( @subscriber.destination, TorqueBox::Messaging::Message.decode( jms_message ) )
+          jms_message.property_names.each do |name|
+            value = jms_message.getObjectProperty( name ).to_s
+            stomp_message.headers.put( name.to_s.to_java( java.lang.String ), value.to_java( java.lang.String) ) if value
+          end
+          puts stomp_message.headers.inspect
           @subscriber.send( stomp_message )
         end
     
