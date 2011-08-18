@@ -85,7 +85,7 @@ module TorqueBox
       end
 
       def with_new_session
-        if Thread.current[:session]
+        if Thread.current[:session] && false
           yield Session.new( Thread.current[:session] )
         else
           transacted = connect_options.fetch( :transacted, false )
