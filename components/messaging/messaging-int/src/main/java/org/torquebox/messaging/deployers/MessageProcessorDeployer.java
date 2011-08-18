@@ -59,22 +59,12 @@ import org.torquebox.messaging.metadata.QueueMetaData;
  */
 public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
 
-    private String demand;
-
     public MessageProcessorDeployer() {
         setStage( DeploymentStages.REAL );
         addInput( MessageProcessorMetaData.class );
         addRequiredInput( RubyApplicationMetaData.class );
         addOutput( BeanMetaData.class );
         setRelativeOrder( 1000 );
-    }
-
-    public void setDemand(String demand) {
-        this.demand = demand;
-    }
-
-    public String getDemand() {
-        return this.demand;
     }
 
     @Override
@@ -112,10 +102,6 @@ public class MessageProcessorDeployer extends AbstractRubyComponentDeployer {
         if (demandClass != null) {
             String destinationBeanName = AttachmentUtils.beanName( unit, demandClass, metaData.getDestinationName() );
             builder.addDemand( destinationBeanName, ControllerState.CREATE, ControllerState.INSTALLED, null );
-        }
-
-        if (this.demand != null) {
-            builder.addDemand( this.demand, ControllerState.CREATE, ControllerState.INSTALLED, null );
         }
 
         String destRemoteHost = getRemoteHost( unit, metaData.getDestinationName() );

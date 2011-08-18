@@ -15,6 +15,11 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="urn:hornetq /schema/hornetq-configuration.xsd">
 
+   <!--  Don't change this name.
+         This is used by the dependency framework on the deployers,
+         to make sure this deployment is done before any other deployment -->
+   <name>HornetQ.main.config</name>
+
    <log-delegate-factory-class-name>org.hornetq.integration.logging.Log4jLogDelegateFactory</log-delegate-factory-class-name>
    
    <bindings-directory>${jboss.server.data.dir}/hornetq/bindings</bindings-directory>
@@ -23,7 +28,7 @@
    
    <!-- Default journal file size is set to 1Mb for faster first boot -->
    <journal-file-size>${hornetq.journal.file.size:1048576}</journal-file-size>
-
+ 
    <!-- Default journal min file is 2, increase for higher average msg rates -->
    <journal-min-files>${hornetq.journal.min.files:2}</journal-min-files> 
 

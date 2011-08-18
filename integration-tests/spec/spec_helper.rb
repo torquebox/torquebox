@@ -7,6 +7,7 @@ TorqueSpec.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '.
 TorqueSpec.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
 TorqueSpec.max_heap = java.lang::System.getProperty( 'max.heap' )
 TorqueSpec.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
+TorqueSpec.jvm_args += " -Dlogging.configuration=file:#{TorqueSpec.jboss_home}/bin/logging.properties"
 
 Capybara.register_driver :akephalos do |app|
   Capybara::Driver::Akephalos.new(app, :browser => :firefox_3)

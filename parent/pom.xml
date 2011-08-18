@@ -243,7 +243,6 @@
     <ruby.compat.version>1.8</ruby.compat.version>
     <version.jruby-maven-plugins>0.26.0</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
-    <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
     <version.hamcrest>1.1</version.hamcrest>
 
@@ -271,19 +270,7 @@
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.3.0</version.rspec>
 
-    <version.jbossas>6.0.0.Final</version.jbossas>
-    <version.jbossas.package>6.0.x</version.jbossas.package>
-    <version.jbossmc>2.2.0.Alpha6</version.jbossmc>
-
-    <version.hornetq>2.0.0.GA</version.hornetq>
-    <version.netty>3.1.5.GA</version.netty>
-    <version.jms>1.1</version.jms>
-
-    <cxf.version>2.2.3</cxf.version>
-
-    <mobicents.sip.version>1.0</mobicents.sip.version>
-    <mobicents.spec.version>1.1.10</mobicents.spec.version>
-
+    <version.jbossas>6.1.0.Final</version.jbossas>
   </properties>
 
   <repositories>

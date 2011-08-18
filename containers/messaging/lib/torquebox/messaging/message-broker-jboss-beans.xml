@@ -62,18 +62,14 @@
            <bean name="ConnectionFactoryConfiguration" class="org.hornetq.jms.server.config.impl.ConnectionFactoryConfigurationImpl">
              <constructor>
                <parameter>ConnectionFactory</parameter>
+               <parameter>false</parameter>
+               <parameter>
+                 <list>
+                   <value>netty</value>
+                 </list>
+               </parameter>
                <parameter>ConnectionFactory</parameter>
              </constructor>
-             <property name="connectorNames">
-               <list>
-                 <bean name="AnonPair" class="org.hornetq.api.core.Pair">
-                   <constructor>
-                     <parameter>netty</parameter>
-                     <parameter><null/></parameter>
-                   </constructor>
-                 </bean>
-               </list>
-             </property>
            </bean>
          </list>
        </parameter>
@@ -83,6 +79,7 @@
        <parameter>
          <list/>
        </parameter>
+       <parameter>null</parameter>
      </constructor>
    </bean>
 
@@ -94,7 +91,7 @@
          </parameter>         
          <parameter class="org.hornetq.jms.server.config.JMSConfiguration">
             <inject bean="JMSConfiguration"/>
-         </parameter>         
+         </parameter>
       </constructor>
       <depends state="Started">RMIClassProvider</depends>
    </bean>

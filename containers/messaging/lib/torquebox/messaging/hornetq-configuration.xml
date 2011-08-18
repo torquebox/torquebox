@@ -15,20 +15,26 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:schemaLocation="urn:hornetq /schema/hornetq-configuration.xsd">
 
+   <!--  Don't change this name.
+         This is used by the dependency framework on the deployers,
+         to make sure this deployment is done before any other deployment -->
+   <name>HornetQ.main.config</name>
+
    <clustered>true</clustered>
    <security-enabled>false</security-enabled>
-   
+
    <log-delegate-factory-class-name>org.hornetq.integration.logging.Log4jLogDelegateFactory</log-delegate-factory-class-name>
 
-   <bindings-directory>${jboss.server.data.dir}/hornetq/bindings</bindings-directory>
+   <bindings-directory>${jboss.server.data.dir}/${hornetq.data.dir:hornetq}/bindings</bindings-directory>
 
-   <journal-directory>${jboss.server.data.dir}/hornetq/journal</journal-directory>
+   <journal-directory>${jboss.server.data.dir}/${hornetq.data.dir:hornetq}/journal</journal-directory>
    
-   <journal-min-files>10</journal-min-files>
+   <journal-min-files>10</journal-min-files> 
 
-   <large-messages-directory>${jboss.server.data.dir}/hornetq/largemessages</large-messages-directory>
 
-   <paging-directory>${jboss.server.data.dir}/hornetq/paging</paging-directory>
+   <large-messages-directory>${jboss.server.data.dir}/${hornetq.data.dir:hornetq}/largemessages</large-messages-directory>
+
+   <paging-directory>${jboss.server.data.dir}/${hornetq.data.dir:hornetq}/paging</paging-directory>
 
    <connectors>
       <connector name="netty">
@@ -63,6 +69,7 @@
          <param key="host"  value="${jboss.bind.address:localhost}"/>
          <param key="port"  value="${hornetq.remoting.netty.batch.port:5455}"/>
          <param key="batch-delay" value="50"/>
+         <param key="direct-deliver" value="false"/>
       </acceptor>
 
       <acceptor name="in-vm">
@@ -77,7 +84,7 @@
          <group-address>231.7.7.7</group-address>
          <group-port>9876</group-port>
          <broadcast-period>5000</broadcast-period>
-         <connector-ref connector-name="netty"/>
+         <connector-ref>netty</connector-ref>
       </broadcast-group>
    </broadcast-groups>
 
@@ -92,6 +99,7 @@
    <cluster-connections>
       <cluster-connection name="my-cluster">
          <address>jms</address>	 
+         <connector-ref>netty</connector-ref>
 	      <discovery-group-ref discovery-group-name="dg-group1"/>
       </cluster-connection>
    </cluster-connections>
