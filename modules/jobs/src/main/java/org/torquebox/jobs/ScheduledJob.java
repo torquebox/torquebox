@@ -29,7 +29,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.quartz.CronTrigger;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.torquebox.core.component.ComponentResolver;
@@ -83,16 +82,12 @@ public class ScheduledJob implements Service<ScheduledJob>, ScheduledJobMBean {
         jobDetail.setDescription( this.description );
         jobDetail.setJobClass( RubyJobProxy.class );
         jobDetail.setRequestsRecovery( true );
-
-        JobDataMap jobData = jobDetail.getJobDataMap();
-	        
-        jobData.put( RubyJobProxyFactory.RUBY_CLASS_NAME_KEY, this.rubyClassName );
         
         CronTrigger trigger = new CronTrigger( getTriggerName(), this.group, this.cronExpression );
         
         JobScheduler jobScheduler = this.jobSchedulerInjector.getValue();
         
-        jobScheduler.addComponentResolver( this.rubyClassName, this.componentResolverInjector.getValue() );
+        jobScheduler.addComponentResolver( this.name, this.componentResolverInjector.getValue() );
         jobScheduler.getScheduler().scheduleJob( jobDetail, trigger );
     }
 
@@ -140,14 +135,6 @@ public class ScheduledJob implements Service<ScheduledJob>, ScheduledJobMBean {
 
     public String getName() {
         return this.name;
-    }
-    
-    public void setComponentResolverName(String resolver) {
-        this.rubyComponentResolverName = resolver;
-    }
-    
-    public String getComponentResolverName() {
-        return this.rubyComponentResolverName;
     }
 
     public String getRubyClassName() {

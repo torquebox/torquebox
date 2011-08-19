@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
@@ -33,14 +32,12 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
 public class RubyJobProxyFactory implements JobFactory {
-    public static final String RUBY_CLASS_NAME_KEY = "torquebox.ruby.class.name";
        
     @Override
     public Job newJob(TriggerFiredBundle bundle) throws SchedulerException {
     	JobDetail jobDetail = bundle.getJobDetail();
-        JobDataMap jobDataMap = jobDetail.getJobDataMap();
         
-        ComponentResolver resolver = this.componentResolvers.get( jobDataMap.get( RUBY_CLASS_NAME_KEY ) );
+        ComponentResolver resolver = this.componentResolvers.get( jobDetail.getName() );
         RubyJobProxy rubyJob = new RubyJobProxy( this.runtimePool, resolver );
        
         return rubyJob;
