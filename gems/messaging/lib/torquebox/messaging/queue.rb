@@ -40,7 +40,7 @@ module TorqueBox
 
       def publish_and_receive(message, options={})
         result = nil
-        with_new_session do |session|
+        with_session do |session|
           result = session.publish_and_receive(self, message,
                                                normalize_options(options))
         end
@@ -48,7 +48,7 @@ module TorqueBox
       end
 
       def receive_and_publish(options={}, &block)
-        with_new_session do |session|
+        with_session do |session|
           session.receive_and_publish(self, normalize_options(options), &block)
         end
       end

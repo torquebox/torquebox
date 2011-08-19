@@ -40,7 +40,7 @@ module TorqueBox
 
       def unsubscribe(subscriber_name = DEFAULT_SUBSCRIBER_NAME, options = { })
         wait_for_destination(options[:startup_timeout]) do
-          with_new_session do |session|
+          with_session do |session|
             session.unsubscribe( subscriber_name )
           end
         end
