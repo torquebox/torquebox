@@ -1,5 +1,3 @@
-puts "loading TorqueBox::Stomp::JmsStomplet"
-
 module TorqueBox
   module Stomp
     class JmsStomplet
@@ -30,43 +28,68 @@ module TorqueBox
       # -----
     
       def on_unsubscribe(subscriber)
-        puts "unsubscribe #{subscriber}"
         subscriptions = @subscriptions.delete( subscriber )
         subscriptions.each do |subscription|
-          puts "closing #{subscription}"
           subscription.close
         end
       end
     
       # -----
       # -----
-    
-      def subscribe_to(subscriber, destination_name, destination_type, selector=nil)
+
+      def queue(name)
         jms_session = @session.jms_session
-        destination = destination_type.to_sym == :queue ? jms_session.create_queue( destination_name ) : jms_session.create_topic( destination_name )
-        consumer = @session.jms_session.create_consumer( destination.to_java, selector )
+        TorqueBox::Messaging::Queue.new( jms_session.create_queue( name ) )
+      end
+
+      def topic(name)
+        jms_session = @session.jms_session
+        TorqueBox::Messaging::Topic.new( jms_session.create_topic( name ) )
+      end
+
+      def destination_for(name, type)
+        return queue(name) if ( type.to_sym == :queue )
+        topic(name)
+      end
+    
+      def subscribe_to(subscriber, destination, selector=nil)
+        puts "destination: #{destination.inspect}"
+        jms_session = @session.jms_session
+        java_destination = @session.java_destination( destination )
+        consumer = @session.jms_session.create_consumer( java_destination.to_java, selector )
         consumer.message_listener = MessageListener.new( subscriber )
         @subscriptions[ subscriber ] ||= []
         @subscriptions[ subscriber ] << consumer
       end
     
-      def send_to(stomp_message, destination_name, destination_type)
+      def send_to(destination, stomp_message, headers={})
         jms_session = @session.jms_session
-        destination = destination_type.to_sym == :queue ? jms_session.create_queue( destination_name ) : jms_session.create_topic( destination_name )
+        java_destination = @session.java_destination( destination )
     
-        producer    = @session.jms_session.create_producer( destination.to_java )
+        producer    = @session.jms_session.create_producer( java_destination.to_java )
 
         jms_message = @session.jms_session.create_text_message
-        jms_message.text = TorqueBox::Messaging::Message.encode( stomp_message.content_as_string )
-
-        stomp_message.headers.header_names.each do |name|
-          jms_name = name.to_s.gsub( /-/, '_' )
-          header_value = stomp_message.headers[ name.to_s ]
-          puts "set on JMS #{jms_name}=#{header_value}"
-          jms_message.setStringProperty( jms_name, stomp_message.headers[ name.to_s ] )
+        case ( stomp_message ) 
+          when org.projectodd.stilts.stomp::StompMessage
+            jms_message.text = TorqueBox::Messaging::Message.encode( stomp_message.content_as_string )
+          else
+            jms_message.text = TorqueBox::Messaging::Message.encode( stomp_message )
         end
 
-        producer.send( destination, jms_message )
+        if ( stomp_message.is_a?( org.projectodd.stilts.stomp::StompMessage ) )
+          stomp_message.headers.header_names.each do |name|
+            jms_name = name.to_s.gsub( /-/, '_' )
+            header_value = stomp_message.headers[ name.to_s ]
+            jms_message.setStringProperty( jms_name, header_value )
+          end
+        end
+
+        headers.each do |name, header_value|
+          jms_name = name.to_s.gsub( /-/, '_' )
+          jms_message.setStringProperty( jms_name, header_value.to_s )
+        end
+
+        producer.send( jms_message )
       end
     
       class MessageListener
@@ -77,12 +100,12 @@ module TorqueBox
         end
     
         def onMessage(jms_message)
-          stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( @subscriber.destination, TorqueBox::Messaging::Message.decode( jms_message ) )
+          #stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( @subscriber.destination, TorqueBox::Messaging::Message.decode( jms_message ) )
+          stomp_message = TorqueBox::Stomp::Message.new( TorqueBox::Messaging::Message.decode( jms_message ) )
           jms_message.property_names.each do |name|
             value = jms_message.getObjectProperty( name ).to_s
             stomp_message.headers.put( name.to_s.to_java( java.lang.String ), value.to_java( java.lang.String) ) if value
           end
-          puts stomp_message.headers.inspect
           @subscriber.send( stomp_message )
         end
     

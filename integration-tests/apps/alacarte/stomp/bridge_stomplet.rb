@@ -15,13 +15,15 @@ class BridgeStomplet < TorqueBox::Stomp::JmsStomplet
   end
 
   def on_message(stomp_message, session)
-    puts "session is #{session}"
-    puts "food is #{session[:food]}"
-    send_to( stomp_message, @destination_name, @destination_type )
+    send_to( destination, stomp_message )
   end
 
   def on_subscribe(subscriber)
-    subscribe_to( subscriber, @destination_name, @destination_type )
+    subscribe_to( subscriber, destination )
+  end
+
+  def destination
+    destination_for( @destination_name, @destination_type )
   end
 
 end
