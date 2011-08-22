@@ -38,5 +38,9 @@ module Transactions
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
+
+    config.after_initialize do
+      ActiveRecord::Migrator.migrate(RAILS_ROOT + "/db/migrate")
+    end
   end
 end
