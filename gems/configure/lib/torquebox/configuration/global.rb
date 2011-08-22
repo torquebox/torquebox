@@ -42,7 +42,7 @@ module TorqueBox
                                                                     :required => [:domain]
                                                                   }),
           :environment => OptionsEntry,
-          :job         => ThingWithOptionsEntry.with_settings(:cumulative => true,
+          :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {
                                                                 :required => [:cron],
                                                                 :optional => [
@@ -62,7 +62,7 @@ module TorqueBox
                                                                 :optional => [:min, :max]
                                                               }),
           :processor   => ThingWithOptionsEntry.with_settings(:require_parent => [:queue, :topic],
-                                                              :cumulative => true,
+                                                              :discrete => true,
                                                               :validate => {
                                                                 :optional => [
                                                                               :concurrency,
@@ -77,7 +77,7 @@ module TorqueBox
                                                                      { :compile_mode => [:force, :jit, :off,
                                                                                          'force', 'jit', 'off'] }]
                                                      }),
-          :service     => ThingWithOptionsEntry.with_settings(:cumulative => true,
+          :service     => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {
                                                                 :optional => [
                                                                               :config,
@@ -149,8 +149,8 @@ module TorqueBox
               metadata['services'][name] = data
             end
 
-          else # <entry_name>: (handles environment, ruby, web)
-            metadata[entry_name] = entry_data
+          else # => <entry_name>: (handles environment, ruby, web)
+            metadata[entry_name].merge!( entry_data )
           end
         end
 

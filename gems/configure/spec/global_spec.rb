@@ -40,7 +40,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     end
 
     def assert_options(config, key, options)
-      if @cumulative
+      if @discrete
         config['<root>'][@method].should == [[key, options]]
       else
         config['<root>'][@method][key].should == options
@@ -209,7 +209,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
   describe "#service" do
     before(:each) do
       @method = 'service'
-      @cumulative = true
+      @discrete = true
     end
     
     it_should_behave_like 'a thing with options'
@@ -233,7 +233,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
   describe "#job" do
     before(:each) do
       @method = 'job'
-      @cumulative = true
+      @discrete = true
     end
 
     it_should_behave_like 'a thing with options'

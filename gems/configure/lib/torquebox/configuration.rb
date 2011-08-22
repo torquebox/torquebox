@@ -113,7 +113,7 @@ module TorqueBox
       end
 
       def finalize_options
-        if @options[:cumulative]
+        if @options[:discrete]
           local_config << @entry_options
         else
           @entry_options = local_config.merge!( @entry_options )
@@ -122,7 +122,7 @@ module TorqueBox
       end
       
       def local_config
-        @config[@name.to_s] = [] if @options[:cumulative] && !@config[@name.to_s].is_a?(Array)
+        @config[@name.to_s] = [] if @options[:discrete] && !@config[@name.to_s].is_a?(Array)
         @config[@name.to_s] ||= {}  
       end
 
@@ -146,7 +146,7 @@ module TorqueBox
       end
 
       def finalize_options
-        if @options[:cumulative]
+        if @options[:discrete]
           local_config << [@thing.to_s, @entry_options]
         else
           local_config[@thing.to_s] = { } unless local_config[@thing.to_s]
