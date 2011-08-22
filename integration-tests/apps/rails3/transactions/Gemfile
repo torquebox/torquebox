@@ -30,7 +30,7 @@ gem 'rails', '3.0.9'
 #   gem 'webrat'
 # end
 gem "activerecord-jdbc-adapter", :require => "arjdbc"
-gem "jdbc-sqlite3"
+gem "jdbc-h2"
 gem "jruby-openssl"
 gem "torquebox-rake-support"
 gem "torquebox"
