@@ -1,4 +1,4 @@
-= Extending the configuration DSL
+# Extending the configuration DSL
 
 To add something to the DSL, you just need to modify lib/configuration/global.rb
 in two places. As an example, we'll add two new keywords to our dsl: stomp & stomplet:
@@ -10,15 +10,15 @@ in two places. As an example, we'll add two new keywords to our dsl: stomp & sto
 * stomplet is used to define a stomplet that will be instantiated. Each call should create 
   a discrete config for that stomplet.
 
-== Adding the keywords
+## Adding the keywords
 
 The ENTRY_MAP in GlobalConfiguration (global.rb) defines all of the keywords for the dsl. It is
 a hash of keyword-as-a-symbol to the Entry class that implements the keyword. lib/configuration.rb 
 defines the following Entry classes:
  
-* ThingEntry: foo :bar
-* OptionsEntry: foo :bar => :baz
-* ThingWithOptionsEntry: foo :bar, :ham => :biscuit
+* ThingEntry: `foo :bar`
+* OptionsEntry: `foo :bar => :baz`
+* ThingWithOptionsEntry: `foo :bar, :ham => :biscuit`
 
 The Entry classes can be customized with the with_settings() class method to add validation and more.
 
@@ -55,16 +55,16 @@ and
 
 To support this, we add the following to the ENTRY_MAP:
 
-   :stomplet => ThingWithOptionsEntry.with_settings( :discrete => true,
-                                                     :validate => {
-                                                       :required => [ :route ],
-                                                       :optional => [ :name, { :fungible => [ true, false ] } ] } )
+    :stomplet => ThingWithOptionsEntry.with_settings( :discrete => true,
+                                                      :validate => {
+                                                        :required => [ :route ],
+                                                        :optional => [ :name, { :fungible => [ true, false ] } ] } )
                                                                  
 The :discrete setting signals this keyword to accumulate entries in
 an array instead of merging into a hash based of off the 'thing' ('MyStomplet' in 
 this case). This allows for multiple stomplets using the same class. 
 
-== Converting to the expected yaml format
+## Converting to the expected yaml format
 
 The DSL has its own simple hash and array based representation of the configuration. Since
 the output of the DSL gets fed into the front of the *YamlParsingProcessor chain, we have
@@ -109,9 +109,9 @@ To add our conversion, simply add when blocks to the case statement in to_metada
         stomplet.merge!( data )
        end
 
-   # for stomp, we just fall through to the default case
+    # for stomp, we just fall through to the default case
 
-== Testing
+## Testing
 
 You should add tests to global_spec.rb and the torquebox_rb_spec.rb integ. I leave those
 as an exercise for the reader.
