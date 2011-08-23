@@ -354,7 +354,7 @@
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
 
-    <version.org.projectodd.stilts>0.1.16</version.org.projectodd.stilts>
+    <version.org.projectodd.stilts>0.1.17</version.org.projectodd.stilts>
   </properties>
 
   <repositories>
