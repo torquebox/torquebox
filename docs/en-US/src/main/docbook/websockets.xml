@@ -256,17 +256,23 @@ end</programlisting></para>
 
     <para><itemizedlist>
         <listitem>
-          <para>subscribe_to( subscriber, jms_destination_name,
-          jms_destination_type )</para>
+          <para>subscribe_to( subscriber, jms_destination, jms_selector=nil
+          )</para>
         </listitem>
 
         <listitem>
-          <para>send_to( stomp_message, jms_destination_name,
-          jms_destination_type )</para>
+          <para>send_to( jms_destination_name, stomp_message, headers={}
+          )</para>
         </listitem>
       </itemizedlist>Your own Stomplet may use these methods to handle the
     heavy-lifting after translating between STOMP destinations and JMS
     destinations.</para>
+
+    <para>When using <methodname>send_to(...)</methodname>, the
+    <parameter>stomp_message</parameter> parameter may be a complete
+    <classname>StompMessage</classname>, or simply a string, which will be
+    converted into a message. Any headers specified will override any headers
+    provided through the <classname>StompMessage</classname>.</para>
 
     <para><example>
         <title>Example JMS Stomplet Bridge</title>
@@ -287,11 +293,11 @@ class BridgeStomplet &lt; TorqueBox::Stomp::JmsStomplet
   end
 
   def on_message(stomp_message, session)
-    send_to( stomp_message, @destination_name, @destination_type )
+    send_to( destination_for( @destination_name, @destination_type ), stomp_message )
   end
 
   def on_subscribe(subscriber)
-    subscribe_to( subscriber, @destination_name, @destination_type )
+    subscribe_to( subscriber, destination_for( @destination_name, @destination_type ) )
   end
 
 end</programlisting></para>
