@@ -111,7 +111,7 @@ describe "STOMP applications via websockets", :js=>true do
       client.commit( 'tx-1' );
     END
 
-    sleep( 1 )
+    sleep( 3 )
 
     page.execute_script <<-END
       client.disconnect();

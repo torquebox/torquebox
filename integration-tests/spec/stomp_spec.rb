@@ -118,7 +118,7 @@ describe "STOMP applications" do
     received_message.should be_nil
 
     tx.commit
-    sleep( 1 )
+    sleep( 3 )
 
     client.disconnect
 
