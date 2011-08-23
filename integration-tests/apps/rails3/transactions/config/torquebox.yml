@@ -1,0 +1,7 @@
+
+queues:
+  /queue/input:
+    durable: false
+
+messaging:
+  /queue/input: Processor
