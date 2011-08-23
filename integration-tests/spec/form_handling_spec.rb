@@ -50,4 +50,28 @@ describe "rails3 form handling" do
     page.driver.cookies["JSESSIONID"].should be_nil
   end
 
+
+  it "should be able to write the file" do
+    visit "/basic-rails/form_handling/upload_file"
+    page.driver.cookies.count.should == 1
+    session_id = page.driver.cookies["JSESSIONID"].value
+    session_id.length.should be > 0
+    auth_token = find(:xpath, "//input[@name='authenticity_token']").value
+    auth_token.length.should be > 0
+    find("#the-upload-form")["action"].should include(session_id)
+
+    data_path = File.expand_path( File.join( File.dirname( __FILE__ ), "..", "target/test-classes/multiline-data.txt" ) ) 
+    attach_file("the-file", data_path )
+    
+    page.driver.cookies.clear
+    click_button("Save changes")
+
+    saved_path = find("#path").text
+
+    data_contents = File.read( data_path )
+    saved_contents = File.read( saved_path )
+    
+    saved_contents.should == data_contents
+  end
+
 end
