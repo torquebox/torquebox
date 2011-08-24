@@ -69,12 +69,12 @@
 end</programlisting>
       </informalexample></para>
 
-   <para><classname>TorqueBox::Injectors</classname> also provides an
-   <methodname>__inject__(...)</methodname> method that can be used in classes
-   that override the  <methodname>inject(...)</methodname> method (classes
-   that include <classname>Enumerable</classname>, for example). It is 
-   interchangeable with the <methodname>inject(...)</methodname> calls
-   in any of the injection examples.</para>
+    <para><classname>TorqueBox::Injectors</classname> also provides an
+    <methodname>__inject__(...)</methodname> method that can be used in
+    classes that override the <methodname>inject(...)</methodname> method
+    (classes that include <classname>Enumerable</classname>, for example). It
+    is interchangeable with the <methodname>inject(...)</methodname> calls in
+    any of the injection examples.</para>
   </section>
 
   <section id="injectable-resources">
@@ -188,6 +188,29 @@ end</programlisting>
 
   def create
     the_actual_webserver = inject( 'jboss.web:service=WebServer' )
+  end
+
+end</programlisting>
+      </informalexample></para>
+
+    <formalpara>
+      <title>Services</title>
+
+      <para>One of the greatest features inside TorqueBox is the possibility
+      to start background tasks as a daemon inside your application. During
+      development, you may need to access properties from these services, for
+      example, to stop your daemon execution from controller. You can inject
+      your service at any point of your application using
+      <methodname>inject(...)</methodname>.</para>
+    </formalpara>
+
+    <para><informalexample>
+        <programlisting>class MyController &lt; ApplicationController
+
+  include TorqueBox::Injectors
+
+  def stop
+    the_torque_service = inject( 'service:MyTorqueService' )
   end
 
 end</programlisting>
