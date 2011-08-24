@@ -21,9 +21,15 @@ module TorqueBox
       end
     
       def destroy
+        puts "stopping jms stomplet"
+        @session.close
+        puts "closed session"
         @connection.stop
+        puts "stopped connection"
         @connection.close
+        puts "closed connection"
       end
+
       # -----
       # -----
     

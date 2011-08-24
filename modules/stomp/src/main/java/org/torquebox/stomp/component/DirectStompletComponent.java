@@ -20,7 +20,12 @@ public class DirectStompletComponent implements Stomplet {
 
     @Override
     public void destroy() throws StompException {
-        this.component._callRubyMethodIfDefined( "destroy" );
+        try {
+            this.component._callRubyMethodIfDefined( "destroy" );
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new StompException( e );
+        }
     }
 
     @Override

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.as.messaging.MessagingServices;
+import org.jboss.as.messaging.jms.JMSServices;
 import org.jboss.as.messaging.jms.JMSTopicService;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -58,7 +59,7 @@ public class TopicDeployer implements DeploymentUnitProcessor {
 
     protected void deploy(DeploymentPhaseContext phaseContext, TopicMetaData topic) {
         final JMSTopicService service = new JMSTopicService(topic.getName(), new String[] { topic.getBindName() } );
-        final ServiceName serviceName = phaseContext.getDeploymentUnit().getServiceName().append( MessagingServices.JBOSS_MESSAGING.append(  "jms", "topic" )).append( topic.getName() );
+        final ServiceName serviceName = JMSServices.JMS_TOPIC_BASE.append(topic.getName());
         phaseContext.getServiceTarget().addService(serviceName, service)
                 .addDependency(MessagingServices.JBOSS_MESSAGING.append( "jms", "manager" ), JMSServerManager.class, service.getJmsServer())
                 .setInitialMode(Mode.ACTIVE)

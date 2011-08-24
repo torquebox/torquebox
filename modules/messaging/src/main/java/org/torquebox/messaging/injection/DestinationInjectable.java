@@ -22,6 +22,7 @@ package org.torquebox.messaging.injection;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
+import org.jboss.as.messaging.jms.JMSServices;
 import org.jboss.as.naming.deployment.ContextNames;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
@@ -30,7 +31,7 @@ import org.torquebox.core.injection.jndi.JNDIInjectable;
 import org.torquebox.messaging.DestinationUtils;
 
 public class DestinationInjectable extends JNDIInjectable {
-    
+
     public DestinationInjectable(String type, String name, boolean generic) {
         super( type, name, generic );
     }
@@ -39,34 +40,45 @@ public class DestinationInjectable extends JNDIInjectable {
     public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) {
         ServiceName destinationServiceName = wrapWithManager( serviceTarget, unit, getDestinationServiceName() );
         ServiceName connectionFactoryServiceName = wrapWithManager( serviceTarget, unit, getConnectionFactoryServiceName() );
-        
+
         ServiceName liveDestinationServiceName = wrapWithLiveDestination( serviceTarget, unit, connectionFactoryServiceName, destinationServiceName );
-        
+
         return liveDestinationServiceName;
     }
 
-    protected ServiceName wrapWithLiveDestination(ServiceTarget serviceTarget, DeploymentUnit unit, ServiceName connectionFactoryServiceName, ServiceName destinationServiceName) {
-    	ServiceName liveDestinationServiceName = destinationServiceName.append( "live" );
-    	
+    protected ServiceName wrapWithLiveDestination(ServiceTarget serviceTarget, DeploymentUnit unit, ServiceName connectionFactoryServiceName,
+            ServiceName destinationServiceName) {
+        ServiceName liveDestinationServiceName = destinationServiceName.append( "live" );
+
         if (serviceIsAlreadyWrapped( unit, liveDestinationServiceName )) {
             return liveDestinationServiceName;
         }
-        
+
         LiveDestinationService liveDestinationService = new LiveDestinationService();
         serviceTarget.addService( liveDestinationServiceName, liveDestinationService )
-            .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
-            .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
-            .install();
+                .addDependency( connectionFactoryServiceName, ConnectionFactory.class, liveDestinationService.getConnectionFactoryInjector() )
+                .addDependency( destinationServiceName, Destination.class, liveDestinationService.getDestinationInjector() )
+                .addDependency( getCoreDestinationServiceName() )
+                .install();
         return liveDestinationServiceName;
     }
 
     protected ServiceName getDestinationServiceName() {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( DestinationUtils.getServiceName( getName() ) );
     }
-    
+
     protected ServiceName getConnectionFactoryServiceName() {
         return ContextNames.JAVA_CONTEXT_SERVICE_NAME.append( "ConnectionFactory" );
     }
 
+    protected ServiceName getCoreDestinationServiceName() {
+
+        if (getType().equals( "queue" )) {
+            return JMSServices.JMS_QUEUE_BASE.append( getName() );
+        }
+
+        return JMSServices.JMS_TOPIC_BASE.append( getName() );
+
+    }
 
 }

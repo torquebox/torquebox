@@ -22,12 +22,14 @@ package org.torquebox.messaging;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.XAConnection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.jms.XAConnection;
 import javax.transaction.TransactionManager;
 
 import org.hornetq.jms.client.HornetQConnectionFactory;
+import org.jboss.as.messaging.jms.JMSServices;
 import org.jboss.as.naming.ManagedReference;
 import org.jboss.as.naming.ManagedReferenceFactory;
 import org.jboss.logging.Logger;
@@ -125,7 +127,13 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                 }
 
                 ServiceTarget target = context.getChildTarget();
-
+                
+                if ( MessageProcessorGroup.this.destination instanceof Queue ) {
+                    target.addDependency( JMSServices.JMS_QUEUE_BASE.append(MessageProcessorGroup.this.destinationName) );
+                } else {
+                    target.addDependency( JMSServices.JMS_TOPIC_BASE.append(MessageProcessorGroup.this.destinationName) );
+                }
+                
                 for (int i = 0; i < MessageProcessorGroup.this.concurrency; ++i) {
                     MessageProcessorService service = new MessageProcessorService( MessageProcessorGroup.this );
                     ServiceName serviceName = baseServiceName.append( "" + i );

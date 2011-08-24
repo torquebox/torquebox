@@ -24,6 +24,7 @@ import java.util.List;
 import org.hornetq.jms.server.JMSServerManager;
 import org.jboss.as.messaging.MessagingServices;
 import org.jboss.as.messaging.jms.JMSQueueService;
+import org.jboss.as.messaging.jms.JMSServices;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -58,7 +59,7 @@ public class QueueDeployer implements DeploymentUnitProcessor {
 
     protected void deploy(DeploymentPhaseContext phaseContext, QueueMetaData queue) {
         final JMSQueueService service = new JMSQueueService(queue.getName(), null, queue.isDurable(), new String[] { queue.getBindName() } );
-        final ServiceName serviceName = phaseContext.getDeploymentUnit().getServiceName().append( MessagingServices.JBOSS_MESSAGING.append("jms","queue" ) ).append( queue.getName() );
+        final ServiceName serviceName = JMSServices.JMS_QUEUE_BASE.append(queue.getName());
         phaseContext.getServiceTarget().addService(serviceName, service)
                 .addDependency(MessagingServices.JBOSS_MESSAGING.append(  "jms", "manager"), JMSServerManager.class, service.getJmsServer())
                 .setInitialMode(Mode.ACTIVE)
