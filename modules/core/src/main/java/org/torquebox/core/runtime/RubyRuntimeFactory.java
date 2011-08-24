@@ -418,7 +418,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private void prepareRuntime(Ruby runtime, String contextInfo) {
-        if ("1.6.3".equals( Constants.VERSION )) {
+        if ("1.6.3".equals( Constants.VERSION ) ||
+            "1.6.4".equals( Constants.VERSION )) {
             log.info( "Disabling POSIX ENV passthrough for " + contextInfo + " runtime (TORQUE-497)" );
             StringBuffer env_fix = new StringBuffer();
             env_fix.append( "update_real_env_attr = org.jruby.RubyGlobal::StringOnlyRubyHash.java_class.declared_fields.find { |f| f.name == 'updateRealENV' }\n" );
