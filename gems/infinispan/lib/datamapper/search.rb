@@ -41,7 +41,7 @@ module Infinispan
     def build_query( query )
       builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
       query = query.conditions.nil? ? builder.all.create_query : handle_condition( builder, query.conditions.first ) 
-      puts "LUCENE QUERY: #{query.to_s}"
+      #puts "LUCENE QUERY: #{query.to_s}"
       query
     end
 

@@ -139,8 +139,8 @@ module TorqueBox
           tm.commit if tm
         rescue Exception => e
           tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
-          puts "[ERROR] Exception raised during transaction. Rolling back."
-          puts "[ERROR] #{e.message}"
+          $stderr.puts "[ERROR] Exception raised during transaction. Rolling back."
+          $stderr.puts "[ERROR] #{e.message}"
         end
       end
 
@@ -176,7 +176,7 @@ module TorqueBox
         cache = manager.get_cache(name)
         config = cache.configuration
         unless config.cache_mode == mode
-          puts "Reconfiguring cache #{name} from #{config.cache_mode} to #{mode}"
+          $stderr.puts "Reconfiguring cache #{name} from #{config.cache_mode} to #{mode}"
           cache.stop
           config.cache_mode = mode
           manager.define_configuration(name, config)
@@ -186,7 +186,7 @@ module TorqueBox
       end
 
       def configure(mode=clustering_mode)
-        puts "Configuring cache #{name} as #{mode}"
+        $stderr.puts "Configuring cache #{name} as #{mode}"
         config = manager.default_configuration.clone
         config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.JBossTransactionManagerLookup.new )
         config.cache_mode = mode
@@ -201,12 +201,12 @@ module TorqueBox
           configure
         end
       rescue
-        puts "Unable to obtain clustered cache; falling back to local: #{$!}" if manager
+        $stderr.puts "Unable to obtain clustered cache; falling back to local: #{$!}" if manager
       end
 
       def local
         # workaround common problem running infinispan in web containers (see FAQ)
-        puts "Configuring local cache for #{name}"
+        $stderr.puts "Configuring local cache for #{name}"
         java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
         config  = org.infinispan.config.Configuration.new.fluent
         config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
@@ -223,14 +223,14 @@ module TorqueBox
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
       rescue Exception => e
-        puts "Unable to obtain local cache: #{$!}"
-        puts e.backtrace
+        $stderr.puts "Unable to obtain local cache: #{$!}"
+        $stderr.puts e.backtrace
       end
       
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        puts "No caching will occur" 
+        $stderr.puts "No caching will occur" 
         result
       end
 

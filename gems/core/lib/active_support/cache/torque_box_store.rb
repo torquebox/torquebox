@@ -141,7 +141,7 @@ module ActiveSupport
         cache = manager.get_cache(name)
         config = cache.configuration
         unless config.cache_mode == mode
-          puts "Reconfiguring cache #{name} from #{config.cache_mode} to #{mode}"
+          $stderr.puts "Reconfiguring cache #{name} from #{config.cache_mode} to #{mode}"
           cache.stop
           config.cache_mode = mode.to_s
           manager.define_configuration(name, config)
@@ -151,7 +151,7 @@ module ActiveSupport
       end
 
       def configure(mode=clustering_mode)
-        puts "Configuring cache #{name} as #{mode}"
+        $stderr.puts "Configuring cache #{name} as #{mode}"
         config = manager.default_configuration.clone
         config.cache_mode = mode.to_s
         manager.define_configuration(name, config)
@@ -165,7 +165,7 @@ module ActiveSupport
           configure
         end
       rescue
-        puts "Unable to obtain clustered cache; falling back to local: #{$!}" if manager
+        $stderr.puts "Unable to obtain clustered cache; falling back to local: #{$!}" if manager
       end
 
       def local
@@ -174,7 +174,7 @@ module ActiveSupport
         manager = org.infinispan.manager.DefaultCacheManager.new()
         manager.get_cache()
       rescue
-        puts "Unable to obtain local cache: #{$!}"
+        $stderr.puts "Unable to obtain local cache: #{$!}"
       end
       
       def nothing

@@ -19,7 +19,6 @@ module TorqueBox
   module Authentication
     def self.[](name)
       return nil unless torquebox_context
-      puts "Looking up authentication context #{service_name( name )}"
       Authenticator.new( ::TorqueBox::ServiceRegistry.lookup( service_name( name ) ) )
     end
 
@@ -36,7 +35,7 @@ module TorqueBox
     end
 
     def self.torquebox_context
-      puts "ERROR: TorqueBox application context not available" unless ENV['TORQUEBOX_APP_NAME']
+      $stderr.puts "ERROR: TorqueBox application context not available" unless ENV['TORQUEBOX_APP_NAME']
       ENV['TORQUEBOX_APP_NAME']
     end
   end
@@ -44,12 +43,11 @@ module TorqueBox
   class Authenticator
     def initialize(auth_bean)
       @auth_bean = auth_bean
-      puts "Initializing TorqueBox Authenticator with #{auth_bean.inspect}"
     end
 
     def authenticate(user, pass, &block)
       if @auth_bean.nil?
-        puts "ERROR: No authentication delegate found. Authentication not enabled." 
+        $stderr.puts "ERROR: No authentication delegate found. Authentication not enabled." 
         return false 
       end
 

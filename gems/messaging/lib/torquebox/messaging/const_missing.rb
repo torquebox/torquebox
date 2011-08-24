@@ -16,7 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 unless defined?(ActiveSupport)
-  puts "WARN: Defining const_missing"
+  $stderr.puts "WARN: Defining const_missing"
   
   def Object.const_missing(name)
     file = org.torquebox.core.util.StringUtils.underscore(name)

@@ -21,13 +21,9 @@ module TorqueBox
       end
     
       def destroy
-        puts "stopping jms stomplet"
         @session.close
-        puts "closed session"
         @connection.stop
-        puts "stopped connection"
         @connection.close
-        puts "closed connection"
       end
 
       # -----
@@ -59,7 +55,6 @@ module TorqueBox
       end
     
       def subscribe_to(subscriber, destination, selector=nil)
-        puts "destination: #{destination.inspect}"
         jms_session = @session.jms_session
         java_destination = @session.java_destination( destination )
         consumer = @session.jms_session.create_consumer( java_destination.to_java, selector )

@@ -57,12 +57,10 @@ module TorqueBox
             session_data[key] = session.getAttribute(key)
           end
         end
-        puts "LOADED #{session_data.inspect}"
         symbolize_keys!(session_data)
         initial_keys = session_data.keys
         session_data[:session_id] = session.getId()
         session_data[:TORQUEBOX_INITIAL_KEYS] = initial_keys
-        puts "RETURN #{session_data.inspect}"
         session_data
       end
 
@@ -93,12 +91,10 @@ module TorqueBox
           if ( String === key )
             case value
               when String, Numeric, true, false, nil
-                puts "SET #{key} = #{value}"
                 session.setAttribute( key, value )
                 true
             else
               if value.respond_to?(:java_object)
-                puts "SET #{key} = #{value}"
                 session.setAttribute( key, value )
                 true
               else

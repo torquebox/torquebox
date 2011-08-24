@@ -82,7 +82,6 @@ module Infinispan
 
       def configure_index!
         properties().each do |prop|
-          puts "---------------property: #{prop.inspect()}"
           add_java_property(prop) 
         end
 
@@ -101,12 +100,10 @@ module Infinispan
 
         java.lang.Thread.currentThread.context_class_loader.register( java_class )
         
-        puts "Became Java! --> [#{java_class}]"
         @@mapped = true
       end
 
       def add_java_property(prop)
-        puts "#{prop.model.name} gets property added #{prop.name}"
         name = prop.name
         type = prop.class
 

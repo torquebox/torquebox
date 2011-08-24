@@ -71,8 +71,8 @@ module TorqueBox
         self.result = yield 
       rescue Exception => e
         self.error = e
-        puts "FutureResponder#respond: An error occured: ", e
-        puts e.backtrace.join( "\n" )
+        $stderr.puts "FutureResponder#respond: An error occured: ", e
+        $stderr.puts e.backtrace.join( "\n" )
       end
 
       # Convenience method that returns the thread local
@@ -101,7 +101,7 @@ module TorqueBox
                         :new_session => true # can't be a part of the task's tx!
                         )
       rescue TypeError => ex
-        puts "FutureResponder#send_response: Warning: unable to marshal #{@result.inspect}"
+        $stderr.puts "FutureResponder#send_response: Warning: unable to marshal #{@result.inspect}"
       end
     end
   end

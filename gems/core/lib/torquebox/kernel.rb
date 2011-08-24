@@ -21,24 +21,24 @@ module TorqueBox
   class Kernel
 
     def self.kernel=(kernel)
-      puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
+      $stderr.puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
       # is this even reasonable?
       TorqueBox::ServiceRegistry.service_registry = kernel
     end
 
     # blocks are not allowed on the method named :[]
     def self.[](name)
-      puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
+      $stderr.puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
       self.lookup(name)
     end
 
     def self.lookup(name, &block)
-      puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
+      $stderr.puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
       TorqueBox::ServiceRegistry.lookup(name, &block)
     end
 
     def self.blocks
-      puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
+      $stderr.puts "[WARNING] >>> TorqueBox::Kernel is deprecated. Please begin using TorqueBox::ServiceRegistry instead."
       TorqueBox::ServiceRegistry.blocks
     end
 
