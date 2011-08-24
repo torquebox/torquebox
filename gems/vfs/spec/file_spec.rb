@@ -206,6 +206,26 @@ describe "File extensions for VFS" do
 	f.close
       }.should_not raise_error
     end
+
+    it "should respect binary mode for vfs files that don't yet exist" do 
+       prefix = test_copy_base_path( :absolute )
+       in_path = "#{prefix}/biscuit.jpg"
+       out_path = vfs_path( "#{prefix}/binfile" )
+       data = File.read( in_path )
+       File.open( out_path, 'wb' ) { |f| f.write( data ) }
+       File.size( out_path ).should == File.size( in_path )
+       File.read( out_path ).should == data
+    end
+
+    it "should respect binary mode for vfs files that already exist" do 
+       prefix = test_copy_base_path( :absolute )
+       path = "#{prefix}/biscuit.jpg"
+       data = File.read( path )
+       size = File.size( path )
+       File.open( path, 'wb' ) { |f| f.write( data ) }
+       File.size( path ).should == size
+       File.read( path ).should == data
+    end
   end
 
   describe "new" do
