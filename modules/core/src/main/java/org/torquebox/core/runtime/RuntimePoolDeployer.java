@@ -67,7 +67,6 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
     }
 
     protected void deploy(DeploymentPhaseContext phaseContext, final PoolMetaData poolMetaData) {
-        log.info( "Deploying runtime pool: " + poolMetaData );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
@@ -145,9 +144,9 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
     @Override
     public void undeploy(org.jboss.as.server.deployment.DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.pool" );
 }

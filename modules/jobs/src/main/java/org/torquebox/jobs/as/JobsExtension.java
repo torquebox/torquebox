@@ -43,8 +43,6 @@ public class JobsExtension extends AbstractBootstrappableExtension {
                 false );
         
         registration.registerXMLElementWriter(JobsSubsystemParser.getInstance());
-
-        log.info( "Initialized TorqueBox jobs Subsystem" );
     }
 
     @Override

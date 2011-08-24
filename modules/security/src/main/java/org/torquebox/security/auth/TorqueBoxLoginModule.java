@@ -46,7 +46,6 @@ public class TorqueBoxLoginModule extends UsernamePasswordLoginModule {
     public void initialize(Subject subject, CallbackHandler callbackHandler,
             Map<String, ?> sharedState, Map<String, ?> options) {
         super.initialize( subject, callbackHandler, sharedState, options );
-        log.info( "Initializing TorqueBoxLoginModule" );
         @SuppressWarnings("unchecked")
         Map<String, String> users = (Map<String, String>) options.get( "credentials" );
         if (users != null) {

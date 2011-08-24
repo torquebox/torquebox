@@ -41,8 +41,6 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
     public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
         Map<String, Map<String, ?>> data = (Map<String, Map<String, ?>>) dataObject;
 
-        log.info( "Parsing: " + data );
-
         for (String jobName : data.keySet()) {
             Map<String, ?> jobSpec = data.get( jobName );
             String description = (String) jobSpec.get( "description" );
@@ -80,5 +78,6 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
         }
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 }

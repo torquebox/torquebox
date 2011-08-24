@@ -43,28 +43,20 @@ import org.torquebox.web.rack.RackEnvironment;
 
 public class RackFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger( RackFilter.class );
-
-    public static final String RACK_APP_DEPLOYMENT_INIT_PARAM = "torquebox.rack.app.deployment.name";
-
-    private ComponentResolver componentResolver;
-    private RubyRuntimePool runtimePool;
-    private ServletContext servletContext;
-
     public void init(FilterConfig filterConfig) throws ServletException {
-        
+
         ServiceRegistry registry = (ServiceRegistry) filterConfig.getServletContext().getAttribute( "service.registry" );
-        
-        ServiceName componentResolverServiceName  = (ServiceName) filterConfig.getServletContext().getAttribute( "component.resolver.service-name" );
-        this.componentResolver =  (ComponentResolver) registry.getService( componentResolverServiceName ).getValue();
+
+        ServiceName componentResolverServiceName = (ServiceName) filterConfig.getServletContext().getAttribute( "component.resolver.service-name" );
+        this.componentResolver = (ComponentResolver) registry.getService( componentResolverServiceName ).getValue();
         if (this.componentResolver == null) {
             throw new ServletException( "Unable to obtain Rack component resolver: " + componentResolverServiceName );
         }
-        
+
         ServiceName runtimePoolServiceName = (ServiceName) filterConfig.getServletContext().getAttribute( "runtime.pool.service-name" );
-        this.runtimePool =  (RubyRuntimePool) registry.getService( runtimePoolServiceName ).getValue();
-        
-        if ( this.runtimePool == null ) {
+        this.runtimePool = (RubyRuntimePool) registry.getService( runtimePoolServiceName ).getValue();
+
+        if (this.runtimePool == null) {
             throw new ServletException( "Unable to obtain runtime pool: " + runtimePoolServiceName );
         }
 
@@ -134,4 +126,12 @@ public class RackFilter implements Filter {
             }
         }
     }
+
+    private static final Logger log = Logger.getLogger( RackFilter.class );
+
+    public static final String RACK_APP_DEPLOYMENT_INIT_PARAM = "torquebox.rack.app.deployment.name";
+
+    private ComponentResolver componentResolver;
+    private RubyRuntimePool runtimePool;
+    private ServletContext servletContext;
 }

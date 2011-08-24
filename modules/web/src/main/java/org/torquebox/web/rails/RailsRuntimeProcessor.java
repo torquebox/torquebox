@@ -48,7 +48,6 @@ public class RailsRuntimeProcessor implements DeploymentUnitProcessor {
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(  RubyRuntimeMetaData.ATTACHMENT_KEY );
         
         if ( runtimeMetaData != null && runtimeMetaData.getRuntimeType() != null ) {
-            log.warn( "Ruby runtime already configured as " + runtimeMetaData.getRuntimeType() + ": " + unit );
             return;
         }
         
@@ -76,6 +75,7 @@ public class RailsRuntimeProcessor implements DeploymentUnitProcessor {
 
     }
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.rails" );
 
 }

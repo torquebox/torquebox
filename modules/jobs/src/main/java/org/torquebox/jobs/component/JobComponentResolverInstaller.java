@@ -65,7 +65,6 @@ public class JobComponentResolverInstaller extends BaseRubyComponentDeployer {
         resolver.setComponentWrapperClass( JobComponent.class );
         resolver.setInitializeParams( jobMetaData.getParameters() );
         
-        log.info( "Installing Jobs component resolver: " + serviceName );
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, jobMetaData.getRubyRequirePath() ), builder );
@@ -100,6 +99,7 @@ public class JobComponentResolverInstaller extends BaseRubyComponentDeployer {
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs.component" );
 
 }

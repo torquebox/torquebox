@@ -73,7 +73,6 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         // Let Rack / Rails handle reloading for the web stack
         resolver.setAlwaysReload( false );
         
-        log.info( "Installing Rack app component resolver: " + serviceName );
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.ON_DEMAND );
@@ -117,9 +116,9 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.component" );
 }

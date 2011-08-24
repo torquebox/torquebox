@@ -83,8 +83,6 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
 
         InjectionAnalyzer analyzer = getAnalyzer();
 
-        long startTime = System.currentTimeMillis();
-
         for (VirtualFile each : root.getChildren()) {
             if (shouldProcess( each )) {
                 try {
@@ -94,10 +92,6 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
                 }
             }
         }
-
-        long elapsed = System.currentTimeMillis() - startTime;
-
-        log.info( "Injection scanning took " + elapsed + "ms" );
     }
 
     private void deployRuntimeInjectionAnalyzer(DeploymentPhaseContext phaseContext) {

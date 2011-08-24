@@ -50,8 +50,6 @@ public class SecurityExtension extends AbstractBootstrappableExtension {
                 false );
 
         registration.registerXMLElementWriter( AuthSubsystemParser.getInstance() );
-
-        log.info( "Initialized TorqueBox Auth Subsystem" );
 	}
 
     @Override

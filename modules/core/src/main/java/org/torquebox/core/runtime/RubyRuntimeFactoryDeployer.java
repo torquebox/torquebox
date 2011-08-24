@@ -40,10 +40,8 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-        String deploymentName = phaseContext.getDeploymentUnit().getName();
-        
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
 
@@ -55,17 +53,16 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             for (RubyLoadPathMetaData loadPath : runtimeMetaData.getLoadPaths()) {
                 loadPaths.add( loadPath.getURL().toExternalForm() );
             }
-            
+
             Module module = unit.getAttachment( Attachments.MODULE );
-            
-            log.info( "Initializing ruby with classloader: " + module );
+
             factory.setClassLoader( module.getClassLoader() );
-            
-            factory.setServiceRegistry(phaseContext.getServiceRegistry());
+
+            factory.setServiceRegistry( phaseContext.getServiceRegistry() );
             factory.setLoadPaths( loadPaths );
             factory.setApplicationName( rubyAppMetaData.getApplicationName() );
             factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
-            factory.setApplicationEnvironment(rubyAppMetaData.getEnvironmentVariables());
+            factory.setApplicationEnvironment( rubyAppMetaData.getEnvironmentVariables() );
 
             if (runtimeMetaData.getVersion() == RubyRuntimeMetaData.Version.V1_9) {
                 factory.setRubyVersion( CompatVersion.RUBY1_9 );
@@ -85,11 +82,9 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
 
             RubyRuntimeFactoryService service = new RubyRuntimeFactoryService( factory );
             ServiceName name = CoreServices.runtimeFactoryName( unit );
-            ServiceBuilder<RubyRuntimeFactory> builder = phaseContext.getServiceTarget().addService( name, service );
-            log.info( "installing factory service for unit" );
-            builder.install();
-            log.info( "installed factory service for unit" );
-
+            
+            phaseContext.getServiceTarget().addService( name, service )
+                    .install();
         }
     }
 
@@ -97,7 +92,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
         log.info( "undeploy!: " + context );
     }
-    
+
     private boolean useJRubyHomeEnvVar = true;
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );

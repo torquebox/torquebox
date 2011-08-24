@@ -89,7 +89,6 @@ public class ManagedPool<T> implements Pool<T> {
         if (!this.deferUntilRequested && !this.startAsynchronously) {
             startPool( true );
         } else if (this.startAsynchronously) {
-            log.info( "Starting " + getName() + " runtime pool asynchronously." );
             Thread initThread = new Thread() {
                 public void run() {
                     try {
@@ -100,8 +99,6 @@ public class ManagedPool<T> implements Pool<T> {
                 }
             };
             initThread.start();
-        } else {
-            log.info( "Deferring start for " + getName() + " runtime pool." );
         }
     }
 

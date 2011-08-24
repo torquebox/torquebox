@@ -65,6 +65,7 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.app" );
 
 }

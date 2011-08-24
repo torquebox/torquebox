@@ -28,8 +28,6 @@ public class StompletDeployer implements DeploymentUnitProcessor {
     }
 
     protected void deploy(DeploymentPhaseContext phaseContext, RubyStompletMetaData stompletMetaData) {
-        log.info( "deploying stomplet: " + stompletMetaData.getName() );
-        
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
         StompletService service = new StompletService();
@@ -50,6 +48,7 @@ public class StompletDeployer implements DeploymentUnitProcessor {
         
     }
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.stomp" );
 
 }

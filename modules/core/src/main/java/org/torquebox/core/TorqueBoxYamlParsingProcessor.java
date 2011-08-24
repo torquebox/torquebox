@@ -64,7 +64,6 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
     
     @SuppressWarnings("unchecked")
     public static TorqueBoxMetaData parse(VirtualFile file) throws IOException {
-        log.info( "parsing: " + file );
 
         Yaml yaml = new Yaml();
         InputStream in = null;
@@ -82,6 +81,7 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
         }
     }
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core" );
 
 }

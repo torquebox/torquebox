@@ -95,8 +95,6 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new MessagingLoadPathProcessor() );
 
-        // context.addDeploymentProcessor( Phase.POST_MODULE, 7, new
-        // MessagingInjectablesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
 
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksDeployer() );

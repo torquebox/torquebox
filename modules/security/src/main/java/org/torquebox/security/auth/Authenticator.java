@@ -31,12 +31,6 @@ import org.jboss.security.SecurityContext;
 import org.picketbox.factories.SecurityFactory;
 
 public class Authenticator implements Service<Authenticator> {
-    public static final String TORQUEBOX_AUTH_DOMAIN = "torquebox";
-
-    private String authDomain;
-    private SecurityContext securityContext;
-    private AuthenticationManager authenticationManager;
-    private static final Logger log = Logger.getLogger( "org.torquebox.auth" );
 
     public void setAuthDomain(String domain) {
         this.authDomain = domain;
@@ -80,17 +74,15 @@ public class Authenticator implements Service<Authenticator> {
         } );
     }
 
-    protected void start() {
-        log.info( "Starting TorqueBox authenticator." );
+    protected void start() throws Exception {
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );
             this.securityContext = SecurityFactory.establishSecurityContext( this.getAuthDomain() );
             this.authenticationManager = securityContext.getAuthenticationManager();
-            log.info( "TorqueBox authenticator started." );
         } catch (Exception e) {
-            log.error( "Unable to initialize TorqueBox security subsystem. " + e.getLocalizedMessage() );
-            e.printStackTrace();
+            log.error( "Unable to initialize TorqueBox security subsystem: " + e.getLocalizedMessage() );
+            throw e;
         } finally {
             Thread.currentThread().setContextClassLoader( originalClassLoader );
         }
@@ -109,4 +101,11 @@ public class Authenticator implements Service<Authenticator> {
             }
         };
     }
+    
+    public static final String TORQUEBOX_AUTH_DOMAIN = "torquebox";
+
+    private String authDomain;
+    private SecurityContext securityContext;
+    private AuthenticationManager authenticationManager;
+    private static final Logger log = Logger.getLogger( "org.torquebox.auth" );
 }

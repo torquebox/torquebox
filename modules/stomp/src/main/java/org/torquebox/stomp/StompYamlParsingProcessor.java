@@ -41,8 +41,6 @@ public class StompYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
     public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
         Map<String, ?> data = (Map<String, Map<String, ?>>) dataObject;
 
-        log.info( "Parsing: " + data );
-
         StompApplicationMetaData stompAppMetaData = new StompApplicationMetaData();
         unit.putAttachment( StompApplicationMetaData.ATTACHMENT_KEY, stompAppMetaData );
 
@@ -81,5 +79,6 @@ public class StompYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.stomp" );
 }

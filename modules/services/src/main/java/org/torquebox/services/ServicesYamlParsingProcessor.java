@@ -35,8 +35,6 @@ public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProces
 
     @SuppressWarnings("unchecked")
     protected void parse(DeploymentUnit unit, Object dataObj) throws Exception {
-        log.info( "parsing: " + dataObj );
-
         Map<String, Map<String, Object>> results = (Map<String, Map<String, Object>>) dataObj;
         if (results != null) {
             for (String service : results.keySet()) {

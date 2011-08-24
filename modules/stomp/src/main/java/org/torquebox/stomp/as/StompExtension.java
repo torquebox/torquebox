@@ -43,8 +43,6 @@ public class StompExtension extends AbstractBootstrappableExtension {
                 false );
         
         registration.registerXMLElementWriter(StompSubsystemParser.getInstance());
-
-        log.info( "Initialized TorqueBox STOMP Subsystem" );
     }
 
     @Override

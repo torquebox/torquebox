@@ -32,8 +32,6 @@ import org.torquebox.core.runtime.RuntimeInitializer;
  */
 public class RackRuntimeInitializer implements RuntimeInitializer {
 
-    @SuppressWarnings("unused")
-    private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
 
     public RackRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackMetaData) {
         this.rubyAppMetaData = rubyAppMetaData;
@@ -99,6 +97,9 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         return script.toString();
     }
 
+    @SuppressWarnings("unused")
+    private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
+    
     protected RubyApplicationMetaData rubyAppMetaData;
     protected RackApplicationMetaData rackAppMetaData;
 

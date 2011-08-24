@@ -97,7 +97,6 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
             return;
         }
 
-        log.info( "Marking as WAR" );
         DeploymentTypeMarker.setType( DeploymentType.WAR, unit );
         WarMetaData warMetaData = new WarMetaData();
         
@@ -120,7 +119,6 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
             webMetaData = new WebMetaData();
             ServiceName jgroups = ChannelFactoryService.getServiceName(null);
             if (phaseContext.getServiceRegistry().getService( jgroups ) != null) {
-                log.info("Marking app as distributable");
                 webMetaData.setDistributable( new EmptyMetaData() );
             }
             warMetaData.setWebMetaData( webMetaData );
@@ -466,6 +464,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 
 }

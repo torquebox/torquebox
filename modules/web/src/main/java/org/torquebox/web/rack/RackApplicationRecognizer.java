@@ -63,5 +63,6 @@ public class RackApplicationRecognizer extends FileLocatingProcessor {
         return result;
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 }

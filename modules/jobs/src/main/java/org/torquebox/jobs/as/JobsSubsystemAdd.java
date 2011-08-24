@@ -79,6 +79,7 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
     
     static final JobsSubsystemAdd ADD_INSTANCE = new JobsSubsystemAdd();
+    
     static final Logger log = Logger.getLogger( "org.torquebox.jobs.as" );
 
 }

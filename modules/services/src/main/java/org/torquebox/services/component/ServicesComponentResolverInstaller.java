@@ -80,7 +80,6 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
 
     }
 
-    private static final Logger log = Logger.getLogger( "org.torquebox.services.component" );
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext, String requirePath) {
 
@@ -101,5 +100,8 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
 
         return prefixes;
     }
+    
+    @SuppressWarnings("unused")
+    private static final Logger log = Logger.getLogger( "org.torquebox.services.component" );
 
 }

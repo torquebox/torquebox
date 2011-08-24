@@ -55,6 +55,7 @@ public class RubyJobProxy implements Job, StatefulJob {
     private RubyRuntimePool runtimePool;
     private ComponentResolver resolver;
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
     
 

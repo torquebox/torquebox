@@ -98,6 +98,7 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
         this.fileName = fileName;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();

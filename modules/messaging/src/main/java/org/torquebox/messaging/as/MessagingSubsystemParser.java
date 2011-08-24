@@ -79,6 +79,7 @@ public class MessagingSubsystemParser implements XMLStreamConstants, XMLElementR
     }
 
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.messaging.as" );
 
 }

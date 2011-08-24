@@ -46,7 +46,7 @@ public class AuthDefaultsProcessor implements DeploymentUnitProcessor {
             // the YAML
             for (TorqueBoxAuthConfig config : authMetaData.getConfigurations()) {
                 if (blank( config.getDomain() )) {
-                    log.info( "No domain specified. Configuring using default: " + DEFAULT_DOMAIN );
+                    log.debug( "No domain specified. Configuring using default: " + DEFAULT_DOMAIN );
                     config.setDomain( DEFAULT_DOMAIN );
                 }
             }

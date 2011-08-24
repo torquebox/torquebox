@@ -22,13 +22,10 @@ package org.torquebox.core.injection.analysis;
 import java.util.Stack;
 
 import org.jboss.logging.Logger;
-import org.jboss.msc.inject.InjectionException;
-import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-import org.jboss.msc.value.InjectedValue;
 import org.jruby.ast.ArrayNode;
 import org.jruby.ast.CallNode;
 import org.jruby.ast.Node;
@@ -38,10 +35,6 @@ import org.jruby.ast.SymbolNode;
 import org.jruby.ast.VCallNode;
 
 public abstract class AbstractInjectableHandler implements InjectableHandler, Service<InjectableHandler> {
-
-    private Logger log = Logger.getLogger( this.getClass() );
-    private String type;
-    private int recognitionPriority = 0;
 
     public AbstractInjectableHandler(String type) {
         this.type = type;
@@ -127,5 +120,10 @@ public abstract class AbstractInjectableHandler implements InjectableHandler, Se
     public void stop(StopContext context) {
         
     }
+
+    @SuppressWarnings("unused")
+    private Logger log = Logger.getLogger( this.getClass() );
+    private String type;
+    private int recognitionPriority = 0;
 
 }

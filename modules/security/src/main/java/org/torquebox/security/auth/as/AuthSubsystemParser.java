@@ -59,7 +59,6 @@ public class AuthSubsystemParser implements XMLStreamConstants, XMLElementReader
     @Override
     public void readElement(XMLExtendedStreamReader reader, List<ModelNode> list)
             throws XMLStreamException {
-        log.info( "torquebox-auth begin readElement" );
         requireNoAttributes( reader );
         requireNoContent( reader );
 
@@ -68,8 +67,8 @@ public class AuthSubsystemParser implements XMLStreamConstants, XMLElementReader
         address.protect();
 
         list.add( AuthSubsystemAdd.createOperation( address ) );
-        log.info( "torquebox-auth end readElement" );
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.auth.as" );
 }

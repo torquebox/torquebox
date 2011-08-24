@@ -54,5 +54,6 @@ public class RubyJobProxyFactory implements JobFactory {
     private RubyRuntimePool runtimePool;
     private Map<String, ComponentResolver> componentResolvers = new HashMap<String, ComponentResolver>();
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 }

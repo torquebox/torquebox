@@ -57,53 +57,7 @@ import org.torquebox.core.pool.InstanceFactory;
  */
 public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
-    private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 
-    /** Re-usable initializer. */
-    private RuntimeInitializer initializer;
-
-    /** ClassLoader for interpreter. */
-    private ClassLoader classLoader;
-
-    /** Shared interpreter class cache. */
-    private ClassCache<Script> classCache;
-
-    /** Application name. */
-    private String applicationName;
-
-    /** Load paths for the interpreter. */
-    private List<String> loadPaths;
-
-    /** Output stream for the interpreter. */
-    private PrintStream outputStream = System.out;
-
-    /** Error stream for the interpreter. */
-    private PrintStream errorStream = System.err;
-
-    /** JRUBY_HOME. */
-    private String jrubyHome;
-
-    /** GEM_PATH. */
-    private String gemPath;
-
-    /** Should environment $JRUBY_HOME be considered? */
-    private boolean useJRubyHomeEnvVar = true;
-
-    /** Additional application environment variables. */
-    private Map<String, String> applicationEnvironment;
-
-    /** Undisposed runtimes created by this factory. */
-    private Set<Ruby> undisposed = Collections.synchronizedSet( new HashSet<Ruby>() );
-
-    /** Ruby compatibility version. */
-    private CompatVersion rubyVersion;
-
-    /** JRuby compile mode. */
-    private CompileMode compileMode;
-
-    private ServiceRegistry serviceRegistry;
-
-    private Closeable mountedJRubyHome;
 
     /**
      * Construct.
@@ -171,18 +125,15 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
      */
     public ClassLoader getClassLoader() {
         if (this.classLoader != null) {
-            log.info( "Using configured classload: " + this.classLoader );
             return this.classLoader;
         }
 
         ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
         if (cl != null) {
-            log.info( "using TCCL" );
             return cl;
         }
 
-        log.info( "Using our own classloader" );
         return getClass().getClassLoader();
     }
 
@@ -565,4 +516,53 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     public ServiceRegistry getServiceRegistry() {
         return this.serviceRegistry;
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
+
+    /** Re-usable initializer. */
+    private RuntimeInitializer initializer;
+
+    /** ClassLoader for interpreter. */
+    private ClassLoader classLoader;
+
+    /** Shared interpreter class cache. */
+    private ClassCache<Script> classCache;
+
+    /** Application name. */
+    private String applicationName;
+
+    /** Load paths for the interpreter. */
+    private List<String> loadPaths;
+
+    /** Output stream for the interpreter. */
+    private PrintStream outputStream = System.out;
+
+    /** Error stream for the interpreter. */
+    private PrintStream errorStream = System.err;
+
+    /** JRUBY_HOME. */
+    private String jrubyHome;
+
+    /** GEM_PATH. */
+    private String gemPath;
+
+    /** Should environment $JRUBY_HOME be considered? */
+    private boolean useJRubyHomeEnvVar = true;
+
+    /** Additional application environment variables. */
+    private Map<String, String> applicationEnvironment;
+
+    /** Undisposed runtimes created by this factory. */
+    private Set<Ruby> undisposed = Collections.synchronizedSet( new HashSet<Ruby>() );
+
+    /** Ruby compatibility version. */
+    private CompatVersion rubyVersion;
+
+    /** JRuby compile mode. */
+    private CompileMode compileMode;
+
+    private ServiceRegistry serviceRegistry;
+
+    private Closeable mountedJRubyHome;
 }
+

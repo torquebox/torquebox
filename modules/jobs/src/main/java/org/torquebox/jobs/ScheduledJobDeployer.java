@@ -53,11 +53,11 @@ import org.torquebox.jobs.as.JobsServices;
  */
 public class ScheduledJobDeployer implements DeploymentUnitProcessor {
 
-	@Override
+    @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-    	 DeploymentUnit unit = phaseContext.getDeploymentUnit();
-    	 List<ScheduledJobMetaData> allJobMetaData = 
-    		 unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        List<ScheduledJobMetaData> allJobMetaData =
+                unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
         for (ScheduledJobMetaData metaData : allJobMetaData) {
             deploy( phaseContext, metaData );
@@ -69,38 +69,36 @@ public class ScheduledJobDeployer implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit unit) {
 
     }
-    
+
     protected void deploy(DeploymentPhaseContext phaseContext, final ScheduledJobMetaData metaData) throws DeploymentUnitProcessingException {
-    	DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
-        ScheduledJob job = new ScheduledJob( 
-        		metaData.getGroup(),
-        		metaData.getName(),
-        		metaData.getDescription(),
-        		metaData.getCronExpression(),
-        		metaData.isSingleton(),
-        		metaData.getRubyClassName(),
-        		metaData.getRubyRequirePath()
-        );
-        
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+
+        ScheduledJob job = new ScheduledJob(
+                metaData.getGroup(),
+                metaData.getName(),
+                metaData.getDescription(),
+                metaData.getCronExpression(),
+                metaData.isSingleton(),
+                metaData.getRubyClassName(),
+                metaData.getRubyRequirePath()
+                );
+
         ServiceName serviceName = JobsServices.scheduledJob( unit, metaData.getName() );
-        
-        log.info( "Deploying Job: " + serviceName );
-        
-        if (metaData.isSingleton() && !metaData.isClustered()) { 
-          log.warn( "Singleton job specified, but we have no cluster - ignoring the singleton flag" );
+
+        if (metaData.isSingleton() && !metaData.isClustered()) {
+            log.warn( "Singleton job specified, but we have no cluster - ignoring the singleton flag" );
         }
-        
+
         ServiceBuilder<ScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
-        builder.addDependency( JobsServices.jobComponentResolver(unit, metaData.getName()), ComponentResolver.class, job.getComponentResolverInjector() );
+        builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
         builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && metaData.isClustered() ), JobScheduler.class, job.getJobSchedulerInjector() );
-        
+
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();
-        
+
         final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
-    
+
         String mbeanName = ObjectNameFactory.create( "torquebox.jobs", new Hashtable<String, String>() {
             {
                 put( "app", rubyAppMetaData.getApplicationName() );

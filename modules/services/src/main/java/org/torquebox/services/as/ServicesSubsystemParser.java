@@ -79,6 +79,7 @@ public class ServicesSubsystemParser implements XMLStreamConstants, XMLElementRe
     }
 
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.services.as" );
     
 }

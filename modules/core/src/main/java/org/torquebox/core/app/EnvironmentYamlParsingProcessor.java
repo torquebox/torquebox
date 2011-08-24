@@ -47,8 +47,6 @@ public class EnvironmentYamlParsingProcessor extends AbstractSplitYamlParsingPro
     @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
         
-        log.info( "parsing: " + dataObj );
-
         RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
         if (appMetaData == null) {
@@ -73,6 +71,7 @@ public class EnvironmentYamlParsingProcessor extends AbstractSplitYamlParsingPro
         appEnv.putAll( env );
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.app.env" );
 
 }

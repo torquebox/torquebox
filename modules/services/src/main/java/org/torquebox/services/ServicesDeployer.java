@@ -102,6 +102,7 @@ public class ServicesDeployer implements DeploymentUnitProcessor {
 
     }
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.services" );
 
 }

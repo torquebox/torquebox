@@ -36,12 +36,6 @@ import org.jruby.util.io.STDIO;
 
 public class RackEnvironment {
 
-    private static final Logger log = Logger.getLogger( RackEnvironment.class );
-
-    private RubyHash env;
-    private RubyIO input;
-    private RubyIO errors;
-
     public RackEnvironment(Ruby ruby, ServletContext servletContext, HttpServletRequest request) throws IOException {
         initializeEnv( ruby, servletContext, request );
     }
@@ -122,5 +116,12 @@ public class RackEnvironment {
             this.input.close();
         }
     }
+    
+    private static final Logger log = Logger.getLogger( RackEnvironment.class );
+
+    private RubyHash env;
+    private RubyIO input;
+    private RubyIO errors;
+
 
 }

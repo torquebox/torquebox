@@ -27,8 +27,6 @@ import org.jboss.logging.Logger;
 
 public class PoolManager<T> extends DefaultPoolListener<T> {
     
-    private static final Logger log = Logger.getLogger( PoolManager.class );
-
     private static abstract class PoolTask<T> implements Runnable {
         protected PoolManager<T> poolManager;
 
@@ -193,5 +191,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
             Thread.sleep( 50 );
         }
     }
+    
+    private static final Logger log = Logger.getLogger( PoolManager.class );
 
 }

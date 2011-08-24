@@ -43,8 +43,6 @@ public class MessagingExtension extends AbstractBootstrappableExtension {
                 false );
         
         registration.registerXMLElementWriter(MessagingSubsystemParser.getInstance());
-
-        log.info( "Initialized TorqueBox Messaging Subsystem" );
     }
     
     @Override

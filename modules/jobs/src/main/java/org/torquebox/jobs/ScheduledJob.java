@@ -187,7 +187,6 @@ public class ScheduledJob implements Service<ScheduledJob>, ScheduledJobMBean {
 
     private String rubyClassName;
     private String rubyRequirePath;
-    private String rubyComponentResolverName;
 
     private String cronExpression;
 

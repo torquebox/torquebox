@@ -124,5 +124,6 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
 
     }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.messaging" );
 }

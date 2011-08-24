@@ -65,6 +65,7 @@ public class WebSubsystemParser implements XMLStreamConstants, XMLElementReader<
     }
 
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.as" );
 
 }

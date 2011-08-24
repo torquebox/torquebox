@@ -66,8 +66,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
     protected void deploy(DeploymentPhaseContext phaseContext, final MessageProcessorMetaData metaData) throws DeploymentUnitProcessingException {
 
-        log.info( "DEPLOY: " + metaData );
-
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
         ComponentClass instantiator = new ComponentClass();
@@ -118,5 +116,6 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
     }
 
-    private static final Logger log = Logger.getLogger( "org.torquebox.web.component" );
+    @SuppressWarnings("unused")
+    private static final Logger log = Logger.getLogger( "org.torquebox.messaging.component" );
 }

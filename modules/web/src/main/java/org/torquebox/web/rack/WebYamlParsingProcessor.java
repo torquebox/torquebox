@@ -36,8 +36,6 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
     @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
         
-        log.info( "parsing: " + dataObj );
-        
         RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
 
         if (rackAppMetaData == null) {
@@ -66,6 +64,7 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
         }
     }
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 
 }

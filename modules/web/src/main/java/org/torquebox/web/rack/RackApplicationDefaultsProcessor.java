@@ -44,8 +44,6 @@ public class RackApplicationDefaultsProcessor implements DeploymentUnitProcessor
             return;
         }
         
-        log.info( "Deploying rack defaults" );
-        
         if (metadata.getHosts().isEmpty()) {
             metadata.addHost( DEFAULT_HOST );
         }
@@ -61,8 +59,8 @@ public class RackApplicationDefaultsProcessor implements DeploymentUnitProcessor
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
     }
     
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 }

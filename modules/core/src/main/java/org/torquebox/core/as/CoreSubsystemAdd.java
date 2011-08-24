@@ -135,11 +135,11 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     
+    @SuppressWarnings("serial")
     protected void addTorqueBoxService(final OperationContext context, ServiceVerificationHandler verificationHandler,
                                        List<ServiceController<?>> newControllers,
                                        InjectableHandlerRegistry registry) throws IOException {
     	TorqueBox torqueBox = new TorqueBox();
-        torqueBox.dump( log );
         
         newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
             .setInitialMode( Mode.ACTIVE )
@@ -161,6 +161,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 .install() );
     }
 
+    @SuppressWarnings("serial")
     protected void addGlobalRubyServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
                                          List<ServiceController<?>> newControllers,
                                          InjectableHandlerRegistry registry) {

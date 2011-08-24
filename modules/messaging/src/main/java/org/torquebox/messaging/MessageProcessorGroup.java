@@ -154,7 +154,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
 
     @Override
     public void stop(StopContext context) {
-        log.info( "Shutting down JMS connection et al: " + connection );
         try {
             this.connection.close();
         } catch (JMSException e) {
