@@ -31,31 +31,23 @@ class IO
       write    = false
       read     = false
       create   = false
+      binary   = false
       case ( mode_str )
         when /r/
           read   = true
-          write  = false
-          append = false
-          create = false
         when /r\+/
           read   = true
           write  = true
-          create = false
-          append = false
         when /w/
-          read     = false
           write    = true
           create   = true
-          append   = false
           truncate = true
         when /w\+/
-          read   = false
+          read   = true
           write  = true
           create = true
-          append = false
           truncate = true
         when /a/
-          read   = false
           write  = true
           create = true
           append = true
@@ -63,6 +55,7 @@ class IO
           read   = true
           write  = true
           create = true
+          append = true
         when Fixnum
           if ( mode_str & File::RDONLY != 0 )
             read  = true
@@ -88,6 +81,8 @@ class IO
           end
       end
 
+      binary = mode_str =~ /b/
+
       # VFS doesn't correctly handle relative paths when
       # retrieving the physical file so expand it
       fd = File.expand_path( fd )
@@ -108,6 +103,7 @@ class IO
         raise Error.new( "Random-access on VFS not supported" )
       end
 
+      ruby_io.binmode if binary
       file_io = TorqueBox::VFS::Ext::VirtualFile.new( ruby_io, fd )
 
       if ( block )
