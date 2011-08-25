@@ -69,6 +69,16 @@ public class InjectionAnalyzerTest {
         return getClass().getResourceAsStream( name );
     }
 
+    protected Set<Injectable> analyzeScript(String name) throws Exception {
+        return analyzeScript( name, Version.V1_8 );
+    }
+
+    protected Set<Injectable> analyzeScript(String name, Version version) throws Exception {
+        InputStream script = openScript( name );
+        analyzer.analyze( "testfile.rb", script, this.visitor, version );
+        return this.visitor.getInjectables();
+    }
+
     @Before
     public void setUpAnalyzer() {
         this.registry = new InjectableHandlerRegistry();
@@ -86,9 +96,7 @@ public class InjectionAnalyzerTest {
 
     @Test
     public void testAnalysis() throws Exception {
-        InputStream script = openScript( "injection.rb" );
-        analyzer.analyze( "testfile.rb", script, this.visitor, Version.V1_8 );
-        Set<Injectable> injectables = this.visitor.getInjectables();
+        Set<Injectable> injectables = analyzeScript( "injection.rb" );
 
         assertEquals( 2, injectables.size() );
 
@@ -99,25 +107,19 @@ public class InjectionAnalyzerTest {
  
     @Test(expected = InvalidInjectionTypeException.class)
     public void testInvalidAnalysis() throws Exception {
-        InputStream script = openScript( "invalid_injection.rb" );
-        analyzer.analyze( "testfile.rb", script, this.visitor, Version.V1_8 );
+        analyzeScript( "invalid_injection.rb" );
     }
 
     @Test
     public void test19CodeIn19Mode() throws Exception {
-        String script = readScript( "injection_19.rb" );
-        analyzer.analyze( "testfile.rb", script, this.visitor, Version.V1_9 );
-        Set<Injectable> injectables = this.visitor.getInjectables();
+        Set<Injectable> injectables = analyzeScript( "injection_19.rb", Version.V1_9 );
 
         assertEquals( 3, injectables.size() );
     }
 
     @Test
     public void testInjectionInsideJRubyNonVisitableNodeIn19Mode() throws Exception {
-        String script = readScript( "injection_19.rb" );
-
-        analyzer.analyze( "testfile.rb", script, this.visitor, Version.V1_9 );
-        Set<Injectable> injectables = this.visitor.getInjectables();
+        Set<Injectable> injectables = analyzeScript( "injection_19.rb", Version.V1_9 );
 
         assertEquals( 3, injectables.size() );
 
@@ -127,31 +129,33 @@ public class InjectionAnalyzerTest {
 
     @Test(expected = RaiseException.class)
     public void test19CodeIn18Mode() throws Exception {
-        String script = readScript( "injection_19.rb" );
-
-        analyzer.analyze( "testfile.rb", script, this.visitor, Version.V1_8 );
-        Set<Injectable> injectables = this.visitor.getInjectables();
+        analyzeScript( "injection_19.rb", Version.V1_8 );
     }
 
     @Test
     public void testAnalysisWithoutMarker() throws Exception {
-        String script = readScript( "not_injection.rb" );
-
-        analyzer.analyze( "testfile.rb", script, this.visitor, Version.V1_9 );
-        Set<Injectable> injectables = this.visitor.getInjectables();
+        Set<Injectable> injectables = analyzeScript( "not_injection.rb" );
 
         assertTrue( injectables.isEmpty() );
     }
 
     @Test
     public void testGenericAnalysis() throws Exception {
-        String script = readScript( "generic_injection.rb" );
-        
-        analyzer.analyze( "testfile.rb", script, this.visitor, Version.V1_9 );
-        Set<Injectable> injectables = this.visitor.getInjectables();
-        
+        Set<Injectable> injectables = analyzeScript( "generic_injection.rb" );
+
         assertEquals( 3, injectables.size() );
     }
+
+    @Test(expected=IllegalInjectionException.class)
+    public void testMultiArgIllegalAnalysis() throws Exception {
+        analyzeScript( "multi_arg_illegal_injection.rb" );
+    }
+
+    @Test(expected=IllegalInjectionException.class)
+    public void testIVarIllegalAnalysis() throws Exception {
+        analyzeScript( "ivar_illegal_injection.rb" );
+    }
+
     
     @Test
     public void testProcAnalysis() throws Exception {
