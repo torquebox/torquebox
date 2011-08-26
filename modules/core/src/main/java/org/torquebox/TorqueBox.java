@@ -101,7 +101,7 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
     public void start(StartContext context) throws StartException {
     }
 
-    public void dump(Logger log) {
+    public void printVersionInfo(Logger log) {
         log.info( "Welcome to TorqueBox AS - http://torquebox.org/" );
         log.info( formatOutput( "version", getVersion() ) );
         String buildNo = getBuildNumber();

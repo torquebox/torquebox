@@ -140,7 +140,8 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
                                        List<ServiceController<?>> newControllers,
                                        InjectableHandlerRegistry registry) throws IOException {
     	TorqueBox torqueBox = new TorqueBox();
-        
+        torqueBox.printVersionInfo( log );
+
         newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
             .setInitialMode( Mode.ACTIVE )
             .addListener( verificationHandler )
