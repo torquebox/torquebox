@@ -33,8 +33,10 @@ public class XAStompletComponent extends AbstractRubyComponent implements XAStom
 
         if (isXa == Boolean.TRUE) {
             RubyArray result = (RubyArray) _callRubyMethodIfDefined( "xa_resources" );
-            for (Object resource : result) {
-                this.xaResources.add( (XAResource) resource );
+            if (result != null) {
+                for (Object resource : result) {
+                    this.xaResources.add( (XAResource) resource );
+                }
             }
         } else {
             this.resourceManager = new PseudoXAStompletResourceManager( this.stomplet );
