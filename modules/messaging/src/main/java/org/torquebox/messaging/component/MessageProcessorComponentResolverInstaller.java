@@ -78,6 +78,7 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( MessageProcessorComponent.class );
+        resolver.setInitializeParams( metaData.getRubyConfig() );
 
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
