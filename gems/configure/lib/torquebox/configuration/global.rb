@@ -85,6 +85,11 @@ module TorqueBox
                                                                               { :singleton => [true, false] }
                                                                              ]
                                                               }),
+          :stomplet => ThingWithOptionsEntry.with_settings( :discrete => true,
+                                                            :validate => {
+                                                              :required => [ :route ],
+                                                              :optional => [ :config, :name ] } ),
+
           :topic       => destination_entry,
           :web         => OptionsEntry.with_settings(:validate => {
                                                        :optional => [:context, :host, :rackup, :static]
@@ -147,6 +152,14 @@ module TorqueBox
                 name = klass.to_s
               end
               metadata['services'][name] = data
+            end
+
+          when 'stomplet' 
+            entry_data.each do |klass, data|
+              name = data.delete( :name ) || unique_name( klass.to_s, metadata['stomp']['stomplets'].keys )
+              stomplet = metadata['stomp']['stomplets'][name] = {}
+              stomplet['class'] = klass.to_s
+              stomplet.merge!( data )
             end
 
           else # => <entry_name>: (handles environment, ruby, web)
