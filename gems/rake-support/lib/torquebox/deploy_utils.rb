@@ -253,6 +253,8 @@ module TorqueBox
         end
       end
 
+      # TODO: This is no longer useful. It should be replaced with
+      # credentials in the torquebox.yml file
       def write_credentials(user_data)
         properties_file = "#{properties_dir}/torquebox-users.properties"
         roles_file      = "#{properties_dir}/torquebox-roles.properties"
