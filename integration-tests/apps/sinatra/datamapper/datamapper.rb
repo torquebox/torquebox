@@ -65,10 +65,12 @@ class Muppet
   property :bio,        Text, :required => true, :lazy => false
   property :created_at, DateTime
 
+#  has 1, :coat
 end
 
 class Coat
   include DataMapper::Resource
+  property :id,         Serial
   property :color,      String
 end
 
@@ -79,3 +81,7 @@ DataMapper.finalize
 Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(Date.today.to_s))
 Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse((Date.today +1).to_s))
 Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse((Date.today -1).to_s))
+
+#Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(Date.today.to_s), :coat=>Coat.new(:color=>'Yellow'))
+#Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse((Date.today +1).to_s), :coat=>Coat.new(:color=>'Brown'))
+#Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse((Date.today -1).to_s), :coat=>Coat.new(:color=>'Blue'))

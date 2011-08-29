@@ -169,7 +169,7 @@ module TorqueBox
       def manager
         # TODO: This name should be ServiceName.JBOSS.append("infinispan", "web")
 #        @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
-        @manager ||= TorqueBox::ServiceRegistry.lookup(ServiceName.JBOSS.append("infinispan", "web")) rescue nil
+        @manager ||= TorqueBox::ServiceRegistry.lookup(ServiceName.JBOSS.append("infinispan")) rescue nil
       end
                        
       def reconfigure(mode=clustering_mode)
@@ -196,12 +196,14 @@ module TorqueBox
 
       def clustered
         if manager.running?(name)
+          $stderr.puts("[INFO] Reconfiguring Infinispan cache #{name}")
           reconfigure
         else
+          $stderr.puts("[INFO] Configuring Infinispan cache #{name}")
           configure
         end
       rescue
-        $stderr.puts "Unable to obtain clustered cache; falling back to local: #{$!}" if manager
+        $stderr.puts "Unable to obtain clustered cache; falling back to local: #{$!}" 
       end
 
       def local
