@@ -90,7 +90,7 @@ public class ScheduledJobDeployer implements DeploymentUnitProcessor {
         }
 
         ServiceBuilder<ScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
-        builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
+        builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ).append( "START" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
         builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
         builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && metaData.isClustered() ), JobScheduler.class, job.getJobSchedulerInjector() );
 
