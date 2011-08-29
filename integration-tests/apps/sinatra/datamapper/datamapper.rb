@@ -67,6 +67,11 @@ class Muppet
 
 end
 
+class Coat
+  include DataMapper::Resource
+  property :color,      String
+end
+
 DataMapper.setup(:default, :adapter=>'infinispan')
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize

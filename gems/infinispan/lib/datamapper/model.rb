@@ -81,6 +81,7 @@ module Infinispan
       end
 
       def configure_index!
+        puts ">>>>>>>>>>>>>> dm-infinispan-adapter: configuring"
         properties().each do |prop|
           add_java_property(prop) 
         end
