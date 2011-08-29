@@ -44,6 +44,7 @@ public class SharedRubyRuntimeFactoryPoolService implements Service<RubyRuntimeP
 
     @Override
     public void stop(StopContext context) {
+        this.pool.stop();
         this.pool.setInstanceFactory( null );
     }
 

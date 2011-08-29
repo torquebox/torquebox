@@ -19,6 +19,7 @@
 
 package org.torquebox.core.runtime;
 
+import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
@@ -44,12 +45,19 @@ public class DefaultRubyRuntimePoolService implements Service<RubyRuntimePool>{
 
     @Override
     public void stop(StopContext context) {
+        try {
+            this.pool.stop();
+        } catch (Exception e) {
+            log.warn(  "Error while stopping pool", e );
+        }
         this.pool.setInstanceFactory( null );
     }
     
     public Injector<RubyRuntimeFactory> getRubyRuntimeFactoryInjector() {
         return this.runtimeFactoryInjector;
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.runtime.pool" );
     
     private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
     private DefaultRubyRuntimePool pool;

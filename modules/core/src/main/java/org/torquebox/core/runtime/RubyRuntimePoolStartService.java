@@ -55,11 +55,8 @@ public class RubyRuntimePoolStartService implements Service<RubyRuntimePool> {
 
     @Override
     public void stop(StopContext context) {
-        try {
-            this.pool.stop();
-        } catch (Exception e) {
-            // swallow
-        }
+        // we intentionally only are responsible for starting a pool.
+        // the pool will be responsible for stopping itself.
     }
 
     public Injector<RubyRuntimeFactory> getRubyRuntimeFactoryInjector() {
