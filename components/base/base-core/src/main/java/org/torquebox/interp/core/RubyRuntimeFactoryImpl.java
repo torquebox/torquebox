@@ -36,6 +36,7 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
@@ -43,8 +44,9 @@ import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.RubyModule;
 import org.jruby.ast.executable.Script;
 import org.jruby.javasupport.JavaEmbedUtils;
-import org.jruby.runtime.Constants;
 import org.jruby.util.ClassCache;
+
+import org.torquebox.common.util.JRubyConstants;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RuntimeInitializer;
 
@@ -438,8 +440,8 @@ public class RubyRuntimeFactoryImpl implements RubyRuntimeFactory {
     }
 
     private void prepareRuntime(Ruby runtime, String contextInfo) {
-        if ("1.6.3".equals( Constants.VERSION ) ||
-            "1.6.4".equals( Constants.VERSION )) {
+        if ("1.6.3".equals( JRubyConstants.getVersion() ) ||
+            "1.6.4".equals( JRubyConstants.getVersion() )) {
             log.info( "Disabling POSIX ENV passthrough for " + contextInfo + " runtime (TORQUE-497)" );
             StringBuffer env_fix = new StringBuffer();
             env_fix.append( "update_real_env_attr = org.jruby.RubyGlobal::StringOnlyRubyHash.java_class.declared_fields.find { |f| f.name == 'updateRealENV' }\n" );

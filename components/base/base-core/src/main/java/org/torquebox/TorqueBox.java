@@ -26,8 +26,11 @@ import java.util.Properties;
 import org.jboss.aop.microcontainer.aspects.jmx.JMX;
 import org.jboss.kernel.Kernel;
 import org.jboss.logging.Logger;
+
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
+
+import org.torquebox.common.util.JRubyConstants;
 import org.torquebox.interp.core.RubyRuntimeFactoryImpl;
 import org.torquebox.interp.spi.RubyRuntimeFactory;
 import org.torquebox.interp.spi.RuntimeInitializer;
@@ -139,19 +142,37 @@ public class TorqueBox implements TorqueBoxMBean {
         return this.properties.getProperty( "build.user" );
     }
 
+    protected String getJRubyBuildVersion() {
+        return this.properties.getProperty( "build.jruby.version" );
+    }
+
+
     public void start() {
         log.info( "Welcome to TorqueBox AS - http://torquebox.org/" );
-        log.info( "  version...... " + getVersion() );
+        log.info( "  version................ " + getVersion() );
         String buildNo = getBuildNumber();
         if (buildNo != null && ! buildNo.trim().equals( "" )) {
-            log.info( "  build........ " + getBuildNumber() );
+            log.info( "  build.................. " + getBuildNumber() );
         } else if ( getVersion().contains(  "SNAPSHOT"  ) ) {
-            log.info( "  build........ development (" + getBuildUser() + ")" );
+            log.info( "  build.................. development (" + getBuildUser() + ")" );
         } else {
-            log.info( "  build........ official" );
+            log.info( "  build.................. official" );
         }
-        log.info( "  revision..... " + getRevision() );
-        log.info( "  jruby.home... " + System.getProperty( "jruby.home" ) );
+        log.info( "  revision............... " + getRevision() );
+        log.info( "  jruby.home............. " + System.getProperty( "jruby.home" ) );
+
+        String jrubyRuntimeVersion = JRubyConstants.getVersion();
+        String jrubyBuildVersion = getJRubyBuildVersion();
+        if (jrubyRuntimeVersion.equals( jrubyBuildVersion )) {
+            log.info( "  jruby version.......... " + jrubyRuntimeVersion );
+        } else {
+            log.warn( "  jruby build version.... " + jrubyBuildVersion );
+            log.warn( "  jruby runtime version.. " + jrubyRuntimeVersion + " !!!" );
+            log.warn( "WARNING: TorqueBox was built and tested with JRuby " + 
+                      jrubyBuildVersion + " and you are running JRuby " + 
+                      jrubyRuntimeVersion + ". You may experience unexpected results. Side effects may include: itching, sleeplessness, and irritability." );
+        }
+
     }
 
     public void stop() {
