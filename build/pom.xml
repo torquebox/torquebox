@@ -22,7 +22,7 @@
       <type>pom</type>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
+      <groupId>rubygems</groupId>
       <artifactId>torquebox-gems-parent</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
