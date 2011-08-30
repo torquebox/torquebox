@@ -74,7 +74,7 @@ class Coat
   property :color,      String
 end
 
-DataMapper.setup(:default, :adapter=>'infinispan')
+DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize
 

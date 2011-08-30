@@ -169,7 +169,14 @@ module TorqueBox
       def manager
         # TODO: This name should be ServiceName.JBOSS.append("infinispan", "web")
 #        @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
-        @manager ||= TorqueBox::ServiceRegistry.lookup(ServiceName.JBOSS.append("infinispan")) rescue nil
+        #@manager ||= TorqueBox::ServiceRegistry.lookup(ServiceName.JBOSS.append("infinispan")) rescue nil
+        begin
+          @manager ||= inject('java:jboss/infinispan/hibernate') rescue nil
+        rescue Exception => e
+          $stderr.puts "Caught exception in injecting java:jboss/infinispan/hibernate"
+          e.print_stack_trace
+        end
+        @manager
       end
                        
       def reconfigure(mode=clustering_mode)
