@@ -19,32 +19,24 @@
 
 package org.torquebox.messaging;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
-import javax.jms.XASession;
 import javax.jms.Topic;
-import javax.transaction.TransactionManager;
+import javax.jms.XASession;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 
-import org.jboss.as.naming.ManagedReference;
-import org.jboss.as.naming.ManagedReferenceFactory;
 import org.jboss.logging.Logger;
-import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.messaging.component.MessageProcessorComponent;
 
 public class MessageProcessorService implements Service<Void>, MessageListener {
@@ -86,28 +78,44 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
 
     @Override
     public void onMessage(Message message) {
+        if ( this.consumer == null ) {
+            return;
+        }
         Ruby ruby = null;
         Transaction transaction = null;
         try {
             tm.begin();
             transaction = tm.getTransaction();
-            transaction.enlistResource(session.getXAResource());
+            transaction.enlistResource( session.getXAResource() );
             ruby = group.getRubyRuntimePool().borrowRuntime();
+            
+            if ( this.consumer == null ) {
+                // while waiting to obtain a Ruby, we got closed.
+                // we can't rollback, because the connection is closed.
+                return;
+            }
+            
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );
             putSessionInThreadLocal( ruby );
             component.process( message );
             transaction.commit();
         } catch (Exception e) {
             log.error( "Unexpected error in " + group.getName(), e );
-            try { transaction.rollback(); } catch (Exception ignored) {}
+            try {
+                transaction.rollback();
+            } catch (Exception ignored) {
+            }
         } finally {
-            try { tm.suspend(); } catch (Exception ignored) {}
+            try {
+                tm.suspend();
+            } catch (Exception ignored) {
+            }
             if (ruby != null) {
                 try {
                     removeSessionFromThreadLocal( ruby );
                     group.getRubyRuntimePool().returnRuntime( ruby );
                 } catch (Throwable ignored) {
-                    log.warn("Possible memory leak? "+ignored, ignored);
+                    log.warn( "Possible memory leak? " + ignored, ignored );
                 }
             }
         }
@@ -118,6 +126,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     public void stop(StopContext context) {
         try {
             this.consumer.close();
+            this.consumer = null;
         } catch (JMSException e) {
             log.error( "Error closing consumer connection", e );
         }

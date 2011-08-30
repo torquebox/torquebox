@@ -85,7 +85,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     @Override
     public String getStatus() {
         if (this.running) {
-        	return "STARTED";
+            return "STARTED";
         }
         return "STOPPED";
     }
@@ -127,13 +127,13 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                 }
 
                 ServiceTarget target = context.getChildTarget();
-                
-                if ( MessageProcessorGroup.this.destination instanceof Queue ) {
-                    target.addDependency( JMSServices.JMS_QUEUE_BASE.append(MessageProcessorGroup.this.destinationName) );
+
+                if (MessageProcessorGroup.this.destination instanceof Queue) {
+                    target.addDependency( JMSServices.JMS_QUEUE_BASE.append( MessageProcessorGroup.this.destinationName ) );
                 } else {
-                    target.addDependency( JMSServices.JMS_TOPIC_BASE.append(MessageProcessorGroup.this.destinationName) );
+                    target.addDependency( JMSServices.JMS_TOPIC_BASE.append( MessageProcessorGroup.this.destinationName ) );
                 }
-                
+
                 for (int i = 0; i < MessageProcessorGroup.this.concurrency; ++i) {
                     MessageProcessorService service = new MessageProcessorService( MessageProcessorGroup.this );
                     ServiceName serviceName = baseServiceName.append( "" + i );
@@ -143,7 +143,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                 }
 
                 MessageProcessorGroup.this.running = true;
-                
+
                 context.complete();
 
             }
@@ -251,7 +251,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private String messageSelector;
     private boolean durable;
     private boolean running = false;
-    
+
     private int concurrency;
     private List<ServiceName> services = new ArrayList<ServiceName>();
 
