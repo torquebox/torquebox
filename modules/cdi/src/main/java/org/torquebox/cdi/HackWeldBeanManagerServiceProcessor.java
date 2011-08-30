@@ -88,18 +88,6 @@ public class HackWeldBeanManagerServiceProcessor implements DeploymentUnitProces
         deploymentUnit.addToAttachmentList( Attachments.SETUP_ACTIONS, new WeldContextSetup() );
     }
 
-    private void bindBeanManager(ServiceTarget serviceTarget, ServiceName beanManagerServiceName, ServiceName contextServiceName) {
-        final ServiceName beanManagerBindingServiceName = contextServiceName.append( "BeanManager" );
-
-        InjectedValue<BeanManager> injectedBeanManager = new InjectedValue<BeanManager>();
-        BinderService beanManagerBindingService = new BinderService( "BeanManager" );
-        serviceTarget.addService( beanManagerBindingServiceName, beanManagerBindingService )
-                    .addInjection( beanManagerBindingService.getManagedObjectInjector(), new ValueManagedReferenceFactory( injectedBeanManager ) )
-                    .addDependency( contextServiceName, NamingStore.class, beanManagerBindingService.getNamingStoreInjector() )
-                    .addDependency( beanManagerServiceName, BeanManager.class, injectedBeanManager )
-                    .install();
-    }
-
     @Override
     public void undeploy(DeploymentUnit deploymentUnit) {
 

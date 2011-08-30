@@ -59,10 +59,10 @@ public class AbstractRubyComponent implements RubyComponent {
     protected Object _callRubyMethod(Object target, String method, Object...args) {
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader().getParent() );
+            //Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader().getParent() );
             return JavaEmbedUtils.invokeMethod( this.rubyComponent.getRuntime(), target, method, args, Object.class );
         } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
+            //Thread.currentThread().setContextClassLoader( originalCl );
         }
     }
     
@@ -73,10 +73,10 @@ public class AbstractRubyComponent implements RubyComponent {
     protected Object _callRubyMethodIfDefined(Object target, String method, Object...args) {
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader().getParent() );
+            //Thread.currentThread().setContextClassLoader( getRuby().getJRubyClassLoader().getParent() );
             return ReflectionHelper.callIfPossible( this.rubyComponent.getRuntime(), target, method, args );
         } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
+            //Thread.currentThread().setContextClassLoader( originalCl );
         }
     }
     

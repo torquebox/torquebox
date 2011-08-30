@@ -27,6 +27,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.logging.Logger;
 import org.torquebox.core.app.RubyApplicationMetaData;
 
 /**
@@ -63,6 +64,8 @@ public class TasksDeployer implements DeploymentUnitProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, DeploymentUnit unit, RubyApplicationMetaData appMetaData, TaskMetaData task) throws DeploymentUnitProcessingException {
         String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + "/tasks/" + task.getQueueSuffix();
                 
+        
+        log.info( "Deploying task queue: " + queueName );
         if (task.getConcurrency() > 0) {
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );
@@ -81,5 +84,7 @@ public class TasksDeployer implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
         
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.messaging.tasks"  );
 
 }

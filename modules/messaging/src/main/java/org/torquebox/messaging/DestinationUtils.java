@@ -1,12 +1,14 @@
 package org.torquebox.messaging;
 
+import org.jboss.msc.service.ServiceName;
+
 public class DestinationUtils {
     
-    public static String getServiceName(String destinationName) {
+    public static ServiceName getServiceName(String destinationName) {
         if (destinationName.startsWith( "/" )) {
             destinationName = destinationName.substring( 1 );
         }
-        return destinationName;
+        return ServiceName.parse( destinationName.replace( '/', '.' ) );
     }
 
 }

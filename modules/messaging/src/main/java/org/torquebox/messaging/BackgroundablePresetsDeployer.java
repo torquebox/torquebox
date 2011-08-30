@@ -45,6 +45,7 @@ public class BackgroundablePresetsDeployer implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
 
+        
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         if (!unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
             return;
