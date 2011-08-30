@@ -43,6 +43,7 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
+
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.core.ArchiveDirectoryMountingProcessor;
@@ -141,7 +142,8 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
                                        InjectableHandlerRegistry registry) throws IOException {
     	TorqueBox torqueBox = new TorqueBox();
         torqueBox.printVersionInfo( log );
-
+        torqueBox.verifyJRubyVersion( log );
+        
         newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
             .setInitialMode( Mode.ACTIVE )
             .addListener( verificationHandler )
