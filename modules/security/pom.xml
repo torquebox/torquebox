@@ -8,7 +8,6 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
   <artifactId>torquebox-security</artifactId>
   <packaging>jar</packaging>
   <name>TorqueBox Security Module</name>

@@ -8,7 +8,6 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.torquebox</groupId>
   <artifactId>torquebox-messaging</artifactId>
   <packaging>jar</packaging>
   <name>TorqueBox Messaging Module</name>
