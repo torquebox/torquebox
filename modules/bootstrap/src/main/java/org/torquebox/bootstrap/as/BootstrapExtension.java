@@ -117,9 +117,6 @@ public class BootstrapExtension implements Extension {
             Method relinkMethod = ModuleLoader.class.getDeclaredMethod( "relink", Module.class );
             relinkMethod.setAccessible( true );
             relinkMethod.invoke( moduleLoader, module );
-
-
-
         } catch (SecurityException e) {
             log.fatal( e.getMessage(), e );
         } catch (NoSuchMethodException e) {
