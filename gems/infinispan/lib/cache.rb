@@ -197,6 +197,7 @@ module TorqueBox
         config = manager.default_configuration.clone
         config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.JBossTransactionManagerLookup.new )
         config.cache_mode = mode
+        config.class_loader = java.lang::Thread.current_thread.context_class_loader
         manager.define_configuration(name, config)
         manager.get_cache(name)
       end
@@ -216,8 +217,11 @@ module TorqueBox
       def local
         # workaround common problem running infinispan in web containers (see FAQ)
         $stderr.puts "Configuring local cache for #{name}"
-        java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
-        config  = org.infinispan.config.Configuration.new.fluent
+        #java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
+        bare_config              = org.infinispan.config.Configuration.new
+        bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
+
+        config  = bare_config.fluent
         config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
         
         if options[:persist]

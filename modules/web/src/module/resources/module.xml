@@ -53,6 +53,7 @@
     <exports>
       <include-set>
         <path name="org/torquebox/web/servlet"/>
+        <path name="org/infinispan/query"/>
         <path name="org/infinispan/query/impl"/>
       </include-set>
     </exports>
