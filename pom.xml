@@ -355,6 +355,13 @@
     <version.org.slf4j>1.5.10</version.org.slf4j>
 
     <version.org.projectodd.stilts>0.1.17</version.org.projectodd.stilts>
+
+    <version.org.hibernate.search>3.4.0.Final</version.org.hibernate.search>
+    <version.org.hibernate.commons.annotations>3.2.0.Final</version.org.hibernate.commons.annotations>
+    <version.org.apache.lucene.core>3.3.0</version.org.apache.lucene.core>
+    <version.org.apache.lucene.other>3.1.0</version.org.apache.lucene.other>
+    <version.org.apache.solr>3.1.0</version.org.apache.solr>
+    <version.org.infinispan>5.0.0.Final</version.org.infinispan>
   </properties>
 
   <repositories>

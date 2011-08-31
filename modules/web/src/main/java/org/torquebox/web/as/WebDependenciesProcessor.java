@@ -35,6 +35,7 @@ public class WebDependenciesProcessor implements DeploymentUnitProcessor {
     
     private static ModuleIdentifier TORQUEBOX_WEB_ID = ModuleIdentifier.create("org.torquebox.web");
     private static ModuleIdentifier NETTY_ID = ModuleIdentifier.create("org.jboss.netty");
+    private static ModuleIdentifier INFINISPAN_ID = ModuleIdentifier.create("org.infinispan");
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -46,6 +47,7 @@ public class WebDependenciesProcessor implements DeploymentUnitProcessor {
         if (unit.hasAttachment( RackApplicationMetaData.ATTACHMENT_KEY )) {
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_WEB_ID );
             addDependency( moduleSpecification, moduleLoader, NETTY_ID );
+            addDependency( moduleSpecification, moduleLoader, INFINISPAN_ID );
         }
     }
 

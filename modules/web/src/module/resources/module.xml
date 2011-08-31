@@ -26,11 +26,34 @@
 
     <resources>
         <resource-root path="${project.artifactId}-${project.version}.jar"/>
+
+        <resource-root path="hibernate-commons-annotations-${version.org.hibernate.commons.annotations}.jar"/>
+        <resource-root path="hibernate-search-${version.org.hibernate.search}.jar"/>
+        <resource-root path="hibernate-search-analyzers-${version.org.hibernate.search}.jar"/>
+        <resource-root path="infinispan-query-${version.org.infinispan}.jar"/>
+        <resource-root path="lucene-analyzers-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="lucene-core-3.3.0.jar"/>
+        <resource-root path="lucene-highlighter-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="lucene-memory-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="lucene-misc-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="lucene-smartcn-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="lucene-spatial-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="lucene-spellchecker-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="lucene-stempel-${version.org.apache.lucene.other}.jar"/>
+
+<!--
+        <resource-root path="rhq-pluginAnnotations-3.0.1.jar"/>
+-->
+        <resource-root path="solr-analysis-extras-${version.org.apache.solr}.jar"/>
+        <resource-root path="solr-commons-csv-${version.org.apache.solr}.jar"/>
+        <resource-root path="solr-core-${version.org.apache.solr}.jar"/>
+        <resource-root path="solr-solrj-${version.org.apache.solr}.jar"/>
     </resources>
 
     <exports>
       <include-set>
         <path name="org/torquebox/web/servlet"/>
+        <path name="org/infinispan/query/impl"/>
       </include-set>
     </exports>
 
@@ -49,6 +72,8 @@
         <module name="org.jboss.as.web"/>
         <module name="org.jboss.as.clustering.jgroups"/>
         <module name="org.torquebox.core"/>
+        <module name="org.slf4j"/>
+        <module name="org.infinispan"/>
     </dependencies>
 </module>
 

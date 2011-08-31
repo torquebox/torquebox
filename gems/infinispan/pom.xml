@@ -22,7 +22,7 @@
     <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-query</artifactId>
-      <version>5.0.0.FINAL</version>
+      <version>${version.org.infinispan}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>

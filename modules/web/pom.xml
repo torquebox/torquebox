@@ -76,14 +76,14 @@
     <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-query</artifactId>
-      <version>5.0.0.FINAL</version>
-      <scope>runtime</scope>
+      <version>${version.org.infinispan}</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search</artifactId>
-      <version>3.4.0.Final</version>
-      <scope>runtime</scope>
+      <version>${version.org.hibernate.search}</version>
+      <scope>compile</scope>
       <exclusions>
         <exclusion>
           <groupId>commons-codec</groupId>
