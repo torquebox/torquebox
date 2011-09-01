@@ -13,14 +13,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+require 'dm-serializer'
 require 'jruby/core_ext'
+require 'json'
 
 module Infinispan
   java_import 'org.torquebox.web.infinispan.datamapper.ModelClassLoader'
   JVoid   = java.lang.Void::TYPE
   
   module Model
-    include java.io.Serializable
+
+    class Externalizer
+      include org.infinispan.marshall.Externalizer
+
+      def writeObject( output, record )
+
+        puts "SHIT MOTHERFUCKER I'M WRITING OUT MY ASS"
+        output.writeObject( record.to_json(:methods => [:deserialize_to]) )
+      end
+
+      def readObject( input )
+        attributes = JSON.parse( input.readObject )
+        cls = eval( attributes.delete(:deserialize_to) )
+        cls.new( attributes ) 
+      end
+
+      become_java!
+    end
 
     # TODO enhance TYPEs list
     TYPES = {
@@ -45,6 +64,10 @@ module Infinispan
           model.before(method) { model.configure_index }
         end
       end
+    end
+
+    def deserialize_to
+      self.class.name
     end
 
     def is_a_with_hack?( thing )
@@ -83,24 +106,29 @@ module Infinispan
       def configure_index!
         puts ">>>>>>>>>>>>>> dm-infinispan-adapter: configuring"
         properties().each do |prop|
+          puts "Adding property #{prop.inspect}"
           add_java_property(prop) 
+          puts "Added property #{prop.inspect}"
         end
+
 
         annotation = {
           org.hibernate.search.annotations.Indexed => {},
-          org.hibernate.search.annotations.ProvidedId => {}
+          org.hibernate.search.annotations.ProvidedId => {},
+          org.infinispan.marshall.SerializeWith => { "value" => Infinispan::Model::Externalizer.java_class }
         }
         add_class_annotation( annotation )
 
         # Wonder twin powers... ACTIVATE!
         become_java!
+        puts "Became java: #{self.inspect}"
 
         unless java.lang.Thread.currentThread.context_class_loader.is_a? ModelClassLoader
           java.lang.Thread.currentThread.context_class_loader = ModelClassLoader.new(java.lang.Thread.currentThread.context_class_loader)
         end
 
         java.lang.Thread.currentThread.context_class_loader.register( java_class )
-        
+
         @@mapped = true
       end
 
@@ -174,5 +202,6 @@ module Infinispan
         add_method_signature set_name, [JVoid, mapped_type]
       end
     end
+
   end
 end
