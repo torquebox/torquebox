@@ -47,10 +47,27 @@
     </dependency>
 
     <dependency>
+      <!-- 
+          json-java 1.5.4 is broken, so we'll pin to 1.5.3 for now,
+          and exclude it from torquespec's deps below.
+      -->
+      <groupId>rubygems</groupId>
+      <artifactId>json</artifactId>
+      <version>1.5.3</version>
+      <type>gem</type>
+    </dependency>
+
+    <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
       <version>0.1.3</version>
       <type>gem</type>
+      <exclusions>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>json</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>

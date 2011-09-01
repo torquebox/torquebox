@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'haml'
 
-gem 'rails', '~>3.0'
+gem 'rails', '~>3.0.0'
 gem 'activerecord-jdbc-adapter'
 gem 'jdbc-sqlite3'
 gem 'torquebox'
