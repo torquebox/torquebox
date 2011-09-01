@@ -36,8 +36,10 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
+
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.util.DeprecationUtil;
 
 public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 
@@ -109,9 +111,9 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
         if (matches.size() == 1) {
             file = matches.get( 0 );
             if (file.getName().endsWith( "-rails.yml" )) {
-                log.warn( "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + file );
+                DeprecationUtil.log( log, "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + file );
             } else if (file.getName().endsWith( "-rack.yml" )) {
-                log.warn( "Usage of -rack.yml is deprecated, please rename to -knob.yml: " + file );
+                DeprecationUtil.log( log, "Usage of -rack.yml is deprecated, please rename to -knob.yml: " + file );
             }
         }
 
