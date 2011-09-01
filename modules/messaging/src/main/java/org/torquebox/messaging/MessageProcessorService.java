@@ -26,6 +26,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Topic;
 import javax.jms.Session;
+import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
@@ -53,6 +54,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             public void run() {
                 try {
                     session = group.getConnection().createSession(true, -1);
+                    tm = group.getTransactionManager();
                     Destination destination = group.getDestination();
                     if (group.isDurable() && destination instanceof Topic) {
                         consumer = session.createDurableSubscriber( (Topic) destination, group.getName(), group.getMessageSelector(), false );
@@ -60,7 +62,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
                         if (group.isDurable() && !(destination instanceof Topic)) {
                             log.warn( "Durable set for processor " + group.getName() + ", but " + destination + " is not a topic - ignoring." );
                         }
-                        consumer = MessageProcessorService.this.session.createConsumer( destination, group.getMessageSelector() );
+                        consumer = session.createConsumer( destination, group.getMessageSelector() );
                     }
                     consumer.setMessageListener( MessageProcessorService.this );
 
@@ -80,6 +82,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
         }
         Ruby ruby = null;
         try {
+            tm.begin();
             ruby = group.getRubyRuntimePool().borrowRuntime();
             
             if ( this.consumer == null ) {
@@ -91,11 +94,14 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );
             putSessionInThreadLocal( ruby );
             component.process( message );
+            tm.commit();
             session.commit();
         } catch (Exception e) {
             log.error( "Unexpected error in " + group.getName(), e );
-            try { session.rollback(); } catch (JMSException ignored) {}
+            try { tm.rollback(); } catch (Exception ignored) {}
+            try { session.rollback(); } catch (Exception ignored) {}
         } finally {
+            try { tm.suspend(); } catch (Exception ignored) {}
             if (ruby != null) {
                 try {
                     removeSessionFromThreadLocal( ruby );
@@ -145,4 +151,5 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     private MessageProcessorGroup group;
     private Session session;
     private MessageConsumer consumer;
+    private TransactionManager tm;
 }
