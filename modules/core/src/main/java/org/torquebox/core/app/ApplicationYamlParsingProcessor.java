@@ -22,8 +22,10 @@ package org.torquebox.core.app;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
-import org.torquebox.core.AbstractSplitYamlParsingProcessor;
 
+import org.torquebox.core.AbstractSplitYamlParsingProcessor;
+import org.torquebox.core.TorqueBoxMetaData;
+import org.torquebox.core.util.DeprecationUtil;
 
 /**
  * <pre>
@@ -55,7 +57,7 @@ public class ApplicationYamlParsingProcessor extends AbstractSplitYamlParsingPro
         }
 
         if (appMetaData.getRoot() == null) {
-            String root = getOneOf( app, "root", "RAILS_ROOT", "RACK_ROOT" );
+            String root = TorqueBoxMetaData.findApplicationRoot( app );
 
             if (root != null && !root.trim().equals( "" )) {
                 appMetaData.setRoot( root.trim() );
@@ -63,7 +65,7 @@ public class ApplicationYamlParsingProcessor extends AbstractSplitYamlParsingPro
         }
         
         if (appMetaData.getEnvironmentName() == null) {
-            String env = getOneOf( app, "env", "RAILS_ENV", "RACK_ENV" );
+            String env = TorqueBoxMetaData.findApplicationEnvironment( app );
 
             if (env != null && !env.trim().equals( "" )) {
                 appMetaData.setEnvironmentName( env.trim() );
@@ -71,4 +73,5 @@ public class ApplicationYamlParsingProcessor extends AbstractSplitYamlParsingPro
 
         }
     }
+
 }

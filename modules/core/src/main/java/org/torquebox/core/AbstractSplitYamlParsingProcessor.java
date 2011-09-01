@@ -168,17 +168,6 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
         }
     }
 
-    protected String getOneOf(Map<String, String> map, String... keys) {
-        for (String each : keys) {
-            for (String key : map.keySet()) {
-                if (each.equalsIgnoreCase( key )) {
-                    return map.get( key );
-                }
-            }
-        }
-        return null;
-    }
-
     protected abstract void parse(DeploymentUnit unit, Object data) throws Exception;
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core" );
