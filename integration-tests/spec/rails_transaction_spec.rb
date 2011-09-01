@@ -18,7 +18,7 @@ remote_describe "rails transactions testing" do
     
   it "should create a Thing in response to a message" do
     @input.publish("happy path")
-    30.times do
+    60.times do
       sleep 1
       break if Thing.uncached { Thing.count > 0 }
     end
