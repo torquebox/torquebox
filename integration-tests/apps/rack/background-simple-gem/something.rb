@@ -14,7 +14,7 @@ class Something
   def self.define_foo
     class_eval do
       define_method :foo do
-        if "release" == @background.receive(:timeout => 25000)
+        if "release" == @background.receive(:timeout => 120_000)
           @foreground.publish "success"
         end
         nil

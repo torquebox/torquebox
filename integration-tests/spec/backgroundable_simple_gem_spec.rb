@@ -24,7 +24,7 @@ describe "backgroundable simple gem tests" do
     visit "/background_simple_gem"
     page.should have_content('it worked')
     @background.publish "release"
-    result = @foreground.receive(:timeout => 25000)
+    result = @foreground.receive(:timeout => 120_000)
     result.should == "success"
   end
 
@@ -32,7 +32,7 @@ describe "backgroundable simple gem tests" do
     visit "/background_simple_gem?redefine=1"
     page.should have_content('it worked')
     @background.publish "release"
-    result = @foreground.receive(:timeout => 25000)
+    result = @foreground.receive(:timeout => 120_000)
     result.should == "success"
   end
 end
