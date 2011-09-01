@@ -1,10 +1,13 @@
 class Processor < TorqueBox::Messaging::MessageProcessor
-
   def on_message(msg)
-    puts "JC: on_message"
-    Thing.create(:name => msg)
-    puts "JC: Thing.created"
+    begin
+      Thing.create(:name => msg)
+      puts "JC: Thing.created count=#{Thing.count}"
+    rescue Exception => e
+      puts "JC: exception(#{e.class})", $!, $@
+      raise
+    end
     raise msg if msg =~ /error/
   end
-
 end
+

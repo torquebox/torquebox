@@ -13,17 +13,28 @@ remote_describe "rails transactions testing" do
 
   before(:each) do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
+    Thing.delete_all
   end
     
   it "should create a Thing in response to a message" do
-    puts "JC: connection.java_class.name=#{Thing.connection.raw_connection.connection.java_class.name}"
-    puts "JC: connection.respond_to?(:getXAResource)=#{Thing.connection.raw_connection.connection.respond_to?(:getXAResource)}"
-    puts "JC: underlying_connection.java_class.name=#{Thing.connection.raw_connection.connection.underlying_connection.java_class.name}"
-    puts "JC: underlying_connection.respond_to?(:getXAResource)=#{Thing.connection.raw_connection.connection.underlying_connection.respond_to?(:getXAResource)}"
-
-    pending("until we can monkey-patch arjdbc to not start transactions if our connection is XA")
-    @input.publish("anything")
-    sleep 5
+    @input.publish("happy path")
+    30.times do
+      sleep 1
+      break if Thing.uncached { Thing.count > 0 }
+    end
     Thing.count.should == 1
+    Thing.find_by_name("happy path").name.should == "happy path"
   end
+
+  it "should create a Thing in response to a message" do
+    pending("til we get a real JMS XA connection factory in place")
+    @input.publish("this will error")
+    20.times do
+      sleep 1
+      break if Thing.uncached { Thing.count > 0 }
+    end
+    Thing.count.should == 0
+    Thing.find_all_by_name("this will error").should be_empty
+  end
+
 end
