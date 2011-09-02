@@ -139,8 +139,8 @@ module TorqueBox
           tm.commit if tm
         rescue Exception => e
           tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
-          $stderr.puts "[ERROR] Exception raised during transaction. Rolling back."
-          $stderr.puts "[ERROR] #{e.message}"
+          log( "Exception raised during transaction. Rolling back.", 'ERROR' )
+          log( e.message, 'ERROR' )
         end
       end
 
@@ -149,6 +149,10 @@ module TorqueBox
       end
 
       private
+
+      def log( message, status = 'INFO' )
+        $stderr.puts( "#{status}: #{message}" )
+      end
 
       def encode(value)
         value.is_a?(java.lang.Object) ? value : Marshal.dump(value).to_java_bytes
@@ -167,14 +171,13 @@ module TorqueBox
       end
 
       def manager
-        # TODO: This name should be ServiceName.JBOSS.append("infinispan", "web")
-#        @manager ||= TorqueBox::ServiceRegistry.lookup("CacheContainerRegistry").cache_container( 'web' ) rescue nil
-        #@manager ||= TorqueBox::ServiceRegistry.lookup(ServiceName.JBOSS.append("infinispan")) rescue nil
         begin
-          @manager ||= inject('java:jboss/infinispan/hibernate') rescue nil
+          #@manager ||= inject('java:jboss/infinispan/hibernate') 
+          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan" )]
         rescue Exception => e
-          $stderr.puts "Caught exception in injecting java:jboss/infinispan/hibernate"
-          e.print_stack_trace
+          #log( "Caught exception in injecting java:jboss/infinispan/hibernate", 'ERROR' )
+          log( "Caught exception while looking up Infinispan service.", 'ERROR' )
+          $stderr.puts e.message
         end
         @manager
       end
@@ -183,7 +186,7 @@ module TorqueBox
         cache = manager.get_cache(name)
         config = cache.configuration
         unless config.cache_mode == mode
-          $stderr.puts "Reconfiguring cache #{name} from #{config.cache_mode} to #{mode}"
+          log( "Reconfiguring Infinispan cache #{name} from #{config.cache_mode} to #{mode}" )
           cache.stop
           config.cache_mode = mode
           manager.define_configuration(name, config)
@@ -193,7 +196,7 @@ module TorqueBox
       end
 
       def configure(mode=clustering_mode)
-        $stderr.puts "Configuring cache #{name} as #{mode}"
+        log( "Configuring Infinispan cache #{name} as #{mode}" )
         config = manager.default_configuration.clone
         config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.JBossTransactionManagerLookup.new )
         config.cache_mode = mode
@@ -203,21 +206,13 @@ module TorqueBox
       end
 
       def clustered
-        if manager.running?(name)
-          $stderr.puts("[INFO] Reconfiguring Infinispan cache #{name}")
-          reconfigure
-        else
-          $stderr.puts("[INFO] Configuring Infinispan cache #{name}")
-          configure
-        end
+        (manager.running?(name) ? reconfigure : configure) if manager
       rescue
-        $stderr.puts "Unable to obtain clustered cache; falling back to local: #{$!}" 
+        log( "Can't get clustered cache; falling back to local: #{$!}", 'ERROR' )
       end
 
       def local
-        # workaround common problem running infinispan in web containers (see FAQ)
-        $stderr.puts "Configuring local cache for #{name}"
-        #java.lang.Thread.current_thread.context_class_loader = org.infinispan.Cache.java_class.class_loader
+        log( "Configuring Infinispan local cache #{name}" )
         bare_config              = org.infinispan.config.Configuration.new
         bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
 
@@ -225,25 +220,27 @@ module TorqueBox
         config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
         
         if options[:persist]
+          log( "Configuring #{name} local cache for file-based persistence" )
           store = org.infinispan.loaders.file.FileCacheStoreConfig.new
           store.purge_on_startup( false )
           store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
           config.loaders.add_cache_loader( store )
         end
         if options[:index]
+          log( "Configuring #{name} local cache for local-only, in-memory indexing" )
           config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
       rescue Exception => e
-        $stderr.puts "Unable to obtain local cache: #{$!}"
+        log( "Unable to obtain local cache: #{$!}", 'ERROR' )
         $stderr.puts e.backtrace
       end
       
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        $stderr.puts "No caching will occur" 
+        log( "Can't get or create an Infinispan cache. No caching will occur", 'ERROR' )
         result
       end
 
