@@ -38,21 +38,6 @@
       <type>pom</type>
       <scope>provided</scope>
     </dependency>
-<!--
-    <dependency> 
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-docs-en_US</artifactId>
-      <version>${project.version}</version>
-      <type>pdf</type>
-    </dependency> 
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-docs-en_US</artifactId>
-      <version>${project.version}</version>
-      <classifier>html</classifier>
-      <type>zip</type>
-    </dependency>
--->
   </dependencies>
 
   <build>
@@ -62,13 +47,25 @@
         <executions>
           <execution>
             <id>dist-bin</id>
-            <phase>package</phase> <!-- append to the packaging phase. -->
+            <phase>package</phase>
             <goals>
               <goal>single</goal> 
             </goals>
             <configuration>
               <descriptors>
                 <descriptor>src/main/assembly/dist-bin.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
+            <id>dist-modules</id>
+            <phase>package</phase> 
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/dist-modules.xml</descriptor>
               </descriptors>
             </configuration>
           </execution>
