@@ -20,7 +20,8 @@
     <version.sinatra>1.2.3</version.sinatra>
     <version.old_rack>1.1.0</version.old_rack>
     <version.dm_core>1.1.0</version.dm_core>
-    <version.json>1.5.2</version.json>
+    <version.dm_serializer>1.1.0</version.dm_serializer>
+    <version.json>1.4.6</version.json>
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
     <max.heap>1024m</max.heap>
@@ -237,6 +238,13 @@
       <artifactId>dm-core</artifactId>
       <type>gem</type>
       <version>${version.dm_core}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>dm-serializer</artifactId>
+      <type>gem</type>
+      <version>${version.dm_serializer}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -480,6 +488,18 @@
                   <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                   <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
                   <installArgs>dm-core -v ${version.dm_core} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-dm-serializer</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>dm-serializer -v ${version.dm_serializer} --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
               <execution>

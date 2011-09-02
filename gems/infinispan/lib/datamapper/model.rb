@@ -27,8 +27,6 @@ module Infinispan
       include org.infinispan.marshall.Externalizer
 
       def writeObject( output, record )
-
-        puts "SHIT MOTHERFUCKER I'M WRITING OUT MY ASS"
         output.writeObject( record.to_json(:methods => [:deserialize_to]) )
       end
 
@@ -39,6 +37,11 @@ module Infinispan
       end
 
       become_java!
+      unless java.lang.Thread.currentThread.context_class_loader.is_a? ModelClassLoader
+        java.lang.Thread.currentThread.context_class_loader = ModelClassLoader.new(java.lang.Thread.currentThread.context_class_loader)
+      end
+
+      java.lang.Thread.currentThread.context_class_loader.register( java_class )
     end
 
     # TODO enhance TYPEs list
