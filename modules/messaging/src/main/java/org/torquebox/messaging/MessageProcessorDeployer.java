@@ -35,6 +35,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.as.txn.TxnServices;
@@ -102,8 +103,9 @@ public class MessageProcessorDeployer implements DeploymentUnitProcessor {
 
         MBeanRegistrationService<MessageProcessorGroupMBean> mbeanService = new MBeanRegistrationService<MessageProcessorGroupMBean>( mbeanName );
         phaseContext.getServiceTarget().addService( baseServiceName.append( "mbean" ), mbeanService )
-                .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                 .addDependency( baseServiceName, MessageProcessorGroupMBean.class, mbeanService.getValueInjector() )
+                .setInitialMode( Mode.PASSIVE )
                 .install();
     }
 
