@@ -92,15 +92,12 @@
       <formalpara>
         <title>Location &amp; Environment</title>
 
-        <para>The application section describes the location and environment
-        for the app itself, in Rails terms: <envar>RAILS_ROOT</envar> and
-        <envar>RAILS_ENV</envar>. Under traditional (mongrel, lighttpd)
+        <para>The application section describes the location
+        for the app itself. Under traditional (mongrel, lighttpd)
         deployments, this information is picked up through the current working
-        directory or environment variables. Since the TorqueBox Server runs
+        directory. Since the TorqueBox Server runs
         from a different location, the current working directory has no
-        meaning. Likewise, as multiple applications may be deployed within a
-        single TorqueBox Server, a single global environment variable to set
-        <envar>RAILS_ENV</envar> is nonsensical.</para>
+        meaning.</para>
       </formalpara>
 
       <table>
@@ -121,35 +118,25 @@
 
           <tbody>
             <row>
-              <entry><varname>root</varname>|<varname>RAILS_ROOT</varname>|<varname>RACK_ROOT</varname></entry>
+              <entry><varname>root</varname></entry>
 
               <entry>Indicates the location of your application. It may refer
               to either an "exploded" application (a directory) or the path to
               a zipped archive. It is required for external descriptors and
-              ignored in an internal descriptor. Regardless of which alias you
-              use, RAILS_ROOT will be set in the ENV hash for Rails apps and
-              RACK_ROOT will be set for Rack apps.</entry>
+              ignored in an internal descriptor. Rails apps will have this value
+              set as ENV['RAILS_ROOT'], and Rack apps will have this value set to
+              both the RACK_ROOT constant and ENV['RACK_ROOT'].</entry>
 
               <entry><emphasis>none</emphasis></entry>
             </row>
 
-            <row>
-              <entry><varname>env</varname>|<varname>RAILS_ENV</varname>|<varname>RACK_ENV</varname></entry>
-
-              <entry>Defines the environment under which the app and its
-              framework will run, e.g. production, development, test,
-              etc.</entry>
-
-              <entry>development</entry>
-            </row>
           </tbody>
         </tgroup>
       </table>
 
       <para>For example: <informalexample>
           <para><programlisting>application:
-  root: /path/to/myapp
-  env: development</programlisting></para>
+  root: /path/to/myapp</programlisting></para>
         </informalexample></para>
     </section>
 
@@ -330,6 +317,23 @@
       <para>Any variable set in the environment section is accessible from
       within the Rack app using the ENV hash, e.g.
       ENV['MAIL_HOST']=='mail.yourhost.com'</para>
+      <section id="application-environment">
+        <title>Application environment</title>
+        
+        <para>To set the environment for the application, set either RACK_ENV
+        or RAILS_ENV as an environment variable. They are equivalent, and will
+        both work for a Rack or Rails application. If the application environment
+        is not set, it will default to 'development'. Rails apps will have this value
+        set as ENV['RAILS_ENV'] (which Rails itself will assign to Rails.env), and 
+        Rack apps will have this value set to both the RACK_ENV constant and ENV['RACK_ENV'].</para>
+
+      <para>For example: <informalexample>
+          <para><programlisting>environment:
+  RAILS_ENV: production</programlisting></para>
+        </informalexample></para>
+
+
+      </section>
     </section>
   </section>
 

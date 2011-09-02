@@ -24,6 +24,8 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 
+import org.torquebox.core.AbstractSplitYamlParsingProcessor;
+
 public class RubyApplicationDefaultsProcessor implements DeploymentUnitProcessor {
 
     @Override
@@ -32,6 +34,10 @@ public class RubyApplicationDefaultsProcessor implements DeploymentUnitProcessor
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData != null) {
+            if (rubyAppMetaData.getEnvironmentName() != null) {
+                AbstractSplitYamlParsingProcessor.logDeprecation( unit, "Setting the application environment via the 'application:' section is deprecated. Set RAILS_ROOT or RACK_ROOT via the 'environment:' section instead." );
+            }
+            rubyAppMetaData.extractAppEnvironment();
             rubyAppMetaData.applyDefaults();
         }
     }

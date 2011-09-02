@@ -20,6 +20,7 @@
 package org.torquebox.core.app;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 import java.net.URL;
 import java.util.Map;
@@ -27,6 +28,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.util.DeprecationLogger;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 import org.torquebox.test.as.MockDeploymentPhaseContext;
 import org.torquebox.test.as.MockDeploymentUnit;
@@ -37,16 +39,12 @@ public class EnvironmentYamlParsingProcessorTest extends AbstractDeploymentProce
     public void setUp() throws Throwable {
         appendDeployer( new TorqueBoxYamlParsingProcessor() );
         appendDeployer( new EnvironmentYamlParsingProcessor() );
+        appendDeployer( new RubyApplicationDefaultsProcessor() );
     }
 
     @Test
     public void testBooleanEnvironmentYml() throws Exception {
-        URL environmentYml = getClass().getResource( "environment.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", environmentYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "environment.yml" );
 
         RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
         assertNotNull( appMetaData );
@@ -56,6 +54,36 @@ public class EnvironmentYamlParsingProcessorTest extends AbstractDeploymentProce
 
         String booleanVariable = environmentVariables.get( "A_BOOLEAN_VALUE" );
         assertEquals( "true", booleanVariable );
+    }
+
+    @Test
+    public void testTorqueBoxYmlWithEnvInEnvVarsAsRACK_ENV() throws Exception {
+        MockDeploymentPhaseContext context = setupResourceAsTorqueboxYml( "RACK_ENV-torquebox.yml" );
+        MockDeploymentUnit unit = context.getMockDeploymentUnit();
+        
+        DeprecationLogger logger = mock( DeprecationLogger.class );
+        unit.putAttachment( DeprecationLogger.ATTACHMENT_KEY, logger );
+
+        deploy( context );
+        verify( logger, never() ).append( anyString() );
+
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        assertEquals( "biscuit", rubyAppMetaData.getEnvironmentName() );
+    }
+
+    @Test
+    public void testTorqueBoxYmlWithEnvInEnvVarsAsRAILS_ENV() throws Exception {
+        MockDeploymentPhaseContext context = setupResourceAsTorqueboxYml( "RACK_ENV-torquebox.yml" );
+        MockDeploymentUnit unit = context.getMockDeploymentUnit();
+        
+        DeprecationLogger logger = mock( DeprecationLogger.class );
+        unit.putAttachment( DeprecationLogger.ATTACHMENT_KEY, logger );
+
+        deploy( context );
+        verify( logger, never() ).append( anyString() );
+
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        assertEquals( "biscuit", rubyAppMetaData.getEnvironmentName() );
     }
 
 }

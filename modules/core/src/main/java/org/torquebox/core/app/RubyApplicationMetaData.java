@@ -58,8 +58,14 @@ public class RubyApplicationMetaData {
         return name.replaceAll( "\\.", "-" );
     }
 
+    public void extractAppEnvironment() {
+        if (this.environmentName == null) {
+            this.environmentName = getAppEnvironmentFromEnvironmentVariables();
+        }        
+    }
+    
     public void applyDefaults() {
-        if (environmentName == null) {
+        if (this.environmentName == null) {
             this.environmentName = DEFAULT_ENVIRONMENT_NAME;
         }
     }
@@ -109,7 +115,11 @@ public class RubyApplicationMetaData {
     }
 
     public boolean isDevelopmentMode() {
-        return environmentName == null || environmentName.trim().equalsIgnoreCase( "development" );
+        String env = this.environmentName;
+        if (env == null) {
+            env = getAppEnvironmentFromEnvironmentVariables();
+        }
+        return env == null || env.trim().equalsIgnoreCase( "development" );
     }
 
     public void setEnvironmentName(String environmentName) {
@@ -142,4 +152,14 @@ public class RubyApplicationMetaData {
         this.authenticationConfig = authConfig;
     }
 
+    protected String getAppEnvironmentFromEnvironmentVariables() {
+        String env = null;
+        if (this.environment != null) {
+            env = this.environment.get( "RACK_ENV" );
+            if (env == null) {
+                env = this.environment.get( "RAILS_ENV" );
+            }
+        }
+        return env;
+    }
 }

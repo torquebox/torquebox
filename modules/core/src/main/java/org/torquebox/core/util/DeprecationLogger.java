@@ -45,7 +45,7 @@ public class DeprecationLogger {
     
     public void dumpToLog(Logger log) {
         for(String each : this.messages) {
-            log.warn( "--> " + each );
+            log.warn( "WARNING: " + each );
         }
     }
     
