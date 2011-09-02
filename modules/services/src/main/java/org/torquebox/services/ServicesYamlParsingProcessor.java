@@ -25,7 +25,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 
 import org.torquebox.core.AbstractSplitYamlParsingProcessor;
-import org.torquebox.core.util.DeprecationUtil;
+import org.torquebox.core.util.DeprecationLogger;
 import org.torquebox.core.util.StringUtils;
 
 public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
@@ -57,7 +57,7 @@ public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProces
                         config = (Map<String, Object>)params.remove( "config" );
                     } else {
                         if (!params.isEmpty()) {
-                            DeprecationUtil.log( log, "Use the config: key to pass configuration to a service - the method you are using has been deprecated (service: " + service + ")" );
+                            logDeprecation( unit, "Use the config: key to pass configuration to a service - the method you are using has been deprecated (service: " + service + ")" );
                         }
                         config = params;
                     } 

@@ -28,6 +28,7 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import org.torquebox.core.util.DeprecationLogger;
 
 public class DeploymentNotifier implements Service<Void> {
     
@@ -48,6 +49,12 @@ public class DeploymentNotifier implements Service<Void> {
         long startTime = unit.getAttachment( DeploymentNotifier.DEPLOYMENT_TIME_ATTACHMENT_KEY );
         long elapsed = System.currentTimeMillis() - startTime;
         log.info( "Completely deployed: " + unit.getName() + " in " + elapsed + "ms" );
+        
+        DeprecationLogger deprecations = unit.getAttachment( DeprecationLogger.ATTACHMENT_KEY );
+        if (deprecations != null && deprecations.hasMessages()) {
+            log.warn( "The deployment '" + unit.getName() + "' generated the following deprecation warnings:" );    
+            deprecations.dumpToLog( log );
+        }
     }
 
     @Override

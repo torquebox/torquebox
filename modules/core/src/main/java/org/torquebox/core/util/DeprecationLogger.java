@@ -19,6 +19,11 @@
 
 package org.torquebox.core.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 
 /**
@@ -27,11 +32,32 @@ import org.jboss.logging.Logger;
  * 
  * @author Toby Crawley <tcrawley@redhat.com>
  */
-public class DeprecationUtil {
-    public static void log(Logger log, String message) {
-        StringBuffer msg = new StringBuffer( "DEPRECATION WARNING: " );
-        msg.append( message );
-        msg.append( " This functionality may be removed in a future version." );
-        log.warn( msg );
+public class DeprecationLogger {
+    public static final AttachmentKey<DeprecationLogger> ATTACHMENT_KEY = AttachmentKey.create(DeprecationLogger.class);
+
+    public void append(String message) {
+        this.messages.add( message );
     }
+    
+    public boolean hasMessages() {
+        return !this.messages.isEmpty();
+    }
+    
+    public void dumpToLog(Logger log) {
+        for(String each : this.messages) {
+            log.warn( "--> " + each );
+        }
+    }
+    
+    public static DeprecationLogger getLogger(DeploymentUnit unit) {
+        DeprecationLogger logger = unit.getAttachment( ATTACHMENT_KEY );
+        if (logger == null) {
+            logger = new DeprecationLogger();
+            unit.putAttachment( ATTACHMENT_KEY, logger );
+        }
+        
+        return logger;
+    }
+    
+    private List<String> messages = new ArrayList<String>();
 }

@@ -83,9 +83,8 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
         script.append( "ENV['RACK_ENV']=%q(" + rackEnv + ")\n" );
         script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
 
-        if (contextPath != null && contextPath.length() > 1) { // only set if
-                                                               // not root
-                                                               // context
+        // only set if not root context
+        if (contextPath != null && contextPath.length() > 1) { 
             // context path should always start with a "/"
             if (!contextPath.startsWith( "/" )) {
                 contextPath = "/" + contextPath;

@@ -32,7 +32,7 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 
-import org.torquebox.core.util.DeprecationUtil;
+import org.torquebox.core.util.DeprecationLogger;
 
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -130,7 +130,7 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
                 if (!metaDataFile.equals( root )) {
-                    DeprecationUtil.log( log, "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
+                    logDeprecation( unit, "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
                 }
                 InputStream in = null;
                 try {
@@ -166,6 +166,10 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
             e.printStackTrace();
             throw new DeploymentUnitProcessingException( e );
         }
+    }
+
+    public static void logDeprecation(DeploymentUnit unit, String message) {
+        DeprecationLogger.getLogger( unit ).append( message );
     }
 
     protected abstract void parse(DeploymentUnit unit, Object data) throws Exception;

@@ -25,7 +25,6 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 
 import org.torquebox.core.AbstractSplitYamlParsingProcessor;
 import org.torquebox.core.TorqueBoxMetaData;
-import org.torquebox.core.util.DeprecationUtil;
 
 /**
  * <pre>
