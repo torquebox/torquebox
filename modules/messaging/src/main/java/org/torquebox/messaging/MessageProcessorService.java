@@ -25,7 +25,7 @@ import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Topic;
-import javax.jms.Session;
+import javax.jms.XASession;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
@@ -53,7 +53,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             @Override
             public void run() {
                 try {
-                    session = group.getConnection().createSession(true, -1);
+                    session = group.getConnection().createXASession();
                     tm = group.getTransactionManager();
                     Destination destination = group.getDestination();
                     if (group.isDurable() && destination instanceof Topic) {
@@ -83,6 +83,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
         Ruby ruby = null;
         try {
             tm.begin();
+            tm.getTransaction().enlistResource( this.session.getXAResource() );
             ruby = group.getRubyRuntimePool().borrowRuntime();
             
             if ( this.consumer == null ) {
@@ -95,11 +96,9 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             putSessionInThreadLocal( ruby );
             component.process( message );
             tm.commit();
-            session.commit();
         } catch (Exception e) {
             log.error( "Unexpected error in " + group.getName(), e );
             try { tm.rollback(); } catch (Exception ignored) {}
-            try { session.rollback(); } catch (Exception ignored) {}
         } finally {
             try { tm.suspend(); } catch (Exception ignored) {}
             if (ruby != null) {
@@ -149,7 +148,7 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     private static final Logger log = Logger.getLogger( "org.torquebox.message" );
 
     private MessageProcessorGroup group;
-    private Session session;
+    private XASession session;
     private MessageConsumer consumer;
     private TransactionManager tm;
 }

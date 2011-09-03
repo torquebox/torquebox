@@ -27,7 +27,6 @@ remote_describe "rails transactions testing" do
   end
 
   it "should create a Thing in response to a message" do
-    pending("til we get a real JMS XA connection factory in place")
     @input.publish("this will error")
     20.times do
       sleep 1

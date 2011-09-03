@@ -25,10 +25,10 @@ import java.util.List;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Queue;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
+import javax.jms.XAConnection;
 import javax.transaction.TransactionManager;
 
+import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.jboss.as.messaging.jms.JMSServices;
 import org.jboss.as.naming.ManagedReference;
 import org.jboss.as.naming.ManagedReferenceFactory;
@@ -102,10 +102,10 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                 Thread.currentThread().setContextClassLoader( MessageProcessorGroup.this.classLoader );
                 ManagedReferenceFactory connectionFactoryManagedReferenceFactory = MessageProcessorGroup.this.connectionFactoryInjector.getValue();
                 ManagedReference connectionFactoryManagedReference = connectionFactoryManagedReferenceFactory.getReference();
-                ConnectionFactory connectionFactory = (ConnectionFactory) connectionFactoryManagedReference.getInstance();
+                HornetQConnectionFactory connectionFactory = (HornetQConnectionFactory) connectionFactoryManagedReference.getInstance();
 
                 try {
-                    MessageProcessorGroup.this.connection = connectionFactory.createConnection();
+                    MessageProcessorGroup.this.connection = connectionFactory.createXAConnection();
                     MessageProcessorGroup.this.connection.start();
                 } catch (JMSException e) {
                     context.failed( new StartException( e ) );
@@ -214,7 +214,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
         return this.transactionManagerInjector;
     }
 
-    public Connection getConnection() {
+    public XAConnection getConnection() {
         return this.connection;
     }
 
@@ -242,7 +242,7 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private RubyRuntimePool runtimePool;
 
     private ClassLoader classLoader;
-    private Connection connection;
+    private XAConnection connection;
     private Destination destination;
 
     private ServiceName baseServiceName;

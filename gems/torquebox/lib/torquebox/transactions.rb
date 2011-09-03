@@ -33,6 +33,11 @@ if defined?(ActiveRecord)
         end
       end
     end
+
+    def self.transaction
+      ActiveRecord::Base.connection.reconnect!
+      yield
+    end
   end
 
   module ActiveRecord
