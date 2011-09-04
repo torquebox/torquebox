@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.util.ReflectionHelper;
 
@@ -57,7 +56,7 @@ public class AbstractRubyComponent implements RubyComponent {
     }
 
     protected Object _callRubyMethod(Object target, String method, Object... args) {
-        return JavaEmbedUtils.invokeMethod( this.rubyComponent.getRuntime(), target, method, args, Object.class );
+        return ReflectionHelper.call( this.rubyComponent.getRuntime(), target, method, args );
     }
 
     public Object _callRubyMethod(String method, Object... args) {
