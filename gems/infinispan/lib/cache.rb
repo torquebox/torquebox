@@ -21,6 +21,8 @@ module TorqueBox
   module Infinispan
 
     class Sequence
+      include java.io.Serializable
+
       def initialize(amount = 1) 
         @data = amount
       end

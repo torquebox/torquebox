@@ -21,6 +21,7 @@ require 'torquebox-infinispan'
 require 'datamapper/model'
 require 'datamapper/search'
 
+
 module DataMapper::Adapters
 
   class InfinispanAdapter < AbstractAdapter

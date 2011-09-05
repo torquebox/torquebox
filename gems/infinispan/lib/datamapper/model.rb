@@ -17,6 +17,7 @@ require 'dm-serializer'
 require 'jruby/core_ext'
 require 'json'
 
+
 module Infinispan
   java_import 'org.torquebox.web.infinispan.datamapper.ModelClassLoader'
   JVoid   = java.lang.Void::TYPE
@@ -24,24 +25,19 @@ module Infinispan
   module Model
 
     class Externalizer
-      include org.infinispan.marshall.Externalizer
 
-      def writeObject( output, record )
-        output.writeObject( record.to_json(:methods => [:deserialize_to]) )
+      def serialize( record )
+        puts ">>>>>>>>>>> LANCE: SERIALIZING"
+        record.to_json(:methods => [:deserialize_to]) 
       end
 
-      def readObject( input )
-        attributes = JSON.parse( input.readObject )
+      def deserialize( input )
+        puts ">>>>>>>>>>> LANCE: DESERIALIZING"
+        attributes = JSON.parse( input )
         cls = eval( attributes.delete(:deserialize_to) )
         cls.new( attributes ) 
       end
-
-      become_java!
-      unless java.lang.Thread.currentThread.context_class_loader.is_a? ModelClassLoader
-        java.lang.Thread.currentThread.context_class_loader = ModelClassLoader.new(java.lang.Thread.currentThread.context_class_loader)
-      end
-
-      java.lang.Thread.currentThread.context_class_loader.register( java_class )
+      
     end
 
     # TODO enhance TYPEs list
@@ -58,6 +54,7 @@ module Infinispan
 
     def self.included(model)
       model.extend(ClassMethods)
+      include java.io.Serializable
       unless model.mapped?
         [:auto_migrate!, :auto_upgrade!, :create, :all, :copy, :first, :first_or_create, :first_or_new, :get, :last, :load].each do |method|
           model.before_class_method(method, :configure_index)
@@ -115,10 +112,11 @@ module Infinispan
         end
 
 
+
         annotation = {
           org.hibernate.search.annotations.Indexed => {},
           org.hibernate.search.annotations.ProvidedId => {},
-          org.infinispan.marshall.SerializeWith => { "value" => Infinispan::Model::Externalizer.java_class }
+          org.infinispan.marshall.SerializeWith => { "value" => org.torquebox.web.infinispan.datamapper.Externalizer.java_class }
         }
         add_class_annotation( annotation )
 
@@ -126,11 +124,9 @@ module Infinispan
         become_java!
         puts "Became java: #{self.inspect}"
 
-        unless java.lang.Thread.currentThread.context_class_loader.is_a? ModelClassLoader
-          java.lang.Thread.currentThread.context_class_loader = ModelClassLoader.new(java.lang.Thread.currentThread.context_class_loader)
-        end
+        # Register with the externalizer
+        org.torquebox.web.infinispan.datamapper.Externalizer.setSerializer(java_class.name, Infinispan::Model::Externalizer.new)
 
-        java.lang.Thread.currentThread.context_class_loader.register( java_class )
 
         @@mapped = true
       end
