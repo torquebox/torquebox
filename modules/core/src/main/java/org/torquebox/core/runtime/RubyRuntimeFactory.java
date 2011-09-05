@@ -42,14 +42,12 @@ import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyInstanceConfig.CompileMode;
-import org.jruby.RubyModule;
 import org.jruby.ast.executable.Script;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.util.ClassCache;
-
 import org.torquebox.bootstrap.JRubyHomeLocator;
 import org.torquebox.core.pool.InstanceFactory;
 import org.torquebox.core.util.JRubyConstants;
+import org.torquebox.core.util.RuntimeHelper;
 
 /**
  * Default Ruby runtime interpreter factory implementation.
@@ -362,14 +360,11 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private void defineVersions(Ruby runtime) {
-        RubyModule torqueBoxModule = runtime.getClassFromPath( "TorqueBox" );
-        JavaEmbedUtils.invokeMethod( runtime, torqueBoxModule, "define_versions", new Object[] { log }, void.class );
+        RuntimeHelper.invokeClassMethod( runtime, "TorqueBox", "define_versions", new Object[] { log } );
     }
 
     private void setApplicationName(Ruby runtime) {
-        RubyModule torqueBoxModule = runtime.getClassFromPath( "TorqueBox" );
-        JavaEmbedUtils.invokeMethod( runtime, torqueBoxModule, "application_name=", new Object[] { applicationName }, void.class );
-
+        RuntimeHelper.invokeClassMethod( runtime, "TorqueBox", "application_name=", new Object[] { applicationName } );
     }
 
     private void prepareRuntime(Ruby runtime, String contextInfo) {
@@ -390,9 +385,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private void injectServiceRegistry(Ruby runtime) {
-        runtime.evalScriptlet( "require %q(torquebox/service_registry)" );
-        RubyModule torqueBoxServiceRegistry = runtime.getClassFromPath( "TorqueBox::ServiceRegistry" );
-        JavaEmbedUtils.invokeMethod( runtime, torqueBoxServiceRegistry, "service_registry=", new Object[] { this.serviceRegistry }, void.class );
+        RuntimeHelper.require( runtime, "torquebox/service_registry" );
+        RuntimeHelper.invokeClassMethod( runtime, "TorqueBox::ServiceRegistry", "service_registry=", new Object[] { this.serviceRegistry } );
     }
 
     protected Map<String, String> createEnvironment() {

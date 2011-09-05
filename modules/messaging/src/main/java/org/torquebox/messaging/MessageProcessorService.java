@@ -34,8 +34,8 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jruby.Ruby;
-import org.jruby.javasupport.JavaEmbedUtils;
-import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.RubyThread;
+import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.messaging.component.MessageProcessorComponent;
 
 public class MessageProcessorService implements Service<Void>, MessageListener {
@@ -134,13 +134,13 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     }
 
     protected void putSessionInThreadLocal(Ruby ruby) {
-        IRubyObject thread = ruby.evalScriptlet( "Thread.current" );
-        JavaEmbedUtils.invokeMethod( ruby, thread, "[]=", new Object[] { "session", session }, Object.class );
+        RubyThread thread = RuntimeHelper.currentThread( ruby );
+        RuntimeHelper.call( ruby, thread, "[]=", new Object[] { "session", session } );
     }
 
     protected void removeSessionFromThreadLocal(Ruby ruby) {
-        IRubyObject thread = ruby.evalScriptlet( "Thread.current" );
-        JavaEmbedUtils.invokeMethod( ruby, thread, "[]=", new Object[] { "session", null }, Object.class );
+        RubyThread thread = RuntimeHelper.currentThread( ruby );
+        RuntimeHelper.call( ruby, thread, "[]=", new Object[] { "session", null } );
     }
 
     // -------

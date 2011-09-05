@@ -35,7 +35,7 @@ public class ComponentRegistry {
             try {
                 rubyRegistry = runtime.getObject().getConstant( TORQUEBOX_COMPONENT_REGISTRY );
             } catch (RaiseException e) {
-                //e.printStackTrace();
+                // ignore, we need to define it ourselves.
             }
 
             ComponentRegistry javaRegistry = null;
@@ -44,7 +44,6 @@ public class ComponentRegistry {
                 javaRegistry = new ComponentRegistry( runtime );
                 rubyRegistry = JavaEmbedUtils.javaToRuby( runtime, javaRegistry );
                 runtime.getObject().setConstant( TORQUEBOX_COMPONENT_REGISTRY, rubyRegistry );
-                System.err.println( "DEFINE COMPONENT_REGISTRY for " + runtime + " by " + Thread.currentThread() );
             } else {
                 javaRegistry = (ComponentRegistry) JavaEmbedUtils.rubyToJava( rubyRegistry );
             }

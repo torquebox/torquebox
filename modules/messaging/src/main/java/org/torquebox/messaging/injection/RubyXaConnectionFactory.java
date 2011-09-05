@@ -21,10 +21,9 @@ package org.torquebox.messaging.injection;
 
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.injection.ConvertableRubyInjection;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class RubyXaConnectionFactory implements ConvertableRubyInjection {
 
@@ -38,8 +37,7 @@ public class RubyXaConnectionFactory implements ConvertableRubyInjection {
         if (!gemRequired.isTrue()) {
             return null;
         }
-        RubyModule connectionFactoryClass = ruby.getClassFromPath( "TorqueBox::Messaging::XaConnectionFactory" );
-        Object destination = JavaEmbedUtils.invokeMethod( ruby, connectionFactoryClass, "new", new Object[] { this.connectionFactory }, Object.class );
+        Object destination = RuntimeHelper.instantiate( ruby, "TorqueBox::Messaging::XaConnectionFactory", new Object[] { this.connectionFactory } );
         return destination;
 
     }

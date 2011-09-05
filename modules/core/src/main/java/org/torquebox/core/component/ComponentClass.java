@@ -20,10 +20,8 @@
 package org.torquebox.core.component;
 
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.core.util.ReflectionHelper;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class ComponentClass implements ComponentInstantiator {
 
@@ -55,7 +53,7 @@ public class ComponentClass implements ComponentInstantiator {
             runtime.getLoadService().load( this.requirePath + ".rb", false );
         }
         
-        return ReflectionHelper.instantiate( runtime, this.className, initParams );
+        return RuntimeHelper.instantiate( runtime, this.className, initParams );
     }
     
     public String toString() {

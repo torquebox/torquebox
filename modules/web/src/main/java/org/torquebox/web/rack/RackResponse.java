@@ -22,9 +22,8 @@ package org.torquebox.web.rack;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jruby.Ruby;
-import org.jruby.RubyClass;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class RackResponse {
     public static final String RESPONSE_HANDLER_RB = "org/torquebox/web/rack/response_handler";
@@ -39,9 +38,8 @@ public class RackResponse {
 
     public void respond(HttpServletResponse response) {
         Ruby ruby = rackResponse.getRuntime();
-        ruby.getLoadService().require( RESPONSE_HANDLER_RB );
-        RubyClass responseHandler = (RubyClass) ruby.getClassFromPath( RESPONSE_HANDLER_CLASS_NAME );
-        JavaEmbedUtils.invokeMethod( ruby, responseHandler, RESPONSE_HANDLER_METHOD_NAME, new Object[] { rackResponse, response }, Object.class );
+        RuntimeHelper.require( ruby, RESPONSE_HANDLER_RB );
+        RuntimeHelper.invokeClassMethod( ruby, RESPONSE_HANDLER_CLASS_NAME, RESPONSE_HANDLER_METHOD_NAME, new Object[] { rackResponse, response}); 
     }
 
 }

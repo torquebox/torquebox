@@ -26,9 +26,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.jboss.msc.inject.InjectionException;
 import org.jboss.msc.inject.Injector;
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.torquebox.core.injection.ConvertableRubyInjection;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class InjectionRegistry {
 
@@ -53,8 +52,7 @@ public class InjectionRegistry {
 
     public void merge(Ruby ruby) throws Exception {
         synchronized (ruby) {
-            RubyModule torqueboxRegistry = ruby.getClassFromPath( TORQUEBOX_REGISTRY_CLASS_NAME );
-            JavaEmbedUtils.invokeMethod( ruby, torqueboxRegistry, "merge!", new Object[] { getConvertedRegistry( ruby ) }, void.class );
+            RuntimeHelper.invokeClassMethod( ruby, TORQUEBOX_REGISTRY_CLASS_NAME, "merge!", new Object[] { getConvertedRegistry( ruby ) } );
         }
     }
 

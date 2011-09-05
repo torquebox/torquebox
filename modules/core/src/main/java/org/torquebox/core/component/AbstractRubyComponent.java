@@ -24,7 +24,7 @@ import java.util.Map;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.core.util.ReflectionHelper;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class AbstractRubyComponent implements RubyComponent {
 
@@ -56,7 +56,7 @@ public class AbstractRubyComponent implements RubyComponent {
     }
 
     protected Object _callRubyMethod(Object target, String method, Object... args) {
-        return ReflectionHelper.call( this.rubyComponent.getRuntime(), target, method, args );
+        return RuntimeHelper.call( this.rubyComponent.getRuntime(), target, method, args );
     }
 
     public Object _callRubyMethod(String method, Object... args) {
@@ -64,7 +64,7 @@ public class AbstractRubyComponent implements RubyComponent {
     }
 
     protected Object _callRubyMethodIfDefined(Object target, String method, Object... args) {
-        return ReflectionHelper.callIfPossible( this.rubyComponent.getRuntime(), target, method, args );
+        return RuntimeHelper.callIfPossible( this.rubyComponent.getRuntime(), target, method, args );
     }
 
     public Object _callRubyMethodIfDefined(String method, Object... args) {
