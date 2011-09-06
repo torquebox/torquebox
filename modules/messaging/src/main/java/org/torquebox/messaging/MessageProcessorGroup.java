@@ -49,10 +49,9 @@ import org.torquebox.core.runtime.RubyRuntimePool;
 
 public class MessageProcessorGroup implements Service<MessageProcessorGroup>, MessageProcessorGroupMBean {
 
-    public MessageProcessorGroup(ServiceRegistry registry, ServiceName baseServiceName, ClassLoader classLoader, String destinationName) {
+    public MessageProcessorGroup(ServiceRegistry registry, ServiceName baseServiceName, String destinationName) {
         this.serviceRegistry = registry;
         this.baseServiceName = baseServiceName;
-        this.classLoader = classLoader;
         this.destinationName = destinationName;
     }
 
@@ -98,8 +97,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
 
             @Override
             public void run() {
-                ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader( MessageProcessorGroup.this.classLoader );
                 ManagedReferenceFactory connectionFactoryManagedReferenceFactory = MessageProcessorGroup.this.connectionFactoryInjector.getValue();
                 ManagedReference connectionFactoryManagedReference = connectionFactoryManagedReferenceFactory.getReference();
                 HornetQConnectionFactory connectionFactory = (HornetQConnectionFactory) connectionFactoryManagedReference.getInstance();
@@ -110,7 +107,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
                 } catch (JMSException e) {
                     context.failed( new StartException( e ) );
                 } finally {
-                    Thread.currentThread().setContextClassLoader( originalClassLoader );
                     if (connectionFactoryManagedReference != null) {
                         connectionFactoryManagedReference.release();
                     }
@@ -241,7 +237,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private String destinationName;
     private RubyRuntimePool runtimePool;
 
-    private ClassLoader classLoader;
     private XAConnection connection;
     private Destination destination;
 

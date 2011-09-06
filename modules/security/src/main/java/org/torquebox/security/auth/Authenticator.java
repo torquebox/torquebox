@@ -75,6 +75,7 @@ public class Authenticator implements Service<Authenticator> {
     }
 
     protected void start() throws Exception {
+        // TODO what's up with this classloader?
         ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader( Authenticator.class.getClassLoader() );

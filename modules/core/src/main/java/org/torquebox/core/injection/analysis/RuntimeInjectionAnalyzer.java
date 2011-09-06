@@ -31,31 +31,25 @@ public class RuntimeInjectionAnalyzer {
             this.analyzer.analyze( proc, visitor );
             Set<Injectable> injectables = visitor.getInjectables();
             InjectionRegistry registry = new InjectionRegistry();
-            ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-            ClassLoader appCl = proc.getRuntime().getJRubyClassLoader().getParent();
-            try {
-                List<RuntimeInjectionListener> waitingListeners = new ArrayList<RuntimeInjectionListener>();
-                Thread.currentThread().setContextClassLoader( appCl );
-                for (Injectable each : injectables) {
-                    ServiceName eachName = each.getServiceName( this.serviceTarget, this.deploymentUnit );
-                    ServiceController<?> controller = this.serviceRegistry.getRequiredService( eachName );
-                    if (controller.getState() == State.UP) {
-                        Object injectedValue = controller.getValue();
-                        registry.getInjector( each.getKey() ).inject( injectedValue );
-                    } else {
-                        RuntimeInjectionListener listener = new RuntimeInjectionListener( controller, each.getKey() );
-                        controller.addListener( listener );
-                        controller.setMode( Mode.ACTIVE );
-                        waitingListeners.add( listener );
-                    }
+
+            List<RuntimeInjectionListener> waitingListeners = new ArrayList<RuntimeInjectionListener>();
+            for (Injectable each : injectables) {
+                ServiceName eachName = each.getServiceName( this.serviceTarget, this.deploymentUnit );
+                ServiceController<?> controller = this.serviceRegistry.getRequiredService( eachName );
+                if (controller.getState() == State.UP) {
+                    Object injectedValue = controller.getValue();
+                    registry.getInjector( each.getKey() ).inject( injectedValue );
+                } else {
+                    RuntimeInjectionListener listener = new RuntimeInjectionListener( controller, each.getKey() );
+                    controller.addListener( listener );
+                    controller.setMode( Mode.ACTIVE );
+                    waitingListeners.add( listener );
                 }
-                for (RuntimeInjectionListener each : waitingListeners) {
-                    each.waitForInjectableness();
-                    Object value = each.getValue();
-                    registry.getInjector( each.getKey() ).inject( value );
-                }
-            } finally {
-                Thread.currentThread().setContextClassLoader( originalCl );
+            }
+            for (RuntimeInjectionListener each : waitingListeners) {
+                each.waitForInjectableness();
+                Object value = each.getValue();
+                registry.getInjector( each.getKey() ).inject( value );
             }
             registry.merge( proc.getRuntime() );
         }

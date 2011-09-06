@@ -25,6 +25,7 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jruby.Ruby;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
+import org.torquebox.core.util.RuntimeHelper;
 
 /**
  * A singleton (per-AS) service providing a "global" Ruby interpreter.
@@ -81,7 +82,7 @@ public class GlobalRuby implements GlobalRubyMBean, Service<GlobalRuby> {
             Thread.sleep( 50 );
         }
         
-        return this.runtime.evalScriptlet( script );
+        return RuntimeHelper.evalScriptlet( this.runtime, script );
     }
 
     /**

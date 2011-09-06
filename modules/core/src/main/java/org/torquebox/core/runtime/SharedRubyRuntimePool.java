@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.jruby.Ruby;
 import org.torquebox.core.pool.SharedPool;
+import org.torquebox.core.util.RuntimeHelper;
 
 /**
  * Ruby interpreter pool which shares a single {@link Ruby} instance.
@@ -104,7 +105,7 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
         
         try {
             ruby = borrowRuntime();
-            return ruby.evalScriptlet( code );
+            return RuntimeHelper.evalScriptlet( ruby, code );
         } finally {
             if ( ruby != null ) {
                 returnRuntime( ruby );

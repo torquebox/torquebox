@@ -32,6 +32,7 @@ import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.web.rack.RackApplicationMetaData;
 import org.torquebox.web.rack.RackRuntimeInitializer;
 
@@ -71,7 +72,7 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
         String scriptLocationBase = new URL( getRailsRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
         makeAutoloadPathsAvailable( ruby );
-        ruby.executeScript( createBoot( getRailsRoot() ), scriptLocationBase + "-boot.rb" );
+        RuntimeHelper.executeScript( ruby, createBoot( getRailsRoot() ), scriptLocationBase + "-boot.rb" );
     }
 
     protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {

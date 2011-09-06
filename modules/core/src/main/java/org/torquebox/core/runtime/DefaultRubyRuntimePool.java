@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.jruby.Ruby;
 import org.torquebox.core.pool.ManagedPool;
+import org.torquebox.core.util.RuntimeHelper;
 
 /**
  * Ruby interpreter pool of discrete, non-shared interpreters.
@@ -77,7 +78,7 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
         
         try {
             ruby = borrowRuntime();
-            return ruby.evalScriptlet( code );
+            return RuntimeHelper.evalScriptlet( ruby, code  );
         } finally {
             if ( ruby != null ) {
                 returnRuntime( ruby );

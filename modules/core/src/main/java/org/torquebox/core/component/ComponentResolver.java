@@ -27,6 +27,7 @@ import org.jboss.msc.inject.Injector;
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.injection.analysis.Injectable;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class ComponentResolver {
     
@@ -44,8 +45,8 @@ public class ComponentResolver {
             rubyComponent = registry.lookup( this.componentName );
         } else {
         	// not yet sure this is needed - reloading is broken with and without the next two lines
-        	runtime.evalScriptlet( "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
-        	runtime.evalScriptlet( "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
+        	RuntimeHelper.evalScriptlet( runtime, "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
+        	RuntimeHelper.evalScriptlet( runtime, "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
         }
 
         if (rubyComponent == null) {
