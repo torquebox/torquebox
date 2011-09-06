@@ -93,7 +93,7 @@ public class RuntimeHelper {
             RuntimeContext.clearCurrentRuntime();
         }
     }
-    
+
     public static Object callIfPossible(Ruby ruby, Object target, String name, Object[] parameters) {
         try {
             RuntimeContext.setCurrentRuntime( ruby );
@@ -110,16 +110,16 @@ public class RuntimeHelper {
             RuntimeContext.clearCurrentRuntime();
         }
     }
-    
+
     public static Object invokeClassMethod(Ruby ruby, String className, String name, Object[] parameters) {
         RubyModule module = ruby.getClassFromPath( className );
         return call( ruby, module, name, parameters );
     }
-    
+
     public static void require(Ruby ruby, String requirement) {
         try {
             RuntimeContext.setCurrentRuntime( ruby );
-            ruby.evalScriptlet( "require %q(" + requirement +  ")" );
+            ruby.evalScriptlet( "require %q(" + requirement + ")" );
         } finally {
             RuntimeContext.clearCurrentRuntime();
         }
@@ -128,7 +128,16 @@ public class RuntimeHelper {
     public static IRubyObject instantiate(Ruby ruby, String className) {
         return instantiate( ruby, className, new Object[] {} );
     }
-    
+
+    public static IRubyObject executeScript(Ruby ruby, String code, String location) {
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            return ruby.executeScript( code, location );
+        } finally {
+            RuntimeContext.clearCurrentRuntime();
+        }
+    }
+
     public static RubyThread currentThread(Ruby ruby) {
         return (RubyThread) invokeClassMethod( ruby, "Thread", "current", EMPTY_OBJECT_ARRAY );
     }
@@ -149,5 +158,5 @@ public class RuntimeHelper {
         }
     }
 
-    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[]{};
+    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 }

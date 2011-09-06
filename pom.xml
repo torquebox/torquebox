@@ -354,7 +354,7 @@
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
 
-    <version.org.projectodd.stilts>0.1.17</version.org.projectodd.stilts>
+    <version.org.projectodd.stilts>0.1.18</version.org.projectodd.stilts>
 
     <version.org.hibernate.search>3.4.0.Final</version.org.hibernate.search>
     <version.org.hibernate.commons.annotations>3.2.0.Final</version.org.hibernate.commons.annotations>
@@ -365,6 +365,17 @@
   </properties>
 
   <repositories>
+    <repository>
+      <id>jboss-third-party-releases</id>
+      <name>JBoss 3rd Party Releases</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public-thirdparty-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>jboss-incremental</id>
       <name>JBoss AS Incremental Builds</name>
