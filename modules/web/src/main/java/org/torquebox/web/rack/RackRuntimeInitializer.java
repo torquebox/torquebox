@@ -24,6 +24,7 @@ import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.runtime.RuntimeInitializer;
+import org.torquebox.core.util.RuntimeHelper;
 
 /**
  * {@link RuntimeInitializer} for Ruby Rack applications.
@@ -48,8 +49,8 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
 
     @Override
     public void initialize(Ruby ruby) throws Exception {
-        ruby.evalScriptlet( "require %(torquebox-web)" );
-        ruby.evalScriptlet( getInitializerScript() );
+        RuntimeHelper.require(  ruby, "torquebox-web" );
+        RuntimeHelper.evalScriptlet( ruby, getInitializerScript() );
         ruby.setCurrentDirectory( this.rubyAppMetaData.getRoot().getPhysicalFile().getCanonicalPath() );
     }
 

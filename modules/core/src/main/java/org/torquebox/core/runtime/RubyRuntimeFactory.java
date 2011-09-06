@@ -353,7 +353,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private void performRuntimeInitialization(Ruby runtime) {
-        runtime.evalScriptlet( "require %q(org/torquebox/core/runtime/runtime_initialization)\n" );
+        RuntimeHelper.require( runtime, "org/torquebox/core/runtime/runtime_initialization" );
         defineVersions( runtime );
         setApplicationName( runtime );
 
@@ -375,12 +375,13 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             env_fix.append( "update_real_env_attr = org.jruby.RubyGlobal::StringOnlyRubyHash.java_class.declared_fields.find { |f| f.name == 'updateRealENV' }\n" );
             env_fix.append( "update_real_env_attr.accessible = true\n" );
             env_fix.append( "update_real_env_attr.set_value(ENV.to_java, false)\n" );;
-            runtime.evalScriptlet( env_fix.toString() );
+            RuntimeHelper.evalScriptlet( runtime, env_fix.toString() );
         }
 
-        runtime.getLoadService().require( "rubygems" );
-        runtime.evalScriptlet( "require %q(torquebox-vfs)" );
-        runtime.evalScriptlet( "require %q(torquebox-core)" );
+        RuntimeHelper.require(  runtime, "rubygems" );
+        RuntimeHelper.require(  runtime, "torquebox-vfs" );
+        RuntimeHelper.require(  runtime, "torquebox-core" );
+        
         injectServiceRegistry( runtime );
     }
 

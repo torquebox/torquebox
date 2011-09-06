@@ -117,9 +117,22 @@ public class RuntimeHelper {
     }
 
     public static void require(Ruby ruby, String requirement) {
+        evalScriptlet( ruby, "require %q(" + requirement + ")" );
+    }
+
+    public static IRubyObject evalScriptlet(Ruby ruby, String script) {
         try {
             RuntimeContext.setCurrentRuntime( ruby );
-            ruby.evalScriptlet( "require %q(" + requirement + ")" );
+            return ruby.evalScriptlet( script );
+        } finally {
+            RuntimeContext.clearCurrentRuntime();
+        }
+    }
+    
+    public static IRubyObject executeScript(Ruby ruby, String script, String location) {
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            return ruby.executeScript( script, location );
         } finally {
             RuntimeContext.clearCurrentRuntime();
         }
@@ -127,15 +140,6 @@ public class RuntimeHelper {
 
     public static IRubyObject instantiate(Ruby ruby, String className) {
         return instantiate( ruby, className, new Object[] {} );
-    }
-
-    public static IRubyObject executeScript(Ruby ruby, String code, String location) {
-        try {
-            RuntimeContext.setCurrentRuntime( ruby );
-            return ruby.executeScript( code, location );
-        } finally {
-            RuntimeContext.clearCurrentRuntime();
-        }
     }
 
     public static RubyThread currentThread(Ruby ruby) {

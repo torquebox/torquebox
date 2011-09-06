@@ -33,7 +33,7 @@ public class RubyXaConnectionFactory implements ConvertableRubyInjection {
     
     @Override
     public Object convert(Ruby ruby) throws Exception {
-        IRubyObject gemRequired = ruby.evalScriptlet( "begin; require %q(torquebox-messaging); true; rescue LoadError; false; end" );
+        IRubyObject gemRequired = RuntimeHelper.evalScriptlet( ruby, "begin; require %q(torquebox-messaging); true; rescue LoadError; false; end" );
         if (!gemRequired.isTrue()) {
             return null;
         }
