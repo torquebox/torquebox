@@ -38,6 +38,8 @@ public class JsonExternalizer implements org.infinispan.marshall.Externalizer<IR
 	
     protected String toJSON(IRubyObject object) {
         RuntimeHelper.require( getCurrentRuntime(), "json" );
+        System.err.println(">>>>>>>> LANCE: converting to json: " + object.asString());
+        System.err.println(">>>>>>>> LANCE: using runtime: " + getCurrentRuntime());
         return (String) JavaEmbedUtils.invokeMethod( getCurrentRuntime(), object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
     }
 
