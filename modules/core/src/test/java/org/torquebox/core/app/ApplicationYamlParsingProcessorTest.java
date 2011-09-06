@@ -21,14 +21,12 @@ package org.torquebox.core.app;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.*;
-
-import java.net.URL;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import org.jboss.logging.Logger;
 
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
