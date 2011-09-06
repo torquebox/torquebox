@@ -27,7 +27,7 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-web</artifactId>
+      <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

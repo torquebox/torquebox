@@ -77,7 +77,6 @@
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-query</artifactId>
       <version>${version.org.infinispan}</version>
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>

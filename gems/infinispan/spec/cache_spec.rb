@@ -115,12 +115,10 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should store java objects" do
-    entry = org.torquebox.web.infinispan.datamapper.Entry.new
-    entry.model = "Snuffleuffagus"
-    entry.data  = "{color: brown}"
-    entry.key   = "Snuffleuffagus/1"
-    @cache.put(entry.key, entry)
-    @cache.get(entry.key).should_not be_nil
+    entry = java.util.HashMap.new
+    entry.put( "Snuffleuffagus", "{color: brown}" )
+    @cache.put('Snuffleuffagus/1', entry)
+    @cache.get('Snuffleuffagus/1').should_not be_nil
   end
 
   it "should increment a sequence" do
@@ -186,7 +184,7 @@ describe TorqueBox::Infinispan::Cache do
       @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
       @configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
       @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string )
-      @index_dir      = File.join( File.dirname(__FILE__), '..', 'org.torquebox.web.infinispan.datamapper.Entry' )
+      @index_dir      = File.join( File.dirname(__FILE__), '..', 'java.util.HashMap' )
       FileUtils.mkdir @configured_dir 
       FileUtils.mkdir @date_cfg_dir 
     end
@@ -200,16 +198,16 @@ describe TorqueBox::Infinispan::Cache do
 
     it "should persist the data with a default directory" do
       cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => true )
-      entry = org.torquebox.web.infinispan.datamapper.Entry.new
-      entry.data = "Hello world"
+      entry = java.util.HashMap.new
+      entry.put( "Hello", "world" )
       cache.put('foo', entry)
       File.exist?(@default_dir).should be_true
     end
 
     it "should persist the data with a configured directory" do
       cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => @configured_dir.to_s )
-      entry = org.torquebox.web.infinispan.datamapper.Entry.new
-      entry.data = "Hello world"
+      entry = java.util.HashMap.new
+      entry.put( "Hello", "world" )
       cache.put('foo', entry)
       File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
     end

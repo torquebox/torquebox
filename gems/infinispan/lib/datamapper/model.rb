@@ -19,7 +19,6 @@ require 'json'
 
 
 module Infinispan
-  java_import 'org.torquebox.web.infinispan.datamapper.ModelClassLoader'
   JVoid   = java.lang.Void::TYPE
   
   module Model
