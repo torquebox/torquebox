@@ -74,10 +74,8 @@ public class MessageProcessorDeployer implements DeploymentUnitProcessor {
 
         final String name = metaData.getName();
 
-        ClassLoader classLoader = unit.getAttachment( Attachments.MODULE ).getClassLoader();
-
         ServiceName baseServiceName = MessagingServices.messageProcessor( unit, name );
-        MessageProcessorGroup service = new MessageProcessorGroup( phaseContext.getServiceRegistry(), baseServiceName, classLoader, metaData.getDestinationName() );
+        MessageProcessorGroup service = new MessageProcessorGroup( phaseContext.getServiceRegistry(), baseServiceName, metaData.getDestinationName() );
         service.setConcurrency( metaData.getConcurrency() );
         service.setDurable( metaData.getDurable() );
         service.setMessageSelector( metaData.getMessageSelector() );
