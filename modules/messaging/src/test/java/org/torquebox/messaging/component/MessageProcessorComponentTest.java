@@ -35,7 +35,7 @@ import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.core.util.ReflectionHelper;
+import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
 
 public class MessageProcessorComponentTest extends AbstractRubyTestCase {
@@ -47,7 +47,7 @@ public class MessageProcessorComponentTest extends AbstractRubyTestCase {
         URL rb = getClass().getResource( "test_message_processor.rb" );
         this.ruby.getLoadService().require( rb.toString() );
 
-        this.rubyProcessor = ReflectionHelper.instantiate( ruby, "TestMessageProcessor" );
+        this.rubyProcessor = RuntimeHelper.instantiate( ruby, "TestMessageProcessor" );
         assertNotNull( rubyProcessor );
     }
     
@@ -60,12 +60,12 @@ public class MessageProcessorComponentTest extends AbstractRubyTestCase {
         Message message = mock( TextMessage.class );
         processor.process( message );
         
-        List messages = (List) ReflectionHelper.getIfPossible( ruby, rubyProcessor, "messages" );
+        List messages = (List) RuntimeHelper.getIfPossible( ruby, rubyProcessor, "messages" );
         assertNotNull( messages );
         assertFalse( messages.isEmpty() );
         assertEquals( 1, messages.size() );
         
-        Message processedMessage = (Message) ReflectionHelper.getIfPossible( ruby, messages.get( 0 ), "jms_message" );
+        Message processedMessage = (Message) RuntimeHelper.getIfPossible( ruby, messages.get( 0 ), "jms_message" );
 
         assertSame( message, processedMessage );
     }

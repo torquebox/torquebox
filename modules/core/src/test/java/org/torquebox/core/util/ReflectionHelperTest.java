@@ -48,7 +48,7 @@ public class ReflectionHelperTest {
         assertNotNull( cls );
         Object target = JavaEmbedUtils.invokeMethod( this.ruby, cls, "new", new Object[] {}, Object.class );
         assertNotNull( target );
-        ReflectionHelper.setIfPossible( ruby, target, "the_property", value );
+        RuntimeHelper.setIfPossible( ruby, target, "the_property", value );
         Object fetched = JavaEmbedUtils.invokeMethod( this.ruby, target, "the_property", new Object[] {}, Object.class );
         assertEquals( "unsettable", fetched );
     }
@@ -61,7 +61,7 @@ public class ReflectionHelperTest {
         assertNotNull( cls );
         Object target = JavaEmbedUtils.invokeMethod( this.ruby, cls, "new", new Object[] {}, Object.class );
         assertNotNull( target );
-        ReflectionHelper.setIfPossible( ruby, target, "the_property", value );
+        RuntimeHelper.setIfPossible( ruby, target, "the_property", value );
         Object fetched = JavaEmbedUtils.invokeMethod( this.ruby, target, "the_property", new Object[] {}, Object.class );
         assertEquals( value, fetched );
     }

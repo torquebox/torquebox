@@ -21,6 +21,7 @@ package org.torquebox.core.util;
 
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
+import org.jruby.RubyThread;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.runtime.RuntimeContext;
@@ -30,7 +31,7 @@ import org.torquebox.core.runtime.RuntimeContext;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class ReflectionHelper {
+public class RuntimeHelper {
 
     /**
      * Set a property on a Ruby object, if possible.
@@ -109,9 +110,27 @@ public class ReflectionHelper {
             RuntimeContext.clearCurrentRuntime();
         }
     }
+    
+    public static Object invokeClassMethod(Ruby ruby, String className, String name, Object[] parameters) {
+        RubyModule module = ruby.getClassFromPath( className );
+        return call( ruby, module, name, parameters );
+    }
+    
+    public static void require(Ruby ruby, String requirement) {
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            ruby.evalScriptlet( "require %q(" + requirement +  ")" );
+        } finally {
+            RuntimeContext.clearCurrentRuntime();
+        }
+    }
 
     public static IRubyObject instantiate(Ruby ruby, String className) {
         return instantiate( ruby, className, new Object[] {} );
+    }
+    
+    public static RubyThread currentThread(Ruby ruby) {
+        return (RubyThread) invokeClassMethod( ruby, "Thread", "current", EMPTY_OBJECT_ARRAY );
     }
 
     public static IRubyObject instantiate(Ruby ruby, String className, Object[] parameters) {
@@ -130,4 +149,5 @@ public class ReflectionHelper {
         }
     }
 
+    private static final Object[] EMPTY_OBJECT_ARRAY = new Object[]{};
 }

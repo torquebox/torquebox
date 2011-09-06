@@ -23,10 +23,9 @@ import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 
 import org.jruby.Ruby;
-import org.jruby.RubyModule;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.injection.ConvertableRubyInjection;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class LiveDestination implements ConvertableRubyInjection {
 
@@ -49,8 +48,10 @@ public class LiveDestination implements ConvertableRubyInjection {
         if (!gemRequired.isTrue()) {
             return null;
         }
-        RubyModule destinationClass = ruby.getClassFromPath( "TorqueBox::Messaging::" + getType() );
-        Object destination = JavaEmbedUtils.invokeMethod( ruby, destinationClass, "new", new Object[] { this.destination, this.connectionFactory }, Object.class );
+        
+        String destinationClassName = "TorqueBox::Messaging::" + getType();
+        Object destination = RuntimeHelper.instantiate( ruby, destinationClassName, new Object[] { this.destination, this.connectionFactory } );
+        
         return destination;
     }
     
