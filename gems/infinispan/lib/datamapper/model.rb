@@ -116,17 +116,13 @@ module Infinispan
         annotation = {
           org.hibernate.search.annotations.Indexed => {},
           org.hibernate.search.annotations.ProvidedId => {},
-          org.infinispan.marshall.SerializeWith => { "value" => org.torquebox.web.infinispan.datamapper.Externalizer.java_class }
+          org.infinispan.marshall.SerializeWith => { "value" => org.torquebox.core.marshalling.JsonExternalizer.java_class }
         }
         add_class_annotation( annotation )
 
         # Wonder twin powers... ACTIVATE!
         become_java!
         puts "Became java: #{self.inspect}"
-
-        # Register with the externalizer
-        org.torquebox.web.infinispan.datamapper.Externalizer.setSerializer(java_class.name, Infinispan::Model::Externalizer.new)
-
 
         @@mapped = true
       end
