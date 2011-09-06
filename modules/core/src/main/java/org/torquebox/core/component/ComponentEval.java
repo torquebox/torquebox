@@ -21,6 +21,7 @@ package org.torquebox.core.component;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.core.util.RuntimeHelper;
 
 public class ComponentEval implements ComponentInstantiator {
     
@@ -28,36 +29,27 @@ public class ComponentEval implements ComponentInstantiator {
     private String location;
 
     public ComponentEval() {
-        
+
     }
-    
+
     public void setCode(String code) {
         this.code = code;
     }
-    
+
     public String getCode() {
         return this.code;
     }
-    
+
     public void setLocation(String location) {
         this.location = location;
     }
-    
+
     public String getLocation() {
         return this.location;
     }
-    
+
     public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
-        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader( runtime.getJRubyClassLoader().getParent() );
-            IRubyObject component = runtime.executeScript( this.code, this.location );
-            return component;
-        } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
-        }
+        return RuntimeHelper.executeScript( runtime, this.code, this.location );
     }
-    
-    
 
 }
