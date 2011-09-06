@@ -1,4 +1,4 @@
-package org.torquebox.web.infinispan.datamapper;
+package org.torquebox.core.marshalling;
 
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -9,7 +9,7 @@ import org.jruby.Ruby;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 
-public class Externalizer implements org.infinispan.marshall.Externalizer<IRubyObject> {
+public class JsonExternalizer implements org.infinispan.marshall.Externalizer<IRubyObject> {
 
 	private static final long serialVersionUID = 1L;
 	private static Ruby ruby_ = null;
@@ -19,7 +19,7 @@ public class Externalizer implements org.infinispan.marshall.Externalizer<IRubyO
 	public IRubyObject readObject(ObjectInput input) throws IOException, ClassNotFoundException {
 		IRubyObject theThing 			= null;
 		String theType 					= (String) input.readObject();
-		IRubyObject serializer 			= Externalizer.getSerializer(theType);
+		IRubyObject serializer 			= JsonExternalizer.getSerializer(theType);
 		if (serializer != null) {
 			// Deserialize the object
 			String[] args = new String[1];
@@ -36,7 +36,7 @@ public class Externalizer implements org.infinispan.marshall.Externalizer<IRubyO
 			throws IOException {
 		Object rubyClass = JavaEmbedUtils.invokeMethod(getRuby(), object, "class", null, Object.class);
 		String theType = (String) JavaEmbedUtils.invokeMethod(getRuby(), rubyClass, "name", null, String.class);
-		IRubyObject serializer = Externalizer.getSerializer(theType);
+		IRubyObject serializer = JsonExternalizer.getSerializer(theType);
 		if (serializer != null) {
 			// Serialize the type
 			output.writeObject(theType);
@@ -51,19 +51,19 @@ public class Externalizer implements org.infinispan.marshall.Externalizer<IRubyO
 	
 	public static void setSerializer(String key, IRubyObject serializer) {
 		System.err.println("[INFO] Setting infinispan serializer for Ruby type: " + key);
-		Externalizer.serializers_.put(key, serializer);
+		JsonExternalizer.serializers_.put(key, serializer);
 	}
 	
 	public static IRubyObject getSerializer(String key) {
-		return Externalizer.serializers_.get(key);
+		return JsonExternalizer.serializers_.get(key);
 	}
 	
 	public static void setRuby(Ruby ruby) {
-		Externalizer.ruby_ = ruby;
+		JsonExternalizer.ruby_ = ruby;
 	}
 	
 	public static Ruby getRuby() {
-		return Externalizer.ruby_;
+		return JsonExternalizer.ruby_;
 	}
 
 }
