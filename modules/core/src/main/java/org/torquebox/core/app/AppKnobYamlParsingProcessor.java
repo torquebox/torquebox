@@ -32,12 +32,13 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.MountHandle;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.as.server.deployment.module.TempFileProviderService;
-import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
+
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.util.DeprecationLogger;
 
 public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 
@@ -109,15 +110,19 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
         if (matches.size() == 1) {
             file = matches.get( 0 );
             if (file.getName().endsWith( "-rails.yml" )) {
-                log.warn( "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + file );
+                logDeprecation( unit, "Usage of -rails.yml is deprecated, please rename to -knob.yml: " + file );
             } else if (file.getName().endsWith( "-rack.yml" )) {
-                log.warn( "Usage of -rack.yml is deprecated, please rename to -knob.yml: " + file );
+                logDeprecation( unit, "Usage of -rack.yml is deprecated, please rename to -knob.yml: " + file );
             }
         }
 
         return file;
     }
 
+    protected void logDeprecation(DeploymentUnit unit, String message) {
+        DeprecationLogger.getLogger( unit ).append( message );
+    }
+    
     private VirtualFileFilter knobFilter = (new VirtualFileFilter() {
             public boolean accepts(VirtualFile file) {
                 return file.getName().endsWith( "-knob.yml" ) ||
@@ -126,7 +131,6 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
             }
         });
 
-    private static final Logger log = Logger.getLogger( "org.torquebox.core.app" );
 }
 
 

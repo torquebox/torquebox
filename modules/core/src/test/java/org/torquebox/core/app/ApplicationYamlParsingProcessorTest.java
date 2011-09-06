@@ -21,13 +21,16 @@ package org.torquebox.core.app;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import java.net.URL;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.util.DeprecationLogger;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 import org.torquebox.test.as.MockDeploymentPhaseContext;
 import org.torquebox.test.as.MockDeploymentUnit;
@@ -43,13 +46,7 @@ public class ApplicationYamlParsingProcessorTest extends AbstractDeploymentProce
 
     @Test
     public void testSimpleTorqueBoxYml() throws Exception {
-        URL torqueboxYml = getClass().getResource( "simple-torquebox.yml" );
-
-        
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", torqueboxYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "simple-torquebox.yml" );
         
         TorqueBoxMetaData metaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
         assertNotNull( metaData );
@@ -60,6 +57,21 @@ public class ApplicationYamlParsingProcessorTest extends AbstractDeploymentProce
         assertEquals( RubyApplicationMetaData.DEFAULT_ENVIRONMENT_NAME, rubyAppMetaData.getEnvironmentName() );
         
         assertEquals( "torquebox", rubyAppMetaData.getApplicationName() );
+    }
+
+    @Test
+    public void testTorqueBoxYmlWithAppEnv() throws Exception {
+        MockDeploymentPhaseContext context = setupResourceAsTorqueboxYml( "app-env-torquebox.yml" );
+        MockDeploymentUnit unit = context.getMockDeploymentUnit();
+        
+        DeprecationLogger logger = mock( DeprecationLogger.class );
+        unit.putAttachment( DeprecationLogger.ATTACHMENT_KEY, logger );
+
+        deploy( context );
+        verify( logger ).append( anyString() );
+
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        assertEquals( "biscuit", rubyAppMetaData.getEnvironmentName() );
     }
 
 }

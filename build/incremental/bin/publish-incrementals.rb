@@ -110,6 +110,10 @@ class Publisher
     File.dirname(__FILE__) + '/../../dist/target/torquebox-dist-bin.zip'
   end
 
+  def dist_modules_path()
+    File.dirname(__FILE__) + '/../../dist/target/torquebox-dist-modules.zip'
+  end
+
   def json_metadata_path()
     File.dirname(__FILE__) + '/../../dist/target/build-metadata.json'
   end
@@ -135,6 +139,7 @@ class Publisher
     dav_put( build_base_url + "/#{File.basename( json_metadata_path ) }", json_metadata_path )
 
     dav_put( build_base_url  + "/#{File.basename( dist_path ) }", dist_path )
+    dav_put( build_base_url  + "/#{File.basename( dist_modules_path ) }", dist_modules_path )
   end
 
   def publish_gem_repo()

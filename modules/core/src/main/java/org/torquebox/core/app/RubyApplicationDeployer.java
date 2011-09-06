@@ -31,6 +31,8 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.value.ImmediateValue;
 
 /** Deploys a RubyApplication, primarily for JMX access.  Not very functional.
@@ -63,7 +65,8 @@ public class RubyApplicationDeployer implements DeploymentUnitProcessor {
         
         MBeanRegistrationService<RubyApplicationMBean> mbeanService = new MBeanRegistrationService<RubyApplicationMBean>( mbeanName, new ImmediateValue<RubyApplicationMBean>( application ) );
         phaseContext.getServiceTarget().addService( serviceName.append( "mbean" ), mbeanService )
-                .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                .setInitialMode( Mode.PASSIVE )
                 .install();
 
     }

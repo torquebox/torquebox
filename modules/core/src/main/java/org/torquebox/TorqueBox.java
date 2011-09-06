@@ -28,7 +28,9 @@ import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+
 import org.torquebox.core.util.BuildInfo;
+import org.torquebox.core.util.JRubyConstants;
 
 /**
  * Primary marker and build/version information provider.
@@ -116,7 +118,7 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
 
         List<String> otherCompoments = this.buildInfo.getComponentNames();
         otherCompoments.remove( "TorqueBox" );
-        log.info( "  featuring:" );
+        log.info( "  built with:" );
         for (String name : otherCompoments) {
             String version = this.buildInfo.get( name, "version" );
             if (version != null) {
@@ -124,6 +126,17 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
             }
         }
 
+    }
+
+    public void verifyJRubyVersion(Logger log) {
+        String jrubyVersion = this.buildInfo.get( "JRuby", "version" );
+        String jarVersion = JRubyConstants.getVersion();
+
+        if (!jarVersion.equals( jrubyVersion )) {
+            log.warn( "WARNING: TorqueBox was built and tested with JRuby " + 
+                      jrubyVersion + " and you are running JRuby " + 
+                      jarVersion + ". You may experience unexpected results. Side effects may include: itching, sleeplessness, and irritability." );
+        }
     }
 
     @Override

@@ -189,7 +189,7 @@ module TorqueBox
         d = {}
         d['application'] = {}
         d['application']['root'] = root
-        d['application']['env'] = env.to_s if env
+        d['environment']['RACK_ENV'] = env.to_s if env
 
         if !context_path &&
             !(File.exists?( File.join( root, "torquebox.yml" )) ||

@@ -19,23 +19,16 @@
 
 package org.torquebox.core.app;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.jboss.as.server.deployment.DeploymentException;
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.Value;
-import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.PoolMetaData;
-import org.torquebox.core.runtime.RubyRuntimeFactory;
-import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.runtime.RuntimePoolDeployer;
 import org.torquebox.core.runtime.SharedRubyRuntimePool;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;

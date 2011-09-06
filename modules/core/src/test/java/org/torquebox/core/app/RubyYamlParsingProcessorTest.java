@@ -19,9 +19,11 @@
 
 package org.torquebox.core.app;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+
 import java.net.URL;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
@@ -29,8 +31,6 @@ import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 import org.torquebox.test.as.MockDeploymentPhaseContext;
 import org.torquebox.test.as.MockDeploymentUnit;
-
-import static org.junit.Assert.*;
 
 public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     

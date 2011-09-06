@@ -85,14 +85,13 @@ public abstract class AbstractDeploymentProcessorTestCase extends AbstractTorque
     }
 
     protected MockDeploymentUnit deployResourceAsTorqueboxYml(String resource) throws Exception {
+        MockDeploymentPhaseContext context = setupResourceAsTorqueboxYml( resource );
+        deploy(context);
+        return context.getMockDeploymentUnit();
+    }
+    protected MockDeploymentPhaseContext setupResourceAsTorqueboxYml(String resource) throws Exception {
         URL yml = getClass().getResource( resource );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", yml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
-        deploy( phaseContext );
-
-        return unit;
+        return createPhaseContext( "torquebox.yml", yml );
     }
 
 }

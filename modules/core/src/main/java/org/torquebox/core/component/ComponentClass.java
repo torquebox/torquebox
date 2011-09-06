@@ -23,6 +23,7 @@ import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.torquebox.core.util.ReflectionHelper;
 
 public class ComponentClass implements ComponentInstantiator {
 
@@ -49,31 +50,12 @@ public class ComponentClass implements ComponentInstantiator {
         return this.requirePath;
     }
 
-    public RubyModule getComponentClass(Ruby runtime) {
+    public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
         if (this.requirePath != null) {
             runtime.getLoadService().load( this.requirePath + ".rb", false );
         }
-
-        RubyModule componentClass = (RubyModule) runtime.getClassFromPath( this.className );
-
-        if (componentClass == null || componentClass.isNil()) {
-            return null;
-        }
-
-        return componentClass;
-    }
-
-    public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
-        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-        try {
-            Thread.currentThread().setContextClassLoader( runtime.getJRubyClassLoader().getParent() );
-            RubyModule rubyClass = getComponentClass( runtime );
-            IRubyObject component = (IRubyObject) JavaEmbedUtils.invokeMethod( runtime, rubyClass, "new", initParams, IRubyObject.class );
-            return component;
-        } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
-
-        }
+        
+        return ReflectionHelper.instantiate( runtime, this.className, initParams );
     }
     
     public String toString() {

@@ -87,9 +87,12 @@ public class TorqueBoxMetaData {
 
     @SuppressWarnings("unchecked")
     public String getApplicationRoot() {
-        Map<String, String> applicationSection = (Map<String, String>) getSection( "application" );
-        if (applicationSection != null) {
-            return getOneOf( applicationSection, "root", "RAILS_ROOT", "RACK_ROOT" );
+        return findApplicationRoot( (Map<String, String>) getSection( "application" ) );
+    }
+
+    public static String findApplicationRoot(Map<String, String> section) {
+        if (section != null) {
+            return getOneOf( section, "root", "RAILS_ROOT", "RACK_ROOT" );
         }
         return null;
     }
@@ -120,14 +123,17 @@ public class TorqueBoxMetaData {
 
     @SuppressWarnings("unchecked")
     public String getApplicationEnvironment() {
-        Map<String, String> applicationSection = (Map<String, String>) getSection( "application" );
-        if (applicationSection != null) {
-            return getOneOf( applicationSection, "env", "RAILS_ENV", "RACK_ENV" );
+        return findApplicationEnvironment( (Map<String, String>) getSection( "application" ) );
+    }
+
+    public static String findApplicationEnvironment(Map<String, String> section) {
+        if (section != null) {
+            return getOneOf( section, "env", "RAILS_ENV", "RACK_ENV" );
         }
         return null;
     }
 
-    protected String getOneOf(Map<String, String> map, String... keys) {
+    protected static String getOneOf(Map<String, String> map, String... keys) {
         for (String each : keys) {
             for (String key : map.keySet()) {
                 if (each.equalsIgnoreCase( key )) {

@@ -35,6 +35,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jruby.Ruby;
@@ -100,8 +101,9 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
             MBeanRegistrationService<BasicRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<BasicRubyRuntimePoolMBean>( mbeanName );
             phaseContext.getServiceTarget().addService( name.append( "mbean" ), mbeanService )
-                    .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                    .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                     .addDependency( name, BasicRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
+                    .setInitialMode( Mode.PASSIVE )
                     .install();
 
         } else {

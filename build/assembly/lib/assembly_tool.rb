@@ -224,6 +224,26 @@ class AssemblyTool
     doc.root.insert_after('extensions', props) unless props.parent
   end
 
+  def add_xa_datasource(doc)
+    string = <<-EOF
+      <xa-datasource jndi-name="java:jboss/datasources/ExampleXADS" pool-name="ExampleXADS">
+        <driver>h2</driver>
+        <xa-datasource-property name="URL">jdbc:h2:mem:test</xa-datasource-property>
+        <xa-pool>
+          <min-pool-size>10</min-pool-size>
+          <max-pool-size>20</max-pool-size>
+          <prefill>true</prefill>
+        </xa-pool>
+        <security>
+          <user-name>sa</user-name>
+          <password>sa</password>
+        </security>
+      </xa-datasource>
+    EOF
+    element = REXML::Document.new( string )
+    doc.root.insert_after('//datasource', element)
+  end
+
   def backup_current_config
     %w{ standalone domain }.each do |mode|
       Dir.chdir( File.join( @jboss_dir, mode, 'configuration' ) ) do
@@ -244,6 +264,7 @@ class AssemblyTool
       add_subsystems(doc)
       set_welcome_root(doc)
       unquote_cookie_path(doc)
+      add_xa_datasource(doc)
 
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)

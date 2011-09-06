@@ -15,10 +15,36 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox-core'
-require 'torquebox-naming'
-require 'torquebox-messaging'
-require 'torquebox-web'
-require 'torquebox-rake-support'
+begin
+  require 'active_record'
+  require 'activerecord-jdbc-adapter'
+rescue LoadError => e
+  puts "WARN: Failed to load ActiveRecord (probably safe to ignore)"
+end
 
-require 'torquebox/transactions'
+if defined?(ActiveRecord)  
+  module TorqueBox
+    module Transactions
+      def transaction(*args)
+        begin
+          super
+        rescue ActiveRecord::JDBCError => e
+          yield
+        end
+      end
+    end
+
+    def self.transaction
+      ActiveRecord::Base.connection.reconnect!
+      yield
+    end
+  end
+
+  module ActiveRecord
+    module ConnectionAdapters
+      class JdbcAdapter
+        include TorqueBox::Transactions
+      end
+    end
+  end
+end

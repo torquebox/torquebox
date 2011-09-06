@@ -31,6 +31,9 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
+
+import org.torquebox.core.util.DeprecationLogger;
+
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -127,7 +130,7 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
                 if (!metaDataFile.equals( root )) {
-                    log.warn( "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
+                    logDeprecation( unit, "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
                 }
                 InputStream in = null;
                 try {
@@ -165,15 +168,8 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
         }
     }
 
-    protected String getOneOf(Map<String, String> map, String... keys) {
-        for (String each : keys) {
-            for (String key : map.keySet()) {
-                if (each.equalsIgnoreCase( key )) {
-                    return map.get( key );
-                }
-            }
-        }
-        return null;
+    public static void logDeprecation(DeploymentUnit unit, String message) {
+        DeprecationLogger.getLogger( unit ).append( message );
     }
 
     protected abstract void parse(DeploymentUnit unit, Object data) throws Exception;
