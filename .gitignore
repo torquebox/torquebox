@@ -24,3 +24,5 @@ Gemfile.lock
 .DS_Store
 .yardoc
 .DS_Store
+Infinispan-FileCacheStore
+
