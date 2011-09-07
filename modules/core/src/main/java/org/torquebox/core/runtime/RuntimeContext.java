@@ -5,14 +5,20 @@ import org.jruby.Ruby;
 public class RuntimeContext {
     
     public static Ruby getCurrentRuntime() {
+    	System.err.println(">>>>>>>>>>>>>> LANCE: Get runtime: " + RuntimeContext.runtime.get());
+    	System.err.println(">>>>>>>>>>>>>> LANCE: Get runtime thread: " + Thread.currentThread().getName());
        return RuntimeContext.runtime.get(); 
     }
 
     public static void setCurrentRuntime(Ruby ruby) {
+    	System.err.println(">>>>>>>>>>>>>> LANCE: Set runtime: " + ruby);
+    	System.err.println(">>>>>>>>>>>>>> LANCE: Set runtime thread: " + Thread.currentThread().getName());
         RuntimeContext.runtime.set( ruby );
     }
     
     public static void clearCurrentRuntime() {
+    	System.err.println(">>>>>>>>>>>>>> LANCE: Clear runtime: " + runtime.get());
+    	System.err.println(">>>>>>>>>>>>>> LANCE: Clear runtime thread: " + Thread.currentThread().getName());
         RuntimeContext.runtime.remove();
     }
     

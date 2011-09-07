@@ -33,23 +33,28 @@ public class JsonExternalizer implements org.infinispan.marshall.Externalizer<IR
 		System.err.println(">>>>>>>>>> LANCE: Writing object type: " + theType);
 		// Serialize the type & object
 		output.writeObject(theType);
+		System.err.println(">>>>>>>>>> LANCE: Writing object data");
 		output.writeObject(toJSON(object));
 	}
 	
     protected String toJSON(IRubyObject object) {
-        RuntimeHelper.require( getCurrentRuntime(), "json" );
+        System.err.println(">>>>>>>> LANCE: getting current runtime");
+    	Ruby runtime = getCurrentRuntime();
+        System.err.println(">>>>>>>> LANCE: requiring json");
+        System.err.println(">>>>>>>> LANCE: using runtime: " + runtime);
+        RuntimeHelper.require( runtime, "json" );
         System.err.println(">>>>>>>> LANCE: converting to json: " + object.asString());
-        System.err.println(">>>>>>>> LANCE: using runtime: " + getCurrentRuntime());
-        return (String) JavaEmbedUtils.invokeMethod( getCurrentRuntime(), object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
+        System.err.println(">>>>>>>> LANCE: using runtime: " + runtime);
+        return (String) JavaEmbedUtils.invokeMethod( runtime, object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
     }
 
     protected IRubyObject fromJSON(String json, String type) {
-        Ruby ruby = getCurrentRuntime();
-        RuntimeHelper.require( getCurrentRuntime(), "json" );
-        RubyModule jsonClass = ruby.getClass( "JSON" );
-        RubyHash jsonHash = (RubyHash) JavaEmbedUtils.invokeMethod( ruby, jsonClass, "parse", new Object[] { json }, RubyHash.class );
-        RubyModule objectClass = ruby.getClassFromPath( type );
-        return (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, objectClass, "new", new Object[] { jsonHash }, IRubyObject.class); 
+        Ruby runtime = getCurrentRuntime();
+        RuntimeHelper.require( runtime, "json" );
+        RubyModule jsonClass = runtime.getClass( "JSON" );
+        RubyHash jsonHash = (RubyHash) JavaEmbedUtils.invokeMethod( runtime, jsonClass, "parse", new Object[] { json }, RubyHash.class );
+        RubyModule objectClass = runtime.getClassFromPath( type );
+        return (IRubyObject) JavaEmbedUtils.invokeMethod( runtime, objectClass, "new", new Object[] { jsonHash }, IRubyObject.class); 
     }
     
     protected Ruby getCurrentRuntime() {
