@@ -133,7 +133,11 @@ public class RuntimeHelper {
     }
 
     public static void require(Ruby ruby, String requirement) {
-        evalScriptlet( ruby, "require %q(" + requirement + ")" );
+        try {
+            evalScriptlet( ruby, "require %q(" + requirement + ")" );
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     public static IRubyObject evalScriptlet(Ruby ruby, String script) {
@@ -148,7 +152,7 @@ public class RuntimeHelper {
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
-    
+
     public static IRubyObject executeScript(Ruby ruby, String script, String location) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();

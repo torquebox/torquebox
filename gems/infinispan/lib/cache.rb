@@ -83,6 +83,10 @@ module TorqueBox
         cache.key_set
       end
 
+      def all
+        cache.key_set.collect{|k| get(k)}
+      end
+
       def contains_key?( key )
         cache.contains_key( key )
       end
@@ -254,6 +258,8 @@ module TorqueBox
           expires_in = expires + 5.minutes
           args << expires_in << SECONDS
         end
+        $stderr.puts "cache=#{cache.inspect}"
+        $stderr.puts "*args=#{args.inspect}"
         cache.send( *args ) && true
       end
     end

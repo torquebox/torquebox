@@ -23,22 +23,6 @@ module Infinispan
   
   module Model
 
-    class Externalizer
-
-      def serialize( record )
-        puts ">>>>>>>>>>> LANCE: SERIALIZING"
-        record.to_json(:methods => [:deserialize_to]) 
-      end
-
-      def deserialize( input )
-        puts ">>>>>>>>>>> LANCE: DESERIALIZING"
-        attributes = JSON.parse( input )
-        cls = eval( attributes.delete(:deserialize_to) )
-        cls.new( attributes ) 
-      end
-      
-    end
-
     # TODO enhance TYPEs list
     TYPES = {
       ::String                         => java.lang.String,

@@ -11,6 +11,9 @@ end
 
 get '/muppets' do
   puts "BOB A: #{java.lang.Thread.current_thread.context_class_loader}"
+  puts "BOB A0: #{Muppet.inspect}"
+  puts "BOB A0.5!"
+  puts "BOB A1: #{Muppet.all.inspect}"
   @muppets = Muppet.all
   haml :muppets
 end
