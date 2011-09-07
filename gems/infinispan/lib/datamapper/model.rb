@@ -120,8 +120,11 @@ module Infinispan
         add_class_annotation( annotation )
 
         # Wonder twin powers... ACTIVATE!
-        become_java!
-        puts "Became java: #{self.inspect}"
+        java_class = become_java!(false)
+        puts "BOB: Became java: #{java_class.name.inspect}"
+        puts "BOB:  CL: #{java_class.class_loader}"
+        puts "BOB:  CL-load: #{java_class.class_loader.load_class( java_class.name )}"
+        puts "BOB:  JCL-load: #{JRuby.runtime.jruby_class_loader.load_class( java_class.name )}"
 
         @@mapped = true
       end

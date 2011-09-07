@@ -53,8 +53,10 @@ public class RuntimeHelper {
      */
     public static boolean setIfPossible(Ruby ruby, Object target, String name, Object value) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
+            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             boolean success = false;
 
             Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name + "=" }, Boolean.class );
@@ -65,14 +67,17 @@ public class RuntimeHelper {
 
             return success;
         } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
     public static Object getIfPossible(Ruby ruby, Object target, String name) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
+            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             Object result = null;
 
             Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
@@ -83,24 +88,30 @@ public class RuntimeHelper {
 
             return result;
         } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
     public static Object call(Ruby ruby, Object target, String name, Object[] parameters) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
+            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             return JavaEmbedUtils.invokeMethod( ruby, target, name, parameters, Object.class );
         } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
     public static Object callIfPossible(Ruby ruby, Object target, String name, Object[] parameters) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
+            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             Object result = null;
 
             Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
@@ -111,6 +122,7 @@ public class RuntimeHelper {
 
             return result;
         } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
@@ -126,20 +138,26 @@ public class RuntimeHelper {
 
     public static IRubyObject evalScriptlet(Ruby ruby, String script) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
+            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             return ruby.evalScriptlet( script );
         } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
     
     public static IRubyObject executeScript(Ruby ruby, String script, String location) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
+            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             return ruby.executeScript( script, location );
         } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
@@ -154,8 +172,10 @@ public class RuntimeHelper {
 
     public static IRubyObject instantiate(Ruby ruby, String className, Object[] parameters) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
+            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             IRubyObject result = null;
             RubyModule rubyClass = ruby.getClassFromPath( className );
 
@@ -165,6 +185,7 @@ public class RuntimeHelper {
 
             return result;
         } finally {
+            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }

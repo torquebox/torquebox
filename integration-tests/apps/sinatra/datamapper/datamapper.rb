@@ -5,20 +5,24 @@ require 'dm-core'
 require 'datamapper/dm-infinispan-adapter'
 
 get '/' do 
+  puts "BOB 0: #{java.lang.Thread.current_thread.context_class_loader}"
   haml :index
 end
 
 get '/muppets' do
+  puts "BOB A: #{java.lang.Thread.current_thread.context_class_loader}"
   @muppets = Muppet.all
   haml :muppets
 end
 
 get '/muppet/name' do
+  puts "BOB B: #{java.lang.Thread.current_thread.context_class_loader}"
   @snuffy = Muppet.first(:name=>'Snuffleupagus')
   haml :muppet
 end
 
 get '/muppet/id' do
+  puts "BOB C: #{java.lang.Thread.current_thread.context_class_loader}"
   @snuffy = Muppet.get(2)
   haml :muppet
 end
