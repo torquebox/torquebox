@@ -12,9 +12,5 @@ public class RuntimeContext {
         RuntimeContext.runtime.set( ruby );
     }
     
-    public static void clearCurrentRuntime() {
-        RuntimeContext.runtime.remove();
-    }
-    
     private static final ThreadLocal<Ruby> runtime = new ThreadLocal<Ruby>();
 }

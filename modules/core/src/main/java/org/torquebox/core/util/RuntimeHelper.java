@@ -52,6 +52,7 @@ public class RuntimeHelper {
      * @return {@code true} if successful, otherwise {@code false}
      */
     public static boolean setIfPossible(Ruby ruby, Object target, String name, Object value) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
             boolean success = false;
@@ -64,11 +65,12 @@ public class RuntimeHelper {
 
             return success;
         } finally {
-            RuntimeContext.clearCurrentRuntime();
+            RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
     public static Object getIfPossible(Ruby ruby, Object target, String name) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
             Object result = null;
@@ -81,20 +83,22 @@ public class RuntimeHelper {
 
             return result;
         } finally {
-            RuntimeContext.clearCurrentRuntime();
+            RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
     public static Object call(Ruby ruby, Object target, String name, Object[] parameters) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
             return JavaEmbedUtils.invokeMethod( ruby, target, name, parameters, Object.class );
         } finally {
-            RuntimeContext.clearCurrentRuntime();
+            RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
     public static Object callIfPossible(Ruby ruby, Object target, String name, Object[] parameters) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
             Object result = null;
@@ -107,7 +111,7 @@ public class RuntimeHelper {
 
             return result;
         } finally {
-            RuntimeContext.clearCurrentRuntime();
+            RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
@@ -121,20 +125,22 @@ public class RuntimeHelper {
     }
 
     public static IRubyObject evalScriptlet(Ruby ruby, String script) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
             return ruby.evalScriptlet( script );
         } finally {
-            RuntimeContext.clearCurrentRuntime();
+            RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
     
     public static IRubyObject executeScript(Ruby ruby, String script, String location) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
             return ruby.executeScript( script, location );
         } finally {
-            RuntimeContext.clearCurrentRuntime();
+            RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
@@ -147,6 +153,7 @@ public class RuntimeHelper {
     }
 
     public static IRubyObject instantiate(Ruby ruby, String className, Object[] parameters) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
         try {
             RuntimeContext.setCurrentRuntime( ruby );
             IRubyObject result = null;
@@ -158,7 +165,7 @@ public class RuntimeHelper {
 
             return result;
         } finally {
-            RuntimeContext.clearCurrentRuntime();
+            RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
 
