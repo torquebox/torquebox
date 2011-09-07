@@ -30,22 +30,20 @@ public class JsonExternalizer implements org.infinispan.marshall.Externalizer<IR
 	public void writeObject(ObjectOutput output, IRubyObject object)
 			throws IOException {
 		String theType = object.getJavaClass().getName();
-		System.err.println(">>>>>>>>>> LANCE: Writing object type: " + theType);
 		// Serialize the type & object
+		System.err.println(">>>>>>>>>> LANCE: Writing object type: " + theType);
 		output.writeObject(theType);
+		System.err.println(">>>>>>>>>> LANCE: Converting object to json");
+		String json = toJSON(object);
 		System.err.println(">>>>>>>>>> LANCE: Writing object data");
-		output.writeObject(toJSON(object));
+		output.writeObject(json);
 	}
 	
     protected String toJSON(IRubyObject object) {
-        System.err.println(">>>>>>>> LANCE: getting current runtime");
-    	Ruby runtime = getCurrentRuntime();
         System.err.println(">>>>>>>> LANCE: requiring json");
-        System.err.println(">>>>>>>> LANCE: using runtime: " + runtime);
-        RuntimeHelper.require( runtime, "json" );
+        RuntimeHelper.require( getCurrentRuntime(), "json" );
         System.err.println(">>>>>>>> LANCE: converting to json: " + object.asString());
-        System.err.println(">>>>>>>> LANCE: using runtime: " + runtime);
-        return (String) JavaEmbedUtils.invokeMethod( runtime, object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
+        return (String) JavaEmbedUtils.invokeMethod( getCurrentRuntime(), object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
     }
 
     protected IRubyObject fromJSON(String json, String type) {
