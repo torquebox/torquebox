@@ -100,7 +100,7 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <configuration>
-          <jrubyJvmArgs>-Xmx768m</jrubyJvmArgs>
+          <jrubyJvmArgs>-Xmx1024m</jrubyJvmArgs>
           <extraFiles>jboss/**/*</extraFiles>
         </configuration>
       </plugin>
@@ -124,7 +124,7 @@
                 safe_version = '${project.version}'.gsub(/-SNAPSHOT/, '')
                 AssemblyTool.copy_gem_to_repo( %Q(#{basedir}/target/${project.artifactId}-#{safe_version}#{ext}) )
               </script>
-              <jrubyJvmArgs>-Xmx768m</jrubyJvmArgs>
+              <jrubyJvmArgs>-Xmx1024m</jrubyJvmArgs>
             </configuration>
           </execution>
         </executions>
