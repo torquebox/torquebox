@@ -44,11 +44,17 @@ public class RuntimeContextTest {
     public void setUpRuntimes() {
         this.runtime1 = Ruby.newInstance();
         this.runtime2 = Ruby.newInstance();
+        
+        RuntimeContext.registerRuntime( this.runtime1 );
+        RuntimeContext.registerRuntime( this.runtime2 );
         this.results.clear();
     }
     
     @After
     public void tearDownRuntimes() {
+        RuntimeContext.deregisterRuntime( this.runtime1 );
+        RuntimeContext.deregisterRuntime( this.runtime2 );
+        
         this.runtime1.tearDown( false );
         this.runtime2.tearDown( false );
     }

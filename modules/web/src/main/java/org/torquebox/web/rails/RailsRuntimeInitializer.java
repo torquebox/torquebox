@@ -72,7 +72,11 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
         String scriptLocationBase = new URL( getRailsRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
         makeAutoloadPathsAvailable( ruby );
-        RuntimeHelper.executeScript( ruby, createBoot( getRailsRoot() ), scriptLocationBase + "-boot.rb" );
+        try {
+            RuntimeHelper.executeScript( ruby, createBoot( getRailsRoot() ), scriptLocationBase + "-boot.rb" );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {

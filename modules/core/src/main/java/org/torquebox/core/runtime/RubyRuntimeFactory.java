@@ -299,6 +299,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
             logRuntimeCreationComplete( config, contextInfo, startTime );
         }
+        
+        RuntimeContext.registerRuntime( runtime );
 
         return runtime;
     }
@@ -375,6 +377,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     public synchronized void destroyInstance(Ruby instance) {
+        RuntimeContext.deregisterRuntime( instance );
         if (undisposed.remove( instance )) {
             // FIXME: this will be unnecessary after JRUBY-6019 is merged and
             // released

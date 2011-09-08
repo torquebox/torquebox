@@ -167,7 +167,6 @@ public class RuntimeHelper {
         ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
 
         try {
-            RuntimeContext.registerRuntime( ruby );
             Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             return block.call();
         } catch (RuntimeException e) {
