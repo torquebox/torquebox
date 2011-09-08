@@ -138,8 +138,9 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             
             MBeanRegistrationService<DefaultRubyRuntimePoolMBean> mbeanService = new MBeanRegistrationService<DefaultRubyRuntimePoolMBean>( mbeanName );
             phaseContext.getServiceTarget().addService( name.append( "mbean" ), mbeanService )
-                    .addDependency( MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
+                    .addDependency( DependencyType.OPTIONAL, MBeanServerService.SERVICE_NAME, MBeanServer.class, mbeanService.getMBeanServerInjector() )
                     .addDependency( name, DefaultRubyRuntimePoolMBean.class, mbeanService.getValueInjector() )
+                    .setInitialMode( Mode.PASSIVE )
                     .install();
         }
     }

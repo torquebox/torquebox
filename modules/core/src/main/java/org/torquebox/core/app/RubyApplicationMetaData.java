@@ -37,6 +37,7 @@ public class RubyApplicationMetaData {
     private Map<String, String> environment;
     private boolean archive = false;
     private Map<String, Map<String, String>> authenticationConfig;
+    private boolean debug = false;
 
     public RubyApplicationMetaData(String applicationName) {
         this.applicationName = sanitize( applicationName );

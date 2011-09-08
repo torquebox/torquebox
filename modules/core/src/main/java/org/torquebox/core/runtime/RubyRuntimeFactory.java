@@ -21,6 +21,7 @@ package org.torquebox.core.runtime;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -173,6 +174,42 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     /**
+     *
+     * @param debug
+     *            Whether JRuby debug logging should be enabled or not
+     */
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    /**
+     * Retrieve the debug mode
+     *
+     * @return Whether debug logging is enabled or not
+     */
+    public boolean isDebug() {
+        return this.debug;
+    }
+
+    /**
+     *
+     * @param interactive
+     *            Whether the runtime is marked as interactive or not
+     */
+    public void setInteractive(boolean interactive) {
+        this.interactive = interactive;
+    }
+
+    /**
+     * Retrieve the interactive mode
+     *
+     * @return Whether the runtime is marked as interactive or not
+     */
+    public boolean isInteractive() {
+        return this.interactive;
+    }
+
+    /**
      * Set the application-specific environment additions.
      * 
      * @param applicationEnvironment
@@ -196,7 +233,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
      */
     public Ruby createInstance(String contextInfo) throws Exception {
 
-        RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
+        TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         config.setLoader( getClassLoader() );
         // config.setClassCache( getClassCache() );
@@ -207,6 +244,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         if (this.compileMode != null) {
             config.setCompileMode( this.compileMode );
         }
+        config.setDebug( this.debug );
+        config.setInteractive( this.interactive );
 
         String jrubyHome = this.jrubyHome;
 
@@ -223,6 +262,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         }
 
         config.setEnvironment( createEnvironment() );
+        config.setInput( getInput() );
         config.setOutput( getOutput() );
         config.setError( getError() );
 
@@ -415,6 +455,25 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     /**
+     * Set the interpreter input stream.
+     *
+     * @param inputStream
+     *            The input stream.
+     */
+    public void setInput(InputStream inputStream) {
+        this.inputStream = inputStream;
+    }
+
+    /**
+     * Retrieve the interpreter input stream.
+     *
+     * @return The input stream.
+     */
+    public InputStream getInput() {
+        return this.inputStream;
+    }
+
+    /**
      * Set the interpreter output stream.
      * 
      * @param outputStream
@@ -526,6 +585,9 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     /** Load paths for the interpreter. */
     private List<String> loadPaths;
 
+    /** Input stream for the interpreter. */
+    private InputStream inputStream = System.in;
+
     /** Output stream for the interpreter. */
     private PrintStream outputStream = System.out;
 
@@ -552,6 +614,12 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /** JRuby compile mode. */
     private CompileMode compileMode;
+
+    /** JRuby debug logging enabled or not. */
+    private boolean debug = false;
+
+    /** I/O streams setup for interactive use or not */
+    private boolean interactive = false;
 
     private ServiceRegistry serviceRegistry;
 

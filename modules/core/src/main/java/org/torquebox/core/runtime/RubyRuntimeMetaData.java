@@ -79,6 +79,12 @@ public class RubyRuntimeMetaData {
     /** The type of runtime this MD is for, if any */
     private RuntimeType runtimeType;
 
+    /** Whether JRuby debug logging should be enabled */
+    private boolean debug = false;
+
+    /** Whether I/O streams should be setup for interactive use */
+    private boolean interactive = false;
+
     /**
      * Construct.
      */
@@ -227,5 +233,21 @@ public class RubyRuntimeMetaData {
 
     public RuntimeType getRuntimeType() {
         return this.runtimeType;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public boolean isDebug() {
+        return this.debug;
+    }
+
+    public void setInteractive(boolean interactive) {
+        this.interactive = interactive;
+    }
+
+    public boolean isInteractive() {
+        return this.interactive;
     }
 }
