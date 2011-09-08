@@ -225,9 +225,12 @@
     <section id="ruby-runtime-config-in-descriptor">
       <title>Ruby runtime configuration</title>
 
-      <para>TorqueBox exposes two of the JRuby runtime options: the ruby
-      compatibility version, and the JIT compile mode. Both of these options
-      are configured in the ruby: section of a deployment descriptor.</para>
+      <para>TorqueBox exposes several of the JRuby runtime options:
+      the ruby compatibility version, the JIT compile mode, and the
+      debug setting. There's also a setting to enable interactive tty
+      for the JRuby runtime for use with the Ruby debugger. All of these
+      options are configured in the ruby: section of a deployment
+      descriptor.</para>
 
       <para>Note that these settings are per application, allowing you to run
       1.8 and 1.9 applications in the same TorqueBox, or have one JIT'ed and
@@ -288,6 +291,27 @@
 
               <entry><parameter>jit</parameter></entry>
             </row>
+
+            <row>
+              <entry><varname>debug</varname></entry>
+
+              <entry>A value of <emphasis>true</emphasis> enables
+              JRuby's debug logging.</entry>
+
+              <entry><parameter>false</parameter></entry>
+            </row>
+
+            <row>
+              <entry><varname>interactive</varname></entry>
+
+              <entry>A value of <emphasis>true</emphasis> sets up the
+              stdin/stdout/stderr of the JRuby runtime for interactive
+              use instead of being redirected to the logging
+              subsystem. Enable this when using the Ruby debugger or
+              the pry gem.</entry>
+
+              <entry><parameter>false</parameter></entry>
+            </row>
           </tbody>
         </tgroup>
       </table>
@@ -295,7 +319,9 @@
       <para>For example: <informalexample>
           <para><programlisting>ruby:
   version: 1.9
-  compile_mode: off</programlisting></para>
+  compile_mode: off
+  debug: false
+  interactive: true</programlisting></para>
         </informalexample></para>
     </section>
 
