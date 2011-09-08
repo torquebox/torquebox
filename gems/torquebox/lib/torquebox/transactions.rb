@@ -29,8 +29,21 @@ if defined?(ActiveRecord)
         begin
           super
         rescue ActiveRecord::JDBCError => e
-          yield
+          unless self.is_a?(XAResource)
+            self.extend(XAResource)
+            retry
+          end
         end
+      end
+    end
+    
+    module XAResource
+      # An XA connection is not allowed to begin/commit/rollback
+      def begin_db_transaction
+      end
+      def commit_db_transaction
+      end
+      def rollback_db_transaction
       end
     end
 

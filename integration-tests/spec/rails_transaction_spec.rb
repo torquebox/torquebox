@@ -7,6 +7,7 @@ remote_describe "rails transactions testing" do
     ---
     application:
       root: #{File.dirname(__FILE__)}/../apps/rails3/transactions
+      env: development
     ruby:
       version: #{RUBY_VERSION[0,3]}
   END
