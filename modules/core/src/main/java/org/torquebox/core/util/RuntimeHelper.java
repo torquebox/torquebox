@@ -19,8 +19,6 @@
 
 package org.torquebox.core.util;
 
-import java.util.concurrent.Callable;
-
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.RubyThread;
@@ -53,57 +51,68 @@ public class RuntimeHelper {
      *            The value to attempt to set.
      * @return {@code true} if successful, otherwise {@code false}
      */
-    public static boolean setIfPossible(final Ruby ruby, final Object target, final String name, final Object value) {
-        return withinContext( ruby, new Callable<Boolean>() {
-            public Boolean call() throws Exception {
-                boolean success = false;
-                Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name + "=" }, Boolean.class );
-                if (respondTo.booleanValue()) {
-                    JavaEmbedUtils.invokeMethod( ruby, target, name + "=", new Object[] { value }, void.class );
-                    success = true;
-                }
-                return success;
+    public static boolean setIfPossible(Ruby ruby, Object target, String name, Object value) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            boolean success = false;
+
+            Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name + "=" }, Boolean.class );
+
+            if (respondTo.booleanValue()) {
+                JavaEmbedUtils.invokeMethod( ruby, target, name + "=", new Object[] { value }, void.class );
             }
-        } );
+
+            return success;
+        } finally {
+            RuntimeContext.setCurrentRuntime( originalRuby );
+        }
     }
 
-    public static Object getIfPossible(final Ruby ruby, final Object target, final String name) {
-        return withinContext( ruby, new Callable<Object>() {
-            public Object call() throws Exception {
-                Object result = null;
+    public static Object getIfPossible(Ruby ruby, Object target, String name) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            Object result = null;
 
-                Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
+            Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
 
-                if (respondTo.booleanValue()) {
-                    result = JavaEmbedUtils.invokeMethod( ruby, target, name, new Object[] {}, Object.class );
-                }
-                return result;
+            if (respondTo.booleanValue()) {
+                result = JavaEmbedUtils.invokeMethod( ruby, target, name, new Object[] {}, Object.class );
             }
-        } );
+
+            return result;
+        } finally {
+            RuntimeContext.setCurrentRuntime( originalRuby );
+        }
     }
 
-    public static Object call(final Ruby ruby, final Object target, final String name, final Object[] parameters) {
-        return withinContext( ruby, new Callable<Object>() {
-            public Object call() throws Exception {
-                return JavaEmbedUtils.invokeMethod( ruby, target, name, parameters, Object.class );
-            }
-        } );
+    public static Object call(Ruby ruby, Object target, String name, Object[] parameters) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            return JavaEmbedUtils.invokeMethod( ruby, target, name, parameters, Object.class );
+        } finally {
+            RuntimeContext.setCurrentRuntime( originalRuby );
+        }
     }
 
-    public static Object callIfPossible(final Ruby ruby, final Object target, final String name, final Object[] parameters) {
-        return withinContext( ruby, new Callable<Object>() {
-            public Object call() throws Exception {
-                Object result = null;
+    public static Object callIfPossible(Ruby ruby, Object target, String name, Object[] parameters) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            Object result = null;
 
-                Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
+            Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
 
-                if (respondTo.booleanValue()) {
-                    result = JavaEmbedUtils.invokeMethod( ruby, target, name, parameters, Object.class );
-                }
-
-                return result;
+            if (respondTo.booleanValue()) {
+                result = JavaEmbedUtils.invokeMethod( ruby, target, name, parameters, Object.class );
             }
-        } );
+
+            return result;
+        } finally {
+            RuntimeContext.setCurrentRuntime( originalRuby );
+        }
     }
 
     public static Object invokeClassMethod(Ruby ruby, String className, String name, Object[] parameters) {
@@ -115,68 +124,47 @@ public class RuntimeHelper {
         evalScriptlet( ruby, "require %q(" + requirement + ")" );
     }
 
-    // ------------------------------------------------------------------------
-
-    public static IRubyObject evalScriptlet(final Ruby ruby, final String script) {
-        return withinContext( ruby, new Callable<IRubyObject>() {
-            public IRubyObject call() throws Exception {
-                return ruby.evalScriptlet( script );
-            }
-        } );
+    public static IRubyObject evalScriptlet(Ruby ruby, String script) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            return ruby.evalScriptlet( script );
+        } finally {
+            RuntimeContext.setCurrentRuntime( originalRuby );
+        }
     }
-
-    public static IRubyObject executeScript(final Ruby ruby, final String script, final String location) {
-        return withinContext( ruby, new Callable<IRubyObject>() {
-            public IRubyObject call() throws Exception {
-                return ruby.executeScript( script, location );
-            }
-        } );
+    
+    public static IRubyObject executeScript(Ruby ruby, String script, String location) {
+        Ruby originalRuby = RuntimeContext.getCurrentRuntime();
+        try {
+            RuntimeContext.setCurrentRuntime( ruby );
+            return ruby.executeScript( script, location );
+        } finally {
+            RuntimeContext.setCurrentRuntime( originalRuby );
+        }
     }
-
-    // ------------------------------------------------------------------------
 
     public static IRubyObject instantiate(Ruby ruby, String className) {
         return instantiate( ruby, className, new Object[] {} );
     }
 
-    public static IRubyObject instantiate(final Ruby ruby, final String className, final Object[] parameters) {
-        return withinContext( ruby, new Callable<IRubyObject>() {
-            public IRubyObject call() throws Exception {
-                IRubyObject result = null;
-                RubyModule rubyClass = ruby.getClassFromPath( className );
-
-                if (rubyClass != null) {
-                    result = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, rubyClass, "new", parameters, IRubyObject.class );
-                }
-
-                return result;
-            }
-
-        } );
-    }
-
-    // ------------------------------------------------------------------------
-
     public static RubyThread currentThread(Ruby ruby) {
         return (RubyThread) invokeClassMethod( ruby, "Thread", "current", EMPTY_OBJECT_ARRAY );
     }
 
-    // ------------------------------------------------------------------------
-
-    protected static <R> R withinContext(Ruby ruby, Callable<R> block) {
+    public static IRubyObject instantiate(Ruby ruby, String className, Object[] parameters) {
         Ruby originalRuby = RuntimeContext.getCurrentRuntime();
-        ClassLoader originalCl = Thread.currentThread().getContextClassLoader();
-
         try {
-            Thread.currentThread().setContextClassLoader( ruby.getJRubyClassLoader() );
             RuntimeContext.setCurrentRuntime( ruby );
-            return block.call();
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException( e );
+            IRubyObject result = null;
+            RubyModule rubyClass = ruby.getClassFromPath( className );
+
+            if (rubyClass != null) {
+                result = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, rubyClass, "new", parameters, IRubyObject.class );
+            }
+
+            return result;
         } finally {
-            Thread.currentThread().setContextClassLoader( originalCl );
             RuntimeContext.setCurrentRuntime( originalRuby );
         }
     }
