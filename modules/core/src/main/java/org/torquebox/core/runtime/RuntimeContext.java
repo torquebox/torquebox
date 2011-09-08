@@ -4,6 +4,7 @@ import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.util.JRubyClassLoader;
 
@@ -14,7 +15,13 @@ public class RuntimeContext {
         while (cl != null) {
             if (cl instanceof JRubyClassLoader) {
                 WeakReference<Ruby> ref = contexts.get( cl );
-                return ref.get();
+                if ( ref == null ) {
+                    log.info( "NULL ref" );
+                    return null;
+                }
+                Ruby ruby = ref.get();
+                log.info( "current runtime: " + ruby );
+                return ruby;
             }
             cl = cl.getParent();
         }
@@ -26,6 +33,11 @@ public class RuntimeContext {
         contexts.put( ruby.getJRubyClassLoader(), new WeakReference<Ruby>(ruby) );
         return;
     }
+    
+    public static void deregisterRuntime(Ruby ruby) {
+        contexts.remove( ruby.getJRubyClassLoader() );
+    }
 
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime.context" );
     private static final Map<JRubyClassLoader, WeakReference<Ruby>> contexts = new WeakHashMap<JRubyClassLoader, WeakReference<Ruby>>();
 }
