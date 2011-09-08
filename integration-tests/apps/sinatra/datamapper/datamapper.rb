@@ -54,6 +54,10 @@ get '/muppet/date/range' do
   start  = DateTime.parse((Date.today-1).to_s)
   ending = DateTime.parse((Date.today+1).to_s)
   result = Muppet.all(:created_at => (start..ending), :order=>:created_at.asc)
+  puts ">>>>>>>> LANCE: Result: #{result.inspect}"
+  result.each do |r| 
+    puts ">>>>>>>>>>> LANCE: #{r.name}: #{r.created_at}"
+  end
   @snuffy = result[1]
   haml :muppet
 end
@@ -72,7 +76,7 @@ class Muppet
   property :bio,        Text, :required => true, :lazy => false
   property :created_at, DateTime
 
-#  has 1, :coat
+  has 1, :coat
 end
 
 class Coat
@@ -85,10 +89,11 @@ DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize
 
-Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(Date.today.to_s))
-Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse((Date.today +1).to_s))
-Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse((Date.today -1).to_s))
+today = Date.today
+tomorrow = Date.today + 1
+yesterday = Date.today - 1
 
-#Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(Date.today.to_s), :coat=>Coat.new(:color=>'Yellow'))
-#Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse((Date.today +1).to_s), :coat=>Coat.new(:color=>'Brown'))
-#Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse((Date.today -1).to_s), :coat=>Coat.new(:color=>'Blue'))
+Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(yesterday.to_s), :coat => Coat.new(:color=>'Yellow'))
+Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse(today.to_s), :coat => Coat.new(:color=>'Brown'))
+Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse(tomorrow.to_s), :coat => Coat.new(:color=>'Blue'))
+

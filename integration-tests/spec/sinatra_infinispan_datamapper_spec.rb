@@ -63,7 +63,6 @@ describe "sinatra with dm-infinispan-adapter" do
   end
 
   it "should find muppets by date range" do
-#    pending "A fix for date queries"
     visit '/sinatra-datamapper/muppet/date/range'
     page.should have_content('Snuffleupagus')
   end
