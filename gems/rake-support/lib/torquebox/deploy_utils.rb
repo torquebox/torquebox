@@ -189,6 +189,7 @@ module TorqueBox
         d = {}
         d['application'] = {}
         d['application']['root'] = root
+        d['environment'] = {}
         d['environment']['RACK_ENV'] = env.to_s if env
 
         if !context_path &&
