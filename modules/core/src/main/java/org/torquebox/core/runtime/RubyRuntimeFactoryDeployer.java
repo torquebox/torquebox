@@ -29,7 +29,6 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
-import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
 import org.jruby.CompatVersion;
 import org.jruby.RubyInstanceConfig.CompileMode;
@@ -63,6 +62,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             factory.setApplicationName( rubyAppMetaData.getApplicationName() );
             factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
             factory.setApplicationEnvironment( rubyAppMetaData.getEnvironmentVariables() );
+            factory.setDebug( runtimeMetaData.isDebug() );
 
             if (runtimeMetaData.getVersion() == RubyRuntimeMetaData.Version.V1_9) {
                 factory.setRubyVersion( CompatVersion.RUBY1_9 );

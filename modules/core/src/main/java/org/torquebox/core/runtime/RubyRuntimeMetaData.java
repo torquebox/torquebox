@@ -79,6 +79,9 @@ public class RubyRuntimeMetaData {
     /** The type of runtime this MD is for, if any */
     private RuntimeType runtimeType;
 
+    /** Whether JRuby debugger should be enabled */
+    private boolean debug = false;
+
     /**
      * Construct.
      */
@@ -227,5 +230,13 @@ public class RubyRuntimeMetaData {
 
     public RuntimeType getRuntimeType() {
         return this.runtimeType;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public boolean isDebug() {
+        return this.debug;
     }
 }

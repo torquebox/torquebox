@@ -223,6 +223,51 @@ public class RubyRuntimeFactoryTest {
 
     }
 
+    @Test
+    public void testDebugModeDefault() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertFalse( ruby.getInstanceConfig().isDebug() );
+    }
+
+    @Test
+    public void testDebugModeDefault19() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setRubyVersion( CompatVersion.RUBY1_9 );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ruby.is1_9() );
+        assertFalse( ruby.getInstanceConfig().isDebug() );
+    }
+
+    @Test
+    public void testDebugModeTrue() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setDebug( true );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ruby.getInstanceConfig().isDebug() );
+    }
+
+
+    @Test
+    public void testDebugModeFalse() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setDebug( false );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertFalse( ruby.getInstanceConfig().isDebug() );
+    }
+
     static class MockRuntimeInitializer implements RuntimeInitializer {
 
         public Ruby ruby;

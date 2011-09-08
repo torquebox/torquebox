@@ -44,9 +44,11 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.stdio.StdioContext;
 
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
+import org.torquebox.TorqueBoxStdioContextSelector;
 import org.torquebox.core.ArchiveDirectoryMountingProcessor;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.GlobalRubyMBean;
@@ -93,6 +95,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         
         try {
             addCoreServices( context, verificationHandler, newControllers, registry );
+            addTorqueBoxStdioContext();
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
@@ -196,6 +199,19 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.PASSIVE )
                 .install() );
+    }
+
+    protected void addTorqueBoxStdioContext() {
+        // Grab the existing AS7 StdioContext
+        final StdioContext defaultContext = StdioContext.getStdioContext();
+        // Uninstall to reset System.in, .out, .err to default values
+        StdioContext.uninstall();
+        // Create debug StdioContext based on System streams
+        final StdioContext debugContext = StdioContext.create( System.in, System.out, System.err );
+        TorqueBoxStdioContextSelector selector = new TorqueBoxStdioContextSelector( defaultContext, debugContext );
+
+        StdioContext.install();
+        StdioContext.setStdioContextSelector( selector);
     }
 
     static ModelNode createOperation(ModelNode address) {

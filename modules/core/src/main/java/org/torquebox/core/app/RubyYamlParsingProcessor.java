@@ -73,6 +73,13 @@ public class RubyYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             runtimeMetaData.setCompileMode( RubyRuntimeMetaData.CompileMode.FORCE );
         }
 
+        Object debug = config.get( "debug" );
+        if ("false".equals( "" + debug )) {
+            runtimeMetaData.setDebug( false );
+        } else if ("true".equals("" + debug )) {
+            runtimeMetaData.setDebug( true );
+        }
+
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.app.ruby" );

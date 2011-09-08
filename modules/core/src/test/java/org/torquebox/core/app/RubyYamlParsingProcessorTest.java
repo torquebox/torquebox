@@ -20,7 +20,9 @@
 package org.torquebox.core.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
@@ -138,6 +140,40 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
         assertSame( runtimeMetaData, runtimeMetaData2 );
         assertEquals( RubyRuntimeMetaData.CompileMode.OFF, runtimeMetaData.getCompileMode() );
+    }
+
+    @Test
+    public void testWithRuntimeMetaDataDebugFalse() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-debug-false.yml" );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+
+        deploy( phaseContext );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertFalse( runtimeMetaData.isDebug() );
+    }
+
+    @Test
+    public void testWithRuntimeMetaDataDebugTrue() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-debug-true.yml" );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+
+        deploy( phaseContext );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertTrue( runtimeMetaData.isDebug() );
     }
 
 }
