@@ -268,6 +268,51 @@ public class RubyRuntimeFactoryTest {
         assertFalse( ruby.getInstanceConfig().isDebug() );
     }
 
+    @Test
+    public void testInteractiveDefault() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertFalse( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
+    }
+
+    @Test
+    public void testInteractiveDefault19() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setRubyVersion( CompatVersion.RUBY1_9 );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ruby.is1_9() );
+        assertFalse( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
+    }
+
+    @Test
+    public void testInteractiveTrue() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setInteractive( true );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
+    }
+
+
+    @Test
+    public void testInteractiveFalse() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.setInteractive( false );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertFalse( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
+    }
+
     static class MockRuntimeInitializer implements RuntimeInitializer {
 
         public Ruby ruby;

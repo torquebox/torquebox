@@ -176,4 +176,38 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertTrue( runtimeMetaData.isDebug() );
     }
 
+    @Test
+    public void testWithRuntimeMetaDataInteractiveFalse() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-interactive-false.yml" );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+
+        deploy( phaseContext );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertFalse( runtimeMetaData.isInteractive() );
+    }
+
+    @Test
+    public void testWithRuntimeMetaDataInteractiveTrue() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-interactive-true.yml" );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+
+        deploy( phaseContext );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertTrue( runtimeMetaData.isInteractive() );
+    }
+
 }

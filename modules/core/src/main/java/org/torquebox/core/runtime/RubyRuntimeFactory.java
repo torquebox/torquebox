@@ -176,7 +176,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     /**
      *
      * @param debug
-     *            Whether debug should be enabled or not
+     *            Whether JRuby debug logging should be enabled or not
      */
     public void setDebug(boolean debug) {
         this.debug = debug;
@@ -185,10 +185,28 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     /**
      * Retrieve the debug mode
      *
-     * @return Whether debug is enabled or not
+     * @return Whether debug logging is enabled or not
      */
     public boolean isDebug() {
         return this.debug;
+    }
+
+    /**
+     *
+     * @param interactive
+     *            Whether the runtime is marked as interactive or not
+     */
+    public void setInteractive(boolean interactive) {
+        this.interactive = interactive;
+    }
+
+    /**
+     * Retrieve the interactive mode
+     *
+     * @return Whether the runtime is marked as interactive or not
+     */
+    public boolean isInteractive() {
+        return this.interactive;
     }
 
     /**
@@ -215,7 +233,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
      */
     public Ruby createInstance(String contextInfo) throws Exception {
 
-        RubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
+        TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         config.setLoader( getClassLoader() );
         // config.setClassCache( getClassCache() );
@@ -227,6 +245,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             config.setCompileMode( this.compileMode );
         }
         config.setDebug( this.debug );
+        config.setInteractive( this.interactive );
 
         String jrubyHome = this.jrubyHome;
 
@@ -596,8 +615,11 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     /** JRuby compile mode. */
     private CompileMode compileMode;
 
-    /** Ruby debug enabled or not. */
+    /** JRuby debug logging enabled or not. */
     private boolean debug = false;
+
+    /** I/O streams setup for interactive use or not */
+    private boolean interactive = false;
 
     private ServiceRegistry serviceRegistry;
 

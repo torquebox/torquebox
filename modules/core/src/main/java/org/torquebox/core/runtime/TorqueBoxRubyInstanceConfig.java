@@ -24,6 +24,7 @@ import org.jruby.RubyInstanceConfig;
 public class TorqueBoxRubyInstanceConfig extends RubyInstanceConfig {
 
     private String jrubyHome;
+    private boolean interactive;
 
     @Override
     public String getJRubyHome() {
@@ -38,6 +39,14 @@ public class TorqueBoxRubyInstanceConfig extends RubyInstanceConfig {
     @Override
     public boolean isManagementEnabled() {
         return true;
+    }
+
+    public boolean isInteractive() {
+        return this.interactive;
+    }
+
+    public void setInteractive(boolean interactive) {
+        this.interactive = interactive;
     }
 
 }

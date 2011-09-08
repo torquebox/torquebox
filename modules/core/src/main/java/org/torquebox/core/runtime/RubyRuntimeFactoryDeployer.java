@@ -63,6 +63,7 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             factory.setUseJRubyHomeEnvVar( this.useJRubyHomeEnvVar );
             factory.setApplicationEnvironment( rubyAppMetaData.getEnvironmentVariables() );
             factory.setDebug( runtimeMetaData.isDebug() );
+            factory.setInteractive( runtimeMetaData.isInteractive() );
 
             if (runtimeMetaData.getVersion() == RubyRuntimeMetaData.Version.V1_9) {
                 factory.setRubyVersion( CompatVersion.RUBY1_9 );

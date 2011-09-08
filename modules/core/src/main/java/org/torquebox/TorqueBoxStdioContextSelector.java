@@ -2,7 +2,9 @@ package org.torquebox;
 
 import org.jboss.stdio.StdioContext;
 import org.jboss.stdio.StdioContextSelector;
+import org.jruby.Ruby;
 import org.torquebox.core.runtime.RuntimeContext;
+import org.torquebox.core.runtime.TorqueBoxRubyInstanceConfig;
 
 public class TorqueBoxStdioContextSelector implements StdioContextSelector {
 
@@ -25,9 +27,12 @@ public class TorqueBoxStdioContextSelector implements StdioContextSelector {
 
     /** {@inheritDoc} */
     public StdioContext getStdioContext() {
-        if (RuntimeContext.getCurrentRuntime() != null &&
-                RuntimeContext.getCurrentRuntime().getInstanceConfig().isDebug()) {
-            return debugContext;
+        Ruby runtime = RuntimeContext.getCurrentRuntime();
+        if (runtime != null && runtime.getInstanceConfig() instanceof TorqueBoxRubyInstanceConfig) {
+            TorqueBoxRubyInstanceConfig config = (TorqueBoxRubyInstanceConfig) runtime.getInstanceConfig();
+            if (config.isInteractive()) {
+                return debugContext;
+            }
         }
         return defaultContext;
     }
