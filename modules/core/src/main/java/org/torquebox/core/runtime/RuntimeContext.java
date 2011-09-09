@@ -20,7 +20,6 @@ public class RuntimeContext {
                     return null;
                 }
                 Ruby ruby = ref.get();
-                log.info( "current runtime: " + ruby );
                 return ruby;
             }
             cl = cl.getParent();
