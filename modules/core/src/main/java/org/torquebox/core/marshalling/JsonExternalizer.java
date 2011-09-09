@@ -21,9 +21,7 @@ public class JsonExternalizer implements org.infinispan.marshall.Externalizer<IR
 
 	@Override
 	public IRubyObject readObject(ObjectInput input) throws IOException, ClassNotFoundException {
-	    log.info( "BOB: readObject" );
 		String theType = (String) input.readObject();
-		log.info(">>>>>>>>>> LANCE: Reading object type: " + theType);
 		String theJson = (String) input.readObject();
 		return fromJSON(theJson, theType);	
 	}
@@ -31,22 +29,14 @@ public class JsonExternalizer implements org.infinispan.marshall.Externalizer<IR
 	@Override
 	public void writeObject(ObjectOutput output, IRubyObject object)
 			throws IOException {
-	    log.info( "BOB: writeObject(..., " + object + ")" );
-		//String theType = object.getJavaClass().getName();
 		String theType = object.getType().getName();
-		// Serialize the type & object
-		log.info(">>>>>>>>>> LANCE: Writing Ruby object type: '" + theType + "'");
 		output.writeObject(theType);
-		log.info(">>>>>>>>>> LANCE: Converting object to json");
 		String json = toJSON(object);
-		log.info(">>>>>>>>>> LANCE: Writing object data");
 		output.writeObject(json);
 	}
 	
     protected String toJSON(IRubyObject object) {
-        log.info(">>>>>>>> LANCE: requiring json");
         RuntimeHelper.require( getCurrentRuntime(), "json" );
-        log.info(">>>>>>>> LANCE: converting to json: " + object.asString());
         return (String) JavaEmbedUtils.invokeMethod( getCurrentRuntime(), object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
     }
 
@@ -54,7 +44,6 @@ public class JsonExternalizer implements org.infinispan.marshall.Externalizer<IR
         Ruby runtime = getCurrentRuntime();
         RuntimeHelper.require( runtime, "json" );
         RubyModule jsonClass = runtime.getClassFromPath( "JSON" );
-        log.info(  "BOB: jsonClass=" + jsonClass );
         if ( jsonClass == null ) {
             throw new ClassNotFoundException( "JSON" );
         }
