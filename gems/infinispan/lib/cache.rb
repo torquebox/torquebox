@@ -16,9 +16,20 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/kernel'
+require 'torquebox/injectors'
 
 module TorqueBox
   module Infinispan
+
+    class TransactionManagerLookup
+      include TorqueBox::Injectors
+      include org.infinispan.transaction.lookup.TransactionManagerLookup
+
+      def getTransactionManager
+        inject('transaction-manager')
+      end
+    end
+
 
     class Sequence
       include java.io.Serializable
@@ -178,10 +189,8 @@ module TorqueBox
 
       def manager
         begin
-          #@manager ||= inject('java:jboss/infinispan/hibernate') 
-          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan" )]
+          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "web" )]
         rescue Exception => e
-          #log( "Caught exception in injecting java:jboss/infinispan/hibernate", 'ERROR' )
           log( "Caught exception while looking up Infinispan service.", 'ERROR' )
           $stderr.puts e.message
         end
@@ -223,7 +232,12 @@ module TorqueBox
         bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
 
         config  = bare_config.fluent
-        config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
+        container_transaction_manager = TorqueBox::Infinispan::TransactionManagerLookup.new
+        if container_transaction_manager.getTransactionManager
+          config.transaction.recovery.transactionManagerLookup( container_transaction_manager )
+        else
+          config.transaction.recovery.transactionManagerLookup( org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new )
+        end
         
         if options[:persist]
           log( "Configuring #{name} local cache for file-based persistence" )
