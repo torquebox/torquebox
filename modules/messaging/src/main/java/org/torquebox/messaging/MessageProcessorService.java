@@ -26,7 +26,6 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Topic;
 import javax.jms.XASession;
-import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
@@ -54,7 +53,6 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
             public void run() {
                 try {
                     session = group.getConnection().createXASession();
-                    tm = group.getTransactionManager();
                     Destination destination = group.getDestination();
                     if (group.isDurable() && destination instanceof Topic) {
                         consumer = session.createDurableSubscriber( (Topic) destination, group.getName(), group.getMessageSelector(), false );
@@ -78,32 +76,21 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     @Override
     public void onMessage(Message message) {
         if ( this.consumer == null ) {
-            return;
+            return;             // racist!
         }
         Ruby ruby = null;
         try {
-            tm.begin();
-            tm.getTransaction().enlistResource( this.session.getXAResource() );
             ruby = group.getRubyRuntimePool().borrowRuntime();
-            
             if ( this.consumer == null ) {
-                // while waiting to obtain a Ruby, we got closed.
-                // we can't rollback, because the connection is closed.
-                return;
+                return;         // racist!
             }
-            
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );
-            putSessionInThreadLocal( ruby );
-            component.process( message );
-            tm.commit();
+            component.process( message, session );
         } catch (Exception e) {
             log.error( "Unexpected error in " + group.getName(), e );
-            try { tm.rollback(); } catch (Exception ignored) {}
         } finally {
-            try { tm.suspend(); } catch (Exception ignored) {}
             if (ruby != null) {
                 try {
-                    removeSessionFromThreadLocal( ruby );
                     group.getRubyRuntimePool().returnRuntime( ruby );
                 } catch (Throwable e) {
                     log.warn( "Possible memory leak?", e );
@@ -133,16 +120,6 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
         return null;
     }
 
-    protected void putSessionInThreadLocal(Ruby ruby) {
-        RubyThread thread = RuntimeHelper.currentThread( ruby );
-        RuntimeHelper.call( ruby, thread, "[]=", new Object[] { "session", session } );
-    }
-
-    protected void removeSessionFromThreadLocal(Ruby ruby) {
-        RubyThread thread = RuntimeHelper.currentThread( ruby );
-        RuntimeHelper.call( ruby, thread, "[]=", new Object[] { "session", null } );
-    }
-
     // -------
 
     private static final Logger log = Logger.getLogger( "org.torquebox.message" );
@@ -150,5 +127,4 @@ public class MessageProcessorService implements Service<Void>, MessageListener {
     private MessageProcessorGroup group;
     private XASession session;
     private MessageConsumer consumer;
-    private TransactionManager tm;
 }

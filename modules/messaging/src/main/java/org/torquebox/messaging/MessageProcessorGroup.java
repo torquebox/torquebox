@@ -26,7 +26,6 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Queue;
 import javax.jms.XAConnection;
-import javax.transaction.TransactionManager;
 
 import org.hornetq.jms.client.HornetQConnectionFactory;
 import org.jboss.as.messaging.jms.JMSServices;
@@ -206,10 +205,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
         return this.componentResolverInjector;
     }
 
-    public Injector<TransactionManager> getTransactionManagerInjector() {
-        return this.transactionManagerInjector;
-    }
-
     public XAConnection getConnection() {
         return this.connection;
     }
@@ -227,10 +222,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
 
     public ComponentResolver getComponentResolver() {
         return this.componentResolverInjector.getValue();
-    }
-
-    public TransactionManager getTransactionManager() {
-        return this.transactionManagerInjector.getValue();
     }
 
     private ServiceRegistry serviceRegistry;
@@ -254,7 +245,6 @@ public class MessageProcessorGroup implements Service<MessageProcessorGroup>, Me
     private final InjectedValue<ManagedReferenceFactory> destinationInjector = new InjectedValue<ManagedReferenceFactory>();
     private final InjectedValue<RubyRuntimePool> runtimePoolInjector = new InjectedValue<RubyRuntimePool>();
     private final InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
-    private final InjectedValue<TransactionManager> transactionManagerInjector = new InjectedValue<TransactionManager>();
 
     private static final Logger log = Logger.getLogger( "org.torquebox.message" );
 
