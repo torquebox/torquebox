@@ -165,7 +165,7 @@
 
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>torquebox-messaging</artifactId>
+      <artifactId>torquebox</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -174,14 +174,6 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquebox-stomp</artifactId>
-      <type>gem</type>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-core</artifactId>
       <type>gem</type>
       <version>${project.version}</version>
       <scope>test</scope>

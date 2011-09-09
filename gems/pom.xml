@@ -19,6 +19,7 @@
 
     <module>core</module>
     <module>naming</module>
+    <module>transactions</module>
     <module>messaging</module>
     <module>stomp</module>
     <module>security</module>

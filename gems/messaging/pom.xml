@@ -23,6 +23,13 @@
     </dependency>
 
     <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-transactions</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>
       <artifactId>jboss-jms-api_1.1_spec</artifactId>
       <scope>runtime</scope>

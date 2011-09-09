@@ -2,6 +2,8 @@
 queues:
   /queue/input:
     durable: false
+  /queue/output:
+    durable: false
 
 messaging:
   /queue/input: Processor

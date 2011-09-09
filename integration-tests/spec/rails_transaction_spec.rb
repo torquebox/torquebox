@@ -14,12 +14,13 @@ remote_describe "rails transactions testing" do
 
   before(:each) do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
+    @output  = TorqueBox::Messaging::Queue.new('/queue/output')
     Thing.delete_all
   end
     
-  it "should create a Thing in response to a message" do
+  it "should create a Thing in response to a happy message" do
     @input.publish("happy path")
-    60.times do
+    30.times do
       sleep 1
       break if Thing.uncached { Thing.count > 0 }
     end
@@ -27,11 +28,14 @@ remote_describe "rails transactions testing" do
     Thing.find_by_name("happy path").name.should == "happy path"
   end
 
-  it "should create a Thing in response to a message" do
+  it "should not create a Thing in response to an error prone message" do
     @input.publish("this will error")
-    20.times do
-      sleep 1
-      break if Thing.uncached { Thing.count > 0 }
+    msgs = []
+    loop do
+      msg = @output.receive(:timeout => 20_000)
+      raise "Didn't receive enough rollback messages" unless msg
+      msgs << msg if msg == 'after_rollback'
+      break if msgs.size == 10  # default number of HornetQ delivery attempts
     end
     Thing.count.should == 0
     Thing.find_all_by_name("this will error").should be_empty

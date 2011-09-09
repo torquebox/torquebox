@@ -24,8 +24,10 @@ end
 
 if defined?(ActiveRecord)  
   module TorqueBox
+
     module Transactions
-      def transaction(*args)
+
+      def transaction(*)
         begin
           super
         rescue ActiveRecord::JDBCError => e
@@ -35,9 +37,30 @@ if defined?(ActiveRecord)
           end
         end
       end
+
+      def self.rolled_back?
+        conns = Thread.current[:tb_tx_records]
+        conns && conns.any? {|type,conn| type == :rollback}
+      end
+
+      def self.run_callbacks!( force_rollback = false )
+        begin
+          Thread.current[:tb_running_callbacks] = true
+          if force_rollback || rolled_back?
+            (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.rollback_transaction_records(:all)}
+          else
+            (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.commit_transaction_records}
+          end
+        ensure
+          Thread.current[:tb_tx_records] = nil
+          Thread.current[:tb_running_callbacks] = nil
+        end
+      end
+
     end
     
     module XAResource
+
       # An XA connection is not allowed to begin/commit/rollback
       def begin_db_transaction
       end
@@ -45,12 +68,36 @@ if defined?(ActiveRecord)
       end
       def rollback_db_transaction
       end
+
+      # Defer execution of these tx-related callbacks invoked by
+      # DatabaseStatements.transaction() until after the XA tx is
+      # either committed or rolled back. Each invocation pushes a
+      # 2-element array onto a thread-local array, the first element
+      # indicating either commit or rollback. This is necessary since
+      # not all rollbacks will raise an exception,
+      # i.e. ActiveRecord::Rollback is not re-raised.
+      def commit_transaction_records(*)
+        if Thread.current[:tb_running_callbacks] 
+          super 
+        else
+          (Thread.current[:tb_tx_records] ||= []) << [:commit, self]
+        end
+      end
+      def rollback_transaction_records(*)
+        if Thread.current[:tb_running_callbacks] 
+          super 
+        else
+          (Thread.current[:tb_tx_records] ||= []) << [:rollback, self]
+        end
+      end
+
     end
 
     def self.transaction
       ActiveRecord::Base.connection.reconnect!
       yield
     end
+
   end
 
   module ActiveRecord
@@ -61,3 +108,4 @@ if defined?(ActiveRecord)
     end
   end
 end
+

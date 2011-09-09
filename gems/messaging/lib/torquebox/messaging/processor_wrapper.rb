@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/injectors'
+require 'torquebox/transactions'
 
 module TorqueBox
   module Messaging
@@ -36,13 +37,16 @@ module TorqueBox
           @tm.transaction.enlist_resource( @session.xa_resource )
           Thread.current[:session] = @session
           @target.process!( @message )
-          # if we're sure AR::Rollback was never tossed (check $! somehow?)
-          @tm.commit
-          # commit transaction records
+          if TorqueBox::Transactions.rolled_back?
+            @tm.rollback
+          else
+            @tm.commit
+          end
+          TorqueBox::Transactions.run_callbacks!
         rescue Exception => e
-          puts "Transaction exception: #{e}"
+          puts "Transaction exception: #{e}", $@
           @tm.rollback
-          # rollback transaction records
+          TorqueBox::Transactions.run_callbacks! :force_rollback
         ensure
           @tm.suspend
           Thread.current[:session] = nil

@@ -20,5 +20,3 @@ require 'torquebox-naming'
 require 'torquebox-messaging'
 require 'torquebox-web'
 require 'torquebox-rake-support'
-
-require 'torquebox/transactions'
