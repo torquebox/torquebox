@@ -50,7 +50,7 @@ driver_type = java.lang::System.getProperty( "driver.type" ) || 'any'
 
 def register_headless_driver()
   Capybara.register_driver :headless do |app|
-    Capybara::Driver::Akephalos.new(app, :browser => :firefox_3, :resynchronize=>false)
+    Capybara::Driver::Akephalos.new(app, :browser => :firefox_3, :resynchronize=>false, :validate_scripts=>false )
   end
 end
 
