@@ -20,7 +20,7 @@ remote_describe "rails transactions testing" do
     
   it "should create a Thing in response to a happy message" do
     @input.publish("happy path")
-    @output.receive(:timeout => 30_000).should == 'after_commit'
+    @output.receive(:timeout => 60_000).should == 'after_commit'
     Thing.count.should == 1
     Thing.find_by_name("happy path").name.should == "happy path"
   end
@@ -29,7 +29,7 @@ remote_describe "rails transactions testing" do
     @input.publish("this will error")
     msgs = []
     loop do
-      msg = @output.receive(:timeout => 20_000)
+      msg = @output.receive(:timeout => 30_000)
       raise "Didn't receive enough rollback messages" unless msg
       msgs << msg if msg == 'after_rollback'
       break if msgs.size == 10  # default number of HornetQ delivery attempts
