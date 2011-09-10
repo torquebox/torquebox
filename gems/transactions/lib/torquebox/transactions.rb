@@ -15,97 +15,89 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-begin
-  require 'active_record'
-  require 'activerecord-jdbc-adapter'
-rescue LoadError => e
-  puts "WARN: Failed to load ActiveRecord (probably safe to ignore)"
-end
+module TorqueBox
 
-if defined?(ActiveRecord)  
-  module TorqueBox
+  module Transactions
 
-    module Transactions
-
-      def transaction(*)
-        begin
-          super
-        rescue ActiveRecord::JDBCError => e
-          unless self.is_a?(XAResource)
-            self.extend(XAResource)
-            retry
-          end
+    def transaction(*)
+      begin
+        super
+      rescue ActiveRecord::JDBCError => e
+        unless self.is_a?(XAResource)
+          puts "JC: extend XAResource due to #{e}"
+          self.extend(XAResource)
+          retry
         end
       end
-
-      def self.rolled_back?
-        conns = Thread.current[:tb_tx_records]
-        conns && conns.any? {|type,conn| type == :rollback}
-      end
-
-      def self.run_callbacks!( force_rollback = false )
-        begin
-          Thread.current[:tb_running_callbacks] = true
-          if force_rollback || rolled_back?
-            (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.rollback_transaction_records(:all)}
-          else
-            (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.commit_transaction_records}
-          end
-        ensure
-          Thread.current[:tb_tx_records] = nil
-          Thread.current[:tb_running_callbacks] = nil
-        end
-      end
-
-    end
-    
-    module XAResource
-
-      # An XA connection is not allowed to begin/commit/rollback
-      def begin_db_transaction
-      end
-      def commit_db_transaction
-      end
-      def rollback_db_transaction
-      end
-
-      # Defer execution of these tx-related callbacks invoked by
-      # DatabaseStatements.transaction() until after the XA tx is
-      # either committed or rolled back. Each invocation pushes a
-      # 2-element array onto a thread-local array, the first element
-      # indicating either commit or rollback. This is necessary since
-      # not all rollbacks will raise an exception,
-      # i.e. ActiveRecord::Rollback is not re-raised.
-      def commit_transaction_records(*)
-        if Thread.current[:tb_running_callbacks] 
-          super 
-        else
-          (Thread.current[:tb_tx_records] ||= []) << [:commit, self]
-        end
-      end
-      def rollback_transaction_records(*)
-        if Thread.current[:tb_running_callbacks] 
-          super 
-        else
-          (Thread.current[:tb_tx_records] ||= []) << [:rollback, self]
-        end
-      end
-
     end
 
-    def self.transaction
+    def self.rolled_back?
+      conns = Thread.current[:tb_tx_records]
+      conns && conns.any? {|type,conn| type == :rollback}
+    end
+
+    def self.run_callbacks!( force_rollback = false )
+      begin
+        Thread.current[:tb_running_callbacks] = true
+        if force_rollback || rolled_back?
+          (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.rollback_transaction_records(:all)}
+        else
+          (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.commit_transaction_records}
+        end
+      ensure
+        Thread.current[:tb_tx_records] = nil
+        Thread.current[:tb_running_callbacks] = nil
+      end
+    end
+
+  end
+  
+  module XAResource
+
+    # An XA connection is not allowed to begin/commit/rollback
+    def begin_db_transaction
+      puts "JC: tx begin"
+    end
+    def commit_db_transaction
+      puts "JC: tx commit"
+    end
+    def rollback_db_transaction
+      puts "JC: tx rollback"
+    end
+
+    # Defer execution of these tx-related callbacks invoked by
+    # DatabaseStatements.transaction() until after the XA tx is
+    # either committed or rolled back. Each invocation pushes a
+    # 2-element array onto a thread-local array, the first element
+    # indicating either commit or rollback. This is necessary since
+    # not all rollbacks will raise an exception,
+    # i.e. ActiveRecord::Rollback is not re-raised.
+    def commit_transaction_records(*)
+      if Thread.current[:tb_running_callbacks] 
+        super 
+      else
+        (Thread.current[:tb_tx_records] ||= []) << [:commit, self]
+      end
+    end
+    def rollback_transaction_records(*)
+      if Thread.current[:tb_running_callbacks] 
+        super 
+      else
+        (Thread.current[:tb_tx_records] ||= []) << [:rollback, self]
+      end
+    end
+
+  end
+
+  # TorqueBox.transaction(resources...)
+  def self.transaction(*resources)
+    if defined?(ActiveRecord)
+      unless ActiveRecord::ConnectionAdapters::JdbcAdapter.include? TorqueBox::Transactions
+        ActiveRecord::ConnectionAdapters::JdbcAdapter.send(:include, TorqueBox::Transactions)
+      end
       ActiveRecord::Base.connection.reconnect!
-      yield
     end
-
+    yield
   end
 
-  module ActiveRecord
-    module ConnectionAdapters
-      class JdbcAdapter
-        include TorqueBox::Transactions
-      end
-    end
-  end
 end
-
