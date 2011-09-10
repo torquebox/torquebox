@@ -15,17 +15,12 @@ remote_describe "rails transactions testing" do
   before(:each) do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
     @output  = TorqueBox::Messaging::Queue.new('/queue/output')
-    puts "JC: deleting"
     Thing.delete_all
-    puts "JC: deleted"
   end
     
   it "should create a Thing in response to a happy message" do
     @input.publish("happy path")
-    30.times do
-      sleep 1
-      break if Thing.uncached { Thing.count > 0 }
-    end
+    @output.receive(:timeout => 30_000).should == 'after_commit'
     Thing.count.should == 1
     Thing.find_by_name("happy path").name.should == "happy path"
   end
