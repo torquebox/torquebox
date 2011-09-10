@@ -15,7 +15,9 @@ remote_describe "rails transactions testing" do
   before(:each) do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
     @output  = TorqueBox::Messaging::Queue.new('/queue/output')
+    puts "JC: deleting"
     Thing.delete_all
+    puts "JC: deleted"
   end
     
   it "should create a Thing in response to a happy message" do
