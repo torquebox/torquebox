@@ -25,23 +25,20 @@
 <module xmlns="urn:jboss:module:1.0" name="org.torquebox.core">
 
     <resources>
-        <resource-root path="${project.artifactId}-${project.version}.jar"/>
-<!--
-        <resource-root path="jruby-complete-${version.jruby}.jar"/>
--->
-        <resource-root path="hibernate-commons-annotations-${version.org.hibernate.commons.annotations}.jar"/>
-        <resource-root path="hibernate-search-${version.org.hibernate.search}.jar"/>
-        <resource-root path="hibernate-search-analyzers-${version.org.hibernate.search}.jar"/>
-        <resource-root path="infinispan-query-${version.org.infinispan}.jar"/>
-        <resource-root path="lucene-analyzers-${version.org.apache.lucene.other}.jar"/>
-        <resource-root path="lucene-core-3.3.0.jar"/>
-        <resource-root path="lucene-highlighter-${version.org.apache.lucene.other}.jar"/>
-        <resource-root path="lucene-memory-${version.org.apache.lucene.other}.jar"/>
-        <resource-root path="lucene-misc-${version.org.apache.lucene.other}.jar"/>
-        <resource-root path="lucene-smartcn-${version.org.apache.lucene.other}.jar"/>
-        <resource-root path="lucene-spatial-${version.org.apache.lucene.other}.jar"/>
-        <resource-root path="lucene-spellchecker-${version.org.apache.lucene.other}.jar"/>
-        <resource-root path="lucene-stempel-${version.org.apache.lucene.other}.jar"/>
+        <resource-root path="${project.artifactId}.jar"/>
+        <resource-root path="hibernate-commons-annotations.jar"/>
+        <resource-root path="hibernate-search.jar"/>
+        <resource-root path="hibernate-search-analyzers.jar"/>
+        <resource-root path="infinispan-query.jar"/>
+        <resource-root path="lucene-analyzers.jar"/>
+        <resource-root path="lucene-core.jar"/>
+        <resource-root path="lucene-highlighter.jar"/>
+        <resource-root path="lucene-memory.jar"/>
+        <resource-root path="lucene-misc.jar"/>
+        <resource-root path="lucene-smartcn.jar"/>
+        <resource-root path="lucene-spatial.jar"/>
+        <resource-root path="lucene-spellchecker.jar"/>
+        <resource-root path="lucene-stempel.jar"/>
     </resources>
 
     <exports>

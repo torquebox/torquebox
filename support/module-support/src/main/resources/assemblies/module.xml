@@ -18,7 +18,7 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>/</outputDirectory>
-      <outputFileNameMapping>${artifact.artifactId}-${artifact.version}.${artifact.extension}</outputFileNameMapping>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
       <unpack>false</unpack>
       <scope>runtime</scope>
     </dependencySet>

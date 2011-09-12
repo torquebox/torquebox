@@ -25,8 +25,8 @@
 <module xmlns="urn:jboss:module:1.0" name="org.torquebox.jobs">
 
     <resources>
-        <resource-root path="${project.artifactId}-${project.version}.jar"/>
-        <resource-root path="quartz-${version.org.quartz-scheduler}.jar"/>
+        <resource-root path="${project.artifactId}.jar"/>
+        <resource-root path="quartz.jar"/>
     </resources>
 
     <dependencies>

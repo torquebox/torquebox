@@ -25,17 +25,17 @@
 <module xmlns="urn:jboss:module:1.0" name="org.torquebox.stomp">
 
     <resources>
-        <resource-root path="${project.artifactId}-${project.version}.jar"/>
+        <resource-root path="${project.artifactId}.jar"/>
 
-        <resource-root path="stilts-stomp-api-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="stilts-stomp-common-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="stilts-stomp-server-core-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="stilts-stomp-server-spi-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="stilts-conduit-server-core-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="stilts-conduit-server-spi-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="stilts-stomplet-server-core-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="stilts-stomplet-api-${version.org.projectodd.stilts}.jar"/>
-        <resource-root path="commons-lang-2.4.jar"/>
+        <resource-root path="stilts-stomp-api.jar"/>
+        <resource-root path="stilts-stomp-common.jar"/>
+        <resource-root path="stilts-stomp-server-core.jar"/>
+        <resource-root path="stilts-stomp-server-spi.jar"/>
+        <resource-root path="stilts-conduit-server-core.jar"/>
+        <resource-root path="stilts-conduit-server-spi.jar"/>
+        <resource-root path="stilts-stomplet-server-core.jar"/>
+        <resource-root path="stilts-stomplet-api.jar"/>
+        <resource-root path="commons-lang.jar"/>
     </resources>
 
     <dependencies>
