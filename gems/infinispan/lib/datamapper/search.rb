@@ -23,8 +23,10 @@ module Infinispan
       @deserializer   = deserializer
       begin
         @search_manager = cache.search_manager
-      rescue
-        puts "[ERROR] Infinispan SearchManager not available for cache: #{cache.name}"
+      rescue Exception => e
+        cache.log( "Infinispan SearchManager not available for cache: #{cache.name}", 'ERROR' )
+        cache.log( e.message, 'ERROR' )
+        cache.log( e.backtracae, 'ERROR' )
       end
     end
 
