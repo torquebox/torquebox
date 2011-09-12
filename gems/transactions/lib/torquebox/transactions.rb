@@ -15,89 +15,143 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'torquebox/injectors'
+
 module TorqueBox
 
   module Transactions
+    
+    module ConnectionAdapters
 
-    def transaction(*)
-      begin
-        super
-      rescue ActiveRecord::JDBCError => e
-        unless self.is_a?(XAResource)
-          puts "JC: extend XAResource due to #{e}"
-          self.extend(XAResource)
-          retry
+      def transaction(*)
+        begin
+          super
+        rescue ActiveRecord::JDBCError => e
+          unless self.is_a?(XAResource)
+            puts "Creating an XAResource; exception=#{e}"
+            self.extend(XAResource)
+            retry
+          end
         end
       end
+
     end
 
-    def self.rolled_back?
-      conns = Thread.current[:tb_tx_records]
-      conns && conns.any? {|type,conn| type == :rollback}
+    module XAResource
+
+      # An XA connection is not allowed to begin/commit/rollback
+      def begin_db_transaction
+        puts "JC: tx begin"
+      end
+      def commit_db_transaction
+        puts "JC: tx commit"
+      end
+      def rollback_db_transaction
+        puts "JC: tx rollback"
+      end
+
+      # Defer execution of these tx-related callbacks invoked by
+      # DatabaseStatements.transaction() until after the XA tx is
+      # either committed or rolled back. 
+      def commit_transaction_records(*)
+        super if Transaction.current.should_commit?(self)
+      end
+      def rollback_transaction_records(*)
+        super if Transaction.current.should_rollback?(self)
+      end
+
     end
 
-    def self.run_callbacks!( force_rollback = false )
-      begin
-        Thread.current[:tb_running_callbacks] = true
-        if force_rollback || rolled_back?
-          (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.rollback_transaction_records(:all)}
+    class Transaction
+      include TorqueBox::Injectors
+
+      def self.current()
+        Thread.current[:torquebox_transaction] ||= new
+      end
+
+      def initialize()
+        @tm = inject('transaction-manager')
+        @resources = []
+        @connections = []
+      end
+
+      def enlist(*resources)
+        if begun?
+          (resources + @resources).each { |r| @tm.transaction.enlist_resource(r) }
+          @resources = []
         else
-          (Thread.current[:tb_tx_records] || []).each {|type,conn| conn.commit_transaction_records}
+          @resources += resources
         end
-      ensure
-        Thread.current[:tb_tx_records] = nil
-        Thread.current[:tb_running_callbacks] = nil
+        self
+      end
+
+      def run &block
+        if begun?
+          yield
+        else
+          with_tx &block
+        end
+      end
+
+      def begun?
+        @tm.transaction != nil
+      end
+
+      def with_tx
+        begin
+          @tm.begin
+          enlist
+          # TODO: This is wasteful when not using a JBoss XA datasource
+          ActiveRecord::Base.connection.reconnect! if defined?(ActiveRecord)
+          yield
+          commit
+        rescue Exception => e
+          puts "Transaction rollback: #{e}", $@
+          rollback
+          raise unless e.is_a?(ActiveRecord::Rollback)
+        ensure
+          @tm.suspend
+          Thread.current[:torquebox_transaction] = nil
+        end
+      end
+
+      def should_commit?(connection)
+        return true if @complete
+        @connections << connection
+        false
+      end
+
+      def should_rollback?(connection)
+        return true if @complete
+        @connections << connection
+        @rolled_back = true
+        false
+      end
+
+      def commit
+        raise ActiveRecord::Rollback if @rolled_back
+        @tm.commit
+        @complete = true
+        @connections.each { |connection| connection.commit_transaction_records }
+      end
+
+      def rollback
+        @tm.rollback
+        @complete = true
+        @connections.each { |connection| connection.rollback_transaction_records(:all) }
       end
     end
 
   end
   
-  module XAResource
-
-    # An XA connection is not allowed to begin/commit/rollback
-    def begin_db_transaction
-      puts "JC: tx begin"
-    end
-    def commit_db_transaction
-      puts "JC: tx commit"
-    end
-    def rollback_db_transaction
-      puts "JC: tx rollback"
-    end
-
-    # Defer execution of these tx-related callbacks invoked by
-    # DatabaseStatements.transaction() until after the XA tx is
-    # either committed or rolled back. Each invocation pushes a
-    # 2-element array onto a thread-local array, the first element
-    # indicating either commit or rollback. This is necessary since
-    # not all rollbacks will raise an exception,
-    # i.e. ActiveRecord::Rollback is not re-raised.
-    def commit_transaction_records(*)
-      if Thread.current[:tb_running_callbacks] 
-        super 
-      else
-        (Thread.current[:tb_tx_records] ||= []) << [:commit, self]
-      end
-    end
-    def rollback_transaction_records(*)
-      if Thread.current[:tb_running_callbacks] 
-        super 
-      else
-        (Thread.current[:tb_tx_records] ||= []) << [:rollback, self]
-      end
-    end
-
-  end
-
   # TorqueBox.transaction(resources...)
-  def self.transaction(*resources)
+  def self.transaction(*resources, &block)
     if defined?(ActiveRecord)
-      unless ActiveRecord::ConnectionAdapters::JdbcAdapter.include? TorqueBox::Transactions
-        ActiveRecord::ConnectionAdapters::JdbcAdapter.send(:include, TorqueBox::Transactions)
+      unless ActiveRecord::ConnectionAdapters::JdbcAdapter.include? TorqueBox::Transactions::ConnectionAdapters
+        ActiveRecord::ConnectionAdapters::JdbcAdapter.send(:include, TorqueBox::Transactions::ConnectionAdapters)
       end
-      ActiveRecord::Base.connection.reconnect!
     end
-    yield
+    Transactions::Transaction.current.enlist(*resources).run &block
   end
 
 end
