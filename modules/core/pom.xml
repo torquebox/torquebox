@@ -76,8 +76,27 @@
 
     <dependency>
       <groupId>org.infinispan</groupId>
+      <artifactId>infinispan-core</artifactId>
+      <version>${version.org.infinispan}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.infinispan</groupId>
       <artifactId>infinispan-query</artifactId>
       <version>${version.org.infinispan}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-mapper-asl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
@@ -96,6 +115,10 @@
         <exclusion>
           <groupId>commons-lang</groupId>
           <artifactId>commons-lang</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.jackson</groupId>
+          <artifactId>jackson-mapper-asl</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.hibernate</groupId>
