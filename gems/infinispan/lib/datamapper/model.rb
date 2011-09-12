@@ -87,11 +87,11 @@ module Infinispan
       end
 
       def configure_index!
-        puts ">>>>>>>>>>>>>> dm-infinispan-adapter: configuring"
+        TorqueBox::Infinispan::Cache.log( "Configuring dm-infinispan-adapter model #{name}" )
         properties().each do |prop|
-          puts "Adding property #{prop.inspect}"
+          TorqueBox::Infinispan::Cache.log( "Adding property #{prop.inspect}" )
           add_java_property(prop) 
-          puts "Added property #{prop.inspect}"
+          TorqueBox::Infinispan::Cache.log( "Added property #{prop.inspect}" )
         end
 
 

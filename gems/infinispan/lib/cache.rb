@@ -196,7 +196,7 @@ module TorqueBox
           @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "web" )]
         rescue Exception => e
           log( "Caught exception while looking up Infinispan service.", 'ERROR' )
-          $stderr.puts e.message
+          log( e.message, 'ERROR' )
         end
         @manager
       end
@@ -258,7 +258,7 @@ module TorqueBox
         manager.get_cache()
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
-        $stderr.puts e.backtrace
+        log( e.backtrace, 'ERROR' )
       end
       
       def nothing
@@ -276,8 +276,8 @@ module TorqueBox
           expires_in = expires + 5.minutes
           args << expires_in << SECONDS
         end
-        $stderr.puts "cache=#{cache.inspect}"
-        $stderr.puts "*args=#{args.inspect}"
+        #$stderr.puts "cache=#{cache.inspect}"
+        #$stderr.puts "*args=#{args.inspect}"
         cache.send( *args ) && true
       end
     end
