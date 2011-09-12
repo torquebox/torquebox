@@ -165,11 +165,15 @@ module TorqueBox
         cache.stop
       end
 
-      private
-
-      def log( message, status = 'INFO' )
+      def self.log( message, status = 'INFO' )
         $stderr.puts( "#{status}: #{message}" )
       end
+
+      def log( message, status = 'INFO' )
+        TorqueBox::Infinispan::Cache.log( message, status )
+      end
+
+      private
 
       def encode(value)
         value.is_a?(java.lang.Object) ? value : Marshal.dump(value).to_java_bytes
