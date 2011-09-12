@@ -26,7 +26,6 @@ module Infinispan
       rescue Exception => e
         cache.log( "Infinispan SearchManager not available for cache: #{cache.name}", 'ERROR' )
         cache.log( e.message, 'ERROR' )
-        cache.log( e.backtracae, 'ERROR' )
       end
     end
 
@@ -35,7 +34,10 @@ module Infinispan
         cache_query = search_manager.get_query( build_query( query ), query.model.java_class )
         cache_query.list.collect { |record| deserialize(record) }
       else
-        cache.all.collect { |record| deserialize(record) }
+        cache.all.select do |r| 
+          record = deserialize(r) 
+          record.class == query.model
+        end
       end
     end
 

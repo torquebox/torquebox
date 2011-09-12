@@ -38,7 +38,8 @@ module Infinispan
     def self.included(model)
       model.extend(ClassMethods)
       include java.io.Serializable
-      unless model.mapped?
+
+      unless model.mapped? model.name
         [:auto_migrate!, :auto_upgrade!, :create, :all, :copy, :first, :first_or_create, :first_or_new, :get, :last, :load].each do |method|
           model.before_class_method(method, :configure_index)
         end
@@ -62,7 +63,7 @@ module Infinispan
 
     module ClassMethods
 
-      @@mapped = false
+      @@mapped = {}
 
       def auto_upgrade!
         configure_index
@@ -76,12 +77,12 @@ module Infinispan
         TYPES[type] || self.to_java_type(type.primitive)
       end
 
-      def mapped?
-        @@mapped
+      def mapped?( type )
+        @@mapped[type]
       end
 
       def configure_index
-        unless mapped?
+        unless mapped?( name )
           configure_index!
         end
       end
@@ -110,7 +111,7 @@ module Infinispan
         #puts "BOB:  CL-load: #{java_class.class_loader.load_class( java_class.name )}"
         #puts "BOB:  JCL-load: #{JRuby.runtime.jruby_class_loader.load_class( java_class.name )}"
 
-        @@mapped = true
+        @@mapped[name] = true
       end
 
       def add_java_property(prop)

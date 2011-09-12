@@ -57,12 +57,6 @@ get '/muppet/delete' do
   "Hiding" unless Muppet.count > 0
 end
 
-class Coat
-  include DataMapper::Resource
-  property :id,         Serial
-  property :color,      String
-end
-
 class Muppet
   include DataMapper::Resource
 
@@ -72,7 +66,13 @@ class Muppet
   property :bio,        Text, :required => true, :lazy => false
   property :created_at, DateTime
 
-  #has 1, :coat
+  has 1, :coat
+end
+
+class Coat
+  include DataMapper::Resource
+  property :id,         Serial
+  property :color,      String
 end
 
 DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
@@ -83,8 +83,11 @@ today = Date.today
 tomorrow = Date.today + 1
 yesterday = Date.today - 1
 
-Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(yesterday.to_s))#, :coat => Coat.create(:color=>'Yellow'))
-Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse(today.to_s))#, :coat => Coat.create(:color=>'Brown'))
-Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse(tomorrow.to_s))#, :coat => Coat.create(:color=>'Blue'))
+blue   = Coat.create(:color=>'Blue')
+brown  = Coat.create(:color=>'Brown')
+
+Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(yesterday.to_s), :coat => Coat.create(:color=>'Yellow'))
+Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse(today.to_s), :coat => brown)
+Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse(tomorrow.to_s), :coat => blue)
 
 
