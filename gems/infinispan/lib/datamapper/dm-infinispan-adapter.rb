@@ -26,6 +26,8 @@ module DataMapper::Adapters
 
   class InfinispanAdapter < AbstractAdapter
 
+    include TorqueBox::Infinispan
+
     DataMapper::Model.append_inclusions( Infinispan::Model )
 
     def initialize( name, options )
@@ -35,8 +37,8 @@ module DataMapper::Adapters
       @options[:name]     = name.to_s
       @options[:index]    = true
       @metadata[:name]    = name.to_s + "/metadata"
-      @cache              = TorqueBox::Infinispan::Cache.new( @options )
-      @metadata_cache     = TorqueBox::Infinispan::Cache.new( @metadata )
+      @cache              = Cache.new( @options )
+      @metadata_cache     = Cache.new( @metadata )
       @search             = Infinispan::Search.new(cache, lambda{ |v| self.deserialize(v) })
     end
 
