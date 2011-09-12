@@ -29,7 +29,7 @@ Capistrano::Configuration.instance.load do
   _cset( :jruby_opts,          lambda{ "--#{app_ruby_version}" } )
   _cset( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } )
 
-  _cset( :jboss_config,        'default'      )
+  _cset( :jboss_config,        'standalone'      )
 
   _cset( :jboss_control_style, :initid )
   _cset( :jboss_init_script,   '/etc/init.d/jbossas' )
@@ -94,9 +94,7 @@ Capistrano::Configuration.instance.load do
       task :check do
         run "test -x #{jboss_init_script}",                        :roles=>[ :app ]
         run "test -d #{jboss_home}",                               :roles=>[ :app ]
-        run "test -d #{jboss_home}/server/#{jboss_config}",        :roles=>[ :app ]
-        run "test -w #{jboss_home}/server/#{jboss_config}/deploy", :roles=>[ :app ]
-        run "test -w #{torquebox_home}/apps", :roles=>[ :app ]
+        run "test -w #{jboss_home}/#{jboss_config}/deployments",   :roles=>[ :app ]
         unless ( [ :initd, :binscripts ].include?( jboss_control_style.to_sym ) )
           fail "invalid jboss_control_style: #{jboss_control_style}"
         end
@@ -105,14 +103,14 @@ Capistrano::Configuration.instance.load do
       task :deployment_descriptor do
         puts "creating deployment descriptor"
         dd_str = YAML.dump_stream( create_deployment_descriptor() )
-        dd_file = "#{torquebox_home}/apps/#{application}-knob.yml"
-        dd_tmp_file = "#{dd_file}.tmp"
-        cmd =  "cat /dev/null > #{dd_tmp_file}"
+        dd_file = "#{jboss_home}/#{jboss_config}/deployments/#{application}-knob.yml"
+        cmd =  "cat /dev/null > #{dd_file}"
         dd_str.each_line do |line|
-          cmd += " && echo \"#{line}\" >> #{dd_tmp_file}"
+          cmd += " && echo \"#{line}\" >> #{dd_file}"
         end
-        cmd += " && mv #{dd_tmp_file} #{dd_file}"
+        cmd += " && echo '' >> #{dd_file}"
         run cmd
+        run "touch #{dd_file}.dodeploy"
       end
     end
 
