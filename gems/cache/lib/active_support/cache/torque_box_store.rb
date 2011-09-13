@@ -54,9 +54,12 @@ module ActiveSupport
       # Increment an integer value in the cache; return new value
       def increment(name, amount = 1, options = nil)
         options = merged_options( options )
+
+        # Get the current entry
         key = namespaced_key( name, options )
         current = cache.get(key)
-        value = decode(current).value.to_i
+        value = current.value.to_i
+
         new_entry = Entry.new( value+amount, options )
         if cache.replace( key, current, encode(new_entry) )
           return new_entry.value
@@ -98,7 +101,7 @@ module ActiveSupport
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
       def delete_entry(key, options) # :nodoc:
-        cache.removeAsync( key ) && true
+        cache.remove( key ) && true
       end
 
       def encode value
