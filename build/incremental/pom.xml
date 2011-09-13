@@ -60,7 +60,7 @@
                   <goal>jruby</goal>
                 </goals>
                 <configuration>
-                  <args>-S gem install json --no-ri --no-rdoc</args>
+                  <args>-S gem install json_pure --no-ri --no-rdoc</args>
                   <gemHome>./target/rubygems</gemHome>
                   <gemPath>./target/rubygems</gemPath>
                 </configuration>
