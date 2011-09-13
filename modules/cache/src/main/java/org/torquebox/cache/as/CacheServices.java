@@ -19,7 +19,6 @@
 
 package org.torquebox.cache.as;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.as.CoreServices;
 
