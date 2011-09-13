@@ -57,7 +57,7 @@ module TorqueBox
       def with_thread_local_session(&block)
         current = Thread.current[:session]
         if current.nil?
-          result = with_new_session do |session|
+          with_new_session do |session|
             Thread.current[:session] = session
             begin
               block.call( session )
@@ -66,9 +66,8 @@ module TorqueBox
             end
           end
         else
-          result = yield( current )
+          yield( current )
         end
-        return result
       end
 
       def create_session()
