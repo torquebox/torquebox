@@ -30,7 +30,7 @@ module TorqueBox
       def process!
         begin
           Thread.current[:session] = @session
-          TorqueBox.transaction(@session.xa_resource) do
+          TorqueBox.transaction( @session ) do
             @target.process!( @message )
           end
         ensure

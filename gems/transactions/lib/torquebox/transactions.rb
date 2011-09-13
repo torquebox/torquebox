@@ -41,13 +41,10 @@ module TorqueBox
 
       # An XA connection is not allowed to begin/commit/rollback
       def begin_db_transaction
-        puts "JC: tx begin"
       end
       def commit_db_transaction
-        puts "JC: tx commit"
       end
       def rollback_db_transaction
-        puts "JC: tx rollback"
       end
 
       # Defer execution of these tx-related callbacks invoked by
@@ -77,7 +74,10 @@ module TorqueBox
 
       def enlist(*resources)
         if begun?
-          (resources + @resources).each { |r| @tm.transaction.enlist_resource(r) }
+          (resources + @resources).each do |resource| 
+            xa = resource.is_a?(javax.transaction.xa.XAResource) ? resource : resource.xa_resource
+            @tm.transaction.enlist_resource(xa)
+          end
           @resources = []
         else
           @resources += resources
