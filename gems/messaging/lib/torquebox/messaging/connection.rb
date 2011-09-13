@@ -40,8 +40,8 @@ module TorqueBox
         @jms_connection.client_id = client_id
       end
       
-      def with_new_session(transacted=false, ack_mode=Session::AUTO_ACK, &block)
-        session = self.create_session( transacted, ack_mode )
+      def with_new_session(&block)
+        session = self.create_session()
         begin
           result = block.call( session )
         ensure
@@ -50,8 +50,8 @@ module TorqueBox
         return result
       end
 
-      def create_session(transacted=false, ack_mode=Session::AUTO_ACK)
-        session = @jms_connection.create_session( transacted, Session.canonical_ack_mode( ack_mode ) )
+      def create_session()
+        session = @jms_connection.create_xa_session()
         @hornetq_direct ? HornetQSession.new( session ) : Session.new( session )
       end
 

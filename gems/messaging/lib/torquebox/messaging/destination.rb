@@ -88,10 +88,8 @@ module TorqueBox
         if Thread.current[:session] && !force_new
           yield Session.new( Thread.current[:session] )
         else
-          transacted = connect_options.fetch( :transacted, false )
-          ack_mode = connect_options.fetch( :ack_mode, Session::AUTO_ACK )
           connection_factory.with_new_connection( connect_options[:client_id] ) do |connection|
-            connection.with_new_session( transacted, ack_mode ) do |session|
+            connection.with_new_session do |session|
               yield session
             end
           end

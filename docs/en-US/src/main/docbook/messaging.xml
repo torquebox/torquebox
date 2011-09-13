@@ -367,27 +367,6 @@ require 'torquebox-messaging'
             </row>
 
             <row>
-              <entry><parameter>:ack_mode</parameter></entry>
-
-              <entry><varname>:auto</varname></entry>
-
-              <entry>Corresponds to one of the three
-              <classname>javax.jms.Session</classname> modes for message
-              delivery acknowledgement: <varname>:auto</varname>,
-              <varname>:client</varname> and
-              <varname>:dups_ok</varname>.</entry>
-            </row>
-
-            <row>
-              <entry><parameter>:transacted</parameter></entry>
-
-              <entry>true</entry>
-
-              <entry>Indicates whether the underlying session is in
-              <emphasis>transacted</emphasis> mode.</entry>
-            </row>
-
-            <row>
               <entry><parameter>:client_id</parameter></entry>
 
               <entry></entry>

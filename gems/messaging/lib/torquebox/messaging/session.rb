@@ -30,10 +30,6 @@ module TorqueBox
         @jms_session = jms_session
       end
 
-      def transacted?
-        @jms_session.transacted?
-      end
-
       def close
         @jms_session.close
       end
