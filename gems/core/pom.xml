@@ -29,6 +29,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>torquebox-infinispan</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+
+
+    <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-core</artifactId>
       <scope>runtime</scope>
