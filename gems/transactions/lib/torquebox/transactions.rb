@@ -152,9 +152,10 @@ module TorqueBox
 end
 
 if defined?(ActiveRecord)
+  require 'arjdbc'
   module ActiveRecord
     module ConnectionAdapters
-      class JdbcAdapter
+      class JdbcAdapter 
         include TorqueBox::Transactions::ConnectionAdapters
       end
     end
