@@ -146,12 +146,17 @@ module TorqueBox
   
   # TorqueBox.transaction(resources...)
   def self.transaction(*resources, &block)
-    if defined?(ActiveRecord)
-      unless ActiveRecord::ConnectionAdapters::JdbcAdapter.include? TorqueBox::Transactions::ConnectionAdapters
-        ActiveRecord::ConnectionAdapters::JdbcAdapter.send(:include, TorqueBox::Transactions::ConnectionAdapters)
-      end
-    end
     Transactions::Transaction.current.enlist(*resources).run &block
   end
 
+end
+
+if defined?(ActiveRecord)
+  module ActiveRecord
+    module ConnectionAdapters
+      class JdbcAdapter
+        include TorqueBox::Transactions::ConnectionAdapters
+      end
+    end
+  end
 end
