@@ -4,6 +4,8 @@ require 'logger'
 java_import org.infinispan.config.Configuration::CacheMode
 include ActiveSupport::Cache
 
+TORQUEBOX_APP_NAME = 'active-support-unit-test'
+
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do

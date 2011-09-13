@@ -5,8 +5,8 @@ require 'logger'
 describe TorqueBox::Logger do
 
   it "should look nice for class objects" do
-    require 'active_support/cache/torque_box_store'
-    logger = TorqueBox::Logger.new( ActiveSupport::Cache::TorqueBoxStore )
+    require 'torquebox/service_registry'
+    logger = TorqueBox::Logger.new( TorqueBox::ServiceRegistry )
     logger.error("JC: log for cache store")
   end
 
