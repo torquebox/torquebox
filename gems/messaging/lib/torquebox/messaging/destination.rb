@@ -85,13 +85,9 @@ module TorqueBox
       end
 
       def with_session(force_new = false)
-        if Thread.current[:session] && !force_new
-          yield Session.new( Thread.current[:session] )
-        else
-          connection_factory.with_new_connection( connect_options[:client_id] ) do |connection|
-            connection.with_new_session do |session|
-              yield session
-            end
+        connection_factory.with_new_connection( connect_options[:client_id] ) do |connection|
+          connection.with_session(force_new) do |session|
+            yield session
           end
         end
       end

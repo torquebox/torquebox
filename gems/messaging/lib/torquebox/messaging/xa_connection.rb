@@ -39,7 +39,7 @@ module TorqueBox
         @jms_connection.client_id = client_id
       end
       
-      def with_new_session(&block)
+      def with_session(&block)
         session = self.create_session()
         begin
           result = block.call( session )

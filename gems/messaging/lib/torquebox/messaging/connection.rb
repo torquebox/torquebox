@@ -40,12 +40,33 @@ module TorqueBox
         @jms_connection.client_id = client_id
       end
       
-      def with_new_session(&block)
+      def with_session(force_new = false, &block)
+        force_new ? with_new_session(&block) : with_thread_local_session(&block)
+      end
+
+      def with_new_session
         session = self.create_session()
         begin
-          result = block.call( session )
+          result = yield( session )
         ensure
           session.close
+        end
+        return result
+      end
+
+      def with_thread_local_session(&block)
+        current = Thread.current[:session]
+        if current.nil?
+          result = with_new_session do |session|
+            Thread.current[:session] = session
+            begin
+              block.call( session )
+            ensure
+              Thread.current[:session] = nil
+            end
+          end
+        else
+          result = yield( current )
         end
         return result
       end

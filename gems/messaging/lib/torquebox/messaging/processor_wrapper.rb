@@ -29,7 +29,7 @@ module TorqueBox
 
       def process!
         begin
-          Thread.current[:session] = @session
+          Thread.current[:session] = Session.new( @session )
           TorqueBox.transaction( @session ) do
             @target.process!( @message )
           end
