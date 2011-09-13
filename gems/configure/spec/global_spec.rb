@@ -108,10 +108,12 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     it_should_behave_like 'options'
 
     it_should_not_allow_invalid_options { ruby :foo => :bar }
-    it_should_allow_valid_options { ruby :version => '1.9', :compile_mode => :jit }
+    it_should_allow_valid_options { ruby :version => '1.9', :compile_mode => :jit, :debug => true, :interactive => true }
 
     it_should_not_allow_invalid_option_values { ruby :version => '2' }
     it_should_not_allow_invalid_option_values { ruby :compile_mode => :bacon }
+    it_should_not_allow_invalid_option_values { ruby :debug => :sure }
+    it_should_not_allow_invalid_option_values { ruby :interactive => :sure }
     it_should_allow_valid_option_values { ruby :version => '1.8', :compile_mode => :jit }
   end
 
