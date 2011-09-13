@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
@@ -22,7 +23,7 @@
   ~ 02110-1301 USA, or see the FSF site: http://www.fsf.org.
   -->
 
-<module xmlns="urn:jboss:module:1.0" name="org.torquebox.web">
+<module xmlns="urn:jboss:module:1.0" name="org.torquebox.cache">
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
@@ -49,7 +50,6 @@
 
     <exports>
       <include-set>
-        <path name="org/torquebox/web/servlet"/>
         <path name="org/infinispan/commands"/>
         <path name="org/infinispan/commands/module"/>
         <path name="org/infinispan/query"/>
@@ -74,14 +74,13 @@
         <module name="org.torquebox.core"/>
         <module name="org.slf4j"/>
 
-        <!-- Infinispan requirements -->
+        <!-- Infinispan-requirements -->
         <module name="javax.transaction.api"/>
         <module name="javax.xml.bind.api"/>
         <module name="org.apache.xerces" services="import"/>
         <module name="org.jboss.marshalling"/>
         <module name="org.jboss.marshalling.river" services="import"/>
         <module name="org.jgroups" optional="true"/>
-        
     </dependencies>
 </module>
 
