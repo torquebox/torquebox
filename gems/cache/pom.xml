@@ -8,9 +8,9 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>torquebox-infinispan</artifactId>
+  <artifactId>torquebox-cache</artifactId>
   <packaging>java-gem</packaging>
-  <name>TorqueBox Infinispan Gem</name>
+  <name>TorqueBox Cache Gem</name>
   <description />
 
   <dependencies>
@@ -67,17 +67,6 @@
       </exclusions>
     </dependency>
 
-    <!--<dependency>-->
-      <!--<groupId>org.infinispan</groupId>-->
-      <!--<artifactId>infinispan-core</artifactId>-->
-      <!--<scope>provided</scope>-->
-      <!--</dependency>-->
-    <!--<dependency>-->
-      <!--<groupId>org.infinispan</groupId>-->
-      <!--<artifactId>infinispan-query</artifactId>-->
-      <!--<version>${version.org.infinispan}</version>-->
-      <!--<scope>runtime</scope>-->
-      <!--</dependency>-->
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-cache</artifactId>

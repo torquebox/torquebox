@@ -17,7 +17,7 @@ require "digest/sha1"
 require 'dm-core'
 require 'cache'
 require 'json'
-require 'torquebox-infinispan'
+require 'torquebox-cache' # is this needed?
 require 'datamapper/model'
 require 'datamapper/search'
 

@@ -64,7 +64,7 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>torquebox-infinispan</artifactId>
+      <artifactId>torquebox-cache</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
     </dependency>
