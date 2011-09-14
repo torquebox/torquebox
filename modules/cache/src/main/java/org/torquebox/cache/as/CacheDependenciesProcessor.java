@@ -41,12 +41,12 @@ public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
 
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
-        log.info( "Adding dependency on: " + TORQUEBOX_CACHE_ID );
+        log.info( "Adding dependency on: " + TORQUEBOX_CACHE_ID + " to " + unit );
         addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CACHE_ID );
     }
 
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
-        moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
+        moduleSpecification.addSystemDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, true, false ) );
     }
 
     @Override

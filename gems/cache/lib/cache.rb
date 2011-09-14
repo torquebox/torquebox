@@ -252,10 +252,12 @@ module TorqueBox
           store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
           config.loaders.add_cache_loader( store )
         end
+
         if options[:index]
           log( "Configuring #{name} local cache for local-only, in-memory indexing" )
           config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
+
         manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
         manager.get_cache()
       rescue Exception => e

@@ -95,21 +95,16 @@ module Infinispan
           TorqueBox::Infinispan::Cache.log( "Added property #{prop.inspect}" )
         end
 
-
-
         annotation = {
           org.hibernate.search.annotations.Indexed => {},
           org.hibernate.search.annotations.ProvidedId => {},
           org.infinispan.marshall.SerializeWith => { "value" => org.torquebox.cache.marshalling.JsonExternalizer.java_class }
         }
+
         add_class_annotation( annotation )
 
         # Wonder twin powers... ACTIVATE!
         java_class = become_java!(false)
-        #puts "BOB: Became java: #{java_class.name.inspect}"
-        #puts "BOB:  CL: #{java_class.class_loader}"
-        #puts "BOB:  CL-load: #{java_class.class_loader.load_class( java_class.name )}"
-        #puts "BOB:  JCL-load: #{JRuby.runtime.jruby_class_loader.load_class( java_class.name )}"
 
         @@mapped[name] = true
       end
