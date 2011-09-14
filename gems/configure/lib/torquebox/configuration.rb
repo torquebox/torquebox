@@ -155,11 +155,9 @@ module TorqueBox
       end
     end
 
-    class ThingEntry < Entry
+    class ThingsEntry < Entry
       def process_args(args)
-        thing = args.first
-        raise ConfigurationError.new( "'#{@name}' takes only one non-hash option", @line_number ) if thing.is_a?(Hash) || args.length != 1
-        self.local_config = thing.to_s
+        @entry_options = args.map(&:to_s)
         local_config
       end
     end

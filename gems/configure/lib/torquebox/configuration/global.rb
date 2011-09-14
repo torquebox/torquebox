@@ -39,8 +39,11 @@ module TorqueBox
                                               })
         {
           :authentication => ThingWithOptionsEntry.with_settings( :validate => {
-                                                                    :required => [:domain]
+                                                                    :required => [:domain],
+                                                                    :optional => [:credential]
                                                                   }),
+          :credential => ThingsEntry.with_settings(:require_parent => [:authentication],
+                                                   :discrete => true),
           :environment => OptionsEntry,
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {
@@ -108,6 +111,10 @@ module TorqueBox
           case entry_name
           when 'authentication' # => auth:
             entry_data.each do |name, data|
+              (data.delete('credential') || []).each do |user, password|
+                data['credentials'] ||= {}
+                data['credentials'][user] = password
+              end
               metadata['auth'][name] = data
             end
 

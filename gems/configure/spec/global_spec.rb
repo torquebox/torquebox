@@ -47,7 +47,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       end
 
     end
-    
+
     it "should parse a string and a hash" do
       config = TorqueBox.configure do |cfg|
         cfg.send( @method, 'a string', {'foo' => 'bar'} )
@@ -87,6 +87,41 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
 
     it_should_not_allow_invalid_options { authentication 'a-name', :foo => :bar }
     it_should_allow_valid_options { authentication 'a-name', :domain => :pizza }
+  end
+
+  describe "#credential" do
+    it "should only be valid inside authentication" do
+      lambda {
+        TorqueBox.configure { credential 'ham', 'biscuit' }
+      }.should raise_error(TorqueBox::Configuration::ConfigurationError)
+
+      lambda {
+        TorqueBox.configure do
+          authentication :default, :domain => 'ham' do
+            credential 'ham', 'biscuit'
+          end
+        end
+      }.should_not raise_error(TorqueBox::Configuration::ConfigurationError)
+    end
+
+    it "should nest under its parent" do
+      config = TorqueBox.configure do
+        authentication :default, :domain => 'ham' do
+          credential 'ham', 'biscuit'
+        end
+      end
+      config['<root>']['authentication']['default']['credential'].should == [['ham', 'biscuit']]
+    end
+
+    it "should nest under its parent properly when called more than once" do
+      config = TorqueBox.configure do
+        authentication :default, :domain => 'ham' do
+          credential 'ham', 'biscuit'
+          credential 'biscuit', 'gravy'
+        end
+      end
+      config['<root>']['authentication']['default']['credential'].should == [['ham', 'biscuit'], ['biscuit', 'gravy']]
+    end
   end
 
   describe '#environment' do
@@ -213,7 +248,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       @method = 'service'
       @discrete = true
     end
-    
+
     it_should_behave_like 'a thing with options'
 
     it_should_not_allow_invalid_options { service 'AClass', :foo => :bar }
@@ -279,9 +314,12 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
   describe "#to_metadata_hash" do
     before(:each) do
       @config = GlobalConfiguration.new
-      @config['<root>'] = { 
+      @config['<root>'] = {
         'authentication' => {
-          'ham' => { :domain => :gravy }
+          'ham' => {
+            :domain => :gravy,
+            'credential' => [['ham', 'biscuit'], ['biscuit', 'gravy']]
+          }
         },
         'environment' => { :ham => 'biscuit' },
         'job' => [ [ FakeConstant.new( 'AJob' ), {
@@ -322,69 +360,69 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
         'web' => { :context => '/bacon' }
       }
 
-    @metadata = @config.to_metadata_hash
-  end
+      @metadata = @config.to_metadata_hash
+    end
 
-  it "should properly setup authentication" do
-    @metadata['auth']['ham'].should == { 'domain' => :gravy }
-  end
+    it "should properly setup authentication" do
+      @metadata['auth']['ham'].should == { 'domain' => :gravy, 'credentials' => { 'ham' => 'biscuit', 'biscuit' => 'gravy' } }
+    end
 
-  it "should properly set the environment" do
-    @metadata['environment'].should == { 'ham' => 'biscuit' }
-  end
+    it "should properly set the environment" do
+      @metadata['environment'].should == { 'ham' => 'biscuit' }
+    end
 
-  it "should properly set a job" do
-    job = @metadata['jobs']['a-job']
-    job.should_not be_nil
-    job['job'].should == 'AJob'
-    job['cron'].should == 'cronspec'
-  end
+    it "should properly set a job" do
+      job = @metadata['jobs']['a-job']
+      job.should_not be_nil
+      job['job'].should == 'AJob'
+      job['cron'].should == 'cronspec'
+    end
 
-  it "should properly handle jobs for the same class without names" do
-    @metadata['jobs']['AnotherJob'].should_not be_nil
-    @metadata['jobs']['AnotherJob-1'].should_not be_nil
-  end
-  
-  it "should properly set task options from options_for" do
-    @metadata['tasks']['Backgroundable']['concurrency'].should == 42
-  end
+    it "should properly handle jobs for the same class without names" do
+      @metadata['jobs']['AnotherJob'].should_not be_nil
+      @metadata['jobs']['AnotherJob-1'].should_not be_nil
+    end
 
-  it "should properly set pooling" do
-    @metadata['pooling']['web'].should == 'shared'
-    foo = @metadata['pooling']['foo']
-    foo.should_not be_nil
-    foo['min'].should == 1
-    foo['max'].should == 2
-  end
+    it "should properly set task options from options_for" do
+      @metadata['tasks']['Backgroundable']['concurrency'].should == 42
+    end
 
-  it "should properly set a processor" do
-    @metadata['messaging']['a-queue']['AProcessor'].should == { "name" => 'a-proc', "config" => { 'foo' => :bar } }
-  end
+    it "should properly set pooling" do
+      @metadata['pooling']['web'].should == 'shared'
+      foo = @metadata['pooling']['foo']
+      foo.should_not be_nil
+      foo['min'].should == 1
+      foo['max'].should == 2
+    end
 
-  it "should properly set a queue" do
-    @metadata['queues']['another-queue'].should == { }
-  end
+    it "should properly set a processor" do
+      @metadata['messaging']['a-queue']['AProcessor'].should == { "name" => 'a-proc', "config" => { 'foo' => :bar } }
+    end
 
-  it "should not set a queue marked as create => false" do
-    @metadata['queues']['a-queue'].should be_nil
-  end
+    it "should properly set a queue" do
+      @metadata['queues']['another-queue'].should == { }
+    end
 
-  it "should properly set ruby runtime options" do
-    @metadata['ruby']['version'].should == '1.9'
-  end
+    it "should not set a queue marked as create => false" do
+      @metadata['queues']['a-queue'].should be_nil
+    end
 
-  it "should properly set a service" do
-    @metadata['services']['a-service'].should == { 'service' => 'AService', 'config' => { 'foo' => :bar } }
-  end
+    it "should properly set ruby runtime options" do
+      @metadata['ruby']['version'].should == '1.9'
+    end
 
-  it "should properly set a topic" do
-    @metadata['topics']['a-topic'].should == { 'durable' => true }
-  end
+    it "should properly set a service" do
+      @metadata['services']['a-service'].should == { 'service' => 'AService', 'config' => { 'foo' => :bar } }
+    end
 
-  it "should properly set web" do
-    @metadata['web']['context'].should == '/bacon'
+    it "should properly set a topic" do
+      @metadata['topics']['a-topic'].should == { 'durable' => true }
+    end
+
+    it "should properly set web" do
+      @metadata['web']['context'].should == '/bacon'
+    end
   end
-end
 end
 
 
