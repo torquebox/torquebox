@@ -30,8 +30,28 @@ module TorqueBox
       end
     end
 
+    class NoOpCodec
+      def self.encode(object)
+        object
+      end
+
+      def self.decode(object)
+        object
+      end
+    end
+
     class Sequence
       include java.io.Serializable
+
+      class Codec
+        def self.encode(sequence)
+          sequence.value.to_s
+        end
+
+        def self.decode(sequence_bytes)
+          sequence_bytes && Sequence.new( sequence_bytes.to_s.to_i )
+        end
+      end
 
       def initialize(amount = 1) 
         @data = amount
@@ -119,16 +139,17 @@ module TorqueBox
         __put(key, value, expires, :put_if_absent_async)
       end
 
-      def replace(key, original_value, new_value)
+      def replace(key, original_value, new_value, codec=NoOpCodec)
         # First, grab the raw value from the cache, which is a byte[]
 
         current = get( key )
+        decoded = codec.decode( current )
 
         # great!  we've got a byte[] now.  Let's apply == to it, like Jim says will work always
 
-        if ( current == original_value )
+        if ( decoded == original_value )
            # how does this work?
-           cache.replace( key, current, new_value )
+           cache.replace( key, current, codec.encode( new_value ) )
         end
       end
 
@@ -138,18 +159,16 @@ module TorqueBox
       end
 
       def increment( sequence_name, amount = 1 )
-        current_entry = decode_sequence( get( sequence_name )  )
-
-        puts "A current_entry = #{current_entry}"
+        current_entry = Sequence::Codec.decode( get( sequence_name )  )
 
         # If we can't find the sequence in the cache, create a new one and return
-        put( sequence_name, encode_sequence( Sequence.new( amount ) ) ) and return amount if current_entry.nil?
+        put( sequence_name, Sequence::Codec.encode( Sequence.new( amount ) ) ) and return amount if current_entry.nil?
 
         # Increment the sequence, stash it, and return
         next_entry = current_entry.next( amount )
 
         # Since replace() doesn't encode, let's encode everything to a byte[] for it, no?
-        if replace( sequence_name, encode_sequence( current_entry ), encode_sequence( next_entry ) )
+        if replace( sequence_name, current_entry, next_entry, Sequence::Codec  )
           return next_entry.value
         else
           raise "Concurrent modification, old value was #{current_entry.value} new value #{next_entry.value}"
@@ -188,15 +207,6 @@ module TorqueBox
       end
 
       private
-
-      def encode_sequence(sequence)
-        sequence.value.to_s
-      end
-
-     def decode_sequence(sequence_bytes)
-        #sequence_bytes && Marshal.load(String.from_java_bytes(sequence_bytes))
-        sequence_bytes && Sequence.new( sequence_bytes.to_s.to_i )
-     end
 
       def options 
         @options ||= {}
