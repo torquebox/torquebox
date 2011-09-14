@@ -100,7 +100,7 @@ module Infinispan
         annotation = {
           org.hibernate.search.annotations.Indexed => {},
           org.hibernate.search.annotations.ProvidedId => {},
-          org.infinispan.marshall.SerializeWith => { "value" => org.torquebox.core.marshalling.JsonExternalizer.java_class }
+          org.infinispan.marshall.SerializeWith => { "value" => org.torquebox.cache.marshalling.JsonExternalizer.java_class }
         }
         add_class_annotation( annotation )
 
