@@ -30,7 +30,6 @@ module TorqueBox
       end
     end
 
-
     class Sequence
       include java.io.Serializable
 
@@ -43,11 +42,15 @@ module TorqueBox
       end
 
       def next(amount = 1)
-        @data.to_i + amount
+        Sequence.new( @data.to_i + amount )
       end
 
       def ==(other)
         self.value == other.value
+      end
+
+      def to_s
+        "Sequence: #{self.value}"
       end
     end
 
@@ -104,7 +107,7 @@ module TorqueBox
 
       # Get an entry from the cache 
       def get(key)
-        decode(cache.get(key))
+        cache.get(key)
       end
 
       # Write an entry to the cache 
@@ -117,10 +120,7 @@ module TorqueBox
       end
 
       def replace(key, original_value, new_value)
-        current = cache.get(key)
-        if decode(current) == original_value
-          cache.replace( key, current, encode(new_value) )
-        end
+        cache.replace( key, new_value )
       end
 
       # Delete an entry from the cache 
@@ -129,17 +129,22 @@ module TorqueBox
       end
 
       def increment( sequence_name, amount = 1 )
-        current_entry = get( sequence_name )
+        current_entry = decode_sequence( get( sequence_name )  )
+
+        puts "A current_entry = #{current_entry}"
 
         # If we can't find the sequence in the cache, create a new one and return
-        put( sequence_name, Sequence.new(amount) ) and return amount if current_entry.nil?
+        put( sequence_name, encode_sequence( Sequence.new( amount ) ) ) and return amount if current_entry.nil?
 
         # Increment the sequence, stash it, and return
-        new_value = current_entry.next( amount )
-        if replace( sequence_name, current_entry, Sequence.new(new_value) )  
-          return new_value
+        next_entry = current_entry.next( amount )
+        puts "B current_entry = #{current_entry}"
+        puts "B current_entry_encoded = #{encode_sequence(current_entry)}"
+        puts "B next_entry = #{next_entry}"
+        if replace( sequence_name, encode_sequence( current_entry ), encode_sequence( next_entry ) )
+          return next_entry.value
         else
-          raise "Concurrent modification, old value was #{current_entry.value} new value #{new_value}"
+          raise "Concurrent modification, old value was #{current_entry.value} new value #{next_entry.value}"
         end
       end
 
@@ -158,6 +163,7 @@ module TorqueBox
           tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
           log( "Exception raised during transaction. Rolling back.", 'ERROR' )
           log( e.message, 'ERROR' )
+          log( e.backtrace, 'ERROR' )
         end
       end
 
@@ -175,15 +181,14 @@ module TorqueBox
 
       private
 
-      def encode(value)
-        #value.is_a?(java.lang.Object) ? value : Marshal.dump(value).to_java_bytes
-        value
+      def encode_sequence(sequence)
+        sequence.value.to_s
       end
 
-      def decode(value)
-        #value && (value.is_a?(java.lang.Object) ? value : Marshal.load(String.from_java_bytes(value)))
-        value
-      end
+     def decode_sequence(sequence_bytes)
+        #sequence_bytes && Marshal.load(String.from_java_bytes(sequence_bytes))
+        sequence_bytes && Sequence.new( sequence_bytes.to_s.to_i )
+     end
 
       def options 
         @options ||= {}
@@ -273,7 +278,7 @@ module TorqueBox
       end
 
       def __put(key, value, expires, operation)
-        args = [ operation, key, encode(value) ]
+        args = [ operation, key, value ]
         if expires > 0
           # Set the Infinispan expire a few minutes into the future to support
           # :race_condition_ttl on read
