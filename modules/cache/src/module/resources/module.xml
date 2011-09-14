@@ -49,6 +49,7 @@
 
     <exports>
       <include-set>
+        <path name="org/torquebox/cache/marshalling"/>
         <path name="org/infinispan/commands"/>
         <path name="org/infinispan/commands/module"/>
         <path name="org/infinispan/query"/>

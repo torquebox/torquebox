@@ -164,6 +164,12 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>org.infinispan</groupId>
+        <artifactId>infinispan-core</artifactId>
+        <version>${version.org.infinispan}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.jboss.as</groupId>
         <artifactId>jboss-as-parent</artifactId>
         <version>${version.jbossas}</version>

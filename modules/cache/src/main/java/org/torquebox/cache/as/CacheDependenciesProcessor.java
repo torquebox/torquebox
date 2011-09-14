@@ -26,21 +26,23 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ModuleDependency;
 import org.jboss.as.server.deployment.module.ModuleSpecification;
+import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
 
 public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
-    
-    private static ModuleIdentifier INFINISPAN_ID = ModuleIdentifier.create("org.infinispan");
+
+    private static ModuleIdentifier TORQUEBOX_CACHE_ID = ModuleIdentifier.create( "org.torquebox.cache" );
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
-        addDependency( moduleSpecification, moduleLoader, INFINISPAN_ID );
+        log.info( "Adding dependency on: " + TORQUEBOX_CACHE_ID );
+        addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CACHE_ID );
     }
 
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
@@ -52,5 +54,7 @@ public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
         // TODO Auto-generated method stub
 
     }
+
+    private static final Logger log = Logger.getLogger( "org.torquebox.cache.as" );
 
 }
