@@ -138,6 +138,7 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should store and retrieve nil values" do
+    pending
     @cache.put('a nil value', nil)
     @cache.contains_key?('a nil value').should be_true
     @cache.get('a nil value').should be_nil
