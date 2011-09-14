@@ -66,12 +66,14 @@ end</programlisting>This example service prints a message every second until sto
     <title>Deploying Services</title>
 
     <para>Services are deployed by creating a services section inside
-    your application's <filename>torquebox.yml</filename>.</para>
+    your application's deployment descriptor.</para>
 
-    <section id="services-yaml-format">
-      <title><filename>torquebox.yml</filename> Services Format</title>
+    <section id="services-format">
+      <title>Configuration Format</title>
 
-      <para>Services reside under a <code>services</code> key of
+      <para>Within the internal <filename>torquebox.yml</filename> descriptor 
+      (or through an external <filename><replaceable>*</replaceable>-knob.yml</filename> 
+      descriptor), services reside under a <code>services</code> key of
       <filename>torquebox.yml</filename>. Each key underneath
       <code>services</code> is either a unique name for the service or
       the name of the Ruby class implementing the service. Providing a
@@ -84,10 +86,16 @@ end</programlisting>This example service prints a message every second until sto
       the parameter to the service's <methodname>initialize</methodname>
       method.</para>
 
-      <para><example>
-        <title><filename>torquebox.yml</filename></title>
+      <para>If you are using the DSL (via <filename>torquebox.rb</filename>) in
+      your internal descriptor, each service is defined using the 
+      <methodname>service</methodname> directive, with very similar options to 
+      the YAML syntax described above. The DSL does not require a name for 
+      each job, unless you intend to share a job class across multiple jobs.</para>
 
-        <para><programlisting>services:
+      <para><example>
+        <title>Example deployment descriptor</title>
+
+        <para>Using the YAML syntax:<programlisting>services:
   MyService:
     config:
       name: TorqueBox User
@@ -109,6 +117,30 @@ end</programlisting>This example service prints a message every second until sto
         which doesn't take any initialization parameters. The
         latter two services reuse the same class, and use a
         unique name as the key.</para>
+        
+       <para>And using the DSL:<programlisting>TorqueBox.configure do 
+  ...
+  service MyService do 
+    config do
+      name 'TorqueBox User'
+    end
+  end
+
+  service AnotherService
+
+  service FoodMachine do
+    name 'ham-machine'
+    config do
+      food 'ham'
+    end
+  end
+
+  service FoodMachine do
+    name 'biscuit-machine'
+    config do
+      food 'biscuit'
+    end
+  end</programlisting></para>
       </example></para>
 
       <para>Service classes should be available in Ruby's load path. For
@@ -155,19 +187,54 @@ end</programlisting>This example service prints a message every second until sto
       service will run on every node in the cluster.</para>
 
       <para><example>
-        <title><filename>torquebox.yml</filename></title>
+        <title>Example deployment descriptor</title>
 
-        <para><programlisting>services:
+        <para>Using the YAML syntax:<programlisting>services:
   MyService:
     singleton: true
     config:
       name: TorqueBox User
 
-  AnotherService:</programlisting>This is the same
-        <filename>torquebox.yml</filename> from the example above but
+  AnotherService:
+
+  ham-machine:
+    service: FoodMachine
+    config: 
+      food: ham
+  
+  biscuit-machine:
+    service: FoodMachine
+    config:
+      food: biscuit</programlisting></para>
+        
+       <para>And using the DSL:<programlisting>TorqueBox.configure do 
+  ...
+  service MyService do 
+    singleton true
+    config do
+      name 'TorqueBox User'
+    end
+  end
+
+  service AnotherService
+
+  service FoodMachine do
+    name 'ham-machine'
+    config do
+      food 'ham'
+    end
+  end
+
+  service FoodMachine do
+    name 'biscuit-machine'
+    config do
+      food 'biscuit'
+    end
+  end</programlisting>This is the same
+        deployment descriptor from the example above but
         this time <classname>MyService</classname> is marked as a
         singleton and will only run on one node in the cluster.
-        <classname>AnotherService</classname> will run on all nodes
+        The remaining jobs will run on all nodes
         in the cluster since a <code>singleton</code> key isn't
         specified.</para>
       </example></para>

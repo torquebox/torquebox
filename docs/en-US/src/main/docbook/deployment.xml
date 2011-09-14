@@ -110,7 +110,7 @@
     Rake tasks, you may manually create a <emphasis>deployment
     descriptor</emphasis>.</para>
 
-    <para>A deployment descriptor is a small text file that is placed in the
+    <para>A deployment descriptor is a small yaml text file that is placed in the
     <filename>apps/</filename> directory of the TorqueBox server. This
     directory is constantly monitored for changes. To deploy an app, add a
     descriptor with a suffix of <filename>-knob.yml</filename>. To redeploy or
@@ -143,8 +143,10 @@
       resides outside of the app's root directory.</para>
 
       <para>An application archive may be configured using an
-      <emphasis>internal</emphasis> descriptor as well. This descriptor should
-      be named <filename>torquebox.yml</filename> and contained within the
+      <emphasis>internal</emphasis> descriptor as well. This descriptor can either
+      be a YAML file (named <filename>torquebox.yml</filename>) that uses our YAML
+      configuration syntax, or a Ruby file (named <filename>torquebox.rb</filename>) 
+      that uses our Ruby configuration DSL. The internal descriptor must be in the
       archive's <filename>config/</filename> directory for a Rails app or the
       root directory of a Rack app. This is described in more detail in <xref
       linkend="deployment-descriptors" />.</para>
@@ -164,7 +166,7 @@
     <section id="creating-a-knob-archive">
       <title>Creating an archive</title>
 
-      <para>After creating <filename>torquebox.yml</filename>, if necessary,
+      <para>After creating the internal descriptor, if necessary,
       the <command>torquebox:archive</command> rake task may be used to create
       a bundle of the application. The task invokes the Java
       <command>jar</command> commandline tool to bundle up the project

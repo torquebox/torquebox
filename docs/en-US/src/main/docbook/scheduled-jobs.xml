@@ -94,15 +94,15 @@ end</programlisting></para>
 
     <para>The job schedule defines the time(s) that a job should execute. This
     may be defined to be single point in time, or more often, as recurring
-    event. The job schedule is defined with a jobs section of your
-    <filename>torquebox.yml</filename>.</para>
+    event. The job schedule is defined in your deployment descriptor.</para>
 
-    <section id="jobs-yaml-format">
-      <title>YAML Configuration Format</title>
+    <section id="jobs-format">
+      <title>Configuration Format</title>
 
-      <para>Within the global torquebox.yml descriptor (or through an external
-      *-knob.yml descriptor), scheduled jobs are configured using the a
-      <parameter>jobs:</parameter> section.</para>
+      <para>Within the internal <filename>torquebox.yml</filename> descriptor 
+      (or through an external <filename><replaceable>*</replaceable>-knob.yml</filename> 
+      descriptor), scheduled jobs are configured using the a <parameter>jobs:</parameter> 
+      section.</para>
 
       <para>Within the <parameter>jobs</parameter>, a block of information is
       provided for each job. The block starts with arbitrary name for the job.
@@ -112,10 +112,16 @@ end</programlisting></para>
       a <parameter>config</parameter>, its value will be passed to the initialize
       method of the job class.</para>
 
-      <para><example>
-          <title>Example <filename>torquebox.yml</filename></title>
+      <para>If you are using the DSL (via <filename>torquebox.rb</filename>) in
+      your internal descriptor, each job is defined using the <methodname>job</methodname>
+      directive, with very similar options to the YAML syntax described above. 
+      The DSL does not require a name for each job, unless you intend to share
+      a job class across multiple jobs.</para>
 
-          <para><programlisting>application:
+      <para><example>
+          <title>Example deployment descriptor</title>
+
+          <para>Using the YAML syntax:<programlisting>application:
   ..
 jobs:
   mail.notifier:
@@ -124,6 +130,18 @@ jobs:
     description: Deliver queued mail notifications
     config: 
       throttle: true</programlisting></para>
+
+         <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  job Mail::Notifier do
+    name 'mail.notifier' # optional, unless the job class is used by multiple jobs
+    cron '0 */5 * * * ?'
+    description 'Deliver queued mail notifications' # optional
+    config do
+      throttle true
+    end
+  end
+end</programlisting></para>
         </example></para>
 
       <para>The cron attribute should contain a typical crontab-like entry. It
@@ -215,20 +233,38 @@ jobs:
 
       <para>You also need to add a special <code>singleton</code> key
       with a value of <code>true</code> to your job specification in
-      <filename>torquebox.yml</filename>. If no <code>singleton</code>
+      your deployment descriptor. If no <code>singleton</code>
       key is defined or it has a value of <code>false</code> the
       job will run on every node in the cluster.</para>
 
-      <para><example>
-        <title><filename>torquebox.yml</filename></title>
 
-        <para><programlisting>jobs:
+      <para><example>
+          <title>Example deployment descriptor</title>
+
+          <para>Using the YAML syntax:<programlisting>application:
+  ..
+jobs:
   mail.notifier:
     job:         Mail::Notifier
     cron:        '0 */5 * * * ?'
-    description: Deliver queued mail notificationsa:
-    singleton: true</programlisting>This is the same
-        <filename>torquebox.yml</filename> from the example above but
+    description: Deliver queued mail notifications
+    singleton: true
+    config: 
+      throttle: true</programlisting></para>
+
+         <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  job Mail::Notifier do
+    name 'mail.notifier' # optional, unless the job class is used by multiple jobs
+    cron '0 */5 * * * ?'
+    description 'Deliver queued mail notifications' # optional
+    singleton true
+    config do
+      throttle true
+    end
+  end
+end</programlisting>This is the same
+        deployment descriptors from the example above but
         this time <classname>mail.notifier</classname> is marked as a
         singleton and will only run on one node in the cluster.</para>
       </example></para>

@@ -64,8 +64,8 @@
     interaction. The configuration of various subsystem pools are affected by
     how the application is deployed. Each subsystem is automatically
     configured using reasonable defaults, but may be completely configured
-    manually through the <filename>pooling.yml</filename> deployment
-    descriptor.</para>
+    manually through a deployment descriptor (see 
+    <xref linkend="deployment-descriptors">deployment descriptor</xref>).</para>
 
     <formalpara>
       <title>Web (Rack)</title>
@@ -105,8 +105,8 @@
     </formalpara>
   </section>
 
-  <section id="pooling-yaml-configuration">
-    <title>YAML Configuration</title>
+  <section id="pooling-configuration">
+    <title>Configuration</title>
 
     <para>If your application is not designed to be thread-safe, you can
     instead pool the interpreters resulting in a single-threaded model. You
@@ -117,15 +117,15 @@
 
     <para>To modify the default interpreter pool configuration, you can add
     pooling: section to either your application's internal
-    <filename>torquebox.yml</filename> deployment descriptor, or through an
+    deployment descriptor, or through an
     external <filename><replaceable>*</replaceable>-knob.yml</filename>
     descriptor. This section is always optional, and only required if you wish
     to modify the defaults.</para>
 
-    <section id="pooling-yaml-configuration-syntax">
+    <section id="pooling-configuration-syntax">
       <title>Syntax</title>
 
-      <para>Within <filename>pooling.yml</filename>, a section may be added
+      <para>Within a deployment descriptor, a block may be added
       for each susbsystem you desire to explicitly configure. Any subsystem
       not mentioned will be configured with its defaults. Configuration of
       each type of pool is slightly different.</para>
@@ -185,10 +185,18 @@
       <example>
         <title>Configuring a bounded pool</title>
 
-        <para><programlisting>pooling:
+        <para>Using the YAML syntax:<programlisting>pooling:
   web:
     min: 3
     max: 10</programlisting></para>
+      
+       <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  pool :web do
+    min 3
+    max 10
+  end
+end</programlisting></para>
       </example>
 
       <formalpara>
@@ -201,8 +209,15 @@
       <example>
         <title>Configuring a shared pool</title>
 
-        <para><programlisting>pooling:
+        <para>Using the YAML syntax:<programlisting>pooling:
   web: shared</programlisting></para>
+
+        <para>And via the DSL:<programlisting>TorqueBox.configure do  
+  ...
+  pool :web do
+    type :shared
+  end
+end</programlisting></para>
       </example>
 
       <formalpara>
@@ -215,18 +230,24 @@
       <example>
         <title>Configuring a global pool</title>
 
-        <para><programlisting>pooling:
+        <para>Using the YAML syntax:<programlisting>pooling:
   web: global</programlisting></para>
+        <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  pool :web do
+    type :global
+  end
+end</programlisting></para>
       </example>
     </section>
 
-    <section id="pooling-yaml-examples">
+    <section id="pooling-examples">
       <title>Examples</title>
 
-      <example id="pooling-yaml-examples-default">
+      <example id="pooling-examples-default">
         <title>Default development-mode pooling</title>
 
-        <para><programlisting>application:
+        <para>Using the YAML syntax:<programlisting>application:
   <replaceable>...</replaceable>
 
 pooling:
@@ -236,7 +257,23 @@ pooling:
   messaging:
     min: 1
     max: 2
-  web: shared</programlisting>The following is the implicit default
+  web: shared</programlisting></para>
+
+        <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  pool :jobs do
+    min 1
+    max 2
+  end
+
+  pool :messaging do
+    min 1
+    max 2
+  end
+
+  pool :web, :type => :shared
+end</programlisting></para>
+        <para>Above is the implicit default
         configuration for an application deployed in <code>development</code>
         mode.</para>
       </example>
@@ -244,13 +281,21 @@ pooling:
       <example id="pooling-yaml-examples-non-devmode">
         <title>Default non-development-mode pooling</title>
 
-        <para><programlisting>application:
+        <para>Using the YAML syntax:<programlisting>application:
   ...
 
 pooling:
   jobs: shared
   messaging: shared
-  web: shared</programlisting>The following is the implicit default
+  web: shared</programlisting></para>
+
+        <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  pool :jobs, :type => :shared
+  pool :messaging, :type => :shared
+  pool :web, :type => :shared
+end</programlisting></para>
+        <para>Above is the implicit default
         configuration for an application deployed in a mode other than
         <code>development</code>.</para>
       </example>

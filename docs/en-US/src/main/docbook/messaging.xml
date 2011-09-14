@@ -238,9 +238,8 @@
 
         <para>Destinations deployed with your application also undeploy when
         your application is undeployed. These destinations are configuration
-        through either your application's internal
-        <filename>torquebox.yml</filename> descriptor, or through an external
-        <filename><replaceable>*</replaceable>-knob.yml</filename>
+        through either your application's internal descriptor, or through an 
+        external <filename><replaceable>*</replaceable>-knob.yml</filename>
         descriptor.</para>
 
         <para>Within either of these files, you may use a
@@ -249,15 +248,21 @@
 
         <para><example>
             <title>Defining topics and queues in
-            <filename>torquebox.yml</filename></title>
+            a deployment descriptor</title>
 
-            <para><programlisting>application:
+            <para>Using the YAML syntax:<programlisting>application:
   ..
 queues:
   /queues/my_app_queue:
 
 topics:
   /queues/my_app_topic:</programlisting></para>
+
+           <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  queue '/queues/my_app_queue'
+  topic '/queues/my_app_topic'
+end</programlisting></para>
           </example></para>
       </section>
     </section>
@@ -827,20 +832,29 @@ end</programlisting></para>
 
           <para>To connect consumers within a TorqueBox-deployed application,
           you need to add a messaging: section to your
-          <filename><filename>torquebox.yml</filename></filename> (or external
-          *-knob.yml descriptor).</para>
+          <filename>torquebox.yml</filename> (or external
+          *-knob.yml descriptor), or add a <methodname>processor</methodname>
+          directive to the destination definition if you are using the DSL 
+          (in <filename>torquebox.rb</filename>).</para>
 
-          <para>This section will contain the mappings from your destinations
+          <para>If you are using a YAML descriptor, the messaging: section 
+          will contain the mappings from your destinations
           (topics and queues) to your consumers. The section is a YAML hash,
           the keys of which are your destination names, which should
           correspond to existing queues and topics. These destinations may be
           deployed through the same <filename>torquebox.yml</filename> or as
           long-lived destinations.</para>
 
-          <example>
-            <title>Messaging handlers in torquebox.yml</title>
+          <para>If you are using a DSL descriptor, the consumers are not defined
+          in a separate section, but as part of the queue/topic definition. If
+          the destination is a long-lived destination (managed by another application),
+          then you will need to tell TorqueBox not to try to create the destination
+          by setting the <varname>create</varname> to false.</para>
 
-            <para><programlisting>application:
+          <example>
+            <title>Messaging handlers in a deployment descriptor</title>
+
+            <para>Using the YAML syntax:<programlisting>application:
   ..
 queues:
   /queues/my_app_queue:
@@ -848,6 +862,17 @@ queues:
 messaging:
   /queues/my_app_queue:     MyFooHandler
   /topics/long_lived_topic: MyBazHandler</programlisting></para>
+            <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  queue '/queues/my_app_queue' do
+    processor MyFooHandler
+  end
+
+  topic '/topics/long_lived_topic' do
+    create false
+    processor MyBazHandler
+  end
+end</programlisting></para>
 
             <para>The classes MyFooHandler and MyBazHandler would correspond
             to files available on the load path:
@@ -931,28 +956,41 @@ messaging:
 
           <example>
             <title>Messaging configuration in
-            <filename>torquebox.yml</filename> with options set</title>
+            a deployment descriptor with options set</title>
 
-            <para><programlisting>application:
+            <para>Using the YAML syntax:<programlisting>application:
   ...
 messaging:
   /queues/foo:
     MyFooHandler:
       filter: "cost &gt; 30"
+      concurrency: 2
       config:
         type: "premium"
         season: "fall"
-      concurrency: 2
   /topics/bar:
     MyBarHandler:
       durable: true</programlisting></para>
+       <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  queue '/queues/foo' do
+    processor MyFooHandler do 
+      filter "cost &gt; 30"
+      concurrency 2
+      config do
+        type "premium"
+        season "fall"
+      end
+    end
+  end
 
-            <para>Because the structure of the file is <ulink
-            url="http://www.yaml.org">YAML</ulink>, proper indentation is
-            required.</para>
+  topic '/topics/bar' do
+    processor MyBarHandler, :durable => true
+  end
+end</programlisting></para>
           </example>
 
-          <para>Actually, YAML enables the configuration to get fairly
+          <para>The YAML and DSL syntaxes enable the configuration to get fairly
           sophisticated, allowing you to, for example, map a single
           destination to multiple processors or re-use configuration options
           in multiple processors. You may never have a need for this much
@@ -960,9 +998,9 @@ messaging:
 
           <example>
             <title>Advanced messaging configuration in
-            <filename>torquebox.yml</filename></title>
+            a deployment descriptor</title>
 
-            <para><programlisting>application:
+            <para>Using the YAML syntax:<programlisting>application:
   ...
 
 messaging:
@@ -1000,6 +1038,39 @@ messaging:
             example also takes advantage of YAML's ability to merge hash's:
             the <code>Observer</code> and <code>LookAndFeel</code> processors
             are configured identically.</para>
+
+            <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  topic '/topics/simple' do
+    processor SimpleHandler
+  end
+
+  common_config = { :filter => "x &gt; 18", :config => { :x => 'ex', :y => 'why' } }
+
+  topic '/topics/popular' do |topic| 
+    topic.processor Handler, :concurrency => 5
+    topic.processor Observer, common_config
+    topic.processor Processor
+  end
+
+  queue '/queues/students' do |queue|
+    queue.processor VerySimpleAnalyzer
+    queue.processor YouthMonitor do 
+      filter "y &lt; 18"
+      config do
+        h 'ache'
+        i 'eye'
+      end
+    end
+    queue.processor LookAndFeel, common_config
+  end
+end</programlisting></para>
+
+           <para>Here we have the same configuration as the YAML example above, but expressed
+           via the DSL. Note that we have to use the block argument form for our destinations
+           that share <varname>common_config</varname>. This is due to the no-argument form
+           using <methodname>instance_eval</methodname>, which does not allow you to access
+           any variables defined outside of the block.</para>
           </example>
 
           <section id="connecting-consumers-outside-of-torquebox">
@@ -1216,7 +1287,7 @@ SomeTask.async(:a_timeboxed_action, {:some_value =&gt; :foo}, :ttl =&gt; 5000)
         <title>Task message processor options</title>
 
         <para>You can set options for the message processors for each task in
-        <filename>torquebox.yml</filename>. Currently, the concurrency is the
+        the deployment descriptor. Currently, the concurrency is the
         only available option:</para>
 
         <table>
@@ -1250,20 +1321,29 @@ SomeTask.async(:a_timeboxed_action, {:some_value =&gt; :foo}, :ttl =&gt; 5000)
           </tgroup>
         </table>
 
-        <para>The options are set in the <filename>torquebox.yml</filename> by
-        keying the options to the task class name:</para>
 
         <example>
           <title>Task message processor options in
-          <filename>torquebox.yml</filename></title>
+          a deployment descriptor</title>
 
-          <para><programlisting>application:
+          <para>The options are set when using the YAML syntax by
+          keying the options to the task class name:
+<programlisting>application:
   ...
 tasks:
   SomeTask:
     concurrency: 2
   SomeOtherTask:
     concurrency: 5</programlisting></para>
+
+          <para>The options are set when using the DSL by
+          <methodname>options_for</methodname> directive:
+<programlisting>TorqueBox.configure do
+  ...
+  options_for SomeTask, :concurrency => 2
+  options_for SomeOtherTask :concurrency => 5
+end</programlisting></para>
+
         </example>
       </section>
     </section>
@@ -1446,22 +1526,28 @@ widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
 
         <para>The concurrency option that is <link
         linkend="task-message-processor-options">available to task class
-        message processors</link> in <filename>torquebox.yml</filename> is
+        message processors</link> in a deployment descriptor is
         available to <classname>Backgroundable</classname> message processors
         as well. Instead of a task class name, you specify
         <classname>Backgroundable</classname>:</para>
 
         <example>
           <title>Task message processor options in
-          <filename>torquebox.yml</filename></title>
+          a deployment descriptor</title>
 
-          <para><programlisting>application:
+          <para>Using the YAML syntax:<programlisting>application:
   ...
 tasks:
   Backgroundable:
     concurrency: 2
   SomeTask:
     concurrency: 5</programlisting></para>
+
+          <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  options_for Backgroundable, :concurrency => 2
+  options_for SomeTask, :concurrency => 5
+end</programlisting></para>
         </example>
 
         <para>By default, every application you deploy will have a queue for

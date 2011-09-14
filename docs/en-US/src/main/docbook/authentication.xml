@@ -45,34 +45,63 @@
       roles else authentication fails.
     </para>
     <para>
-      To use the <code>torquebox</code> domain, specify this in your torquebox.yml.
-      <screen>auth:
+      To use the <code>torquebox</code> domain, specify this in your deployment descriptor:
+    </para>
+    
+    <para><example>
+      <title>Using the <code>torquebox</code> domain</title>
+      <para>Using the YAML syntax:<programlisting>auth:
   default:
-    domain: torquebox </screen>
+    domain: torquebox</programlisting></para>
 
+      <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  authentication :default, :domain => 'torquebox'
+end</programlisting></para>
+     </example></para>
+
+    <para>
       The <code>torquebox</code> domain is deployed on demand only if your application
       specifies it in the configuration file.  However, note that JAAS security domains
       are available to all applications deployed within the AS.  
     </para>
     <para>
       In addition to the <code>torquebox</code> security domain, an application specific
-      domain - <code>torquebox-appname</code> is initialized when your application is deployed.
-      This domain allows you to specify username/password pairs inside your torquebox.yml
-      file.  Users are authenticated against whatever usernames and passwords you have configured.
-      For example:
+      domain - <code>torquebox-<replaceable>appname</replaceable></code> is initialized 
+      when your application is deployed. The name of the application is determined from 
+      the name of your external descriptor (your <filename><replaceable>*</replaceable>-knob.yml</filename>
+      file) - the <filename>-knob.yml</filename> is dropped, leaving the application name.
+    </para>
+      
+    <para>
+      This domain allows you to specify username/password pairs inside your deployment descriptor.
+      Users are authenticated against whatever usernames and passwords you have configured.
+    </para>
 
-      <screen>auth:
+      <para><example>
+        <title>Using the <code>torquebox</code> domain</title>
+        <para>Using the YAML syntax:<programlisting>auth:
   default:
     domain: torquebox-myapp
     credentials:
       john: johnspassword
-      alice: alicespassword</screen>
+      alice: alicespassword</programlisting></para>
+
+      <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  authentication :default do 
+    domain 'torquebox'
+    credential 'john', 'johnspassword'
+    credential 'alice', 'alicespassword'
+  end
+end</programlisting></para>
+     </example></para>
     
-    </para>
+
   </section>
 
-  <section id="authentication-yaml-configuration">
-    <title>YAML Configuration</title>
+  <section id="authentication-configuration">
+    <title>Configuration</title>
     <para>
       TorqueBox authentication is configured in the <code>torquebox.yml</code> file or in a
       separate <code>auth.yml</code> by adding an <code>auth</code> 
@@ -80,14 +109,27 @@
       example, let's say your application is a dashboard which allows users to access JMX
       and HornetQ data.  Most of the time, you're going to be using the hornetq domain, but
       on occasion, you'll want to authenticate against the JMX domain.  You can do this
-      within Ruby code by configuring your <code>auth</code> section:
-      <screen>
-auth:
+      within Ruby code by configuring your <code>auth</code> section.
+    </para>
+
+    <para>When using the DSL in <filename>torquebox.rb</filename>, each authentication entry
+    is specified using the <methodname>authentication</methodname> directive.</para>
+    
+    <para><example>
+      <title>Using the <code>torquebox</code> domain</title>
+      <para>Using the YAML syntax:<programlisting>auth:
   default:
     domain: hornetq
   jmx:
-    domain: jmx-console</screen>
-    </para>
+    domain: jmx-console</programlisting></para>
+
+      <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  authentication :default, :domain => 'hornetq'
+  authentication :jmx, :domain => 'jmx-console'
+end</programlisting></para>
+     </example></para>
+
     <para>
       A handle to the HornetQ authentication domain is now available to you with:
       <screen>authenticator = TorqueBox::Authentication.default</screen> and the JMX authentication
