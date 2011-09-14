@@ -602,6 +602,10 @@
               <name>jruby.home</name>
               <value>${integ.dist.dir}/jruby</value>
             </property>
+            <property>
+              <name>org.jboss.modules</name>
+              <value>TRACE</value>
+            </property>
           </systemProperties>
         </configuration>
         <executions>

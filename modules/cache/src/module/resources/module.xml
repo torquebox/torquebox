@@ -30,8 +30,10 @@
         <resource-root path="hibernate-commons-annotations.jar"/>
         <resource-root path="hibernate-search.jar"/>
         <resource-root path="hibernate-search-analyzers.jar"/>
-        <resource-root path="infinispan-query.jar"/>
+
         <resource-root path="infinispan-core.jar"/>
+        <resource-root path="infinispan-query.jar"/>
+
         <resource-root path="lucene-analyzers.jar"/>
         <resource-root path="lucene-core.jar"/>
         <resource-root path="lucene-highlighter.jar"/>
@@ -45,15 +47,27 @@
         <resource-root path="solr-commons-csv.jar"/>
         <resource-root path="solr-core.jar"/>
         <resource-root path="solr-solrj.jar"/>
+
+        <resource-root path="avro.jar"/>
+
+        <resource-root path="jackson-core-asl.jar"/>
+        <resource-root path="jackson-mapper-asl.jar"/>
     </resources>
 
     <exports>
       <include-set>
-        <path name="org/torquebox/cache/marshalling"/>
         <path name="org/infinispan/commands"/>
         <path name="org/infinispan/commands/module"/>
         <path name="org/infinispan/query"/>
         <path name="org/infinispan/query/impl"/>
+        <path name="org/infinispan/util"/>
+        <path name="org/hibernate/search"/>
+        <path name="org/hibernate/search/spi"/>
+        <path name="org/hibernate/search/cfg/spi"/>
+        <path name="org/hibernate/search/impl"/>
+        <path name="org/hibernate/annotations/common/reflection"/>
+        <path name="org/apache/avro"/>
+        <path name="javax/xml/bind/annotation"/>
       </include-set>
     </exports>
 
@@ -75,6 +89,7 @@
         <module name="org.slf4j"/>
 
         <!-- Infinispan-requirements -->
+        <module name="org.hibernate"/>
         <module name="javax.transaction.api"/>
         <module name="javax.xml.bind.api"/>
         <module name="org.apache.xerces" services="import"/>
