@@ -120,7 +120,16 @@ module TorqueBox
       end
 
       def replace(key, original_value, new_value)
-        cache.replace( key, new_value )
+        # First, grab the raw value from the cache, which is a byte[]
+
+        current = get( key )
+
+        # great!  we've got a byte[] now.  Let's apply == to it, like Jim says will work always
+
+        if ( current == original_value )
+           # how does this work?
+           cache.replace( key, current, new_value )
+        end
       end
 
       # Delete an entry from the cache 
@@ -138,9 +147,8 @@ module TorqueBox
 
         # Increment the sequence, stash it, and return
         next_entry = current_entry.next( amount )
-        puts "B current_entry = #{current_entry}"
-        puts "B current_entry_encoded = #{encode_sequence(current_entry)}"
-        puts "B next_entry = #{next_entry}"
+
+        # Since replace() doesn't encode, let's encode everything to a byte[] for it, no?
         if replace( sequence_name, encode_sequence( current_entry ), encode_sequence( next_entry ) )
           return next_entry.value
         else
