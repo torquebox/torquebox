@@ -122,7 +122,9 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should increment a sequence" do
+    puts "AAAA"
     @cache.increment("My Sequence Name", 1).should == 1
+    puts "BBBB"
     @cache.increment("My Sequence Name", 1).should == 2
   end
 
