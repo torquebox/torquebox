@@ -61,7 +61,7 @@ module ActiveSupport
         value = current.value.to_i
 
         new_entry = Entry.new( value+amount, options )
-        if cache.replace( key, current, encode(new_entry) )
+        if cache.replace( key, current, new_entry )
           return new_entry.value
         else
           raise "Concurrent modification, old value was #{value}"
@@ -84,6 +84,14 @@ module ActiveSupport
 
       protected
 
+      #def encode value
+        #Marshal.dump(value).to_java_bytes
+      #end
+
+      #def decode value
+        #value && Marshal.load(String.from_java_bytes(value))
+      #end
+      
       # Return the keys in the cache; potentially very expensive depending on configuration
       def keys
         cache.keys
@@ -91,12 +99,12 @@ module ActiveSupport
 
       # Read an entry from the cache implementation. Subclasses must implement this method.
       def read_entry(key, options)
-        cache.get(key)
+        cache.get( key ) 
       end
 
       # Write an entry to the cache implementation. Subclasses must implement this method.
       def write_entry(key, entry, options = {})
-        cache.put( key, entry )
+        options[:unless_exist] ? cache.put_if_absent( key, entry ) : cache.put( key, entry )
       end
 
       # Delete an entry from the cache implementation. Subclasses must implement this method.
@@ -104,13 +112,6 @@ module ActiveSupport
         cache.remove( key ) && true
       end
 
-      def encode value
-        Marshal.dump(value).to_java_bytes
-      end
-
-      def decode value
-        value && Marshal.load(String.from_java_bytes(value))
-      end
 
       private
 
