@@ -267,6 +267,36 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     end
   end
 
+  describe '#stomp' do
+    before(:each) { @method = 'stomp' }
+    it_should_behave_like 'options'
+
+    it_should_not_allow_invalid_options { stomp :foo => :bar }
+    it_should_allow_valid_options { stomp :host => 'example.com' }
+  end
+
+
+  describe "#stomplet" do
+    before(:each) do
+      @method = 'stomplet'
+      @discrete = true
+    end
+
+    it_should_behave_like 'a thing with options'
+
+    it_should_not_allow_invalid_options { stomplet 'AClass', :route => '/foo', :foo => :bar }
+    it_should_allow_valid_options { stomplet 'AClass', :config => '',  :route => '/foo', :name => '' }
+
+    it "should allow multiple stomplets using the same class" do
+      config = TorqueBox.configure do
+        stomplet 'AStomplet', :route => '/x'
+        stomplet 'AStomplet', :route => '/y'
+      end
+
+      config['<root>']['stomplet'].should == [['AStomplet', {:route => '/x' }], ['AStomplet', { :route => '/y' }]]
+    end
+  end
+
   describe "#job" do
     before(:each) do
       @method = 'job'
@@ -356,6 +386,14 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                            :config => { :foo => :bar } } ],
                        [ FakeConstant.new( 'AnotherService' ), {
                            :config => { :foo => :bar } } ] ],
+        'stomp' => { :host => 'hambiscuit.com' },
+        'stomplet' => [ [ FakeConstant.new( 'AStomplet' ), {
+                            :route => '/a',
+                            :name => 'a-stomplet',
+                            :config => { :foo => :bar } } ],
+                        [ FakeConstant.new( 'AnotherStomplet' ), {
+                            :route => '/b',
+                            :config => { :foo => :bar } } ] ],
         'topic' => { 'a-topic' => { :durable => true } },
         'web' => { :context => '/bacon' }
       }
@@ -411,8 +449,16 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       @metadata['ruby']['version'].should == '1.9'
     end
 
+    it "should properly set stomp options" do
+      @metadata['stomp']['host'].should == 'hambiscuit.com'
+    end
+
     it "should properly set a service" do
       @metadata['services']['a-service'].should == { 'service' => 'AService', 'config' => { 'foo' => :bar } }
+    end
+
+    it "should properly set a stomplet" do
+      @metadata['stomp']['stomplets']['a-stomplet'].should == { 'class' => 'AStomplet', 'route' => '/a', 'config' => { 'foo' => :bar } }
     end
 
     it "should properly set a topic" do

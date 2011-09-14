@@ -42,7 +42,7 @@ module TorqueBox
                                                                     :required => [:domain],
                                                                     :optional => [:credential]
                                                                   }),
-          :credential => ThingsEntry.with_settings(:require_parent => [:authentication],
+          :credential  => ThingsEntry.with_settings(:require_parent => [:authentication],
                                                    :discrete => true),
           :environment => OptionsEntry,
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
@@ -91,11 +91,12 @@ module TorqueBox
                                                                               { :singleton => [true, false] }
                                                                              ]
                                                               }),
-          :stomplet => ThingWithOptionsEntry.with_settings( :discrete => true,
-                                                            :validate => {
-                                                              :required => [ :route ],
-                                                              :optional => [ :config, :name ] } ),
-
+          :stomp       => OptionsEntry.with_settings(:validate => { :required => [:host] } ),
+          :stomplet    => ThingWithOptionsEntry.with_settings( :discrete => true,
+                                                               :validate => {
+                                                                 :required => [ :route ],
+                                                                 :optional => [ :config, :name ] } ),
+          
           :topic       => destination_entry,
           :web         => OptionsEntry.with_settings(:validate => {
                                                        :optional => [:context, :host, :rackup, :static]
@@ -172,7 +173,7 @@ module TorqueBox
               stomplet.merge!( data )
             end
 
-          else # => <entry_name>: (handles environment, ruby, web)
+          else # => <entry_name>: (handles environment, ruby, stomp, web)
             metadata[entry_name].merge!( entry_data )
           end
         end
