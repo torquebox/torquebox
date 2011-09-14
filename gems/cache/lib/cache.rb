@@ -176,11 +176,13 @@ module TorqueBox
       private
 
       def encode(value)
-        value.is_a?(java.lang.Object) ? value : Marshal.dump(value).to_java_bytes
+        #value.is_a?(java.lang.Object) ? value : Marshal.dump(value).to_java_bytes
+        value
       end
 
       def decode(value)
-        value && (value.is_a?(java.lang.Object) ? value : Marshal.load(String.from_java_bytes(value)))
+        #value && (value.is_a?(java.lang.Object) ? value : Marshal.load(String.from_java_bytes(value)))
+        value
       end
 
       def options 
