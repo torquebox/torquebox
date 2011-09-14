@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe "an app using a torquebox.rb" do
 
-  deploy( { :application => { :root => "#{File.dirname(__FILE__)}/../apps/rack/basic-torquebox-rb" } } )
+  deploy( { :application => { :root => "#{File.dirname(__FILE__)}/../apps/rack/basic-torquebox-rb" },
+            :environment => { 'FOO' => 'baz' } } )
 
   context "external tests" do
     before(:each) do
@@ -12,6 +13,10 @@ describe "an app using a torquebox.rb" do
     it "should have the correct environment vars" do
       page.find("#success")[:class].should =~ /gravy/
       page.find("#success")[:class].should =~ /biscuit/
+    end
+
+    it "settings in the external descriptor should override" do
+      page.find("#success")[:class].should =~ /baz/
     end
 
     it "should have a pool specified with a hash" do

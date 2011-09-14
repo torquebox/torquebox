@@ -3,6 +3,7 @@ TorqueBox.configure do
   
   environment { 
     HAM :biscuit
+    FOO :bar
   }
 
   options_for Backgroundable, :disabled => true
