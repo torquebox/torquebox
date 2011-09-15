@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.as;
+package org.torquebox.cache.as;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -26,31 +26,27 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ModuleDependency;
 import org.jboss.as.server.deployment.module.ModuleSpecification;
+import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
-import org.torquebox.web.rack.RackApplicationMetaData;
 
-public class WebDependenciesProcessor implements DeploymentUnitProcessor {
-    
-    private static ModuleIdentifier TORQUEBOX_WEB_ID = ModuleIdentifier.create("org.torquebox.web");
-    private static ModuleIdentifier NETTY_ID = ModuleIdentifier.create("org.jboss.netty");
+public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
+
+    private static ModuleIdentifier TORQUEBOX_CACHE_ID = ModuleIdentifier.create( "org.torquebox.cache" );
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
-
-        if (unit.hasAttachment( RackApplicationMetaData.ATTACHMENT_KEY )) {
-            addDependency( moduleSpecification, moduleLoader, TORQUEBOX_WEB_ID );
-            addDependency( moduleSpecification, moduleLoader, NETTY_ID );
-        }
+        log.info( "Adding dependency on: " + TORQUEBOX_CACHE_ID + " to " + unit );
+        addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CACHE_ID );
     }
 
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
-        moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
+        moduleSpecification.addSystemDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, true, false ) );
     }
 
     @Override
@@ -58,5 +54,7 @@ public class WebDependenciesProcessor implements DeploymentUnitProcessor {
         // TODO Auto-generated method stub
 
     }
+
+    private static final Logger log = Logger.getLogger( "org.torquebox.cache.as" );
 
 }

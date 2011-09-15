@@ -23,7 +23,7 @@
     <module>messaging</module>
     <module>stomp</module>
     <module>security</module>
-    <module>infinispan</module>
+    <module>cache</module>
     <module>web</module>
 
     <module>configure</module>

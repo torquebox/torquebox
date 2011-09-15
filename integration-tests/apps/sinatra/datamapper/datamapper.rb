@@ -5,28 +5,22 @@ require 'dm-core'
 require 'datamapper/dm-infinispan-adapter'
 
 get '/' do 
-  puts "BOB 0: #{java.lang.Thread.current_thread.context_class_loader}"
   haml :index
 end
 
 get '/muppets' do
-  puts "BOB A: #{java.lang.Thread.current_thread.context_class_loader}"
-  puts "BOB A0: #{Muppet.inspect}"
-  puts "BOB A0.5!"
-  puts "BOB A1: #{Muppet.all.inspect}"
   @muppets = Muppet.all
   haml :muppets
 end
 
 get '/muppet/name' do
-  puts "BOB B: #{java.lang.Thread.current_thread.context_class_loader}"
   @snuffy = Muppet.first(:name=>'Snuffleupagus')
   haml :muppet
 end
 
 get '/muppet/id' do
-  puts "BOB C: #{java.lang.Thread.current_thread.context_class_loader}"
-  @snuffy = Muppet.get(2)
+  by_name = Muppet.first(:name=>'Snuffleupagus') # assumes that finding by name works...
+  @snuffy = Muppet.get(by_name.id)
   haml :muppet
 end
 
@@ -54,10 +48,6 @@ get '/muppet/date/range' do
   start  = DateTime.parse((Date.today-1).to_s)
   ending = DateTime.parse((Date.today+1).to_s)
   result = Muppet.all(:created_at => (start..ending), :order=>:created_at.asc)
-  puts ">>>>>>>> LANCE: Result: #{result.inspect}"
-  result.each do |r| 
-    puts ">>>>>>>>>>> LANCE: #{r.name}: #{r.created_at}"
-  end
   @snuffy = result[1]
   haml :muppet
 end
@@ -93,7 +83,11 @@ today = Date.today
 tomorrow = Date.today + 1
 yesterday = Date.today - 1
 
-Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(yesterday.to_s), :coat => Coat.new(:color=>'Yellow'))
-Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse(today.to_s), :coat => Coat.new(:color=>'Brown'))
-Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse(tomorrow.to_s), :coat => Coat.new(:color=>'Blue'))
+blue   = Coat.create(:color=>'Blue')
+brown  = Coat.create(:color=>'Brown')
+
+Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(yesterday.to_s), :coat => Coat.create(:color=>'Yellow'))
+Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse(today.to_s), :coat => brown)
+Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse(tomorrow.to_s), :coat => blue)
+
 

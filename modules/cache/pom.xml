@@ -8,9 +8,9 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>torquebox-web</artifactId>
+  <artifactId>torquebox-cache</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Web Module</name>
+  <name>TorqueBox Cache Module</name>
   <description />
 
   <dependencies>
@@ -27,33 +27,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-web</artifactId>
-      <version>${project.version}</version>
-      <type>gem</type>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.web</groupId>
-      <artifactId>jbossweb</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-web</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-threads</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.spec.javax.servlet</groupId>
-      <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-vfs</artifactId>
       <scope>provided</scope>
@@ -64,11 +37,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.jboss.netty</groupId>
-      <artifactId>netty</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
@@ -76,57 +44,15 @@
     <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-core</artifactId>
-      <version>${version.org.infinispan}</version>
     </dependency>
-    
     <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-query</artifactId>
-      <version>${version.org.infinispan}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search</artifactId>
-      <version>${version.org.hibernate.search}</version>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
-    
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-ruby-test-support</artifactId>
