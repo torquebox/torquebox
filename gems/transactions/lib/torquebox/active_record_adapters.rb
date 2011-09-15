@@ -43,13 +43,13 @@ module TorqueBox
 
         # An XA connection is not allowed to begin/commit/rollback
         def begin_db_transaction
-          super unless Manager.current.begun?
+          super unless Manager.current.active?
         end
         def commit_db_transaction
-          super unless Manager.current.begun?
+          super unless Manager.current.active?
         end
         def rollback_db_transaction
-          super unless Manager.current.begun?
+          super unless Manager.current.active?
         end
 
         # Defer execution of these tx-related callbacks invoked by
@@ -92,13 +92,13 @@ module TorqueBox
         end
 
         def should_commit?(connection)
-          return true if @complete || !begun?
+          return true if @complete || !active?
           connections << connection
           false
         end
 
         def should_rollback?(connection)
-          return true if @complete || !begun?
+          return true if @complete || !active?
           connections << connection
           @rolled_back = true
           false

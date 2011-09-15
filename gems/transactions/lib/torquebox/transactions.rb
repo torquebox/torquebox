@@ -58,7 +58,7 @@ module TorqueBox
       end
 
       def enlist(*resources)
-        if begun?
+        if active?
           (resources + @resources).each do |resource| 
             xa = resource.is_a?(javax.transaction.xa.XAResource) ? resource : resource.xa_resource
             @tm.transaction.enlist_resource(xa)
@@ -71,14 +71,14 @@ module TorqueBox
       end
 
       def run &block
-        if begun?
+        if active?
           yield
         else
           with_tx &block
         end
       end
 
-      def begun?
+      def active?
         @tm.transaction != nil
       end
 
