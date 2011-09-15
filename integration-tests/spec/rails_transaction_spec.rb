@@ -44,6 +44,32 @@ remote_describe "rails transactions testing" do
     Thing.find_by_name("sally").name.should == 'sally'
   end
 
+  it "should continue to have surprising behavior with nested non-torquebox transactions" do
+    Thing.transaction do
+      Thing.create(:name => 'bob')
+      Thing.transaction do
+        Thing.create(:name => 'ben')
+        raise ActiveRecord::Rollback
+      end
+    end
+    Thing.find_by_name('bob').name.should == 'bob'
+    Thing.find_by_name('ben').name.should == 'ben'
+    Thing.count.should == 2
+  end
+
+  it "should not have surprising behavior when nesting torquebox transactions" do
+    TorqueBox.transaction do
+      Thing.create(:name => 'bob')
+      Thing.transaction do
+        Thing.create(:name => 'ben')
+        raise ActiveRecord::Rollback
+      end
+    end
+    Thing.find_by_name('bob').should be_nil
+    Thing.find_by_name('ben').should be_nil
+    Thing.count.should == 0
+  end
+
   it "should rollback as expected for a non-XA connection" do
     puts "JC: ActiveRecord::Base.transaction()"
     test_rollback ActiveRecord::Base.method(:transaction)
