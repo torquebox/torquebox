@@ -23,9 +23,14 @@ module TorqueBox
   def self.transaction(*resources, &block)
     Transactions::Manager.current.run(*resources, &block)
   end
-
+  
+  # Abstractions for distributed transactions
   module Transactions
 
+    # The default module mixed into the Manager. Adapters for various
+    # resources are expected to override these methods as appropriate
+    # for their library. See ActiveRecordAdapters::Transaction, for
+    # example.  These are the methods invoked by Manager#with_tx()
     module Transaction
 
       def prepare
@@ -57,6 +62,8 @@ module TorqueBox
 
     end
 
+    # The thread-local Manager encapsulates the interaction with the
+    # *real* JBoss TransactionManager
     class Manager
       include TorqueBox::Injectors
       include Transaction
@@ -70,6 +77,9 @@ module TorqueBox
         @transactions = []
       end
 
+      # Associate a list of resources with the current transaction. A
+      # resource is expected to either implement XAResource or
+      # respond_to?(:xa_resource)
       def enlist(*resources)
         resources.each do |resource| 
           xa = resource.is_a?( javax.transaction.xa.XAResource ) ? resource : resource.xa_resource
@@ -77,6 +87,8 @@ module TorqueBox
         end
       end
 
+      # Where we either begin a new transaction (with_tx) or simply
+      # yield as part of the current transaction.
       def run(*args, &block)
         opts = args.last.is_a?(Hash) ? args.pop : {}
         if active? && !opts[:requires_new]
@@ -90,20 +102,20 @@ module TorqueBox
         end
       end
 
+      # Is there an active transaction?
       def active?
         @tm.transaction != nil
       end
 
+      # The heart of the matter
       def with_tx
-        begin
-          prepare
-          yield
-          commit
-        rescue Exception => e
-          error(e)
-        ensure
-          cleanup
-        end
+        prepare
+        yield
+        commit
+      rescue Exception => e
+        error(e)
+      ensure
+        cleanup
       end
 
     end

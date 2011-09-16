@@ -20,21 +20,22 @@ require 'set'
 
 module TorqueBox
   module Transactions
+
+    # These are only mixed in when ActiveRecord is loaded. They make
+    # ActiveRecord's transactions distributed.
     module ActiveRecordAdapters
 
       module Connection
 
         def transaction(*)
-          begin
-            super
-          rescue ActiveRecord::JDBCError => e
-            unless self.is_a?(XAResource)
-              puts "Creating an XAResource; exception=#{e}"
-              self.extend(XAResource)
-              retry
-            else
-              raise
-            end
+          super
+        rescue ActiveRecord::JDBCError => e
+          unless self.is_a?(XAResource)
+            puts "Creating an XAResource; exception=#{e}"
+            self.extend(XAResource)
+            retry
+          else
+            raise
           end
         end
 
