@@ -71,7 +71,7 @@ module TorqueBox
           super
           # TODO: not this, but we need AR's pooled connection to
           # refresh from jboss *after* the transaction is begun.
-          ActiveRecord::Base.connection.reconnect!
+          ActiveRecord::Base.clear_active_connections!
         end
 
         def cleanup
@@ -104,14 +104,12 @@ module TorqueBox
 
         def should_commit?(connection)
           return true if @complete || !active?
-          puts "JC: connection=#{connection}"
           connections << connection
           false
         end
 
         def should_rollback?(connection)
           return true if @complete || !active?
-          puts "JC: connection=#{connection}"
           connections << connection
           @rolled_back = true
           false
