@@ -27,12 +27,12 @@
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
 
+        <resource-root path="infinispan-core.jar"/>
+        <resource-root path="infinispan-query.jar"/>
+
         <resource-root path="hibernate-commons-annotations.jar"/>
         <resource-root path="hibernate-search.jar"/>
         <resource-root path="hibernate-search-analyzers.jar"/>
-
-        <resource-root path="infinispan-core.jar"/>
-        <resource-root path="infinispan-query.jar"/>
 
         <resource-root path="lucene-analyzers.jar"/>
         <resource-root path="lucene-core.jar"/>
@@ -43,6 +43,7 @@
         <resource-root path="lucene-spatial.jar"/>
         <resource-root path="lucene-spellchecker.jar"/>
         <resource-root path="lucene-stempel.jar"/>
+
         <resource-root path="solr-analysis-extras.jar"/>
         <resource-root path="solr-commons-csv.jar"/>
         <resource-root path="solr-core.jar"/>
