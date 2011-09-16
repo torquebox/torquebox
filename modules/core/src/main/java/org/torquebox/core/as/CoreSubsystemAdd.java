@@ -45,7 +45,6 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
-
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.TorqueBoxStdioContextSelector;
@@ -63,6 +62,10 @@ import org.torquebox.core.app.RubyApplicationDeployer;
 import org.torquebox.core.app.RubyApplicationExploder;
 import org.torquebox.core.app.RubyApplicationRecognizer;
 import org.torquebox.core.app.RubyYamlParsingProcessor;
+import org.torquebox.core.datasource.DataSourceInstaller;
+import org.torquebox.core.datasource.DatabaseProcessor;
+import org.torquebox.core.datasource.DatabaseYamlParsingProcessor;
+import org.torquebox.core.datasource.DriverInstaller;
 import org.torquebox.core.injection.CorePredeterminedInjectableDeployer;
 import org.torquebox.core.injection.PredeterminedInjectableProcessor;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
@@ -116,8 +119,10 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 35, new PoolingYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 36, new RubyYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RubyApplicationDefaultsProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new RubyApplicationExploder() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 5000, new DatabaseProcessor() );
 
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
@@ -129,6 +134,8 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9009, new DriverInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9010, new DataSourceInstaller() );
     }
 
     protected void addCoreServices(final OperationContext context, ServiceVerificationHandler verificationHandler,

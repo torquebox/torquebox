@@ -1,0 +1,44 @@
+package org.torquebox.core.datasource;
+
+import java.util.List;
+
+import org.jboss.as.connector.ConnectorServices;
+import org.jboss.as.connector.registry.DriverRegistry;
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceName;
+import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.runtime.RubyRuntimeFactory;
+
+public class DriverInstaller implements DeploymentUnitProcessor {
+
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+
+        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+
+        List<DriverMetaData> allMetaData = unit.getAttachmentList( DriverMetaData.ATTACHMENTS );
+
+        for (DriverMetaData each : allMetaData) {
+            DriverService driverService = new DriverService( rubyAppMetaData.getRootPath(), each.getAdapterName(), each.getDriverClassName() );
+
+            ServiceName name = DataSourceServices.driverName( unit, each.getAdapterName() );
+
+            phaseContext.getServiceTarget().addService( name, driverService )
+                    .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, driverService.getDriverRegistryInjector() )
+                    .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class, driverService.getRuntimeFactoryInjector() )
+                    .setInitialMode( ServiceController.Mode.ACTIVE ).install();
+        }
+    }
+
+    @Override
+    public void undeploy(DeploymentUnit context) {
+
+    }
+}

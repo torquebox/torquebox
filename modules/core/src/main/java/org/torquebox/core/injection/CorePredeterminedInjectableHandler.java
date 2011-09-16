@@ -19,7 +19,9 @@
 
 package org.torquebox.core.injection;
 
-import org.torquebox.core.as.CoreServices;
+import org.jboss.msc.service.ServiceRegistry;
+import org.jboss.msc.service.ServiceTarget;
+import org.torquebox.core.datasource.DataSourceInfoInjectable;
 import org.torquebox.core.injection.analysis.PredeterminedInjectableHandler;
 
 /**
@@ -48,6 +50,7 @@ public class CorePredeterminedInjectableHandler extends PredeterminedInjectableH
         addInjectable( "deployment-unit", DeploymentUnitInjectable.INSTANCE );
         addInjectable( "runtime-injection-analyzer", RuntimeInjectionAnalyzerInjectable.INSTANCE );
         addInjectable( "transaction-manager", TransactionManagerInjectable.INSTANCE );
+        addInjectable( "xa-ds-info", DataSourceInfoInjectable.INSTANCE );
     }
 
 }

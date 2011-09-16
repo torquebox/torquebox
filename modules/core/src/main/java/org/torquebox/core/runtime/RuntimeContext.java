@@ -16,7 +16,6 @@ public class RuntimeContext {
             if (cl instanceof JRubyClassLoader) {
                 WeakReference<Ruby> ref = contexts.get( cl );
                 if ( ref == null ) {
-                    log.info( "NULL ref" );
                     return null;
                 }
                 Ruby ruby = ref.get();

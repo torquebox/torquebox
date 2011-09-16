@@ -44,24 +44,21 @@ public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcess
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
 
-        if (index == null) {
-            log.warn( "No injection index for " + phaseContext + " //  + resolver " );
-            return;
-        }
+        if (index != null) {
+            Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
 
-        Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
-
-        for (Injectable injectable : injectables) {
-            try {
-                ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
-                builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
-            } catch (Exception e) {
-                throw new DeploymentUnitProcessingException( e );
+            for (Injectable injectable : injectables) {
+                try {
+                    ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
+                    builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
+                } catch (Exception e) {
+                    throw new DeploymentUnitProcessingException( e );
+                }
             }
         }
 
         AttachmentList<Injectable> additionalInjectables = unit.getAttachment( ComponentResolver.ADDITIONAL_INJECTABLES );
-        
+
         if (additionalInjectables != null) {
             for (Injectable injectable : additionalInjectables) {
                 try {

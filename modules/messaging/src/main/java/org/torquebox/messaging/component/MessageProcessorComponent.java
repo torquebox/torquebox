@@ -43,7 +43,11 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
         } else {
             RubyModule processorWrapperClass = getClass( "TorqueBox::Messaging::ProcessorWrapper" );
             Object wrappedProcessor = _callRubyMethod( processorWrapperClass, "new", getRubyComponent(), session, wrappedMessage );
+            try {
             _callRubyMethod( wrappedProcessor, "process!" );
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
     }
 

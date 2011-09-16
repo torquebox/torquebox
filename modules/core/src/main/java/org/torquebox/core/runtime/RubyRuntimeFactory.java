@@ -34,7 +34,10 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
+import org.jboss.msc.inject.Injector;
+import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
@@ -46,6 +49,9 @@ import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.ast.executable.Script;
 import org.jruby.util.ClassCache;
 import org.torquebox.bootstrap.JRubyHomeLocator;
+import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.component.InjectionRegistry;
+import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.core.pool.InstanceFactory;
 import org.torquebox.core.util.JRubyConstants;
 import org.torquebox.core.util.RuntimeHelper;
@@ -174,7 +180,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     /**
-     *
+     * 
      * @param debug
      *            Whether JRuby debug logging should be enabled or not
      */
@@ -184,7 +190,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /**
      * Retrieve the debug mode
-     *
+     * 
      * @return Whether debug logging is enabled or not
      */
     public boolean isDebug() {
@@ -192,7 +198,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     /**
-     *
+     * 
      * @param interactive
      *            Whether the runtime is marked as interactive or not
      */
@@ -202,7 +208,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /**
      * Retrieve the interactive mode
-     *
+     * 
      * @return Whether the runtime is marked as interactive or not
      */
     public boolean isInteractive() {
@@ -232,6 +238,10 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
      * Create a new instance of a fully-initialized runtime.
      */
     public Ruby createInstance(String contextInfo) throws Exception {
+        return createInstance( contextInfo, true );
+    }
+
+    public Ruby createInstance(String contextInfo, boolean initialize) throws Exception {
 
         TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
@@ -282,10 +292,13 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
             prepareRuntime( runtime, contextInfo );
 
-            if (this.initializer != null) {
-                this.initializer.initialize( runtime );
-            } else {
-                log.warn( "No initializer set for runtime" );
+            if (initialize) {
+                this.injectionRegistry.merge( runtime );
+                if (this.initializer != null) {
+                    this.initializer.initialize( runtime );
+                } else {
+                    log.warn( "No initializer set for runtime" );
+                }
             }
 
             performRuntimeInitialization( runtime );
@@ -299,7 +312,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
             logRuntimeCreationComplete( config, contextInfo, startTime );
         }
-        
+
         RuntimeContext.registerRuntime( runtime );
 
         return runtime;
@@ -459,7 +472,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /**
      * Set the interpreter input stream.
-     *
+     * 
      * @param inputStream
      *            The input stream.
      */
@@ -469,7 +482,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /**
      * Retrieve the interpreter input stream.
-     *
+     * 
      * @return The input stream.
      */
     public InputStream getInput() {
@@ -571,6 +584,10 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         return this.serviceRegistry;
     }
 
+    public Injector<Object> getInjector(String key) {
+        return this.injectionRegistry.getInjector( key );
+    }
+
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 
     /** Re-usable initializer. */
@@ -627,4 +644,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     private ServiceRegistry serviceRegistry;
 
     private Closeable mountedJRubyHome;
+
+    private InjectionRegistry injectionRegistry = new InjectionRegistry();
 }

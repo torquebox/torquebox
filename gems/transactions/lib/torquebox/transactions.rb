@@ -125,3 +125,4 @@ end
 if defined?(ActiveRecord)
   require 'torquebox/active_record_adapters'
 end
+

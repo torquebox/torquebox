@@ -40,11 +40,15 @@ module Transactions
     config.filter_parameters += [:password]
 
     config.after_initialize do
+      puts "migrating with #{ActiveRecord::Base.configurations.inspect}"
       begin
         ActiveRecord::Migrator.migrate(RAILS_ROOT + "/db/migrate")
-      rescue Exception
+      rescue Exception=>e
+        puts "Received error #{e} #{$!}"
+        puts e.backtrace
         puts "Ignoring migration error, probably due to multiple runtimes initializing: #{$!}"
       end
+      puts "migration complete"
     end
   end
 end

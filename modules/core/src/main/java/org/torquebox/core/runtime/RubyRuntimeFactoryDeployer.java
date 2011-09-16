@@ -22,6 +22,7 @@ package org.torquebox.core.runtime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -29,11 +30,15 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
+import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.jruby.CompatVersion;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.injection.analysis.Injectable;
 
 public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
 
@@ -84,14 +89,40 @@ public class RubyRuntimeFactoryDeployer implements DeploymentUnitProcessor {
             RubyRuntimeFactoryService service = new RubyRuntimeFactoryService( factory );
             ServiceName name = CoreServices.runtimeFactoryName( unit );
             
-            phaseContext.getServiceTarget().addService( name, service )
-                    .install();
+            ServiceBuilder<RubyRuntimeFactory> builder = phaseContext.getServiceTarget().addService( name, service );
+            addPredeterminedInjections( phaseContext, builder, factory ); 
+            builder.install();
+            
+            installLightweightFactory( phaseContext, factory );
         }
+    }
+    
+    protected void addPredeterminedInjections(DeploymentPhaseContext phaseContext, ServiceBuilder<?> builder, RubyRuntimeFactory factory) throws DeploymentUnitProcessingException {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        AttachmentList<Injectable> additionalInjectables = unit.getAttachment( ComponentResolver.ADDITIONAL_INJECTABLES );
+
+        if (additionalInjectables != null) {
+            for (Injectable injectable : additionalInjectables) {
+                try {
+                    ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
+                    builder.addDependency( serviceName, factory.getInjector( injectable.getKey() ) );
+                } catch (Exception e) {
+                    throw new DeploymentUnitProcessingException( e );
+                }
+            }
+        }
+    }
+
+    protected void installLightweightFactory(DeploymentPhaseContext phaseContext, RubyRuntimeFactory factory) {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        RubyRuntimeFactoryService service = new RubyRuntimeFactoryService( factory );
+        ServiceName name = CoreServices.runtimeFactoryName( unit ).append( "lightweight" );
+        
+        phaseContext.getServiceTarget().addService( name, service ).setInitialMode( Mode.ON_DEMAND ).install();
     }
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        log.info( "undeploy!: " + context );
     }
 
     private boolean useJRubyHomeEnvVar = true;

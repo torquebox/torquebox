@@ -39,6 +39,7 @@ public class InjectionRegistry {
         return new Injector<Object>() {
             @Override
             public void inject(Object value) throws InjectionException {
+                //System.err.println( "INJECT: " + key + " = " + value );
                 InjectionRegistry.this.injections.put( key, value );
             }
 
