@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'arjdbc'
+require 'set'
 
 module TorqueBox
   module Transactions
@@ -67,15 +68,23 @@ module TorqueBox
       module Transaction
         
         def prepare
+          super
           # TODO: not this, but we need AR's pooled connection to
           # refresh from jboss *after* the transaction is begun.
-          ActiveRecord::Base.clear_active_connections!
+          ActiveRecord::Base.connection.reconnect!
+        end
+
+        def cleanup
           super
+          @rolled_back = @complete = @connections = nil
         end
 
         def error( exception )
           super
-          raise exception unless exception.is_a?(ActiveRecord::Rollback)
+          unless exception.is_a?(ActiveRecord::Rollback)
+            puts $@
+            raise exception 
+          end
         end
 
         def commit
@@ -88,24 +97,28 @@ module TorqueBox
         def rollback
           super
           @complete = true
-          connections.each { |connection| connection.rollback_transaction_records(:all) }
+          connections.each do |connection| 
+            connection.rollback_transaction_records(@transactions.empty?) 
+          end
         end
 
         def should_commit?(connection)
           return true if @complete || !active?
+          puts "JC: connection=#{connection}"
           connections << connection
           false
         end
 
         def should_rollback?(connection)
           return true if @complete || !active?
+          puts "JC: connection=#{connection}"
           connections << connection
           @rolled_back = true
           false
         end
         
         def connections
-          @connections ||= []
+          @connections ||= Set.new
         end
       end
       

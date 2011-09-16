@@ -21,18 +21,16 @@ module TorqueBox
 
   # TorqueBox.transaction(resources...)
   def self.transaction(*resources, &block)
-    Transactions::Manager.current.enlist(*resources).run &block
+    Transactions::Manager.current.run(*resources, &block)
   end
 
   module Transactions
 
     module Transaction
-      def prepare
-      end
 
-      def error( exception )
-        puts "Transaction rollback: #{exception}"
-        rollback
+      def prepare
+        @transactions.push( @tm.suspend ) if active?
+        @tm.begin
       end
 
       def commit
@@ -42,6 +40,21 @@ module TorqueBox
       def rollback
         @tm.rollback
       end
+
+      def cleanup
+        @tm.suspend
+        if @transactions.last
+          @tm.resume( @transactions.pop )
+        else
+          Thread.current[:torquebox_transaction] = nil
+        end
+      end
+
+      def error( exception )
+        puts "Transaction rollback: #{exception}"
+        rollback
+      end
+
     end
 
     class Manager
@@ -54,27 +67,26 @@ module TorqueBox
 
       def initialize()
         @tm = inject('transaction-manager')
-        @resources = []
+        @transactions = []
       end
 
       def enlist(*resources)
-        if active?
-          (resources + @resources).each do |resource| 
-            xa = resource.is_a?(javax.transaction.xa.XAResource) ? resource : resource.xa_resource
-            @tm.transaction.enlist_resource(xa)
-          end
-          @resources = []
-        else
-          @resources += resources
+        resources.each do |resource| 
+          xa = resource.is_a?( javax.transaction.xa.XAResource ) ? resource : resource.xa_resource
+          @tm.transaction.enlist_resource(xa)
         end
-        self
       end
 
-      def run &block
-        if active?
+      def run(*args, &block)
+        opts = args.last.is_a?(Hash) ? args.pop : {}
+        if active? && !opts[:requires_new]
+          enlist(*args)
           yield
         else
-          with_tx &block
+          with_tx do
+            enlist(*args)
+            block.call
+          end
         end
       end
 
@@ -84,16 +96,13 @@ module TorqueBox
 
       def with_tx
         begin
-          @tm.begin
-          enlist
           prepare
           yield
           commit
         rescue Exception => e
           error(e)
         ensure
-          @tm.suspend
-          Thread.current[:torquebox_transaction] = nil
+          cleanup
         end
       end
 

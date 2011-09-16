@@ -57,27 +57,54 @@ remote_describe "rails transactions testing" do
     Thing.count.should == 2
   end
 
-  it "should not have surprising behavior when nesting torquebox transactions" do
+  it "should support :requires_new for creating models in torquebox transactions" do
     TorqueBox.transaction do
-      Thing.create(:name => 'bob')
-      Thing.transaction do
-        Thing.create(:name => 'ben')
+      Thing.create(:name => 'Kotori')
+      TorqueBox.transaction(:requires_new => true) do
+        Thing.create(:name => 'Nemu')
         raise ActiveRecord::Rollback
       end
     end
-    Thing.find_by_name('bob').should be_nil
-    Thing.find_by_name('ben').should be_nil
-    Thing.count.should == 0
+    Thing.find_by_name('Kotori').should_not be_nil
+    Thing.find_by_name('Nemu').should be_nil
+  end
+
+  it "should support :requires_new for updating models in torquebox transactions" do
+    sally = Thing.create(:name => 'sally')
+    ethel = Thing.create(:name => 'ethel')
+    sally.callback.should == 'after_commit'
+    ethel.callback.should == 'after_commit'
+    sally.name = 'fred'
+    ethel.name = 'barney'
+    TorqueBox.transaction do
+      sally.save!
+      TorqueBox.transaction(:requires_new => true) do
+        ethel.save!
+        raise ActiveRecord::Rollback
+      end
+    end
+    sally.callback.should == 'after_commit'
+    ethel.callback.should == 'after_rollback'
+    Thing.find_all_by_name("fred").size.should == 1
+    Thing.find_all_by_name("barney").should be_empty
+    Thing.find_all_by_name("sally").should be_empty
+    Thing.find_all_by_name("ethel").size.should == 1
   end
 
   it "should rollback as expected for a non-XA connection" do
-    puts "JC: ActiveRecord::Base.transaction()"
     test_rollback ActiveRecord::Base.method(:transaction)
   end
 
   it "should rollback as expected for an XA connection" do
-    puts "JC: TorqueBox.transaction()"
     test_rollback TorqueBox.method(:transaction)
+  end
+
+  it "should rollback correctly when nesting a non-torquebox tx in a torquebox one" do
+    test_nested_rollback ActiveRecord::Base.method(:transaction)
+  end
+
+  it "should rollback correctly when nesting two torquebox transactions" do
+    test_nested_rollback TorqueBox.method(:transaction)
   end
 
   def test_rollback meth
@@ -98,6 +125,19 @@ remote_describe "rails transactions testing" do
     Thing.find_all_by_name("barney").should be_empty
     Thing.find_all_by_name("sally").size.should == 1
     Thing.find_all_by_name("ethel").size.should == 1
+  end
+
+  def test_nested_rollback meth
+    TorqueBox.transaction do
+      Thing.create(:name => 'bob')
+      meth.call do
+        Thing.create(:name => 'ben')
+        raise ActiveRecord::Rollback
+      end
+    end
+    Thing.find_by_name('bob').should be_nil
+    Thing.find_by_name('ben').should be_nil
+    Thing.count.should == 0
   end
 
 end
