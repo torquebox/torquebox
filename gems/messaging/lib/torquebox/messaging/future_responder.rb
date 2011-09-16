@@ -98,7 +98,7 @@ module TorqueBox
                         :correlation_id => @correlation_id,
                         :ttl => @message_ttl,
                         :priority => priority,
-                        :new_session => true # can't be a part of the task's tx!
+                        :requires_new => true # can't be a part of the task's tx!
                         )
       rescue TypeError => ex
         $stderr.puts "FutureResponder#send_response: Warning: unable to marshal #{@result.inspect}"

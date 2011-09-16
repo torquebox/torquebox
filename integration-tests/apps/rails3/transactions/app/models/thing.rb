@@ -6,7 +6,7 @@ class Thing < ActiveRecord::Base
     %w{ before after }.each do |state|
       callback = "#{state}_#{event}"
       define_method(callback.to_sym) do 
-        TorqueBox::Messaging::Queue.new('/queue/output').publish(callback, :new_session => true)
+        TorqueBox::Messaging::Queue.new('/queue/output').publish(callback, :requires_new => true)
         @callback = callback
       end
     end

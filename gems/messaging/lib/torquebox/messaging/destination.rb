@@ -56,7 +56,7 @@ module TorqueBox
 
       def publish(message, options = {})
         wait_for_destination(options[:startup_timeout]) do
-          with_session(options[:new_session]) do |session|
+          with_session(options[:requires_new]) do |session|
             session.publish self, message, normalize_options(options)
           end
         end
