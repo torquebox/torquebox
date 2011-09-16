@@ -228,7 +228,7 @@ class AssemblyTool
     string = <<-EOF
       <xa-datasource jndi-name="java:jboss/datasources/ExampleXADS" pool-name="ExampleXADS">
         <driver>h2</driver>
-        <xa-datasource-property name="URL">jdbc:h2:mem:test</xa-datasource-property>
+        <xa-datasource-property name="URL">jdbc:h2:mem:test;MVCC=TRUE</xa-datasource-property>
         <xa-pool>
           <min-pool-size>10</min-pool-size>
           <max-pool-size>20</max-pool-size>
