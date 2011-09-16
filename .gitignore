@@ -25,4 +25,4 @@ Gemfile.lock
 .yardoc
 .DS_Store
 Infinispan-FileCacheStore
-
+rubyObj.*
