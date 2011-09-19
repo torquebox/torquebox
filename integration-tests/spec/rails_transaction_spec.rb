@@ -16,6 +16,7 @@ remote_describe "rails transactions testing" do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
     @output  = TorqueBox::Messaging::Queue.new('/queue/output')
     Thing.delete_all
+    Person.delete_all
   end
     
   it "should create a Thing in response to a happy message" do
@@ -89,6 +90,25 @@ remote_describe "rails transactions testing" do
     Thing.find_all_by_name("barney").should be_empty
     Thing.find_all_by_name("sally").should be_empty
     Thing.find_all_by_name("ethel").size.should == 1
+  end
+
+  it "should save to multiple class-specific databases in a TorqueBox transacation" do
+    TorqueBox.transaction do
+      Thing.create(:name => 'sue')
+      Person.create(:name => 'sue', :age => 42)
+    end
+    Thing.find_by_name('sue').should_not be_nil
+    Person.find_by_name('sue').should_not be_nil
+  end
+
+  it "should rollback from multiple class-specific databases in a TorqueBox transacation" do
+    TorqueBox.transaction do
+      Thing.create(:name => 'sue')
+      Person.create(:name => 'sue', :age => 42)
+      raise ActiveRecord::Rollback
+    end
+    Thing.find_by_name('sue').should be_nil
+    Person.find_by_name('sue').should be_nil
   end
 
   it "should rollback as expected for a non-XA connection" do

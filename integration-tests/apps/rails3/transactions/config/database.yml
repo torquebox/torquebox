@@ -1,9 +1,11 @@
-# SQLite version 3.x
-#   gem install sqlite3
 development:
   adapter: h2
   jndi: java:jboss/datasources/ExampleXADS
 
+person_database:
+  adapter: h2
+  jndi: java:jboss/datasources/people
+  
 # SQLite version 3.x
 #   gem install sqlite3
 original_development:
