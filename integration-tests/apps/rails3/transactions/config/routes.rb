@@ -1,4 +1,6 @@
 Transactions::Application.routes.draw do
+  resources :people
+
   resources :things
 
   # The priority is based upon order of creation:
