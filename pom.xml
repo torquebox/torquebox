@@ -375,7 +375,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.jruby-maven-plugins>0.28.4-SNAPSHOT</version.jruby-maven-plugins> 
+    <version.jruby-maven-plugins>0.28.4</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
     <version.mockito>1.8.4</version.mockito>
