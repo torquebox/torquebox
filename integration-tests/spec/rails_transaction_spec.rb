@@ -58,6 +58,21 @@ remote_describe "rails transactions testing" do
     Thing.count.should == 2
   end
 
+  it "should have less surprising behavior wrapped in a torquebox transaction" do
+    TorqueBox.transaction do
+      Thing.transaction do
+        Thing.create(:name => 'bob')
+        Thing.transaction do
+          Thing.create(:name => 'ben')
+          raise ActiveRecord::Rollback
+        end
+      end
+    end
+    Thing.find_by_name('bob').should be_nil
+    Thing.find_by_name('ben').should be_nil
+    Thing.count.should == 0
+  end
+
   it "should support :requires_new for creating models in torquebox transactions" do
     TorqueBox.transaction do
       Thing.create(:name => 'Kotori')

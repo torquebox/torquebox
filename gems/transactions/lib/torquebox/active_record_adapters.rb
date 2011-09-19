@@ -54,6 +54,14 @@ module TorqueBox
           super unless Manager.current.active?
         end
 
+        # These prevent rollbacks from occurring
+        def increment_open_transactions
+          super unless Manager.current.active?
+        end
+        def decrement_open_transactions
+          super unless Manager.current.active?
+        end
+
         # Defer execution of these tx-related callbacks invoked by
         # DatabaseStatements.transaction() until after the XA tx is
         # either committed or rolled back. 
@@ -73,11 +81,6 @@ module TorqueBox
           # TODO: not this, but we need AR's pooled connection to
           # refresh from jboss *after* the transaction is begun.
           ActiveRecord::Base.clear_active_connections!
-        end
-
-        def cleanup
-          super
-          @rolled_back = @complete = @connections = nil
         end
 
         def error( exception )
