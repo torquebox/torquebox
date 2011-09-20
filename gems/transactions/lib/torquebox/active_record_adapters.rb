@@ -43,23 +43,12 @@ module TorqueBox
 
       module XAResource
 
-        # An XA connection is not allowed to begin/commit/rollback
-        def begin_db_transaction
-          super unless Manager.current.active?
-        end
-        def commit_db_transaction
-          super unless Manager.current.active?
-        end
-        def rollback_db_transaction
-          super unless Manager.current.active?
-        end
-
-        # These prevent rollbacks from occurring
-        def increment_open_transactions
-          super unless Manager.current.active?
-        end
-        def decrement_open_transactions
-          super unless Manager.current.active?
+        [ :begin_db_transaction, :commit_db_transaction, :rollback_db_transaction,
+          :increment_open_transactions, :decrement_open_transactions, 
+        ].each do |method|
+          define_method(method) do 
+            super unless Manager.current.active?
+          end
         end
 
         # Defer execution of these tx-related callbacks invoked by
