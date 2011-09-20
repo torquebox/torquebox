@@ -113,9 +113,10 @@ module TorqueBox
         puts "TorqueBox install OK: #{opt_torquebox}"
       end
 
-      def run_command_line(clustered)
+      def run_command_line(opts={})
         options = ENV['JBOSS_OPTS'] || ''
-        options = "#{options} --server-config=#{cluster_config_file}" if clustered
+        options = "#{options} --server-config=#{cluster_config_file}" if opts[:clustered]
+        options = "#{options} -Dorg.torquebox.web.http.maxThreads=#{opts[:max_threads]}" if opts[:max_threads]
         if windows?
           cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
         else
@@ -124,7 +125,7 @@ module TorqueBox
         [cmd, options]
       end
 
-      def run_server(clustered=false)
+      def run_server(options={})
         Dir.chdir(jboss_home) do
           # don't send the gemfile from the current app, instead let
           # bundler suss it out itself for each deployed
@@ -133,12 +134,12 @@ module TorqueBox
           ENV.delete('BUNDLE_GEMFILE')
 
           if windows?
-            exec *run_command_line(clustered)
+            exec *run_command_line(options)
           else
             old_trap = trap("INT") do
               puts "caught SIGINT, shutting down"
             end
-            exec_command(run_command_line(clustered).join(' '))
+            exec_command(run_command_line(options).join(' '))
             trap("INT", old_trap)
           end
         end

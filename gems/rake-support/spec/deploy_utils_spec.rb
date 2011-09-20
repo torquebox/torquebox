@@ -202,6 +202,44 @@ module TorqueBox
 
     end
 
+    describe 'TorqueBox::DeployUtils.run_server' do
+      before( :each ) do
+        ENV['TORQUEBOX_HOME'] = '/torquebox'
+        ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+        Dir.stub!(:chdir).and_yield
+        Kernel.stub!(:exec)
+        TorqueBox::DeployUtils.stub!(:exec_command)
+      end
+
+      it 'should pass options to run_command_line' do
+        options = { :clustered => true, :max_threads => 25 }
+        TorqueBox::DeployUtils.should_receive(:run_command_line).with(options).and_return([])
+        TorqueBox::DeployUtils.run_server(options)
+      end
+    end
+
+    describe 'TorqueBox::DeployUtils.run_command_line' do
+      it 'should not add --server-config when not clustered' do
+        command, options = TorqueBox::DeployUtils.run_command_line(:clustered => false)
+        options.should_not include('--server-config=')
+      end
+
+      it 'should add --server-config when clustered' do
+        command, options = TorqueBox::DeployUtils.run_command_line(:clustered => true)
+        options.should include('--server-config=')
+      end
+
+      it 'should not set max threads by default' do
+        command, options = TorqueBox::DeployUtils.run_command_line
+        options.should_not include('-Dorg.torquebox.web.http.maxThreads=')
+      end
+
+      it 'should set max threads when given' do
+        command, options = TorqueBox::DeployUtils.run_command_line(:max_threads => 5)
+        options.should include('-Dorg.torquebox.web.http.maxThreads=5')
+      end
+    end
+
   end
 end
 
