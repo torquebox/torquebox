@@ -4,8 +4,73 @@
 <chapter>
   <title>Production Setup</title>
 
+  <section id="number-http-threads">
+    <title>Sizing Number of HTTP Threads to Connection Pool</title>
+
+    <para>When running under load in production and against a
+    database, you'll want to size the number of HTTP threads
+    concurrently processing web requests based on the number of
+    connections available in your database connection pool so you
+    don't have too many requests waiting to grab a connection from the
+    pool and timing out. The specific ratio of HTTP threads to
+    database connection pool size will depend on your application, but
+    a good starting point is 1 to 1. Examples follow.</para>
+
+    <para><example>
+      <title>Database Connection Pool
+      (<filename>config/database.yml</filename>)</title>
+
+      <para><programlisting>production:
+  adapter: mysql
+  database: my_database
+  host: my_host
+  username: my_username
+  password: my_password
+  encoding: utf8
+  pool: 100</programlisting>This example sets the database connection
+      pool size to 100.</para>
+    </example></para>
+
+    <table>
+      <title>Number of HTTP Threads System Property</title>
+      <tgroup cols="2">
+        <thead>
+          <row>
+            <entry>System Property</entry>
+            <entry>Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry><parameter>org.torquebox.web.http.maxThreads</parameter></entry>
+            <entry>The maximum number of threads to use for the
+            default HTTP connector. If you've changed the connector's
+            name from <emphasis>http</emphasis> in
+            <filename>standalone.xml</filename> then substitute
+            <emphasis>http</emphasis> for the new connector name in
+            the property key. The default value is inherited from AS7
+            and is 512 * the number of CPUs.</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+
+    <para><example>
+      <title>Number of HTTP Threads
+      (<filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>)</title>
+
+      <para><programlisting><![CDATA[    <extensions>
+        ...
+    </extensions>
+    <system-properties>
+        <property name='org.torquebox.web.http.maxThreads' value='100'/>
+    </system-properties>]]>
+      </programlisting>This example sets the maximum of HTTP threads to 100.</para>
+    </example></para>
+  </section>
+
   <section>
-    <title> SSL JBoss Web</title>
+    <title>SSL JBoss Web</title>
 
     <para></para>
   </section>

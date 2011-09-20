@@ -23,8 +23,12 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
 
+import java.util.Enumeration;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.catalina.connector.Connector;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -32,11 +36,13 @@ import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
+import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.web.VirtualHostInstaller;
+import org.torquebox.web.WebConnectorConfigService;
 import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
 import org.torquebox.web.rack.RackApplicationDefaultsProcessor;
 import org.torquebox.web.rack.RackApplicationRecognizer;
@@ -69,6 +75,12 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
             }
         }, OperationContext.Stage.RUNTIME );
         
+        try {
+            addWebConnectorConfigServices( context, verificationHandler, newControllers );
+        } catch (Exception e) {
+            throw new OperationFailedException( e, null );
+        }
+
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
@@ -91,6 +103,32 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
     }
 
+    protected void addWebConnectorConfigServices(final OperationContext context,
+                                                 ServiceVerificationHandler verificationHandler,
+                                                 List<ServiceController<?>> newControllers) throws Exception {
+        for (Enumeration<?> e = System.getProperties().propertyNames(); e.hasMoreElements();) {
+            String key = (String) e.nextElement();
+            Matcher matcher = maxThreadsPattern.matcher( key );
+            if (matcher.matches()) {
+                String connectorName = matcher.group( 1 );
+                int maxThreads = Integer.parseInt( System.getProperty( key ) );
+                addWebConnectorConfigService (context, verificationHandler, newControllers, connectorName, maxThreads );
+            }
+        }
+    }
+
+    protected void addWebConnectorConfigService(final OperationContext context,
+                                                ServiceVerificationHandler verificationHandler,
+                                                List<ServiceController<?>> newControllers,
+                                                String connectorName, int maxThreads) throws Exception {
+        WebConnectorConfigService service = new WebConnectorConfigService();
+        service.setMaxThreads(maxThreads);
+        newControllers.add( context.getServiceTarget().addService( WebServices.WEB_CONNECTOR_CONFIG.append( connectorName ), service )
+                .addDependency( WebSubsystemServices.JBOSS_WEB_CONNECTOR.append( connectorName ), Connector.class, service.getConnectorInjector() )
+                .addListener( verificationHandler)
+                .setInitialMode( Mode.ACTIVE )
+                .install() );
+    }
 
     static ModelNode createOperation(ModelNode address) {
         final ModelNode subsystem = new ModelNode();
@@ -101,5 +139,6 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     static final WebSubsystemAdd ADD_INSTANCE = new WebSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.web.as" );
+    static final Pattern maxThreadsPattern = Pattern.compile( "org\\.torquebox\\.web\\.(.+)\\.maxThreads" );
 
 }
