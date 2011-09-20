@@ -19,6 +19,12 @@ remote_describe "rails transactions testing" do
     Person.delete_all
   end
     
+  it "should save a simple thing" do
+    sally = Thing.create(:name => 'sally')
+    sally.callback.should == 'after_commit'
+    Thing.find_by_name("sally").name.should == 'sally'
+  end
+
   it "should create a Thing in response to a happy message" do
     @input.publish("happy path")
     @output.receive(:timeout => 60_000).should == 'after_commit'
@@ -39,13 +45,7 @@ remote_describe "rails transactions testing" do
     Thing.find_all_by_name("this will error").should be_empty
   end
 
-  it "should save a simple thing" do
-    sally = Thing.create(:name => 'sally')
-    sally.callback.should == 'after_commit'
-    Thing.find_by_name("sally").name.should == 'sally'
-  end
-
-  it "should continue to have surprising behavior with nested non-torquebox transactions" do
+  it "should continue to have surprising behavior with nested non-TorqueBox transactions" do
     Thing.transaction do
       Thing.create(:name => 'bob')
       Thing.transaction do
@@ -58,7 +58,7 @@ remote_describe "rails transactions testing" do
     Thing.count.should == 2
   end
 
-  it "should have less surprising behavior wrapped in a torquebox transaction" do
+  it "should have less surprising behavior wrapped in a TorqueBox transaction" do
     TorqueBox.transaction do
       Thing.transaction do
         Thing.create(:name => 'bob')
@@ -73,7 +73,7 @@ remote_describe "rails transactions testing" do
     Thing.count.should == 0
   end
 
-  it "should support :requires_new for creating models in torquebox transactions" do
+  it "should support :requires_new for creating models in TorqueBox transactions" do
     TorqueBox.transaction do
       Thing.create(:name => 'Kotori')
       TorqueBox.transaction(:requires_new => true) do
@@ -85,7 +85,7 @@ remote_describe "rails transactions testing" do
     Thing.find_by_name('Nemu').should be_nil
   end
 
-  it "should support :requires_new for updating models in torquebox transactions" do
+  it "should support :requires_new for updating models in TorqueBox transactions" do
     sally = Thing.create(:name => 'sally')
     ethel = Thing.create(:name => 'ethel')
     sally.callback.should == 'after_commit'
@@ -134,11 +134,11 @@ remote_describe "rails transactions testing" do
     test_rollback TorqueBox.method(:transaction)
   end
 
-  it "should rollback correctly when nesting a non-torquebox tx in a torquebox one" do
+  it "should rollback correctly when nesting a non-TorqueBox tx in a TorqueBox one" do
     test_nested_rollback ActiveRecord::Base.method(:transaction)
   end
 
-  it "should rollback correctly when nesting two torquebox transactions" do
+  it "should rollback correctly when nesting two TorqueBox transactions" do
     test_nested_rollback TorqueBox.method(:transaction)
   end
 
