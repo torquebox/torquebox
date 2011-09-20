@@ -6,7 +6,7 @@
 
 development:
   adapter: h2
-  database: mem:development
+  database: mem:development;MVCC=TRUE
   pool: 50
 
 # Warning: The database defined as "test" will be erased and
