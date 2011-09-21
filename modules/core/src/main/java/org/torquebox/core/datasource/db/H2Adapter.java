@@ -15,6 +15,14 @@ public class H2Adapter extends AbstractAdapter {
     }
 
     @Override
+    public String[] getNames() {
+        return new String[] {
+                "h2",
+                "jdbch2",
+        };
+    }
+
+    @Override
     public Map<String, String> getPropertiesFor(DatabaseMetaData dbMeta) {
         Map<String, Object> config = dbMeta.getConfiguration();
 

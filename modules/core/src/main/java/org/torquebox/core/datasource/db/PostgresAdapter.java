@@ -3,16 +3,22 @@ package org.torquebox.core.datasource.db;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.jca.common.api.metadata.ds.DsSecurity;
-import org.jboss.jca.common.api.validator.ValidateException;
-import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.torquebox.core.datasource.DatabaseMetaData;
 
 public class PostgresAdapter extends AbstractAdapter {
 
     public PostgresAdapter() {
-        super( "postgresql", "org.postgresql.Driver", "org.postgresql.xa.PGXADataSource" );
+        super( "postgres", "org.postgresql.Driver", "org.postgresql.xa.PGXADataSource" );
     }
+    
+    @Override
+    public String[] getNames() {
+        return new String[] {
+                "postgresql",
+                "jdbcpostgresql",
+        };
+    }
+
 
     @Override
     public Map<String, String> getPropertiesFor(DatabaseMetaData dbMeta) {

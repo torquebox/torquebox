@@ -8,7 +8,9 @@ import org.torquebox.core.datasource.DatabaseMetaData;
 
 public interface Adapter {
     
-    String getName();
+    String getId();
+    String[] getNames(); 
+    
     String getDriverClassName();
     String getDataSourceClassName();
     

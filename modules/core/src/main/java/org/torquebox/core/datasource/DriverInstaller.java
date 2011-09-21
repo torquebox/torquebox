@@ -33,9 +33,9 @@ public class DriverInstaller implements DeploymentUnitProcessor {
         try {
             String applicationDir = rubyAppMetaData.getRoot().getPhysicalFile().getAbsolutePath();
             for (DriverMetaData each : allMetaData) {
-                DriverService driverService = new DriverService( applicationDir, each.getAdapterName(), each.getDriverClassName() );
+                DriverService driverService = new DriverService( applicationDir, each.getDriverId(), each.getDriverClassName() );
 
-                ServiceName name = DataSourceServices.driverName( unit, each.getAdapterName() );
+                ServiceName name = DataSourceServices.driverName( unit, each.getDriverId() );
 
                 phaseContext
                         .getServiceTarget()

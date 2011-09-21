@@ -7,13 +7,13 @@ public class DriverMetaData {
     
     public static final AttachmentKey<AttachmentList<DriverMetaData>> ATTACHMENTS = AttachmentKey.createList( DriverMetaData.class );
     
-    public DriverMetaData(String adapterName, String driverClassName) {
-        this.adapterName = adapterName;
+    public DriverMetaData(String driverId, String driverClassName) {
+        this.driverId = driverId;
         this.driverClassName = driverClassName;
     }
     
-    public String getAdapterName() {
-        return this.adapterName;
+    public String getDriverId() {
+        return this.driverId;
     }
     
     public void setDriverClassName(String driverClassName) {
@@ -33,10 +33,10 @@ public class DriverMetaData {
     }
     
     public String toString() {
-        return "[Driver: " + this.adapterName + "]";
+        return "[Driver: " + this.driverId + "]";
     }
 
-    private String adapterName;
+    private String driverId;
     private String driverClassName;
     private String dataSourceClassName;
 }

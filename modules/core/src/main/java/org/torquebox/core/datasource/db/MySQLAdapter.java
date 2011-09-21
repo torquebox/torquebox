@@ -3,9 +3,6 @@ package org.torquebox.core.datasource.db;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jboss.jca.common.api.metadata.ds.DsSecurity;
-import org.jboss.jca.common.api.validator.ValidateException;
-import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.torquebox.core.datasource.DatabaseMetaData;
 
 public class MySQLAdapter extends AbstractAdapter {
@@ -13,6 +10,17 @@ public class MySQLAdapter extends AbstractAdapter {
     public MySQLAdapter() {
         super( "mysql", "com.mysql.jdbc.Driver", "com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" );
     }
+    
+    @Override
+    public String[] getNames() {
+        return new String[] {
+                "mysql",
+                "mysql2",
+                "jdbcmysql",
+                "jdbcmysql2",
+        };
+    }
+
 
     @Override
     public Map<String, String> getPropertiesFor(DatabaseMetaData dbMeta) {

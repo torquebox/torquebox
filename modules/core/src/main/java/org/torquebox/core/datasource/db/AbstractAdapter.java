@@ -2,21 +2,20 @@ package org.torquebox.core.datasource.db;
 
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.validator.ValidateException;
-import org.torquebox.core.datasource.DataSourceMetaData;
 import org.torquebox.core.datasource.DatabaseMetaData;
 
 
 public abstract class AbstractAdapter implements Adapter {
 
-    public AbstractAdapter(String name, String driverClassName, String dataSourceClassName) {
-        this.name = name;
+    public AbstractAdapter(String id, String driverClassName, String dataSourceClassName) {
+        this.id = id;
         this.driverClassName = driverClassName;
         this.dataSourceClassName = dataSourceClassName;
     }
     
     @Override
-    public String getName() {
-        return this.name;
+    public String getId() {
+        return this.id;
     }
 
     @Override
@@ -34,7 +33,7 @@ public abstract class AbstractAdapter implements Adapter {
         return null;
     }
 
-    private String name;
+    private String id;
     private String driverClassName;
     private String dataSourceClassName;
 }

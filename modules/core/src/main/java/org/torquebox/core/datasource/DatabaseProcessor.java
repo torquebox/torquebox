@@ -26,7 +26,10 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     }
 
     protected void addAdapter(Adapter adapter) {
-        this.adapters.put( adapter.getName(), adapter );
+        String[] names = adapter.getNames();
+        for (String name : names) {
+            this.adapters.put( name, adapter );
+        }
     }
 
     protected Adapter getAdapter(String adapterName) {
@@ -91,13 +94,13 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
     protected void processDriver(DeploymentPhaseContext phaseContext, Adapter adapter) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        DriverMetaData driverMeta = new DriverMetaData( adapter.getName(), adapter.getDriverClassName() );
+        DriverMetaData driverMeta = new DriverMetaData( adapter.getId(), adapter.getDriverClassName() );
         unit.addToAttachmentList( DriverMetaData.ATTACHMENTS, driverMeta );
     }
 
     protected void processDataSource(DeploymentPhaseContext phaseContext, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        DataSourceMetaData dsMeta = new DataSourceMetaData( dbMeta.getConfigurationName(), adapter.getName(), adapter.getDataSourceClassName() );
+        DataSourceMetaData dsMeta = new DataSourceMetaData( dbMeta.getConfigurationName(), adapter.getId(), adapter.getDataSourceClassName() );
 
         dsMeta.setJndiName( DataSourceServices.jndiName( unit, dsMeta.getName() ) );
         dsMeta.setProperties( adapter.getPropertiesFor( dbMeta ) );

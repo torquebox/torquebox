@@ -16,9 +16,9 @@ import org.torquebox.core.util.RuntimeHelper;
 
 public class DriverService implements Service<Driver> {
 
-    public DriverService(String applicationDirectory, String driverName, String driverClassName) {
+    public DriverService(String applicationDirectory, String driverId, String driverClassName) {
         this.applicationDirectory = applicationDirectory;
-        this.driverName = driverName;
+        this.driverId = driverId;
         this.driverClassName = driverClassName;
     }
 
@@ -48,7 +48,7 @@ public class DriverService implements Service<Driver> {
         ruby.setCurrentDirectory( this.applicationDirectory );
 
         RuntimeHelper.require( ruby, "bundler/setup" );
-        RuntimeHelper.require( ruby, "jdbc/" + this.driverName );
+        RuntimeHelper.require( ruby, "jdbc/" + this.driverId );
 
         try {
             ClassLoader classLoader = ruby.getJRubyClassLoader();
@@ -64,7 +64,7 @@ public class DriverService implements Service<Driver> {
         int majorVersion = this.driver.getMajorVersion();
         int minorVersion = this.driver.getMinorVersion();
         boolean compliant = this.driver.jdbcCompliant();
-        return new InstalledDriver( this.driverName, this.driver.getClass().getName(), null, null, majorVersion, minorVersion, compliant );
+        return new InstalledDriver( this.driverId, this.driver.getClass().getName(), null, null, majorVersion, minorVersion, compliant );
     }
 
     @Override
@@ -84,7 +84,7 @@ public class DriverService implements Service<Driver> {
     private InjectedValue<DriverRegistry> driverRegistryInjector = new InjectedValue<DriverRegistry>();
 
     private String applicationDirectory;
-    private String driverName;
+    private String driverId;
     private String driverClassName;
     
     private Driver driver;
