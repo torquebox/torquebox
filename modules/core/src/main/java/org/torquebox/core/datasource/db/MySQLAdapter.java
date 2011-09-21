@@ -8,7 +8,7 @@ import org.torquebox.core.datasource.DatabaseMetaData;
 public class MySQLAdapter extends AbstractAdapter {
 
     public MySQLAdapter() {
-        super( "mysql", "com.mysql.jdbc.Driver", "com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" );
+        super( "mysql", "jdbc/mysql", "com.mysql.jdbc.Driver", "com.mysql.jdbc.jdbc2.optional.MysqlXADataSource" );
     }
     
     @Override

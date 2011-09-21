@@ -11,23 +11,22 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
+import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.util.RuntimeHelper;
 
 public class DriverService implements Service<Driver> {
 
-    public DriverService(String applicationDirectory, String driverId, String driverClassName) {
+    public DriverService(String applicationDirectory, Adapter adapter) {
         this.applicationDirectory = applicationDirectory;
-        this.driverId = driverId;
-        this.driverClassName = driverClassName;
+        this.adapter = adapter;
     }
 
     @Override
     public void start(StartContext context) throws StartException {
-
         try {
             this.driver = instantiateDriver();
-            InstalledDriver installedDriver = createInstalledDriver();
+            this.installedDriver = createInstalledDriver();
             
             DriverRegistry registry = this.driverRegistryInjector.getValue();
             
@@ -39,6 +38,7 @@ public class DriverService implements Service<Driver> {
 
     @Override
     public void stop(StopContext context) {
+        this.driverRegistryInjector.getValue().unregisterInstalledDriver( this.installedDriver );
     }
 
     protected Driver instantiateDriver() throws Exception {
@@ -48,11 +48,11 @@ public class DriverService implements Service<Driver> {
         ruby.setCurrentDirectory( this.applicationDirectory );
 
         RuntimeHelper.require( ruby, "bundler/setup" );
-        RuntimeHelper.require( ruby, "jdbc/" + this.driverId );
+        RuntimeHelper.require( ruby, this.adapter.getRequirePath() );
 
         try {
             ClassLoader classLoader = ruby.getJRubyClassLoader();
-            final Class<? extends Driver> driverClass = classLoader.loadClass( this.driverClassName ).asSubclass( Driver.class );
+            final Class<? extends Driver> driverClass = classLoader.loadClass( this.adapter.getDriverClassName() ).asSubclass( Driver.class );
             Driver driver = driverClass.newInstance();
             return driver;
         } finally {
@@ -64,7 +64,7 @@ public class DriverService implements Service<Driver> {
         int majorVersion = this.driver.getMajorVersion();
         int minorVersion = this.driver.getMinorVersion();
         boolean compliant = this.driver.jdbcCompliant();
-        return new InstalledDriver( this.driverId, this.driver.getClass().getName(), null, null, majorVersion, minorVersion, compliant );
+        return new InstalledDriver( this.adapter.getId(), this.driver.getClass().getName(), null, null, majorVersion, minorVersion, compliant );
     }
 
     @Override
@@ -84,9 +84,10 @@ public class DriverService implements Service<Driver> {
     private InjectedValue<DriverRegistry> driverRegistryInjector = new InjectedValue<DriverRegistry>();
 
     private String applicationDirectory;
-    private String driverId;
-    private String driverClassName;
+    private Adapter adapter;
     
     private Driver driver;
+    private InstalledDriver installedDriver;
+
 
 }

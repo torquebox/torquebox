@@ -62,10 +62,8 @@ import org.torquebox.core.app.RubyApplicationDeployer;
 import org.torquebox.core.app.RubyApplicationExploder;
 import org.torquebox.core.app.RubyApplicationRecognizer;
 import org.torquebox.core.app.RubyYamlParsingProcessor;
-import org.torquebox.core.datasource.DataSourceInstaller;
 import org.torquebox.core.datasource.DatabaseProcessor;
 import org.torquebox.core.datasource.DatabaseYamlParsingProcessor;
-import org.torquebox.core.datasource.DriverInstaller;
 import org.torquebox.core.injection.CorePredeterminedInjectableDeployer;
 import org.torquebox.core.injection.PredeterminedInjectableProcessor;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
@@ -134,8 +132,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9009, new DriverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9010, new DataSourceInstaller() );
     }
 
     protected void addCoreServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
