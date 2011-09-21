@@ -23,6 +23,10 @@ public class DriverInstaller implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        
+        if ( rubyAppMetaData == null ) {
+            return;
+        }
 
         List<DriverMetaData> allMetaData = unit.getAttachmentList( DriverMetaData.ATTACHMENTS );
 
