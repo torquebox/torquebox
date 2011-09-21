@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.servlet;
+package org.projectodd.polyglot.web.servlet;
 
 import java.io.IOException;
 
@@ -78,7 +78,7 @@ public class HttpServletResponseCapture extends HttpServletResponseWrapper {
         }
     }
 
-    boolean isError() {
+    public boolean isError() {
         return status >= 400;
     }
 }

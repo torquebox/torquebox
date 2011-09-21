@@ -47,7 +47,7 @@ public class RackApplicationRecognizer extends FileLocatingProcessor {
             if (rackAppMetaData == null) {
                 rackAppMetaData = new RackApplicationMetaData();
                 rackAppMetaData.setRackUpScriptLocation( DEFAULT_RACKUP_PATH );
-                unit.putAttachment( RackApplicationMetaData.ATTACHMENT_KEY, rackAppMetaData );
+                rackAppMetaData.attach( unit );
             }
         }
     }

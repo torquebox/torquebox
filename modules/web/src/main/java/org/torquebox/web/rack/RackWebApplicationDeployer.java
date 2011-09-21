@@ -54,6 +54,8 @@ import org.jboss.metadata.web.spec.ServletMappingMetaData;
 import org.jboss.metadata.web.spec.WebFragmentMetaData;
 import org.jboss.metadata.web.spec.WebMetaData;
 import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.web.servlet.FiveHundredServlet;
+import org.projectodd.polyglot.web.servlet.StaticResourceServlet;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.web.as.WebServices;
 import org.torquebox.web.servlet.RackFilter;
@@ -73,10 +75,10 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
     public static final String RACK_FILTER_NAME = "torquebox.rack";
 
     public static final String STATIC_RESROUCE_SERVLET_NAME = "torquebox.static";
-    public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = "org.torquebox.web.servlet.StaticResourceServlet";
+    public static final String STATIC_RESOURCE_SERVLET_CLASS_NAME = StaticResourceServlet.class.getName(); 
 
     public static final String FIVE_HUNDRED_SERVLET_NAME = "torquebox.500";
-    public static final String FIVE_HUNDRED_SERVLET_CLASS_NAME = "org.torquebox.web.servlet.FiveHundredServlet";
+    public static final String FIVE_HUNDRED_SERVLET_CLASS_NAME = FiveHundredServlet.class.getName();
 
     public static final String LOCALHOST_MBEAN_NAME = "jboss.web:host=localhost,type=Host";
 

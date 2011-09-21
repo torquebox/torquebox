@@ -26,6 +26,7 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
+        <resource-root path="polyglot-web.jar"/>
     </resources>
 
     <exports>

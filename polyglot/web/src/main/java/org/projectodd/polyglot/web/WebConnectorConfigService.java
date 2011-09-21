@@ -1,4 +1,4 @@
-package org.torquebox.web;
+package org.projectodd.polyglot.web;
 
 import java.lang.reflect.Method;
 

@@ -41,7 +41,7 @@
         <path name="org/yaml/snakeyaml/error"/>
         <path name="org/torquebox/core/util"/>
         <path name="org/torquebox/bootstrap/as"/>
-        <path name="org/projectodd/polyglot/**"/>
+        <path name="org/projectodd/polyglot/core/**"/>
       </include-set>
     </exports>
 

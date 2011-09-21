@@ -705,11 +705,39 @@
                     </versionRange>
                     <goals>
                       <goal>install</goal>
+                      <goal>initialize</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
                     <ignore></ignore>
                   </action>
+                </pluginExecution>
+                <pluginExecution>
+                	<pluginExecutionFilter>
+                		<groupId>de.saumya.mojo</groupId>
+                		<artifactId>jruby-maven-plugin</artifactId>
+                		<versionRange>[0.28.4,)</versionRange>
+                		<goals>
+                			<goal>jruby</goal>
+                		</goals>
+                	</pluginExecutionFilter>
+                	<action>
+                		<ignore></ignore>
+                	</action>
+                </pluginExecution>
+                <pluginExecution>
+                	<pluginExecutionFilter>
+                		<groupId>org.jboss.maven.plugins</groupId>
+                		<artifactId>maven-jdocbook-plugin</artifactId>
+                		<versionRange>[2.3.3,)</versionRange>
+                		<goals>
+                			<goal>generate</goal>
+                			<goal>resources</goal>
+                		</goals>
+                	</pluginExecutionFilter>
+                	<action>
+                		<ignore></ignore>
+                	</action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>

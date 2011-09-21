@@ -40,7 +40,7 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
         if (rackAppMetaData == null) {
             rackAppMetaData = new RackApplicationMetaData();
-            unit.putAttachment( RackApplicationMetaData.ATTACHMENT_KEY, rackAppMetaData );
+            rackAppMetaData.attach( unit );
         }
         
         Map<String, Object> webData = (Map<String, Object>) dataObj;

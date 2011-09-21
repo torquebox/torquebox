@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web;
+package org.projectodd.polyglot.web;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,6 @@ import org.jboss.as.web.WebServer;
 import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.as.web.WebVirtualHostService;
 import org.jboss.msc.service.ServiceName;
-import org.torquebox.web.rack.RackApplicationMetaData;
 
 public class VirtualHostInstaller implements DeploymentUnitProcessor {
     
@@ -42,14 +41,14 @@ public class VirtualHostInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RackApplicationMetaData rackMetaData = unit.getAttachment(RackApplicationMetaData.ATTACHMENT_KEY);
+        WebApplicationMetaData webMetaData = unit.getAttachment( WebApplicationMetaData.ATTACHMENT_KEY );
         
-        if ( rackMetaData == null ) {
+        if ( webMetaData == null ) {
             return;
         }
         
         List<String> hosts = new ArrayList<String>();
-        hosts.addAll( rackMetaData.getHosts() );
+        hosts.addAll( webMetaData.getHosts() );
         
         if ( hosts.isEmpty() ) {
             return;

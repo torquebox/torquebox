@@ -22,14 +22,14 @@ package org.torquebox.web.rack;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
+import org.projectodd.polyglot.web.WebApplicationMetaData;
 
-public class RackApplicationMetaData {
+public class RackApplicationMetaData extends WebApplicationMetaData {
 
     public static final AttachmentKey<RackApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create(RackApplicationMetaData.class);
     
@@ -37,6 +37,11 @@ public class RackApplicationMetaData {
 
     }
 
+    public void attach(DeploymentUnit unit) {
+        super.attach( unit );
+        unit.putAttachment( ATTACHMENT_KEY, this );
+    }
+    
     public void setRackUpScript(String rackUpScript) {
         this.rackUpScript = rackUpScript;
     }
@@ -84,31 +89,6 @@ public class RackApplicationMetaData {
         }
     }
 
-    public void addHost(String host) {
-        if (host != null && !this.hosts.contains( host ))
-            this.hosts.add( host );
-    }
-
-    public List<String> getHosts() {
-        return this.hosts;
-    }
-
-    public void setContextPath(String contextPath) {
-        if (contextPath != null) this.contextPath = contextPath;
-    }
-
-    public String getContextPath() {
-        return this.contextPath;
-    }
-
-    public void setStaticPathPrefix(String staticPathPrefix) {
-        this.staticPathPrefix = staticPathPrefix;
-    }
-
-    public String getStaticPathPrefix() {
-        return this.staticPathPrefix;
-    }
-
     public void setRubyRuntimePoolName(String rubyRuntimePoolName) {
         this.rubyRuntimePoolName = rubyRuntimePoolName;
     }
@@ -135,15 +115,11 @@ public class RackApplicationMetaData {
 
     public String toString() {
         return "[RackApplicationMetaData:" + System.identityHashCode( this ) + "\n  rackupScriptLocation=" + this.rackUpScriptLocation + "\n  rackUpScript="
-                + this.rackUpScript + "\n  host=" + this.hosts + "\n  context=" + this.contextPath + "\n  static=" + this.staticPathPrefix + "]";
+                + this.rackUpScript + "\n  host=" + getHosts() + "\n  context=" + getContextPath() + "\n  static=" + getStaticPathPrefix() + "]";
     }
 
     private String rackUpScript;
     private String rackUpScriptLocation = "config.ru";
-
-    private List<String> hosts = new ArrayList<String>();
-    private String contextPath = "/";
-    private String staticPathPrefix = "public/";
 
     private String rubyRuntimePoolName;
     private String rackApplicationFactoryName;

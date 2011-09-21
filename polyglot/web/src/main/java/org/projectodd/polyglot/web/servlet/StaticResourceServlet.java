@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.servlet;
+package org.projectodd.polyglot.web.servlet;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

@@ -8,9 +8,10 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>torquebox-web</artifactId>
+  <groupId>org.projectodd</groupId>
+  <artifactId>polyglot-web</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Web Module</name>
+  <name>Polyglot Web Module</name>
   <description />
 
   <dependencies>
@@ -18,31 +19,6 @@
       <groupId>org.projectodd</groupId>
       <artifactId>polyglot-core</artifactId>
       <version>${version.polyglot}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.projectodd</groupId>
-      <artifactId>polyglot-web</artifactId>
-      <version>${version.polyglot}</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-bootstrap</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-core</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-web</artifactId>
-      <version>${project.version}</version>
-      <type>gem</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -86,18 +62,6 @@
       <scope>provided</scope>
     </dependency>
     
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-ruby-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-as-test-support</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 
   <build>

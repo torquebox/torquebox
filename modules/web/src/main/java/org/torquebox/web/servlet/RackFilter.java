@@ -36,6 +36,7 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 import org.jruby.Ruby;
 import org.jruby.exceptions.RaiseException;
+import org.projectodd.polyglot.web.servlet.HttpServletResponseCapture;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.web.component.RackApplicationComponent;

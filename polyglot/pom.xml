@@ -17,7 +17,7 @@
     <module>core</module>
     <!-- <module>cache</module> -->
     <!-- <module>services</module> -->
-    <!-- <module>web</module> -->
+    <module>web</module>
     <!-- <module>messaging</module> -->
     <!-- <module>jobs</module> -->
 
