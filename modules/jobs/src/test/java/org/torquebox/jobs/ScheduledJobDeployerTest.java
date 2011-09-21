@@ -74,7 +74,7 @@ public class ScheduledJobDeployerTest extends AbstractDeploymentProcessorTestCas
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
         
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+        rubyAppMetaData.attach( unit );
         
         deploy( phaseContext );
 

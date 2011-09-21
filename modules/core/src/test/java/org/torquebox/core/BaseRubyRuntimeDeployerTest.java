@@ -58,8 +58,8 @@ public class BaseRubyRuntimeDeployerTest extends AbstractDeploymentProcessorTest
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         DeploymentUnit unit = phaseContext.getMockDeploymentUnit();
 
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-
+        rubyAppMetaData.attach( unit );
+                
         deploy( phaseContext );
 
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
@@ -81,10 +81,8 @@ public class BaseRubyRuntimeDeployerTest extends AbstractDeploymentProcessorTest
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
 
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-        
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, existingRuntimeMD );
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+        rubyAppMetaData.attach( unit );
 
         deploy( phaseContext );
 
@@ -109,8 +107,8 @@ public class BaseRubyRuntimeDeployerTest extends AbstractDeploymentProcessorTest
         existingRuntimeMD.setRuntimeType( RubyRuntimeMetaData.RuntimeType.RACK );
 
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, existingRuntimeMD );
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-
+        rubyAppMetaData.attach( unit );
+        
         deploy( phaseContext );
 
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );

@@ -58,7 +58,7 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeploymentProcessorT
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
         
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo" );
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+        rubyAppMetaData.attach( unit );
         
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
 
@@ -83,9 +83,9 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeploymentProcessorT
         metaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
         
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo");
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-        
+        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo"); 
+        rubyAppMetaData.attach( unit );
+                
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
 
         deploy( phaseContext );
@@ -110,8 +110,8 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeploymentProcessorT
 
 
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo");
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-        
+        rubyAppMetaData.attach( unit );
+                
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
 
         deploy( phaseContext );
@@ -137,8 +137,8 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeploymentProcessorT
 
 
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo");
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-        
+        rubyAppMetaData.attach( unit );
+                
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
 
         deploy( phaseContext );
@@ -163,8 +163,8 @@ public class RubyRuntimeFactoryDeployerTest extends AbstractDeploymentProcessorT
 
 
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo");
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
-        
+        rubyAppMetaData.attach( unit );
+                
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
 
         deploy( phaseContext );

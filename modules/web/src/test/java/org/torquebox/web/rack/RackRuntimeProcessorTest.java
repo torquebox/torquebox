@@ -57,7 +57,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
 
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+        rubyAppMetaData.attach( unit );
         unit.putAttachment( RackApplicationMetaData.ATTACHMENT_KEY, rackAppMetaData );
 
         deploy( phaseContext );
@@ -82,7 +82,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
 
         RubyRuntimeMetaData originalRuntimeMD = new RubyRuntimeMetaData();
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, originalRuntimeMD );
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+        rubyAppMetaData.attach( unit );
         unit.putAttachment( RackApplicationMetaData.ATTACHMENT_KEY, rackAppMetaData );
 
         deploy( phaseContext );
@@ -109,7 +109,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
         originalRuntimeMD.setRuntimeType( RubyRuntimeMetaData.RuntimeType.BARE );
 
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, originalRuntimeMD );
-        unit.putAttachment( RubyApplicationMetaData.ATTACHMENT_KEY, rubyAppMetaData );
+        rubyAppMetaData.attach( unit );
         unit.putAttachment( RackApplicationMetaData.ATTACHMENT_KEY, rackAppMetaData );
 
         deploy( phaseContext );

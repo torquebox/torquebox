@@ -22,6 +22,7 @@ package org.torquebox.core.app;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.projectodd.polyglot.core.app.ApplicationMetaData;
 
 public class RubyApplicationMetaData extends ApplicationMetaData {
@@ -32,6 +33,11 @@ public class RubyApplicationMetaData extends ApplicationMetaData {
  
     public RubyApplicationMetaData(String applicationName) {
         super( applicationName );
+    }
+    
+    public void attach(DeploymentUnit unit) {
+        super.attach( unit );
+        unit.putAttachment( ATTACHMENT_KEY, this );
     }
     
     public void extractAppEnvironment() {
