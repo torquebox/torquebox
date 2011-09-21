@@ -39,7 +39,6 @@ import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
-import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.as.JobsServices;
 

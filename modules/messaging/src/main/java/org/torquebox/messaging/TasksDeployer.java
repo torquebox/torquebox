@@ -20,9 +20,7 @@
 package org.torquebox.messaging;
 
 import java.util.List;
-import java.util.Set;
 
-import org.jboss.as.server.deployment.DeploymentException;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;

@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core.as;
+package org.projectodd.polyglot.core.as;
 
 import java.util.List;
 
@@ -25,9 +25,9 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.core.app.ApplicationMetaData;
 
 public class DeploymentNotifierInstaller implements DeploymentUnitProcessor {
 
@@ -35,7 +35,7 @@ public class DeploymentNotifierInstaller implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        if ( ! unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY ) ) {
+        if ( ! unit.hasAttachment( ApplicationMetaData.ATTACHMENT_KEY ) ) {
             return;
         }
         

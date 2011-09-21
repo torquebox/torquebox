@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core.as;
+package org.projectodd.polyglot.core.as;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

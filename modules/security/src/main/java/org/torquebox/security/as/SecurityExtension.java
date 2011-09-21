@@ -26,7 +26,7 @@ import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
-import org.torquebox.core.as.AbstractBootstrappableExtension;
+import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 import org.torquebox.security.auth.as.AuthSubsystemAdd;
 import org.torquebox.security.auth.as.AuthSubsystemParser;
 import org.torquebox.security.auth.as.AuthSubsystemProviders;

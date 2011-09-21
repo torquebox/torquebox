@@ -28,8 +28,7 @@ import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-
-import org.torquebox.core.util.BuildInfo;
+import org.projectodd.polyglot.core.util.BuildInfo;
 import org.torquebox.core.util.JRubyConstants;
 
 /**
@@ -48,7 +47,7 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
      *             file.
      */
     public TorqueBox() throws IOException {
-        this.buildInfo = new BuildInfo();
+        this.buildInfo = new BuildInfo( "org/torquebox/torquebox.properties" );
     }
 
     /**

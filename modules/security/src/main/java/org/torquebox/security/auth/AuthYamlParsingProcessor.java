@@ -21,8 +21,8 @@ package org.torquebox.security.auth;
 
 import java.util.Map;
 
-import org.jboss.logging.Logger;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.logging.Logger;
 import org.torquebox.core.AbstractSplitYamlParsingProcessor;
 
 public class AuthYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {

@@ -29,6 +29,7 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.projectodd.polyglot.core.AbstractParsingProcessor;
 import org.torquebox.core.as.CoreServices;
 
 public class TorqueBoxRbProcessor extends AbstractParsingProcessor {

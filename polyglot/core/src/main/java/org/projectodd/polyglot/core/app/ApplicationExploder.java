@@ -17,48 +17,55 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core.as;
+package org.projectodd.polyglot.core.app;
+
+import java.io.File;
+import java.io.IOException;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.as.server.deployment.module.ModuleDependency;
-import org.jboss.as.server.deployment.module.ModuleSpecification;
-import org.jboss.modules.ModuleIdentifier;
-import org.jboss.modules.ModuleLoader;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
 
-/**
- * Ensure all JavaSE APIs are made available to deployments. This is
- * hopefully a temporary hack until AS7 does the same upstream.
- * 
- * @author Ben Browning
- *
- */
-public class JdkDependenciesProcessor implements DeploymentUnitProcessor {
-    
-    private static String[] JAVA_SE_MODULE_IDS = new String[] {
-        "system"
-    };
+public class ApplicationExploder implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        ApplicationMetaData appMetaData = unit.getAttachment( ApplicationMetaData.ATTACHMENT_KEY );
         
-        final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
-        final ModuleLoader moduleLoader = unit.getAttachment( Attachments.SERVICE_MODULE_LOADER );
-
-        if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
-            for (String moduleIdentifier : JAVA_SE_MODULE_IDS) {
-                addDependency( moduleSpecification, moduleLoader, ModuleIdentifier.create( moduleIdentifier ) );
+        if (appMetaData == null) {
+            return;
+        }
+        
+        ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
+        VirtualFile root = resourceRoot.getRoot();
+        
+        try {
+            VirtualFile explodedRoot = getExplodedApplication( root );
+            if (!root.equals( explodedRoot )) {
+                appMetaData.explode( explodedRoot );
             }
+        } catch (IOException e) {
+            throw new DeploymentUnitProcessingException( e );
         }
     }
     
-    private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
-        moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
+    /**
+     * This method is a hack to make sure the WAR is fully exploded. Currently
+     * this is only needed for WARs that come through the DeclaredStructure
+     * deployer. This should be removed when the DeclaredStructure deployer
+     * correctly support exploding WARs.
+     */
+    private VirtualFile getExplodedApplication(VirtualFile virtualFile) throws IOException {
+        File physicalRoot = virtualFile.getPhysicalFile();
+        virtualFile = VFS.getChild( physicalRoot.getAbsolutePath() );
+
+        return virtualFile;
     }
 
     @Override

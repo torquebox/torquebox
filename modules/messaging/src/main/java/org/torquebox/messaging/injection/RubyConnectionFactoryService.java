@@ -20,7 +20,6 @@
 package org.torquebox.messaging.injection;
 
 import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
 
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;

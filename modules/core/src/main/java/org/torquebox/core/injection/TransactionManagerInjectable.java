@@ -19,12 +19,10 @@
 
 package org.torquebox.core.injection;
 
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.txn.TxnServices;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
-import org.torquebox.core.as.CoreServices;
 
 /**
  * Predetermined injectable which provides a <code>ServiceTarget</code> for each

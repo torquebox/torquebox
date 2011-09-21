@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.msc.service.ServiceTarget;
 import org.jruby.ast.Node;
 
 /**

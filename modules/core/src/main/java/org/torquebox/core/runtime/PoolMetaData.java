@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
-import org.jboss.as.server.deployment.module.ModuleDependency;
 
 /**
  * Ruby interpreter pool configuration.

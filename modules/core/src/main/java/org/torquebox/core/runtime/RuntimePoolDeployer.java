@@ -23,7 +23,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 import org.jboss.as.ee.naming.InjectedEENamespaceContextSelector;
 import org.jboss.as.jmx.MBeanRegistrationService;
@@ -31,6 +30,7 @@ import org.jboss.as.jmx.MBeanServerService;
 import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.DeploymentException;
+
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -38,12 +38,11 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
-import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.jruby.Ruby;
+import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.core.as.DeploymentNotifier;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
-import org.torquebox.core.as.DeploymentNotifier;
 
 /**
  * <pre>

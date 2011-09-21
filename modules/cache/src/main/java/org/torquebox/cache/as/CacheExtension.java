@@ -26,7 +26,7 @@ import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
-import org.torquebox.core.as.AbstractBootstrappableExtension;
+import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 
 public class CacheExtension extends AbstractBootstrappableExtension {
 

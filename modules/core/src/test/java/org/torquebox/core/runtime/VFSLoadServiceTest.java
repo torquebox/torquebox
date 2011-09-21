@@ -19,7 +19,7 @@
 
 package org.torquebox.core.runtime;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.jboss.vfs.VFS;
 import org.junit.Before;

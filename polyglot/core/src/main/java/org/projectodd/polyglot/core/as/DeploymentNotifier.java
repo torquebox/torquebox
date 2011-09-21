@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core.as;
+package org.projectodd.polyglot.core.as;
 
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
@@ -28,7 +28,7 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
-import org.torquebox.core.util.DeprecationLogger;
+import org.projectodd.polyglot.core.util.DeprecationLogger;
 
 public class DeploymentNotifier implements Service<Void> {
     

@@ -19,7 +19,8 @@
 
 package org.torquebox.bootstrap.as;
 
-import static org.jboss.as.controller.parsing.ParseUtils.*;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
 
 import java.util.List;
 

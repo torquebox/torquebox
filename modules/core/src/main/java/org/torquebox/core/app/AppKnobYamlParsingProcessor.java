@@ -35,10 +35,9 @@ import org.jboss.as.server.deployment.module.TempFileProviderService;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
-
+import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.core.util.DeprecationLogger;
 
 public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 

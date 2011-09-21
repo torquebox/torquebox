@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core.util;
+package org.projectodd.polyglot.core.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,9 +29,8 @@ import java.util.Map;
 import java.util.Properties;
 
 public class BuildInfo {
-
-    public BuildInfo() throws IOException {
-        InputStream buildInfoStream = getClass().getClassLoader().getResourceAsStream( "org/torquebox/torquebox.properties" );
+    public BuildInfo(String propertiesPath) throws IOException {
+        InputStream buildInfoStream = getClass().getClassLoader().getResourceAsStream( propertiesPath );
         Properties props = new Properties();
 
         props.load( buildInfoStream );

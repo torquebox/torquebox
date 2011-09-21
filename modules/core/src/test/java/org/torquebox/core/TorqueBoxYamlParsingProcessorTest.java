@@ -19,7 +19,8 @@
 
 package org.torquebox.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 
 import java.net.URL;
 

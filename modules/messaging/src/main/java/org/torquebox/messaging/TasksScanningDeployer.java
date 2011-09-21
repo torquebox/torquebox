@@ -23,7 +23,7 @@ import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.AbstractScanningDeployer;
+import org.projectodd.polyglot.core.AbstractScanningDeployer;
 import org.torquebox.core.util.StringUtils;
 
 /**

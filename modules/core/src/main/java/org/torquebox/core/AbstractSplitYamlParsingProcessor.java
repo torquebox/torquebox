@@ -31,9 +31,8 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
-
-import org.torquebox.core.util.DeprecationLogger;
-
+import org.projectodd.polyglot.core.AbstractParsingProcessor;
+import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 

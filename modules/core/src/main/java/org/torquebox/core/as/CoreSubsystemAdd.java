@@ -45,10 +45,15 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
+
+import org.projectodd.polyglot.core.ArchiveDirectoryMountingProcessor;
+import org.projectodd.polyglot.core.app.ApplicationExploder;
+import org.projectodd.polyglot.core.as.DeploymentNotifierInstaller;
+import org.projectodd.polyglot.core.as.JdkDependenciesProcessor;
+import org.projectodd.polyglot.core.as.KnobStructureProcessor;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.TorqueBoxStdioContextSelector;
-import org.torquebox.core.ArchiveDirectoryMountingProcessor;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.GlobalRubyMBean;
 import org.torquebox.core.TorqueBoxRbProcessor;
@@ -59,7 +64,6 @@ import org.torquebox.core.app.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
 import org.torquebox.core.app.RubyApplicationDefaultsProcessor;
 import org.torquebox.core.app.RubyApplicationDeployer;
-import org.torquebox.core.app.RubyApplicationExploder;
 import org.torquebox.core.app.RubyApplicationRecognizer;
 import org.torquebox.core.app.RubyYamlParsingProcessor;
 import org.torquebox.core.datasource.DatabaseProcessor;
@@ -119,7 +123,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 36, new RubyYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RubyApplicationDefaultsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new RubyApplicationExploder() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new ApplicationExploder() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeDeployer() );
 
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );

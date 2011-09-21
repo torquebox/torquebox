@@ -22,43 +22,18 @@ package org.torquebox.core.app;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.AttachmentKey;
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VirtualFile;
+import org.projectodd.polyglot.core.app.ApplicationMetaData;
 
-public class RubyApplicationMetaData {
+public class RubyApplicationMetaData extends ApplicationMetaData {
 
     public static final AttachmentKey<RubyApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create( RubyApplicationMetaData.class );
 
     public static final String DEFAULT_ENVIRONMENT_NAME = "development";
-
-    private VirtualFile root;
-    private String applicationName;
-    private String environmentName;
-    private Map<String, String> environment;
-    private boolean archive = false;
-    private Map<String, Map<String, String>> authenticationConfig;
-    private boolean debug = false;
-
+ 
     public RubyApplicationMetaData(String applicationName) {
-        this.applicationName = sanitize( applicationName );
+        super( applicationName );
     }
-
-    private String sanitize(String name) {
-        int lastSlash = name.lastIndexOf( "/" );
-        if ( lastSlash >= 0 ) {
-            name = name.substring( lastSlash+1 );
-        }
-        int lastDot = name.lastIndexOf( "." );
-        if (lastDot >= 0) {
-            name = name.substring( 0, lastDot );
-        }
-        int lastKnob = name.lastIndexOf( "-knob" );
-        if (lastKnob >= 0) {
-            name = name.substring( 0, lastKnob );
-        }
-        return name.replaceAll( "\\.", "-" );
-    }
-
+    
     public void extractAppEnvironment() {
         if (this.environmentName == null) {
             this.environmentName = getAppEnvironmentFromEnvironmentVariables();
@@ -69,50 +44,6 @@ public class RubyApplicationMetaData {
         if (this.environmentName == null) {
             this.environmentName = DEFAULT_ENVIRONMENT_NAME;
         }
-    }
-
-    public void setRoot(VirtualFile root) {
-        this.root = root;
-    }
-
-    public void setRoot(String path) {
-        if (path != null) {
-            String sanitizedPath = null;
-
-            if (path.indexOf( "\\\\" ) >= 0) {
-                sanitizedPath = path.replaceAll( "\\\\\\\\", "/" );
-                sanitizedPath = sanitizedPath.replaceAll( "\\\\", "" );
-            } else {
-                sanitizedPath = path.replaceAll( "\\\\", "/" );
-            }
-            VirtualFile root = VFS.getChild( sanitizedPath );
-            setRoot( root );
-        }
-    }
-
-    public VirtualFile getRoot() {
-        return this.root;
-    }
-
-    public String getRootPath() {
-        try {
-            return getRoot().toURL().toString();
-        } catch (Exception e) {
-            return "";
-        }
-    }
-
-    public void explode(VirtualFile root) {
-        this.root = root;
-        this.archive = true;
-    }
-
-    public String getApplicationName() {
-        return this.applicationName;
-    }
-
-    public boolean isArchive() {
-        return this.archive;
     }
 
     public boolean isDevelopmentMode() {
@@ -140,7 +71,7 @@ public class RubyApplicationMetaData {
     }
 
     public String toString() {
-        return "[RubyApplicationMetaData:\n  root=" + this.root + "\n  environmentName=" + this.environmentName + "\n  archive=" + this.archive + "\n  environment="
+        return "[RubyApplicationMetaData:\n  root=" + getRoot() + "\n  environmentName=" + this.environmentName + "\n  archive=" + isArchive() + "\n  environment="
                 + this.environment + "]";
     }
 
@@ -163,4 +94,8 @@ public class RubyApplicationMetaData {
         }
         return env;
     }
+    
+    private String environmentName;
+    private Map<String, String> environment;
+    private Map<String, Map<String, String>> authenticationConfig;
 }

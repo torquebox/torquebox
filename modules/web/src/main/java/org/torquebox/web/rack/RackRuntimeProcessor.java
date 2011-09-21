@@ -21,7 +21,6 @@ package org.torquebox.web.rack;
 
 import java.net.MalformedURLException;
 
-import org.jboss.as.server.deployment.DeploymentException;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;

@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core;
+package org.projectodd.polyglot.core;
 
 import java.io.Closeable;
 import java.io.File;
@@ -32,7 +32,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.projectodd.polyglot.core.app.ApplicationMetaData;
 
 public class ArchiveDirectoryMountingProcessor implements DeploymentUnitProcessor {
 
@@ -41,16 +41,16 @@ public class ArchiveDirectoryMountingProcessor implements DeploymentUnitProcesso
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        ApplicationMetaData appMetaData = unit.getAttachment( ApplicationMetaData.ATTACHMENT_KEY );
 
-        if (rubyAppMetaData == null) {
+        if (appMetaData == null) {
             return;
         }
 
-        if (rubyAppMetaData.isArchive()) {
+        if (appMetaData.isArchive()) {
             try {
-                mountDir( unit, rubyAppMetaData.getRoot(), "log", System.getProperty( "jboss.server.log.dir" ) + "/" + rubyAppMetaData.getApplicationName() );
-                mountDir( unit, rubyAppMetaData.getRoot(), "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/rails/" + rubyAppMetaData.getApplicationName() );
+                mountDir( unit, appMetaData.getRoot(), "log", System.getProperty( "jboss.server.log.dir" ) + "/" + appMetaData.getApplicationName() );
+                mountDir( unit, appMetaData.getRoot(), "tmp", System.getProperty( "jboss.server.temp.dir" ) + "/app/" + appMetaData.getApplicationName() );
             } catch (Exception e) {
                 throw new DeploymentUnitProcessingException( e );
             }

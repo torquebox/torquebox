@@ -28,7 +28,6 @@ import org.jruby.RubyThread;
 import org.jruby.exceptions.RaiseException;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.core.runtime.RuntimeContext;
 
 /**
  * Ruby reflection helper utilities.

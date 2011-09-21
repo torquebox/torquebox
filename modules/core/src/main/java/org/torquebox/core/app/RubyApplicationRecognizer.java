@@ -26,8 +26,8 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.FileLocatingProcessor;
-import org.torquebox.core.as.DeploymentNotifier;
+import org.projectodd.polyglot.core.FileLocatingProcessor;
+import org.projectodd.polyglot.core.as.DeploymentNotifier;
 
 public class RubyApplicationRecognizer extends FileLocatingProcessor {
 

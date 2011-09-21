@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.core;
+package org.projectodd.polyglot.core;
 
 import java.util.List;
 

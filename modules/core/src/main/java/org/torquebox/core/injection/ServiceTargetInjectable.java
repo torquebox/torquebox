@@ -19,7 +19,6 @@
 
 package org.torquebox.core.injection;
 
-import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;

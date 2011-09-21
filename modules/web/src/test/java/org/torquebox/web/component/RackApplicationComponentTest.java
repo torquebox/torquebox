@@ -19,8 +19,10 @@
 
 package org.torquebox.web.component;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.jruby.Ruby;
 import org.jruby.RubyHash;

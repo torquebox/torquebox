@@ -19,7 +19,9 @@
 
 package org.torquebox.jobs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.Value;

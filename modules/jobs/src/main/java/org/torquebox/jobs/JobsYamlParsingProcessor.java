@@ -19,7 +19,6 @@
 
 package org.torquebox.jobs;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;

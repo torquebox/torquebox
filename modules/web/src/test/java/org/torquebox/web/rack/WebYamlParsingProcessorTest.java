@@ -25,7 +25,6 @@ import static org.junit.Assert.assertNull;
 
 import java.net.URL;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;

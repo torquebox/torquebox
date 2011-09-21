@@ -19,7 +19,9 @@
 
 package org.torquebox.core.injection.analysis;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,11 +31,7 @@ import java.util.Set;
 
 import org.jruby.Ruby;
 import org.jruby.RubyProc;
-import org.jruby.ast.Node;
 import org.jruby.exceptions.RaiseException;
-import org.jruby.runtime.Block;
-import org.jruby.runtime.BlockBody;
-import org.jruby.runtime.InterpretedBlock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

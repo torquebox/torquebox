@@ -19,7 +19,8 @@
 
 package org.torquebox.core.injection.analysis;
 
-import static org.jruby.ast.NodeType.*;
+import static org.jruby.ast.NodeType.CALLNODE;
+import static org.jruby.ast.NodeType.VCALLNODE;
 
 import java.util.List;
 import java.util.Stack;

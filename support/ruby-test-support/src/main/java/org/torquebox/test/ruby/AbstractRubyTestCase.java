@@ -19,7 +19,7 @@
 
 package org.torquebox.test.ruby;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;

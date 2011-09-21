@@ -19,7 +19,8 @@
 
 package org.torquebox.core;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.modules.Module;

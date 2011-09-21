@@ -19,11 +19,14 @@
 
 package org.torquebox.core.pool;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.net.URL;
 import java.util.List;
-import java.util.Set;
 
-import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,8 +35,6 @@ import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 import org.torquebox.test.as.MockDeploymentPhaseContext;
 import org.torquebox.test.as.MockDeploymentUnit;
-
-import static org.junit.Assert.*;
 
 public class PoolingYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 

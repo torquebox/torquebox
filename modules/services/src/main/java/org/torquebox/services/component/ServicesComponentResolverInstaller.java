@@ -31,7 +31,7 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.as.DeploymentNotifier;
+import org.projectodd.polyglot.core.as.DeploymentNotifier;
 import org.torquebox.core.component.BaseRubyComponentDeployer;
 import org.torquebox.core.component.ComponentClass;
 import org.torquebox.core.component.ComponentResolver;

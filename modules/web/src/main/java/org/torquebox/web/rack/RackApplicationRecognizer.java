@@ -26,7 +26,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.FileLocatingProcessor;
+import org.projectodd.polyglot.core.FileLocatingProcessor;
 
 public class RackApplicationRecognizer extends FileLocatingProcessor {
 

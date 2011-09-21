@@ -33,8 +33,6 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jruby.Ruby;
-import org.jruby.RubyThread;
-import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.messaging.component.MessageProcessorComponent;
 
 public class MessageProcessorService implements Service<Void>, MessageListener {

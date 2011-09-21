@@ -21,15 +21,12 @@ package org.torquebox.core;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-
-import org.junit.Test;
 import org.jruby.Ruby;
-import org.torquebox.core.TorqueBoxMetaData;
+import org.junit.Test;
 
 
 public class TorqueBoxMetaDataTest {

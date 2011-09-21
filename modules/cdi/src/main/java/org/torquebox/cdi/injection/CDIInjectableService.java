@@ -19,7 +19,6 @@
 
 package org.torquebox.cdi.injection;
 
-import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -36,7 +35,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jboss.weld.literal.AnyLiteral;
-import org.jboss.weld.manager.BeanManagerImpl;
 
 public class CDIInjectableService implements Service<Object> {
 

@@ -19,7 +19,10 @@
 
 package org.torquebox.core.injection.analysis;
 
-import static org.torquebox.core.injection.analysis.RubyInjectionUtils.*;
+import static org.torquebox.core.injection.analysis.RubyInjectionUtils.getConstString;
+import static org.torquebox.core.injection.analysis.RubyInjectionUtils.getString;
+import static org.torquebox.core.injection.analysis.RubyInjectionUtils.isLegalInjection;
+import static org.torquebox.core.injection.analysis.RubyInjectionUtils.isValidInjectCall;
 
 import java.util.Collections;
 import java.util.HashSet;
