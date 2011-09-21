@@ -14,11 +14,15 @@ import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.logging.Logger;
 import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.datasource.db.H2Adapter;
+import org.torquebox.core.datasource.db.PostgresAdapter;
+import org.torquebox.core.datasource.db.MySQLAdapter;
 
 public class DatabaseProcessor implements DeploymentUnitProcessor {
 
     public DatabaseProcessor() {
         addAdapter( new H2Adapter() );
+        addAdapter( new PostgresAdapter() );
+        addAdapter( new MySQLAdapter() );
     }
 
     protected void addAdapter(Adapter adapter) {
