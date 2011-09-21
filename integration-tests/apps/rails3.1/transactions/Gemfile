@@ -23,6 +23,7 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem 'therubyrhino'
 
 # Use unicorn as the web server
 # gem 'unicorn'
