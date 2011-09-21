@@ -1,16 +1,8 @@
 require 'spec_helper'
 
-remote_describe "rails transactions testing" do
-  require 'torquebox-messaging'
+shared_examples_for "transactions" do
 
-  deploy <<-END.gsub(/^ {4}/,'')
-    ---
-    application:
-      root: #{File.dirname(__FILE__)}/../apps/rails3/transactions
-      env: development
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-  END
+  require 'torquebox-messaging'
 
   before(:each) do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
@@ -175,4 +167,32 @@ remote_describe "rails transactions testing" do
     Thing.count.should == 0
   end
 
+end
+
+remote_describe "rails 3.0 transactions testing" do
+
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rails3/transactions
+      env: development
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it_should_behave_like "transactions"
+end
+
+remote_describe "rails 3.1 transactions testing" do
+
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rails3.1/transactions
+      env: development
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it_should_behave_like "transactions"
 end
