@@ -46,11 +46,17 @@ module Transactions
     config.assets.version = '1.0'
 
     config.after_initialize do
-      begin
-        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
-      rescue Exception
-        puts "Ignoring migration error, probably due to multiple runtimes initializing: #{$!}"
+      proc = Proc.new do
+        begin
+          ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
+        rescue Exception
+          puts "Ignoring migration error, probably due to multiple runtimes initializing: #{$!}"
+        end
       end
+      ActiveRecord::Base.establish_connection :person_database
+      proc.call
+      ActiveRecord::Base.establish_connection Rails.env
+      proc.call
     end
 
   end
