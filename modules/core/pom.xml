@@ -18,7 +18,7 @@
       <groupId>org.projectodd</groupId>
       <artifactId>polyglot-core</artifactId>
       <version>${version.polyglot}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>

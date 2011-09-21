@@ -26,6 +26,7 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
+        <resource-root path="polyglot-core.jar"/>
     </resources>
 
     <exports>
@@ -40,6 +41,7 @@
         <path name="org/yaml/snakeyaml/error"/>
         <path name="org/torquebox/core/util"/>
         <path name="org/torquebox/bootstrap/as"/>
+        <path name="org/projectodd/polyglot/**"/>
       </include-set>
     </exports>
 
