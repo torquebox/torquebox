@@ -405,6 +405,42 @@
                 </configuration>
               </execution>
               <execution>
+                <id>install-sass-rails3.1</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>sass-rails -v ${version.rails31} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-coffee-rails3.1</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>coffee-rails -v ${version.rails31} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-uglifier</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>uglifier --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
                 <id>install-jdbc-h2</id>
                 <phase>test-compile</phase>
                 <goals>
@@ -438,6 +474,18 @@
                   <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
                   <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
                   <installArgs>activerecord-jdbc-adapter -v ${version.ar.jdbc} --no-rdoc --no-ri</installArgs>
+                </configuration>
+              </execution>
+              <execution>
+                <id>install-newer-ar-jdbc</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>install</goal>
+                </goals>
+                <configuration>
+                  <gemHome>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemHome>
+                  <gemPath>${integ.dist.dir}/jruby/lib/ruby/gems/1.8</gemPath>
+                  <installArgs>activerecord-jdbc-adapter -v 1.2.0 --no-rdoc --no-ri</installArgs>
                 </configuration>
               </execution>
               <execution>

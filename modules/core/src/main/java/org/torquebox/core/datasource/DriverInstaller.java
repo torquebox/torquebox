@@ -1,5 +1,6 @@
 package org.torquebox.core.datasource;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.jboss.as.connector.ConnectorServices;
@@ -25,16 +26,25 @@ public class DriverInstaller implements DeploymentUnitProcessor {
 
         List<DriverMetaData> allMetaData = unit.getAttachmentList( DriverMetaData.ATTACHMENTS );
 
-        for (DriverMetaData each : allMetaData) {
-            DriverService driverService = new DriverService( rubyAppMetaData.getRootPath(), each.getAdapterName(), each.getDriverClassName() );
+        try {
+            String applicationDir = rubyAppMetaData.getRoot().getPhysicalFile().getAbsolutePath();
+            for (DriverMetaData each : allMetaData) {
+                DriverService driverService = new DriverService( applicationDir, each.getAdapterName(), each.getDriverClassName() );
 
-            ServiceName name = DataSourceServices.driverName( unit, each.getAdapterName() );
+                ServiceName name = DataSourceServices.driverName( unit, each.getAdapterName() );
 
-            phaseContext.getServiceTarget().addService( name, driverService )
-                    .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, driverService.getDriverRegistryInjector() )
-                    .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class, driverService.getRuntimeFactoryInjector() )
-                    .setInitialMode( ServiceController.Mode.ACTIVE ).install();
+                phaseContext
+                        .getServiceTarget()
+                        .addService( name, driverService )
+                        .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, driverService.getDriverRegistryInjector() )
+                        .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class,
+                                driverService.getRuntimeFactoryInjector() )
+                        .setInitialMode( ServiceController.Mode.ACTIVE ).install();
+            }
+        } catch (IOException e) {
+            throw new DeploymentUnitProcessingException( e );
         }
+
     }
 
     @Override

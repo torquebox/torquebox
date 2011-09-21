@@ -5,14 +5,18 @@ gem 'rails', '3.1.0'
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
-gem 'activerecord-jdbcsqlite3-adapter'
+gem "activerecord-jdbc-adapter", '~> 1.2.0', :require => "arjdbc"
+gem "jdbc-h2"
+gem "jdbc-sqlite3"
 
 gem 'jruby-openssl'
 gem 'json'
 
 # Gems used only for assets and not required
 # in production environments by default.
+
 group :assets do
+  puts "loading the assets group for some stupid reason"
   gem 'sass-rails', "  ~> 3.1.0"
   gem 'coffee-rails', "~> 3.1.0"
   gem 'uglifier'

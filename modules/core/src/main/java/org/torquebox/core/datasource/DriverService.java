@@ -47,10 +47,8 @@ public class DriverService implements Service<Driver> {
         
         ruby.setCurrentDirectory( this.applicationDirectory );
 
-        RuntimeHelper.evalScriptlet( ruby, "puts $LOAD_PATH" );
         RuntimeHelper.require( ruby, "bundler/setup" );
-        RuntimeHelper.evalScriptlet( ruby, "puts $LOAD_PATH" );
-        RuntimeHelper.require( ruby, "jdbc/h2");
+        RuntimeHelper.require( ruby, "jdbc/" + this.driverName );
 
         try {
             ClassLoader classLoader = ruby.getJRubyClassLoader();
