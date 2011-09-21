@@ -47,7 +47,7 @@ module Transactions
 
     config.after_initialize do
       begin
-        ActiveRecord::Migrator.migrate(RAILS_ROOT + "/db/migrate")
+        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
       rescue Exception
         puts "Ignoring migration error, probably due to multiple runtimes initializing: #{$!}"
       end
