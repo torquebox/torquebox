@@ -15,13 +15,17 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'torquebox/injectors'
+
 module TorqueBox
   module Messaging
     class Connection
+      include TorqueBox::Injectors
 
       def initialize(jms_connection, hornetq_direct)
         @jms_connection = jms_connection
         @hornetq_direct = hornetq_direct
+        @tm = inject('transaction-manager')
       end
 
       def start
@@ -71,7 +75,7 @@ module TorqueBox
       end
 
       def create_session()
-        session = @jms_connection.create_xa_session()
+        session = (@tm.nil? || @tm.transaction.nil?) ? @jms_connection.create_session( false, Session::AUTO_ACK ) : @jms_connection.create_xa_session()
         @hornetq_direct ? HornetQSession.new( session ) : Session.new( session )
       end
 
