@@ -20,6 +20,7 @@ shared_examples_for "transactions" do
   it "should create a Thing in response to a happy message" do
     @input.publish("happy path")
     @output.receive(:timeout => 60_000).should == 'after_commit'
+    sleep 2
     Thing.count.should == 1
     Thing.find_by_name("happy path").name.should == "happy path"
   end
