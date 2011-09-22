@@ -35,7 +35,6 @@
 
   <modules>
     <module>support</module>
-    <module>polyglot</module>
     <module>modules</module>
     <module>gems</module>
     <module>build</module>
@@ -376,7 +375,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.polyglot>${project.version}</version.polyglot>
+    <version.polyglot>1.0.0-SNAPSHOT</version.polyglot>
     <version.jruby-maven-plugins>0.28.4</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
