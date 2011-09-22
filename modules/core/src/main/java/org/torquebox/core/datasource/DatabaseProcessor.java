@@ -79,8 +79,8 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
-        DriverManager.setLogWriter( new PrintWriter( System.err )  );
+
+        DriverManager.setLogWriter( new PrintWriter( System.err ) );
 
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
@@ -98,7 +98,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         List<DatabaseMetaData> allMetaData = unit.getAttachmentList( DatabaseMetaData.ATTACHMENTS );
 
         Set<String> adapterNames = new HashSet<String>();
-        
+
         DataSourceInfoList infoList = new DataSourceInfoList();
 
         for (DatabaseMetaData each : allMetaData) {
@@ -108,14 +108,14 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             }
 
             String adapterName = (String) each.getConfiguration().get( "adapter" );
-            
+
             Adapter adapter = getAdapter( adapterName );
 
             if (adapter == null) {
                 log.errorf( "Unknown adapter type: %s", adapterName );
                 continue;
             }
-            
+
             if (adapterNames.add( adapterName )) {
                 processDriver( phaseContext, adapter, applicationDir );
             }
@@ -129,10 +129,10 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             }
         }
 
-        if ( ! adapterNames.isEmpty() ) {
+        if (!adapterNames.isEmpty()) {
             installJDBCDriverLoadingRuntime( phaseContext );
         }
-        
+
         processDataSourceInfos( phaseContext, infoList );
     }
 
@@ -149,8 +149,13 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     private void processDataSourceInfos(DeploymentPhaseContext phaseContext, DataSourceInfoList infoList) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         Service<DataSourceInfoList> service = new ValueService<DataSourceInfoList>( new ImmediateValue<DataSourceInfoList>( infoList ) );
-        phaseContext.getServiceTarget().addService( DataSourceServices.dataSourceInfoName( unit ), service )
-                .install();
+        ServiceBuilder<DataSourceInfoList> builder = phaseContext.getServiceTarget().addService( DataSourceServices.dataSourceInfoName( unit ), service );
+        
+        for ( DataSourceInfoList.Info each : infoList.getConfigurations() ) {
+            builder.addDependencies( each.getServiceName() );
+        }
+        
+        builder.install();
     }
 
     // ------------------------------------------------------------------------
@@ -180,12 +185,13 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
         final String jndiName = DataSourceServices.jndiName( unit, dbMeta.getConfigurationName() );
+        final ServiceName dataSourceServiceName = DataSourceServices.datasourceName( unit, dbMeta.getConfigurationName() );
+        
         try {
             final XaDataSource config = createConfig( unit, dbMeta, adapter );
             XaDataSourceService service = new XaDataSourceService( jndiName );
 
             service.getDataSourceConfigInjector().inject( config );
-            ServiceName dataSourceServiceName = DataSourceServices.datasourceName( unit, dbMeta.getConfigurationName() );
             phaseContext.getServiceTarget().addService( dataSourceServiceName, service )
                     .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, service.getDriverRegistryInjector() )
                     .addDependency( DataSourceServices.driverName( unit, adapter.getId() ), Driver.class, service.getDriverInjector() )
@@ -236,7 +242,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         }
 
         String adapterName = (String) dbMeta.getConfiguration().get( "adapter" );
-        return new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName );
+        return new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName );
     }
 
     protected XaDataSource createConfig(DeploymentUnit unit, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException {
