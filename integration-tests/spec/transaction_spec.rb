@@ -65,4 +65,22 @@ remote_describe "transactions testing" do
     end
   end
 
+  it "should rollback message when explicit transaction fails" do
+    pending("until we stop closing sessions before TB.tx commits")
+    queue = TorqueBox::Messaging::Queue.start "/queue/foo"
+    begin
+      TorqueBox.transaction do
+        queue.publish("whatevs")
+        raise "should rollback"
+      end
+      raise "should not get here"
+    rescue Exception => e
+      raise "Wrong exception: #{$!}" unless e.message == 'should rollback'
+      response = queue.receive(:timeout => 5_000)
+      response.should be_nil
+    ensure
+      queue.stop
+    end
+  end
+
 end
