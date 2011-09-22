@@ -64,7 +64,7 @@ module TorqueBox
 
       def receive(options = {})
         wait_for_destination(options[:startup_timeout]) do
-          with_session do |session|
+          with_session(options[:requires_new]) do |session|
             session.receive self, options
           end
         end
