@@ -45,7 +45,7 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
         if (rubyAppMetaData == null) {
             rubyAppMetaData = new RubyApplicationMetaData( unit.getName() );
             rubyAppMetaData.setRoot( root );
-            rubyAppMetaData.attach( unit );
+            rubyAppMetaData.attachTo( unit );
         }
         
         unit.putAttachment( DeploymentNotifier.DEPLOYMENT_TIME_ATTACHMENT_KEY, System.currentTimeMillis() );

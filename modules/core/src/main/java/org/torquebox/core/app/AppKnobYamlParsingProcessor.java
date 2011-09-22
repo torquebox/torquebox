@@ -81,7 +81,7 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( unit.getName() );
         rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( metaData.getApplicationEnvironment() );
-        rubyAppMetaData.attach( unit );
+        rubyAppMetaData.attachTo( unit );
                 
         unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
     }

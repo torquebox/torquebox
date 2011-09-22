@@ -51,7 +51,7 @@ public class EnvironmentYamlParsingProcessor extends AbstractSplitYamlParsingPro
 
         if (appMetaData == null) {
             appMetaData = new RubyApplicationMetaData( unit.getName() );
-            appMetaData.attach( unit );
+            appMetaData.attachTo( unit );
         }
 
         Map<String, Object> envData = (Map<String, Object>) dataObj;

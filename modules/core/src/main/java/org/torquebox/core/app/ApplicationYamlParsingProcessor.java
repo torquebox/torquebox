@@ -51,7 +51,7 @@ public class ApplicationYamlParsingProcessor extends AbstractSplitYamlParsingPro
 
         if (appMetaData == null) {
             appMetaData = new RubyApplicationMetaData( unit.getName() );
-            appMetaData.attach( unit );
+            appMetaData.attachTo( unit );
         }
 
         if (appMetaData.getRoot() == null) {

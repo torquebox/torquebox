@@ -37,8 +37,9 @@ public class RackApplicationMetaData extends WebApplicationMetaData {
 
     }
 
-    public void attach(DeploymentUnit unit) {
-        super.attach( unit );
+    @Override
+    public void attachTo(DeploymentUnit unit) {
+        super.attachTo( unit );
         unit.putAttachment( ATTACHMENT_KEY, this );
     }
     

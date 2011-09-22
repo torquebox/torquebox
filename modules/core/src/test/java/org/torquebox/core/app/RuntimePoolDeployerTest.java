@@ -55,7 +55,7 @@ public class RuntimePoolDeployerTest extends AbstractDeploymentProcessorTestCase
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
-        rubyAppMetaData.attach( unit );
+        rubyAppMetaData.attachTo( unit );
         
         deploy( phaseContext );
         
@@ -83,7 +83,7 @@ public class RuntimePoolDeployerTest extends AbstractDeploymentProcessorTestCase
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         
         RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
-        rubyAppMetaData.attach( unit );
+        rubyAppMetaData.attachTo( unit );
         
         deploy( phaseContext );
         
