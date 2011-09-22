@@ -1,7 +1,9 @@
 package org.torquebox.core.datasource;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Driver;
+import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +47,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ValueService;
 import org.jboss.msc.value.ImmediateValue;
+import org.jruby.Ruby;
 import org.torquebox.core.app.RubyApplicationMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.datasource.DataSourceInfoList.Info;
@@ -76,6 +79,8 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        
+        DriverManager.setLogWriter( new PrintWriter( System.err )  );
 
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
@@ -124,11 +129,24 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             }
         }
 
+        if ( ! adapterNames.isEmpty() ) {
+            installJDBCDriverLoadingRuntime( phaseContext );
+        }
+        
         processDataSourceInfos( phaseContext, infoList );
     }
 
-    private void processDataSourceInfos(DeploymentPhaseContext phaseContext, DataSourceInfoList infoList) {
+    private void installJDBCDriverLoadingRuntime(DeploymentPhaseContext phaseContext) {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        JDBCDriverLoadingRuntimeService service = new JDBCDriverLoadingRuntimeService();
+        ServiceName name = DataSourceServices.jdbcDriverLoadingRuntimeName( unit );
+        phaseContext.getServiceTarget().addService( name, service )
+                .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class, service.getRuntimeFactoryInjector() )
+                .setInitialMode( Mode.ON_DEMAND )
+                .install();
+    }
 
+    private void processDataSourceInfos(DeploymentPhaseContext phaseContext, DataSourceInfoList infoList) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         Service<DataSourceInfoList> service = new ValueService<DataSourceInfoList>( new ImmediateValue<DataSourceInfoList>( infoList ) );
         phaseContext.getServiceTarget().addService( DataSourceServices.dataSourceInfoName( unit ), service )
@@ -148,7 +166,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         phaseContext.getServiceTarget().addService( name, driverService )
                 .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, driverService.getDriverRegistryInjector() )
-                .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class, driverService.getRuntimeFactoryInjector() )
+                .addDependency( DataSourceServices.jdbcDriverLoadingRuntimeName( unit ), Ruby.class, driverService.getRuntimeInjector() )
                 .setInitialMode( ServiceController.Mode.ACTIVE ).install();
 
     }

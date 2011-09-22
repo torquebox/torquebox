@@ -4,6 +4,7 @@ import java.sql.Driver;
 
 import org.jboss.as.connector.registry.DriverRegistry;
 import org.jboss.as.connector.registry.InstalledDriver;
+import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
@@ -24,40 +25,40 @@ public class DriverService implements Service<Driver> {
 
     @Override
     public void start(StartContext context) throws StartException {
+        log.info( "START" );
         try {
             this.driver = instantiateDriver();
+            log.info( "driver: " + this.driver );
             this.installedDriver = createInstalledDriver();
-            
+            log.info( "installed.driver: " + this.installedDriver );
+
             DriverRegistry registry = this.driverRegistryInjector.getValue();
-            
+
             registry.registerInstalledDriver( installedDriver );
         } catch (Exception e) {
+            log.error( "Failed to register driver", e );
             throw new StartException( e );
         }
     }
 
     @Override
     public void stop(StopContext context) {
+        log.info( "STOP and deregister" );
         this.driverRegistryInjector.getValue().unregisterInstalledDriver( this.installedDriver );
     }
 
     protected Driver instantiateDriver() throws Exception {
-        RubyRuntimeFactory factory = runtimeFactoryInjector.getValue();
-        Ruby ruby = factory.createInstance( "JDBC Driver Loader", false );
-        
+        Ruby ruby = this.runtimeInjector.getValue();
+
         ruby.setCurrentDirectory( this.applicationDirectory );
 
         RuntimeHelper.require( ruby, "bundler/setup" );
         RuntimeHelper.require( ruby, this.adapter.getRequirePath() );
 
-        try {
-            ClassLoader classLoader = ruby.getJRubyClassLoader();
-            final Class<? extends Driver> driverClass = classLoader.loadClass( this.adapter.getDriverClassName() ).asSubclass( Driver.class );
-            Driver driver = driverClass.newInstance();
-            return driver;
-        } finally {
-            factory.destroyInstance( ruby );
-        }
+        ClassLoader classLoader = ruby.getJRubyClassLoader();
+        final Class<? extends Driver> driverClass = classLoader.loadClass( this.adapter.getDriverClassName() ).asSubclass( Driver.class );
+        Driver driver = driverClass.newInstance();
+        return driver;
     }
 
     protected InstalledDriver createInstalledDriver() {
@@ -72,22 +73,22 @@ public class DriverService implements Service<Driver> {
         return this.driver;
     }
 
-    public Injector<RubyRuntimeFactory> getRuntimeFactoryInjector() {
-        return this.runtimeFactoryInjector;
+    public Injector<Ruby> getRuntimeInjector() {
+        return this.runtimeInjector;
     }
-    
+
     public Injector<DriverRegistry> getDriverRegistryInjector() {
         return this.driverRegistryInjector;
     }
 
-    private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.db" );
+    private InjectedValue<Ruby> runtimeInjector = new InjectedValue<Ruby>();
     private InjectedValue<DriverRegistry> driverRegistryInjector = new InjectedValue<DriverRegistry>();
 
     private String applicationDirectory;
     private Adapter adapter;
-    
+
     private Driver driver;
     private InstalledDriver installedDriver;
-
 
 }

@@ -23,4 +23,8 @@ public class DataSourceServices {
         return "java:/torquebox/datasources/" + unit.getName() + "/" + dsName;
     }
 
+    public static ServiceName jdbcDriverLoadingRuntimeName(DeploymentUnit unit) {
+        return unit.getServiceName().append(  "runtime", "jdbc-loader" );
+    }
+
 }
