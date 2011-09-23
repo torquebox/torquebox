@@ -156,10 +156,13 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should behave like a transaction" do
-      @cache.transaction do |cache|
-        cache.put('Tommy', 'Dorsey')
-        raise "yikes!"
-        cache.put('Elvis', 'Presley')
+      begin
+        @cache.transaction do |cache|
+          cache.put('Tommy', 'Dorsey')
+          cache.put('Elvis', 'Presley')
+          raise "yikes!"
+        end
+      rescue
       end
       @cache.get('Tommy').should be_nil
       @cache.get('Elvis').should be_nil
