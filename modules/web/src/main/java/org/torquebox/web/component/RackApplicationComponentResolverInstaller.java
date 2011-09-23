@@ -77,6 +77,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.ON_DEMAND );
         addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext ), builder );
+        addNamespaceContext( phaseContext, service, builder );
         builder.install();
         
         // Add to our notifier's watch list

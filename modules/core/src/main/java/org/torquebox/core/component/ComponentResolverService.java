@@ -19,10 +19,13 @@
 
 package org.torquebox.core.component;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
+import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import org.jboss.msc.value.InjectedValue;
 
 public class ComponentResolverService implements Service<ComponentResolver> {
 
@@ -37,13 +40,19 @@ public class ComponentResolverService implements Service<ComponentResolver> {
 
     @Override
     public void start(StartContext context) throws StartException {
-        
+        this.resolver.setNamespaceContextSelector( this.selectorInjector.getValue() );
     }
 
     @Override
     public void stop(StopContext context) {
         
     }
+
+    public Injector<NamespaceContextSelector> getNamespaceContextSelectorInjector() {
+        return this.selectorInjector;
+    }
+    
+    private InjectedValue<NamespaceContextSelector> selectorInjector = new InjectedValue<NamespaceContextSelector>();
     
     private ComponentResolver resolver;
 }

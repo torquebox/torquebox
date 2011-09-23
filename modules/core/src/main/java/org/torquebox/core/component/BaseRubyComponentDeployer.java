@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -33,11 +34,19 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.core.injection.analysis.InjectionIndex;
 
 public abstract class BaseRubyComponentDeployer implements DeploymentUnitProcessor {
 
+    protected void addNamespaceContext(DeploymentPhaseContext phaseContext, ComponentResolverService resolverService, ServiceBuilder<ComponentResolver> builder) {
+        DeploymentUnit unit = phaseContext.getDeploymentUnit();
+        
+        ServiceName selectorName = CoreServices.appNamespaceContextSelector( unit );
+        builder.addDependency( selectorName, NamespaceContextSelector.class, resolverService.getNamespaceContextSelectorInjector() );
+    }
+    
     protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
             ServiceBuilder<ComponentResolver> builder)
             throws DeploymentUnitProcessingException {

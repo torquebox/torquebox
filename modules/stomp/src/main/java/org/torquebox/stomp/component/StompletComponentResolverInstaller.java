@@ -66,6 +66,7 @@ public class StompletComponentResolverInstaller extends BaseRubyComponentDeploye
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, stompletMetaData.getRubyRequirePath() ), builder );
+        addNamespaceContext( phaseContext, service, builder );
         builder.setInitialMode( Mode.ON_DEMAND );
         builder.install();
     }

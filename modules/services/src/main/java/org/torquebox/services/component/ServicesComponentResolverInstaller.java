@@ -69,6 +69,7 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentDeploye
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );
         addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, serviceMetaData.getRubyRequirePath() ), builder );
+        addNamespaceContext( phaseContext, service, builder );
         builder.install();
         
         // Add to our notifier's watch list

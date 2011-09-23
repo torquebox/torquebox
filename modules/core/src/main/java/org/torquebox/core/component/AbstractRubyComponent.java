@@ -21,6 +21,7 @@ package org.torquebox.core.component;
 
 import java.util.Map;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.runtime.builtin.IRubyObject;
@@ -56,7 +57,16 @@ public class AbstractRubyComponent implements RubyComponent {
     }
 
     protected Object _callRubyMethod(Object target, String method, Object... args) {
-        return RuntimeHelper.call( this.rubyComponent.getRuntime(), target, method, args );
+        try {
+            if (this.namespaceContextSelector != null) {
+                NamespaceContextSelector.pushCurrentSelector( this.namespaceContextSelector );
+            }
+            return RuntimeHelper.call( this.rubyComponent.getRuntime(), target, method, args );
+        } finally {
+            if (this.namespaceContextSelector != null) {
+                NamespaceContextSelector.popCurrentSelector();
+            }
+        }
     }
 
     public Object _callRubyMethod(String method, Object... args) {
@@ -64,7 +74,17 @@ public class AbstractRubyComponent implements RubyComponent {
     }
 
     protected Object _callRubyMethodIfDefined(Object target, String method, Object... args) {
-        return RuntimeHelper.callIfPossible( this.rubyComponent.getRuntime(), target, method, args );
+        try {
+            if (this.namespaceContextSelector != null) {
+                NamespaceContextSelector.pushCurrentSelector( this.namespaceContextSelector );
+            }
+            return RuntimeHelper.callIfPossible( this.rubyComponent.getRuntime(), target, method, args );
+        } finally {
+            if (this.namespaceContextSelector != null) {
+                NamespaceContextSelector.popCurrentSelector();
+            }
+
+        }
     }
 
     public Object _callRubyMethodIfDefined(String method, Object... args) {
@@ -79,6 +99,11 @@ public class AbstractRubyComponent implements RubyComponent {
         return this.rubyComponent.getRuntime();
     }
 
+    public void setNamespaceContextSelector(NamespaceContextSelector namespaceContextSelector) {
+        this.namespaceContextSelector = namespaceContextSelector;
+    }
+
     private Map<String, Object> options;
     private IRubyObject rubyComponent;
+    private NamespaceContextSelector namespaceContextSelector;
 }

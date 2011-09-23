@@ -21,6 +21,7 @@ package org.torquebox.core.component;
 
 import java.util.Map;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.msc.inject.Injector;
@@ -129,9 +130,14 @@ public class ComponentResolver {
         AbstractRubyComponent wrappedComponent = this.wrapperClass.newInstance();
         wrappedComponent.setOptions( this.componentWrapperOptions );
         wrappedComponent.setRubyComponent( rubyComponent );
+        wrappedComponent.setNamespaceContextSelector( this.namespaceContextSelector );
         return wrappedComponent;
     }
     
+    public void setNamespaceContextSelector(NamespaceContextSelector namespaceContextSelector) {
+        this.namespaceContextSelector = namespaceContextSelector;
+    }
+
     public Injector<Object> getInjector(String key) {
         return this.injectionRegistry.getInjector( key );
     }
@@ -139,6 +145,7 @@ public class ComponentResolver {
     private Class<? extends AbstractRubyComponent> wrapperClass = AbstractRubyComponent.class;
     private Map<String, Object> componentWrapperOptions;
 
+    private NamespaceContextSelector namespaceContextSelector;
     private InjectionRegistry injectionRegistry = new InjectionRegistry();
     private ComponentInstantiator componentInstantiator;
     private String componentName;
