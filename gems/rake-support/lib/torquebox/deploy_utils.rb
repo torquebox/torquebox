@@ -117,6 +117,7 @@ module TorqueBox
         options = ENV['JBOSS_OPTS'] || ''
         options = "#{options} --server-config=#{cluster_config_file}" if opts[:clustered]
         options = "#{options} -Dorg.torquebox.web.http.maxThreads=#{opts[:max_threads]}" if opts[:max_threads]
+        options = "#{options} -b #{opts[:bind_address]}" if opts[:bind_address]
         if windows?
           cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
         else

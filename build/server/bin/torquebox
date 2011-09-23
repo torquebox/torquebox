@@ -28,11 +28,13 @@ class TorqueBoxCommand < Thor
   map "run" => "start"
   desc "run", "Run TorqueBox"
   method_option :clustered, :type => :boolean, :desc => "Run TorqueBox in clustered mode"
-  method_option 'max-threads', :type => :numeric, :desc => "Maximum Number of HTTP threads"
+  method_option 'max-threads', :type => :numeric, :desc => "Maximum number of HTTP threads"
+  method_option 'bind-address', :aliases => '-b', :type => :string, :desc => "IP address to bind to"
   def start
     setup_environment
     TorqueBox::DeployUtils.run_server(:clustered => options.clustered,
-                                      :max_threads => options['max-threads'])
+                                      :max_threads => options['max-threads'],
+                                      :bind_address => options['bind-address'])
   end
 
   desc "deploy ROOT", "Deploy an application to TorqueBox"

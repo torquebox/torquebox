@@ -238,6 +238,16 @@ module TorqueBox
         command, options = TorqueBox::DeployUtils.run_command_line(:max_threads => 5)
         options.should include('-Dorg.torquebox.web.http.maxThreads=5')
       end
+
+      it 'should not set bind address by default' do
+        command, options = TorqueBox::DeployUtils.run_command_line
+        options.should_not include('-b ')
+      end
+
+      it 'should set bind address when given' do
+        command, options = TorqueBox::DeployUtils.run_command_line(:bind_address => '0.0.0.0')
+        options.should include('-b 0.0.0.0')
+      end
     end
 
   end
