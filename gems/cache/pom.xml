@@ -93,6 +93,12 @@
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
+      <artifactId>torquebox-transactions</artifactId>
+      <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
       <artifactId>dm-serializer</artifactId>
       <version>1.1.0</version>
       <type>gem</type>
