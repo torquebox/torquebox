@@ -21,6 +21,7 @@ package org.torquebox.core.pool;
 
 import java.util.Set;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 
 public class ManagedPool<T> implements Pool<T> {
@@ -191,6 +192,14 @@ public class ManagedPool<T> implements Pool<T> {
     void waitForInitialFill() throws InterruptedException {
         this.poolManager.waitForMinimumFill();
     }
+    
+    public void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector) {
+        this.nsContextSelector = nsContextSelector;
+    }
+    
+    public NamespaceContextSelector getNamespaceContextSelector() {
+        return this.nsContextSelector;
+    }
 
     
     private Logger log = Logger.getLogger( this.getClass() );
@@ -200,6 +209,7 @@ public class ManagedPool<T> implements Pool<T> {
     private boolean deferUntilRequested = true;
     private boolean startAsynchronously = false;
     private boolean started = false;
+    private NamespaceContextSelector nsContextSelector;
     
     
 }

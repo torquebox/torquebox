@@ -19,6 +19,9 @@
 
 package org.torquebox.core.pool;
 
+import javax.naming.InitialContext;
+
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 
 /**
@@ -124,7 +127,21 @@ public class SharedPool<T> implements Pool<T> {
 
     public synchronized void startPool() throws Exception {
         if (this.instance == null) {
-            this.instance = factory.createInstance( getName() );
+            if (this.nsContextSelector != null) {
+                log.info(  "Pushing: " + this.nsContextSelector  );
+                NamespaceContextSelector.pushCurrentSelector( this.nsContextSelector );
+            }
+            try {
+                //InitialContext context = new InitialContext();
+                //Object ut = context.lookup( "java:/UserTransaction" );
+                //log.info( "UserTransaction: " + ut );
+                this.instance = factory.createInstance( getName() );
+            } finally {
+                if (this.nsContextSelector != null) {
+                    log.info( "Popping" );
+                    NamespaceContextSelector.popCurrentSelector();
+                }
+            }
         }
     }
 
@@ -143,7 +160,7 @@ public class SharedPool<T> implements Pool<T> {
     public void setStartAsynchronously(boolean startAsynchronously) {
         this.startAsynchronously = startAsynchronously;
     }
-    
+
     /**
      * Create the pool.
      * 
@@ -166,7 +183,7 @@ public class SharedPool<T> implements Pool<T> {
                 public void run() {
                     try {
                         SharedPool.this.startPool();
-                    } catch(Exception ex) {
+                    } catch (Exception ex) {
                         log.error( "Failed to start pool", ex );
                     }
                 }
@@ -208,15 +225,23 @@ public class SharedPool<T> implements Pool<T> {
         while (this.instance == null) {
             long startWait = System.currentTimeMillis();
             this.wait( timeout );
-            remaining = remaining - (System.currentTimeMillis() - startWait );
-            if ( remaining <= 0 ) {
+            remaining = remaining - (System.currentTimeMillis() - startWait);
+            if (remaining <= 0) {
                 break;
             }
         }
-        
+
         return this.instance;
     }
     
+    public void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector) {
+        this.nsContextSelector = nsContextSelector;
+    }
+    
+    public NamespaceContextSelector getNamespaceContextSelector() {
+        return this.nsContextSelector;
+    }
+
     /** Name of the pool. */
     private String name = "anonymous-pool";
 
@@ -227,7 +252,9 @@ public class SharedPool<T> implements Pool<T> {
     private InstanceFactory<T> factory;
 
     private boolean deferUntilRequested = true;
-    
+
     private boolean startAsynchronously = false;
+
+    private NamespaceContextSelector nsContextSelector = null;
 
 }

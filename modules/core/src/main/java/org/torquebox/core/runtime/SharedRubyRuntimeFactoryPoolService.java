@@ -19,6 +19,7 @@
 
 package org.torquebox.core.runtime;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
@@ -39,7 +40,8 @@ public class SharedRubyRuntimeFactoryPoolService implements Service<RubyRuntimeP
 
     @Override
     public void start(final StartContext context) throws StartException {
-        this.pool.setInstanceFactory( factoryInjector.getValue() );
+        this.pool.setInstanceFactory( this.factoryInjector.getValue() );
+        this.pool.setNamespaceContextSelector( this.selectorInjector.getValue() );
     }
 
     @Override
@@ -51,7 +53,12 @@ public class SharedRubyRuntimeFactoryPoolService implements Service<RubyRuntimeP
     public Injector<RubyRuntimeFactory> getRubyRuntimeFactoryInjector() {
         return this.factoryInjector;
     }
+    
+    public Injector<NamespaceContextSelector> getNamespaceContextSelectorInjector() {
+        return this.selectorInjector;
+    }
 
+    private InjectedValue<NamespaceContextSelector> selectorInjector = new InjectedValue<NamespaceContextSelector>();
     private InjectedValue<RubyRuntimeFactory> factoryInjector = new InjectedValue<RubyRuntimeFactory>();
     private SharedRubyRuntimePool pool;
 

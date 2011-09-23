@@ -19,6 +19,7 @@
 
 package org.torquebox.core.runtime;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
@@ -41,6 +42,7 @@ public class DefaultRubyRuntimePoolService implements Service<RubyRuntimePool>{
     @Override
     public void start(StartContext context) throws StartException {
         this.pool.setInstanceFactory( this.runtimeFactoryInjector.getValue() );
+        this.pool.setNamespaceContextSelector( this.selectorInjector.getValue() );
     }
 
     @Override
@@ -57,9 +59,14 @@ public class DefaultRubyRuntimePoolService implements Service<RubyRuntimePool>{
         return this.runtimeFactoryInjector;
     }
     
+    public Injector<NamespaceContextSelector> getNamespaceContextSelectorInjector() {
+        return this.selectorInjector;
+    }
+    
     private static final Logger log = Logger.getLogger( "org.torquebox.runtime.pool" );
     
     private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
+    private InjectedValue<NamespaceContextSelector> selectorInjector = new InjectedValue<NamespaceContextSelector>();
     private DefaultRubyRuntimePool pool;
 
 

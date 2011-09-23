@@ -25,9 +25,11 @@ import java.util.List;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.jboss.as.ee.naming.InjectedEENamespaceContextSelector;
 import org.jboss.as.jmx.MBeanRegistrationService;
 import org.jboss.as.jmx.MBeanServerService;
 import org.jboss.as.jmx.ObjectNameFactory;
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.as.server.deployment.DeploymentException;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -73,6 +75,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
         if (poolMetaData.isShared()) {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();
+            
             pool.setName( poolMetaData.getName() );
             pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
             pool.setStartAsynchronously( poolMetaData.isStartAsynchronously() );
@@ -81,9 +84,10 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
 
-            ServiceBuilder<RubyRuntimePool> builder = phaseContext.getServiceTarget().addService( name, service );
-            builder.addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() );
-            builder.install();
+            phaseContext.getServiceTarget().addService( name, service )
+                    .addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
+                    .addDependency( CoreServices.appNamespaceContextSelector( unit ), NamespaceContextSelector.class, service.getNamespaceContextSelectorInjector() )
+                    .install();
 
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
 
@@ -108,7 +112,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
 
         } else {
             DefaultRubyRuntimePool pool = new DefaultRubyRuntimePool();
-
+            
             pool.setName( poolMetaData.getName() );
             pool.setMinimumInstances( poolMetaData.getMinimumSize() );
             pool.setMaximumInstances( poolMetaData.getMaximumSize() );
@@ -120,6 +124,7 @@ public class RuntimePoolDeployer implements DeploymentUnitProcessor {
             ServiceName name = CoreServices.runtimePoolName( unit, pool.getName() );
             phaseContext.getServiceTarget().addService( name, service )
                     .addDependency( CoreServices.runtimeFactoryName( unit ), RubyRuntimeFactory.class, service.getRubyRuntimeFactoryInjector() )
+                    .addDependency( CoreServices.appNamespaceContextSelector( unit ), NamespaceContextSelector.class, service.getNamespaceContextSelectorInjector() )
                     .install();
 
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );

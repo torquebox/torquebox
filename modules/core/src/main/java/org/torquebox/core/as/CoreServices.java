@@ -56,5 +56,9 @@ public class CoreServices {
         return unit.getServiceName().append( INJECTION ).append( "runtime-injection-analyzer" );
     }
     
+    public static ServiceName appNamespaceContextSelector(DeploymentUnit unit) {
+        return unit.getServiceName().append( CORE ).append( "ns-context-selector" );
+    }
+    
  
 }

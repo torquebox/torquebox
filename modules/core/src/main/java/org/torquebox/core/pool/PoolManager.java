@@ -23,10 +23,11 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 
 public class PoolManager<T> extends DefaultPoolListener<T> {
-    
+
     private static abstract class PoolTask<T> implements Runnable {
         protected PoolManager<T> poolManager;
 
@@ -81,9 +82,11 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     private Executor executor;
     private FillTask<T> fillTask;
     private DrainTask<T> drainTask;
-    
+
     private boolean started = false;
-    
+
+    private NamespaceContextSelector nsContextSelector;
+
     public PoolManager(SimplePool<T> pool, InstanceFactory<T> factory, int minInstances, int maxInstances) {
         this.pool = pool;
         this.factory = factory;
@@ -134,9 +137,9 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         if (this.instances == null) {
             this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
         }
-        log.trace( "instanceRequested - totalInstances = " + totalInstances + 
-                  ", availableNow = " + availableNow + ", availablePermits = " + 
-                  this.instances.availablePermits() );
+        log.trace( "instanceRequested - totalInstances = " + totalInstances +
+                ", availableNow = " + availableNow + ", availablePermits = " +
+                this.instances.availablePermits() );
 
         if (totalInstances >= maxInstances) {
             return;
@@ -149,24 +152,33 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     protected void fillInstance() throws Exception {
         synchronized (this.pool) {
             if (this.started) { // don't fill an instance if we've stopped
-                T instance = this.factory.createInstance( this.pool.getName() );
-                this.pool.fillInstance( instance );
-            } 
+                if (this.nsContextSelector != null) {
+                    NamespaceContextSelector.pushCurrentSelector( this.nsContextSelector );
+                }
+                try {
+                    T instance = this.factory.createInstance( this.pool.getName() );
+                    this.pool.fillInstance( instance );
+                } finally {
+                    if (this.nsContextSelector != null) {
+                        NamespaceContextSelector.popCurrentSelector();
+                    }
+                }
+            }
         }
     }
-        
+
     protected void drainInstance() throws Exception {
-    	synchronized (this.pool) {
+        synchronized (this.pool) {
             T instance = this.pool.drainInstance();
             this.factory.destroyInstance( instance );
-    	}
+        }
     }
 
     public void start() {
         started = true;
         if (this.executor == null) {
             this.executor = Executors.newSingleThreadExecutor();
-        } 
+        }
         for (int i = 0; i < this.minInstances; ++i) {
             this.executor.execute( this.fillTask );
         }
@@ -185,13 +197,21 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
             Thread.sleep( 50 );
         }
     }
-    
+
     public void waitForEmpty() throws InterruptedException {
-        while (this.pool.size() > 0 ) {
+        while (this.pool.size() > 0) {
             Thread.sleep( 50 );
         }
     }
-    
+
+    public void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector) {
+        this.nsContextSelector = nsContextSelector;
+    }
+
+    public NamespaceContextSelector getNamespaceContextSelector() {
+        return this.nsContextSelector;
+    }
+
     private static final Logger log = Logger.getLogger( PoolManager.class );
 
 }

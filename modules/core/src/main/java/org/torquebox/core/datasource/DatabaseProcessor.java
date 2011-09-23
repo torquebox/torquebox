@@ -189,7 +189,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         
         try {
             final XaDataSource config = createConfig( unit, dbMeta, adapter );
-            XaDataSourceService service = new XaDataSourceService( jndiName );
+            XaDataSourceService service = new HackDataSourceService( jndiName );
 
             service.getDataSourceConfigInjector().inject( config );
             phaseContext.getServiceTarget().addService( dataSourceServiceName, service )

@@ -70,6 +70,7 @@ import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
 import org.torquebox.core.pool.PoolingYamlParsingProcessor;
 import org.torquebox.core.runtime.BaseRubyRuntimeDeployer;
+import org.torquebox.core.runtime.RubyNamespaceContextSelectorProcessor;
 import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
 import org.torquebox.core.runtime.RuntimePoolDeployer;
 
@@ -128,6 +129,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableDeployer() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 110, new RubyNamespaceContextSelectorProcessor() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );

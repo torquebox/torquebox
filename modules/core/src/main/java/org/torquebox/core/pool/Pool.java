@@ -19,6 +19,7 @@
 
 package org.torquebox.core.pool;
 
+
 /**
  * A simple instance pool.
  * 
@@ -52,7 +53,7 @@ public interface Pool<T> {
      *            The instance to release.
      */
     void releaseInstance(T instance);
-    
+
     String getName();
 
 }

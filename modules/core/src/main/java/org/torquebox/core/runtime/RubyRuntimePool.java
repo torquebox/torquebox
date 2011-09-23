@@ -21,6 +21,7 @@ package org.torquebox.core.runtime;
 
 import java.util.Set;
 
+import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jruby.Ruby;
 
 /**
@@ -38,4 +39,6 @@ public interface RubyRuntimePool {
     
     void start() throws Exception;
     void stop() throws Exception;
+    
+    void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector);
 }
