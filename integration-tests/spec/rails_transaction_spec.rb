@@ -184,16 +184,16 @@ remote_describe "rails 3.0 transactions testing" do
   it_should_behave_like "transactions"
 end
 
-remote_describe "rails 3.1 transactions testing" do
+# remote_describe "rails 3.1 transactions testing" do
 
-  deploy <<-END.gsub(/^ {4}/,'')
-    ---
-    application:
-      root: #{File.dirname(__FILE__)}/../apps/rails3.1/transactions
-      env: development
-    ruby:
-      version: #{RUBY_VERSION[0,3]}
-  END
+#   deploy <<-END.gsub(/^ {4}/,'')
+#     ---
+#     application:
+#       root: #{File.dirname(__FILE__)}/../apps/rails3.1/transactions
+#       env: development
+#     ruby:
+#       version: #{RUBY_VERSION[0,3]}
+#   END
 
-  it_should_behave_like "transactions"
-end
+#   it_should_behave_like "transactions"
+# end
