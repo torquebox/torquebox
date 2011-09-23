@@ -17,6 +17,7 @@
 
 require 'torquebox/kernel'
 require 'torquebox/injectors'
+require 'torquebox/transactions'
 
 module TorqueBox
   module Infinispan
@@ -181,16 +182,18 @@ module TorqueBox
       end
 
       def transaction(&block)
-        tm = cache.getAdvancedCache().getTransactionManager()
-        begin
-          tm.begin if tm
+        TorqueBox.transaction do
           yield self
-          tm.commit if tm
-        rescue Exception => e
-          tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
-          log( "Exception raised during transaction. Rolling back.", 'ERROR' )
-          log( e.message, 'ERROR' )
-          log( e.backtrace, 'ERROR' )
+        #tm = cache.getAdvancedCache().getTransactionManager()
+        #begin
+          #tm.begin if tm
+          #yield self
+          #tm.commit if tm
+        #rescue Exception => e
+          #tm.rollback if tm && tm.status != javax.transaction.Status.STATUS_NO_TRANSACTION
+          #log( "Exception raised during transaction. Rolling back.", 'ERROR' )
+          #log( e.message, 'ERROR' )
+          #log( e.backtrace, 'ERROR' )
         end
       end
 
