@@ -90,6 +90,7 @@ module TorqueBox
       # Where we either begin a new transaction (with_tx) or simply
       # yield as part of the current transaction.
       def run(*args, &block)
+        return yield unless @tm
         opts = args.last.is_a?(Hash) ? args.pop : {}
         if active? && !opts[:requires_new]
           enlist(*args)
@@ -110,8 +111,9 @@ module TorqueBox
       # The heart of the matter
       def with_tx
         prepare
-        yield
+        result = yield
         commit
+        result
       rescue Exception => e
         error(e)
       ensure
