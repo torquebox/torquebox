@@ -31,10 +31,10 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
+import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
+import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
+import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
-import org.torquebox.test.as.MockDeploymentPhaseContext;
-import org.torquebox.test.as.MockDeploymentUnit;
 
 public class EnvironmentYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 

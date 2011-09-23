@@ -27,9 +27,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-test-support</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-test-support</artifactId>
+      <version>${version.polyglot}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

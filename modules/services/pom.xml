@@ -43,9 +43,9 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-as-test-support</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-as-test-support</artifactId>
+      <version>${version.polyglot}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

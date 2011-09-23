@@ -23,7 +23,7 @@ import static org.junit.Assert.assertFalse;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.test.AbstractTorqueBoxTestCase;
+import org.projectodd.polyglot.test.AbstractTorqueBoxTestCase;
 
 public class AbstractRubyTestCase extends AbstractTorqueBoxTestCase {
 

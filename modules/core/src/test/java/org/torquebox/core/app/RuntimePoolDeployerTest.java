@@ -26,15 +26,15 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.Value;
 import org.junit.Before;
 import org.junit.Test;
+import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
+import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
+import org.projectodd.polyglot.test.as.MockDeploymentUnit;
+import org.projectodd.polyglot.test.as.MockServiceBuilder;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.core.runtime.RuntimePoolDeployer;
 import org.torquebox.core.runtime.SharedRubyRuntimePool;
-import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
-import org.torquebox.test.as.MockDeploymentPhaseContext;
-import org.torquebox.test.as.MockDeploymentUnit;
-import org.torquebox.test.as.MockServiceBuilder;
 
 public class RuntimePoolDeployerTest extends AbstractDeploymentProcessorTestCase {
     

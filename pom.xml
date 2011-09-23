@@ -137,6 +137,32 @@
 
       <build>
         <plugins>
+
+          <plugin>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>unpack</id>
+                <phase>pre-site</phase>
+             <goals>
+               <goal>unpack</goal>
+             </goals>
+             <configuration>
+               <artifactItems>
+                 <artifactItem>
+                   <groupId>org.projectodd</groupId>
+                   <artifactId>polyglot-javadoc-support</artifactId>
+                   <version>${version.polyglot}</version>
+                   <type>jar</type>
+                 </artifactItem>
+               </artifactItems>
+               <outputDirectory>${project.basedir}/target/javadoc-support</outputDirectory>
+               <includes>**/*.css,**/*.png,**/*.gif</includes>
+             </configuration>
+           </execution>
+         </executions>
+       </plugin>
+
           <plugin>
             <artifactId>maven-javadoc-plugin</artifactId>
             <executions>
@@ -149,8 +175,8 @@
                 <configuration>
                   <inherit>false</inherit>
                   <aggregate>true</aggregate>
-                  <stylesheetfile>${project.basedir}/support/javadoc-support/stylesheet/stylesheet.css</stylesheetfile>
-                  <javadocDirectory>${project.basedir}/support/javadoc-support/resources/</javadocDirectory>
+                  <stylesheetfile>${project.basedir}/target/javadoc-support/stylesheet/stylesheet.css</stylesheetfile>
+                  <javadocDirectory>${project.basedir}/target/javadoc-support/</javadocDirectory>
                   <docfilessubdirs>true</docfilessubdirs>
                 </configuration>
               </execution>
@@ -368,7 +394,6 @@
         <version>${version.jbossas}</version>
         <type>zip</type>
       </dependency>
-
 
     </dependencies>
   </dependencyManagement>

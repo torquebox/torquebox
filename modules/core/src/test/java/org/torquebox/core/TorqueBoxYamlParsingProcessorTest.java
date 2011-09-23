@@ -27,9 +27,9 @@ import java.net.URL;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
-import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
-import org.torquebox.test.as.MockDeploymentPhaseContext;
-import org.torquebox.test.as.MockDeploymentUnit;
+import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
+import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
+import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 
 public class TorqueBoxYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     

@@ -15,13 +15,7 @@
   <description />
 
   <modules>
-
-    <module>module-support</module>
-
-    <module>test-support</module>
     <module>ruby-test-support</module>
-    <module>as-test-support</module>
-
   </modules>
 
 

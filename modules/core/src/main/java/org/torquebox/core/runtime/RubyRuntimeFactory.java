@@ -34,10 +34,8 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceRegistry;
 import org.jboss.vfs.TempFileProvider;
 import org.jboss.vfs.VFS;
@@ -52,7 +50,6 @@ import org.torquebox.bootstrap.JRubyHomeLocator;
 import org.torquebox.core.component.ComponentRegistry;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.InjectionRegistry;
-import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.core.pool.InstanceFactory;
 import org.torquebox.core.util.JRubyConstants;
 import org.torquebox.core.util.RuntimeHelper;
