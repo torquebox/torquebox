@@ -18,7 +18,7 @@
 module TorqueBox
   module Messaging
 
-    class HornetQSession < Session
+    module HornetQSession 
 
       # if we direct connect to HQ, we have to provide an actual
       # HornetQDestination instead of a destination name

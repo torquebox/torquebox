@@ -58,6 +58,7 @@ module TorqueBox
       def error( exception )
         puts "Transaction rollback: #{exception}"
         rollback
+        raise
       end
 
     end

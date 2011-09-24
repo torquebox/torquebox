@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'torquebox/injectors'
+require 'torquebox/messaging/session'
 
 module TorqueBox
   module Messaging
@@ -44,41 +45,90 @@ module TorqueBox
         @jms_connection.client_id = client_id
       end
       
-      def with_session(force_new = false, &block)
-        force_new ? with_new_session(&block) : with_thread_local_session(&block)
-      end
-
-      def with_new_session
-        session = self.create_session()
-        begin
-          result = yield( session )
-        ensure
-          session.close
-        end
-        return result
-      end
-
-      def with_thread_local_session(&block)
-        current = Thread.current[:session]
-        if current.nil?
-          with_new_session do |session|
-            Thread.current[:session] = session
-            begin
-              block.call( session )
-            ensure
-              Thread.current[:session] = nil
-            end
+      def with_session(force_new = false)
+        if force_new || current.nil?
+          begin
+            yield( activate( create_session( !force_new ) ) )
+          ensure
+            deactivate
+          end
+        elsif transaction && (!current.is_a?(TransactedSession) || current.transaction != transaction)
+          begin 
+            yield( activate( create_session ) )
+          ensure
+            deactivate
           end
         else
           yield( current )
         end
       end
 
-      def create_session()
-        session = (@tm.nil? || @tm.transaction.nil?) ? @jms_connection.create_session( false, Session::AUTO_ACK ) : @jms_connection.create_xa_session()
-        @hornetq_direct ? HornetQSession.new( session ) : Session.new( session )
+      private
+
+      def sessions
+        Thread.current[:session] ||= []
+      end
+      def activate(session)
+        sessions.push(session) && current
+      end
+      def deactivate
+        sessions.pop.close
+      end
+      def current
+        sessions.last
+      end
+
+      def transaction
+        @tm && @tm.transaction
+      end
+
+      def create_session(support_tx = true)
+        if (support_tx && transaction)
+          jms_session = @jms_connection.create_xa_session()
+          transaction.enlist_resource( jms_session.xa_resource )
+          session = TransactedSession.new( jms_session, transaction, self )
+          transaction.registerSynchronization( session )
+        else
+          session = Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
+        end
+        @hornetq_direct ? session.extend(HornetQSession) : session
       end
 
     end
+    
+    class TransactedSession < Session
+      include javax.transaction.Synchronization
+      attr_reader :transaction
+
+      def initialize( jms_session, transaction, connection )
+        super( jms_session )
+        @transaction = transaction
+        @connection = connection.extend(TransactedConnection)
+      end
+
+      def close
+        puts "JC: close #{self}, but not really"
+      end
+
+      def beforeCompletion
+        puts "JC: beforeCompletion #{self}"
+      end
+
+      def afterCompletion(status)
+        puts "JC: afterCompletion #{self} status=#{status}"
+        @connection.complete!
+      end
+    end
+
+    module TransactedConnection
+      def close
+        super if @complete
+      end
+      def complete!
+        @complete = true
+        close
+      end
+    end
+
   end
 end

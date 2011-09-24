@@ -74,10 +74,7 @@ module TorqueBox
 
         def error( exception )
           super
-          unless exception.is_a?(ActiveRecord::Rollback)
-            puts $@
-            raise exception 
-          end
+        rescue ActiveRecord::Rollback
         end
 
         def commit
