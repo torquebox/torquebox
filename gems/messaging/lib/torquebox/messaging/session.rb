@@ -34,10 +34,6 @@ module TorqueBox
         @jms_session.close
       end
 
-      def commit
-        @jms_session.commit
-      end
-
       def queue_for(name)
         Queue.new( @jms_session.create_queue( name ) )
       end
