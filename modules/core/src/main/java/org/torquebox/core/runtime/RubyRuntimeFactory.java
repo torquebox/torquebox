@@ -430,6 +430,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         RuntimeHelper.require( runtime, "rubygems" );
         RuntimeHelper.require( runtime, "torquebox-vfs" );
         RuntimeHelper.require( runtime, "torquebox-core" );
+        
+        RuntimeHelper.require( runtime, "org/torquebox/core/runtime/thread_context_patch" );
 
         injectServiceRegistry( runtime );
     }
