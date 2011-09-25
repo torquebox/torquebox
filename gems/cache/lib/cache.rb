@@ -22,6 +22,15 @@ require 'torquebox/transactions'
 module TorqueBox
   module Infinispan
 
+    class ContainerTransactionManagerLookup 
+      include TorqueBox::Injectors
+      include org.infinispan.transaction.lookup.TransactionManagerLookup
+      
+      def getTransactionManager
+        inject('transaction-manager')
+      end
+    end
+
     class NoOpCodec
       def self.encode(object)
         object
@@ -264,7 +273,11 @@ module TorqueBox
       end
 
       def transaction_manager_lookup
-        @tm ||= inject('transaction-manager') || org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new
+        @tm ||= if inject('transaction-manager')
+                  ContainerTransactionManagerLookup.new 
+                else
+                  org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new
+                end
       end
 
       def clustered
