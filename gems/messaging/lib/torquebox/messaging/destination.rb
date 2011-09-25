@@ -56,7 +56,7 @@ module TorqueBox
 
       def publish(message, options = {})
         wait_for_destination(options[:startup_timeout]) do
-          with_session(options[:requires_new]) do |session|
+          with_session(options) do |session|
             session.publish self, message, normalize_options(options)
           end
         end
@@ -64,7 +64,7 @@ module TorqueBox
 
       def receive(options = {})
         wait_for_destination(options[:startup_timeout]) do
-          with_session(options[:requires_new]) do |session|
+          with_session(options) do |session|
             session.receive self, options
           end
         end
@@ -84,9 +84,10 @@ module TorqueBox
         end
       end
 
-      def with_session(force_new = false)
+      def with_session(opts = {})
+        transactional = opts.fetch(:tx, true)
         connection_factory.with_new_connection( connect_options[:client_id] ) do |connection|
-          connection.with_session(force_new) do |session|
+          connection.with_session(transactional) do |session|
             yield session
           end
         end

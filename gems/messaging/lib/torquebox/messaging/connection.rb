@@ -45,28 +45,25 @@ module TorqueBox
         @jms_connection.client_id = client_id
       end
       
-      def with_session(force_new = false)
-        if force_new || current.nil?
+      def with_session(enlist_tx = true)
+        if !enlist_tx || (current.nil? && !transaction)
           begin
-            yield( activate( create_session( !force_new ) ) )
+            yield activate( create_session )
           ensure
             deactivate
           end
-        elsif transaction && (!current.is_a?(TransactedSession) || current.transaction != transaction)
-          begin 
-            yield( activate( create_session ) )
-          ensure
-            deactivate
-          end
+        elsif transaction && (!current.respond_to?(:transaction) || current.transaction != transaction)
+          yield activate( create_xa_session )
         else
           yield( current )
         end
       end
 
-      private
-
       def sessions
         Thread.current[:session] ||= []
+      end
+      def current
+        sessions.last
       end
       def activate(session)
         sessions.push(session) && current
@@ -74,23 +71,21 @@ module TorqueBox
       def deactivate
         sessions.pop.close
       end
-      def current
-        sessions.last
-      end
 
       def transaction
         @tm && @tm.transaction
       end
 
-      def create_session(support_tx = true)
-        if (support_tx && transaction)
-          jms_session = @jms_connection.create_xa_session()
-          transaction.enlist_resource( jms_session.xa_resource )
-          session = TransactedSession.new( jms_session, transaction, self )
-          transaction.registerSynchronization( session )
-        else
-          session = Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
-        end
+      def create_xa_session
+        jms_session = @jms_connection.create_xa_session()
+        transaction.enlist_resource( jms_session.xa_resource )
+        session = TransactedSession.new( jms_session, transaction, self )
+        transaction.registerSynchronization( session )
+        session
+      end
+
+      def create_session
+        session = Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
         @hornetq_direct ? session.extend(HornetQSession) : session
       end
 
@@ -107,15 +102,15 @@ module TorqueBox
       end
 
       def close
-        puts "JC: close #{self}, but not really"
+        # eat the close, until tx completes
       end
 
       def beforeCompletion
-        puts "JC: beforeCompletion #{self}"
+        # required interface
       end
 
       def afterCompletion(status)
-        puts "JC: afterCompletion #{self} status=#{status}"
+        @connection.deactivate
         @connection.complete!
       end
     end

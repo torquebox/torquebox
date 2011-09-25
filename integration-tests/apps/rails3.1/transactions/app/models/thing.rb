@@ -9,7 +9,7 @@ class Thing < ActiveRecord::Base
 
   def report(callback)
     if publish_callback?
-      TorqueBox::Messaging::Queue.new('/queue/output').publish(callback, :requires_new => true)
+      TorqueBox::Messaging::Queue.new('/queue/output').publish(callback, :tx => false)
     end
     @callback = callback
   end

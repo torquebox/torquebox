@@ -68,18 +68,108 @@ remote_describe "transactions testing" do
   it "should rollback message when explicit transaction fails" do
     queue = TorqueBox::Messaging::Queue.start "/queue/foo"
     begin
-      puts "JC: AAAA"
       TorqueBox.transaction do
         queue.publish("whatevs")
-        puts "JC: BBBB"
         raise "rollback"
-        puts "JC: CCCC"
       end
-      puts "JC: DDDD"
       raise "should not get here"
     rescue Exception => e
       e.message.should == 'rollback'
       queue.receive(:timeout => 5_000).should be_nil
+    ensure
+      queue.stop
+    end
+  end
+
+  it "should support nested messaging transactions" do
+    queue = TorqueBox::Messaging::Queue.start "/queue/foo"
+    begin
+      TorqueBox.transaction do
+        queue.publish("first")
+        TorqueBox.transaction(:requires_new => false) do
+          queue.publish("second")
+        end
+      end
+      q = queue.to_a
+      q[0].decode.should == 'first'
+      q[1].decode.should == 'second'
+      q.count.should == 2
+    ensure
+      queue.stop
+    end
+  end
+
+  it "should support nested messaging transactions, the latter new" do
+    queue = TorqueBox::Messaging::Queue.start "/queue/foo"
+    begin
+      TorqueBox.transaction do
+        queue.publish("first")
+        TorqueBox.transaction(:requires_new => true) do
+          queue.publish("second")
+        end
+      end
+      q = queue.to_a
+      q[0].decode.should == 'second'
+      q[1].decode.should == 'first'
+      q.count.should == 2
+    ensure
+      queue.stop
+    end
+  end
+
+  it "should rollback nested messaging transactions" do
+    queue = TorqueBox::Messaging::Queue.start "/queue/foo"
+    begin
+      TorqueBox.transaction do
+        queue.publish("first")
+        TorqueBox.transaction(:requires_new => false) do
+          queue.publish("second")
+          raise "rollback"
+        end
+      end
+      raise "should not get here"
+    rescue Exception => e
+      e.message.should == 'rollback'
+      queue.count.should == 0
+    ensure
+      queue.stop
+    end
+  end
+
+  it "should rollback nested messaging transactions, the latter new" do
+    queue = TorqueBox::Messaging::Queue.start "/queue/foo"
+    begin
+      TorqueBox.transaction do
+        queue.publish("first")
+        begin
+          TorqueBox.transaction(:requires_new => true) do
+            queue.publish("second")
+            raise "rollback"
+          end
+        rescue Exception => e
+          e.message.should == 'rollback'
+        end
+      end
+      queue.first.decode.should == 'first'
+      queue.count.should == 1
+    ensure
+      queue.stop
+    end
+  end
+
+  it "should not rollback non-transactional messages" do
+    queue = TorqueBox::Messaging::Queue.start "/queue/foo"
+    begin
+      TorqueBox.transaction do
+        queue.publish("first")
+        queue.publish("second", :tx => false)
+        raise "rollback"
+      end
+      raise "should not get here"
+    rescue Exception => e
+      e.message.should == 'rollback'
+      queue.first.decode.should == 'second'
+      queue.count.should == 1
     ensure
       queue.stop
     end

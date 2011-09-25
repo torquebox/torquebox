@@ -9,7 +9,7 @@ class Thing < ActiveRecord::Base
       callback = "#{state}_#{event}"
       define_method(callback.to_sym) do 
         if publish_callback?
-          TorqueBox::Messaging::Queue.new('/queue/output').publish(callback, :requires_new => true)
+          TorqueBox::Messaging::Queue.new('/queue/output').publish(callback, :tx => false)
         end
         @callback = callback
       end
