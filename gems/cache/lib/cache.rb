@@ -22,18 +22,6 @@ require 'torquebox/transactions'
 module TorqueBox
   module Infinispan
 
-    class TransactionManagerLookup < org.infinispan.transaction.lookup.JBossStandaloneJTAManagerLookup
-      include TorqueBox::Injectors
-      
-      def initialize
-        super
-      end
-
-      def getTransactionManager
-       inject('transaction-manager') || super.getTransactionManager()
-      end
-    end
-
     class NoOpCodec
       def self.encode(object)
         object
@@ -83,9 +71,8 @@ module TorqueBox
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
 
       def initialize(opts = {})
-        @options      = opts
-        @in_container = false
-        @tm_lookup    = TransactionManagerLookup.new
+        @options                      = opts
+        @in_container                 = false
         cache
       end
 
@@ -190,17 +177,34 @@ module TorqueBox
         increment( name, -amount )
       end
 
+      include TorqueBox::Injectors
       def transaction(&block)
-        begin
+        if inject('transaction-manager').nil?
+          tm = cache.getAdvancedCache.getTransactionManager
+          begin
+            tm.begin if tm
+            yield self
+            tm.commit if tm
+          rescue Exception => e
+            if tm.nil?
+              log( "Transaction is nil", "ERROR" )
+              log( e.message, 'ERROR' )
+              log( e.backtrace, 'ERROR' )
+            elsif tm.status == javax.transaction.Status.STATUS_NO_TRANSACTION
+              log( "No transaction was started", "ERROR" )
+              log( e.message, 'ERROR' )
+              log( e.backtrace, 'ERROR' )
+            else
+              tm.rollback 
+              log( "Rolling back.", 'ERROR' )
+              log( e.message, 'ERROR' )
+              log( e.backtrace, 'ERROR' )
+            end
+          end
+        else
           TorqueBox.transaction do 
             yield self 
           end
-        rescue Exception => e
-          tm = cache.getAdvancedCache().getTransactionManager
-          tm.rollback if tm 
-          log( e.message, 'ERROR' )
-          log( e.backtrace, 'ERROR' )
-          raise e
         end
       end
 
@@ -252,11 +256,15 @@ module TorqueBox
       def configure(mode=clustering_mode)
         log( "Configuring Infinispan cache #{name} as #{mode}" )
         config = manager.default_configuration.clone
-        config.transaction.recovery.transactionManagerLookup( @transaction_manager_lookup )
+        config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
         config.cache_mode = mode
         config.class_loader = java.lang::Thread.current_thread.context_class_loader
         manager.define_configuration(name, config)
         manager.get_cache(name)
+      end
+
+      def transaction_manager_lookup
+        @tm ||= inject('transaction-manager') || org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new
       end
 
       def clustered
@@ -271,7 +279,7 @@ module TorqueBox
         bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
 
         config  = bare_config.fluent
-        config.transaction.recovery.transactionManagerLookup( @transaction_manager_lookup )
+        config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
         
         if options[:persist]
           log( "Configuring #{name} local cache for file-based persistence" )
