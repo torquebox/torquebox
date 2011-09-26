@@ -49,6 +49,7 @@ import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.ast.executable.Script;
 import org.jruby.util.ClassCache;
 import org.torquebox.bootstrap.JRubyHomeLocator;
+import org.torquebox.core.component.ComponentRegistry;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.InjectionRegistry;
 import org.torquebox.core.injection.analysis.Injectable;
@@ -433,6 +434,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         RuntimeHelper.require( runtime, "org/torquebox/core/runtime/thread_context_patch" );
 
         injectServiceRegistry( runtime );
+        ComponentRegistry.createRegistryFor( runtime );
     }
 
     private void injectServiceRegistry(Ruby runtime) {
