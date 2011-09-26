@@ -38,7 +38,7 @@ public class RackResponse {
 
     public void respond(HttpServletResponse response) {
         Ruby ruby = rackResponse.getRuntime();
-        RuntimeHelper.require( ruby, RESPONSE_HANDLER_RB );
+        RuntimeHelper.requireUnlessDefined( ruby, RESPONSE_HANDLER_RB, RESPONSE_HANDLER_CLASS_NAME );
         RuntimeHelper.invokeClassMethod( ruby, RESPONSE_HANDLER_CLASS_NAME, RESPONSE_HANDLER_METHOD_NAME, new Object[] { rackResponse, response}); 
     }
 

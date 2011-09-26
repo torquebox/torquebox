@@ -121,6 +121,14 @@ public class RuntimeHelper {
         }
     }
 
+    public static void requireUnlessDefined(Ruby ruby, String requirement, String constant) {
+        try {
+            evalScriptlet( ruby, "require %q(" + requirement + ") unless defined?(" + constant + ")" );
+        } catch (Throwable t) {
+            log.errorf( t, "Unable to require file: %s", requirement );
+        }
+    }
+
     // ------------------------------------------------------------------------
 
     public static IRubyObject evalScriptlet(final Ruby ruby, final String script) {
