@@ -17,6 +17,7 @@ describe "sinatra with dm-infinispan-adapter" do
 
   after(:all) do
     FileUtils.rm_rf(File.join(File.dirname(__FILE__), '..', 'rubyobj.Muppet'))
+    FileUtils.rm_rf(File.join(File.dirname(__FILE__), '..', 'rubyobj.Coat'))
   end
 
   it "should work" do
