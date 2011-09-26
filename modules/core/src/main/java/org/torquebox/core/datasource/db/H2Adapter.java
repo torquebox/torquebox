@@ -39,7 +39,7 @@ public class H2Adapter extends AbstractAdapter {
 
     public DsSecurity getSecurityFor(DatabaseMetaData dbMeta) throws ValidateException {
         Map<String, Object> config = dbMeta.getConfiguration();
-        return new DsSecurityImpl( (String) config.get( "user" ), (String) config.get( "password" ), null, null );
+        return new DsSecurityImpl( (String) config.get( "username" ), (String) config.get( "password" ), null, null );
     }
 
 }
