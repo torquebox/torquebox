@@ -80,8 +80,6 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        DriverManager.setLogWriter( new PrintWriter( System.err ) );
-
         RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData == null) {
@@ -104,6 +102,12 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         for (DatabaseMetaData each : allMetaData) {
 
             if (each.getConfiguration().containsKey( "jndi" )) {
+                continue;
+            }
+            
+            Object xaEntry = each.getConfiguration().get( "xa" );
+            
+            if ( xaEntry != null && xaEntry == Boolean.FALSE ) {
                 continue;
             }
 
