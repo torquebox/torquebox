@@ -21,9 +21,11 @@ package org.torquebox.core.util;
 
 import java.util.concurrent.Callable;
 
+import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.RubyThread;
+import org.jruby.exceptions.RaiseException;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.runtime.RuntimeContext;
@@ -115,7 +117,7 @@ public class RuntimeHelper {
         try {
             evalScriptlet( ruby, "require %q(" + requirement + ")" );
         } catch (Throwable t) {
-            t.printStackTrace();
+            log.errorf( t, "Unable to require file: %s", requirement );
         }
     }
 
@@ -124,7 +126,12 @@ public class RuntimeHelper {
     public static IRubyObject evalScriptlet(final Ruby ruby, final String script) {
         return withinContext( ruby, new Callable<IRubyObject>() {
             public IRubyObject call() throws Exception {
-                return ruby.evalScriptlet( script );
+                try {
+                    return ruby.evalScriptlet( script );
+                } catch (Exception e) {
+                    log.errorf( e, "Error during evaluation: %s", script );
+                    throw e;
+                }
             }
         } );
     }
@@ -132,7 +139,12 @@ public class RuntimeHelper {
     public static IRubyObject executeScript(final Ruby ruby, final String script, final String location) {
         return withinContext( ruby, new Callable<IRubyObject>() {
             public IRubyObject call() throws Exception {
-                return ruby.executeScript( script, location );
+                try {
+                    return ruby.executeScript( script, location );
+                } catch (Exception e) {
+                    log.errorf( e, "Error during execution: %s", script );
+                    throw e;
+                }
             }
         } );
     }
@@ -150,7 +162,12 @@ public class RuntimeHelper {
                 RubyModule rubyClass = ruby.getClassFromPath( className );
 
                 if (rubyClass != null) {
+                    try {
                     result = (IRubyObject) JavaEmbedUtils.invokeMethod( ruby, rubyClass, "new", parameters, IRubyObject.class );
+                    } catch (Exception e) {
+                        log.errorf( e, "Unable to instantiate: %s", className );
+                        throw e;
+                    }
                 }
 
                 return result;
@@ -182,5 +199,6 @@ public class RuntimeHelper {
         }
     }
 
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
     private static final Object[] EMPTY_OBJECT_ARRAY = new Object[] {};
 }

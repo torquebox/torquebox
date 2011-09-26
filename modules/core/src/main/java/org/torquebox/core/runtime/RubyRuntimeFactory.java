@@ -302,9 +302,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             }
 
             performRuntimeInitialization( runtime );
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            log.error( "Failed to initialize runtime: ", ex );
+        } catch (Exception e) {
+            log.error( "Failed to initialize runtime: ", e );
         } finally {
             if (runtime != null) {
                 this.undisposed.add( runtime );

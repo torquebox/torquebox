@@ -39,7 +39,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
             try {
                 perform();
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(  "Error managing pool", e );
             } finally {
                 this.poolManager.taskCompleted();
             }

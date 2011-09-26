@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.jboss.logging.Logger;
 import org.jruby.runtime.Constants;
 
 /**
@@ -45,15 +46,17 @@ public class JRubyConstants {
                 Field constant = Constants.class.getField( name );
                 value = constant.get( Constants.class );
             } catch (IllegalAccessException e) {
-                e.printStackTrace();
+                log.errorf(  e, "Unable to access constant: %s", name );
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                log.errorf(  e, "Unable to access constant: %s", name );
             }
             constants.put( name, value );
 
         }
         return value;
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.util" );
 
     private static Map<String, Object> constants = new HashMap<String, Object>();
 

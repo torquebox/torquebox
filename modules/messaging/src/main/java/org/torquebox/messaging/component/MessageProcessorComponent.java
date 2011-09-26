@@ -22,6 +22,7 @@ package org.torquebox.messaging.component;
 import javax.jms.Message;
 import javax.jms.XASession;
 
+import org.jboss.logging.Logger;
 import org.jruby.RubyModule;
 import org.torquebox.core.component.AbstractRubyComponent;
 
@@ -46,9 +47,11 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
             try {
             _callRubyMethod( wrappedProcessor, "process!" );
             } catch (Throwable t) {
-                t.printStackTrace();
+                log.errorf(  t, "Unable to process inbound message" );
             }
         }
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.messaging" );
 
 }

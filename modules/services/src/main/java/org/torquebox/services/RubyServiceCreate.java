@@ -49,11 +49,9 @@ public class RubyServiceCreate implements Service<RubyService> {
         context.execute(new Runnable() {
             public void run() {
                 try {
-                    System.err.println( "CREATE service: " + service );
                     RubyServiceCreate.this.service.create();
                     context.complete();
                 } catch (Exception e) {
-                    e.printStackTrace();
                     context.failed( new StartException( e ) );
                 }
             }
