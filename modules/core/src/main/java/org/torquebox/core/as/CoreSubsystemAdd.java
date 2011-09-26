@@ -121,7 +121,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new RubyApplicationExploder() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 5000, new DatabaseProcessor() );
 
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
@@ -130,6 +129,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 110, new RubyNamespaceContextSelectorProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 5000, new DatabaseProcessor() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );

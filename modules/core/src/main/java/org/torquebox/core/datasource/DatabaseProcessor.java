@@ -63,6 +63,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         addAdapter( new H2Adapter() );
         addAdapter( new PostgresAdapter() );
         addAdapter( new MySQLAdapter() );
+        DriverManager.setLogWriter( new PrintWriter( System.err ) );
     }
 
     protected void addAdapter(Adapter adapter) {
@@ -104,10 +105,10 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             if (each.getConfiguration().containsKey( "jndi" )) {
                 continue;
             }
-            
+
             Object xaEntry = each.getConfiguration().get( "xa" );
-            
-            if ( xaEntry != null && xaEntry == Boolean.FALSE ) {
+
+            if (xaEntry != null && xaEntry == Boolean.FALSE) {
                 continue;
             }
 
@@ -154,11 +155,11 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         Service<DataSourceInfoList> service = new ValueService<DataSourceInfoList>( new ImmediateValue<DataSourceInfoList>( infoList ) );
         ServiceBuilder<DataSourceInfoList> builder = phaseContext.getServiceTarget().addService( DataSourceServices.dataSourceInfoName( unit ), service );
-        
-        for ( DataSourceInfoList.Info each : infoList.getConfigurations() ) {
+
+        for (DataSourceInfoList.Info each : infoList.getConfigurations()) {
             builder.addDependencies( each.getServiceName() );
         }
-        
+
         builder.install();
     }
 
@@ -175,7 +176,10 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         phaseContext.getServiceTarget().addService( name, driverService )
                 .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, driverService.getDriverRegistryInjector() )
-                .addDependency( DataSourceServices.jdbcDriverLoadingRuntimeName( unit ), Ruby.class, driverService.getRuntimeInjector() )
+                // .addDependency(
+                // DataSourceServices.jdbcDriverLoadingRuntimeName( unit ),
+                // Ruby.class, driverService.getRuntimeInjector() )
+                .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class, driverService.getRuntimeFactoryInjector() )
                 .setInitialMode( ServiceController.Mode.ACTIVE ).install();
 
     }
@@ -190,7 +194,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         final String jndiName = DataSourceServices.jndiName( unit, dbMeta.getConfigurationName() );
         final ServiceName dataSourceServiceName = DataSourceServices.datasourceName( unit, dbMeta.getConfigurationName() );
-        
+
         try {
             final XaDataSource config = createConfig( unit, dbMeta, adapter );
             XaDataSourceService service = new HackDataSourceService( jndiName );
@@ -253,7 +257,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         TransactionIsolation transactionIsolation = null;
         TimeOut timeOut = null;
         Statement statement = null;
-        Validation validation = null;
+        Validation validation = adapter.getValidationFor(dbMeta);
         String urlDelimiter = null;
         String urlSelectorStrategyClassName = null;
         boolean useJavaContext = false;

@@ -48,7 +48,8 @@ public class DriverService implements Service<Driver> {
     }
 
     protected Driver instantiateDriver() throws Exception {
-        Ruby ruby = this.runtimeInjector.getValue();
+        //Ruby ruby = this.runtimeInjector.getValue();
+        Ruby ruby = this.runtimeFactoryInjector.getValue().createInstance( "JDBC lookup: " + this.adapter.getId(), false );
 
         ruby.setCurrentDirectory( this.applicationDirectory );
 
@@ -76,13 +77,20 @@ public class DriverService implements Service<Driver> {
     public Injector<Ruby> getRuntimeInjector() {
         return this.runtimeInjector;
     }
+    
+    public Injector<RubyRuntimeFactory> getRuntimeFactoryInjector() {
+        return this.runtimeFactoryInjector;
+    }
 
     public Injector<DriverRegistry> getDriverRegistryInjector() {
         return this.driverRegistryInjector;
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.db" );
+    
     private InjectedValue<Ruby> runtimeInjector = new InjectedValue<Ruby>();
+    private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
+    
     private InjectedValue<DriverRegistry> driverRegistryInjector = new InjectedValue<DriverRegistry>();
 
     private String applicationDirectory;

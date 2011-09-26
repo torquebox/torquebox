@@ -1,6 +1,7 @@
 package org.torquebox.core.datasource.db;
 
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
+import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.torquebox.core.datasource.DatabaseMetaData;
 
@@ -38,6 +39,12 @@ public abstract class AbstractAdapter implements Adapter {
     public DsSecurity getSecurityFor(DatabaseMetaData dsMeta) throws ValidateException {
         return null;
     }
+    
+    @Override
+    public Validation getValidationFor(DatabaseMetaData dbMeta) throws ValidateException {
+        return null;
+    }
+
 
     private String id;
     private String requirePath;
