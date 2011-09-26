@@ -1,3 +1,4 @@
+#require 'torquebox-cache'
 require 'torquebox-messaging'
 
 class Processor < TorqueBox::Messaging::MessageProcessor

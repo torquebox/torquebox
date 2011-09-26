@@ -2,6 +2,7 @@ require 'spec_helper'
 
 remote_describe "transactions testing" do
   require 'torquebox-messaging'
+  require 'torquebox-cache'
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -14,6 +15,15 @@ remote_describe "transactions testing" do
   before(:each) do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
     @output = TorqueBox::Messaging::Queue.new('/queue/output')
+    @cache  = TorqueBox::Infinispan::Cache.new(:name => 'tx-test')
+  end
+
+  after(:each) do
+    @cache.clear
+  end
+
+  after(:all) do
+    @cache.stop
   end
     
   it "should not hang when receive times out" do
@@ -114,6 +124,36 @@ remote_describe "transactions testing" do
       q.count.should == 2
     ensure
       queue.stop
+    end
+  end
+
+  it "should rollback cache transactions" do
+    begin
+      @cache = TorqueBox::Infinispan::Cache.new( :name=>"tx-test" )
+      TorqueBox.transaction do
+        @cache.put("first", "1")
+        raise "rollback"
+      end
+      raise "should not get here"
+    rescue Exception => e
+      e.message.should == 'rollback'
+      @cache.keys.size.should == 0
+    end
+  end
+
+  it "should rollback nested cache transactions" do
+    begin
+      TorqueBox.transaction do
+        @cache.put("first", "1")
+        TorqueBox.transaction(:requires_new => false) do
+          @cache.put("second", "2")
+          raise "rollback"
+        end
+      end
+      raise "should not get here"
+    rescue Exception => e
+      e.message.should == 'rollback'
+      @cache.keys.size.should == 0
     end
   end
 
