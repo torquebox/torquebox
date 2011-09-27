@@ -39,16 +39,22 @@ module Transactions
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
+    include TorqueBox::Injectors
     config.after_initialize do
-      puts "migrating with #{ActiveRecord::Base.configurations.inspect}"
-      begin
-        ActiveRecord::Migrator.migrate(RAILS_ROOT + "/db/migrate")
-      rescue Exception=>e
-        puts "Received error #{e} #{$!}"
-        puts e.backtrace
-        puts "Ignoring migration error, probably due to multiple runtimes initializing: #{$!}"
+      arbitrary_object_common_to_runtimes = inject('deployment-unit')
+      arbitrary_object_common_to_runtimes.synchronized do
+        puts "JC: migrating :person_database"
+        ActiveRecord::Base.establish_connection :person_database
+        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
+        puts "JC: migrated :person_database"
       end
-      puts "migration complete"
+      arbitrary_object_common_to_runtimes.synchronized do
+        puts "JC: migrating :development"
+        ActiveRecord::Base.establish_connection Rails.env
+        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
+        puts "JC: migrated :development"
+      end
     end
+
   end
 end

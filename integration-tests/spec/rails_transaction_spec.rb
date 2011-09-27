@@ -193,8 +193,6 @@ remote_describe "rails 3.1 transactions testing" do
       env: development
     ruby:
       version: #{RUBY_VERSION[0,3]}
-    pooling:
-      web: shared
   END
 
   it_should_behave_like "transactions"

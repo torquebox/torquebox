@@ -45,18 +45,21 @@ module Transactions
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
 
+    include TorqueBox::Injectors
     config.after_initialize do
-      proc = Proc.new do
-        begin
-          ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
-        rescue Exception
-          puts "Ignoring migration error, probably due to multiple runtimes initializing: #{$!}"
-        end
+      arbitrary_object_common_to_runtimes = inject('deployment-unit')
+      arbitrary_object_common_to_runtimes.synchronized do
+        puts "JC: migrating :person_database"
+        ActiveRecord::Base.establish_connection :person_database
+        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
+        puts "JC: migrated :person_database"
       end
-      ActiveRecord::Base.establish_connection :person_database
-      proc.call
-      ActiveRecord::Base.establish_connection Rails.env
-      proc.call
+      arbitrary_object_common_to_runtimes.synchronized do
+        puts "JC: migrating :development"
+        ActiveRecord::Base.establish_connection Rails.env
+        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
+        puts "JC: migrated :development"
+      end
     end
 
   end
