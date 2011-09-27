@@ -24,21 +24,27 @@ public class DriverService implements Service<Driver> {
     }
 
     @Override
-    public void start(StartContext context) throws StartException {
+    public void start(final StartContext context) throws StartException {
         log.info( "START" );
-        try {
-            this.driver = instantiateDriver();
-            log.info( "driver: " + this.driver );
-            this.installedDriver = createInstalledDriver();
-            log.info( "installed.driver: " + this.installedDriver );
+        context.asynchronous();
+        context.execute( new Runnable() {
+            public void run() {
+                try {
+                    DriverService.this.driver = instantiateDriver();
+                    log.info( "driver: " + DriverService.this.driver );
+                    DriverService.this.installedDriver = createInstalledDriver();
+                    log.info( "installed.driver: " + DriverService.this.installedDriver );
 
-            DriverRegistry registry = this.driverRegistryInjector.getValue();
+                    DriverRegistry registry = DriverService.this.driverRegistryInjector.getValue();
+                    registry.registerInstalledDriver( installedDriver );
+                    
+                    context.complete();
+                } catch (Exception e) {
+                    context.failed( new StartException( e ) );
+                }
+            }
+        } );
 
-            registry.registerInstalledDriver( installedDriver );
-        } catch (Exception e) {
-            log.error( "Failed to register driver", e );
-            throw new StartException( e );
-        }
     }
 
     @Override
@@ -48,36 +54,39 @@ public class DriverService implements Service<Driver> {
     }
 
     protected Driver instantiateDriver() throws Exception {
-        //Ruby ruby = this.runtimeInjector.getValue();
-        Ruby ruby = this.runtimeFactoryInjector.getValue().createInstance( "JDBC lookup: " + this.adapter.getId(), false );
+        Ruby ruby = this.runtimeInjector.getValue();
 
-        ruby.setCurrentDirectory( this.applicationDirectory );
+        synchronized (ruby) {
+            ruby.setCurrentDirectory( this.applicationDirectory );
 
-        RuntimeHelper.require( ruby, "bundler/setup" );
-        RuntimeHelper.require( ruby, this.adapter.getRequirePath() );
+            RuntimeHelper.require( ruby, "bundler/setup" );
+            RuntimeHelper.require( ruby, this.adapter.getRequirePath() );
 
-        ClassLoader classLoader = ruby.getJRubyClassLoader();
-        final Class<? extends Driver> driverClass = classLoader.loadClass( this.adapter.getDriverClassName() ).asSubclass( Driver.class );
-        Driver driver = driverClass.newInstance();
-        return driver;
+            ClassLoader classLoader = ruby.getJRubyClassLoader();
+            final Class<? extends Driver> driverClass = classLoader.loadClass( this.adapter.getDriverClassName() ).asSubclass( Driver.class );
+            Driver driver = driverClass.newInstance();
+            return driver;
+        }
     }
 
     protected InstalledDriver createInstalledDriver() {
         int majorVersion = this.driver.getMajorVersion();
         int minorVersion = this.driver.getMinorVersion();
         boolean compliant = this.driver.jdbcCompliant();
-        return new InstalledDriver( this.adapter.getId(), this.driver.getClass().getName(), null, null, majorVersion, minorVersion, compliant );
+        return new InstalledDriver( this.adapter.getId(), this.driver.getClass()
+                .getName(), null, null, majorVersion, minorVersion, compliant );
     }
 
     @Override
-    public Driver getValue() throws IllegalStateException, IllegalArgumentException {
+    public Driver getValue() throws IllegalStateException,
+            IllegalArgumentException {
         return this.driver;
     }
 
     public Injector<Ruby> getRuntimeInjector() {
         return this.runtimeInjector;
     }
-    
+
     public Injector<RubyRuntimeFactory> getRuntimeFactoryInjector() {
         return this.runtimeFactoryInjector;
     }
@@ -87,10 +96,10 @@ public class DriverService implements Service<Driver> {
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.db" );
-    
+
     private InjectedValue<Ruby> runtimeInjector = new InjectedValue<Ruby>();
     private InjectedValue<RubyRuntimeFactory> runtimeFactoryInjector = new InjectedValue<RubyRuntimeFactory>();
-    
+
     private InjectedValue<DriverRegistry> driverRegistryInjector = new InjectedValue<DriverRegistry>();
 
     private String applicationDirectory;

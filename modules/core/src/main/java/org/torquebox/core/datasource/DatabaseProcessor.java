@@ -176,10 +176,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         phaseContext.getServiceTarget().addService( name, driverService )
                 .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, driverService.getDriverRegistryInjector() )
-                // .addDependency(
-                // DataSourceServices.jdbcDriverLoadingRuntimeName( unit ),
-                // Ruby.class, driverService.getRuntimeInjector() )
-                .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class, driverService.getRuntimeFactoryInjector() )
+                .addDependency( DataSourceServices.jdbcDriverLoadingRuntimeName( unit ), Ruby.class, driverService.getRuntimeInjector() )
                 .setInitialMode( ServiceController.Mode.ACTIVE ).install();
 
     }
