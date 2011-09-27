@@ -42,19 +42,20 @@ module Transactions
     include TorqueBox::Injectors
     config.after_initialize do
       arbitrary_object_common_to_runtimes = inject('deployment-unit')
-      arbitrary_object_common_to_runtimes.synchronized do
-        puts "JC: migrating :person_database"
-        ActiveRecord::Base.establish_connection :person_database
-        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
-        puts "JC: migrated :person_database"
-      end
-      arbitrary_object_common_to_runtimes.synchronized do
-        puts "JC: migrating :development"
-        ActiveRecord::Base.establish_connection Rails.env
-        ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
-        puts "JC: migrated :development"
+      unless arbitrary_object_common_to_runtimes.nil?
+        arbitrary_object_common_to_runtimes.synchronized do
+          puts "JC: migrating :person_database"
+          ActiveRecord::Base.establish_connection :person_database
+          ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
+          puts "JC: migrated :person_database"
+        end
+        arbitrary_object_common_to_runtimes.synchronized do
+          puts "JC: migrating :development"
+          ActiveRecord::Base.establish_connection Rails.env
+          ActiveRecord::Migrator.migrate(File.join(Rails.root, "/db/migrate"))
+          puts "JC: migrated :development"
+        end
       end
     end
-
   end
 end
