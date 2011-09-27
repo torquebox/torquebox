@@ -20,4 +20,13 @@ describe "rails PWD-based jar loading" do
     uuid.should match(/^........-....-....-....-............$/)
   end
 
+  before(:each) do
+    @default_dir = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
+    FileUtils.rm_rf @default_dir
+  end
+
+  after(:all) do
+    FileUtils.rm_rf @default_dir
+  end
+
 end

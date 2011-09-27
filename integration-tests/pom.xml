@@ -246,7 +246,6 @@
       <artifactId>dm-core</artifactId>
       <type>gem</type>
       <version>${version.dm_core}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>

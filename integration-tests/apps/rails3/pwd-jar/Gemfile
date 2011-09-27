@@ -6,3 +6,4 @@ gem 'activerecord-jdbc-adapter'
 gem 'jdbc-sqlite3'
 
 gem 'torquebox'
+gem 'torquebox-cache'

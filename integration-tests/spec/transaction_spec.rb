@@ -16,6 +16,8 @@ remote_describe "transactions testing" do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
     @output = TorqueBox::Messaging::Queue.new('/queue/output')
     @cache  = TorqueBox::Infinispan::Cache.new(:name => 'tx-test')
+    @default_dir = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
+    FileUtils.rm_rf @default_dir
   end
 
   after(:each) do
@@ -24,6 +26,7 @@ remote_describe "transactions testing" do
 
   after(:all) do
     @cache.stop
+    FileUtils.rm_rf @default_dir
   end
     
   it "should not hang when receive times out" do

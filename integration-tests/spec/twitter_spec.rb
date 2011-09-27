@@ -11,6 +11,15 @@ describe "end-to-end twitter testing" do
       tweets:
   END
 
+  before(:each) do
+    @default_dir = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
+    FileUtils.rm_rf @default_dir
+  end
+
+  after(:all) do
+    FileUtils.rm_rf @default_dir
+  end
+
   # Runs locally using capybara DSL
   it "should retrieve the index using a Capybara DSL" do
     visit "/tweets"
