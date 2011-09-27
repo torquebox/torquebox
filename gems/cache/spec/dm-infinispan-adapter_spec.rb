@@ -44,7 +44,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
     it "should store data in a configured directory" do
       DataMapper.setup(:default, :adapter => 'infinispan', :persist => @configured_dir.to_s )
       heffalump = Heffalump.create
-      File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
+      File.exist?("#{@configured_dir.to_s}/default").should be_true
       heffalump.should_not be_nil
     end
 

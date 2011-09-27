@@ -307,8 +307,9 @@ module TorqueBox
           config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
 
-        manager = org.infinispan.manager.DefaultCacheManager.new(config.build)
-        manager.get_cache()
+        manager = org.infinispan.manager.DefaultCacheManager.new
+        manager.define_configuration( name, config.build )
+        manager.get_cache( self.name )
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
         log( e.backtrace, 'ERROR' )

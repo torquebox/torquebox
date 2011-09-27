@@ -215,14 +215,14 @@ describe TorqueBox::Infinispan::Cache do
       entry = java.util.HashMap.new
       entry.put( "Hello", "world" )
       cache.put('foo', entry)
-      File.exist?("#{@configured_dir.to_s}/___defaultcache").should be_true
+      File.exist?("#{@configured_dir.to_s}/persisted-cache").should be_true
     end
 
     it "should persist dates with a configured directory" do
       cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => @date_cfg_dir.to_s )
       entry = java.util.Date.new
       cache.put('foo', entry).should be_true
-      File.exist?("#{@date_cfg_dir.to_s}/___defaultcache").should be_true
+      File.exist?("#{@date_cfg_dir.to_s}/persisted-cache").should be_true
     end
   end
 
