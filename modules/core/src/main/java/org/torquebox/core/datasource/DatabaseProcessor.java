@@ -63,7 +63,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         addAdapter( new H2Adapter() );
         addAdapter( new PostgresAdapter() );
         addAdapter( new MySQLAdapter() );
-        DriverManager.setLogWriter( new PrintWriter( System.err ) );
+        //DriverManager.setLogWriter( new PrintWriter( System.err ) );
     }
 
     protected void addAdapter(Adapter adapter) {
