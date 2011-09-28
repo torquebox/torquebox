@@ -196,12 +196,10 @@ end</programlisting>
     <formalpara>
       <title>Services</title>
 
-      <para>One of the greatest features inside TorqueBox is the possibility
-      to start background tasks as a daemon inside your application. During
-      development, you may need to access properties from these services, for
-      example, to stop your daemon execution from controller. You can inject
-      your service at any point of your application using
-      <methodname>inject(...)</methodname>.</para>
+      <para>TorqueBox Services may be injected into your components if
+      the argument to <methodname>inject(...)</methodname> begins with
+      <literal>"service:"</literal> followed by the key used to configure
+      the service in <filename>torquebox.yml</filename>.</para>
     </formalpara>
 
     <para><informalexample>
@@ -210,7 +208,10 @@ end</programlisting>
   include TorqueBox::Injectors
 
   def stop
-    the_torque_service = inject( 'service:MyTorqueService' )
+    # Service defined with a unique name in torquebox.yml
+    the_torque_service = inject( 'service:my_torque_service' )
+    # Service defined with service class in torquebox.yml
+    another_service = inject( 'service:AnotherSerice' )
   end
 
 end</programlisting>
