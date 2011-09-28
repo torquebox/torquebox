@@ -30,7 +30,7 @@ import org.junit.Test;
 import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
-import org.torquebox.core.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 
 public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 	

@@ -34,14 +34,14 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
 import org.torquebox.core.app.RubyApplicationMetaData;
-import org.torquebox.core.component.BaseRubyComponentDeployer;
 import org.torquebox.core.component.ComponentEval;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
+import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
 import org.torquebox.web.as.WebServices;
 import org.torquebox.web.rack.RackApplicationMetaData;
 
-public class RackApplicationComponentResolverInstaller extends BaseRubyComponentDeployer {
+public class RackApplicationComponentResolverInstaller extends BaseRubyComponentInstaller {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {

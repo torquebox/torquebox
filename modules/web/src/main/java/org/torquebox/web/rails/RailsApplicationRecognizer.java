@@ -25,7 +25,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VirtualFile;
-import org.projectodd.polyglot.core.FileLocatingProcessor;
+import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
 
 public class RailsApplicationRecognizer extends FileLocatingProcessor {
     

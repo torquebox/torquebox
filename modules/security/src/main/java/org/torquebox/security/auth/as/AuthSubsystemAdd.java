@@ -53,9 +53,9 @@ import org.jboss.security.ISecurityManagement;
 import org.jboss.security.auth.login.AuthenticationInfo;
 import org.jboss.security.config.ApplicationPolicy;
 import org.torquebox.security.as.SecurityDependencyProcessor;
-import org.torquebox.security.auth.AuthDefaultsProcessor;
-import org.torquebox.security.auth.AuthDeployer;
-import org.torquebox.security.auth.AuthYamlParsingProcessor;
+import org.torquebox.security.auth.processors.AuthDefaultsProcessor;
+import org.torquebox.security.auth.processors.AuthInstaller;
+import org.torquebox.security.auth.processors.AuthYamlParsingProcessor;
 
 public class AuthSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
@@ -83,7 +83,7 @@ public class AuthSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 15, new AuthYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new SecurityDependencyProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new AuthDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new AuthInstaller() );
     }
 
     protected void addTorqueBoxSecurityDomainService(final OperationContext context, ServiceVerificationHandler verificationHandler,

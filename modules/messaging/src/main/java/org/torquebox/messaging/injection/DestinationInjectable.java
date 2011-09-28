@@ -28,7 +28,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 import org.torquebox.core.injection.jndi.JNDIInjectable;
-import org.torquebox.messaging.DestinationUtils;
+import org.torquebox.messaging.destinations.DestinationUtils;
 
 public class DestinationInjectable extends JNDIInjectable {
 

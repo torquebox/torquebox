@@ -32,8 +32,8 @@ import org.junit.Test;
 import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
-import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.core.pool.PoolingYamlParsingProcessor;
+import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
+import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.runtime.PoolMetaData;
 
 public class WebRuntimePoolProcessorTest extends AbstractDeploymentProcessorTestCase {

@@ -43,22 +43,22 @@ import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.injection.jndi.ManagedReferenceInjectableService;
-import org.torquebox.messaging.ApplicationNamingContextBindingProcessor;
-import org.torquebox.messaging.BackgroundablePresetsDeployer;
-import org.torquebox.messaging.MessageProcessorDeployer;
-import org.torquebox.messaging.MessagingLoadPathProcessor;
-import org.torquebox.messaging.MessagingRuntimePoolDeployer;
-import org.torquebox.messaging.MessagingYamlParsingProcessor;
-import org.torquebox.messaging.QueueDeployer;
-import org.torquebox.messaging.QueuesYamlParsingProcessor;
-import org.torquebox.messaging.TasksDeployer;
-import org.torquebox.messaging.TasksScanningDeployer;
-import org.torquebox.messaging.TasksYamlParsingProcessor;
-import org.torquebox.messaging.TopicDeployer;
-import org.torquebox.messaging.TopicsYamlParsingProcessor;
-import org.torquebox.messaging.component.MessageProcessorComponentResolverInstaller;
+import org.torquebox.messaging.component.processors.MessageProcessorComponentResolverInstaller;
+import org.torquebox.messaging.destinations.processors.QueueInstaller;
+import org.torquebox.messaging.destinations.processors.QueuesYamlParsingProcessor;
+import org.torquebox.messaging.destinations.processors.TopicInstaller;
+import org.torquebox.messaging.destinations.processors.TopicsYamlParsingProcessor;
 import org.torquebox.messaging.injection.RubyConnectionFactoryService;
 import org.torquebox.messaging.injection.RubyXaConnectionFactoryService;
+import org.torquebox.messaging.processors.ApplicationNamingContextBindingProcessor;
+import org.torquebox.messaging.processors.BackgroundablePresetsProcessor;
+import org.torquebox.messaging.processors.MessageProcessorInstaller;
+import org.torquebox.messaging.processors.MessagingLoadPathProcessor;
+import org.torquebox.messaging.processors.MessagingRuntimePoolProcessor;
+import org.torquebox.messaging.processors.MessagingYamlParsingProcessor;
+import org.torquebox.messaging.tasks.processors.TasksInstaller;
+import org.torquebox.messaging.tasks.processors.TasksScanningProcessor;
+import org.torquebox.messaging.tasks.processors.TasksYamlParsingProcessor;
 
 class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
@@ -84,12 +84,12 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
 
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningProcessor() );
 
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
 
@@ -97,13 +97,13 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
 
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 320, new MessagingRuntimePoolDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 320, new MessagingRuntimePoolProcessor() );
 
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 120, new MessageProcessorComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 220, new MessageProcessorDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 221, new QueueDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 222, new TopicDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 220, new MessageProcessorInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 221, new QueueInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 222, new TopicInstaller() );
     }
 
     protected void addMessagingServices(final OperationContext context, ServiceVerificationHandler verificationHandler,

@@ -26,9 +26,10 @@ import java.util.Set;
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.app.ApplicationYamlParsingProcessor;
-import org.torquebox.core.app.RubyYamlParsingProcessor;
-import org.torquebox.core.pool.PoolingYamlParsingProcessor;
+import org.torquebox.core.app.processors.ApplicationYamlParsingProcessor;
+import org.torquebox.core.app.processors.RubyYamlParsingProcessor;
+import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
+import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 
 /** Generalized opaque holder of <code>torquebox.yml</code>-specified metadata.
  * 

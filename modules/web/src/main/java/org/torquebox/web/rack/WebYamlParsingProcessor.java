@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
-import org.torquebox.core.AbstractSplitYamlParsingProcessor;
+import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
 public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
     

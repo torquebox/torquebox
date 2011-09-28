@@ -40,16 +40,16 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.projectodd.stilts.stomplet.StompletServer;
-import org.torquebox.stomp.SessionManagerInstaller;
-import org.torquebox.stomp.StompApplicationDefaultsProcessor;
 import org.torquebox.stomp.StompWebAdjuster;
-import org.torquebox.stomp.StompYamlParsingProcessor;
-import org.torquebox.stomp.StompletContainerDeployer;
-import org.torquebox.stomp.StompletDeployer;
-import org.torquebox.stomp.StompletLoadPathProcessor;
 import org.torquebox.stomp.StompletServerService;
-import org.torquebox.stomp.StompletsRuntimePoolProcessor;
-import org.torquebox.stomp.component.StompletComponentResolverInstaller;
+import org.torquebox.stomp.component.processors.StompletComponentResolverInstaller;
+import org.torquebox.stomp.processors.SessionManagerInstaller;
+import org.torquebox.stomp.processors.StompApplicationDefaultsProcessor;
+import org.torquebox.stomp.processors.StompYamlParsingProcessor;
+import org.torquebox.stomp.processors.StompletContainerInstaller;
+import org.torquebox.stomp.processors.StompletInstaller;
+import org.torquebox.stomp.processors.StompletLoadPathProcessor;
+import org.torquebox.stomp.processors.StompletsRuntimePoolProcessor;
 
 public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
@@ -104,8 +104,8 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 5, new StompDependenciesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new StompletComponentResolverInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 99, new SessionManagerInstaller( "localhost" ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 100, new StompletContainerDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 101, new StompletDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 100, new StompletContainerInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 101, new StompletInstaller() );
     }
     
     static ModelNode createOperation(ModelNode address) {

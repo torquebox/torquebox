@@ -45,37 +45,38 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
-import org.projectodd.polyglot.core.ArchiveDirectoryMountingProcessor;
-import org.projectodd.polyglot.core.app.ApplicationExploder;
 import org.projectodd.polyglot.core.as.DeploymentNotifierInstaller;
-import org.projectodd.polyglot.core.as.JdkDependenciesProcessor;
-import org.projectodd.polyglot.core.as.KnobStructureProcessor;
+import org.projectodd.polyglot.core.processors.ApplicationExploder;
+import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
+import org.projectodd.polyglot.core.processors.JdkDependenciesProcessor;
+import org.projectodd.polyglot.core.processors.KnobStructureProcessor;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.TorqueBoxStdioContextSelector;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.GlobalRubyMBean;
-import org.torquebox.core.TorqueBoxRbProcessor;
-import org.torquebox.core.TorqueBoxYamlParsingProcessor;
-import org.torquebox.core.app.AppJarScanningProcessor;
-import org.torquebox.core.app.AppKnobYamlParsingProcessor;
-import org.torquebox.core.app.ApplicationYamlParsingProcessor;
-import org.torquebox.core.app.EnvironmentYamlParsingProcessor;
-import org.torquebox.core.app.RubyApplicationDefaultsProcessor;
-import org.torquebox.core.app.RubyApplicationDeployer;
-import org.torquebox.core.app.RubyApplicationRecognizer;
-import org.torquebox.core.app.RubyYamlParsingProcessor;
-import org.torquebox.core.datasource.DatabaseProcessor;
-import org.torquebox.core.datasource.DatabaseYamlParsingProcessor;
-import org.torquebox.core.injection.CorePredeterminedInjectableDeployer;
-import org.torquebox.core.injection.PredeterminedInjectableProcessor;
+import org.torquebox.core.app.processors.AppJarScanningProcessor;
+import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
+import org.torquebox.core.app.processors.ApplicationYamlParsingProcessor;
+import org.torquebox.core.app.processors.EnvironmentYamlParsingProcessor;
+import org.torquebox.core.app.processors.RubyApplicationDefaultsProcessor;
+import org.torquebox.core.app.processors.RubyApplicationInstaller;
+import org.torquebox.core.app.processors.RubyApplicationRecognizer;
+import org.torquebox.core.app.processors.RubyYamlParsingProcessor;
+import org.torquebox.core.datasource.processors.DatabaseProcessor;
+import org.torquebox.core.datasource.processors.DatabaseYamlParsingProcessor;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
-import org.torquebox.core.injection.analysis.InjectionIndexingProcessor;
-import org.torquebox.core.pool.PoolingYamlParsingProcessor;
-import org.torquebox.core.runtime.BaseRubyRuntimeDeployer;
-import org.torquebox.core.runtime.RubyNamespaceContextSelectorProcessor;
-import org.torquebox.core.runtime.RubyRuntimeFactoryDeployer;
-import org.torquebox.core.runtime.RuntimePoolDeployer;
+import org.torquebox.core.injection.analysis.processors.InjectionIndexingProcessor;
+import org.torquebox.core.injection.processors.CorePredeterminedInjectableInstaller;
+import org.torquebox.core.injection.processors.PredeterminedInjectableProcessor;
+import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
+import org.torquebox.core.processors.KnobRootMountProcessor;
+import org.torquebox.core.processors.TorqueBoxRbProcessor;
+import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.runtime.processors.BaseRubyRuntimeInstaller;
+import org.torquebox.core.runtime.processors.RubyNamespaceContextSelectorProcessor;
+import org.torquebox.core.runtime.processors.RubyRuntimeFactoryInstaller;
+import org.torquebox.core.runtime.processors.RuntimePoolInstaller;
 
 class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
@@ -123,20 +124,21 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RubyApplicationDefaultsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new ApplicationExploder() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeInstaller() );
 
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new PredeterminedInjectableProcessor( registry ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableInstaller() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 110, new RubyNamespaceContextSelectorProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 5000, new DatabaseProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolDeployer() );
+
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationInstaller() );
     }
 
     protected void addCoreServices(final OperationContext context, ServiceVerificationHandler verificationHandler,

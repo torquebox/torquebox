@@ -35,12 +35,12 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.torquebox.jobs.JobSchedulerDeployer;
-import org.torquebox.jobs.JobsLoadPathProcessor;
-import org.torquebox.jobs.JobsRuntimePoolProcessor;
-import org.torquebox.jobs.JobsYamlParsingProcessor;
-import org.torquebox.jobs.ScheduledJobDeployer;
-import org.torquebox.jobs.component.JobComponentResolverInstaller;
+import org.torquebox.jobs.component.processors.JobComponentResolverInstaller;
+import org.torquebox.jobs.processors.JobSchedulerInstaller;
+import org.torquebox.jobs.processors.JobsLoadPathProcessor;
+import org.torquebox.jobs.processors.JobsRuntimePoolProcessor;
+import org.torquebox.jobs.processors.JobsYamlParsingProcessor;
+import org.torquebox.jobs.processors.ScheduledJobInstaller;
 
 public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
@@ -67,8 +67,8 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new JobsLoadPathProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerDeployer() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobInstaller() );
     }
     
     static ModelNode createOperation(ModelNode address) {

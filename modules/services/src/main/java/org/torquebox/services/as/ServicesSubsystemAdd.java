@@ -35,11 +35,11 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.torquebox.services.ServicesDeployer;
-import org.torquebox.services.ServicesLoadPathProcessor;
-import org.torquebox.services.ServicesRuntimePoolProcessor;
-import org.torquebox.services.ServicesYamlParsingProcessor;
-import org.torquebox.services.component.ServicesComponentResolverInstaller;
+import org.torquebox.services.component.processors.ServicesComponentResolverInstaller;
+import org.torquebox.services.processors.ServicesDeployer;
+import org.torquebox.services.processors.ServicesLoadPathProcessor;
+import org.torquebox.services.processors.ServicesRuntimePoolProcessor;
+import org.torquebox.services.processors.ServicesYamlParsingProcessor;
 
 public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
 

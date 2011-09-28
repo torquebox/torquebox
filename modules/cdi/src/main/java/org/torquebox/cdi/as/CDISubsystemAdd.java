@@ -35,7 +35,8 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.torquebox.cdi.HackWeldBeanManagerServiceProcessor;
+import org.torquebox.cdi.processors.CDIStructureProcessor;
+import org.torquebox.cdi.processors.HackWeldBeanManagerServiceProcessor;
 
 class CDISubsystemAdd extends AbstractBoottimeAddStepHandler {
     
