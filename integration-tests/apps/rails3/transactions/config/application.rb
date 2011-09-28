@@ -57,5 +57,8 @@ module Transactions
         end
       end
     end
+    config.after_initialize do
+      puts "JC: rails initialization complete"
+    end
   end
 end
