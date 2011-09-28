@@ -8,33 +8,32 @@ shared_examples_for "transactions" do
     @input  = TorqueBox::Messaging::Queue.new('/queue/input')
     @output  = TorqueBox::Messaging::Queue.new('/queue/output')
     Thing.delete_all
-    puts "JC: deleted all Things"
     Person.delete_all
-    puts "JC: deleted all People"
+    puts "JC: deleted all People and Things"
   end
     
   it "should save a simple thing" do
-    puts "JC: save a simple thing"
+    puts "JC: test saving 'sally'"
     sally = Thing.create(:name => 'sally')
     sally.callback.should == 'after_commit'
     Thing.find_by_name("sally").name.should == 'sally'
   end
 
   it "should create a Thing in response to a happy message" do
-    puts "JC: publishing happy"
+    puts "JC: test publishing 'happy path'"
     @input.publish("happy path")
-    @output.receive(:timeout => 60_000).should == 'after_commit'
+    @output.receive(:timeout => 120_000).should == 'after_commit'
     sleep 2
     Thing.count.should == 1
     Thing.find_by_name("happy path").name.should == "happy path"
   end
 
   it "should not create a Thing in response to an error prone message" do
-    puts "JC: publishing sad"
+    puts "JC: test publishing 'this will error'"
     @input.publish("this will error")
     msgs = []
     loop do
-      msg = @output.receive(:timeout => 30_000)
+      msg = @output.receive(:timeout => 120_000)
       puts "received: #{msg}"
       raise "Didn't receive enough rollback messages" unless msg
       msgs << msg if msg == 'after_rollback'
