@@ -22,6 +22,7 @@
   <xi:include href="installation.xml"                 xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="jboss.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="web.xml"                          xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="cache.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="deployment.xml"                   xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="deployment-descriptors.xml"       xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="websockets.xml"                   xmlns:xi="http://www.w3.org/2001/XInclude" />
