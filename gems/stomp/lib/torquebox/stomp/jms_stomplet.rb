@@ -22,7 +22,6 @@ module TorqueBox
     
       def destroy
         @session.close
-        @connection.stop
         @connection.close
       end
 
