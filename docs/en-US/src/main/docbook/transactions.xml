@@ -7,18 +7,160 @@
   <section>
     <title>Overview</title>
     <para>
+      TorqueBox takes advantage of its host's robust transactional
+      facilities. JBoss provides state-of-the-art distributed XA
+      transaction support, and TorqueBox exposes this to Ruby
+      developers in a concise, often transparent API.
     </para>
+    <para>
+      It's important to understand the difference between a
+      conventional database transaction and a distributed transaction:
+      multiple resources may participate in a distributed
+      transaction. The most common example of a transactional resource
+      is a relational database, but other examples include message
+      brokers and even NoSQL data grids. Distributed transactions
+      allow your application to say, tie the success of a database
+      update to the delivery of a message, i.e. the message is only
+      sent if the database update succeeds, and vice versa. If either
+      fails, both rollback.
+    </para>
+
+  </section>
+
+  <section>
+    <title>The <code>TorqueBox.transaction</code> method</title>
+    <para>
+      You may explicitly demarcate a transaction using
+      <code>TorqueBox.transaction</code>.  If the block of commands
+      you pass to it runs to completion without raising an exception,
+      the transaction is committed. Otherwise, it is rolled back. It's
+      just that simple.  It accepts the following arguments:
+
+      <itemizedlist>
+        <listitem>
+          <para>
+            An arbitrary number of resources to enlist in the current
+            transaction (you probably won't ever use this)
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            An optional hash of options; currently only <code>:requires_new</code>
+            is supported, defaulting to <code>false</code>
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>A block defining your transaction</para>
+        </listitem>
+      </itemizedlist>
+
+    </para>
+
+    <para>
+      TorqueBox message destinations, background tasks and caches are
+      all transactionally aware. They will enlist themselves in the
+      transaction defined by <code>TorqueBox.transaction</code>
+      automatically, by default.
+    </para>
+
+    <para>
+      In addition, Rails <classname>ActiveRecord</classname> models
+      are enhanced when run in TorqueBox so that connections from
+      multiple, class-specific databases can indeed participate in a
+      single distributed transaction.  Further, the behavior of nested
+      transaction rollbacks won't surprise you: if the child rolls
+      back, the parent will, too, excepting when the
+      <code>:requires_new=>true</code> option is passed to the child.
+      Callbacks for <code>after_commit</code> and
+      <code>after_rollback</code> work as one would expect.
+    </para>
+
   </section>
 
   <section>
     <title>Messaging</title>
     <para>
+      By default, all <classname>MessageProcessors</classname> are
+      transactional, so each <methodname>on_message(msg)</methodname>
+      invocation demarcates a transaction. If no exceptions are
+      raised, the transaction commits. Otherwise, it rolls back. This
+      is the default behavior and requires no additional configuration
+      on your part.
+    </para>
+    <para>
+      Any messages published to any JMS destinations automatically
+      become part of the current transaction, by default. So they
+      won't be delivered until that transaction commits.
+    </para>
+    <para>
+      All <classname>Backgroundable</classname> tasks are
+      transactional, so if invoked within a transaction, it will only
+      start when the transaction commits.
+    </para>
+    <para>
+      Any manipulations of your Rails
+      <classname>ActiveRecord</classname> models (persisted to your
+      XA-compliant database) within
+      <methodname>on_message(msg)</methodname> will become part of its
+      transaction.
+    </para>
+    <para>
+      Occasionally, you may not want a published message to assume the
+      active transaction. In that case, pass <code>:tx =>
+      false</code>, and the message will be delivered whether the
+      active transaction commits or not.  This option works for
+      backgrounded tasks as well.
     </para>
   </section>
 
   <section>
-    <title><code>TorqueBox.transaction {...}</code></title>
+    <title>Configuration</title>
     <para>
+      No extra configuration of your app is required other that what
+      you'd normally do for a database-aware Ruby application,
+      i.e. standard configuration of the
+      <code>activerecord-jdbc-adapter</code>.  See <xref
+      linkend="database"/> for more details.
     </para>
+    <para>
+      Distributed transactions are restricted to those databases
+      supported by both the <code>activerecord-jdbc-adapter</code> and
+      JBoss XA datasources.. Currently, that includes PostgreSQL,
+      MySQL, H2, Derby, Oracle, Microsoft SQL Server, and IBM
+      DB2. Sqlite3 doesn't support XA. Default installations of some
+      of these databases may require additional configuration to
+      support XA.
+    </para>
+
+    <section>
+      <title>PostgreSQL</title>
+      <para>
+        To enable full distributed transaction support in PostgreSQL,
+        you'll need to set <code>max_prepared_transactions</code> to
+        something greater than zero in
+        <filename>postgresql.conf</filename>, which is the usual
+        default in most installations.  Changing it requires a server
+        restart.
+      </para>
+    </section>
+
+    <section>
+      <title>MySQL</title>
+      <para>
+        To achieve transactional support -- even non-distributed
+        functionality -- you must enable the <code>InnoDB</code>
+        storage engine. As of MySQL 5.5, this is the default storage
+        engine.
+      </para>
+    </section>
+
   </section>
+
+  <section>
+    <title>Examples</title>
+    <para>Coming soon</para>
+  </section>
+
 </chapter>
