@@ -51,7 +51,10 @@
   <section>
     <title>Clustering</title>
 
-    <para>Clustering nodes is trivially easy: <screen> <prompt>$</prompt> <command>torquebox run --clustered</command> </screen></para>
+    <para>Clustering nodes is trivially easy:
+    <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command> </screen>
+    Or, if using the torquebox-server gem:
+    <screen> <prompt>$</prompt> <command>torquebox run --clustered</command> </screen></para>
 
     <para>And when those nodes are behind the <ulink
     url="http://www.jboss.org/mod_cluster">JBoss mod_cluster Apache
