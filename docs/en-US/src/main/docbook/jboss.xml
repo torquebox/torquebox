@@ -73,9 +73,25 @@
     <filename>standalone.conf</filename>. Running the JBoss server is simple:
     <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh</command> </screen>Use
     the <option>--server-config</option> option to specify a different
-    configuration. For example, to put JBoss in "clustered" mode: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=torquebox/standalone-preview-ha.xml</command> </screen>
-    You may set Java system properties using the <option>-D</option> option.
-    Pass <option>-h</option> for a list of all the available options.</para>
+    configuration. For example, to put JBoss in "clustered" mode: <screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=torquebox/standalone-preview-ha.xml</command> </screen></para>
+
+    <para>In the latest releases of TorqueBox some commands of JBoss were
+    encapsulated to turn life easier. Now is possible to do the same
+    with:</para>
+
+    <para><screen> <prompt>$</prompt> <command>torquebox run --clustered</command> </screen>Multiple
+    instances of TorqueBox can run in the same machine completely
+    independently, to bind each one with some specific IP address:</para>
+
+    <para><screen> <prompt>$</prompt> <command>torquebox run -b 0.0.0.0</command> </screen></para>
+
+    <para>You may set Java system properties using the <option>-D</option>
+    option. Pass <option>-h</option> for a list of all the available
+    options.</para>
+
+    <para><emphasis role="bold">Note</emphasis>: TorqueBox setup will be the
+    topic of the next chapters. Binding option with STOMP is currently
+    experimental.</para>
 
     <para>Permanent runtime configuration of JBoss should go in
     <filename>bin/standalone.conf</filename>. For example, your application
