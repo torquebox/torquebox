@@ -34,7 +34,7 @@ import org.junit.Test;
 import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData.RuntimeType;
 import org.torquebox.core.runtime.processors.BaseRubyRuntimeInstaller;
@@ -51,7 +51,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
     @Test
     public void testHappy() throws Exception {
         environment.put( "SOME_VAR", "gassy" );
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "app_name");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
 
         rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
         rubyAppMetaData.setEnvironmentVariables( environment );
@@ -73,7 +73,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
 
     @Test
     public void testWithExistingRubyRuntimeMD() throws Exception {
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "app_name");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
 
         rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
 
@@ -97,7 +97,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
 
     @Test
     public void testWithExistingTypedRubyRuntimeMD() throws Exception {
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "app_name");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
 
         rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
 

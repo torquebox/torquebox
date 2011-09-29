@@ -37,7 +37,7 @@ import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 
 public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
@@ -79,7 +79,7 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
 
         unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
 
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( unit.getName() );
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( unit.getName() );
         rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( metaData.getApplicationEnvironment() );
         rubyAppMetaData.attachTo( unit );

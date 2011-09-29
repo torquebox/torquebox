@@ -31,7 +31,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 
 public class RailsVersionProcessor implements DeploymentUnitProcessor {
 
@@ -39,8 +39,8 @@ public class RailsVersionProcessor implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
-        RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
+        RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
         
         if ( rubyAppMetaData == null || railsAppMetaData == null) {
             return;

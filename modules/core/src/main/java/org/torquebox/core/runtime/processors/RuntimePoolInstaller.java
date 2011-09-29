@@ -41,7 +41,7 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.BasicRubyRuntimePoolMBean;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
@@ -79,7 +79,7 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
 
     protected void deploy(DeploymentPhaseContext phaseContext, final PoolMetaData poolMetaData) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        final RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
 
         if (poolMetaData.isShared()) {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();

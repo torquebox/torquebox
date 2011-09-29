@@ -25,7 +25,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.messaging.MessageProcessorMetaData;
 
@@ -66,7 +66,7 @@ public class MessagingRuntimePoolProcessor implements DeploymentUnitProcessor {
                 return;
             }
         }
-        RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData envMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
         PoolMetaData pool = devMode ? new PoolMetaData( "messaging", 1, 2 ) : new PoolMetaData( "messaging" );
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, pool );

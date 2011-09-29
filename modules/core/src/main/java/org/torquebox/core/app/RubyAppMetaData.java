@@ -25,13 +25,11 @@ import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.projectodd.polyglot.core.app.ApplicationMetaData;
 
-public class RubyApplicationMetaData extends ApplicationMetaData {
+public class RubyAppMetaData extends ApplicationMetaData {
 
-    public static final AttachmentKey<RubyApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create( RubyApplicationMetaData.class );
+    public static final AttachmentKey<RubyAppMetaData> ATTACHMENT_KEY = AttachmentKey.create( RubyAppMetaData.class );
 
-    public static final String DEFAULT_ENVIRONMENT_NAME = "development";
- 
-    public RubyApplicationMetaData(String applicationName) {
+    public RubyAppMetaData(String applicationName) {
         super( applicationName );
     }
     
@@ -42,44 +40,18 @@ public class RubyApplicationMetaData extends ApplicationMetaData {
     }
     
     public void extractAppEnvironment() {
-        if (this.environmentName == null) {
-            this.environmentName = getAppEnvironmentFromEnvironmentVariables();
+        if (getEnvironmentName() == null) {
+            setEnvironmentName( getAppEnvironmentFromEnvironmentVariables() );
         }        
     }
     
-    public void applyDefaults() {
-        if (this.environmentName == null) {
-            this.environmentName = DEFAULT_ENVIRONMENT_NAME;
-        }
-    }
-
+    @Override
     public boolean isDevelopmentMode() {
-        String env = this.environmentName;
+        String env = getEnvironmentName();
         if (env == null) {
             env = getAppEnvironmentFromEnvironmentVariables();
         }
         return env == null || env.trim().equalsIgnoreCase( "development" );
-    }
-
-    public void setEnvironmentName(String environmentName) {
-        this.environmentName = environmentName;
-    }
-
-    public String getEnvironmentName() {
-        return this.environmentName;
-    }
-
-    public void setEnvironmentVariables(Map<String, String> environment) {
-        this.environment = environment;
-    }
-
-    public Map<String, String> getEnvironmentVariables() {
-        return this.environment;
-    }
-
-    public String toString() {
-        return "[RubyApplicationMetaData:\n  root=" + getRoot() + "\n  environmentName=" + this.environmentName + "\n  archive=" + isArchive() + "\n  environment="
-                + this.environment + "]";
     }
 
     public Map<String, Map<String, String>> getAuthenticationConfig() {
@@ -93,16 +65,15 @@ public class RubyApplicationMetaData extends ApplicationMetaData {
 
     protected String getAppEnvironmentFromEnvironmentVariables() {
         String env = null;
-        if (this.environment != null) {
-            env = this.environment.get( "RACK_ENV" );
+        Map<String, String> envVars = getEnvironmentVariables();
+        if (envVars != null) {
+            env = envVars.get( "RACK_ENV" );
             if (env == null) {
-                env = this.environment.get( "RAILS_ENV" );
+                env = envVars.get( "RAILS_ENV" );
             }
         }
         return env;
     }
     
-    private String environmentName;
-    private Map<String, String> environment;
     private Map<String, Map<String, String>> authenticationConfig;
 }

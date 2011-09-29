@@ -48,7 +48,7 @@ public class WebRuntimePoolProcessorTest extends AbstractDeploymentProcessorTest
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
 
-        (new RackApplicationMetaData()).attachTo( unit );
+        (new RackMetaData()).attachTo( unit );
 
         deploy( phaseContext );
 
@@ -89,7 +89,7 @@ public class WebRuntimePoolProcessorTest extends AbstractDeploymentProcessorTest
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", poolingYml );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
 
-        (new RackApplicationMetaData()).attachTo( unit );
+        (new RackMetaData()).attachTo( unit );
 
         deploy( phaseContext );
         List<PoolMetaData> allMetaData = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );

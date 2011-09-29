@@ -29,7 +29,7 @@ import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
-import org.torquebox.web.rack.RackApplicationMetaData;
+import org.torquebox.web.rack.RackMetaData;
 
 public class WebDependenciesProcessor implements DeploymentUnitProcessor {
     
@@ -43,7 +43,7 @@ public class WebDependenciesProcessor implements DeploymentUnitProcessor {
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
-        if (unit.hasAttachment( RackApplicationMetaData.ATTACHMENT_KEY )) {
+        if (unit.hasAttachment( RackMetaData.ATTACHMENT_KEY )) {
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_WEB_ID );
             addDependency( moduleSpecification, moduleLoader, NETTY_ID );
         }

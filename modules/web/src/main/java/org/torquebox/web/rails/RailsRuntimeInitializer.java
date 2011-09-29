@@ -31,9 +31,9 @@ import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
-import org.torquebox.web.rack.RackApplicationMetaData;
+import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.rack.RackRuntimeInitializer;
 
 public class RailsRuntimeInitializer extends RackRuntimeInitializer {
@@ -41,9 +41,9 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
     private List<String> autoloadPaths = new ArrayList<String>();
 
     @SuppressWarnings("unused")
-    private RailsApplicationMetaData railsAppMetaData;
+    private RailsMetaData railsAppMetaData;
 
-    public RailsRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackAppMetaData, RailsApplicationMetaData railsAppMetaData) {
+    public RailsRuntimeInitializer(RubyAppMetaData rubyAppMetaData, RackMetaData rackAppMetaData, RailsMetaData railsAppMetaData) {
         super( rubyAppMetaData, rackAppMetaData );
         this.railsAppMetaData = railsAppMetaData;
     }

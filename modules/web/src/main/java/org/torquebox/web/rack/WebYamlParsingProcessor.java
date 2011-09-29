@@ -36,10 +36,10 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
     @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
         
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         if (rackAppMetaData == null) {
-            rackAppMetaData = new RackApplicationMetaData();
+            rackAppMetaData = new RackMetaData();
             rackAppMetaData.attachTo( unit );
         }
         

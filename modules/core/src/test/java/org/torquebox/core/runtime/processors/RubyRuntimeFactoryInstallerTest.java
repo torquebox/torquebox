@@ -34,7 +34,7 @@ import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.projectodd.polyglot.test.as.MockServiceBuilder;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
@@ -58,7 +58,7 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
         
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo" );
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo" );
         rubyAppMetaData.attachTo( unit );
         
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
@@ -84,7 +84,7 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         metaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
         
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo"); 
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo"); 
         rubyAppMetaData.attachTo( unit );
                 
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
@@ -110,7 +110,7 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
 
 
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
         rubyAppMetaData.attachTo( unit );
                 
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
@@ -137,7 +137,7 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
 
 
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
         rubyAppMetaData.attachTo( unit );
                 
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
@@ -163,7 +163,7 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
 
 
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "foo");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
         rubyAppMetaData.attachTo( unit );
                 
         unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );

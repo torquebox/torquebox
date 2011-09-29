@@ -16,7 +16,7 @@ import org.projectodd.stilts.conduit.stomp.SimpleStompSessionManager;
 import org.torquebox.stomp.HttpStompSessionManagerService;
 import org.torquebox.stomp.StompApplicationMetaData;
 import org.torquebox.stomp.as.StompServices;
-import org.torquebox.web.rack.RackApplicationMetaData;
+import org.torquebox.web.rack.RackMetaData;
 
 public class SessionManagerInstaller implements DeploymentUnitProcessor {
 
@@ -34,7 +34,7 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
             return;
         }
 
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         boolean useWeb = false;
         
@@ -92,7 +92,7 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
     }
 
     protected ServiceName getWebHostServiceName(DeploymentUnit unit) {
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
         List<String> hosts = rackAppMetaData.getHosts();
 
         String hostName = null;

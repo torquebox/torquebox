@@ -24,15 +24,15 @@ import static org.junit.Assert.assertEquals;
 import org.jboss.vfs.VFS;
 import org.jruby.Ruby;
 import org.junit.Test;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.test.ruby.AbstractRubyTestCase;
 
 public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 
     @Test
     public void testInitializer() throws Exception {
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
-        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test-app");
+        RackMetaData rackAppMetaData = new RackMetaData();
         rubyAppMetaData.setRoot( VFS.getChild( "/myapp" ) );
         rubyAppMetaData.setEnvironmentName( "test" );
         rackAppMetaData.setContextPath( "/mycontext" );

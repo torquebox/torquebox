@@ -4,7 +4,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.web.rack.RackApplicationMetaData;
+import org.torquebox.web.rack.RackMetaData;
 
 public class StompWebAdjuster implements DeploymentUnitProcessor {
 
@@ -20,7 +20,7 @@ public class StompWebAdjuster implements DeploymentUnitProcessor {
             return;
         }
         
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
         System.err.println( "rackAppMetaData=" + rackAppMetaData );
         
         if ( rackAppMetaData == null ) {

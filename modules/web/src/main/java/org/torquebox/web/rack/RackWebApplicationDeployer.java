@@ -92,7 +92,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
 
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         if (rackAppMetaData == null) {
             return;
@@ -165,7 +165,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, CoreServices.runtimePoolName( unit, "web" ) );
     }
 
-    protected void setUpRackFilter(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+    protected void setUpRackFilter(DeploymentUnit unit, RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
         FilterMetaData rackFilter = new FilterMetaData();
         rackFilter.setId( RACK_FILTER_NAME );
         rackFilter.setFilterClass( RackFilter.class.getName() );
@@ -203,7 +203,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
     }
 
-    protected void setUpStaticResourceServlet(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+    protected void setUpStaticResourceServlet(RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
         JBossServletsMetaData servlets = jbossWebMetaData.getServlets();
         if (servlets == null) {
             servlets = new JBossServletsMetaData();
@@ -236,7 +236,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         }
     }
 
-    protected void ensureSomeServlet(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+    protected void ensureSomeServlet(RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
         JBossServletsMetaData servlets = jbossWebMetaData.getServlets();
 
         if (servlets.isEmpty()) {
@@ -255,12 +255,12 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
         }
     }
 
-    protected void setUpHostAndContext(DeploymentUnit unit, RackApplicationMetaData rackAppMetaData, WarMetaData warMetaData, JBossWebMetaData jbossWebMetaData)
+    protected void setUpHostAndContext(DeploymentUnit unit, RackMetaData rackAppMetaData, WarMetaData warMetaData, JBossWebMetaData jbossWebMetaData)
             throws Exception {
         jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
     }
 
-    protected void setUpPoolDependency(RackApplicationMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+    protected void setUpPoolDependency(RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
         List<String> depends = jbossWebMetaData.getDepends();
 
         if (depends == null) {

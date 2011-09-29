@@ -48,7 +48,7 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
         deploy( phaseContext );
         
-        assertNull( unit.getAttachment(RackApplicationMetaData.ATTACHMENT_KEY ));
+        assertNull( unit.getAttachment(RackMetaData.ATTACHMENT_KEY ));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
         deploy( phaseContext );
 
-        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         assertNotNull( rackMetaData );
 
@@ -77,7 +77,7 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
         deploy( phaseContext );
 
-        RackApplicationMetaData rackMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         assertNotNull( rackMetaData );
 

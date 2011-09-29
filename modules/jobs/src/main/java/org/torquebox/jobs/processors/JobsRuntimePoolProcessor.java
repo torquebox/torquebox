@@ -25,7 +25,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
 
@@ -52,7 +52,7 @@ public class JobsRuntimePoolProcessor implements DeploymentUnitProcessor {
         PoolMetaData jobsPool = PoolMetaData.extractNamedMetaData( allMetaData, "jobs" );
         
         if (jobsPool == null) {
-            RubyApplicationMetaData envMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+            RubyAppMetaData envMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
             boolean devMode = envMetaData != null && envMetaData.isDevelopmentMode();
             jobsPool = devMode ? new PoolMetaData( "jobs", 1, 2 ) : new PoolMetaData( "jobs" );
             unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, jobsPool );

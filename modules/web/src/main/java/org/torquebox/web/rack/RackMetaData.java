@@ -29,11 +29,11 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.web.WebApplicationMetaData;
 
-public class RackApplicationMetaData extends WebApplicationMetaData {
+public class RackMetaData extends WebApplicationMetaData {
 
-    public static final AttachmentKey<RackApplicationMetaData> ATTACHMENT_KEY = AttachmentKey.create(RackApplicationMetaData.class);
+    public static final AttachmentKey<RackMetaData> ATTACHMENT_KEY = AttachmentKey.create(RackMetaData.class);
     
-    public RackApplicationMetaData() {
+    public RackMetaData() {
 
     }
 

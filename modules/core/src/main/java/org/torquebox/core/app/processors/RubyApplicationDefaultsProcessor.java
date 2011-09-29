@@ -23,7 +23,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
 public class RubyApplicationDefaultsProcessor implements DeploymentUnitProcessor {
@@ -31,7 +31,7 @@ public class RubyApplicationDefaultsProcessor implements DeploymentUnitProcessor
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData != null) {
             if (rubyAppMetaData.getEnvironmentName() != null) {

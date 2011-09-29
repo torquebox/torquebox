@@ -33,7 +33,7 @@ import org.junit.Test;
 import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
 public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCase {
@@ -48,8 +48,8 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
     @Test
     public void testHappy() throws Exception {
         environment.put( "SOME_VAR", "gassy" );
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "app_name");
-        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
+        RackMetaData rackAppMetaData = new RackMetaData();
 
         rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
         rubyAppMetaData.setEnvironmentVariables( environment );
@@ -72,8 +72,8 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
 
     @Test
     public void testWithExistingRubyRuntimeMD() throws Exception {
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "app_name");
-        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
+        RackMetaData rackAppMetaData = new RackMetaData();
 
         rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
 
@@ -96,8 +96,8 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
 
     @Test
     public void testWithExistingTypedRubyRuntimeMD() throws Exception {
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "app_name" );
-        RackApplicationMetaData rackAppMetaData = new RackApplicationMetaData();
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name" );
+        RackMetaData rackAppMetaData = new RackMetaData();
 
         rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
 

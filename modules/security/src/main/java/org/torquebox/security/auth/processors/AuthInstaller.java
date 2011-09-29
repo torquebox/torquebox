@@ -45,7 +45,7 @@ import org.jboss.msc.service.ServiceTarget;
 import org.jboss.security.ISecurityManagement;
 import org.jboss.security.auth.login.AuthenticationInfo;
 import org.jboss.security.config.ApplicationPolicy;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.security.auth.AuthMetaData;
 import org.torquebox.security.auth.Authenticator;
 import org.torquebox.security.auth.TorqueBoxLoginModule;
@@ -60,7 +60,7 @@ public class AuthInstaller implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
         // We need the application name to name our bean with
-        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         if (appMetaData != null) {
             String applicationName = appMetaData.getApplicationName();
             this.setApplicationName( applicationName );

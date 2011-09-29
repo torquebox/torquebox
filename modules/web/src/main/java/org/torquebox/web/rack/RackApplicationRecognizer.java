@@ -42,10 +42,10 @@ public class RackApplicationRecognizer extends FileLocatingProcessor {
         VirtualFile root = resourceRoot.getRoot();
 
         if (isRackApplication( root )) {
-            RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+            RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
             if (rackAppMetaData == null) {
-                rackAppMetaData = new RackApplicationMetaData();
+                rackAppMetaData = new RackMetaData();
                 rackAppMetaData.setRackUpScriptLocation( DEFAULT_RACKUP_PATH );
                 rackAppMetaData.attachTo( unit );
             }

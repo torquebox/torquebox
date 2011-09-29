@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
 /**
@@ -48,10 +48,10 @@ public class EnvironmentYamlParsingProcessor extends AbstractSplitYamlParsingPro
     @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
         
-        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
 
         if (appMetaData == null) {
-            appMetaData = new RubyApplicationMetaData( unit.getName() );
+            appMetaData = new RubyAppMetaData( unit.getName() );
             appMetaData.attachTo( unit );
         }
 

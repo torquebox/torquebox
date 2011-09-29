@@ -33,13 +33,13 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.component.ComponentEval;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
 import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
 import org.torquebox.web.as.WebServices;
-import org.torquebox.web.rack.RackApplicationMetaData;
+import org.torquebox.web.rack.RackMetaData;
 
 public class RackApplicationComponentResolverInstaller extends BaseRubyComponentInstaller {
 
@@ -47,8 +47,8 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
 
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData == null || rackAppMetaData == null) {
             return;
@@ -87,7 +87,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
 
     protected List<String> getInjectionPathPrefixes(DeploymentPhaseContext phaseContext) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
         
         List<String> prefixes = defaultInjectionPathPrefixes();
         prefixes.add(  rackAppMetaData.getRackUpScriptLocation() );

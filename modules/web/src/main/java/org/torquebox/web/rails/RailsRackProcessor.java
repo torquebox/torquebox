@@ -23,8 +23,8 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.app.RubyApplicationMetaData;
-import org.torquebox.web.rack.RackApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.web.rack.RackMetaData;
 
 public class RailsRackProcessor implements DeploymentUnitProcessor {
 
@@ -32,9 +32,9 @@ public class RailsRackProcessor implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
-        RackApplicationMetaData rackAppMetaData = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
-        RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
+        RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
+        RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
         
         if (rubyAppMetaData == null || rackAppMetaData == null || railsAppMetaData == null) {
             return;
@@ -45,9 +45,6 @@ public class RailsRackProcessor implements DeploymentUnitProcessor {
         } else {
             rackAppMetaData.setRackUpScript( getRackUpScript( rackAppMetaData.getContextPath() ) );
         }
-        
-        rackAppMetaData.setStaticPathPrefix( STATIC_PATH_PREFIX );
-
     }
     
     protected String getRackUpScript(String context) {
@@ -62,7 +59,4 @@ public class RailsRackProcessor implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
 
     }
-    
-    public static final String STATIC_PATH_PREFIX = "public";
-
 }

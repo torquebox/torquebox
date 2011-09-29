@@ -38,11 +38,11 @@ public class RailsApplicationRecognizer extends FileLocatingProcessor {
         VirtualFile root = resourceRoot.getRoot();
         
         if (isRailsApplication( root )) {
-            RailsApplicationMetaData railsAppMetaData = unit.getAttachment( RailsApplicationMetaData.ATTACHMENT_KEY );
+            RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
             
             if (railsAppMetaData == null) {
-                railsAppMetaData = new RailsApplicationMetaData();
-                unit.putAttachment( RailsApplicationMetaData.ATTACHMENT_KEY, railsAppMetaData );
+                railsAppMetaData = new RailsMetaData();
+                unit.putAttachment( RailsMetaData.ATTACHMENT_KEY, railsAppMetaData );
             }
         }
 

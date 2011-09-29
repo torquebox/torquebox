@@ -34,7 +34,7 @@ import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.app.processors.EnvironmentYamlParsingProcessor;
 import org.torquebox.core.app.processors.RubyApplicationDefaultsProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
@@ -52,7 +52,7 @@ public class EnvironmentYamlParsingProcessorTest extends AbstractDeploymentProce
     public void testBooleanEnvironmentYml() throws Exception {
         MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "environment.yml" );
 
-        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         assertNotNull( appMetaData );
 
         Map<String, String> environmentVariables = appMetaData.getEnvironmentVariables();
@@ -73,7 +73,7 @@ public class EnvironmentYamlParsingProcessorTest extends AbstractDeploymentProce
         deploy( context );
         verify( logger, never() ).append( anyString() );
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         assertEquals( "biscuit", rubyAppMetaData.getEnvironmentName() );
     }
 
@@ -88,7 +88,7 @@ public class EnvironmentYamlParsingProcessorTest extends AbstractDeploymentProce
         deploy( context );
         verify( logger, never() ).append( anyString() );
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         assertEquals( "biscuit", rubyAppMetaData.getEnvironmentName() );
     }
 

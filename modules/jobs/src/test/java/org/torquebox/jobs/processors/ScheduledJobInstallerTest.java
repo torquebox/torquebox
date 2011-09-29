@@ -33,7 +33,7 @@ import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.projectodd.polyglot.test.as.MockServiceBuilder;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.jobs.ScheduledJob;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.jobs.as.JobsServices;
@@ -76,7 +76,7 @@ public class ScheduledJobInstallerTest extends AbstractDeploymentProcessorTestCa
         jobMetaData.setRubySchedulerName( "scheduler" );
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
         
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test-app");
         rubyAppMetaData.attachTo( unit );
         
         deploy( phaseContext );

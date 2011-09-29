@@ -32,7 +32,7 @@ import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.TorqueBoxMetaData;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.app.processors.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.processors.RubyApplicationDefaultsProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
@@ -53,10 +53,10 @@ public class ApplicationYamlParsingProcessorTest extends AbstractDeploymentProce
         TorqueBoxMetaData metaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
         assertNotNull( metaData );
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         assertNotNull( rubyAppMetaData );
         
-        assertEquals( RubyApplicationMetaData.DEFAULT_ENVIRONMENT_NAME, rubyAppMetaData.getEnvironmentName() );
+        assertEquals( RubyAppMetaData.DEFAULT_ENVIRONMENT_NAME, rubyAppMetaData.getEnvironmentName() );
         
         assertEquals( "torquebox", rubyAppMetaData.getApplicationName() );
     }
@@ -72,7 +72,7 @@ public class ApplicationYamlParsingProcessorTest extends AbstractDeploymentProce
         deploy( context );
         verify( logger ).append( anyString() );
 
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         assertEquals( "biscuit", rubyAppMetaData.getEnvironmentName() );
     }
 

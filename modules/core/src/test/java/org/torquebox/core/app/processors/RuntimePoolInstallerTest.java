@@ -30,7 +30,7 @@ import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.projectodd.polyglot.test.as.MockServiceBuilder;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.DefaultRubyRuntimePool;
 import org.torquebox.core.runtime.PoolMetaData;
@@ -55,7 +55,7 @@ public class RuntimePoolInstallerTest extends AbstractDeploymentProcessorTestCas
 
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test-app");
         rubyAppMetaData.attachTo( unit );
         
         deploy( phaseContext );
@@ -83,7 +83,7 @@ public class RuntimePoolInstallerTest extends AbstractDeploymentProcessorTestCas
         
         unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         
-        RubyApplicationMetaData rubyAppMetaData = new RubyApplicationMetaData( "test-app");
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test-app");
         rubyAppMetaData.attachTo( unit );
         
         deploy( phaseContext );

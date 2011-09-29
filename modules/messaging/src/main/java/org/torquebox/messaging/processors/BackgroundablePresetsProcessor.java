@@ -23,7 +23,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.messaging.tasks.TaskMetaData;
 
 /**
@@ -48,7 +48,7 @@ public class BackgroundablePresetsProcessor implements DeploymentUnitProcessor {
 
         
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        if (!unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
+        if (!unit.hasAttachment( RubyAppMetaData.ATTACHMENT_KEY )) {
             return;
         }
         TaskMetaData task = new TaskMetaData();

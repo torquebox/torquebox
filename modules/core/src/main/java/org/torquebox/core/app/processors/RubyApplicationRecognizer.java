@@ -28,7 +28,7 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.as.DeploymentNotifier;
 import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 
 public class RubyApplicationRecognizer extends FileLocatingProcessor {
 
@@ -41,10 +41,10 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
         if (!isRubyApplication( root )) {
             return;
         }
-        RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
 
         if (rubyAppMetaData == null) {
-            rubyAppMetaData = new RubyApplicationMetaData( unit.getName() );
+            rubyAppMetaData = new RubyAppMetaData( unit.getName() );
             rubyAppMetaData.setRoot( root );
             rubyAppMetaData.attachTo( unit );
         }

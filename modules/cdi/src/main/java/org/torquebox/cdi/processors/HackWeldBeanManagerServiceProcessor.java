@@ -33,7 +33,7 @@ import org.jboss.as.weld.services.BeanManagerService;
 import org.jboss.as.weld.services.WeldService;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 
 /**
  * {@link DeploymentUnitProcessor} that binds the bean manager to JNDI
@@ -54,7 +54,7 @@ public class HackWeldBeanManagerServiceProcessor implements DeploymentUnitProces
             return;
         }
         
-        RubyApplicationMetaData rubyAppMetaData = deploymentUnit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData rubyAppMetaData = deploymentUnit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         if (rubyAppMetaData == null) {
             return;
         }

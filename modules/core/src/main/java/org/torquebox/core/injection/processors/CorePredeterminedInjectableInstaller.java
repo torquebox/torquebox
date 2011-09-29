@@ -27,7 +27,7 @@ import org.jboss.msc.service.ServiceRegistry;
 import org.jboss.msc.service.ServiceTarget;
 import org.jboss.msc.service.ValueService;
 import org.jboss.msc.value.ImmediateValue;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.injection.CorePredeterminedInjectableHandler;
 import org.torquebox.core.injection.ServiceRegistryInjectable;
@@ -49,7 +49,7 @@ public class CorePredeterminedInjectableInstaller implements DeploymentUnitProce
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        if (!unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
+        if (!unit.hasAttachment( RubyAppMetaData.ATTACHMENT_KEY )) {
             return;
         }
 

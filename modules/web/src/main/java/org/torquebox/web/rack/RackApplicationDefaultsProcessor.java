@@ -38,7 +38,7 @@ public class RackApplicationDefaultsProcessor implements DeploymentUnitProcessor
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        RackApplicationMetaData metadata = unit.getAttachment( RackApplicationMetaData.ATTACHMENT_KEY );
+        RackMetaData metadata = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
         
         if ( metadata == null ) {
             return;

@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.vfs.VirtualFile;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
@@ -118,7 +118,7 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
     }
 
     protected ComponentResolver createComponentResolver(DeploymentUnit unit) {
-        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         boolean alwaysReload = false;
         if (appMetaData != null) {
             alwaysReload = appMetaData.isDevelopmentMode();

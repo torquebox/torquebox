@@ -33,7 +33,7 @@ public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        if ( ! unit.hasAttachment( RackApplicationMetaData.ATTACHMENT_KEY ) ) {
+        if ( ! unit.hasAttachment( RackMetaData.ATTACHMENT_KEY ) ) {
             return;
         }
         

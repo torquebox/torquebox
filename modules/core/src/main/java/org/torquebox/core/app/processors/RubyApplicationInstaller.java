@@ -36,7 +36,7 @@ import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.ImmediateValue;
 import org.torquebox.core.app.RubyApplication;
 import org.torquebox.core.app.RubyApplicationMBean;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 
 /** Deploys a RubyApplication, primarily for JMX access.  Not very functional.
  * 
@@ -47,7 +47,7 @@ public class RubyApplicationInstaller implements DeploymentUnitProcessor {
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        final RubyApplicationMetaData rubyAppMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        final RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         
         if ( rubyAppMetaData == null ) {
             return;

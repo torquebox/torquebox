@@ -29,7 +29,7 @@ import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 
 public class CoreDependenciesProcessor implements DeploymentUnitProcessor {
     
@@ -45,7 +45,7 @@ public class CoreDependenciesProcessor implements DeploymentUnitProcessor {
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
 
-        if (unit.hasAttachment( RubyApplicationMetaData.ATTACHMENT_KEY )) {
+        if (unit.hasAttachment( RubyAppMetaData.ATTACHMENT_KEY )) {
             //addDependency( moduleSpecification, moduleLoader, TORQUEBOX_BOOTSTRAP_ID );
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CORE_ID );
             addDependency( moduleSpecification, moduleLoader, JBOSS_VFS_ID );

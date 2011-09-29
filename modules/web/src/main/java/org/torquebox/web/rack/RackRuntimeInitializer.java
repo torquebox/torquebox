@@ -22,7 +22,7 @@ package org.torquebox.web.rack;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.RuntimeInitializer;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -34,7 +34,7 @@ import org.torquebox.core.util.RuntimeHelper;
 public class RackRuntimeInitializer implements RuntimeInitializer {
 
 
-    public RackRuntimeInitializer(RubyApplicationMetaData rubyAppMetaData, RackApplicationMetaData rackMetaData) {
+    public RackRuntimeInitializer(RubyAppMetaData rubyAppMetaData, RackMetaData rackMetaData) {
         this.rubyAppMetaData = rubyAppMetaData;
         this.rackAppMetaData = rackMetaData;
     }
@@ -100,7 +100,7 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
     
-    protected RubyApplicationMetaData rubyAppMetaData;
-    protected RackApplicationMetaData rackAppMetaData;
+    protected RubyAppMetaData rubyAppMetaData;
+    protected RackMetaData rackAppMetaData;
 
 }

@@ -26,7 +26,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.messaging.MessageProcessorMetaData;
 import org.torquebox.messaging.destinations.QueueMetaData;
 import org.torquebox.messaging.tasks.TaskMetaData;
@@ -49,7 +49,7 @@ public class TasksInstaller implements DeploymentUnitProcessor {
     
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RubyApplicationMetaData appMetaData = unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY );
+        RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
         
         if ( appMetaData == null ) {
             return;
@@ -62,7 +62,7 @@ public class TasksInstaller implements DeploymentUnitProcessor {
         }
     }
 
-    protected void deploy(DeploymentPhaseContext phaseContext, DeploymentUnit unit, RubyApplicationMetaData appMetaData, TaskMetaData task) throws DeploymentUnitProcessingException {
+    protected void deploy(DeploymentPhaseContext phaseContext, DeploymentUnit unit, RubyAppMetaData appMetaData, TaskMetaData task) throws DeploymentUnitProcessingException {
         String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + "/tasks/" + task.getQueueSuffix();
                 
         

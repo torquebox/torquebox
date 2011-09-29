@@ -12,7 +12,7 @@ import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ValueService;
 import org.jboss.msc.value.ImmediateValue;
-import org.torquebox.core.app.RubyApplicationMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 
 public class RubyNamespaceContextSelectorProcessor implements DeploymentUnitProcessor {
@@ -21,7 +21,7 @@ public class RubyNamespaceContextSelectorProcessor implements DeploymentUnitProc
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         
-        if ( unit.getAttachment( RubyApplicationMetaData.ATTACHMENT_KEY ) == null ) {
+        if ( unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY ) == null ) {
             return;
         }
         
