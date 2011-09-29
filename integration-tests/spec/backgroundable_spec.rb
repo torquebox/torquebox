@@ -24,7 +24,7 @@ describe "backgroundable tests" do
     visit "/background"
     page.should have_content('it worked')
     @background.publish "release"
-    result = @foreground.receive(:timeout => 25000)
+    result = @foreground.receive(:timeout => 60000)
     result.should == "success"
   end
 
@@ -32,7 +32,7 @@ describe "backgroundable tests" do
     visit "/background?redefine=1"
     page.should have_content('it worked')
     @background.publish "release"
-    result = @foreground.receive(:timeout => 25000)
+    result = @foreground.receive(:timeout => 60000)
     result.should == "success"
   end
 end
