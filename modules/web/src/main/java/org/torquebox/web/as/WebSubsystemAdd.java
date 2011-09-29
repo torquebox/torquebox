@@ -43,8 +43,8 @@ import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.projectodd.polyglot.web.WebConnectorConfigService;
 import org.projectodd.polyglot.web.processors.VirtualHostInstaller;
+import org.projectodd.polyglot.web.processors.WebApplicationDefaultsProcessor;
 import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
-import org.torquebox.web.rack.RackApplicationDefaultsProcessor;
 import org.torquebox.web.rack.RackApplicationRecognizer;
 import org.torquebox.web.rack.RackRuntimeProcessor;
 import org.torquebox.web.rack.RackWebApplicationDeployer;
@@ -89,7 +89,7 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RailsVersionProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 50, new RailsRackProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 60, new RackApplicationDefaultsProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 60, new WebApplicationDefaultsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 70, new RackWebApplicationDeployer() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
