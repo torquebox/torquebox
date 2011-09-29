@@ -35,6 +35,7 @@
   <xi:include href="transactions.xml"                 xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="pooling.xml"                      xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="capistrano-support.xml"           xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="torquebox-server-gem.xml"         xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="production-setup.xml"             xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="additional-resources.xml"         xmlns:xi="http://www.w3.org/2001/XInclude" />
 
