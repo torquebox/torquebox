@@ -27,4 +27,3 @@ Gemfile.lock
 Infinispan-FileCacheStore
 rubyObj.*
 schema.rb
-integration-tests/db/
