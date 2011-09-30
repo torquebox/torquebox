@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="torquebox-server-gem">
+  <title>torquebox-server Gem</title>
+
+  <section id="running-torquebox-server">
+    <title>Running</title>
+
+    <para>Running TorqueBox is as simple as:
+
+    <screen> <prompt>$</prompt> <command> torquebox run</command> </screen>
+
+    To run TorqueBox in clustered mode, use:
+
+    <screen> <prompt>$</prompt> <command>torquebox run --clustered</command> </screen>
+
+    Multiple instances of TorqueBox can run on the same machine by
+    binding each one to a some specific IP address:
+
+    <screen> <prompt>$</prompt> <command>torquebox run -b 0.0.0.0</command> </screen></para>
+
+  </section>
+</chapter>
