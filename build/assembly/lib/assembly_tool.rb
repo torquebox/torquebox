@@ -22,22 +22,6 @@ require 'rubygems'
 require 'rubygems/installer'
 require 'rubygems/dependency_installer'
 
-=begin
-  gem 'builder', '3.0.0'
-rescue Gem::LoadError=> e
-  puts "Installing builder gem"
-  require 'rubygems/commands/install_command'
-  installer = Gem::Commands::InstallCommand.new
-  installer.options[:args] = [ 'builder' ]
-  installer.options[:version] = '3.0.0'
-  installer.options[:generate_rdoc] = false
-  installer.options[:generate_ri] = false
-  begin
-    installer.execute
-  rescue Gem::SystemExitException=>e2
-  end
-=end
-
 class AssemblyTool
 
   attr_accessor :src_dir
@@ -185,7 +169,41 @@ class AssemblyTool
       modules.each do |name|
         previous_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:torquebox-#{name}:1.0']" )
         if ( previous_subsystem.empty? )
-          profile.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:torquebox-#{name}:1.0" )
+          #profile.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:torquebox-#{name}:1.0" )
+          profile.add_element( subsystem_element( name ) )
+        end
+      end
+    end
+  end
+
+  def subsystem_element(name)
+    custom_subsystem_path = base_dir + "/../../modules/#{name}/src/subsystem/subsystem.xml"
+    if ( ! File.exist?( custom_subsystem_path ) ) 
+      e = REXML::Element.new( 'subsystem' )
+      e.add_attribute( 'xmlns', "urn:jboss:domain:torquebox-#{name}:1.0" )
+      return e
+    end
+
+    custom_doc = REXML::Document.new( File.read( custom_subsystem_path ) )
+    custom_doc.root 
+  end
+
+  def add_socket_bindings(doc)
+    servers = doc.root.get_elements( '//server' )
+    servers.each do |server|
+      modules.each do |name|
+        binding_path = base_dir + "/../../modules/#{name}/src/subsystem/socket-binding.conf"
+        if ( File.exists?( binding_path ) )
+          group_name, port_name, port = File.read( binding_path ).chomp.split(':')
+          binding_group = server.get_elements( "socket-binding-group[@name='#{group_name}']" )
+          if ( binding_group.empty? )
+            $stderr.puts "invalid binding group #{group_name}"
+            next
+          end
+          previous_binding = binding_group.first.get_elements( "socket-binding[@name='#{port_name}']" )
+          if ( previous_binding.empty? )
+            binding_group.first.add_element( 'socket-binding', 'name'=>port_name, 'port'=>port )
+          end
         end
       end
     end
@@ -224,26 +242,6 @@ class AssemblyTool
     doc.root.insert_after('extensions', props) unless props.parent
   end
 
-  def add_xa_datasource(doc)
-    string = <<-EOF
-      <xa-datasource jndi-name="java:jboss/datasources/ExampleXADS" pool-name="ExampleXADS">
-        <driver>h2</driver>
-        <xa-datasource-property name="URL">jdbc:h2:mem:test;MVCC=TRUE</xa-datasource-property>
-        <xa-pool>
-          <min-pool-size>10</min-pool-size>
-          <max-pool-size>20</max-pool-size>
-          <prefill>true</prefill>
-        </xa-pool>
-        <security>
-          <user-name>sa</user-name>
-          <password>sa</password>
-        </security>
-      </xa-datasource>
-    EOF
-    element = REXML::Document.new( string )
-    doc.root.insert_after('//datasource', element)
-  end
-
   def backup_current_config
     %w{ standalone domain }.each do |mode|
       Dir.chdir( File.join( @jboss_dir, mode, 'configuration' ) ) do
@@ -262,9 +260,9 @@ class AssemblyTool
       increase_deployment_timeout(doc)
       add_extensions(doc)
       add_subsystems(doc)
+      add_socket_bindings(doc)
       set_welcome_root(doc)
       unquote_cookie_path(doc)
-      add_xa_datasource(doc)
 
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)

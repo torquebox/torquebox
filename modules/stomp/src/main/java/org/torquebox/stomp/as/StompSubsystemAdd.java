@@ -31,6 +31,7 @@ import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.network.SocketBinding;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
@@ -53,46 +54,51 @@ import org.torquebox.stomp.processors.StompletsRuntimePoolProcessor;
 
 public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
+
     @Override
-    protected void populateModel(ModelNode operation, ModelNode model) {
-        model.setEmptyObject();
+    protected void populateModel(ModelNode operation, ModelNode subModel) {
+        subModel.get( "socket-binding" ).set( operation.get( "socket-binding" ) );
     }
-    
+
     @Override
-    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
-        
+
         try {
-            addCoreServices( context, verificationHandler, newControllers );
+            addCoreServices( context, operation, model, verificationHandler, newControllers );
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
     }
     
-    protected void addCoreServices(OperationContext context, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
-        addStompletServer( context, verificationHandler, newControllers );
+
+    protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
+        addStompletServer( context, operation, model, verificationHandler, newControllers );
     }
 
-    private void addStompletServer(OperationContext context, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
+    private void addStompletServer(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
         StompletServer server = new StompletServer();
         StompletServerService service = new StompletServerService( server );
         
+        final String bindingRef = operation.require("socket-binding").asString();
+        log.info(  "Binding STOMP to " + bindingRef );
+
         ServiceController<StompletServer> controller = context.getServiceTarget().addService( StompServices.SERVER, service )
-            .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, service.getTransactionManagerInjector() )
-            .setInitialMode( Mode.ON_DEMAND )
-            .addListener( verificationHandler )
-            .install();
-        
+                .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, service.getTransactionManagerInjector() )
+                .addDependency(SocketBinding.JBOSS_BINDING_NAME.append(bindingRef), SocketBinding.class, service.getBindingInjector())
+                .setInitialMode( Mode.ON_DEMAND )
+                .addListener( verificationHandler )
+                .install();
+
         newControllers.add( controller );
-        
+
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
@@ -107,14 +113,14 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 100, new StompletContainerInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 101, new StompletInstaller() );
     }
-    
+
     static ModelNode createOperation(ModelNode address) {
         final ModelNode subsystem = new ModelNode();
         subsystem.get( OP ).set( ADD );
         subsystem.get( OP_ADDR ).set( address );
         return subsystem;
     }
-    
+
     static final StompSubsystemAdd ADD_INSTANCE = new StompSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.stomp.as" );
 

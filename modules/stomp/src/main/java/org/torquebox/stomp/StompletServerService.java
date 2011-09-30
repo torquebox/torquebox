@@ -2,6 +2,7 @@ package org.torquebox.stomp;
 
 import javax.transaction.TransactionManager;
 
+import org.jboss.as.network.SocketBinding;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
@@ -17,13 +18,13 @@ public class StompletServerService implements Service<StompletServer> {
     }
 
     @Override
-    public StompletServer getValue() throws IllegalStateException,
-            IllegalArgumentException {
+    public StompletServer getValue() throws IllegalStateException, IllegalArgumentException {
         return this.server;
     }
 
     @Override
     public void start(StartContext context) throws StartException {
+        System.err.println( "Starting STOMP server with: " + this.bindingInjector.getValue() );
         try {
             this.server.setTransactionManager( this.transactionManagerInjector.getValue() );
             this.server.start();
@@ -44,8 +45,14 @@ public class StompletServerService implements Service<StompletServer> {
     public Injector<TransactionManager> getTransactionManagerInjector() {
         return this.transactionManagerInjector;
     }
+    
+    public Injector<SocketBinding> getBindingInjector() {
+        return this.bindingInjector;
+    }
+
 
     private StompletServer server;
     private InjectedValue<TransactionManager> transactionManagerInjector = new InjectedValue<TransactionManager>();
-
+    private InjectedValue<SocketBinding> bindingInjector = new InjectedValue<SocketBinding>();
+    
 }
