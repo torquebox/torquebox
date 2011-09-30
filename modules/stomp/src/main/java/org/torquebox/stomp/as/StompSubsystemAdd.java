@@ -40,7 +40,7 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.projectodd.stilts.stomplet.StompletServer;
+import org.projectodd.stilts.stomplet.server.StompletServer;
 import org.torquebox.stomp.StompWebAdjuster;
 import org.torquebox.stomp.StompletServerService;
 import org.torquebox.stomp.component.processors.StompletComponentResolverInstaller;

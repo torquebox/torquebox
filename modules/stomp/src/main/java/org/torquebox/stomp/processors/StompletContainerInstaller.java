@@ -7,7 +7,7 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.projectodd.stilts.conduit.spi.StompSessionManager;
-import org.projectodd.stilts.stomplet.StompletServer;
+import org.projectodd.stilts.stomplet.server.StompletServer;
 import org.torquebox.stomp.RubyStompletMetaData;
 import org.torquebox.stomp.StompApplicationMetaData;
 import org.torquebox.stomp.StompletContainerService;

@@ -9,7 +9,7 @@ import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
-import org.projectodd.stilts.stomplet.StompletServer;
+import org.projectodd.stilts.stomplet.server.StompletServer;
 
 public class StompletServerService implements Service<StompletServer> {
 
@@ -24,8 +24,10 @@ public class StompletServerService implements Service<StompletServer> {
 
     @Override
     public void start(StartContext context) throws StartException {
-        System.err.println( "Starting STOMP server with: " + this.bindingInjector.getValue() );
+        SocketBinding binding = this.bindingInjector.getValue();
         try {
+        	this.server.setBindAddress( binding.getAddress() );
+        	this.server.setPort( binding.getPort() );
             this.server.setTransactionManager( this.transactionManagerInjector.getValue() );
             this.server.start();
         } catch (Exception e) {

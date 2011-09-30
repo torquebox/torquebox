@@ -10,8 +10,8 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.projectodd.stilts.conduit.spi.StompSessionManager;
-import org.projectodd.stilts.stomplet.StompletServer;
 import org.projectodd.stilts.stomplet.container.SimpleStompletContainer;
+import org.projectodd.stilts.stomplet.server.StompletServer;
 
 public class StompletContainerService implements Service<SimpleStompletContainer> {
 
