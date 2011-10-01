@@ -25,3 +25,10 @@ Once your repositories are configured, simply type:
 
     mvn install
 
+Dependencies
+------------
+
+TorqueBox depends on polyglot: https://github.com/projectodd/jboss-polyglot
+
+You'll need to pull and build it before building TorqueBox, and it will
+stuff its artifacts into ~/.m2/
