@@ -242,6 +242,11 @@ class AssemblyTool
     doc.root.insert_after('extensions', props) unless props.parent
   end
 
+  def remove_destinations(doc)
+    destinations = doc.root.get_elements( '//jms-topic' ) + doc.root.get_elements( '//jms-queue' )
+    destinations.each &:remove
+  end
+
   def backup_current_config
     %w{ standalone domain }.each do |mode|
       Dir.chdir( File.join( @jboss_dir, mode, 'configuration' ) ) do
@@ -263,6 +268,7 @@ class AssemblyTool
       add_socket_bindings(doc)
       set_welcome_root(doc)
       unquote_cookie_path(doc)
+      remove_destinations(doc)
 
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)
