@@ -116,8 +116,7 @@
         <artifactId>gem-maven-plugin</artifactId>
         <configuration>
           <jrubyJvmArgs>-Xmx1024m</jrubyJvmArgs>
-          <extraFiles>jboss/**/*</extraFiles>
-          <extraFiles>share/**/*</extraFiles>
+          <extraFiles>jboss/**/*,share/**/*</extraFiles>
         </configuration>
       </plugin>
       <plugin>
