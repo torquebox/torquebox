@@ -96,14 +96,14 @@ describe "STOMP applications via websockets", :js=>true do
 
     wait_for( :subscribed ).should_not be_nil
 
-    sleep( 1 )
+    sleep( 3 )
 
     page.execute_script <<-END
       client.begin( 'tx-1' );
       client.send( "/bridge/foo", { transaction: 'tx-1' }, "this is my message" );
     END
 
-    sleep( 1 )
+    sleep( 3 )
 
     page_variable( :received_message ).should be_nil
 
@@ -128,7 +128,7 @@ def page_variable(variable_name)
   page.evaluate_script( variable_name ) 
 end
 
-def wait_for(variable_name, timeout_seconds=15)
+def wait_for(variable_name, timeout_seconds=30)
   0.upto( timeout_seconds ) do
     v = page_variable( variable_name )
     return v unless ( v.nil? )

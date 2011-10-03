@@ -26,8 +26,8 @@ public class StompletServerService implements Service<StompletServer> {
     public void start(StartContext context) throws StartException {
         SocketBinding binding = this.bindingInjector.getValue();
         try {
-        	this.server.setBindAddress( binding.getAddress() );
-        	this.server.setPort( binding.getPort() );
+        	this.server.setBindAddress( binding.getSocketAddress().getAddress() );
+        	this.server.setPort( binding.getSocketAddress().getPort() );
             this.server.setTransactionManager( this.transactionManagerInjector.getValue() );
             this.server.start();
         } catch (Exception e) {
