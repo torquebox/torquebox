@@ -80,7 +80,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-assembly-for-gem</id>
+            <id>copy-assembly-jboss-for-gem</id>
             <phase>process-sources</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -94,6 +94,21 @@
               </resources>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-assembly-share-for-gem</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/torquebox-server/share</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../assembly/target/stage/torquebox/share</directory>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -102,6 +117,7 @@
         <configuration>
           <jrubyJvmArgs>-Xmx1024m</jrubyJvmArgs>
           <extraFiles>jboss/**/*</extraFiles>
+          <extraFiles>share/**/*</extraFiles>
         </configuration>
       </plugin>
       <plugin>
