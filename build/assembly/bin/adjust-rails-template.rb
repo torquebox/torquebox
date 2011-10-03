@@ -39,7 +39,7 @@ class RailsTemplateAdjuster
   end
    
   def template_path
-    File.dirname( __FILE__ ) + '/../../assembly/target/stage/torquebox/share/rails/template.rb'
+    File.dirname( __FILE__ ) + '/../target/stage/torquebox/share/rails/template.rb'
   end
 
 end

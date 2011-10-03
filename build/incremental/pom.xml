@@ -76,17 +76,6 @@
                   <args>/private/torquebox/private-settings.xml ${env.BUILD_NUMBER}</args>
                 </configuration>
               </execution>
-              <execution>
-                <id>adjust-rails-template</id>
-                <phase>install</phase>
-                <goals>
-                  <goal>jruby</goal>
-                </goals>
-                <configuration>
-                  <file>bin/adjust-rails-template.rb</file>
-                  <args>${env.BUILD_NUMBER}</args>
-                </configuration>
-              </execution>
             </executions>
           </plugin>
         </plugins>

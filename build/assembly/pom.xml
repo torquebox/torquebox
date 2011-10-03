@@ -46,6 +46,33 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>ci</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>jruby-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>adjust-rails-template</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>jruby</goal>
+                </goals>
+                <configuration>
+                  <file>bin/adjust-rails-template.rb</file>
+                  <args>${env.BUILD_NUMBER}</args>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
