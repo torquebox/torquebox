@@ -6,6 +6,11 @@ Requirements
 Building
 --------
 
+TorqueBox depends on polyglot: https://github.com/projectodd/jboss-polyglot
+
+You'll need to pull and build it (following its README) before building 
+TorqueBox, and it will stuff its artifacts into ~/.m2/
+
 Install the project using the provided settings.xml:
 
     mvn -s support/settings.xml install
@@ -25,10 +30,4 @@ Once your repositories are configured, simply type:
 
     mvn install
 
-Dependencies
-------------
 
-TorqueBox depends on polyglot: https://github.com/projectodd/jboss-polyglot
-
-You'll need to pull and build it before building TorqueBox, and it will
-stuff its artifacts into ~/.m2/
