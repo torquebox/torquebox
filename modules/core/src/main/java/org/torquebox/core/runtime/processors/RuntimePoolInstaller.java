@@ -24,19 +24,15 @@ import java.util.List;
 
 import javax.management.MBeanServer;
 
-import org.jboss.as.ee.naming.InjectedEENamespaceContextSelector;
 import org.jboss.as.jmx.MBeanRegistrationService;
 import org.jboss.as.jmx.MBeanServerService;
 import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.naming.context.NamespaceContextSelector;
-import org.jboss.as.server.deployment.DeploymentException;
-
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;

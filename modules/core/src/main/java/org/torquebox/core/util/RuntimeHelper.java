@@ -25,7 +25,6 @@ import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.RubyThread;
-import org.jruby.exceptions.RaiseException;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.jruby.runtime.builtin.IRubyObject;
 

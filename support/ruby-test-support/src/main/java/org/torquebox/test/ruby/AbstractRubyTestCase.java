@@ -23,9 +23,9 @@ import static org.junit.Assert.assertFalse;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
-import org.projectodd.polyglot.test.AbstractTorqueBoxTestCase;
+import org.projectodd.polyglot.test.AbstractBoxTestCase;
 
-public class AbstractRubyTestCase extends AbstractTorqueBoxTestCase {
+public class AbstractRubyTestCase extends AbstractBoxTestCase {
 
     protected Ruby createRuby() throws Exception {
         return TestRubyFactory.createRuby();

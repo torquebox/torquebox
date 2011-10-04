@@ -19,14 +19,10 @@
 
 package org.torquebox.core.app.processors;
 
-import java.net.URL;
-
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
-import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
-import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class AppKnobYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     
@@ -38,11 +34,7 @@ public class AppKnobYamlParsingProcessorTest extends AbstractDeploymentProcessor
 
     @Test(expected=DeploymentUnitProcessingException.class)
     public void testInvalidRootKnob() throws Exception {
-        
-        URL appKnobYml = getClass().getResource( "invalid-root-knob.yml" );
-        
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "invalid-root-knob.yml", appKnobYml );
-        deploy( phaseContext );
+        deployResourceAs( "invalid-root-knob.yml", "invalid-root-knob.yml" );
     }
 
 }

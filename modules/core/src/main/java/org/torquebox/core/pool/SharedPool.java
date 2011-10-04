@@ -19,8 +19,6 @@
 
 package org.torquebox.core.pool;
 
-import javax.naming.InitialContext;
-
 import org.jboss.as.naming.context.NamespaceContextSelector;
 import org.jboss.logging.Logger;
 

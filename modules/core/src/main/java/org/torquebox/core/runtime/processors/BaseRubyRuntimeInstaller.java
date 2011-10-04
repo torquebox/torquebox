@@ -28,7 +28,6 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
-import org.torquebox.core.runtime.RubyRuntimeMetaData.RuntimeType;
 
 public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
 

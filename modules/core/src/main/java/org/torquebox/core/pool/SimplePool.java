@@ -23,8 +23,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.jboss.as.naming.context.NamespaceContextSelector;
-
 public class SimplePool<T> implements ManageablePool<T> {
 
     private String name;

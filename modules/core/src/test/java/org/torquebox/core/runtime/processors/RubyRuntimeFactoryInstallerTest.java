@@ -30,7 +30,6 @@ import org.jruby.CompatVersion;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.projectodd.polyglot.test.as.MockServiceBuilder;
@@ -38,8 +37,7 @@ import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
-import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
-import org.torquebox.core.runtime.processors.RubyRuntimeFactoryInstaller;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessorTestCase {
     

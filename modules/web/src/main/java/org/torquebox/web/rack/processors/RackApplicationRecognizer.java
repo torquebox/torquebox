@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rack;
+package org.torquebox.web.rack.processors;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -27,6 +27,7 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
+import org.torquebox.web.rack.RackMetaData;
 
 public class RackApplicationRecognizer extends FileLocatingProcessor {
 

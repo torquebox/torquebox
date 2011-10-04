@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rails;
+package org.torquebox.web.rails.processors;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -26,6 +26,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
+import org.torquebox.web.rails.RailsMetaData;
 
 public class RailsApplicationRecognizer extends FileLocatingProcessor {
     

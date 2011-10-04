@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rails;
+package org.torquebox.web.rails.processors;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,6 +32,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.web.rails.RailsMetaData;
 
 public class RailsVersionProcessor implements DeploymentUnitProcessor {
 

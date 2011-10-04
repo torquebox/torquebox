@@ -24,18 +24,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
 import java.util.List;
 
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
-import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
-import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.runtime.PoolMetaData;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class PoolingYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 
@@ -47,35 +44,21 @@ public class PoolingYamlParsingProcessorTest extends AbstractDeploymentProcessor
 
     @Test
     public void testEmptyPoolingYml() throws Exception {
-
-        URL poolingYml = getClass().getResource( "empty.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", poolingYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        deploy( phaseContext );
-
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "empty.yml" );
+        
         assertTrue( unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY ).isEmpty() );
 
     }
 
     @Test(expected=DeploymentUnitProcessingException.class)
     public void testJunkPoolingYml() throws Exception {
-
-        URL poolingYml = getClass().getResource( "junk-pooling.yml" );
-        
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", poolingYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        deploy( phaseContext );
+        deployResourceAsTorqueboxYml( "junk-pooling.yml" );
     }
 
     @Test
     public void testMinMaxPoolingYml() throws Exception {
-        URL poolingYml = getClass().getResource( "min-max-pooling.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", poolingYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        deploy( phaseContext );
-        
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "min-max-pooling.yml" );
+                
         List<PoolMetaData> pools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
 
         assertFalse( pools.isEmpty() );

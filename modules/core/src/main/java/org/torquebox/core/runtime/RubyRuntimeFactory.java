@@ -48,7 +48,6 @@ import org.jruby.ast.executable.Script;
 import org.jruby.util.ClassCache;
 import org.torquebox.bootstrap.JRubyHomeLocator;
 import org.torquebox.core.component.ComponentRegistry;
-import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.InjectionRegistry;
 import org.torquebox.core.pool.InstanceFactory;
 import org.torquebox.core.util.JRubyConstants;

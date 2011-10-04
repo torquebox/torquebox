@@ -29,10 +29,9 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
-import org.torquebox.jobs.processors.JobsRuntimePoolProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTestCase {
 

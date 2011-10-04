@@ -28,12 +28,11 @@ import java.net.URL;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
-import org.torquebox.core.app.processors.RubyYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     
@@ -45,12 +44,7 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
     @Test
     public void testInvalidVersionMetaData() throws Exception {
-        URL rubyYml = getClass().getResource( "ruby-invalid.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "ruby-invalid.yml" );
 
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
         assertEquals( RubyRuntimeMetaData.Version.V1_8, runtimeMetaData.getVersion() );
@@ -59,8 +53,7 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
     @Test
     public void testWithRuntimeMetaData18() throws Exception {
-        URL rubyYml = getClass().getResource( "ruby-1.8.yml" );
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentPhaseContext phaseContext = setupResourceAsTorqueboxYml( "ruby-1.8.yml" );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
         
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
@@ -76,8 +69,7 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
     @Test
     public void testWithRuntimeMetaData19() throws Exception {
-        URL rubyYml = getClass().getResource( "ruby-1.9.yml" );
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentPhaseContext phaseContext = setupResourceAsTorqueboxYml( "ruby-1.9.yml" );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
         
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();

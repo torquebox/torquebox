@@ -43,7 +43,6 @@ import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.runtime.RubyRuntimeFactoryService;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
-import org.torquebox.core.runtime.RubyRuntimeMetaData.Version;
 
 public class RubyRuntimeFactoryInstaller implements DeploymentUnitProcessor {
 

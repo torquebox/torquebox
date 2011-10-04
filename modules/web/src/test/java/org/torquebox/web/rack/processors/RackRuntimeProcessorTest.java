@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rack;
+package org.torquebox.web.rack.processors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -30,11 +30,13 @@ import java.util.Map;
 import org.jboss.vfs.VFS;
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
+import org.torquebox.web.rack.RackMetaData;
+import org.torquebox.web.rack.RackRuntimeInitializer;
 
 public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCase {
 	

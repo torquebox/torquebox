@@ -28,14 +28,13 @@ import org.jboss.msc.value.Value;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.projectodd.polyglot.test.as.MockServiceBuilder;
 import org.torquebox.jobs.JobScheduler;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.jobs.as.JobsServices;
-import org.torquebox.jobs.processors.JobSchedulerInstaller;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCase {
     

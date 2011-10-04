@@ -31,13 +31,11 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.vfs.VFS;
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
-import org.torquebox.core.runtime.RubyRuntimeMetaData.RuntimeType;
-import org.torquebox.core.runtime.processors.BaseRubyRuntimeInstaller;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTestCase {
     

@@ -24,18 +24,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
-import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.messaging.destinations.TopicMetaData;
-import org.torquebox.messaging.destinations.processors.TopicsYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
+
 
 public class TopicsYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     
@@ -47,12 +45,7 @@ public class TopicsYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testEmptyYaml() throws Exception {
-        URL topicsYml = getClass().getResource( "empty.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "topics.yml", topicsYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAs( "empty.yml", "topics.yml" );
         
         List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENTS_KEY );
         assertTrue( allMetaData.isEmpty() );
@@ -60,12 +53,7 @@ public class TopicsYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testJunkYaml() throws Exception {
-        URL topicsYml = getClass().getResource( "junk-topics.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "topics.yml", topicsYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAs( "junk-topics.yml", "topics.yml" );
         
         List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENTS_KEY );
         assertTrue( allMetaData.isEmpty() );
@@ -73,12 +61,7 @@ public class TopicsYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testValidYaml() throws Exception {
-        URL topicsYml = getClass().getResource( "valid-topics.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "topics.yml", topicsYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAs( "valid-topics.yml", "topics.yml" );
         
         List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENTS_KEY );
 
@@ -94,12 +77,7 @@ public class TopicsYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testTorqueBoxYml() throws Exception {
-        URL topicsYml = getClass().getResource( "valid-torquebox.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", topicsYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-torquebox.yml" );
         
         List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENTS_KEY );
 

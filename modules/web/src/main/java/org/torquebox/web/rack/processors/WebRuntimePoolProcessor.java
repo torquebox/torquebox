@@ -17,35 +17,43 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rails;
+package org.torquebox.web.rack.processors;
+
+import java.util.List;
 
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.runtime.RubyLoadPathMetaData;
-import org.torquebox.core.runtime.RubyRuntimeMetaData;
+import org.torquebox.core.runtime.PoolMetaData;
+import org.torquebox.web.rack.RackMetaData;
 
-public class RailsAutoloadPathProcessor implements DeploymentUnitProcessor {
+public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
         
-        if (runtimeMetaData != null && runtimeMetaData.getRuntimeInitializer() instanceof RailsRuntimeInitializer) {
-            RailsRuntimeInitializer initializer = (RailsRuntimeInitializer) runtimeMetaData.getRuntimeInitializer();
-            for (RubyLoadPathMetaData path : runtimeMetaData.getLoadPaths()) {
-                if (path.isAutoload()) {
-                    initializer.addAutoloadPath( path.toString() );
-                }
-            }
+        if ( ! unit.hasAttachment( RackMetaData.ATTACHMENT_KEY ) ) {
+            return;
         }
+        
+        List<PoolMetaData> allMetaData = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
+        PoolMetaData poolMetaData = PoolMetaData.extractNamedMetaData( allMetaData, "web" );
+        
+        if ( poolMetaData == null ) {
+            poolMetaData = new PoolMetaData("web");
+            poolMetaData.setShared();
+            unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
+        }
+        
+        poolMetaData.setStartAsynchronously( true );
     }
 
     @Override
     public void undeploy(DeploymentUnit context) {
-
+        // TODO Auto-generated method stub
+        
     }
 
 }

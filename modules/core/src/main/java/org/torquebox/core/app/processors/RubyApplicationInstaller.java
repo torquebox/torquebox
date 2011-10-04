@@ -34,9 +34,9 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.ImmediateValue;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.app.RubyApplication;
 import org.torquebox.core.app.RubyApplicationMBean;
-import org.torquebox.core.app.RubyAppMetaData;
 
 /** Deploys a RubyApplication, primarily for JMX access.  Not very functional.
  * 

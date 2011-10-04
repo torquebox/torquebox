@@ -24,18 +24,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
-import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.messaging.destinations.QueueMetaData;
-import org.torquebox.messaging.destinations.processors.QueuesYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 
@@ -47,12 +44,7 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testEmptyYaml() throws Exception {
-        URL queuesYml = getClass().getResource( "empty.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "queues.yml", queuesYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAs( "empty.yml", "queues.yml" );
         
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
         assertTrue( allMetaData.isEmpty() );
@@ -60,12 +52,7 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testJunkYaml() throws Exception {
-        URL queuesYml = getClass().getResource( "junk-queues.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "queues.yml", queuesYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAs( "junk-queues.yml", "queues.yml" );
         
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
         assertTrue( allMetaData.isEmpty() );
@@ -73,12 +60,7 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testValidYaml() throws Exception {
-        URL queuesYml = getClass().getResource( "valid-queues.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "queues.yml", queuesYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAs( "valid-queues.yml", "queues.yml" );
         
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
 
@@ -93,12 +75,7 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Test
     public void testTorqueBoxYml() throws Exception {
-        URL queuesYml = getClass().getResource( "valid-torquebox.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", queuesYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-torquebox.yml" );
         
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
 
@@ -144,12 +121,7 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
     @Test
     public void testDestinationDurability() throws Exception {
         
-        URL queuesYml = getClass().getResource( "valid-torquebox.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", queuesYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-torquebox.yml" );
         
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
 

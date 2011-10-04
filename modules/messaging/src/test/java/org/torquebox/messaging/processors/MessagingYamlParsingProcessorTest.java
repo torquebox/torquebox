@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +30,10 @@ import java.util.Map;
 import org.jboss.as.server.deployment.DeploymentException;
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
-import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.messaging.MessageProcessorMetaData;
-import org.torquebox.messaging.processors.MessagingYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     
@@ -131,13 +128,8 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
     }
 
     private List< MessageProcessorMetaData> getMetaData(String filename) throws Exception {
-        URL torqueboxYml = getClass().getResource( filename );
-        
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", torqueboxYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
-        deploy( phaseContext );
-        
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( filename );
+                        
         return unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
     }
 

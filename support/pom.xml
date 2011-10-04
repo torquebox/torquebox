@@ -15,6 +15,7 @@
   <description />
 
   <modules>
+    <module>as-test-support</module>
     <module>ruby-test-support</module>
   </modules>
 

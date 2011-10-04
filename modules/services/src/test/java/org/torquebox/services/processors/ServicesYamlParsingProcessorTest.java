@@ -30,11 +30,10 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.services.ServiceMetaData;
-import org.torquebox.services.processors.ServicesYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class ServicesYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     

@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rack;
+package org.torquebox.web.rack.processors;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +25,7 @@ import java.util.Map;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
+import org.torquebox.web.rack.RackMetaData;
 
 public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
     

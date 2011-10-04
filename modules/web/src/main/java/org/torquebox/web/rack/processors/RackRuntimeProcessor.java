@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rack;
+package org.torquebox.web.rack.processors;
 
 import java.net.MalformedURLException;
 
@@ -30,6 +30,8 @@ import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.core.runtime.RuntimeInitializer;
+import org.torquebox.web.rack.RackMetaData;
+import org.torquebox.web.rack.RackRuntimeInitializer;
 
 /**
  * <pre>

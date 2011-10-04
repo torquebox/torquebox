@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rack;
+package org.torquebox.web.rack.processors;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -58,6 +58,7 @@ import org.projectodd.polyglot.web.servlet.FiveHundredServlet;
 import org.projectodd.polyglot.web.servlet.StaticResourceServlet;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.web.as.WebServices;
+import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.servlet.RackFilter;
 
 /**
@@ -70,7 +71,7 @@ import org.torquebox.web.servlet.RackFilter;
  * Makes the JBossWebMetaData depend on the RackApplicationPool, and sets up
  * Java servlet filters to delegate to the Rack application
  */
-public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
+public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
     public static final String RACK_FILTER_NAME = "torquebox.rack";
 
@@ -84,7 +85,7 @@ public class RackWebApplicationDeployer implements DeploymentUnitProcessor {
 
     public static final String EXPANDED_WAR_URL_ATTACHMENT_NAME = "org.jboss.web.expandedWarURL";
 
-    public RackWebApplicationDeployer() {
+    public RackWebApplicationInstaller() {
     }
 
     @Override

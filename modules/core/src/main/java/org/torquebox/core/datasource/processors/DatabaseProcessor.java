@@ -1,9 +1,7 @@
 package org.torquebox.core.datasource.processors;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.Driver;
-import java.sql.DriverManager;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,12 +49,12 @@ import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.datasource.DataSourceInfoList;
+import org.torquebox.core.datasource.DataSourceInfoList.Info;
 import org.torquebox.core.datasource.DataSourceServices;
 import org.torquebox.core.datasource.DatabaseMetaData;
 import org.torquebox.core.datasource.DriverService;
 import org.torquebox.core.datasource.HackDataSourceService;
 import org.torquebox.core.datasource.JDBCDriverLoadingRuntimeService;
-import org.torquebox.core.datasource.DataSourceInfoList.Info;
 import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.datasource.db.H2Adapter;
 import org.torquebox.core.datasource.db.MySQLAdapter;

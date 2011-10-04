@@ -9,9 +9,8 @@ import java.io.Closeable;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
-import org.torquebox.core.processors.KnobRootMountProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class KnobRootMountProcessorTest extends AbstractDeploymentProcessorTestCase {
     

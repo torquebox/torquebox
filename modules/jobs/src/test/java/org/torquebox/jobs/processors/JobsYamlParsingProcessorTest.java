@@ -24,17 +24,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URL;
 import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
-import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.jobs.ScheduledJobMetaData;
-import org.torquebox.jobs.processors.JobsYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 
@@ -47,13 +44,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
     /** Ensure that an empty jobs.yml causes no problems. */
     @Test
     public void testEmptyJobsYml() throws Exception {
-        URL jobsYml = getClass().getResource( "empty.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", jobsYml );
-
-        deploy( phaseContext );
-
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "empty.yml" );
         List<ScheduledJobMetaData> allMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
         assertTrue( allMetaData.isEmpty() );
@@ -62,13 +53,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
     /** Ensure that a valid jobs.yml attaches metadata. */
     @Test
     public void testValidJobsYml() throws Exception {
-        URL jobsYml = getClass().getResource( "valid-jobs.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", jobsYml );
-
-        deploy( phaseContext );
-
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-jobs.yml" );
 
         List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 

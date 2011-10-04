@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.component;
+package org.torquebox.web.component.processors;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,6 +39,7 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.component.ComponentResolverService;
 import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
 import org.torquebox.web.as.WebServices;
+import org.torquebox.web.component.RackApplicationComponent;
 import org.torquebox.web.rack.RackMetaData;
 
 public class RackApplicationComponentResolverInstaller extends BaseRubyComponentInstaller {

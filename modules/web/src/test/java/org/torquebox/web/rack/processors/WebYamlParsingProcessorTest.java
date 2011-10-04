@@ -17,20 +17,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.web.rack;
+package org.torquebox.web.rack.processors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.net.URL;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
-import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
+import org.torquebox.web.rack.RackMetaData;
 
 public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
 	
@@ -42,22 +40,14 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
 	
     @Test()
     public void testEmptyWebYml() throws Exception {
-        URL webYml = getClass().getResource( "empty.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", webYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "empty.yml" );
         
         assertNull( unit.getAttachment(RackMetaData.ATTACHMENT_KEY ));
     }
 
     @Test
     public void testValidWebYml() throws Exception {
-        URL webYml = getClass().getResource( "valid-web.yml" );
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", webYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        deploy( phaseContext );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-web.yml" );
 
         RackMetaData rackMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
@@ -71,12 +61,8 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
 
     @Test
     public void testValidWebYmlCustomStaticPathPrefix() throws Exception {
-        URL webYml = getClass().getResource( "static-path-web.yml" );
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "static-path-web.yml" );
         
-        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", webYml );
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        deploy( phaseContext );
-
         RackMetaData rackMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         assertNotNull( rackMetaData );

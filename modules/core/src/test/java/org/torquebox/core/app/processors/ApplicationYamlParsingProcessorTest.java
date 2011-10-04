@@ -28,14 +28,12 @@ import static org.mockito.Mockito.verify;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
-import org.projectodd.polyglot.test.as.AbstractDeploymentProcessorTestCase;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.app.processors.ApplicationYamlParsingProcessor;
-import org.torquebox.core.app.processors.RubyApplicationDefaultsProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
+import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class ApplicationYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
     

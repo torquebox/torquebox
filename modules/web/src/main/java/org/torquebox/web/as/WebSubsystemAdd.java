@@ -44,17 +44,17 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.projectodd.polyglot.web.WebConnectorConfigService;
 import org.projectodd.polyglot.web.processors.VirtualHostInstaller;
 import org.projectodd.polyglot.web.processors.WebApplicationDefaultsProcessor;
-import org.torquebox.web.component.RackApplicationComponentResolverInstaller;
-import org.torquebox.web.rack.RackApplicationRecognizer;
-import org.torquebox.web.rack.RackRuntimeProcessor;
-import org.torquebox.web.rack.RackWebApplicationDeployer;
-import org.torquebox.web.rack.WebRuntimePoolProcessor;
-import org.torquebox.web.rack.WebYamlParsingProcessor;
-import org.torquebox.web.rails.RailsApplicationRecognizer;
-import org.torquebox.web.rails.RailsAutoloadPathProcessor;
+import org.torquebox.web.component.processors.RackApplicationComponentResolverInstaller;
+import org.torquebox.web.rack.processors.RackApplicationRecognizer;
+import org.torquebox.web.rack.processors.RackRuntimeProcessor;
+import org.torquebox.web.rack.processors.RackWebApplicationInstaller;
+import org.torquebox.web.rack.processors.WebRuntimePoolProcessor;
+import org.torquebox.web.rack.processors.WebYamlParsingProcessor;
 import org.torquebox.web.rails.RailsRackProcessor;
-import org.torquebox.web.rails.RailsRuntimeProcessor;
-import org.torquebox.web.rails.RailsVersionProcessor;
+import org.torquebox.web.rails.processors.RailsApplicationRecognizer;
+import org.torquebox.web.rails.processors.RailsAutoloadPathProcessor;
+import org.torquebox.web.rails.processors.RailsRuntimeProcessor;
+import org.torquebox.web.rails.processors.RailsVersionProcessor;
 
 class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
     
@@ -90,7 +90,7 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RailsVersionProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 50, new RailsRackProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 60, new WebApplicationDefaultsProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 70, new RackWebApplicationDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 70, new RackWebApplicationInstaller() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
         
