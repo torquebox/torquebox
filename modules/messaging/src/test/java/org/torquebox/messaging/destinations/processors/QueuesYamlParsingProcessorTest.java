@@ -29,9 +29,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.projectodd.polyglot.messaging.destinations.QueueMetaData;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
-import org.torquebox.messaging.destinations.QueueMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {

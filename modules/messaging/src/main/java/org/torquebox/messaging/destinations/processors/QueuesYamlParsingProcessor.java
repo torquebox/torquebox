@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.projectodd.polyglot.messaging.destinations.QueueMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
-import org.torquebox.messaging.destinations.QueueMetaData;
 
 /**
  * <pre>

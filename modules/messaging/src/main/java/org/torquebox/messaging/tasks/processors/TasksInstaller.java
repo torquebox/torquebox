@@ -26,9 +26,9 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.messaging.destinations.QueueMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.messaging.MessageProcessorMetaData;
-import org.torquebox.messaging.destinations.QueueMetaData;
 import org.torquebox.messaging.tasks.TaskMetaData;
 
 /**

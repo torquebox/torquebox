@@ -36,6 +36,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.messaging.destinations.DestinationUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
@@ -45,7 +46,6 @@ import org.torquebox.messaging.MessageProcessorGroup;
 import org.torquebox.messaging.MessageProcessorGroupMBean;
 import org.torquebox.messaging.MessageProcessorMetaData;
 import org.torquebox.messaging.as.MessagingServices;
-import org.torquebox.messaging.destinations.DestinationUtils;
 
 /**
  * <pre>
