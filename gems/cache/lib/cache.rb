@@ -222,7 +222,7 @@ module TorqueBox
       end
 
       def self.log( message, status = 'INFO' )
-        $stderr.puts( "#{status}: #{message}" )
+        $stdout.puts( "#{status}: #{message}" )
       end
 
       def log( message, status = 'INFO' )

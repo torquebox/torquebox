@@ -11,9 +11,8 @@ describe "end-to-end twitter testing" do
       tweets:
   END
 
-  before(:each) do
+  before(:all) do
     @default_dir = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
-    FileUtils.rm_rf @default_dir
   end
 
   after(:all) do
