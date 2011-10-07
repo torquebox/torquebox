@@ -25,11 +25,17 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.torquebox.core.datasource.DatabaseMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
+/**
+ * This class is used to read rails database.yml, not a database section
+ * of torquebox.yml.
+ * 
+ */
 public class DatabaseYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
     
     public DatabaseYamlParsingProcessor() {
         setSectionName( "database" );
-        setSupportsStandalone( false );
+        setSupportsStandalone( true );
+        setStandaloneDeprecated( false );
     }
 
     @Override

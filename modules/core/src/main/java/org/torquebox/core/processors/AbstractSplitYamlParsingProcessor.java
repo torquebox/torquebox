@@ -59,6 +59,8 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
     /** Does this deployer support a standalone *.yml descriptor? */
     private boolean supportsStandalone = true;
 
+    private boolean standaloneDeprecated = true;
+    
     /** Does this deploy support a *-<name>.yml format? */
     private boolean supportsSuffix = false;
 
@@ -77,6 +79,14 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
         return this.supportsStandalone;
     }
 
+    public void setStandaloneDeprecated(boolean deprecated) {
+        this.standaloneDeprecated = deprecated;
+    }
+
+    public boolean isStandaloneDeprecated() {
+        return this.standaloneDeprecated;
+    }
+    
     public void setSupportsSuffix(boolean supports) {
         this.supportsSuffix = supports;
     }
@@ -129,7 +139,7 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
             }
 
             if ((metaDataFile != null) && metaDataFile.exists()) {
-                if (!metaDataFile.equals( root )) {
+                if (!metaDataFile.equals( root ) && this.standaloneDeprecated) {
                     logDeprecation( unit, "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
                 }
                 InputStream in = null;
