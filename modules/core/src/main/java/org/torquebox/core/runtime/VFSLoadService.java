@@ -24,14 +24,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Iterator;
 
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyFile;
+import org.jruby.RubyInstanceConfig;
+import org.jruby.RubyString;
 import org.jruby.exceptions.RaiseException;
-import org.jruby.runtime.builtin.IRubyObject;
 import org.jruby.runtime.load.Library;
 import org.jruby.runtime.load.LoadService;
 import org.jruby.runtime.load.LoadServiceResource;
@@ -44,13 +44,6 @@ import org.jruby.util.JRubyFile;
  */
 public class VFSLoadService extends LoadService {
 
-    {
-        for (int i = 0; i < searchers.size(); ++i) {
-            if (searchers.get( i ) instanceof NormalSearcher) {
-                searchers.set( i, new VFSSearcher() );
-            }
-        }
-    }
 
     public class VFSSearcher implements LoadSearcher {
 
@@ -60,8 +53,9 @@ public class VFSLoadService extends LoadService {
         }
 
         @Override
-        public void trySearch(SearchState state) throws AlreadyLoaded {
+        public boolean trySearch(SearchState state) {
             state.library = findLibraryWithoutCWD( state, state.searchFile, state.suffixType );
+            return true;
         }
 
     }
@@ -98,12 +92,16 @@ public class VFSLoadService extends LoadService {
         case Both:
             library = findBuiltinLibrary( state, baseName, SuffixType.Source );
             if (library == null)
+                library = createLibrary( state, tryResourceFromJarURL( state, baseName, SuffixType.Source ) );
+            if (library == null)
                 library = createLibrary( state, tryResourceFromLoadPathOrURL( state, baseName, SuffixType.Source ) );
             // If we fail to find as a normal Ruby script, we try to find as an
             // extension,
             // checking for a builtin first.
             if (library == null)
                 library = findBuiltinLibrary( state, baseName, SuffixType.Extension );
+            if (library == null)
+                library = createLibrary( state, tryResourceFromJarURL( state, baseName, SuffixType.Extension ) );
             if (library == null)
                 library = createLibrary( state, tryResourceFromLoadPathOrURL( state, baseName, SuffixType.Extension ) );
             break;
@@ -112,9 +110,12 @@ public class VFSLoadService extends LoadService {
             // Check for a builtin first.
             library = findBuiltinLibrary( state, baseName, suffixType );
             if (library == null)
+                library = createLibrary( state, tryResourceFromJarURL( state, baseName, suffixType ) );
+            if (library == null)
                 library = createLibrary( state, tryResourceFromLoadPathOrURL( state, baseName, suffixType ) );
             break;
         case Neither:
+            library = createLibrary( state, tryResourceFromJarURL( state, baseName, SuffixType.Neither ) );
             if (library == null)
                 library = createLibrary( state, tryResourceFromLoadPathOrURL( state, baseName, SuffixType.Neither ) );
             break;
@@ -134,20 +135,34 @@ public class VFSLoadService extends LoadService {
             foundResource = tryResourceFromCWD( state, baseName, suffixType );
 
             if (foundResource != null) {
-                state.loadName = foundResource.getName();
-                return foundResource;
+                state.loadName = resolveLoadName( foundResource, foundResource.getName() );
             }
+
+            // not found, don't bother with load path
+            return foundResource;
+        }
+
+        // if it's a ~/ baseName use HOME logic
+        if (baseName.startsWith( "~/" )) {
+            foundResource = tryResourceFromHome( state, baseName, suffixType );
+
+            if (foundResource != null) {
+                state.loadName = resolveLoadName( foundResource, foundResource.getName() );
+            }
+
+            // not found, don't bother with load path
+            return foundResource;
         }
 
         // if given path is absolute, just try it as-is (with extensions) and no
         // load path
-        if (new File( baseName ).isAbsolute() || baseName.startsWith( "vfs:" )) {
+        if (new File( baseName ).isAbsolute() || baseName.startsWith("../") || baseName.startsWith( "vfs:" )) {
             for (String suffix : suffixType.getSuffixes()) {
                 String namePlusSuffix = baseName + suffix;
                 foundResource = tryResourceAsIs( namePlusSuffix );
 
                 if (foundResource != null) {
-                    state.loadName = namePlusSuffix;
+                    state.loadName = resolveLoadName( foundResource, namePlusSuffix );
                     return foundResource;
                 }
             }
@@ -155,26 +170,41 @@ public class VFSLoadService extends LoadService {
             return null;
         }
 
-        Outer: for (Iterator pathIter = loadPath.getList().iterator(); pathIter.hasNext();) {
+        Outer: for (int i = 0; i < loadPath.size(); i++) {
             // TODO this is really ineffient, and potentially a problem
             // everytime anyone require's something.
             // we should try to make LoadPath a special array object.
-            String loadPathEntry = ((IRubyObject) pathIter.next()).toString();
+            RubyString entryString = loadPath.eltInternal( i ).convertToString();
+            String loadPathEntry = entryString.asJavaString();
 
-            if (loadPathEntry.equals( "." )) {
+            if (loadPathEntry.equals( "." ) || loadPathEntry.equals( "" )) {
                 foundResource = tryResourceFromCWD( state, baseName, suffixType );
 
                 if (foundResource != null) {
-                    state.loadName = foundResource.getName();
+                    String ss = foundResource.getName();
+                    if(ss.startsWith( "./" )) {
+                        ss = ss.substring( 2 );
+                    }
+                    state.loadName = resolveLoadName( foundResource, ss );
                     break Outer;
                 }
             } else {
+                boolean looksLikeJarURL = loadPathLooksLikeJarURL( loadPathEntry );
                 for (String suffix : suffixType.getSuffixes()) {
                     String namePlusSuffix = baseName + suffix;
-                    foundResource = tryResourceFromLoadPath( namePlusSuffix, loadPathEntry );
+
+                    if (looksLikeJarURL) {
+                        foundResource = tryResourceFromJarURLWithLoadPath( namePlusSuffix, loadPathEntry );
+                    } else {
+                        foundResource = tryResourceFromLoadPath( namePlusSuffix, loadPathEntry );
+                    }
 
                     if (foundResource != null) {
-                        state.loadName = namePlusSuffix;
+                        String ss = namePlusSuffix;
+                        if(ss.startsWith( "./" )) {
+                            ss = ss.substring( 2 );
+                        }
+                        state.loadName = resolveLoadName( foundResource, ss );
                         break Outer; // end suffix iteration
                     }
                 }
@@ -209,26 +239,23 @@ public class VFSLoadService extends LoadService {
                 }
 
                 String reportedPath = loadPathEntry + "/" + namePlusSuffix;
-                JRubyFile actualPath = null;
+                boolean absolute = true;
                 // we check length == 0 for 'load', which does not use load path
-                if (new File( reportedPath ).isAbsolute()) {
-                    // it's an absolute path, use it as-is
-                    actualPath = JRubyFile.create( loadPathEntry, RubyFile.expandUserPath( runtime.getCurrentContext(), namePlusSuffix ) );
-                } else {
-                    // prepend ./ if . is not already there, since we're loading
-                    // based on CWD
+                if (!new File( reportedPath ).isAbsolute()) {
+                    absolute = false;
+                    // prepend ./ if . is not already there, since we're loading based on CWD
                     if (reportedPath.charAt( 0 ) != '.') {
                         reportedPath = "./" + reportedPath;
                     }
-                    actualPath = JRubyFile.create( JRubyFile.create( runtime.getCurrentDirectory(), loadPathEntry ).getAbsolutePath(),
-                            RubyFile.expandUserPath( runtime.getCurrentContext(), namePlusSuffix ) );
+                    loadPathEntry = JRubyFile.create( runtime.getCurrentDirectory(), loadPathEntry ).getAbsolutePath();
                 }
-                if (actualPath.isFile()) {
-                    try {
-                        foundResource = new NonLeakingLoadServiceResource( actualPath.toURI().toURL(), reportedPath );
-                    } catch (MalformedURLException e) {
-                        throw runtime.newIOErrorFromException( e );
-                    }
+                JRubyFile actualPath = JRubyFile.create( loadPathEntry, RubyFile.expandUserPath( runtime.getCurrentContext(), namePlusSuffix ) );
+                if (RubyInstanceConfig.DEBUG_LOAD_SERVICE) {
+                    debugLogTry( "resourceFromLoadPath", "'" + actualPath.toString() + "' " + actualPath.isFile() + " " + actualPath.canRead() );
+                }
+                if (actualPath.isFile() && actualPath.canRead()) {
+                    foundResource = new LoadServiceResource( actualPath, reportedPath, absolute );
+                    debugLogFound( foundResource );
                 }
             }
         } catch (SecurityException secEx) {
@@ -271,11 +298,13 @@ public class VFSLoadService extends LoadService {
                     if (reportedPath.charAt( 0 ) == '.' && reportedPath.charAt( 1 ) == '/') {
                         reportedPath = reportedPath.replaceFirst( "\\./", runtime.getCurrentDirectory() );
                     }
-                    actualPath = new File( RubyFile.expandUserPath( runtime.getCurrentContext(), reportedPath ) );
+                    actualPath = JRubyFile.create( runtime.getCurrentDirectory(), RubyFile.expandUserPath( runtime.getCurrentContext(), namePlusSuffix ) );
                 }
-                if (actualPath.isFile()) {
+                debugLogTry( "resourceAsIs", actualPath.toString() );
+                if (actualPath.isFile() && actualPath.canRead()) {
                     try {
                         foundResource = new NonLeakingLoadServiceResource( actualPath.toURI().toURL(), reportedPath );
+                        debugLogFound( foundResource );
                     } catch (MalformedURLException e) {
                         throw runtime.newIOErrorFromException( e );
                     }
