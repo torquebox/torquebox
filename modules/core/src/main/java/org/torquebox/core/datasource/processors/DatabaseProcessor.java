@@ -80,6 +80,14 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     protected Adapter getAdapter(String adapterName) {
         return this.adapters.get( adapterName );
     }
+    
+    protected boolean isCurrentEnvironmentDatabase(String currentEnv, String configName) {
+    	return currentEnv.equals( configName );
+    }
+    
+    protected boolean isAtypicalDatabase(String configName) {
+    	return ! TYPICAL_ENVIRONMENTS.contains( configName );
+    }
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -90,6 +98,8 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         if (rubyAppMetaData == null) {
             return;
         }
+        
+        String currentEnv = rubyAppMetaData.getEnvironmentName();
 
         String applicationDir;
         try {
@@ -105,6 +115,12 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         DataSourceInfoList infoList = new DataSourceInfoList();
 
         for (DatabaseMetaData each : allMetaData) {
+        	
+        	String configName = each.getConfigurationName();
+        	
+        	if ( ! isCurrentEnvironmentDatabase( currentEnv, configName ) && ! isAtypicalDatabase( configName ) ) {
+        		continue;
+        	}
 
             if (each.getConfiguration().containsKey( "jndi" )) {
                 continue;
@@ -320,7 +336,14 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
 
     }
-
+    
+    @SuppressWarnings("serial")
+	private static final Set<String> TYPICAL_ENVIRONMENTS = new HashSet<String>() {{
+    	add( "development" );
+    	add( "production" );
+    	add( "test" );
+    }};
+    
     private static final Logger log = Logger.getLogger( "org.torquebox.db" );
     private Map<String, Adapter> adapters = new HashMap<String, Adapter>();
 
