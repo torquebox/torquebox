@@ -47,9 +47,9 @@ import org.jboss.security.auth.login.AuthenticationInfo;
 import org.jboss.security.config.ApplicationPolicy;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.security.auth.AuthMetaData;
+import org.torquebox.security.auth.AuthMetaData.TorqueBoxAuthConfig;
 import org.torquebox.security.auth.Authenticator;
 import org.torquebox.security.auth.TorqueBoxLoginModule;
-import org.torquebox.security.auth.AuthMetaData.TorqueBoxAuthConfig;
 import org.torquebox.security.auth.as.AuthServices;
 import org.torquebox.security.auth.as.AuthSubsystemAdd;
 
