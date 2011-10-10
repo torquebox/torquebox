@@ -256,32 +256,6 @@ module TorqueBox
         end
       end
 
-      # TODO: This is no longer useful. It should be replaced with
-      # credentials in the torquebox.yml file
-      def write_credentials(user_data)
-        properties_file = "#{properties_dir}/torquebox-users.properties"
-        roles_file      = "#{properties_dir}/torquebox-roles.properties"
-        FileUtils.touch( properties_file ) unless File.exist?( properties_file )
-        FileUtils.touch( roles_file ) unless File.exist?( roles_file )
-        users = File.readlines( properties_file ).inject( {} ) do |accum, line|
-          user, pass = line.split( '=' )
-          accum[user] = pass
-          accum
-        end
-
-        users = user_data.inject( users ) do |accum, user|
-          accum[user[0]] = user[1]
-          accum
-        end
-        
-        File.open( properties_file, 'w' ) do |file|
-          users.each do |user, pass|
-            file.puts( "#{user}=#{pass}" )
-          end
-        end
-        properties_file
-      end
-      
       # TODO: This is not windows friendly
       def create_symlink
         unless File.exist? opt_dir
