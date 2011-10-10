@@ -47,9 +47,9 @@
       <title>Invalidation</title>
 
       <para>This is the default mode when TorqueBox runs clustered.
-      TODO: REPLACE THIS i.e. <code>JBOSS_CONF=all</code>. No data is actually
-      shared among the nodes in this mode. Instead, notifications are sent to
-      all nodes when data changes, causing them to evict their stale copies of
+      No data is actually shared among the nodes in this mode. Instead,
+      notifications are sent to all nodes when data changes, causing them to
+      evict their stale copies of
       the updated entry. This mode works very well for Rails' fragment and
       action caching.</para>
     </formalpara>
@@ -76,8 +76,7 @@
   </section>
 
   <section id="caching-options-and-usage">
-
-    <title>TorqueBox::Infinispan::Cache Options</title>
+    <title>TorqueBox::Infinispan::Cache Options and Usage</title>
 
     <para>The <code>TorqueBox::Infinispan::Cache</code> supports a number
       of options.  All components that use the cache as their underlying
@@ -196,19 +195,20 @@
       </tgroup>
     </table>
 
-    <title>TorqueBox::Infinispan::Cache Usage</title>
-    <para>
-      The <code>Cache</code> object may be used to store and retrieve values
-      from Infinispan. You can store just about anything: arbitrary Ruby data
-      types, Java class instances, strings, numbers. The gamut.  To use the 
-      <code>Cache</code> just make a new one providing it with initialization
-      options.
-    </para>
+    <formalpara>
+      <title>TorqueBox::Infinispan::Cache Usage</title>
+      <para>
+        The <code>Cache</code> object may be used to store and retrieve values
+        from Infinispan. You can store just about anything: arbitrary Ruby data
+        types, Java class instances, strings, numbers. The gamut.  To use the 
+        <code>Cache</code> just make a new one providing it with initialization
+        options.
+      </para>
+    </formalpara>
     <para>
       <programlisting>
         require 'torquebox-cache'
-        cache = TorqueBox::Infinispan::Cache.new( :name => 'treasure', :persist=>'/data/treasure' )
-      </programlisting>
+        cache = TorqueBox::Infinispan::Cache.new( :name => 'treasure', :persist=>'/data/treasure' )</programlisting>
     </para>
     <para>
       Adding, removing and updating items in the cache is as you might expect.
@@ -223,8 +223,7 @@
         user = cache.get( params[:id] )
 
         # Remove something
-        cache.remove( 'akey' )
-      </programlisting>
+        cache.remove( 'akey' )</programlisting>
 
       You also have typical hash-like methods which allow you to manipulate
       and query the cache for key information.
@@ -253,10 +252,36 @@
         # replaces t1 with t2
         cache.replace( "time", t1, t2 )
         # does NOT replace since the value is now t2
-        cache.replace( "time", t1, Time.now + 20 )
-      </programlisting>
+        cache.replace( "time", t1, Time.now + 20 )</programlisting>
 
-      TODO: increment, decrement, transaction
+      <formalpara>
+        <title>Increment, Decrement and Transactions</title>
+        <para>
+          <code>TorqueBox::Infinispan::Cache</code> also provides some convenience methods
+          for atomically incrementing or decrementing a value in the cache. Additionally,
+          the <code>Cache</code> provides transactional blocks with
+          <code>Cache#transaction do ...</code>, and all <code>Cache</code> operations
+          automatically participate in XA transactions if they are called from
+          within a <code>TorqueBox.transaction</code> block.  
+        </para>
+      </formalpara>
+
+      <programlisting>
+        cache.increment('mykey') # 1
+        cache.increment('mykey') # 2
+        cache.decrement('mykey') # 3
+
+        # Automatically participates in XA transactions
+        Torquebox.transaction do
+          cache.increment('mykey')
+          # ...
+        end
+
+        # And can scope transactions itself
+        cache.transaction do
+          cache.decrement('mykey')
+        end
+      </programlisting>
     </para>
 
   </section>
