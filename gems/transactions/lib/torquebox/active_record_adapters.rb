@@ -130,3 +130,15 @@ module TorqueBox
   end
 end
 
+module ActiveRecord
+  module ConnectionAdapters
+    module JndiConnectionPoolCallbacks
+      def self.prepare(adapter, conn)
+        if ActiveRecord::Base.respond_to?(:connection_pool) && conn.jndi_connection?
+          adapter.extend self
+        end
+      end
+    end
+  end
+end
+
