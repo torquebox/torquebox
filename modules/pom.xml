@@ -44,6 +44,11 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-module-support</artifactId>
+      <version>${version.polyglot}</version>
+    </dependency>
   </dependencies>
 
   <build> 

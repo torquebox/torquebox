@@ -499,6 +499,18 @@
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
+    <repository>
+      <id>polyglot-snapshot</id>
+      <name>Polyglot SNAPSHOT builds</name>
+      <url>https://repository-torquebox.forge.cloudbees.com/snapshot</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <!-- Plugin Repositories -->
