@@ -50,7 +50,7 @@ import org.torquebox.services.ServiceMetaData;
 import org.torquebox.services.as.ServicesServices;
 import org.torquebox.services.injection.InjectableService;
 
-public class ServicesDeployer implements DeploymentUnitProcessor {
+public class ServiceInstaller implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {

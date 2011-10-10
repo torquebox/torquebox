@@ -35,10 +35,10 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.torquebox.services.component.processors.ServicesComponentResolverInstaller;
-import org.torquebox.services.processors.ServicesDeployer;
-import org.torquebox.services.processors.ServicesLoadPathProcessor;
-import org.torquebox.services.processors.ServicesRuntimePoolProcessor;
+import org.torquebox.services.component.processors.ServiceComponentResolverInstaller;
+import org.torquebox.services.processors.ServiceInstaller;
+import org.torquebox.services.processors.ServiceLoadPathProcessor;
+import org.torquebox.services.processors.ServiceRuntimePoolProcessor;
 import org.torquebox.services.processors.ServicesYamlParsingProcessor;
 
 public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
@@ -64,10 +64,10 @@ public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
         
         processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new ServicesYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new ServicesLoadPathProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new ServicesRuntimePoolProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new ServicesComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new ServicesDeployer() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new ServiceLoadPathProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new ServiceRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new ServiceComponentResolverInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new ServiceInstaller() );
         
     }
     

@@ -28,7 +28,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.torquebox.core.runtime.PoolMetaData;
 import org.torquebox.services.ServiceMetaData;
 
-public class ServicesRuntimePoolProcessor implements DeploymentUnitProcessor {
+public class ServiceRuntimePoolProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {

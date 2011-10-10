@@ -22,13 +22,13 @@ package org.torquebox.services;
 import org.jruby.Ruby;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.services.component.ServicesComponent;
+import org.torquebox.services.component.ServiceComponent;
 
 public class RubyService implements RubyServiceMBean {
 
     public void create() throws Exception {
         this.runtime = this.runtimePool.borrowRuntime();
-        this.servicesComponent = (ServicesComponent) this.resolver.resolve( runtime );
+        this.servicesComponent = (ServiceComponent) this.resolver.resolve( runtime );
     }
 
     public void start() {
@@ -80,7 +80,7 @@ public class RubyService implements RubyServiceMBean {
         this.runtimePool = runtimePool;
     }
 
-    public ServicesComponent getComponent() {
+    public ServiceComponent getComponent() {
         return this.servicesComponent;
     }
 
@@ -89,6 +89,6 @@ public class RubyService implements RubyServiceMBean {
     private ComponentResolver resolver;
     private RubyRuntimePool runtimePool;
     private Ruby runtime;
-    private ServicesComponent servicesComponent;
+    private ServiceComponent servicesComponent;
 
 }

@@ -21,7 +21,7 @@ package org.torquebox.services.component;
 
 import org.torquebox.core.component.AbstractRubyComponent;
 
-public class ServicesComponent extends AbstractRubyComponent {
+public class ServiceComponent extends AbstractRubyComponent {
 
     public void start() {
     	_callRubyMethodIfDefined( "start" );

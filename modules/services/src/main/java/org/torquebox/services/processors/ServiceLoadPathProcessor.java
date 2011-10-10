@@ -25,7 +25,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 
-public class ServicesLoadPathProcessor implements DeploymentUnitProcessor {
+public class ServiceLoadPathProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {

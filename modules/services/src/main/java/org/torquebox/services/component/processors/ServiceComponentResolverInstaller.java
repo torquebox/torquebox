@@ -38,9 +38,9 @@ import org.torquebox.core.component.ComponentResolverService;
 import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
 import org.torquebox.services.ServiceMetaData;
 import org.torquebox.services.as.ServicesServices;
-import org.torquebox.services.component.ServicesComponent;
+import org.torquebox.services.component.ServiceComponent;
 
-public class ServicesComponentResolverInstaller extends BaseRubyComponentInstaller {
+public class ServiceComponentResolverInstaller extends BaseRubyComponentInstaller {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -63,7 +63,7 @@ public class ServicesComponentResolverInstaller extends BaseRubyComponentInstall
         ComponentResolver resolver = createComponentResolver( unit );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
-        resolver.setComponentWrapperClass( ServicesComponent.class );
+        resolver.setComponentWrapperClass( ServiceComponent.class );
         resolver.setInitializeParams( serviceMetaData.getParameters() );
 
         ComponentResolverService service = new ComponentResolverService( resolver );
