@@ -3,13 +3,16 @@ Requirements
 * Maven 3
 * Configuration of the JBoss Maven repository in settings.xml
 
-Building
---------
+Dependencies
+------------
 
 TorqueBox depends on polyglot: https://github.com/projectodd/jboss-polyglot
 
-You'll need to pull and build it (following its README) before building 
-TorqueBox, and it will stuff its artifacts into ~/.m2/
+Polyglot is published as a snapshot, so you may need to run mvn with the
+-U option to check for updates if you run into build issues.
+
+Building
+--------
 
 Install the project using the provided settings.xml:
 
