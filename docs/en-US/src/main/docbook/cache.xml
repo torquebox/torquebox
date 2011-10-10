@@ -269,7 +269,7 @@
       <programlisting>
         cache.increment('mykey') # 1
         cache.increment('mykey') # 2
-        cache.decrement('mykey') # 3
+        cache.decrement('mykey') # 1
 
         # Automatically participates in XA transactions
         Torquebox.transaction do
