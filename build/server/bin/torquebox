@@ -45,7 +45,7 @@ class TorqueBoxCommand < Thor
   EOS
   method_option :context_path, :type => :string, :desc => "Context Path (ex: /, /my_app)"
   method_option :env, :type => :string, :desc => "Application Environment (ex: development, test, production)"
-  def deploy(root)
+  def deploy(root = ".")
     setup_environment
     root = File.expand_path(root)
     opts = {:root => root}.merge(options)
