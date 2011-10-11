@@ -57,7 +57,7 @@ class TorqueBoxCommand < Thor
   end
 
   desc "undeploy ROOT", "Undeploy an application from TorqueBox"
-  def undeploy(root)
+  def undeploy(root = ".")
     setup_environment
     root = File.expand_path(root)
     deployment_name = TorqueBox::DeployUtils.deployment_name(root)
