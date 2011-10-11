@@ -53,6 +53,8 @@
 
         <resource-root path="jackson-core-asl.jar"/>
         <resource-root path="jackson-mapper-asl.jar"/>
+        <resource-root path="jandex.jar"/>
+        <resource-root path="hibernate-search-engine.jar"/>
     </resources>
 
     <exports>

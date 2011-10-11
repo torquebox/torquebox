@@ -81,7 +81,6 @@ module TorqueBox
 
       def initialize(opts = {})
         @options                      = opts
-        @in_container                 = false
         cache
       end
 
@@ -91,10 +90,6 @@ module TorqueBox
 
       def search_manager
         @search_manager ||= org.infinispan.query.Search.getSearchManager(@cache)
-      end
-
-      def in_container?
-        @in_container
       end
 
       def clustering_mode
