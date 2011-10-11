@@ -280,8 +280,8 @@
         # And can scope transactions itself
         cache.transaction do
           cache.decrement('mykey')
-        end
-      </programlisting>
+        end</programlisting>
+      <para>To read more about transactions see <xref linkend='transactions'/>.</para>
     </para>
 
   </section>
@@ -312,7 +312,46 @@
 
   <section id='dm-infinispan-adapter'>
     <title>dm-infinispan-adapter Options and Usage</title>
-    <para>TODO</para>
+    <para><code>TorqueBox</code> also provides support for storing, searching and
+      retrieving <code>DataMapper</code> models within Infinispan using the
+      <code>dm-infinispan-adapter</code> gem.  Usage is simple and, aside from the 
+      <code>TorqueBox</code> runtime requirement, no different than any other
+      <code>DataMapper</code> adapter.  Simply add <code>torquebox-cache</code> to
+      your Gemfile and require <code>dm-infinispan-adapter</code> as shown below.
+    </para>
+    <programlisting>
+      require 'dm-core'
+      require 'dm-infinispan-adapter'
+
+      class Beer
+        include DataMapper::Resource
+
+        property :id, Serial
+        property :name, String
+        property :rating, Integer
+        property :notes, Text
+
+        belongs_to :user
+      end
+
+      class User
+        include DataMapper::Resource
+
+        property :id, Serial
+        property :name, String
+
+        has n, :beers
+      end
+
+      DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
+      DataMapper.finalize</programlisting>
+    <para>
+      The <code>DataMapper.setup</code> method accepts an optional hash
+      as the final parameter. In the example above, we are specifying that
+      the cache data should be persisted through server restarts. You may
+      also provide any of the options mentioned above for the <code>Cache</code>
+      and they will be passed on to the <code>Cache</code> constructor.
+    </para>
   </section>
 </chapter>
 
