@@ -4,21 +4,125 @@
 <chapter id="torquebox-server-gem">
   <title>torquebox-server Gem</title>
 
+  <para>One of the new features is the ability to install TorqueBox as
+  a gem instead of the zip-based installation. The gem installation
+  gives you access to a new <command>torquebox</command> command to
+  deploy and undeploy applications and start Torquebox.</para>
+
+  <section id="installing-torquebox-server">
+    <title>Installation</title>
+
+    <screen><prompt>$</prompt> <command>jruby -J-Xmx1024m -S gem install torquebox-server --pre \</command>
+    <command>--source http://torquebox.org/2x/builds/LATEST/gem-repo</command></screen>
+
+    <para>Due to the large gem size, the maximum memory allocated to
+    the gem installation must be increased or you'll receive an
+    OutOfMemory error.</para>
+  </section>
+
+  <section id="applications-torquebox-server">
+    <title>Deploying and Undeploying Applications</title>
+
+    <para>To deploy an application to TorqueBox:
+
+    <screen><prompt>$</prompt> <command>torquebox deploy /path/to/my_app</command></screen>
+
+    To undeploy that same application:
+
+    <screen><prompt>$</prompt> <command>torquebox undeploy /path/to/my_app</command></screen>
+
+    If you omit a path, the commands default to deploying or
+    undeploying the application in the current directory.</para>
+
+    <formalpara>
+      <title>Deployment Help</title>
+
+      <screen><prompt>$</prompt> <command>torquebox help deploy</command>
+Usage:
+  torquebox deploy ROOT
+
+Options:
+  [--context-path=CONTEXT_PATH]  # Context Path (ex: /, /my_app)
+  [--env=ENV]                    # Application Environment (ex: development, test, production)
+
+Description:
+  Deploy an application to TorqueBox. The ROOT argument should point to either a 
+  directory containing the application you want to deploy, a -knob.yml file, a 
+  .knob archive, or any Java deployable artifact (.war, .ear, etc).</screen>
+    </formalpara>
+
+    <formalpara>
+      <title>Undeployment Help</title>
+
+      <screen><prompt>$</prompt> <command>torquebox help undeploy</command>
+Usage:
+  torquebox undeploy ROOT
+
+Undeploy an application from TorqueBox</screen>
+    </formalpara>
+  </section>
+
   <section id="running-torquebox-server">
     <title>Running</title>
 
     <para>Running TorqueBox is as simple as:
 
-    <screen> <prompt>$</prompt> <command> torquebox run</command> </screen>
+    <screen><prompt>$</prompt> <command>torquebox run</command></screen>
 
     To run TorqueBox in clustered mode, use:
 
-    <screen> <prompt>$</prompt> <command>torquebox run --clustered</command> </screen>
+    <screen><prompt>$</prompt> <command>torquebox run --clustered</command></screen>
 
     Multiple instances of TorqueBox can run on the same machine by
-    binding each one to a some specific IP address:
+    binding each one to a specific IP address:
 
-    <screen> <prompt>$</prompt> <command>torquebox run -b 0.0.0.0</command> </screen></para>
+    <screen><prompt>$</prompt> <command>torquebox run -b 0.0.0.0</command></screen></para>
 
+    <formalpara>
+      <title>Run Help</title>
+
+      <screen><prompt>$</prompt> <command>torquebox help run</command>
+Usage:
+  torquebox run
+
+Options:
+      [--clustered]                  # Run TorqueBox in clustered mode
+      [--max-threads=N]              # Maximum number of HTTP threads
+  -b, [--bind-address=BIND-ADDRESS]  # IP address to bind to
+
+Run TorqueBox</screen>
+    </formalpara>
+  </section>
+
+  <section id="torquebox-server-environment">
+    <title>Shortcuts For Accessing Paths Inside torquebox-server Gem</title>
+
+    <para>With our zip distribution, you set
+    <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar>,
+    and <envar>$JRUBY_HOME</envar>. These aren't set when installing
+    TorqueBox as a gem but we provide an easy way to access those same
+    paths if needed:
+
+    <screen><prompt>$</prompt> <command>torquebox env torquebox_home</command></screen>
+
+    The available environment variables are torquebox_home,
+    jboss_home, and jruby_home. Note that they are case-insensitive so
+    you can use TORQUEBOX_HOME if you prefer.</para>
+
+    <example>
+      <title>Tailing AS7 boot.log File</title>
+
+      <screen><prompt>$</prompt> <command>tail `torquebox env jboss_home`/standalone/log/boot.log</command>
+11:26:32,107 INFO  [jacorb.poa] POA RootPOA destroyed
+11:26:32,109 INFO  [jacorb.orb] prepare ORB for shutdown...
+11:26:32,110 INFO  [jacorb.orb] ORB going down...
+11:26:32,112 INFO  [jacorb.orb] ORB shutdown complete
+11:26:32,113 INFO  [jacorb.orb.iiop] Listener exited
+11:26:32,113 INFO  [jacorb.orb] ORB run, exit
+11:26:32,143 INFO  [org.hornetq.core.server.impl.HornetQServerImpl] HornetQ Server version 2.2.7.Final (HQ_2_2_7_FINAL_AS7, 121) [612e2de5-f41d-11e0-b7b8-005056c00008] stopped
+11:26:33,782 WARN  [org.torquebox.core.runtime] No initializer set for runtime
+11:26:33,801 INFO  [org.torquebox.core.runtime] Created ruby runtime (ruby_version: RUBY1_8, compile_mode: JIT, context: global) in 9.86s
+11:26:33,806 INFO  [org.jboss.as] JBoss AS 7.0.2.Final "Arc" stopped in 1729ms</screen>
+    </example>
   </section>
 </chapter>
