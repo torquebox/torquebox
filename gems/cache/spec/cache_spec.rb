@@ -16,6 +16,8 @@
 
 require File.dirname(__FILE__) + '/spec_helper'
 
+# TODO Figure out how to test Cache's at_exit behavior
+
 describe TorqueBox::Infinispan::Cache do
   before :each do
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
