@@ -216,6 +216,15 @@ module TorqueBox
         cache.stop
       end
 
+      def self.shutdown
+        Cache.local_managers.each { |m| m.stop }
+      end
+
+      @@local_managers = []
+      def self.local_managers
+        @@local_managers
+      end
+
       def self.log( message, status = 'INFO' )
         $stdout.puts( "#{status}: #{message}" )
       end
@@ -283,6 +292,7 @@ module TorqueBox
 
       def local
         log( "Configuring Infinispan local cache #{name}" )
+        local_manager = org.infinispan.manager.DefaultCacheManager.new
         bare_config              = org.infinispan.config.Configuration.new
         bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
 
@@ -302,9 +312,10 @@ module TorqueBox
           config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
 
-        manager = org.infinispan.manager.DefaultCacheManager.new
-        manager.define_configuration( name, config.build )
-        manager.get_cache( self.name )
+        local_manager.define_configuration( name, config.build )
+
+        Cache.local_managers << local_manager
+        local_manager.get_cache( self.name )
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
         log( e.backtrace, 'ERROR' )
@@ -331,6 +342,7 @@ module TorqueBox
       end
     end
 
+    at_exit { Cache.shutdown }
   end
 end
 
