@@ -40,7 +40,7 @@ module TorqueBox
 
       def publish(destination, payload, options={})
         producer    = @jms_session.create_producer( java_destination( destination ) )
-        message     = Message.new( @jms_session.create_text_message, payload )
+        message     = Message.new( @jms_session, payload, options[:encoding] )
 
         message.populate_message_headers(options)
         message.populate_message_properties(options[:properties])
@@ -72,7 +72,7 @@ module TorqueBox
         begin
           jms_message = consumer.receive( timeout )
           if jms_message
-            decode ? Message.decode( jms_message ) : jms_message
+            decode ? Message.new( jms_message ).decode : jms_message
           end
         ensure
           consumer.close unless consumer.nil?
@@ -102,7 +102,7 @@ module TorqueBox
         response = receive(destination, options)
     
         if response
-          decode ? Message.decode( response ): response
+          decode ? Message.new( response ).decode : response
         end
       end
 
@@ -118,7 +118,7 @@ module TorqueBox
     
         request = receive(destination, receive_options)
         unless request.nil?
-          decoded_request = Message.decode( request )
+          decoded_request = Message.new( request ).decode
           request_message = decoded_request[:message]
           # Base the response ttl off the original request timeout
           request_timeout = decoded_request[:timeout]

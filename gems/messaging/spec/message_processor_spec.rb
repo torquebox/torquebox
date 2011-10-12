@@ -1,4 +1,6 @@
 require 'torquebox/messaging/message_processor'
+require 'torquebox/messaging/message'
+require 'torquebox/messaging/marshal_base64_message'
 
 class MyTestMessage
   include javax.jms::TextMessage
@@ -14,6 +16,14 @@ class MyTestMessage
   end
 end
 
+class MyTestSession
+  include javax.jms::Session
+
+  def create_text_message
+    MyTestMessage.new
+  end
+end
+
 class MyTestProcessor < TorqueBox::Messaging::MessageProcessor
   attr_accessor :body
   def on_message(body)
@@ -25,18 +35,18 @@ describe TorqueBox::Messaging::MessageProcessor do
   
   before :each do
     @processor = MyTestProcessor.new
-    @jms_message = MyTestMessage.new
+    @jms_session = MyTestSession.new
   end
 
   it "should process text messages" do
-    @message = TorqueBox::Messaging::Message.new(@jms_message, "foo")
+    @message = TorqueBox::Messaging::Message.new(@jms_session, "foo")
     @processor.process! @message
     @processor.body.should eql("foo")
   end
 
   it "should process non-text messages" do
     payload = {:foo => "foo", :sym => :sym, "bar" => :bar}
-    @message = TorqueBox::Messaging::Message.new(@jms_message, payload)
+    @message = TorqueBox::Messaging::Message.new(@jms_session, payload)
     @processor.process! @message
     @processor.body.should eql(payload)
   end

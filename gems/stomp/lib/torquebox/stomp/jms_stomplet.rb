@@ -68,13 +68,15 @@ module TorqueBox
     
         producer    = @session.jms_session.create_producer( java_destination.to_java )
 
-        jms_message = @session.jms_session.create_text_message
         case ( stomp_message ) 
-          when org.projectodd.stilts.stomp::StompMessage
-            jms_message.text = TorqueBox::Messaging::Message.encode( stomp_message.content_as_string )
-          else
-            jms_message.text = TorqueBox::Messaging::Message.encode( stomp_message )
+        when org.projectodd.stilts.stomp::StompMessage
+          content = stomp_message.content_as_string
+        else
+          content = jms_message
         end
+
+        encoded_message = TorqueBox::Messaging::Message.new( @session.jms_session, content )
+        jms_message = encoded_message.jms_message
 
         if ( stomp_message.is_a?( org.projectodd.stilts.stomp::StompMessage ) )
           stomp_message.headers.header_names.each do |name|
@@ -100,8 +102,7 @@ module TorqueBox
         end
     
         def onMessage(jms_message)
-          #stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( @subscriber.destination, TorqueBox::Messaging::Message.decode( jms_message ) )
-          stomp_message = TorqueBox::Stomp::Message.new( TorqueBox::Messaging::Message.decode( jms_message ) )
+          stomp_message = TorqueBox::Stomp::Message.new( TorqueBox::Messaging::Message.new( jms_message ).decode )
           jms_message.property_names.each do |name|
             value = jms_message.getObjectProperty( name ).to_s
             stomp_message.headers.put( name.to_s.to_java( java.lang.String ), value.to_java( java.lang.String) ) if value

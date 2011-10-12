@@ -1,21 +1,19 @@
 # Copyright 2008-2011 Red Hat, Inc, and individual contributors.
-# 
+#
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation; either version 2.1 of
 # the License, or (at your option) any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this software; if not, write to the Free
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
-
-require 'base64'
 
 module TorqueBox
   module Messaging
@@ -23,9 +21,21 @@ module TorqueBox
 
       attr_reader :jms_message
 
-      def initialize(jms_message, payload=nil)
+      DEFAULT_ENCODING = :marshal_base64
+      ENCODING_PROPERTY = "__ContentEncoding"
+
+      def initialize(jms_session, payload)
+        @jms_message = jms_session.create_text_message
+        set_encoding
+        encode( payload )
+      end
+
+      def initialize_from_message(jms_message)
         @jms_message = jms_message
-        encode( payload ) if payload
+      end
+
+      def set_encoding
+        @jms_message.set_string_property( ENCODING_PROPERTY, encoding.to_s )
       end
 
       def populate_message_headers(options)
@@ -38,7 +48,7 @@ module TorqueBox
           end
         end
       end
-    
+
       def populate_message_properties(properties)
         return if properties.nil?
         properties.each do |key, value|
@@ -55,32 +65,51 @@ module TorqueBox
         end
       end
 
-      def encode(message)
-        @jms_message.text = Message.encode(message)
-      end
-    
-      def decode()
-        Message.decode( @jms_message )
-      end
-
-      def self.encode(message)
-        unless message.nil?
-          marshalled = Marshal.dump( message )
-          Base64.encode64( marshalled )
-        end
-      end
-        
-      def self.decode(jms_message)
-        unless jms_message.nil? || jms_message.text.nil?
-          serialized = Base64.decode64( jms_message.text )
-          Marshal.restore( serialized )
-        end
-      end
-
       def method_missing(*args)
         @jms_message.send(*args)
       end
 
+      class << self
+        alias :__new__ :new
+
+        def inherited(subclass)
+          class << subclass
+            alias :new :__new__
+          end
+        end
+
+        def new(jms_message_or_session, payload = nil, encoding = nil)
+          if jms_message_or_session.is_a?( javax.jms::Session )
+            klass = class_for_encoding( encoding )
+            klass.new( jms_message_or_session, payload )
+          else
+            klass = class_for_encoding( extract_encoding_from_message( jms_message_or_session ) )
+            msg = klass.allocate
+            msg.initialize_from_message( jms_message_or_session )
+            msg
+          end
+        end
+
+        def encoding_map
+          @encoding_map ||= { }
+        end
+
+        def register_encoding(encoding, klass)
+          encoding_map[encoding] = klass
+        end
+
+        def class_for_encoding(encoding)
+          encoding ||= DEFAULT_ENCODING
+          klass = encoding_map[encoding.to_sym]
+          raise ArgumentError.new( "No message class found for encoding '#{encoding}'" ) unless klass
+          klass
+        end
+
+        def extract_encoding_from_message(jms_message)
+          jms_message.get_string_property( ENCODING_PROPERTY )
+        end
+
+      end
     end
   end
 end
