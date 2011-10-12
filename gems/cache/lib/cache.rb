@@ -78,9 +78,14 @@ module TorqueBox
     class Cache
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
+      java_import org.infinispan.config.Configuration::CacheMode
+      java_import org.infinispan.transaction::TransactionMode
+      java_import org.infinispan.transaction::LockingMode
 
       def initialize(opts = {})
-        @options                      = opts
+        @options = opts
+        options[:transaction_mode] = :transactional unless options.has_key?( :transaction_mode )
+        options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
         cache
       end
 
@@ -93,7 +98,6 @@ module TorqueBox
       end
 
       def clustering_mode
-        java_import org.infinispan.config.Configuration::CacheMode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
         distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
         sync = !!options[:sync]
@@ -105,6 +109,21 @@ module TorqueBox
         else
           sync ? CacheMode::INVALIDATION_SYNC : CacheMode::INVALIDATION_ASYNC
         end
+      end
+
+      def locking_mode
+        case options[:locking_mode]
+        when :optimistic : LockingMode::OPTIMISTIC
+        when :pessimistic : LockingMode::PESSIMISTIC
+        end
+      end
+
+      def transaction_mode
+        options[:transaction_mode] == :transactional ? TransactionMode::TRANSACTIONAL : TransactionMode::NON_TRANSACTIONAL
+      end
+
+      def transactional?
+        transaction_mode == TransactionMode::TRANSACTIONAL
       end
 
       # Clear the entire cache. Be careful with this method since it could
@@ -183,7 +202,9 @@ module TorqueBox
 
       include TorqueBox::Injectors
       def transaction(&block)
-        if inject('transaction-manager').nil?
+        if !transactional?
+          yield self
+        elsif inject('transaction-manager').nil? 
           tm = cache.getAdvancedCache.getTransactionManager
           begin
             tm.begin if tm
@@ -292,12 +313,16 @@ module TorqueBox
 
       def local
         log( "Configuring Infinispan local cache #{name}" )
-        local_manager = org.infinispan.manager.DefaultCacheManager.new
-        bare_config              = org.infinispan.config.Configuration.new
+        bare_config = org.infinispan.config.Configuration.new
         bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
 
         config  = bare_config.fluent
-        config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
+        config.transaction.transactionMode( transaction_mode )
+
+        if transactional?
+          config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup ) 
+          config.transaction.lockingMode( locking_mode )
+        end
         
         if options[:persist]
           log( "Configuring #{name} local cache for file-based persistence" )
@@ -312,6 +337,7 @@ module TorqueBox
           config.indexing.index_local_only(true).add_property('indexing', 'in memory')
         end
 
+        local_manager = org.infinispan.manager.DefaultCacheManager.new
         local_manager.define_configuration( name, config.build )
 
         Cache.local_managers << local_manager

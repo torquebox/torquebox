@@ -150,6 +150,39 @@ describe TorqueBox::Infinispan::Cache do
 
   describe "with JTA transactions" do
 
+    it "should should be transactional by default" do
+      @cache.transactional?.should be_true
+      @cache.transaction_mode.should == org.infinispan.transaction.TransactionMode::TRANSACTIONAL
+    end
+
+    it "should support non-transactional mode" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'non-transactional-cache', :transaction_mode => false )
+      cache.transactional?.should be_false
+      cache.transaction_mode.should == org.infinispan.transaction.TransactionMode::NON_TRANSACTIONAL
+      begin
+        cache.transaction do
+          cache.put "key1", "G"
+          raise "An exception"
+          cache.put "key2", "C"
+        end
+      rescue Exception => e
+        e.message.should == "An exception"
+        cache.get("key1").should == "G"
+        cache.get("key2").should be_nil
+      end
+      cache.stop
+    end
+
+    it "should use optimisitic locking mode by default" do
+      @cache.locking_mode.should == org.infinispan.transaction.LockingMode::OPTIMISTIC
+    end
+
+    it "should support pessimistic locking mode" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'non-transactional-cache', :locking_mode => :pessimistic )
+      cache.locking_mode.should == org.infinispan.transaction.LockingMode::PESSIMISTIC
+      cache.stop
+    end
+
     it "should accept transactional blocks" do
       @cache.transaction do |cache|
         cache.put('Frankie', 'Vallie')
