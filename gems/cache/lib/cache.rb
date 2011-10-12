@@ -113,8 +113,8 @@ module TorqueBox
 
       def locking_mode
         case options[:locking_mode]
-        when :optimistic : LockingMode::OPTIMISTIC
-        when :pessimistic : LockingMode::PESSIMISTIC
+        when :optimistic then LockingMode::OPTIMISTIC
+        when :pessimistic then LockingMode::PESSIMISTIC
         end
       end
 
