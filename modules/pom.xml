@@ -25,6 +25,7 @@
     <module>cdi</module>
     <module>security</module>
     <module>stomp</module>
+    <module>topology</module>
   </modules>
 
   <dependencies>
