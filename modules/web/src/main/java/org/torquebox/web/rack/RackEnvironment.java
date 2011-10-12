@@ -51,7 +51,7 @@ public class RackEnvironment {
         this.input.setAutoclose( false );
         env.put( RubyString.newString( ruby, "rack.input" ), input );
 
-        this.errors = new RubyIO( ruby, STDIO.ERR );
+        this.errors = new RubyIO( ruby, ruby.getErr() );
         this.errors.setAutoclose( false );
         env.put( RubyString.newString( ruby, "rack.errors" ), errors );
 

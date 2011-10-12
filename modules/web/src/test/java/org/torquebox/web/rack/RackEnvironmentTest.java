@@ -27,7 +27,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.Field;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.ServletContext;
@@ -185,6 +187,28 @@ public class RackEnvironmentTest extends AbstractRubyTestCase {
         RubyHash envHash = env.getEnv();
         assertNotNull( envHash );
         assertNull( envHash.get( "CONTENT_LENGTH" ) );
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testLeakingRubyFilenoMap() throws Exception {
+        final ServletContext servletContext = mock( ServletContext.class );
+        final HttpServletRequest servletRequest = mock( HttpServletRequest.class );
+        final ServletInputStream inputStream = new MockServletInputStream( new ByteArrayInputStream( "".getBytes() ) );
+
+        when( servletRequest.getInputStream() ).thenReturn( inputStream );
+
+        // This is hacky to do via reflection but we've had a leak in this specific HashMap
+        // and need to ensure it's fixed
+        Field filenoMapField = ruby.getClass().getDeclaredField( "filenoIntExtMap" );
+        filenoMapField.setAccessible( true );
+        Map<Integer, Integer> filenoIntExtMap = (Map<Integer, Integer>) filenoMapField.get( ruby );
+
+        int startingSize = filenoIntExtMap.size();
+        new RackEnvironment( ruby, servletContext, servletRequest );
+        int sizeAfterCreatingEnv = filenoIntExtMap.size();
+
+        assertEquals( startingSize, sizeAfterCreatingEnv );
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
