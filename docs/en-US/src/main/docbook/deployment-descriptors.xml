@@ -35,7 +35,7 @@
     <para>An <emphasis>external</emphasis> descriptor references an
     application somewhere on your filesystem. To deploy the
     application, the descriptor is placed in the
-    <filename>$TORQUEBOX_HOME/apps/</filename> directory of the
+    <filename>$TORQUEBOX_HOME/jboss/standalone/deployments/</filename> directory of the
     TorqueBox server. The external descriptor's name should have a
     suffix of <filename>-knob.yml</filename> .</para>
 
