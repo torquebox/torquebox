@@ -191,6 +191,30 @@
             enabled only for <code>dm-infinispan-adapter</code> model indexing and
             searching. Use with extreme caution.</entry>
           </row>
+          <row>
+            <entry><parameter>:transaction_mode</parameter></entry>
+
+            <entry><parameter>:transactional</parameter></entry>
+
+            <entry>By default, all local caches are transactional. If you
+              don't need transactions, set this to <parameter>:non_transactional</parameter>.
+            </entry>
+          </row>
+          <row>
+            <entry><parameter>:locking_mode</parameter></entry>
+
+            <entry><parameter>:optimistic</parameter></entry>
+
+            <entry>Starting with Infinispan 5.1 the supported transaction models are 
+              <parameter>:optimistic</parameter> and <parameter>:pessimistic.</parameter>
+              The <parameter>:optimistic</parameter> option defers lock
+              acquisition to transaction prepare time, reducing lock
+              acquisition duration and increasing throughput. With the
+              <parameter>pessimistic</parameter> model, cluster wide-locks are
+              acquired on each write and released after the transaction
+              completes.  
+            </entry>
+          </row>
         </tbody>
       </tgroup>
     </table>
