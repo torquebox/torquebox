@@ -20,7 +20,8 @@ require 'base64'
 module TorqueBox
   module Messaging
     class MarshalBase64Message < Message
-
+      ENCODING = :marshal_base64
+      
       def encode(message)
         unless message.nil?
           marshalled = Marshal.dump( message )
@@ -35,12 +36,8 @@ module TorqueBox
         end
       end
 
-      def encoding
-        :marshal_base64
-      end
-
     end
 
-    Message.register_encoding( :marshal_base64, MarshalBase64Message )
+    Message.register_encoding( MarshalBase64Message )
   end
 end

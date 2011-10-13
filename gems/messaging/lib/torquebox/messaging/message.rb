@@ -21,7 +21,12 @@ module TorqueBox
 
       attr_reader :jms_message
 
-      DEFAULT_ENCODING = :marshal_base64
+      # if no encoding specified in the message itself assume the legacy encoding
+      DEFAULT_DECODE_ENCODING = :marshal_base64
+      
+      # if no encoding specified when creating a message, use :marshal
+      DEFAULT_ENCODE_ENCODING = :marshal
+      
       ENCODING_PROPERTY = "__ContentEncoding"
 
       def initialize(jms_session, payload)
@@ -35,7 +40,7 @@ module TorqueBox
       end
 
       def set_encoding
-        @jms_message.set_string_property( ENCODING_PROPERTY, encoding.to_s )
+        @jms_message.set_string_property( ENCODING_PROPERTY, self.class::ENCODING.to_s )
       end
 
       def populate_message_headers(options)
@@ -80,10 +85,10 @@ module TorqueBox
 
         def new(jms_message_or_session, payload = nil, encoding = nil)
           if jms_message_or_session.is_a?( javax.jms::Session )
-            klass = class_for_encoding( encoding )
+            klass = class_for_encoding( encoding || DEFAULT_ENCODE_ENCODING )
             klass.new( jms_message_or_session, payload )
           else
-            klass = class_for_encoding( extract_encoding_from_message( jms_message_or_session ) )
+            klass = class_for_encoding( extract_encoding_from_message( jms_message_or_session ) || DEFAULT_DECODE_ENCODING )
             msg = klass.allocate
             msg.initialize_from_message( jms_message_or_session )
             msg
@@ -94,12 +99,11 @@ module TorqueBox
           @encoding_map ||= { }
         end
 
-        def register_encoding(encoding, klass)
-          encoding_map[encoding] = klass
+        def register_encoding(klass)
+          encoding_map[klass::ENCODING] = klass
         end
 
         def class_for_encoding(encoding)
-          encoding ||= DEFAULT_ENCODING
           klass = encoding_map[encoding.to_sym]
           raise ArgumentError.new( "No message class found for encoding '#{encoding}'" ) unless klass
           klass
