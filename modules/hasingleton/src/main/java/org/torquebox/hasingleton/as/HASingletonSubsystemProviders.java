@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.topology.as;
+package org.torquebox.hasingleton.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIPTION;
@@ -34,9 +34,9 @@ import java.util.ResourceBundle;
 import org.jboss.as.controller.descriptions.DescriptionProvider;
 import org.jboss.dmr.ModelNode;
 
-public class TopologySubsystemProviders {
+public class HASingletonSubsystemProviders {
     
-    static final String RESOURCE_NAME = TopologySubsystemProviders.class.getPackage().getName() + ".LocalDescriptions";
+    static final String RESOURCE_NAME = HASingletonSubsystemProviders.class.getPackage().getName() + ".LocalDescriptions";
 
     static final DescriptionProvider SUBSYSTEM = new DescriptionProvider() {
         @Override

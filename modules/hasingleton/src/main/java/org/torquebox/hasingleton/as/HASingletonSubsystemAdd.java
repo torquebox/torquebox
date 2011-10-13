@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.topology.as;
+package org.torquebox.hasingleton.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
@@ -25,6 +25,8 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_
 
 import java.util.List;
 
+import org.jboss.as.clustering.jgroups.ChannelFactory;
+import org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -34,9 +36,10 @@ import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
+import org.torquebox.hasingleton.HASingleton;
+import org.torquebox.hasingleton.HASingletonCoordinatorService;
 
-public class TopologySubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
+public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     @Override
     protected void populateModel(ModelNode operation, ModelNode subModel) {
@@ -59,14 +62,26 @@ public class TopologySubsystemAdd extends AbstractBoottimeAddStepHandler {
             throw new OperationFailedException( e, null );
         }
     }
-    
 
-    protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
+    protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) {
+
+        ServiceController<Void> singletonController = context.getServiceTarget().addService( HASingleton.serviceName(), new HASingleton() ).install();
+        newControllers.add( singletonController );
+
+        if (context.getServiceRegistry( false ).getService( ChannelFactoryService.getServiceName( null ) ) != null) {
+            HASingletonCoordinatorService coordinator = new HASingletonCoordinatorService( singletonController, "ha-singleton" );
+            newControllers.add(
+                    context.getServiceTarget().addService( HASingleton.serviceName().append( "coordinator" ), coordinator )
+                            .addDependency( ChannelFactoryService.getServiceName( null ), ChannelFactory.class, coordinator.getChannelFactoryInjector() )
+                            .install()
+                    );
+        }
     }
 
-
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        //processorTarget.addDeploymentProcessor( Phase.PARSE, 31, new StompYamlParsingProcessor() );
+        // processorTarget.addDeploymentProcessor( Phase.PARSE, 31, new
+        // StompYamlParsingProcessor() );
     }
 
     static ModelNode createOperation(ModelNode address) {
@@ -76,7 +91,7 @@ public class TopologySubsystemAdd extends AbstractBoottimeAddStepHandler {
         return subsystem;
     }
 
-    static final TopologySubsystemAdd ADD_INSTANCE = new TopologySubsystemAdd();
-    static final Logger log = Logger.getLogger( "org.torquebox.topology.as" );
+    static final HASingletonSubsystemAdd ADD_INSTANCE = new HASingletonSubsystemAdd();
+    static final Logger log = Logger.getLogger( "org.torquebox.hasingleton.as" );
 
 }

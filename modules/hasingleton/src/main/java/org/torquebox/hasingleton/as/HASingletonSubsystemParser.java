@@ -17,11 +17,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.topology.as;
+package org.torquebox.hasingleton.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
 
 import java.util.List;
 
@@ -36,15 +36,15 @@ import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
 
-public class TopologySubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
+public class HASingletonSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
-    private static final TopologySubsystemParser INSTANCE = new TopologySubsystemParser();
+    private static final HASingletonSubsystemParser INSTANCE = new HASingletonSubsystemParser();
 
-    public static TopologySubsystemParser getInstance() {
+    public static HASingletonSubsystemParser getInstance() {
         return INSTANCE;
     }
 
-    private TopologySubsystemParser() {
+    private HASingletonSubsystemParser() {
     }
 
     @Override
@@ -54,10 +54,10 @@ public class TopologySubsystemParser implements XMLStreamConstants, XMLElementRe
         requireNoContent( reader );
         
         final ModelNode address = new ModelNode();
-        address.add( SUBSYSTEM, TopologyExtension.SUBSYSTEM_NAME );
+        address.add( SUBSYSTEM, HASingletonExtension.SUBSYSTEM_NAME );
         address.protect();
 
-        ModelNode subsystem = TopologySubsystemAdd.createOperation( address );
+        ModelNode subsystem = HASingletonSubsystemAdd.createOperation( address );
 
         list.add( subsystem );
     }
@@ -65,10 +65,9 @@ public class TopologySubsystemParser implements XMLStreamConstants, XMLElementRe
     @Override
     public void writeContent(final XMLExtendedStreamWriter writer, final SubsystemMarshallingContext context) throws XMLStreamException {
         context.startSubsystemElement( Namespace.CURRENT.getUriString(), false );
-        writer.writeAttribute( "socket-binding", context.getModelNode().get( "socket-binding" ).asString() );
         writer.writeEndElement();
     }
 
-    private static final Logger log = Logger.getLogger( "org.torquebox.topology.as" );
+    private static final Logger log = Logger.getLogger( "org.torquebox.hasingleton.as" );
 
 }

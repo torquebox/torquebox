@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.topology.as;
+package org.torquebox.hasingleton.as;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,12 +26,12 @@ public enum Namespace {
     // must be first
     UNKNOWN(null),
 
-    TORQUEBOX_TOPOLOGY_1_0("urn:jboss:domain:torquebox-topology:1.0");
+    TORQUEBOX_HASINGLETON_1_0("urn:jboss:domain:torquebox-hasingleton:1.0");
 
     /**
      * The current namespace version.
      */
-    public static final Namespace CURRENT = TORQUEBOX_TOPOLOGY_1_0;
+    public static final Namespace CURRENT = TORQUEBOX_HASINGLETON_1_0;
 
     private final String name;
 

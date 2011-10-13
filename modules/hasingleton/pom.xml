@@ -8,9 +8,9 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>torquebox-topology</artifactId>
+  <artifactId>torquebox-hasingleton</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Cluster Topology Module</name>
+  <name>TorqueBox HASingleton Module</name>
   <description />
 
   <dependencies>
@@ -26,6 +26,19 @@
       <version>${version.polyglot}</version>
       <scope>compile</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.jgroups</groupId>
+      <artifactId>jgroups</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-clustering-jgroups</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>

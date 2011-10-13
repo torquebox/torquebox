@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.topology.as;
+package org.torquebox.hasingleton.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 
@@ -28,29 +28,29 @@ import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 
-public class TopologyExtension extends AbstractBootstrappableExtension {
+public class HASingletonExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initialize(ExtensionContext context) {
         bootstrap();
-        log.info( "Initializing TorqueBox Topology Subsystem" );
+        log.info( "Initializing TorqueBox HA-Singleton Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( TopologySubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( HASingletonSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
-                TopologySubsystemAdd.ADD_INSTANCE,
-                TopologySubsystemProviders.SUBSYSTEM_ADD,
+                HASingletonSubsystemAdd.ADD_INSTANCE,
+                HASingletonSubsystemProviders.SUBSYSTEM_ADD,
                 false );
         
-        registration.registerXMLElementWriter(TopologySubsystemParser.getInstance());
+        registration.registerXMLElementWriter(HASingletonSubsystemParser.getInstance());
     }
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), TopologySubsystemParser.getInstance());
+        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), HASingletonSubsystemParser.getInstance());
     }
     
-    public static final String SUBSYSTEM_NAME = "torquebox-topology";
-    static final Logger log = Logger.getLogger( "org.torquebox.topology.as" );
+    public static final String SUBSYSTEM_NAME = "torquebox-hasingleton";
+    static final Logger log = Logger.getLogger( "org.torquebox.hasingleton.as" );
 
 }
