@@ -1,40 +1,48 @@
 # Copyright 2008-2011 Red Hat, Inc, and individual contributors.
-# 
+#
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation; either version 2.1 of
 # the License, or (at your option) any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this software; if not, write to the Free
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-#require 'torquebox/messaging/client'
+module TorqueBox
+  module Messaging
+    class MarshalMessage < Message
+      ENCODING = :marshal
+      
+      def initialize(jms_session, payload)
+        @jms_message = jms_session.create_bytes_message
+        set_encoding
+        encode( payload )
+      end
 
-require 'torquebox/messaging/connection_factory'
-require 'torquebox/messaging/connection'
-require 'torquebox/messaging/session'
-require 'torquebox/messaging/hornetq_session'
+      def encode(message)
+        unless message.nil?
+          marshalled = Marshal.dump( message )
+          @jms_message.write_bytes( marshalled.to_java_bytes )
+        end
+      end
 
-require 'torquebox/messaging/message'
-require 'torquebox/messaging/marshal_base64_message'
-require 'torquebox/messaging/marshal_message'
+      def decode
+        if (length = @jms_message.get_body_length) > 0
+          bytes = Java::byte[length].new
+          @jms_message.read_bytes( bytes )
+          Marshal.restore( String.from_java_bytes( bytes ) )
+        end
+      end
 
-require 'torquebox/messaging/destination'
-require 'torquebox/messaging/queue'
-require 'torquebox/messaging/topic'
+    end
 
-require 'torquebox/messaging/xa_connection_factory'
-require 'torquebox/messaging/xa_connection'
-require 'torquebox/messaging/xa_session'
-
-require 'torquebox/messaging/message_processor'
-require 'torquebox/messaging/task'
-require 'torquebox/messaging/backgroundable'
-require 'torquebox/messaging/processor_wrapper'
+    Message.register_encoding( MarshalMessage )
+  end
+end

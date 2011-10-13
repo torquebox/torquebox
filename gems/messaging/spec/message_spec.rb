@@ -3,9 +3,10 @@ require 'torquebox/messaging/message'
 include TorqueBox::Messaging
 
 class DummyMessage < Message
+  ENCODING = :dummy
 end
 
-Message.register_encoding( :dummy, DummyMessage )
+Message.register_encoding( DummyMessage )
 
 def mock_message
   msg = mock( 'JMSMessage' )
