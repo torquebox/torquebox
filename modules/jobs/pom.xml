@@ -33,6 +33,12 @@
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
+      <artifactId>torquebox-hasingleton</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -50,6 +56,11 @@
     <dependency>
       <groupId>org.jboss.as</groupId>
       <artifactId>jboss-as-jmx</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-clustering-jgroups</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

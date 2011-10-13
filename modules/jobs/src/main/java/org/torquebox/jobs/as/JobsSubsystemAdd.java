@@ -25,6 +25,7 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_
 
 import java.util.List;
 
+import org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -43,43 +44,44 @@ import org.torquebox.jobs.processors.JobsYamlParsingProcessor;
 import org.torquebox.jobs.processors.ScheduledJobInstaller;
 
 public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
+
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
         model.setEmptyObject();
     }
-    
+
     @Override
-    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
+        final boolean clustered = ( context.getServiceRegistry( false ).getService( ChannelFactoryService.getServiceName( null )  ) != null );
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                addDeploymentProcessors( processorTarget );
+                addDeploymentProcessors( processorTarget, clustered );
             }
         }, OperationContext.Stage.RUNTIME );
     }
-    
-    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
+
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, boolean clustered ) {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new JobsYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new JobsLoadPathProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerInstaller( clustered ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobInstaller( clustered ) );
     }
-    
+
     static ModelNode createOperation(ModelNode address) {
         final ModelNode subsystem = new ModelNode();
         subsystem.get( OP ).set( ADD );
         subsystem.get( OP_ADDR ).set( address );
         return subsystem;
     }
-    
+
     static final JobsSubsystemAdd ADD_INSTANCE = new JobsSubsystemAdd();
-    
+
     static final Logger log = Logger.getLogger( "org.torquebox.jobs.as" );
 
 }

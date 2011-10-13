@@ -1,5 +1,6 @@
 package org.torquebox.hasingleton;
 
+import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.StartContext;
@@ -19,12 +20,15 @@ public class HASingleton implements Service<Void> {
 
     @Override
     public void start(StartContext context) throws StartException {
+        log.info( "HA Singleton starting" );
         
     }
 
     @Override
     public void stop(StopContext context) {
-        
+        log.info( "HA Singleton stopping" );
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.hasingleton"  );
 
 }

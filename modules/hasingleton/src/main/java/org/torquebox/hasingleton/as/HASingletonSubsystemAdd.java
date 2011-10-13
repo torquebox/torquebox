@@ -36,6 +36,7 @@ import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
 import org.torquebox.hasingleton.HASingleton;
 import org.torquebox.hasingleton.HASingletonCoordinatorService;
 
@@ -70,6 +71,7 @@ public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
         newControllers.add( singletonController );
 
         if (context.getServiceRegistry( false ).getService( ChannelFactoryService.getServiceName( null ) ) != null) {
+            singletonController.setMode( Mode.NEVER );
             HASingletonCoordinatorService coordinator = new HASingletonCoordinatorService( singletonController, "ha-singleton" );
             newControllers.add(
                     context.getServiceTarget().addService( HASingleton.serviceName().append( "coordinator" ), coordinator )

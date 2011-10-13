@@ -104,14 +104,6 @@ public class ScheduledJobMetaData {
         return this.rubySchedulerName;
     }
 
-    public void setClustered(boolean b) {
-        this.clustered = b;
-    }
-
-    public boolean isClustered() {
-        return this.clustered;
-    }
-
     private String group;
     private String name;
     private String description;
@@ -122,6 +114,5 @@ public class ScheduledJobMetaData {
     
     private String rubySchedulerName;
     private boolean singleton;
-    private boolean clustered;
 
 }

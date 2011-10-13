@@ -42,7 +42,7 @@ public class ScheduledJobInstallerTest extends AbstractDeploymentProcessorTestCa
     
     @Before
     public void setUp() {
-        appendDeployer( new ScheduledJobInstaller() );
+        appendDeployer( new ScheduledJobInstaller( false ) );
     }
     
 
