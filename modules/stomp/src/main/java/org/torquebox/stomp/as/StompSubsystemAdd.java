@@ -53,7 +53,6 @@ import org.torquebox.stomp.processors.StompletLoadPathProcessor;
 import org.torquebox.stomp.processors.StompletsRuntimePoolProcessor;
 
 public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
 
     @Override
     protected void populateModel(ModelNode operation, ModelNode subModel) {
@@ -64,9 +63,12 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
 
+        log.info( "performBoottime" );
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
+                log.info( "execute step" );
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
@@ -77,22 +79,23 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
             throw new OperationFailedException( e, null );
         }
     }
-    
 
-    protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
+    protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) {
         addStompletServer( context, operation, model, verificationHandler, newControllers );
     }
 
-    private void addStompletServer(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler, List<ServiceController<?>> newControllers) {
+    private void addStompletServer(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) {
         StompletServer server = new StompletServer();
         StompletServerService service = new StompletServerService( server );
-        
-        final String bindingRef = operation.require("socket-binding").asString();
-        log.info(  "Binding STOMP to " + bindingRef );
+
+        final String bindingRef = operation.require( "socket-binding" ).asString();
+        log.info( "Binding STOMP to " + bindingRef );
 
         ServiceController<StompletServer> controller = context.getServiceTarget().addService( StompServices.SERVER, service )
                 .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, service.getTransactionManagerInjector() )
-                .addDependency(SocketBinding.JBOSS_BINDING_NAME.append(bindingRef), SocketBinding.class, service.getBindingInjector())
+                .addDependency( SocketBinding.JBOSS_BINDING_NAME.append( bindingRef ), SocketBinding.class, service.getBindingInjector() )
                 .setInitialMode( Mode.ON_DEMAND )
                 .addListener( verificationHandler )
                 .install();

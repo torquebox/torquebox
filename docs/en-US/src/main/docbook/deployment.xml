@@ -58,7 +58,7 @@
     access <uri>http://localhost:8080/</uri>.</para>
 
     <para>When the application is deployed, a deployment descriptor is written
-    to the <filename>$TORQUEBOX_HOME/apps/</filename>
+    to the <filename>$TORQUEBOX_HOME/jboss/standalone/deployments/</filename>
     directory with a filename based upon the directory name of your current
     directory.</para>
 
@@ -138,7 +138,7 @@
       <para>Typically, an application is <link
       linkend="deployment-descriptors">configured using a deployment
       descriptor suffixed by <filename>-knob.yml</filename></link> and placed
-      in <filename>$TORQUEBOX_HOME/apps/</filename>. We refer
+      in <filename>$TORQUEBOX_HOME/jboss/standalone/deployments/</filename>. We refer
       to this file as an <emphasis>external</emphasis> descriptor, because it
       resides outside of the app's root directory.</para>
 
@@ -155,11 +155,11 @@
       self-contained archive, you may override portions of the internal
       descriptor using an external descriptor. If you do, make sure that only
       the external descriptor resides beneath
-      <filename>$TORQUEBOX_HOME/apps/</filename>. The archive
+      <filename>$TORQUEBOX_HOME/jboss/standalone/deployments/</filename>. The archive
       containing the (possibly overridden) internal descriptors should reside
       elsewhere on the filesystem, its path referenced in the external
       descriptor. Having both the archive and the external descriptor beneath
-      <filename>$TORQUEBOX_HOME/apps/</filename> will result
+      <filename>$TORQUEBOX_HOME/jboss/standalone/deployments/</filename> will result
       in errors stemming from two separate deployments of the same app.</para>
     </section>
 
@@ -203,7 +203,7 @@ app/controllers/application_controller.rb
       used</para>
 
       <para><informalexample><screen>$ <command>rake</command> <command>torquebox:archive</command>
-$ <command>cp</command> <filename><replaceable>myapp</replaceable>.knob</filename> <filename><envar>$TORQUEBOX_HOME</envar>/apps/</filename></screen></informalexample></para>
+$ <command>cp</command> <filename><replaceable>myapp</replaceable>.knob</filename> <filename><envar>$TORQUEBOX_HOME</envar>/jboss/standalone/deployments/</filename></screen></informalexample></para>
 
       <para>If
       you redeploy an archive, the server will remove the previous version,

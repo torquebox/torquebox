@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.jobs.as;
+package org.torquebox.hasingleton.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
@@ -25,7 +25,6 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_
 
 import java.util.List;
 
-import org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -36,14 +35,9 @@ import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.torquebox.jobs.component.processors.JobComponentResolverInstaller;
-import org.torquebox.jobs.processors.JobSchedulerInstaller;
-import org.torquebox.jobs.processors.JobsLoadPathProcessor;
-import org.torquebox.jobs.processors.JobsRuntimePoolProcessor;
-import org.torquebox.jobs.processors.JobsYamlParsingProcessor;
-import org.torquebox.jobs.processors.ScheduledJobInstaller;
+import org.torquebox.hasingleton.HASingletonInstaller;
 
-public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
+public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
@@ -53,22 +47,21 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
+        
+        log.info( "performBoottime" );
 
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
+                log.info( "executing step" );
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new JobsYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new JobsLoadPathProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobInstaller() );
+        log.info( "Adding deployment processor for hasingleton");
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 200, new HASingletonInstaller() );
     }
 
     static ModelNode createOperation(ModelNode address) {
@@ -78,8 +71,7 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
         return subsystem;
     }
 
-    static final JobsSubsystemAdd ADD_INSTANCE = new JobsSubsystemAdd();
-
-    static final Logger log = Logger.getLogger( "org.torquebox.jobs.as" );
+    static final HASingletonSubsystemAdd ADD_INSTANCE = new HASingletonSubsystemAdd();
+    static final Logger log = Logger.getLogger( "org.torquebox.hasingleton.as" );
 
 }

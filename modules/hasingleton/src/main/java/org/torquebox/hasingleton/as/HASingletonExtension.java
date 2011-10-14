@@ -17,7 +17,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.torquebox.cdi.as;
+package org.torquebox.hasingleton.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
@@ -31,18 +31,18 @@ import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 import org.torquebox.core.as.GenericSubsystemDescribeHandler;
 
-public class CDIExtension extends AbstractBootstrappableExtension {
+public class HASingletonExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initialize(ExtensionContext context) {
         bootstrap();
-        log.info( "Initializing TorqueBox CDI Subsystem" );
+        log.info( "Initializing TorqueBox HA-Singleton Subsystem" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CDISubsystemProviders.SUBSYSTEM );
+        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( HASingletonSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
-                CDISubsystemAdd.ADD_INSTANCE,
-                CDISubsystemProviders.SUBSYSTEM_ADD,
+                HASingletonSubsystemAdd.ADD_INSTANCE,
+                HASingletonSubsystemProviders.SUBSYSTEM_ADD,
                 false );
         
         subsystem.registerOperationHandler(DESCRIBE, 
@@ -51,16 +51,15 @@ public class CDIExtension extends AbstractBootstrappableExtension {
                 false, 
                 OperationEntry.EntryType.PRIVATE);
         
-        registration.registerXMLElementWriter(CDISubsystemParser.getInstance());
+        registration.registerXMLElementWriter(HASingletonSubsystemParser.getInstance());
     }
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), CDISubsystemParser.getInstance());
+        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), HASingletonSubsystemParser.getInstance());
     }
     
-    public static final String SUBSYSTEM_NAME = "torquebox-cdi";
-    static final Logger log = Logger.getLogger( "org.torquebox.cdi.as" );
-
+    public static final String SUBSYSTEM_NAME = "torquebox-hasingleton";
+    static final Logger log = Logger.getLogger( "org.torquebox.hasingleton.as" );
 
 }

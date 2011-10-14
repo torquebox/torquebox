@@ -45,13 +45,19 @@ public class InjectableHandlerAdd extends AbstractAddStepHandler {
     
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
+        
+        /*
         try {
             for (InjectableHandler eachHandler : getInjectableHandlers( operation )) {
+                log.info( "Adding type: " + eachHandler.getType() );
                 model.get( eachHandler.getType() ).setEmptyObject();
             }
         } catch (ModuleLoadException e) {
             log.error( "Unable to add injectable handlers to model", e );
         }
+        */
+        
+        model.get(  "attributes", "module" ).set( operation.get( "attributes", "module" ) );
         
     }
     
@@ -74,8 +80,11 @@ public class InjectableHandlerAdd extends AbstractAddStepHandler {
     }
     
     protected ServiceLoader<InjectableHandler> getInjectableHandlers(ModelNode operation) throws ModuleLoadException {
+        log.info(  "getHandlers on " + operation  );
         String handlerModuleIdentifierStr = operation.get( "attributes", "module" ).asString();
+        log.info( "HMIstr: " + handlerModuleIdentifierStr );
         ModuleIdentifier handlerModuleIdentifier = ModuleIdentifier.create( handlerModuleIdentifierStr );
+        log.info( "HMIobj: " + handlerModuleIdentifier );
         return Module.loadServiceFromCallerModuleLoader( handlerModuleIdentifier, InjectableHandler.class );
     }
 

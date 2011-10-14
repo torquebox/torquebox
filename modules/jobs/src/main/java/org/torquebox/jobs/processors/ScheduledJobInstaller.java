@@ -30,7 +30,6 @@ import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
@@ -39,6 +38,7 @@ import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.processors.ClusterAwareProcessor;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.JobScheduler;
 import org.torquebox.jobs.ScheduledJob;
@@ -55,18 +55,19 @@ import org.torquebox.jobs.as.JobsServices;
  * 
  * Creates objects from metadata
  */
-public class ScheduledJobInstaller implements DeploymentUnitProcessor {
+public class ScheduledJobInstaller extends ClusterAwareProcessor {
+
+    public ScheduledJobInstaller() {
+    }
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<ScheduledJobMetaData> allJobMetaData =
-                unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
+        List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
         for (ScheduledJobMetaData metaData : allJobMetaData) {
             deploy( phaseContext, metaData );
         }
-
     }
 
     @Override
@@ -89,14 +90,10 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
 
         ServiceName serviceName = JobsServices.scheduledJob( unit, metaData.getName() );
 
-        if (metaData.isSingleton() && !metaData.isClustered()) {
-            log.warn( "Singleton job specified, but we have no cluster - ignoring the singleton flag" );
-        }
-
         ServiceBuilder<ScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
         builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
-        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && metaData.isClustered() ), JobScheduler.class, job.getJobSchedulerInjector() );
+        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && isClustered( phaseContext ) ), JobScheduler.class, job.getJobSchedulerInjector() );
 
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();

@@ -8,35 +8,12 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>torquebox-jobs</artifactId>
+  <artifactId>torquebox-hasingleton</artifactId>
   <packaging>jar</packaging>
-  <name>TorqueBox Jobs Module</name>
+  <name>TorqueBox HASingleton Module</name>
   <description />
 
   <dependencies>
-    <dependency>
-      <groupId>org.projectodd</groupId>
-      <artifactId>polyglot-core</artifactId>
-      <version>${version.polyglot}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby-complete</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-bootstrap</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-hasingleton</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
@@ -44,35 +21,59 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz</artifactId>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-core</artifactId>
+      <version>${version.polyglot}</version>
       <scope>compile</scope>
     </dependency>
+
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jboss.as</groupId>
-      <artifactId>jboss-as-jmx</artifactId>
+      <groupId>org.jgroups</groupId>
+      <artifactId>jgroups</artifactId>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.jboss.as</groupId>
       <artifactId>jboss-as-clustering-jgroups</artifactId>
       <scope>provided</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-as-test-support</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
-
   <build>
+    <resources> 
+      <resource> 
+        <directory>src/main/resources</directory> 
+      </resource> 
+      <resource> 
+        <directory>src/main/java</directory> 
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*.rb</include>
+          <include>**/*.properties</include>
+        </includes>
+      </resource> 
+      <resource> 
+        <directory>src/main/ruby</directory> 
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources> 
     <plugins> 
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
