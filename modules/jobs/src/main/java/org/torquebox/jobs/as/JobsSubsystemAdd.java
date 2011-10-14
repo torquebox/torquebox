@@ -54,23 +54,21 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
 
-        final boolean clustered = ( context.getServiceRegistry( false ).getService( ChannelFactoryService.getServiceName( null )  ) != null );
-
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                addDeploymentProcessors( processorTarget, clustered );
+                addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
     }
 
-    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, boolean clustered ) {
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new JobsYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new JobsLoadPathProcessor() );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerInstaller( clustered ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobInstaller( clustered ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobInstaller() );
     }
 
     static ModelNode createOperation(ModelNode address) {

@@ -20,12 +20,14 @@
 package org.torquebox.core.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
+import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 
@@ -44,6 +46,13 @@ public class CoreExtension extends AbstractBootstrappableExtension {
                 CoreSubsystemAdd.ADD_INSTANCE,
                 CoreSubsystemProviders.SUBSYSTEM_ADD,
                 false );
+        
+        subsystem.registerOperationHandler(DESCRIBE, 
+                GenericSubsystemDescribeHandler.INSTANCE, 
+                GenericSubsystemDescribeHandler.INSTANCE, 
+                false, 
+                OperationEntry.EntryType.PRIVATE);
+
 
         ManagementResourceRegistration injector = subsystem.registerSubModel( PathElement.pathElement( "injector" ), CoreSubsystemProviders.INJECTOR );
 

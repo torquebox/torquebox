@@ -39,6 +39,7 @@ import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.processors.ClusterAwareProcessor;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.JobScheduler;
 import org.torquebox.jobs.ScheduledJob;
@@ -55,22 +56,19 @@ import org.torquebox.jobs.as.JobsServices;
  * 
  * Creates objects from metadata
  */
-public class ScheduledJobInstaller implements DeploymentUnitProcessor {
-    
-    public ScheduledJobInstaller(boolean clustered) {
-        this.clustered = clustered;
+public class ScheduledJobInstaller extends ClusterAwareProcessor {
+
+    public ScheduledJobInstaller() {
     }
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        List<ScheduledJobMetaData> allJobMetaData =
-                unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
+        List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
         for (ScheduledJobMetaData metaData : allJobMetaData) {
             deploy( phaseContext, metaData );
         }
-
     }
 
     @Override
@@ -96,7 +94,7 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
         ServiceBuilder<ScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
         builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
-        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && isClustered() ), JobScheduler.class, job.getJobSchedulerInjector() );
+        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && isClustered( phaseContext ) ), JobScheduler.class, job.getJobSchedulerInjector() );
 
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();
@@ -118,12 +116,6 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
                 .install();
 
     }
-    
-    public boolean isClustered() {
-        return this.clustered;
-    }
-    
-    private boolean clustered;
 
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 }

@@ -20,13 +20,16 @@
 package org.torquebox.security.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
+import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
 import org.jboss.as.controller.registry.ManagementResourceRegistration;
+import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
+import org.torquebox.core.as.GenericSubsystemDescribeHandler;
 import org.torquebox.security.auth.as.AuthSubsystemAdd;
 import org.torquebox.security.auth.as.AuthSubsystemParser;
 import org.torquebox.security.auth.as.AuthSubsystemProviders;
@@ -48,6 +51,12 @@ public class SecurityExtension extends AbstractBootstrappableExtension {
                 AuthSubsystemAdd.ADD_INSTANCE,
                 AuthSubsystemProviders.SUBSYSTEM_ADD,
                 false );
+        
+        subsystem.registerOperationHandler(DESCRIBE, 
+                GenericSubsystemDescribeHandler.INSTANCE, 
+                GenericSubsystemDescribeHandler.INSTANCE, 
+                false, 
+                OperationEntry.EntryType.PRIVATE);
 
         registration.registerXMLElementWriter( AuthSubsystemParser.getInstance() );
 	}

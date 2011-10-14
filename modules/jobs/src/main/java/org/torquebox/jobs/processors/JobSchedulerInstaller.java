@@ -31,6 +31,7 @@ import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.processors.ClusterAwareProcessor;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.hasingleton.HASingleton;
 import org.torquebox.jobs.JobScheduler;
@@ -40,10 +41,9 @@ import org.torquebox.jobs.as.JobsServices;
 /**
  * Creates a JobScheduler service if there are any job meta data
  */
-public class JobSchedulerInstaller implements DeploymentUnitProcessor {
+public class JobSchedulerInstaller extends ClusterAwareProcessor {
 
-    public JobSchedulerInstaller(boolean clustered) {
-        this.clustered = clustered;
+    public JobSchedulerInstaller() {
     }
 
     public void setKernel(Kernel kernel) {
@@ -82,7 +82,7 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
         DeployedJobTypes jobTypes = getJobTypes( allMetaData );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        if (this.isClustered()) {
+        if (isClustered( phaseContext )) {
             log.debug( "Deploying clustered scheduler: " + unit );
             if (jobTypes.singletonJobs) {
                 this.buildScheduler( phaseContext, true );
@@ -118,10 +118,6 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
         builder.install();
     }
 
-    public boolean isClustered() {
-        return this.clustered;
-    }
-
     private DeployedJobTypes getJobTypes(List<ScheduledJobMetaData> allMetaData) {
         DeployedJobTypes deployedJobTypes = new DeployedJobTypes();
         for (ScheduledJobMetaData each : allMetaData) {
@@ -136,8 +132,6 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
-
-    private boolean clustered;
 
     private String runtimePoolName;
     private Kernel kernel;

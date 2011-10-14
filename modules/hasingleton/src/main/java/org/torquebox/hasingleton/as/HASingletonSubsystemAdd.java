@@ -37,6 +37,7 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
 import org.torquebox.hasingleton.HASingleton;
 import org.torquebox.hasingleton.HASingletonCoordinatorService;
 
@@ -57,28 +58,45 @@ public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
             }
         }, OperationContext.Stage.RUNTIME );
 
+        /*
         try {
             addCoreServices( context, operation, model, verificationHandler, newControllers );
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
+        */
+    }
+    
+    
+
+    @Override
+    protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+        addCoreServices( context, operation, model, verificationHandler, newControllers );
     }
 
     protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) {
 
-        ServiceController<Void> singletonController = context.getServiceTarget().addService( HASingleton.serviceName(), new HASingleton() ).install();
+        ServiceController<Void> singletonController = context.getServiceTarget().addService( HASingleton.serviceName(), new HASingleton() )
+                .setInitialMode( Mode.NEVER )
+                .install();
         newControllers.add( singletonController );
 
-        if (context.getServiceRegistry( false ).getService( ChannelFactoryService.getServiceName( null ) ) != null) {
-            singletonController.setMode( Mode.NEVER );
-            HASingletonCoordinatorService coordinator = new HASingletonCoordinatorService( singletonController, "ha-singleton" );
-            newControllers.add(
-                    context.getServiceTarget().addService( HASingleton.serviceName().append( "coordinator" ), coordinator )
-                            .addDependency( ChannelFactoryService.getServiceName( null ), ChannelFactory.class, coordinator.getChannelFactoryInjector() )
-                            .install()
-                    );
-        }
+        ServiceName channelFactoryServiceName = ChannelFactoryService.getServiceName( null );
+
+        log.info( "Looking for " + channelFactoryServiceName );
+
+        boolean clustered = (context.getServiceRegistry( false ).getService( channelFactoryServiceName ) != null);
+
+        log.info( "Clustered? " + clustered );
+
+        HASingletonCoordinatorService coordinator = new HASingletonCoordinatorService( singletonController, "ha-singleton" );
+        newControllers.add(
+                context.getServiceTarget().addService( HASingleton.serviceName().append( "coordinator" ), coordinator )
+                        .addDependency( ChannelFactoryService.getServiceName( null ), ChannelFactory.class, coordinator.getChannelFactoryInjector() )
+                        .install()
+                );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
