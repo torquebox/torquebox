@@ -1,0 +1,6 @@
+messaging:
+  default_message_encoding: biscuit
+
+  /topics/foo:
+    MyClass:
+

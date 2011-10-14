@@ -125,6 +125,9 @@ describe "an app using a torquebox.rb" do
       response.should == 'biscuit'
     end
 
-    
+    it "should set the default message encoding" do
+      ENV['DEFAULT_MESSAGE_ENCODING'].should == 'marshal_base64'
+    end
+
   end
 end

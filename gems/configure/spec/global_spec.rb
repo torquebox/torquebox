@@ -366,8 +366,10 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                        :cron => 'cronspec',
                        :config => { :foo => :bar }
                      } ] ],
-        'options_for' => { FakeConstant.new( 'Backgroundable' ) => {
-            :concurrency => 42 } },
+        'options_for' => {
+          FakeConstant.new( 'Backgroundable' ) => { :concurrency => 42 },
+          'messaging' => { :default_message_encoding => :biscuit }
+        },
         'pool' => {
           'web' => { :type => :shared },
           'foo' => { :type => :bounded, :min => 1, :max => 2 } },
@@ -422,6 +424,11 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       @metadata['jobs']['AnotherJob-1'].should_not be_nil
     end
 
+
+    it "should properly set messaging options from options_for" do
+      @metadata['messaging']['default_message_encoding'].should == 'biscuit'
+    end
+    
     it "should properly set task options from options_for" do
       @metadata['tasks']['Backgroundable']['concurrency'].should == 42
     end

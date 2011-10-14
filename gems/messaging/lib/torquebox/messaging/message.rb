@@ -87,10 +87,12 @@ module TorqueBox
 
         def new(jms_message_or_session, payload = nil, encoding = nil)
           if jms_message_or_session.is_a?( javax.jms::Session )
-            klass = class_for_encoding( encoding || DEFAULT_ENCODE_ENCODING )
+            encoding ||= ENV['DEFAULT_MESSAGE_ENCODING'] || DEFAULT_ENCODE_ENCODING
+            klass = class_for_encoding( encoding.to_sym )
             klass.new( jms_message_or_session, payload )
           else
-            klass = class_for_encoding( extract_encoding_from_message( jms_message_or_session ) || DEFAULT_DECODE_ENCODING )
+            encoding = extract_encoding_from_message( jms_message_or_session ) || DEFAULT_DECODE_ENCODING
+            klass = class_for_encoding( encoding )
             msg = klass.allocate
             msg.initialize_from_message( jms_message_or_session )
             msg
