@@ -160,9 +160,9 @@ class Assembler
   def transform_configs
     stash_stock_configs
     trash_stock_configs
-    tool.transform_config('target/standalone-preview.xml',    'standalone/configuration/standalone.xml' )
-    tool.transform_config('target/standalone-preview-ha.xml', 'standalone/configuration/standalone-ha.xml' )
-    tool.transform_config('target/domain-preview.xml',            'domain/configuration/domain.xml', true )
+    tool.transform_config('target/standalone-preview.xml',    'standalone/configuration/standalone.xml',    false, false )
+    tool.transform_config('target/standalone-preview-ha.xml', 'standalone/configuration/standalone-ha.xml', false, true  )
+    tool.transform_config('target/domain-preview.xml',        'domain/configuration/domain.xml',            true,  true  )
   end
 
   def transform_host_config

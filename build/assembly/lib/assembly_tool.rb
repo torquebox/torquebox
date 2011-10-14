@@ -275,6 +275,90 @@ class AssemblyTool
     destinations.each &:remove
   end
 
+  def fix_messaging_clustering(doc)
+    messaging_subsystem = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.0']" ).first
+
+    e = REXML::Element.new( 'clustered' )
+    e.text = 'true'
+    messaging_subsystem.add_element( e )
+
+    e = REXML::Element.new( 'cluster-user' )
+    e.text = 'admin'
+    messaging_subsystem.add_element( e );
+
+    e = REXML::Element.new( 'cluster-password' )
+    e.text = 'password'
+    messaging_subsystem.add_element( e )
+
+    broadcast_groups = REXML::Element.new( 'broadcast-groups' )
+    broadcast_group = REXML::Element.new( 'broadcast-group' )
+    broadcast_group.attributes['name'] = 'default-broadcast-group'
+
+    e = REXML::Element.new( 'group-address' )
+    e.text = '231.7.7.7' 
+    broadcast_group.add_element( e )
+
+    e = REXML::Element.new( 'group-port' )
+    e.text = '9876'
+    broadcast_group.add_element( e )
+
+    e = REXML::Element.new( 'broadcast-period' )
+    e.text = '100'
+    broadcast_group.add_element( e )
+
+    e = REXML::Element.new( 'connector-ref' )
+    e.text = 'netty-connector'
+    broadcast_group.add_element( e )
+    broadcast_groups.add_element( broadcast_group )
+    messaging_subsystem.add_element( broadcast_groups )
+
+    discovery_groups = REXML::Element.new( 'discovery-groups' )
+    discovery_group = REXML::Element.new( 'discovery-group' )
+    discovery_group.attributes['name'] = 'default-discovery-group'
+
+    e = REXML::Element.new( 'group-address' )
+    e.text = '231.7.7.7' 
+    discovery_group.add_element( e )
+
+    e = REXML::Element.new( 'group-port' )
+    e.text = '9876'
+    discovery_group.add_element( e )
+
+    e = REXML::Element.new( 'refresh-timeout' )
+    e.text = '10000'
+    discovery_group.add_element( e )
+
+    discovery_groups.add_element( discovery_group )
+    messaging_subsystem.add_element( discovery_groups )
+
+    cluster_connections = REXML::Element.new( 'cluster-connections' )
+    cluster_connection = REXML::Element.new( 'cluster-connection' )
+    cluster_connection.attributes['name'] = 'default-cluster-connection'
+
+    e = REXML::Element.new( 'address' )
+    e.text = 'jms'
+    cluster_connection.add_element( e )
+
+    e = REXML::Element.new( 'connector-ref' )
+    e.text = 'netty-connector'
+    cluster_connection.add_element( e )
+
+    e = REXML::Element.new( 'retry-interval' )
+    e.text = '500'
+    cluster_connection.add_element( e )
+
+    e = REXML::Element.new( 'forward-when-no-consumers' )
+    e.text = 'true'
+    cluster_connection.add_element( e )
+
+    e = REXML::Element.new( 'discovery-group-ref' )
+    e.attributes['discovery-group-name'] = 'default-discovery-group'
+    cluster_connection.add_element( e )
+
+    cluster_connections.add_element( cluster_connection )
+    messaging_subsystem.add_element( cluster_connections )
+  end
+
   def fix_host_servers(doc)
     doc.root.get_elements( '//servers/server' ).each &:remove
     servers = doc.root.get_elements( '//servers' ).first
@@ -308,7 +392,7 @@ class AssemblyTool
     end
   end
 
-  def transform_config(input_file, output_file, domain=false)
+  def transform_config(input_file, output_file, domain=false, ha=false)
     doc = REXML::Document.new( File.read( input_file ) )
 
     Dir.chdir( @jboss_dir ) do
@@ -325,6 +409,10 @@ class AssemblyTool
         setup_server_groups(doc)
         fix_profiles(doc)
         fix_socket_binding_groups(doc)
+      end
+
+      if ( domain || ha )
+        fix_messaging_clustering(doc)
       end
 
       # Uncomment to create a minimal standalone.xml
