@@ -14,7 +14,7 @@ describe "sinatra queues test" do
 
   it "should scream toby crawley" do
     visit "/uppercaser/up/toby+crawley"
-    page.should have_content('TOBY CRAWLEY')
+    page.should have_content('TOBY+CRAWLEY')
   end
 
   remote_describe "jobs check" do
