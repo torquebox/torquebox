@@ -233,6 +233,10 @@ module TorqueBox
         end
       end
 
+      def add_listener( listener )
+        cache.add_listener( listener )
+      end
+
       def stop
         cache.stop
       end
@@ -341,6 +345,7 @@ module TorqueBox
         local_manager.define_configuration( name, config.build )
 
         Cache.local_managers << local_manager
+        
         local_manager.get_cache( self.name )
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
