@@ -24,13 +24,15 @@ module TorqueBox
       # if no encoding specified in the message itself assume the legacy encoding
       DEFAULT_DECODE_ENCODING = :marshal_base64
       
-      # if no encoding specified when creating a message, use :marshal
+      # if no encoding specified when creating a message and no global
+      # defaut set use :marshal
       DEFAULT_ENCODE_ENCODING = :marshal
       
-      ENCODING_PROPERTY = "__ContentEncoding"
+      ENCODING_PROPERTY = "__ContentEncoding__"
 
       def initialize(jms_session, payload)
-        @jms_message = jms_session.create_text_message
+        @jms_message = self.class::JMS_TYPE == :text ? jms_session.create_text_message :
+          jms_session.create_bytes_message
         set_encoding
         encode( payload )
       end

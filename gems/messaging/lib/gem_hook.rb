@@ -15,14 +15,13 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-#require 'torquebox/messaging/client'
-
 require 'torquebox/messaging/connection_factory'
 require 'torquebox/messaging/connection'
 require 'torquebox/messaging/session'
 require 'torquebox/messaging/hornetq_session'
 
 require 'torquebox/messaging/message'
+require 'torquebox/messaging/json_message'
 require 'torquebox/messaging/marshal_base64_message'
 require 'torquebox/messaging/marshal_message'
 

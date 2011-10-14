@@ -89,10 +89,32 @@ remote_describe "in-container messaging tests" do
 
   describe "sending and receiving" do
 
+    context "with an encoding of json" do
+      it "should be able to publish to and receive from a queue" do
+        queue = TorqueBox::Messaging::Queue.start "/queues/foo"
+        
+        queue.publish ["howdy"], :encoding => :json
+        message = queue.receive
+        
+        queue.stop
+        message.should eql( ["howdy"] )
+      end
+
+      it "should be able to publish a complex type to and receive from a queue" do
+        queue = TorqueBox::Messaging::Queue.start "/queues/foo"
+
+        data = { 'time' => Time.now, 'string' => 'abc' }
+        queue.publish data, :encoding => :json
+        message = queue.receive
+        queue.stop
+        message.should eql( data )
+      end
+    end
+    
     [:marshal, :marshal_base64, nil].each do |encoding|
       
       context "with an encoding of #{encoding || 'default'}" do
-        it "should be able to publish to and receive from a queue" do
+        it "should be able to publish a string to and receive from a queue" do
           queue = TorqueBox::Messaging::Queue.start "/queues/foo"
 
           queue.publish "howdy", :encoding => encoding
@@ -102,13 +124,25 @@ remote_describe "in-container messaging tests" do
           message.should eql( "howdy" )
         end
 
-        it "should receive a binary file correctly" do
+        it "should be able to publish a complex type to and receive from a queue" do
           queue = TorqueBox::Messaging::Queue.start "/queues/foo"
 
-          data = File.open("#{File.dirname(__FILE__)}/../src/test/resources/sample.pdf", "r") { |file| file.read }
+          data = { :time => Time.now, :string => 'abc' }
           queue.publish data, :encoding => encoding
           message = queue.receive
 
+          queue.stop
+          message.should eql( data )
+        end
+
+        
+        it "should receive a binary file correctly" do
+          queue = TorqueBox::Messaging::Queue.start "/queues/foo"
+          
+          data = File.open("#{File.dirname(__FILE__)}/../src/test/resources/sample.pdf", "r") { |file| file.read }
+          queue.publish data, :encoding => encoding
+          message = queue.receive
+          
           queue.stop
           message.should eql( data )
         end
@@ -253,3 +287,4 @@ remote_describe "in-container messaging tests" do
   end
 
 end
+

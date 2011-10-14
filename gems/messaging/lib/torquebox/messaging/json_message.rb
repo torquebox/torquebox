@@ -15,30 +15,27 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'base64'
+require 'json/pure'
+require 'json/add/core'
 
 module TorqueBox
   module Messaging
-    class MarshalBase64Message < Message
-      ENCODING = :marshal_base64
+    class JSONMessage < Message
+      ENCODING = :json
       JMS_TYPE = :text
       
       def encode(message)
-        unless message.nil?
-          marshalled = Marshal.dump( message )
-          @jms_message.text = Base64.encode64( marshalled )
-        end
+        @jms_message.text = JSON.fast_generate( message ) unless message.nil?
       end
 
       def decode
-        unless @jms_message.text.nil?
-          serialized = Base64.decode64( @jms_message.text )
-          Marshal.restore( serialized )
-        end
+        # we can't :symbolize_names here, since that breaks turning
+        # json_class back into an object, ffs
+        JSON.parse( @jms_message.text ) unless @jms_message.text.nil?
       end
 
     end
 
-    Message.register_encoding( MarshalBase64Message )
+    Message.register_encoding( JSONMessage )
   end
 end
