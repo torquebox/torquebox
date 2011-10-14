@@ -125,6 +125,7 @@ module TorqueBox
             queue_name = Task.queue_name( "torquebox_backgroundable" )
             queue = Queue.new( queue_name )
             future = Future.new( queue )
+            options[:encoding] = :marshal
             queue.publish( {:receiver => receiver,
                              :future_id => future.correlation_id,
                              :future_queue => queue_name,

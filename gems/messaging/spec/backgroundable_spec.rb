@@ -83,7 +83,8 @@ describe TorqueBox::Messaging::Backgroundable do
                                              :future_queue => "/queues/torquebox//tasks/torquebox_backgroundable",
                                              :method => '__sync_an_async_action',
                                              :args => [:a, :b]
-                                           }, { })
+                                           },
+                                           anything)
       object.an_async_action(:a, :b) 
     end
     
@@ -95,7 +96,7 @@ describe TorqueBox::Messaging::Backgroundable do
 
     it "should pass through the options" do
       MyTestModel.always_background :optioned, :priority => :low
-      @queue.should_receive(:publish).with(anything, :priority => :low)
+      @queue.should_receive(:publish).with(anything, hash_including(:priority => :low))
       MyTestModel.new.optioned
     end
 
@@ -110,29 +111,18 @@ describe TorqueBox::Messaging::Backgroundable do
     end
 
     it "should queue any method called on it" do
-      @queue.should_receive(:publish).with({:receiver => anything,
-                                             :method => :foo,
-                                             :args => anything,
-                                             :future_id => anything,
-                                             :future_queue => anything}, { })
+      @queue.should_receive(:publish).with(hash_including(:method => :foo),
+                                           anything)
       @object.background.foo 
     end
 
     it "should queue the receiver" do
-      @queue.should_receive(:publish).with({:receiver => @object,
-                                             :method => anything,
-                                             :args => anything,
-                                             :future_id => anything,
-                                             :future_queue => anything}, { })
+      @queue.should_receive(:publish).with(hash_including(:receiver => @object), anything)
       @object.background.foo 
     end
 
     it "should queue the args" do
-      @queue.should_receive(:publish).with({:receiver => anything,
-                                             :method => anything,
-                                             :future_id => anything,
-                                             :future_queue => anything,
-                                             :args => [1,2]}, {})
+      @queue.should_receive(:publish).with(hash_including(:args => [1,2]), anything)
       @object.background.foo(1,2) 
     end
 
@@ -148,14 +138,17 @@ describe TorqueBox::Messaging::Backgroundable do
     end
 
     it "should pass through any options" do
-      @queue.should_receive(:publish).with({:receiver => anything,
-                                             :method => anything,
-                                             :args => anything,
-                                             :future_id => anything,
-                                             :future_queue => anything},
-                                           {:ttl => 1})
+      @queue.should_receive(:publish).with(anything,
+                                           hash_including(:ttl => 1))
       @object.background(:ttl => 1).foo
     end
+
+    it "should always use the :marshal encoding" do
+      @queue.should_receive(:publish).with(anything,
+                                           hash_including(:encoding => :marshal))
+      @object.background.foo
+    end
+
   end
   
 end

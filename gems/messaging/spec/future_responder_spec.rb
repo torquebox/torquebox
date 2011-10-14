@@ -5,7 +5,7 @@ include TorqueBox::Messaging
 describe TorqueBox::Messaging::FutureResponder do
   def self.it_should_publish(message, priority=nil, &block)
     it "should publish with #{message.inspect}#{priority ? ' and priority :' + priority.to_s : ''}" do
-      opts = { :correlation_id => 'ham-biscuit', :ttl => 1234 }
+      opts = { :correlation_id => 'ham-biscuit', :ttl => 1234, :encoding => :marshal }
       opts[:priority] = priority if priority
       queue = mock('queue')
       responder = FutureResponder.new(queue, 'ham-biscuit', 1234)
