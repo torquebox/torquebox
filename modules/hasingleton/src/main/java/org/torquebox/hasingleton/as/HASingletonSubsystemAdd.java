@@ -25,83 +25,43 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_
 
 import java.util.List;
 
-import org.jboss.as.clustering.jgroups.ChannelFactory;
-import org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
+import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
-import org.jboss.msc.service.ServiceController.Mode;
-import org.jboss.msc.service.ServiceName;
-import org.torquebox.hasingleton.HASingleton;
-import org.torquebox.hasingleton.HASingletonCoordinatorService;
+import org.torquebox.hasingleton.HASingletonInstaller;
 
 public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     @Override
-    protected void populateModel(ModelNode operation, ModelNode subModel) {
+    protected void populateModel(ModelNode operation, ModelNode model) {
+        model.setEmptyObject();
     }
 
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
+        
+        log.info( "performBoottime" );
 
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
+                log.info( "executing step" );
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
-
-        /*
-        try {
-            addCoreServices( context, operation, model, verificationHandler, newControllers );
-        } catch (Exception e) {
-            throw new OperationFailedException( e, null );
-        }
-        */
-    }
-    
-    
-
-    @Override
-    protected void performRuntime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers) throws OperationFailedException {
-        addCoreServices( context, operation, model, verificationHandler, newControllers );
-    }
-
-    protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers) {
-
-        ServiceController<Void> singletonController = context.getServiceTarget().addService( HASingleton.serviceName(), new HASingleton() )
-                .setInitialMode( Mode.NEVER )
-                .install();
-        newControllers.add( singletonController );
-
-        ServiceName channelFactoryServiceName = ChannelFactoryService.getServiceName( null );
-
-        log.info( "Looking for " + channelFactoryServiceName );
-
-        boolean clustered = (context.getServiceRegistry( false ).getService( channelFactoryServiceName ) != null);
-
-        log.info( "Clustered? " + clustered );
-
-        HASingletonCoordinatorService coordinator = new HASingletonCoordinatorService( singletonController, "ha-singleton" );
-        newControllers.add(
-                context.getServiceTarget().addService( HASingleton.serviceName().append( "coordinator" ), coordinator )
-                        .addDependency( ChannelFactoryService.getServiceName( null ), ChannelFactory.class, coordinator.getChannelFactoryInjector() )
-                        .install()
-                );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        // processorTarget.addDeploymentProcessor( Phase.PARSE, 31, new
-        // StompYamlParsingProcessor() );
+        log.info( "Adding deployment processor for hasingleton");
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 200, new HASingletonInstaller() );
     }
 
     static ModelNode createOperation(ModelNode address) {

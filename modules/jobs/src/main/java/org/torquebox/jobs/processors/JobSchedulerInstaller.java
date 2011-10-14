@@ -25,7 +25,6 @@ import java.util.List;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
@@ -109,7 +108,7 @@ public class JobSchedulerInstaller extends ClusterAwareProcessor {
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );
 
         if (singleton) {
-            builder.addDependency( HASingleton.serviceName() );
+            builder.addDependency( HASingleton.serviceName( unit ) );
             builder.setInitialMode( Mode.PASSIVE );
         } else {
             builder.setInitialMode( Mode.ACTIVE );

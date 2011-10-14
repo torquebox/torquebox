@@ -1,5 +1,6 @@
 package org.torquebox.hasingleton;
 
+import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceName;
@@ -9,8 +10,8 @@ import org.jboss.msc.service.StopContext;
 
 public class HASingleton implements Service<Void> {
     
-    public static ServiceName serviceName() {
-        return ServiceName.of(  "torquebox", "ha", "singleton"  );
+    public static ServiceName serviceName(DeploymentUnit unit) {
+        return unit.getServiceName().append(  "ha-singleton"  );
     }
 
     @Override
