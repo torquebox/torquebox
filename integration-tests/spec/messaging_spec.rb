@@ -39,36 +39,28 @@ remote_describe "in-container messaging tests" do
 
   describe "message enumeration" do
     it "should allow enumeration of the messages" do
-      queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
-      queue.count.should == 0
-      queue.publish "howdy"
-      queue.first.decode.should == 'howdy'
-      queue.count.should == 1
-      TorqueBox::Messaging::Queue.new("/queues/browseable").count.should == 1
-      queue.stop
+      with_queue("/queues/browseable") do |queue|
+        queue.count.should == 0
+        queue.publish "howdy"
+        queue.first.decode.should == 'howdy'
+        queue.count.should == 1
+        TorqueBox::Messaging::Queue.new("/queues/browseable").count.should == 1
+      end
     end
 
     it "should accept a selector" do
-      queue = TorqueBox::Messaging::Queue.start "/queues/browseable"
-      queue.enumerable_options = { :selector => 'blurple > 5' }
-      queue.publish "howdy", :properties => {:blurple => 5}
-      queue.publish "ahoyhoy", :properties => {:blurple => 6}
-      queue.first.decode.should == 'ahoyhoy'
-      queue.detect { |m| m.decode == 'howdy' }.should be_nil
-      queue.detect { |m| m.decode == 'ahoyhoy' }.should_not be_nil
-      queue.stop
+      with_queue("/queues/browseable") do |queue|
+        queue.enumerable_options = { :selector => 'blurple > 5' }
+        queue.publish "howdy", :properties => {:blurple => 5}
+        queue.publish "ahoyhoy", :properties => {:blurple => 6}
+        queue.first.decode.should == 'ahoyhoy'
+        queue.detect { |m| m.decode == 'howdy' }.should be_nil
+        queue.detect { |m| m.decode == 'ahoyhoy' }.should_not be_nil
+      end
     end
   end
 
   context "message selectors" do
-    before(:each) do
-      @queue = TorqueBox::Messaging::Queue.start "/queues/selectors"
-    end
-
-    after(:each) do
-      @queue.stop
-    end
-
     {
       'prop = true' => true,
       'prop <> false' => true,
@@ -79,166 +71,161 @@ remote_describe "in-container messaging tests" do
       "prop = 'string'" => 'string'
     }.each do |selector, value|
       it "should be able to select with property set to #{value} using selector '#{selector}'" do
-        @queue.publish value.to_s, :properties => { :prop => value }
-        message = @queue.receive(:timeout => 1000, :selector => selector)
-        message.should == value.to_s
+        with_queue("/queues/selectors") do |queue|
+          queue.publish value.to_s, :properties => { :prop => value }
+          message = queue.receive(:timeout => 1000, :selector => selector)
+          message.should == value.to_s
+        end
       end
     end
 
   end
 
+
   describe "sending and receiving" do
 
     context "with an encoding of json" do
       it "should be able to publish to and receive from a queue" do
-        queue = TorqueBox::Messaging::Queue.start "/queues/foo"
-        
-        queue.publish ["howdy"], :encoding => :json
-        message = queue.receive
-        
-        queue.stop
-        message.should eql( ["howdy"] )
+        with_queue("/queues/foo") do |queue|
+          queue.publish ["howdy"], :encoding => :json
+          message = queue.receive
+
+          message.should eql( ["howdy"] )
+        end
       end
 
       it "should be able to publish a complex type to and receive from a queue" do
-        queue = TorqueBox::Messaging::Queue.start "/queues/foo"
-
-        data = { 'time' => Time.now, 'string' => 'abc' }
-        queue.publish data, :encoding => :json
-        message = queue.receive
-        queue.stop
-        message.should eql( data )
-      end
-    end
-    
-    [:marshal, :marshal_base64, nil].each do |encoding|
-      
-      context "with an encoding of #{encoding || 'default'}" do
-        it "should be able to publish a string to and receive from a queue" do
-          queue = TorqueBox::Messaging::Queue.start "/queues/foo"
-
-          queue.publish "howdy", :encoding => encoding
+        with_queue("/queues/foo") do |queue|
+          data = { 'time' => Time.now, 'string' => 'abc' }
+          queue.publish data, :encoding => :json
           message = queue.receive
 
-          queue.stop
-          message.should eql( "howdy" )
+          message.should eql( data )
+        end
+      end
+    end
+
+    [:marshal, :marshal_base64, nil].each do |encoding|
+
+      context "with an encoding of #{encoding || 'default'}" do
+        it "should be able to publish a string to and receive from a queue" do
+          with_queue("/queues/foo") do |queue|
+            queue.publish "howdy", :encoding => encoding
+            message = queue.receive
+
+            message.should eql( "howdy" )
+          end
         end
 
         it "should be able to publish a complex type to and receive from a queue" do
-          queue = TorqueBox::Messaging::Queue.start "/queues/foo"
+          with_queue("/queues/foo") do |queue|
+            data = { :time => Time.now, :string => 'abc' }
+            queue.publish data, :encoding => encoding
+            message = queue.receive
 
-          data = { :time => Time.now, :string => 'abc' }
-          queue.publish data, :encoding => encoding
-          message = queue.receive
-
-          queue.stop
-          message.should eql( data )
+            message.should eql( data )
+          end
         end
 
-        
+
         it "should receive a binary file correctly" do
-          queue = TorqueBox::Messaging::Queue.start "/queues/foo"
-          
-          data = File.open("#{File.dirname(__FILE__)}/../src/test/resources/sample.pdf", "r") { |file| file.read }
-          queue.publish data, :encoding => encoding
-          message = queue.receive
-          
-          queue.stop
-          message.should eql( data )
+          with_queue("/queues/foo") do |queue|
+            data = File.open("#{File.dirname(__FILE__)}/../src/test/resources/sample.pdf", "r") { |file| file.read }
+            queue.publish data, :encoding => encoding
+            message = queue.receive
+
+            message.should eql( data )
+          end
         end
 
         it "should publish to multiple topic consumers" do
-          topic = TorqueBox::Messaging::Topic.start "/topics/foo"
-          threads, count = [], 10
-          # Use a threadsafe "array"
-          msgs = java.util.Collections.synchronizedList( [] )
+          with_topic("/topics/foo") do |topic|
+            threads, count = [], 10
+            # Use a threadsafe "array"
+            msgs = java.util.Collections.synchronizedList( [] )
 
-          # Ensure all clients are blocking on the receipt of a message
-          count.times { threads << Thread.new { msgs << topic.receive } }
-          sleep(1)
-          topic.publish "howdy", :encoding => encoding
-          threads.each {|t| t.join}
+            # Ensure all clients are blocking on the receipt of a message
+            count.times { threads << Thread.new { msgs << topic.receive } }
+            sleep(1)
+            topic.publish "howdy", :encoding => encoding
+            threads.each {|t| t.join}
 
-          topic.stop
-          msgs.to_a.should eql( ["howdy"] * count )
+            msgs.to_a.should eql( ["howdy"] * count )
+          end
         end
 
         context "synchronous messaging" do
           it "should return value of block given to receive_and_publish" do
-            queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
+            with_queue("/queues/publish_and_receive") do |queue|
+              response_thread = Thread.new {
+                queue.receive_and_publish( :timeout => 10000, :encoding => encoding ) { |msg| msg.upcase }
+              }
+              message = queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
+              response_thread.join
 
-            response_thread = Thread.new {
-              queue.receive_and_publish( :timeout => 10000, :encoding => encoding ) { |msg| msg.upcase }
-            }
-            message = queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
-            response_thread.join
-
-            queue.stop
-            message.should eql( "PING" )
+              message.should eql( "PING" )
+            end
           end
 
           it "should return request message if no block given" do
-            queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
+            with_queue("/queues/publish_and_receive") do |queue|
+              response_thread = Thread.new {
+                queue.receive_and_publish( :timeout => 10000, :encoding => encoding )
+              }
+              message = queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
+              response_thread.join
 
-            response_thread = Thread.new {
-              queue.receive_and_publish( :timeout => 10000, :encoding => encoding )
-            }
-            message = queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
-            response_thread.join
-
-            queue.stop
-            message.should eql( "ping" )
+              message.should eql( "ping" )
+            end
           end
 
           it "should not mess up with multiple consumers" do
-            queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
+            with_queue("/queues/publish_and_receive") do |queue|
+              thread_count = 3
+              response_threads = (1..thread_count).map do
+                Thread.new {
+                  queue.receive_and_publish( :timeout => 10000, :encoding => encoding ) { |msg| msg.upcase }
+                }
+              end
 
-            thread_count = 3
-            response_threads = (1..thread_count).map do
-              Thread.new {
-                queue.receive_and_publish( :timeout => 10000, :encoding => encoding ) { |msg| msg.upcase }
-              }
+              message = queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
+              # Send extra messages to trigger all remaining response threads
+              (thread_count - 1).times do
+                queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
+              end
+              response_threads.each { |thread| thread.join }
+
+              message.should eql( "PING" )
             end
-
-            message = queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
-            # Send extra messages to trigger all remaining response threads
-            (thread_count - 1).times do
-              queue.publish_and_receive "ping", :timeout => 10000, :encoding => encoding
-            end
-            response_threads.each { |thread| thread.join }
-
-            queue.stop
-            message.should eql( "PING" )
           end
 
           it "should allow a selector to be passed" do
-            queue = TorqueBox::Messaging::Queue.start "/queues/publish_and_receive"
+            with_queue("/queues/publish_and_receive") do |queue|
+              response_thread = Thread.new {
+                queue.receive_and_publish( :timeout => 10000,
+                                           :encoding => encoding,
+                                           :selector => "age > 60 or tan = true" )
+              }
 
-            response_thread = Thread.new {
-              queue.receive_and_publish( :timeout => 10000,
+              # Publish a non-synchronous message that should not match selector
+              queue.publish( "young and tan", :encoding => encoding, :properties => { :age => 25, :tan => true } )
+              # Publish a synchronous message that should not match selector
+              queue.publish_and_receive( "young",
+                                         :timeout => 25,
                                          :encoding => encoding,
-                                         :selector => "age > 60 or tan = true" )
-            }
+                                         :properties => { :age => 25 } )
+              # Publish a synchronous message that should match selector
+              message = queue.publish_and_receive( "wrinkled",
+                                                   :timeout => 10000,
+                                                   :encoding => encoding,
+                                                   :properties => { :age => 65, :tan => true } )
+              message.should eql( "wrinkled" )
+              response_thread.join
 
-            # Publish a non-synchronous message that should not match selector
-            queue.publish( "young and tan", :encoding => encoding, :properties => { :age => 25, :tan => true } )
-            # Publish a synchronous message that should not match selector
-            queue.publish_and_receive( "young",
-                                       :timeout => 25,
-                                       :encoding => encoding,
-                                       :properties => { :age => 25 } )
-            # Publish a synchronous message that should match selector
-            message = queue.publish_and_receive( "wrinkled",
-                                                 :timeout => 10000,
-                                                 :encoding => encoding,
-                                                 :properties => { :age => 65, :tan => true } )
-            message.should eql( "wrinkled" )
-            response_thread.join
+              # Drain any remaining messages off the queue
+              2.times { queue.receive(:timeout => 10) }
 
-            # Drain any remaining messages off the queue
-            2.times { queue.receive(:timeout => 10) }
-
-            queue.stop
+            end
           end
         end
       end
@@ -288,3 +275,16 @@ remote_describe "in-container messaging tests" do
 
 end
 
+def with_queue(name)
+  queue = TorqueBox::Messaging::Queue.start name
+  yield queue
+ensure
+  queue.stop if queue
+end
+
+def with_topic(name)
+  topic = TorqueBox::Messaging::Topic.start name
+  yield topic
+ensure
+  topic.stop if topic
+end
