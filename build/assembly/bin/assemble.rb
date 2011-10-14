@@ -138,11 +138,37 @@ class Assembler
     FileUtils.cp( stomp_js, File.join( js_dir, 'stilts-stomp.js' ) )
   end
 
+  def stash_stock_configs
+    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone-preview.xml',    'target/standalone-preview.xml' ) unless File.exist?( 'target/standalone-preview.xml' )
+    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone-preview-ha.xml', 'target/standalone-preview-ha.xml' ) unless File.exist?( 'target/standalone-preview-ha.xml' )
+    FileUtils.cp( 'target/stage/torquebox/jboss/domain/configuration/domain-preview.xml',            'target/domain-preview.xml' )     unless File.exist?( 'target/domain-preview.xml' )
+  end
+
+  def stash_stock_host_config
+    FileUtils.cp( 'target/stage/torquebox/jboss/domain/configuration/host.xml', 'target/host.xml' ) unless File.exist?( 'target/host.xml' )
+  end
+
+  def trash_stock_host_config
+    FileUtils.rm_f( 'target/stage/torquebox/jboss/domain/configuration/host.xml' )
+  end
+
+  def trash_stock_configs
+    FileUtils.rm_f( Dir[ 'target/stage/torquebox/jboss/standalone/configuration/standalone*.xml' ] )
+    FileUtils.rm_f( Dir[ 'target/stage/torquebox/jboss/domain/configuration/domain*.xml' ] )
+  end
+
   def transform_configs
-    tool.transform_config('standalone/configuration/standalone-preview.xml')
-    tool.transform_config('standalone/configuration/standalone-preview-ha.xml')
-    tool.transform_config('domain/configuration/domain.xml')
-    tool.transform_config('domain/configuration/domain-preview.xml')
+    stash_stock_configs
+    trash_stock_configs
+    tool.transform_config('target/standalone-preview.xml',    'standalone/configuration/standalone.xml' )
+    tool.transform_config('target/standalone-preview-ha.xml', 'standalone/configuration/standalone-ha.xml' )
+    tool.transform_config('target/domain-preview.xml',            'domain/configuration/domain.xml', true )
+  end
+
+  def transform_host_config
+    stash_stock_host_config
+    trash_stock_host_config
+    tool.transform_host_config( 'target/host.xml', 'domain/configuration/host.xml' )
   end
 
   def windows?
@@ -158,9 +184,10 @@ class Assembler
     install_gems
     install_share
     transform_configs
-    Dir.chdir( tool.jboss_dir ) do 
-      FileUtils.cp( 'standalone/configuration/torquebox/standalone-preview.xml', 'standalone/configuration/standalone.xml' )
-    end
+    transform_host_config
+    #Dir.chdir( tool.jboss_dir ) do 
+      #FileUtils.cp( 'standalone/configuration/torquebox/standalone-preview.xml', 'standalone/configuration/standalone.xml' )
+    #end
   end
 end
 

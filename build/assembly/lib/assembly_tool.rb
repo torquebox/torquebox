@@ -242,26 +242,77 @@ class AssemblyTool
     doc.root.insert_after('extensions', props) unless props.parent
   end
 
+  def setup_server_groups(doc)
+    doc.root.get_elements( '//server-groups/server-group' ).each &:remove
+    server_groups = doc.root.get_elements( '//server-groups' ).first
+    server_group = REXML::Element.new( 'server-group' )
+
+    socket_binding_group = REXML::Element.new( 'socket-binding-group' )
+    socket_binding_group.attributes['ref'] = 'standard-sockets'
+    server_group.add_element( socket_binding_group )
+
+    server_group.attributes['name'] = 'default'
+    server_group.attributes['profile'] = 'default'
+    server_groups.add_element( server_group )
+  end
+
+  def fix_profiles(doc)
+    profile = doc.root.get_elements( "//profile[@name='default']" ).first
+    profile.remove
+    profile = doc.root.get_elements( "//profile[@name='ha']" ).first
+    profile.attributes['name'] = 'default' 
+  end
+
+  def fix_socket_binding_groups(doc)
+    group = doc.root.get_elements( "//socket-binding-group[@name='standard-sockets']" ).first
+    group.remove
+    group = doc.root.get_elements( "//socket-binding-group[@name='ha-sockets']" ).first
+    group.attributes['name'] = 'standard-sockets'
+  end
+
   def remove_destinations(doc)
     destinations = doc.root.get_elements( '//jms-topic' ) + doc.root.get_elements( '//jms-queue' )
     destinations.each &:remove
   end
 
-  def backup_current_config
-    %w{ standalone domain }.each do |mode|
-      Dir.chdir( File.join( @jboss_dir, mode, 'configuration' ) ) do
-        unless File.exists?( "#{mode}-original.xml" )
-          FileUtils.cp( "#{mode}.xml", "#{mode}-original.xml" )
-        end
+  def fix_host_servers(doc)
+    doc.root.get_elements( '//servers/server' ).each &:remove
+    servers = doc.root.get_elements( '//servers' ).first
+
+    1.upto( 2 ) do |i|
+      server = REXML::Element.new( 'server' )
+      server.attributes['name'] = sprintf( "server-%02d", i )
+      server.attributes['group'] = "default"
+
+      jvm = REXML::Element.new( 'jvm' )
+      jvm.attributes['name'] = 'default'
+      server.add_element( jvm )
+
+      socket_binding_group = REXML::Element.new( 'socket-binding-group' )
+      socket_binding_group.attributes['ref'] = 'standard-sockets'
+      socket_binding_group.attributes['port-offset'] = (i-1) * 100
+      server.add_element( socket_binding_group )
+     
+      servers.add_element( server )
+    end
+  end
+
+  def transform_host_config(input_file, output_file)
+    doc = REXML::Document.new( File.read( input_file ) )
+    Dir.chdir( @jboss_dir ) do
+      fix_host_servers(doc)
+      FileUtils.mkdir_p( File.dirname(output_file) )
+      open( output_file, 'w' ) do |f|
+        doc.write( f, 4 )
       end
     end
   end
 
-  def transform_config(file)
+  def transform_config(input_file, output_file, domain=false)
+    doc = REXML::Document.new( File.read( input_file ) )
+
     Dir.chdir( @jboss_dir ) do
-      doc = REXML::Document.new( File.read( file ) )
       
-      backup_current_config
       increase_deployment_timeout(doc)
       add_extensions(doc)
       add_subsystems(doc)
@@ -270,13 +321,18 @@ class AssemblyTool
       unquote_cookie_path(doc)
       remove_destinations(doc)
 
+      if ( domain ) 
+        setup_server_groups(doc)
+        fix_profiles(doc)
+        fix_socket_binding_groups(doc)
+      end
+
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)
       # remove_non_web_subsystems(doc)
 
-      output = File.join( File.dirname(file), "torquebox", File.basename(file) )
-      FileUtils.mkdir_p( File.dirname(output) )
-      open( output, 'w' ) do |f|
+      FileUtils.mkdir_p( File.dirname(output_file) )
+      open( output_file, 'w' ) do |f|
         doc.write( f, 4 )
       end
     end
