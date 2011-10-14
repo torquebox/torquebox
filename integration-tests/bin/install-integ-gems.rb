@@ -21,6 +21,7 @@ versions = {
   :jdbc_sqlite3   =>    '3.7.2',
 
   :sinatra        =>    '1.2.3',
+  :sinatra_flash  =>    '0.3.0',
 
   :rack11         =>    '1.1.2',
   :rack12         =>    '1.2.4',
@@ -28,6 +29,9 @@ versions = {
 
   :dm_core        =>    '1.1.0',
   :json           =>    '1.4.6',
+  
+  :padrino        =>    '0.10.4'
+  
 }
 
 #GemInstaller.into( File.dirname(__FILE__) + '/../target/integ-dist/jruby/lib/ruby/gems/1.8', versions ) do |installer|
@@ -60,4 +64,8 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'dm-serializer', versions[:dm_core] )
 
   installer.install( 'json' )
+  
+  installer.install( 'padrino', versions[:padrino] )
+  installer.install( 'sinatra-flash', versions[:sinatra_flash] )
+  
 end

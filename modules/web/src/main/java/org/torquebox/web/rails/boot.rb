@@ -17,8 +17,6 @@
 
 require 'pp'
 
-#require 'torquebox-web'
-
 class Class
   
   alias_method :method_added_before_torquebox, :method_added
@@ -33,21 +31,6 @@ class Class
             @root_path = ENV['RAILS_ROOT']
             ::RAILS_ROOT.replace @root_path
           end 
-        end
-      end
-
-      # We monkey patch activerecord-jdbc-adapter here to handle
-      # sqlite vfs paths. This patch works for
-      # activerecord-jdbc-adapter v1.1.3 and up. For lower versions,
-      # see vfs/lib/torquebox/vfs/ext/jdbc.rb. 
-      if self.to_s == 'ActiveRecord::ConnectionAdapters::JdbcDriver' &&
-          method_name == :connection
-        self.class_eval do
-          alias_method :connection_before_torquebox, :connection
-
-          def connection(url, user, pass)
-            connection_before_torquebox( url.sub(':vfs:', ':'), user, pass )
-          end
         end
       end
       
@@ -87,7 +70,7 @@ class Class
       end
       if ( (self.to_s == 'Rails::Application') && ( method_name == :initialize! ) )
         self.class_eval do
-          alias_method :initialize_before_torquebox!, :initialize!            
+          alias_method :initialize_before_torquebox!, :initialize!
           
           def initialize!
             puts "initialize the app!"
@@ -123,7 +106,6 @@ class Class
     end # unless ( recursing )
   end # method_added
 end
-
 
   
 begin

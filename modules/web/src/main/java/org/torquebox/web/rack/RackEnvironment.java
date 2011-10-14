@@ -32,7 +32,6 @@ import org.jruby.RubyFixnum;
 import org.jruby.RubyHash;
 import org.jruby.RubyIO;
 import org.jruby.RubyString;
-import org.jruby.util.io.STDIO;
 
 public class RackEnvironment {
 
