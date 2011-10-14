@@ -19,13 +19,8 @@ module TorqueBox
   module Messaging
     class MarshalMessage < Message
       ENCODING = :marshal
+      JMS_TYPE = :bytes
       
-      def initialize(jms_session, payload)
-        @jms_message = jms_session.create_bytes_message
-        set_encoding
-        encode( payload )
-      end
-
       def encode(message)
         unless message.nil?
           marshalled = Marshal.dump( message )
