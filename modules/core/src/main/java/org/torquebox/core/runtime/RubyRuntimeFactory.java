@@ -428,6 +428,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         RuntimeHelper.require( runtime, "torquebox-core" );
         
         RuntimeHelper.require( runtime, "org/torquebox/core/runtime/thread_context_patch" );
+        
+        RuntimeHelper.require( runtime, "org/torquebox/core/runtime/activerecord_patch" );
 
         injectServiceRegistry( runtime );
         ComponentRegistry.createRegistryFor( runtime );

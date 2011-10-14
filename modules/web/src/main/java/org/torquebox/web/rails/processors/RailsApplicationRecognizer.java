@@ -19,6 +19,11 @@
 
 package org.torquebox.web.rails.processors;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.regex.Pattern;
+
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -29,22 +34,30 @@ import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
 import org.torquebox.web.rails.RailsMetaData;
 
 public class RailsApplicationRecognizer extends FileLocatingProcessor {
-    
-    public static final String DEFAULT_BOOT_RB_PATH = "config/boot.rb";
+
+    private static final String RAILS3_FILE = "config/application.rb";
+    private static final Pattern RAILS3_PATTERN = Pattern.compile( "^.*Rails\\:\\:Application.*$" );
+
+    private static final String RAILS2_FILE = "config/environment.rb";
+    private static final Pattern RAILS2_PATTERN = Pattern.compile( "^.*Rails\\:\\:Initializer.*$" );
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
-        
-        if (isRailsApplication( root )) {
-            RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
-            
-            if (railsAppMetaData == null) {
-                railsAppMetaData = new RailsMetaData();
-                unit.putAttachment( RailsMetaData.ATTACHMENT_KEY, railsAppMetaData );
+
+        try {
+            if (isRailsApplication( root )) {
+                RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
+
+                if (railsAppMetaData == null) {
+                    railsAppMetaData = new RailsMetaData();
+                    unit.putAttachment( RailsMetaData.ATTACHMENT_KEY, railsAppMetaData );
+                }
             }
+        } catch (IOException e) {
+            throw new DeploymentUnitProcessingException("Error processing rails file: ", e);
         }
 
     }
@@ -53,10 +66,35 @@ public class RailsApplicationRecognizer extends FileLocatingProcessor {
     public void undeploy(DeploymentUnit unit) {
 
     }
-        
-    static boolean isRailsApplication(VirtualFile file) {
-        boolean result = hasAnyOf( file, DEFAULT_BOOT_RB_PATH );
-        return result;
+
+    /**
+     * Checks to see if the deployment is a Rails application. It does so by
+     * looking for either config/application.rb (Rails 3) or
+     * config/environment.rb
+     * (Rails 2), and checking for Rails content within them.
+     * 
+     * @param root The root VFS location for the app
+     * @return True if the app is a Rails app, false otherwise.
+     */
+    static boolean isRailsApplication(VirtualFile root) throws IOException {
+        return findRailsPattern( root, RAILS3_FILE, RAILS3_PATTERN ) || findRailsPattern( root, RAILS2_FILE, RAILS2_PATTERN );
+    }
+
+    private static boolean findRailsPattern(VirtualFile root, String fileName, Pattern pattern) throws IOException {
+        boolean retValue = false;
+        VirtualFile railsFile = root.getChild( fileName );
+        if (railsFile.exists()) {
+            BufferedReader brIn = new BufferedReader( new InputStreamReader( railsFile.openStream() ) );
+            String line;
+            while ((line = brIn.readLine()) != null) {
+                if (pattern.matcher( line ).matches()) {
+                    retValue = true;
+                    break;
+                }
+            }
+            brIn.close();
+        }
+        return retValue;
     }
 
 }

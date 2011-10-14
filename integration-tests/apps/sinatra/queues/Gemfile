@@ -1,3 +1,4 @@
 source "http://rubygems.org"
 gem "sinatra"
 gem "torquebox-messaging"
+gem "torquebox-rake-support"
