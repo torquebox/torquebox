@@ -98,6 +98,7 @@ module TorqueBox
                         :correlation_id => @correlation_id,
                         :ttl => @message_ttl,
                         :priority => priority,
+                        :encoding => :marshal,
                         :tx => false # can't be a part of the task's tx!
                         )
       rescue TypeError => ex

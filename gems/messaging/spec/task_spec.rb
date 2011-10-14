@@ -29,14 +29,14 @@ describe TorqueBox::Messaging::Task do
     end
 
     it "should send payload correctly" do
-      expectation = [{:method => :payload=, :payload => {:foo => 'bar'}, :future_id => '1234', :future_queue => MyTestTask.queue_name('my_test')}, { }]
+      expectation = [{:method => :payload=, :payload => {:foo => 'bar'}, :future_id => '1234', :future_queue => MyTestTask.queue_name('my_test')}, anything]
       @send_queue.should_receive(:publish).with(*expectation)
       
       MyTestTask.async(:payload=, :foo => 'bar')
     end
 
     it "should handle nil payload as empty hash" do
-      @send_queue.should_receive(:publish).with(hash_including(:payload => {}), {})
+      @send_queue.should_receive(:publish).with(hash_including(:payload => {}), anything)
 
       MyTestTask.async(:payload=)
     end
@@ -44,6 +44,12 @@ describe TorqueBox::Messaging::Task do
     it "should return a future" do
       result = MyTestTask.async(:payload=)
       result.is_a?(TorqueBox::Messaging::Future).should be_true
+    end
+
+    it "should always use the :marshal encoding" do
+      @send_queue.should_receive(:publish).with(anything, hash_including(:encoding => :marshal))
+
+      MyTestTask.async(:payload=)
     end
   end
 

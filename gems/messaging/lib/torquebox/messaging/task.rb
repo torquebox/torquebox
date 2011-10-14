@@ -40,6 +40,7 @@ module TorqueBox
           :future_id => future.correlation_id,
           :future_queue => queue_name
         }
+        options[:encoding] = :marshal
         queue.publish( message, options )
         
         future
