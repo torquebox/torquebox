@@ -81,7 +81,34 @@ describe TorqueBox::Messaging::Message do
   end
 
   describe 'encodings' do
-    
+    before(:each) do
+      @class = mock("MessageSubClass", :new => nil)
+      @session = mock("Session", :is_a? => true)
+    end
+
+    it 'should use the default encoding if none provided' do
+      Message.should_receive(:class_for_encoding).with(Message::DEFAULT_ENCODE_ENCODING).and_return(@class)
+      Message.new(@session)
+    end
+
+    it 'should use the given encoding if provided' do
+      Message.should_receive(:class_for_encoding).with(:biscuit).and_return(@class)
+      Message.new(@session, nil, :biscuit)
+    end
+
+    it 'should use the encoding from the env if set and no encoding is passed to the constructor' do
+      ENV['DEFAULT_MESSAGE_ENCODING'] = 'ham'
+      Message.should_receive(:class_for_encoding).with(:ham).and_return(@class)
+      Message.new(@session)
+      ENV['DEFAULT_MESSAGE_ENCODING'] = nil
+    end
+
+    it 'should ignore the encoding from the env if set and an encoding is passed to the constructor' do
+      ENV['DEFAULT_MESSAGE_ENCODING'] = 'ham'
+      Message.should_receive(:class_for_encoding).with(:biscuit).and_return(@class)
+      Message.new(@session, nil, :biscuit)
+      ENV['DEFAULT_MESSAGE_ENCODING'] = nil
+    end
   end
 
 end

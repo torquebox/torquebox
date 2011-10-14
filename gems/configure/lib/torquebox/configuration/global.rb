@@ -57,7 +57,8 @@ module TorqueBox
           :options_for => ThingWithOptionsEntry.with_settings(:validate => {
                                                                 :optional => [
                                                                               :concurrency,
-                                                                              { :disabled => [true, false] }
+                                                                              { :disabled => [true, false] },
+                                                                              :default_message_encoding
                                                                              ]
                                                               }),
           :pool        => ThingWithOptionsEntry.with_settings(:validate => {
@@ -128,7 +129,12 @@ module TorqueBox
               job.merge!( data )
             end
 
-          when 'options_for' # => tasks:
+          when 'options_for' # => tasks:, messaging:\n  default_message_encoding:
+            if (messaging_opts = entry_data.delete( 'messaging' )) &&
+                (default_encoding = messaging_opts.delete( :default_message_encoding ))
+              metadata['messaging']['default_message_encoding'] = default_encoding.to_s
+            end
+
             entry_data.each do |name, data|
               data[:concurrency] = 0 if data.delete( :disabled )
               data[:concurrency] &&= data[:concurrency].to_java(java.lang.Integer)

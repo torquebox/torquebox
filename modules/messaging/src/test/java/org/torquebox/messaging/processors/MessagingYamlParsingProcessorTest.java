@@ -24,13 +24,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentException;
 import org.junit.Before;
 import org.junit.Test;
+import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.messaging.MessageProcessorMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
@@ -44,6 +47,26 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         appendDeployer( new MessagingYamlParsingProcessor()  );
     }
 
+    @Test
+    public void testSettingDefaultMessageEncoding() throws Exception {
+        MockDeploymentPhaseContext context = setupResourceAsTorqueboxYml( "messaging-with-default-encoding.yml" );
+        MockDeploymentUnit unit = context.getMockDeploymentUnit();
+        RubyAppMetaData appMetaData = new RubyAppMetaData( "app-name" );
+        Map<String, String> env = new HashMap<String, String>();
+        appMetaData.setEnvironmentVariables( env );
+        appMetaData.attachTo( unit );
+        deploy( context );
+        
+        assertEquals( "biscuit", env.get( "DEFAULT_MESSAGE_ENCODING" ) );
+        
+        List<MessageProcessorMetaData> procMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
+        assertEquals( 1, procMetaData.size() );
+        MessageProcessorMetaData metaData = procMetaData.iterator().next();
+        assertNotNull( metaData );
+        assertEquals( "MyClass", metaData.getRubyClassName() );
+        assertEquals( "/topics/foo", metaData.getDestinationName() );
+    }
+    
     @Test
     public void testEmptyMessagingConfig() throws Exception {
         List<MessageProcessorMetaData> allMetaData = getMetaData( "empty.yml" );

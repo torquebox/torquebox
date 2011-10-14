@@ -6,6 +6,8 @@ TorqueBox.configure do
     FOO :bar
   }
 
+  options_for :messaging, :default_message_encoding => :marshal_base64
+  
   options_for Backgroundable, :disabled => true
 
   pool :foo, :type => :bounded, :min => 0, :max => 6

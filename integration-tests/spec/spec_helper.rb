@@ -10,6 +10,7 @@ TorqueSpec.configure do |config|
   config.max_heap = java.lang::System.getProperty( 'max.heap' )
   config.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
   config.jvm_args += " -Dgem.path=default"
+  #config.jvm_args += " -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"
   config.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'knobs' ) )
 end
 FileUtils.mkdir_p(TorqueSpec.knob_root) unless File.exist?(TorqueSpec.knob_root)

@@ -27,6 +27,7 @@ import java.util.Map;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.core.util.StringUtils;
 import org.torquebox.messaging.MessageProcessorMetaData;
@@ -41,9 +42,27 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
         setSectionName( "messaging" );
     }
 
+    @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObject) throws DeploymentUnitProcessingException {
         try {
-            for (MessageProcessorMetaData metadata : Parser.parse( dataObject )) {
+            if (dataObject instanceof String) {
+                String s = (String) dataObject;
+                if (s.trim().length() == 0) {
+                    return;
+                } else {
+                    parse( unit, new Yaml().load( s ) );
+                }
+            }
+            
+            Map<String, Object> data = (Map<String, Object>)dataObject;
+            
+            if (data.containsKey( "default_message_encoding" )) {
+                RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
+                appMetaData.getEnvironmentVariables().put( "DEFAULT_MESSAGE_ENCODING", (String)data.get( "default_message_encoding" ) );
+                data.remove( "default_message_encoding" );
+            }
+            
+            for (MessageProcessorMetaData metadata : Parser.parseDestinations( data )) {
                 unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY, metadata );
             }
         } catch (Exception e) {
@@ -52,19 +71,6 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
     }
 
     public static class Parser {
-
-        @SuppressWarnings("unchecked")
-        static List<MessageProcessorMetaData> parse(Object data) throws Exception {
-            if (data instanceof String) {
-                String s = (String) data;
-                if (s.trim().length() == 0) {
-                    return Collections.emptyList();
-                } else {
-                    return parse( new Yaml().load( (String) data ) );
-                }
-            }
-            return parseDestinations( (Map<String, Object>) data );
-        }
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         static List<MessageProcessorMetaData> parseDestinations(Map<String, Object> data) {

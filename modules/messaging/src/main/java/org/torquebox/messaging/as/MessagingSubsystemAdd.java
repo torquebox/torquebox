@@ -87,7 +87,7 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 13, new MessagingYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 35, new MessagingYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningProcessor() );
 
