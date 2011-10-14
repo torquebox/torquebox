@@ -40,8 +40,10 @@ import org.jboss.msc.value.ImmediateValue;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
+import org.torquebox.core.processors.ClusterAwareProcessor;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.util.StringUtils;
+import org.torquebox.hasingleton.HASingleton;
 import org.torquebox.services.RubyService;
 import org.torquebox.services.RubyServiceCreate;
 import org.torquebox.services.RubyServiceMBean;
@@ -79,6 +81,11 @@ public class ServiceInstaller implements DeploymentUnitProcessor {
         RubyServiceStart serviceStart = new RubyServiceStart();
         ServiceBuilder<RubyService> builderStart = phaseContext.getServiceTarget().addService( serviceStartName, serviceStart );
         builderStart.addDependency( serviceCreateName, RubyService.class, serviceStart.getRubyServiceInjector() );
+        
+        if ( serviceMetaData.isRequiresSingleton() ) {
+            builderStart.addDependency(  HASingleton.serviceName( unit )  );
+        }
+        
         builderStart.setInitialMode( Mode.PASSIVE );
         builderStart.install();
         
