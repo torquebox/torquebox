@@ -15,24 +15,19 @@ public class HASingletonInstaller extends ClusterAwareProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
-
-        log.info( "Deploying HA-Singleton" );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
         ServiceBuilder<Void> builder = phaseContext.getServiceTarget().addService( HASingleton.serviceName( unit ), new HASingleton() );
 
         if (isClustered( phaseContext )) {
-            log.info( "Clustered, not activating" );
             builder.setInitialMode( Mode.NEVER );
         } else {
-            log.info( "Not clustered, activating" );
             builder.setInitialMode( Mode.ACTIVE );
         }
 
         ServiceController<Void> singletonController = builder.install();
 
         if (isClustered( phaseContext )) {
-            log.info( "Clustered, deploying coordinator" );
             HASingletonCoordinatorService coordinator = new HASingletonCoordinatorService( singletonController, unit.getName() );
 
             phaseContext.getServiceTarget().addService( HASingleton.serviceName( unit ).append( "coordinator" ), coordinator )
@@ -43,7 +38,6 @@ public class HASingletonInstaller extends ClusterAwareProcessor {
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        // TODO Auto-generated method stub
 
     }
 

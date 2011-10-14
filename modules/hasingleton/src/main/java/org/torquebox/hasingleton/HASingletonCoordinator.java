@@ -29,12 +29,10 @@ public class HASingletonCoordinator extends ReceiverAdapter {
     
     @Override
     public void viewAccepted(View view) {
-        log.info( "new view: " + view );
         if ( shouldBeMaster( view ) ) {
-            log.info( "becoming master" );
+            log.info( "Becoming HASingleton master." );
             haSingletonController.setMode( Mode.ACTIVE );
         } else {
-            log.info( "ensuring we are not master" );
             haSingletonController.setMode( Mode.NEVER );
         }
     }

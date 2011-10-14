@@ -26,7 +26,6 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
 
     @Override
     public void start(StartContext context) throws StartException {
-        log.info( "Starting HA-Singleton coordinator" );
         try {
             ChannelFactory factory = this.channelFactoryInjector.getValue();
             Channel channel = factory.createChannel( this.partitionName );
@@ -35,19 +34,16 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
         } catch (Exception e) {
             throw new StartException( e );
         }
-        log.info( "Started HA-Singleton coordinator" );
     }
 
     @Override
     public void stop(StopContext context) {
-        log.info( "Stopping HA-Singleton coordinator" );
         try {
             this.coordinator.stop();
             this.coordinator = null;
         } catch (ChannelException e) {
             log.error( "Unable to stop HA partition", e );
         }
-        log.info( "Stopped HA-Singleton coordinator" );
     }
 
     public Injector<ChannelFactory> getChannelFactoryInjector() {

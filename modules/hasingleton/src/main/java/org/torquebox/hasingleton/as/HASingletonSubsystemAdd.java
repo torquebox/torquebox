@@ -48,19 +48,15 @@ public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
         
-        log.info( "performBoottime" );
-
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                log.info( "executing step" );
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        log.info( "Adding deployment processor for hasingleton");
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 200, new HASingletonInstaller() );
     }
 

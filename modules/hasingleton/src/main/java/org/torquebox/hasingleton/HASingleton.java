@@ -21,13 +21,11 @@ public class HASingleton implements Service<Void> {
 
     @Override
     public void start(StartContext context) throws StartException {
-        log.info( "HA Singleton starting" );
-        
+        // nothing, just a dependency
     }
 
     @Override
     public void stop(StopContext context) {
-        log.info( "HA Singleton stopping" );
     }
     
     private static final Logger log = Logger.getLogger( "org.torquebox.hasingleton"  );
