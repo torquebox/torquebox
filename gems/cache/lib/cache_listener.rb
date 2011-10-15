@@ -21,7 +21,6 @@ module TorqueBox
 
       def event_fired( event )
         event_type = event.get_type.to_s.downcase
-        puts "EVENT TYPE: #{event_type}"
         if respond_to? event_type
           self.send( event_type, event )
         else
@@ -32,8 +31,12 @@ module TorqueBox
       add_class_annotation( { org.infinispan.notifications.Listener => { } } )
       add_method_signature( "event_fired", [java.lang.Void::TYPE, org.infinispan.notifications.cachelistener.event.Event.java_class] )
       add_method_annotation( "event_fired", 
-                            { org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated => {},
-                              org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved => {},
+                            { org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated    => {},
+                              org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved    => {},
+                              org.infinispan.notifications.cachelistener.annotation.CacheEntryModified   => {},
+                              org.infinispan.notifications.cachelistener.annotation.CacheEntryEvicted    => {},
+                              org.infinispan.notifications.cachelistener.annotation.CacheEntryActivated  => {},
+                              org.infinispan.notifications.cachelistener.annotation.CacheEntryVisited    => {}
       })
       become_java!
     end
