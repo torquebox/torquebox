@@ -1,2 +1,2 @@
 # require 'torquebox/tasks'
-require 'torquebox-rake-support'
+# require 'torquebox-rake-support'

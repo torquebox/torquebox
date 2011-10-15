@@ -13,7 +13,7 @@ describe "sinatra queues test" do
   END
 
   it "should scream toby crawley" do
-    visit "/uppercaser/up/toby%20crawley"
+    visit "/uppercaser/up/toby+crawley"
     page.should have_content('TOBY CRAWLEY')
   end
 
