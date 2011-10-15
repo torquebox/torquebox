@@ -189,7 +189,7 @@ class AssemblyTool
   end
 
   def add_socket_bindings(doc)
-    servers = doc.root.get_elements( '//server' )
+    servers = doc.root.get_elements( '//server' ) + doc.root.get_elements( '//domain/socket-binding-groups' )
     servers.each do |server|
       modules.each do |name|
         binding_path = base_dir + "/../../modules/#{name}/src/subsystem/socket-binding.conf"
@@ -370,6 +370,17 @@ class AssemblyTool
 
       jvm = REXML::Element.new( 'jvm' )
       jvm.attributes['name'] = 'default'
+
+      e = REXML::Element.new( 'heap' )
+      e.attributes['size'] = '256m'
+      e.attributes['max-size'] = '1024m'
+      jvm.add_element( e )
+
+      e = REXML::Element.new( 'permgen' )
+      e.attributes['size'] = '256m'
+      e.attributes['max-size'] = '512m'
+      jvm.add_element( e )
+
       server.add_element( jvm )
 
       socket_binding_group = REXML::Element.new( 'socket-binding-group' )
@@ -400,7 +411,6 @@ class AssemblyTool
       increase_deployment_timeout(doc)
       add_extensions(doc)
       add_subsystems(doc)
-      add_socket_bindings(doc)
       set_welcome_root(doc)
       unquote_cookie_path(doc)
       remove_destinations(doc)
@@ -410,6 +420,8 @@ class AssemblyTool
         fix_profiles(doc)
         fix_socket_binding_groups(doc)
       end
+
+      add_socket_bindings(doc)
 
       if ( domain || ha )
         fix_messaging_clustering(doc)
