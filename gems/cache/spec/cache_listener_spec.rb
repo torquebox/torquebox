@@ -37,7 +37,7 @@ describe TorqueBox::Infinispan::CacheListener do
     @cache.put("akey", "avalue")
   end
 
-  it "should notify when an entry is added to the cache" do
+  it "should notify when an entry is deleted from the cache" do
     listener = TestListener.new
     @cache.add_listener( listener )
     @cache.put("akey", "avalue")
@@ -45,15 +45,33 @@ describe TorqueBox::Infinispan::CacheListener do
     @cache.remove("akey")
   end
 
+  it "should notify when an entry is retrieved from the cache" do
+    listener = TestListener.new
+    @cache.add_listener( listener )
+    @cache.put("akey", "avalue")
+    listener.should_receive( :cache_entry_visited ).at_least :once
+    @cache.get("akey")
+  end
+
+  it "should notify when an entry is modified in the cache" do
+    listener = TestListener.new
+    @cache.add_listener( listener )
+    @cache.put("akey", "avalue")
+    listener.should_receive( :cache_entry_modified ).at_least :once
+    @cache.put("akey", "another value")
+  end
+
 end
 
 class TestListener < TorqueBox::Infinispan::CacheListener
-  def cache_entry_created(entry)
-    puts "CREATED"
-  end
+  def cache_entry_created(entry) ; end
 
-  def cache_entry_removed(entry)
-    puts "REMOVED"
-  end
+  def cache_entry_removed(entry) ; end
+
+  def cache_entry_visited(entry) ; end
+
+  def cache_entry_modified(entry) ; end
+
+  def cache_entry_activated(entry) ; end
 end
 
