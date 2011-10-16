@@ -223,9 +223,12 @@ class AssemblyTool
   end
 
   def set_welcome_root(doc)
-    unless options[:enable_welcome_root].nil?
-      element = doc.root.get_elements("//virtual-server").first
-      element.attributes['enable-welcome-root'] = options[:enable_welcome_root]
+    #unless options[:enable_welcome_root].nil?
+    #  element = doc.root.get_elements("//virtual-server").first
+    #  element.attributes['enable-welcome-root'] = options[:enable_welcome_root]
+    #end
+    doc.root.get_elements("//virtual-server").each do |e|
+      e.attributes.delete('enable-welcome-root')
     end
   end
 
@@ -307,7 +310,7 @@ class AssemblyTool
     broadcast_group.add_element( e )
 
     e = REXML::Element.new( 'connector-ref' )
-    e.text = 'netty-connector'
+    e.text = 'netty'
     broadcast_group.add_element( e )
     broadcast_groups.add_element( broadcast_group )
     messaging_subsystem.add_element( broadcast_groups )
@@ -325,7 +328,7 @@ class AssemblyTool
     discovery_group.add_element( e )
 
     e = REXML::Element.new( 'refresh-timeout' )
-    e.text = '10000'
+    e.text = '20000'
     discovery_group.add_element( e )
 
     discovery_groups.add_element( discovery_group )
@@ -340,7 +343,7 @@ class AssemblyTool
     cluster_connection.add_element( e )
 
     e = REXML::Element.new( 'connector-ref' )
-    e.text = 'netty-connector'
+    e.text = 'netty'
     cluster_connection.add_element( e )
 
     e = REXML::Element.new( 'retry-interval' )
