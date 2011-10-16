@@ -139,9 +139,9 @@ class Assembler
   end
 
   def stash_stock_configs
-    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone-preview.xml',    'target/standalone-preview.xml' ) unless File.exist?( 'target/standalone-preview.xml' )
-    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone-preview-ha.xml', 'target/standalone-preview-ha.xml' ) unless File.exist?( 'target/standalone-preview-ha.xml' )
-    FileUtils.cp( 'target/stage/torquebox/jboss/domain/configuration/domain-preview.xml',            'target/domain-preview.xml' )     unless File.exist?( 'target/domain-preview.xml' )
+    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone.xml',    'target/standalone.xml' ) unless File.exist?( 'target/standalone.xml' )
+    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone-ha.xml', 'target/standalone-ha.xml' ) unless File.exist?( 'target/standalone-ha.xml' )
+    FileUtils.cp( 'target/stage/torquebox/jboss/domain/configuration/domain.xml',            'target/domain.xml' )     unless File.exist?( 'target/domain.xml' )
   end
 
   def stash_stock_host_config
@@ -160,9 +160,9 @@ class Assembler
   def transform_configs
     stash_stock_configs
     trash_stock_configs
-    tool.transform_config('target/standalone-preview.xml',    'standalone/configuration/standalone.xml',    false, false )
-    tool.transform_config('target/standalone-preview-ha.xml', 'standalone/configuration/standalone-ha.xml', false, true  )
-    tool.transform_config('target/domain-preview.xml',        'domain/configuration/domain.xml',            true,  true  )
+    tool.transform_config('target/standalone.xml',         'standalone/configuration/standalone.xml',    false, false )
+    tool.transform_config('target/standalone-ha.xml',      'standalone/configuration/standalone-ha.xml', false, true  )
+    tool.transform_config('target/domain.xml',             'domain/configuration/domain.xml',            true,  true  )
   end
 
   def transform_host_config

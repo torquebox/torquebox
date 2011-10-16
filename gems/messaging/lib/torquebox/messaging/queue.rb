@@ -26,14 +26,14 @@ module TorqueBox
         selector = options.fetch( :selector, "" )
         durable  = options.fetch( :durable,  true )
         jndi     = options.fetch( :jndi,     [].to_java(:string) )
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
+        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
           server.createQueue( false, name, selector, durable, jndi )
         end
         new( name )
       end
 
       def stop
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
+        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
           server.destroyQueue( name )
         end
       end

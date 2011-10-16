@@ -19,7 +19,7 @@ describe TorqueBox::Messaging::Destination do
 
   it "should start and stop a queue" do
     server = Mockito.mock(JMSServerManagerImpl.java_class)
-    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.jms.manager").and_yield(server)
+    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
 
     queue = TorqueBox::Messaging::Queue.start( "my_queue" )
     queue.name.should == "my_queue"
@@ -34,7 +34,7 @@ describe TorqueBox::Messaging::Destination do
 
   it "should start and stop a topic" do
     server = Mockito.mock(JMSServerManagerImpl.java_class)
-    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.jms.manager").and_yield(server)
+    TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
 
     topic = TorqueBox::Messaging::Topic.start( "my_topic" )
     topic.name.should == "my_topic"

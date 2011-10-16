@@ -130,7 +130,7 @@ class AssemblyTool
     if options[:deployment_timeout]
       profiles = doc.root.get_elements( '//profile' )
       profiles.each do |profile|
-        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
+        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.1']" ).first
         unless subsystem.nil?
           scanner = subsystem.get_elements( 'deployment-scanner' ).first
           scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
@@ -217,7 +217,7 @@ class AssemblyTool
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
       to_remove.each do |name|
-        profile.delete_element( "subsystem[@xmlns='urn:jboss:domain:#{name}:1.0']" )
+        profile.delete_element( "subsystem[@xmlns='urn:jboss:domain:#{name}:1.1']" )
       end
     end
   end
@@ -278,8 +278,15 @@ class AssemblyTool
     destinations.each &:remove
   end
 
+  def enable_messaging_jmx(doc)
+    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    e = REXML::Element.new( 'jmx-management-enabled' )
+    e.text = 'true'
+    hornetq_server.add_element( e )
+  end
+
   def fix_messaging_clustering(doc)
-    messaging_subsystem = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.0']" ).first
+    messaging_subsystem = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']" ).first
 
     e = REXML::Element.new( 'clustered' )
     e.text = 'true'
@@ -417,6 +424,8 @@ class AssemblyTool
       set_welcome_root(doc)
       unquote_cookie_path(doc)
       remove_destinations(doc)
+
+      enable_messaging_jmx(doc)
 
       if ( domain ) 
         setup_server_groups(doc)
