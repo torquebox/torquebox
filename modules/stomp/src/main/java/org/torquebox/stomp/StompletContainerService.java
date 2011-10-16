@@ -35,6 +35,7 @@ public class StompletContainerService implements Service<SimpleStompletContainer
             StompletServer server = this.serverInjector.getValue();
             if (this.hostNames.isEmpty()) {
                 server.setDefaultContainer( this.container );
+                server.setDefaultSessionManager( sessionManager );
             } else {
                 for (String each : this.hostNames) {
                     server.registerVirtualHost( each, this.container, sessionManager );

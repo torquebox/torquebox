@@ -37,13 +37,16 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
         RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         boolean useWeb = false;
-        
+
         String hostName = null;
         String context = null;
 
         if (rackAppMetaData != null) {
             List<String> webHosts = rackAppMetaData.getHosts();
             List<String> stompHosts = stompAppMetaData.getHosts();
+
+            System.err.println( "webhosts: " + webHosts );
+            System.err.println( "stomphosts: " + stompHosts );
 
             if (stompHosts.isEmpty()) {
                 useWeb = true;
@@ -52,16 +55,24 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
             } else if (stompHosts.get( 0 ).equals( webHosts.get( 0 ) )) {
                 useWeb = true;
             }
-            
-            if ( useWeb ) {
-                hostName = webHosts.get(  0 );
+
+            if (useWeb) {
+                if (!webHosts.isEmpty()) {
+                    hostName = webHosts.get( 0 );
+                }
                 context = rackAppMetaData.getContextPath();
             } else {
-                hostName = stompHosts.get( 0 );
+                if (!stompHosts.isEmpty()) {
+                    hostName = stompHosts.get( 0 );
+                }
                 context = stompAppMetaData.getContextPath();
             }
         }
 
+        if ( hostName == null ) {
+            hostName = "default-host";
+        }
+        
         if (useWeb) {
             deployWebBasedSessionManager( phaseContext, hostName, context );
         } else {
@@ -74,7 +85,7 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         HttpStompSessionManagerService service = new HttpStompSessionManagerService();
         ServiceName serviceName = StompServices.container( unit ).append( "session-manager" );
-        
+
         ServiceName contextServiceName = WebSubsystemServices.deploymentServiceName( hostName, context );
         phaseContext.getServiceTarget().addService( serviceName, service )
                 .addDependency( contextServiceName, Context.class, service.getContextInjector() )

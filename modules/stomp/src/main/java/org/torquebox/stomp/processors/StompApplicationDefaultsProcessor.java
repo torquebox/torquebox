@@ -22,10 +22,6 @@ public class StompApplicationDefaultsProcessor implements DeploymentUnitProcesso
             stompAppMetaData.setContextPath( "/" );
         }
         
-        if ( stompAppMetaData.getHosts().isEmpty() ) {
-            stompAppMetaData.addHost( "localhost" );
-        }
-        
         System.err.println( "STOMP HOSTS: " + stompAppMetaData.getHosts() );
     }
 
