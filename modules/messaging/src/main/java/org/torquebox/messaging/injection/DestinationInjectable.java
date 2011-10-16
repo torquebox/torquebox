@@ -73,11 +73,15 @@ public class DestinationInjectable extends JNDIInjectable {
 
     protected ServiceName getCoreDestinationServiceName() {
 
+        ServiceName hornetQ = ServiceName.JBOSS.append( "messaging" ).append( "default" );
+
         if (getType().equals( "queue" )) {
-            return JMSServices.JMS_QUEUE_BASE.append( getName() );
+            // return JMSServices.JMS_QUEUE_BASE.append( getName() );
+            return JMSServices.getJmsQueueBaseServiceName( hornetQ ).append( getName() );
         }
 
-        return JMSServices.JMS_TOPIC_BASE.append( getName() );
+        //return JMSServices.JMS_TOPIC_BASE.append( getName() );
+        return JMSServices.getJmsTopicBaseServiceName( hornetQ ).append( getName() );
 
     }
 

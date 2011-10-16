@@ -26,14 +26,14 @@ module TorqueBox
       
       def self.start( name, options={} )
         jndi = options.fetch( :jndi, [].to_java(:string) )
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
+        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
           server.createTopic( false, name, jndi )
         end
         new( name )
       end
 
       def stop
-        TorqueBox::ServiceRegistry.lookup("jboss.messaging.jms.manager") do |server|
+        TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager") do |server|
           server.destroyTopic( name )
         end
       end

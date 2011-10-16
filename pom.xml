@@ -189,6 +189,16 @@
     
   <dependencyManagement>
     <dependencies>
+
+      <!-- Because AS7 integrates Stilts and is behind-the-times, 
+           we must re-manage is back to a useful version. -->
+  
+      <dependency>
+        <groupId>org.projectodd.stilts</groupId>
+        <artifactId>stilts-stomplet-server-core</artifactId>
+        <version>${version.org.projectodd.stilts}</version>
+      </dependency>
+
       <dependency>
         <groupId>org.infinispan</groupId>
         <artifactId>infinispan-core</artifactId>
@@ -433,7 +443,7 @@
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.3.0</version.rspec>
 
-    <version.jbossas>7.0.2.Final</version.jbossas>
+    <version.jbossas>7.x.incremental.159</version.jbossas>
 
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
