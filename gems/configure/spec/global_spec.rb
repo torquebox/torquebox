@@ -205,6 +205,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
           end
         end
       }.should_not raise_error(TorqueBox::Configuration::ConfigurationError)
+
     end
 
     it "should nest under its parent" do
@@ -225,7 +226,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
 
     it_should_allow_valid_options  do
       topic 'a-topic' do
-        processor 'AClass', :concurrency => 1, :config => '', :filter => '', :name => ''
+        processor 'AClass', :concurrency => 1, :config => '', :filter => '', :name => '', :singleton=>true
       end
     end
 

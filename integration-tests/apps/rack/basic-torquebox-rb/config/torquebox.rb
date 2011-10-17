@@ -41,6 +41,13 @@ TorqueBox.configure do
     end
   end
 
+  queue '/queue/singleton-queue' do
+    durable false
+    processor AProcessor do
+      singleton true
+    end
+  end
+
   topic '/topic/a-topic', :durable => false
 
   ruby :version => '1.9'
