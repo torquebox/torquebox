@@ -418,6 +418,13 @@ require 'torquebox-messaging'
         both Topics and Queues are identical; they each simply represent a
         destination for your messages.</para>
 
+        <para>By default, messages are encoded using Ruby's Marshal serialization
+        mechanism, allowing you to include Ruby objects in your message. If you need
+        to produce messages that will be consumed by non-Ruby or TorqueBox 1.x clients, 
+        you can override the encoding mechanism globally
+        or on a per <methodname>publish</methodname> basis. See <xref linkend="message-encodings"/>
+        for more information.</para>
+
         <example>
           <title>Publish text messages</title>
 
@@ -470,6 +477,33 @@ queue.publish "Some message"</programlisting></para>
             </thead>
 
             <tbody>
+              <row>
+                <entry><parameter>:encoding</parameter></entry>
+
+                <entry>:marshal</entry>
+
+                <entry>Specifies the serialization encoding to use for the message. TorqueBox 
+                provides the following built-in encodings:
+                <itemizedlist>
+                  <listitem>
+                    <para><parameter>:marshal</parameter> - The message in encoded/decoded via Marshal,
+                    and is transmitted as a binary message.</para>
+                  </listitem>
+                  <listitem>
+                    <para><parameter>:marshal_base64</parameter> - The message in encoded/decoded via Marshal,
+                    and is transmitted as a base64 encoded text message. This was the encoding scheme
+                    used in TorqueBox 1.x.</para>
+                  </listitem>
+                  <listitem>
+                    <para><parameter>:json</parameter> - The message in encoded/decoded via JSON,
+                    and is transmitted as a text message. This encoding is limited, and should
+                    only be used for simple messages.</para>
+                  </listitem>
+                </itemizedlist>
+                See <xref linkend="message-encodings"/> for more information.
+                </entry>
+              </row>
+
               <row>
                 <entry><parameter>:priority</parameter></entry>
 
@@ -749,6 +783,114 @@ message = queue.publish_and_receive "ping", :timeout =&gt; 5000
         <methodname>receive</methodname>. Synchronous messaging is only
         available with queues, not topics.</para>
       </section>
+
+    </section>
+
+    <section id="message-encodings">
+      <title>Message Encodings</title>
+      <para>TorqueBox provides several different encoding serialization schemes for messaging,
+      and allows you to override the default encoding for all of your messages, or override
+      the encoding used on a per <methodname>publish</methodname> basis. Creating and registering 
+      your own encoding is trivial if you need an encoding scheme that is not provided out of the
+      box.</para>
+
+      <section id="built-in-message-encodings">
+        <title>Built-In Encodings</title>
+        <para>
+          TorqueBox provides the following built-in encodings:
+          <itemizedlist>
+            <listitem>
+              <para><parameter>:marshal</parameter> - The message in encoded/decoded via Marshal,
+              and is transmitted as a binary message. This is the default encoding.</para>
+            </listitem>
+            <listitem>
+              <para><parameter>:marshal_base64</parameter> - The message in encoded/decoded via Marshal,
+              and is transmitted as a base64 encoded text message. This was the encoding scheme
+              used in TorqueBox 1.x.</para>
+            </listitem>
+            <listitem>
+              <para><parameter>:json</parameter> - The message in encoded/decoded via JSON,
+              and is transmitted as a text message. This encoding is limited, and should
+              only be used for simple messages. This encoding is intended to provide interoperability
+              with other languages. Any application that uses the :json encoding will need
+              to provide the json gem via its Gemfile, or, if you are not using Bundler, 
+              the json gem must at least be installed.</para>
+            </listitem>
+          </itemizedlist>
+        </para>
+        <para>You can specify the encoding on a per-publish basis (see <xref linkend="messaging-producers" />), 
+        or set the default encoding globally (see <xref linkend="overriding-default-message-encoding" />).</para>
+      </section>
+
+      <section id="overriding-default-message-encoding">
+        <title>Overriding The Default Encoding</title>
+        <para>You can override the default encoding (:marshal) in your deployment descriptor. This
+        default will be used for any of your publish calls if no encoding is specified at call time.
+        This change will not affect any messages used by TorqueBox internally (to implement <link
+        linkend="backgroundable">Backgroundable</link> for example).</para>
+
+        <example>
+            <title>Overriding the default message encoding</title>
+
+            <para>Using the YAML syntax:<programlisting>application:
+  ...
+messaging:
+  default_message_encoding: json</programlisting></para>
+       <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  options_for :messaging, :default_message_encoding => :json
+end</programlisting></para>
+          </example>
+
+      </section>
+
+      <section id="creating-your-own-message-encoding">
+        <title>Creating Your Own Message Encoding</title>
+        <para>To create your own message encoding, you need to create a subclass
+        of <classname>TorqueBox::Messaging::Message</classname> that provides
+        <methodname>encode</methodname> and <methodname>decode</methodname> methods, 
+        along with <methodname>ENCODING</methodname> and 
+        <methodname>JMS_TYPE</methodname> constants. Below is a simple annotated
+        example of a custom YAML encoding.</para>
+
+        <example>
+            <title>Annotated custom YAML encoding example</title>
+
+            <para><programlisting>require 'yaml'
+module MyModule
+  class YAMLMessage &lt; TorqueBox::Messaging::Message
+    # a unique name for the encoding, stored with a published 
+    # message so it can be properly decoded
+    ENCODING = :yaml 
+
+    # can also be :bytes for a binary message
+    JMS_TYPE = :text 
+
+    def encode(message)
+      # @jms_message is the actual javax.jms.TextMessage
+      @jms_message.text = YAML::dump(message) unless message.nil?
+    end
+
+    def decode
+      YAML::load(@jms_message.text) unless @jms_message.text.nil?
+    end
+  end
+
+  # this will register the class under the key given by its ENCODING
+  TorqueBox::Messaging::Message.register_encoding(YAMLMessage)
+end</programlisting></para>
+<para>Using our new encoding:<programlisting>#you'll need to require your encoding class anywhere you publish/receive 
+require 'yaml_message'
+
+data = [1, 2, 3]
+some_queue.publish(data, :encoding => :yaml)
+puts some_queue.receive # [1, 2, 3]</programlisting></para>
+          </example>
+
+          <para>For additional examples, see the message classes defined in the <ulink
+          url="http://github.com/torquebox/torquebox">TorqueBox source.</ulink></para>
+      </section>
+
     </section>
 
     <section id="messaging-consumers">
