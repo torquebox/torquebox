@@ -28,7 +28,7 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
     public void start(StartContext context) throws StartException {
         try {
             ChannelFactory factory = this.channelFactoryInjector.getValue();
-            Channel channel = factory.createChannel( this.partitionName );
+            this.channel = factory.createChannel( this.partitionName );
             this.coordinator = new HASingletonCoordinator( this.haSingletonController, channel, this.partitionName );
             this.coordinator.start();
         } catch (Exception e) {
@@ -41,6 +41,7 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
         try {
             this.coordinator.stop();
             this.coordinator = null;
+            this.channel.close();
         } catch (ChannelException e) {
             log.error( "Unable to stop HA partition", e );
         }
@@ -57,6 +58,7 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
 
     private InjectedValue<ChannelFactory> channelFactoryInjector = new InjectedValue<ChannelFactory>();;
     
+    private Channel channel;
     private HASingletonCoordinator coordinator;
 
 
