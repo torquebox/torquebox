@@ -119,6 +119,9 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
             result.setMessageSelector( (String) options.get( "filter" ) );
             result.setRubyConfig( (Map) options.get( "config" ) );
             result.setConcurrency( (Integer) options.get( "concurrency" ) );
+            if (options.containsKey( "singleton" )) {
+                result.setSingleton( (Boolean) options.get( "singleton" ) );
+            }
             result.setDurable( (Boolean) options.get( "durable" ) );
             return result;
         }
