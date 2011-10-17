@@ -69,6 +69,7 @@ module TorqueBox
                                                               :validate => {
                                                                 :optional => [
                                                                               :concurrency,
+                                                                              { :singleton => [true, false] },
                                                                               :config,
                                                                               :filter,
                                                                               :name

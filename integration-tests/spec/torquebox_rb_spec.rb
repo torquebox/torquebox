@@ -77,6 +77,12 @@ describe "an app using a torquebox.rb" do
       proc.message_selector.should == "steak = 'salad'"
     end
 
+    it "should create allow a singleton processor" do
+      proc = mbean('torquebox.messaging.processors:name=/queue/singleton_queue/a_processor,app=an_app_using_a_torquebox_rb')
+      proc.destination_name.should == '/queue/singleton-queue'
+      proc.concurrency.should == 1
+    end
+
     it "should create a service with a hash" do
       service = mbean('torquebox.services:name=ham,app=an_app_using_a_torquebox_rb')
       service.ruby_class_name.should == 'AService'
