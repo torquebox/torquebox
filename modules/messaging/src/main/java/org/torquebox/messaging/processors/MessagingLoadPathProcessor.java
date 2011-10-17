@@ -36,6 +36,8 @@ public class MessagingLoadPathProcessor implements DeploymentUnitProcessor {
             try {
                 runtimeMetaData.appendLoadPath( "app/tasks" );
                 runtimeMetaData.appendLoadPath( "tasks" );
+                runtimeMetaData.appendLoadPath( "app/processors" );
+                runtimeMetaData.appendLoadPath( "processors" );
             } catch (Exception e) {
                 throw new DeploymentUnitProcessingException( e );
             }
