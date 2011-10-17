@@ -11,15 +11,20 @@ public class MessageProcessor extends BaseMessageProcessor {
 
     @Override
     public void onMessage(Message message) {
-        if ( getConsumer() == null ) {
-            return;             // racist!
+        log.info( "begin onMessage(" + message + ")" );
+        if (getConsumer() == null) {
+            log.info( "null consumer, return early." );
+            return; // racist!
         }
-        MessageProcessorGroup group = (MessageProcessorGroup)getGroup();
+        MessageProcessorGroup group = (MessageProcessorGroup) getGroup();
         Ruby ruby = null;
         try {
+            log.info( "borrowing runtime from " + group.getRubyRuntimePool() );
             ruby = group.getRubyRuntimePool().borrowRuntime();
-            if ( getConsumer() == null ) {
-                return;         // racist!
+            log.info( "runtime is " + ruby);
+            if (getConsumer() == null) {
+            log.info( "null consumer, return early #2." );
+                return; // racist!
             }
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );
             component.process( message, getSession() );
@@ -36,6 +41,6 @@ public class MessageProcessor extends BaseMessageProcessor {
         }
 
     }
-    
+
     public static final Logger log = Logger.getLogger( "org.torquebox.messaging" );
- }
+}

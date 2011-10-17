@@ -6,6 +6,7 @@ class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
   include TorqueBox::Injectors
 
   def on_message(body)
+    puts "messaging-alacart SimpleProcessor#on_message()"
     puts ENV.inspect
     basedir = ENV['BASEDIR']
     basedir = basedir.gsub( %r(\\:), ':' )

@@ -33,25 +33,30 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
     }
 
     public void process(Message message) {
-        process(message, (XASession) null);
+        process( message, (XASession) null );
     }
 
     public void process(Message message, XASession session) {
+        log.info( "process with XA session: " + session );
         RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
         Object wrappedMessage = _callRubyMethod( messageWrapperClass, "new", message );
         if (session == null) {
+            log.info( "process! without XA" );
             _callRubyMethod( "process!", wrappedMessage );
+            log.info( "process copmlete" );
         } else {
+            log.info( "process! with XA" );
             RubyModule processorWrapperClass = getClass( "TorqueBox::Messaging::ProcessorWrapper" );
             Object wrappedProcessor = _callRubyMethod( processorWrapperClass, "new", getRubyComponent(), session, wrappedMessage );
             try {
-            _callRubyMethod( wrappedProcessor, "process!" );
+                _callRubyMethod( wrappedProcessor, "process!" );
             } catch (Throwable t) {
-                log.errorf(  t, "Unable to process inbound message" );
+                log.errorf( t, "Unable to process inbound message" );
             }
+            log.info( "process copmlete" );
         }
     }
-    
+
     private static final Logger log = Logger.getLogger( "org.torquebox.messaging" );
 
 }
