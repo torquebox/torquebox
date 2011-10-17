@@ -34,6 +34,7 @@ public class MessageProcessorMetaData {
     private String messageSelector;
     private int concurrency = 1;
     private boolean durable = false; //only has meaning for Topic processors
+    private boolean singleton = false;
 
     private Map<String, Object> rubyConfig;
     
@@ -103,8 +104,16 @@ public class MessageProcessorMetaData {
             this.durable = durable;
     }
 
-    public Boolean getDurable() {
+    public Boolean isDurable() {
         return this.durable;
+    }
+    
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }
+    
+    public boolean isSingleton() {
+        return this.singleton;
     }
 
 }

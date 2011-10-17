@@ -33,15 +33,18 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.messaging.BaseMessageProcessorGroup;
 import org.projectodd.polyglot.messaging.destinations.DestinationUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.core.util.StringUtils;
+import org.torquebox.hasingleton.HASingleton;
 import org.torquebox.messaging.MessageProcessorGroup;
 import org.torquebox.messaging.MessageProcessorGroupMBean;
 import org.torquebox.messaging.MessageProcessorMetaData;
@@ -78,20 +81,27 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
         ServiceName baseServiceName = MessagingServices.messageProcessor( unit, name );
         MessageProcessorGroup service = new MessageProcessorGroup( phaseContext.getServiceRegistry(), baseServiceName, metaData.getDestinationName() );
         service.setConcurrency( metaData.getConcurrency() );
-        service.setDurable( metaData.getDurable() );
+        service.setDurable( metaData.isDurable() );
         service.setMessageSelector( metaData.getMessageSelector() );
         service.setName( metaData.getName() );
 
-        phaseContext.getServiceTarget().addService( baseServiceName, service )
-            .addDependency( MessagingServices.messageProcessorComponentResolver( unit, name ), ComponentResolver.class, service.getComponentResolverInjector() )
-            .addDependency( getConnectionFactoryServiceName(), ManagedReferenceFactory.class, service.getConnectionFactoryInjector() )
-            .addDependency( getDestinationServiceName( metaData.getDestinationName() ), ManagedReferenceFactory.class, service.getDestinationInjector() )
-            .addDependency( CoreServices.runtimePoolName( unit, "messaging" ), RubyRuntimePool.class, service.getRuntimePoolInjector() )
-            .setInitialMode( Mode.ACTIVE )
-            .install();
-        
+        ServiceBuilder<BaseMessageProcessorGroup> builder = phaseContext.getServiceTarget().addService( baseServiceName, service )
+                .addDependency( MessagingServices.messageProcessorComponentResolver( unit, name ), ComponentResolver.class, service.getComponentResolverInjector() )
+                .addDependency( getConnectionFactoryServiceName(), ManagedReferenceFactory.class, service.getConnectionFactoryInjector() )
+                .addDependency( getDestinationServiceName( metaData.getDestinationName() ), ManagedReferenceFactory.class, service.getDestinationInjector() )
+                .addDependency( CoreServices.runtimePoolName( unit, "messaging" ), RubyRuntimePool.class, service.getRuntimePoolInjector() );
+
+        if (metaData.isSingleton()) {
+            builder.addDependency( HASingleton.serviceName( unit ) );
+            builder.setInitialMode( Mode.PASSIVE );
+        } else {
+            builder.setInitialMode( Mode.ACTIVE );
+        }
+
+        builder.install();
+
         final RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-        
+
         String mbeanName = ObjectNameFactory.create( "torquebox.messaging.processors", new Hashtable<String, String>() {
             {
                 put( "app", rubyAppMetaData.getApplicationName() );
