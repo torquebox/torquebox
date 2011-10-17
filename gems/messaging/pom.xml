@@ -30,14 +30,6 @@
     </dependency>
 
     <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>json</artifactId>
-      <version>${version.json}</version>
-      <classifier>java</classifier>
-      <type>gem</type>
-    </dependency>
-
-    <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>
       <artifactId>jboss-jms-api_1.1_spec</artifactId>
       <scope>runtime</scope>

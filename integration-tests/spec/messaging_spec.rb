@@ -34,7 +34,6 @@ describe "messaging rack test" do
 
 end
 
-
 remote_describe "in-container messaging tests" do
 
   describe "message enumeration" do
