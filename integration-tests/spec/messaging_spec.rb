@@ -98,8 +98,8 @@ remote_describe "in-container messaging tests" do
           data = { 'time' => Time.now, 'string' => 'abc' }
           queue.publish data, :encoding => :json
           message = queue.receive
-
-          message.should eql( data )
+          message['time'].to_s.should eql( data['time'].to_s )
+          message['string'].should eql( 'abc' )
         end
       end
     end
