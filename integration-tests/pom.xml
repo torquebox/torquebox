@@ -291,7 +291,7 @@
       <id>19</id>
       <properties>
         <ruby.compat.version>1.9</ruby.compat.version>
-        <max.heap>2048m</max.heap>
+        <max.heap>3072m</max.heap>
       </properties>
     </profile>
     <profile>
