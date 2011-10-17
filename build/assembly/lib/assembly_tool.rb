@@ -286,19 +286,19 @@ class AssemblyTool
   end
 
   def fix_messaging_clustering(doc)
-    messaging_subsystem = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']" ).first
+    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
 
     e = REXML::Element.new( 'clustered' )
     e.text = 'true'
-    messaging_subsystem.add_element( e )
+    hornetq_server.add_element( e )
 
     e = REXML::Element.new( 'cluster-user' )
     e.text = 'admin'
-    messaging_subsystem.add_element( e );
+    hornetq_server.add_element( e );
 
     e = REXML::Element.new( 'cluster-password' )
     e.text = 'password'
-    messaging_subsystem.add_element( e )
+    hornetq_server.add_element( e )
 
     broadcast_groups = REXML::Element.new( 'broadcast-groups' )
     broadcast_group = REXML::Element.new( 'broadcast-group' )
@@ -320,7 +320,7 @@ class AssemblyTool
     e.text = 'netty'
     broadcast_group.add_element( e )
     broadcast_groups.add_element( broadcast_group )
-    messaging_subsystem.add_element( broadcast_groups )
+    hornetq_server.add_element( broadcast_groups )
 
     discovery_groups = REXML::Element.new( 'discovery-groups' )
     discovery_group = REXML::Element.new( 'discovery-group' )
@@ -339,7 +339,7 @@ class AssemblyTool
     discovery_group.add_element( e )
 
     discovery_groups.add_element( discovery_group )
-    messaging_subsystem.add_element( discovery_groups )
+    hornetq_server.add_element( discovery_groups )
 
     cluster_connections = REXML::Element.new( 'cluster-connections' )
     cluster_connection = REXML::Element.new( 'cluster-connection' )
@@ -366,7 +366,7 @@ class AssemblyTool
     cluster_connection.add_element( e )
 
     cluster_connections.add_element( cluster_connection )
-    messaging_subsystem.add_element( cluster_connections )
+    hornetq_server.add_element( cluster_connections )
   end
 
   def fix_host_servers(doc)
