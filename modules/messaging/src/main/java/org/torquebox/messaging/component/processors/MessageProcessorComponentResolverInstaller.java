@@ -76,7 +76,7 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
-        builder.setInitialMode( Mode.ON_DEMAND );
+        builder.setInitialMode( Mode.PASSIVE );
         addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, metaData.getRubyRequirePath() ), builder );
         addNamespaceContext( phaseContext, service, builder );
         builder.install();
