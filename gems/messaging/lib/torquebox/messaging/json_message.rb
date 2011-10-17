@@ -15,20 +15,32 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'json/pure'
-require 'json/add/core'
-
 module TorqueBox
   module Messaging
     class JSONMessage < Message
       ENCODING = :json
       JMS_TYPE = :text
+
+      def require_json
+        # We can't ship our own json, as it may collide with the gem
+        # requirement for the app.
+        if !defined?( JSON )
+          begin
+            require 'json'
+            require 'json/add/core'
+          rescue LoadError => ex
+            raise RuntimeError.new( "Unable to load the json gem. Verify that is installed and in your Gemfile (if using Bundler)" )
+          end
+        end
+      end
       
       def encode(message)
+        require_json 
         @jms_message.text = JSON.fast_generate( message ) unless message.nil?
       end
 
       def decode
+        require_json 
         # we can't :symbolize_names here, since that breaks turning
         # json_class back into an object, ffs
         JSON.parse( @jms_message.text ) unless @jms_message.text.nil?
