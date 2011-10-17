@@ -29,7 +29,7 @@ module TorqueBox
       end
 
       add_class_annotation( { org.infinispan.notifications.Listener => { } } )
-      add_method_signature( "event_fired", [java.lang.Void::TYPE, org.infinispan.notifications.cachelistener.event.Event.java_class] )
+      add_method_signature( "event_fired", [java.lang.Void::TYPE, org.infinispan.notifications.cachelistener.event.Event] )
       add_method_annotation( "event_fired", 
                             { org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated    => {},
                               org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved    => {},

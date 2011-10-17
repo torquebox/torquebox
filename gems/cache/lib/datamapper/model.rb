@@ -173,7 +173,7 @@ module Infinispan
           EOT
         end
 
-        mapped_type = to_java_type(type).java_class
+        mapped_type = to_java_type(type)
         add_method_signature get_name, [mapped_type]
         add_method_annotation get_name, annotation
         add_method_signature set_name, [JVoid, mapped_type]
