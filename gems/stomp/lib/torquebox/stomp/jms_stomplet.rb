@@ -72,7 +72,7 @@ module TorqueBox
         when org.projectodd.stilts.stomp::StompMessage
           content = stomp_message.content_as_string
         else
-          content = jms_message
+          content = stomp_message.to_s
         end
 
         encoded_message = TorqueBox::Messaging::Message.new( @session.jms_session, content )
