@@ -61,17 +61,33 @@ describe TorqueBox::Infinispan::CacheListener do
     @cache.put("akey", "another value")
   end
 
+  it "should notify when an entry is activated in the cache" do
+    pending "Figuring out why this doesn't work"
+    listener = TestListener.new
+    cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache', :persist=>true )
+    cache.add_listener( listener )
+    cache.put("akey", "avalue")
+    cache.evict("akey")
+    listener.should_receive( :cache_entry_activated ).at_least :once
+    cache.get("akey")
+  end
+
+  it "should notify when an entry is evicted in the cache" do
+    listener = TestListener.new
+    @cache.add_listener( listener )
+    @cache.put("akey", "avalue")
+    listener.should_receive( :cache_entry_evicted ).at_least :once
+    @cache.evict( "akey" )
+  end
+
 end
 
 class TestListener < TorqueBox::Infinispan::CacheListener
-  def cache_entry_created(entry) ; end
-
-  def cache_entry_removed(entry) ; end
-
-  def cache_entry_visited(entry) ; end
-
-  def cache_entry_modified(entry) ; end
-
+  def cache_entry_created(entry)   ; end
+  def cache_entry_removed(entry)   ; end
+  def cache_entry_visited(entry)   ; end
+  def cache_entry_modified(entry)  ; end
+  def cache_entry_evicted(entry)   ; end
   def cache_entry_activated(entry) ; end
 end
 

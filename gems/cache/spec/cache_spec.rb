@@ -148,6 +148,13 @@ describe TorqueBox::Infinispan::Cache do
     @cache.get('a nil value').should be_nil
   end
 
+  it "should expire entries based on provided expiry durations" do
+    cache = TorqueBox::Infinispan::Cache.new( :name => 'expiring-cache' )
+    cache.put("foo", "bar", 0.1)
+    sleep 1
+    cache.get("foo").should be_nil
+  end
+
   describe "with JTA transactions" do
 
     it "should should be transactional by default" do
@@ -258,6 +265,28 @@ describe TorqueBox::Infinispan::Cache do
       entry = java.util.Date.new
       cache.put('foo', entry).should be_true
       File.exist?("#{@date_cfg_dir.to_s}/persisted-cache").should be_true
+    end
+
+    it "should evict keys from the heap" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
+      cache.put("akey", "avalue")
+      cache.evict( "akey" )
+      # when cache is in-memory only, the key should return nil
+      cache.get( "akey" ).should == nil
+    end
+
+    it "should only evict keys from the heap, not persistent storage" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache', :persist=>true )
+      cache.put("akey", "avalue")
+      cache.evict( "akey" )
+      cache.get( "akey" ).should == "avalue"
+    end
+
+    it "should expire entries based on provided expiry durations" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'expiring-cache', :persist=>true )
+      cache.put("foo", "bar", 0.1)
+      sleep 1
+      cache.get("foo").should be_nil
     end
   end
 

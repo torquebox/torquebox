@@ -159,6 +159,10 @@ module TorqueBox
         __put(key, value, expires, :put_if_absent_async)
       end
 
+      def evict( key )
+        cache.evict( key )
+      end
+
       def replace(key, original_value, new_value, codec=NoOpCodec)
         # First, grab the raw value from the cache, which is a byte[]
 
@@ -364,8 +368,10 @@ module TorqueBox
         if expires > 0
           # Set the Infinispan expire a few minutes into the future to support
           # :race_condition_ttl on read
-          expires_in = expires + 5.minutes
+          #expires_in = expires + 300 # 300 seconds == 5 minutes
+          expires_in = expires
           args << expires_in << SECONDS
+          args << expires << SECONDS
         end
         #$stderr.puts "cache=#{cache.inspect}"
         #$stderr.puts "*args=#{args.inspect}"

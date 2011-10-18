@@ -36,6 +36,7 @@ module TorqueBox
                               org.infinispan.notifications.cachelistener.annotation.CacheEntryModified   => {},
                               org.infinispan.notifications.cachelistener.annotation.CacheEntryEvicted    => {},
                               org.infinispan.notifications.cachelistener.annotation.CacheEntryActivated  => {},
+                              org.infinispan.notifications.cachelistener.annotation.CacheEntryEvicted    => {},
                               org.infinispan.notifications.cachelistener.annotation.CacheEntryVisited    => {}})
       become_java!
     end
