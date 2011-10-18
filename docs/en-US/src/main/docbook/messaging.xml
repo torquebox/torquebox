@@ -499,6 +499,11 @@ queue.publish "Some message"</programlisting></para>
                     and is transmitted as a text message. This encoding is limited, and should
                     only be used for simple messages.</para>
                   </listitem>
+                  <listitem>
+                    <para><parameter>:text</parameter> - The message isn't encoded/decoded at all,
+                    and is passed straight through as a text message. The content of the message
+                    must be a string.</para>
+                  </listitem>
                 </itemizedlist>
                 See <xref linkend="message-encodings"/> for more information.
                 </entry>
@@ -816,6 +821,12 @@ message = queue.publish_and_receive "ping", :timeout =&gt; 5000
               to provide the json gem via its Gemfile, or, if you are not using Bundler, 
               the json gem must at least be installed.</para>
             </listitem>
+            <listitem>
+              <para><parameter>:text</parameter> - The message isn't encoded/decoded at all,
+              and is passed straight through as a text message. The content of the message
+              must be a string. This is useful for passing messages you can guarantee will 
+              always be strings, or you are doing your own application level encoding/decoding.</para>
+            </listitem>
           </itemizedlist>
         </para>
         <para>You can specify the encoding on a per-publish basis (see <xref linkend="messaging-producers" />), 
@@ -857,6 +868,7 @@ end</programlisting></para>
             <title>Annotated custom YAML encoding example</title>
 
             <para><programlisting>require 'yaml'
+
 module MyModule
   class YAMLMessage &lt; TorqueBox::Messaging::Message
     # a unique name for the encoding, stored with a published 
@@ -1358,7 +1370,7 @@ end</programlisting>The first parameter to the <function>async(...)</function>
 
                 <entry>:normal</entry>
 
-                <entry>higher priority messages will be delivered before lower
+                <entry>Higher priority messages will be delivered before lower
                 priority messages within the context of a queue. You can
                 specify the priority as an integer in the range 0..9, or as
                 one of the following convenience symbols (with the
