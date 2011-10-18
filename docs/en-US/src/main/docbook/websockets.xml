@@ -355,8 +355,7 @@ end</programlisting></para>
       config:
         type: topic
         destination: /jms-topics/bar</programlisting></para>
-      </informalexample>
-      To configure stomplets via the DSL: <informalexample>
+      </informalexample> To configure stomplets via the DSL: <informalexample>
         <para><programlisting>TorqueBox.configure do
   ...
   stomp do
@@ -368,7 +367,7 @@ end</programlisting></para>
   end
 
   stomplet BridgeStomplet do
-    name 'foo.stomplet' # required if >1 stomplets use the same class, optional otherwise
+    name 'foo.stomplet' # required if &gt;1 stomplets use the same class, optional otherwise
     route '/bridge/foo'
     config do
       type 'queue'
@@ -377,14 +376,13 @@ end</programlisting></para>
   end
 
   stomplet BridgeStomplet do
-    name 'bar.stomplet' # required if >1 stomplets use the same class, optional otherwise
+    name 'bar.stomplet' # required if &gt;1 stomplets use the same class, optional otherwise
     route '/bridge/bar'
-    config :type => 'topic', :destination => '/jms-topics/bar'
+    config :type =&gt; 'topic', :destination =&gt; '/jms-topics/bar'
   end
 end</programlisting></para>
       </informalexample></para>
   </section>
-
 
   <section>
     <title>Javascript Client</title>
@@ -563,6 +561,26 @@ app = lambda { |env|
 use TorqueBox::Stomp::StompJavascriptClientProvider
 run app</programlisting></para>
         </informalexample></para>
+    </section>
+
+    <section>
+      <title>Injecting the endpoint URL</title>
+
+      <para>In your application, it's useful to be able to know exactly the
+      STOMP server's endpoint URL, without having to hard-code that into your
+      application. Since JBoss AS allows changing ports for services,
+      especially when running multiple nodes on the same machine, determining
+      the URL at runtime is helpful.</para>
+
+      <para>You may inject stomp-endpoint into your application code, and it
+      will provide the the URL for connections to the STOMP endpoint on that
+      node.</para>
+
+      <para><informalexample>
+          <para><programlisting>my_url = inject( 'stomp-endpoint' )</programlisting></para>
+        </informalexample>The URL may be used with the middleware-provided
+      Javascript client to conveniently and reliably connect back to the STOMP
+      endpoint, regardless of the current port being used.</para>
     </section>
   </section>
 

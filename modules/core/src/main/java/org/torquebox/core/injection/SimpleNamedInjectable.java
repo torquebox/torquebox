@@ -28,15 +28,25 @@ public abstract class SimpleNamedInjectable implements Injectable {
     private String type;
     private String name;
     private boolean generic;
+    private boolean optional;
 
     public SimpleNamedInjectable(String type, String name, boolean generic) {
+        this( type, name, generic, false );
+    }
+    
+    public SimpleNamedInjectable(String type, String name, boolean generic, boolean optional) {
         this.type = type;
         this.name = name;
         this.generic = generic;
+        this.optional = optional;
     }
     
     public boolean isGeneric() {
         return this.generic;
+    }
+    
+    public boolean isOptional() {
+        return this.optional;
     }
     
     public String getType() {

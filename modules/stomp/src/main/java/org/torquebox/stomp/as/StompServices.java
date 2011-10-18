@@ -35,6 +35,10 @@ public class StompServices {
         return unit.getServiceName().append( "stomp", "container" );
     }
     
+    public static ServiceName endpointBinding(DeploymentUnit unit) {
+        return container( unit ).append( "endpoint-binding" );
+    }
+    
     public static ServiceName stomplet(DeploymentUnit unit, String name) {
         return container( unit ).append( name );
     }

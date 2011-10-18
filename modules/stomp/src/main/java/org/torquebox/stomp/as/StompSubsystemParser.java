@@ -34,10 +34,13 @@ import javax.xml.stream.XMLStreamException;
 import org.jboss.as.controller.persistence.SubsystemMarshallingContext;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.modules.Module;
 import org.jboss.staxmapper.XMLElementReader;
 import org.jboss.staxmapper.XMLElementWriter;
 import org.jboss.staxmapper.XMLExtendedStreamReader;
 import org.jboss.staxmapper.XMLExtendedStreamWriter;
+import org.torquebox.core.as.CoreExtension;
+import org.torquebox.core.as.InjectableHandlerAdd;
 
 public class StompSubsystemParser implements XMLStreamConstants, XMLElementReader<List<ModelNode>>, XMLElementWriter<SubsystemMarshallingContext> {
 
@@ -83,6 +86,14 @@ public class StompSubsystemParser implements XMLStreamConstants, XMLElementReade
         requireNoContent( reader );
 
         list.add( subsystem );
+        
+        // Tell the core that we've got injectable-handlers to add.
+        
+        final ModelNode core = new ModelNode();
+        core.add(SUBSYSTEM, CoreExtension.SUBSYSTEM_NAME);
+        core.protect();
+        
+        list.add(InjectableHandlerAdd.createOperation(core, StompExtension.SUBSYSTEM_NAME, Module.getCallerModule().getIdentifier().getName() ) );
     }
 
     @Override

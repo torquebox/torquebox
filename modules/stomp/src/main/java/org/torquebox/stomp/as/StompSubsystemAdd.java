@@ -60,7 +60,7 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     @Override
-    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
+    protected void performBoottime(OperationContext context, final ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
 
         log.info( "performBoottime" );
@@ -69,7 +69,8 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 log.info( "execute step" );
-                addDeploymentProcessors( processorTarget );
+                final String bindingRef = operation.require( "socket-binding" ).asString();
+                addDeploymentProcessors( processorTarget, bindingRef );
             }
         }, OperationContext.Stage.RUNTIME );
 
@@ -104,7 +105,7 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     }
 
-    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, String socketBindingRef) {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 31, new StompYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1031, new StompWebAdjuster() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 1032, new StompApplicationDefaultsProcessor() );
@@ -113,7 +114,7 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 5, new StompDependenciesProcessor() );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new StompletComponentResolverInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 99, new SessionManagerInstaller( "localhost" ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 100, new StompletContainerInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 100, new StompletContainerInstaller( socketBindingRef ) );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 101, new StompletInstaller() );
     }
 

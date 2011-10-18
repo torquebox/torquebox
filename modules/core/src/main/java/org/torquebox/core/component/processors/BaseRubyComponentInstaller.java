@@ -44,11 +44,11 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
 
     protected void addNamespaceContext(DeploymentPhaseContext phaseContext, ComponentResolverService resolverService, ServiceBuilder<ComponentResolver> builder) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         ServiceName selectorName = CoreServices.appNamespaceContextSelector( unit );
         builder.addDependency( selectorName, NamespaceContextSelector.class, resolverService.getNamespaceContextSelectorInjector() );
     }
-    
+
     protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
             ServiceBuilder<ComponentResolver> builder)
             throws DeploymentUnitProcessingException {
@@ -74,7 +74,11 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
             for (Injectable injectable : additionalInjectables) {
                 try {
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
-                    builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
+                    if (serviceName != null) {
+                        builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
+                    } else if ( ! injectable.isOptional() ) {
+                        log.error( "Unable to inject: " + injectable.getName());
+                    }
                 } catch (Exception e) {
                     throw new DeploymentUnitProcessingException( e );
                 }

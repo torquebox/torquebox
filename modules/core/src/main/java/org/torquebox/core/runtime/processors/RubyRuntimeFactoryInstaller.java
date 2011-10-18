@@ -92,16 +92,17 @@ public class RubyRuntimeFactoryInstaller implements DeploymentUnitProcessor {
 
             RubyRuntimeFactoryService service = new RubyRuntimeFactoryService( factory );
             ServiceName name = CoreServices.runtimeFactoryName( unit );
-            
+
             ServiceBuilder<RubyRuntimeFactory> builder = phaseContext.getServiceTarget().addService( name, service );
-            addPredeterminedInjections( phaseContext, builder, factory ); 
+            addPredeterminedInjections( phaseContext, builder, factory );
             builder.install();
-            
+
             installLightweightFactory( phaseContext, factory );
         }
     }
-    
-    protected void addPredeterminedInjections(DeploymentPhaseContext phaseContext, ServiceBuilder<?> builder, RubyRuntimeFactory factory) throws DeploymentUnitProcessingException {
+
+    protected void addPredeterminedInjections(DeploymentPhaseContext phaseContext, ServiceBuilder<?> builder, RubyRuntimeFactory factory)
+            throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         AttachmentList<Injectable> additionalInjectables = unit.getAttachment( ComponentResolver.ADDITIONAL_INJECTABLES );
 
@@ -109,7 +110,11 @@ public class RubyRuntimeFactoryInstaller implements DeploymentUnitProcessor {
             for (Injectable injectable : additionalInjectables) {
                 try {
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
-                    builder.addDependency( serviceName, factory.getInjector( injectable.getKey() ) );
+                    if (serviceName != null) {
+                        builder.addDependency( serviceName, factory.getInjector( injectable.getKey() ) );
+                    } else if (!injectable.isOptional()) {
+                        log.error( "Unable to inject: " + injectable.getName() );
+                    }
                 } catch (Exception e) {
                     throw new DeploymentUnitProcessingException( e );
                 }
@@ -121,7 +126,7 @@ public class RubyRuntimeFactoryInstaller implements DeploymentUnitProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         RubyRuntimeFactoryService service = new RubyRuntimeFactoryService( factory );
         ServiceName name = CoreServices.runtimeFactoryName( unit ).append( "lightweight" );
-        
+
         phaseContext.getServiceTarget().addService( name, service ).setInitialMode( Mode.ON_DEMAND ).install();
     }
 

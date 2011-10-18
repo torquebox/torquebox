@@ -62,6 +62,8 @@ public interface Injectable {
     String getKey();
 
     boolean isGeneric();
+    
+    boolean isOptional();
 
     /**
      * Retrieve the MSC <code>ServiceName</code> of the actual underlying
