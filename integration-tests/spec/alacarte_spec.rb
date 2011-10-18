@@ -8,7 +8,7 @@ shared_examples_for "alacarte" do
     response = responseq.receive( :timeout => 120_000 )
     5.times do
       response.should == 'done'
-      response = responseq.receive( :timeout => 10_000 )
+      response = responseq.receive( :timeout => 120_000 )
     end
   end
 
