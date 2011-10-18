@@ -134,34 +134,26 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     @Override
     public void instanceRequested(int totalInstances, int availableNow) {
-        if (this.instances == null) {
-            this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
-        }
-        log.info( "instanceRequested - totalInstances = " + totalInstances +
+        log.debug( "instanceRequested - totalInstances = " + totalInstances +
                 ", availableNow = " + availableNow + ", availablePermits = " +
                 this.instances.availablePermits() );
 
-        if (totalInstances >= maxInstances) {
-            return;
-        }
-        if ((availableNow == 0) && (this.instances.tryAcquire())) {
+        if (this.instances.tryAcquire()) {
             this.executor.execute( this.fillTask );
         }
     }
 
     protected void fillInstance() throws Exception {
-        synchronized (this.pool) {
-            if (this.started) { // don't fill an instance if we've stopped
+        if (this.started) { // don't fill an instance if we've stopped
+            if (this.nsContextSelector != null) {
+                NamespaceContextSelector.pushCurrentSelector( this.nsContextSelector );
+            }
+            try {
+                T instance = this.factory.createInstance( this.pool.getName() );
+                this.pool.fillInstance( instance );
+            } finally {
                 if (this.nsContextSelector != null) {
-                    NamespaceContextSelector.pushCurrentSelector( this.nsContextSelector );
-                }
-                try {
-                    T instance = this.factory.createInstance( this.pool.getName() );
-                    this.pool.fillInstance( instance );
-                } finally {
-                    if (this.nsContextSelector != null) {
-                        NamespaceContextSelector.popCurrentSelector();
-                    }
+                    NamespaceContextSelector.popCurrentSelector();
                 }
             }
         }
@@ -176,6 +168,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
 
     public void start() {
         started = true;
+        this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
         if (this.executor == null) {
             this.executor = Executors.newFixedThreadPool( 4 );
         }

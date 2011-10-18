@@ -92,12 +92,15 @@ public class SimplePoolTest extends AbstractPoolTestCase {
 
         assertBorrow( pool );
 
-        verify( listener ).instanceRequested( 1, 1 );
         verify( listener ).instanceBorrowed( "Instance-1", 1, 0 );
 
         pool.releaseInstance( "Instance-1" );
 
         verify( listener ).instanceReleased( "Instance-1", 1, 1 );
+
+        pool.requestInstance();
+
+        verify( listener ).instanceRequested( 1, 1 );
     }
 
 }

@@ -22,6 +22,8 @@ package org.torquebox.core.pool;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.logging.Logger;
 
@@ -33,6 +35,8 @@ public class SimplePool<T> implements ManageablePool<T> {
     private final Set<T> availableInstances = new HashSet<T>();
 
     private final PoolListeners<T> listeners = new PoolListeners<T>();
+
+    private final Semaphore instancesSemaphore = new Semaphore( 0, true );
     
     public void setName(String name) {
         this.name = name;
@@ -55,27 +59,40 @@ public class SimplePool<T> implements ManageablePool<T> {
         return borrowInstance( requester, 0 );
     }
 
-    public synchronized T borrowInstance(String requester, long timeout) throws InterruptedException {
+    public T borrowInstance(String requester, long timeout) throws InterruptedException {
         log.info(  "Borrow runtime requested by " + requester );
         long start = System.currentTimeMillis();
-        this.listeners.instanceRequested( instances.size(), availableInstances.size() );
-        while (availableInstances.isEmpty()) {
-            long remainingTime = ((timeout == 0) ? 0 : (timeout - (System.currentTimeMillis() - start)));
-            if ((timeout != 0) && (remainingTime <= 0)) {
-                return null;
+
+        boolean acquired = this.instancesSemaphore.tryAcquire();
+        if (!acquired) {
+            requestInstance();
+
+            if (timeout > 0) {
+                acquired = this.instancesSemaphore.tryAcquire( timeout, TimeUnit.MILLISECONDS );
+            } else {
+                this.instancesSemaphore.acquire();
+                acquired = true;
             }
-            wait( remainingTime );
         }
 
-        Iterator<T> iter = this.availableInstances.iterator();
-        T instance = iter.next();
-        
+        if (!acquired) {
+            return null;
+        }
+
         long elapsed = System.currentTimeMillis() - start;
         log.info(  "Borrowed runtime by " + requester + " fullfilled in " + elapsed + "ms" );
+        return borrowedInstance();
+    }
+
+    protected synchronized void requestInstance() {
+        this.listeners.instanceRequested( instances.size(), availableInstances.size() );
+    }
+
+    protected synchronized T borrowedInstance() {
+        Iterator<T> iter = this.availableInstances.iterator();
+        T instance = iter.next();
         iter.remove();
-
         this.borrowedInstances.add( instance );
-
         this.listeners.instanceBorrowed( instance, instances.size(), availableInstances.size() );
         return instance;
     }
@@ -84,6 +101,7 @@ public class SimplePool<T> implements ManageablePool<T> {
     public synchronized void releaseInstance(T instance) {
         this.borrowedInstances.remove( instance );
         this.availableInstances.add( instance );
+        this.instancesSemaphore.release();
         this.listeners.instanceReleased( instance, instances.size(), availableInstances.size() );
         notifyAll();
     }
@@ -91,6 +109,7 @@ public class SimplePool<T> implements ManageablePool<T> {
     public synchronized void fillInstance(T instance) {
         this.instances.add( instance );
         this.availableInstances.add( instance );
+        this.instancesSemaphore.release();
         notifyAll();
     }
 
