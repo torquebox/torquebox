@@ -41,7 +41,7 @@ public class SharedPoolTest {
         pool.start();
 
         for (int i = 0; i < 100; ++i) {
-            assertEquals( instance, pool.borrowInstance() );
+            assertEquals( instance, pool.borrowInstance( "test" ) );
         }
     }
 
@@ -55,7 +55,7 @@ public class SharedPoolTest {
         pool.start();
 
         for (int i = 0; i < 100; ++i) {
-            assertEquals( instance, pool.borrowInstance() );
+            assertEquals( instance, pool.borrowInstance( "test" ) );
         }
     }
 
@@ -68,7 +68,7 @@ public class SharedPoolTest {
         pool.start();
 
         for (int i = 0; i < 100; ++i) {
-            assertEquals( instance, pool.borrowInstance() );
+            assertEquals( instance, pool.borrowInstance( "test" ) );
         }
     }
 
@@ -83,7 +83,7 @@ public class SharedPoolTest {
         pool.start();
 
         for (int i = 0; i < 100; ++i) {
-            assertEquals( instance, pool.borrowInstance() );
+            assertEquals( instance, pool.borrowInstance( "test" ) );
         }
     }
 

@@ -35,7 +35,7 @@ public interface Pool<T> {
      * @return The borrowed instance.
      * @throws Exception if an error occurs.
      */
-    T borrowInstance() throws Exception;
+    T borrowInstance(String requester) throws Exception;
 
     /**
      * Borrow an instance from the pool.
@@ -44,7 +44,7 @@ public interface Pool<T> {
      * @return The borrowed instance.
      * @throws Exception if an error occurs.
      */
-    T borrowInstance(long timeout) throws Exception;
+    T borrowInstance(String requester, long timeout) throws Exception;
 
     /**
      * Release an instance back into the pool.

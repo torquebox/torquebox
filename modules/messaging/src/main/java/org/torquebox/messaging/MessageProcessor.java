@@ -20,7 +20,7 @@ public class MessageProcessor extends BaseMessageProcessor {
         Ruby ruby = null;
         try {
             log.info( "borrowing runtime from " + group.getRubyRuntimePool() );
-            ruby = group.getRubyRuntimePool().borrowRuntime();
+            ruby = group.getRubyRuntimePool().borrowRuntime( getGroup().getName() );
             log.info( "runtime is " + ruby);
             if (getConsumer() == null) {
             log.info( "null consumer, return early #2." );

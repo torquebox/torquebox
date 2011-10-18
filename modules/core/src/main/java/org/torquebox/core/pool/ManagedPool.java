@@ -112,19 +112,19 @@ public class ManagedPool<T> implements Pool<T> {
     }
 
     @Override
-    public T borrowInstance() throws Exception {
+    public T borrowInstance(String requester) throws Exception {
         if (!this.started) {
             startPool();
         }
-        return this.pool.borrowInstance();
+        return this.pool.borrowInstance( requester );
     }
 
     @Override
-    public T borrowInstance(long timeout) throws Exception {
+    public T borrowInstance(String requester, long timeout) throws Exception {
         if (!this.started) {
             startPool();
         }
-        return this.pool.borrowInstance( timeout );
+        return this.pool.borrowInstance( requester, timeout );
     }
 
 

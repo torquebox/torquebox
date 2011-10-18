@@ -30,7 +30,7 @@ import org.jruby.Ruby;
  * @author Bob McWhirter
  */
 public interface RubyRuntimePool {
-    Ruby borrowRuntime() throws Exception;
+    Ruby borrowRuntime(String requester) throws Exception;
     void returnRuntime(Ruby runtime);
     
     Set<String> getAllRuntimeNames();

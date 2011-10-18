@@ -204,8 +204,8 @@ public class SharedPool<T> implements Pool<T> {
     }
 
     @Override
-    public T borrowInstance() throws Exception {
-        return borrowInstance( 0 );
+    public T borrowInstance(String requester) throws Exception {
+        return borrowInstance( requester, 0 );
     }
 
     @Override
@@ -214,7 +214,7 @@ public class SharedPool<T> implements Pool<T> {
     }
 
     @Override
-    public synchronized T borrowInstance(long timeout) throws Exception {
+    public synchronized T borrowInstance(String requester, long timeout) throws Exception {
         if (this.instance == null) {
             startPool();
         }

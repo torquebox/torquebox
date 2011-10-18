@@ -137,7 +137,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
         if (this.instances == null) {
             this.instances = new Semaphore( this.maxInstances - this.minInstances, true );
         }
-        log.trace( "instanceRequested - totalInstances = " + totalInstances +
+        log.info( "instanceRequested - totalInstances = " + totalInstances +
                 ", availableNow = " + availableNow + ", availablePermits = " +
                 this.instances.availablePermits() );
 

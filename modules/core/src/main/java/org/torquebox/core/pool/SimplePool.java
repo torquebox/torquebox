@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.jboss.logging.Logger;
+
 public class SimplePool<T> implements ManageablePool<T> {
 
     private String name;
@@ -49,11 +51,12 @@ public class SimplePool<T> implements ManageablePool<T> {
     }
 
     @Override
-    public T borrowInstance() throws Exception {
-        return borrowInstance( 0 );
+    public T borrowInstance(String requester) throws Exception {
+        return borrowInstance( requester, 0 );
     }
 
-    public synchronized T borrowInstance(long timeout) throws InterruptedException {
+    public synchronized T borrowInstance(String requester, long timeout) throws InterruptedException {
+        log.info(  "Borrow runtime requested by " + requester );
         long start = System.currentTimeMillis();
         this.listeners.instanceRequested( instances.size(), availableInstances.size() );
         while (availableInstances.isEmpty()) {
@@ -66,6 +69,9 @@ public class SimplePool<T> implements ManageablePool<T> {
 
         Iterator<T> iter = this.availableInstances.iterator();
         T instance = iter.next();
+        
+        long elapsed = System.currentTimeMillis() - start;
+        log.info(  "Borrowed runtime by " + requester + " fullfilled in " + elapsed + "ms" );
         iter.remove();
 
         this.borrowedInstances.add( instance );
@@ -93,7 +99,7 @@ public class SimplePool<T> implements ManageablePool<T> {
     }
 
     public synchronized T drainInstance(long timeout) throws Exception {
-        T instance = borrowInstance( timeout );
+        T instance = borrowInstance( "anonymous-drain", timeout );
         this.borrowedInstances.remove( instance );
         this.instances.remove( instance );
         return instance;
@@ -128,5 +134,7 @@ public class SimplePool<T> implements ManageablePool<T> {
     synchronized int availableSize() {
         return this.availableInstances.size();
     }
+    
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.pool" );
 
 }

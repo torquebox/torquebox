@@ -27,7 +27,7 @@ import org.torquebox.services.component.ServiceComponent;
 public class RubyService implements RubyServiceMBean {
 
     public void create() throws Exception {
-        this.runtime = this.runtimePool.borrowRuntime();
+        this.runtime = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
         this.servicesComponent = (ServiceComponent) this.resolver.resolve( runtime );
     }
 

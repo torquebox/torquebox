@@ -40,7 +40,7 @@ public class RubyJobProxy implements Job, StatefulJob {
     public void execute(JobExecutionContext context) throws JobExecutionException {
     	 Ruby ruby = null;
          try {
-             ruby = this.runtimePool.borrowRuntime();
+             ruby = this.runtimePool.borrowRuntime( resolver.getComponentName() );
              JobComponent job = (JobComponent)resolver.resolve( ruby );
              job.run();
          } catch (Exception e) {

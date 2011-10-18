@@ -20,12 +20,12 @@ public class StompletService implements Service<Stomplet> {
     public StompletService() {
 
     }
-    
+
     public void setConfig(Map<String, String> config) {
         this.config = config;
     }
-    
-    public Map<String,String> getConfig() {
+
+    public Map<String, String> getConfig() {
         return this.config;
     }
 
@@ -46,7 +46,7 @@ public class StompletService implements Service<Stomplet> {
     public void start(StartContext context) throws StartException {
 
         try {
-            this.runtime = this.poolInjector.getValue().borrowRuntime();
+            this.runtime = this.poolInjector.getValue().borrowRuntime( getDestinationPattern() );
 
             try {
                 ComponentResolver componentResolver = this.componentResolverInjector.getValue();
@@ -74,22 +74,21 @@ public class StompletService implements Service<Stomplet> {
     public Injector<RubyRuntimePool> getRuntimePoolInjector() {
         return this.poolInjector;
     }
-    
+
     public Injector<ComponentResolver> getComponentResolverInjector() {
         return this.componentResolverInjector;
     }
-    
+
     public Injector<SimpleStompletContainer> getStompletContainerInjector() {
         return this.containerInjector;
     }
-    
+
     private InjectedValue<RubyRuntimePool> poolInjector = new InjectedValue<RubyRuntimePool>();
     private InjectedValue<ComponentResolver> componentResolverInjector = new InjectedValue<ComponentResolver>();
     private InjectedValue<SimpleStompletContainer> containerInjector = new InjectedValue<SimpleStompletContainer>();
 
     private Ruby runtime;
     private Map<String, String> config;
-
 
     private String destinationPattern;
 }

@@ -54,8 +54,8 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
     }
 
     @Override
-    public Ruby borrowRuntime() throws Exception {
-        return borrowInstance();
+    public Ruby borrowRuntime(String requester) throws Exception {
+        return borrowInstance(requester);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class DefaultRubyRuntimePool extends ManagedPool<Ruby> implements RubyRun
         Ruby ruby = null;
         
         try {
-            ruby = borrowRuntime();
+            ruby = borrowRuntime( "anonymous-evaluate" );
             return RuntimeHelper.evalScriptlet( ruby, code  );
         } finally {
             if ( ruby != null ) {

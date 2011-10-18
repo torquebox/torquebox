@@ -106,7 +106,7 @@ public class RackFilter implements Filter {
         Ruby runtime = null;
         RackApplicationComponent rackApp;
         try {
-            runtime = this.runtimePool.borrowRuntime();
+            runtime = this.runtimePool.borrowRuntime( "rack" );
             rackApp = (RackApplicationComponent) this.componentResolver.resolve( runtime );
             rackEnv = new RackEnvironment( runtime, servletContext, request );
             rackApp.call( rackEnv ).respond( response );

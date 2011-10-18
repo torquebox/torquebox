@@ -70,8 +70,8 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
     }
 
     @Override
-    public Ruby borrowRuntime() throws Exception {
-        return borrowInstance();
+    public Ruby borrowRuntime(String requester) throws Exception {
+        return borrowInstance( requester );
     }
 
     @Override
@@ -104,7 +104,7 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
         Ruby ruby = null;
         
         try {
-            ruby = borrowRuntime();
+            ruby = borrowRuntime( "anonymous-evaluate" );
             return RuntimeHelper.evalScriptlet( ruby, code );
         } finally {
             if ( ruby != null ) {
