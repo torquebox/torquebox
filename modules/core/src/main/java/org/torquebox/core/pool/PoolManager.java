@@ -177,7 +177,7 @@ public class PoolManager<T> extends DefaultPoolListener<T> {
     public void start() {
         started = true;
         if (this.executor == null) {
-            this.executor = Executors.newSingleThreadExecutor();
+            this.executor = Executors.newFixedThreadPool( 4 );
         }
         for (int i = 0; i < this.minInstances; ++i) {
             this.executor.execute( this.fillTask );
