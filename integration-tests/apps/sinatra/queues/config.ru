@@ -11,7 +11,7 @@ get '/up/:word' do
   puts "publishing #{params[:word]}"
   publisher.publish params[:word]
   puts "published #{params[:word]}"
-  result = receiver.receive(:timeout => 25000)
+  result = receiver.receive(:timeout => 45000)
   puts "received: #{result}"
   result
 end
