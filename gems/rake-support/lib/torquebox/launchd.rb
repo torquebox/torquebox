@@ -15,7 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-# Helpers for upstart rake tasks
+# Helpers for launchd rake tasks
 
 require 'torquebox/deploy_utils'
 
@@ -46,7 +46,7 @@ module TorqueBox
         launchctl_found = false; IO.popen( 'launchctl list | grep torquebox' ) do |output|
           output.each do |line|
             if line =~ /torquebox/
-              puts "TorqueBox launchd script OK: #{line}."
+              puts "TorqueBox launchd script OK: #{line}"
               launchctl_found = true
               break
             end
@@ -59,7 +59,7 @@ module TorqueBox
       
       def install
         unless File.writable?( plist_dir )
-          raise "Cannot write upstart configuration to #{plist_dir}. You'll need to copy #{plist_file} to #{plist_dir} yourself."
+          raise "Cannot write launchd configuration to #{plist_dir}. You'll need to copy #{plist_file} to #{plist_dir} yourself."
         end
         
         File.delete( plist_file ) if File.exists? plist_file 
@@ -82,3 +82,4 @@ module TorqueBox
     end
   end
 end
+
