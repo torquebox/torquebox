@@ -174,11 +174,9 @@ end</programlisting>This example service prints a message every second until sto
       on a new node.</para>
 
       <para>To use high availability singleton services, you must
-      start TorqueBox with a JBoss profile that supports
-      clustering. In our binary distribution, this is the
-      <code>all</code> profile.</para>
+      start TorqueBox with a clustered configuration. For example:</para>
 
-      <para><screen><prompt>$</prompt> JBOSS_CONF=all <command>jruby</command> <parameter>-S rake torquebox:run</parameter></screen></para>
+      <para><screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command></screen></para>
 
       <para>You also need to add a special <code>singleton</code> key
       with a value of <code>true</code> to your services section of
