@@ -60,7 +60,7 @@ public class SimplePool<T> implements ManageablePool<T> {
     }
 
     public T borrowInstance(String requester, long timeout) throws InterruptedException {
-        log.info(  "Borrow runtime requested by " + requester );
+        log.debug(  "Borrow runtime requested by " + requester );
         long start = System.currentTimeMillis();
 
         boolean acquired = this.instancesSemaphore.tryAcquire();
@@ -80,7 +80,7 @@ public class SimplePool<T> implements ManageablePool<T> {
         }
 
         long elapsed = System.currentTimeMillis() - start;
-        log.info(  "Borrowed runtime by " + requester + " fullfilled in " + elapsed + "ms" );
+        log.debug(  "Borrowed runtime by " + requester + " fullfilled in " + elapsed + "ms" );
         return borrowedInstance();
     }
 

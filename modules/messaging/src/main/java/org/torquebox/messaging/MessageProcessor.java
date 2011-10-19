@@ -11,7 +11,7 @@ public class MessageProcessor extends BaseMessageProcessor {
 
     @Override
     public void onMessage(Message message) {
-        log.info( "begin onMessage(" + message + ")" );
+        log.debug( "begin onMessage(" + message + ")" );
         if (getConsumer() == null) {
             log.info( "null consumer, return early." );
             return; // racist!
@@ -19,9 +19,9 @@ public class MessageProcessor extends BaseMessageProcessor {
         MessageProcessorGroup group = (MessageProcessorGroup) getGroup();
         Ruby ruby = null;
         try {
-            log.info( "borrowing runtime from " + group.getRubyRuntimePool() );
+            log.debug( "borrowing runtime from " + group.getRubyRuntimePool() );
             ruby = group.getRubyRuntimePool().borrowRuntime( getGroup().getName() );
-            log.info( "runtime is " + ruby);
+            log.debug( "runtime is " + ruby);
             if (getConsumer() == null) {
             log.info( "null consumer, return early #2." );
                 return; // racist!
