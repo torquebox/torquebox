@@ -23,18 +23,62 @@ module TorqueBox
   module Launchd
     class << self
 
+      def log_dir
+        File.join( TorqueBox::DeployUtils.jboss_home, 'standalone', 'logs' )
+      end
+
+      def plist_template
+        File.join( plist_dir, 'TorqueBoxAgent.plist.template' )
+      end
+      
+      def plist_file
+        File.join( plist_dir, 'TorqueBoxAgent.plist' )
+      end
+
       def plist_dir
-        # TODO
+        File.join( TorqueBox::DeployUtils.torquebox_home, 'share', 'init' )
       end
 
       def check_install
-        TorqueBox::DeployUtils.check_opt_torquebox
-        # raise "#{init_torquebox} not installed in #{init_dir}" unless ( File.exist?( init_torquebox ) )
-        # puts "TorqueBox init scripts OK: #{init_torquebox}"
+        raise "#{plist_file} not installed in #{plist_dir}" unless ( File.exist?( plist_file ) )
+        puts "TorqueBox plist scripts OK: #{plist_file}."
+        
+        launchctl_found = false; IO.popen( 'launchctl list | grep torquebox' ) do |output|
+          output.each do |line|
+            if line =~ /torquebox/
+              puts "TorqueBox launchd script OK: #{line}."
+              launchctl_found = true
+              break
+            end
+          end
+        end
+        
+        raise "TorqueBox launchd script not found in launchctl." unless launchctl_found
+        
       end
-
+      
+      def install
+        unless File.writable?( plist_dir )
+          raise "Cannot write upstart configuration to #{plist_dir}. You'll need to copy #{plist_file} to #{plist_dir} yourself."
+        end
+        
+        File.delete( plist_file ) if File.exists? plist_file 
+        lines = File.open( plist_template, 'r' ) { |f| f.readlines }  
+        File.open( plist_file, 'w' ) do |file|
+          lines.each do |line|
+            if line =~ /\$\{TORQUEBOX_HOME\}/
+              file.puts( line.sub( /\$\{TORQUEBOX_HOME\}/, TorqueBox::DeployUtils.torquebox_home ) )
+            else
+              file.puts line
+            end
+          end
+        end
+        puts "Created launchd plist #{plist_file}, loading now."
+        TorqueBox::DeployUtils.exec_command "launchctl load #{plist_file}"
+        check_install
+        FileUtils.mkdir_p log_dir, :mode => 0755 unless File.exists? log_dir
+      end
+    
     end
   end
 end
-
-

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+	<dict>
+	        <key>Label</key>
+	        <string>org.torquebox.TorqueBox</string>
+	        <key>Program</key>
+	        <string>${TORQUEBOX_HOME}/jboss/bin/standalone.sh</string>
+	</dict>
+</plist>
