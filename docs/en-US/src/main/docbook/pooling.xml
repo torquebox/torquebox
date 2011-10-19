@@ -14,7 +14,7 @@
   <section id="types-of-pools">
     <title>Types of Runtime Pools</title>
 
-    <para>TorqueBox defines three types of pools from which a Ruby interpreter
+    <para>TorqueBox defines two types of pools from which a Ruby interpreter
     may be obtained:</para>
 
     <itemizedlist spacing="compact">
@@ -166,6 +166,12 @@
 
               <entry><code>services</code></entry>
             </row>
+
+            <row>
+              <entry>Stomplets</entry>
+
+              <entry><code>stomplets</code></entry>
+            </row>
           </tbody>
         </tgroup>
       </informaltable>
@@ -216,26 +222,6 @@ end</programlisting></para>
   ...
   pool :web do
     type :shared
-  end
-end</programlisting></para>
-      </example>
-
-      <formalpara>
-        <title>Global pool</title>
-
-        <para>A global pool has no configuration other than indicating a
-        susbsystem should use the global pool.</para>
-      </formalpara>
-
-      <example>
-        <title>Configuring a global pool</title>
-
-        <para>Using the YAML syntax:<programlisting>pooling:
-  web: global</programlisting></para>
-        <para>And via the DSL:<programlisting>TorqueBox.configure do
-  ...
-  pool :web do
-    type :global
   end
 end</programlisting></para>
       </example>
