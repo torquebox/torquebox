@@ -18,10 +18,6 @@ describe "HA jobs test" do
       version: #{RUBY_VERSION[0,3]}
   END
 
-  describe "in a cluster" do
-    it "should work (when we can figure out how to test in a cluster, and actually have HASingleton and clustering support)" 
-  end
-  
   describe "standalone" do
     it "should still work" do
       filename = TorqueBox::Messaging::Queue.new('/queue/backchannel').receive( :timeout => 120_000 )
