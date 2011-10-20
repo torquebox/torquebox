@@ -1,6 +1,7 @@
 package org.torquebox.messaging;
 
 import javax.jms.Message;
+import javax.transaction.xa.XAException;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
@@ -21,13 +22,16 @@ public class MessageProcessor extends BaseMessageProcessor {
         try {
             log.debug( "borrowing runtime from " + group.getRubyRuntimePool() );
             ruby = group.getRubyRuntimePool().borrowRuntime( getGroup().getName() );
-            log.debug( "runtime is " + ruby);
+            log.debug( "runtime is " + ruby );
             if (getConsumer() == null) {
-            log.info( "null consumer, return early #2." );
+                log.info( "null consumer, return early #2." );
                 return; // racist!
             }
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );
             component.process( message, getSession() );
+        } catch (XAException e) {
+            log.error( "Caught an XA exception" );
+            log.error( "CAUGHT: ", e );
         } catch (Exception e) {
             log.error( "Unexpected error in " + group.getName(), e );
         } finally {
