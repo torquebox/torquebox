@@ -79,13 +79,7 @@ module TorqueBox
 
         def commit
           raise ActiveRecord::Rollback if @rolled_back
-          begin
-            super
-          rescue Exception=>e
-            puts "CAUGHT #{e}"
-            puts e.backtrace
-            raise e
-          end
+          super
           @complete = true
           connections.each { |connection| connection.commit_transaction_records }
         end
