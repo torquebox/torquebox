@@ -31,7 +31,7 @@ package org.torquebox.core.pool;
 public interface InstanceFactory<T> {
 
     /**
-     * Create an instance.
+     * Create an instance. The contents of this method must be thread-safe.
      * 
      * @return The newly-created instance.
      * @throws Exception

@@ -154,6 +154,11 @@
       <section id="long-lived-destinations">
         <title><filename>Long-lived queues and topics</filename></title>
 
+        <note><para>Long-lived queues and topics can't be created in
+        TorqueBox 2.x yet. See <ulink
+        url="https://issues.jboss.org/browse/TORQUE-574">https://issues.jboss.org/browse/TORQUE-574</ulink></para></note>
+
+<!--
         <para>If your queues and topics have a lifecycle that extends beyond
         the deployment of any single app, you may want long-lived queues and
         topics. Long-lived destinations are first-order components, and may be
@@ -227,6 +232,7 @@
             <para>By convention, topics are named with the prefix of
             <filename>/topics</filename>.</para>
           </example></para>
+-->
       </section>
 
       <section id="application-linked-destinations">

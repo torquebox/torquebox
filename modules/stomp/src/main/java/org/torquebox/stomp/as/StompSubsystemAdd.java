@@ -63,12 +63,9 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void performBoottime(OperationContext context, final ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
 
-        log.info( "performBoottime" );
-
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                log.info( "execute step" );
                 final String bindingRef = operation.require( "socket-binding" ).asString();
                 addDeploymentProcessors( processorTarget, bindingRef );
             }
@@ -92,7 +89,6 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
         StompletServerService service = new StompletServerService( server );
 
         final String bindingRef = operation.require( "socket-binding" ).asString();
-        log.info( "Binding STOMP to " + bindingRef );
 
         ServiceController<StompletServer> controller = context.getServiceTarget().addService( StompServices.SERVER, service )
                 .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, service.getTransactionManagerInjector() )

@@ -100,8 +100,6 @@ public class JobSchedulerInstaller extends ClusterAwareProcessor {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         ServiceName serviceName = JobsServices.jobScheduler( unit, singleton );
 
-        log.info( "Installing Job Scheduler: " + serviceName );
-
         JobScheduler scheduler = new JobScheduler( "JobScheduler$" + unit.getName() );
 
         ServiceBuilder<JobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );

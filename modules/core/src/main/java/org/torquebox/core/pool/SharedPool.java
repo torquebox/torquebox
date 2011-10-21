@@ -126,17 +126,12 @@ public class SharedPool<T> implements Pool<T> {
     public synchronized void startPool() throws Exception {
         if (this.instance == null) {
             if (this.nsContextSelector != null) {
-                log.info(  "Pushing: " + this.nsContextSelector  );
                 NamespaceContextSelector.pushCurrentSelector( this.nsContextSelector );
             }
             try {
-                //InitialContext context = new InitialContext();
-                //Object ut = context.lookup( "java:/UserTransaction" );
-                //log.info( "UserTransaction: " + ut );
                 this.instance = factory.createInstance( getName() );
             } finally {
                 if (this.nsContextSelector != null) {
-                    log.info( "Popping" );
                     NamespaceContextSelector.popCurrentSelector();
                 }
             }

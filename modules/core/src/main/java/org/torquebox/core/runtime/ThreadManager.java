@@ -6,17 +6,14 @@ import org.jboss.logging.Logger;
 public class ThreadManager {
     
     public static ThreadContextBundle getCurrentBundle() {
-        log.info( "getCurrentBundle() " + Thread.currentThread() );
         return new ThreadContextBundle( NamespaceContextSelector.getCurrentSelector() );
     }
     
     public static void prepareThread(ThreadContextBundle parentBundle) {
-        log.info( "prepareThread() " + Thread.currentThread() );
         NamespaceContextSelector.pushCurrentSelector( parentBundle.getNamespaceContextSelector() );
     }
     
     public static void unprepareThread(ThreadContextBundle parentBundle) {
-        log.info( "unprepareThread() " + Thread.currentThread() );
         NamespaceContextSelector.popCurrentSelector();
     }
     

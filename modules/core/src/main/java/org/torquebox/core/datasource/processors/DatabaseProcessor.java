@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.sql.DataSource;
+import javax.transaction.TransactionManager;
 
 import org.jboss.as.connector.ConnectorServices;
 import org.jboss.as.connector.registry.DriverRegistry;
@@ -23,6 +24,7 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.txn.TxnServices;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
@@ -38,19 +40,18 @@ import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.AbstractServiceListener;
-import org.jboss.msc.service.Service;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
-import org.jboss.msc.service.ValueService;
-import org.jboss.msc.value.ImmediateValue;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.datasource.DataSourceInfoList;
 import org.torquebox.core.datasource.DataSourceInfoList.Info;
+import org.torquebox.core.datasource.DataSourceInfoListService;
 import org.torquebox.core.datasource.DataSourceServices;
+import org.torquebox.core.datasource.DataSourceXAVerifierService;
 import org.torquebox.core.datasource.DatabaseMetaData;
 import org.torquebox.core.datasource.DriverService;
 import org.torquebox.core.datasource.HackDataSourceService;
@@ -67,7 +68,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         addAdapter( new H2Adapter() );
         addAdapter( new PostgresAdapter() );
         addAdapter( new MySQLAdapter() );
-        //DriverManager.setLogWriter( new PrintWriter( System.err ) );
+        // DriverManager.setLogWriter( new PrintWriter( System.err ) );
     }
 
     protected void addAdapter(Adapter adapter) {
@@ -80,13 +81,13 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     protected Adapter getAdapter(String adapterName) {
         return this.adapters.get( adapterName );
     }
-    
+
     protected boolean isCurrentEnvironmentDatabase(String currentEnv, String configName) {
-    	return currentEnv.equals( configName );
+        return currentEnv.equals( configName );
     }
-    
+
     protected boolean isAtypicalDatabase(String configName) {
-    	return ! TYPICAL_ENVIRONMENTS.contains( configName );
+        return !TYPICAL_ENVIRONMENTS.contains( configName );
     }
 
     @Override
@@ -98,7 +99,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         if (rubyAppMetaData == null) {
             return;
         }
-        
+
         String currentEnv = rubyAppMetaData.getEnvironmentName();
 
         String applicationDir;
@@ -112,15 +113,16 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         Set<String> adapterNames = new HashSet<String>();
 
-        DataSourceInfoList infoList = new DataSourceInfoList();
+        DataSourceInfoListService dsInfoService = new DataSourceInfoListService( org.jboss.logmanager.Logger.getLogger( "com.arjuna.ats" ).getLevel() );
+        ServiceBuilder<DataSourceInfoList> dsInfoBuilder = phaseContext.getServiceTarget().addService( DataSourceServices.dataSourceInfoName( unit ), dsInfoService );
 
         for (DatabaseMetaData each : allMetaData) {
-        	
-        	String configName = each.getConfigurationName();
-        	
-        	if ( ! isCurrentEnvironmentDatabase( currentEnv, configName ) && ! isAtypicalDatabase( configName ) ) {
-        		continue;
-        	}
+
+            String configName = each.getConfigurationName();
+
+            if (!isCurrentEnvironmentDatabase( currentEnv, configName ) && !isAtypicalDatabase( configName )) {
+                continue;
+            }
 
             if (each.getConfiguration().containsKey( "jndi" )) {
                 continue;
@@ -137,7 +139,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             Adapter adapter = getAdapter( adapterName );
 
             if (adapter == null) {
-                log.errorf( "Unknown adapter type: %s", adapterName );
+                log.warnf( "Not enabling XA for unknown adapter type: %s", adapterName );
                 continue;
             }
 
@@ -146,19 +148,20 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             }
 
             try {
-                Info info = processDataSource( phaseContext, each, adapter );
-                infoList.addConfiguration( info );
+                ServiceName dsVerifierServiceName = processDataSource( phaseContext, each, adapter );
+                dsInfoBuilder.addDependency( dsVerifierServiceName, Info.class, dsInfoService.getInfoInjector() );
             } catch (ValidateException e) {
                 log.warnf( "Unable to add data-source: %s", each.getConfigurationName() );
                 throw new DeploymentUnitProcessingException( e );
             }
         }
 
+        dsInfoBuilder.install();
+
         if (!adapterNames.isEmpty()) {
             installJDBCDriverLoadingRuntime( phaseContext );
         }
 
-        processDataSourceInfos( phaseContext, infoList );
     }
 
     private void installJDBCDriverLoadingRuntime(DeploymentPhaseContext phaseContext) {
@@ -169,18 +172,6 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
                 .addDependency( CoreServices.runtimeFactoryName( unit ).append( "lightweight" ), RubyRuntimeFactory.class, service.getRuntimeFactoryInjector() )
                 .setInitialMode( Mode.ON_DEMAND )
                 .install();
-    }
-
-    private void processDataSourceInfos(DeploymentPhaseContext phaseContext, DataSourceInfoList infoList) {
-        DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        Service<DataSourceInfoList> service = new ValueService<DataSourceInfoList>( new ImmediateValue<DataSourceInfoList>( infoList ) );
-        ServiceBuilder<DataSourceInfoList> builder = phaseContext.getServiceTarget().addService( DataSourceServices.dataSourceInfoName( unit ), service );
-
-        for (DataSourceInfoList.Info each : infoList.getConfigurations()) {
-            builder.addDependencies( each.getServiceName() );
-        }
-
-        builder.install();
     }
 
     // ------------------------------------------------------------------------
@@ -205,7 +196,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     // DataSources
     // ------------------------------------------------------------------------
 
-    protected DataSourceInfoList.Info processDataSource(DeploymentPhaseContext phaseContext, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException,
+    protected ServiceName processDataSource(DeploymentPhaseContext phaseContext, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException,
             DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
@@ -262,19 +253,29 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             binderBuilder.setInitialMode( Mode.ACTIVE );
             binderBuilder.install();
 
+            String adapterName = (String) dbMeta.getConfiguration().get( "adapter" );
+            Info dsInfo = new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName );
+
+            DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo );
+            ServiceName verifierServiceName = dataSourceServiceName.append( "xa-verifier" );
+            phaseContext.getServiceTarget().addService( verifierServiceName, verifierService )
+                    .addDependency( dataSourceServiceName, DataSource.class, verifierService.getDataSourceInjector() )
+                    .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, verifierService.getTransactionManagerInjector() )
+                    .install();
+
+            return verifierServiceName;
+
         } catch (ValidateException e) {
             throw new DeploymentUnitProcessingException( e );
         }
 
-        String adapterName = (String) dbMeta.getConfiguration().get( "adapter" );
-        return new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName );
     }
 
     protected XaDataSource createConfig(DeploymentUnit unit, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException {
         TransactionIsolation transactionIsolation = null;
         TimeOut timeOut = null;
         Statement statement = null;
-        Validation validation = adapter.getValidationFor(dbMeta);
+        Validation validation = adapter.getValidationFor( dbMeta );
         String urlDelimiter = null;
         String urlSelectorStrategyClassName = null;
         boolean useJavaContext = false;
@@ -336,14 +337,16 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
     public void undeploy(DeploymentUnit context) {
 
     }
-    
+
     @SuppressWarnings("serial")
-	private static final Set<String> TYPICAL_ENVIRONMENTS = new HashSet<String>() {{
-    	add( "development" );
-    	add( "production" );
-    	add( "test" );
-    }};
-    
+    private static final Set<String> TYPICAL_ENVIRONMENTS = new HashSet<String>() {
+        {
+            add( "development" );
+            add( "production" );
+            add( "test" );
+        }
+    };
+
     private static final Logger log = Logger.getLogger( "org.torquebox.db" );
     private Map<String, Adapter> adapters = new HashMap<String, Adapter>();
 

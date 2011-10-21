@@ -65,8 +65,6 @@ public class TasksInstaller implements DeploymentUnitProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, DeploymentUnit unit, RubyAppMetaData appMetaData, TaskMetaData task) throws DeploymentUnitProcessingException {
         String queueName = "/queues/torquebox/" + appMetaData.getApplicationName() + "/tasks/" + task.getQueueSuffix();
                 
-        
-        log.info( "Deploying task queue: " + queueName );
         if (task.getConcurrency() > 0) {
             QueueMetaData queue = new QueueMetaData();
             queue.setName( queueName );

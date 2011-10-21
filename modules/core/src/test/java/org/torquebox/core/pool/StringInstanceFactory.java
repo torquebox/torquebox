@@ -25,7 +25,7 @@ public class StringInstanceFactory implements InstanceFactory<String> {
     private int counter = 0;
 
     @Override
-    public String createInstance(String contextInfo) throws Exception {
+    public synchronized String createInstance(String contextInfo) throws Exception {
         return "Instance-" + (++counter);
     }
 

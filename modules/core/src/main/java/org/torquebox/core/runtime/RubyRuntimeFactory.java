@@ -294,7 +294,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
                 if (this.initializer != null) {
                     this.initializer.initialize( runtime );
                 } else {
-                    log.warn( "No initializer set for runtime" );
+                    log.debug( "No initializer set for runtime" );
                 }
             }
 
@@ -331,7 +331,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
                 if (!vfsJar.isDirectory()) {
                     ScheduledExecutorService executor = Executors.newScheduledThreadPool( 1 );
                     TempFileProvider tempFileProvider = TempFileProvider.create( "jruby.home", executor );
-                    this.mountedJRubyHome = VFS.mountZip( vfsJar, vfsJar, tempFileProvider );
+                    this.mountedJRubyHomes.add( VFS.mountZip( vfsJar, vfsJar, tempFileProvider ) );
                 }
 
                 if (vfsJar.isDirectory()) {
@@ -347,8 +347,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private long logRuntimeCreationStart(RubyInstanceConfig config, String contextInfo) {
-        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo )
-                + ")" );
+        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ")" );
         return System.currentTimeMillis();
     }
 
@@ -414,7 +413,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     private void prepareRuntime(Ruby runtime, String contextInfo) {
         if ("1.6.3".equals( JRubyConstants.getVersion() ) ||
                 "1.6.4".equals( JRubyConstants.getVersion() )) {
-            log.info( "Disabling POSIX ENV passthrough for " + contextInfo + " runtime (TORQUE-497)" );
+            log.debug( "Disabling POSIX ENV passthrough for " + contextInfo + " runtime (TORQUE-497)" );
             StringBuffer env_fix = new StringBuffer();
             env_fix.append( "update_real_env_attr = org.jruby.RubyGlobal::StringOnlyRubyHash.java_class.declared_fields.find { |f| f.name == 'updateRealENV' }\n" );
             env_fix.append( "update_real_env_attr.accessible = true\n" );
@@ -563,14 +562,14 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             destroyInstance( ruby );
         }
         this.undisposed.clear();
-        if (this.mountedJRubyHome != null) {
+        for (Closeable mountedJRubyHome : this.mountedJRubyHomes) {
             try {
-                this.mountedJRubyHome.close();
+                mountedJRubyHome.close();
             } catch (IOException e) {
                 // ignore
             }
-            this.mountedJRubyHome = null;
         }
+        this.mountedJRubyHomes.clear();
     }
 
     public ClassCache getClassCache() {
@@ -644,7 +643,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     private ServiceRegistry serviceRegistry;
 
-    private Closeable mountedJRubyHome;
+    private List<Closeable> mountedJRubyHomes = Collections.synchronizedList( new ArrayList<Closeable>() );
 
     private InjectionRegistry injectionRegistry = new InjectionRegistry();
 }

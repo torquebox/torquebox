@@ -1,6 +1,7 @@
 package org.torquebox.messaging;
 
 import javax.jms.Message;
+import javax.transaction.xa.XAException;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
@@ -11,19 +12,14 @@ public class MessageProcessor extends BaseMessageProcessor {
 
     @Override
     public void onMessage(Message message) {
-        log.debug( "begin onMessage(" + message + ")" );
         if (getConsumer() == null) {
-            log.info( "null consumer, return early." );
             return; // racist!
         }
         MessageProcessorGroup group = (MessageProcessorGroup) getGroup();
         Ruby ruby = null;
         try {
-            log.debug( "borrowing runtime from " + group.getRubyRuntimePool() );
             ruby = group.getRubyRuntimePool().borrowRuntime( getGroup().getName() );
-            log.debug( "runtime is " + ruby);
             if (getConsumer() == null) {
-            log.info( "null consumer, return early #2." );
                 return; // racist!
             }
             MessageProcessorComponent component = (MessageProcessorComponent) group.getComponentResolver().resolve( ruby );

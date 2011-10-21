@@ -8,6 +8,8 @@ import org.jboss.msc.service.ServiceName;
 public class DataSourceInfoList {
     
     public static class Info {
+        public static final Info DISABLED = new Info( null, null, null, null);
+        
         private String name;
         private String jndiName;
         private String adapterName;
