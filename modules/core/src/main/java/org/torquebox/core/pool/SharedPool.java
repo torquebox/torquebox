@@ -168,23 +168,7 @@ public class SharedPool<T> implements Pool<T> {
         if (this.factory == null) {
             throw new IllegalArgumentException( "Neither an instance nor an instance-factory provided." );
         }
-        if (!this.deferUntilRequested && !this.startAsynchronously) {
-            startPool();
-        } else if (this.startAsynchronously) {
-            log.info( "Starting " + this.name + " runtime pool asynchronously" );
-            Thread initThread = new Thread() {
-                public void run() {
-                    try {
-                        SharedPool.this.startPool();
-                    } catch (Exception ex) {
-                        log.error( "Failed to start pool", ex );
-                    }
-                }
-            };
-            initThread.start();
-        } else {
-            log.info( "Deferring start for " + this.name + " runtime pool." );
-        }
+        startPool();
     }
 
     /**
@@ -226,11 +210,11 @@ public class SharedPool<T> implements Pool<T> {
 
         return this.instance;
     }
-    
+
     public void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector) {
         this.nsContextSelector = nsContextSelector;
     }
-    
+
     public NamespaceContextSelector getNamespaceContextSelector() {
         return this.nsContextSelector;
     }

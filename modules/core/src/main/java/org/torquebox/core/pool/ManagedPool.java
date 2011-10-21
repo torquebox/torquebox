@@ -27,7 +27,7 @@ import org.jboss.logging.Logger;
 public class ManagedPool<T> implements Pool<T> {
 
     public ManagedPool() {
-        this( null, 1, 1);
+        this( null, 1, 1 );
     }
 
     public ManagedPool(InstanceFactory<T> factory) {
@@ -87,20 +87,7 @@ public class ManagedPool<T> implements Pool<T> {
     }
 
     public void start() throws InterruptedException {
-        if (!this.deferUntilRequested && !this.startAsynchronously) {
-            startPool( true );
-        } else if (this.startAsynchronously) {
-            Thread initThread = new Thread() {
-                public void run() {
-                    try {
-                        ManagedPool.this.startPool();
-                    } catch(Exception ex) {
-                        log.error( "Failed to start pool", ex );
-                    }
-                }
-            };
-            initThread.start();
-        }
+        startPool( false );
     }
 
     public void stop() throws Exception {
@@ -127,7 +114,6 @@ public class ManagedPool<T> implements Pool<T> {
         return this.pool.borrowInstance( requester, timeout );
     }
 
-
     @Override
     public void releaseInstance(T instance) {
         this.pool.releaseInstance( instance );
@@ -152,7 +138,7 @@ public class ManagedPool<T> implements Pool<T> {
     public void setStartAsynchronously(boolean startAsynchronously) {
         this.startAsynchronously = startAsynchronously;
     }
-    
+
     public int getSize() {
         return size();
     }
@@ -192,16 +178,15 @@ public class ManagedPool<T> implements Pool<T> {
     void waitForInitialFill() throws InterruptedException {
         this.poolManager.waitForMinimumFill();
     }
-    
+
     public void setNamespaceContextSelector(NamespaceContextSelector nsContextSelector) {
         this.nsContextSelector = nsContextSelector;
     }
-    
+
     public NamespaceContextSelector getNamespaceContextSelector() {
         return this.nsContextSelector;
     }
 
-    
     private Logger log = Logger.getLogger( this.getClass() );
 
     private SimplePool<T> pool;
@@ -210,6 +195,5 @@ public class ManagedPool<T> implements Pool<T> {
     private boolean startAsynchronously = false;
     private boolean started = false;
     private NamespaceContextSelector nsContextSelector;
-    
-    
+
 }

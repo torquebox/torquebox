@@ -81,8 +81,8 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
             SharedRubyRuntimePool pool = new SharedRubyRuntimePool();
             
             pool.setName( poolMetaData.getName() );
-            pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
-            pool.setStartAsynchronously( poolMetaData.isStartAsynchronously() );
+            //pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
+            //pool.setStartAsynchronously( poolMetaData.isStartAsynchronously() );
             
             SharedRubyRuntimeFactoryPoolService service = new SharedRubyRuntimeFactoryPoolService( pool );
 
@@ -97,7 +97,7 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
 
             phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
                     .addDependency( name )
-                    .setInitialMode( Mode.PASSIVE )
+                    .setInitialMode( poolMetaData.isStartAsynchronously() ? Mode.PASSIVE : Mode.ON_DEMAND )
                     .install();
 
             String mbeanName = ObjectNameFactory.create( "torquebox.pools", new Hashtable<String, String>() {
@@ -135,7 +135,7 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
 
             phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
                     .addDependency( name )
-                    .setInitialMode( Mode.PASSIVE )
+                    .setInitialMode( poolMetaData.isStartAsynchronously() ? Mode.PASSIVE : Mode.ON_DEMAND )
                     .install();
             
             String mbeanName = ObjectNameFactory.create( "torquebox.pools", new Hashtable<String, String>() {

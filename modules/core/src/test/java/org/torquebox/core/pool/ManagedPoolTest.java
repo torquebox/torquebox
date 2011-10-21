@@ -36,12 +36,14 @@ public class ManagedPoolTest extends AbstractPoolTestCase {
         this.factory = new StringInstanceFactory();
     }
 
+    /*
     @Test
     public void testDeferredPoolShouldDefer() throws Exception {
         ManagedPool<String> pool = new ManagedPool<String>( this.factory, 5, 10 );
         pool.start();
         assertEquals( false, pool.isStarted() );
     }
+    */
     
     @Test
     public void testNonDeferredPoolShouldNotDefer() throws Exception {
