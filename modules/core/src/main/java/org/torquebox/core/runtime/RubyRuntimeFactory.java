@@ -331,7 +331,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
                 if (!vfsJar.isDirectory()) {
                     ScheduledExecutorService executor = Executors.newScheduledThreadPool( 1 );
                     TempFileProvider tempFileProvider = TempFileProvider.create( "jruby.home", executor );
-                    this.mountedJRubyHome = VFS.mountZip( vfsJar, vfsJar, tempFileProvider );
+                    this.mountedJRubyHomes.add( VFS.mountZip( vfsJar, vfsJar, tempFileProvider ) );
                 }
 
                 if (vfsJar.isDirectory()) {
@@ -562,14 +562,14 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             destroyInstance( ruby );
         }
         this.undisposed.clear();
-        if (this.mountedJRubyHome != null) {
+        for (Closeable mountedJRubyHome : this.mountedJRubyHomes) {
             try {
-                this.mountedJRubyHome.close();
+                mountedJRubyHome.close();
             } catch (IOException e) {
                 // ignore
             }
-            this.mountedJRubyHome = null;
         }
+        this.mountedJRubyHomes.clear();
     }
 
     public ClassCache getClassCache() {
@@ -643,7 +643,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     private ServiceRegistry serviceRegistry;
 
-    private Closeable mountedJRubyHome;
+    private List<Closeable> mountedJRubyHomes = Collections.synchronizedList( new ArrayList<Closeable>() );
 
     private InjectionRegistry injectionRegistry = new InjectionRegistry();
 }
