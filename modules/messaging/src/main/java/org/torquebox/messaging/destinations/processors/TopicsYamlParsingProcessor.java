@@ -40,6 +40,7 @@ public class TopicsYamlParsingProcessor extends AbstractSplitYamlParsingProcesso
     public TopicsYamlParsingProcessor() {
         setSectionName( "topics" );
         setSupportsSuffix( true );
+        setSupportsRootless( true );
     }
 
     @SuppressWarnings("unchecked")
