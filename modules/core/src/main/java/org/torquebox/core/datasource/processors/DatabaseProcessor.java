@@ -139,7 +139,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             Adapter adapter = getAdapter( adapterName );
 
             if (adapter == null) {
-                log.errorf( "Unknown adapter type: %s", adapterName );
+                log.warnf( "Not enabling XA for unknown adapter type: %s", adapterName );
                 continue;
             }
 

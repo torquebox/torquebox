@@ -19,8 +19,6 @@ import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.deployers.common.DeployException;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
 import org.jboss.msc.value.InjectedValue;
 
 public class HackDataSourceService extends XaDataSourceService {
@@ -31,14 +29,6 @@ public class HackDataSourceService extends XaDataSourceService {
         super( jndiName );
     }
     
-    @Override
-    public synchronized void start(StartContext startContext) throws StartException {
-        log.info( "HackDataSource.start" );
-        super.start( startContext );
-    }
-
-
-
     @Override
     public AS7DataSourceDeployer getDeployer() {
         return new HackAS7DataSourceDeployer( ((InjectedValue<XaDataSource>) getDataSourceConfigInjector()).getValue() );

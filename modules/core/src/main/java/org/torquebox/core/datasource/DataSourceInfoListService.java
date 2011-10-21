@@ -35,7 +35,6 @@ public class DataSourceInfoListService implements Service<DataSourceInfoList> {
     public Injector<Info> getInfoInjector() {
         return new Injector<Info>() {
             public void inject(Info value) throws InjectionException {
-                log.info( "inject: " + value );
                 if (value != Info.DISABLED) {
                     list.addConfiguration( value );
                 }

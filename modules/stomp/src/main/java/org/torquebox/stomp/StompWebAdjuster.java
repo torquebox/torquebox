@@ -14,14 +14,12 @@ public class StompWebAdjuster implements DeploymentUnitProcessor {
         
         
         StompApplicationMetaData stompAppMetaData = unit.getAttachment( StompApplicationMetaData.ATTACHMENT_KEY );
-        System.err.println( "ADJUSTER BEFORE stompAppMetaData=" + stompAppMetaData );
         
         if ( stompAppMetaData == null ) {
             return;
         }
         
         RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
-        System.err.println( "rackAppMetaData=" + rackAppMetaData );
         
         if ( rackAppMetaData == null ) {
             return;
@@ -32,11 +30,9 @@ public class StompWebAdjuster implements DeploymentUnitProcessor {
         }
         
         if ( stompAppMetaData.getHosts().isEmpty() ) {
-            System.err.println( "STOMP no hosts, set to " + rackAppMetaData.getHosts() );
             stompAppMetaData.setHosts( rackAppMetaData.getHosts() );
         }
         
-        System.err.println( "ADJUSTER AFTER stompAppMetaData=" + stompAppMetaData );
     }
 
     @Override

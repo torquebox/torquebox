@@ -41,7 +41,6 @@ public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
 
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
-        log.info( "Adding dependency on: " + TORQUEBOX_CACHE_ID + " to " + unit );
         addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CACHE_ID );
     }
 
@@ -54,7 +53,4 @@ public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
         // TODO Auto-generated method stub
 
     }
-
-    private static final Logger log = Logger.getLogger( "org.torquebox.cache.as" );
-
 }

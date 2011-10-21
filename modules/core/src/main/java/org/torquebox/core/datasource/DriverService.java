@@ -25,15 +25,13 @@ public class DriverService implements Service<Driver> {
 
     @Override
     public void start(final StartContext context) throws StartException {
-        log.info( "START" );
         context.asynchronous();
         context.execute( new Runnable() {
             public void run() {
                 try {
                     DriverService.this.driver = instantiateDriver();
-                    log.info( "driver: " + DriverService.this.driver );
+                    log.debug( "driver: " + DriverService.this.driver );
                     DriverService.this.installedDriver = createInstalledDriver();
-                    log.info( "installed.driver: " + DriverService.this.installedDriver );
 
                     DriverRegistry registry = DriverService.this.driverRegistryInjector.getValue();
                     registry.registerInstalledDriver( installedDriver );
@@ -49,7 +47,6 @@ public class DriverService implements Service<Driver> {
 
     @Override
     public void stop(StopContext context) {
-        log.info( "STOP and deregister" );
         this.driverRegistryInjector.getValue().unregisterInstalledDriver( this.installedDriver );
     }
 

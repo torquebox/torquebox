@@ -73,7 +73,6 @@ class Class
           alias_method :initialize_before_torquebox!, :initialize!
           
           def initialize!
-            puts "initialize the app!"
             require 'torquebox-web'
             require 'action_dispatch/session/torque_box_store'
             
@@ -111,8 +110,8 @@ end
 begin
   load ENV['RAILS_ROOT'] + '/config/environment.rb'
 rescue => e
-  puts e.message
-  puts e.backtrace
+  $stderr.puts e.message
+  $stderr.puts e.backtrace
   raise e
 end
 
