@@ -1,6 +1,7 @@
 package org.torquebox.core.runtime;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -37,5 +38,5 @@ public class RuntimeContext {
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime.context" );
-    private static final Map<JRubyClassLoader, WeakReference<Ruby>> contexts = new WeakHashMap<JRubyClassLoader, WeakReference<Ruby>>();
+    private static final Map<JRubyClassLoader, WeakReference<Ruby>> contexts = Collections.synchronizedMap( new WeakHashMap<JRubyClassLoader, WeakReference<Ruby>>() );
 }
