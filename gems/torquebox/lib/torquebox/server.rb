@@ -16,16 +16,18 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'java'
+require 'rubygems'
 
 module TorqueBox
   class Server
 
     def self.torquebox_home
-      File.expand_path(File.join(File.dirname(__FILE__), '..', '..'))
+      home = Gem.searcher.find( 'torquebox-server' )
+      home.full_gem_path if home
     end
 
     def self.jboss_home
-      File.join(torquebox_home, 'jboss')
+      File.join(torquebox_home, 'jboss') if torquebox_home
     end
 
     def self.jruby_home
