@@ -29,10 +29,6 @@ import org.projectodd.polyglot.core.util.StringUtil;
  * @author Bob McWhirter
  */
 public class StringUtils extends StringUtil {
-
-    public static boolean isBlank(String str) {
-        return str == null || str.isEmpty();
-    }
     
     public static String pathToClassName(String path) {
         return pathToClassName( path, ".rb" );
