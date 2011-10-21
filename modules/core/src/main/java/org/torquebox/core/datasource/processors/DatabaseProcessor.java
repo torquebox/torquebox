@@ -41,6 +41,7 @@ import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.AbstractServiceListener;
 import org.jboss.msc.service.ServiceBuilder;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
@@ -256,10 +257,11 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             String adapterName = (String) dbMeta.getConfiguration().get( "adapter" );
             Info dsInfo = new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName );
 
-            DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo );
+            DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo, phaseContext.getServiceRegistry(), jndiName, dataSourceServiceName );
             ServiceName verifierServiceName = dataSourceServiceName.append( "xa-verifier" );
             phaseContext.getServiceTarget().addService( verifierServiceName, verifierService )
-                    .addDependency( dataSourceServiceName, DataSource.class, verifierService.getDataSourceInjector() )
+                    // marked as OPTIONAL because we may need to remove it
+                    .addDependency( DependencyType.OPTIONAL, dataSourceServiceName, DataSource.class, verifierService.getDataSourceInjector() )
                     .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, verifierService.getTransactionManagerInjector() )
                     .install();
 
