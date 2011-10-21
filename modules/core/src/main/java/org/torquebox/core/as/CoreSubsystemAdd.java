@@ -137,7 +137,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 1000, new DeploymentNotifierInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationInstaller() );
     }
 
