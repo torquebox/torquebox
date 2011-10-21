@@ -34,7 +34,7 @@ import org.torquebox.messaging.MessageProcessorMetaData;
 import org.yaml.snakeyaml.Yaml;
 
 /**
- * Creates ScheduledJobMetaData instances from jobs.yml
+ * Creates MessageProcessorMetaData instances from queues.yml
  */
 public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
 
@@ -53,15 +53,15 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
                     parse( unit, new Yaml().load( s ) );
                 }
             }
-            
-            Map<String, Object> data = (Map<String, Object>)dataObject;
-            
+
+            Map<String, Object> data = (Map<String, Object>) dataObject;
+
             if (data.containsKey( "default_message_encoding" )) {
                 RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-                appMetaData.getEnvironmentVariables().put( "DEFAULT_MESSAGE_ENCODING", (String)data.get( "default_message_encoding" ) );
+                appMetaData.getEnvironmentVariables().put( "DEFAULT_MESSAGE_ENCODING", (String) data.get( "default_message_encoding" ) );
                 data.remove( "default_message_encoding" );
             }
-            
+
             for (MessageProcessorMetaData metadata : Parser.parseDestinations( data )) {
                 unit.addToAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY, metadata );
             }
@@ -119,16 +119,16 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
             if (options == null)
                 options = Collections.EMPTY_MAP;
             MessageProcessorMetaData result = new MessageProcessorMetaData();
-            result.setRubyClassName( StringUtils.camelize( handler ) );
-            result.setRubyRequirePath( StringUtils.underscore( handler ) );
+            result.setDurable( (Boolean) options.get( "durable" ) );
             result.setDestinationName( destination );
             result.setMessageSelector( (String) options.get( "filter" ) );
-            result.setRubyConfig( (Map) options.get( "config" ) );
-            result.setConcurrency( (Integer) options.get( "concurrency" ) );
             if (options.containsKey( "singleton" )) {
                 result.setSingleton( (Boolean) options.get( "singleton" ) );
             }
-            result.setDurable( (Boolean) options.get( "durable" ) );
+            result.setRubyClassName( StringUtils.camelize( handler ) );
+            result.setRubyRequirePath( StringUtils.underscore( handler ) );
+            result.setRubyConfig( (Map) options.get( "config" ) );
+            result.setConcurrency( (Integer) options.get( "concurrency" ) );
             return result;
         }
 
