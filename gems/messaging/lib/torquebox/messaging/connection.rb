@@ -85,8 +85,7 @@ module TorqueBox
       end
 
       def create_session
-        session = Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
-        @hornetq_direct ? session.extend(HornetQSession) : session
+        Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
       end
 
     end
