@@ -26,7 +26,6 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.ModuleDependency;
 import org.jboss.as.server.deployment.module.ModuleSpecification;
-import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoader;
@@ -34,6 +33,7 @@ import org.jboss.modules.ModuleLoader;
 public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
 
     private static ModuleIdentifier TORQUEBOX_CACHE_ID = ModuleIdentifier.create( "org.torquebox.cache" );
+    private static ModuleIdentifier INFINISPAN_ID = ModuleIdentifier.create( "org.infinispan" );
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -42,6 +42,7 @@ public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
         final ModuleSpecification moduleSpecification = unit.getAttachment( Attachments.MODULE_SPECIFICATION );
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
         addDependency( moduleSpecification, moduleLoader, TORQUEBOX_CACHE_ID );
+        addDependency( moduleSpecification, moduleLoader, INFINISPAN_ID );
     }
 
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {

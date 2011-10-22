@@ -5,7 +5,6 @@ import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jgroups.Address;
 import org.jgroups.Channel;
-import org.jgroups.ChannelException;
 import org.jgroups.ReceiverAdapter;
 import org.jgroups.View;
 
@@ -19,11 +18,11 @@ public class HASingletonCoordinator extends ReceiverAdapter {
         this.partitionName = partitionName;
     }
     
-    public void start() throws ChannelException {
+    public void start() throws Exception {
         this.channel.connect( this.partitionName );
     }
     
-    public void stop() throws ChannelException {
+    public void stop() throws Exception {
         this.channel.disconnect();
     }
     

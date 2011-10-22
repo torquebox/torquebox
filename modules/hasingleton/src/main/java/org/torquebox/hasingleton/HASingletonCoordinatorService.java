@@ -10,7 +10,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jgroups.Channel;
-import org.jgroups.ChannelException;
 
 public class HASingletonCoordinatorService implements Service<HASingletonCoordinator> {
 
@@ -42,7 +41,7 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
             this.coordinator.stop();
             this.coordinator = null;
             this.channel.close();
-        } catch (ChannelException e) {
+        } catch (Exception e) {
             log.error( "Unable to stop HA partition", e );
         }
     }
