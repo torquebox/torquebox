@@ -22,6 +22,7 @@ package org.torquebox.cdi.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -39,34 +40,34 @@ import org.torquebox.cdi.processors.CDIStructureProcessor;
 import org.torquebox.cdi.processors.HackWeldBeanManagerServiceProcessor;
 
 class CDISubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
+
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
         model.setEmptyObject();
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 11, new CDIStructureProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, new HackWeldBeanManagerServiceProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 11, rootSafe( new CDIStructureProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, rootSafe( new HackWeldBeanManagerServiceProcessor() ) );
     }
-    
+
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
-        
+
         addCDIServices( context, verificationHandler, newControllers );
     }
 
     protected void addCDIServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                  List<ServiceController<?>> newControllers) {
+            List<ServiceController<?>> newControllers) {
     }
 
     static ModelNode createOperation(ModelNode address) {

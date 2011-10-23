@@ -22,6 +22,7 @@ package org.torquebox.security.auth.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.HashMap;
 import java.util.List;
@@ -58,36 +59,36 @@ import org.torquebox.security.auth.processors.AuthInstaller;
 import org.torquebox.security.auth.processors.AuthYamlParsingProcessor;
 
 public class AuthSubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
+
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
         model.setEmptyObject();
     }
-    
+
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
-        
+
         addTorqueBoxSecurityDomainService( context, verificationHandler, newControllers );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 15, new AuthYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 20, new AuthDefaultsProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new SecurityDependencyProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new AuthInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 15, rootSafe( new AuthYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 20, rootSafe( new AuthDefaultsProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, rootSafe( new SecurityDependencyProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, rootSafe( new AuthInstaller() ) );
     }
 
     protected void addTorqueBoxSecurityDomainService(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                                     List<ServiceController<?>> newControllers) {
+            List<ServiceController<?>> newControllers) {
         final ApplicationPolicy applicationPolicy = new ApplicationPolicy( TORQUEBOX_DOMAIN );
         AuthenticationInfo authenticationInfo = new AuthenticationInfo( TORQUEBOX_DOMAIN );
 

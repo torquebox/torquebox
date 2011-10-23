@@ -19,6 +19,8 @@
 
 package org.torquebox.core.processors;
 
+import java.util.Map;
+
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -26,9 +28,11 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
+import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.torquebox.core.TorqueBoxMetaData;
+import org.torquebox.core.util.YAMLUtils;
 
-public class TorqueBoxYamlParsingProcessor extends AbstractYamlParsingProcessor {
+public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
 
     public static final String TORQUEBOX_YAML_FILE = "torquebox.yml";
 
@@ -41,7 +45,13 @@ public class TorqueBoxYamlParsingProcessor extends AbstractYamlParsingProcessor 
         VirtualFile file = getMetaDataFile( root, TORQUEBOX_YAML_FILE );
 
         if (file != null) {
-            TorqueBoxMetaData metaData = new TorqueBoxMetaData( parseYaml( file ) );
+            Map<String, Object> data = null;
+            try {
+                data = YAMLUtils.parseYaml( file );
+            } catch (Exception e) {
+                throw new DeploymentUnitProcessingException("Error processing yaml: ", e);
+            } 
+            TorqueBoxMetaData metaData = new TorqueBoxMetaData( data );
             TorqueBoxMetaData externalMetaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
             if (externalMetaData != null) {
                 metaData = externalMetaData.overlayOnto( metaData );

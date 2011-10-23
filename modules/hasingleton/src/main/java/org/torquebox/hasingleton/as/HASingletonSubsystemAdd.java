@@ -22,6 +22,7 @@ package org.torquebox.hasingleton.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
@@ -57,7 +58,7 @@ public class HASingletonSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 200, new HASingletonInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 200, rootSafe( new HASingletonInstaller() ) );
     }
 
     static ModelNode createOperation(ModelNode address) {
