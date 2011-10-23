@@ -28,9 +28,12 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
+import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.core.component.processors.DeploymentUtils;
+import org.torquebox.core.util.YAMLUtils;
 
 /**
  * Abstract deployer base-class supporting <code>torquebox.yml</code> sectional
@@ -43,7 +46,7 @@ import org.torquebox.core.app.RubyAppMetaData;
  * 
  * @author Bob McWhirter
  */
-public abstract class AbstractSplitYamlParsingProcessor extends AbstractYamlParsingProcessor {
+public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingProcessor {
 
     /** Name of the section within torquebox.yml. */
     private String sectionName;
@@ -101,14 +104,19 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractYamlPars
                 if (!metaDataFile.equals( root ) && this.standaloneDeprecated) {
                     logDeprecation( unit, "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
                 }
-                data = parseYaml( metaDataFile );
+                try {
+                    data = YAMLUtils.parseYaml( metaDataFile );
+                } catch (Exception e) {
+                    throw new DeploymentUnitProcessingException( "Error processing yaml: ", e );
+                }
             }
         } else {
 
-            // Check to see if they have an app root, and if so, if it's
-            // required by this section.
+            // If data has been specified for this section, and the deployment
+            // is rootless,
+            // but rootlessness is not supported, then error out.
             RubyAppMetaData rubyMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-            if (!isSupportsRootless() && rubyMetaData != null && !hasApplicationRoot( unit )) {
+            if (data != null && !isSupportsRootless() && rubyMetaData != null && DeploymentUtils.isUnitRootless( unit )) {
                 throw new DeploymentUnitProcessingException( String.format(
                         "Error processing deployment %s: The section %s requires an app root to be specified, but none has been provided.",
                         unit.getName(), getSectionName() ) );
@@ -139,11 +147,6 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractYamlPars
 
     public String getSectionName() {
         return this.sectionName;
-    }
-
-    public boolean hasApplicationRoot(DeploymentUnit unit) {
-        RubyAppMetaData rubyMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-        return rubyMetaData != null && rubyMetaData.getRoot() != null;
     }
 
     public boolean isSupportsRootless() {

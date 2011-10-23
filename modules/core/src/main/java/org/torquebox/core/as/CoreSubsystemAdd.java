@@ -22,6 +22,7 @@ package org.torquebox.core.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.io.IOException;
 import java.util.Hashtable;
@@ -78,89 +79,89 @@ import org.torquebox.core.runtime.processors.RubyRuntimeFactoryInstaller;
 import org.torquebox.core.runtime.processors.RuntimePoolInstaller;
 
 class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
+
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
         model.get( "injector" ).setEmptyObject();
     }
-    
+
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
         final InjectableHandlerRegistry registry = new InjectableHandlerRegistry();
-        
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 addDeploymentProcessors( processorTarget, registry );
             }
         }, OperationContext.Stage.RUNTIME );
-        
+
         try {
             addCoreServices( context, verificationHandler, newControllers, registry );
             addTorqueBoxStdioContext();
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
-        
+
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, final InjectableHandlerRegistry registry) {
+
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobStructureProcessor() );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 100, new AppJarScanningProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 100, rootSafe( new AppJarScanningProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, new RubyApplicationRecognizer() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, rootSafe( new RubyApplicationRecognizer() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 5, new TorqueBoxYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new TorqueBoxRbProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 20, new ApplicationYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 20, rootSafe( new ApplicationYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 35, new PoolingYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 36, new RubyYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RubyApplicationDefaultsProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 35, rootSafe( new PoolingYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 36, rootSafe( new RubyYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, rootSafe( new RubyApplicationDefaultsProcessor() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new ApplicationExploder() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, new BaseRubyRuntimeInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, rootSafe( new BaseRubyRuntimeInstaller() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, new CoreDependenciesProcessor() );
-        //processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, new JdkDependenciesProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, new PredeterminedInjectableProcessor( registry ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, new CorePredeterminedInjectableInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, new InjectionIndexingProcessor( registry ) );
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, rootSafe( new CoreDependenciesProcessor() ) );
+        // processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, rootSafe( new JdkDependenciesProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, rootSafe( new PredeterminedInjectableProcessor( registry ) ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, rootSafe( new CorePredeterminedInjectableInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, rootSafe( new InjectionIndexingProcessor( registry ) ) );
         processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 110, new RubyNamespaceContextSelectorProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 5000, new DatabaseProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 110, rootSafe( new RubyNamespaceContextSelectorProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 5000, rootSafe( new DatabaseProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new RubyRuntimeFactoryInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new RuntimePoolInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, new RubyApplicationInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, rootSafe( new RubyRuntimeFactoryInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, rootSafe( new RuntimePoolInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 9000, rootSafe( new RubyApplicationInstaller() ) );
     }
 
     protected void addCoreServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers, 
-                                   InjectableHandlerRegistry registry) throws Exception {
+            List<ServiceController<?>> newControllers,
+            InjectableHandlerRegistry registry) throws Exception {
         addTorqueBoxService( context, verificationHandler, newControllers, registry );
         addGlobalRubyServices( context, verificationHandler, newControllers, registry );
         addInjectionServices( context, verificationHandler, newControllers, registry );
     }
 
-    
     @SuppressWarnings("serial")
     protected void addTorqueBoxService(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                       List<ServiceController<?>> newControllers,
-                                       InjectableHandlerRegistry registry) throws IOException {
-    	TorqueBox torqueBox = new TorqueBox();
+            List<ServiceController<?>> newControllers,
+            InjectableHandlerRegistry registry) throws IOException {
+        TorqueBox torqueBox = new TorqueBox();
         torqueBox.printVersionInfo( log );
         torqueBox.verifyJRubyVersion( log );
-        
+
         newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
-            .setInitialMode( Mode.ACTIVE )
-            .addListener( verificationHandler )
-            .install() );
-        
+                .setInitialMode( Mode.ACTIVE )
+                .addListener( verificationHandler )
+                .install() );
+
         String mbeanName = ObjectNameFactory.create( "torquebox", new Hashtable<String, String>() {
             {
                 put( "type", "version" );
@@ -178,8 +179,8 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     @SuppressWarnings("serial")
     protected void addGlobalRubyServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                         List<ServiceController<?>> newControllers,
-                                         InjectableHandlerRegistry registry) {
+            List<ServiceController<?>> newControllers,
+            InjectableHandlerRegistry registry) {
         newControllers.add( context.getServiceTarget().addService( CoreServices.GLOBAL_RUBY, new GlobalRuby() )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.ACTIVE )
@@ -201,8 +202,8 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addInjectionServices(final OperationContext context, ServiceVerificationHandler verificationHandler,
-                                        List<ServiceController<?>> newControllers,
-                                        InjectableHandlerRegistry registry) {
+            List<ServiceController<?>> newControllers,
+            InjectableHandlerRegistry registry) {
         newControllers.add( context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.PASSIVE )
@@ -219,7 +220,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         TorqueBoxStdioContextSelector selector = new TorqueBoxStdioContextSelector( defaultContext, debugContext );
 
         StdioContext.install();
-        StdioContext.setStdioContextSelector( selector);
+        StdioContext.setStdioContextSelector( selector );
     }
 
     static ModelNode createOperation(ModelNode address) {

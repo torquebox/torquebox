@@ -35,12 +35,15 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
+import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.processors.AbstractYamlParsingProcessor;
+import org.torquebox.core.component.processors.DeploymentUtils;
+import org.torquebox.core.util.YAMLUtils;
+import org.yaml.snakeyaml.error.YAMLException;
 
-public class AppKnobYamlParsingProcessor extends AbstractYamlParsingProcessor {
+public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -54,7 +57,7 @@ public class AppKnobYamlParsingProcessor extends AbstractYamlParsingProcessor {
             if (appKnobYml == null) {
                 return;
             }
-            metaData = new TorqueBoxMetaData( parseYaml( appKnobYml ) );
+            metaData = new TorqueBoxMetaData( YAMLUtils.parseYaml( appKnobYml ) );
             root = metaData.getApplicationRootFile();
 
             if (root != null) {
@@ -68,7 +71,7 @@ public class AppKnobYamlParsingProcessor extends AbstractYamlParsingProcessor {
                     final Closeable closable = VFS.mountZipExpanded( root, root, TempFileProviderService.provider() );
                     final MountHandle mountHandle = new MountHandle( closable );
                     appRoot = new ResourceRoot( root, mountHandle );
-                    
+
                 } else {
                     appRoot = new ResourceRoot( root, null );
                 }
@@ -76,10 +79,13 @@ public class AppKnobYamlParsingProcessor extends AbstractYamlParsingProcessor {
             }
             else {
                 log.infof( "Rootless deployment detected: %s", unit.getName() );
+                DeploymentUtils.markUnitAsRootless( unit );
             }
 
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
+        } catch (YAMLException e) {
+            throw new DeploymentUnitProcessingException( "Error processing YAML: ", e );
         }
 
         unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );

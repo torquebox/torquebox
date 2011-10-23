@@ -22,6 +22,7 @@ package org.torquebox.services.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -47,12 +48,12 @@ public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void populateModel(ModelNode operation, ModelNode model) {
         model.setEmptyObject();
     }
-    
+
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
@@ -60,24 +61,24 @@ public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
             }
         }, OperationContext.Stage.RUNTIME );
     }
-    
+
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new ServicesYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new ServiceLoadPathProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new ServiceRuntimePoolProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new ServiceComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new ServiceInstaller() );
-        
+
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, rootSafe( new ServicesYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, rootSafe( new ServiceLoadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new ServiceRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new ServiceComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, rootSafe( new ServiceInstaller() ) );
+
     }
-    
+
     static ModelNode createOperation(ModelNode address) {
         final ModelNode subsystem = new ModelNode();
         subsystem.get( OP ).set( ADD );
         subsystem.get( OP_ADDR ).set( address );
         return subsystem;
     }
-    
+
     static final ServicesSubsystemAdd ADD_INSTANCE = new ServicesSubsystemAdd();
     static final Logger log = Logger.getLogger( "org.torquebox.services.as" );
 
