@@ -18,7 +18,6 @@
 require 'torquebox/messaging/connection_factory'
 require 'torquebox/messaging/connection'
 require 'torquebox/messaging/session'
-require 'torquebox/messaging/hornetq_session'
 
 require 'torquebox/messaging/message'
 require 'torquebox/messaging/json_message'

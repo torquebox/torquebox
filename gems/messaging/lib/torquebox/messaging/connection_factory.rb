@@ -31,7 +31,6 @@ module TorqueBox
 
       def initialize(internal_connection_factory = nil)
         @internal_connection_factory = internal_connection_factory
-        @hornetq_direct = false
       end
 
       def with_new_connection(client_id = nil, &block)
@@ -56,10 +55,9 @@ module TorqueBox
                                                             connect_opts)
           @internal_connection_factory =
             org.hornetq.api.jms.HornetQJMSClient.createConnectionFactoryWithoutHA( org.hornetq.api.jms::JMSFactoryType::CF, transport_config )
-          @hornetq_direct = true
         end
 
-        Connection.new( @internal_connection_factory.create_connection, @hornetq_direct )
+        Connection.new( @internal_connection_factory.create_connection )
       end
 
 

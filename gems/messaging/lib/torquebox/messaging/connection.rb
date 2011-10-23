@@ -23,9 +23,8 @@ module TorqueBox
     class Connection
       include TorqueBox::Injectors
 
-      def initialize(jms_connection, hornetq_direct)
+      def initialize(jms_connection)
         @jms_connection = jms_connection
-        @hornetq_direct = hornetq_direct
         @tm = inject('transaction-manager')
       end
 
