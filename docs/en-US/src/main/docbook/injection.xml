@@ -173,11 +173,12 @@ end</programlisting>
       </informalexample></para>
 
     <formalpara>
-      <title>JBoss Microcontainer Beans (MCBeans, MBeans)</title>
+      <title>JBoss MSC Services</title>
 
-      <para>JBoss Microcontainer is the container that drives the entire
-      TorqueBox AS. Many components are accessible as MCBeans or Java JMX
-      MBeans. These may be injected by passing an MBean style name to
+      <para>JBoss Modular Service Container is the container that
+      drives the entire TorqueBox AS. Many components are accessible
+      as MSC Services. These may be injected by passing the
+      ServiceName as a string to
       <methodname>inject(...)</methodname>.</para>
     </formalpara>
 
@@ -187,7 +188,7 @@ end</programlisting>
   include TorqueBox::Injectors
 
   def create
-    the_actual_webserver = inject( 'jboss.web:service=WebServer' )
+    the_actual_webserver = inject( 'jboss.web' )
   end
 
 end</programlisting>
