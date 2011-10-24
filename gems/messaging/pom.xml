@@ -32,118 +32,39 @@
     <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>
       <artifactId>jboss-jms-api_1.1_spec</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-core</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-jms</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.netty</groupId>
       <artifactId>netty</artifactId>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
-      <scope>runtime</scope>
+      <scope>provided</scope>
     </dependency>
-
-<!--
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-core</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-jms-client</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.netty</groupId>
-      <artifactId>netty</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hornetq</groupId>
-      <artifactId>hornetq-logging</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.logging</groupId>
-      <artifactId>jboss-logging</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jboss.naming</groupId>
-      <artifactId>jnp-client</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-naming</artifactId>
-      <type>gem</type>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-naming-container</artifactId>
-      <type>gem</type>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-messaging-container</artifactId>
-      <type>gem</type>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-base-core</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-messaging-core</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>torquebox-base</artifactId>
-      <version>${project.version}</version>
-      <type>gem</type>
-      <scope>runtime</scope>
-    </dependency>
--->
 
     <dependency>
       <groupId>rubygems</groupId>
