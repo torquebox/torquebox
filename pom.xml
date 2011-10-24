@@ -422,7 +422,7 @@
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
 
-    <version.org.projectodd.stilts>0.1.23</version.org.projectodd.stilts>
+    <version.org.projectodd.stilts>0.1.24</version.org.projectodd.stilts>
 
     <version.org.hibernate.search>4.0.0.Beta1</version.org.hibernate.search>
     <version.org.hibernate.commons.annotations>3.2.0.Final</version.org.hibernate.commons.annotations>
@@ -733,31 +733,31 @@
                   </action>
                 </pluginExecution>
                 <pluginExecution>
-                	<pluginExecutionFilter>
-                		<groupId>de.saumya.mojo</groupId>
-                		<artifactId>jruby-maven-plugin</artifactId>
-                		<versionRange>[0.28.4,)</versionRange>
-                		<goals>
-                			<goal>jruby</goal>
-                		</goals>
-                	</pluginExecutionFilter>
-                	<action>
-                		<ignore></ignore>
-                	</action>
+                  <pluginExecutionFilter>
+                    <groupId>de.saumya.mojo</groupId>
+                    <artifactId>jruby-maven-plugin</artifactId>
+                    <versionRange>[0.28.4,)</versionRange>
+                    <goals>
+                      <goal>jruby</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
                 </pluginExecution>
                 <pluginExecution>
-                	<pluginExecutionFilter>
-                		<groupId>org.jboss.maven.plugins</groupId>
-                		<artifactId>maven-jdocbook-plugin</artifactId>
-                		<versionRange>[2.3.3,)</versionRange>
-                		<goals>
-                			<goal>generate</goal>
-                			<goal>resources</goal>
-                		</goals>
-                	</pluginExecutionFilter>
-                	<action>
-                		<ignore></ignore>
-                	</action>
+                  <pluginExecutionFilter>
+                    <groupId>org.jboss.maven.plugins</groupId>
+                    <artifactId>maven-jdocbook-plugin</artifactId>
+                    <versionRange>[2.3.3,)</versionRange>
+                    <goals>
+                      <goal>generate</goal>
+                      <goal>resources</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>
