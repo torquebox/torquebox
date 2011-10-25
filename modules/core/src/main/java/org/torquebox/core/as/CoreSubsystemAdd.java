@@ -45,7 +45,6 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
-import org.projectodd.polyglot.core.as.DeploymentNotifierInstaller;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
 import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
 import org.projectodd.polyglot.core.processors.JdkDependenciesProcessor;

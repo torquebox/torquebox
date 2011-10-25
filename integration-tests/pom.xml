@@ -88,7 +88,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
-      <version>0.4.1</version>
+      <version>0.4.3</version>
       <type>gem</type>
     </dependency>
 

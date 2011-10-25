@@ -54,3 +54,19 @@ describe "services alacarte" do
 
   it_should_behave_like "alacarte"
 end
+
+describe "services alacarte with gemfile" do
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/services-with-gemfile
+      env: development
+
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it "should not break when using a Gemfile" do
+    # good 'nuf!
+  end
+end
