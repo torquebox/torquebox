@@ -395,7 +395,7 @@
 
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 
-    <version.jruby>1.6.4</version.jruby>
+    <version.jruby>1.6.5</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
     <version.rack>1.1.0</version.rack>
 
@@ -437,6 +437,17 @@
       <id>jboss-third-party-releases</id>
       <name>JBoss 3rd Party Releases</name>
       <url>https://repository.jboss.org/nexus/content/groups/public-thirdparty-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus repo</name>
+      <url>http://repository.codehaus.org/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
