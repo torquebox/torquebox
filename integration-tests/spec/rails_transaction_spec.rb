@@ -183,7 +183,7 @@ remote_describe "rails 3.0 transactions testing" do
       root: #{File.dirname(__FILE__)}/../apps/rails3/transactions
       env: development
     ruby:
-      version: 1.8
+      version: #{RUBY_VERSION[0,3]}
   END
 
   it_should_behave_like "transactions"
@@ -197,7 +197,7 @@ remote_describe "rails 3.1 transactions testing" do
       root: #{File.dirname(__FILE__)}/../apps/rails3.1/transactions
       env: development
     ruby:
-      version: 1.8
+      version: #{RUBY_VERSION[0,3]}
   END
 
   it_should_behave_like "transactions"
