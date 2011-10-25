@@ -23,6 +23,7 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.core.runtime.BundlerAwareRuntimeInitializer;
 import org.torquebox.core.runtime.RuntimeInitializer;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -31,16 +32,12 @@ import org.torquebox.core.util.RuntimeHelper;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class RackRuntimeInitializer implements RuntimeInitializer {
+public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
 
 
     public RackRuntimeInitializer(RubyAppMetaData rubyAppMetaData, RackMetaData rackMetaData) {
-        this.rubyAppMetaData = rubyAppMetaData;
+        super( rubyAppMetaData );
         this.rackAppMetaData = rackMetaData;
-    }
-
-    public VirtualFile getRackRoot() {
-        return this.rubyAppMetaData.getRoot();
     }
 
     public String getRackEnv() {
@@ -50,8 +47,8 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
     @Override
     public void initialize(Ruby ruby) throws Exception {
         RuntimeHelper.require(  ruby, "torquebox-web" );
+        super.initialize( ruby );
         RuntimeHelper.evalScriptlet( ruby, getInitializerScript() );
-        ruby.setCurrentDirectory( this.rubyAppMetaData.getRoot().getPhysicalFile().getCanonicalPath() );
     }
 
     /**
@@ -100,7 +97,6 @@ public class RackRuntimeInitializer implements RuntimeInitializer {
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
     
-    protected RubyAppMetaData rubyAppMetaData;
     protected RackMetaData rackAppMetaData;
 
 }

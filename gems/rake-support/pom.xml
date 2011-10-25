@@ -16,13 +16,12 @@
   <dependencies>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>rspec</artifactId>
+      <artifactId>rake</artifactId>
       <type>gem</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
-      <artifactId>rake</artifactId>
+      <artifactId>rspec</artifactId>
       <type>gem</type>
       <scope>test</scope>
     </dependency>

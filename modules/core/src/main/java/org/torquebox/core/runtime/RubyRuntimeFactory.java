@@ -289,6 +289,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
             prepareRuntime( runtime, contextInfo );
 
+            log.info(  "Initialize? " + initialize  );
+            log.info(  "Initializer=" + this.initializer );
             if (initialize) {
                 this.injectionRegistry.merge( runtime );
                 if (this.initializer != null) {

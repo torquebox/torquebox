@@ -48,10 +48,6 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
         this.railsAppMetaData = railsAppMetaData;
     }
 
-    public VirtualFile getRailsRoot() {
-        return getRackRoot();
-    }
-
     public String getRailsEnv() {
         return getRackEnv();
     }
@@ -66,13 +62,13 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
 
     public void initialize(Ruby ruby) throws Exception {
         super.initialize( ruby );
-        Logger logger = Logger.getLogger( getRailsRoot().toURL().toExternalForm() );
+        Logger logger = Logger.getLogger( getApplicationRoot().toURL().toExternalForm() );
         IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby( ruby, logger );
         ruby.getGlobalVariables().set( "$JBOSS_RAILS_LOGGER", rubyLogger );
 
-        String scriptLocationBase = new URL( getRailsRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
+        String scriptLocationBase = new URL( getApplicationRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
         makeAutoloadPathsAvailable( ruby );
-        RuntimeHelper.executeScript( ruby, createBoot( getRailsRoot() ), scriptLocationBase + "-boot.rb" );
+        RuntimeHelper.executeScript( ruby, createBoot( getApplicationRoot() ), scriptLocationBase + "-boot.rb" );
     }
 
     protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {

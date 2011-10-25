@@ -102,18 +102,11 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
 
     protected String getCode(String rackUpScript, VirtualFile root) {
         StringBuilder code = new StringBuilder();
-        if (usesBundler( root )) {
-            code.append( "require %q(bundler/setup)\n" );
-        }
         code.append( "require %q(rack)\n" );
         code.append( "Rack::Builder.new{(\n" );
         code.append( rackUpScript );
         code.append( "\n)}.to_app" );
         return code.toString();
-    }
-    
-    protected boolean usesBundler(VirtualFile root) {
-        return root.getChild( "Gemfile" ).exists();
     }
 
     @Override
