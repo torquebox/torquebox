@@ -130,7 +130,7 @@ class AssemblyTool
     if options[:deployment_timeout]
       profiles = doc.root.get_elements( '//profile' )
       profiles.each do |profile|
-        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.1']" ).first
+        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
         unless subsystem.nil?
           scanner = subsystem.get_elements( 'deployment-scanner' ).first
           scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
