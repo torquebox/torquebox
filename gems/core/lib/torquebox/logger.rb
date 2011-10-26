@@ -15,7 +15,33 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+require 'logger'
+
 module TorqueBox
+
+  class FallbackLogger < ::Logger
+
+    def initialize name = nil
+      super( $stderr )
+      @category = name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox"
+    end
+
+    def add(severity, message, progname, &block)
+      if ( message.nil? && block.nil? )
+        message = progname
+        progname = @category
+      end
+      super( severity, message, @category, &block )
+    end
+  end 
+
+  begin
+    org.jboss.logging::Logger
+  rescue
+    Logger = FallbackLogger
+    return
+  end
+
   class Logger 
 
     def initialize name = nil
