@@ -176,7 +176,7 @@ class Assembler
   def transform_host_config
     stash_stock_host_config
     trash_stock_host_config
-    tool.transform_host_config( 'target/host.xml', 'domain/configuration/host.xml' )
+    tool.transform_host_config( config_stash + '/host.xml', 'domain/configuration/host.xml' )
   end
 
   def windows?
