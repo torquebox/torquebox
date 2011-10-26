@@ -15,6 +15,13 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+begin
+  javax.jms::Session
+rescue
+  $stderr.puts "Will not load torquebox-messaging: javax.jms.* cannot be loaded"
+  return 
+end
+
 require 'torquebox/messaging/connection_factory'
 require 'torquebox/messaging/connection'
 require 'torquebox/messaging/session'
