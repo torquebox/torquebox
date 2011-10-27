@@ -15,7 +15,13 @@ class RootController < ApplicationController
   end
 
   def databaseyml
+    cfg = Rails.application.config
+    puts ">>>>>>>>>>>>>>>>>> Got config: #{cfg.to_s}"
+    db_cfg = cfg.database_configuration
+    puts ">>>>>>>>>>>>>>>>>> Got database_config: #{db_cfg.to_s}"
     @db_user = Rails.application.config.database_configuration["production"]["username"]
+    puts "LOOKING FOR USER"
+    puts ">>>>>>>>>>>>>>>>>> Got database user: #{db_cfg["production"]["username"]}"
   end
 
   def environment
