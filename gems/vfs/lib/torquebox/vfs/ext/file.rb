@@ -47,12 +47,12 @@ class File
     #
     if ( File.respond_to? :realpath )
       alias_method :realpath_without_vfs,    :realpath
-      def realpath(path)
+      def realpath(path, dir_string=nil)
         if vfs_path?( path )
 	  virtual_file = TorqueBox::VFS.virtual_file( path )
 	  return virtual_file.physical_file.to_s
 	end
-	realpath_without_vfs( path )
+	realpath_without_vfs( path, dir_string )
       end
     end
 
