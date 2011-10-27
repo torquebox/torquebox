@@ -21,6 +21,7 @@ package org.torquebox.web.rack.processors;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
@@ -28,31 +29,31 @@ import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.web.rack.RackMetaData;
 
 public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
-    
+
     public WebYamlParsingProcessor() {
         setSectionName( "web" );
         setSupportsStandalone( false );
     }
-    
+
     @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
-        
+
         RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
 
         if (rackAppMetaData == null) {
             rackAppMetaData = new RackMetaData();
             rackAppMetaData.attachTo( unit );
         }
-        
+
         Map<String, Object> webData = (Map<String, Object>) dataObj;
-        
+
         rackAppMetaData.setContextPath( (String) webData.get( "context" ) );
         rackAppMetaData.setStaticPathPrefix( (String) webData.get( "static" ) );
-        
-        if (webData.get( "rackup" ) != null ) {
+
+        if (webData.get( "rackup" ) != null) {
             rackAppMetaData.setRackUpScriptLocation( (String) webData.get( "rackup" ) );
         }
-        
+
         Object hosts = webData.get( "host" );
 
         if (hosts instanceof List) {
@@ -63,8 +64,32 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
         } else {
             rackAppMetaData.addHost( (String) hosts );
         }
+
+        String timeoutStr = (String) webData.get( "session-timeout" );
+
+        TimeUnit timeUnit = TimeUnit.MINUTES;
+
+        if (timeoutStr != null) {
+            timeoutStr = timeoutStr.trim();
+            if (timeoutStr.endsWith( "m" )) {
+                timeUnit = TimeUnit.MINUTES;
+                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
+            } else if (timeoutStr.endsWith( "h" )) {
+                timeUnit = TimeUnit.HOURS;
+                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
+            } else if (timeoutStr.endsWith( "s" )) {
+                timeUnit = TimeUnit.SECONDS;
+                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
+            } else if (timeoutStr.endsWith( "ms" )) {
+                timeUnit = TimeUnit.MILLISECONDS;
+                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 2 );
+            }
+            long timeout = Long.parseLong( timeoutStr.trim() );
+            rackAppMetaData.setSessionTimeout( timeout, timeUnit );
+        }
+
     }
-    
+
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
 

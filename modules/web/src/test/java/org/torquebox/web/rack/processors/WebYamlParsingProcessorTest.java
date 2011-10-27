@@ -57,6 +57,7 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
         assertEquals( 1, rackMetaData.getHosts().size() );
         assertEquals( "foobar.com", rackMetaData.getHosts().get( 0 ) );
         assertNull( rackMetaData.getStaticPathPrefix() );
+        assertEquals( 600, rackMetaData.getSessionTimeout() );
     }
 
     @Test

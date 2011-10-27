@@ -7,56 +7,58 @@
   <para>TorqueBox applications contain one central, but optional deployment
   descriptor. A deployment descriptor is simply a configuration file that
   affects how your components are woven together at deployment time. The
-  primary deployment descriptor used by TorqueBox can be either a YAML
-  text file (known as <filename>torquebox.yml</filename>) or a Ruby file
-  (known as <filename>torquebox.rb</filename>).</para>
+  primary deployment descriptor used by TorqueBox can be either a YAML text
+  file (known as <filename>torquebox.yml</filename>) or a Ruby file (known as
+  <filename>torquebox.rb</filename>).</para>
 
   <para>The deployment descriptor may be placed inside your application so
-  that it is entirely self-contained. Alternatively, an additional (YAML only) 
-  descriptor may be used outside of your application, overriding portions of the
-  descriptor contained within the application.</para>
+  that it is entirely self-contained. Alternatively, an additional (YAML only)
+  descriptor may be used outside of your application, overriding portions of
+  the descriptor contained within the application.</para>
 
   <para>Each subsystem within TorqueBox may contribute one or more
   configurable sections to the descriptor. For more information on the various
-  subsystem descriptor sections, please see: <xref linkend="websockets" />, 
-  <xref linkend="messaging" />, <xref linkend="scheduled-jobs" />, 
-  <xref linkend="services" />, <xref linkend="authentication" />, 
-  and <xref linkend="pooling" />.</para>
+  subsystem descriptor sections, please see: <xref linkend="websockets" />,
+  <xref linkend="messaging" />, <xref linkend="scheduled-jobs" />, <xref
+  linkend="services" />, <xref linkend="authentication" />, and <xref
+  linkend="pooling" />.</para>
 
   <section id="external-and-internal-descriptors">
     <title>External and Internal descriptors</title>
 
-    <para>Deployment descriptors may be "external", residing outside the 
+    <para>Deployment descriptors may be "external", residing outside the
     application, or "internal", residing within it. The descriptors come in
-    two flavors: YAML-formatted text files and Ruby text files using the 
-    TorqueBox configuration DSL. Internal descriptors may use either form,
-    but external descriptors are required to be YAML files.</para>
+    two flavors: YAML-formatted text files and Ruby text files using the
+    TorqueBox configuration DSL. Internal descriptors may use either form, but
+    external descriptors are required to be YAML files.</para>
 
     <para>An <emphasis>external</emphasis> descriptor references an
-    application somewhere on your filesystem. To deploy the
-    application, the descriptor is placed in the
-    <filename>$TORQUEBOX_HOME/jboss/standalone/deployments/</filename> directory of the
-    TorqueBox server. The external descriptor's name should have a
-    suffix of <filename>-knob.yml</filename> .</para>
+    application somewhere on your filesystem. To deploy the application, the
+    descriptor is placed in the
+    <filename>$TORQUEBOX_HOME/jboss/standalone/deployments/</filename>
+    directory of the TorqueBox server. The external descriptor's name should
+    have a suffix of <filename>-knob.yml</filename> .</para>
 
     <para>An <emphasis>internal</emphasis> descriptor should be named
-    <filename>torquebox.yml</filename> or <filename>torquebox.rb</filename> 
-    and reside inside the application's
-    <filename>config/</filename> directory, if present, otherwise at the root.
-    Internal descriptors allow you to override the TorqueBox defaults but only
-    for a single app. As such, they are not required. Values in the external
-    descriptor override those in the internal descriptor which, in turn,
-    override the TorqueBox defaults. The YAML syntax used in the external 
-    descriptor is identical to the syntax available to the internal descriptor.</para>
+    <filename>torquebox.yml</filename> or <filename>torquebox.rb</filename>
+    and reside inside the application's <filename>config/</filename>
+    directory, if present, otherwise at the root. Internal descriptors allow
+    you to override the TorqueBox defaults but only for a single app. As such,
+    they are not required. Values in the external descriptor override those in
+    the internal descriptor which, in turn, override the TorqueBox defaults.
+    The YAML syntax used in the external descriptor is identical to the syntax
+    available to the internal descriptor.</para>
   </section>
 
   <section id="contents-of-deployment-descriptors">
     <title>Contents of a descriptor</title>
 
-    <para>There are two syntaxes available for use in an internal descriptor: YAML and 
-    a Ruby DSL.</para>
+    <para>There are two syntaxes available for use in an internal descriptor:
+    YAML and a Ruby DSL.</para>
+
     <section id="yaml-descriptor-layout">
       <title>YAML syntax layout</title>
+
       <para>The YAML descriptor has several sections, grouped by subsystem,
       represented as top-level keys in a YAML associative array.</para>
 
@@ -65,32 +67,32 @@
           <para><varname>application</varname>: General application
           configuration</para>
         </listitem>
-        
+
         <listitem>
           <para><varname>web</varname>: Web-specific configuration</para>
         </listitem>
-        
+
         <listitem>
           <para><varname>ruby</varname>: Runtime version and JIT
           options</para>
         </listitem>
-        
+
         <listitem>
           <para><varname>environment</varname>: Environment variables</para>
         </listitem>
-        
+
         <listitem>
           <para><varname>jobs</varname>: Scheduled executions</para>
         </listitem>
-        
+
         <listitem>
           <para><varname>messaging</varname>: Advanced message-handling</para>
         </listitem>
-        
+
         <listitem>
           <para><varname>pooling</varname>: Runtime pooling control</para>
         </listitem>
-        
+
         <listitem>
           <para><varname>services</varname>: low-level service daemons</para>
         </listitem>
@@ -99,41 +101,43 @@
 
     <section id="ruby-descriptor-layout">
       <title>Ruby DSL syntax layout</title>
+
       <para>The DSL does not follow the strict sections of the YAML syntax,
-      but the corresponding DSL methods can be grouped and described in the 
+      but the corresponding DSL methods can be grouped and described in the
       same manner.</para>
 
-      <para>To use the DSL, you nest your configuration inside the block 
-      passed to <methodname>TorqueBox.configure</methodname> inside 
-      <filename>torquebox.rb</filename>:<informalexample><para>
-      <programlisting>TorqueBox.configure do
+      <para>To use the DSL, you nest your configuration inside the block
+      passed to <methodname>TorqueBox.configure</methodname> inside
+      <filename>torquebox.rb</filename>:<informalexample>
+          <para><programlisting>TorqueBox.configure do
   # DSL calls go here
-end</programlisting></para></informalexample>
-      </para>
-      <para>The <methodname>TorqueBox.configure</methodname> method and the 
-      DSL methods that take a block can be given a block with or without an 
+end</programlisting></para>
+        </informalexample></para>
+
+      <para>The <methodname>TorqueBox.configure</methodname> method and the
+      DSL methods that take a block can be given a block with or without an
       argument. If given a block argument, the block will receive a proxy
-      object that must be used to call the DSL methods. Without an argument, 
+      object that must be used to call the DSL methods. Without an argument,
       the block will use <methodname>instance_eval</methodname> to evaluate
       the DSL calls, which will cause issues if you refer to any variables
-      that aren't defined within the scope of the block. Most of the 
+      that aren't defined within the scope of the block. Most of the
       documentation examples use the <methodname>instance_eval</methodname>
       (no argument) block syntax.</para>
 
-      <para>Using no-argument blocks:<informalexample><para>
-      <programlisting>TorqueBox.configure do
+      <para>Using no-argument blocks:<informalexample>
+          <para><programlisting>TorqueBox.configure do
   web do
     context "/"
   end
-end</programlisting></para></informalexample>
-Using argument blocks:<informalexample><para>
-      <programlisting>TorqueBox.configure do |cfg|
+end</programlisting></para>
+        </informalexample> Using argument blocks:<informalexample>
+          <para><programlisting>TorqueBox.configure do |cfg|
   cfg.web do |web|
     web.context "/"
   end
-end</programlisting></para></informalexample>
-You can also mix &amp; match:<informalexample><para>
-      <programlisting>TorqueBox.configure do
+end</programlisting></para>
+        </informalexample> You can also mix &amp; match:<informalexample>
+          <para><programlisting>TorqueBox.configure do
   web do |web|
     web.context "/"
   end
@@ -141,14 +145,13 @@ You can also mix &amp; match:<informalexample><para>
   ruby do
     version "1.9"
   end
-end</programlisting></para></informalexample>
-      </para>
+end</programlisting></para>
+        </informalexample></para>
 
-      <para>Some DSL methods can also take their options as a hash instead
-      of method calls nested in a block:
-<informalexample><para>
-      <programlisting>TorqueBox.configure do
-  web :context => "/", :host => "example.com"
+      <para>Some DSL methods can also take their options as a hash instead of
+      method calls nested in a block: <informalexample>
+          <para><programlisting>TorqueBox.configure do
+  web :context =&gt; "/", :host =&gt; "example.com"
 
   # is equivalent to:
 
@@ -156,8 +159,8 @@ end</programlisting></para></informalexample>
     context "/"
     host "example.com"
   end
-end</programlisting></para></informalexample></para>
-    
+end</programlisting></para>
+        </informalexample></para>
     </section>
 
     <section id="general-application-config-in-descriptor">
@@ -166,12 +169,11 @@ end</programlisting></para></informalexample></para>
       <formalpara>
         <title>Location</title>
 
-        <para>The application section describes the location
-        for the app itself. Under traditional (mongrel, lighttpd)
-        deployments, this information is picked up through the current working
-        directory. Since the TorqueBox Server runs
-        from a different location, the current working directory has no
-        meaning.</para>
+        <para>The application section describes the location for the app
+        itself. Under traditional (mongrel, lighttpd) deployments, this
+        information is picked up through the current working directory. Since
+        the TorqueBox Server runs from a different location, the current
+        working directory has no meaning.</para>
       </formalpara>
 
       <table>
@@ -183,7 +185,7 @@ end</programlisting></para></informalexample></para>
           <thead>
             <row>
               <entry>YAML Key</entry>
-              
+
               <entry>DSL Method</entry>
 
               <entry>Description</entry>
@@ -195,17 +197,19 @@ end</programlisting></para></informalexample></para>
           <tbody>
             <row>
               <entry><varname>root</varname></entry>
+
               <entry><emphasis>none</emphasis></entry>
+
               <entry>Indicates the location of your application. It may refer
               to either an "exploded" application (a directory) or the path to
               a zipped archive. It is required for external descriptors and
-              ignored in an internal descriptor. Rails apps will have this value
-              set as ENV['RAILS_ROOT'], and Rack apps will have this value set to
-              both the RACK_ROOT constant and ENV['RACK_ROOT'].</entry>
+              ignored in an internal descriptor. Rails apps will have this
+              value set as ENV['RAILS_ROOT'], and Rack apps will have this
+              value set to both the RACK_ROOT constant and
+              ENV['RACK_ROOT'].</entry>
 
               <entry><emphasis>none</emphasis></entry>
             </row>
-
           </tbody>
         </tgroup>
       </table>
@@ -224,8 +228,9 @@ end</programlisting></para></informalexample></para>
       host several apps under a single host, or multiple apps under different
       hostnames.</para>
 
-      <para>In a YAML configuration, the web settings are grouped under the <varname>web</varname>
-      key. For the DSL, they are grouped within the <varname>web</varname> block.</para>
+      <para>In a YAML configuration, the web settings are grouped under the
+      <varname>web</varname> key. For the DSL, they are grouped within the
+      <varname>web</varname> block.</para>
 
       <table>
         <title>web</title>
@@ -236,7 +241,7 @@ end</programlisting></para></informalexample></para>
           <thead>
             <row>
               <entry>YAML Key/DSL Method</entry>
-              
+
               <entry>Description</entry>
 
               <entry>Default</entry>
@@ -255,7 +260,7 @@ end</programlisting></para></informalexample></para>
 
             <row>
               <entry><varname>host</varname></entry>
-  
+
               <entry>Virtual hosts allow one application to respond to
               <emphasis>www.host-one.com</emphasis>, while another running
               within the same JBoss AS to respond to
@@ -267,7 +272,7 @@ end</programlisting></para></informalexample></para>
 
             <row>
               <entry><varname>context</varname></entry>
-  
+
               <entry>Applications within a single TorqueBox Server may be
               separated purely by a <emphasis>context path</emphasis>. For a
               given host, the context path is the prefix used to access the
@@ -281,12 +286,39 @@ end</programlisting></para></informalexample></para>
 
             <row>
               <entry><varname>static</varname></entry>
-  
+
               <entry>Any static web content provided by your app should reside
               beneath this directory.</entry>
 
               <entry><emphasis>none</emphasis> unless deploying a Rails
               application, then <filename>public</filename>.</entry>
+            </row>
+
+            <row>
+              <entry><varname>sesion-timeout</varname></entry>
+
+              <entry>Time (defaults to minutes) for idle sessions to timeout.
+              Specified as an integer followed by a units
+              designation<itemizedlist>
+                  <listitem>
+                    <para><code>ms</code> designates milliseconds</para>
+                  </listitem>
+
+                  <listitem>
+                    <para><code>s</code> designates seconds</para>
+                  </listitem>
+
+                  <listitem>
+                    <para><code>m</code> designates minutes (default if no
+                    units are specified)</para>
+                  </listitem>
+
+                  <listitem>
+                    <para><code>h</code> designates hours</para>
+                  </listitem>
+                </itemizedlist></entry>
+
+              <entry><code>30m</code>, specifying 30 minutes.</entry>
             </row>
           </tbody>
         </tgroup>
@@ -298,8 +330,7 @@ end</programlisting></para></informalexample></para>
   context: /app-one
   static: public
   host: www.host-one.com</programlisting></para>
-        </informalexample>
-        And via the DSL: <informalexample>
+        </informalexample> And via the DSL: <informalexample>
           <para><programlisting>TorqueBox.configure do
   web do
     rackup "alternative/path/to/my_config.ru"
@@ -314,19 +345,19 @@ end</programlisting></para>
     <section id="ruby-runtime-config-in-descriptor">
       <title>Ruby runtime configuration</title>
 
-      <para>TorqueBox exposes several of the JRuby runtime options:
-      the ruby compatibility version, the JIT compile mode, and the
-      debug setting. There's also a setting to enable interactive tty
-      for the JRuby runtime for use with the Ruby debugger. All of these
-      options are configured in the ruby: section of a deployment
-      descriptor.</para>
+      <para>TorqueBox exposes several of the JRuby runtime options: the ruby
+      compatibility version, the JIT compile mode, and the debug setting.
+      There's also a setting to enable interactive tty for the JRuby runtime
+      for use with the Ruby debugger. All of these options are configured in
+      the ruby: section of a deployment descriptor.</para>
 
       <para>Note that these settings are per application, allowing you to run
       1.8 and 1.9 applications in the same TorqueBox, or have one JIT'ed and
       another not.</para>
 
-      <para>In a YAML configuration, the ruby settings are grouped under the <varname>ruby</varname>
-      key. For the DSL, they are grouped within the <varname>ruby</varname> block.</para>
+      <para>In a YAML configuration, the ruby settings are grouped under the
+      <varname>ruby</varname> key. For the DSL, they are grouped within the
+      <varname>ruby</varname> block.</para>
 
       <table>
         <title>ruby</title>
@@ -387,8 +418,8 @@ end</programlisting></para>
             <row>
               <entry><varname>debug</varname></entry>
 
-              <entry>A value of <emphasis>true</emphasis> enables
-              JRuby's debug logging.</entry>
+              <entry>A value of <emphasis>true</emphasis> enables JRuby's
+              debug logging.</entry>
 
               <entry><parameter>false</parameter></entry>
             </row>
@@ -397,10 +428,9 @@ end</programlisting></para>
               <entry><varname>interactive</varname></entry>
 
               <entry>A value of <emphasis>true</emphasis> sets up the
-              stdin/stdout/stderr of the JRuby runtime for interactive
-              use instead of being redirected to the logging
-              subsystem. Enable this when using the Ruby debugger or
-              the pry gem.</entry>
+              stdin/stdout/stderr of the JRuby runtime for interactive use
+              instead of being redirected to the logging subsystem. Enable
+              this when using the Ruby debugger or the pry gem.</entry>
 
               <entry><parameter>false</parameter></entry>
             </row>
@@ -414,9 +444,7 @@ end</programlisting></para>
   compile_mode: off
   debug: false
   interactive: true</programlisting></para>
-        </informalexample>
-        And via the DSL:
-        <informalexample>
+        </informalexample> And via the DSL: <informalexample>
           <para><programlisting>TorqueBox.configure do
   ruby do
     version "1.9"
@@ -437,16 +465,15 @@ end</programlisting></para>
       merged, with the external variables overriding any internal matching
       keys.</para>
 
-      <para>In a YAML configuration, the environment settings are grouped under the <varname>environment</varname>
-      key. For the DSL, they are grouped within the <varname>environment</varname> block.</para>
+      <para>In a YAML configuration, the environment settings are grouped
+      under the <varname>environment</varname> key. For the DSL, they are
+      grouped within the <varname>environment</varname> block.</para>
 
       <para>For example, in YAML: <informalexample>
           <para><programlisting>environment:
   MAIL_HOST: mail.yourhost.com
   REPLY_TO: you@yourhost.com</programlisting></para>
-        </informalexample>
-        And via the DSL:
-<informalexample>
+        </informalexample> And via the DSL: <informalexample>
           <para><programlisting>TorqueBox.configure do 
   environment do
     MAIL_HOST 'mail.yourhost.com'
@@ -455,32 +482,31 @@ end</programlisting></para>
 end</programlisting></para>
         </informalexample></para>
 
-
       <para>Any variable set in the environment section is accessible from
       within the Rack app using the ENV hash, e.g.
       ENV['MAIL_HOST']=='mail.yourhost.com'</para>
+
       <section id="application-environment">
         <title>Application environment</title>
-        
+
         <para>To set the environment for the application, set either RACK_ENV
         or RAILS_ENV as an environment variable. They are equivalent, and will
-        both work for a Rack or Rails application. If the application environment
-        is not set, it will default to 'development'. Rails apps will have this value
-        set as ENV['RAILS_ENV'] (which Rails itself will assign to Rails.env), and 
-        Rack apps will have this value set to both the RACK_ENV constant and ENV['RACK_ENV'].</para>
+        both work for a Rack or Rails application. If the application
+        environment is not set, it will default to 'development'. Rails apps
+        will have this value set as ENV['RAILS_ENV'] (which Rails itself will
+        assign to Rails.env), and Rack apps will have this value set to both
+        the RACK_ENV constant and ENV['RACK_ENV'].</para>
 
-      <para>For example, in YAML: <informalexample>
-          <para><programlisting>environment:
+        <para>For example, in YAML: <informalexample>
+            <para><programlisting>environment:
   RAILS_ENV: production</programlisting></para>
-        </informalexample>
-        And via the DSL:
-        <informalexample>
-          <para><programlisting>TorqueBox.configure do 
+          </informalexample> And via the DSL: <informalexample>
+            <para><programlisting>TorqueBox.configure do 
   environment do
     RAILS_ENV 'production'
   end
 end</programlisting></para>
-        </informalexample></para>
+          </informalexample></para>
       </section>
     </section>
   </section>
