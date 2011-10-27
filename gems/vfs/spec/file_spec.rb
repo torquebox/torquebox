@@ -7,6 +7,20 @@ describe "File extensions for VFS" do
 
   extend TestDataCopyHelper
 
+  it "should set __FILE__ correctly" do
+    __FILE__.should =~ /^#{absolute_prefix}/
+  end
+
+  if ( File.respond_to? :realpath) 
+    it "should handle realpath on a normal path" do
+      File.realpath( __FILE__ ).should == __FILE__
+    end
+  
+    it "should handle realpath on a VFS path" do
+      File.realpath( vfs_path(__FILE__) ).should =~ /^#{absolute_prefix}/
+    end
+  end
+
   it "should report writable-ness for VFS urls" do
     prefix = test_copy_base_path( :relative )
     url = vfs_path( "#{prefix}/home/larry/file1.txt" )

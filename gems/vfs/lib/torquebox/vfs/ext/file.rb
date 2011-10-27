@@ -42,6 +42,20 @@ class File
     alias_method :rename_without_vfs,      :rename
     alias_method :join_without_vfs,        :join
 
+    #
+    # File.realpath is a 1.9ism
+    #
+    if ( File.respond_to? :realpath )
+      alias_method :realpath_without_vfs,    :realpath
+      def realpath(path)
+        if vfs_path?( path )
+	  virtual_file = TorqueBox::VFS.virtual_file( path )
+	  return virtual_file.physical_file.to_s
+	end
+	realpath_without_vfs( path )
+      end
+    end
+
     def open(fname,mode_str='r', flags=nil, &block)
       if ( Fixnum === fname )
         return open_without_vfs( fname, mode_str, &block )
