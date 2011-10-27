@@ -93,13 +93,13 @@ remote_describe "in-container messaging tests" do
         end
       end
 
-      it "should be able to publish a complex type to and receive from a queue" do
+      it "should be able to publish a hash to and receive from a queue" do
         with_queue("/queues/foo") do |queue|
-          data = { 'time' => Time.now, 'string' => 'abc' }
+          data = { :array => [1, 'abc'], :int => 123, :string => 'abc' }
           queue.publish data, :encoding => :json
           message = queue.receive
-          message['time'].to_s.should eql( data['time'].to_s )
-          message['string'].should eql( 'abc' )
+
+          message.should eql( data )
         end
       end
     end

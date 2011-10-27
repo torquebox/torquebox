@@ -18,7 +18,7 @@ describe "messaging rails test" do
   remote_describe "json encoding" do
     it "should send and receive" do
       queue = TorqueBox::Messaging::Queue.new( '/queue/hamalamb' )
-      data = { 'a' => 'b' }
+      data = { :a => 'b' }
       queue.publish( data, :encoding => :json )
       queue.receive( :timeout => 120_000 ).should == data
     end
