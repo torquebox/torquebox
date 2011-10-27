@@ -15,7 +15,7 @@ class RootController < ApplicationController
   end
 
   def databaseyml
-    @db_user = Rails.application.config.database_configuration["production"]["user"]
+    @db_user = Rails.application.config.database_configuration["production"]["username"]
   end
 
   def environment
