@@ -302,7 +302,8 @@ module TorqueBox
         base_config.cache_mode = mode
 
         config = base_config.fluent
-        #config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
+        config.transaction.transactionMode( transaction_mode )
+        config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
         manager.define_configuration(name, config.build )
         manager.get_cache(name)
       end
