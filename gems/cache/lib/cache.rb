@@ -284,12 +284,15 @@ module TorqueBox
                        
       def reconfigure(mode=clustering_mode)
         cache = manager.get_cache(name)
-        config = cache.configuration
-        unless config.cache_mode == mode
+        base_config = cache.configuration
+        unless base_config.cache_mode == mode
           log( "Reconfiguring Infinispan cache #{name} from #{config.cache_mode} to #{mode}" )
           cache.stop
-          config.cache_mode = mode
-          manager.define_configuration(name, config)
+          base_config.cache_mode = mode
+          config = base_config.fluent
+          config.transaction.transactionMode( transaction_mode )
+          config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
+          manager.define_configuration(name, config.build)
           cache.start
         end
         return cache
