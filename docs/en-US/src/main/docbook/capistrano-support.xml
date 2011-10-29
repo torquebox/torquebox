@@ -50,24 +50,24 @@
 
       <para>All applications, whether using TorqueBox or another server,
       require some common settings to be used with Capistrano. The default
-      deploy.rb indicates some typical variables you should customize for your
-      deployment.</para>
+      <filename>deploy.rb</filename> indicates some typical variables you
+      should customize for your deployment.</para>
     </section>
   </section>
 
   <section id="deploy-rb-configuration">
     <title>TorqueBox-specific deploy.rb configuration</title>
 
-    <para>Within your deploy.rb, there are a few additional steps and
-    variables you may configure in order to deploy to a remote TorqueBox
-    server.</para>
+    <para>Within your <filename>deploy.rb</filename>, there are a few
+    additional steps and variables you may configure in order to deploy to a
+    remote TorqueBox server.</para>
 
     <section id="include-torquebox-recipes">
       <title>Include TorqueBox recipes</title>
 
       <para>First, you should include the Capistrano recipes which support
       TorqueBox deployments. If you use Bundler, you should also include the
-      Bunlder recipes at this point.</para>
+      Bundler recipes at this point.</para>
 
       <para><screen>require 'torquebox-capistrano-support'
 require 'bundler/capistrano'</screen></para>
@@ -90,7 +90,7 @@ require 'bundler/capistrano'</screen></para>
       components, you may instead set <varname>:jboss_home</varname> and
       <varname>:jruby_home</varname> individually.</para>
 
-      <para><screen>set :jboss_home,        '/opt/jboss-as6'
+      <para><screen>set :jboss_home,        '/opt/jboss-as'
 set :jruby_home,        '/usr/local/jruby'</screen></para>
 
       <para>Capistrano uses these values in order to control the TorqueBox AS
@@ -106,8 +106,8 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
       <para>Typical usage of Capistrano expects production values to be
       embedded into your application's <filename>torquebox.yml</filename>
       file. In the event you need to override some values when deploying with
-      Capistrano, several application variables may be set. If these are
-      un-set, they will not be emitted by Capistrano into the
+      Capistrano, several application variables may be set. If these are not
+      set, they will not be emitted by Capistrano into the
       <filename>*-knob.yml</filename> it deploys.</para>
 
       <table>
@@ -170,7 +170,7 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
         <varname>:jboss_init_script</varname> variable.</para>
       </formalpara>
 
-      <para><screen>set :jboss_init_script,    '/etc/init.d/jboss-as6m3'</screen></para>
+      <para><screen>set :jboss_init_script,    '/etc/init.d/jboss-as7-custom'</screen></para>
 
       <para>When using an <filename>init.d</filename> script, it is assumed
       that other details, such as bind IP address, server configuration
@@ -198,14 +198,6 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
 
         <tgroup cols="3">
           <tbody>
-            <row>
-              <entry><varname>:jboss_config</varname></entry>
-
-              <entry><code>default</code></entry>
-
-              <entry>The server profile to use when launching the AS.</entry>
-            </row>
-
             <row>
               <entry><varname>:jboss_bind_address</varname></entry>
 
