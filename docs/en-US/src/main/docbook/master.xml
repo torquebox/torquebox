@@ -25,8 +25,8 @@
   <xi:include href="cache.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="deployment.xml"                   xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="deployment-descriptors.xml"       xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="websockets.xml"                   xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="messaging.xml"                    xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="stomp.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="scheduled-jobs.xml"               xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="services.xml"                     xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="injection.xml"                    xmlns:xi="http://www.w3.org/2001/XInclude" />

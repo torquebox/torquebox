@@ -98,10 +98,11 @@ class TorqueBoxCommand < Thor
 
   no_tasks {
     def setup_environment
-      ENV['TORQUEBOX_HOME'] = TorqueBox::Server.torquebox_home
-      ENV['JBOSS_HOME'] = TorqueBox::Server.jboss_home
-      ENV['JRUBY_HOME'] = TorqueBox::Server.jruby_home
-      ENV['JBOSS_OPTS'] = "-Djruby.home=#{TorqueBox::Server.jruby_home}"
+      ENV['TORQUEBOX_HOME'] ||= TorqueBox::Server.torquebox_home
+      ENV['JBOSS_HOME'] ||= TorqueBox::Server.jboss_home
+      ENV['JRUBY_HOME'] ||= TorqueBox::Server.jruby_home
+      ENV['JBOSS_OPTS'] ||= "-Djruby.home=#{TorqueBox::Server.jruby_home}"
+      %w(TORQUEBOX_HOME JBOSS_HOME JRUBY_HOME).each { |key| puts "[ERROR] #{key} is not set. Install torquebox-server gem or manually set #{key}" unless ENV[key] }
     end
 
     class << self

@@ -32,14 +32,17 @@
     <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-core</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.infinispan</groupId>
       <artifactId>infinispan-query</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-search</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -59,16 +62,18 @@
       <artifactId>jboss-msc</artifactId>
       <scope>provided</scope>
     </dependency>
-    <!--<dependency>-->
-      <!--<groupId>org.jboss</groupId>-->
-      <!--<artifactId>jboss-transaction-spi</artifactId>-->
-      <!--<version>7.0.0.CR1</version>-->
-      <!--<scope>provided</scope>-->
-      <!--</dependency>-->
+    <dependency>
+      <groupId>org.jboss.spec.javax.transaction</groupId>
+      <artifactId>jboss-transaction-api_1.1_spec</artifactId>
+      <scope>provided</scope>
+    </dependency>
     <dependency>
       <groupId>org.jboss</groupId>
       <artifactId>jboss-transaction-spi</artifactId>
+<!--
       <version>7.0.0.CR1</version>
+-->
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.jboss.marshalling</groupId>

@@ -284,12 +284,15 @@ module TorqueBox
                        
       def reconfigure(mode=clustering_mode)
         cache = manager.get_cache(name)
-        config = cache.configuration
-        unless config.cache_mode == mode
+        base_config = cache.configuration
+        unless base_config.cache_mode == mode
           log( "Reconfiguring Infinispan cache #{name} from #{config.cache_mode} to #{mode}" )
           cache.stop
-          config.cache_mode = mode
-          manager.define_configuration(name, config)
+          base_config.cache_mode = mode
+          config = base_config.fluent
+          config.transaction.transactionMode( transaction_mode )
+          config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
+          manager.define_configuration(name, config.build)
           cache.start
         end
         return cache
@@ -297,11 +300,14 @@ module TorqueBox
 
       def configure(mode=clustering_mode)
         log( "Configuring Infinispan cache #{name} as #{mode}" )
-        config = manager.default_configuration.clone
+        base_config = manager.default_configuration.clone
+        base_config.class_loader = java.lang::Thread.current_thread.context_class_loader
+        base_config.cache_mode = mode
+
+        config = base_config.fluent
+        config.transaction.transactionMode( transaction_mode )
         config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
-        config.cache_mode = mode
-        config.class_loader = java.lang::Thread.current_thread.context_class_loader
-        manager.define_configuration(name, config)
+        manager.define_configuration(name, config.build )
         manager.get_cache(name)
       end
 

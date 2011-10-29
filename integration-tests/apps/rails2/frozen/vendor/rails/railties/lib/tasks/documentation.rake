@@ -1,6 +1,8 @@
+begin
+  require 'rdoc/task'
 namespace :doc do
   desc "Generate documentation for the application. Set custom template with TEMPLATE=/path/to/rdoc/template.rb or title with TITLE=\"Custom Title\""
-  Rake::RDocTask.new("app") { |rdoc|
+  RDoc::Task.new("app") { |rdoc|
     rdoc.rdoc_dir = 'doc/app'
     rdoc.template = ENV['template'] if ENV['template']
     rdoc.title    = ENV['title'] || "Rails Application Documentation"
@@ -12,7 +14,7 @@ namespace :doc do
   }
 
   desc "Generate documentation for the Rails framework"
-  Rake::RDocTask.new("rails") { |rdoc|
+  RDoc::Task.new("rails") { |rdoc|
     rdoc.rdoc_dir = 'doc/api'
     rdoc.template = "#{ENV['template']}.rb" if ENV['template']
     rdoc.title    = "Rails Framework Documentation"
@@ -85,4 +87,7 @@ namespace :doc do
       end
     end
   end
+end
+rescue LoadError
+  $stderr.puts 'Please install RDoc 2.4.2+ to generate documentation.'
 end

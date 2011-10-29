@@ -49,6 +49,7 @@
       <groupId>org.projectodd</groupId>
       <artifactId>polyglot-module-support</artifactId>
       <version>${version.polyglot}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
 

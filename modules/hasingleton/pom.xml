@@ -24,7 +24,7 @@
       <groupId>org.projectodd</groupId>
       <artifactId>polyglot-core</artifactId>
       <version>${version.polyglot}</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -36,6 +36,12 @@
     <dependency>
       <groupId>org.jboss.as</groupId>
       <artifactId>jboss-as-clustering-jgroups</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-clustering-impl</artifactId>
       <scope>provided</scope>
     </dependency>
 

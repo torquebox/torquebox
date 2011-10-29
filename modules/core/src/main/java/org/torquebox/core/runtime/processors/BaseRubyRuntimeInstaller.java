@@ -26,8 +26,10 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.core.runtime.BundlerAwareRuntimeInitializer;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
+import org.torquebox.core.runtime.RuntimeInitializer;
 
 public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
 
@@ -60,6 +62,9 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
         } catch (MalformedURLException e) {
             throw new DeploymentUnitProcessingException( e );
         }
+        
+        RuntimeInitializer initializer = new BundlerAwareRuntimeInitializer( rubyAppMetaData );
+        runtimeMetaData.setRuntimeInitializer( initializer );
 
     }
 

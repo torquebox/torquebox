@@ -201,12 +201,6 @@
 
       <dependency>
         <groupId>org.infinispan</groupId>
-        <artifactId>infinispan-core</artifactId>
-        <version>${version.org.infinispan}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.infinispan</groupId>
         <artifactId>infinispan-query</artifactId>
         <version>${version.org.infinispan}</version>
         <exclusions>
@@ -214,16 +208,6 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
           </exclusion>
-<!--
-          <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-          </exclusion>
--->
         </exclusions>
       </dependency>
 
@@ -244,16 +228,6 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
           </exclusion>
-<!--
-          <exclusion>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-          </exclusion>
-          <exclusion>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-          </exclusion>
--->
         </exclusions>
       </dependency>
 
@@ -421,7 +395,7 @@
 
     <version.jboss.reloaded>0.1.2</version.jboss.reloaded>
 
-    <version.jruby>1.6.4</version.jruby>
+    <version.jruby>1.6.5</version.jruby>
     <version.snakeyaml>1.5</version.snakeyaml>
     <version.rack>1.1.0</version.rack>
 
@@ -443,19 +417,19 @@
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.3.0</version.rspec>
 
-    <version.jbossas>7.x.incremental.159</version.jbossas>
+    <version.jbossas>7.x.incremental.174</version.jbossas>
 
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
 
-    <version.org.projectodd.stilts>0.1.23</version.org.projectodd.stilts>
+    <version.org.projectodd.stilts>0.1.24</version.org.projectodd.stilts>
 
     <version.org.hibernate.search>4.0.0.Beta1</version.org.hibernate.search>
     <version.org.hibernate.commons.annotations>3.2.0.Final</version.org.hibernate.commons.annotations>
     <version.org.apache.lucene.core>3.3.0</version.org.apache.lucene.core>
     <version.org.apache.lucene.other>3.1.0</version.org.apache.lucene.other>
     <version.org.apache.solr>3.1.0</version.org.apache.solr>
-    <version.org.infinispan>5.1.0.BETA1</version.org.infinispan>
+    <version.org.infinispan>5.1.0.BETA2</version.org.infinispan>
   </properties>
 
   <repositories>
@@ -463,6 +437,17 @@
       <id>jboss-third-party-releases</id>
       <name>JBoss 3rd Party Releases</name>
       <url>https://repository.jboss.org/nexus/content/groups/public-thirdparty-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>codehaus</id>
+      <name>Codehaus repo</name>
+      <url>http://repository.codehaus.org/</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -759,31 +744,31 @@
                   </action>
                 </pluginExecution>
                 <pluginExecution>
-                	<pluginExecutionFilter>
-                		<groupId>de.saumya.mojo</groupId>
-                		<artifactId>jruby-maven-plugin</artifactId>
-                		<versionRange>[0.28.4,)</versionRange>
-                		<goals>
-                			<goal>jruby</goal>
-                		</goals>
-                	</pluginExecutionFilter>
-                	<action>
-                		<ignore></ignore>
-                	</action>
+                  <pluginExecutionFilter>
+                    <groupId>de.saumya.mojo</groupId>
+                    <artifactId>jruby-maven-plugin</artifactId>
+                    <versionRange>[0.28.4,)</versionRange>
+                    <goals>
+                      <goal>jruby</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
                 </pluginExecution>
                 <pluginExecution>
-                	<pluginExecutionFilter>
-                		<groupId>org.jboss.maven.plugins</groupId>
-                		<artifactId>maven-jdocbook-plugin</artifactId>
-                		<versionRange>[2.3.3,)</versionRange>
-                		<goals>
-                			<goal>generate</goal>
-                			<goal>resources</goal>
-                		</goals>
-                	</pluginExecutionFilter>
-                	<action>
-                		<ignore></ignore>
-                	</action>
+                  <pluginExecutionFilter>
+                    <groupId>org.jboss.maven.plugins</groupId>
+                    <artifactId>maven-jdocbook-plugin</artifactId>
+                    <versionRange>[2.3.3,)</versionRange>
+                    <goals>
+                      <goal>generate</goal>
+                      <goal>resources</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
+                  </action>
                 </pluginExecution>
               </pluginExecutions>
             </lifecycleMappingMetadata>

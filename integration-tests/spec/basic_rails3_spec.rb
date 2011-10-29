@@ -6,6 +6,8 @@ describe "basic rails3 test" do
     ---
     application:
       RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails3/basic
+    environment:
+      DB_USER: foobar
     web:
       context: /basic-rails
     
@@ -35,6 +37,11 @@ describe "basic rails3 test" do
   it "should default to development environment" do
     visit "/basic-rails/root/environment"
     find('#success').text.should == 'development'
+  end
+
+  it "should support environment variables in database.yml" do
+    visit "/basic-rails/root/databaseyml"
+    find('#success').text.should == 'foobar'
   end
 
 end

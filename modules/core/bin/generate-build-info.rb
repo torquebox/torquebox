@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'java'
 require 'rexml/document'
 
 class BuildInfo
@@ -28,6 +29,8 @@ class BuildInfo
     @versions["JBossAS"]["version"] = from_parent_pom( "project/properties/version.jbossas" )
     @versions["Quartz"]["version"] = from_parent_pom( "project/properties/version.org.quartz-scheduler" )
     @versions["JRuby"]["version"] = from_parent_pom( "project/properties/version.jruby" )
+    @versions['Infinispan']['version'] = org.infinispan.Version.VERSION
+    @versions['HornetQ']['version'] = org.hornetq.utils.VersionLoader.version.full_version
   end
 
   def dump_versions

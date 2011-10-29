@@ -23,9 +23,8 @@ module TorqueBox
     class Connection
       include TorqueBox::Injectors
 
-      def initialize(jms_connection, hornetq_direct)
+      def initialize(jms_connection)
         @jms_connection = jms_connection
-        @hornetq_direct = hornetq_direct
         @tm = inject('transaction-manager')
       end
 
@@ -85,8 +84,7 @@ module TorqueBox
       end
 
       def create_session
-        session = Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
-        @hornetq_direct ? session.extend(HornetQSession) : session
+        Session.new( @jms_connection.create_session( false, Session::AUTO_ACK ) )
       end
 
     end

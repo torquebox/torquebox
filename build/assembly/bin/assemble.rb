@@ -20,7 +20,8 @@ class Assembler
   attr_accessor :stilts_version
 
   attr_accessor :m2_repo
-
+  attr_accessor :config_stash
+  
   def initialize() 
     @tool = AssemblyTool.new(:deployment_timeout => 1200, :enable_welcome_root => false)
     determine_versions
@@ -35,6 +36,8 @@ class Assembler
     puts "Maven repo: #{@m2_repo}"
     @jboss_zip = @m2_repo + "/org/jboss/as/jboss-as-dist/#{@jboss_version}/jboss-as-dist-#{@jboss_version}.zip"
     @jruby_zip = @m2_repo + "/org/jruby/jruby-dist/#{@jruby_version}/jruby-dist-#{@jruby_version}-bin.zip"
+
+    @config_stash = File.dirname(__FILE__) + '/../target'
   end
 
   def determine_versions
@@ -140,36 +143,40 @@ class Assembler
   end
 
   def stash_stock_configs
-    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone.xml',    'target/standalone.xml' ) unless File.exist?( 'target/standalone.xml' )
-    FileUtils.cp( 'target/stage/torquebox/jboss/standalone/configuration/standalone-ha.xml', 'target/standalone-ha.xml' ) unless File.exist?( 'target/standalone-ha.xml' )
-    FileUtils.cp( 'target/stage/torquebox/jboss/domain/configuration/domain.xml',            'target/domain.xml' )     unless File.exist?( 'target/domain.xml' )
+    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone.xml',
+                  config_stash + '/standalone.xml' ) unless File.exist?( config_stash + '/standalone.xml' )
+    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-ha.xml',
+                  config_stash + '/standalone-ha.xml' ) unless File.exist?( config_stash + '/standalone-ha.xml' )
+    FileUtils.cp( tool.jboss_dir + '/domain/configuration/domain.xml',
+                  config_stash + '/domain.xml' )     unless File.exist?( config_stash + '/domain.xml' )
   end
 
   def stash_stock_host_config
-    FileUtils.cp( 'target/stage/torquebox/jboss/domain/configuration/host.xml', 'target/host.xml' ) unless File.exist?( 'target/host.xml' )
+    FileUtils.cp( tool.jboss_dir + '/domain/configuration/host.xml',
+                  config_stash + '/host.xml' ) unless File.exist?( config_stash + '/host.xml' )
   end
 
   def trash_stock_host_config
-    FileUtils.rm_f( 'target/stage/torquebox/jboss/domain/configuration/host.xml' )
+    FileUtils.rm_f( tool.jboss_dir + '/domain/configuration/host.xml' )
   end
 
   def trash_stock_configs
-    FileUtils.rm_f( Dir[ 'target/stage/torquebox/jboss/standalone/configuration/standalone*.xml' ] )
-    FileUtils.rm_f( Dir[ 'target/stage/torquebox/jboss/domain/configuration/domain*.xml' ] )
+    FileUtils.rm_f( Dir[ tool.jboss_dir + '/standalone/configuration/standalone*.xml' ] )
+    FileUtils.rm_f( Dir[ tool.jboss_dir + '/domain/configuration/domain*.xml' ] )
   end
 
   def transform_configs
     stash_stock_configs
     trash_stock_configs
-    tool.transform_config('target/standalone.xml',         'standalone/configuration/standalone.xml',    false, false )
-    tool.transform_config('target/standalone-ha.xml',      'standalone/configuration/standalone-ha.xml', false, true  )
-    tool.transform_config('target/domain.xml',             'domain/configuration/domain.xml',            true,  true  )
+    tool.transform_config(config_stash + '/standalone.xml',         'standalone/configuration/standalone.xml',    false, false )
+    tool.transform_config(config_stash + '/standalone-ha.xml',      'standalone/configuration/standalone-ha.xml', false, true  )
+    tool.transform_config(config_stash + '/domain.xml',             'domain/configuration/domain.xml',            true,  true  )
   end
 
   def transform_host_config
     stash_stock_host_config
     trash_stock_host_config
-    tool.transform_host_config( 'target/host.xml', 'domain/configuration/host.xml' )
+    tool.transform_host_config( config_stash + '/host.xml', 'domain/configuration/host.xml' )
   end
 
   def windows?
@@ -192,5 +199,7 @@ class Assembler
   end
 end
 
-Assembler.new.assemble
+if __FILE__ == $0 || '-e' == $0 # -e == called from mvn
+  Assembler.new.assemble
+end
 

@@ -130,7 +130,7 @@ class AssemblyTool
     if options[:deployment_timeout]
       profiles = doc.root.get_elements( '//profile' )
       profiles.each do |profile|
-        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.1']" ).first
+        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
         unless subsystem.nil?
           scanner = subsystem.get_elements( 'deployment-scanner' ).first
           scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
@@ -209,6 +209,20 @@ class AssemblyTool
     end
   end
 
+  def add_messaging_socket_binding(doc)
+    groups = doc.root.get_elements( '//server' ) + doc.root.get_elements( '//domain/socket-binding-groups/socket-binding-group' )
+    groups.each do |group|
+      binding = group.get_elements( "*[@name='default-broadcast-group']" )
+      if ( binding.empty? )
+        group.add_element( 'socket-binding', 
+                           'name'=>'default-broadcast-group',
+                           'port'=>'0',
+                           'multicast-address'=>'231.7.7.7',
+                           'multicast-port'=>'9876')
+      end
+    end
+  end
+
   def remove_non_web_subsystems(doc)
     to_remove = %W(datasources ejb3 infinispan jacorb jaxrs jca jpa messaging osgi
                    resource-adapters sar threads
@@ -279,7 +293,7 @@ class AssemblyTool
   end
 
   def enable_messaging_jmx(doc)
-    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    hornetq_server = doc.root.get_elements( "//hornetq-server" ).first
     e = REXML::Element.new( 'jmx-management-enabled' )
     e.text = 'true'
     hornetq_server.add_element( e )
@@ -425,7 +439,6 @@ class AssemblyTool
       unquote_cookie_path(doc)
       remove_destinations(doc)
 
-      enable_messaging_jmx(doc)
 
       if ( domain ) 
         setup_server_groups(doc)
@@ -437,7 +450,10 @@ class AssemblyTool
 
       if ( domain || ha )
         fix_messaging_clustering(doc)
+        add_messaging_socket_binding(doc)
       end
+
+      enable_messaging_jmx(doc)
 
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)

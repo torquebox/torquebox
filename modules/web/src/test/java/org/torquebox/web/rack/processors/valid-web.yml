@@ -1,3 +1,4 @@
 web:
   host: foobar.com
   context: /tacos
+  session-timeout: 10 m

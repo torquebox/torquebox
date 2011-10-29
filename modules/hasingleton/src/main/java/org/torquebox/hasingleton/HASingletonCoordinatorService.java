@@ -10,7 +10,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jgroups.Channel;
-import org.jgroups.ChannelException;
 
 public class HASingletonCoordinatorService implements Service<HASingletonCoordinator> {
 
@@ -26,14 +25,15 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
 
     @Override
     public void start(StartContext context) throws StartException {
+        log.info(  "Start HASingletonCoordinator"  );
         try {
             ChannelFactory factory = this.channelFactoryInjector.getValue();
-            this.channel = factory.createChannel( this.partitionName );
-            this.coordinator = new HASingletonCoordinator( this.haSingletonController, channel, this.partitionName );
+            this.coordinator = new HASingletonCoordinator( this.haSingletonController, factory, this.partitionName );
             this.coordinator.start();
         } catch (Exception e) {
             throw new StartException( e );
         }
+        log.info(  "Started HASingletonCoordinator"  );
     }
 
     @Override
@@ -41,8 +41,7 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
         try {
             this.coordinator.stop();
             this.coordinator = null;
-            this.channel.close();
-        } catch (ChannelException e) {
+        } catch (Exception e) {
             log.error( "Unable to stop HA partition", e );
         }
     }
@@ -51,14 +50,11 @@ public class HASingletonCoordinatorService implements Service<HASingletonCoordin
         return this.channelFactoryInjector;
     }
     
-    private static final Logger log = Logger.getLogger( "org.torquebox.topology" );
-
-    private ServiceController<Void> haSingletonController;
-    private String partitionName;
+    private static final Logger log = Logger.getLogger( "org.torquebox.hasingleton" );
 
     private InjectedValue<ChannelFactory> channelFactoryInjector = new InjectedValue<ChannelFactory>();;
-    
-    private Channel channel;
+    private ServiceController<Void> haSingletonController;
+    private String partitionName;
     private HASingletonCoordinator coordinator;
 
 

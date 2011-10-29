@@ -7,7 +7,7 @@ require 'torquebox-messaging'
   
 class RackApp 
   def initialize 
-    @log = org.apache.log4j.Logger.getLogger('adapters.producer.rack_app') 
+    @log = TorqueBox::Logger.new('adapters.producer.rack_app') 
     @topic = TorqueBox::Messaging::Topic.new('/topics/producer/local') 
 
     # rfc-4122 GUID 

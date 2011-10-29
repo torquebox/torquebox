@@ -1,6 +1,5 @@
 require 'spec_helper'
 require 'fileutils'
-require 'torquebox/deploy_utils'
 
 shared_examples_for "basic rails2 tests" do
 

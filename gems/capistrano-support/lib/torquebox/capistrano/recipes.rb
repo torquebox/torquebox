@@ -29,10 +29,8 @@ Capistrano::Configuration.instance.load do
   _cset( :jruby_opts,          lambda{ "--#{app_ruby_version}" } )
   _cset( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } )
 
-  _cset( :jboss_config,        'standalone'      )
-
   _cset( :jboss_control_style, :initid )
-  _cset( :jboss_init_script,   '/etc/init.d/jbossas' )
+  _cset( :jboss_init_script,   '/etc/init.d/jboss-as-standalone' )
 
   _cset( :jboss_bind_address,  '0.0.0.0'      )
 
@@ -55,7 +53,7 @@ Capistrano::Configuration.instance.load do
         when :initd
           run "#{jboss_init_script} start"
         when :binscripts
-          run "nohup #{jboss_home}/bin/run.sh -b #{jboss_bind_address} -c #{jboss_config} < /dev/null > /dev/null 2>&1 &"
+          run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
       end
     end
   
@@ -66,7 +64,7 @@ Capistrano::Configuration.instance.load do
         when :initd
           run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
         when :binscripts
-          run "#{jboss_home}/bin/shutdown.sh -S"
+          run "#{jboss_home}/bin/jboss-admin.sh --connect :shutdown"
       end
     end
   
@@ -77,8 +75,8 @@ Capistrano::Configuration.instance.load do
           puts "Restarting TorqueBox AS"
           puts "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
         when :binscripts
-          puts "deploy:restart only supported with initd control style."
-          puts "Please use deploy:stop and deploy:start."
+          run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+          run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
       end
     end
   
@@ -92,9 +90,11 @@ Capistrano::Configuration.instance.load do
       end
 
       task :check do
-        run "test -x #{jboss_init_script}",                        :roles=>[ :app ]
+        puts "style #{jboss_control_style}"
+        if ( jboss_control_style == :initd )
+          run "test -x #{jboss_init_script}",                        :roles=>[ :app ]
+        end
         run "test -d #{jboss_home}",                               :roles=>[ :app ]
-        run "test -w #{jboss_home}/#{jboss_config}/deployments",   :roles=>[ :app ]
         unless ( [ :initd, :binscripts ].include?( jboss_control_style.to_sym ) )
           fail "invalid jboss_control_style: #{jboss_control_style}"
         end
