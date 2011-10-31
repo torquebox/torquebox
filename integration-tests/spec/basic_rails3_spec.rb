@@ -30,6 +30,11 @@ shared_examples_for "basic rails3 test" do
     visit "/basic-rails/root/databaseyml"
     find('#success').text.should == 'foobar'
   end
+
+  it "should support environment variables from torquebox.yml" do
+    visit "/basic-rails/root/environment"
+    find('#foo').text.should == 'bar'
+  end
 end
 
 describe "basic tests with environment variables in database.yml" do
@@ -39,6 +44,7 @@ describe "basic tests with environment variables in database.yml" do
     application:
       RAILS_ROOT: #{File.dirname(__FILE__)}/../apps/rails3/basic
     environment:
+      foo: bar
       DB_USER: foobar
     web:
       context: /basic-rails
@@ -55,7 +61,13 @@ describe "archive knobs with environment variables in database.yml" do
   deploy { TorqueBox::DeployUtils.create_archive( "basic-rails3.knob", 
                                                   File.join( File.dirname( __FILE__ ), "../apps/rails3/basic" ),
                                                   TorqueSpec.knob_root ) }
-  pending "A fix" do
-    it_should_behave_like "basic rails3 test"
-  end
+  it_should_behave_like "basic rails3 test"
+end
+
+describe "environment variables in an archive knob" do
+  deploy { TorqueBox::DeployUtils.create_archive( "basic-rails3.knob", 
+                                                  File.join( File.dirname( __FILE__ ), "../apps/rails3/basic" ),
+                                                  TorqueSpec.knob_root ) }
+
+  it_should_behave_like "basic rails3 test"
 end

@@ -7,25 +7,6 @@ require 'rails/all'
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
 
-module Rails
-  class Application
-    class Configuration < ::Rails::Engine::Configuration
-      def database_configuration
-        require 'erb'
-        file = File.expand_path('database.yml', File.dirname(__FILE__))
-        puts "[LANCE] >>>>> READING FILE: #{file.to_s}"
-        io = IO.read( file )
-        puts "[LANCE] >>>>> FILE IO: #{io.to_s}"
-        erb = ERB.new( io )
-        puts "[LANCE] >>>>> GOT ERB: #{erb.result}"
-        yaml = YAML::load( erb.result )
-        puts "[LANCE] >>>>> YAML inspect: #{yaml.inspect}"
-        yaml
-      end
-    end
-  end
-end
-
 module Basic
   class Application < Rails::Application
     # Settings in config/environments/* take precedence over those specified here.
