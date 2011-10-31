@@ -9,7 +9,7 @@ require 'json'
 
 class Publisher
 
-  BASE_URL = 'https://repository-torquebox.forge.cloudbees.com/incremental'
+  BASE_URL = 'https://repository-projectodd.forge.cloudbees.com/incremental'
 
   attr_accessor :build_number
 

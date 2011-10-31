@@ -73,7 +73,7 @@
                 </goals>
                 <configuration>
                   <file>bin/publish-incrementals.rb</file>
-                  <args>/private/torquebox/private-settings.xml ${env.BUILD_NUMBER}</args>
+                  <args>/private/projectodd/private-settings.xml ${env.BUILD_NUMBER}</args>
                 </configuration>
               </execution>
             </executions>
