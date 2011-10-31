@@ -64,7 +64,9 @@ public class RubyRuntimeFactoryInstaller implements DeploymentUnitProcessor {
 
             Module module = unit.getAttachment( Attachments.MODULE );
 
-            factory.setClassLoader( module.getClassLoader() );
+            if (module != null) {
+                factory.setClassLoader( module.getClassLoader() );
+            }
 
             factory.setServiceRegistry( phaseContext.getServiceRegistry() );
             factory.setLoadPaths( loadPaths );

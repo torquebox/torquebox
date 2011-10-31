@@ -14,6 +14,7 @@ import javax.transaction.TransactionManager;
 import org.jboss.as.connector.ConnectorServices;
 import org.jboss.as.connector.registry.DriverRegistry;
 import org.jboss.as.connector.subsystems.datasources.DataSourceReferenceFactoryService;
+import org.jboss.as.connector.subsystems.datasources.ModifiableXaDataSource;
 import org.jboss.as.connector.subsystems.datasources.XaDataSourceService;
 import org.jboss.as.naming.ManagedReferenceFactory;
 import org.jboss.as.naming.ServiceBasedNamingStore;
@@ -35,7 +36,6 @@ import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
-import org.jboss.jca.common.metadata.ds.XADataSourceImpl;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.logging.Logger;
@@ -205,7 +205,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         final ServiceName dataSourceServiceName = DataSourceServices.datasourceName( unit, dbMeta.getConfigurationName() );
 
         try {
-            final XaDataSource config = createConfig( unit, dbMeta, adapter );
+            final ModifiableXaDataSource config = createConfig( unit, dbMeta, adapter );
             XaDataSourceService service = new HackDataSourceService( jndiName );
 
             service.getDataSourceConfigInjector().inject( config );
@@ -273,7 +273,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
     }
 
-    protected XaDataSource createConfig(DeploymentUnit unit, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException {
+    protected ModifiableXaDataSource createConfig(DeploymentUnit unit, DatabaseMetaData dbMeta, Adapter adapter) throws ValidateException {
         TransactionIsolation transactionIsolation = null;
         TimeOut timeOut = null;
         Statement statement = null;
@@ -289,7 +289,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         CommonXaPool xaPool = createPool( dbMeta );
         Recovery recovery = null;
 
-        return new XADataSourceImpl(
+        return new ModifiableXaDataSource(
                 transactionIsolation,
                 timeOut,
                 adapter.getSecurityFor( dbMeta ),

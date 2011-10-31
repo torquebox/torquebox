@@ -6,6 +6,7 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.as.connector.subsystems.datasources.AbstractDataSourceService;
+import org.jboss.as.connector.subsystems.datasources.ModifiableXaDataSource;
 import org.jboss.as.connector.subsystems.datasources.XaDataSourceService;
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
 import org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory;
@@ -31,7 +32,7 @@ public class HackDataSourceService extends XaDataSourceService {
     
     @Override
     public AS7DataSourceDeployer getDeployer() {
-        return new HackAS7DataSourceDeployer( ((InjectedValue<XaDataSource>) getDataSourceConfigInjector()).getValue() );
+        return new HackAS7DataSourceDeployer( ((InjectedValue<ModifiableXaDataSource>) getDataSourceConfigInjector()).getValue() );
     }
 
     public class HackAS7DataSourceDeployer extends AbstractDataSourceService.AS7DataSourceDeployer {
@@ -44,7 +45,7 @@ public class HackDataSourceService extends XaDataSourceService {
         protected ManagedConnectionFactory createMcf(XaDataSource arg0, String arg1, ClassLoader arg2) throws NotFoundException, DeployException {
             final MyXaMCF xaManagedConnectionFactory = new MyXaMCF();
 
-            XaDataSource xaDataSourceConfig = ((InjectedValue<XaDataSource>) getDataSourceConfigInjector()).getValue();
+            XaDataSource xaDataSourceConfig = ((InjectedValue<ModifiableXaDataSource>) getDataSourceConfigInjector()).getValue();
 
             if (xaDataSourceConfig.getUrlDelimiter() != null) {
                 try {
