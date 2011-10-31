@@ -16,12 +16,8 @@ describe TorqueBox::Server do
 
     it "should use torquebox-server gem's installed path" do
       server_gem = mock('server-gem')
-      searcher   = mock('searcher')
-
-      Gem.should_receive(:searcher).and_return(searcher)
-      searcher.stub('find').and_return(server_gem)
+      Gem::Specification.should_receive(:find_by_name).with('torquebox-server').and_return(server_gem)
       server_gem.stub('full_gem_path').and_return('torquebox-server-install-path')
-
       TorqueBox::Server.torquebox_home.should == 'torquebox-server-install-path'
     end
   end
