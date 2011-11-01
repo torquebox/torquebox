@@ -210,7 +210,7 @@ class AssemblyTool
   end
 
   def add_messaging_socket_binding(doc)
-    groups = doc.root.get_elements( '//server' ) + doc.root.get_elements( '//domain/socket-binding-groups/socket-binding-group' )
+    groups = doc.root.get_elements( '//server/socket-binding-group' ) + doc.root.get_elements( '//domain/socket-binding-groups/socket-binding-group' )
     groups.each do |group|
       binding = group.get_elements( "*[@name='default-broadcast-group']" )
       if ( binding.empty? )
