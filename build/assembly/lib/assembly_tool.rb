@@ -299,6 +299,12 @@ class AssemblyTool
     hornetq_server.add_element( e )
   end
 
+  def adjust_messaging_config(doc)
+    settings = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server/address-settings/address-setting" ).first
+    settings.get_elements( 'address-full-policy' ).first.text = 'PAGE'
+    settings.get_elements( 'max-size-bytes' ).first.text = '20971520'
+  end
+
   def fix_messaging_clustering(doc)
     hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
 
@@ -453,6 +459,7 @@ class AssemblyTool
         add_messaging_socket_binding(doc)
       end
 
+      adjust_messaging_config(doc)
       enable_messaging_jmx(doc)
 
       # Uncomment to create a minimal standalone.xml

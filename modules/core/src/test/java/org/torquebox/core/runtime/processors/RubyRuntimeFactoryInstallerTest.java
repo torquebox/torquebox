@@ -59,8 +59,6 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo" );
         rubyAppMetaData.attachTo( unit );
         
-        unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
-
         deploy( phaseContext );
 
         ServiceName factoryServiceName = CoreServices.runtimeFactoryName( unit );
@@ -85,8 +83,6 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo"); 
         rubyAppMetaData.attachTo( unit );
                 
-        unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
-
         deploy( phaseContext );
 
         ServiceName factoryServiceName = CoreServices.runtimeFactoryName( unit );
@@ -111,8 +107,6 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
         rubyAppMetaData.attachTo( unit );
                 
-        unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
-
         deploy( phaseContext );
 
         ServiceName factoryServiceName = CoreServices.runtimeFactoryName( unit );
@@ -138,8 +132,6 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
         rubyAppMetaData.attachTo( unit );
                 
-        unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
-
         deploy( phaseContext );
 
         ServiceName factoryServiceName = CoreServices.runtimeFactoryName( unit );
@@ -164,8 +156,6 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
         rubyAppMetaData.attachTo( unit );
                 
-        unit.putAttachment( Attachments.MODULE, Module.getSystemModule() );
-
         deploy( phaseContext );
 
         ServiceName factoryServiceName = CoreServices.runtimeFactoryName( unit );

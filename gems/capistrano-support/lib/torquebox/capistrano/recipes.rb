@@ -53,7 +53,7 @@ Capistrano::Configuration.instance.load do
         when :initd
           run "#{jboss_init_script} start"
         when :binscripts
-          run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
+          run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
       end
     end
   
@@ -103,7 +103,7 @@ Capistrano::Configuration.instance.load do
       task :deployment_descriptor do
         puts "creating deployment descriptor"
         dd_str = YAML.dump_stream( create_deployment_descriptor() )
-        dd_file = "#{jboss_home}/#{jboss_config}/deployments/#{application}-knob.yml"
+        dd_file = "#{jboss_home}/standalone/deployments/#{application}-knob.yml"
         cmd =  "cat /dev/null > #{dd_file}"
         dd_str.each_line do |line|
           cmd += " && echo \"#{line}\" >> #{dd_file}"

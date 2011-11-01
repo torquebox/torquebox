@@ -22,8 +22,11 @@ module TorqueBox
   class Server
 
     def self.torquebox_home
-      home = Gem.searcher.find( 'torquebox-server' )
+      home = Gem::Specification.find_by_name( 'torquebox-server' )
       home.full_gem_path if home
+    rescue Exception => e
+      puts "Cannot find torquebox-server: #{e}"
+      nil
     end
 
     def self.jboss_home

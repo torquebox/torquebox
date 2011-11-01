@@ -58,8 +58,8 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/release</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
+        <jboss.releases.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/release</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/snapshot</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
@@ -68,8 +68,8 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <jboss.releases.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/staging</jboss.releases.repo.url>
-        <jboss.snapshots.repo.url>dav:https://repository-torquebox.forge.cloudbees.com/staging</jboss.snapshots.repo.url>
+        <jboss.releases.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.releases.repo.url>
+        <jboss.snapshots.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.snapshots.repo.url>
       </properties>
     </profile>
     <profile>
@@ -417,7 +417,7 @@
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.3.0</version.rspec>
 
-    <version.jbossas>7.x.incremental.174</version.jbossas>
+    <version.jbossas>7.x.incremental.180</version.jbossas>
 
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
@@ -458,7 +458,7 @@
     <repository>
       <id>jboss-incremental</id>
       <name>JBoss AS Incremental Builds</name>
-      <url>https://repository-torquebox.forge.cloudbees.com/upstream</url>
+      <url>https://repository-projectodd.forge.cloudbees.com/upstream</url>
       <layout>default</layout>
       <releases>
         <enabled>true</enabled>
@@ -497,7 +497,7 @@
     <repository>
       <id>polyglot-snapshot</id>
       <name>Polyglot SNAPSHOT builds</name>
-      <url>https://repository-torquebox.forge.cloudbees.com/snapshot</url>
+      <url>https://repository-projectodd.forge.cloudbees.com/snapshot</url>
       <layout>default</layout>
       <releases>
         <enabled>false</enabled>
