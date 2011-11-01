@@ -76,6 +76,7 @@ module TorqueBox
     end
 
     class Cache
+      include TorqueBox::Injectors
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
       java_import org.infinispan.config.Configuration::CacheMode
@@ -204,7 +205,6 @@ module TorqueBox
         increment( name, -amount )
       end
 
-      include TorqueBox::Injectors
       def transaction(&block)
         if !transactional?
           yield self
@@ -229,6 +229,7 @@ module TorqueBox
               log( e.message, 'ERROR' )
               log( e.backtrace, 'ERROR' )
             end
+            raise e
           end
         else
           TorqueBox.transaction do 

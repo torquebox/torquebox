@@ -51,7 +51,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
   end
   
   describe '#auto_upgrade!' do
-    it 'should clear the cache' do
+    it 'should not clear the cache' do
       Heffalump.create(:color => 'magenta')
       Heffalump.all.size.should == 1
       Heffalump.auto_upgrade!
@@ -320,45 +320,50 @@ describe DataMapper::Adapters::InfinispanAdapter do
   end
 
   describe "with persistence" do
-    before :each do
+    before :all do
       @configured_dir  = File.join( File.dirname(__FILE__), '..', random_string )
       @default_dir     = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
+      @snuffy          = File.join( File.dirname(__FILE__), '..', 'rubyobj.Snuffleupagus' ) 
       FileUtils.mkdir( @configured_dir )
-    end
-
-    it "should store data in a configured directory" do
-      DataMapper.setup(:default, :adapter => 'infinispan', :persist => @configured_dir.to_s )
-      heffalump = Heffalump.create
-      File.exist?("#{@configured_dir.to_s}/default").should be_true
-      heffalump.should_not be_nil
-    end
-
-    it "should store data in a default directory" do
-      DataMapper.setup(:default, :adapter => 'infinispan', :persist=>true)
-      heffalump = Heffalump.create
-      File.exist?( @default_dir ).should be_true
-      heffalump.should_not be_nil
-    end
-
-    it "should store dates" do
       class Snuffleupagus
         include DataMapper::Resource
         property :id, Serial
         property :birthday, Date
       end
       Snuffleupagus.configure_index!
-      adapter = DataMapper.setup(:default, :adapter => 'infinispan')
+    end
+
+    after :all do
+      FileUtils.rm_rf( @configured_dir )
+      FileUtils.rm_rf( @default_dir )
+      FileUtils.rm_rf( @snuffy )
+    end
+
+    it "should store data in a configured directory" do
+      adapter = DataMapper.setup(:default, :adapter => 'infinispan', :persist => @configured_dir.to_s)
+      snuffy = Snuffleupagus.create(:birthday=>Date.today)
+      File.exist?("#{@configured_dir.to_s}/default").should be_true
+      snuffy.should_not be_nil
+      adapter.stop
+    end
+
+    it "should store data in a default directory" do
+      adapter = DataMapper.setup(:default, :adapter => 'infinispan', :persist=>true)
+      snuffy = Snuffleupagus.create(:birthday=>Date.today)
+      File.exist?( @default_dir ).should be_true
+      snuffy.should_not be_nil
+      snuffy.id.should_not be_nil
+      adapter.stop
+    end
+
+    it "should store dates" do
+      adapter = DataMapper.setup(:default, :adapter => 'infinispan', :persist=>true)
       snuffy = Snuffleupagus.create(:birthday => Date.today)
       snuffy.should_not be_nil
       snuffy.getBirthday.should_not be_nil
       adapter.stop
-      FileUtils.rm_rf( File.join( File.dirname(__FILE__), '..', 'rubyobj.Snuffleupagus' ) )
     end
 
-    after :each do
-      FileUtils.rm_rf( @configured_dir )
-      FileUtils.rm_rf( @default_dir )
-    end
   end
 end
 
