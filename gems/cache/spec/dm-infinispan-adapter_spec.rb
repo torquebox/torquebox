@@ -33,6 +33,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
     end
 
     DataMapper.finalize
+    Heffalump.auto_migrate!
   end
 
   after :all do
@@ -58,8 +59,6 @@ describe DataMapper::Adapters::InfinispanAdapter do
   describe '#read' do
     before :all do
       @heffalump = Heffalump.create(:color => 'brownish hue')
-      #just going to borrow this, so I can check the return values
-      @query = Heffalump.all.query
     end
 
     it 'should not raise any errors' do
