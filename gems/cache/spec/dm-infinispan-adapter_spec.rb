@@ -40,6 +40,24 @@ describe DataMapper::Adapters::InfinispanAdapter do
     @adapter.stop
     FileUtils.rm_rf @heffalump_index
   end
+
+  describe '#auto_migrate!' do
+    it 'should clear the cache' do
+      Heffalump.create(:color => 'magenta')
+      Heffalump.all.size.should == 1
+      Heffalump.auto_migrate!
+      Heffalump.all.size.should == 0
+    end
+  end
+  
+  describe '#auto_upgrade!' do
+    it 'should clear the cache' do
+      Heffalump.create(:color => 'magenta')
+      Heffalump.all.size.should == 1
+      Heffalump.auto_upgrade!
+      Heffalump.all.size.should == 1
+    end
+  end
   
   describe '#create' do
     it 'should not raise any errors' do
