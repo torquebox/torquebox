@@ -70,6 +70,7 @@ module Infinispan
       end
 
       def auto_migrate!
+        destroy
         configure_index
       end
 

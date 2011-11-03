@@ -37,8 +37,8 @@ public class JsonExternalizer implements Externalizer<IRubyObject> {
 	}
 	
     protected String toJSON(IRubyObject object) {
-        RuntimeHelper.require( getCurrentRuntime(), "json" );
-        return (String) JavaEmbedUtils.invokeMethod( getCurrentRuntime(), object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
+        RuntimeHelper.require( object.getRuntime(), "json" );
+        return (String) JavaEmbedUtils.invokeMethod( object.getRuntime(), object, "to_json", EMPTY_OBJECT_ARRAY, String.class );
     }
 
     protected IRubyObject fromJSON(String json, String type) throws ClassNotFoundException {

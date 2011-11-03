@@ -211,10 +211,13 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should handle multiple transactions" do
-      @cache.transaction do |cache|
-        cache.put('Tommy', 'Dorsey')
-        raise "yikes!"
-        cache.put('Elvis', 'Presley')
+      begin
+        @cache.transaction do |cache|
+          cache.put('Tommy', 'Dorsey')
+          raise "yikes!"
+          cache.put('Elvis', 'Presley')
+        end
+      rescue
       end
       @cache.get('Tommy').should be_nil
       @cache.get('Elvis').should be_nil
@@ -230,8 +233,8 @@ describe TorqueBox::Infinispan::Cache do
   describe "with persistence" do
     before(:all) do
       @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
-      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
-      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string )
+      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
+      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
       @index_dir      = File.join( File.dirname(__FILE__), '..', 'java.util.HashMap' )
       FileUtils.mkdir @configured_dir 
       FileUtils.mkdir @date_cfg_dir 
@@ -287,6 +290,40 @@ describe TorqueBox::Infinispan::Cache do
       cache.put("foo", "bar", 0.1)
       sleep 1
       cache.get("foo").should be_nil
+    end
+
+    it "should handle transactions" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache', :persist=>true )
+      begin
+        @cache.transaction do
+          cache.put('Tommy', 'Dorsey')
+          cache.put('Elvis', 'Presley')
+          raise "yikes!"
+        end
+      rescue
+      end
+      @cache.get('Tommy').should be_nil
+      @cache.get('Elvis').should be_nil
+    end
+
+    it "should handle multiple transactions" do
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache', :persist=>true )
+      begin
+        cache.transaction do |cache|
+          cache.put('Tommy', 'Dorsey')
+          raise "yikes!"
+          cache.put('Elvis', 'Presley')
+        end
+      rescue
+      end
+      cache.get('Tommy').should be_nil
+      cache.get('Elvis').should be_nil
+      cache.transaction do 
+        cache.put('Tommy', 'Dorsey')
+        cache.put('Elvis', 'Presley')
+      end
+      cache.get('Tommy').should == 'Dorsey'
+      cache.get('Elvis').should == 'Presley'
     end
   end
 
