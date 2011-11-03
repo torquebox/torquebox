@@ -42,10 +42,12 @@ describe "basic rails3 asset test" do
       Capybara.app_host = "http://integ-app3.torquebox.org:8080"
     end
 
-    it "should generate correct asset path" do
+    it "should generate correct asset and link paths" do
       visit "/"
       image = page.find('img')
       image['src'].should match(/\/images\/rails\.png/)
+      link = page.find('a')
+      link['href'].should eql('/')
     end
 
     it "should return correct Content-Type header", :browser_not_supported=>true do
@@ -55,10 +57,12 @@ describe "basic rails3 asset test" do
   end
 
   describe "non-root context" do
-    it "should generate correct asset path" do
+    it "should generate correct asset and link paths" do
       visit "/basic-rails3-asset"
       image = page.find('img')
       image['src'].should match(/\/basic-rails3-asset\/images\/rails\.png/)
+      link = page.find('a')
+      link['href'].should eql('/basic-rails3-asset/')
     end
 
     it "should return correct Content-Type header", :browser_not_supported=>true do

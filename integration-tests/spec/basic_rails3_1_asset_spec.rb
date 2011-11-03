@@ -18,4 +18,12 @@ describe "basic rails3.1 asset test" do
     visit "/basic-rails31-asset/assets/test.js"
     page.source.should =~ /\/\/ taco/
   end
+
+  it "should generate correct asset and link paths" do
+    visit "/basic-rails31-asset"
+    image = page.find('img')
+    image['src'].should match(/\/basic-rails31-asset\/assets\/rails\.png/)
+    link = page.find('a')
+    link['href'].should eql('/basic-rails31-asset/')
+  end
 end
