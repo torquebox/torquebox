@@ -208,6 +208,7 @@ module TorqueBox
         ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
         Dir.stub!(:chdir).and_yield
         Kernel.stub!(:exec)
+        TorqueBox::DeployUtils.stub!(:exec)
         TorqueBox::DeployUtils.stub!(:exec_command)
       end
 
