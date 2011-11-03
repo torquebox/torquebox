@@ -348,8 +348,8 @@ module TorqueBox
         end
 
         if options[:index]
-          log( "Configuring #{name} local cache for local-only, in-memory indexing" )
-          config.indexing.index_local_only(true).add_property('indexing', 'in memory')
+          log( "Configuring #{name} local cache for local-only indexing" )
+          config.indexing.index_local_only(true)
         end
 
         local_manager = org.infinispan.manager.DefaultCacheManager.new
