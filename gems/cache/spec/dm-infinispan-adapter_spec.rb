@@ -143,6 +143,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
 
   describe 'query matching' do
     before :all do
+      Heffalump.auto_migrate!
       @red  = Heffalump.create(:color => 'red')
       @two  = Heffalump.create(:num_spots => 2)
       @five = Heffalump.create(:num_spots => 5)
@@ -321,7 +322,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
 
   describe "with persistence" do
     before :all do
-      @configured_dir  = File.join( File.dirname(__FILE__), '..', random_string )
+      @configured_dir  = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
       @default_dir     = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
       @snuffy          = File.join( File.dirname(__FILE__), '..', 'rubyobj.Snuffleupagus' ) 
       FileUtils.mkdir( @configured_dir )

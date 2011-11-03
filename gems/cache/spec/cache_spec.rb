@@ -233,8 +233,8 @@ describe TorqueBox::Infinispan::Cache do
   describe "with persistence" do
     before(:all) do
       @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
-      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string )
-      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string )
+      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
+      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
       @index_dir      = File.join( File.dirname(__FILE__), '..', 'java.util.HashMap' )
       FileUtils.mkdir @configured_dir 
       FileUtils.mkdir @date_cfg_dir 
