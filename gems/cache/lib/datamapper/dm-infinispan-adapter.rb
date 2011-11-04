@@ -47,20 +47,19 @@ module DataMapper::Adapters
       cache.transaction do
         resources.each do |resource|
           initialize_serial( resource, @metadata_cache.increment( index_for( resource ) ) )
-          cache.put( key( resource ), serialize( resource ) )
+          cache.put( key( resource ), serialize( resource ) ) 
         end
       end
     end
 
     def read( query )
       records = []
-      cache.transaction { records = @search.search( query ) }
-      query.filter_records(records)
+      query.filter_records(@search.search( query ))
     end
 
     def update( attributes, collection )
+      attributes = attributes_as_fields(attributes)
       cache.transaction do
-        attributes = attributes_as_fields(attributes)
         collection.each do |resource|
           resource.attributes(:field).merge(attributes)
           cache.put( key(resource), serialize(resource) )

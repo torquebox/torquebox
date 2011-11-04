@@ -38,13 +38,11 @@ describe TorqueBox::Messaging::JSONMessage do
 
     it "should not raise if json is available" do
       @message.should_receive(:require).with('json').and_return { define_JSON }
-      @message.should_receive(:require).with('json/add/core')
       lambda { @message.encode( 'abc' ) }.should_not raise_error
     end
 
     it "should only require json once" do
       @message.should_receive(:require).once.with('json').and_return { define_JSON }
-      @message.should_receive(:require).once.with('json/add/core')
       @message.encode( 'abc' )
       @message.encode( 'abc' )
     end

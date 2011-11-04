@@ -27,7 +27,6 @@ module TorqueBox
         if !defined?( JSON )
           begin
             require 'json'
-            require 'json/add/core'
           rescue LoadError => ex
             raise RuntimeError.new( "Unable to load the json gem. Verify that is installed and in your Gemfile (if using Bundler)" )
           end
@@ -41,9 +40,7 @@ module TorqueBox
 
       def decode
         require_json 
-        # we can't :symbolize_names here, since that breaks turning
-        # json_class back into an object, ffs
-        JSON.parse( @jms_message.text ) unless @jms_message.text.nil?
+        JSON.parse( @jms_message.text, :symbolize_names => true ) unless @jms_message.text.nil?
       end
 
     end
