@@ -15,9 +15,10 @@ ROOTLESS
 rooted = <<-ROOTED.gsub(/^ {4}/, '')
     application:
       root: #{File.dirname(__FILE__)}/../apps/sinatra/rootless
-    publisher:
-      job: JobQueuePublisher
-      cron: '*/1 * * * * ?'
+    jobs:
+      publisher:
+        job: JobQueuePublisher
+        cron: '*/1 * * * * ?'
     messaging:
       /queues/requests: UpperCaser
     web:
