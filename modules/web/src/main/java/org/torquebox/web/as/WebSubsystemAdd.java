@@ -22,6 +22,7 @@ package org.torquebox.web.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.Enumeration;
 import java.util.List;
@@ -57,24 +58,24 @@ import org.torquebox.web.rails.processors.RailsRuntimeProcessor;
 import org.torquebox.web.rails.processors.RailsVersionProcessor;
 
 class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
-    
+
     @Override
     protected void populateModel(ModelNode operation, ModelNode model) {
         model.setEmptyObject();
     }
-    
+
     @Override
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
-                                   ServiceVerificationHandler verificationHandler,
-                                   List<ServiceController<?>> newControllers) throws OperationFailedException {
-        
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
-        
+
         try {
             addWebConnectorConfigServices( context, verificationHandler, newControllers );
         } catch (Exception e) {
@@ -84,48 +85,48 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, new RackApplicationRecognizer() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new RailsApplicationRecognizer() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new WebYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new RailsVersionProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 50, new RailsRackProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 60, new WebApplicationDefaultsProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 70, new RackWebApplicationInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, new RailsRuntimeProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, new RackRuntimeProcessor() );
-        
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 1, new WebDependenciesProcessor() );
-        
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new WebRuntimePoolProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, new RailsAutoloadPathProcessor() );
-        
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new RackApplicationComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 2100, new VirtualHostInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, rootSafe( new RackApplicationRecognizer() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, rootSafe( new RailsApplicationRecognizer() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, rootSafe( new WebYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, rootSafe( new RailsVersionProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 50, rootSafe( new RailsRackProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 60, rootSafe( new WebApplicationDefaultsProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 70, rootSafe( new RackWebApplicationInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, rootSafe( new RailsRuntimeProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, rootSafe( new RackRuntimeProcessor() ) );
+
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 1, rootSafe( new WebDependenciesProcessor() ) );
+
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new WebRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, rootSafe( new RailsAutoloadPathProcessor() ) );
+
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new RackApplicationComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 2100, rootSafe( new VirtualHostInstaller() ) );
     }
 
     protected void addWebConnectorConfigServices(final OperationContext context,
-                                                 ServiceVerificationHandler verificationHandler,
-                                                 List<ServiceController<?>> newControllers) throws Exception {
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws Exception {
         for (Enumeration<?> e = System.getProperties().propertyNames(); e.hasMoreElements();) {
             String key = (String) e.nextElement();
             Matcher matcher = maxThreadsPattern.matcher( key );
             if (matcher.matches()) {
                 String connectorName = matcher.group( 1 );
                 int maxThreads = Integer.parseInt( System.getProperty( key ) );
-                addWebConnectorConfigService (context, verificationHandler, newControllers, connectorName, maxThreads );
+                addWebConnectorConfigService( context, verificationHandler, newControllers, connectorName, maxThreads );
             }
         }
     }
 
     protected void addWebConnectorConfigService(final OperationContext context,
-                                                ServiceVerificationHandler verificationHandler,
-                                                List<ServiceController<?>> newControllers,
-                                                String connectorName, int maxThreads) throws Exception {
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers,
+            String connectorName, int maxThreads) throws Exception {
         WebConnectorConfigService service = new WebConnectorConfigService();
-        service.setMaxThreads(maxThreads);
+        service.setMaxThreads( maxThreads );
         newControllers.add( context.getServiceTarget().addService( WebServices.WEB_CONNECTOR_CONFIG.append( connectorName ), service )
                 .addDependency( WebSubsystemServices.JBOSS_WEB_CONNECTOR.append( connectorName ), Connector.class, service.getConnectorInjector() )
-                .addListener( verificationHandler)
+                .addListener( verificationHandler )
                 .setInitialMode( Mode.ACTIVE )
                 .install() );
     }

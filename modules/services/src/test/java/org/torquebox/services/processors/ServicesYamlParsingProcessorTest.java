@@ -22,15 +22,18 @@ package org.torquebox.services.processors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
+import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.services.ServiceMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
@@ -59,6 +62,21 @@ public class ServicesYamlParsingProcessorTest extends AbstractDeploymentProcesso
         List<ServiceMetaData> allMetaData = unit.getAttachmentList( ServiceMetaData.ATTACHMENTS_KEY );
         
         assertEquals( 2, allMetaData.size() );
+    }
+    
+    @Test
+    public void testRootless() throws Exception {
+        try {
+            clearDeployers();
+            appendDeployer( new AppKnobYamlParsingProcessor() );
+            appendDeployer( new ServicesYamlParsingProcessor() );
+            deployResourceAs( "rootless-services-knob.yml", "rootless-services-knob.yml" );
+            fail( "Rootless services knob deployment should have failed." );
+        } catch (DeploymentUnitProcessingException e) {
+            assertEquals( "Error processing deployment rootless-services-knob.yml: The section services " +
+                    "requires an app root to be specified, but none has been provided.",
+                    e.getMessage() );
+        }
     }
 
     @Test

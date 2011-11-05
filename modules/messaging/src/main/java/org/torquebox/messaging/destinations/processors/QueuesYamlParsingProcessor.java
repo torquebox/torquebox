@@ -40,6 +40,7 @@ public class QueuesYamlParsingProcessor extends AbstractSplitYamlParsingProcesso
     public QueuesYamlParsingProcessor() {
         setSectionName( "queues" );
         setSupportsSuffix( true );
+        setSupportsRootless( true );
     }
 
     @SuppressWarnings("unchecked")
@@ -50,14 +51,14 @@ public class QueuesYamlParsingProcessor extends AbstractSplitYamlParsingProcesso
         for (String queueName : data.keySet()) {
             QueueMetaData queueMetaData = new QueueMetaData( queueName );
             Map<String, Object> queueOptions = data.get( queueName );
-            if (queueOptions == null || !queueOptions.containsKey( "durable" )) { 
-            	queueMetaData.setDurable( true ); 
+            if (queueOptions == null || !queueOptions.containsKey( "durable" )) {
+                queueMetaData.setDurable( true );
             }
-            else if (queueOptions.containsKey("durable")) {
-            	queueMetaData.setDurable((Boolean) queueOptions.get("durable"));
-            } 
-            
-            unit.addToAttachmentList( QueueMetaData.ATTACHMENTS_KEY, queueMetaData); 
+            else if (queueOptions.containsKey( "durable" )) {
+                queueMetaData.setDurable( (Boolean) queueOptions.get( "durable" ) );
+            }
+
+            unit.addToAttachmentList( QueueMetaData.ATTACHMENTS_KEY, queueMetaData );
         }
     }
 

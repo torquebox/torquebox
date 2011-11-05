@@ -39,6 +39,7 @@ public class DatabaseYamlParsingProcessor extends AbstractSplitYamlParsingProces
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void parse(DeploymentUnit unit, Object data) throws Exception {
         Map<String, Map<String, Object>> file = (Map<String, Map<String, Object>>) data;
         

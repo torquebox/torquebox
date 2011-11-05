@@ -26,11 +26,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.projectodd.polyglot.messaging.destinations.TopicMetaData;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
+import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
@@ -51,12 +53,35 @@ public class TopicsYamlParsingProcessorTest extends AbstractDeploymentProcessorT
         assertTrue( allMetaData.isEmpty() );
     }
 
-    @Test
+    @Test(expected=DeploymentUnitProcessingException.class)
     public void testJunkYaml() throws Exception {
         MockDeploymentUnit unit = deployResourceAs( "junk-topics.yml", "topics.yml" );
         
         List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENTS_KEY );
         assertTrue( allMetaData.isEmpty() );
+    }
+    
+    @Test
+    public void testRootless() throws Exception {
+
+        clearDeployers();
+        appendDeployer( new AppKnobYamlParsingProcessor() );
+        appendDeployer( new TopicsYamlParsingProcessor() );
+
+        MockDeploymentUnit unit = deployResourceAs( "rootless-topics-knob.yml", "rootless-topics-knob.yml" );
+        List<TopicMetaData> allMetaData = unit.getAttachmentList( TopicMetaData.ATTACHMENTS_KEY );
+
+        assertEquals( 3, allMetaData.size() );
+
+        TopicMetaData topicWorker = getMetaData( allMetaData, "/topics/worker" );
+        assertNotNull( topicWorker );
+
+        TopicMetaData topicParasite = getMetaData( allMetaData, "/topics/parasite" );
+        assertNotNull( topicParasite );
+        
+        TopicMetaData topicFission = getMetaData( allMetaData, "/topics/smilin_joe_fission" );
+        assertNotNull( topicFission );
+        
     }
 
     @Test

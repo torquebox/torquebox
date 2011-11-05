@@ -1,0 +1,8 @@
+messaging:
+  /topics/foo:
+    MyClass:
+      filter: myfilter
+      config:
+        a: "toast"
+      concurrency: 2
+  /queue/bar:

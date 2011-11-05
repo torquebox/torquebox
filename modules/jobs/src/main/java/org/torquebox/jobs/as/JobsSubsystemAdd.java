@@ -22,10 +22,10 @@ package org.torquebox.jobs.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
-import org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService;
 import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
@@ -63,12 +63,12 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new JobsYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new JobsLoadPathProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, new JobsRuntimePoolProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, new JobComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, new JobSchedulerInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, new ScheduledJobInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, rootSafe( new JobsYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, rootSafe( new JobsLoadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new JobsRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new JobComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, rootSafe( new JobSchedulerInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, rootSafe( new ScheduledJobInstaller() ) );
     }
 
     static ModelNode createOperation(ModelNode address) {

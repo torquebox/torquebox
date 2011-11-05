@@ -34,17 +34,18 @@ import org.junit.Test;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.messaging.MessageProcessorMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
-    
 
     @Before
     public void setUpDeployer() throws Throwable {
+        clearDeployers();
         appendDeployer( new TorqueBoxYamlParsingProcessor() );
-        appendDeployer( new MessagingYamlParsingProcessor()  );
+        appendDeployer( new MessagingYamlParsingProcessor() );
     }
 
     @Test
@@ -52,13 +53,14 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         MockDeploymentPhaseContext context = setupResourceAsTorqueboxYml( "messaging-with-default-encoding.yml" );
         MockDeploymentUnit unit = context.getMockDeploymentUnit();
         RubyAppMetaData appMetaData = new RubyAppMetaData( "app-name" );
+        appMetaData.setRoot( "/home/mrplow" );
         Map<String, String> env = new HashMap<String, String>();
         appMetaData.setEnvironmentVariables( env );
         appMetaData.attachTo( unit );
         deploy( context );
-        
+
         assertEquals( "biscuit", env.get( "DEFAULT_MESSAGE_ENCODING" ) );
-        
+
         List<MessageProcessorMetaData> procMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
         assertEquals( 1, procMetaData.size() );
         MessageProcessorMetaData metaData = procMetaData.iterator().next();
@@ -66,7 +68,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         assertEquals( "MyClass", metaData.getRubyClassName() );
         assertEquals( "/topics/foo", metaData.getDestinationName() );
     }
-    
+
     @Test
     public void testEmptyMessagingConfig() throws Exception {
         List<MessageProcessorMetaData> allMetaData = getMetaData( "empty.yml" );
@@ -77,6 +79,14 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
     public void testJunkMessagingConfig() throws Exception {
         List<MessageProcessorMetaData> allMetaData = getMetaData( "junk-messaging.yml" );
         assertTrue( allMetaData.isEmpty() );
+    }
+
+    @Test(expected=DeploymentException.class)
+    public void testRootlessMessagingConfig() throws Exception {
+        clearDeployers();
+        appendDeployer( new AppKnobYamlParsingProcessor() );
+        appendDeployer( new MessagingYamlParsingProcessor() );
+        deployResourceAs( "rootless-messaging-knob.yml", "rootless-messaging-knob.yml" );
     }
 
     @Test
@@ -150,9 +160,9 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         assertEquals( new Integer( 1 ), metadata.getConcurrency() );
     }
 
-    private List< MessageProcessorMetaData> getMetaData(String filename) throws Exception {
+    private List<MessageProcessorMetaData> getMetaData(String filename) throws Exception {
         MockDeploymentUnit unit = deployResourceAsTorqueboxYml( filename );
-                        
+
         return unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
     }
 
