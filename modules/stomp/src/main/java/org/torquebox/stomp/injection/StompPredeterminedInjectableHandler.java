@@ -23,7 +23,7 @@ import org.torquebox.core.injection.analysis.PredeterminedInjectableHandler;
 
 /** Handles MSC service injections.
  * 
- * Priority: 4,000
+ * Priority: 6000
  * 
  * @author Bob McWhirter
  */

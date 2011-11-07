@@ -19,10 +19,7 @@
 
 package org.torquebox.core.processors;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -34,8 +31,9 @@ import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
+import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.core.component.processors.DeploymentUtils;
+import org.torquebox.core.util.YAMLUtils;
 
 /**
  * Abstract deployer base-class supporting <code>torquebox.yml</code> sectional
@@ -56,67 +54,30 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
     /** Optional file-name for NAME.yml parsing separate from torquebox.yml. */
     private String fileName;
 
-    /** Does this deployer support a standalone *.yml descriptor? */
+    /** Does this deploy unit support a standalone *.yml descriptor? */
     private boolean supportsStandalone = true;
 
     private boolean standaloneDeprecated = true;
-    
+
     /** Does this deploy support a *-<name>.yml format? */
     private boolean supportsSuffix = false;
+
+    /** Is the app root required for this deploy unit? **/
+    private boolean supportsRootless = false;
+
+    private static final Logger log = Logger.getLogger( "org.torquebox.core" );
+
+    public static void logDeprecation(DeploymentUnit unit, String message) {
+        DeprecationLogger.getLogger( unit ).append( message );
+    }
 
     public AbstractSplitYamlParsingProcessor() {
     }
 
-    public String getSectionName() {
-        return this.sectionName;
-    }
-
-    public void setSupportsStandalone(boolean supports) {
-        this.supportsStandalone = supports;
-    }
-
-    public boolean isSupportsStandalone() {
-        return this.supportsStandalone;
-    }
-
-    public void setStandaloneDeprecated(boolean deprecated) {
-        this.standaloneDeprecated = deprecated;
-    }
-
-    public boolean isStandaloneDeprecated() {
-        return this.standaloneDeprecated;
-    }
-    
-    public void setSupportsSuffix(boolean supports) {
-        this.supportsSuffix = supports;
-    }
-
-    public boolean isSupportsSuffix() {
-        return this.supportsSuffix;
-    }
-
-    public void setSectionName(String sectionName) {
-        this.sectionName = sectionName;
-    }
-
-    public String getFileName() {
-        if (this.fileName != null) {
-            return this.fileName;
-        }
-
-        return getSectionName() + ".yml";
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    @SuppressWarnings("unchecked")
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
-        VirtualFile root = resourceRoot.getRoot();
         TorqueBoxMetaData globalMetaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
 
         Object data = null;
@@ -125,6 +86,7 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
             data = globalMetaData.getSection( getSectionName() );
         }
 
+        VirtualFile root = resourceRoot.getRoot();
         if (data == null && isSupportsStandalone()) {
             VirtualFile metaDataFile = getMetaDataFile( root, getFileName() );
 
@@ -142,25 +104,22 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
                 if (!metaDataFile.equals( root ) && this.standaloneDeprecated) {
                     logDeprecation( unit, "Usage of " + getFileName() + " is deprecated.  Please use torquebox.yml." );
                 }
-                InputStream in = null;
                 try {
-                    in = metaDataFile.openStream();
-                    Yaml yaml = new Yaml();
-                    data = (Map<String, ?>) yaml.load( in );
-                } catch (YAMLException e) {
-                    log.warn( "Error parsing: " + metaDataFile + ": " + e.getMessage() );
-                    data = null;
-                } catch (IOException e) {
-                    throw new DeploymentUnitProcessingException( e );
-                } finally {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (IOException e) {
-                            throw new DeploymentUnitProcessingException( e );
-                        }
-                    }
+                    data = YAMLUtils.parseYaml( metaDataFile );
+                } catch (Exception e) {
+                    throw new DeploymentUnitProcessingException( "Error processing yaml: ", e );
                 }
+            }
+        } else {
+
+            // If data has been specified for this section, and the deployment
+            // is rootless,
+            // but rootlessness is not supported, then error out.
+            RubyAppMetaData rubyMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
+            if (data != null && !isSupportsRootless() && rubyMetaData != null && DeploymentUtils.isUnitRootless( unit )) {
+                throw new DeploymentUnitProcessingException( String.format(
+                        "Error processing deployment %s: The section %s requires an app root to be specified, but none has been provided.",
+                        unit.getName(), getSectionName() ) );
             }
         }
 
@@ -178,12 +137,58 @@ public abstract class AbstractSplitYamlParsingProcessor extends AbstractParsingP
         }
     }
 
-    public static void logDeprecation(DeploymentUnit unit, String message) {
-        DeprecationLogger.getLogger( unit ).append( message );
+    public String getFileName() {
+        if (this.fileName != null) {
+            return this.fileName;
+        }
+
+        return getSectionName() + ".yml";
+    }
+
+    public String getSectionName() {
+        return this.sectionName;
+    }
+
+    public boolean isSupportsRootless() {
+        return supportsRootless;
+    }
+
+    public boolean isStandaloneDeprecated() {
+        return this.standaloneDeprecated;
+    }
+
+    public boolean isSupportsStandalone() {
+        return this.supportsStandalone;
+    }
+
+    public boolean isSupportsSuffix() {
+        return this.supportsSuffix;
     }
 
     protected abstract void parse(DeploymentUnit unit, Object data) throws Exception;
 
-    private static final Logger log = Logger.getLogger( "org.torquebox.core" );
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setSupportsRootless(boolean supportsRootless) {
+        this.supportsRootless = supportsRootless;
+    }
+
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
+    }
+
+    public void setStandaloneDeprecated(boolean deprecated) {
+        this.standaloneDeprecated = deprecated;
+    }
+
+    public void setSupportsStandalone(boolean supports) {
+        this.supportsStandalone = supports;
+    }
+
+    public void setSupportsSuffix(boolean supports) {
+        this.supportsSuffix = supports;
+    }
 
 }

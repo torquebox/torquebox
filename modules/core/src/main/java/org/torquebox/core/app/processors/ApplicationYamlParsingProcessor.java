@@ -62,7 +62,7 @@ public class ApplicationYamlParsingProcessor extends AbstractSplitYamlParsingPro
                 appMetaData.setRoot( root.trim() );
             }
         }
-        
+
         if (appMetaData.getEnvironmentName() == null) {
             String env = TorqueBoxMetaData.findApplicationEnvironment( app );
 

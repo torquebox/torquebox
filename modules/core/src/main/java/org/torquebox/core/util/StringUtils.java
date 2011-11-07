@@ -29,7 +29,7 @@ import org.projectodd.polyglot.core.util.StringUtil;
  * @author Bob McWhirter
  */
 public class StringUtils extends StringUtil {
-
+    
     public static String pathToClassName(String path) {
         return pathToClassName( path, ".rb" );
     }

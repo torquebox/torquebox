@@ -22,6 +22,7 @@ package org.torquebox.messaging.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.OP_ADDR;
+import static org.torquebox.core.processors.RootedDeploymentProcessor.rootSafe;
 
 import java.util.List;
 
@@ -71,7 +72,6 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
             ServiceVerificationHandler verificationHandler,
             List<ServiceController<?>> newControllers) throws OperationFailedException {
-
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
@@ -84,24 +84,24 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
 
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, new BackgroundablePresetsProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, rootSafe( new BackgroundablePresetsProcessor() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 35, new MessagingYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, new TasksYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 41, new TasksScanningProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 35, rootSafe( new MessagingYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, rootSafe( new TasksYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 41, rootSafe( new TasksScanningProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, new MessagingDependenciesProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, rootSafe( new MessagingDependenciesProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, new MessagingLoadPathProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, rootSafe( new MessagingLoadPathProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 11, new ApplicationNamingContextBindingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 11, rootSafe( new ApplicationNamingContextBindingProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, new TasksInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 320, new MessagingRuntimePoolProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, rootSafe( new TasksInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 320, rootSafe( new MessagingRuntimePoolProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 120, new MessageProcessorComponentResolverInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 220, new MessageProcessorInstaller() );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 120, rootSafe( new MessageProcessorComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( Phase.INSTALL, 220, rootSafe( new MessageProcessorInstaller() ) );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 221, new QueueInstaller() );
         processorTarget.addDeploymentProcessor( Phase.INSTALL, 222, new TopicInstaller() );
     }

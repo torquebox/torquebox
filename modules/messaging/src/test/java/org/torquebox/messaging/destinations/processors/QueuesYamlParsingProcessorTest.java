@@ -26,11 +26,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.projectodd.polyglot.messaging.destinations.QueueMetaData;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
+import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
@@ -38,6 +40,7 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
     @Before
     public void setUpDeployer() throws Throwable {
+        clearDeployers();
         appendDeployer( new TorqueBoxYamlParsingProcessor() );
         appendDeployer( new QueuesYamlParsingProcessor() );
     }
@@ -45,15 +48,15 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
     @Test
     public void testEmptyYaml() throws Exception {
         MockDeploymentUnit unit = deployResourceAs( "empty.yml", "queues.yml" );
-        
+
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
         assertTrue( allMetaData.isEmpty() );
     }
 
-    @Test
+    @Test(expected = DeploymentUnitProcessingException.class)
     public void testJunkYaml() throws Exception {
         MockDeploymentUnit unit = deployResourceAs( "junk-queues.yml", "queues.yml" );
-        
+
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
         assertTrue( allMetaData.isEmpty() );
     }
@@ -61,7 +64,7 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
     @Test
     public void testValidYaml() throws Exception {
         MockDeploymentUnit unit = deployResourceAs( "valid-queues.yml", "queues.yml" );
-        
+
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
 
         assertEquals( 2, allMetaData.size() );
@@ -74,9 +77,35 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
     }
 
     @Test
+    public void testRootless() throws Exception {
+
+        clearDeployers();
+        appendDeployer( new AppKnobYamlParsingProcessor() );
+        appendDeployer( new QueuesYamlParsingProcessor() );
+
+        MockDeploymentUnit unit = deployResourceAs( "rootless-queues-knob.yml", "rootless-queues-knob.yml" );
+        List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
+
+        assertEquals( 3, allMetaData.size() );
+
+        QueueMetaData queueItchy = getMetaData( allMetaData, "/queues/itchy" );
+        assertNotNull( queueItchy );
+        assertTrue( queueItchy.isDurable() );
+
+        QueueMetaData queueScratchy = getMetaData( allMetaData, "/queues/scratchy" );
+        assertNotNull( queueScratchy );
+        assertFalse( queueScratchy.isDurable() );
+        
+        QueueMetaData queuePoochie = getMetaData( allMetaData, "/queues/poochie" );
+        assertNotNull( queuePoochie );
+        assertTrue( queuePoochie.isDurable() );
+        
+    }
+
+    @Test
     public void testTorqueBoxYml() throws Exception {
         MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-torquebox.yml" );
-        
+
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
 
         assertEquals( 3, allMetaData.size() );
@@ -86,43 +115,49 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
 
         QueueMetaData queueBar = getMetaData( allMetaData, "/queues/tbyaml/bar" );
         assertNotNull( queueBar );
-        
+
         QueueMetaData queueFooBar = getMetaData( allMetaData, "/queues/tbyaml/foobar" );
         assertNotNull( queueFooBar );
     }
 
-    @Ignore @Test
+    @Ignore
+    @Test
     public void testTorqueBoxYmlWins() throws Exception {
         // TODO fix multi-asset deployer tests.
-        
-//        JavaArchive jar = createJar( "mystuff.jar" );
-//        jar.addResource( getClass().getResource( "/valid-queues.yml" ), "/META-INF/queues.yml" );
-//        jar.addResource( getClass().getResource( "/valid-torquebox.yml" ), "/META-INF/torquebox.yml" );
-//        String deploymentName = addDeployment( createJarFile( jar ) );
-//
-//        processDeployments( true );
-//
-//        DeploymentUnit unit = getDeploymentUnit( deploymentName );
-//        Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData( QueueMetaData.class );
-//
-//        assertFalse( allMetaData.isEmpty() );
-//
-//        assertEquals( 3, allMetaData.size() );
-//
-//        QueueMetaData queueFoo = getMetaData( allMetaData, "/queues/tbyaml/foo" );
-//        assertNotNull( queueFoo );
-//
-//        QueueMetaData queueBar = getMetaData( allMetaData, "/queues/tbyaml/bar" );
-//        assertNotNull( queueBar );
-//
-//        undeploy( deploymentName );
+
+        // JavaArchive jar = createJar( "mystuff.jar" );
+        // jar.addResource( getClass().getResource( "/valid-queues.yml" ),
+        // "/META-INF/queues.yml" );
+        // jar.addResource( getClass().getResource( "/valid-torquebox.yml" ),
+        // "/META-INF/torquebox.yml" );
+        // String deploymentName = addDeployment( createJarFile( jar ) );
+        //
+        // processDeployments( true );
+        //
+        // DeploymentUnit unit = getDeploymentUnit( deploymentName );
+        // Set<? extends QueueMetaData> allMetaData = unit.getAllMetaData(
+        // QueueMetaData.class );
+        //
+        // assertFalse( allMetaData.isEmpty() );
+        //
+        // assertEquals( 3, allMetaData.size() );
+        //
+        // QueueMetaData queueFoo = getMetaData( allMetaData,
+        // "/queues/tbyaml/foo" );
+        // assertNotNull( queueFoo );
+        //
+        // QueueMetaData queueBar = getMetaData( allMetaData,
+        // "/queues/tbyaml/bar" );
+        // assertNotNull( queueBar );
+        //
+        // undeploy( deploymentName );
     }
 
     @Test
     public void testDestinationDurability() throws Exception {
-        
+
         MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-torquebox.yml" );
-        
+
         List<QueueMetaData> allMetaData = unit.getAttachmentList( QueueMetaData.ATTACHMENTS_KEY );
 
         assertEquals( 3, allMetaData.size() );
@@ -137,12 +172,13 @@ public class QueuesYamlParsingProcessorTest extends AbstractDeploymentProcessorT
         QueueMetaData queueBar = getMetaData( allMetaData, "/queues/tbyaml/bar" );
         assertNotNull( queueBar );
         assertFalse( queueBar.isDurable() );
-        
-        // /queues/tbyaml/bar has durability set to false, we should reflect that
+
+        // /queues/tbyaml/bar has durability set to false, we should reflect
+        // that
         QueueMetaData queueFooBar = getMetaData( allMetaData, "/queues/tbyaml/foobar" );
         assertNotNull( queueFooBar );
         assertTrue( queueFooBar.isDurable() );
-        
+
     }
 
     private QueueMetaData getMetaData(List<QueueMetaData> allMetaData, String name) {
