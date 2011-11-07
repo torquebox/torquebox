@@ -413,7 +413,7 @@
     <version.jdbc.mysql>5.0.4</version.jdbc.mysql>
     <version.jdbc.postgresql>8.4.701</version.jdbc.postgresql>
 
-    <version.rake>0.8.7</version.rake>
+    <version.rake>[0.8.7,1.0.0]</version.rake>
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.7.0</version.rspec>
 
