@@ -38,7 +38,7 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
 
-        if (!isRubyApplication( root, unit )) {
+        if (!isRubyApplication( root )) {
             return;
         }
         RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
@@ -52,7 +52,7 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
         unit.putAttachment( DeploymentNotifier.DEPLOYMENT_TIME_ATTACHMENT_KEY, System.currentTimeMillis() );
     }
 
-    static boolean isRubyApplication(VirtualFile file, DeploymentUnit unit) {
+    static boolean isRubyApplication(VirtualFile file) {
         boolean result = hasAnyOf( file, 
                     "torquebox.rb", "config/torquebox.rb",
                     "torquebox.yml", "config/torquebox.yml", 
