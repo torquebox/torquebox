@@ -28,19 +28,22 @@ import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
-import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.server.deployment.module.MountHandle;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.as.server.deployment.module.TempFileProviderService;
+import org.jboss.logging.Logger;
 import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
+import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
+import org.torquebox.core.component.processors.DeploymentUtils;
+import org.torquebox.core.util.YAMLUtils;
+import org.yaml.snakeyaml.error.YAMLException;
 
-public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
+public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
 
     @Override
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
@@ -54,27 +57,35 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
             if (appKnobYml == null) {
                 return;
             }
-            metaData = TorqueBoxYamlParsingProcessor.parse( appKnobYml );
+            metaData = new TorqueBoxMetaData( YAMLUtils.parseYaml( appKnobYml ) );
             root = metaData.getApplicationRootFile();
-            
-            if (root == null) {
-                throw new DeploymentUnitProcessingException( "No application root specified" );
+
+            if (root != null) {
+                if (!root.exists()) {
+                    throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
+                }
+
+                if (root.exists() && !root.isDirectory()) {
+                    // Expand the referenced root if it's not a directory (ie
+                    // .knob archive)
+                    final Closeable closable = VFS.mountZipExpanded( root, root, TempFileProviderService.provider() );
+                    final MountHandle mountHandle = new MountHandle( closable );
+                    appRoot = new ResourceRoot( root, mountHandle );
+
+                } else {
+                    appRoot = new ResourceRoot( root, null );
+                }
+                unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
             }
-            
-            if ( ! root.exists() ) {
-                throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
+            else {
+                log.infof( "Rootless deployment detected: %s", unit.getName() );
+                DeploymentUtils.markUnitAsRootless( unit );
             }
-            
-            if (root.exists() && !root.isDirectory()) {
-                // Expand the referenced root if it's not a directory (ie .knob archive)
-                final Closeable closable = VFS.mountZipExpanded( root, root, TempFileProviderService.provider() );
-                final MountHandle mountHandle = new MountHandle( closable );
-                appRoot = new ResourceRoot( root, mountHandle );
-            } else {
-                appRoot = new ResourceRoot( root, null );
-            }
+
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
+        } catch (YAMLException e) {
+            throw new DeploymentUnitProcessingException( "Error processing YAML: ", e );
         }
 
         unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
@@ -83,19 +94,19 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
         rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( metaData.getApplicationEnvironment() );
         rubyAppMetaData.attachTo( unit );
-                
-        unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
+
     }
 
     @Override
-    public void undeploy(DeploymentUnit context) {}
+    public void undeploy(DeploymentUnit context) {
+    }
 
     protected VirtualFile getFile(DeploymentUnit unit) throws DeploymentUnitProcessingException, IOException {
         List<VirtualFile> matches = new ArrayList<VirtualFile>();
 
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
-        
+
         if (this.knobFilter.accepts( root )) {
             return root;
         }
@@ -122,15 +133,15 @@ public class AppKnobYamlParsingProcessor implements DeploymentUnitProcessor {
     protected void logDeprecation(DeploymentUnit unit, String message) {
         DeprecationLogger.getLogger( unit ).append( message );
     }
-    
+
     private VirtualFileFilter knobFilter = (new VirtualFileFilter() {
-            public boolean accepts(VirtualFile file) {
-                return file.getName().endsWith( "-knob.yml" ) ||
+        public boolean accepts(VirtualFile file) {
+            return file.getName().endsWith( "-knob.yml" ) ||
                     file.getName().endsWith( "-rails.yml" ) ||
                     file.getName().endsWith( "-rack.yml" );
-            }
-        });
+        }
+    });
+
+    private static final Logger log = Logger.getLogger( "org.torquebox.core" );
 
 }
-
-

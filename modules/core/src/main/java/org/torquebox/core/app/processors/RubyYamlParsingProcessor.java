@@ -32,9 +32,9 @@ import org.torquebox.core.runtime.RubyRuntimeMetaData;
  *    In: RubyRuntimeMetaData
  *   Out: RubyRuntimeMetaData
  * </pre>
- *
+ * 
  * Parsing deployer for {@code ruby.yml} to specify ruby 1.8 -vs- 1.9, at least.
- *
+ * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
 public class RubyYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
@@ -46,8 +46,8 @@ public class RubyYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
 
     @SuppressWarnings("unchecked")
     public void parse(DeploymentUnit unit, Object dataObj) throws Exception {
-        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
 
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
         if (runtimeMetaData == null) {
             log.debug( "Initializing ruby runtime metadata: " + unit );
             runtimeMetaData = new RubyRuntimeMetaData();
@@ -63,9 +63,9 @@ public class RubyYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             runtimeMetaData.setVersion( RubyRuntimeMetaData.Version.V1_9 );
         }
 
-
         Object compileMode = config.get( "compile_mode" );
-        if ("false".equals( "" + compileMode )) { // 'off' becomes 'false' via the yml parser
+        if ("false".equals( "" + compileMode )) { // 'off' becomes 'false' via
+                                                  // the yml parser
             runtimeMetaData.setCompileMode( RubyRuntimeMetaData.CompileMode.OFF );
         } else if ("jit".equals( "" + compileMode )) {
             runtimeMetaData.setCompileMode( RubyRuntimeMetaData.CompileMode.JIT );

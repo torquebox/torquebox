@@ -37,20 +37,20 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         RubyAppMetaData rubyAppMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-        
-        if ( rubyAppMetaData == null ) {
+
+        if (rubyAppMetaData == null) {
             return;
         }
-        
-        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment(  RubyRuntimeMetaData.ATTACHMENT_KEY );
-        
-        if ( runtimeMetaData != null && runtimeMetaData.getRuntimeType() != null ) {
+
+        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        if (runtimeMetaData != null && runtimeMetaData.getRuntimeType() != null) {
             return;
         }
 
         if (runtimeMetaData == null) {
             runtimeMetaData = new RubyRuntimeMetaData();
-            unit.putAttachment(  RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+            unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
         }
 
         runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );

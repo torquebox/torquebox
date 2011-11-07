@@ -29,12 +29,18 @@ public class AppKnobYamlParsingProcessorTest extends AbstractDeploymentProcessor
 
     @Before
     public void setUp() throws Throwable {
+        clearDeployers();
         appendDeployer( new AppKnobYamlParsingProcessor() );
     }
 
     @Test(expected=DeploymentUnitProcessingException.class)
     public void testInvalidRootKnob() throws Exception {
         deployResourceAs( "invalid-root-knob.yml", "invalid-root-knob.yml" );
+    }
+    
+    @Test
+    public void testRootlessKnob() throws Exception {
+        deployResourceAs( "rootless-knob.yml", "rootless-knob.yml" );
     }
 
 }

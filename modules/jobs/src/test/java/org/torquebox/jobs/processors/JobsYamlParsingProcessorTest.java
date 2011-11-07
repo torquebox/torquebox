@@ -23,12 +23,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
+import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
@@ -37,6 +40,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
     @Before
     public void setUp() {
+        clearDeployers();
         appendDeployer( new TorqueBoxYamlParsingProcessor() );
         appendDeployer( new JobsYamlParsingProcessor() );
     }
@@ -90,6 +94,21 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
         assertEquals( jobOne.getGroup(), jobThree.getGroup() );
+    }
+    
+    @Test
+    public void testRootless() throws Exception {
+        try {
+            clearDeployers();
+            appendDeployer( new AppKnobYamlParsingProcessor() );
+            appendDeployer( new JobsYamlParsingProcessor() );
+            deployResourceAs( "rootless-jobs-knob.yml", "rootless-jobs-knob.yml" );
+            fail( "Rootless jobs knob deployment should have failed." );
+        } catch (DeploymentUnitProcessingException e) {
+            assertEquals( "Error processing deployment rootless-jobs-knob.yml: The section jobs " +
+                    "requires an app root to be specified, but none has been provided.",
+                    e.getMessage() );
+        }
     }
 
     /**

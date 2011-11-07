@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
 
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
@@ -35,9 +36,10 @@ import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
 public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTestCase {
-    
+
     @Before
     public void setUpDeployer() throws Throwable {
+        clearDeployers();
         appendDeployer( new TorqueBoxYamlParsingProcessor() );
         appendDeployer( new RubyYamlParsingProcessor() );
     }
@@ -52,13 +54,27 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
     }
 
     @Test
+    public void testRootless() throws Exception {
+        clearDeployers();
+        appendDeployer( new AppKnobYamlParsingProcessor() );
+        appendDeployer( new RubyYamlParsingProcessor() );
+        try {
+            deployResourceAs( "rootless-ruby-knob.yml", "rootless-ruby-knob.yml" );
+        } catch (DeploymentUnitProcessingException e) {
+            assertEquals( "Error processing deployment rootless-ruby-knob.yml: The section ruby " +
+                    "requires an app root to be specified, but none has been provided.",
+                    e.getMessage() );
+        }
+    }
+
+    @Test
     public void testWithRuntimeMetaData18() throws Exception {
         MockDeploymentPhaseContext phaseContext = setupResourceAsTorqueboxYml( "ruby-1.8.yml" );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
+
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
-        
+
         deploy( phaseContext );
 
         RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
@@ -71,10 +87,10 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
     public void testWithRuntimeMetaData19() throws Exception {
         MockDeploymentPhaseContext phaseContext = setupResourceAsTorqueboxYml( "ruby-1.9.yml" );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
+
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
-        
+
         deploy( phaseContext );
 
         RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
@@ -83,16 +99,15 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( RubyRuntimeMetaData.Version.V1_9, runtimeMetaData.getVersion() );
     }
 
-
     @Test
     public void testWithRuntimeMetaDataCompileModeForce() throws Exception {
         URL rubyYml = getClass().getResource( "ruby-compile-mode-force.yml" );
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
+
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
-        
+
         deploy( phaseContext );
 
         RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
@@ -106,10 +121,10 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         URL rubyYml = getClass().getResource( "ruby-compile-mode-jit.yml" );
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
+
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
-        
+
         deploy( phaseContext );
 
         RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
@@ -123,10 +138,10 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         URL rubyYml = getClass().getResource( "ruby-compile-mode-off.yml" );
         MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
+
         RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
         unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
-        
+
         deploy( phaseContext );
 
         RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );

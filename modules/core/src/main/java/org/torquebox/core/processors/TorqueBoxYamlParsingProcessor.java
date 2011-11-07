@@ -19,9 +19,6 @@
 
 package org.torquebox.core.processors;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.Attachments;
@@ -33,10 +30,10 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.torquebox.core.TorqueBoxMetaData;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
+import org.torquebox.core.util.YAMLUtils;
 
 public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
+
     public static final String TORQUEBOX_YAML_FILE = "torquebox.yml";
 
     @Override
@@ -46,43 +43,24 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
         VirtualFile root = resourceRoot.getRoot();
 
         VirtualFile file = getMetaDataFile( root, TORQUEBOX_YAML_FILE );
-        
-        if ( file != null ) {
-            try {
-                TorqueBoxMetaData metaData = parse( file );
-                TorqueBoxMetaData externalMetaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
-                if ( externalMetaData != null ) {
-                    metaData = externalMetaData.overlayOnto( metaData );
-                }
-                unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
-            } catch (YAMLException e) {
-                throw new DeploymentUnitProcessingException( e );
-            } catch (IOException e) {
-                throw new DeploymentUnitProcessingException( e );
-            }
-        }
-        
-    }
-    
-    @SuppressWarnings("unchecked")
-    public static TorqueBoxMetaData parse(VirtualFile file) throws IOException {
 
-        Yaml yaml = new Yaml();
-        InputStream in = null;
-        try {
-            in = file.openStream();
-            Map<String, Object> data = (Map<String, Object>) yaml.load( in );
-            if (data == null) {
-                data = new HashMap<String, Object>();
+        if (file != null) {
+            Map<String, Object> data = null;
+            try {
+                data = YAMLUtils.parseYaml( file );
+            } catch (Exception e) {
+                throw new DeploymentUnitProcessingException("Error processing yaml: ", e);
+            } 
+            TorqueBoxMetaData metaData = new TorqueBoxMetaData( data );
+            TorqueBoxMetaData externalMetaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
+            if (externalMetaData != null) {
+                metaData = externalMetaData.overlayOnto( metaData );
             }
-            return new TorqueBoxMetaData( data );
-        } finally {
-            if (in != null) {
-                in.close();
-            }
+            unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
         }
+
     }
-    
+
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core" );
 
