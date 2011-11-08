@@ -11,21 +11,23 @@
   extended. Feel free to skip this section if you're just getting started with
   TorqueBox, and use it as a reference later.</para>
 
+  <para>For more detailed documentation, please read the <ulink
+  url="https://docs.jboss.org/author/display/AS7/Documentation">official
+  AS7 docs</ulink>.</para>
+
   <section id="configuring-jboss">
     <title>Configuring</title>
 
-    <para>JBoss folder structure now has expressive changes since previous
-    releases, the most visible comes to folder structure and runtime modes:
+    <para>JBoss AS7 has extensive changes since the previous releases,
+    the most visible being folder structure and runtime modes:
     <emphasis role="bold">domain</emphasis> and <emphasis
-    role="bold">standalone.</emphasis> In this release of Torquebox, just
-    standalone mode is supported, domain mode support will come to the next
-    releases.</para>
+    role="bold">standalone.</emphasis></para>
 
-    <para>Now in JBoss, all server configuration is concentrated in two
-    runtime modes: <emphasis>standalone</emphasis> and
-    <emphasis>domain</emphasis>. Administrative tasks come to be easier to
-    maintain, eliminating complexity of multiple configuration folders and
-    descriptors.</para>
+    <para>In AS7, all server configuration is kept in two folders for
+    each runtime mode: <filename>standalone</filename> and
+    <filename>domain</filename>. Administrative tasks are simplified
+    from previous releases because all configuration is in one folder
+    and, in standalone mode, in a single file.</para>
 
     <para><mediaobject>
         <imageobject>
@@ -34,21 +36,21 @@
         </imageobject>
       </mediaobject></para>
 
-    <para>TorqueBox uses default mode from standalone runtime. A stock JBoss
-    distribution will come with others, as you see above, custom profiles will
-    come up in the next releases.</para>
+    <para>TorqueBox uses standalone mode by default but can be run in
+    domain mode as well.</para>
 
-    <para>JBoss AS 7 comes with a modular architecture, libraries common to
-    all server configurations are kept under the <filename>modules/</filename>
-    directory and configuration files are stored inside
-    <literal>standalone/configuration</literal>/ folder through <emphasis
-    role="bold">standalone.xml</emphasis>.</para>
+    <para>JBoss AS 7 comes with a modular architecture - libraries
+    common to all server configurations are kept under the
+    <filename>modules/</filename> directory. Configuration files are
+    stored inside <filename>standalone/configuration/</filename> and
+    <filename>domain/configuration</filename> folders.</para>
 
-    <para>The standalone mode has a common structure, and usually include the
-    following directories: <literal>configuration/</literal>,
-    <literal>deployments/</literal> and <literal>lib/</literal>. In general,
-    it isn't a good idea to remove anything from these directories that you
-    didn't put there yourself.</para>
+    <para>Both standalone and domain modes have a common folder
+    structure, including the following directories:
+    <filename>configuration/</filename>, <filename>deployments/</filename>
+    and <filename>lib/</filename>. In general, it isn't a good idea to
+    remove anything from these directories that you didn't put there
+    yourself.</para>
 
     <para><mediaobject>
         <imageobject>
@@ -57,7 +59,7 @@
         </imageobject>
       </mediaobject></para>
 
-    <para>In addition, some directories are created automatically at runtime,
+    <para>Some additional directories are created automatically at runtime,
     as needed: <filename>tmp/</filename>, <filename>data/</filename>, and
     <filename>log/</filename>. Though not typically necessary, you may safely
     delete these when the server is not running to clear its persistent
@@ -126,13 +128,14 @@
         </imageobject>
       </mediaobject></para>
 
-    <para>With introduction of <emphasis role="bold">knob</emphasis> file
-    concept TorqueBox became more technology-agnostic, it's possible now to
-    deploy any combination of components: web, messaging, jobs and services.
-    Application files doesn't have as requirement anymore to stay in a
-    specific directory, JBoss scanner will do all the job looking at knob
-    files reference inside <literal>/standalone/deployments</literal>
-    folder.</para>
+    <para>With the introduction of <emphasis
+    role="bold">knob</emphasis> files TorqueBox became more
+    technology-agnostic. It's possible now to deploy any combination
+    of web, messaging, job, or service components.  Application source
+    files don't have to reside in a specific directory - the JBoss
+    deployment scanner will look at the knob files inside
+    <filename>/standalone/deployments</filename> folder which point to
+    the application's root directory.</para>
 
     <para>TorqueBox provides Rake tasks to create and copy a deployment
     descriptor for your Ruby application to
