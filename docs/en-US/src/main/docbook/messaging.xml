@@ -154,31 +154,27 @@
       <section id="long-lived-destinations">
         <title><filename>Long-lived queues and topics</filename></title>
 
-        <note><para>Long-lived queues and topics can't be created in
-        TorqueBox 2.x yet. See <ulink
-        url="https://issues.jboss.org/browse/TORQUE-574">https://issues.jboss.org/browse/TORQUE-574</ulink></para></note>
-
-<!--
         <para>If your queues and topics have a lifecycle that extends beyond
         the deployment of any single app, you may want long-lived queues and
         topics. Long-lived destinations are first-order components, and may be
         deployed on their own. In this way, many applications can come and go
         over time, publishing and consuming from the same queues.</para>
 
-        <para>When using long-lived destinations, the corresponding deployment
-        descriptors are placed directly into the <filename>apps/</filename>
-        directory of TorqueBox AS.</para>
+        <para>When using long-lived destinations,
+        <filename><replaceable>*</replaceable>-knob.yml</filename>
+        deployment descriptors are placed directly into the
+        <filename>deployments/</filename> directory of TorqueBox
+        AS.</para>
 
         <formalpara>
           <title>Queues</title>
 
-          <para>To deploy queues, a simple YAML file is required, simply
-          naming the queue, and providing additional configuration parameters.
-          The file should either be named exactly
-          <filename>queues.yml</filename> or have the suffix of
-          <filename>-queues.yml</filename>, such as
-          <filename><replaceable>these</replaceable>-queues.yml</filename> or
-          <filename><replaceable>those</replaceable>-queues.yml</filename>.
+          <para>To deploy queues, a simple YAML file is required to 
+          name the queues and provide additional configuration parameters.
+          The file should have the suffix of
+          <filename>-knob.yml</filename>, such as
+          <filename><replaceable>these-queues</replaceable>-knob.yml</filename> or
+          <filename><replaceable>those-queues</replaceable>-knob.yml</filename>.
           The only configuration option available on queues is the
           <parameter>durable</parameter> option.</para>
         </formalpara>
@@ -189,14 +185,16 @@
         performance, but increases the risk of losing messages.</para>
 
         <para><example>
-            <title>queues.yml</title>
+            <title>queues-knob.yml</title>
 
-            <para><programlisting>/queues/my_queue:
+            <para><programlisting>queues:
+  /queues/my_queue:
 
-/queues/my_other_queue:
-  durable: false</programlisting>The name of the queue will be used when
-            registering the queue in the naming-service, and is used to
-            discover the queue for attaching consumers and producers.</para>
+  /queues/my_other_queue:
+    durable: false</programlisting>
+            The name of the queue will be used when registering the
+            queue in the naming-service, and is used to discover
+            the queue for attaching consumers and producers.</para>
 
             <para>By convention, queues are named with the prefix of
             <filename>/queues</filename>.</para>
@@ -205,13 +203,12 @@
         <formalpara>
           <title>Topics</title>
 
-          <para>To deploy topics, a simple YAML file is required, simply
-          naming the topic, and providing additional configuration parameters.
-          The file should either be named exactly
-          <filename>topics.yml</filename> or have the suffix of
-          <filename>-topics.yml</filename>, such as
-          <filename><replaceable>these</replaceable>-topics.yml</filename> or
-          <filename><replaceable>those</replaceable>-topics.yml</filename>.
+          <para>To deploy topics, a simple YAML file is required to
+          name the topics and provide additional configuration parameters.
+          The file should have the suffix of
+          <filename>-knob.yml</filename>, such as
+          <filename><replaceable>these-topics</replaceable>-knob.yml</filename> or
+          <filename><replaceable>those-topics</replaceable>-knob.yml</filename>.
           Currently, no additional configuration parameters are
           allowed - topic durability is controlled via options on
           the attached processors (See <xref
@@ -219,20 +216,19 @@
         </formalpara>
 
         <para><example>
-            <title>topics.yml</title>
+            <title>topics-knob.yml</title>
 
-            <para><programlisting>/topics/my_topic:
+            <para><programlisting>topics:
+  /topics/my_topic:
 
-/topics/my_other_topic:
-
-</programlisting>The name of the queue will be used when registering the topic
+  /topics/my_other_topic:</programlisting>
+            The name of the topic will be used when registering the topic
             in the naming-service, and is used to discover the topic for
             attaching consumers and producers.</para>
 
             <para>By convention, topics are named with the prefix of
             <filename>/topics</filename>.</para>
           </example></para>
--->
       </section>
 
       <section id="application-linked-destinations">
