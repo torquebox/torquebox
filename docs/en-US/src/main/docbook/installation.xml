@@ -4,6 +4,15 @@
 <chapter id="installation">
   <title>Installation</title>
 
+  <section id="using-rubygems">
+    <title>Installation using RubyGems</title>
+
+    <para>TorqueBox 2 can be installed entirely as a RubyGem. For
+    details, please see <xref linkend="torquebox-server-gem"/>.
+    TorqueBox can also be installed from a binary distribution
+    as described below.</para>
+  </section>
+
   <section id="using-complete-binary">
     <title>Installation using Complete Binary Distribution</title>
 
@@ -26,129 +35,128 @@
     <para>Note: these instructions assume you are running on a unix-like system.
     If you are using Windows, you will need to adjust the file-system paths and
     environment variables accordingly.</para>
-  </section>
 
-  <section id="ensure-you-have-java6">
-    <title>Ensure you have Java 6</title>
+    <section id="ensure-you-have-java6">
+      <title>Ensure you have Java 6</title>
 
-    <para>TorqueBox requires Java JDK 6.</para>
+      <para>TorqueBox requires Java JDK 6.</para>
 
-    <para>To determine which version, if any, is installed on your system, at
-    a command-line, attempt to run the <command>java</command> command with
-    the <option>-version</option> argument.</para>
+      <para>To determine which version, if any, is installed on your system, at
+      a command-line, attempt to run the <command>java</command> command with
+      the <option>-version</option> argument.</para>
 
-    <screen><prompt>$</prompt> <command>java -version</command>
+      <screen><prompt>$</prompt> <command>java -version</command>
 java version "1.6.0_07"
 Java(TM) SE Runtime Environment (build 1.6.0_07-b06-153)
 Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
 
-    <para>If the version is at least 1.6, your version of Java is
-    sufficient.</para>
+      <para>If the version is at least 1.6, your version of Java is
+      sufficient.</para>
 
-    <para>If you have no Java installed, or a version less than 1.6, you'll
-    need to install a Java Development Kit. For many systems, it is easy to
-    install the open-source OpenJDK.</para>
+      <para>If you have no Java installed, or a version less than 1.6, you'll
+      need to install a Java Development Kit. For many systems, it is easy to
+      install the open-source OpenJDK.</para>
 
-    <para>For installation on Ubuntu, Fedora, OpenSuse, or Debian, please
-    refer to the <ulink url="http://openjdk.java.net/install/">installation
-    instructions provided</ulink> by the OpenJDK project. If you find a
-    <command>java</command> on your system, ensure that it is not actually
-    <command>gcj</command>. The <command>gcj</command> is insufficient for
-    running the TorqueBox server.</para>
+      <para>For installation on Ubuntu, Fedora, OpenSuse, or Debian, please
+      refer to the <ulink url="http://openjdk.java.net/install/">installation
+      instructions provided</ulink> by the OpenJDK project. If you find a
+      <command>java</command> on your system, ensure that it is not actually
+      <command>gcj</command>. The <command>gcj</command> is insufficient for
+      running the TorqueBox server.</para>
 
-    <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
-  </section>
+      <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
+    </section>
 
-  <section id="get-latest-torquebox-binary-package">
-    <title>Get the latest version of TorqueBox binary package</title>
+    <section id="get-latest-torquebox-binary-package">
+      <title>Get the latest version of TorqueBox binary package</title>
 
-    <para>You can obtain the latest version of TorqueBox from the TorqueBox
-    repository. As of this writing, the latest version is
-    ${project.version}.</para>
+      <para>You can obtain the latest version of TorqueBox from the TorqueBox
+      repository. As of this writing, the latest version is
+      ${project.version}.</para>
 
-    <para><ulink
+      <para><ulink
     url="http://repository-torquebox.forge.cloudbees.com/release/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip">http://repository.torquebox.org/maven2/releases/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</ulink></para>
-  </section>
+    </section>
 
-  <section id="unzip-the-package">
-    <title>Unzip it somewhere handy</title>
+    <section id="unzip-the-package">
+      <title>Unzip it somewhere handy</title>
 
-    <para>We'll install TorqueBox under your user's <envar>$HOME</envar> directory.</para>
+      <para>We'll install TorqueBox under your user's <envar>$HOME</envar> directory.</para>
 
-    <para><screen><prompt>$</prompt> <command>unzip -q torquebox-dist-${project.version}-bin.zip</command>
-</screen></para>
+      <para><screen><prompt>$</prompt> <command>unzip -q torquebox-dist-${project.version}-bin.zip</command>
+      </screen></para>
 
-    <para>Before using the TorqueBox server, you must set up your environment.
-    To make it easier to upgrade without having to reconfigure your
-    environment, it is useful to create a symlink to the versioned directory
-    produced when you unpackaged the distribution.</para>
+      <para>Before using the TorqueBox server, you must set up your environment.
+      To make it easier to upgrade without having to reconfigure your
+      environment, it is useful to create a symlink to the versioned directory
+      produced when you unpackaged the distribution.</para>
 
-    <para><screen><prompt>$</prompt> <command>ln -s torquebox-${project.version} torquebox-current</command></screen></para>
+      <para><screen><prompt>$</prompt> <command>ln -s torquebox-${project.version} torquebox-current</command></screen></para>
 
-    <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar> and
-    <envar>$JRUBY_HOME</envar> need to be set, and adjusting your
-    <envar>$PATH</envar> will make working with the package easier. You can
-    either run the following commands each time on the command-line, or add
-    them to your <filename>.bash_profile</filename>.</para>
+      <para>Next, <envar>$TORQUEBOX_HOME</envar>, <envar>$JBOSS_HOME</envar> and
+      <envar>$JRUBY_HOME</envar> need to be set, and adjusting your
+      <envar>$PATH</envar> will make working with the package easier. You can
+      either run the following commands each time on the command-line, or add
+      them to your <filename>.bash_profile</filename>.</para>
 
-    <para>First, the various <envar>$<replaceable>X</replaceable>_HOME</envar>
-    variables are set so that each subsystem can find its supporting
-    files.</para>
+      <para>First, the various <envar>$<replaceable>X</replaceable>_HOME</envar>
+      variables are set so that each subsystem can find its supporting
+      files.</para>
 
-    <para><screen>export TORQUEBOX_HOME=$HOME/torquebox-current
+      <para><screen>export TORQUEBOX_HOME=$HOME/torquebox-current
 export JBOSS_HOME=$TORQUEBOX_HOME/jboss
 export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 
-    <para>Next, we make sure that JRuby's binaries are first in our executable
-    <envar>$PATH</envar>, before any previously-installed Ruby
-    packages.</para>
+      <para>Next, we make sure that JRuby's binaries are first in our executable
+      <envar>$PATH</envar>, before any previously-installed Ruby
+      packages.</para>
 
-    <para><screen>export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing
-    this, commands such as <command>rake</command>, <command>gem</command>,
-    and <command>rails</command> will load from the TorqueBox-provided JRuby
-    installation.</para>
+      <para><screen>export PATH=$JRUBY_HOME/bin:$PATH</screen>By doing
+      this, commands such as <command>rake</command>, <command>gem</command>,
+      and <command>rails</command> will load from the TorqueBox-provided JRuby
+      installation.</para>
 
-    <para>You can also run TorqueBox using your own install of
-    JRuby by installing the TorqueBox gems.
+      <para>You can also run TorqueBox using your own install of
+      JRuby by installing the TorqueBox gems.
 
-      <screen><prompt>$</prompt> <command>jruby -S gem install torquebox torquebox-capistrano-support</command></screen>
+        <screen><prompt>$</prompt> <command>jruby -S gem install torquebox torquebox-capistrano-support</command></screen>
 
-    You will also need to set <envar>$JRUBY_HOME</envar> to point to
-    your JRuby installation.</para>
+      You will also need to set <envar>$JRUBY_HOME</envar> to point to
+      your JRuby installation.</para>
 
-    <para><emphasis>Note:</emphasis> if you are going to run a non-bundled JRuby
-    with a prerelease build of TorqueBox, it is recommended that you either use a
-    separate <ulink url="http://rvm.beginrescueend.com">rvm</ulink> <ulink
-    url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink> for each prerelease
-    build, or be sure to reinstall the TorqueBox gems for the latest prerelease.
-    There is a <ulink url="http://torquebox.org/news/2011/02/25/using-rvm-with-torquebox/">blog post</ulink> 
-    on torquebox.org describing how to 
-    set up your torquebox environment with RVM.</para>
+      <para><emphasis>Note:</emphasis> if you are going to run a non-bundled JRuby
+      with a prerelease build of TorqueBox, it is recommended that you either use a
+      separate <ulink url="http://rvm.beginrescueend.com">rvm</ulink> <ulink
+      url="http://rvm.beginrescueend.com/gemsets/">gemset</ulink> for each prerelease
+      build, or be sure to reinstall the TorqueBox gems for the latest prerelease.
+      There is a <ulink url="http://torquebox.org/news/2011/02/25/using-rvm-with-torquebox/">blog post</ulink> 
+      on torquebox.org describing how to 
+      set up your torquebox environment with RVM.</para>
 
-    <para>For prerelease builds, you will also need to ensure that
-    your <command>gem</command> command can find the prerelease
-    TorqueBox gems by adding http://rubygems.torquebox.org to your
-    <filename>~/.gemrc</filename> file and including the
-    <command>--pre</command> flag to <command>gem install</command>. 
-      <screen>
+      <para>For prerelease builds, you will also need to ensure that
+      your <command>gem</command> command can find the prerelease
+      TorqueBox gems by adding http://torquebox.org/2x/builds/LATEST/gem-repo/
+      to your <filename>~/.gemrc</filename> file and including the
+      <command>--pre</command> flag to <command>gem install</command>. 
+        <screen>
 <prompt>$</prompt> <command>cat ~/.gemrc</command>
 --- 
 :sources: 
 - http://rubygems.org
-- http://rubygems.torquebox.org</screen>
-    </para>
-  </section>
+- http://torquebox.org/2x/builds/LATEST/gem-repo/</screen>
+      </para>
+    </section>
 
-  <section id="running-torquebox">
-    <title>How to run TorqueBox</title>
+    <section id="running-torquebox">
+      <title>How to run TorqueBox</title>
 
-    <para>Running TorqueBox essentially amounts to running JBoss:</para>
+      <para>Running TorqueBox essentially amounts to running JBoss:</para>
     
-    <screen><prompt>$</prompt> <command>$JBOSS_HOME/bin/run.sh</command></screen>
+      <screen><prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh</command></screen>
 
-    <para>Alternatively, the top-level <filename>$TORQUEBOX_HOME/Rakefile</filename> provides a few rake tasks to help with deployment and installation.</para>
+      <para>Alternatively, the top-level <filename>$TORQUEBOX_HOME/Rakefile</filename> provides a few rake tasks to help with deployment and installation.</para>
 
-    <screen><prompt>$</prompt> <command>cd $TORQUEBOX_HOME; jruby -S rake -T</command>
+      <screen><prompt>$</prompt> <command>cd $TORQUEBOX_HOME; jruby -S rake -T</command>
 (in /opt/torquebox)
 rake torquebox:check            # Check your installation of the TorqueBox ...
 rake torquebox:run              # Run TorqueBox server
@@ -157,25 +165,26 @@ rake torquebox:upstart:install  # Install TorqueBox as an upstart service
 rake torquebox:upstart:restart  # Restart TorqueBox when running as an upst...
 rake torquebox:upstart:start    # Start TorqueBox when running as an upstar...
 rake torquebox:upstart:stop     # Stop TorqueBox when running as an upstart...
-    </screen>
+      </screen>
 
-    <itemizedlist>
-      <listitem><command>torquebox:check</command>: Check your TorqueBox installation</listitem>
-      <listitem><command>torquebox:run</command>: Run TorqueBox</listitem>
-      <listitem><command>torquebox:upstart:check</command>: Check if TorqueBox is installed as an upstart service</listitem>
-      <listitem><command>torquebox:upstart:install</command>: Install TorqueBox as an upstart service</listitem>
-      <listitem><command>torquebox:upstart:restart</command>: Restart TorqueBox when it is running as an upstart service</listitem>
-      <listitem><command>torquebox:upstart:start</command>: Start TorqueBox when it is installed as an upstart service</listitem>
-      <listitem><command>torquebox:upstart:stop</command>: Stop TorqueBox when it is installed as an upstart service</listitem>
-    </itemizedlist>
-
-    <para>
-      Note: The <command>upstart:install</command> task makes a couple of assumptions you need to take into account. 
       <itemizedlist>
-        <listitem>You must have a 'torquebox' user on your system.</listitem>
-        <listitem>The rake task attempts to create a symlink from $TORQUEBOX_HOME to /opt/torquebox. Run the task as a user with sufficient permissions so that this does not fail.</listitem>
+        <listitem><command>torquebox:check</command>: Check your TorqueBox installation</listitem>
+        <listitem><command>torquebox:run</command>: Run TorqueBox</listitem>
+        <listitem><command>torquebox:upstart:check</command>: Check if TorqueBox is installed as an upstart service</listitem>
+        <listitem><command>torquebox:upstart:install</command>: Install TorqueBox as an upstart service</listitem>
+        <listitem><command>torquebox:upstart:restart</command>: Restart TorqueBox when it is running as an upstart service</listitem>
+        <listitem><command>torquebox:upstart:start</command>: Start TorqueBox when it is installed as an upstart service</listitem>
+        <listitem><command>torquebox:upstart:stop</command>: Stop TorqueBox when it is installed as an upstart service</listitem>
       </itemizedlist>
-    </para>
 
+      <para>
+        Note: The <command>upstart:install</command> task makes a couple of assumptions you need to take into account. 
+        <itemizedlist>
+          <listitem>You must have a 'torquebox' user on your system.</listitem>
+          <listitem>The rake task attempts to create a symlink from $TORQUEBOX_HOME to /opt/torquebox. Run the task as a user with sufficient permissions so that this does not fail.</listitem>
+      </itemizedlist>
+      </para>
+
+    </section>
   </section>
 </chapter>
