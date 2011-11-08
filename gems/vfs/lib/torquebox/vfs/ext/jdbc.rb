@@ -30,8 +30,11 @@ class Java::java.sql::DriverManager
       url = url.sub(':vfs:', ':')
 
       # Call the correct version based on the number of arguments
-      raise NotImplementedError.new('Need to hande the single param version of getConnection') if params.count == 0
-      params.count == 1 ? get_connection_with_properties(url, params.first) : get_connection_with_username_password(url, params[0], params[1])
+      case params.count
+      when 0 then get_connection_with_url(url)
+      when 1 then get_connection_with_properties(url, params.first)
+      when 2 then get_connection_with_username_password(url, params[0], params[1])
+      end
     end
 
     def registerDriver(driver)
@@ -41,12 +44,22 @@ class Java::java.sql::DriverManager
 
     private
 
+    # The 1 param version of getConnection passing in a url
+    def get_connection_with_url(url)
+      get_connection_without_vfs(url)
+    rescue => e
+      raise e unless @driver
+      # If we did register a driver, try to connect using it directly
+      props = java.util.Properties.new
+      @driver.connect(url, props)
+    end
+
     # The 2 param version of getConnection passing in url and a hash of properties
     def get_connection_with_properties(url, properties)
       get_connection_without_vfs(url, properties)
     rescue => e
       raise e unless @driver
-      # If we did register a driver, try to connection using it directly
+      # If we did register a driver, try to connect using it directly
       @driver.connect(url, properties)
     end
 

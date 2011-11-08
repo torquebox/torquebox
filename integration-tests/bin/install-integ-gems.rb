@@ -29,14 +29,15 @@ versions = {
 
   :dm_core        =>    '1.1.0',
   :json           =>    '1.4.6',
-  
-  :padrino        =>    '0.10.4'
-  
+
+  :padrino        =>    '0.10.4',
+
+  :sequel         =>    '3.29.0'
 }
 
 #GemInstaller.into( File.dirname(__FILE__) + '/../target/integ-dist/jruby/lib/ruby/gems/1.8', versions ) do |installer|
 
-GemInstaller.with( versions ) do |installer| 
+GemInstaller.with( versions ) do |installer|
   installer.install( 'jruby-openssl' )
   installer.install( 'haml'          )
   installer.install( 'rails',         versions[:rails2x] )
@@ -67,5 +68,6 @@ GemInstaller.with( versions ) do |installer|
   
   installer.install( 'padrino', versions[:padrino] )
   installer.install( 'sinatra-flash', versions[:sinatra_flash] )
-  
+
+  installer.install( 'sequel', versions[:sequel] )
 end

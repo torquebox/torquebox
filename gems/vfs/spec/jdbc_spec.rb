@@ -11,6 +11,12 @@ describe "JDBC Extensions for VFS" do
 
     describe "getConnection" do
 
+      it "should call get_connection_with_url if passed a single argument" do
+        @driver_manager.should_receive(:get_connection_with_url).
+          with("url")
+        @driver_manager.getConnection("url")
+      end
+
       it "should call get_connection_with_properties if passed two arguments" do
         properties = Properties.new
         @driver_manager.should_receive(:get_connection_with_properties).
@@ -22,6 +28,23 @@ describe "JDBC Extensions for VFS" do
         @driver_manager.should_receive(:get_connection_with_username_password).
           with("url", "user", "password")
         @driver_manager.getConnection("url", "user", "password")
+      end
+
+    end
+
+    describe "get_connection_with_url" do
+
+      it "should delegate to original method" do
+        @driver_manager.should_receive(:get_connection_without_vfs).
+          with("url")
+        @driver_manager.send(:get_connection_with_url, "url")
+      end
+
+      it "should fall back to connect directly" do
+        driver = mock('driver')
+        driver.should_receive(:connect).with("url", an_instance_of(Properties))
+        @driver_manager.registerDriver(driver)
+        @driver_manager.send(:get_connection_with_url, "url")
       end
 
     end
