@@ -110,7 +110,7 @@ class IO
         begin
           block.call( file_io )
         ensure
-          file_io.close
+          file_io.close unless file_io.closed?
         end
       else
         return file_io
@@ -147,6 +147,15 @@ class IO
         opts = options.pop if options.last.is_a?( Hash ) #1.9
         # FIXME: we're ignoring the 1.9 options (encoding, mode, open_args)
         vfs_open( name ).readlines( *options )
+      end
+    end
+
+    if RUBY_VERSION =~ /1.9/
+      alias_method :copy_stream_without_vfs, :copy_stream
+      def copy_stream(src, dst, *args)
+        src = src.__getobj__ if src.is_a?( TorqueBox::VFS::Ext::VirtualFile )
+        dst = dst.__getobj__ if dst.is_a?( TorqueBox::VFS::Ext::VirtualFile )
+        copy_stream_without_vfs( src, dst, *args )
       end
     end
   end
