@@ -33,6 +33,7 @@ require 'torquebox/vfs/ext/dir'
 require 'torquebox/vfs/ext/pathname'
 require 'torquebox/vfs/ext/kernel'
 require 'torquebox/vfs/ext/jdbc'
+require 'torquebox/vfs/ext/process'
 
 
 module TorqueBox

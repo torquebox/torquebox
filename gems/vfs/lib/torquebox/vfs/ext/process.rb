@@ -15,24 +15,20 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-module Kernel
+module Process
 
-  private
-  alias_method :open_without_vfs, :open
-  alias_method :backtick_without_vfs, '`'
+  class << self
 
-  def open(name, *rest, &block)
-    if ( name =~ /^vfs:/ )
-      return IO.vfs_open( name, *rest, &block )
+    if self.respond_to?(:spawn)
+      alias_method :spawn_without_vfs, :spawn
+      def spawn(*args)
+        non_vfs_args = args.map do |arg|
+          arg.is_a?(String) ? arg.gsub("vfs:", "") : arg
+        end
+        spawn_without_vfs(*non_vfs_args)
+      end
     end
-    open_without_vfs( name, *rest, &block )
-  end
 
-  def `(*args)
-    non_vfs_args = args.map do |arg|
-       arg.is_a?(String) ? arg.gsub("vfs:", "") : arg
-    end
-    backtick_without_vfs(*non_vfs_args)
   end
 
 end
