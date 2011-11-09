@@ -44,21 +44,21 @@ describe "Dir extensions for VFS" do
       end
       
       it "should ignore dotdirs by default" do
-      	items = Dir.glob( "#{prefix}/**/*" )
-      	items.should_not be_empty
-      	items.size.should eql(33)
+        items = Dir.glob( "#{prefix}/**/*" )
+        items.should_not be_empty
+        items.size.should eql(33)
       end
 
       it "should handle trailing double splats" do
-      	items = Dir.glob( "#{prefix}/**" )
-      	items.should_not be_empty
-      	items.size.should eql(6)
+        items = Dir.glob( "#{prefix}/**" )
+        items.should_not be_empty
+        items.size.should eql(6)
       end
       
       it "should handle Rails 2 glob-related arglebargle" do
-      	items = Dir.glob( "#{prefix}/**/*/**" )
-      	items.should_not be_empty
-      	items.size.should eql(27)
+        items = Dir.glob( "#{prefix}/**/*/**" )
+        items.should_not be_empty
+        items.size.should eql(27)
       end
       
       it "should ignore dotfiles by default" do
@@ -269,6 +269,16 @@ describe "Dir extensions for VFS" do
         items = []
         lambda {
           items = Dir["#{prefix}/home/larry/*"]
+        }.should_not raise_error
+
+        items.should include( "#{prefix}/home/larry/file1.txt" )
+      end
+
+      it "should allow globbing with pathnames via []" do
+        items = []
+        path = Pathname.new( prefix ).join( "home", "larry", "*" )
+        lambda {
+          items = Dir[path]
         }.should_not raise_error
 
         items.should include( "#{prefix}/home/larry/file1.txt" )

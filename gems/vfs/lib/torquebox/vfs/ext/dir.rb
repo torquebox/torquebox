@@ -117,7 +117,7 @@ class Dir
 
     def glob_one(pattern, flags=0, &block)
       #str_pattern = "#{pattern}"
-      str_pattern = pattern.to_str
+      str_pattern = File.path_to_str(pattern)
 
       segments = str_pattern.split( '/' )
 
