@@ -15,6 +15,7 @@ set :jboss_control_style, :binscripts
 #set :app_environment, {
   #'FOO'=>'bar'
 #}
+set :rails_env, "production"
 
 #set :app_host, 'taco.com'
 #set :app_context, '/myapp'

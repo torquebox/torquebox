@@ -17,113 +17,12 @@
 
 require 'capistrano'
 
-Capistrano::Configuration.instance.load do 
-
-  # --
-
-  _cset( :app_ruby_version,    1.8 )
-
-  _cset( :torquebox_home,      '/opt/torquebox'   )
-  _cset( :jboss_home,          lambda{ "#{torquebox_home}/jboss" } )
-  _cset( :jruby_home,          lambda{ "#{torquebox_home}/jruby" } )
-  _cset( :jruby_opts,          lambda{ "--#{app_ruby_version}" } )
-  _cset( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } )
-
-  _cset( :jboss_control_style, :initid )
-  _cset( :jboss_init_script,   '/etc/init.d/jboss-as-standalone' )
-
-  _cset( :jboss_bind_address,  '0.0.0.0'      )
-
-  _cset( :bundle_cmd,          lambda{ "#{jruby_bin} -S bundle" } )
-  _cset( :bundle_flags,        '' )
- 
-  
-  namespace :deploy do
-  
-    desc "Perform a deployment"
-
-    task :default do
-      update
-    end
-  
-    desc "Start TorqueBox Server"
-    task :start do
-      puts "Starting TorqueBox AS"
-      case ( jboss_control_style )
-        when :initd
-          run "#{jboss_init_script} start"
-        when :binscripts
-          run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
-      end
-    end
-  
-    desc "Stop TorqueBox Server"
-    task :stop do
-      puts "Stopping TorqueBox AS"
-      case ( jboss_control_style )
-        when :initd
-          run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
-        when :binscripts
-          run "#{jboss_home}/bin/jboss-admin.sh --connect :shutdown"
-      end
-    end
-  
-    desc "Restart TorqueBox Server"
-    task :restart do
-      case ( jboss_control_style )
-        when :initd
-          puts "Restarting TorqueBox AS"
-          puts "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
-        when :binscripts
-          run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
-          run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
-      end
-    end
-  
-    namespace :torquebox do
-
-      task :info do
-        puts "torquebox_home.....#{torquebox_home}"
-        puts "jboss_home.........#{jboss_home}"
-        puts "jruby_home.........#{jruby_home}"
-        puts "bundle command.....#{bundle_cmd}"
-      end
-
-      task :check do
-        puts "style #{jboss_control_style}"
-        if ( jboss_control_style == :initd )
-          run "test -x #{jboss_init_script}",                        :roles=>[ :app ]
-        end
-        run "test -d #{jboss_home}",                               :roles=>[ :app ]
-        unless ( [ :initd, :binscripts ].include?( jboss_control_style.to_sym ) )
-          fail "invalid jboss_control_style: #{jboss_control_style}"
-        end
-      end
-
-      task :deployment_descriptor do
-        puts "creating deployment descriptor"
-        dd_str = YAML.dump_stream( create_deployment_descriptor() )
-        dd_file = "#{jboss_home}/standalone/deployments/#{application}-knob.yml"
-        cmd =  "cat /dev/null > #{dd_file}"
-        dd_str.each_line do |line|
-          cmd += " && echo \"#{line}\" >> #{dd_file}"
-        end
-        cmd += " && echo '' >> #{dd_file}"
-        run cmd
-        run "touch #{dd_file}.dodeploy"
-      end
-    end
-
-
-    desc "Dump the deployment descriptor"
-    task :dump do
-      puts YAML.dump( create_deployment_descriptor )
-    end
-
-    def create_deployment_descriptor
+module Capistrano
+  class Configuration
+    def create_deployment_descriptor( root )
         dd = {
           'application'=>{
-            'root'=>"#{latest_release}",
+            'root'=>"#{root}",
           },
         }
 
@@ -146,13 +45,132 @@ Capistrano::Configuration.instance.load do
           dd['environment'] = app_environment
         end
 
+        if ( exists?( :rails_env ) )
+          dd['environment'] ||= {}
+          dd['environment']['RAILS_ENV'] = rails_env
+        end
+
         dd
     end
-  
   end
+        
+  module TorqueBox
 
-  before 'deploy:check',   'deploy:torquebox:check'
-  after  'deploy:symlink', 'deploy:torquebox:deployment_descriptor'
+    def self.load_into( configuration )
+      configuration.load do 
+        # --
 
+        set( :app_ruby_version,    1.8 ) unless exists?( :app_ruby_version )
+        set( :torquebox_home,      '/opt/torquebox' ) unless exists?( :torquebox_home )
+
+        set( :jruby_home,          lambda{ "#{torquebox_home}/jruby" } ) unless exists?( :jruby_home )
+        set( :jruby_opts,          lambda{ "--#{app_ruby_version}" } ) unless exists?( :jruby_opts )
+        set( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } ) unless exists?( :jruby_bin )
+
+        set( :jboss_home,          lambda{ "#{torquebox_home}/jboss" } ) unless exists?( :jboss_home )
+        set( :jboss_control_style, :initid ) unless exists?( :jboss_control_style )
+        set( :jboss_init_script,   '/etc/init.d/jboss-as-standalone' ) unless exists?( :jboss_init_script )
+        set( :jboss_bind_address,  '0.0.0.0' ) unless exists?( :jboss_bind_address )
+
+        set( :bundle_cmd,          lambda{ "#{jruby_bin} -S bundle" } ) unless exists?( :bundle_cmd )
+        set( :bundle_flags,        '' ) unless exists?( :bundle_flags )
+        
+        namespace :deploy do
+        
+          desc "Perform a deployment"
+
+          task :default do
+            update
+          end
+        
+          desc "Start TorqueBox Server"
+          task :start do
+            puts "Starting TorqueBox AS"
+            case ( jboss_control_style )
+              when :initd
+                run "#{jboss_init_script} start"
+              when :binscripts
+                run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
+            end
+          end
+        
+          desc "Stop TorqueBox Server"
+          task :stop do
+            puts "Stopping TorqueBox AS"
+            case ( jboss_control_style )
+              when :initd
+                run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+              when :binscripts
+                run "#{jboss_home}/bin/jboss-admin.sh --connect :shutdown"
+            end
+          end
+        
+          desc "Restart TorqueBox Server"
+          task :restart do
+            case ( jboss_control_style )
+              when :initd
+                puts "Restarting TorqueBox AS"
+                puts "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
+              when :binscripts
+                run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+                run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
+            end
+          end
+        
+          namespace :torquebox do
+
+            task :info do
+              puts "torquebox_home.....#{torquebox_home}"
+              puts "jboss_home.........#{jboss_home}"
+              puts "jruby_home.........#{jruby_home}"
+              puts "bundle command.....#{bundle_cmd}"
+            end
+
+            task :check do
+              puts "style #{jboss_control_style}"
+              if ( jboss_control_style == :initd )
+                run "test -x #{jboss_init_script}",                        :roles=>[ :app ]
+              end
+              run "test -d #{jboss_home}",                               :roles=>[ :app ]
+              unless ( [ :initd, :binscripts ].include?( jboss_control_style.to_sym ) )
+                fail "invalid jboss_control_style: #{jboss_control_style}"
+              end
+            end
+
+            task :deployment_descriptor do
+              puts "creating deployment descriptor"
+              dd_str = YAML.dump_stream( create_deployment_descriptor(latest_release) )
+              dd_file = "#{jboss_home}/standalone/deployments/#{application}-knob.yml"
+              cmd =  "cat /dev/null > #{dd_file}"
+              dd_str.each_line do |line|
+                cmd += " && echo \"#{line}\" >> #{dd_file}"
+              end
+              cmd += " && echo '' >> #{dd_file}"
+              run cmd
+              run "touch #{dd_file}.dodeploy"
+            end
+          end
+
+
+          desc "Dump the deployment descriptor"
+          task :dump do
+            dd = create_deployment_descriptor( latest_release )
+            puts dd
+            exit
+            puts YAML.dump( create_deployment_descriptor( latest_release ) )
+          end
+
+        end
+
+        before 'deploy:check',   'deploy:torquebox:check'
+        after  'deploy:symlink', 'deploy:torquebox:deployment_descriptor'
+      end
+    end
+  end
+end
+
+
+if Capistrano::Configuration.instance
+  Capistrano::TorqueBox.load_into(Capistrano::Configuration.instance)
 end
 

@@ -13,6 +13,36 @@
   <name>TorqueBox Capistrano Support</name>
   <description />
 
+  <dependencies>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>jruby-openssl</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+      <version>0.7.4</version>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>capistrano</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+      <version>2.9.0</version>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>capistrano-spec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+      <version>0.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>rspec</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -21,6 +51,15 @@
         <executions>
           <execution>
             <id>install-gem</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>run-specs</id>
           </execution>
         </executions>
       </plugin>
