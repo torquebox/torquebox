@@ -68,7 +68,7 @@ namespace :torquebox do
     desc "Check if TorqueBox is installed as an upstart service"
     task :check=>[ 'torquebox:check' ] do
       TorqueBox::Upstart.check_install
-      puts "TorqueBox is installed as an upstart service at #{TorqueBox::Upstart.opt_torquebox}"
+      puts "TorqueBox is installed as an upstart service at #{TorqueBox::DeployUtils.opt_torquebox}"
     end
 
     desc "Install TorqueBox as an upstart service"
