@@ -34,7 +34,7 @@ public class CoreServices {
     
     public static final ServiceName GLOBAL_RUBY                   = RUNTIME.append( "global" );
     public static final ServiceName INJECTABLE_HANDLER_REGISTRY   = INJECTION.append( "injectable-handler-registry" );
-    
+    public static final ServiceName DEPLOYMENT_SCANNER_HELPER     = CORE.append( "deployment-scanner-helper" );
     
     public static ServiceName runtimeFactoryName(final DeploymentUnit unit) {
         return unit.getServiceName().append( RUNTIME ).append("factory");
