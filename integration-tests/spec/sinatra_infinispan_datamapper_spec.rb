@@ -73,5 +73,10 @@ describe "sinatra with dm-infinispan-adapter" do
     page.should have_content('Hiding')
   end
 
+  it "should index records" do
+    visit '/sinatra-datamapper'
+    page.should have_content('indexed')
+  end
+
 end
 

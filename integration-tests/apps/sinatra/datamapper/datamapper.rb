@@ -4,7 +4,10 @@ require 'haml'
 require 'dm-core'
 require 'datamapper/dm-infinispan-adapter'
 
+ADAPTER = DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
+
 get '/' do 
+  @indexed = !ADAPTER.search_manager.nil?
   haml :index
 end
 
@@ -75,7 +78,6 @@ class Coat
   property :color,      String
 end
 
-DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize
 

@@ -139,6 +139,19 @@ class AssemblyTool
     end
   end
 
+  def add_cache(doc)
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.0']" ).first
+      unless subsystem.nil?
+        container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
+        cache = container.add_element( 'local-cache', 'name'=>'sessions' )
+        cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )
+        cache.add_element( 'expiration', 'max-idle'=>'100000' )
+      end
+    end
+  end
+
   def add_extensions(doc)
     extensions = doc.root.get_elements( 'extensions' ).first
     modules.each do |name|
@@ -441,6 +454,7 @@ class AssemblyTool
       increase_deployment_timeout(doc)
       add_extensions(doc)
       add_subsystems(doc)
+      add_cache(doc)
       set_welcome_root(doc)
       unquote_cookie_path(doc)
       remove_destinations(doc)

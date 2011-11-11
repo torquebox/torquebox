@@ -41,6 +41,10 @@ module Infinispan
       end
     end
 
+    def search_manager
+      @search_manager
+    end
+
     private
     def build_query( query )
       builder = search_manager.build_query_builder_for_class( query.model.java_class ).get
@@ -129,10 +133,6 @@ module Infinispan
 
     def cache
       @cache
-    end
-
-    def search_manager
-      @search_manager
     end
 
     def deserialize(value)
