@@ -275,7 +275,7 @@ module TorqueBox
 
       def manager
         begin
-          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "web" )]
+          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )]
         rescue Exception => e
           log( "Caught exception while looking up Infinispan service.", 'ERROR' )
           log( e.message, 'ERROR' )

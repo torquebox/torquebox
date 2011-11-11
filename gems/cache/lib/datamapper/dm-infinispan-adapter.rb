@@ -87,6 +87,10 @@ module DataMapper::Adapters
       value.is_a?(String) ? JSON.parse(value) : value
     end
 
+    def search_manager
+      @search.search_manager
+    end
+
     private
     def cache
       @cache
