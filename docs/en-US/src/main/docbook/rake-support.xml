@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="rake-support">
+  <title>Rake support</title>
+
+  <section id="deploy-using-rake" revision="1">
+    <title id="rake-tasks">Overview</title>
+
+    <para>TorqueBox includes a support package which includes Rake tasks which
+    assist in the deployment to and undeployment from an instance of the
+    TorqueBox Server, in addition to the launching of the server. This
+    rake-based support is normally intended for development-time usage, and
+    not for production. More advanced tooling, such as Capistrano (see
+    Capistrano Support) is advisable for production environments.</para>
+
+    <para>First, the <envar>$TORQUEBOX_HOME</envar> and
+    <envar>$JBOSS_HOME</envar> variables must be set to the path of the top of
+    your TorqueBox Installation and the JBoss installation inside of it,
+    respectively, as described in <xref linkend="installation" />.</para>
+
+    <para><informalexample>
+        <screen><prompt>$</prompt> <command>export TORQUEBOX_HOME=/path/to/torquebox</command>
+<prompt>$</prompt> <command>export JBOSS_HOME=$TORQUEBOX_HOME/jboss</command></screen>
+      </informalexample></para>
+
+    <para>To include these tasks into your <filename>Rakefile</filename>, use
+    a <methodname>single</methodname> require statement.</para>
+
+    <para><informalexample>
+        <programlisting>require 'torquebox-rake-support'</programlisting>
+      </informalexample></para>
+
+    <para>Once these variables are set and you have adjusted your Rakefile,
+    you may perform directory- or archive-based deployments and control the
+    execution of the TorqueBox AS.</para>
+  </section>
+
+  <section>
+    <title>Deploying applications</title>
+
+    <section>
+      <title>Directory-based deployments</title>
+
+      <para>The typical usage of the rake tasks is to perform a deployment of
+      your current application into a local TorqueBox AS during development.
+      The simplest deployment form will deploy the application with
+      <varname>RACK_ENV</varname> or <varname>RAILS_ENV</varname> set to
+      <code>development</code>, no virtual host, at the root of the
+      server.</para>
+
+      <para><informalexample>
+          <screen><prompt>$</prompt> <command>rake torquebox:deploy</command></screen>
+        </informalexample></para>
+
+      <para>If you wish to deploy with a different value for RACK_ENV or
+      RAIL_ENV, the task respects your current shell's values for those
+      variables.</para>
+
+      <para><informalexample>
+          <screen><prompt>$</prompt> <command>RAILS_ENV=staging rake torquebox:deploy</command></screen>
+        </informalexample></para>
+
+      <para>Additionally, a custom context path may be used instead of the
+      defaul to of <code>/</code>, by providing a rake argument to the
+      <command>torquebox:deploy</command> task.</para>
+
+      <para><informalexample>
+          <screen><prompt>$</prompt> <command>rake torquebox:deploy['/my-app']</command></screen>
+        </informalexample></para>
+    </section>
+
+    <section>
+      <title>Archive-based deployments</title>
+
+      <para>In the event you need to deploy the application as an archive,
+      instead of as a directory of loose files, the rake support includes a
+      task to do just that. Additional, the rake task may also be used to
+      simply create the archive without deploying it, if you intend to
+      distribute it to your servers in some other fashion.</para>
+
+      <para>To create but not deploy an archive:</para>
+
+      <para><informalexample>
+          <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>
+        </informalexample></para>
+
+      <para>The resulting archive will be placed at the root of the
+      application, with a suffix of <filename>.knob</filename>. To inspect the
+      contents, you may use the <command>jar</command> tool.</para>
+
+      <para><informalexample>
+          <screen><prompt>$</prompt> <command>jar</command> <option>tf</option> <filename><replaceable>myapp</replaceable>.knob</filename>
+META-INF/
+META-INF/MANIFEST.MF
+app/
+app/controllers/
+app/controllers/application_controller.rb
+...</screen>
+        </informalexample></para>
+
+      <para>You may also have the archive deployed immediately after creating
+      it, in a single command.</para>
+
+      <para><informalexample>
+          <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive</command></screen>
+        </informalexample></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Undeploying applications</title>
+
+    <para>To undeploy an application, either a directory- or archive-based
+    deployment, a single command may be used.</para>
+
+    <para><informalexample>
+        <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:undeploy</command></screen>
+      </informalexample></para>
+  </section>
+
+  <section>
+    <title>Server control</title>
+
+    <para>You may also control the server using the
+    <command>torquebox:run</command> rake task.</para>
+
+    <para><informalexample>
+        <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:run</command></screen>
+      </informalexample></para>
+
+    <para>The server will retain control of the console while it is running.
+    To stop the server, simply send a <code>SIGINT</code>, typically using by
+    typing <keycap>control-C</keycap>.</para>
+  </section>
+</chapter>
