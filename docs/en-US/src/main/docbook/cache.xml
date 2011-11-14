@@ -12,11 +12,11 @@
       Infinispan offers a noSQL key/value store that can be replicated
       or distributed across a cluster, or run on a single machine locally.  The
       cache is exposed as Ruby modules and classes through TorqueBox.  There
-      are three ways that applications can take advantage of this data store.
+      are two ways that applications can take advantage of this data store.
       <itemizedlist>
         <listitem><code>TorqueBox::Infinispan::Cache</code> Direct Ruby access to the Infinispan cache</listitem>
         <listitem><code>ActiveSupport::Cache::Store</code> Sinatra and Rails session, fragment and other framework caching</listitem>
-        <listitem><code>dm-infinispan-adapter</code> Infinispan-backed <ulink url="http://datamapper.org">DataMapper</ulink> adapter</listitem>
+        <!--        <listitem><code>dm-infinispan-adapter</code> Infinispan-backed <ulink url="http://datamapper.org">DataMapper</ulink> adapter</listitem> -->
       </itemizedlist>
 
       Each of these components allows applications to configure the clustering
@@ -81,7 +81,8 @@
     <para>The <code>TorqueBox::Infinispan::Cache</code> supports a number
       of options.  All components that use the cache as their underlying
       storage, e.g. <code>ActiveSupport::Cache::TorqueBoxStore</code>
-      and <code>dm-infinispan-adapter</code>, as well as the 
+      <!--and <code>dm-infinispan-adapter</code>-->
+      as well as the 
       <code>Cache</code> class itself accept a hash of options.
       The common options for all cache components are:</para>
 
@@ -177,6 +178,7 @@
               <parameter>:persist</parameter> which is a path to a writable
               directory will be used for cache storage.</entry>
           </row>
+          <!--
           <row>
             <entry><parameter>:index</parameter></entry>
 
@@ -191,6 +193,7 @@
             enabled only for <code>dm-infinispan-adapter</code> model indexing and
             searching. Use with extreme caution.</entry>
           </row>
+          -->
           <row>
             <entry><parameter>:transaction_mode</parameter></entry>
 
@@ -334,6 +337,7 @@
     </para>
   </section>
 
+  <!--
   <section id='dm-infinispan-adapter'>
     <title>dm-infinispan-adapter Options and Usage</title>
     <para><code>TorqueBox</code> also provides support for storing, searching and
@@ -377,6 +381,7 @@
       and they will be passed on to the <code>Cache</code> constructor.
     </para>
   </section>
+  -->
 </chapter>
 
 
