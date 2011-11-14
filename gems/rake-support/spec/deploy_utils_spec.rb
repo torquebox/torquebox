@@ -217,6 +217,35 @@ module TorqueBox
         TorqueBox::DeployUtils.should_receive(:run_command_line).with(options).and_return([])
         TorqueBox::DeployUtils.run_server(options)
       end
+
+      it 'should check if the current directory is deployed' do
+        TorqueBox::DeployUtils.should_receive(:is_deployed?).and_return( true )
+        TorqueBox::DeployUtils.run_server
+      end
+    end
+
+    describe 'TorqueBox::DeployUtils.is_deployed?' do
+      before( :each ) do
+        ENV['TORQUEBOX_HOME'] = '/torquebox'
+        ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+        @myapp = TorqueBox::DeployUtils.deployment_name( 'my-app' )
+      end
+
+      it 'should be false if the app is not deployed' do
+        TorqueBox::DeployUtils.is_deployed?( @myapp ).should be_false
+      end
+
+      it 'should be true if the app has been deployed' do
+        File.stub('exists?').with(File.join(TorqueBox::DeployUtils.torquebox_home, 'apps')).and_return false
+        File.stub('exists?').with(File.join(TorqueBox::DeployUtils.deploy_dir, @myapp)).and_return true
+        TorqueBox::DeployUtils.is_deployed?( @myapp ).should be_true
+      end
+
+      it 'should default to the default deployment_name' do
+        TorqueBox::DeployUtils.should_receive(:deployment_name).and_return @myapp
+        TorqueBox::DeployUtils.is_deployed?
+      end
+
     end
 
     describe 'TorqueBox::DeployUtils.run_command_line' do

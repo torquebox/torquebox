@@ -126,7 +126,14 @@ module TorqueBox
         [cmd, options]
       end
 
+      def is_deployed?( appname = deployment_name )
+        File.exists?( File.join(deploy_dir, appname) )
+      end
+
       def run_server(options={})
+        
+        puts "[WARNING] #{deployment_name} has not been deployed. Starting TorqueBox anyway." unless ( is_deployed? )
+
         Dir.chdir(jboss_home) do
           # don't send the gemfile from the current app, instead let
           # bundler suss it out itself for each deployed
