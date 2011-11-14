@@ -22,7 +22,11 @@ module TorqueBox
   class Server
 
     def self.torquebox_home
-      home = Gem::Specification.find_by_name( 'torquebox-server' )
+      if ((gem_version <=> Gem::Version.new('1.8.9')) < 0)
+        home = Gem.searcher.find( 'torquebox-server' )
+      else
+        home = Gem::Specification.find_by_name( 'torquebox-server' )
+      end
       home.full_gem_path if home
     rescue Exception => e
       puts "Cannot find torquebox-server: #{e}"
@@ -36,5 +40,10 @@ module TorqueBox
     def self.jruby_home
       File.expand_path(java.lang.System.getProperty('jruby.home'))
     end
+
+    def self.gem_version
+      Gem::Version.new( Gem::VERSION )
+    end
   end
+
 end
