@@ -49,17 +49,17 @@
       <title>Destinations</title>
 
       <para>A destination represents a rendezvous where messages are
-      exchanged. A message may be sent to a destination by one actor,
-      and received from the destination by another.</para>
+      exchanged. A message may be sent to a destination by one actor, and
+      received from the destination by another.</para>
     </formalpara>
 
     <para>There are two main types of destinations:
     <emphasis>queues</emphasis> and <emphasis>topics</emphasis>. All
     destinations allow multiple actors to place messages with them. The type
     of destination affects what happens to the message once given to the
-    destination. A queue delivers the message to a single recipient
-    (possibly one of many candidate recipients). A topic delivers the message
-    to multiple interested recipients.</para>
+    destination. A queue delivers the message to a single recipient (possibly
+    one of many candidate recipients). A topic delivers the message to
+    multiple interested recipients.</para>
 
     <para>In the image below, the green lines represent the flow of a single
     message from a producer to one-or-more consumers through a topic and a
@@ -161,19 +161,18 @@
         over time, publishing and consuming from the same queues.</para>
 
         <para>When using long-lived destinations,
-        <filename><replaceable>*</replaceable>-knob.yml</filename>
-        deployment descriptors are placed directly into the
-        <filename>deployments/</filename> directory of TorqueBox
-        AS.</para>
+        <filename><replaceable>*</replaceable>-knob.yml</filename> deployment
+        descriptors are placed directly into the
+        <filename>deployments/</filename> directory of TorqueBox AS.</para>
 
         <formalpara>
           <title>Queues</title>
 
-          <para>To deploy queues, a simple YAML file is required to 
-          name the queues and provide additional configuration parameters.
-          The file should have the suffix of
-          <filename>-knob.yml</filename>, such as
-          <filename><replaceable>these-queues</replaceable>-knob.yml</filename> or
+          <para>To deploy queues, a simple YAML file is required to name the
+          queues and provide additional configuration parameters. The file
+          should have the suffix of <filename>-knob.yml</filename>, such as
+          <filename><replaceable>these-queues</replaceable>-knob.yml</filename>
+          or
           <filename><replaceable>those-queues</replaceable>-knob.yml</filename>.
           The only configuration option available on queues is the
           <parameter>durable</parameter> option.</para>
@@ -191,10 +190,9 @@
   /queues/my_queue:
 
   /queues/my_other_queue:
-    durable: false</programlisting>
-            The name of the queue will be used when registering the
-            queue in the naming-service, and is used to discover
-            the queue for attaching consumers and producers.</para>
+    durable: false</programlisting> The name of the queue will be used when
+            registering the queue in the naming-service, and is used to
+            discover the queue for attaching consumers and producers.</para>
 
             <para>By convention, queues are named with the prefix of
             <filename>/queues</filename>.</para>
@@ -203,15 +201,15 @@
         <formalpara>
           <title>Topics</title>
 
-          <para>To deploy topics, a simple YAML file is required to
-          name the topics and provide additional configuration parameters.
-          The file should have the suffix of
-          <filename>-knob.yml</filename>, such as
-          <filename><replaceable>these-topics</replaceable>-knob.yml</filename> or
+          <para>To deploy topics, a simple YAML file is required to name the
+          topics and provide additional configuration parameters. The file
+          should have the suffix of <filename>-knob.yml</filename>, such as
+          <filename><replaceable>these-topics</replaceable>-knob.yml</filename>
+          or
           <filename><replaceable>those-topics</replaceable>-knob.yml</filename>.
-          Currently, no additional configuration parameters are
-          allowed - topic durability is controlled via options on
-          the attached processors (See <xref
+          Currently, no additional configuration parameters are allowed -
+          topic durability is controlled via options on the attached
+          processors (See <xref
           linkend="connecting-consumers-within-torquebox" />).</para>
         </formalpara>
 
@@ -221,10 +219,9 @@
             <para><programlisting>topics:
   /topics/my_topic:
 
-  /topics/my_other_topic:</programlisting>
-            The name of the topic will be used when registering the topic
-            in the naming-service, and is used to discover the topic for
-            attaching consumers and producers.</para>
+  /topics/my_other_topic:</programlisting> The name of the topic will be used
+            when registering the topic in the naming-service, and is used to
+            discover the topic for attaching consumers and producers.</para>
 
             <para>By convention, topics are named with the prefix of
             <filename>/topics</filename>.</para>
@@ -240,7 +237,7 @@
 
         <para>Destinations deployed with your application also undeploy when
         your application is undeployed. These destinations are configuration
-        through either your application's internal descriptor, or through an 
+        through either your application's internal descriptor, or through an
         external <filename><replaceable>*</replaceable>-knob.yml</filename>
         descriptor.</para>
 
@@ -249,8 +246,8 @@
         <parameter>topics:</parameter> section to define topics.</para>
 
         <para><example>
-            <title>Defining topics and queues in
-            a deployment descriptor</title>
+            <title>Defining topics and queues in a deployment
+            descriptor</title>
 
             <para>Using the YAML syntax:<programlisting>application:
   ..
@@ -260,7 +257,7 @@ queues:
 topics:
   /queues/my_app_topic:</programlisting></para>
 
-           <para>And via the DSL:<programlisting>TorqueBox.configure do
+            <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
   queue '/queues/my_app_queue'
   topic '/queues/my_app_topic'
@@ -275,12 +272,14 @@ end</programlisting></para>
 
     <para>All classes in the <classname>TorqueBox::Messaging</classname>
     module reside in the Ruby gem, <filename>torquebox-messaging</filename>,
-    so to use them in your Rails app, you'll need to configure your app to 
+    so to use them in your Rails app, you'll need to configure your app to
     load the gem.</para>
 
     <formalpara>
       <title>Rails 2.x</title>
-      <para>Add this to your <filename>config/environment.rb</filename>:</para>
+
+      <para>Add this to your
+      <filename>config/environment.rb</filename>:</para>
     </formalpara>
 
     <example>
@@ -293,9 +292,9 @@ end</programlisting></para>
   ...</programlisting></para>
     </example>
 
-
     <formalpara>
       <title>Rails 3.x</title>
+
       <para>Add this to your <filename>Gemfile</filename>:</para>
     </formalpara>
 
@@ -378,17 +377,18 @@ require 'torquebox-messaging'
 
               <entry></entry>
 
-              <entry>A string to uniquely indentify the connecting client. Optional unless
-              you are using the <varname>:durable</varname> option with 
-              <methodname>receive</methodname> on a <classname>Topic</classname>.</entry>
+              <entry>A string to uniquely indentify the connecting client.
+              Optional unless you are using the <varname>:durable</varname>
+              option with <methodname>receive</methodname> on a
+              <classname>Topic</classname>.</entry>
             </row>
           </tbody>
         </tgroup>
       </table>
 
-      <para>You can also set these options via the <methodname>connect_options</methodname>
-      on the destination object.</para>
-
+      <para>You can also set these options via the
+      <methodname>connect_options</methodname> on the destination
+      object.</para>
 
       <para>Though sometimes convenient, these methods are fairly low-level
       and higher-level abstractions such as <link
@@ -408,24 +408,24 @@ require 'torquebox-messaging'
         in the runtime environments of both the producer and the
         consumer.</para>
 
-        <para>To send a message, you will need access to a <classname>Topic</classname> or 
-        <classname>Queue</classname> instance. The preferred method for
-        accessing the destination instance is to use <methodname>inject(...)</methodname>
-        (see <xref linkend="injectable-destinations"/> for more details). If you need to 
+        <para>To send a message, you will need access to a
+        <classname>Topic</classname> or <classname>Queue</classname> instance.
+        The preferred method for accessing the destination instance is to use
+        <methodname>inject(...)</methodname> (see <xref
+        linkend="injectable-destinations" /> for more details). If you need to
         pass options to the instance, or only have access to the destination
-        name at runtime, construct either a
-        <classname>Topic</classname> or a <classname>Queue</classname>
-        instance with its name and options. Once you have a destination instance,
-        simply call its publish method. The API's of
-        both Topics and Queues are identical; they each simply represent a
-        destination for your messages.</para>
+        name at runtime, construct either a <classname>Topic</classname> or a
+        <classname>Queue</classname> instance with its name and options. Once
+        you have a destination instance, simply call its publish method. The
+        API's of both Topics and Queues are identical; they each simply
+        represent a destination for your messages.</para>
 
-        <para>By default, messages are encoded using Ruby's Marshal serialization
-        mechanism, allowing you to include Ruby objects in your message. If you need
-        to produce messages that will be consumed by non-Ruby or TorqueBox 1.x clients, 
-        you can override the encoding mechanism globally
-        or on a per <methodname>publish</methodname> basis. See <xref linkend="message-encodings"/>
-        for more information.</para>
+        <para>By default, messages are encoded using Ruby's Marshal
+        serialization mechanism, allowing you to include Ruby objects in your
+        message. If you need to produce messages that will be consumed by
+        non-Ruby or TorqueBox 1.x clients, you can override the encoding
+        mechanism globally or on a per <methodname>publish</methodname> basis.
+        See <xref linkend="message-encodings" /> for more information.</para>
 
         <example>
           <title>Publish text messages</title>
@@ -484,31 +484,37 @@ queue.publish "Some message"</programlisting></para>
 
                 <entry>:marshal</entry>
 
-                <entry>Specifies the serialization encoding to use for the message. TorqueBox 
-                provides the following built-in encodings:
+                <entry>Specifies the serialization encoding to use for the
+                message. TorqueBox provides the following built-in encodings:
                 <itemizedlist>
-                  <listitem>
-                    <para><parameter>:marshal</parameter> - The message in encoded/decoded via Marshal,
-                    and is transmitted as a binary message.</para>
-                  </listitem>
-                  <listitem>
-                    <para><parameter>:marshal_base64</parameter> - The message in encoded/decoded via Marshal,
-                    and is transmitted as a base64 encoded text message. This was the encoding scheme
-                    used in TorqueBox 1.x.</para>
-                  </listitem>
-                  <listitem>
-                    <para><parameter>:json</parameter> - The message in encoded/decoded via JSON,
-                    and is transmitted as a text message. This encoding is limited, and should
-                    only be used for simple messages.</para>
-                  </listitem>
-                  <listitem>
-                    <para><parameter>:text</parameter> - The message isn't encoded/decoded at all,
-                    and is passed straight through as a text message. The content of the message
-                    must be a string.</para>
-                  </listitem>
-                </itemizedlist>
-                See <xref linkend="message-encodings"/> for more information.
-                </entry>
+                    <listitem>
+                      <para><parameter>:marshal</parameter> - The message in
+                      encoded/decoded via Marshal, and is transmitted as a
+                      binary message.</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:marshal_base64</parameter> - The
+                      message in encoded/decoded via Marshal, and is
+                      transmitted as a base64 encoded text message. This was
+                      the encoding scheme used in TorqueBox 1.x.</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:json</parameter> - The message in
+                      encoded/decoded via JSON, and is transmitted as a text
+                      message. This encoding is limited, and should only be
+                      used for simple messages.</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:text</parameter> - The message isn't
+                      encoded/decoded at all, and is passed straight through
+                      as a text message. The content of the message must be a
+                      string.</para>
+                    </listitem>
+                  </itemizedlist> See <xref linkend="message-encodings" /> for
+                more information.</entry>
               </row>
 
               <row>
@@ -564,9 +570,9 @@ queue.publish "Some message"</programlisting></para>
 
                 <entry>By default, queued messages will survive across AS
                 restarts. If you don't want a message to be persistent, set
-                the persistence to <parameter>false</parameter> 
-                (see <xref linkend="long-lived-destinations"/> for controlling
-                message durability globally for a queue).</entry>
+                the persistence to <parameter>false</parameter> (see <xref
+                linkend="long-lived-destinations" /> for controlling message
+                durability globally for a queue).</entry>
               </row>
 
               <row>
@@ -722,37 +728,44 @@ message = topic.receive
 
                 <entry>false</entry>
 
-                <entry>Specifies that the connection to a topic should be durable. 
-                This causes any messages that arrive on the topic to be queued. If
-                false, messages that arrive on the topic when a <methodname>receive</methodname>
-                is not waiting will be discarded. If <parameter>true</parameter>, you must
-                also supply a <varname>:client_id</varname> in the connect options for the
-                Topic. This option is ignored for Queues.</entry>
+                <entry>Specifies that the connection to a topic should be
+                durable. This causes any messages that arrive on the topic to
+                be queued. If false, messages that arrive on the topic when a
+                <methodname>receive</methodname> is not waiting will be
+                discarded. If <parameter>true</parameter>, you must also
+                supply a <varname>:client_id</varname> in the connect options
+                for the Topic. This option is ignored for Queues.</entry>
               </row>
+
               <row>
                 <entry><parameter>:subscriber_name</parameter></entry>
 
                 <entry>'subscriber-1'</entry>
 
-                <entry>Specifies the subscriber name to be used when creating a durable 
-                topic subscription. This option is ignored for Queues and for non-durable
-                receives on a Topic.</entry>
+                <entry>Specifies the subscriber name to be used when creating
+                a durable topic subscription. This option is ignored for
+                Queues and for non-durable receives on a Topic.</entry>
               </row>
             </tbody>
           </tgroup>
         </table>
+
         <section id="durable-topic-unsubscribe">
           <title>Unsubscribing a Durable Topic</title>
-          <para>If you create a durable topic subscriber by passing the <varname>:durable</varname>
-          option to the <methodname>receive</methodname> method, that subscription will remain
-          until the HornetQ Topic is shut down. If you no longer need the subscription, you
-          should unsubscribe it by calling the <methodname>unsubscribe</methodname> method
-          on the <classname>Topic</classname> object. If you provided a <varname>:subscriber_name</varname>
-          to the <methodname>receive</methodname> call, you will need to provide that
-          same name as an argument to <methodname>unsubscribe</methodname>.</para> 
+
+          <para>If you create a durable topic subscriber by passing the
+          <varname>:durable</varname> option to the
+          <methodname>receive</methodname> method, that subscription will
+          remain until the HornetQ Topic is shut down. If you no longer need
+          the subscription, you should unsubscribe it by calling the
+          <methodname>unsubscribe</methodname> method on the
+          <classname>Topic</classname> object. If you provided a
+          <varname>:subscriber_name</varname> to the
+          <methodname>receive</methodname> call, you will need to provide that
+          same name as an argument to
+          <methodname>unsubscribe</methodname>.</para>
         </section>
       </section>
-
 
       <section id="synchronous-messaging">
         <title>Synchronous Messaging</title>
@@ -790,86 +803,103 @@ message = queue.publish_and_receive "ping", :timeout =&gt; 5000
         <methodname>receive</methodname>. Synchronous messaging is only
         available with queues, not topics.</para>
       </section>
-
     </section>
 
     <section id="message-encodings">
       <title>Message Encodings</title>
-      <para>TorqueBox provides several different encoding serialization schemes for messaging,
-      and allows you to override the default encoding for all of your messages, or override
-      the encoding used on a per <methodname>publish</methodname> basis. Creating and registering 
-      your own encoding is trivial if you need an encoding scheme that is not provided out of the
-      box.</para>
+
+      <para>TorqueBox provides several different encoding serialization
+      schemes for messaging, and allows you to override the default encoding
+      for all of your messages, or override the encoding used on a per
+      <methodname>publish</methodname> basis. Creating and registering your
+      own encoding is trivial if you need an encoding scheme that is not
+      provided out of the box.</para>
 
       <section id="built-in-message-encodings">
         <title>Built-In Encodings</title>
-        <para>
-          TorqueBox provides the following built-in encodings:
-          <itemizedlist>
+
+        <para>TorqueBox provides the following built-in encodings:
+        <itemizedlist>
             <listitem>
-              <para><parameter>:marshal</parameter> - The message in encoded/decoded via Marshal,
-              and is transmitted as a binary message. This is the default encoding.</para>
+              <para><parameter>:marshal</parameter> - The message in
+              encoded/decoded via Marshal, and is transmitted as a binary
+              message. This is the default encoding.</para>
             </listitem>
+
             <listitem>
-              <para><parameter>:marshal_base64</parameter> - The message in encoded/decoded via Marshal,
-              and is transmitted as a base64 encoded text message. This was the encoding scheme
-              used in TorqueBox 1.x.</para>
+              <para><parameter>:marshal_base64</parameter> - The message in
+              encoded/decoded via Marshal, and is transmitted as a base64
+              encoded text message. This was the encoding scheme used in
+              TorqueBox 1.x.</para>
             </listitem>
+
             <listitem>
-              <para><parameter>:json</parameter> - The message in encoded/decoded via JSON,
-              and is transmitted as a text message. This encoding is limited, and should
-              only be used for simple messages. This encoding is intended to provide interoperability
-              with other languages. Any application that uses the :json encoding will need
-              to provide the json gem via its Gemfile, or, if you are not using Bundler, 
-              the json gem must at least be installed.</para>
+              <para><parameter>:json</parameter> - The message in
+              encoded/decoded via JSON, and is transmitted as a text message.
+              This encoding is limited, and should only be used for simple
+              messages. This encoding is intended to provide interoperability
+              with other languages. Any application that uses the :json
+              encoding will need to provide the json gem via its Gemfile, or,
+              if you are not using Bundler, the json gem must at least be
+              installed.</para>
             </listitem>
+
             <listitem>
-              <para><parameter>:text</parameter> - The message isn't encoded/decoded at all,
-              and is passed straight through as a text message. The content of the message
-              must be a string. This is useful for passing messages you can guarantee will 
-              always be strings, or you are doing your own application level encoding/decoding.</para>
+              <para><parameter>:text</parameter> - The message isn't
+              encoded/decoded at all, and is passed straight through as a text
+              message. The content of the message must be a string. This is
+              useful for passing messages you can guarantee will always be
+              strings, or you are doing your own application level
+              encoding/decoding.</para>
             </listitem>
-          </itemizedlist>
-        </para>
-        <para>You can specify the encoding on a per-publish basis (see <xref linkend="messaging-producers" />), 
-        or set the default encoding globally (see <xref linkend="overriding-default-message-encoding" />).</para>
+          </itemizedlist></para>
+
+        <para>You can specify the encoding on a per-publish basis (see <xref
+        linkend="messaging-producers" />), or set the default encoding
+        globally (see <xref
+        linkend="overriding-default-message-encoding" />).</para>
       </section>
 
       <section id="overriding-default-message-encoding">
         <title>Overriding The Default Encoding</title>
-        <para>You can override the default encoding (:marshal) in your deployment descriptor. This
-        default will be used for any of your publish calls if no encoding is specified at call time.
-        This change will not affect any messages used by TorqueBox internally (to implement <link
-        linkend="backgroundable">Backgroundable</link> for example).</para>
+
+        <para>You can override the default encoding (:marshal) in your
+        deployment descriptor. This default will be used for any of your
+        publish calls if no encoding is specified at call time. This change
+        will not affect any messages used by TorqueBox internally (to
+        implement <link linkend="backgroundable">Backgroundable</link> for
+        example).</para>
 
         <example>
-            <title>Overriding the default message encoding</title>
+          <title>Overriding the default message encoding</title>
 
-            <para>Using the YAML syntax:<programlisting>application:
+          <para>Using the YAML syntax:<programlisting>application:
   ...
 messaging:
   default_message_encoding: json</programlisting></para>
-       <para>And via the DSL:<programlisting>TorqueBox.configure do
-  ...
-  options_for :messaging, :default_message_encoding => :json
-end</programlisting></para>
-          </example>
 
+          <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  options_for :messaging, :default_message_encoding =&gt; :json
+end</programlisting></para>
+        </example>
       </section>
 
       <section id="creating-your-own-message-encoding">
         <title>Creating Your Own Message Encoding</title>
-        <para>To create your own message encoding, you need to create a subclass
-        of <classname>TorqueBox::Messaging::Message</classname> that provides
-        <methodname>encode</methodname> and <methodname>decode</methodname> methods, 
-        along with <methodname>ENCODING</methodname> and 
-        <methodname>JMS_TYPE</methodname> constants. Below is a simple annotated
-        example of a custom YAML encoding.</para>
+
+        <para>To create your own message encoding, you need to create a
+        subclass of <classname>TorqueBox::Messaging::Message</classname> that
+        provides <methodname>encode</methodname> and
+        <methodname>decode</methodname> methods, along with
+        <methodname>ENCODING</methodname> and
+        <methodname>JMS_TYPE</methodname> constants. Below is a simple
+        annotated example of a custom YAML encoding.</para>
 
         <example>
-            <title>Annotated custom YAML encoding example</title>
+          <title>Annotated custom YAML encoding example</title>
 
-            <para><programlisting>require 'yaml'
+          <para><programlisting>require 'yaml'
 
 module MyModule
   class YAMLMessage &lt; TorqueBox::Messaging::Message
@@ -893,18 +923,19 @@ module MyModule
   # this will register the class under the key given by its ENCODING
   TorqueBox::Messaging::Message.register_encoding(YAMLMessage)
 end</programlisting></para>
-<para>Using our new encoding:<programlisting>#you'll need to require your encoding class anywhere you publish/receive 
+
+          <para>Using our new encoding:<programlisting>#you'll need to require your encoding class anywhere you publish/receive 
 require 'yaml_message'
 
 data = [1, 2, 3]
-some_queue.publish(data, :encoding => :yaml)
+some_queue.publish(data, :encoding =&gt; :yaml)
 puts some_queue.receive # [1, 2, 3]</programlisting></para>
-          </example>
+        </example>
 
-          <para>For additional examples, see the message classes defined in the <ulink
-          url="http://github.com/torquebox/torquebox">TorqueBox source.</ulink></para>
+        <para>For additional examples, see the message classes defined in the
+        <ulink url="http://github.com/torquebox/torquebox">TorqueBox
+        source.</ulink></para>
       </section>
-
     </section>
 
     <section id="messaging-consumers">
@@ -988,24 +1019,25 @@ end</programlisting></para>
 
           <para>To connect consumers within a TorqueBox-deployed application,
           you need to add a messaging: section to your
-          <filename>torquebox.yml</filename> (or external
-          *-knob.yml descriptor), or add a <methodname>processor</methodname>
-          directive to the destination definition if you are using the DSL 
-          (in <filename>torquebox.rb</filename>).</para>
+          <filename>torquebox.yml</filename> (or external *-knob.yml
+          descriptor), or add a <methodname>processor</methodname> directive
+          to the destination definition if you are using the DSL (in
+          <filename>torquebox.rb</filename>).</para>
 
-          <para>If you are using a YAML descriptor, the messaging: section 
-          will contain the mappings from your destinations
-          (topics and queues) to your consumers. The section is a YAML hash,
-          the keys of which are your destination names, which should
-          correspond to existing queues and topics. These destinations may be
-          deployed through the same <filename>torquebox.yml</filename> or as
-          long-lived destinations.</para>
+          <para>If you are using a YAML descriptor, the messaging: section
+          will contain the mappings from your destinations (topics and queues)
+          to your consumers. The section is a YAML hash, the keys of which are
+          your destination names, which should correspond to existing queues
+          and topics. These destinations may be deployed through the same
+          <filename>torquebox.yml</filename> or as long-lived
+          destinations.</para>
 
-          <para>If you are using a DSL descriptor, the consumers are not defined
-          in a separate section, but as part of the queue/topic definition. If
-          the destination is a long-lived destination (managed by another application),
-          then you will need to tell TorqueBox not to try to create the destination
-          by setting the <varname>create</varname> to false.</para>
+          <para>If you are using a DSL descriptor, the consumers are not
+          defined in a separate section, but as part of the queue/topic
+          definition. If the destination is a long-lived destination (managed
+          by another application), then you will need to tell TorqueBox not to
+          try to create the destination by setting the
+          <varname>create</varname> to false.</para>
 
           <example>
             <title>Messaging handlers in a deployment descriptor</title>
@@ -1018,6 +1050,7 @@ queues:
 messaging:
   /queues/my_app_queue:     MyFooHandler
   /topics/long_lived_topic: MyBazHandler</programlisting></para>
+
             <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
   queue '/queues/my_app_queue' do
@@ -1111,8 +1144,8 @@ end</programlisting></para>
           </table>
 
           <example>
-            <title>Messaging configuration in
-            a deployment descriptor with options set</title>
+            <title>Messaging configuration in a deployment descriptor with
+            options set</title>
 
             <para>Using the YAML syntax:<programlisting>application:
   ...
@@ -1127,7 +1160,8 @@ messaging:
   /topics/bar:
     MyBarHandler:
       durable: true</programlisting></para>
-       <para>And via the DSL:<programlisting>TorqueBox.configure do
+
+            <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
   queue '/queues/foo' do
     processor MyFooHandler do 
@@ -1141,20 +1175,20 @@ messaging:
   end
 
   topic '/topics/bar' do
-    processor MyBarHandler, :durable => true
+    processor MyBarHandler, :durable =&gt; true
   end
 end</programlisting></para>
           </example>
 
-          <para>The YAML and DSL syntaxes enable the configuration to get fairly
-          sophisticated, allowing you to, for example, map a single
+          <para>The YAML and DSL syntaxes enable the configuration to get
+          fairly sophisticated, allowing you to, for example, map a single
           destination to multiple processors or re-use configuration options
           in multiple processors. You may never have a need for this much
           flexibility, but it's available if you do.</para>
 
           <example>
-            <title>Advanced messaging configuration in
-            a deployment descriptor</title>
+            <title>Advanced messaging configuration in a deployment
+            descriptor</title>
 
             <para>Using the YAML syntax:<programlisting>application:
   ...
@@ -1201,10 +1235,10 @@ messaging:
     processor SimpleHandler
   end
 
-  common_config = { :filter => "x &gt; 18", :config => { :x => 'ex', :y => 'why' } }
+  common_config = { :filter =&gt; "x &gt; 18", :config =&gt; { :x =&gt; 'ex', :y =&gt; 'why' } }
 
   topic '/topics/popular' do |topic| 
-    topic.processor Handler, :concurrency => 5
+    topic.processor Handler, :concurrency =&gt; 5
     topic.processor Observer, common_config
     topic.processor Processor
   end
@@ -1222,11 +1256,13 @@ messaging:
   end
 end</programlisting></para>
 
-           <para>Here we have the same configuration as the YAML example above, but expressed
-           via the DSL. Note that we have to use the block argument form for our destinations
-           that share <varname>common_config</varname>. This is due to the no-argument form
-           using <methodname>instance_eval</methodname>, which does not allow you to access
-           any variables defined outside of the block.</para>
+            <para>Here we have the same configuration as the YAML example
+            above, but expressed via the DSL. Note that we have to use the
+            block argument form for our destinations that share
+            <varname>common_config</varname>. This is due to the no-argument
+            form using <methodname>instance_eval</methodname>, which does not
+            allow you to access any variables defined outside of the
+            block.</para>
           </example>
 
           <section id="connecting-consumers-outside-of-torquebox">
@@ -1269,241 +1305,6 @@ end</programlisting></para>
       </section>
     </section>
 
-    <section id="async-tasks">
-      <title>Tasks</title>
-
-      <para>A special case of message queues is to execute some task
-      asynchronously, perhaps even remotely. Rails developers often want to
-      spawn a potentially long-running task in response to a user request,
-      without forcing the user to wait for its completion. TorqueBox makes
-      this easy.</para>
-
-      <section id="task-classes">
-        <title>Task Classes</title>
-
-        <para>Task classes simply extend
-        <classname>TorqueBox::Messaging::Task</classname> and implement one or
-        more (usually long-running) methods that take a single object payload,
-        a Ruby <classname>Hash</classname>.</para>
-
-        <para>In Rails applications, these tasks should be placed in the
-        <filename>app/tasks/</filename> directory. For non-Rails applications,
-        they should be placed in <filename>tasks/</filename>. The tasks should
-        be suffixed with <filename>_task.rb</filename> for the file name, and
-        suffixed with <classname>Task</classname> for the class name.</para>
-
-        <para>Any of the task's methods can be invoked asynchronously by
-        calling the task's class method, <function>async</function>, which
-        returns a <link linkend="messaging-futures">Future</link> object
-        that can be used to monitor the status of the task processing
-        and retrieve the final return value.</para>
-
-        <para><example>
-            <title>Example task class</title>
-
-            <para><programlisting>class EmailerTask &lt; TorqueBox::Messaging::Task
-  def send_welcome(payload)
-    to = "#{payload[:name]} &lt;#{payload[:address]}&gt;"
-    # send welcome email to the user
-  end
-
-  def send_password_reset(payload)
-    email = payload[:address]
-    # send password-reset email to the user
-  end
-end</programlisting></para>
-          </example></para>
-      </section>
-
-      <section id="invoke-a-task">
-        <title>Invoke a task</title>
-
-        <para>Tasks can be invoked asynchronously from within any application
-        running inside TorqueBox, e.g. your Rails app.</para>
-
-        <para><example>
-            <title>Spawning a task from a Rails controller</title>
-
-            <para><programlisting>class UserController &lt; ApplicationController
-  def register
-    user = User.new(params[:user])
-    ...
-    EmailerTask.async(:send_welcome, :address =&gt; user.email, :name =&gt; user.name)
-  end
-
-  def reset_password
-    ...
-    future_result = EmailerTask.async(:send_password, :address =&gt; params[:email])
-    ...
-  end
-end</programlisting>The first parameter to the <function>async(...)</function>
-            class method is a symbol indicating the method to execute
-            asynchronously. Optional hash pairs comprising the payload of the
-            message follow.</para>
-          </example></para>
-      </section>
-
-      <section id="task-invocation-options">
-        <title>Task invocation options</title>
-
-        <para>When invoking a task, you can override the default priority,
-        time-to-live, and persistence options by passing an options hash to
-        <function>async</function>. The available options are:</para>
-
-        <table>
-          <title>Task invocation options</title>
-
-          <tgroup cols="3">
-            <colspec align="left" />
-
-            <thead>
-              <row>
-                <entry>Option</entry>
-
-                <entry>Default</entry>
-
-                <entry>Description</entry>
-              </row>
-            </thead>
-
-            <tbody>
-              <row>
-                <entry><parameter>:priority</parameter></entry>
-
-                <entry>:normal</entry>
-
-                <entry>Higher priority messages will be delivered before lower
-                priority messages within the context of a queue. You can
-                specify the priority as an integer in the range 0..9, or as
-                one of the following convenience symbols (with the
-                corresponding integer priorities in parentheses):
-                <itemizedlist>
-                    <listitem>
-                      <para><parameter>:low</parameter> (1)</para>
-                    </listitem>
-
-                    <listitem>
-                      <para><parameter>:normal</parameter> (4)</para>
-                    </listitem>
-
-                    <listitem>
-                      <para><parameter>:high</parameter> (7)</para>
-                    </listitem>
-
-                    <listitem>
-                      <para><parameter>:critical</parameter> (9)</para>
-                    </listitem>
-                  </itemizedlist> Higher priority messages will be processed
-                before lower priority ones for a specific message
-                processor.</entry>
-              </row>
-
-              <row>
-                <entry><parameter>:ttl</parameter></entry>
-
-                <entry></entry>
-
-                <entry>The maximum time the message will wait in a destination
-                to be consumed, in milliseconds. If the message isn't consumed
-                within this time it will be delivered to an expiry queue. By
-                default, messages don't have a ttl (and therefore never
-                expire). By default, expired messages end up on the
-                <varname>/queue/ExpiryQueue</varname> queue. If you want to do
-                something special with those messages, you'll need to add a
-                processor for that queue.</entry>
-              </row>
-
-              <row>
-                <entry><parameter>:persistent</parameter></entry>
-
-                <entry>true</entry>
-
-                <entry>By default, queued messages will survive across AS
-                restarts. If you don't want a message to be persistent, set
-                the persistence to <parameter>false</parameter>.</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table>
-
-        <para>The options are passed as the third argument to
-        <function>async</function>:</para>
-
-        <para><example>
-            <title>Passing options to <function>async</function></title>
-
-            <para><programlisting>SomeTask.async(:an_important_action, {:id =&gt; 28}, :priority =&gt; :high)
-SomeTask.async(:a_timeboxed_action, {:some_value =&gt; :foo}, :ttl =&gt; 5000)
-</programlisting>The message options are passed as a
-            <classname>Hash</classname> after the payload argument.</para>
-          </example></para>
-      </section>
-
-      <section id="task-message-processor-options">
-        <title>Task message processor options</title>
-
-        <para>You can set options for the message processors for each task in
-        the deployment descriptor. Currently, the concurrency is the
-        only available option:</para>
-
-        <table>
-          <title>Task message processor options</title>
-
-          <tgroup cols="3">
-            <colspec align="left" />
-
-            <thead>
-              <row>
-                <entry>Option</entry>
-
-                <entry>Default</entry>
-
-                <entry>Description</entry>
-              </row>
-            </thead>
-
-            <tbody>
-              <row>
-                <entry><parameter>concurrency</parameter></entry>
-
-                <entry>1</entry>
-
-                <entry>May be used to throttle the throughput of your
-                processor. Processors are single-threaded, by default, but you
-                can increase this value to match the number of concurrent
-                messages you expect to receive.</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table>
-
-
-        <example>
-          <title>Task message processor options in
-          a deployment descriptor</title>
-
-          <para>The options are set when using the YAML syntax by
-          keying the options to the task class name:
-<programlisting>application:
-  ...
-tasks:
-  SomeTask:
-    concurrency: 2
-  SomeOtherTask:
-    concurrency: 5</programlisting></para>
-
-          <para>The options are set when using the DSL by
-          <methodname>options_for</methodname> directive:
-<programlisting>TorqueBox.configure do
-  ...
-  options_for SomeTask, :concurrency => 2
-  options_for SomeOtherTask :concurrency => 5
-end</programlisting></para>
-
-        </example>
-      </section>
-    </section>
-
     <section id="backgroundable">
       <title><classname>Backgroundable</classname> Methods</title>
 
@@ -1511,12 +1312,12 @@ end</programlisting></para>
       for background proccessing, TorqueBox also provides
       <classname>Backgroundable</classname> methods.
       <classname>Backgroundable</classname> allows you to process any method
-      on any object asynchronously. You can mark a method to always execute
-      in the background, or send a method to the background on an ad hoc
-      basis. Backgrounded methods return a <link 
-      linkend="messaging-futures">Future</link> object
-      that can be used to monitor the status of the method invocation
-      and retrieve the final return value.</para>
+      on any object asynchronously. You can mark a method to always execute in
+      the background, or send a method to the background on an ad hoc basis.
+      Backgrounded methods return a <link
+      linkend="messaging-futures">Future</link> object that can be used to
+      monitor the status of the method invocation and retrieve the final
+      return value.</para>
 
       <section id="backgroundable-always-background">
         <title><function>always_background</function></title>
@@ -1569,11 +1370,11 @@ User.always_background(:send_signup_notification)
 
         <para>If you have not marked an instance method with
         <function>always_background</function>, you can background it at call
-        time with the <function>background</function> instance method. 
-        A method called via <function>background</function> will also return 
-        a <link linkend="messaging-futures">Future</link> object
-        that can be used to monitor the status of the method invocation
-        and retrieve the final return value.</para>
+        time with the <function>background</function> instance method. A
+        method called via <function>background</function> will also return a
+        <link linkend="messaging-futures">Future</link> object that can be
+        used to monitor the status of the method invocation and retrieve the
+        final return value.</para>
 
         <example>
           <title>Backgrounding a method ad hoc</title>
@@ -1682,14 +1483,14 @@ widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
 
         <para>The concurrency option that is <link
         linkend="task-message-processor-options">available to task class
-        message processors</link> in a deployment descriptor is
-        available to <classname>Backgroundable</classname> message processors
-        as well. Instead of a task class name, you specify
+        message processors</link> in a deployment descriptor is available to
+        <classname>Backgroundable</classname> message processors as well.
+        Instead of a task class name, you specify
         <classname>Backgroundable</classname>:</para>
 
         <example>
-          <title>Task message processor options in
-          a deployment descriptor</title>
+          <title>Task message processor options in a deployment
+          descriptor</title>
 
           <para>Using the YAML syntax:<programlisting>application:
   ...
@@ -1701,8 +1502,8 @@ tasks:
 
           <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
-  options_for Backgroundable, :concurrency => 2
-  options_for SomeTask, :concurrency => 5
+  options_for Backgroundable, :concurrency =&gt; 2
+  options_for SomeTask, :concurrency =&gt; 5
 end</programlisting></para>
         </example>
 
@@ -1716,95 +1517,109 @@ end</programlisting></para>
 
   <section id="messaging-futures">
     <title>Future Objects</title>
-    <para>Both <function>Task.async</function> and methods backgrounded via 
+
+    <para>Both <function>Task.async</function> and methods backgrounded via
     <classname>Backgroundable</classname> return <classname>Future</classname>
-    objects that allow you to monitor the progress of the asynchronous 
+    objects that allow you to monitor the progress of the asynchronous
     processing.</para>
 
     <table>
       <title>Future instance methods</title>
+
       <tgroup cols="2">
         <colspec align="left" />
-          
+
         <thead>
           <row>
             <entry>Method</entry>
-            
+
             <entry>Description</entry>
           </row>
         </thead>
-        
+
         <tbody>
           <row>
             <entry>started?</entry>
-            
-            <entry>Returns <parameter>true</parameter> if the task processing has started.</entry>
+
+            <entry>Returns <parameter>true</parameter> if the task processing
+            has started.</entry>
           </row>
-          
+
           <row>
             <entry>complete?</entry>
-            
-            <entry>Returns <parameter>true</parameter> if the task processing has completed without error. 
-            If <parameter>true</parameter>, The result is available via the <function>result</function>
+
+            <entry>Returns <parameter>true</parameter> if the task processing
+            has completed without error. If <parameter>true</parameter>, The
+            result is available via the <function>result</function>
             method.</entry>
           </row>
-          
+
           <row>
             <entry>error?</entry>
-            
-            <entry>Returns <parameter>true</parameter> if an error occurred during the task processing.
-            If <parameter>true</parameter>, The actual error is available via the <function>error</function>
+
+            <entry>Returns <parameter>true</parameter> if an error occurred
+            during the task processing. If <parameter>true</parameter>, The
+            actual error is available via the <function>error</function>
             method.</entry>
           </row>
-          
+
           <row>
             <entry>status</entry>
-            
-            <entry>Returns the last status message returned from the task. This will only have meaning
-            if you signal status information from within your task. See the <link
-            linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
+
+            <entry>Returns the last status message returned from the task.
+            This will only have meaning if you signal status information from
+            within your task. See the <link
+            linkend="messaging-futures-status">status notifications</link>
+            section for more details.</entry>
           </row>
 
           <row>
             <entry>status_changed?</entry>
-            
-            <entry>Returns true if the status has changed since you last called <function>status</function>. 
-            This will only have meaning if you signal status information from within your task. See the <link
-            linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
+
+            <entry>Returns true if the status has changed since you last
+            called <function>status</function>. This will only have meaning if
+            you signal status information from within your task. See the <link
+            linkend="messaging-futures-status">status notifications</link>
+            section for more details.</entry>
           </row>
 
           <row>
             <entry>all_statuses</entry>
-            
-            <entry>Returns an array of all the statuses received by the future, which may not include all of 
-            the statuses sent if the task completes before they are all received. 
-            This will only have meaning if you signal status information from within your task. See the <link
-            linkend="messaging-futures-status">status notifications</link> section for more details.</entry>
+
+            <entry>Returns an array of all the statuses received by the
+            future, which may not include all of the statuses sent if the task
+            completes before they are all received. This will only have
+            meaning if you signal status information from within your task.
+            See the <link linkend="messaging-futures-status">status
+            notifications</link> section for more details.</entry>
           </row>
-          
+
           <row>
             <entry>result</entry>
-            
-            <entry>Returns the result of the remote processing. This method takes a 
-            <parameter>timeout</parameter> (in milliseconds), and will block for that amount of
-            time if processing has started but not completed, or up to twice that time if processing 
-            has yet to start. If no result is available after timing out, a 
-            <classname>TorqueBox::Messaging::TimeoutException</classname> is raised.
-            The <parameter>timeout</parameter> defaults to 30 seconds. The recommended pattern
-            is to wait for <function>complete?</function> to return <parameter>true</parameter>
-            before calling <function>result</function>.</entry>
+
+            <entry>Returns the result of the remote processing. This method
+            takes a <parameter>timeout</parameter> (in milliseconds), and will
+            block for that amount of time if processing has started but not
+            completed, or up to twice that time if processing has yet to
+            start. If no result is available after timing out, a
+            <classname>TorqueBox::Messaging::TimeoutException</classname> is
+            raised. The <parameter>timeout</parameter> defaults to 30 seconds.
+            The recommended pattern is to wait for
+            <function>complete?</function> to return
+            <parameter>true</parameter> before calling
+            <function>result</function>.</entry>
           </row>
-          
+
           <row>
             <entry>method_missing</entry>
-            
-            <entry>Delegates any missing methods to the <function>result</function>, using
-            the default timeout.</entry>
+
+            <entry>Delegates any missing methods to the
+            <function>result</function>, using the default timeout.</entry>
           </row>
-          
+
           <row>
             <entry>error</entry>
-            
+
             <entry>Returns the remote error object if an error occurred during
             task processing.</entry>
           </row>
@@ -1813,13 +1628,14 @@ end</programlisting></para>
     </table>
 
     <section id="messaging-futures-status">
-      <title>Sending status notifications to the Future from within the task</title>
+      <title>Sending status notifications to the Future from within the
+      task</title>
 
       <para>From within a task or backgrounded method invocation, you can send
-      a status notification to the <classname>Future</classname> for this 
-      call by using the <function>future.status=</function>
-      method. The status can be any marshalable object, and its semantics are 
-      defined by your application.</para>
+      a status notification to the <classname>Future</classname> for this call
+      by using the <function>future.status=</function> method. The status can
+      be any marshalable object, and its semantics are defined by your
+      application.</para>
 
       <example>
         <title>Sending a status message</title>
@@ -1840,13 +1656,11 @@ end
 
 future = Something.new.process_some_stuff
 # time passes
-future.started? # => true
-future.status   # => 22
+future.started? # =&gt; true
+future.status   # =&gt; 22
 # time passes
-future.status   # => 87</programlisting></para>
+future.status   # =&gt; 87</programlisting></para>
       </example>
-
-
     </section>
   </section>
 </chapter>

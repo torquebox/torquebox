@@ -156,7 +156,7 @@
             </row>
 
             <row>
-              <entry>Message Processors &amp; Async Tasks</entry>
+              <entry>Message Processors</entry>
 
               <entry><code>messaging</code></entry>
             </row>
