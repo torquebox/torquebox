@@ -231,10 +231,6 @@
       <section id="application-linked-destinations">
         <title>Application-linked queues and topics</title>
 
-        <para>Some destinations are intimately tied to the lifecycle of some
-        particular application. For example, internally in the asynchornous
-        tasks implementation, an application-link queue is used.</para>
-
         <para>Destinations deployed with your application also undeploy when
         your application is undeployed. These destinations are configuration
         through either your application's internal descriptor, or through an
@@ -392,8 +388,7 @@ require 'torquebox-messaging'
 
       <para>Though sometimes convenient, these methods are fairly low-level
       and higher-level abstractions such as <link
-      linkend="consumers">MessageProcessors</link>, <link
-      linkend="async-tasks">Tasks</link>, and <link
+      linkend="consumers">MessageProcessors</link>, and <link
       linkend="backgroundable">Backgroundable</link> are often better-suited
       to the task.</para>
 
@@ -1264,43 +1259,6 @@ end</programlisting></para>
             allow you to access any variables defined outside of the
             block.</para>
           </example>
-
-          <section id="connecting-consumers-outside-of-torquebox">
-            <title>Connecting Consumers outside of TorqueBox</title>
-
-            <para>To support messaging outside of TorqueBox, i.e. outside of
-            the JBoss Application Server (AS), two command-line utilities are
-            provided: one that can deploy your <filename>queues.yml</filename>
-            (or <filename>topics.yml</filename>) and one that can deploy your
-            <filename>messaging.yml</filename> config file.</para>
-
-            <para><example>
-                <title>Deploying your Consumers outside of the App
-                Server</title>
-
-                <para><programlisting>$ trq-message-processor-host --deploy messaging.yml
-              </programlisting></para>
-
-                <para>Optionally, you can pass <code>-N
-                your.naming.host</code> if there's not a naming server running
-                locally</para>
-              </example></para>
-
-            <para>Firing up the consumers doesn't do much good without the
-            actual destinations, though...</para>
-
-            <para><example>
-                <title>Deploying your Destinations outside of the App
-                Server</title>
-
-                <para><programlisting>$ trq-message-broker -s --deploy queues.yml
-              </programlisting></para>
-
-                <para>The <code>-s</code> option tells the broker to fire up
-                its own naming service. Otherwise, it attempts to use a local
-                one.</para>
-              </example></para>
-          </section>
         </section>
       </section>
     </section>
@@ -1308,16 +1266,16 @@ end</programlisting></para>
     <section id="backgroundable">
       <title><classname>Backgroundable</classname> Methods</title>
 
-      <para>In addition to <link linkend="task-classes">task classes</link>
-      for background proccessing, TorqueBox also provides
-      <classname>Backgroundable</classname> methods.
-      <classname>Backgroundable</classname> allows you to process any method
-      on any object asynchronously. You can mark a method to always execute in
-      the background, or send a method to the background on an ad hoc basis.
-      Backgrounded methods return a <link
+      <para>TorqueBox also provides <classname>Backgroundable</classname>
+      methods. <classname>Backgroundable</classname> allows you to process any
+      method on any object asynchronously. You can mark a method to always
+      execute in the background, or send a method to the background on an ad
+      hoc basis. Backgrounded methods return a <link
       linkend="messaging-futures">Future</link> object that can be used to
       monitor the status of the method invocation and retrieve the final
-      return value.</para>
+      return value. When transitioning from TorqueBox 1.x to 2.x, it is
+      advisable to replace any <classname>Task</classname> implementation with
+      usage of <classname>Backgroundable</classname>.</para>
 
       <section id="backgroundable-always-background">
         <title><function>always_background</function></title>
@@ -1444,7 +1402,7 @@ end
         options</title>
 
         <para>The priority, time-to-live, and persistence options that are
-        available to <link linkend="task-invocation-options">available to task
+        available to <link linkend="invocation-options">available to task
         classes</link> are available to <classname>Backgroundable</classname>
         methods as well:</para>
 
@@ -1475,6 +1433,82 @@ widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
           <function>background</function> affect only that particular
           invocation.</para>
         </example>
+
+        <table>
+          <title>Backgroundable invocation options</title>
+
+          <tgroup cols="3">
+            <colspec align="left" />
+
+            <thead>
+              <row>
+                <entry>Option</entry>
+
+                <entry>Default</entry>
+
+                <entry>Description</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry><parameter>:priority</parameter></entry>
+
+                <entry>:normal</entry>
+
+                <entry>Higher priority messages will be delivered before lower
+                priority messages within the context of a queue. You can
+                specify the priority as an integer in the range 0..9, or as
+                one of the following convenience symbols (with the
+                corresponding integer priorities in parentheses):
+                <itemizedlist>
+                    <listitem>
+                      <para><parameter>:low</parameter> (1)</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:normal</parameter> (4)</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:high</parameter> (7)</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:critical</parameter> (9)</para>
+                    </listitem>
+                  </itemizedlist> Higher priority messages will be processed
+                before lower priority ones for a specific message
+                processor.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:ttl</parameter></entry>
+
+                <entry></entry>
+
+                <entry>The maximum time the message will wait in a destination
+                to be consumed, in milliseconds. If the message isn't consumed
+                within this time it will be delivered to an expiry queue. By
+                default, messages don't have a ttl (and therefore never
+                expire). By default, expired messages end up on the
+                <varname>/queue/ExpiryQueue</varname> queue. If you want to do
+                something special with those messages, you'll need to add a
+                processor for that queue.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:persistent</parameter></entry>
+
+                <entry>true</entry>
+
+                <entry>By default, queued messages will survive across AS
+                restarts. If you don't want a message to be persistent, set
+                the persistence to <parameter>false</parameter>.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
       </section>
 
       <section id="backgroundable-message-processor-options">
@@ -1482,8 +1516,8 @@ widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
         options</title>
 
         <para>The concurrency option that is <link
-        linkend="task-message-processor-options">available to task class
-        message processors</link> in a deployment descriptor is available to
+        linkend="task-message-processor-options">available to message
+        processors</link> in a deployment descriptor is available to
         <classname>Backgroundable</classname> message processors as well.
         Instead of a task class name, you specify
         <classname>Backgroundable</classname>:</para>
@@ -1497,8 +1531,7 @@ widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
 tasks:
   Backgroundable:
     concurrency: 2
-  SomeTask:
-    concurrency: 5</programlisting></para>
+</programlisting></para>
 
           <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
@@ -1513,134 +1546,132 @@ end</programlisting></para>
         0.</para>
       </section>
     </section>
-  </section>
 
-  <section id="messaging-futures">
-    <title>Future Objects</title>
+    <section id="messaging-futures">
+      <title>Future Objects</title>
 
-    <para>Both <function>Task.async</function> and methods backgrounded via
-    <classname>Backgroundable</classname> return <classname>Future</classname>
-    objects that allow you to monitor the progress of the asynchronous
-    processing.</para>
+      <para>Methods backgrounded via <classname>Backgroundable</classname>
+      return <classname>Future</classname> objects that allow you to monitor
+      the progress of the asynchronous processing.</para>
 
-    <table>
-      <title>Future instance methods</title>
+      <table>
+        <title>Future instance methods</title>
 
-      <tgroup cols="2">
-        <colspec align="left" />
+        <tgroup cols="2">
+          <colspec align="left" />
 
-        <thead>
-          <row>
-            <entry>Method</entry>
+          <thead>
+            <row>
+              <entry>Method</entry>
 
-            <entry>Description</entry>
-          </row>
-        </thead>
+              <entry>Description</entry>
+            </row>
+          </thead>
 
-        <tbody>
-          <row>
-            <entry>started?</entry>
+          <tbody>
+            <row>
+              <entry>started?</entry>
 
-            <entry>Returns <parameter>true</parameter> if the task processing
-            has started.</entry>
-          </row>
+              <entry>Returns <parameter>true</parameter> if the task
+              processing has started.</entry>
+            </row>
 
-          <row>
-            <entry>complete?</entry>
+            <row>
+              <entry>complete?</entry>
 
-            <entry>Returns <parameter>true</parameter> if the task processing
-            has completed without error. If <parameter>true</parameter>, The
-            result is available via the <function>result</function>
-            method.</entry>
-          </row>
+              <entry>Returns <parameter>true</parameter> if the task
+              processing has completed without error. If
+              <parameter>true</parameter>, The result is available via the
+              <function>result</function> method.</entry>
+            </row>
 
-          <row>
-            <entry>error?</entry>
+            <row>
+              <entry>error?</entry>
 
-            <entry>Returns <parameter>true</parameter> if an error occurred
-            during the task processing. If <parameter>true</parameter>, The
-            actual error is available via the <function>error</function>
-            method.</entry>
-          </row>
+              <entry>Returns <parameter>true</parameter> if an error occurred
+              during the task processing. If <parameter>true</parameter>, The
+              actual error is available via the <function>error</function>
+              method.</entry>
+            </row>
 
-          <row>
-            <entry>status</entry>
+            <row>
+              <entry>status</entry>
 
-            <entry>Returns the last status message returned from the task.
-            This will only have meaning if you signal status information from
-            within your task. See the <link
-            linkend="messaging-futures-status">status notifications</link>
-            section for more details.</entry>
-          </row>
+              <entry>Returns the last status message returned from the task.
+              This will only have meaning if you signal status information
+              from within your task. See the <link
+              linkend="messaging-futures-status">status notifications</link>
+              section for more details.</entry>
+            </row>
 
-          <row>
-            <entry>status_changed?</entry>
+            <row>
+              <entry>status_changed?</entry>
 
-            <entry>Returns true if the status has changed since you last
-            called <function>status</function>. This will only have meaning if
-            you signal status information from within your task. See the <link
-            linkend="messaging-futures-status">status notifications</link>
-            section for more details.</entry>
-          </row>
+              <entry>Returns true if the status has changed since you last
+              called <function>status</function>. This will only have meaning
+              if you signal status information from within your task. See the
+              <link linkend="messaging-futures-status">status
+              notifications</link> section for more details.</entry>
+            </row>
 
-          <row>
-            <entry>all_statuses</entry>
+            <row>
+              <entry>all_statuses</entry>
 
-            <entry>Returns an array of all the statuses received by the
-            future, which may not include all of the statuses sent if the task
-            completes before they are all received. This will only have
-            meaning if you signal status information from within your task.
-            See the <link linkend="messaging-futures-status">status
-            notifications</link> section for more details.</entry>
-          </row>
+              <entry>Returns an array of all the statuses received by the
+              future, which may not include all of the statuses sent if the
+              task completes before they are all received. This will only have
+              meaning if you signal status information from within your task.
+              See the <link linkend="messaging-futures-status">status
+              notifications</link> section for more details.</entry>
+            </row>
 
-          <row>
-            <entry>result</entry>
+            <row>
+              <entry>result</entry>
 
-            <entry>Returns the result of the remote processing. This method
-            takes a <parameter>timeout</parameter> (in milliseconds), and will
-            block for that amount of time if processing has started but not
-            completed, or up to twice that time if processing has yet to
-            start. If no result is available after timing out, a
-            <classname>TorqueBox::Messaging::TimeoutException</classname> is
-            raised. The <parameter>timeout</parameter> defaults to 30 seconds.
-            The recommended pattern is to wait for
-            <function>complete?</function> to return
-            <parameter>true</parameter> before calling
-            <function>result</function>.</entry>
-          </row>
+              <entry>Returns the result of the remote processing. This method
+              takes a <parameter>timeout</parameter> (in milliseconds), and
+              will block for that amount of time if processing has started but
+              not completed, or up to twice that time if processing has yet to
+              start. If no result is available after timing out, a
+              <classname>TorqueBox::Messaging::TimeoutException</classname> is
+              raised. The <parameter>timeout</parameter> defaults to 30
+              seconds. The recommended pattern is to wait for
+              <function>complete?</function> to return
+              <parameter>true</parameter> before calling
+              <function>result</function>.</entry>
+            </row>
 
-          <row>
-            <entry>method_missing</entry>
+            <row>
+              <entry>method_missing</entry>
 
-            <entry>Delegates any missing methods to the
-            <function>result</function>, using the default timeout.</entry>
-          </row>
+              <entry>Delegates any missing methods to the
+              <function>result</function>, using the default timeout.</entry>
+            </row>
 
-          <row>
-            <entry>error</entry>
+            <row>
+              <entry>error</entry>
 
-            <entry>Returns the remote error object if an error occurred during
-            task processing.</entry>
-          </row>
-        </tbody>
-      </tgroup>
-    </table>
+              <entry>Returns the remote error object if an error occurred
+              during task processing.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
 
-    <section id="messaging-futures-status">
-      <title>Sending status notifications to the Future from within the
-      task</title>
+      <section id="messaging-futures-status">
+        <title>Sending status notifications to the Future from within the
+        task</title>
 
-      <para>From within a task or backgrounded method invocation, you can send
-      a status notification to the <classname>Future</classname> for this call
-      by using the <function>future.status=</function> method. The status can
-      be any marshalable object, and its semantics are defined by your
-      application.</para>
+        <para>From within a task or backgrounded method invocation, you can
+        send a status notification to the <classname>Future</classname> for
+        this call by using the <function>future.status=</function> method. The
+        status can be any marshalable object, and its semantics are defined by
+        your application.</para>
 
-      <example>
-        <title>Sending a status message</title>
+        <example>
+          <title>Sending a status message</title>
 
-        <para><programlisting>class Something
+          <para><programlisting>class Something
   include TorqueBox::Messaging::Backgroundable
   
   always_background :process_some_stuff
@@ -1660,7 +1691,8 @@ future.started? # =&gt; true
 future.status   # =&gt; 22
 # time passes
 future.status   # =&gt; 87</programlisting></para>
-      </example>
+        </example>
+      </section>
     </section>
   </section>
 </chapter>
