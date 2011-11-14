@@ -275,7 +275,7 @@ module TorqueBox
 
       def manager
         begin
-          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "web" )]
+          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )]
         rescue Exception => e
           log( "Caught exception while looking up Infinispan service.", 'ERROR' )
           log( e.message, 'ERROR' )
@@ -357,7 +357,14 @@ module TorqueBox
 
         Cache.local_managers << local_manager
         
-        local_manager.get_cache( self.name )
+        c = local_manager.get_cache( self.name )
+
+        if options[:index]
+          c.getAdvancedCache.getComponentRegistry.registerComponent( )
+        end
+
+        c
+
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
         log( e.backtrace, 'ERROR' )

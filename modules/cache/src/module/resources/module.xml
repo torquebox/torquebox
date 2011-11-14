@@ -95,8 +95,8 @@
         <module name="org.slf4j"/>
 
         <!-- Infinispan-requirements -->
-        <module name="org.hibernate"/>
-        <module name="org.infinispan"/>
+        <module name="org.hibernate" services="import"/>
+        <module name="org.infinispan" services="import"/>
         <module name="javax.transaction.api"/>
         <module name="javax.xml.bind.api"/>
         <module name="org.apache.xerces" services="import"/>

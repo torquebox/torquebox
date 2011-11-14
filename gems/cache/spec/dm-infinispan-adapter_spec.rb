@@ -36,6 +36,10 @@ describe DataMapper::Adapters::InfinispanAdapter do
     Heffalump.auto_migrate!
   end
 
+  it "should use the infinispan search manager" do
+    @adapter.search_manager.should_not be_nil
+  end
+
   after :all do
     @adapter.stop
     FileUtils.rm_rf @heffalump_index
