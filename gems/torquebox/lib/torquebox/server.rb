@@ -23,6 +23,7 @@ module TorqueBox
 
     def self.torquebox_home
       if ((gem_version <=> Gem::Version.new('1.8.9')) < 0)
+        puts "[WARNING] Found rubygems version #{Gem::VERSION}. This probably means you are on JRuby 1.6.4. While JRuby 1.6.4 should work, TorqueBox is tested on and ships with JRuby 1.6.5."
         home = Gem.searcher.find( 'torquebox-server' )
       else
         home = Gem::Specification.find_by_name( 'torquebox-server' )

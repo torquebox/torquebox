@@ -74,6 +74,7 @@ describe "sinatra with dm-infinispan-adapter" do
   end
 
   it "should index records" do
+    pending
     visit '/sinatra-datamapper'
     page.should have_content('indexed')
   end
