@@ -357,13 +357,8 @@ module TorqueBox
 
         Cache.local_managers << local_manager
         
-        c = local_manager.get_cache( self.name )
+        local_manager.get_cache( self.name )
 
-        if options[:index]
-          c.getAdvancedCache.getComponentRegistry.registerComponent( )
-        end
-
-        c
 
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
