@@ -20,7 +20,7 @@
 package org.torquebox.core.injection;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.as.txn.TxnServices;
+import org.jboss.as.txn.service.TxnServices;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.service.ServiceTarget;
 
