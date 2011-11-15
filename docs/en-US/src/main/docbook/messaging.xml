@@ -210,7 +210,7 @@
           Currently, no additional configuration parameters are allowed -
           topic durability is controlled via options on the attached
           processors (See <xref
-          linkend="connecting-consumers-within-torquebox" />).</para>
+          linkend="connecting-consumers-to-destinations" />).</para>
         </formalpara>
 
         <para><example>
@@ -677,7 +677,7 @@ message = topic.receive
                 <methodname>receive</methodname> returns the same value that
                 was sent via <methodname>publish</methodname>. If
                 <parameter>:decode</parameter> is false, the JMS <ulink
-                url="http://download.oracle.com/javaee/1.3/api/javax/jms/TextMessage.html">TextMessage</ulink>
+                url="http://download.oracle.com/javaee/1.3/api/javax/jms/Message.html">javax.jms.Message</ulink>
                 object will be returned instead. This should be true unless
                 you need to access headers or properties of the JMS
                 message.</entry>
@@ -928,8 +928,7 @@ puts some_queue.receive # [1, 2, 3]</programlisting></para>
         </example>
 
         <para>For additional examples, see the message classes defined in the
-        <ulink url="http://github.com/torquebox/torquebox">TorqueBox
-        source.</ulink></para>
+        <ulink url="https://github.com/torquebox/torquebox/tree/2x-dev/gems/messaging/lib/torquebox/messaging">TorqueBox source</ulink>.</para>
       </section>
     </section>
 
@@ -1003,14 +1002,6 @@ end</programlisting></para>
 
       <section id="connecting-consumers-to-destinations">
         <title>Connecting Consumers to Destinations</title>
-
-        <para>You can connect consumers hosted within a TorqueBox-based
-        application, or in external scripts. The method for each environment
-        is similar, but slightly different, since TorqueBox-hosted consumers
-        get more baked-in support from the container.</para>
-
-        <section id="connecting-consumers-within-torquebox">
-          <title>Connecting consumers within TorqueBox</title>
 
           <para>To connect consumers within a TorqueBox-deployed application,
           you need to add a messaging: section to your
@@ -1259,7 +1250,6 @@ end</programlisting></para>
             allow you to access any variables defined outside of the
             block.</para>
           </example>
-        </section>
       </section>
     </section>
 
