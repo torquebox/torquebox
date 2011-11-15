@@ -388,7 +388,7 @@ require 'torquebox-messaging'
 
       <para>Though sometimes convenient, these methods are fairly low-level
       and higher-level abstractions such as <link
-      linkend="consumers">MessageProcessors</link>, and <link
+      linkend="messaging-consumers">Message Processors</link>, and <link
       linkend="backgroundable">Backgroundable</link> are often better-suited
       to the task.</para>
 
@@ -457,7 +457,7 @@ queue.publish "Some message"</programlisting></para>
         <para>The <methodname>publish</methodname> method takes an optional
         second argument containing a hash of options:</para>
 
-        <table>
+        <table id="messaging-producers-options">
           <title>Publish options</title>
 
           <tgroup cols="3">
@@ -979,7 +979,7 @@ end</programlisting></para>
 
             <para><programlisting>class MyConsumer &lt; TorqueBox::Messaging::MessageProcessor
   def on_message(body)
-    # The body will be of whatever type was <link linkend="producers">published by the Producer</link>
+    # The body will be of whatever type was <link linkend="messaging-producers">published by the Producer</link>
     # the entire JMS message is available as a member variable called <function>message()</function>
   end
   def on_error(exception)
@@ -1071,7 +1071,7 @@ end</programlisting></para>
           but it's possible to alter the behavior of your message processor
           using the following options:</para>
 
-          <table>
+          <table id="task-message-processor-options">
             <title>Message processor options</title>
 
             <tgroup cols="3">
@@ -1401,9 +1401,9 @@ end
         <title><classname>Backgroundable</classname> method invocation
         options</title>
 
-        <para>The priority, time-to-live, and persistence options that are
-        available to <link linkend="invocation-options">available to task
-        classes</link> are available to <classname>Backgroundable</classname>
+        <para>The priority, time-to-live (TTL), and persistence options that are
+        available when <link linkend="messaging-producers-options">publishing messages</link>
+         are available to <classname>Backgroundable</classname>
         methods as well:</para>
 
         <example>

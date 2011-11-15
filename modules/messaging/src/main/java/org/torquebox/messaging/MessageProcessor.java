@@ -1,7 +1,6 @@
 package org.torquebox.messaging;
 
 import javax.jms.Message;
-import javax.transaction.xa.XAException;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
