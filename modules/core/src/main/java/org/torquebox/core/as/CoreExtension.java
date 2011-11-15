@@ -30,12 +30,18 @@ import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
+import org.torquebox.bootstrap.as.TorqueBoxBootstrapper;
 
 public class CoreExtension extends AbstractBootstrappableExtension {
+
+    public CoreExtension() throws ClassNotFoundException {
+        super( TorqueBoxBootstrapper.class.getName() );
+    }
 
     @Override
     public void initialize(ExtensionContext context) {
 
+        log.info( "Boostrapping TorqueBox Core Subsystem" );
         bootstrap();
         
         log.info( "Initializing TorqueBox Core Subsystem" );

@@ -29,12 +29,17 @@ import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
+import org.torquebox.bootstrap.as.TorqueBoxBootstrapper;
 import org.torquebox.core.as.GenericSubsystemDescribeHandler;
 import org.torquebox.security.auth.as.AuthSubsystemAdd;
 import org.torquebox.security.auth.as.AuthSubsystemParser;
 import org.torquebox.security.auth.as.AuthSubsystemProviders;
 
 public class SecurityExtension extends AbstractBootstrappableExtension {
+
+    public SecurityExtension() throws ClassNotFoundException {
+        super( TorqueBoxBootstrapper.class.getName() );
+    }
 
     @Override
     public void initialize(ExtensionContext context) {

@@ -28,11 +28,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.jar.JarFile;
 
-import org.jboss.as.controller.Extension;
-import org.jboss.as.controller.ExtensionContext;
-import org.jboss.as.controller.SubsystemRegistration;
-import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 import org.jboss.modules.Module;
 import org.jboss.modules.ModuleClassLoader;
@@ -42,52 +37,46 @@ import org.jboss.modules.ResourceLoaderSpec;
 import org.jboss.modules.ResourceLoaders;
 import org.torquebox.bootstrap.JRubyHomeLocator;
 
-public class BootstrapExtension implements Extension {
-    
-    @Override
-    public void initialize(ExtensionContext context) {
-        /*
-        log.info( "Bootstrapping TorqueBox" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
-        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( BootstrapSubsystemProviders.SUBSYSTEM );
-        registration.registerXMLElementWriter( BootstrapSubsystemParser.getInstance() );
+public class TorqueBoxBootstrapper {
+    private static final Logger log = Logger.getLogger( "org.torquebox.bootstrap" );
 
-        String jrubyHome = JRubyHomeLocator.determineJRubyHome(true);
+    static {
+        log.info( "Bootstrapping TorqueBox" );
+
+        String jrubyHome = JRubyHomeLocator.determineJRubyHome( true );
 
         if (jrubyHome == null) {
             log.fatal( "Unable to find a JRuby Home" );
-            return;
-        }
-        
-        log.info( "===> " + jrubyHome );
-        
-        System.setProperty( "jruby.home", jrubyHome );
+        } else {
 
-        File libDir = new File( jrubyHome, "lib" );
+            log.info( "===> " + jrubyHome );
 
-        List<ResourceLoaderSpec> loaderSpecs = new ArrayList<ResourceLoaderSpec>();
+            System.setProperty( "jruby.home", jrubyHome );
 
-        for (File child : libDir.listFiles()) {
-            if (child.getName().endsWith( ".jar" )) {
-                log.info( "Adding: " + child );
-                try {
-                    ResourceLoader loader = ResourceLoaders.createJarResourceLoader( child.getName(), new JarFile( child ) );
-                    ResourceLoaderSpec loaderSpec = ResourceLoaderSpec.createResourceLoaderSpec( loader );
-                    loaderSpecs.add( loaderSpec );
-                } catch (IOException e) {
-                    log.error( e );
+            File libDir = new File( jrubyHome, "lib" );
+
+            List<ResourceLoaderSpec> loaderSpecs = new ArrayList<ResourceLoaderSpec>();
+
+            for (File child : libDir.listFiles()) {
+                if (child.getName().endsWith( ".jar" )) {
+                    log.info( "Adding: " + child );
+                    try {
+                        ResourceLoader loader = ResourceLoaders.createJarResourceLoader( child.getName(), new JarFile( child ) );
+                        ResourceLoaderSpec loaderSpec = ResourceLoaderSpec.createResourceLoaderSpec( loader );
+                        loaderSpecs.add( loaderSpec );
+                    } catch (IOException e) {
+                        log.error( e );
+                    }
                 }
             }
+
+            swizzleResourceLoaders( loaderSpecs );
         }
-
-        swizzleResourceLoaders( loaderSpecs );
-        */
     }
-
-    /*
-    private ResourceLoader[] getExistingResourceLoaders() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
+    
+    private static ResourceLoader[] getExistingResourceLoaders() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
             InvocationTargetException {
-        Module module = Module.forClass( BootstrapExtension.class );
+        Module module = Module.forClass( TorqueBoxBootstrapper.class );
         ModuleClassLoader cl = module.getClassLoader();
 
         Method method = ModuleClassLoader.class.getDeclaredMethod( "getResourceLoaders" );
@@ -98,16 +87,16 @@ public class BootstrapExtension implements Extension {
 
     }
 
-    private void swizzleResourceLoaders(List<ResourceLoaderSpec> loaderSpecs) {
+    private static void swizzleResourceLoaders(List<ResourceLoaderSpec> loaderSpecs) {
 
-        Module module = Module.forClass( BootstrapExtension.class );
+        Module module = Module.forClass( TorqueBoxBootstrapper.class );
         ModuleLoader moduleLoader = module.getModuleLoader();
 
         try {
             for (ResourceLoader each : getExistingResourceLoaders()) {
                 loaderSpecs.add( ResourceLoaderSpec.createResourceLoaderSpec( each ) );
             }
-            
+
             Method method = ModuleLoader.class.getDeclaredMethod( "setAndRefreshResourceLoaders", Module.class, Collection.class );
             method.setAccessible( true );
             log.info( "Swizzle: " + loaderSpecs );
@@ -133,14 +122,5 @@ public class BootstrapExtension implements Extension {
         }
 
     }
-    */
-    
-    @Override
-    public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping( Namespace.CURRENT.getUriString(), BootstrapSubsystemParser.getInstance() );
-    }
-
-    public static final String SUBSYSTEM_NAME = "torquebox-bootstrap";
-    private static final Logger log = Logger.getLogger( "org.torquebox.bootstrap" );
 
 }

@@ -29,9 +29,14 @@ import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
+import org.torquebox.bootstrap.as.TorqueBoxBootstrapper;
 import org.torquebox.core.as.GenericSubsystemDescribeHandler;
 
 public class WebExtension extends AbstractBootstrappableExtension {
+
+    public WebExtension() throws ClassNotFoundException {
+        super( TorqueBoxBootstrapper.class.getName() );
+    }
 
     @Override
     public void initialize(ExtensionContext context) {
