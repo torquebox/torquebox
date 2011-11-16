@@ -305,6 +305,11 @@ class AssemblyTool
     destinations.each &:remove
   end
 
+  def disable_management_security(doc)
+    interfaces = doc.root.get_elements("//management-interfaces/*")
+    interfaces.each { |i| i.attributes.delete( 'security-realm' )}
+  end
+
   def enable_messaging_jmx(doc)
     hornetq_server = doc.root.get_elements( "//hornetq-server" ).first
     e = REXML::Element.new( 'jmx-management-enabled' )
@@ -439,6 +444,7 @@ class AssemblyTool
     doc = REXML::Document.new( File.read( input_file ) )
     Dir.chdir( @jboss_dir ) do
       fix_host_servers(doc)
+      disable_management_security(doc)
       FileUtils.mkdir_p( File.dirname(output_file) )
       open( output_file, 'w' ) do |f|
         doc.write( f, 4 )
@@ -458,7 +464,7 @@ class AssemblyTool
       set_welcome_root(doc)
       unquote_cookie_path(doc)
       remove_destinations(doc)
-
+      disable_management_security(doc)
 
       if ( domain ) 
         setup_server_groups(doc)
