@@ -40,21 +40,19 @@ import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
-import org.jboss.as.server.deployment.scanner.api.DeploymentScanner;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.jboss.msc.service.ServiceName;
 import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
 import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
+import org.projectodd.polyglot.core.processors.JdkDependenciesProcessor;
 import org.projectodd.polyglot.core.processors.KnobStructureProcessor;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.TorqueBoxStdioContextSelector;
-import org.torquebox.core.DeploymentScannerHelper;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.GlobalRubyMBean;
 import org.torquebox.core.app.processors.AppJarScanningProcessor;
@@ -149,7 +147,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         addTorqueBoxService( context, verificationHandler, newControllers, registry );
         addGlobalRubyServices( context, verificationHandler, newControllers, registry );
         addInjectionServices( context, verificationHandler, newControllers, registry );
-        addDeploymentScannerHelperService( context, verificationHandler, newControllers, registry );
     }
 
     @SuppressWarnings("serial")
@@ -210,19 +207,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         newControllers.add( context.getServiceTarget().addService( CoreServices.INJECTABLE_HANDLER_REGISTRY, registry )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.PASSIVE )
-                .install() );
-    }
-
-    protected void addDeploymentScannerHelperService(final OperationContext context, ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers,
-            InjectableHandlerRegistry registry) throws IOException {
-        DeploymentScannerHelper scannerHelper = new DeploymentScannerHelper();
-        ServiceName pathService = DeploymentScanner.BASE_SERVICE_NAME.append( "default" ).append( "path" );
-
-        newControllers.add( context.getServiceTarget().addService( CoreServices.DEPLOYMENT_SCANNER_HELPER, scannerHelper )
-                .addDependency( pathService, String.class, scannerHelper.getPathInjector() )
-                .setInitialMode( Mode.PASSIVE )
-                .addListener( verificationHandler )
                 .install() );
     }
 
