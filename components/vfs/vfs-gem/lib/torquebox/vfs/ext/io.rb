@@ -100,7 +100,7 @@ class IO
         java_out = java.io::FileOutputStream.new( physical_file, append )
         ruby_io = java_out.to_io
       elsif ( read && write )
-        raise Error.new( "Random-access on VFS not supported" )
+        raise ArgumentError.new( "Random-access on VFS not supported" )
       end
 
       ruby_io.binmode if binary
