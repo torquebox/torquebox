@@ -64,7 +64,7 @@ end
 desc "Run all examples"
 #task 'spec'=>[ 'test:data:prepare' ] do
 #task 'spec', :key do |t, args|
-task 'spec', :key, :needs=>[ 'check:dependencies', TEST_DATA_OUT ] do |t, args|
+task 'spec', [:key] => [ 'check:dependencies', TEST_DATA_OUT ] do |t, args|
   jar_dir = File.dirname(__FILE__) + '/target/dependencies'
   jars = Dir[ "#{jar_dir}/*.jar" ]
 
