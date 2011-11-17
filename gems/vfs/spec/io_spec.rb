@@ -5,6 +5,18 @@ describe "IO extensions for VFS" do
 
   extend TestDataHelper
 
+  describe "vfs_open" do
+    before(:each) do
+      @file = vfs_path( test_data_base_path( :absolute ) + "/home/larry/file1.txt" ) 
+    end
+    
+    it "should raise when given RDWR" do
+      lambda { 
+        IO.vfs_open( @file, File::RDWR )
+      }.should raise_error( ArgumentError )
+    end
+  end
+  
   [ :absolute, :relative ].each do |style|
     [ :vfs, :normal ].each do |vfs_style|
       describe "with #{vfs_style} #{style} paths" do
