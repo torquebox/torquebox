@@ -18,7 +18,7 @@
 begin
   javax.jms::Session
 rescue
-  $stderr.puts "Will not load torquebox-messaging: javax.jms.* cannot be loaded"
+  # $stderr.puts "Will not load torquebox-messaging: javax.jms.* cannot be loaded"
   return 
 end
 
