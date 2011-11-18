@@ -45,7 +45,6 @@ class File
     
     def to_s
       s = to_s_without_vfs
-      puts "IN FILE.to_s :: s is #{s} and vfs_path? is #{vfs_path?(s)}"
       vfs_path?( s ) ? name_without_vfs( s )  : s[4..-1]
     end
 
