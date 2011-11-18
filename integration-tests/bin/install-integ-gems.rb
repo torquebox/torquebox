@@ -9,6 +9,7 @@ versions = {
   :rails30        =>    '3.0.10',
   :rails31        =>    '3.1.0',
   :rails31        =>    '3.1.0',
+  :rails312       =>    '3.1.2rc2',
   :therubyrhino   =>    '1.72.8',
   :uglifier       =>    '1.0.3',
 
@@ -43,6 +44,7 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'rails',         versions[:rails2x] )
   installer.install( 'rails',         versions[:rails30] )
   installer.install( 'rails',         versions[:rails31] )
+  installer.install( 'rails',         versions[:rails312] )
   installer.install( 'therubyrhino' )
   installer.install( 'sass-rails',    versions[:rails31] )
   installer.install( 'coffee-rails',  versions[:rails31] )

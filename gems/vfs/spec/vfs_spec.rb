@@ -11,7 +11,7 @@ describe "VFS path resolution" do
     it "should return pathnames with vfs: prefix unmodified" do
       pathname = Pathname.new("vfs:/tmp/foo")
       path = TorqueBox::VFS.resolve_within_archive(pathname)
-      path.should == pathname.to_s
+      pathname.vfs_path?.should be_true and path.should == "vfs:#{pathname}"
     end
   end
 

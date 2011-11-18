@@ -24,12 +24,12 @@ describe "Pathname extensions for VFS" do
 
     it "should expand VFS paths correctly on Windows" do
       pathname = Pathname.new("vfs:/C:/tmp/test")
-      pathname.expand_path.to_s.should == "vfs:/C:/tmp/test"
+      pathname.expand_path.to_s.should == "/C:/tmp/test" and pathname.vfs_path?.should be_true
     end
 
     it "should apply realpath to VFS paths correctly on windows" do
       pathname = Pathname.new("vfs:/C:/tmp/test")
-      pathname.realpath.to_s.should == "vfs:/C:/tmp/test"
+      pathname.realpath.to_s.should == "/C:/tmp/test" and pathname.vfs_path?.should be_true
     end
 
     it "should find real path for non-VFS paths" do
