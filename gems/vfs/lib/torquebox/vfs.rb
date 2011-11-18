@@ -39,6 +39,9 @@ require 'torquebox/vfs/ext/process'
 module TorqueBox
   module VFS
     def self.resolve_within_archive(path)
+      if ( path.respond_to?(:vfs_path?) && path.vfs_path? )
+        return "vfs:#{path.to_s}" 
+      end
       path = path.to_s
       return path if ( path =~ %r(^vfs:) )
       cur = path

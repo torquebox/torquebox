@@ -54,12 +54,12 @@ describe "File extensions for VFS" do
 
     it "should expand paths relative to VFS pathnames as VFS" do
       absolute = File.expand_path("db/development.sqlite3", Pathname.new( vfs_path( "/path/to/app" ) ) )
-      absolute.should eql( vfs_path("#{absolute_prefix}/path/to/app/db/development.sqlite3") )
+      absolute.should eql( vfs_path( "#{absolute_prefix}/path/to/app/db/development.sqlite3" ) )
     end
 
     it "should expand absolute Pathname objects correctly" do
       File.expand_path( vfs_path("/foo") ).should eql( vfs_path("/foo") )
-      File.expand_path(Pathname.new( vfs_path("/foo"))).should eql( vfs_path("/foo") )
+      File.expand_path(Pathname.new( vfs_path("/foo"))).should eql( "/foo" )
     end
 
     it "should return first path when given two vfs paths" do

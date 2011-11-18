@@ -41,6 +41,13 @@ class File
     alias_method :new_without_vfs,         :new
     alias_method :rename_without_vfs,      :rename
     alias_method :join_without_vfs,        :join
+    alias_method :to_s_without_vfs,        :to_s
+    
+    def to_s
+      s = to_s_without_vfs
+      puts "IN FILE.to_s :: s is #{s} and vfs_path? is #{vfs_path?(s)}"
+      vfs_path?( s ) ? name_without_vfs( s )  : s[4..-1]
+    end
 
     #
     # File.realpath is a 1.9ism
@@ -281,6 +288,8 @@ class File
     end
     
     def vfs_path?(path)
+      return path.vfs_path? if path.respond_to?(:vfs_path?)
+      return path.path =~ /^vfs:/ if path.respond_to?(:path)
       path.to_s =~ /^vfs:/
     end
 
