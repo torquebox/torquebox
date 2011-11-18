@@ -204,6 +204,26 @@ describe TorqueBox::DeployUtils do
 
   end
 
+  describe '.check_server' do
+    context "when it can't find the modules" do 
+      before(:each) do
+        File.stub(:exist?).and_return(false)
+      end
+      
+      it "should raise if it can't find the torquebox modules" do
+        lambda { @util.check_server }.should raise_error
+      end
+
+      it "should give a helpful error message" do
+        begin
+          @util.check_server
+        rescue Exception => e
+          e.message.should =~ %r{doesn't appear to be a valid TorqueBox install}
+        end
+      end
+    end
+  end
+
   describe '.run_server' do
     before( :each ) do
       ENV['TORQUEBOX_HOME'] = '/torquebox'

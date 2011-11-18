@@ -104,7 +104,7 @@ module TorqueBox
       end
 
       def check_server
-        raise "No TorqueBox modules installed in #{deployers_dir}" unless File.exist?( torquebox_modules_dir )
+        raise "#{jboss_home} doesn't appear to be a valid TorqueBox install" unless File.exist?( torquebox_modules_dir )
         puts "TorqueBox installation appears OK"
       end
 
