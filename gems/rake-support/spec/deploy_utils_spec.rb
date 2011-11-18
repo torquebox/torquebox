@@ -16,270 +16,269 @@
 
 require 'spec_helper'
 
-module TorqueBox
-  module DeployUtils
+describe TorqueBox::DeployUtils do
+  before(:each) do
+    @util = TorqueBox::DeployUtils
+  end
 
-    describe 'TorqueBox::DeployUtils.jboss_home' do
-      extend PathHelper
+  describe '.jboss_home' do
+    extend PathHelper
 
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/torquebox'
-        ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
-      end
-
-      it 'should use JBOSS_HOME environment if it is set' do
-        TorqueBox::DeployUtils.jboss_home.downcase.should == "#{absolute_prefix}/torquebox/jboss".downcase
-      end
-
-      it 'should use TORQUEBOX_HOME environment if JBOSS_HOME is not set' do
-        ENV['JBOSS_HOME'] = nil
-        TorqueBox::DeployUtils.jboss_home.downcase.should == "#{absolute_prefix}/torquebox/jboss".downcase
-      end
-
-      it 'should raise an error if neither JBOSS_HOME or TORQUEBOX_HOME is set' do
-        ENV['JBOSS_HOME'] = nil
-        ENV['TORQUEBOX_HOME'] = nil
-        lambda { TorqueBox::DeployUtils.jboss_home }.should raise_error
-      end
-
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+      ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
     end
 
-    describe 'TorqueBox::DeployUtils.torquebox_home' do
-      extend PathHelper
-
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/torquebox'
-      end
-
-      it 'should use TORQUEBOX_HOME environment variable' do
-        TorqueBox::DeployUtils.torquebox_home.downcase.should == "#{absolute_prefix}/torquebox".downcase
-      end
-
+    it 'should use JBOSS_HOME environment if it is set' do
+      @util.jboss_home.downcase.should == "#{absolute_prefix}/torquebox/jboss".downcase
     end
 
-    describe 'TorqueBox::DeployUtils.jboss_conf' do
-      extend PathHelper
-      it 'should defafult to "standalone"' do
-        TorqueBox::DeployUtils.jboss_conf.should == 'standalone'
-      end
-
-      it 'should use ENV["JBOSS_CONF"] if it exists' do
-        ENV['JBOSS_CONF'] = 'domain'
-        TorqueBox::DeployUtils.jboss_conf.should == ENV['JBOSS_CONF']
-      end
-
-      it 'should use ENV["TORQUEBOX_CONF"] if it exists' do
-        ENV['TORQUEBOX_CONF'] = 'foobar'
-        TorqueBox::DeployUtils.jboss_conf.should == ENV['TORQUEBOX_CONF']
-      end
-
-      it 'should prefer ENV["TORQUEBOX_CONF"] if it exists over ENV["JBOSS_CONF"]' do
-        ENV['JBOSS_CONF'] = 'domain'
-        ENV['TORQUEBOX_CONF'] = 'foobar'
-        TorqueBox::DeployUtils.jboss_conf.should == ENV['TORQUEBOX_CONF']
-      end
+    it 'should use TORQUEBOX_HOME environment if JBOSS_HOME is not set' do
+      ENV['JBOSS_HOME'] = nil
+      @util.jboss_home.downcase.should == "#{absolute_prefix}/torquebox/jboss".downcase
     end
 
-    describe 'TorqueBox::DeployUtils.sys_root' do
-      extend PathHelper
-      it 'should be /' do
-        TorqueBox::DeployUtils.sys_root.should == '/'
-      end
-    end
-
-    describe 'TorqueBox::DeployUtils.opt_dir' do
-      extend PathHelper
-      it 'should be /opt' do
-        TorqueBox::DeployUtils.opt_dir.should == '/opt'
-      end
-    end
-
-    describe 'TorqueBox::DeployUtils.opt_torquebox' do
-      extend PathHelper
-      it 'should be /opt' do
-        TorqueBox::DeployUtils.opt_torquebox.should == '/opt/torquebox'
-      end
-    end
-
-    describe 'TorqueBox::DeployUtils.server_dir' do
-      extend PathHelper
-      it 'should default to ENV["JBOSS_HOME"]/standalone' do
-        ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
-        ENV['JBOSS_CONF'] = nil
-        ENV['TORQUEBOX_CONF'] = nil
-        TorqueBox::DeployUtils.server_dir.downcase.should == "#{absolute_prefix}/opt/torquebox/jboss/standalone".downcase
-      end
-
-      it 'should use ENV["JBOSS_HOME"]/ENV["JBOSS_CONF"] if JBOSS_CONF is available' do
-        ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
-        ENV['JBOSS_CONF'] = 'foobar'
-        ENV['TORQUEBOX_CONF'] = nil
-        TorqueBox::DeployUtils.server_dir.downcase.should == "#{absolute_prefix}/opt/torquebox/jboss/foobar".downcase
-      end
-
-      it 'should use ENV["JBOSS_HOME"]/ENV["TORQUEBOX_CONF"] if TORQUEBOX_CONF is available' do
-        ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
-        ENV['JBOSS_CONF'] = 'foobar'
-        ENV['TORQUEBOX_CONF'] = 'boofar'
-        TorqueBox::DeployUtils.server_dir.downcase.should == "#{absolute_prefix}/opt/torquebox/jboss/boofar".downcase
-      end
-    end
-
-    describe 'TorqueBox::DeployUtils.config_dir' do
-      extend PathHelper
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/opt/torquebox'
-        ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
-        ENV['JBOSS_CONF'] = nil
-        ENV['TORQUEBOX_CONF'] = nil
-      end
-      
-      it 'should be ENV["JBOSS_HOME"]/standalone/configuration' do
-        TorqueBox::DeployUtils.config_dir.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration".downcase
-      end
-
-      it 'should be ENV["JBOSS_HOME"]/standalone/configuration/torquebox/standalone-preview-ha.xml' do
-        TorqueBox::DeployUtils.cluster_config_file.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration/torquebox/standalone-preview-ha.xml".downcase
-      end
-    end
-
-
-    describe 'TorqueBox::DeployUtils.properties_dir' do
-      extend PathHelper
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/opt/torquebox'
-        ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
-        ENV['JBOSS_CONF'] = nil
-        ENV['TORQUEBOX_CONF'] = nil
-      end
-      
-      it 'should be ENV["JBOSS_HOME"]/standalone/configuration' do
-        TorqueBox::DeployUtils.properties_dir.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration".downcase
-      end
-
-      it 'should be the same as TorqueBox::DeployUtils.config_dir' do
-        TorqueBox::DeployUtils.properties_dir.downcase.should == TorqueBox::DeployUtils.config_dir.downcase
-      end
-    end
-
-    describe 'TorqueBox::DeployUtils.deploy_dir' do
-      extend PathHelper
-      before( :each ) do
-        ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
-        ENV['JBOSS_CONF'] = nil
-        ENV['TORQUEBOX_CONF'] = nil
-      end
-      it 'should point to JBOSS_HOME/JBOSS_CONF/deployments' do
-        TorqueBox::DeployUtils.deploy_dir.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/deployments".downcase
-      end
-    end
-
-    describe 'TorqueBox::DeployUtils.modules_dir' do
-      extend PathHelper
-
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/torquebox'
-        ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
-      end
-
-      it 'should be where I expect it to be' do
-        TorqueBox::DeployUtils.modules_dir.downcase.should == "#{absolute_prefix}/torquebox/jboss/modules".downcase
-      end
-
-    end
-
-    describe 'TorqueBox::DeployUtils.torquebox_modules_dir' do
-      extend PathHelper
-
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/torquebox'
-        ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
-      end
-
-      it 'should be where I expect it to be' do
-        TorqueBox::DeployUtils.torquebox_modules_dir.downcase.should == "#{absolute_prefix}/torquebox/jboss/modules/org/torquebox".downcase
-      end
-
-    end
-
-    describe 'TorqueBox::DeployUtils.run_server' do
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/torquebox'
-        ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
-        Dir.stub!(:chdir).and_yield
-        Kernel.stub!(:exec)
-        TorqueBox::DeployUtils.stub!(:exec)
-        TorqueBox::DeployUtils.stub!(:exec_command)
-      end
-
-      it 'should pass options to run_command_line' do
-        options = { :clustered => true, :max_threads => 25 }
-        TorqueBox::DeployUtils.should_receive(:run_command_line).with(options).and_return([])
-        TorqueBox::DeployUtils.run_server(options)
-      end
-
-      it 'should check if the current directory is deployed' do
-        TorqueBox::DeployUtils.should_receive(:is_deployed?).and_return( true )
-        TorqueBox::DeployUtils.run_server
-      end
-    end
-
-    describe 'TorqueBox::DeployUtils.is_deployed?' do
-      before( :each ) do
-        ENV['TORQUEBOX_HOME'] = '/torquebox'
-        ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
-        @myapp = TorqueBox::DeployUtils.deployment_name( 'my-app' )
-      end
-
-      it 'should be false if the app is not deployed' do
-        TorqueBox::DeployUtils.is_deployed?( @myapp ).should be_false
-      end
-
-      it 'should be true if the app has been deployed' do
-        File.stub('exists?').with(File.join(TorqueBox::DeployUtils.torquebox_home, 'apps')).and_return false
-        File.stub('exists?').with(File.join(TorqueBox::DeployUtils.deploy_dir, @myapp)).and_return true
-        TorqueBox::DeployUtils.is_deployed?( @myapp ).should be_true
-      end
-
-      it 'should default to the default deployment_name' do
-        TorqueBox::DeployUtils.should_receive(:deployment_name).and_return @myapp
-        TorqueBox::DeployUtils.is_deployed?
-      end
-
-    end
-
-    describe 'TorqueBox::DeployUtils.run_command_line' do
-      it 'should not add --server-config when not clustered' do
-        command, options = TorqueBox::DeployUtils.run_command_line(:clustered => false)
-        options.should_not include('--server-config=')
-      end
-
-      it 'should add --server-config when clustered' do
-        command, options = TorqueBox::DeployUtils.run_command_line(:clustered => true)
-        options.should include('--server-config=')
-      end
-
-      it 'should not set max threads by default' do
-        command, options = TorqueBox::DeployUtils.run_command_line
-        options.should_not include('-Dorg.torquebox.web.http.maxThreads=')
-      end
-
-      it 'should set max threads when given' do
-        command, options = TorqueBox::DeployUtils.run_command_line(:max_threads => 5)
-        options.should include('-Dorg.torquebox.web.http.maxThreads=5')
-      end
-
-      it 'should not set bind address by default' do
-        command, options = TorqueBox::DeployUtils.run_command_line
-        options.should_not include('-b ')
-      end
-
-      it 'should set bind address when given' do
-        command, options = TorqueBox::DeployUtils.run_command_line(:bind_address => '0.0.0.0')
-        options.should include('-b 0.0.0.0')
-      end
+    it 'should raise an error if neither JBOSS_HOME or TORQUEBOX_HOME is set' do
+      ENV['JBOSS_HOME'] = nil
+      ENV['TORQUEBOX_HOME'] = nil
+      lambda { @util.jboss_home }.should raise_error
     end
 
   end
-end
 
+  describe '.torquebox_home' do
+    extend PathHelper
+
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+    end
+
+    it 'should use TORQUEBOX_HOME environment variable' do
+      @util.torquebox_home.downcase.should == "#{absolute_prefix}/torquebox".downcase
+    end
+
+  end
+
+  describe '.jboss_conf' do
+    extend PathHelper
+    it 'should defafult to "standalone"' do
+      @util.jboss_conf.should == 'standalone'
+    end
+
+    it 'should use ENV["JBOSS_CONF"] if it exists' do
+      ENV['JBOSS_CONF'] = 'domain'
+      @util.jboss_conf.should == ENV['JBOSS_CONF']
+    end
+
+    it 'should use ENV["TORQUEBOX_CONF"] if it exists' do
+      ENV['TORQUEBOX_CONF'] = 'foobar'
+      @util.jboss_conf.should == ENV['TORQUEBOX_CONF']
+    end
+
+    it 'should prefer ENV["TORQUEBOX_CONF"] if it exists over ENV["JBOSS_CONF"]' do
+      ENV['JBOSS_CONF'] = 'domain'
+      ENV['TORQUEBOX_CONF'] = 'foobar'
+      @util.jboss_conf.should == ENV['TORQUEBOX_CONF']
+    end
+  end
+
+  describe '.sys_root' do
+    extend PathHelper
+    it 'should be /' do
+      @util.sys_root.should == '/'
+    end
+  end
+
+  describe '.opt_dir' do
+    extend PathHelper
+    it 'should be /opt' do
+      @util.opt_dir.should == '/opt'
+    end
+  end
+
+  describe '.opt_torquebox' do
+    extend PathHelper
+    it 'should be /opt' do
+      @util.opt_torquebox.should == '/opt/torquebox'
+    end
+  end
+
+  describe '.server_dir' do
+    extend PathHelper
+    it 'should default to ENV["JBOSS_HOME"]/standalone' do
+      ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
+      ENV['JBOSS_CONF'] = nil
+      ENV['TORQUEBOX_CONF'] = nil
+      @util.server_dir.downcase.should == "#{absolute_prefix}/opt/torquebox/jboss/standalone".downcase
+    end
+
+    it 'should use ENV["JBOSS_HOME"]/ENV["JBOSS_CONF"] if JBOSS_CONF is available' do
+      ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
+      ENV['JBOSS_CONF'] = 'foobar'
+      ENV['TORQUEBOX_CONF'] = nil
+      @util.server_dir.downcase.should == "#{absolute_prefix}/opt/torquebox/jboss/foobar".downcase
+    end
+
+    it 'should use ENV["JBOSS_HOME"]/ENV["TORQUEBOX_CONF"] if TORQUEBOX_CONF is available' do
+      ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
+      ENV['JBOSS_CONF'] = 'foobar'
+      ENV['TORQUEBOX_CONF'] = 'boofar'
+      @util.server_dir.downcase.should == "#{absolute_prefix}/opt/torquebox/jboss/boofar".downcase
+    end
+  end
+
+  describe '.config_dir' do
+    extend PathHelper
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/opt/torquebox'
+      ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
+      ENV['JBOSS_CONF'] = nil
+      ENV['TORQUEBOX_CONF'] = nil
+    end
+
+    it 'should be ENV["JBOSS_HOME"]/standalone/configuration' do
+      @util.config_dir.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration".downcase
+    end
+
+    it 'should be ENV["JBOSS_HOME"]/standalone/configuration/torquebox/standalone-preview-ha.xml' do
+      @util.cluster_config_file.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration/torquebox/standalone-preview-ha.xml".downcase
+    end
+  end
+
+
+  describe '.properties_dir' do
+    extend PathHelper
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/opt/torquebox'
+      ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
+      ENV['JBOSS_CONF'] = nil
+      ENV['TORQUEBOX_CONF'] = nil
+    end
+
+    it 'should be ENV["JBOSS_HOME"]/standalone/configuration' do
+      @util.properties_dir.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration".downcase
+    end
+
+    it 'should be the same as @util.config_dir' do
+      @util.properties_dir.downcase.should == @util.config_dir.downcase
+    end
+  end
+
+  describe '.deploy_dir' do
+    extend PathHelper
+    before( :each ) do
+      ENV['JBOSS_HOME'] = '/opt/torquebox/jboss'
+      ENV['JBOSS_CONF'] = nil
+      ENV['TORQUEBOX_CONF'] = nil
+    end
+    it 'should point to JBOSS_HOME/JBOSS_CONF/deployments' do
+      @util.deploy_dir.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/deployments".downcase
+    end
+  end
+
+  describe '.modules_dir' do
+    extend PathHelper
+
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+      ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+    end
+
+    it 'should be where I expect it to be' do
+      @util.modules_dir.downcase.should == "#{absolute_prefix}/torquebox/jboss/modules".downcase
+    end
+
+  end
+
+  describe '.torquebox_modules_dir' do
+    extend PathHelper
+
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+      ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+    end
+
+    it 'should be where I expect it to be' do
+      @util.torquebox_modules_dir.downcase.should == "#{absolute_prefix}/torquebox/jboss/modules/org/torquebox".downcase
+    end
+
+  end
+
+  describe '.run_server' do
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+      ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+      Dir.stub!(:chdir).and_yield
+      Kernel.stub!(:exec)
+      @util.stub!(:exec)
+      @util.stub!(:exec_command)
+    end
+
+    it 'should pass options to run_command_line' do
+      options = { :clustered => true, :max_threads => 25 }
+      @util.should_receive(:run_command_line).with(options).and_return([])
+      @util.run_server(options)
+    end
+
+    it 'should check if the current directory is deployed' do
+      @util.should_receive(:is_deployed?).and_return( true )
+      @util.run_server
+    end
+  end
+
+  describe '.is_deployed?' do
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+      ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+      @myapp = @util.deployment_name( 'my-app' )
+    end
+
+    it 'should be false if the app is not deployed' do
+      @util.is_deployed?( @myapp ).should be_false
+    end
+
+    it 'should be true if the app has been deployed' do
+      File.stub('exists?').with(File.join(@util.torquebox_home, 'apps')).and_return false
+      File.stub('exists?').with(File.join(@util.deploy_dir, @myapp)).and_return true
+      @util.is_deployed?( @myapp ).should be_true
+    end
+
+    it 'should default to the default deployment_name' do
+      @util.should_receive(:deployment_name).and_return @myapp
+      @util.is_deployed?
+    end
+
+  end
+
+  describe '.run_command_line' do
+    it 'should not add --server-config when not clustered' do
+      command, options = @util.run_command_line(:clustered => false)
+      options.should_not include('--server-config=')
+    end
+
+    it 'should add --server-config when clustered' do
+      command, options = @util.run_command_line(:clustered => true)
+      options.should include('--server-config=')
+    end
+
+    it 'should not set max threads by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Dorg.torquebox.web.http.maxThreads=')
+    end
+
+    it 'should set max threads when given' do
+      command, options = @util.run_command_line(:max_threads => 5)
+      options.should include('-Dorg.torquebox.web.http.maxThreads=5')
+    end
+
+    it 'should not set bind address by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-b ')
+    end
+
+    it 'should set bind address when given' do
+      command, options = @util.run_command_line(:bind_address => '0.0.0.0')
+      options.should include('-b 0.0.0.0')
+    end
+  end
+end
