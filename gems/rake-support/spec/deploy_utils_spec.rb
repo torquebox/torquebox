@@ -49,11 +49,20 @@ describe TorqueBox::DeployUtils do
   describe '.torquebox_home' do
     extend PathHelper
 
-    before( :each ) do
-      ENV['TORQUEBOX_HOME'] = '/torquebox'
+    it 'should return nil if TORQUEBOX_HOME is not set and torquebox-server is not installed' do
+      ENV['TORQUEBOX_HOME'] = nil
+      TorqueBox::Server.should_receive( :torquebox_home ).and_return( nil )
+      @util.torquebox_home.should == nil
+    end
+
+    it 'should use torquebox-server if TORQUEBOX_HOME is not set and torquebox-server is installed' do
+      ENV['TORQUEBOX_HOME'] = nil
+      TorqueBox::Server.should_receive( :torquebox_home ).and_return( 'torquebox-server-install-path' )
+      @util.torquebox_home.should == 'torquebox-server-install-path'
     end
 
     it 'should use TORQUEBOX_HOME environment variable' do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
       @util.torquebox_home.downcase.should == "#{absolute_prefix}/torquebox".downcase
     end
 

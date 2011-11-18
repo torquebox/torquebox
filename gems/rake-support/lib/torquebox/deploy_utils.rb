@@ -19,6 +19,7 @@ require 'tmpdir'
 require 'rbconfig'
 require 'yaml'
 require 'rake'
+require 'torquebox/server'
 
 
 module TorqueBox
@@ -36,6 +37,8 @@ module TorqueBox
         torquebox_home = nil
         if ( ENV['TORQUEBOX_HOME'] )
           torquebox_home = File.expand_path(ENV['TORQUEBOX_HOME'])
+        else
+          torquebox_home = TorqueBox::Server.torquebox_home
         end
         torquebox_home
       end
