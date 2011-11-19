@@ -45,7 +45,7 @@ class File
     
     def to_s
       s = to_s_without_vfs
-      vfs_path?( s ) ? name_without_vfs( s )  : s[4..-1]
+      vfs_path?( s ) ? s[4..-1] : s
     end
 
     #
