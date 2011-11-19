@@ -9,7 +9,7 @@ versions = {
   :rails30        =>    '3.0.10',
   :rails31        =>    '3.1.0',
   :rails31        =>    '3.1.0',
-  :rails312       =>    '3.1.2rc2',
+  :rails312       =>    '3.1.2',
   :therubyrhino   =>    '1.72.8',
   :uglifier       =>    '1.0.3',
 
