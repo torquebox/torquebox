@@ -323,7 +323,7 @@ module TorqueBox
       def clustered
         (manager.running?(name) ? reconfigure : configure) if manager
       rescue
-        log( "Can't get clustered cache; falling back to local: #{$!}", 'ERROR' )
+        log( "Clustered: Can't get clustered cache; falling back to local: #{$!}", 'ERROR' )
       end
 
       def local
@@ -352,24 +352,34 @@ module TorqueBox
           config.indexing.index_local_only(true)
         end
 
-        local_manager = org.infinispan.manager.DefaultCacheManager.new
-        local_manager.define_configuration( name, config.build )
+        if ((local_manager = find_local_manager) == nil)
+          local_manager = org.infinispan.manager.DefaultCacheManager.new
+          local_manager.define_configuration( name, config.build )
+          Cache.local_managers << local_manager
+        end
 
-        Cache.local_managers << local_manager
-        
         local_manager.get_cache( self.name )
-
-
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
         log( e.backtrace, 'ERROR' )
       end
       
       def nothing
-        result = Object.new
         def result.method_missing(*args); end
-        log( "Can't get or create an Infinispan cache. No caching will occur", 'ERROR' )
+        log( "Nothing: Can't get or create an Infinispan cache. No caching will occur", 'ERROR' )
         result
+      end
+      
+      # check existing Cache.local_managers array for a local cache named {self.name}
+      def find_local_manager 
+        Cache.local_managers.each do |m|
+          if m.cache_exists( name )
+            log( ":-:-:-: local_manager already exists for #{name}" )
+            return m 
+          end
+        end
+
+        return nil
       end
 
       def __put(key, value, expires, operation)
