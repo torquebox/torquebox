@@ -145,9 +145,7 @@ module TorqueBox
           ENV.delete('BUNDLE_GEMFILE')
 
           if windows?
-	    cmd = run_command_line(options)
-	    rest = cmd[1..-1]
-	    exec cmd[0], rest
+            exec *run_command_line(options)
           else
             old_trap = trap("INT") do
               puts "caught SIGINT, shutting down"
