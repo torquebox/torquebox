@@ -16,8 +16,6 @@
 
 require File.dirname(__FILE__) + '/spec_helper'
 
-# TODO Figure out how to test Cache's at_exit behavior
-
 describe TorqueBox::Infinispan::Cache do
   before :each do
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
@@ -29,6 +27,11 @@ describe TorqueBox::Infinispan::Cache do
 
   it "should have a name" do
     @cache.name.should == 'foo-cache'
+  end
+
+  it "should reuse existing cache managers for an extant local cache" do
+    TorqueBox::Infinispan::Cache.should_receive( :find_local_manager ).with( 'foo-cache' )
+    TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
   it "should respond to clustering_mode" do
@@ -233,8 +236,8 @@ describe TorqueBox::Infinispan::Cache do
   describe "with persistence" do
     before(:all) do
       @default_dir    = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
-      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
-      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
+      @configured_dir = File.join( File.dirname(__FILE__), '..', random_string + "-persisted.cache" )
+      @date_cfg_dir   = File.join( File.dirname(__FILE__), '..', random_string + "-persisted-date.cache" )
       @index_dir      = File.join( File.dirname(__FILE__), '..', 'java.util.HashMap' )
       FileUtils.mkdir @configured_dir 
       FileUtils.mkdir @date_cfg_dir 
@@ -243,7 +246,7 @@ describe TorqueBox::Infinispan::Cache do
     after(:all) do
       FileUtils.rm_rf @default_dir
       FileUtils.rm_rf @configured_dir
-      FileUtils.rm_rf @date_cfg_dir
+      #FileUtils.rm_rf @date_cfg_dir
       FileUtils.rm_rf @index_dir if File.exist?( @index_dir )
     end
 
@@ -256,18 +259,18 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should persist the data with a configured directory" do
-      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => @configured_dir.to_s )
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-date-cache', :persist => @configured_dir.to_s )
       entry = java.util.HashMap.new
       entry.put( "Hello", "world" )
       cache.put('foo', entry)
-      File.exist?("#{@configured_dir.to_s}/persisted-cache").should be_true
+      File.exist?("#{@configured_dir.to_s}/persisted-date-cache").should be_true
     end
 
     it "should persist dates with a configured directory" do
-      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-cache', :persist => @date_cfg_dir.to_s )
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'persisted-configured-date-cache', :persist => @date_cfg_dir.to_s )
       entry = java.util.Date.new
       cache.put('foo', entry).should be_true
-      File.exist?("#{@date_cfg_dir.to_s}/persisted-cache").should be_true
+      File.exist?("#{@date_cfg_dir.to_s}/persisted-configured-date-cache").should be_true
     end
 
     it "should evict keys from the heap" do
@@ -279,7 +282,7 @@ describe TorqueBox::Infinispan::Cache do
     end
 
     it "should only evict keys from the heap, not persistent storage" do
-      cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache', :persist=>true )
+      cache = TorqueBox::Infinispan::Cache.new( :name => 'evict-cache', :persist=>true )
       cache.put("akey", "avalue")
       cache.evict( "akey" )
       cache.get( "akey" ).should == "avalue"

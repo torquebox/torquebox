@@ -352,7 +352,7 @@ module TorqueBox
           config.indexing.index_local_only(true)
         end
 
-        if ((local_manager = find_local_manager) == nil)
+        if ((local_manager = Cache.find_local_manager(name)) == nil)
           local_manager = org.infinispan.manager.DefaultCacheManager.new
           local_manager.define_configuration( name, config.build )
           Cache.local_managers << local_manager
@@ -370,18 +370,6 @@ module TorqueBox
         result
       end
       
-      # check existing Cache.local_managers array for a local cache named {self.name}
-      def find_local_manager 
-        Cache.local_managers.each do |m|
-          if m.cache_exists( name )
-            log( ":-:-:-: local_manager already exists for #{name}" )
-            return m 
-          end
-        end
-
-        return nil
-      end
-
       def __put(key, value, expires, operation)
         args = [ operation, key, value ]
         if expires > 0
@@ -396,6 +384,18 @@ module TorqueBox
         #$stderr.puts "*args=#{args.inspect}"
         cache.send( *args ) && true
       end
+
+      # Finds the CacheManager for a given cache and returns it - or nil if not found
+      def self.find_local_manager( cache_name )
+        local_managers.each do |m|
+          if m.cache_exists( cache_name )
+            log( ":-:-:-: local_manager already exists for #{cache_name}" )
+            return m 
+          end
+        end
+        return nil
+      end
+
     end
 
     at_exit { Cache.shutdown }
