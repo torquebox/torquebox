@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="production-setup">
-  <title>Production Setup</title>
+  <title>TorqueBox Production Setup</title>
 
   <section id="number-http-threads">
     <title>Sizing Number of HTTP Threads to Connection Pool</title>

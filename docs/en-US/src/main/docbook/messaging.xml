@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="messaging">
-  <title>Messaging</title>
+  <title>TorqueBox Messaging</title>
 
   <section id="messaging-intro">
     <title>Introduction</title>

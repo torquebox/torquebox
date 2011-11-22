@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="deployment-descriptors">
-  <title>Deployment Descriptors</title>
+  <title>TorqueBox Deployment Descriptors</title>
 
   <para>TorqueBox applications contain one central, but optional deployment
   descriptor. A deployment descriptor is simply a configuration file that

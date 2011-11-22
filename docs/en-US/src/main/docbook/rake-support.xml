@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="rake-support">
-  <title>Rake support</title>
+  <title>TorqueBox Rake Support</title>
 
   <section id="deploy-using-rake" revision="1">
     <title id="rake-tasks">Overview</title>

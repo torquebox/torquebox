@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="resource-injection">
-  <title>Resource Injection</title>
+  <title>TorqueBox Resource Injection</title>
 
   <section id="what-is-resource-injection">
     <title>What is Resource Injection?</title>

@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="services">
-  <title>Services</title>
+  <title>TorqueBox Services</title>
 
   <section id="what-are-services">
     <title>What Are Services?</title>

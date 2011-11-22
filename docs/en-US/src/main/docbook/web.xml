@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="web">
-  <title>Web Applications</title>
+  <title>TorqueBox Web Applications</title>
 
   <para>TorqueBox supports any and all Rack-based web application frameworks,
   including Ruby On Rails and Sinatra, among others. TorqueBox aims to be

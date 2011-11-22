@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="scheduled-jobs">
-  <title>Scheduled Jobs</title>
+  <title>TorqueBox Scheduled Jobs</title>
 
   <section id="what-are-scheduled-jobs">
     <title>What Are Scheduled Jobs?</title>

@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="installation">
-  <title>Installation</title>
+  <title>TorqueBox Installation</title>
 
   <section id="using-rubygems">
     <title>Installation using RubyGems</title>

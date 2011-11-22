@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="authentication">
-  <title>Authentication</title>
+  <title>TorqueBox Authentication</title>
 
   <para>
     TorqueBox provides a simple Ruby interface to the underlying JAAS 

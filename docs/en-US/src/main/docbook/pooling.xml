@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="pooling">
-  <title>Runtime Pooling</title>
+  <title>TorqueBox Runtime Pooling</title>
 
   <para>To run Ruby code inside a Java application server, the TorqueBox
   platform requires a Ruby interpreter, provided by <ulink

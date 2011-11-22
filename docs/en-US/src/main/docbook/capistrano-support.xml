@@ -2,7 +2,7 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="capistrano-support">
-  <title>Capistrano Support</title>
+  <title>TorqueBox Capistrano Support</title>
 
   <section id="what-is-capistrano">
     <title id="capistrano-support.title">What is Capistrano?</title>
