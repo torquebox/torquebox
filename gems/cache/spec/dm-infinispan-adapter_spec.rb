@@ -326,7 +326,7 @@ describe DataMapper::Adapters::InfinispanAdapter do
 
   describe "with persistence" do
     before :all do
-      @configured_dir  = File.join( File.dirname(__FILE__), '..', random_string + ".cache" )
+      @configured_dir  = File.join( File.dirname(__FILE__), '..', random_string + "-dm-infinispan-adapter.cache" )
       @default_dir     = File.join(File.dirname(__FILE__), '..', 'Infinispan-FileCacheStore')
       @snuffy          = File.join( File.dirname(__FILE__), '..', 'rubyobj.Snuffleupagus' ) 
       FileUtils.mkdir( @configured_dir )
@@ -339,21 +339,21 @@ describe DataMapper::Adapters::InfinispanAdapter do
     end
 
     after :all do
-      FileUtils.rm_rf( @configured_dir )
-      FileUtils.rm_rf( @default_dir )
+      #FileUtils.rm_rf( @configured_dir )
+      #FileUtils.rm_rf( @default_dir )
       FileUtils.rm_rf( @snuffy )
     end
 
     it "should store data in a configured directory" do
-      adapter = DataMapper.setup(:default, :adapter => 'infinispan', :persist => @configured_dir.to_s)
+      adapter = DataMapper.setup(:dminfinispanadapterconfigured, :adapter => 'infinispan', :persist => @configured_dir.to_s)
       snuffy = Snuffleupagus.create(:birthday=>Date.today)
-      File.exist?("#{@configured_dir.to_s}/default").should be_true
+      File.exist?("#{@configured_dir.to_s}/dminfinispanadapterconfigured").should be_true
       snuffy.should_not be_nil
       adapter.stop
     end
 
     it "should store data in a default directory" do
-      adapter = DataMapper.setup(:default, :adapter => 'infinispan', :persist=>true)
+      adapter = DataMapper.setup(:dminfinispanadapterdefault, :adapter => 'infinispan', :persist=>true)
       snuffy = Snuffleupagus.create(:birthday=>Date.today)
       File.exist?( @default_dir ).should be_true
       snuffy.should_not be_nil

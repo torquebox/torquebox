@@ -246,7 +246,7 @@ describe TorqueBox::Infinispan::Cache do
     after(:all) do
       FileUtils.rm_rf @default_dir
       FileUtils.rm_rf @configured_dir
-      #FileUtils.rm_rf @date_cfg_dir
+      FileUtils.rm_rf @date_cfg_dir
       FileUtils.rm_rf @index_dir if File.exist?( @index_dir )
     end
 
