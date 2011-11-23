@@ -54,7 +54,7 @@ end
 
 # Create app/tasks and app/jobs, just for fun
 inside('app') {
-  FileUtils.mkdir %w( tasks jobs )
+  %w( tasks jobs ).each { |dir| FileUtils.mkdir(dir) unless File.exists?(dir) }
 }
 
 app_constant = RAILS_2 ? 'Rails::Application' : app_const
