@@ -25,6 +25,14 @@ describe "IO extensions for VFS" do
         prefix = vfs_path( prefix ) if vfs_style == :vfs
 
         describe 'read' do
+        
+          it "should raise a proper exception if file not found" do
+            begin
+              content = IO.read( "#{prefix}/joey/jo/jo/junior.shabadoo" )
+            rescue => ex
+              ex.message.should include "joey/jo/jo/junior.shabadoo"
+            end
+          end
           
           it "should allow reading of regular files" do
             content = IO.read( "#{prefix}/home/larry/file1.txt" ).chomp
