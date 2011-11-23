@@ -89,7 +89,7 @@ class IO
       virtual_file = org.jboss.vfs.VFS.child( fd )
 
       if ( ! create && ! virtual_file.exists )
-        raise Errno::ENOENT
+        raise Errno::ENOENT, fd
       end
 
       if ( read && ! write )
