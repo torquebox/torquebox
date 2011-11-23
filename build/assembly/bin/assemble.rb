@@ -143,8 +143,8 @@ class Assembler
   end
 
   def stash_stock_configs
-    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone.xml',
-                  config_stash + '/standalone.xml' ) unless File.exist?( config_stash + '/standalone.xml' )
+    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-full.xml',
+                  config_stash + '/standalone-full.xml' ) unless File.exist?( config_stash + '/standalone-full.xml' )
     FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-ha.xml',
                   config_stash + '/standalone-ha.xml' ) unless File.exist?( config_stash + '/standalone-ha.xml' )
     FileUtils.cp( tool.jboss_dir + '/domain/configuration/domain.xml',
@@ -168,9 +168,9 @@ class Assembler
   def transform_configs
     stash_stock_configs
     trash_stock_configs
-    tool.transform_config(config_stash + '/standalone.xml',         'standalone/configuration/standalone.xml',    false, false )
-    tool.transform_config(config_stash + '/standalone-ha.xml',      'standalone/configuration/standalone-ha.xml', false, true  )
-    tool.transform_config(config_stash + '/domain.xml',             'domain/configuration/domain.xml',            true,  true  )
+    tool.transform_config(config_stash + '/standalone-full.xml',    'standalone/configuration/standalone-full.xml', false, false )
+    tool.transform_config(config_stash + '/standalone-ha.xml',      'standalone/configuration/standalone-ha.xml',   false, true  )
+    tool.transform_config(config_stash + '/domain.xml',             'domain/configuration/domain.xml',              true,  true  )
   end
 
   def transform_host_config
@@ -193,9 +193,9 @@ class Assembler
     install_share
     transform_configs
     transform_host_config
-    #Dir.chdir( tool.jboss_dir ) do 
-      #FileUtils.cp( 'standalone/configuration/torquebox/standalone-preview.xml', 'standalone/configuration/standalone.xml' )
-    #end
+    Dir.chdir( tool.jboss_dir ) do
+      FileUtils.cp( 'standalone/configuration/standalone-full.xml', 'standalone/configuration/standalone.xml' )
+    end
   end
 end
 
