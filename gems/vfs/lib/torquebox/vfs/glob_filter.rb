@@ -36,7 +36,6 @@ module TorqueBox
         end
         @regexp = Regexp.new( regexp_str )
         @dirs_only = dirs_only
-        # puts "glob #{glob} ==> #{@regexp}"
       end
       
       def accepts(file)
