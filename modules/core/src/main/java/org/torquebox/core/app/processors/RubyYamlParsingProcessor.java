@@ -86,6 +86,11 @@ public class RubyYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
         } else if ("true".equals( "" + interactive )) {
             runtimeMetaData.setInteractive( true );
         }
+        
+        Object profileApi = config.get( "profile_api" );
+        if (profileApi != null) {
+            runtimeMetaData.setProfileApi( (Boolean) profileApi );
+        }
 
     }
 

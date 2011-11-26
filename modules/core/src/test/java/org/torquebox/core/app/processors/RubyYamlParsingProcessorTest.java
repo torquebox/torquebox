@@ -217,5 +217,39 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertSame( runtimeMetaData, runtimeMetaData2 );
         assertTrue( runtimeMetaData.isInteractive() );
     }
+    
+    @Test
+    public void testWithRuntimeMetaDataProfilingTrue() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-profiling-true.yml" );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+
+        deploy( phaseContext );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertTrue( runtimeMetaData.isProfileApi() );
+    }
+    
+    @Test
+    public void testWithRuntimeMetaDataProfilingFalse() throws Exception {
+        URL rubyYml = getClass().getResource( "ruby-profiling-false.yml" );
+        MockDeploymentPhaseContext phaseContext = createPhaseContext( "torquebox.yml", rubyYml );
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+
+        RubyRuntimeMetaData runtimeMetaData = new RubyRuntimeMetaData();
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
+
+        deploy( phaseContext );
+
+        RubyRuntimeMetaData runtimeMetaData2 = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
+
+        assertSame( runtimeMetaData, runtimeMetaData2 );
+        assertFalse( runtimeMetaData.isProfileApi() );
+    }    
 
 }
