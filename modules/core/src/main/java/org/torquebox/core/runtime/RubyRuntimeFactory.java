@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -213,6 +214,24 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     /**
+     * Retrieve the profile.api mode
+     * 
+     * @return Whether the JRuby profile.api flag is enabled or not
+     */
+    public boolean isProfileApi() {
+        return profileApi;
+    }
+
+    /**
+     * Sets the profile.api value for the JRuby environment.
+     * 
+     * @param profileApi Whether the JRuby profile.api flag is enabled or not.
+     */
+    public void setProfileApi(boolean profileApi) {
+        this.profileApi = profileApi;
+    }
+
+    /**
      * Set the application-specific environment additions.
      * 
      * @param applicationEnvironment
@@ -254,6 +273,13 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         config.setDebug( this.debug );
         config.setInteractive( this.interactive );
 
+        if (this.profileApi) {
+            log.info( "JRuby Profile API enabled." );
+            List<String> argv = new ArrayList<String>( Arrays.asList( config.getArgv() ) );
+            argv.add( "--profile.api" );
+            config.setArgv( argv.toArray( new String[0] ) );
+        }
+
         String jrubyHome = this.jrubyHome;
 
         if (jrubyHome == null) {
@@ -289,8 +315,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
             prepareRuntime( runtime, contextInfo );
 
-            log.info(  "Initialize? " + initialize  );
-            log.info(  "Initializer=" + this.initializer );
+            log.info( "Initialize? " + initialize );
+            log.info( "Initializer=" + this.initializer );
             if (initialize) {
                 this.injectionRegistry.merge( runtime );
                 if (this.initializer != null) {
@@ -349,7 +375,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
     }
 
     private long logRuntimeCreationStart(RubyInstanceConfig config, String contextInfo) {
-        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo ) + ")" );
+        log.info( "Creating ruby runtime (ruby_version: " + config.getCompatVersion() + ", compile_mode: " + config.getCompileMode() + getFullContext( contextInfo )
+                + ")" );
         return System.currentTimeMillis();
     }
 
@@ -423,9 +450,9 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         RuntimeHelper.require( runtime, "rubygems" );
         RuntimeHelper.require( runtime, "torquebox-vfs" );
         RuntimeHelper.require( runtime, "torquebox-core" );
-        
+
         RuntimeHelper.require( runtime, "org/torquebox/core/runtime/thread_context_patch" );
-        
+
         RuntimeHelper.require( runtime, "org/torquebox/core/runtime/activerecord_patch" );
 
         injectServiceRegistry( runtime );
@@ -638,6 +665,9 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /** I/O streams setup for interactive use or not */
     private boolean interactive = false;
+
+    /** Whether the JRuby profile api is enabled or not */
+    private boolean profileApi = false;
 
     private ServiceRegistry serviceRegistry;
 

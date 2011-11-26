@@ -20,10 +20,10 @@
 package org.torquebox.core.runtime.processors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import org.jboss.as.server.deployment.Attachments;
-import org.jboss.modules.Module;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.Value;
 import org.jruby.CompatVersion;
@@ -166,6 +166,54 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         assertNotNull( factory );
         assertEquals( CompileMode.FORCE, factory.getCompileMode() );
     }
+    
+    @Test
+    public void testDeploymentTrueProfileAPI() throws Exception {
+        MockDeploymentPhaseContext phaseContext = createPhaseContext();
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+        
+        RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
+        metaData.setProfileApi( true );
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
+
+
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
+        rubyAppMetaData.attachTo( unit );
+                
+        deploy( phaseContext );
+
+        ServiceName factoryServiceName = CoreServices.runtimeFactoryName( unit );
+        MockServiceBuilder<?> factoryBuilder = phaseContext.getMockServiceTarget().getMockServiceBuilder( factoryServiceName );
+        Value<?> factoryValue = factoryBuilder.getValue();
+        RubyRuntimeFactory factory = (RubyRuntimeFactory) factoryValue.getValue();
+
+        assertNotNull( factory );
+        assertTrue( factory.isProfileApi() );
+    }    
+    
+    @Test
+    public void testDeploymentFalseProfileAPI() throws Exception {
+        MockDeploymentPhaseContext phaseContext = createPhaseContext();
+        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
+        
+        RubyRuntimeMetaData metaData = new RubyRuntimeMetaData();
+        metaData.setProfileApi( false );
+        unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, metaData );
+
+
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "foo");
+        rubyAppMetaData.attachTo( unit );
+                
+        deploy( phaseContext );
+
+        ServiceName factoryServiceName = CoreServices.runtimeFactoryName( unit );
+        MockServiceBuilder<?> factoryBuilder = phaseContext.getMockServiceTarget().getMockServiceBuilder( factoryServiceName );
+        Value<?> factoryValue = factoryBuilder.getValue();
+        RubyRuntimeFactory factory = (RubyRuntimeFactory) factoryValue.getValue();
+
+        assertNotNull( factory );
+        assertFalse( factory.isProfileApi() );
+    }       
 
 
 
