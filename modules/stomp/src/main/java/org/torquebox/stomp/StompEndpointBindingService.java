@@ -26,24 +26,31 @@ public class StompEndpointBindingService implements Service<String> {
     public void start(StartContext context) throws StartException {
         int port = socketBindingInjector.getValue().getSocketAddress().getPort();
 
-        String host = null;
+        String host = this.hostName;
 
-        if (this.hostName == null) {
+        if (host == null) {
             VirtualHost vhost = this.virtualHostInjector.getOptionalValue();
 
             if (vhost != null) {
                 host = vhost.getHost().getName();
-                if ( host.equals( "default-host" ) ) {
-                    String[] aliases = vhost.getHost().findAliases();
-                    if ( aliases != null && aliases.length >= 1 ) {
-                        host = aliases[0];
+                if (host.equals( "default-host" )) {
+                    if (vhost.getHost().getName() != null) {
+                        host = vhost.getHost().getName();
+                    } else {
+                        String[] aliases = vhost.getHost().findAliases();
+                        if (aliases != null && aliases.length >= 1) {
+                            host = aliases[0];
+                        }
                     }
                 }
-            } else {
-                host = "localhost";
             }
+
         }
 
+        if (host == null) {
+            host = socketBindingInjector.getValue().getAddress().getHostAddress();
+        }
+        
         this.binding = new StompEndpointBinding( host, port, this.context );
 
         log.info( "Advertising STOMP binding: " + this.binding );
