@@ -5,6 +5,7 @@ require File.dirname(__FILE__) + '/../lib/gem_installer.rb'
 versions = {
   :jruby_openssl  =>    '0.7.4',
   :haml           =>    '3.1.3',
+  :json           =>    '1.6.1',
   :rails2x        =>    '2.3.14',
   :rails30        =>    '3.0.10',
   :rails31        =>    '3.1.0',
@@ -37,7 +38,7 @@ versions = {
   :rack13         =>    '1.3.3',
 
   :dm_core        =>    '1.1.0',
-  :json           =>    '1.4.6',
+  :json_for_dm    =>    '1.4.6',
 
   :padrino        =>    '0.10.4',
 
@@ -49,6 +50,7 @@ versions = {
 GemInstaller.with( versions ) do |installer|
   installer.install( 'jruby-openssl' )
   installer.install( 'haml'          )
+  installer.install( 'json' )
   installer.install( 'rails',         versions[:rails2x] )
   installer.install( 'rails',         versions[:rails30] )
   installer.install( 'rails',         versions[:rails31] )
@@ -76,7 +78,7 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'dm-core',       versions[:dm_core] )
   installer.install( 'dm-serializer', versions[:dm_core] )
 
-  installer.install( 'json' )
+  installer.install( 'json', versions[:json_for_dm] )
   
   installer.install( 'padrino', versions[:padrino] )
   installer.install( 'sinatra-flash', versions[:sinatra_flash] )
