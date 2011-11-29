@@ -84,6 +84,9 @@ public class RubyRuntimeMetaData {
 
     /** Whether I/O streams should be setup for interactive use */
     private boolean interactive = false;
+    
+    /** Whether the JRuby profile API should be turned on */
+    private boolean profileApi = false;
 
     /**
      * Construct.
@@ -250,4 +253,14 @@ public class RubyRuntimeMetaData {
     public boolean isInteractive() {
         return this.interactive;
     }
+    
+
+    public boolean isProfileApi() {
+        return profileApi;
+    }
+
+    public void setProfileApi(boolean profiling) {
+        this.profileApi = profiling;
+    }    
+    
 }

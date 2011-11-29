@@ -48,5 +48,7 @@ public class TorqueBoxRubyInstanceConfig extends RubyInstanceConfig {
     public void setInteractive(boolean interactive) {
         this.interactive = interactive;
     }
+    
+    
 
 }
