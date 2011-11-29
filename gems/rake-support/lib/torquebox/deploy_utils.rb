@@ -145,7 +145,9 @@ module TorqueBox
           ENV.delete('BUNDLE_GEMFILE')
 
           if windows?
-            exec *run_command_line(options)
+            # exec on Windows doesn't like empty strings
+            args = run_command_line(options).map { |arg| arg.empty? ? nil : arg }
+            exec *args
           else
             old_trap = trap("INT") do
               puts "caught SIGINT, shutting down"
