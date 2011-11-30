@@ -144,17 +144,7 @@ module TorqueBox
           # is probably not what we want.
           ENV.delete('BUNDLE_GEMFILE')
 
-          if windows?
-            # exec on Windows doesn't like empty strings
-            args = run_command_line(options).map { |arg| arg.empty? ? nil : arg }
-            exec *args
-          else
-            old_trap = trap("INT") do
-              puts "caught SIGINT, shutting down"
-            end
-            exec_command(run_command_line(options).join(' '))
-            trap("INT", old_trap)
-          end
+          exec_command(run_command_line(options).join(' '))
         end
       end
 
@@ -295,6 +285,10 @@ module TorqueBox
 
       def exec_command(cmd)
         IO.popen4( cmd ) do |pid, stdin, stdout, stderr|
+          trap("INT") do
+            puts "caught SIGINT, shutting down"
+            `taskkill /F /T /PID #{pid}` if windows?
+          end
           stdin.close
           [
            Thread.new(stdout) {|stdout_io|
