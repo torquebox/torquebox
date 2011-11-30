@@ -434,6 +434,21 @@ end</programlisting></para>
 
               <entry><parameter>false</parameter></entry>
             </row>
+
+            <row>
+              <entry><varname>profile_api</varname></entry>
+              <entry>A value of <emphasis>true</emphasis> enables JRuby's 
+              profiler instrumentation, which allows you to obtain performance 
+              information on a given block of ruby code.
+
+              <para>For more information, check out 
+              <ulink url="http://danlucraft.com/blog/2011/03/built-in-profiler-in-jruby-1.6/">How to Use the New JRuby Profiler</ulink>
+              </para>
+              </entry>
+
+              <entry><parameter>false</parameter></entry> 
+            </row>
+
           </tbody>
         </tgroup>
       </table>
@@ -443,7 +458,8 @@ end</programlisting></para>
   version: 1.9
   compile_mode: off
   debug: false
-  interactive: true</programlisting></para>
+  interactive: true
+  profile_api: true</programlisting></para>
         </informalexample> And via the DSL: <informalexample>
           <para><programlisting>TorqueBox.configure do
   ruby do
@@ -451,6 +467,7 @@ end</programlisting></para>
     compile_mode "off"
     debug false
     interactive true
+    profile_api true
   end
 end</programlisting></para>
         </informalexample></para>
@@ -500,6 +517,7 @@ end</programlisting></para>
         <para>For example, in YAML: <informalexample>
             <para><programlisting>environment:
   RAILS_ENV: production</programlisting></para>
+
           </informalexample> And via the DSL: <informalexample>
             <para><programlisting>TorqueBox.configure do 
   environment do
