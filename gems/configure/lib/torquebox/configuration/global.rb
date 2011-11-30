@@ -82,7 +82,8 @@ module TorqueBox
                                                                      { :compile_mode => [:force, :jit, :off,
                                                                                          'force', 'jit', 'off'] },
                                                                      { :debug => [true, false] },
-                                                                     { :interactive => [true, false] }
+                                                                     { :interactive => [true, false] },
+                                                                     { :profile_api => [true, false] }
                                                                     ]
                                                      }),
           :service     => ThingWithOptionsEntry.with_settings(:discrete => true,
