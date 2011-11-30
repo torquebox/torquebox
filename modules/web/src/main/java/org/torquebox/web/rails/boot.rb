@@ -47,6 +47,7 @@ class Class
           end
         end
       end
+      
       if ( (self.to_s == 'Rails::Initializer') && ( method_name == :load_gems ) )
         self.class_eval do
           alias_method :load_gems_before_torquebox, :load_gems            

@@ -247,6 +247,51 @@ describe "Dir extensions for VFS" do
         items.should include( "#{prefix}/home" )
         items.should include( "#{prefix}/sound of music" )
       end
+      
+      it "should match the current directory on a double-splat with trailing slash" do
+        items = Dir.glob( "#{prefix}/**/" )
+        
+        puts "\nFor 255:"
+        items.each {|i| puts i}
+        
+        items.should_not be_empty
+        items.size.should eql(4)
+        items.should include( "#{prefix}/" )
+        items.should include( "#{prefix}/dotfiles" )
+        items.should include( "#{prefix}/home" )
+        items.should include( "#{prefix}/sound of music" )
+      end
+      
+      it "should match files on a double splat without a trailing slash" do
+        items = Dir.glob( "#{prefix}/**" )
+        items.should_not be_empty
+        items.size.should eql(6)
+        items.should include( "#{prefix}/dotfiles" )
+        items.should include( "#{prefix}/home" )
+        items.should include( "#{prefix}/sound of music" )
+        items.should include( "#{prefix}/#bad-uri#" )
+        items.should include( "#{prefix}/biscuit.jpg" )
+        items.should include( "#{prefix}/views%2Flocalhost%3A8080%2Fposts" )
+      end
+      
+      it "should match using question marks" do
+        items = Dir.glob( "#{prefix}/biscuit.jp?" )
+        items.should_not be_empty
+        items.size.should eql(1)
+        items.should include( "#{prefix}/biscuit.jpg" )
+      end
+      
+      it "should match files on a single splat without a trailing slash" do
+        items = Dir.glob( "#{prefix}/*" )
+        items.should_not be_empty
+        items.size.should eql(6)
+        items.should include( "#{prefix}/dotfiles" )
+        items.should include( "#{prefix}/home" )
+        items.should include( "#{prefix}/sound of music" )
+        items.should include( "#{prefix}/#bad-uri#" )
+        items.should include( "#{prefix}/biscuit.jpg" )
+        items.should include( "#{prefix}/views%2Flocalhost%3A8080%2Fposts" )
+      end
 
       it "should allow for multiple single-star globbing" do
         items = Dir.glob( "#{prefix}/home/**/*file*.txt" )

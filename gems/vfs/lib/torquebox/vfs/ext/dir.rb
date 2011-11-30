@@ -144,7 +144,7 @@ class Dir
 
       matcher_segments = segments - base_segments
       matcher = matcher_segments.join( '/' )
-      dirs_only = (str_pattern[-1,1] == '/')
+      dirs_only = ( str_pattern[-1,1] == '/' )
       #puts "matcher [#{matcher}]"
 
       begin
@@ -164,8 +164,15 @@ class Dir
         #puts "base=#{base}"
         # puts "preparing glob filter for path #{child_path} and match #{matcher}"
         filter = TorqueBox::VFS::GlobFilter.new( child_path, matcher, dirs_only )
-        #puts "filter is #{filter}"
-        paths = starting_point.getChildrenRecursively( filter ).collect{|e|
+        paths = starting_point.getChildrenRecursively( filter )
+        
+        if ( str_pattern[str_pattern.length - 3, str_pattern.length - 1] == '**/' )
+          # if asking for double-splat and a trailing slash, the root counts too.
+          paths << org.jboss.vfs.VFS.child( child_path )
+        end
+        
+        # paths = starting_point.getChildrenRecursively( filter ).collect{ |e|
+        paths = paths.collect {	|e|
           #path_name = e.path_name
           path_name = e.getPathNameRelativeTo( starting_point )
           #puts "(collect) path_name=#{path_name}"
