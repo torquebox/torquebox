@@ -22,10 +22,14 @@ require 'torquebox/transactions'
 module TorqueBox
   module Infinispan
 
-    class ContainerTransactionManagerLookup 
+    class ContainerTransactionManagerLookup
       include TorqueBox::Injectors
-      include org.infinispan.transaction.lookup.TransactionManagerLookup
-      
+      begin
+        include org.infinispan.transaction.lookup.TransactionManagerLookup
+      rescue NameError
+        # Not running inside TorqueBox
+      end
+
       def getTransactionManager
         inject('transaction-manager')
       end
@@ -79,9 +83,15 @@ module TorqueBox
       include TorqueBox::Injectors
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
-      java_import org.infinispan.config.Configuration::CacheMode
-      java_import org.infinispan.transaction::TransactionMode
-      java_import org.infinispan.transaction::LockingMode
+      begin
+        java_import org.infinispan.config.Configuration::CacheMode
+        java_import org.infinispan.transaction::TransactionMode
+        java_import org.infinispan.transaction::LockingMode
+        INFINISPAN_AVAILABLE = true
+      rescue NameError
+        INFINISPAN_AVAILABLE = false
+        # Not running inside TorqueBox
+      end
 
       def initialize(opts = {})
         @options = opts
@@ -270,7 +280,11 @@ module TorqueBox
       end
 
       def cache
-        @cache ||= clustered || local || nothing
+        if INFINISPAN_AVAILABLE
+          @cache ||= clustered || local || nothing
+        else
+          @cache ||= nothing
+        end
       end
 
       def manager
@@ -363,13 +377,14 @@ module TorqueBox
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
         log( e.backtrace, 'ERROR' )
       end
-      
+
       def nothing
+        result = Object.new
         def result.method_missing(*args); end
         log( "Nothing: Can't get or create an Infinispan cache. No caching will occur", 'ERROR' )
         result
       end
-      
+
       def __put(key, value, expires, operation)
         args = [ operation, key, value ]
         if expires > 0

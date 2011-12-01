@@ -1,5 +1,6 @@
 require 'torquespec'
 require 'fileutils'
+require 'rbconfig'
 require 'torquebox-rake-support'
 
 $: << File.dirname( __FILE__ )
@@ -28,6 +29,10 @@ def mutable_app(path)
   FileUtils.rm_rf( full_path )
   FileUtils.mkdir_p( dest_path )
   FileUtils.cp_r( File.join( File.dirname( __FILE__ ), '..', 'apps', path ), dest_path )
+end
+
+def jruby_binary
+  File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
 end
 
 # Because DRb requires ObjectSpace and 1.9 disables it
