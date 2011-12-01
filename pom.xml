@@ -65,7 +65,10 @@
     <profile>
       <id>release-staging</id>
       <activation>
-        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>build_profile</name>
+          <value>release-staging</value>
+        </property>
       </activation>
       <properties>
         <jboss.releases.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.releases.repo.url>
