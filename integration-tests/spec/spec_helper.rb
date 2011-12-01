@@ -32,7 +32,7 @@ def mutable_app(path)
 end
 
 def jruby_binary
-  File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
+  File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby', 'bin', 'jruby' ) )
 end
 
 # Because DRb requires ObjectSpace and 1.9 disables it
