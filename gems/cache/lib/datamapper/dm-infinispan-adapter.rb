@@ -53,7 +53,6 @@ module DataMapper::Adapters
     end
 
     def read( query )
-      records = []
       query.filter_records(@search.search( query ))
     end
 

@@ -365,9 +365,13 @@ module TorqueBox
         if options[:index]
           log( "Configuring #{name} local cache for local-only indexing" )
           config.indexing.index_local_only(true)
+        else
+          log( "Configuring #{name} local cache with no indexing" )
+          config.indexing.disable
         end
 
         if ((local_manager = Cache.find_local_manager(name)) == nil)
+          log( "No local CacheManager exists for #{name}. Creating one." )
           local_manager = org.infinispan.manager.DefaultCacheManager.new
           local_manager.define_configuration( name, config.build )
           Cache.local_managers << local_manager
