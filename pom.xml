@@ -73,7 +73,7 @@
       </properties>
       <repositories>
         <repository>
-          <id>projectodd-snapshot</id>
+          <id>projectodd-staging</id>
           <name>projectodd staging</name>
           <url>https://repository-projectodd.forge.cloudbees.com/staging</url>
           <layout>default</layout>
