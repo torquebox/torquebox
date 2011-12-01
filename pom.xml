@@ -63,7 +63,7 @@
       </properties>
     </profile>
     <profile>
-      <id>bees-staging</id>
+      <id>release-staging</id>
       <activation>
         <activeByDefault>false</activeByDefault>
       </activation>
@@ -71,6 +71,20 @@
         <jboss.releases.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.snapshots.repo.url>
       </properties>
+      <repositories>
+        <repository>
+          <id>projectodd-snapshot</id>
+          <name>projectodd staging</name>
+          <url>https://repository-projectodd.forge.cloudbees.com/staging</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </repository>
+      </repositories>
     </profile>
     <profile>
       <id>local</id>
@@ -404,7 +418,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.polyglot>1.0.0-SNAPSHOT</version.polyglot>
+    <version.polyglot>1.0.0</version.polyglot>
     <version.jruby-maven-plugins>0.28.4</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
