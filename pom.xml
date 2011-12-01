@@ -65,10 +65,7 @@
     <profile>
       <id>release-staging</id>
       <activation>
-        <property>
-          <name>build_profile</name>
-          <value>release-staging</value>
-        </property>
+        <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
         <jboss.releases.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.releases.repo.url>
@@ -88,6 +85,20 @@
           </snapshots>
         </repository>
       </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>projectodd-staging</id>
+          <name>projectodd staging</name>
+          <url>https://repository-projectodd.forge.cloudbees.com/staging</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+        </pluginRepository>
+      </pluginRepositories>
     </profile>
     <profile>
       <id>local</id>
