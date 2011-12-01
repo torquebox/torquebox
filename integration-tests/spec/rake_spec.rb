@@ -4,13 +4,12 @@ require 'spec_helper'
 remote_describe "rake tasks" do
 
   it "should work" do
-    pending
     output = rake('integ:sanity_check --trace')
     output.should include('sanity check passed')
   end
 
   def rake(cmd)
-    `#{jruby_binary} -S rake -f #{File.dirname(__FILE__)}/../apps/rails3.1/basic/Rakefile #{cmd} 2>&1`
+    `#{jruby_binary} -S rake -f #{File.dirname(__FILE__)}/../apps/rails3.1/basic/Rakefile #{cmd}`
   end
 
 end
