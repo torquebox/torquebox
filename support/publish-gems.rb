@@ -11,17 +11,20 @@ gem_map = gems_we_have.inject({ }) do |accum, gem|
 end
 
 gem_order = %w{
+    torquebox-core
     torquebox-vfs
-    torquebox-base
     torquebox-capistrano-support
     torquebox-rake-support
-    torquebox-container-foundation
-    torquebox-messaging-container
-    torquebox-naming-container
+    torquebox-configure
     torquebox-naming
+    torquebox-security
+    torquebox-transactions
+    torquebox-cache
     torquebox-messaging
+    torquebox-stomp
     torquebox-web
     torquebox
+    torquebox-server
 }
 
 if gem_map.keys.sort != gem_order.sort
