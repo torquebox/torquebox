@@ -594,6 +594,18 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    <repository>
+      <id>projectodd-release</id>
+      <name>projectodd release</name>
+      <url>https://repository-projectodd.forge.cloudbees.com/release</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
 
   <!-- Plugin Repositories -->
@@ -609,6 +621,18 @@
       <snapshots>
         <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>projectodd-release</id>
+      <name>projectodd release</name>
+      <url>https://repository-projectodd.forge.cloudbees.com/release</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
   </pluginRepositories>
