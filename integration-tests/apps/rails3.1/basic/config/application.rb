@@ -39,5 +39,8 @@ module Basic
 
     # Enable the asset pipeline
     config.assets.enabled = true
+
+    require 'torquebox-cache'
+    config.cache_store = :torque_box_store
   end
 end

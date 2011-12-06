@@ -8,8 +8,22 @@ remote_describe "rake tasks" do
     output.should include('sanity check passed')
   end
 
-  def rake(cmd)
-    `#{jruby_binary} -S rake -f #{File.dirname(__FILE__)}/../apps/rails3.1/basic/Rakefile #{cmd}`
+  def rake(task)
+    command = "#{jruby_binary} -S rake -f #{File.dirname(__FILE__)}/../apps/rails3.1/basic/Rakefile #{task}"
+    output = ""
+    IO.popen4(command) do |pid, stdin, stdout, stderr|
+      stdin.close
+      stdout_reader = Thread.new(stdout) { |stdout_io|
+        stdout_io.each_line { |l| output << l }
+        stdout_io.close
+      }
+      stderr_reader = Thread.new(stderr) { |stderr_io|
+        stderr_io.each_line { |l| output << l }
+        stderr_io.close
+      }
+      [stdout_reader, stderr_reader].each(&:join)
+      output
+    end
   end
 
 end
