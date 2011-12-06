@@ -94,6 +94,7 @@ module TorqueBox
       end
 
       def initialize(opts = {})
+        return nothing unless INFINISPAN_AVAILABLE
         @options = opts
         options[:transaction_mode] = :transactional unless options.has_key?( :transaction_mode )
         options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
