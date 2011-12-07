@@ -30,16 +30,11 @@ import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 import org.projectodd.polyglot.core.as.GenericSubsystemDescribeHandler;
-import org.torquebox.bootstrap.as.TorqueBoxBootstrapper;
 import org.torquebox.security.auth.as.AuthSubsystemAdd;
 import org.torquebox.security.auth.as.AuthSubsystemParser;
 import org.torquebox.security.auth.as.AuthSubsystemProviders;
 
 public class SecurityExtension extends AbstractBootstrappableExtension {
-
-    public SecurityExtension() throws ClassNotFoundException {
-        super();
-    }
 
     @Override
     public void initialize(ExtensionContext context) {

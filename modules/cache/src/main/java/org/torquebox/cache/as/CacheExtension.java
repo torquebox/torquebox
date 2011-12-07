@@ -33,10 +33,6 @@ import org.projectodd.polyglot.core.as.GenericSubsystemDescribeHandler;
 
 public class CacheExtension extends AbstractBootstrappableExtension {
     
-    public CacheExtension() throws ClassNotFoundException {
-        super();
-    }
-
     @Override
     public void initialize(ExtensionContext context) {
         bootstrap();

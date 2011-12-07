@@ -30,13 +30,8 @@ import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 import org.projectodd.polyglot.core.as.GenericSubsystemDescribeHandler;
-import org.torquebox.bootstrap.as.TorqueBoxBootstrapper;
 
 public class StompExtension extends AbstractBootstrappableExtension {
-
-    public StompExtension() throws ClassNotFoundException {
-        super();
-    }
 
     @Override
     public void initialize(ExtensionContext context) {

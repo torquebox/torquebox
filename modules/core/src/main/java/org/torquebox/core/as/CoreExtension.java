@@ -34,10 +34,6 @@ import org.projectodd.polyglot.core.as.GenericSubsystemDescribeHandler;
 
 public class CoreExtension extends AbstractBootstrappableExtension {
 
-    public CoreExtension() throws ClassNotFoundException {
-        super();
-    }
-
     @Override
     public void initialize(ExtensionContext context) {
 
