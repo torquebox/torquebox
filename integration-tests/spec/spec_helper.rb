@@ -35,6 +35,28 @@ def jruby_binary
   File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby', 'bin', 'jruby' ) )
 end
 
+def integ_jruby(command)
+  # We wrap the command so we can clear GEM_HOME and GEM_PATH, thus using
+  # the integ-dist gems instead of maven gems
+  wrapped_command = "#{jruby_binary} -J-Dgem.path=default -e \"ENV.delete('GEM_HOME'); ENV.delete('GEM_PATH'); puts `#{jruby_binary} #{command} 2>&1`\""
+  # We use IO.popen4 instead of backticks because nested backticks didn't
+  # play nice
+  output = ""
+  IO.popen4(wrapped_command) do |pid, stdin, stdout, stderr|
+    stdin.close
+    stdout_reader = Thread.new(stdout) { |stdout_io|
+      stdout_io.each_line { |l| output << l }
+      stdout_io.close
+    }
+    stderr_reader = Thread.new(stderr) { |stderr_io|
+      stderr_io.each_line { |l| output << l }
+      stderr_io.close
+    }
+    [stdout_reader, stderr_reader].each(&:join)
+    output
+  end
+end
+
 # Because DRb requires ObjectSpace and 1.9 disables it
 require 'jruby'
 JRuby.objectspace = true
