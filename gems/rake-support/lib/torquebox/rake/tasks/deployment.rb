@@ -21,18 +21,20 @@ require 'torquebox/deploy_utils'
 namespace :torquebox do
 
   desc "Deploy the app in the current directory"
-  task :deploy, [:context_path] => ['torquebox:check'] do |t, args|
+  task :deploy, [:context_path, :name] => ['torquebox:check'] do |t, args|
     descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor( :context_path => args[:context_path] )
-    deployment_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml( descriptor )    
+    deployment_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml( descriptor, args )
   
     puts "Deployed: #{deployment_name}"
     puts "    into: #{deploy_dir}"
   end
 
   desc "Undeploy the app in the current directory"
-  task :undeploy=>['torquebox:check'] do
-    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy # try -knob.yml first
-    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy( TorqueBox::DeployUtils.archive_name ) unless deploy_name
+  task :undeploy, [:name] => ['torquebox:check'] do |t, args|
+    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_yaml( args ) # try -knob.yml first
+    unless deploy_name
+      deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_archive( args )
+    end
 
     if deploy_name
       puts "Undeployed: #{deploy_name}"
@@ -44,11 +46,25 @@ namespace :torquebox do
 
   desc "Create (if needed) and deploy as application archive"
   namespace :deploy do
-    task :archive=>[ 'torquebox:archive' ] do
-      archive_name, deploy_dir = TorqueBox::DeployUtils.deploy_archive
+    task :archive, [:name] => [ 'torquebox:archive' ] do |t, args|
+      archive_name, deploy_dir = TorqueBox::DeployUtils.deploy_archive( args )
       
       puts "Deployed: #{archive_name}"
       puts "    into: #{deploy_dir}"
+    end
+  end
+  
+  desc "Undeploy an application archive"
+  namespace :undeploy do
+    task :archive, [:name] => [ 'torquebox:check' ] do |t, args|
+      deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_archive( args )
+      
+      if deploy_name
+        puts "Undeployed: #{deploy_name}"
+        puts "      from: #{deploy_dir}" 
+      else
+        puts "Nothing to undeploy"
+      end
     end
   end
    
