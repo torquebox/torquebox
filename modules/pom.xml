@@ -50,6 +50,14 @@
       <version>${version.polyglot}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-hasingleton</artifactId>
+      <version>${version.polyglot}</version>
+      <type>jar</type>
+      <classifier>module</classifier>
+      <scope>provided</scope>
+    </dependency>
   </dependencies>
 
   <build> 
