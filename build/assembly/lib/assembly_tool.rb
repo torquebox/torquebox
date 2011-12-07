@@ -146,11 +146,10 @@ class AssemblyTool
   end
 
   def install_polyglot_module(name, version)
-    artifact_path = "#{m2_repo}/org/projectodd/polyglot-#{name}/#{version}/polyglot-#{name}-#{version}-module.jar"
+    artifact_path = "#{m2_repo}/org/projectodd/polyglot-#{name}/#{version}/polyglot-#{name}-#{version}-module.zip"
     artifact_dir = Dir.mktmpdir
     Dir.chdir( artifact_dir ) do
       unzip( artifact_path )
-      FileUtils.rm_rf "META-INF"
     end
     install_module( name, artifact_dir, "/modules/org/projectodd/polyglot/#{name}/main", false )
   end
