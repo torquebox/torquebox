@@ -70,7 +70,7 @@ describe TorqueBox::DeployUtils do
 
   describe '.jboss_conf' do
     extend PathHelper
-    it 'should defafult to "standalone"' do
+    it 'should default to "standalone"' do
       @util.jboss_conf.should == 'standalone'
     end
 
