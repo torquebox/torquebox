@@ -29,10 +29,10 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.component.processors.DeploymentUtils;
 import org.torquebox.core.util.YAMLUtils;
 
 /**

@@ -25,7 +25,6 @@
     <module>cdi</module>
     <module>security</module>
     <module>stomp</module>
-    <module>hasingleton</module>
   </modules>
 
   <dependencies>

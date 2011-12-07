@@ -22,6 +22,12 @@
     </dependency>
     <dependency>
       <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-hasingleton</artifactId>
+      <version>${version.polyglot}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
       <artifactId>polyglot-messaging</artifactId>
       <version>${version.polyglot}</version>
       <scope>compile</scope>
@@ -35,12 +41,6 @@
     <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-hasingleton</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>

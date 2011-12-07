@@ -16,6 +16,7 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'fileutils'
+require 'tmpdir'
 require 'rexml/document'
 require 'rubygems'
 
@@ -35,6 +36,8 @@ class AssemblyTool
   attr_accessor :jboss_dir
   attr_accessor :jruby_dir
 
+  attr_accessor :m2_repo
+  
   attr_reader :options
 
   def modules
@@ -72,6 +75,13 @@ class AssemblyTool
 
     @jboss_dir = @torquebox_dir + '/jboss'
     @jruby_dir = @torquebox_dir + '/jruby'
+
+    @m2_repo = nil 
+    if ( ENV['M2_REPO'] ) 
+      @m2_repo = ENV['M2_REPO']
+    else
+      @m2_repo = ENV['HOME'] + '/.m2/repository'
+    end
   end
 
   def self.install_gem(gem)
@@ -80,6 +90,14 @@ class AssemblyTool
 
   def self.copy_gem_to_repo(gem)
     AssemblyTool.new().copy_gem_to_repo( gem, true )
+  end
+
+  def unzip(path)
+    windows? ? `jar xf #{path}` : `unzip -q #{path}`
+  end
+
+  def windows?
+    Config::CONFIG['host_os'] =~ /mswin/
   end
 
   def install_gem(gem, update_index=false)
@@ -115,15 +133,26 @@ class AssemblyTool
      AssemblyTool.new().install_module( name, path )
   end
  
-  def install_module(name, path)
+  def install_module(name, path, dest_suffix = nil, remember = true)
     puts "Installing #{name} from #{path}"
+    dest_suffix ||= "/modules/org/torquebox/#{name}/main"
     Dir.chdir( @jboss_dir ) do 
-      dest_dir = Dir.pwd + "/modules/org/torquebox/#{name}/main"
+      dest_dir = Dir.pwd + dest_suffix
       FileUtils.rm_rf dest_dir
       FileUtils.mkdir_p File.dirname( dest_dir )
       FileUtils.cp_r path, dest_dir
     end
-    modules << name
+    modules << name if remember
+  end
+
+  def install_polyglot_module(name, version)
+    artifact_path = "#{m2_repo}/org/projectodd/polyglot-#{name}/#{version}/polyglot-#{name}-#{version}-module.jar"
+    artifact_dir = Dir.mktmpdir
+    Dir.chdir( artifact_dir ) do
+      unzip( artifact_path )
+      FileUtils.rm_rf "META-INF"
+    end
+    install_module( name, artifact_dir, "/modules/org/projectodd/polyglot/#{name}/main", false )
   end
 
   def increase_deployment_timeout(doc)
@@ -152,12 +181,14 @@ class AssemblyTool
     end
   end
 
-  def add_extensions(doc)
+  def add_extensions(doc, extra_extensions)
     extensions = doc.root.get_elements( 'extensions' ).first
-    modules.each do |name|
-      previous_extension = extensions.get_elements( "extension[@module='org.torquebox.#{name}']" )
+    all_modules = modules.map { |name| "org.torquebox.#{name}" }
+    all_modules += extra_extensions.map { |name_bits| "org.#{name_bits.join('.')}" } if extra_extensions
+    all_modules.each do |name|
+      previous_extension = extensions.get_elements( "extension[@module='#{name}']" )
       if ( previous_extension.empty? )
-        extensions.add_element( 'extension', 'module'=>"org.torquebox.#{name}" )
+        extensions.add_element( 'extension', 'module'=>"#{name}" )
       end
     end
   end
@@ -176,24 +207,31 @@ class AssemblyTool
     end
   end
 
-  def add_subsystems(doc)
+  def add_subsystems(doc, extra_subsystems)
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
-      modules.each do |name|
-        previous_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:torquebox-#{name}:1.0']" )
-        if ( previous_subsystem.empty? )
-          #profile.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:torquebox-#{name}:1.0" )
-          profile.add_element( subsystem_element( name ) )
-        end
+      all_modules = modules.map { |name| "torquebox-#{name}" }
+      all_modules += extra_subsystems.map { |_, group, name| "#{group}-#{name}"} if extra_subsystems
+      all_modules.each do |name|
+        add_subsystem(profile, name)
       end
     end
   end
 
+  def add_subsystem(element, name)
+    previous_subsystem = element.get_elements( "subsystem[@xmlns='urn:jboss:domain:#{name}:1.0']" )
+    if ( previous_subsystem.empty? )
+      #element.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:#{name}:1.0" )
+      element.add_element( subsystem_element( name ) )
+    end
+  end
+  
   def subsystem_element(name)
-    custom_subsystem_path = base_dir + "/../../modules/#{name}/src/subsystem/subsystem.xml"
+    short_name = name.split('-').last
+    custom_subsystem_path = base_dir + "/../../modules/#{short_name}/src/subsystem/subsystem.xml"
     if ( ! File.exist?( custom_subsystem_path ) ) 
       e = REXML::Element.new( 'subsystem' )
-      e.add_attribute( 'xmlns', "urn:jboss:domain:torquebox-#{name}:1.0" )
+      e.add_attribute( 'xmlns', "urn:jboss:domain:#{name}:1.0" )
       return e
     end
 
@@ -452,14 +490,16 @@ class AssemblyTool
     end
   end
 
-  def transform_config(input_file, output_file, domain=false, ha=false)
+  def transform_config(input_file, output_file, options = { })
+    domain = options[:domain]
+    ha = options[:ha]
     doc = REXML::Document.new( File.read( input_file ) )
 
     Dir.chdir( @jboss_dir ) do
       
       increase_deployment_timeout(doc)
-      add_extensions(doc)
-      add_subsystems(doc)
+      add_extensions(doc, options[:extra_modules])
+      add_subsystems(doc, options[:extra_modules])
       add_cache(doc)
       set_welcome_root(doc)
       unquote_cookie_path(doc)

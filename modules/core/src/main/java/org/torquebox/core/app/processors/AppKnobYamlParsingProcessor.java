@@ -36,10 +36,10 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jboss.vfs.VirtualFileFilter;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
+import org.projectodd.polyglot.core.util.DeploymentUtils;
 import org.projectodd.polyglot.core.util.DeprecationLogger;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.component.processors.DeploymentUtils;
 import org.torquebox.core.util.YAMLUtils;
 import org.yaml.snakeyaml.error.YAMLException;
 

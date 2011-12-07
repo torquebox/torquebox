@@ -41,6 +41,6 @@
         <module name="org.jboss.vfs"/>
         <module name="org.jboss.metadata"/>
         <module name="org.torquebox.core"/>
-        <module name="org.torquebox.hasingleton"/>
+        <module name="org.projectodd.polyglot.hasingleton"/>
     </dependencies>
 </module>

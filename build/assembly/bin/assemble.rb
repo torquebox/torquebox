@@ -16,7 +16,7 @@ class Assembler
   attr_accessor :torquebox_version
   attr_accessor :jboss_version
   attr_accessor :jruby_version
-
+  attr_accessor :polyglot_version
   attr_accessor :stilts_version
 
   attr_accessor :m2_repo
@@ -26,12 +26,7 @@ class Assembler
     @tool = AssemblyTool.new(:deployment_timeout => 1200, :enable_welcome_root => false)
     determine_versions
 
-    @m2_repo   = nil 
-    if ( ENV['M2_REPO'] ) 
-      @m2_repo = ENV['M2_REPO']
-    else
-      @m2_repo   = ENV['HOME'] + '/.m2/repository'
-    end
+    @m2_repo   = @tool.m2_repo
 
     puts "Maven repo: #{@m2_repo}"
     @jboss_zip = @m2_repo + "/org/jboss/as/jboss-as-dist/#{@jboss_version}/jboss-as-dist-#{@jboss_version}.zip"
@@ -45,10 +40,12 @@ class Assembler
     @torquebox_version = doc.get_elements( "project/version" ).first.text
     @jboss_version     = doc.get_elements( "project/properties/version.jbossas" ).first.text
     @jruby_version     = doc.get_elements( "project/properties/version.jruby" ).first.text
+    @polyglot_version  = doc.get_elements( "project/properties/version.polyglot" ).first.text
     @stilts_version    = doc.get_elements( "project/properties/version.org.projectodd.stilts" ).first.text
     puts "TorqueBox.... #{@torquebox_version}" 
-    puts "JBoss........ #{@jboss_version}" 
+    puts "JBoss........ #{@jboss_version}"
     puts "JRuby........ #{@jruby_version}"
+    puts "Polyglot..... #{@polyglot_version}"
     puts "Stilts....... #{@stilts_version}"
     #puts doc
   end
@@ -67,8 +64,8 @@ class Assembler
       #puts "JBoss already laid down"
     else
       puts "Laying down JBoss"
-      Dir.chdir( File.dirname( tool.jboss_dir ) ) do 
-        windows? ? `jar xf #{jboss_zip}` : `unzip -q #{jboss_zip}`
+      Dir.chdir( File.dirname( tool.jboss_dir ) ) do
+        tool.unzip( jboss_zip )
         original_dir= File.expand_path( Dir[ 'jboss-*' ].first )
         FileUtils.mv original_dir, tool.jboss_dir
       end
@@ -81,13 +78,17 @@ class Assembler
     else
       puts "Laying down JRuby" 
       Dir.chdir( File.dirname( tool.jruby_dir ) ) do
-        windows? ? `jar xf #{jruby_zip}` : `unzip -q #{jruby_zip}`
+        tool.unzip( jruby_zip )
         original_dir= File.expand_path( Dir[ 'jruby-*' ].first )
         FileUtils.mv original_dir, tool.jruby_dir
       end
     end
   end
 
+  def polyglot_modules
+    @polyglot_modules ||= ['hasingleton']
+  end
+  
   def install_modules
     modules = Dir[ tool.base_dir + '/../../modules/*/target/*-module' ].map do |module_dir|
       [ File.basename( module_dir, '-module' ).gsub( /torquebox-/, '' ), module_dir ]
@@ -101,6 +102,10 @@ class Assembler
 
     modules.each do |module_name, module_dir|
       tool.install_module( module_name, module_dir )
+    end
+
+    polyglot_modules.each do |name|
+      tool.install_polyglot_module( name, polyglot_version )
     end
   end
 
@@ -168,19 +173,25 @@ class Assembler
   def transform_configs
     stash_stock_configs
     trash_stock_configs
-    tool.transform_config(config_stash + '/standalone-full.xml',    'standalone/configuration/standalone-full.xml', false, false )
-    tool.transform_config(config_stash + '/standalone-ha.xml',      'standalone/configuration/standalone-ha.xml',   false, true  )
-    tool.transform_config(config_stash + '/domain.xml',             'domain/configuration/domain.xml',              true,  true  )
+    polyglot_mods = polyglot_modules.map { |name| ["projectodd", "polyglot", name]}
+    tool.transform_config(config_stash + '/standalone-full.xml',
+                          'standalone/configuration/standalone-full.xml',
+                          :extra_modules => polyglot_mods)
+    tool.transform_config(config_stash + '/standalone-ha.xml',
+                          'standalone/configuration/standalone-ha.xml',
+                          :extra_modules => polyglot_mods,
+                          :ha => true )
+    tool.transform_config(config_stash + '/domain.xml',
+                          'domain/configuration/domain.xml',
+                          :extra_modules => polyglot_mods,
+                          :domain => true,
+                          :ha => true )
   end
 
   def transform_host_config
     stash_stock_host_config
     trash_stock_host_config
     tool.transform_host_config( config_stash + '/host.xml', 'domain/configuration/host.xml' )
-  end
-
-  def windows?
-    Config::CONFIG['host_os'] =~ /mswin/
   end
 
   def assemble() 
