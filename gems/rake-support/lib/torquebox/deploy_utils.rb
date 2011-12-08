@@ -314,10 +314,11 @@ module TorqueBox
       end
       
       def normalize_archive_name(name)
-        name[-6..-1] == '.knob' ? name : name + '.knob'
+        name[-5..-1] == '.knob' ? name : name + '.knob'
       end
       
       def undeploy(name, opts = {})
+        puts "Attempting to undeploy #{name}"
         from_dir = find_option( opts, 'deploy_dir' ) || deploy_dir
         deployment = File.join( from_dir, name )
         undeployed = false

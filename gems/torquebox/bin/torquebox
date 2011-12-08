@@ -45,6 +45,7 @@ class TorqueBoxCommand < Thor
   EOS
   method_option :context_path, :type => :string, :desc => "Context Path (ex: /, /my_app)"
   method_option :env, :type => :string, :desc => "Application Environment (ex: development, test, production)"
+  method_option :name, :type => :string, :desc => "The desired name of the deployment artifact (ex: foo)"
   def deploy(root = ".")
     TorqueBox::Server.setup_environment
     root = File.expand_path(root)
@@ -57,11 +58,15 @@ class TorqueBoxCommand < Thor
   end
 
   desc "undeploy ROOT", "Undeploy an application from TorqueBox"
+  method_option :name, :type => :string, :desc => "The name of the artifact to undeploy (ex: foo)"
   def undeploy(root = ".")
     TorqueBox::Server.setup_environment
     root = File.expand_path(root)
     deployment_name = TorqueBox::DeployUtils.deployment_name(root)
-    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy(deployment_name)
+    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_yaml(deployment_name)
+    unless deploy_name
+      deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_archive(deployment_name)
+    end
 
     if deploy_name
       puts "Undeployed: #{deploy_name}"
