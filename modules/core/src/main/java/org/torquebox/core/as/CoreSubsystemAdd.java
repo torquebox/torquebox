@@ -48,7 +48,6 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
 import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
-import org.projectodd.polyglot.core.processors.JdkDependenciesProcessor;
 import org.projectodd.polyglot.core.processors.KnobStructureProcessor;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
@@ -154,8 +153,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
             List<ServiceController<?>> newControllers,
             InjectableHandlerRegistry registry) throws IOException {
         TorqueBox torqueBox = new TorqueBox();
-        torqueBox.printVersionInfo( log );
-        torqueBox.verifyJRubyVersion( log );
 
         newControllers.add( context.getServiceTarget().addService( CoreServices.TORQUEBOX, torqueBox )
                 .setInitialMode( Mode.ACTIVE )

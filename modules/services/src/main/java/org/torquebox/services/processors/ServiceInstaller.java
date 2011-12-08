@@ -37,7 +37,6 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.jboss.msc.value.ImmediateValue;
-import org.projectodd.polyglot.core.processors.ClusterAwareProcessor;
 import org.projectodd.polyglot.hasingleton.HASingleton;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;

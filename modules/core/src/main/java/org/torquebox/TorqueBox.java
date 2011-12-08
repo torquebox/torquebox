@@ -21,13 +21,13 @@ package org.torquebox;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.Service;
 import org.jboss.msc.service.StartContext;
 import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
+import org.projectodd.polyglot.core.ProjectInfo;
 import org.projectodd.polyglot.core.util.BuildInfo;
 import org.torquebox.core.util.JRubyConstants;
 
@@ -37,7 +37,7 @@ import org.torquebox.core.util.JRubyConstants;
  * @author Toby Crawley
  * @author Bob McWhirter
  */
-public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
+public class TorqueBox extends ProjectInfo implements TorqueBoxMBean, Service<TorqueBox> {
 
     /**
      * Construct.
@@ -47,50 +47,7 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
      *             file.
      */
     public TorqueBox() throws IOException {
-        this.buildInfo = new BuildInfo( "org/torquebox/torquebox.properties" );
-    }
-
-    /**
-     * Retrieve the version of TorqueBox.
-     * 
-     * <p>
-     * The version is typically a string that could be used as part of a maven
-     * artifact coordinate, such as <code>1.0.1</code> or
-     * <code>2.x.incremental.4</code>.
-     * </p>
-     */
-    public String getVersion() {
-        return this.buildInfo.get( "TorqueBox", "version" );
-    }
-
-    /**
-     * Retrieve the git commit revision use in this build.
-     */
-    public String getRevision() {
-        return this.buildInfo.get( "TorqueBox", "build.revision" );
-    }
-
-    /**
-     * Retrieve the build number, if built by our CI server.
-     */
-    public String getBuildNumber() {
-        return this.buildInfo.get( "TorqueBox", "build.number" );
-    }
-
-    /**
-     * Retrieve the user who performed the build.
-     * 
-     */
-    public String getBuildUser() {
-        return this.buildInfo.get( "TorqueBox", "build.user" );
-    }
-
-    public List<String> getComponentNames() {
-        return this.buildInfo.getComponentNames();
-    }
-
-    public Map<String, String> getComponentBuildInfo(String componentName) {
-        return this.buildInfo.getComponentInfo( componentName );
+        super( "TorqueBox", "org/torquebox/torquebox.properties" );
     }
 
     @Override
@@ -115,11 +72,11 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
         }
         log.info( formatOutput( "revision", getRevision() ) );
 
-        List<String> otherCompoments = this.buildInfo.getComponentNames();
+        List<String> otherCompoments = getBuildInfo().getComponentNames();
         otherCompoments.remove( "TorqueBox" );
         log.info( "  built with:" );
         for (String name : otherCompoments) {
-            String version = this.buildInfo.get( name, "version" );
+            String version = getBuildInfo().get( name, "version" );
             if (version != null) {
                 log.info( formatOutput( "  " + name, version ) );
             }
@@ -128,38 +85,19 @@ public class TorqueBox implements TorqueBoxMBean, Service<TorqueBox> {
     }
 
     public void verifyJRubyVersion(Logger log) {
-        String jrubyVersion = this.buildInfo.get( "JRuby", "version" );
+        String jrubyVersion = getBuildInfo().get( "JRuby", "version" );
         String jarVersion = JRubyConstants.getVersion();
-
+    
         if (!jarVersion.equals( jrubyVersion )) {
             log.warn( "WARNING: TorqueBox was built and tested with JRuby " + 
                       jrubyVersion + " and you are running JRuby " + 
                       jarVersion + ". You may experience unexpected results. Side effects may include: itching, sleeplessness, and irritability." );
         }
     }
-
+    
     @Override
     public void stop(StopContext context) {
 
     }
-
-    private String formatOutput(String label, String value) {
-
-        StringBuffer output = new StringBuffer( "  " );
-        output.append( label );
-        int length = output.length();
-        if (length < 20) {
-            for (int i = 0; i < 20 - length; i++) {
-                output.append( '.' );
-            }
-        }
-
-        output.append( ' ' );
-        output.append( value );
-
-        return output.toString();
-    }
-
-    private BuildInfo buildInfo;
 
 }

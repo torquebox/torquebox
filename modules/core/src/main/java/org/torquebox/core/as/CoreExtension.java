@@ -22,6 +22,9 @@ package org.torquebox.core.as;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD;
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 
+import java.io.IOException;
+import java.util.logging.Level;
+
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathElement;
 import org.jboss.as.controller.SubsystemRegistration;
@@ -31,6 +34,7 @@ import org.jboss.as.controller.registry.OperationEntry;
 import org.jboss.logging.Logger;
 import org.projectodd.polyglot.core.as.AbstractBootstrappableExtension;
 import org.projectodd.polyglot.core.as.GenericSubsystemDescribeHandler;
+import org.torquebox.TorqueBox;
 
 public class CoreExtension extends AbstractBootstrappableExtension {
 
@@ -65,6 +69,13 @@ public class CoreExtension extends AbstractBootstrappableExtension {
 
         registration.registerXMLElementWriter( CoreSubsystemParser.getInstance() );
 
+        try {
+            TorqueBox torquebox = new TorqueBox();
+            torquebox.printVersionInfo( log );
+            torquebox.verifyJRubyVersion( log );
+        } catch (IOException e) {
+            log.error( "Failed to load torquebox.properties", e );
+        }
     }
 
     @Override
