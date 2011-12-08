@@ -339,8 +339,8 @@ describe DataMapper::Adapters::InfinispanAdapter do
     end
 
     after :all do
-      #FileUtils.rm_rf( @configured_dir )
-      #FileUtils.rm_rf( @default_dir )
+      FileUtils.rm_rf( @configured_dir )
+      FileUtils.rm_rf( @default_dir )
       FileUtils.rm_rf( @snuffy )
     end
 
