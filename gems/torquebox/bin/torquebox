@@ -51,8 +51,7 @@ class TorqueBoxCommand < Thor
     root = File.expand_path(root)
     opts = {:root => root}.merge(options)
     descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor(opts)
-    deployment_name = TorqueBox::DeployUtils.deployment_name(root)
-    deployed_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml(descriptor, deployment_name)
+    deployed_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml(descriptor, opts)
     puts "Deployed: #{deployed_name}"
     puts "    into: #{deploy_dir}"
   end
@@ -62,10 +61,10 @@ class TorqueBoxCommand < Thor
   def undeploy(root = ".")
     setup_environment
     root = File.expand_path(root)
-    deployment_name = TorqueBox::DeployUtils.deployment_name(root)
-    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_yaml(deployment_name)
+    opts = {:root => root}.merge(options)
+    deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_yaml(opts)
     unless deploy_name
-      deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_archive(deployment_name)
+      deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy_archive(opts)
     end
 
     if deploy_name
