@@ -122,6 +122,10 @@ class Publisher
     File.dirname(__FILE__) + '/../../assembly/target/stage/gem-repo'
   end
 
+  def standalone_xml_path()
+    File.dirname(__FILE__) + '/../../assembly/target/stage/torquebox/jboss/standalone/configuration/standalone.xml'
+  end
+  
   def publish_documentation()
     if File.exist?(javadocs_path)
       dav_mkdir_p( build_base_url + '/javadocs' )
@@ -140,6 +144,7 @@ class Publisher
 
     dav_put( build_base_url  + "/#{File.basename( dist_path ) }", dist_path )
     dav_put( build_base_url  + "/#{File.basename( dist_modules_path ) }", dist_modules_path )
+    dav_put( build_base_url  + "/#{File.basename( standalone_xml_path ) }", standalone_xml_path )
   end
 
   def publish_gem_repo()
