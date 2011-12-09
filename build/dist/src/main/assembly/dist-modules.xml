@@ -1,6 +1,6 @@
 <assembly>
   <id>modules</id>
-  <baseDirectory>torquebox</baseDirectory>
+  <baseDirectory>modules/org/torquebox</baseDirectory>
   <formats>
     <format>zip</format>
   </formats>
