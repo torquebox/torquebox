@@ -71,7 +71,7 @@ describe "rake tasks" do
         check_deployment( 'torquebox:deploy NAME=foo', 'foo' )
         check_undeployment( 'torquebox:undeploy NAME=foo', 'foo' )
       end
-    end
+    end  
     
     it "should treat undeployment of a non-existent yaml deployment as a noop" do
       Dir.chdir( root_dir ) do
@@ -118,6 +118,15 @@ describe "rake tasks" do
         output = rake('torquebox:undeploy:archive NAME=poochie')
         output.should include("Can't undeploy #{TorqueBox::DeployUtils.deploy_dir}/poochie.knob. It does not appear to be deployed.")
         output.should include("Nothing to undeploy")
+      end
+    end
+    
+    it "should be able to undeploy an archive using only torquebox:undeploy" do
+      Dir.chdir( root_dir ) do
+        check_deployment( 'torquebox:deploy:archive NAME=joe', 'joe', '.knob' )
+        check_undeployment('torquebox:undeploy NAME=joe', 'joe', '.knob' )
+        File.exist?("#{root_dir}/joe.knob").should == true
+        FileUtils.rm_rf("#{root_dir}/joe.knob")
       end
     end
   
