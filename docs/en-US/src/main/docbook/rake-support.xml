@@ -60,9 +60,21 @@
       <para><informalexample>
           <screen><prompt>$</prompt> <command>RAILS_ENV=staging rake torquebox:deploy</command></screen>
         </informalexample></para>
+        
+      <para>You may supply a name argument, either as a rake parameter or as an environment variable,
+      to adjust the name of your -knob.yml file. If not supplied, the name of the deployment defaults 
+      to the current directory name.</para>
+      
+      <para><informalexample>
+        <screen><prompt>$</prompt> <command>rake torquebox:deploy['/my-app','foo']</command></screen>
+        <screen><prompt>$</prompt> <command>rake torquebox:deploy NAME=foo</command></screen>
+      </informalexample></para>
+      
+      <para>For example, running "rake torquebox:deploy NAME=foo" will create a deployment artifact
+      called "foo-knob.yml" and deploy it accordingly.</para>
 
       <para>Additionally, a custom context path may be used instead of the
-      defaul to of <code>/</code>, by providing a rake argument to the
+      default to of <code>/</code>, by providing a rake argument to the
       <command>torquebox:deploy</command> task.</para>
 
       <para><informalexample>
@@ -79,11 +91,20 @@
       simply create the archive without deploying it, if you intend to
       distribute it to your servers in some other fashion.</para>
 
-      <para>To create but not deploy an archive:</para>
+      <para>To create (but not deploy) an archive:</para>
 
       <para><informalexample>
           <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive</command></screen>
         </informalexample></para>
+        
+      <para>Additionally, you can specify a name for the archive, either on the command line or as an 
+      environment variable. For example, either of these statements:</para>
+      <para><informalexample>
+          <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive[baz]</command></screen>
+          <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:archive NAME=baz</command></screen>
+      </informalexample></para>     
+      
+      <para>will produce an archive called "baz.knob".</para>
 
       <para>The resulting archive will be placed at the root of the
       application, with a suffix of <filename>.knob</filename>. To inspect the
@@ -100,10 +121,12 @@ app/controllers/application_controller.rb
         </informalexample></para>
 
       <para>You may also have the archive deployed immediately after creating
-      it, in a single command.</para>
+      it, in a single command. Here, as before, you may specify a name for the archive.</para>
 
       <para><informalexample>
           <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive</command></screen>
+          <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive[baz]</command></screen>
+          <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:deploy:archive NAME=baz</command></screen>
         </informalexample></para>
     </section>
   </section>
@@ -112,11 +135,18 @@ app/controllers/application_controller.rb
     <title>Undeploying applications</title>
 
     <para>To undeploy an application, either a directory- or archive-based
-    deployment, a single command may be used.</para>
+    deployment, a single command may be used:</para>
 
     <para><informalexample>
         <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:undeploy</command></screen>
       </informalexample></para>
+      
+    <para>...but we also support torquebox:undeploy:archive for symmetry's sake:</para>
+    <para><informalexample>
+        <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:undeploy:archive</command></screen>
+        <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:undeploy:archive[baz]</command></screen>
+        <screen><prompt>$</prompt> <command>rake</command> <command>torquebox:undeploy:archive NAME=baz</command></screen>
+      </informalexample></para>    
   </section>
 
   <section>
