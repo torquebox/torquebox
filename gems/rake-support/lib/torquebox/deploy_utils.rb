@@ -103,7 +103,7 @@ module TorqueBox
       end
 
       def deployment_name(root = Dir.pwd)
-        normalize_yaml_name( File.basename( root ) )
+        normalize_yaml_name( File.basename( root || Dir.pwd ) )
       end
 
       def check_server
@@ -211,7 +211,7 @@ module TorqueBox
       end
 
       def deploy_yaml(deployment_descriptor, opts = {})
-        name = normalize_yaml_name( find_option( opts, 'name' ) || deployment_name )
+        name = normalize_yaml_name( find_option( opts, 'name' ) || deployment_name(opts[:root] || opts['root']) )
         dest_dir = opts[:dest_dir] || opts['dest_dir'] || deploy_dir
         deployment = File.join( dest_dir, name )
         File.open( deployment, 'w' ) do |file|
@@ -303,10 +303,8 @@ module TorqueBox
         Config::CONFIG['host_os'] =~ /mswin/
       end
       
-      private 
-      
       def find_option(opt, key)
-        opt[key.to_sym] || opt[key] || ENV[key.upcase]
+        opt[key.to_sym] || opt[key] || ENV[key] || ENV[key.upcase]
       end
       
       def normalize_yaml_name(name)
@@ -316,6 +314,8 @@ module TorqueBox
       def normalize_archive_name(name)
         name[-5..-1] == '.knob' ? name : name + '.knob'
       end
+      
+      private 
       
       def undeploy(name, opts = {})
         puts "Attempting to undeploy #{name}"
