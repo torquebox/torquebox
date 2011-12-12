@@ -31,7 +31,7 @@ class TorqueBoxCommand < Thor
   method_option 'max-threads', :type => :numeric, :desc => "Maximum number of HTTP threads"
   method_option 'bind-address', :aliases => '-b', :type => :string, :desc => "IP address to bind to"
   def start
-    setup_environment
+    TorqueBox::Server.setup_environment
     TorqueBox::DeployUtils.run_server(:clustered => options.clustered,
                                       :max_threads => options['max-threads'],
                                       :bind_address => options['bind-address'])
@@ -46,7 +46,7 @@ class TorqueBoxCommand < Thor
   method_option :context_path, :type => :string, :desc => "Context Path (ex: /, /my_app)"
   method_option :env, :type => :string, :desc => "Application Environment (ex: development, test, production)"
   def deploy(root = ".")
-    setup_environment
+    TorqueBox::Server.setup_environment
     root = File.expand_path(root)
     opts = {:root => root}.merge(options)
     descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor(opts)
@@ -58,7 +58,7 @@ class TorqueBoxCommand < Thor
 
   desc "undeploy ROOT", "Undeploy an application from TorqueBox"
   def undeploy(root = ".")
-    setup_environment
+    TorqueBox::Server.setup_environment
     root = File.expand_path(root)
     deployment_name = TorqueBox::DeployUtils.deployment_name(root)
     deploy_name, deploy_dir = TorqueBox::DeployUtils.undeploy(deployment_name)
@@ -73,7 +73,7 @@ class TorqueBoxCommand < Thor
 
   desc "cli", "Run the JBoss AS7 CLI"
   def cli
-    setup_environment
+    TorqueBox::Server.setup_environment
     options = "--connect"
     if Config::CONFIG['host_os'] =~ /mswin/
       path = File.join(TorqueBox::Server.jboss_home, "bin\\jboss-admin")
@@ -86,7 +86,7 @@ class TorqueBoxCommand < Thor
 
   desc "env [VARIABLE]", "Display TorqueBox environment variables"
   def env(variable=nil)
-    setup_environment
+    TorqueBox::Server.setup_environment
     env_keys = %w(TORQUEBOX_HOME JBOSS_HOME JRUBY_HOME)
     if variable.nil?
       env_keys.each { |key| shell.say "#{key}=#{ENV[key]}" }
@@ -97,14 +97,6 @@ class TorqueBoxCommand < Thor
   end
 
   no_tasks {
-    def setup_environment
-      ENV['TORQUEBOX_HOME'] ||= TorqueBox::Server.torquebox_home
-      ENV['JBOSS_HOME'] ||= TorqueBox::Server.jboss_home
-      ENV['JRUBY_HOME'] ||= TorqueBox::Server.jruby_home
-      ENV['JBOSS_OPTS'] ||= "-Djruby.home=#{TorqueBox::Server.jruby_home}"
-      %w(TORQUEBOX_HOME JBOSS_HOME JRUBY_HOME).each { |key| puts "[ERROR] #{key} is not set. Install torquebox-server gem or manually set #{key}" unless ENV[key] }
-    end
-
     class << self
       # Override all_tasks and help methods in Thor to print options
       # out in the order we prefer

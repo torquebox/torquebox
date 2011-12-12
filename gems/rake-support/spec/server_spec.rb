@@ -10,6 +10,15 @@ describe TorqueBox::Server do
   it "should return nil if torquebox-server is not installed" do
     TorqueBox::Server.torquebox_home.should == nil
   end
+
+  describe ".setup_environment" do
+    it "should use TORQUEBOX_HOME to determine JBOSS_HOME" do
+      ENV["JBOSS_HOME"] = nil
+      ENV["TORQUEBOX_HOME"] = "/path/to/torquebox"
+      TorqueBox::Server.setup_environment
+      ENV["JBOSS_HOME"].should == "/path/to/torquebox/jboss"
+    end
+  end
   
   describe "under jruby-1.6.5" do
     it "should use torquebox-server gem's installed path" do
