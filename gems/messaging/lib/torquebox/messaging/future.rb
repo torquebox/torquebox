@@ -49,12 +49,12 @@ module TorqueBox
 
       def started?
         receive unless @started
-        @started
+        !!@started
       end
 
       def complete?
         receive unless @complete || @error
-        @complete
+        !!@complete
       end
 
       def error?
