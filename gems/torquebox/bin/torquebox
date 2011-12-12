@@ -42,10 +42,10 @@ class TorqueBoxCommand < Thor
   method_option :apply, :type => :boolean, :desc => "Apply the TorqueBox Rails template to an existing application instead of creating a new app."
   def rails(root = ".")
     ARGV.shift
+    TorqueBox::Server.setup_environment
     if options.apply
-      puts "Sorry, chap! That's not implemented yet."
+      TorqueBox::Rails.apply_template( root )
     else
-      TorqueBox::Server.setup_environment
       TorqueBox::Rails.new_app
     end
   end
