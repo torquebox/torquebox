@@ -3,6 +3,11 @@ require 'spec_helper'
 # Run these remotely so our jruby_home, gem_home, etc are all setup
 describe "rake tasks" do
 
+  before(:all) do
+    ENV['TORQUEBOX_HOME'] = File.join(File.dirname(__FILE__), '..', 'target', 'integ-dist')
+    ENV['JBOSS_HOME'] = "#{ENV['TORQUEBOX_HOME']}/jboss"
+  end
+
   it "should pass a sanity check" do
     output = rake('integ:sanity_check')
     output.should include('sanity check passed')
