@@ -2,6 +2,11 @@ require 'spec_helper'
 
 describe "torquebox thor utility tests" do
 
+  before(:all) do
+    ENV['TORQUEBOX_HOME'] = File.join(File.dirname(__FILE__), '..', 'target', 'integ-dist')
+    ENV['JBOSS_HOME'] = "#{ENV['TORQUEBOX_HOME']}/jboss"
+  end
+
   describe "torquebox deploy" do
     
     it "should deploy a basic app" do
@@ -49,8 +54,6 @@ describe "torquebox thor utility tests" do
   
   def check_deployment(tb_command, name = 'basic', suffix = '-knob.yml')
     output = tb(tb_command)
-    puts "\nFor command #{tb_command}, deploy output is: "
-    puts output
     output.should include("Deployed: #{name}#{suffix}")
     output.should include("into: #{TorqueBox::DeployUtils.deploy_dir}")
     File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == true
