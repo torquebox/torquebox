@@ -37,3 +37,4 @@ Dir.chdir( assembly_dir ) do
 end
 
 FileUtils.rm_rf( Dir["#{output_dir}/jboss/standalone/log/*"] )
+FileUtils.rm_rf( Dir["#{output_dir}/jboss/standalone/deployments/*"] )
