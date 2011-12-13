@@ -98,12 +98,12 @@ module TorqueBox
         File.join( modules_dir, 'org', 'torquebox' )
       end
 
-      def archive_name(root=Dir.pwd)
-        File.basename( root ) + '.knob'
+      def archive_name(root = Dir.pwd)
+        normalize_archive_name( File.basename( root || Dir.pwd ) )
       end
 
       def deployment_name(root = Dir.pwd)
-        File.basename( root ) + '-knob.yml'
+        normalize_yaml_name( File.basename( root || Dir.pwd ) )
       end
 
       def check_server
@@ -148,7 +148,11 @@ module TorqueBox
         end
       end
 
-      def create_archive(archive = archive_name, app_dir = Dir.pwd, dest_dir = Dir.pwd)
+      def create_archive(opts = {})
+
+        archive = normalize_archive_name( find_option( opts, 'name' ) || archive_name )
+        app_dir = find_option( opts, 'app_dir') || Dir.pwd
+        dest_dir = find_option( opts, 'dest_dir') || Dir.pwd
         skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
 
         archive_path = File.join(dest_dir, archive)
@@ -210,7 +214,9 @@ module TorqueBox
         d
       end
 
-      def deploy_yaml(deployment_descriptor, name = deployment_name, dest_dir = deploy_dir)
+      def deploy_yaml(deployment_descriptor, opts = {})
+        name = normalize_yaml_name( find_option( opts, 'name' ) || deployment_name(opts[:root] || opts['root']) )
+        dest_dir = opts[:dest_dir] || opts['dest_dir'] || deploy_dir
         deployment = File.join( dest_dir, name )
         File.open( deployment, 'w' ) do |file|
           YAML.dump( deployment_descriptor, file )
@@ -219,43 +225,30 @@ module TorqueBox
         [name, dest_dir]
       end
 
-      def deploy_archive(archive_path = nil, dest_dir = deploy_dir)
-        archive_path ||= File.join( Dir.pwd, archive_name )
+      def deploy_archive(opts = {})
+        name = normalize_archive_name( find_option( opts, 'name' ) || archive_name )
+        archive_path = find_option( opts, 'archive_path' ) || File.join( Dir.pwd, name )
+        dest_dir = find_option( opts, 'dest_dir' ) || deploy_dir
         FileUtils.cp( archive_path, dest_dir )
         archive = File.basename( archive_path )
         FileUtils.touch( dodeploy_file( archive ) )
         [archive, dest_dir]
       end
 
-      def dodeploy_file( name )
+      def dodeploy_file(name)
         File.join( DeployUtils.deploy_dir, "#{name}" ) + ".dodeploy"
       end
 
-      def deployed_file( name )
+      def deployed_file(name)
         File.join( DeployUtils.deploy_dir, "#{name}" ) + ".deployed"
       end
-
-      def undeploy(name = deployment_name, from_dir = deploy_dir)
-        deployment = File.join( from_dir, name )
-        undeployed = false
-        if File.exists?( dodeploy_file( name ) )
-          FileUtils.rm_rf( dodeploy_file( name ) )
-          undeployed = true
-        end
-        if File.exists?( deployed_file( name ) )
-          FileUtils.rm_rf( deployed_file( name ) )
-          undeployed = true
-        end
-        if File.exists?( deployment )
-          FileUtils.rm_rf( deployment )
-          undeployed = true
-        end
-
-        if undeployed
-          [name, from_dir]
-        else
-          puts "Can't undeploy #{deployment}. It does not appear to be deployed."
-        end
+      
+      def undeploy_archive(opts = {})
+        undeploy( normalize_archive_name( find_option( opts, 'name' ) || archive_name ), opts )
+      end 
+      
+      def undeploy_yaml(opts = {})
+        undeploy( normalize_yaml_name( find_option( opts, 'name' ) || deployment_name ), opts )
       end
 
       # TODO: This is not windows friendly
@@ -312,6 +305,45 @@ module TorqueBox
 
       def windows?
         Config::CONFIG['host_os'] =~ /mswin/
+      end
+      
+      def find_option(opt, key)
+        opt[key.to_sym] || opt[key] || ENV[key] || ENV[key.upcase]
+      end
+      
+      def normalize_yaml_name(name)
+        name[-9..-1] == '-knob.yml' ? name : name + '-knob.yml'
+      end
+      
+      def normalize_archive_name(name)
+        name[-5..-1] == '.knob' ? name : name + '.knob'
+      end
+      
+      private 
+      
+      def undeploy(name, opts = {})
+        puts "Attempting to undeploy #{name}"
+        from_dir = find_option( opts, 'deploy_dir' ) || deploy_dir
+        deployment = File.join( from_dir, name )
+        undeployed = false
+        if File.exists?( dodeploy_file( name ) )
+          FileUtils.rm_rf( dodeploy_file( name ) )
+          undeployed = true
+        end
+        if File.exists?( deployed_file( name ) )
+          FileUtils.rm_rf( deployed_file( name ) )
+          undeployed = true
+        end
+        if File.exists?( deployment )
+          FileUtils.rm_rf( deployment )
+          undeployed = true
+        end
+
+        if undeployed
+          [name, from_dir]
+        else
+          puts "Can't undeploy #{deployment}. It does not appear to be deployed."
+        end
       end
 
     end
