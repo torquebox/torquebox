@@ -54,6 +54,11 @@ describe "torquebox thor utility tests" do
   
   def check_deployment(tb_command, name = 'basic', suffix = '-knob.yml')
     output = tb(tb_command)
+<<<<<<< HEAD
+=======
+    puts "\nFor command #{tb_command}, deploy output is: "
+    puts output
+>>>>>>> b4bf1f6dcf48d3620d48e6e28a2d668c8add281a
     output.should include("Deployed: #{name}#{suffix}")
     output.should include("into: #{TorqueBox::DeployUtils.deploy_dir}")
     File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == true
@@ -86,4 +91,8 @@ describe "torquebox thor utility tests" do
     integ_jruby("-S torquebox #{cmd}")
   end  
 
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> b4bf1f6dcf48d3620d48e6e28a2d668c8add281a
