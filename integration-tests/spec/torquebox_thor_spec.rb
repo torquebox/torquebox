@@ -62,8 +62,6 @@ describe "torquebox thor utility tests" do
   
   def check_undeployment(tb_command, name = 'basic', suffix = '-knob.yml')
     output = tb(tb_command)
-    puts "\nFor command #{tb_command}, output is: "
-    puts output
     output.should include("Undeployed: #{name}#{suffix}")
     output.should include("from: #{TorqueBox::DeployUtils.deploy_dir}")
       
