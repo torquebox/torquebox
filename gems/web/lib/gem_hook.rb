@@ -15,6 +15,7 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'action_dispatch/session/torque_box_store'
-require 'action_controller/session/torque_box_store'
+require 'torquebox/session/servlet_store'
+require 'action_dispatch/session/torque_box_store' if defined?(ActionDispatch) || ENV['TORQUEBOX_APP_TYPE'] == 'rails'
+require 'action_controller/session/torque_box_store' if defined?(ActionController) || ENV['TORQUEBOX_APP_TYPE'] == 'rails'
 

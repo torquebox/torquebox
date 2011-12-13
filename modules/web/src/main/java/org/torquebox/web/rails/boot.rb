@@ -75,7 +75,6 @@ class Class
           
           def initialize!
             require 'torquebox-web'
-            require 'action_dispatch/session/torque_box_store'
             
             self.class.initializer "monkeypatch-ar", :before=>'active_record.initialize_database', :after=>'active_record.set_configs' do
               if ( defined?( ActiveRecord ) )
