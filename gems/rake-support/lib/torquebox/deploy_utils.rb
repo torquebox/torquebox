@@ -148,7 +148,11 @@ module TorqueBox
         end
       end
 
-      def create_archive(archive = archive_name, app_dir = Dir.pwd, dest_dir = Dir.pwd)
+      def create_archive(opts = {})
+
+        archive = normalize_archive_name( find_option( opts, 'name' ) || archive_name )
+        app_dir = find_option( opts, 'app_dir') || Dir.pwd
+        dest_dir = find_option( opts, 'dest_dir') || Dir.pwd
         skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
 
         archive_path = File.join(dest_dir, archive)

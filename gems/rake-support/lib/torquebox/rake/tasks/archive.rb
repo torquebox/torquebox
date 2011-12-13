@@ -22,10 +22,7 @@ namespace :torquebox do
 
   desc "Create a nice self-contained application archive"
   task :archive, :name do |t, args|
-    archive_name = args[:name] ? 
-      TorqueBox::DeployUtils.archive_name( args[:name] ) : TorqueBox::DeployUtils.archive_name 
-    puts "Creating archive: #{archive_name}"
-    path = TorqueBox::DeployUtils.create_archive( archive_name )
+    path = TorqueBox::DeployUtils.create_archive( args )
     puts "Created archive: #{path}"
   end
 
