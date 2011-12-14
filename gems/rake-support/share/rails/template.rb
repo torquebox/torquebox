@@ -24,7 +24,12 @@ if RAILS_2
     <<-INIT
 # Configure the TorqueBox Servlet-based session store.
 # Provides for server-based, in-memory, cluster-compatible sessions.
-ActionController::Base.session_store = :torquebox_store
+unless ENV['TORQUEBOX_APP_NAME'].nil?
+  ActionController::Base.session_store = :torquebox_store
+else
+  ActionController::Base.session = { :session_key => '_CHANGEME_session', :secret => 'CHANGEME_107f23805ff8eed10736e03d1d8ab229706afedfa8d7918be604dc291d6772c56cdf94d2b7a3d656d1ebc8ed83d91c2042445670208f07df38acb4ebe93bbef7' }
+  ActionController::Base.session_store = :cookie_store
+end  
     INIT
   end
 else
@@ -34,6 +39,11 @@ else
 # Configure the TorqueBox Servlet-based session store.
 # Provides for server-based, in-memory, cluster-compatible sessions
 #{app_const}.config.session_store :torquebox_store
+unless ENV['TORQUEBOX_APP_NAME'].nil?
+  #{app_const}.config.session_store :torquebox_store
+else
+  #{app_const}.config.session_store :cookie_store, :key => '_CHANGEME_session'
+end  
     INIT
   end
 end
