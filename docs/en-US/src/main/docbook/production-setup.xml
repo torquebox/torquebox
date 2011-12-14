@@ -87,6 +87,160 @@
 
   </section>
 
+  <section id="clustering-without-multicast">
+    <title>Clustering TorqueBox Without Multicast</title>
+
+    <para>By default when you start TorqueBox in clustered mode other
+    members of the cluster are discovered using multicast. Sometimes
+    this isn't the desired behavior, either because the environment
+    doesn't support multicast or the administrator wants direct
+    control over the members of a cluster. In these cases, it's
+    possible to configure TorqueBox to use a predefined set of cluster
+    members.</para>
+
+    <section id="clustering-infinispan-without-multicast">
+      <title>Clustering Infinispan</title>
+
+      <para>Infinispan is used for web session replication and can be
+      used for clustered caching if your application is setup
+      appropriately. See <xref linkend="cache"/> for more details on
+      this setup. Under the hood Infinispan uses a library called
+      JGroups to handle the cluster discovery and transports. An
+      example of configuring Infinispan to cluster without multicast
+      is below.</para>
+
+      <para><example>
+        <title>JGroups Configuration
+        (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
+
+        <para><programlisting><![CDATA[<server name="xyz" xmlns="urn:jboss:domain:1.1">
+  <profile>
+    ...
+    <subsystem xmlns="urn:jboss:domain:jgroups:1.0" default-stack="tcp">
+      <stack name="tcp">
+        <transport type="TCP" socket-binding="jgroups-tcp" diagnostics-socket-binding="jgroups-diagnostics"/>
+        <protocol type="TCPPING">
+          <property name="initial_hosts">
+            10.100.10.2[7600],10.100.10.3[7600]
+          </property>
+        </protocol>
+        <protocol type="MERGE2"/>
+        <protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/>
+        <protocol type="FD"/>
+        <protocol type="VERIFY_SUSPECT"/>
+        <protocol type="BARRIER"/>
+        <protocol type="pbcast.NAKACK"/>
+        <protocol type="UNICAST2"/>
+        <protocol type="pbcast.STABLE"/>
+        <protocol type="pbcast.GMS"/>
+        <protocol type="UFC"/>
+        <protocol type="MFC"/>
+        <protocol type="FRAG2"/>
+        <protocol type="pbcast.STATE_TRANSFER"/>
+        <protocol type="pbcast.FLUSH"/>
+      </stack>
+    </subsystem>
+    ...
+  </profile>
+  <socket-binding-group name="standard-sockets" default-interface="public">
+    ...
+    <socket-binding name="jgroups-tcp" port="7600"/>
+    <socket-binding name="jgroups-tcp-fd" port="57600"/>
+    ...
+  </socket-binding-group>
+</server>]]>
+        </programlisting>
+        The most important bit here is the initial_hosts property. Be
+        sure to replace the IP addresses with the correct values for
+        your environment and change the ports from 7600 if you've
+        changed the jgroups-tcp socket binding to a different port on
+        those hosts.</para>
+
+      </example></para>
+
+    </section>
+
+    <section id="clustering-hornetq-without-multicast">
+      <title>Clustering HornetQ</title>
+
+      <para>HornetQ is used for all messaging. Right now HornetQ
+      doesn't use JGroups for its cluster configuration so we must
+      configure it separately from Infinispan. An example of
+      configuring HornetQ to cluster without multicast is
+      below.</para>
+
+      <para><example>
+        <title>HornetQ Configuration
+        (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
+
+        <para><programlisting><![CDATA[<server name="xyz" xmlns="urn:jboss:domain:1.1">
+  <profile>
+    ...
+    <subsystem xmlns="urn:jboss:domain:messaging:1.1">
+      <hornetq-server>
+        ...
+        <connectors>
+          <netty-connector name="netty" socket-binding="messaging"/>
+          ...
+          <netty-connector name="server2-connector" socket-binding="messaging-server2"/>
+          <netty-connector name="server3-connector" socket-binding="messaging-server3"/>
+        </connectors>
+        ...
+        <cluster-connections>
+          <cluster-connection name="default-cluster-connection">
+            <address>
+              jms
+            </address>
+            <connector-ref>
+              netty
+            </connector-ref>
+            <retry-interval>
+              500
+            </retry-interval>
+            <forward-when-no-consumers>
+              true
+            </forward-when-no-consumers>
+            <static-connectors>
+              <connector-ref>
+                server2-connector
+              </connector-ref>
+              <connector-ref>
+                server3-connector
+              </connector-ref>
+            </static-connectors>
+          </cluster-connection>
+        </cluster-connections>
+        ...
+      </hornetq-server>
+    </subsystem>
+    ...
+  </profile>
+  <socket-binding-group name="standard-sockets" default-interface="public">
+    ...
+    <socket-binding name="messaging" port="5445"/>
+      ...
+      <outbound-socket-binding name="messaging-server2">
+        <remote-destination host="10.100.10.2" port="5445"/>
+      </outbound-socket-binding>
+      <outbound-socket-binding name="messaging-server3">
+        <remote-destination host="10.100.10.3" port="5445"/>
+      </outbound-socket-binding>
+  </socket-binding-group>
+</server>]]>
+        </programlisting>
+        Change the outbound socket binding hosts and ports to match
+        your environment. The port should match the value of the
+        messaging socket binding configured on each host. Each
+        additional host needs the netty-connector, connector-ref under
+        static-connectors, and outbound-socket-binding
+        elements.</para>
+
+      </example></para>
+
+    </section>
+
+  </section>
+
   <section>
     <title>SSL JBoss Web</title>
 
