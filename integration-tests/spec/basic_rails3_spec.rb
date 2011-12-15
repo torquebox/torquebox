@@ -58,16 +58,16 @@ describe "basic tests with environment variables in database.yml" do
 end
 
 describe "archive knobs with environment variables in database.yml" do
-  deploy { TorqueBox::DeployUtils.create_archive( "basic-rails3.knob", 
-                                                  File.join( File.dirname( __FILE__ ), "../apps/rails3/basic" ),
-                                                  TorqueSpec.knob_root ) }
+  deploy { TorqueBox::DeployUtils.create_archive( :name => "basic-rails3.knob", 
+                                                  :app_dir => File.join( File.dirname( __FILE__ ), "../apps/rails3/basic" ),
+                                                  :dest_dir => TorqueSpec.knob_root ) }
   it_should_behave_like "basic rails3 test"
 end
 
 describe "environment variables in an archive knob" do
-  deploy { TorqueBox::DeployUtils.create_archive( "basic-rails3.knob", 
-                                                  File.join( File.dirname( __FILE__ ), "../apps/rails3/basic" ),
-                                                  TorqueSpec.knob_root ) }
+  deploy { TorqueBox::DeployUtils.create_archive( :name => "basic-rails3.knob", 
+                                                  :app_dir => File.join( File.dirname( __FILE__ ), "../apps/rails3/basic" ),
+                                                  :dest_dir => TorqueSpec.knob_root ) }
 
   it_should_behave_like "basic rails3 test"
 end
