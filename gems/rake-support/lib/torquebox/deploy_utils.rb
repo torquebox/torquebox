@@ -189,7 +189,7 @@ module TorqueBox
       def basic_deployment_descriptor(options = {})
         env = options[:env] || options['env']
         env ||= defined?(RACK_ENV) ? RACK_ENV : ENV['RACK_ENV']
-        env ||= defined?(::Rails) ? ::Rails.env : ENV['RAILS_ENV']
+        env ||= defined?(::Rails) && Rails.respond_to?(:env) ? ::Rails.env : ENV['RAILS_ENV']
 
         root = options[:root] || options['root'] || Dir.pwd
         context_path = options[:context_path] || options['context_path']
