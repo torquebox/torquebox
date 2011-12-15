@@ -71,7 +71,6 @@
         <jboss.releases.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.releases.repo.url>
         <jboss.snapshots.repo.url>dav:https://repository-projectodd.forge.cloudbees.com/staging</jboss.snapshots.repo.url>
       </properties>
-<!--
       <repositories>
         <repository>
           <id>projectodd-staging</id>
@@ -100,7 +99,6 @@
           </snapshots>
         </pluginRepository>
       </pluginRepositories>
--->
     </profile>
     <profile>
       <id>release</id>
