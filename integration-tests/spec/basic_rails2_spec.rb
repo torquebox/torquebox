@@ -44,8 +44,8 @@ describe "basic knob compatibility" do
 end
 
 describe "basic archive knob compatibility" do
-  deploy { TorqueBox::DeployUtils.create_archive( "basic-rails2.knob", 
-                                                  File.join( File.dirname( __FILE__ ), "../apps/rails2/basic" ),
-                                                  TorqueSpec.knob_root ) }
+  deploy { TorqueBox::DeployUtils.create_archive( :name => "basic-rails2.knob", 
+                                                  :app_dir => File.join( File.dirname( __FILE__ ), "../apps/rails2/basic" ),
+                                                  :dest_dir => TorqueSpec.knob_root ) }
   it_should_behave_like "basic rails2 tests"
 end
