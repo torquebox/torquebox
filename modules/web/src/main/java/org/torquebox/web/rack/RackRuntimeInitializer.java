@@ -19,8 +19,9 @@
 
 package org.torquebox.web.rack;
 
+import java.io.IOException;
+
 import org.jboss.logging.Logger;
-import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.BundlerAwareRuntimeInitializer;
@@ -64,20 +65,20 @@ public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
     protected String getInitializerScript() {
         StringBuilder script = new StringBuilder();
         String appName = this.rubyAppMetaData.getApplicationName();
-        String rackRootPath = this.rubyAppMetaData.getRootPath();
         String rackEnv = this.rubyAppMetaData.getEnvironmentName();
         String contextPath = this.rackAppMetaData.getContextPath();
-
+        String rackRootPath = null;
+        
+        try { 
+            rackRootPath = this.rubyAppMetaData.getRoot().getCanonicalPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         if (rackRootPath.endsWith( "/" )) {
             rackRootPath = rackRootPath.substring( 0, rackRootPath.length() - 1 );
         }
-
-        if (!rackRootPath.startsWith( "vfs:/" )) {
-            if (!rackRootPath.startsWith( "/" )) {
-                rackRootPath = "/" + rackRootPath;
-            }
-        }
-
+        
         script.append( "RACK_ROOT=%q(" + rackRootPath + ")\n" );
         script.append( "RACK_ENV=%q(" + rackEnv + ")\n" );
         script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );

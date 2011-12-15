@@ -63,7 +63,7 @@ public class RubyApplicationInstaller implements DeploymentUnitProcessor {
 
         RubyApplication application = new RubyApplication();
         application.setEnvironmentName( rubyAppMetaData.getEnvironmentName() );
-        application.setRootPath( rubyAppMetaData.getRootPath() );
+        application.setRootPath( rubyAppMetaData.getRoot().getAbsolutePath() );
         application.setName( rubyAppMetaData.getApplicationName() );
         
         MBeanRegistrationService<RubyApplicationMBean> mbeanService = new MBeanRegistrationService<RubyApplicationMBean>( mbeanName, new ImmediateValue<RubyApplicationMBean>( application ) );

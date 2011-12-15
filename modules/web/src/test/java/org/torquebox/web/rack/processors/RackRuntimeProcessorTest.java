@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,10 +42,12 @@ import org.torquebox.web.rack.RackRuntimeInitializer;
 public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCase {
 	
     private Map<String, String> environment = new HashMap<String, String>();
+	private File root;
 	
 	@Before
 	public void setUpDeployer() {
 		appendDeployer( new RackRuntimeProcessor() );
+		root = new File( "/foo" );
 	}
 	
     @Test
@@ -53,7 +56,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
         RackMetaData rackAppMetaData = new RackMetaData();
 
-        rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
+        rubyAppMetaData.setRoot( this.root );
         rubyAppMetaData.setEnvironmentVariables( environment );
 
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
@@ -66,7 +69,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
         
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
         assertNotNull( runtimeMetaData );
-        assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
+        assertEquals( this.root, runtimeMetaData.getBaseDir() );
         assertTrue( runtimeMetaData.getEnvironment().containsKey( "SOME_VAR" ) );
         assertTrue( runtimeMetaData.getRuntimeInitializer() instanceof RackRuntimeInitializer );
         assertEquals( RubyRuntimeMetaData.RuntimeType.RACK, runtimeMetaData.getRuntimeType() );
@@ -77,7 +80,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
         RackMetaData rackAppMetaData = new RackMetaData();
 
-        rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
+        rubyAppMetaData.setRoot( this.root );
 
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
@@ -92,7 +95,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
         assertNotNull( runtimeMetaData );
         assertEquals( originalRuntimeMD, runtimeMetaData );
-        assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
+        assertEquals( this.root, runtimeMetaData.getBaseDir() );
         assertEquals( RubyRuntimeMetaData.RuntimeType.RACK, runtimeMetaData.getRuntimeType() );
     }
 
@@ -101,8 +104,7 @@ public class RackRuntimeProcessorTest extends AbstractDeploymentProcessorTestCas
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name" );
         RackMetaData rackAppMetaData = new RackMetaData();
 
-        rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
-
+        rubyAppMetaData.setRoot( this.root );
         
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();

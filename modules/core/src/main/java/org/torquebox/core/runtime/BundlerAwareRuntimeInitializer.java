@@ -19,11 +19,11 @@
 
 package org.torquebox.core.runtime;
 
+import java.io.File;
+
 import org.jboss.logging.Logger;
-import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.runtime.RuntimeInitializer;
 import org.torquebox.core.util.RuntimeHelper;
 
 /**
@@ -37,17 +37,18 @@ public class BundlerAwareRuntimeInitializer implements RuntimeInitializer {
         this.rubyAppMetaData = rubyAppMetaData;
     }
 
-    public VirtualFile getApplicationRoot() {
+    public File getApplicationRoot() {
         return this.rubyAppMetaData.getRoot();
     }
 
     @Override
     public void initialize(Ruby ruby) throws Exception {
-        ruby.setCurrentDirectory( this.rubyAppMetaData.getRoot().getPhysicalFile().getCanonicalPath() );
+        ruby.setCurrentDirectory( this.rubyAppMetaData.getRoot().getCanonicalPath() );
         
-        if (getApplicationRoot().getChild( "Gemfile" ).exists()) {
+        File gemfile = new File( getApplicationRoot(), "Gemfile" );
+        if (gemfile.exists()) {
             log.info(  "Setting up Bundler" );
-            RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + getApplicationRoot().getChild( "Gemfile" ).getPhysicalFile().getAbsolutePath() +  "'" );
+            RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + gemfile.getAbsolutePath() +  "'" );
             RuntimeHelper.require( ruby, "bundler/setup" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']=nil" );
         }

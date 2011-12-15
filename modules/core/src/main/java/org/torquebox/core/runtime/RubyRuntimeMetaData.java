@@ -19,14 +19,13 @@
 
 package org.torquebox.core.runtime;
 
+import java.io.File;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.AttachmentKey;
-import org.jboss.vfs.VirtualFile;
 
 /**
  * Root configuration for a Ruby interpreter.
@@ -59,7 +58,7 @@ public class RubyRuntimeMetaData {
     }
 
     /** Base working directory. */
-    private VirtualFile baseDir;
+    private File baseDir;
 
     /** Optional interpreter initializer. */
     private RuntimeInitializer initializer;
@@ -100,7 +99,7 @@ public class RubyRuntimeMetaData {
      * @param baseDir
      *            The base working directory.
      */
-    public void setBaseDir(VirtualFile baseDir) {
+    public void setBaseDir(File baseDir) {
         this.baseDir = baseDir;
     }
 
@@ -109,7 +108,7 @@ public class RubyRuntimeMetaData {
      * 
      * @return The base working directory.
      */
-    public VirtualFile getBaseDir() {
+    public File getBaseDir() {
         return this.baseDir;
     }
 
@@ -159,8 +158,7 @@ public class RubyRuntimeMetaData {
      *            The relative path element to append
      */
     public void appendLoadPath(String loadPath) throws MalformedURLException {
-        URL url = getBaseDir().getChild( loadPath ).toURL();
-        RubyLoadPathMetaData loadPathMetaData = new RubyLoadPathMetaData( url );
+        RubyLoadPathMetaData loadPathMetaData = new RubyLoadPathMetaData( new File( getBaseDir(), loadPath ) );
         loadPaths.add( loadPathMetaData );
     }
 

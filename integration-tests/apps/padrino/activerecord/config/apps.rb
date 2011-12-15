@@ -30,6 +30,7 @@ Padrino.configure_apps do
   set :session_secret, '4267fe0b9a6885b98f6398e3ef2ebdae9226471aa1836fef4728eb793cad2cb9'
 end
 
+puts "apps CALLED"
 # Mounts the core application for this project
 Padrino.mount("Activerecord").to('/')
 

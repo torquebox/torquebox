@@ -20,6 +20,8 @@
 package org.torquebox.web.rails.processors;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,7 +32,6 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.web.rails.RailsMetaData;
 
@@ -47,11 +48,11 @@ public class RailsVersionProcessor implements DeploymentUnitProcessor {
             return;
         }
         
-        VirtualFile railsRoot = rubyAppMetaData.getRoot();
+        File railsRoot = rubyAppMetaData.getRoot();
         railsAppMetaData.setVersionSpec( determineRailsVersion( railsRoot ) );
     }
     
-    protected String determineRailsVersion(VirtualFile railsRoot) throws DeploymentUnitProcessingException {
+    protected String determineRailsVersion(File railsRoot) throws DeploymentUnitProcessingException {
         String version = null;
         try {
             version = determineVersionTryRails2Vendor( railsRoot );
@@ -74,8 +75,8 @@ public class RailsVersionProcessor implements DeploymentUnitProcessor {
         }
     }
 
-    protected String determineVersionTryRails2Vendor(VirtualFile railsRoot) throws IOException {
-        VirtualFile railsVersion = railsRoot.getChild( "vendor/rails/railties/lib/rails/version.rb" );
+    protected String determineVersionTryRails2Vendor(File railsRoot) throws IOException {
+        File railsVersion = new File( railsRoot, "vendor/rails/railties/lib/rails/version.rb" );
 
         if (!railsVersion.exists()) {
             return null;
@@ -103,8 +104,8 @@ public class RailsVersionProcessor implements DeploymentUnitProcessor {
         return null;
     }
 
-    protected String determineVersionTryRails2(VirtualFile railsRoot) throws IOException {
-        VirtualFile configEnvironmentFile = railsRoot.getChild( "/config/environment.rb" );
+    protected String determineVersionTryRails2(File railsRoot) throws IOException {
+        File configEnvironmentFile = new File( railsRoot, "/config/environment.rb" );
         if (configEnvironmentFile == null || !configEnvironmentFile.exists()) {
             return null;
         }
@@ -118,8 +119,8 @@ public class RailsVersionProcessor implements DeploymentUnitProcessor {
         return null;
     }
 
-    protected String determineVersionTryRails3(VirtualFile railsRoot) throws IOException {
-        VirtualFile gemfile = railsRoot.getChild( "Gemfile" );
+    protected String determineVersionTryRails3(File railsRoot) throws IOException {
+        File gemfile = new File( railsRoot, "Gemfile" );
         if (gemfile == null || !gemfile.exists()) {
             return null;
         }
@@ -133,10 +134,10 @@ public class RailsVersionProcessor implements DeploymentUnitProcessor {
         return version;
     }
 
-    protected String find(VirtualFile file, Pattern pattern) throws IOException {
+    protected String find(File file, Pattern pattern) throws IOException {
         BufferedReader in = null;
         try {
-            InputStream inStream = file.openStream();
+            InputStream inStream = new FileInputStream( file );
             InputStreamReader inReader = new InputStreamReader( inStream );
             in = new BufferedReader( inReader );
             String line = null;

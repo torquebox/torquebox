@@ -14,7 +14,11 @@ shared_examples_for "basic rack" do
   it "should be running under the proper ruby version" do
     page.find("#ruby-version").text.strip.should == RUBY_VERSION
   end
-  
+
+  it "should not have a vfs path for __FILE__" do
+    page.find("#path").text.strip.should_not match(/^vfs:/)
+  end
+
 end
 
 describe "basic rack test with heredoc" do

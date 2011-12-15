@@ -38,7 +38,7 @@ public class RailsAutoloadPathProcessor implements DeploymentUnitProcessor {
             RailsRuntimeInitializer initializer = (RailsRuntimeInitializer) runtimeMetaData.getRuntimeInitializer();
             for (RubyLoadPathMetaData path : runtimeMetaData.getLoadPaths()) {
                 if (path.isAutoload()) {
-                    initializer.addAutoloadPath( path.toString() );
+                    initializer.addAutoloadPath( path.getPath().getAbsolutePath() );
                 }
             }
         }

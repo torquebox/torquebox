@@ -20,6 +20,7 @@
 package org.torquebox.core.app.processors;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,7 @@ public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
     public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         TorqueBoxMetaData metaData = null;
-        VirtualFile root = null;
+        File rootFile = null;
         ResourceRoot appRoot = null;
 
         try {
@@ -58,9 +59,10 @@ public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
                 return;
             }
             metaData = new TorqueBoxMetaData( YAMLUtils.parseYaml( appKnobYml ) );
-            root = metaData.getApplicationRootFile();
+            rootFile = metaData.getApplicationRootFile();
 
-            if (root != null) {
+            if (rootFile != null) {
+                VirtualFile root = VFS.getChild( rootFile.toURI() );
                 if (!root.exists()) {
                     throw new DeploymentUnitProcessingException( "Application root does not exist: " + root.toURL().toExternalForm() );
                 }
@@ -91,7 +93,7 @@ public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
         unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
 
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( unit.getName() );
-        rubyAppMetaData.setRoot( root );
+        rubyAppMetaData.setRoot( rootFile );
         rubyAppMetaData.setEnvironmentName( metaData.getApplicationEnvironment() );
         rubyAppMetaData.attachTo( unit );
 

@@ -19,17 +19,11 @@
 
 package org.torquebox.core.runtime;
 
-import java.net.URL;
-
+import java.io.File;
 
 /**
  * Describes a path to use for {@code LOAD_PATH} in a Ruby interpreter.
  * 
- * <p>
- * While the load path is described as a collection of {@link URL} instances,
- * the URLs are intended to be local or VFS-based URLs. It is highly unlikely a
- * {@code http://} URL will work.
- * </p>
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  * 
@@ -37,12 +31,6 @@ import java.net.URL;
  * 
  */
 public class RubyLoadPathMetaData {
-
-    /** URL of the path. */
-    private URL url;
-
-    /** whether classes in path should be auto-loaded */
-    private boolean autoload = true;
 
     /**
      * Construct without a path.
@@ -52,32 +40,21 @@ public class RubyLoadPathMetaData {
     }
 
     /**
-     * Construct with a URL.
+     * Construct with a path.
      * 
-     * @param url
-     *            The URL to add to the Ruby load path.
+     * @param path
+     *            The path to add to the Ruby load path.
      */
-    public RubyLoadPathMetaData(URL url) {
-        this.url = url;
+    public RubyLoadPathMetaData(File path) {
+        setPath( path );
     }
 
-    /**
-     * Set the URL.
-     * 
-     * @param url
-     *            The URL to add to the Ruby load path.
-     */
-    public void setURL(URL url) {
-        this.url = url;
+    public File getPath() {
+        return path;
     }
 
-    /**
-     * Retrieve the URL.
-     * 
-     * n * @return The URL to add to the Ruby load path.
-     */
-    public URL getURL() {
-        return this.url;
+    public void setPath(File path) {
+      this.path = path;
     }
 
     /**
@@ -98,6 +75,13 @@ public class RubyLoadPathMetaData {
      * Stringification
      */
     public String toString() {
-        return this.url == null ? "" : this.url.toExternalForm();
+        return this.path == null ? "" : this.path.toString();
     }
+    
+
+    /** the path. */
+    private File path;
+
+    /** whether classes in path should be auto-loaded */
+    private boolean autoload = true;
 }

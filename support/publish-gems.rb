@@ -12,7 +12,6 @@ end
 
 gem_order = %w{
     torquebox-core
-    torquebox-vfs
     torquebox-capistrano-support
     torquebox-rake-support
     torquebox-configure

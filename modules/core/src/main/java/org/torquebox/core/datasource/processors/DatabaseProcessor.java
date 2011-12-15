@@ -1,6 +1,5 @@
 package org.torquebox.core.datasource.processors;
 
-import java.io.IOException;
 import java.sql.Driver;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,7 +32,6 @@ import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 import org.jboss.jca.core.api.management.ManagementRepository;
@@ -102,13 +100,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         }
 
         String currentEnv = rubyAppMetaData.getEnvironmentName();
-
-        String applicationDir;
-        try {
-            applicationDir = rubyAppMetaData.getRoot().getPhysicalFile().getAbsolutePath();
-        } catch (IOException e) {
-            throw new DeploymentUnitProcessingException( e );
-        }
+        String applicationDir = rubyAppMetaData.getRoot().getAbsolutePath();
 
         List<DatabaseMetaData> allMetaData = unit.getAttachmentList( DatabaseMetaData.ATTACHMENTS );
 

@@ -60,8 +60,8 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
 
         ComponentEval instantiator = new ComponentEval();
         try {
-            instantiator.setCode( getCode( rackAppMetaData.getRackUpScript( root ), rubyAppMetaData.getRoot() ) );
-            instantiator.setLocation( rackAppMetaData.getRackUpScriptFile( root ).toURL().toString() );
+            instantiator.setCode( getCode( rackAppMetaData.getRackUpScript( root.getPhysicalFile() ) ) );
+            instantiator.setLocation( rackAppMetaData.getRackUpScriptFile( root.getPhysicalFile() ).getAbsolutePath() );
         } catch (IOException e) {
             throw new DeploymentUnitProcessingException( e );
         }
@@ -100,7 +100,7 @@ public class RackApplicationComponentResolverInstaller extends BaseRubyComponent
     }
 
 
-    protected String getCode(String rackUpScript, VirtualFile root) {
+    protected String getCode(String rackUpScript) {
         StringBuilder code = new StringBuilder();
         code.append( "require %q(rack)\n" );
         code.append( "Rack::Builder.new{(\n" );

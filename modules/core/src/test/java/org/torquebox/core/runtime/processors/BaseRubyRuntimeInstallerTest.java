@@ -24,11 +24,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.vfs.VFS;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
@@ -40,10 +40,12 @@ import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTestCase {
     
     private Map<String, String> environment = new HashMap<String, String>();
-
+    private File root;
+    
     @Before
     public void setUpDeployer() throws Throwable {
         appendDeployer( new BaseRubyRuntimeInstaller() );
+        this.root = new File( "/foo" );
     }
 
     @Test
@@ -51,7 +53,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
         environment.put( "SOME_VAR", "gassy" );
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
 
-        rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
+        rubyAppMetaData.setRoot( this.root );
         rubyAppMetaData.setEnvironmentVariables( environment );
 
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
@@ -63,7 +65,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
 
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
         assertNotNull( runtimeMetaData );
-        assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
+        assertEquals( this.root, runtimeMetaData.getBaseDir() );
         assertTrue( runtimeMetaData.getEnvironment().containsKey( "SOME_VAR" ) );
         assertEquals( RubyRuntimeMetaData.RuntimeType.BARE, runtimeMetaData.getRuntimeType() );
     }
@@ -73,7 +75,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
     public void testWithExistingRubyRuntimeMD() throws Exception {
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
 
-        rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
+        rubyAppMetaData.setRoot( this.root );
 
         RubyRuntimeMetaData existingRuntimeMD = new RubyRuntimeMetaData();
         
@@ -88,7 +90,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
         RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
         assertNotNull( runtimeMetaData );
         assertEquals( existingRuntimeMD, runtimeMetaData );
-        assertEquals( vfsAbsolutePrefix() + "/foo", runtimeMetaData.getBaseDir().getPathName() );
+        assertEquals( this.root, runtimeMetaData.getBaseDir() );
         assertEquals( RubyRuntimeMetaData.RuntimeType.BARE, runtimeMetaData.getRuntimeType() );
     }
 
@@ -97,7 +99,7 @@ public class BaseRubyRuntimeInstallerTest extends AbstractDeploymentProcessorTes
     public void testWithExistingTypedRubyRuntimeMD() throws Exception {
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "app_name");
 
-        rubyAppMetaData.setRoot( VFS.getChild( "/foo" ) );
+        rubyAppMetaData.setRoot( this.root );
 
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();

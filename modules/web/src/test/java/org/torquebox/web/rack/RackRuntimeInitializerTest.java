@@ -21,7 +21,8 @@ package org.torquebox.web.rack;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jboss.vfs.VFS;
+import java.io.File;
+
 import org.jruby.Ruby;
 import org.junit.Test;
 import org.torquebox.core.app.RubyAppMetaData;
@@ -31,9 +32,10 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
 
     @Test
     public void testInitializer() throws Exception {
+        File root = new File( "/myapp" );
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test-app");
         RackMetaData rackAppMetaData = new RackMetaData();
-        rubyAppMetaData.setRoot( VFS.getChild( "/myapp" ) );
+        rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( "test" );
         rackAppMetaData.setContextPath( "/mycontext" );
 
@@ -43,13 +45,13 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
         initializer.initialize( ruby );
 
         String rackRoot = (String) ruby.evalScriptlet( "RACK_ROOT" ).toJava( String.class );
-        assertEquals( "vfs:" + vfsAbsolutePrefix() + "/myapp", rackRoot );
+        assertEquals( root.getAbsolutePath(), rackRoot );
 
         String rackEnv = (String) ruby.evalScriptlet( "RACK_ENV" ).toJava( String.class );
         assertEquals( "test", rackEnv );
 
         String pwd = (String) ruby.evalScriptlet( "Dir.pwd" ).toJava( String.class );
-        assertEquals( absolutePrefix() + "/myapp", pwd );
+        assertEquals( root.getAbsolutePath(), pwd );
 
         String baseUri = (String) ruby.evalScriptlet( "ENV['RACK_BASE_URI']" ).toJava( String.class );
         assertEquals( "/mycontext", baseUri );

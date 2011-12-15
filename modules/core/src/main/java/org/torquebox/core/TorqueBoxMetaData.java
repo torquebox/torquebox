@@ -19,13 +19,12 @@
 
 package org.torquebox.core;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.jboss.as.server.deployment.AttachmentKey;
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.app.processors.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.processors.RubyYamlParsingProcessor;
 import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
@@ -98,28 +97,21 @@ public class TorqueBoxMetaData {
         return null;
     }
 
-    public VirtualFile getApplicationRootFile() {
-        String path = getApplicationRoot();
+    public static File findApplicationRootFile(Map<String, String> section) {
+        String path = findApplicationRoot( section );
 
         if (path == null) {
             return null;
         }
-        
-        String sanitizedPath = null;
-
-        if (path.indexOf( "\\\\" ) >= 0) {
-            sanitizedPath = path.replaceAll( "\\\\\\\\", "/" );
-            sanitizedPath = sanitizedPath.replaceAll( "\\\\", "" );
-        } else {
-            sanitizedPath = path.replaceAll( "\\\\", "/" );
+           
+        if ( path.startsWith( "~" ) ) {
+            path = System.getProperty( "user.home" ) + path.substring( 1 );
         }
-        
-        if ( sanitizedPath.startsWith( "~" ) ) {
-            sanitizedPath = System.getProperty( "user.home" ) + sanitizedPath.substring( 1 );
-        }
-        VirtualFile root = VFS.getChild( sanitizedPath );
-
-        return root;
+        return new File( path ); 
+    }
+    
+    public File getApplicationRootFile() {
+        return findApplicationRootFile( (Map<String, String>) getSection( "application" ) );
     }
 
     @SuppressWarnings("unchecked")

@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +54,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         MockDeploymentPhaseContext context = setupResourceAsTorqueboxYml( "messaging-with-default-encoding.yml" );
         MockDeploymentUnit unit = context.getMockDeploymentUnit();
         RubyAppMetaData appMetaData = new RubyAppMetaData( "app-name" );
-        appMetaData.setRoot( "/home/mrplow" );
+        appMetaData.setRoot( new File( "/home/mrplow" ) );
         Map<String, String> env = new HashMap<String, String>();
         appMetaData.setEnvironmentVariables( env );
         appMetaData.attachTo( unit );

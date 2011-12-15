@@ -59,7 +59,7 @@ public class RubyRuntimeFactoryInstaller implements DeploymentUnitProcessor {
             List<String> loadPaths = new ArrayList<String>();
 
             for (RubyLoadPathMetaData loadPath : runtimeMetaData.getLoadPaths()) {
-                loadPaths.add( loadPath.getURL().toExternalForm() );
+                loadPaths.add( loadPath.getPath().getAbsolutePath() );
             }
 
             Module module = unit.getAttachment( Attachments.MODULE );

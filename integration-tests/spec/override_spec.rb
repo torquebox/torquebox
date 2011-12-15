@@ -58,7 +58,7 @@ end
 
 describe "exploded internal" do
   before(:each) do
-    @home = /^vfs:.*\/override$/
+    @home = /^.*\/override$/
   end
   deploy <<-END.gsub(/^ {4}/,'')
     application:
@@ -73,7 +73,7 @@ end
 
 describe "archived internal" do
   before(:each) do
-    @home = /^vfs:.*\/override.knob.*$/
+    @home = /^.*\/override.knob.*$/
   end
   deploy <<-END.gsub(/^ {4}/,'')
     application:
@@ -87,7 +87,7 @@ end
 
 describe "exploded external" do
   before(:each) do
-    @home = /^vfs:.*\/override$/
+    @home = /^.*\/override$/
   end
   deploy <<-END.gsub(/^ {4}/,'')
     application:
@@ -109,7 +109,7 @@ end
 
 describe "archived external" do
   before(:each) do
-    @home = /^vfs:.*\/override.knob.*$/
+    @home = /^.*\/override.knob.*$/
   end
   deploy <<-END.gsub(/^ {4}/,'')
     application:

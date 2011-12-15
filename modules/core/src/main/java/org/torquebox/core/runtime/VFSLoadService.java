@@ -90,8 +90,8 @@ public class VFSLoadService extends LoadService {
     }
 
     protected Library findLibraryWithoutCWD(SearchState state, String baseName, SuffixType suffixType) {
-        // System.err.println("findLibraryWithoutCWD(" + baseName + "," +
-        // suffixType + ")");
+        //System.err.println("findLibraryWithoutCWD(" + baseName + "," +
+         //suffixType + ")");
         Library library = null;
 
         switch (suffixType) {
@@ -125,8 +125,8 @@ public class VFSLoadService extends LoadService {
 
     @SuppressWarnings("rawtypes")
     protected LoadServiceResource tryResourceFromLoadPathOrURL(SearchState state, String baseName, SuffixType suffixType) {
-        // System.err.println("tryResourceFromLoadPathOrUrl(" + baseName + "," +
-        // suffixType + ")");
+         //System.err.println("tryResourceFromLoadPathOrUrl(" + baseName + "," +
+         //suffixType + ")");
         LoadServiceResource foundResource = null;
 
         // if it's a ./ baseName, use CWD logic
@@ -185,8 +185,8 @@ public class VFSLoadService extends LoadService {
     }
 
     protected LoadServiceResource tryResourceFromLoadPath(String namePlusSuffix, String loadPathEntry) throws RaiseException {
-        // System.err.println("tryResourceFromLoadPath(" + namePlusSuffix + ","
-        // + loadPathEntry + ")");
+         //System.err.println("tryResourceFromLoadPath(" + namePlusSuffix + ","
+         //+ loadPathEntry + ")");
         LoadServiceResource foundResource = null;
 
         try {
@@ -195,12 +195,13 @@ public class VFSLoadService extends LoadService {
                 if (loadPathEntry.startsWith( "vfs:" )) {
                     try {
                         URL vfsUrl = makeUrl( loadPathEntry, namePlusSuffix );
-                        VirtualFile file = VFS.getChild(  vfsUrl.toURI() );
+                        VirtualFile file = VFS.getChild( vfsUrl.toURI() );
                         if (file != null && file.exists()) {
-                            return new NonLeakingLoadServiceResource( file.toURI().toURL(), vfsUrl.toExternalForm() );
+                            return unVFSifiedResource( file );
+                            //return new NonLeakingLoadServiceResource( file.toURI().toURL(), vfsUrl.toExternalForm() );
                         }
                         return null;
-                    } catch (MalformedURLException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                     } catch (URISyntaxException e) {
                         e.printStackTrace();
@@ -237,7 +238,7 @@ public class VFSLoadService extends LoadService {
     }
 
     protected LoadServiceResource tryResourceAsIs(String namePlusSuffix) throws RaiseException {
-        // System.err.println("tryResourceAsIs(" + namePlusSuffix + ")");
+         //System.err.println("tryResourceAsIs(" + namePlusSuffix + ")");
         LoadServiceResource foundResource = null;
 
         try {
@@ -250,7 +251,8 @@ public class VFSLoadService extends LoadService {
                         // VirtualFile file = VFS.getRoot(vfsUrl);
                         VirtualFile file = VFS.getChild( vfsUrl.toURI() );
                         if (file != null && file.exists()) {
-                            return new NonLeakingLoadServiceResource( file.toURI().toURL(), reportedPath );
+                            return unVFSifiedResource( file );
+                            //return new NonLeakingLoadServiceResource( file.toURI().toURL(), reportedPath );
                         }
                     } catch (IOException e) {
                         // ignore
@@ -287,7 +289,7 @@ public class VFSLoadService extends LoadService {
     }
 
     public void load(String file, boolean wrap) {
-        // System.err.println("load(" + file + ")");
+         //System.err.println("load(" + file + ")");
         if (!runtime.getProfile().allowLoad( file )) {
             throw runtime.newLoadError( "No such file to load -- " + file );
         }
@@ -344,6 +346,11 @@ public class VFSLoadService extends LoadService {
         return foundResource;
     }
 
+    protected NonLeakingLoadServiceResource unVFSifiedResource(VirtualFile vFile) throws IOException {
+        File file = vFile.getPhysicalFile();
+        return new NonLeakingLoadServiceResource( file.toURI().toURL(), file.getAbsolutePath() );
+    }
+    
     /*
      * @Override protected void addLoadedFeature(RubyString loadNameRubyString)
      * { System.err.println( "addLoadedFeature(" + loadNameRubyString + ")" );

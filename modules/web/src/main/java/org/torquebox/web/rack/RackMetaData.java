@@ -20,13 +20,13 @@
 package org.torquebox.web.rack;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.DeploymentUnit;
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.web.WebApplicationMetaData;
 
 public class RackMetaData extends WebApplicationMetaData {
@@ -47,14 +47,14 @@ public class RackMetaData extends WebApplicationMetaData {
         this.rackUpScript = rackUpScript;
     }
 
-    public String getRackUpScript(VirtualFile root) throws IOException {
+    public String getRackUpScript(File root) throws IOException {
         if (this.rackUpScript == null) {
-            VirtualFile file = getRackUpScriptFile( root );
+            File file = getRackUpScriptFile( root );
             if (file != null && file.exists()) {
                 StringBuilder script = new StringBuilder();
                 BufferedReader in = null;
                 try {
-                    in = new BufferedReader( new InputStreamReader( file.openStream() ) );
+                    in = new BufferedReader( new InputStreamReader( new FileInputStream( file ) ) );
                     String line = null;
                     while ((line = in.readLine()) != null) {
                         script.append( line );
@@ -78,15 +78,15 @@ public class RackMetaData extends WebApplicationMetaData {
         return this.rackUpScriptLocation;
     }
 
-    public VirtualFile getRackUpScriptFile(VirtualFile root) {
+    public File getRackUpScriptFile(File root) {
         if (this.rackUpScriptLocation == null) {
             return null;
         }
 
         if (this.rackUpScriptLocation.startsWith( "/" ) || rackUpScriptLocation.matches( "^[A-Za-z]:.*" )) {
-            return VFS.getChild( rackUpScriptLocation );
+            return new File( rackUpScriptLocation );
         } else {
-            return root.getChild( rackUpScriptLocation );
+            return new File( root, rackUpScriptLocation );
         }
     }
 

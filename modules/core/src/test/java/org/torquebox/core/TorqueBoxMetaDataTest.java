@@ -21,10 +21,9 @@ package org.torquebox.core;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
 import java.util.Map;
 
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.junit.Test;
 
@@ -79,10 +78,9 @@ public class TorqueBoxMetaDataTest {
 
         String expected = System.getProperty( "user.home" ) + "/tacos";
         // Normalize the file paths across OSes
-        VirtualFile expectedFile = VFS.getChild( expected );
-        expected = expectedFile.getPathName();
-        
-        assertEquals( expected, metaData.getApplicationRootFile().getPathName() );
+        File expectedFile = new File( expected );
+                
+        assertEquals( expectedFile, metaData.getApplicationRootFile() );
         
     }
     

@@ -19,14 +19,13 @@
 
 package org.torquebox.web.rails;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.logging.Logger;
-import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyModule;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -63,16 +62,17 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
     public void initialize(Ruby ruby) throws Exception {
         setRuntimeType( ruby, "rails" );
         super.initialize( ruby );
-        Logger logger = Logger.getLogger( getApplicationRoot().toURL().toExternalForm() );
+       
+        Logger logger = Logger.getLogger( this.rubyAppMetaData.getApplicationName() );
         IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby( ruby, logger );
         ruby.getGlobalVariables().set( "$JBOSS_RAILS_LOGGER", rubyLogger );
 
-        String scriptLocationBase = new URL( getApplicationRoot().toURL(), "<torquebox-bootstrap>" ).toExternalForm();
+        File scriptLocation = new File( getApplicationRoot(), "<torquebox-bootstrap>-boot.rb" );
         makeAutoloadPathsAvailable( ruby );
-        RuntimeHelper.executeScript( ruby, createBoot( getApplicationRoot() ), scriptLocationBase + "-boot.rb" );
+        RuntimeHelper.executeScript( ruby, createBoot(), scriptLocation.getAbsolutePath() );
     }
 
-    protected String createBoot(VirtualFile railsRoot) throws MalformedURLException, URISyntaxException {
+    protected String createBoot() {
         StringBuffer bootScript = new StringBuffer();
         bootScript.append( "ENV['RAILS_ROOT']=RACK_ROOT\n" );
         bootScript.append( "ENV['RAILS_ENV']=RACK_ENV\n" );

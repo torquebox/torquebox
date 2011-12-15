@@ -19,8 +19,6 @@
 
 package org.torquebox.core.runtime.processors;
 
-import java.net.MalformedURLException;
-
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -56,12 +54,7 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
         runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
         runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.BARE );
-
-        try {
-            runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot().toURL() ) );
-        } catch (MalformedURLException e) {
-            throw new DeploymentUnitProcessingException( e );
-        }
+        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot() ) );
         
         RuntimeInitializer initializer = new BundlerAwareRuntimeInitializer( rubyAppMetaData );
         runtimeMetaData.setRuntimeInitializer( initializer );

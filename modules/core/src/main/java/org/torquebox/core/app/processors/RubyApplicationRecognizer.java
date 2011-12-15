@@ -19,6 +19,8 @@
 
 package org.torquebox.core.app.processors;
 
+import java.io.IOException;
+
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -45,7 +47,11 @@ public class RubyApplicationRecognizer extends FileLocatingProcessor {
 
         if (rubyAppMetaData == null) {
             rubyAppMetaData = new RubyAppMetaData( unit.getName() );
-            rubyAppMetaData.setRoot( root );
+            try {
+                rubyAppMetaData.setRoot( root.getPhysicalFile() );
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             rubyAppMetaData.attachTo( unit );
         }
         

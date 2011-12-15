@@ -23,10 +23,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.List;
 
 import org.jboss.vfs.VFS;
-import org.jboss.vfs.VirtualFile;
 import org.jruby.Ruby;
 import org.jruby.RubyClass;
 import org.jruby.RubyModule;
@@ -59,12 +59,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
     @Test
     public void testInitializeWithGems() throws Exception {
-        String railsRootStr = pwd() + "/src/test/faux-rails2";
-
-        railsRootStr = railsRootStr.replaceAll( "\\\\", "/" );
-        String vfsRailsRootStr = toVfsPath( railsRootStr );
-
-        VirtualFile railsRoot = VFS.getChild( railsRootStr );
+        File railsRoot = root( "/src/test/faux-rails2" );
 
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
@@ -76,7 +71,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         
         String rubyRailsRoot = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ROOT" }, String.class );
         assertNotNull( rubyRailsRoot );
-        assertEquals( vfsRailsRootStr, rubyRailsRoot );
+        assertEquals( railsRoot.getCanonicalPath(), rubyRailsRoot );
 
         String rubyRailsEnv = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ENV" }, String.class );
         assertNotNull( rubyRailsEnv );
@@ -88,9 +83,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
     @Ignore
     // TODO move this to integ test?
     public void testOpenSSL_HMAC_digest() throws Exception {
-        String railsRootStr = pwd() + "/src/test/faux-rails2";
-        VirtualFile railsRoot = VFS.getChild( railsRootStr );
-        RailsRuntimeInitializer initializer = create( railsRoot, "development" );
+        RailsRuntimeInitializer initializer = create( root( "/src/test/faux-rails2" ), "development" );
 
         initializer.initialize( ruby );
 
@@ -101,10 +94,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
     @SuppressWarnings("unchecked")
     @Test
     public void testAutoloadPathsAvailableAsRubyConstant() throws Exception {
-        String railsRootStr = pwd() + "/src/test/faux-rails2";
-        VirtualFile root = VFS.getChild( railsRootStr );
-
-        RailsRuntimeInitializer initializer = create( root, "development" );
+        RailsRuntimeInitializer initializer = create( root( "/src/test/faux-rails2" ), "development" );
         initializer.addAutoloadPath( "path1" );
         initializer.addAutoloadPath( "path2" );
 
@@ -123,12 +113,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
     
     @Test
     public void testRails3() throws Exception {
-        String railsRootStr = pwd() + "/src/test/faux-rails3";
-        
-        railsRootStr = railsRootStr.replaceAll( "\\\\", "/" );
-        String vfsRailsRootStr = toVfsPath( railsRootStr );
-        
-        VirtualFile railsRoot = VFS.getChild( railsRootStr );
+        File railsRoot = root( "/src/test/faux-rails3" );
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
         initializer.initialize( ruby ); 
@@ -139,14 +124,18 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         
         String rubyRailsRoot = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ROOT" }, String.class );
         assertNotNull( rubyRailsRoot );
-        assertEquals( vfsRailsRootStr, rubyRailsRoot );
+        assertEquals( railsRoot.getCanonicalPath(), rubyRailsRoot );
 
         String rubyRailsEnv = (String) JavaEmbedUtils.invokeMethod( ruby, envConst, "[]", new Object[] { "RAILS_ENV" }, String.class );
         assertNotNull( rubyRailsEnv );
         assertEquals( "development", rubyRailsEnv );
     }
 
-    private RailsRuntimeInitializer create(VirtualFile root, String env) {
+    private File root(String relativePath) {
+        return new File( pwd(), relativePath );
+    }
+    
+    private RailsRuntimeInitializer create(File root, String env) {
         RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test-app");
         rubyAppMetaData.setRoot( root );
         rubyAppMetaData.setEnvironmentName( env );

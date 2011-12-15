@@ -19,6 +19,7 @@
 
 package org.torquebox.core.app.processors;
 
+import java.io.File;
 import java.util.Map;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -56,10 +57,10 @@ public class ApplicationYamlParsingProcessor extends AbstractSplitYamlParsingPro
         }
 
         if (appMetaData.getRoot() == null) {
-            String root = TorqueBoxMetaData.findApplicationRoot( app );
+            File root = TorqueBoxMetaData.findApplicationRootFile( app );
 
-            if (root != null && !root.trim().equals( "" )) {
-                appMetaData.setRoot( root.trim() );
+            if (root != null ) {
+                appMetaData.setRoot( root );
             }
         }
 
