@@ -1,5 +1,10 @@
-require 'rails/generators'
-require 'rails/generators/rails/app/app_generator'
+begin
+  require 'rails/generators'
+  require 'rails/generators/rails/app/app_generator'
+rescue LoadError
+  # Rails isn't installed, bail out
+  return
+end
 
 module TorqueBox
   class Rails
