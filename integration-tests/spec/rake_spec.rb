@@ -12,6 +12,12 @@ describe "rake tasks" do
     output = rake('integ:sanity_check')
     output.should include('sanity check passed')
   end
+
+  describe "TorqueBox::DeployUtils" do
+    it "should use a valid cluster config file" do
+      File.exist?(TorqueBox::DeployUtils.cluster_config_file).should be_true
+    end
+  end
   
   describe "torquebox:archive" do
   
