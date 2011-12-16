@@ -32,7 +32,9 @@ def mutable_app(path)
 end
 
 def jruby_binary
-  File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby', 'bin', 'jruby' ) )
+  bin = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jruby', 'bin', 'jruby' ) )
+  bin << ".exe" if TESTING_ON_WINDOWS
+  bin
 end
 
 def integ_jruby(command)
