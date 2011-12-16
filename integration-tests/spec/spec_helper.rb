@@ -57,6 +57,15 @@ def integ_jruby(command)
   end
 end
 
+def normalize_path(path)
+    path = path.slice(0..0).downcase + path.slice(1..-1) if TESTING_ON_WINDOWS
+    File.expand_path(path.strip)
+end
+
+def assert_paths_are_equal(actual, expected) 
+  normalize_path(actual).should eql(normalize_path(expected))
+end
+
 # Because DRb requires ObjectSpace and 1.9 disables it
 require 'jruby'
 JRuby.objectspace = true

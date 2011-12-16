@@ -17,9 +17,9 @@ describe "archived rackup files don't have to reside at the root" do
 
   it "should be happy" do
     visit "/norootrackuparchive"
-    root = File.expand_path( File.join( File.dirname( __FILE__ ), '..' ) )
-    prefix = root.start_with?("/") ? "" : "/"
-    page.source.should match /RACK_ROOT=#{prefix}#{root}.*\/norootrackup\.knob.*/
+    root = normalize_path( File.join( File.dirname( __FILE__ ), '..' ) )
+    page.source =~ %r{RACK_ROOT=(.*)}
+    normalize_path($1).should match %r{#{root}.*[/\\]norootrackup\.knob.*}
   end
 
 end

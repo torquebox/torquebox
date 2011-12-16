@@ -17,8 +17,9 @@ describe "rackup files don't have to reside at the root" do
 
   it "should be happy" do
     visit "/norootrackup"
-    root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', '/apps/rack/norootrackup' ) )
-    page.should have_content( "RACK_ROOT=#{root}" )
+    root = File.join( File.dirname( __FILE__ ), '..', '/apps/rack/norootrackup' )
+    page.body =~ /RACK_ROOT=(.*)/
+    assert_paths_are_equal( $1, root )
   end
 
 end
