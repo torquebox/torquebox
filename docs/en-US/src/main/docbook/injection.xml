@@ -30,7 +30,7 @@
 
     <para><itemizedlist>
         <listitem>
-          <para>Include <classname>TorqueBox::Injectors</classname> in any
+          <para>Include <classname>TorqueBox::Injectors</classname> in a
           source file that needs to perform injection. If injection occurs in
           a super-class, the super class must include
           <classname>TorqueBox::Injectors</classname>. If injection also
@@ -50,6 +50,17 @@
           required.</para>
         </listitem>
       </itemizedlist></para>
+      
+      <para>TorqueBox supports injection in the following locations (relative 
+      to the root directory of your application):
+        <itemizedlist>
+          <listitem>your app's root directory</listitem>
+          <listitem>/app</listitem>
+          <listitem>/lib</listitem>
+          <listitem>/helpers</listitem>
+          <listitem>/models (for Padrino apps)</listitem>
+        </itemizedlist>
+      </para>
 
     <para>For instance:</para>
 

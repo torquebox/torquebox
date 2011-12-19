@@ -56,6 +56,8 @@ import org.torquebox.core.runtime.RubyRuntimeMetaData;
  */
 public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
 
+    private static final String[] INJECTION_WHITELIST = { "app", "lib", "models", "helpers" };
+
     public InjectionIndexingProcessor(InjectableHandlerRegistry registry) {
         this.registry = registry;
         this.injectionAnalyzer = new InjectionAnalyzer( this.registry );
@@ -70,8 +72,8 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         if (runtimeMetaData == null) {
             return;
         }
-        
-        deployRuntimeInjectionAnalyzer( phaseContext ); 
+
+        deployRuntimeInjectionAnalyzer( phaseContext );
 
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
 
@@ -98,25 +100,28 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
 
     private void deployRuntimeInjectionAnalyzer(DeploymentPhaseContext phaseContext) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        
+
         ServiceName serviceName = CoreServices.runtimeInjectionAnalyzerName( unit );
-        RuntimeInjectionAnalyzer runtimeAnalyzer = new RuntimeInjectionAnalyzer( phaseContext.getServiceRegistry(), phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit(), this.injectionAnalyzer );
+        RuntimeInjectionAnalyzer runtimeAnalyzer = new RuntimeInjectionAnalyzer( phaseContext.getServiceRegistry(), phaseContext.getServiceTarget(),
+                phaseContext.getDeploymentUnit(), this.injectionAnalyzer );
         Service<RuntimeInjectionAnalyzer> service = new ValueService<RuntimeInjectionAnalyzer>( new ImmediateValue<RuntimeInjectionAnalyzer>( runtimeAnalyzer ) );
-        
+
         phaseContext.getServiceTarget().addService( serviceName, service ).install();
-        
+
     }
 
     protected boolean shouldProcess(VirtualFile dir) {
-        if (dir.getName().startsWith( "." )) {
-            return false;
+        if (!dir.isDirectory()) {
+            return true;
         }
-
-        if (dir.getName().equals( "vendor" )) {
-            return false;
+        else {
+            for (String element : INJECTION_WHITELIST) {
+                if (element.equals( dir.getName() )) {
+                    return true;
+                }
+            }
         }
-
-        return true;
+        return false;
     }
 
     @Override

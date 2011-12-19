@@ -8,7 +8,7 @@ describe "rackup files don't have to reside at the root" do
       RACK_ROOT: #{File.dirname(__FILE__)}/../apps/rack/norootrackup
       RACK_ENV: development
     web: 
-      rackup: foobar/config.ru
+      rackup: lib/config.ru
       context: /norootrackup
     
     ruby:
