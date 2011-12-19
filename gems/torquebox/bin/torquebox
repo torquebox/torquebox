@@ -38,15 +38,32 @@ class TorqueBoxCommand < Thor
                                       :bind_address => options['bind-address'])
   end
 
-  desc "rails ROOT", "Create a Rails application at ROOT using the TorqueBox Rails template."
-  method_option :apply, :type => :boolean, :desc => "Apply the TorqueBox Rails template to an existing application instead of creating a new app."
+  desc "rails ROOT", "Create a Rails application at ROOT using the TorqueBox Rails template, or apply the TorqueBox template to an existing application at ROOT."
   def rails(root = ".")
     ARGV.shift
     TorqueBox::Server.setup_environment
-    if options.apply
+    if File.exist?( root )
       TorqueBox::Rails.apply_template( root )
     else
       TorqueBox::Rails.new_app
+    end
+  end
+
+  desc "archive ROOT", "Create a nice self-contained application archive"
+  method_option :deploy, :type => :boolean, :desc => "Deploy the archive to TORQUEBOX_HOME."
+  long_desc <<-EOS
+    Creates an application archive containing all of your application dependencies.
+    The archive can be deployed to TorqueBox with the --deploy option or after the archive
+    file, known as a .knob, has been created by using `torquebox deploy ROOT.knob`.
+  EOS
+  def archive(root = Dir.pwd)
+    TorqueBox::Server.setup_environment
+    archive_name = TorqueBox::DeployUtils.archive_name( root )
+    path = TorqueBox::DeployUtils.create_archive(archive_name, root)
+    puts "Created archive: #{path}"
+    if options.deploy
+      puts "Deploying #{archive_name} to #{ENV['TORQUEBOX_HOME']}"
+      TorqueBox::DeployUtils.deploy_archive( path )
     end
   end
 
