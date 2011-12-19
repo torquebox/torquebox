@@ -24,7 +24,7 @@ require 'torquebox/rails'
 
 class TorqueBoxCommand < Thor
 
-  TASK_ORDER = %w(deploy undeploy start cli env help)
+  TASK_ORDER = %w(deploy undeploy start rails archive cli env help)
 
   map "run" => "start"
   desc "run", "Run TorqueBox"
@@ -53,8 +53,9 @@ class TorqueBoxCommand < Thor
   method_option :deploy, :type => :boolean, :desc => "Deploy the archive to TORQUEBOX_HOME."
   long_desc <<-EOS
     Creates an application archive containing all of your application dependencies.
-    The archive can be deployed to TorqueBox with the --deploy option or after the archive
-    file, known as a .knob, has been created by using `torquebox deploy ROOT.knob`.
+    The archive can be deployed to TorqueBox with the --deploy option or by
+    hand after the archive file, known as a .knob, has been created by using
+    `torquebox deploy myapp.knob`.
   EOS
   def archive(root = Dir.pwd)
     TorqueBox::Server.setup_environment
