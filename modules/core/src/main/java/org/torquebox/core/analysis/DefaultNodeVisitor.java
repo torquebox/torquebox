@@ -598,4 +598,9 @@ public class DefaultNodeVisitor implements NodeVisitor {
     public Object visitZSuperNode(ZSuperNode iVisited) {
         return defaultVisitNode( iVisited );
     }
+
+    @Override
+    public Object visitLambdaNode(LambdaNode iVisited) {
+        return defaultVisitNode( iVisited );
+    }
 }
