@@ -56,8 +56,12 @@ describe "torquebox thor utility tests" do
     output = tb(tb_command)
     output.should include("Deployed: #{name}#{suffix}")
     output.should include("into: #{TorqueBox::DeployUtils.deploy_dir}")
-    File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == true
-    File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}.dodeploy").should == true
+    deployment = "#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}"
+    dodeploy = "#{deployment}.dodeploy"
+    isdeploying = "#{deployment}.isdeploying"
+    deployed = "#{deployment}.deployed"
+    File.exist?(deployment).should == true
+    (File.exist?(dodeploy) || File.exist?(isdeploying) || File.exist(deployed)).should == true
   end
   
   def check_undeployment(tb_command, name = 'basic', suffix = '-knob.yml')
