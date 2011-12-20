@@ -8,6 +8,13 @@ person_database:
   database: mem:people;MVCC=TRUE
   pool: 50
 
+# Ensure nothing bombs when a single adapter is referred to using
+# different names
+something_else:
+  adapter: jdbch2
+  database: mem:something_else:MVCC=TRUE
+  pool: 50
+
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.

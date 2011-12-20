@@ -104,7 +104,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         List<DatabaseMetaData> allMetaData = unit.getAttachmentList( DatabaseMetaData.ATTACHMENTS );
 
-        Set<String> adapterNames = new HashSet<String>();
+        Set<String> adapterIds = new HashSet<String>();
 
         DataSourceInfoListService dsInfoService = new DataSourceInfoListService( org.jboss.logmanager.Logger.getLogger( "com.arjuna.ats" ).getLevel() );
         ServiceBuilder<DataSourceInfoList> dsInfoBuilder = phaseContext.getServiceTarget().addService( DataSourceServices.dataSourceInfoName( unit ), dsInfoService );
@@ -136,7 +136,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
                 continue;
             }
 
-            if (adapterNames.add( adapterName )) {
+            if (adapterIds.add( adapter.getId() )) {
                 processDriver( phaseContext, adapter, applicationDir );
             }
 
@@ -151,7 +151,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         dsInfoBuilder.install();
 
-        if (!adapterNames.isEmpty()) {
+        if (!adapterIds.isEmpty()) {
             installJDBCDriverLoadingRuntime( phaseContext );
         }
 
