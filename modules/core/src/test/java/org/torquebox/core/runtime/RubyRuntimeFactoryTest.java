@@ -136,7 +136,7 @@ public class RubyRuntimeFactoryTest {
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertTrue( ruby.is1_9() );
-        assertEquals( "1.9.2", ((RubyString) ruby.evalScriptlet( "RUBY_VERSION" )).toString() );
+        assertEquals( "1.9.3", ((RubyString) ruby.evalScriptlet( "RUBY_VERSION" )).toString() );
     }
 
     @Test
