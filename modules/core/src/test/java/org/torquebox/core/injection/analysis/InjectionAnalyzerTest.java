@@ -125,9 +125,11 @@ public class InjectionAnalyzerTest {
 
     }
 
-    @Test(expected = RaiseException.class)
+    @Test
     public void test19CodeIn18Mode() throws Exception {
-        analyzeScript( "injection_19.rb", Version.V1_8 );
+        Set<Injectable> injectables = analyzeScript( "injection_19.rb", Version.V1_8 );
+
+        assertTrue( injectables.isEmpty() );
     }
 
     @Test

@@ -22,6 +22,7 @@ package org.torquebox.core.analysis;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
@@ -29,6 +30,7 @@ import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyProc;
 import org.jruby.ast.Node;
 import org.jruby.ast.visitor.NodeVisitor;
+import org.jruby.exceptions.RaiseException;
 import org.jruby.parser.LocalStaticScope;
 import org.jruby.parser.StaticScope;
 import org.jruby.runtime.BlockBody;
@@ -54,6 +56,8 @@ public class ScriptAnalyzer {
 
     /** Cached ruby 1.9 interpreter. */
     private Ruby ruby19;
+    
+    private Logger log = Logger.getLogger( this.getClass() );
 
     public ScriptAnalyzer() {
         createRuby18();
@@ -141,8 +145,12 @@ public class ScriptAnalyzer {
             analyzingRuby = this.ruby19;
         }
 
-        Node result = analyzingRuby.parseEval( script, filename, scope, 0 );
-        result.accept( visitor );
+        try {
+            Node result = analyzingRuby.parseEval( script, filename, scope, 0 );
+            result.accept( visitor );
+        } catch(RaiseException ex) {
+            log.trace( "JRuby exception when parsing file " + filename , ex );
+        }
     }
 
     /**
