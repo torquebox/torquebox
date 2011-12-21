@@ -24,6 +24,7 @@ public class RuntimeInjectionAnalyzer {
     }
 
     public Object analyzeAndInject(Object arg) throws Exception {
+        
         if (arg instanceof RubyProc) {
             RubyProc proc = (RubyProc) arg;
             InjectionRubyByteCodeVisitor visitor = new InjectionRubyByteCodeVisitor( this.analyzer );

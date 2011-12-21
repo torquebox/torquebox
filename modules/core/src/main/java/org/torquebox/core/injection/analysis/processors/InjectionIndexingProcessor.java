@@ -34,6 +34,7 @@ import org.jboss.msc.service.ValueService;
 import org.jboss.msc.value.ImmediateValue;
 import org.jboss.vfs.VirtualFile;
 import org.torquebox.core.as.CoreServices;
+import org.torquebox.core.injection.InjectionMetaData;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.InjectionAnalyzer;
 import org.torquebox.core.injection.analysis.InjectionIndex;
@@ -74,6 +75,11 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         }
 
         deployRuntimeInjectionAnalyzer( phaseContext );
+        
+        if (!InjectionMetaData.injectionIsEnabled( unit )) {
+            log.infof( "Per configuration, injection analysis is disabled for deployment unit %s.", unit.getName() );
+            return;
+        }
 
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
 
@@ -90,6 +96,7 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
         for (VirtualFile each : root.getChildren()) {
             if (shouldProcess( each )) {
                 try {
+                    log.tracef( "Preparing analyzer for: %s", each.getName() );
                     analyzer.analyzeRecursively( index, each, runtimeMetaData.getVersion() );
                 } catch (IOException e) {
                     log.error( "Error processing file: " + each );

@@ -19,6 +19,7 @@
 
 package org.torquebox.core.injection.processors;
 
+
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -66,6 +67,6 @@ public class CorePredeterminedInjectableInstaller implements DeploymentUnitProce
     @Override
     public void undeploy(DeploymentUnit context) {
 
-    }
-
+    }  
+    
 }

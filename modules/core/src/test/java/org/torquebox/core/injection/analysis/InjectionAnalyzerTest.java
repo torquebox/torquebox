@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.jruby.Ruby;
 import org.jruby.RubyProc;
-import org.jruby.exceptions.RaiseException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -170,7 +169,7 @@ public class InjectionAnalyzerTest {
         System.err.println( injectables );
     }
     
-    protected void assertContains(Set<Injectable> actual, Class injectableClass, String type, String name, String key) {
+    protected void assertContains(Set<Injectable> actual, Class<?> injectableClass, String type, String name, String key) {
         int numFound = 0;
 
         for (Injectable each : actual) {
