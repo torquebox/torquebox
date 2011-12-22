@@ -37,7 +37,10 @@ module TorqueBox
           out = servlet_response.getOutputStream()
 
           if body.respond_to?( :each )
-            body.each { |chunk| out.write( chunk.to_java_bytes ) }
+            body.each { |chunk| 
+              out.write( chunk.to_java_bytes )
+              out.flush
+            }
           else
             out.write( body.to_java_bytes )
           end
