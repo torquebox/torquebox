@@ -33,4 +33,13 @@ Once your repositories are configured, simply type:
 
     mvn install
 
+Running
+-------
+
+When built, set the follow environment variables, but replace ~/src/torquebox with the path to your local repo.
+
+    export TORQUEBOX_HOME=~/src/torquebox/build/assembly/target/stage/torquebox
+    export PATH=$TORQUEBOX_HOME/jruby/bin:$PATH
+
+Then start as usual with ```torquebox run```.
 
