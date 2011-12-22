@@ -1,5 +1,6 @@
 Requirements
 ------------
+
 * Maven 3
 * Configuration of the JBoss Maven repository in settings.xml
 
@@ -33,4 +34,15 @@ Once your repositories are configured, simply type:
 
     mvn install
 
+Running
+-------
 
+After successfully building it, you'll probably want to run it.  To do
+so, set `TORQUEBOX_HOME`, and add `$TORQUEBOX_HOME/jruby/bin` to your
+`$PATH`, like so:
+
+    export TORQUEBOX_HOME=$PWD/build/assembly/target/stage/torquebox
+    export PATH=$TORQUEBOX_HOME/jruby/bin:$PATH
+    
+You can then use the `torquebox` command to control your creation. Run
+it without parameters to see a list of its supported subcommands.
