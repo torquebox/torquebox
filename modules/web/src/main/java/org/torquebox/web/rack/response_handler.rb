@@ -37,10 +37,10 @@ module TorqueBox
           out = servlet_response.getOutputStream()
 
           if body.respond_to?( :each )
-            body.each { |chunk| 
+            body.each do |chunk| 
               out.write( chunk.to_java_bytes )
-              out.flush
-            }
+              out.flush if headers['Transfer-Encoding'] == 'chunked'
+            end
           else
             out.write( body.to_java_bytes )
           end
