@@ -22,11 +22,11 @@ module TorqueBox
         status  = rack_response[0]
         headers = rack_response[1]
         body    = rack_response[2]
-        
+
         begin
           status_code = status.to_i
           servlet_response.setStatus( status_code )
-          
+
           headers.each{|key,value|
             if value.respond_to?( :each ) 
               value.each { |v| servlet_response.addHeader( key, v ) }
@@ -37,10 +37,11 @@ module TorqueBox
           out = servlet_response.getOutputStream()
 
           if body.respond_to?( :each )
-            body.each do |chunk| 
+            chunked = headers.fetch( 'Transfer-Encoding', '' ) == 'chunked'
+            body.each { |chunk| 
               out.write( chunk.to_java_bytes )
-              out.flush if headers['Transfer-Encoding'] == 'chunked'
-            end
+              out.flush if chunked
+            }
           else
             out.write( body.to_java_bytes )
           end
