@@ -139,12 +139,30 @@
               <execution>
                 <id>dist-yardocs</id>
                 <inherited>false</inherited>
-                <phase>package</phase>
+                <phase>prepare-package</phase>
                 <goals>
                   <goal>jruby</goal>
                 </goals>
                 <configuration>
                   <file>bin/run-yard.rb</file>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jar-dist-yardocs</id>
+                <inherited>false</inherited>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>src/main/assembly/yardoc-jar.xml</descriptor>
+                  </descriptors>
                 </configuration>
               </execution>
             </executions>
