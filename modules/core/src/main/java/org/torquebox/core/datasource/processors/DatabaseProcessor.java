@@ -34,6 +34,7 @@ import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.logging.Logger;
@@ -207,6 +208,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
                     .addDependency( ConnectorServices.MANAGEMENT_REPOSISTORY_SERVICE, ManagementRepository.class, service.getmanagementRepositoryInjector() )
                     .addDependency( ConnectorServices.TRANSACTION_INTEGRATION_SERVICE, TransactionIntegration.class, service.getTransactionIntegrationInjector() )
                     .addDependency( NamingService.SERVICE_NAME )
+                    .addDependency(ConnectorServices.CCM_SERVICE, CachedConnectionManager.class, service.getCcmInjector())
                     .install();
 
             final DataSourceReferenceFactoryService referenceFactoryService = new DataSourceReferenceFactoryService();
