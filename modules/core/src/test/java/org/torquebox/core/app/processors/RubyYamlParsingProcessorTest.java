@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URL;
 
@@ -46,11 +47,13 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
     @Test
     public void testInvalidVersionMetaData() throws Exception {
-        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "ruby-invalid.yml" );
-
-        RubyRuntimeMetaData runtimeMetaData = unit.getAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY );
-        assertEquals( RubyRuntimeMetaData.Version.V1_8, runtimeMetaData.getVersion() );
-        assertEquals( null, runtimeMetaData.getCompileMode() );
+        try {
+            deployResourceAsTorqueboxYml( "ruby-invalid.yml" );
+            fail("Should have failed.");
+        } catch (Exception e) {
+            assertEquals( "2.7 is not a valid value for the enumeration on field version", 
+                    e.getCause().getMessage() );
+        }
     }
 
     @Test
@@ -217,7 +220,7 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertSame( runtimeMetaData, runtimeMetaData2 );
         assertTrue( runtimeMetaData.isInteractive() );
     }
-    
+
     @Test
     public void testWithRuntimeMetaDataProfilingTrue() throws Exception {
         URL rubyYml = getClass().getResource( "ruby-profiling-true.yml" );
@@ -234,7 +237,7 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertSame( runtimeMetaData, runtimeMetaData2 );
         assertTrue( runtimeMetaData.isProfileApi() );
     }
-    
+
     @Test
     public void testWithRuntimeMetaDataProfilingFalse() throws Exception {
         URL rubyYml = getClass().getResource( "ruby-profiling-false.yml" );
@@ -250,6 +253,6 @@ public class RubyYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
 
         assertSame( runtimeMetaData, runtimeMetaData2 );
         assertFalse( runtimeMetaData.isProfileApi() );
-    }    
+    }
 
 }
