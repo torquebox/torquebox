@@ -60,7 +60,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         appMetaData.attachTo( unit );
         deploy( context );
 
-        assertEquals( "biscuit", env.get( "DEFAULT_MESSAGE_ENCODING" ) );
+        assertEquals( "marshal", env.get( "DEFAULT_MESSAGE_ENCODING" ) );
 
         List<MessageProcessorMetaData> procMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
         assertEquals( 1, procMetaData.size() );

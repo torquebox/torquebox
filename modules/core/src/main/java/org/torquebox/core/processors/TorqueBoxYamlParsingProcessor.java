@@ -29,6 +29,7 @@ import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
+import org.projectodd.yaml.SchemaException;
 import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.util.YAMLUtils;
 
@@ -51,10 +52,17 @@ public class TorqueBoxYamlParsingProcessor extends AbstractParsingProcessor {
             } catch (Exception e) {
                 throw new DeploymentUnitProcessingException("Error processing yaml: ", e);
             } 
+                        
             TorqueBoxMetaData metaData = new TorqueBoxMetaData( data );
             TorqueBoxMetaData externalMetaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
             if (externalMetaData != null) {
                 metaData = externalMetaData.overlayOnto( metaData );
+            }
+            
+            try {
+                metaData.validate();
+            } catch (SchemaException e) {
+                throw new DeploymentUnitProcessingException("Configuration validation failed: ", e);
             }
             unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
         }
