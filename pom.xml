@@ -515,7 +515,7 @@
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.7.0</version.rspec>
 
-    <version.jbossas>7.1.0.Beta1b</version.jbossas>
+    <version.jbossas>7.1.0.CR1b</version.jbossas>
 
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
     <version.org.slf4j>1.5.10</version.org.slf4j>
