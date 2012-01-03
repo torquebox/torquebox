@@ -1,0 +1,13 @@
+<assembly>
+  <id>yardocs</id>
+  <formats>
+    <format>jar</format>
+  </formats>
+  <baseDirectory>/</baseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>target/yardocs/</directory>
+      <outputDirectory>/</outputDirectory>
+    </fileSet>
+  </fileSets>
+</assembly>
