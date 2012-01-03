@@ -82,6 +82,7 @@ public class MessageProcessorInstaller implements DeploymentUnitProcessor {
         MessageProcessorGroup service = new MessageProcessorGroup( phaseContext.getServiceRegistry(), baseServiceName, metaData.getDestinationName() );
         service.setConcurrency( metaData.getConcurrency() );
         service.setDurable( metaData.isDurable() );
+        service.setClientID( metaData.getClientID() );
         service.setMessageSelector( metaData.getMessageSelector() );
         service.setName( metaData.getName() );
 

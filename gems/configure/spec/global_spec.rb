@@ -227,7 +227,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
 
     it_should_allow_valid_options  do
       topic 'a-topic' do
-        processor 'AClass', :concurrency => 1, :config => '', :filter => '', :name => '', :singleton=>true
+        processor 'AClass', :concurrency => 1, :config => '', :filter => '', :name => '', :durable => true, :client_id => 'client-id', :singleton=>true
       end
     end
 
@@ -376,11 +376,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
           'foo' => { :type => :bounded, :min => 1, :max => 2 } },
         'queue' => {
           'a-queue' => {
-            :create => false,
-            'processor' => [ [ FakeConstant.new( 'AProcessor' ),
-                               {
-                                 :name => 'a-proc',
-                                 :config => { :foo => :bar } } ] ]
+            :create => false
           },
           'another-queue' => {},
         },
@@ -398,8 +394,15 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                         [ FakeConstant.new( 'AnotherStomplet' ), {
                             :route => '/b',
                             :config => { :foo => :bar } } ] ],
-        'topic' => { 'a-topic' => { :durable => true } },
-        'web' => { :context => '/bacon' }
+        'topic' => { 'a-topic' => {
+            :durable => true,
+            'processor' => [ [ FakeConstant.new( 'AProcessor' ),
+                               {
+                                 :name => 'a-proc',
+                                 :durable => true,
+                                 :client_id => 'client-id',
+                                 :config => { :foo => :bar } } ] ] } },
+          'web' => { :context => '/bacon' }
       }
 
       @metadata = @config.to_metadata_hash
@@ -443,7 +446,12 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     end
 
     it "should properly set a processor" do
-      @metadata['messaging']['a-queue']['AProcessor'].should == { "name" => 'a-proc', "config" => { 'foo' => :bar } }
+      @metadata['messaging']['a-topic']['AProcessor'].should == {
+        "name" => 'a-proc',
+        "durable" => true,
+        "client_id" => 'client-id',
+        "config" => { 'foo' => :bar }
+      }
     end
 
     it "should properly set a queue" do

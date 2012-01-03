@@ -38,5 +38,8 @@ public interface MessageProcessorGroupMBean {
     String getMessageSelector();
 
     String getStatus();
-
+    
+    boolean isDurable();
+    
+    String getClientID();
 }

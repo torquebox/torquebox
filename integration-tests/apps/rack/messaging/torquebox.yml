@@ -11,4 +11,8 @@ topics:
 
 messaging:
   /queues/test: TestQueueConsumer
-  /topics/test: TestTopicConsumer
+  /topics/test: 
+    TestTopicConsumer:
+      durable: true
+      client_id: the-client
+

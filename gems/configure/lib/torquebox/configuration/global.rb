@@ -71,6 +71,8 @@ module TorqueBox
                                                                 :optional => [
                                                                               :concurrency,
                                                                               { :singleton => [true, false] },
+                                                                              { :durable => [true, false] },
+                                                                              :client_id,
                                                                               :config,
                                                                               :filter,
                                                                               :name
