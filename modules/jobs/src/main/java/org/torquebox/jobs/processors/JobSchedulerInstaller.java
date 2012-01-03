@@ -31,6 +31,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.processors.ClusterAwareProcessor;
 import org.projectodd.polyglot.hasingleton.HASingleton;
+import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.JobScheduler;
@@ -102,7 +103,7 @@ public class JobSchedulerInstaller extends ClusterAwareProcessor {
 
         JobScheduler scheduler = new JobScheduler( "JobScheduler$" + unit.getName() );
 
-        ServiceBuilder<JobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
+        ServiceBuilder<BaseJobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );
 
         if (singleton) {

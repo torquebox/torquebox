@@ -353,17 +353,6 @@
         <artifactId>hornetq-logging</artifactId>
         <version>${version.org.hornetq.hornetq-jms}</version>
       </dependency>
-      <dependency>
-        <groupId>org.quartz-scheduler</groupId>
-        <artifactId>quartz</artifactId>
-        <version>${version.org.quartz-scheduler}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${version.org.slf4j}</version>
-      </dependency>
-
 
       <dependency>
         <groupId>org.jruby</groupId>
@@ -516,9 +505,7 @@
     <version.rspec>2.7.0</version.rspec>
 
     <version.jbossas>7.1.0.CR1b</version.jbossas>
-
     <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
-    <version.org.slf4j>1.5.10</version.org.slf4j>
 
     <version.org.projectodd.stilts>0.1.25</version.org.projectodd.stilts>
 

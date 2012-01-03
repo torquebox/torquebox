@@ -27,6 +27,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-jobs</artifactId>
+      <version>${version.polyglot}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby-complete</artifactId>
       <scope>provided</scope>
@@ -41,26 +47,6 @@
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-core</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz</artifactId>
-      <scope>compile</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.transaction</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

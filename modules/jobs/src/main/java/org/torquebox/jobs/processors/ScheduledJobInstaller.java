@@ -36,11 +36,12 @@ import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.processors.ClusterAwareProcessor;
+import org.projectodd.polyglot.jobs.BaseJobScheduler;
+import org.projectodd.polyglot.jobs.BaseScheduledJob;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
-import org.torquebox.jobs.JobScheduler;
 import org.torquebox.jobs.ScheduledJob;
 import org.torquebox.jobs.ScheduledJobMBean;
 import org.torquebox.jobs.ScheduledJobMetaData;
@@ -78,22 +79,21 @@ public class ScheduledJobInstaller extends ClusterAwareProcessor {
     protected void deploy(DeploymentPhaseContext phaseContext, final ScheduledJobMetaData metaData) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        ScheduledJob job = new ScheduledJob(
+        ScheduledJob job = new ScheduledJob( 
                 metaData.getGroup(),
                 metaData.getName(),
                 metaData.getDescription(),
                 metaData.getCronExpression(),
                 metaData.isSingleton(),
-                metaData.getRubyClassName(),
-                metaData.getRubyRequirePath()
+                metaData.getRubyClassName()
                 );
 
         ServiceName serviceName = JobsServices.scheduledJob( unit, metaData.getName() );
 
-        ServiceBuilder<ScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
+        ServiceBuilder<BaseScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
         builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
-        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && isClustered( phaseContext ) ), JobScheduler.class, job.getJobSchedulerInjector() );
+        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && isClustered( phaseContext ) ), BaseJobScheduler.class, job.getJobSchedulerInjector() );
 
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();
