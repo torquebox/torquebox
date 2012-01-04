@@ -505,7 +505,6 @@
     <version.rspec>2.7.0</version.rspec>
 
     <version.jbossas>7.1.0.CR1b</version.jbossas>
-    <version.org.quartz-scheduler>1.8.5</version.org.quartz-scheduler>
 
     <version.org.projectodd.stilts>0.1.25</version.org.projectodd.stilts>
 
