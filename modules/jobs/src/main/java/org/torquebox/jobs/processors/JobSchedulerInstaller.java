@@ -19,7 +19,6 @@
 
 package org.torquebox.jobs.processors;
 
-import java.awt.image.Kernel;
 import java.util.List;
 
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -44,14 +43,6 @@ import org.torquebox.jobs.as.JobsServices;
 public class JobSchedulerInstaller extends ClusterAwareProcessor {
 
     public JobSchedulerInstaller() {
-    }
-
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
-    }
-
-    public Kernel getKernel() {
-        return this.kernel;
     }
 
     public void setRubyRuntimePoolName(String runtimePoolName) {
@@ -132,7 +123,6 @@ public class JobSchedulerInstaller extends ClusterAwareProcessor {
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 
     private String runtimePoolName;
-    private Kernel kernel;
 
     private class DeployedJobTypes {
         boolean regularJobs = false;
