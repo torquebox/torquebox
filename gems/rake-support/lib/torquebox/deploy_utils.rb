@@ -244,11 +244,11 @@ module TorqueBox
       end
       
       def undeploy_archive(opts = {})
-        undeploy( normalize_archive_name( find_option( opts, 'name' ) || archive_name ), opts )
+        undeploy( normalize_archive_name( find_option( opts, 'name' ) || archive_name( opts[:root] ) ), opts )
       end 
       
       def undeploy_yaml(opts = {})
-        undeploy( normalize_yaml_name( find_option( opts, 'name' ) || deployment_name ), opts )
+        undeploy( normalize_yaml_name( find_option( opts, 'name' ) || deployment_name( opts[:root] ) ), opts )
       end
 
       # TODO: This is not windows friendly
