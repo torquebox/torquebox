@@ -22,11 +22,11 @@ module TorqueBox
         status  = rack_response[0]
         headers = rack_response[1]
         body    = rack_response[2]
-        
+
         begin
           status_code = status.to_i
           servlet_response.setStatus( status_code )
-          
+
           headers.each{|key,value|
             if value.respond_to?( :each ) 
               value.each { |v| servlet_response.addHeader( key, v ) }
@@ -37,10 +37,17 @@ module TorqueBox
           out = servlet_response.getOutputStream()
 
           if body.respond_to?( :each )
-            body.each { |chunk| out.write( chunk.to_java_bytes ) }
+            chunked = headers.fetch( 'Transfer-Encoding', '' ) == 'chunked'
+            body.each { |chunk| 
+              out.write( chunk.to_java_bytes )
+              out.flush if chunked
+            }
           else
             out.write( body.to_java_bytes )
           end
+        rescue NativeException => e
+          # Don't needlessly raise errors because of client abort exceptions
+          raise unless e.cause.toString =~ /(clientabortexception|broken pipe)/i
         ensure
           body.close if body && body.respond_to?( :close )
         end
