@@ -14,7 +14,8 @@ describe "rake tasks" do
 
   describe "TorqueBox::DeployUtils" do
     it "should use a valid cluster config file" do
-      File.exist?(TorqueBox::DeployUtils.cluster_config_file).should be_true
+      full_path = File.join(TorqueBox::DeployUtils.config_dir, TorqueBox::DeployUtils.cluster_config_file)
+      File.exist?(full_path).should be_true
     end
   end
 
