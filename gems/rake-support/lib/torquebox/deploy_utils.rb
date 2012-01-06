@@ -1,4 +1,4 @@
-# Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+# Copyright 2008-2012 Red Hat, Inc, and individual contributors.
 # 
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
@@ -70,7 +70,7 @@ module TorqueBox
       end
 
       def cluster_config_file
-        File.join(config_dir, "standalone-ha.xml")
+        "standalone-ha.xml"
       end
 
       def properties_dir
@@ -244,11 +244,11 @@ module TorqueBox
       end
       
       def undeploy_archive(opts = {})
-        undeploy( normalize_archive_name( find_option( opts, 'name' ) || archive_name ), opts )
+        undeploy( normalize_archive_name( find_option( opts, 'name' ) || archive_name( opts[:root] ) ), opts )
       end 
       
       def undeploy_yaml(opts = {})
-        undeploy( normalize_yaml_name( find_option( opts, 'name' ) || deployment_name ), opts )
+        undeploy( normalize_yaml_name( find_option( opts, 'name' ) || deployment_name( opts[:root] ) ), opts )
       end
 
       # TODO: This is not windows friendly

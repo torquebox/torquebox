@@ -148,10 +148,6 @@ describe TorqueBox::DeployUtils do
     it 'should be ENV["JBOSS_HOME"]/standalone/configuration' do
       @util.config_dir.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration".downcase
     end
-
-    it 'should be ENV["JBOSS_HOME"]/standalone/configuration/standalone-ha.xml' do
-      @util.cluster_config_file.downcase.should == "#{absolute_prefix}#{ENV['JBOSS_HOME']}/standalone/configuration/standalone-ha.xml".downcase
-    end
   end
 
 

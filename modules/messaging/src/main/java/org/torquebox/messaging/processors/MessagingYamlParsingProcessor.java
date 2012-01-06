@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+ * Copyright 2008-2012 Red Hat, Inc, and individual contributors.
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -120,6 +120,7 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
                 options = Collections.EMPTY_MAP;
             MessageProcessorMetaData result = new MessageProcessorMetaData();
             result.setDurable( (Boolean) options.get( "durable" ) );
+            result.setClientID( (String) options.get( "client_id" ) );
             result.setDestinationName( destination );
             result.setMessageSelector( (String) options.get( "filter" ) );
             if (options.containsKey( "singleton" )) {

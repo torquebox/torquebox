@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+ * Copyright 2008-2012 Red Hat, Inc, and individual contributors.
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -34,6 +34,7 @@ public class MessageProcessorMetaData {
     private String messageSelector;
     private int concurrency = 1;
     private boolean durable = false; //only has meaning for Topic processors
+    private String clientID;         //only has meaning for Topic processors
     private boolean singleton = false;
 
     private Map<String, Object> rubyConfig;
@@ -108,6 +109,14 @@ public class MessageProcessorMetaData {
         return this.durable;
     }
     
+    public String getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(String clientID) {
+        this.clientID = clientID;
+    }
+
     public void setSingleton(boolean singleton) {
         this.singleton = singleton;
     }

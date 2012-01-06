@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+ * Copyright 2008-2012 Red Hat, Inc, and individual contributors.
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -20,90 +20,35 @@
 package org.torquebox.jobs;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
-import org.jboss.msc.service.Service;
-import org.jboss.msc.service.StartContext;
-import org.jboss.msc.service.StartException;
-import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
-import org.quartz.Scheduler;
+import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-public class JobScheduler implements Service<JobScheduler> {
+public class JobScheduler extends BaseJobScheduler  {
 
 	public JobScheduler(String name) {
-		this.name = name;
+		super( name );
 	}
 	
-	@Override	
-	public JobScheduler getValue() throws IllegalStateException, IllegalArgumentException {
-		return this;
-	}	
-
-	@Override
-	public void start(final StartContext context) throws StartException {
-		context.asynchronous();
-	        
-		context.execute(new Runnable() {
-			public void run() {
-				try {
-					JobScheduler.this.start();
-					context.complete();
-            	} catch (Exception e) {
-            		context.failed( new StartException( e ) );
-            	}
-            }
-        });
-    }
-
-    @Override
-    public void stop(StopContext context) {
-    	try {
-    		this.scheduler.shutdown( true );
-    	} catch (SchedulerException ex) {
-		log.warn( "An error occured stopping scheduler for " + this.name, ex );
-    	}
-    }
-	   
     public void start() throws IOException, SchedulerException {
-        Properties props = new Properties();
-        props.load( this.getClass().getResourceAsStream( "scheduler.properties" ) );
-        props.setProperty( StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, getName() );
-
-        this.jobFactory = new RubyJobProxyFactory();
+        RubyJobProxyFactory jobFactory = new RubyJobProxyFactory();
         jobFactory.setRubyRuntimePool( this.rubyRuntimePoolInjector.getValue() );
-
-        StdSchedulerFactory factory = new StdSchedulerFactory( props );
-        this.scheduler = factory.getScheduler();
-        this.scheduler.setJobFactory( this.jobFactory );
-        this.scheduler.start();
+        setJobFactory( jobFactory );
+        super.start();
     }
 
     public void addComponentResolver(String rubyClass, ComponentResolver resolver) {
-    	this.jobFactory.addComponentResolver( rubyClass, resolver );
-    }
-    
-    public String getName() {
-        return this.name;
-    }
-
-    public Scheduler getScheduler() {
-        return this.scheduler;
+    	((RubyJobProxyFactory)getJobFactory()).addComponentResolver( rubyClass, resolver );
     }
        
     public Injector<RubyRuntimePool> getRubyRuntimePoolInjector() {
         return this.rubyRuntimePoolInjector;
     }
-    
-    private String name;
-    private Scheduler scheduler;
-    private RubyJobProxyFactory jobFactory;
     
     private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
     

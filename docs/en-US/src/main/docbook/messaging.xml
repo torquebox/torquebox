@@ -1111,9 +1111,20 @@ end</programlisting></para>
                   <entry>Turns the processor into a durable subscriber. Once a
                   processor durably subscribes to a topic, if it disconnects
                   any messages sent will be saved and delivered once the
-                  processor reconnects. This setting only affects processors
-                  attached to topics, and is ignored for queue
-                  processors.</entry>
+                  processor reconnects. If <parameter>true</parameter>, you must also
+                  supply a <varname>client_id</varname> as well.
+                  This setting only affects processors attached to topics, and 
+                  is ignored for queue processors.</entry>
+                </row>
+
+                <row>
+                  <entry><parameter>client_id</parameter></entry>
+
+                  <entry></entry>
+
+                  <entry>A string to uniquely indentify the connecting client.
+                  Optional unless you are using the <varname>durable</varname>
+                  option (above) on a <classname>Topic</classname>.</entry>
                 </row>
 
                 <row>
@@ -1145,7 +1156,8 @@ messaging:
         season: "fall"
   /topics/bar:
     MyBarHandler:
-      durable: true</programlisting></para>
+      durable: true
+      client_id: my-awesome-client</programlisting></para>
 
             <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
@@ -1161,7 +1173,7 @@ messaging:
   end
 
   topic '/topics/bar' do
-    processor MyBarHandler, :durable =&gt; true
+    processor MyBarHandler, :durable =&gt; true, :client_id =&gt; 'my-awesome-client'
   end
 end</programlisting></para>
           </example>

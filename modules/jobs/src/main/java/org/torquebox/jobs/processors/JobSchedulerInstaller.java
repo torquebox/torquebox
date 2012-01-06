@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+ * Copyright 2008-2012 Red Hat, Inc, and individual contributors.
  * 
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -19,7 +19,6 @@
 
 package org.torquebox.jobs.processors;
 
-import java.awt.image.Kernel;
 import java.util.List;
 
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
@@ -31,6 +30,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.core.processors.ClusterAwareProcessor;
 import org.projectodd.polyglot.hasingleton.HASingleton;
+import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.JobScheduler;
@@ -43,14 +43,6 @@ import org.torquebox.jobs.as.JobsServices;
 public class JobSchedulerInstaller extends ClusterAwareProcessor {
 
     public JobSchedulerInstaller() {
-    }
-
-    public void setKernel(Kernel kernel) {
-        this.kernel = kernel;
-    }
-
-    public Kernel getKernel() {
-        return this.kernel;
     }
 
     public void setRubyRuntimePoolName(String runtimePoolName) {
@@ -102,7 +94,7 @@ public class JobSchedulerInstaller extends ClusterAwareProcessor {
 
         JobScheduler scheduler = new JobScheduler( "JobScheduler$" + unit.getName() );
 
-        ServiceBuilder<JobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
+        ServiceBuilder<BaseJobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );
 
         if (singleton) {
@@ -131,7 +123,6 @@ public class JobSchedulerInstaller extends ClusterAwareProcessor {
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 
     private String runtimePoolName;
-    private Kernel kernel;
 
     private class DeployedJobTypes {
         boolean regularJobs = false;

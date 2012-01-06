@@ -4,7 +4,7 @@ require 'find'
 require 'fileutils'
 
 COPYRIGHT_STATEMENT = <<END
-Copyright 2008-2011 Red Hat, Inc, and individual contributors.
+Copyright 2008-2012 Red Hat, Inc, and individual contributors.
 
 This is free software; you can redistribute it and/or modify it
 under the terms of the GNU Lesser General Public License as
