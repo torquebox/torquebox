@@ -45,6 +45,9 @@ module TorqueBox
           :credential  => ThingsEntry.with_settings(:require_parent => [:authentication],
                                                    :discrete => true),
           :environment => OptionsEntry,
+          :injection   => OptionsEntry.with_settings(:validate => {
+                                                       :required => [{ :enabled => [true, false] }]
+                                                     }),
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {
                                                                 :required => [:cron],

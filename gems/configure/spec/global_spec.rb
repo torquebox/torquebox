@@ -137,6 +137,16 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       config['<root>']['environment'].should == { 'foo' => 'bar', 'bar' => 'baz' }
     end
   end
+  
+  describe '#injection' do
+    before(:each) { @method = 'injection' }
+    it_should_behave_like 'options'
+    
+    it_should_not_allow_invalid_options { injection :foo => :bar }
+    it_should_allow_valid_options { injection :enabled => true }
+    it_should_allow_valid_options { injection :enabled => false }
+    
+  end
 
   describe '#ruby' do
     before(:each) { @method = 'ruby' }
