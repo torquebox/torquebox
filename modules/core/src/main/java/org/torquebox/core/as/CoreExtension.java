@@ -23,7 +23,6 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathElement;

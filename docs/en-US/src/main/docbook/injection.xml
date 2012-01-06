@@ -291,4 +291,21 @@ end</programlisting>
     <literal>"Java::JavaUtil::Set"</literal> when used as an injection lookup
     key.</para>
   </section>
+  
+  <section id="disabling-the-scanner">
+    <title>Disabling the Injection Scanner</title>
+    
+    <para>If you're not making use of injection, you can disable the injection
+    scanner on a per-application basis. Simply add:</para>
+    
+    <para><informalexample><programlisting>injection:
+  enabled: false
+    </programlisting>
+    </informalexample></para>
+    
+    <para>to your -knob.yml or torquebox.yml file, and injection scanning will be 
+    disabled for your application.</para>
+    
+  </section>
+  
 </chapter>
