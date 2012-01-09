@@ -64,7 +64,8 @@ class TorqueBoxCommand < Thor
     path = TorqueBox::DeployUtils.create_archive(:name => archive_name, :app_dir => root)
     puts "Created archive: #{path}"
     if options.deploy
-      puts "Deploying #{archive_name} to #{ENV['TORQUEBOX_HOME']}"
+      puts "Deployed: #{archive_name}"
+      puts "    into: #{ENV['TORQUEBOX_HOME']}"
       TorqueBox::DeployUtils.deploy_archive( :archive_path => path )
     end
   end
