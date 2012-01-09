@@ -32,10 +32,10 @@ module TorqueBox
       attr_accessor :connect_options
 
       PRIORITY_MAP = {
-          :low => 1,
-          :normal => 4,
-          :high => 7,
-          :critical => 9
+        :low => 1,
+        :normal => 4,
+        :high => 7,
+        :critical => 9
       }
 
       def _dump(depth)
@@ -44,7 +44,7 @@ module TorqueBox
       end
 
       def self._load(str)
-       self.new( str )
+        self.new( str )
       end
 
       def initialize(destination, connection_factory = __inject__( 'connection-factory' ))
@@ -119,7 +119,7 @@ module TorqueBox
           if PRIORITY_MAP[options[:priority]]
             options[:priority] = PRIORITY_MAP[options[:priority]]
           elsif (0..9) === options[:priority].to_i
-          options[:priority] = options[:priority].to_i
+            options[:priority] = options[:priority].to_i
           else
             raise ArgumentError.new(":priority must in the range 0..9, or one of #{PRIORITY_MAP.keys.collect {|k| ":#{k}"}.join(',')}")
           end
