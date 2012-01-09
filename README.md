@@ -46,3 +46,4 @@ so, set `TORQUEBOX_HOME`, and add `$TORQUEBOX_HOME/jruby/bin` to your
     
 You can then use the `torquebox` command to control your creation. Run
 it without parameters to see a list of its supported subcommands.
+
