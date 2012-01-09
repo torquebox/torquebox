@@ -6,6 +6,42 @@ describe "torquebox thor utility tests" do
     ENV['TORQUEBOX_HOME'] = File.join(File.dirname(__FILE__), '..', 'target', 'integ-dist')
     ENV['JBOSS_HOME'] = "#{ENV['TORQUEBOX_HOME']}/jboss"
   end
+  
+  describe "torquebox archive" do
+  
+    it "should archive an app from the root" do
+      Dir.chdir( root_dir ) do
+        tb('archive')
+        File.exist?("#{root_dir}/basic.knob").should == true
+        FileUtils.rm_rf("#{root_dir}/basic.knob")
+      end
+    end
+    
+    it "should archive an app with a root specified" do
+      tb("archive #{root_dir}")
+      File.exist?('basic.knob').should == true
+      FileUtils.rm_rf('basic.knob')
+    end
+    
+    it "should archive and deploy an app from the root" do
+      Dir.chdir( root_dir ) do
+        check_deployment("archive --deploy", 'basic', '.knob')
+        File.exist?("#{root_dir}/basic.knob").should == true
+        FileUtils.rm_rf "#{root_dir}/basic.knob"
+        check_undeployment('undeploy', 'basic', '.knob')
+      end
+    end
+    
+    it "should archive and deploy an app with a root specified" do
+      check_deployment("archive #{root_dir} --deploy", 'basic', '.knob')
+      File.exist?('basic.knob').should == true
+      FileUtils.rm_rf('basic.knob')
+      Dir.chdir( root_dir ) do
+        check_undeployment("undeploy", 'basic', '.knob')
+      end
+    end
+  
+  end
 
   describe "torquebox deploy" do
     
@@ -55,7 +91,6 @@ describe "torquebox thor utility tests" do
   def check_deployment(tb_command, name = 'basic', suffix = '-knob.yml')
     output = tb(tb_command)
     output.should include("Deployed: #{name}#{suffix}")
-    output.should include("into: #{TorqueBox::DeployUtils.deploy_dir}")
     deployment = "#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}"
     dodeploy = "#{deployment}.dodeploy"
     isdeploying = "#{deployment}.isdeploying"
@@ -67,7 +102,6 @@ describe "torquebox thor utility tests" do
   def check_undeployment(tb_command, name = 'basic', suffix = '-knob.yml')
     output = tb(tb_command)
     output.should include("Undeployed: #{name}#{suffix}")
-    output.should include("from: #{TorqueBox::DeployUtils.deploy_dir}")
       
     # give the AS as many as five seconds to undeploy
     5.times { 
@@ -78,6 +112,7 @@ describe "torquebox thor utility tests" do
       
     File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == false
     File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}.dodeploy").should == false
+    output
   end  
   
   def root_dir
