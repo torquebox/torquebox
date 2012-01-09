@@ -62,7 +62,7 @@ public class ComponentResolver {
         return wrapComponent( rubyComponent );
     }
 
-    protected IRubyObject createComponent(final Ruby runtime) throws Exception {
+    protected synchronized IRubyObject createComponent(final Ruby runtime) throws Exception {
         prepareInjections(runtime);
         IRubyObject rubyComponent = this.componentInstantiator.newInstance( runtime, this.initializeParams );
         return rubyComponent;
