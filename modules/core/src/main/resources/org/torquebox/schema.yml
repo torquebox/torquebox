@@ -50,7 +50,10 @@
           -config:
             type: map
             arbitrary: true
+<<<<<<< HEAD
           -client_id: string
+=======
+>>>>>>> b9b7915e60a0139656af6e94277c14b7067089a2
     list:
       value-types:
         string:
@@ -142,4 +145,8 @@
   -static:
   -session-timeout:
     type: string
+<<<<<<< HEAD
     regex: ^[0-9]+\s*(ms|s|m|h)\s*
+=======
+    regex: ^[0-9]+\s*(ms|s|m|h)\s*
+>>>>>>> b9b7915e60a0139656af6e94277c14b7067089a2
