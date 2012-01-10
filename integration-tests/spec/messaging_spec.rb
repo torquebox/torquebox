@@ -86,6 +86,21 @@ remote_describe "in-container messaging tests" do
     end
   end
 
+  describe "message ttl" do
+    it "should live" do
+      with_queue("/queues/ttl") do |queue|
+        queue.publish "live!", :ttl => 9999
+        queue.receive(:timeout => 1000).should_not be_nil
+      end
+    end
+    it "should die" do
+      with_queue("/queues/ttl") do |queue|
+        queue.publish "die!", :ttl => 1
+        queue.receive(:timeout => 1000).should be_nil
+      end
+    end
+  end
+
   context "message selectors" do
     {
       'prop = true' => true,
