@@ -153,7 +153,10 @@ module TorqueBox
         archive = normalize_archive_name( find_option( opts, 'name' ) || archive_name )
         app_dir = find_option( opts, 'app_dir') || Dir.pwd
         dest_dir = find_option( opts, 'dest_dir') || Dir.pwd
-        skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
+
+        default_skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
+        opts_skip_files = (find_option(opts, 'exclude') || "").split(/,/)
+        skip_files = default_skip_files + opts_skip_files
 
         archive_path = File.join(dest_dir, archive)
         
