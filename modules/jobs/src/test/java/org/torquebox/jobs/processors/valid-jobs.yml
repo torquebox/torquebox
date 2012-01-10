@@ -17,3 +17,9 @@ jobs:
     description: My singleton job class
     cron: 01 01 01 15 * ?
     singleton: true
+
+  job.four:
+    job: MyLongRunningJob
+    description: My long running job has timeout
+    cron: 01 01 01 15 * ?
+    timeout: 5000
