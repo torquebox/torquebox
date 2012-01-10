@@ -296,8 +296,12 @@ class AssemblyTool
     end
   end
 
-  def unquote_cookie_path(doc)
+  def tweak_jboss_web_properties(doc)
+    # Ensure cookie paths don't get quoted
     set_system_property(doc, 'org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR', false)
+    # Wait for an available thread instead of dropping new connections
+    # when max-threads is reached
+    set_system_property(doc, 'org.apache.tomcat.util.net.WAIT_FOR_THREAD', true)
   end
 
   def set_system_property(doc, name, value)
@@ -501,7 +505,7 @@ class AssemblyTool
       add_subsystems(doc, options[:extra_modules])
       add_cache(doc)
       set_welcome_root(doc)
-      unquote_cookie_path(doc)
+      tweak_jboss_web_properties(doc)
       remove_destinations(doc)
       disable_management_security(doc)
 
