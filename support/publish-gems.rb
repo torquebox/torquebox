@@ -24,6 +24,7 @@ gem_order = %w{
     torquebox-web
     torquebox
     torquebox-server
+    torquebox-no-op
 }
 
 if gem_map.keys.sort != gem_order.sort
