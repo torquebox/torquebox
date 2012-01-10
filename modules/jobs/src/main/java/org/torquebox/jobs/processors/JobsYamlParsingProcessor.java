@@ -20,6 +20,7 @@
 package org.torquebox.jobs.processors;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -75,6 +76,32 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             jobMetaData.setSingleton( singleton == null ? true : (Boolean) singleton );
     
             unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
+
+            String timeoutStr = jobSpec.containsKey( "job-timeout" ) ?
+                jobSpec.get( "job-timeout" ).toString() : null;
+
+            TimeUnit timeUnit = TimeUnit.MINUTES;
+
+            if (timeoutStr != null) {
+                timeoutStr = timeoutStr.trim();
+                if (timeoutStr.endsWith("m")) {
+                    timeUnit = TimeUnit.MINUTES;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 1);
+                } else if (timeoutStr.endsWith("h")) {
+                    timeUnit = TimeUnit.HOURS;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 1);
+                } else if (timeoutStr.endsWith("ms")) {
+                    timeUnit = TimeUnit.MILLISECONDS;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 2);
+                } else if (timeoutStr.endsWith("s")) {
+                    timeUnit = TimeUnit.SECONDS;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 1);
+                }
+                long timeout = Long.parseLong(timeoutStr.trim());
+                jobMetaData.setJobTimeout(timeout, timeUnit);
+
+            }
+
         }
     }
 

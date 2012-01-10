@@ -62,7 +62,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
         assertNotNull( allJobMetaData );
-        assertEquals( 3, allJobMetaData.size() );
+        assertEquals( 4, allJobMetaData.size() );
 
         ScheduledJobMetaData jobOne = getJobMetaData( allJobMetaData, "job.one" );
         assertNotNull( jobOne );
@@ -92,8 +92,40 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertFalse( jobThree.isSingleton() );
         assertNotNull( jobTwo.getGroup() );
 
+        ScheduledJobMetaData jobFour = getJobMetaData( allJobMetaData, "job.four" );
+        assertNotNull( jobFour );
+        assertEquals( "job.four", jobFour.getName() );
+        assertEquals( "My long running job has timeout", jobFour.getDescription() );
+        assertEquals( "01 01 01 15 * ?", jobFour.getCronExpression() );
+        assertEquals( "MyLongRunningJob", jobFour.getRubyClassName() );
+        assertEquals( 5, jobFour.getJobTimeout() );
+        assertFalse( jobFour.isSingleton() );
+        assertNotNull( jobFour.getGroup() );
+
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
         assertEquals( jobOne.getGroup(), jobThree.getGroup() );
+    }
+
+    @Test
+    public void testNoUnitsJobTimeout() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "timeout-nounits-jobs.yml" );
+
+        List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
+
+        assertNotNull( allJobMetaData );
+        assertEquals( 1, allJobMetaData.size() );
+
+        ScheduledJobMetaData jobOne = getJobMetaData( allJobMetaData, "job.one" );
+        assertNotNull( jobOne );
+        assertEquals( "job.one", jobOne.getName() );
+        assertEquals( "My Job is routine", jobOne.getDescription() );
+        assertEquals( "01 * * * * ?", jobOne.getCronExpression() );
+        assertEquals( "MyNoUnitJobClass", jobOne.getRubyClassName() );
+        assertEquals( 3600, jobOne.getJobTimeout() );
+
+        assertFalse( jobOne.isSingleton() );
+        assertNotNull( jobOne.getGroup() );
+
     }
     
     @Test

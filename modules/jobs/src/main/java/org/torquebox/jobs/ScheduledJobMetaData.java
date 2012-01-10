@@ -19,10 +19,11 @@
 
 package org.torquebox.jobs;
 
-import java.util.Map;
-
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
+
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class ScheduledJobMetaData {
     public static final AttachmentKey<AttachmentList<ScheduledJobMetaData>> ATTACHMENTS_KEY = 
@@ -104,10 +105,29 @@ public class ScheduledJobMetaData {
         return this.rubySchedulerName;
     }
 
+    public long getJobTimeout() {
+        return jobTimeout;
+    }
+
+    public void setJobTimeout(long timeout, TimeUnit unit) {
+        if (timeout < 0) {
+            this.jobTimeout = -1;
+            return;
+        }
+        long convertedTimeout = TimeUnit.SECONDS.convert( timeout, unit );
+
+        if (convertedTimeout > Integer.MAX_VALUE) {
+            this.jobTimeout = Integer.MAX_VALUE;
+        } else {
+            this.jobTimeout = (int) convertedTimeout;
+        }
+    }
+
     private String group;
     private String name;
     private String description;
     private String cronExpression;
+    private long jobTimeout;
     private String rubyClassName;
     private String rubyRequirePath;
     private Map<String, Object> parameters;
