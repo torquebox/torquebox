@@ -29,6 +29,7 @@
     <module>rake-support</module>
     <module>capistrano-support</module>
 
+    <module>no-op</module>
     <module>torquebox</module>
   </modules>
 
