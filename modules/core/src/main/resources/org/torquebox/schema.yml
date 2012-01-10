@@ -14,6 +14,8 @@
         arbitrary: true
 -environment:
   arbitrary: true
+-injection:
+  -enabled: boolean
 -jobs:
   dependencies: /application/root
   type: map
@@ -27,6 +29,7 @@
       -config:
         type: map
         arbitrary: true
+      -timeout: string  
 -messaging:
   type: map
   arbitrary: true
@@ -47,6 +50,7 @@
           -config:
             type: map
             arbitrary: true
+          -client_id: string
     list:
       value-types:
         string:
