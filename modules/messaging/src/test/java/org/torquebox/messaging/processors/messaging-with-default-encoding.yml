@@ -1,5 +1,5 @@
 messaging:
-  default_message_encoding: biscuit
+  default_message_encoding: marshal
 
   /topics/foo:
     MyClass:
