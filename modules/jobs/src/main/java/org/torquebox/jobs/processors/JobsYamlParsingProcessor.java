@@ -46,7 +46,7 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             String description = (String) jobSpec.get( "description" );
             String job = (String) jobSpec.get( "job" );
             String cron = (String) jobSpec.get( "cron" );
-            Object timeout = jobSpec.get( "timeout" );
+            String timeout = (String) jobSpec.get( "timeout" );
             Object singleton = jobSpec.get("singleton");
             Map<String, Object> params = (Map<String, Object>)jobSpec.get( "config" );
             
@@ -71,7 +71,7 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             }
             jobMetaData.setRubyClassName( job.trim() );
             jobMetaData.setCronExpression( cron.trim() );
-            jobMetaData.setTimeout(timeout == null? 0 : (Integer) timeout);
+            jobMetaData.setTimeout(timeout == null? "" : timeout);
             jobMetaData.setParameters( params );
             jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
             jobMetaData.setSingleton( singleton == null ? false : (Boolean) singleton );
