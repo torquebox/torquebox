@@ -104,11 +104,11 @@ public class ScheduledJobMetaData {
         return this.rubySchedulerName;
     }
 
-    public int getTimeout() {
+    public String getTimeout() {
         return timeout;
     }
 
-    public void setTimeout(int timeout) {
+    public void setTimeout(String timeout) {
         this.timeout = timeout;
     }
 
@@ -116,7 +116,7 @@ public class ScheduledJobMetaData {
     private String name;
     private String description;
     private String cronExpression;
-    private int timeout;
+    private String timeout;
     private String rubyClassName;
     private String rubyRequirePath;
     private Map<String, Object> parameters;
