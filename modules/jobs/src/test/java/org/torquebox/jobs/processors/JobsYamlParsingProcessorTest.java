@@ -98,7 +98,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "My long running job has timeout", jobFour.getDescription() );
         assertEquals( "01 01 01 15 * ?", jobFour.getCronExpression() );
         assertEquals( "MyLongRunningJob", jobFour.getRubyClassName() );
-        assertEquals( 5000, jobFour.getTimeout() );
+        assertEquals( "5000 ms", jobFour.getTimeout() );
         assertFalse( jobFour.isSingleton() );
         assertNotNull( jobFour.getGroup() );
 
