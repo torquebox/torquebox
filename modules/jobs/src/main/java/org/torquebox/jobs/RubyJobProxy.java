@@ -21,15 +21,12 @@ package org.torquebox.jobs;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.StatefulJob;
+import org.quartz.*;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.component.JobComponent;
 
-public class RubyJobProxy implements Job, StatefulJob {
+public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
 
     public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver) {
         this.runtimePool = runtimePool;
@@ -52,11 +49,17 @@ public class RubyJobProxy implements Job, StatefulJob {
          }
     }
 
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+        log.info("|||||||||||||||||||| The job was interrupted  ||||||||||||||||||||");
+    }
+
     private RubyRuntimePool runtimePool;
     private ComponentResolver resolver;
 
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
-    
+
+
 
 }
