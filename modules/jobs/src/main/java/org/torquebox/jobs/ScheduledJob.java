@@ -19,8 +19,6 @@
 
 package org.torquebox.jobs;
 
-import java.text.ParseException;
-
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.value.InjectedValue;
@@ -29,6 +27,8 @@ import org.projectodd.polyglot.jobs.BaseScheduledJob;
 import org.quartz.SchedulerException;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
+
+import java.text.ParseException;
 
 public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean {
     public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
@@ -41,6 +41,7 @@ public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean 
     public synchronized void start() throws ParseException, SchedulerException {
         JobScheduler jobScheduler = (JobScheduler)((Value)getJobSchedulerInjector()).getValue();
         jobScheduler.addComponentResolver( getName(), this.componentResolverInjector.getValue() );
+        jobScheduler.getScheduler().addGlobalTriggerListener(new RubyTriggerListener());
         super.start();
     }
 
