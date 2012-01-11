@@ -48,8 +48,8 @@ public class RubyTriggerListener implements TriggerListener {
 
     private static void registerWatchDog(final JobExecutionContext jobExecutionContext) {
 
-        int delay = (Integer) jobExecutionContext.getJobDetail().getJobDataMap().get("timeout");
-
+        //int delay = (Integer) jobExecutionContext.getJobDetail().getJobDataMap().get("timeout");
+        int delay = 5000; //will be changed on polyglot
         //TODO Replace ExecutorService by JBossThreadPool
         ScheduledExecutorService service = Executors.newScheduledThreadPool(1);
 
@@ -70,12 +70,12 @@ public class RubyTriggerListener implements TriggerListener {
 
     @Override
     public void triggerMisfired(Trigger trigger) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // TODO include some action here
     }
 
     @Override
     public void triggerComplete(Trigger trigger, JobExecutionContext jobExecutionContext, int i) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // TODO include some action here
     }
 
     private static final Logger log = Logger.getLogger("org.torquebox.jobs");
