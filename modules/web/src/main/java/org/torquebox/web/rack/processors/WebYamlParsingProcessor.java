@@ -65,7 +65,8 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
             rackAppMetaData.addHost( (String) hosts );
         }
 
-        String timeoutStr = (String) webData.get( "session-timeout" );
+        String timeoutStr = webData.containsKey( "session-timeout" ) ?
+                webData.get( "session-timeout" ).toString() : null;
 
         TimeUnit timeUnit = TimeUnit.MINUTES;
 

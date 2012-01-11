@@ -142,4 +142,4 @@
   -static:
   -session-timeout:
     type: string
-    regex: ^[0-9]+\s*(ms|s|m|h)\s*
+    regex: ^[0-9]+(\s*(ms|s|m|h)\s*){0,1}$
