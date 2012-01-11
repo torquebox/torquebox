@@ -33,15 +33,14 @@ import java.text.ParseException;
 public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean {
     public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
 	
-    public ScheduledJob(String group, String name, String description, String cronExpression, boolean singleton, String rubyClassName) {
-        super( RubyJobProxy.class, group, name, description, cronExpression, singleton );
+    public ScheduledJob(String group, String name, String description, String cronExpression, String timeout, boolean singleton, String rubyClassName) {
+        super( RubyJobProxy.class, group, name, description, cronExpression, timeout, singleton );
         this.rubyClassName = rubyClassName;
     }
    
     public synchronized void start() throws ParseException, SchedulerException {
         JobScheduler jobScheduler = (JobScheduler)((Value)getJobSchedulerInjector()).getValue();
         jobScheduler.addComponentResolver( getName(), this.componentResolverInjector.getValue() );
-        jobScheduler.getScheduler().addGlobalTriggerListener(new RubyTriggerListener());
         super.start();
     }
 
