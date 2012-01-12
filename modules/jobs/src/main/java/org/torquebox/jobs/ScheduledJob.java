@@ -33,7 +33,7 @@ import java.text.ParseException;
 public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean {
     public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
 	
-    public ScheduledJob(String group, String name, String description, String cronExpression, String timeout, boolean singleton, String rubyClassName) {
+    public ScheduledJob(String group, String name, String description, String cronExpression, long timeout, boolean singleton, String rubyClassName) {
         super( RubyJobProxy.class, group, name, description, cronExpression, timeout, singleton );
         this.rubyClassName = rubyClassName;
     }
