@@ -105,6 +105,28 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
         assertEquals( jobOne.getGroup(), jobThree.getGroup() );
     }
+
+    @Test
+    public void testNoUnitsJobTimeout() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "timeout-nounits-jobs.yml" );
+
+        List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
+
+        assertNotNull( allJobMetaData );
+        assertEquals( 1, allJobMetaData.size() );
+
+        ScheduledJobMetaData jobOne = getJobMetaData( allJobMetaData, "job.one" );
+        assertNotNull( jobOne );
+        assertEquals( "job.one", jobOne.getName() );
+        assertEquals( "My Job is routine", jobOne.getDescription() );
+        assertEquals( "01 * * * * ?", jobOne.getCronExpression() );
+        assertEquals( "MyNoUnitJobClass", jobOne.getRubyClassName() );
+        assertEquals( 3600, jobOne.getJobTimeout() );
+
+        assertFalse( jobOne.isSingleton() );
+        assertNotNull( jobOne.getGroup() );
+
+    }
     
     @Test
     public void testRootless() throws Exception {

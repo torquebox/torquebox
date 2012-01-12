@@ -1,6 +1,6 @@
 jobs:
   job.one:
-    job: MyJobClass
+    job: MyNoUnitJobClass
     description: My Job is routine
     cron: 01 * * * * ?
     job-timeout: 60
