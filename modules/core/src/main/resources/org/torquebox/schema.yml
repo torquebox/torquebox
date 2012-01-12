@@ -44,7 +44,7 @@
         string:
           required: false
         map:
-          -concurrency: natural
+          -concurrency: integer
           -filter: string
           -durable: boolean
           -config:
@@ -58,7 +58,7 @@
           arbitrary: true
           value-types:
             map:
-              -concurrency: natural
+              -concurrency: integer
               -filter: string
               -durable: boolean
               -config:
@@ -128,7 +128,7 @@
     string:
       required: false
     map:
-      -concurrency: natural
+      -concurrency: integer
 -web:
   arbitrary: true
   dependencies: /application/root
