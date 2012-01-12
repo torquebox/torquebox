@@ -20,6 +20,7 @@
 package org.torquebox.jobs.processors;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -46,7 +47,7 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             String description = (String) jobSpec.get( "description" );
             String job = (String) jobSpec.get( "job" );
             String cron = (String) jobSpec.get( "cron" );
-            String timeout = (String) jobSpec.get( "timeout" );
+            String timeoutStr = (String) jobSpec.get( "job-timeout" );
             Object singleton = jobSpec.get("singleton");
             Map<String, Object> params = (Map<String, Object>)jobSpec.get( "config" );
             
@@ -71,12 +72,34 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             }
             jobMetaData.setRubyClassName( job.trim() );
             jobMetaData.setCronExpression( cron.trim() );
-            jobMetaData.setTimeout(timeout == null? "" : timeout);
             jobMetaData.setParameters( params );
             jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
             jobMetaData.setSingleton( singleton == null ? false : (Boolean) singleton );
     
             unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
+
+            TimeUnit timeUnit = TimeUnit.MINUTES;
+
+            if (timeoutStr != null) {
+                timeoutStr = timeoutStr.trim();
+                if (timeoutStr.endsWith("m")) {
+                    timeUnit = TimeUnit.MINUTES;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 1);
+                } else if (timeoutStr.endsWith("h")) {
+                    timeUnit = TimeUnit.HOURS;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 1);
+                } else if (timeoutStr.endsWith("ms")) {
+                    timeUnit = TimeUnit.MILLISECONDS;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 2);
+                } else if (timeoutStr.endsWith("s")) {
+                    timeUnit = TimeUnit.SECONDS;
+                    timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 1);
+                }
+                long timeout = Long.parseLong(timeoutStr.trim());
+                jobMetaData.setJobTimeout(timeout, timeUnit);
+
+            }
+
         }
     }
 
