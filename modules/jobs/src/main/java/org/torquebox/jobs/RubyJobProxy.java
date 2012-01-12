@@ -28,6 +28,9 @@ import org.torquebox.jobs.component.JobComponent;
 
 public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
 
+    private Ruby ruby;
+    private JobComponent job;
+
     public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver) {
         this.runtimePool = runtimePool;
         this.resolver = resolver;
@@ -35,10 +38,9 @@ public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-    	 Ruby ruby = null;
          try {
              ruby = this.runtimePool.borrowRuntime( resolver.getComponentName() );
-             JobComponent job = (JobComponent)resolver.resolve( ruby );
+             job = (JobComponent)resolver.resolve( ruby );
              job.run();
          } catch (Exception e) {
         	 throw new JobExecutionException( e );
@@ -51,7 +53,18 @@ public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
 
     @Override
     public void interrupt() throws UnableToInterruptJobException {
-        log.info("|||||||||||||||||||| The job was interrupted  ||||||||||||||||||||");
+         log.info("|||||||||||||||||||| Interruption Job  ||||||||||||||||||||");
+         try {
+             ruby = this.runtimePool.borrowRuntime( resolver.getComponentName() );
+             job = (JobComponent)resolver.resolve( ruby );
+             job.onTimeout();
+         } catch (Exception e) {
+        	 throw new UnableToInterruptJobException( e );
+         } finally {
+        	 if (ruby != null) {
+        		 this.runtimePool.returnRuntime( ruby );
+        	 }
+         }
     }
 
     private RubyRuntimePool runtimePool;
