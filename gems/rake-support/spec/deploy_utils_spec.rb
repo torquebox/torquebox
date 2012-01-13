@@ -306,4 +306,53 @@ describe TorqueBox::DeployUtils do
       options.should include('-b 0.0.0.0')
     end
   end
+
+  describe '.create_archive' do
+    it 'should not include excluded dirs and files' do
+      @util.should_receive(:exec_command) do |arg|
+        ["config.ru", "app"].permutation.map {|p|
+          "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
+        }.should include(arg)
+      end
+
+      path = @util.create_archive(
+          :name => "simpleapp",
+          :app_dir => File.join(File.dirname(__FILE__), 'fixtures/simpleapp'),
+          :dest_dir => "/tmp",
+          :exclude => "puppet,simpleapp.box"
+      )
+      path.should == "/tmp/simpleapp.knob"
+    end
+
+    it 'should exclude based on patterns' do
+      @util.should_receive(:exec_command) do |arg|
+        ["puppet", "config.ru", "app"].permutation.map {|p|
+          "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
+        }.should include(arg)
+      end
+
+      path = @util.create_archive(
+          :name => "simpleapp",
+          :app_dir => File.join(File.dirname(__FILE__), 'fixtures/simpleapp'),
+          :dest_dir => "/tmp",
+          :exclude => ".box"
+      )
+      path.should == "/tmp/simpleapp.knob"
+    end
+
+    it 'should include all dirs and files except default' do
+      @util.should_receive(:exec_command) do |arg|
+        ["config.ru", "app", "puppet", "simpleapp.box"].permutation.map {|p|
+          "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
+        }.should include(arg)
+      end
+
+      path = @util.create_archive(
+          :name => "simpleapp",
+          :app_dir => File.join(File.dirname(__FILE__), 'fixtures/simpleapp'),
+          :dest_dir => "/tmp"
+      )
+      path.should == "/tmp/simpleapp.knob"
+    end
+  end
 end
