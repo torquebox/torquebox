@@ -82,7 +82,7 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
                 jobSpec.get( "timeout" ).toString() : null;
 
             if (timeoutStr != null) {
-                TimeIntervalUtil.IntervalData timeout = TimeIntervalUtil.parseInterval( timeoutStr, TimeUnit.MINUTES );
+                TimeIntervalUtil.IntervalData timeout = TimeIntervalUtil.parseInterval( timeoutStr, TimeUnit.SECONDS );
                     
                 if (timeout != null) {
                     jobMetaData.setTimeout(timeout.interval, timeout.unit);
