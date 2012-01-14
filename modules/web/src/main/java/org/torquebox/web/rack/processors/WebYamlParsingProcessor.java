@@ -78,12 +78,12 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
             } else if (timeoutStr.endsWith( "h" )) {
                 timeUnit = TimeUnit.HOURS;
                 timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
-            } else if (timeoutStr.endsWith( "s" )) {
-                timeUnit = TimeUnit.SECONDS;
-                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
             } else if (timeoutStr.endsWith( "ms" )) {
                 timeUnit = TimeUnit.MILLISECONDS;
                 timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 2 );
+            } else if (timeoutStr.endsWith("s")) {
+                timeUnit = TimeUnit.SECONDS;
+                timeoutStr = timeoutStr.substring(0, timeoutStr.length() - 1);
             }
             long timeout = Long.parseLong( timeoutStr.trim() );
             rackAppMetaData.setSessionTimeout( timeout, timeUnit );
