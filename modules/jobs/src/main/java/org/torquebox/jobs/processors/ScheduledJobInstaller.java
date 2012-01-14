@@ -84,7 +84,7 @@ public class ScheduledJobInstaller extends ClusterAwareProcessor {
                 metaData.getName(),
                 metaData.getDescription(),
                 metaData.getCronExpression(),
-                metaData.getJobTimeout(),
+                metaData.getTimeout(),
                 metaData.isSingleton(),
                 metaData.getRubyClassName()
                 );

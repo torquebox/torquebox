@@ -29,7 +29,7 @@
       -config:
         type: map
         arbitrary: true
-      -job-timeout:
+      -timeout:
         type: string
         regex: ^[0-9]+(\s*(ms|s|m|h)\s*){0,1}$
 -messaging:

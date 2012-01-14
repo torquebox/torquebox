@@ -139,7 +139,7 @@ jobs:
   mail.notifier:
     job:         Mail::Notifier
     cron:        '0 */5 * * * ?'
-    job-timeout: 50000 ms
+    timeout: 50000 ms
     description: Deliver queued mail notifications
     config: 
       throttle: true</programlisting></para>
@@ -218,11 +218,11 @@ end</programlisting></para>
       <code>?</code> character, since specifying both is contradictory.</para>
 
       <para>To configure timeout interruption for long running jobs you must
-      setup <literal>job-timeout</literal> field and specify time unit suffix
+      setup <literal>timeout</literal> field and specify time unit suffix
       where <literal>ms</literal> = milliseconds, <literal>s</literal> =
       seconds, <literal>m</literal> = minutes and <literal>h</literal> =
       hours. If no suffix provided, <literal>milliseconds</literal> will be
-      assumed by default. Ex: <literal>job-timeout: 50 m</literal> will be
+      assumed by default. Ex: <literal>timeout: 50 m</literal> will be
       converted in minutes.</para>
     </section>
   </section>

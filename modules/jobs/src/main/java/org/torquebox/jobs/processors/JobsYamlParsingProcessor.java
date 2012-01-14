@@ -78,14 +78,14 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
     
             unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
 
-            String timeoutStr = jobSpec.containsKey( "job-timeout" ) ?
-                jobSpec.get( "job-timeout" ).toString() : null;
+            String timeoutStr = jobSpec.containsKey( "timeout" ) ?
+                jobSpec.get( "timeout" ).toString() : null;
 
             if (timeoutStr != null) {
                 TimeIntervalUtil.IntervalData timeout = TimeIntervalUtil.parseInterval( timeoutStr, TimeUnit.MINUTES );
                     
                 if (timeout != null) {
-                    jobMetaData.setJobTimeout( timeout.interval, timeout.unit );
+                    jobMetaData.setTimeout(timeout.interval, timeout.unit);
                 }
             }
         }

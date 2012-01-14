@@ -3,4 +3,4 @@ jobs:
     job: MyNoUnitJobClass
     description: My Job is routine
     cron: 01 * * * * ?
-    job-timeout: 60
+    timeout: 60
