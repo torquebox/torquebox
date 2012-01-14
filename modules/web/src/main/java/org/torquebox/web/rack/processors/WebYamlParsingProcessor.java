@@ -69,10 +69,13 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
         String timeoutStr = webData.containsKey( "session-timeout" ) ?
                 webData.get( "session-timeout" ).toString() : null;
 
-        TimeIntervalUtil.IntervalData intervalData = TimeIntervalUtil.parseInterval(timeoutStr, TimeUnit.MINUTES);
-
-        rackAppMetaData.setSessionTimeout(intervalData.interval, intervalData.unit);
-
+        if (timeoutStr != null) {
+            TimeIntervalUtil.IntervalData timeout = TimeIntervalUtil.parseInterval( timeoutStr, TimeUnit.MINUTES );
+            
+            if (timeout != null) {
+                rackAppMetaData.setSessionTimeout( timeout.interval, timeout.unit );
+            }
+        }
     }
 
     @SuppressWarnings("unused")
