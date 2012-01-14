@@ -21,15 +21,15 @@ package org.torquebox.jobs;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.StatefulJob;
+import org.quartz.*;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.component.JobComponent;
 
-public class RubyJobProxy implements Job, StatefulJob {
+public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
+
+    private Ruby ruby;
+    private JobComponent job;
 
     public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver) {
         this.runtimePool = runtimePool;
@@ -38,13 +38,28 @@ public class RubyJobProxy implements Job, StatefulJob {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-    	 Ruby ruby = null;
          try {
              ruby = this.runtimePool.borrowRuntime( resolver.getComponentName() );
-             JobComponent job = (JobComponent)resolver.resolve( ruby );
+             job = (JobComponent)resolver.resolve( ruby );
              job.run();
          } catch (Exception e) {
         	 throw new JobExecutionException( e );
+         } finally {
+        	 if (ruby != null) {
+        		 this.runtimePool.returnRuntime( ruby );
+        	 }
+         }
+    }
+
+    @Override
+    public void interrupt() throws UnableToInterruptJobException {
+         log.info("|||||||||||||||||||| Interruption Job  ||||||||||||||||||||");
+         try {
+             ruby = this.runtimePool.borrowRuntime( resolver.getComponentName() );
+             job = (JobComponent)resolver.resolve( ruby );
+             job.onTimeout();
+         } catch (Exception e) {
+        	 throw new UnableToInterruptJobException( e );
          } finally {
         	 if (ruby != null) {
         		 this.runtimePool.returnRuntime( ruby );
@@ -57,6 +72,7 @@ public class RubyJobProxy implements Job, StatefulJob {
 
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
-    
+
+
 
 }

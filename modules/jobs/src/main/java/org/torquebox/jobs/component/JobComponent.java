@@ -27,4 +27,8 @@ public class JobComponent extends AbstractRubyComponent {
     	_callRubyMethod( "run" );
     }
 
+    public void onTimeout(){
+        _callRubyMethod( "on_timeout" );
+    }
+
 }

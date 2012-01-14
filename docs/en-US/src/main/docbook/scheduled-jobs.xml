@@ -81,12 +81,24 @@ end</programlisting></para>
 
     end
 
+    def on_timeout
+    
+      # perform work here 
+
+    end
+
   end
 end</programlisting></para>
       </example></para>
 
     <para>From within the class's <methodname>run()</methodname> method, the
-    full application environment is available.</para>
+    full application environment is available. In some cases scheduled jobs
+    runs longer than the scheduled interval time, in this case
+    <methodname>on_timeout</methodname> method will be invoked to perform some
+    action before job be interrupted by timeout.</para>
+
+    <para>We will look further in the next sections to understand how to
+    configure job timeouts.</para>
   </section>
 
   <section id="scheduling-jobs">
@@ -127,11 +139,12 @@ jobs:
   mail.notifier:
     job:         Mail::Notifier
     cron:        '0 */5 * * * ?'
+    job-timeout: 50000 ms
     description: Deliver queued mail notifications
     config: 
       throttle: true</programlisting></para>
 
-         <para>And via the DSL:<programlisting>TorqueBox.configure do
+          <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
   job Mail::Notifier do
     name 'mail.notifier' # optional, unless the job class is used by multiple jobs
@@ -203,6 +216,14 @@ end</programlisting></para>
 
       <para>Either day-of-month or day-of-week must be specified using the
       <code>?</code> character, since specifying both is contradictory.</para>
+
+      <para>To configure timeout interruption for long running jobs you must
+      setup <literal>job-timeout</literal> field and specify time unit suffix
+      where <literal>ms</literal> = milliseconds, <literal>s</literal> =
+      seconds, <literal>m</literal> = minutes and <literal>h</literal> =
+      hours. If no suffix provided, <literal>milliseconds</literal> will be
+      assumed by default. Ex: <literal>job-timeout: 50 m</literal> will be
+      converted in minutes.</para>
     </section>
   </section>
 
