@@ -121,7 +121,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "My Job is routine", jobOne.getDescription() );
         assertEquals( "01 * * * * ?", jobOne.getCronExpression() );
         assertEquals( "MyNoUnitJobClass", jobOne.getRubyClassName() );
-        assertEquals( 3600, jobOne.getTimeout() );
+        assertEquals( 60, jobOne.getTimeout() );
 
         assertFalse( jobOne.isSingleton() );
         assertNotNull( jobOne.getGroup() );
