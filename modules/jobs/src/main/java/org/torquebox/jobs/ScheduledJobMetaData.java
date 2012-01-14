@@ -105,21 +105,21 @@ public class ScheduledJobMetaData {
         return this.rubySchedulerName;
     }
 
-    public long getJobTimeout() {
-        return jobTimeout;
+    public long getTimeout() {
+        return timeout;
     }
 
-    public void setJobTimeout(long timeout, TimeUnit unit) {
+    public void setTimeout(long timeout, TimeUnit unit) {
         if (timeout < 0) {
-            this.jobTimeout = -1;
+            this.timeout = -1;
             return;
         }
         long convertedTimeout = TimeUnit.SECONDS.convert( timeout, unit );
 
         if (convertedTimeout > Integer.MAX_VALUE) {
-            this.jobTimeout = Integer.MAX_VALUE;
+            this.timeout = Integer.MAX_VALUE;
         } else {
-            this.jobTimeout = (int) convertedTimeout;
+            this.timeout = (int) convertedTimeout;
         }
     }
 
@@ -127,7 +127,7 @@ public class ScheduledJobMetaData {
     private String name;
     private String description;
     private String cronExpression;
-    private long jobTimeout;
+    private long timeout;
     private String rubyClassName;
     private String rubyRequirePath;
     private Map<String, Object> parameters;
