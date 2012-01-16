@@ -301,7 +301,8 @@ class AssemblyTool
     set_system_property(doc, 'org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR', false)
     # Wait for an available thread instead of dropping new connections
     # when max-threads is reached
-    set_system_property(doc, 'org.apache.tomcat.util.net.WAIT_FOR_THREAD', true)
+    # FIXME: Temporarily disabled because of performance issues
+    set_system_property(doc, 'org.apache.tomcat.util.net.WAIT_FOR_THREAD', false)
   end
 
   def set_system_property(doc, name, value)
