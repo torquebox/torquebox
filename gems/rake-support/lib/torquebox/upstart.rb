@@ -17,6 +17,7 @@
 
 # Helpers for upstart rake tasks
 
+require 'erb'
 require 'torquebox/deploy_utils'
 
 module TorqueBox
@@ -35,9 +36,16 @@ module TorqueBox
         File.join( init_dir, 'torquebox.conf' )
       end
 
-      def copy_init_script
+      def copy_init_script(opts={})
         if File.writable?( init_dir )
-          FileUtils.cp( init_script, init_dir )
+          if ( server_opts = TorqueBox::DeployUtils.find_option(opts, 'server_opts') )
+            to_init_file = File.join( init_dir, File.basename(init_script) )
+            File.open( to_init_file, 'w' ) do |f|
+              f.write( process_init_template(server_opts) )
+            end
+          else
+            FileUtils.cp( init_script, init_dir )
+          end
         else
           puts "Cannot write upstart configuration to #{init_dir}. You'll need to copy #{init_script} to #{init_dir} yourself."
         end
@@ -49,6 +57,11 @@ module TorqueBox
         puts "TorqueBox init scripts OK: #{init_torquebox}"
       end
 
+      # param names are important to the template
+      def process_init_template(server_opts)
+        template = ERB.new File.new( "#{init_script}.erb" ).read
+        template.result(binding)
+      end
     end
   end
 end

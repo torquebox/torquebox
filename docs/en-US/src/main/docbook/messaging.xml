@@ -143,8 +143,22 @@
         and undeploy them separate from any app, creating additional
         work.</para>
       </section>
-    </section>
 
+      <section id="destination-deployment-runtime">
+        <title>Deploying destinations at runtime</title>
+
+        <para>You can also choose to deploy messaging destinations at runtime:</para>
+
+        <para><example>
+          <title>Deploying queues and topics at runtime</title>
+        
+          <para><programlisting>TorqueBox::Messaging::Queue.start '/queues/foo'
+TorqueBox::Messaging::Topic.start '/topics/bar'</programlisting>
+          </para></example>
+        </para>
+      </section>
+    </section>
+  
     <section id="messaging-deployment-descriptors">
       <title>Deployment Descriptors</title>
 
