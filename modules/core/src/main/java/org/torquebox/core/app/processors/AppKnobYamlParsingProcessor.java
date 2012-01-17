@@ -77,6 +77,7 @@ public class AppKnobYamlParsingProcessor extends AbstractParsingProcessor {
                 } else {
                     appRoot = new ResourceRoot( root, null );
                 }
+                appRoot.putAttachment ( Attachments.INDEX_RESOURCE_ROOT, false );
                 unit.putAttachment( Attachments.DEPLOYMENT_ROOT, appRoot );
             }
             else {
