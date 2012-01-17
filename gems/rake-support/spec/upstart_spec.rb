@@ -4,6 +4,7 @@ describe TorqueBox::Upstart do
 
   describe ".copy_init_script" do
     it "should not use the template" do
+      pending "need fakefs or similar to properly test copy"
       # need fakefs or something
     end
   end
