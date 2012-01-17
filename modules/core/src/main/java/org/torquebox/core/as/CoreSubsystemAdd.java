@@ -112,8 +112,8 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobStructureProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 100, rootSafe( new AppJarScanningProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 800, new AppKnobYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 900, rootSafe( new AppJarScanningProcessor() ) );
 
         processorTarget.addDeploymentProcessor( Phase.PARSE, 0, rootSafe( new RubyApplicationRecognizer() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 5, new TorqueBoxYamlParsingProcessor() );

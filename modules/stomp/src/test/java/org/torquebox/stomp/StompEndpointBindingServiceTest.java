@@ -46,7 +46,7 @@ public class StompEndpointBindingServiceTest {
         Collection<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         NetworkInterfaceBinding networkInterfaceBinding = new NetworkInterfaceBinding( networkInterfaces, address );
         SocketBindingManager socketBindingManager = new SocketBindingManagerService( 0 );
-        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager );
+        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager, null );
         service.getSocketBindingInjector().inject( socketBinding );
         
         StartContext context = new MockStartContext();
@@ -66,7 +66,7 @@ public class StompEndpointBindingServiceTest {
         Collection<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         NetworkInterfaceBinding networkInterfaceBinding = new NetworkInterfaceBinding( networkInterfaces, address );
         SocketBindingManager socketBindingManager = new SocketBindingManagerService( 0 );
-        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager );
+        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager, null );
         service.getSocketBindingInjector().inject( socketBinding );
         
         StartContext context = new MockStartContext();
@@ -87,7 +87,7 @@ public class StompEndpointBindingServiceTest {
         Collection<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         NetworkInterfaceBinding networkInterfaceBinding = new NetworkInterfaceBinding( networkInterfaces, address );
         SocketBindingManager socketBindingManager = new SocketBindingManagerService( 0 );
-        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager );
+        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager, null );
         service.getSocketBindingInjector().inject( socketBinding );
         
         Host host = new StandardHost();
@@ -112,7 +112,7 @@ public class StompEndpointBindingServiceTest {
         Collection<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
         NetworkInterfaceBinding networkInterfaceBinding = new NetworkInterfaceBinding( networkInterfaces, address );
         SocketBindingManager socketBindingManager = new SocketBindingManagerService( 0 );
-        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager );
+        SocketBinding socketBinding = new SocketBinding("stomp", 8675, false, null, 0, networkInterfaceBinding, socketBindingManager, null );
         service.getSocketBindingInjector().inject( socketBinding );
         
         Host host = new StandardHost();

@@ -35,7 +35,7 @@ module TorqueBox
 
       def with_new_connection(client_id = nil, &block)
         connection = create_connection
-        connection.client_id = client_id
+        connection.client_id = client_id if client_id
         connection.start
         begin
           result = block.call( connection )
