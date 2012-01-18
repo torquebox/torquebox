@@ -1109,7 +1109,7 @@ end</programlisting></para>
                 </row>
 
                 <row>
-                  <entry><parameter>filter</parameter></entry>
+                  <entry><parameter>selector</parameter></entry>
 
                   <entry></entry>
 
@@ -1163,7 +1163,7 @@ end</programlisting></para>
 messaging:
   /queues/foo:
     MyFooHandler:
-      filter: "cost &gt; 30"
+      selector: "cost &gt; 30"
       concurrency: 2
       config:
         type: "premium"
@@ -1177,7 +1177,7 @@ messaging:
   ...
   queue '/queues/foo' do
     processor MyFooHandler do 
-      filter "cost &gt; 30"
+      selector "cost &gt; 30"
       concurrency 2
       config do
         type "premium"
@@ -1212,7 +1212,7 @@ messaging:
     - Handler
         concurrency: 5
     - Observer: &amp;defaults
-        filter: "x &gt; 18"
+        selector: "x &gt; 18"
         config:
           x: ex
           y: why
@@ -1221,7 +1221,7 @@ messaging:
 /queues/students:
     VerySimpleAnalyzer:
     YouthMonitor:
-      filter: "y &lt; 18"
+      selector: "y &lt; 18"
       config:
         h: ache
         i: eye
@@ -1247,7 +1247,7 @@ messaging:
     processor SimpleHandler
   end
 
-  common_config = { :filter =&gt; "x &gt; 18", :config =&gt; { :x =&gt; 'ex', :y =&gt; 'why' } }
+  common_config = { :selector =&gt; "x &gt; 18", :config =&gt; { :x =&gt; 'ex', :y =&gt; 'why' } }
 
   topic '/topics/popular' do |topic| 
     topic.processor Handler, :concurrency =&gt; 5
@@ -1258,7 +1258,7 @@ messaging:
   queue '/queues/students' do |queue|
     queue.processor VerySimpleAnalyzer
     queue.processor YouthMonitor do 
-      filter "y &lt; 18"
+      selector "y &lt; 18"
       config do
         h 'ache'
         i 'eye'
