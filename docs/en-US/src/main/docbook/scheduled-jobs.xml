@@ -188,16 +188,16 @@ end</programlisting></para>
         </informaltable></para>
 
       <para>For several fields, you may denote subdivision by using the
-      forward-slash (<code>/</code>) character. To execute a task every 5
+      forward-slash (<code>/</code>) character. To execute a job every 5
       minutes, <code>*/5</code> in the minutes field would specify this
       condition.</para>
 
       <para>Spans may be indicated using the dash (<code>-</code>) character.
-      To execute a task Monday through Friday, <code>MON-FRI</code> should be
+      To execute a job Monday through Friday, <code>MON-FRI</code> should be
       used in the day-of-week field.</para>
 
       <para>Multiple values may be separated using the comma (<code>,</code>)
-      characeter. The specification of <code>1,15</code> in the day-of-month
+      character. The specification of <code>1,15</code> in the day-of-month
       field would result in the job firing on the 1st and 15th of each
       month.</para>
 
