@@ -45,7 +45,7 @@
           required: false
         map:
           -concurrency: integer
-          -filter: string
+          -selector: string
           -durable: boolean
           -config:
             type: map
@@ -59,7 +59,7 @@
           value-types:
             map:
               -concurrency: integer
-              -filter: string
+              -selector: string
               -durable: boolean
               -config:
                 arbitrary: true

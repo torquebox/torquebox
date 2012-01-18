@@ -99,7 +99,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         assertNotNull( metaData );
         assertEquals( "MyClass", metaData.getRubyClassName() );
         assertEquals( "/topics/foo", metaData.getDestinationName() );
-        assertEquals( "myfilter", metaData.getMessageSelector() );
+        assertEquals( "mySelector", metaData.getMessageSelector() );
         assertEquals( "toast", metaData.getRubyConfig().get( "a" ) );
         assertEquals( new Integer( 2 ), metaData.getConcurrency() );
     }
