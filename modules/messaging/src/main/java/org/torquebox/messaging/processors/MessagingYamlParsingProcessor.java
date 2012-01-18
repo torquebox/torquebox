@@ -122,7 +122,7 @@ public class MessagingYamlParsingProcessor extends AbstractSplitYamlParsingProce
             result.setDurable( (Boolean) options.get( "durable" ) );
             result.setClientID( (String) options.get( "client_id" ) );
             result.setDestinationName( destination );
-            result.setMessageSelector( (String) options.get( "filter" ) );
+            result.setMessageSelector( (String) options.get( "selector" ) );
             if (options.containsKey( "singleton" )) {
                 result.setSingleton( (Boolean) options.get( "singleton" ) );
             }
