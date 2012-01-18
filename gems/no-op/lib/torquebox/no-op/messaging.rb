@@ -6,8 +6,7 @@ module TorqueBox
       end
 
       def background(options = {})
-        # no-op
-        # todo: set a global option to run the method synchronously?
+        self
       end
 
       module ClassMethods
