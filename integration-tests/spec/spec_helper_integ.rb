@@ -11,7 +11,11 @@ require 'stilts-stomp-client'
 require 'driver_helper'
 
 def mbean(name)
-  JMX::MBean.establish_connection :command => /org.jboss.as.standalone/i
+  url = JMX::JDKHelper.find_local_url(/org.jboss.as.standalone/i)
+  puts "default jmx url: " + url
+  url.gsub!(/\d+\.\d+\.\d+\.\d+/, "127.0.0.1")
+  puts "using jmx url: " + url
+  JMX::MBean.establish_connection :url => url #:command => /org.jboss.as.standalone/i
   JMX::MBean.find_by_name(name)
 end
 
