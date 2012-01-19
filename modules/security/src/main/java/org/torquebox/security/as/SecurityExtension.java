@@ -44,7 +44,7 @@ public class SecurityExtension extends AbstractBootstrappableExtension {
 
 	private void initializeAuthentication(ExtensionContext context) {
 		log.info( "Initializing TorqueBox Auth Subsystem" );
-        final SubsystemRegistration registration = context.registerSubsystem( AUTHENTICATION_SUBSYSTEM_NAME );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( AuthSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
@@ -63,9 +63,9 @@ public class SecurityExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping( Namespace.CURRENT.getUriString(), AuthSubsystemParser.getInstance() );
+        context.setSubsystemXmlMapping( SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), AuthSubsystemParser.getInstance() );
     }
 
-    public static final String AUTHENTICATION_SUBSYSTEM_NAME = "torquebox-auth";
+    public static final String SUBSYSTEM_NAME = "torquebox-auth";
     static final Logger log = Logger.getLogger( "org.torquebox.security.as" );
 }
