@@ -1,0 +1,10 @@
+
+jobs:
+  job.one:
+    job: LongRunningJob
+    description: My long running job has timeout
+    cron: "*/3 * * * * ?"
+
+queues:
+  /queue/response:
+    durable: false
