@@ -31,7 +31,7 @@ public class BootstrapExtension implements Extension {
     @Override
     public void initialize(ExtensionContext context) {
         log.info( "Bootstrapping TorqueBox" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( BootstrapSubsystemProviders.SUBSYSTEM );
         registration.registerXMLElementWriter( BootstrapSubsystemParser.getInstance() );
     }
@@ -39,7 +39,7 @@ public class BootstrapExtension implements Extension {
     
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping( SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), BootstrapSubsystemParser.getInstance() );
+        context.setSubsystemXmlMapping( Namespace.CURRENT.getUriString(), BootstrapSubsystemParser.getInstance() );
     }
 
     public static final String SUBSYSTEM_NAME = "torquebox-bootstrap";

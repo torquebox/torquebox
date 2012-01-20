@@ -37,7 +37,7 @@ public class MessagingExtension extends AbstractBootstrappableExtension {
     public void initialize(ExtensionContext context) {
         bootstrap();
         log.info( "Initializing TorqueBox Messaging Subsystem" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( MessagingSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
@@ -56,7 +56,7 @@ public class MessagingExtension extends AbstractBootstrappableExtension {
     
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), MessagingSubsystemParser.getInstance());
+        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), MessagingSubsystemParser.getInstance());
     }
     
     

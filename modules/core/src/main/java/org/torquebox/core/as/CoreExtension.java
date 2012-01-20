@@ -44,7 +44,7 @@ public class CoreExtension extends AbstractBootstrappableExtension {
         bootstrap();
         
         log.info( "Initializing TorqueBox Core Subsystem" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CoreSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
@@ -79,7 +79,7 @@ public class CoreExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping( SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), CoreSubsystemParser.getInstance() );
+        context.setSubsystemXmlMapping( Namespace.CURRENT.getUriString(), CoreSubsystemParser.getInstance() );
     }
 
     public static final String SUBSYSTEM_NAME = "torquebox-core";

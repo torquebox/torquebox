@@ -37,7 +37,7 @@ public class StompExtension extends AbstractBootstrappableExtension {
     public void initialize(ExtensionContext context) {
         bootstrap();
         log.info( "Initializing TorqueBox STOMP Subsystem" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( StompSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
@@ -56,7 +56,7 @@ public class StompExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), StompSubsystemParser.getInstance());
+        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), StompSubsystemParser.getInstance());
     }
     
     public static final String SUBSYSTEM_NAME = "torquebox-stomp";
