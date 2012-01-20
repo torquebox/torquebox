@@ -51,6 +51,7 @@
             type: map
             arbitrary: true
           -client_id: string
+          -singleton: boolean
     list:
       value-types:
         string:
@@ -63,6 +64,8 @@
               -durable: boolean
               -config:
                 arbitrary: true
+              -client_id: string
+              -singleton: boolean
 -pooling:
   dependencies: /application/root
   arbitrary: true
