@@ -38,7 +38,7 @@ class Thread
         rescue Exception=>e
           puts e.message
         ensure
-          org.torquebox.core.runtime::ThreadManager.unprepare_thread()
+          org.torquebox.core.runtime::ThreadManager.unprepare_thread( parent_bundle )
         end
       end
     end
