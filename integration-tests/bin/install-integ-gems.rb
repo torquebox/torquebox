@@ -54,7 +54,7 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'therubyrhino' )
   installer.install( 'sass-rails',    versions[:sass_rails][:rails31] )
   installer.install( 'coffee-rails',  versions[:coffee_rails][:rails31] )
-  installer.install( 'jquery-rails' )
+  installer.install( 'jquery-rails',  versions[:jquery_rails], false )
   installer.install( 'uglifier' )
   
   installer.install( 'activerecord-jdbc-adapter', versions[:arjdbc11] )
