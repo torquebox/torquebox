@@ -473,8 +473,7 @@ class AssemblyTool
 
       server.add_element( jvm )
 
-      socket_binding_group = REXML::Element.new( 'socket-binding-group' )
-      socket_binding_group.attributes['ref'] = 'standard-sockets'
+      socket_binding_group = REXML::Element.new( 'socket-bindings' )
       socket_binding_group.attributes['port-offset'] = (i-1) * 100
       server.add_element( socket_binding_group )
      
