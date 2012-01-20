@@ -33,8 +33,9 @@ module TorqueBox
         @internal_connection_factory = internal_connection_factory
       end
 
-      def with_new_connection(client_id = nil, &block)
-        connection = create_connection
+      def with_new_connection(options, &block)
+        client_id = options[:client_id]
+        connection = create_connection( options[:naming_host], options[:naming_port] )
         connection.client_id = client_id if client_id
         connection.start
         begin
@@ -45,11 +46,12 @@ module TorqueBox
         return result
       end
 
-      def create_connection()
+      def create_connection(host, port)
+        host ||= "localhost"
+        port ||= 5445
         if !@internal_connection_factory
-          # try to connect to HornetQ directly - this currently
-          # assumes localhost, and the default AS7 HQ Netty port of 5445
-          connect_opts = { org.hornetq.core.remoting.impl.netty.TransportConstants::PORT_PROP_NAME => 5445.to_java( java.lang.Integer ) }
+          # try to connect to HornetQ directly
+          connect_opts = { "host" => host, "port" => port }
           transport_config =
             org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory", 
                                                             connect_opts)

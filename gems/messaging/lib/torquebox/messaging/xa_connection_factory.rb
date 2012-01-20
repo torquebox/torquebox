@@ -33,7 +33,8 @@ module TorqueBox
         @internal_connection_factory = internal_connection_factory
       end
 
-      def with_new_connection(client_id = nil, &block)
+      def with_new_connection(options, &block)
+        client_id = options[:client_id]
         connection = create_connection
         connection.client_id = client_id
         connection.start
