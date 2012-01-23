@@ -481,6 +481,18 @@ class AssemblyTool
     end
   end
 
+  def add_logger_categories(doc)
+    categories = { 'org.jboss.jca.adapters.jdbc.extensions.mysql' => 'ERROR' }
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:logging:1.1']" ).first
+      categories.each_pair do |category, level|
+        container = subsystem.add_element( 'logger', 'category' => category )
+        container.add_element( 'level', 'name' => level )
+      end
+    end
+  end
+
   def transform_host_config(input_file, output_file)
     doc = REXML::Document.new( File.read( input_file ) )
     Dir.chdir( @jboss_dir ) do
@@ -524,6 +536,8 @@ class AssemblyTool
 
       adjust_messaging_config(doc)
       enable_messaging_jmx(doc)
+
+      add_logger_categories(doc)
 
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)
