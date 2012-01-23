@@ -47,10 +47,15 @@ module TorqueBox
         self.new( str )
       end
 
-      def initialize(destination, connection_factory = __inject__( 'connection-factory' ))
+      def initialize(destination, connection_factory_or_options = nil)
+        if connection_factory_or_options.nil? || connection_factory_or_options.is_a?( Hash )
+          @connection_factory = ConnectionFactory.new( __inject__( 'connection-factory' ) )
+          @connect_options = connection_factory_or_options || {}
+        else
+          @connection_factory  = ConnectionFactory.new( connection_factory_or_options )
+          @connect_options = {}
+        end
         @name                = destination
-        @connection_factory  = ConnectionFactory.new( connection_factory )
-        @connect_options     = {}
         @enumerable_options  = {}
       end
 

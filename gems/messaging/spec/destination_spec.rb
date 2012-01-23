@@ -17,6 +17,30 @@ describe TorqueBox::Messaging::Destination do
     topic.name.should == "/topics/bar"
   end
 
+  it "should fall back to internal connection factory" do
+    factory = Object.new
+    TorqueBox::Registry.merge!("connection-factory" => factory)
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo")
+    queue.connection_factory.internal_connection_factory.should == factory
+  end
+
+  it "should initialize with connection factory if given" do
+    factory = Object.new
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo", factory)
+    queue.connection_factory.internal_connection_factory.should == factory
+    queue.connect_options.should be_empty
+  end
+
+  it "should default to no connect options" do
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo")
+    queue.connect_options.should be_empty
+  end
+
+  it "should initialize with connect options if given" do
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo", :naming_host => "bart")
+    queue.connect_options[:naming_host].should == "bart"
+  end
+
   it "should start and stop a queue" do
     server = Mockito.mock(JMSServerManagerImpl.java_class)
     TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
