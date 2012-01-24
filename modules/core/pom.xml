@@ -23,7 +23,6 @@
     <dependency>
       <groupId>org.projectodd</groupId>
       <artifactId>yaml-schema</artifactId>
-      <version>0.2</version>
       <scope>compile</scope>
     </dependency>
     <dependency>
