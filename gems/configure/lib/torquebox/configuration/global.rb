@@ -77,7 +77,7 @@ module TorqueBox
                                                                               { :durable => [true, false] },
                                                                               :client_id,
                                                                               :config,
-                                                                              :filter,
+                                                                              :selector,
                                                                               :name
                                                                              ]
                                                               }),

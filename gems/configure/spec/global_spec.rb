@@ -237,7 +237,7 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
 
     it_should_allow_valid_options  do
       topic 'a-topic' do
-        processor 'AClass', :concurrency => 1, :config => '', :filter => '', :name => '', :durable => true, :client_id => 'client-id', :singleton=>true
+        processor 'AClass', :concurrency => 1, :config => '', :selector => '', :name => '', :durable => true, :client_id => 'client-id', :singleton=>true
       end
     end
 
