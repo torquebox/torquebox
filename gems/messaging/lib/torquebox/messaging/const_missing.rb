@@ -20,7 +20,7 @@ unless defined?(ActiveSupport)
   
   def Object.const_missing(name)
     file = org.torquebox.core.util.StringUtils.underscore(name)
-    require file
+    Dir["./**/#{file}.rb"].each { |f| require f }
     result = const_get(name)
     return result if result
     raise "Class not found: #{name}"
