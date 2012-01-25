@@ -158,11 +158,9 @@ class AssemblyTool
     if options[:deployment_timeout]
       profiles = doc.root.get_elements( '//profile' )
       profiles.each do |profile|
-        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
-        unless subsystem.nil?
-          scanner = subsystem.get_elements( 'deployment-scanner' ).first
-          scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
-        end
+        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.1']" ).first
+        scanner = subsystem.get_elements( 'deployment-scanner' ).first
+        scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
       end
     end
   end
@@ -512,7 +510,7 @@ class AssemblyTool
 
     Dir.chdir( @jboss_dir ) do
       
-      increase_deployment_timeout(doc)
+      increase_deployment_timeout(doc) unless domain
       add_extensions(doc, options[:extra_modules])
       add_subsystems(doc, options[:extra_modules])
       add_cache(doc)
