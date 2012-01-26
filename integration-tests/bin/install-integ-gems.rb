@@ -71,6 +71,7 @@ GemInstaller.with( versions ) do |installer|
   
   installer.install( 'dm-core',       versions[:dm_core] )
   installer.install( 'dm-serializer', versions[:dm_core] )
+  installer.install( 'dm-validations', versions[:dm_core] )
 
   installer.install( 'json', versions[:json_for_dm] )
   

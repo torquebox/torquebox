@@ -3,6 +3,8 @@ require 'sinatra'
 require 'haml'
 require 'dm-core'
 require 'datamapper/dm-infinispan-adapter'
+require 'foo'
+require 'bar'
 
 ADAPTER = DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
 
@@ -60,6 +62,16 @@ get '/muppet/delete' do
   "Hiding" unless Muppet.count > 0
 end
 
+get '/foo/:message' do
+  Foo.create.foo(params[:message])
+  "success"
+end
+
+get '/bar/:message' do
+  Bar.create.background.bar(params[:message])
+  "success"
+end
+
 class Muppet
   include DataMapper::Resource
 
@@ -78,6 +90,7 @@ class Coat
   property :color,      String
 end
 
+
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize
 
@@ -91,5 +104,3 @@ brown  = Coat.create(:color=>'Brown')
 Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(yesterday.to_s), :coat => Coat.create(:color=>'Yellow'))
 Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse(today.to_s), :coat => brown)
 Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse(tomorrow.to_s), :coat => blue)
-
-
