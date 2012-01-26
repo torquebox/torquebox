@@ -31,14 +31,14 @@ TorqueBox.configure do
   end
 
   queue '/queue/another-queue', :durable => false do
-    processor AProcessor, :concurrency => 2, :filter => "steak = 'salad'", :config => { :foo => :bar }
+    processor AProcessor, :concurrency => 2, :selector => "steak = 'salad'", :config => { :foo => :bar }
   end
 
   queue '/queue/yet-another-queue' do
     durable false
     processor AProcessor do
       concurrency 2
-      filter "steak = 'salad'"
+      selector "steak = 'salad'"
       config(:foo => :bar)
     end
   end
