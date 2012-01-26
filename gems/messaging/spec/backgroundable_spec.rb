@@ -19,7 +19,7 @@ describe TorqueBox::Messaging::Backgroundable do
   before(:all) do
     @util = TorqueBox::Messaging::Backgroundable::Util
   end
-  
+
   describe "always_background" do
     it "should be able to handle mutliple methods" do
       MyTestModel.always_background :foo, :bar
