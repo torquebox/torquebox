@@ -1,9 +1,5 @@
 require 'spec_helper'
 
-TOUCHFILE = File.join( File.dirname(__FILE__).gsub( %r(\\:), ':' ).gsub( %r(\\\\), '\\' ), '..', 'target' )
-FOO_FILE  = File.join( TOUCHFILE, 'dm-messaging-foofile.txt' )
-BAR_FILE  = File.join( TOUCHFILE, 'dm-messaging-barfile.txt' )
-
 describe "sinatra with dm-infinispan-adapter" do
 
   deploy <<-END.gsub(/^ {4}/,'')
@@ -15,9 +11,6 @@ describe "sinatra with dm-infinispan-adapter" do
       context: /sinatra-datamapper
     ruby:
       version: #{RUBY_VERSION[0,3]}
-    environment:
-      FOO_FILE: #{FOO_FILE}
-      BAR_FILE: #{BAR_FILE}
 
   END
 
@@ -93,27 +86,6 @@ describe "sinatra with dm-infinispan-adapter" do
     pending
     visit '/sinatra-datamapper'
     page.should have_content('indexed')
-  end
-
-  it "should work for always_backgrounded jobs on DataMapper::Resource" do
-    touchfile = Pathname.new( FOO_FILE )
-    FileUtils.rm_rf( touchfile )
-    visit '/sinatra-datamapper/foo/hello'
-    sleep 2
-    touchfile.should exist
-    File.read( touchfile ).strip.should eql( 'hello' )
-    page.should have_content('success')
-  end
-
-  it "should work for ad hoc backgrounded jobs on DataMapper::Resource" do
-    pending "Figuring out wtf is up with ad hoc backgrounding"
-    touchfile = Pathname.new( BAR_FILE )
-    FileUtils.rm_rf( touchfile )
-    visit '/sinatra-datamapper/bar/world'
-    sleep 2
-    touchfile.should exist
-    File.read( touchfile ).strip.should eql( 'world' )
-    page.should have_content('success')
   end
 
 end

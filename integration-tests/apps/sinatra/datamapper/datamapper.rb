@@ -3,8 +3,6 @@ require 'sinatra'
 require 'haml'
 require 'dm-core'
 require 'datamapper/dm-infinispan-adapter'
-require 'foo'
-require 'bar'
 
 ADAPTER = DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
 
@@ -60,16 +58,6 @@ end
 get '/muppet/delete' do
   Muppet.destroy
   "Hiding" unless Muppet.count > 0
-end
-
-get '/foo/:message' do
-  Foo.create.foo(params[:message])
-  "success"
-end
-
-get '/bar/:message' do
-  Bar.create.background.bar(params[:message])
-  "success"
 end
 
 class Muppet

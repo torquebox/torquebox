@@ -1,0 +1,6 @@
+source "http://rubygems.org"
+gem "sinatra"
+gem "torquebox", "2.0.0.beta4"
+gem "data_mapper", "1.2.0"
+gem "dm-sqlite-adapter", "1.2.0"
+gem 'jdbc-sqlite3'
