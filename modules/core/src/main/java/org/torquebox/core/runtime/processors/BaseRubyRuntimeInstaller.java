@@ -19,6 +19,8 @@
 
 package org.torquebox.core.runtime.processors;
 
+import java.io.File;
+
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -55,6 +57,7 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
         runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.BARE );
         runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot() ) );
+        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( rubyAppMetaData.getRoot(), "lib" ) ) );
         
         RuntimeInitializer initializer = new BundlerAwareRuntimeInitializer( rubyAppMetaData );
         runtimeMetaData.setRuntimeInitializer( initializer );

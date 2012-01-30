@@ -19,6 +19,8 @@
 
 package org.torquebox.web.rails.processors;
 
+import java.io.File;
+
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -60,6 +62,7 @@ public class RailsRuntimeProcessor implements DeploymentUnitProcessor {
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
         runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.RAILS );
         runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot() ) );
+        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( rubyAppMetaData.getRoot(), "lib" ) ) );
         
         RuntimeInitializer initializer = new RailsRuntimeInitializer( rubyAppMetaData, rackAppMetaData, railsAppMetaData );
         runtimeMetaData.setRuntimeInitializer( initializer );
