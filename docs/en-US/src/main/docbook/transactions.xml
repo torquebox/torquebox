@@ -161,9 +161,9 @@
   <section>
     <title>Examples</title>
 
-    <para>Distributed transactions support comes enabled by default, no extra
-    configuration is required. If you don't need this feature is possible to
-    disable it configuring the environment section with <code>xa</code> in
+    <para>Distributed transactions support comes enabled by default, so no extra
+    configuration is required to enable it. If you don't need this feature, it is possible to
+    disable it by setting <code>xa</code> to false in your 
     database.yml.</para>
 
     <section>
