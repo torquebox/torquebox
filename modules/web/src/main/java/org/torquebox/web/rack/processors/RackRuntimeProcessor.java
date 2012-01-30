@@ -19,6 +19,8 @@
 
 package org.torquebox.web.rack.processors;
 
+import java.io.File;
+
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -32,12 +34,6 @@ import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.rack.RackRuntimeInitializer;
 
 /**
- * <pre>
- * Stage: PRE_DESCRIBE
- *    In: RackApplicationMetaData
- *   Out: RubyRuntimeMetaData
- * </pre>
- * 
  * Create the ruby runtime metadata from the rack metadata
  */
 public class RackRuntimeProcessor implements DeploymentUnitProcessor {
@@ -70,6 +66,7 @@ public class RackRuntimeProcessor implements DeploymentUnitProcessor {
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
         runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.RACK );
         runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot() ) );
+        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( rubyAppMetaData.getRoot(), "lib" ) ) );
 
         RuntimeInitializer initializer = new RackRuntimeInitializer( rubyAppMetaData, rackAppMetaData );
         runtimeMetaData.setRuntimeInitializer( initializer );
