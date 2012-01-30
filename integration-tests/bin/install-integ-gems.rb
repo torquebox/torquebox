@@ -33,8 +33,8 @@ versions = {
   :rack12         =>    '1.2.4',
   :rack13         =>    '1.3.3',
 
-  :dm_core        =>    '1.2.0',
-  #:json_for_dm    =>    '1.4.6',
+  :dm_core        =>    '1.1.0',
+  :json_for_dm    =>    '1.4.6',
 
   :padrino        =>    '0.10.5',
   :bcrypt_ruby    =>    '3.0.1',
@@ -71,8 +71,9 @@ GemInstaller.with( versions ) do |installer|
   
   installer.install( 'data_mapper',       versions[:dm_core] )
   installer.install( 'dm-sqlite-adapter', versions[:dm_core] )
+  installer.install( 'dm-serializer', versions[:dm_core] )
 
-  #installer.install( 'json', versions[:json_for_dm] )
+  installer.install( 'json', versions[:json_for_dm] )
   
   installer.install( 'padrino', versions[:padrino] )
   installer.install( 'bcrypt-ruby' )
