@@ -34,14 +34,6 @@ class Bar
     end
   end
 
-  def _dump( level )
-    [id, self.class].join(':')
-  end
-
-  def self._load( string )
-    id, clazz = string.split(':')
-    Kernel.const_get(clazz).get(id)
-  end
 end
 
 

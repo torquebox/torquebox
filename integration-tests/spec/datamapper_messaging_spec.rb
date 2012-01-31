@@ -32,6 +32,7 @@ describe "torquebox-messaging with datamapper" do
   end
 
   it "should support ad hoc backgrounded jobs on DataMapper::Resource" do
+    pending "a better answer for TORQUE-700 than this hack job"
     touchfile = Pathname.new( BAR_FILE )
     FileUtils.rm_rf( touchfile )
     visit '/datamapper-messaging/bar/world'
