@@ -32,11 +32,10 @@ describe "torquebox-messaging with datamapper" do
   end
 
   it "should support ad hoc backgrounded jobs on DataMapper::Resource" do
-    pending "Figuring out wtf is up with ad hoc backgrounding"
     touchfile = Pathname.new( BAR_FILE )
     FileUtils.rm_rf( touchfile )
     visit '/datamapper-messaging/bar/world'
-    sleep 2
+    sleep 5
     touchfile.should exist
     File.read( touchfile ).strip.should eql( 'world' )
     page.should have_content('success')

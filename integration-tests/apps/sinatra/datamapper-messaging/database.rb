@@ -40,7 +40,7 @@ class Bar
 
   def self._load( string )
     id, clazz = string.split(':')
-    raise "Resource not found for #{clazz} with ID #{id}" unless Kernel.const_get(clazz).get(id)
+    Kernel.const_get(clazz).get(id)
   end
 end
 
