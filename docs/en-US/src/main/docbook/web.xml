@@ -91,7 +91,24 @@
     Java session.</para>
 
     <para>The supported scalar types are <type>numerics</type>,
-    <type>strings</type>, <type>booleans</type> and <type>nil</type>.</para>
+    <type>strings</type>, <type>booleans</type> and <type>nil</type>. Session
+    timeout can be configured in the <code>torquebox.yml</code> where
+    <literal>ms</literal> = milliseconds, <literal>s</literal> = seconds,
+    <literal>m</literal> = minutes and <literal>h</literal> = hours. If no
+    suffix provided, <literal>minutes</literal> will be assumed by default.
+    Ex: <literal>session-timeout: 10 h</literal> will be converted in
+    hours.</para>
+
+    <para><example>
+        <title>Example deployment descriptor</title>
+
+        <para>Configuring session timeout:<programlisting>...
+  
+web:
+  host: foobar.com
+  context: /tacos
+  session-timeout: 10</programlisting></para>
+      </example></para>
   </section>
 
   <section id="torque-box-store">
