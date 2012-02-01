@@ -75,7 +75,7 @@ import org.torquebox.web.servlet.RackFilter;
 public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
     
     /** Default session timeout (30 minutes). */
-    public static final int DEFAULT_SESSION_TIMEOUT_SECONDS = 30 * 60;
+    public static final int DEFAULT_SESSION_TIMEOUT_MINUTES = 30;
 
     public static final String RACK_FILTER_NAME = "torquebox.rack";
 
@@ -179,10 +179,12 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
         SessionConfigMetaData sessionConfig = new SessionConfigMetaData();
         
         if (timeout < 0) {
-            sessionConfig.setSessionTimeout( DEFAULT_SESSION_TIMEOUT_SECONDS );
+            sessionConfig.setSessionTimeout( DEFAULT_SESSION_TIMEOUT_MINUTES );
         } else {
-            sessionConfig.setSessionTimeout( timeout );
+            sessionConfig.setSessionTimeout( timeout / 60 ); // convert seconds to minutes
         }
+
+        jbossWebMetaData.setSessionConfig(  sessionConfig );
 
     }
 

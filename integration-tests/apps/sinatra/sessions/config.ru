@@ -13,6 +13,10 @@ class SinatraSessions < Sinatra::Base
   get '/bar' do
     session[:message]   # => 'Hello World!'
   end
+
+  get '/inactive_interval' do
+    env['servlet_request'].session.max_inactive_interval.to_s
+  end
 end
 
 run SinatraSessions
