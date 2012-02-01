@@ -79,8 +79,35 @@ class Assembler
       puts "Laying down JRuby" 
       Dir.chdir( File.dirname( tool.jruby_dir ) ) do
         tool.unzip( jruby_zip )
-        original_dir= File.expand_path( Dir[ 'jruby-*' ].first )
+        original_dir = File.expand_path( Dir[ 'jruby-*' ].first )
         FileUtils.mv original_dir, tool.jruby_dir
+
+        ### HACK begin
+        ###
+        ### JRuby 1.6.6 suffers from a StackOverflowError in some cases
+        ### and this hack (see http://jira.codehaus.org/browse/JRUBY-6407)
+        ### moves a require() statement around to avoid the aforementioned
+        ### StackOverflowError
+        ###
+        ### Hopefully remove this when using > JRuby 1.6.6
+        ###
+        open( tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb', 'r' ) do |original_rb|
+          open( tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb.new', 'w' ) do |new_rb|
+            new_rb.puts( "require 'jruby/util'" )
+            original_rb.each do |line|
+              if ( line =~ %r(jruby/util) ) 
+                puts "skip #{line}"
+              else
+                puts line
+                new_rb.puts line
+              end
+            end
+          end
+        end
+        FileUtils.mv tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb.new', tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb'
+        ###
+        ### HACK end
+
       end
     end
   end
