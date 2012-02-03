@@ -20,6 +20,7 @@ begin
   require 'rails/generators/rails/app/app_generator'
 rescue LoadError
   # Rails isn't installed, bail out
+  $stderr.puts "ERROR: Rails 3.x gem not found. Rails generators cannot be loaded."
   return
 end
 
