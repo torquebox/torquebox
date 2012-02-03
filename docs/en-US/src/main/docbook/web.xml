@@ -361,6 +361,20 @@ run app</programlisting></para>
           <para><screen><prompt>$</prompt> <command>gem</command> <parameter>install rails</parameter></screen></para>
         </section>
 
+        <section id="using-torquebox-rails">
+          <title>Using the torquebox command line</title>
+          
+          <para>TorqueBox ships with a command line application which you can use
+            to setup a new Rails 3.x application or modify an existing one to work with
+            TorqueBox. The same command works for both scenarios. If the application 
+            directory exists, it will apply the TorqueBox rails template to that application.
+            If it does not exist, a new Rails 3.x application will be created.
+          </para>
+
+          <para><screen><prompt>$</prompt> <command>torquebox</command> rails <parameter>/path/to/myapp</parameter></screen></para>
+
+        </section>
+
         <section id="using-the-rails-application-template">
           <title>Using the application template</title>
 
