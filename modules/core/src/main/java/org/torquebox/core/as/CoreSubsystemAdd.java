@@ -48,7 +48,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
 import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
-import org.projectodd.polyglot.core.processors.KnobStructureProcessor;
+import org.projectodd.polyglot.core.processors.ArchiveStructureProcessor;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.TorqueBoxStdioContextSelector;
@@ -111,7 +111,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, final InjectableHandlerRegistry registry) {
 
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobStructureProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new ArchiveStructureProcessor( ".knob" ) );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 800, new AppKnobYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 900, rootSafe( new AppJarScanningProcessor() ) );
 
