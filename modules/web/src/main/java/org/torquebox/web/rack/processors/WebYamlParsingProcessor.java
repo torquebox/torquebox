@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.core.util.TimeIntervalUtil;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.web.rack.RackMetaData;
 
@@ -68,26 +69,9 @@ public class WebYamlParsingProcessor extends AbstractSplitYamlParsingProcessor {
         String timeoutStr = webData.containsKey( "session-timeout" ) ?
                 webData.get( "session-timeout" ).toString() : null;
 
-        TimeUnit timeUnit = TimeUnit.MINUTES;
+        TimeIntervalUtil.IntervalData intervalData = TimeIntervalUtil.parseInterval(timeoutStr, TimeUnit.MINUTES);
 
-        if (timeoutStr != null) {
-            timeoutStr = timeoutStr.trim();
-            if (timeoutStr.endsWith( "m" )) {
-                timeUnit = TimeUnit.MINUTES;
-                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
-            } else if (timeoutStr.endsWith( "h" )) {
-                timeUnit = TimeUnit.HOURS;
-                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
-            } else if (timeoutStr.endsWith( "s" )) {
-                timeUnit = TimeUnit.SECONDS;
-                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 1 );
-            } else if (timeoutStr.endsWith( "ms" )) {
-                timeUnit = TimeUnit.MILLISECONDS;
-                timeoutStr = timeoutStr.substring( 0, timeoutStr.length() - 2 );
-            }
-            long timeout = Long.parseLong( timeoutStr.trim() );
-            rackAppMetaData.setSessionTimeout( timeout, timeUnit );
-        }
+        rackAppMetaData.setSessionTimeout(intervalData.interval, intervalData.unit);
 
     }
 
