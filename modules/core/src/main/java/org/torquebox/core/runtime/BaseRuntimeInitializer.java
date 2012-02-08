@@ -19,45 +19,40 @@
 
 package org.torquebox.core.runtime;
 
-import java.io.File;
-
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
 
 /**
- * {@link RuntimeInitializer} for Ruby Rack applications.
+ * {@link RuntimeInitializer} for Ruby applications.
  * 
- * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class BundlerAwareRuntimeInitializer extends BaseRuntimeInitializer {
+public class BaseRuntimeInitializer implements RuntimeInitializer {
 
-    public BundlerAwareRuntimeInitializer(RubyAppMetaData rubyAppMetaData) {
-        super( rubyAppMetaData );
-    }
 
-    public File getApplicationRoot() {
-        return getRubyAppMetaData().getRoot();
+    public BaseRuntimeInitializer(RubyAppMetaData rubyAppMetaData) {
+        this.rubyAppMetaData = rubyAppMetaData;
     }
 
     @Override
     public void initialize(Ruby ruby) throws Exception {
-        super.initialize( ruby );
-        ruby.setCurrentDirectory( getRubyAppMetaData().getRoot().getCanonicalPath() );
-        
-        File gemfile = new File( getApplicationRoot(), "Gemfile" );
-        if (gemfile.exists()) {
-            log.info(  "Setting up Bundler" );
-            RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + gemfile.getAbsolutePath() +  "'" );
-            RuntimeHelper.require( ruby, "bundler/setup" );
-            RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']=nil" );
-        }
+        StringBuilder script = new StringBuilder();
+        String appName = this.rubyAppMetaData.getApplicationName();
+                
+        script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );
+        script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
+
+        RuntimeHelper.evalScriptlet( ruby, script.toString() );
     }
 
+    public RubyAppMetaData getRubyAppMetaData() {
+        return rubyAppMetaData;
+    }
 
+    @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
-
- 
-
+    
+    private RubyAppMetaData rubyAppMetaData;
+    
 }

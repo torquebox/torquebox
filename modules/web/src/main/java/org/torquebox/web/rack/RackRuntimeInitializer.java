@@ -42,7 +42,7 @@ public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
     }
 
     public String getRackEnv() {
-        return this.rubyAppMetaData.getEnvironmentName();
+        return getRubyAppMetaData().getEnvironmentName();
     }
 
     @Override
@@ -64,13 +64,12 @@ public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
      */
     protected String getInitializerScript() {
         StringBuilder script = new StringBuilder();
-        String appName = this.rubyAppMetaData.getApplicationName();
-        String rackEnv = this.rubyAppMetaData.getEnvironmentName();
+        String rackEnv = getRubyAppMetaData().getEnvironmentName();
         String contextPath = this.rackAppMetaData.getContextPath();
         String rackRootPath = null;
         
         try { 
-            rackRootPath = this.rubyAppMetaData.getRoot().getCanonicalPath();
+            rackRootPath = getRubyAppMetaData().getRoot().getCanonicalPath();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -81,11 +80,9 @@ public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
         
         script.append( "RACK_ROOT=%q(" + rackRootPath + ")\n" );
         script.append( "RACK_ENV=%q(" + rackEnv + ")\n" );
-        script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );
         script.append( "TORQUEBOX_RACKUP_CONTEXT=%q(" + contextPath + ")\n" );
         script.append( "ENV['RACK_ROOT']=%q(" + rackRootPath + ")\n" );
         script.append( "ENV['RACK_ENV']=%q(" + rackEnv + ")\n" );
-        script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
 
         // only set if not root context
         if (contextPath != null && contextPath.length() > 1) { 
@@ -101,7 +98,7 @@ public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
     }
 
     @SuppressWarnings("unused")
-    private static final Logger log = Logger.getLogger( RackRuntimeInitializer.class );
+    private static final Logger log = Logger.getLogger( "org.torquebox.web.rack" );
     
     protected RackMetaData rackAppMetaData;
 
