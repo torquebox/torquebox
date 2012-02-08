@@ -195,6 +195,17 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     end
   end
 
+  describe '#torquebox_init' do
+    it "should store the block given" do
+      str = "I'm evaluated at runtime init"
+      config = TorqueBox.configure do 
+        torquebox_init { str }
+      end
+      config['<root>']['torquebox_init'].call.should == str
+    end
+  end
+
+
   describe "#processor" do
     it "should only be valid inside a queue or topic" do
       lambda {

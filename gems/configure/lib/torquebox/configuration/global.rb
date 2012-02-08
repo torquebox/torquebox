@@ -38,6 +38,7 @@ module TorqueBox
                                                              ]
                                               })
         {
+          :torquebox_init => BlockEntry,
           :authentication => ThingWithOptionsEntry.with_settings( :validate => {
                                                                     :required => [:domain],
                                                                     :optional => [:credential]
