@@ -515,12 +515,8 @@
     <version.org.projectodd.stilts>0.1.25</version.org.projectodd.stilts>
     <version.org.projectodd.yaml-schema>0.2</version.org.projectodd.yaml-schema>
 
-    <version.org.hibernate.search>4.1.0.Alpha1</version.org.hibernate.search>
-    <version.org.hibernate.commons.annotations>3.2.0.Final</version.org.hibernate.commons.annotations>
-    <version.org.apache.lucene.core>3.5.0</version.org.apache.lucene.core>
-    <version.org.apache.lucene.other>3.1.0</version.org.apache.lucene.other>
-    <version.org.apache.solr>3.1.0</version.org.apache.solr>
-    <version.org.infinispan>5.1.0.CR4</version.org.infinispan>
+    <version.org.hibernate.search>4.1.0.Beta1</version.org.hibernate.search>
+    <version.org.infinispan>5.1.1.FINAL</version.org.infinispan>
   </properties>
 
   <repositories>
