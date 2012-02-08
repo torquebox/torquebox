@@ -101,7 +101,7 @@ module Capistrano
               when :initd
                 run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
               when :binscripts
-                run "#{jboss_home}/bin/jboss-admin.sh --connect :shutdown"
+                run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
             end
           end
         

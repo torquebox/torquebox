@@ -361,6 +361,13 @@ class AssemblyTool
     settings.get_elements( 'max-size-bytes' ).first.text = '20971520'
   end
 
+  def remove_messaging_security(doc)
+    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    e = REXML::Element.new( 'security-enabled' )
+    e.text = 'false'
+    hornetq_server.add_element( e )
+  end
+
   def fix_messaging_clustering(doc)
     hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
 
@@ -532,6 +539,7 @@ class AssemblyTool
 
       adjust_messaging_config(doc)
       enable_messaging_jmx(doc)
+      remove_messaging_security(doc)
 
       add_logger_categories(doc)
 

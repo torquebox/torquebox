@@ -42,7 +42,7 @@ public class SecurityDependencyProcessor implements DeploymentUnitProcessor {
         final ModuleLoader moduleLoader = Module.getBootModuleLoader();
         final ModuleSpecification moduleSpecification = deploymentUnit.getAttachment( Attachments.MODULE_SPECIFICATION );
         moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader,
-                TORQUEBOX_SECURITY_ID, false, true, false ) );
+                TORQUEBOX_SECURITY_ID, false, true, false, false ) );
     }
 
     @Override
