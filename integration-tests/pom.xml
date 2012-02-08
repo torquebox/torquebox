@@ -303,7 +303,7 @@
     <profile>
       <id>ci</id>
       <properties>
-        <max.heap>4096m</max.heap>
+        <max.heap>3084m</max.heap>
         <driver.type>headless</driver.type>
       </properties>
     </profile>
