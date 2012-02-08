@@ -71,7 +71,6 @@ class DAV
     response = ''
     error    = ''
     Open3.popen3( cmd ) do |stdin, stdout, stderr|
-      stdin.close
       stdout_thr = Thread.new(stdout) do |stream|
         while ( ! stream.eof? )
           response += stream.readline

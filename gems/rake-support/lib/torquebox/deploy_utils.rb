@@ -285,14 +285,12 @@ module TorqueBox
             puts "caught SIGINT, shutting down"
             `taskkill /F /T /PID #{pid}` if windows?
           end
-          stdin.close
           [
            Thread.new(stdout) {|stdout_io|
              stdout_io.each_line do |l|
                STDOUT.puts l
                STDOUT.flush
              end
-             stdout_io.close
            },
 
            Thread.new(stderr) {|stderr_io|
