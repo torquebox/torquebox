@@ -118,6 +118,14 @@ public class RuntimeHelper {
             log.errorf( t, "Unable to require file: %s", requirement );
         }
     }
+    
+    public static void requireIfAvailable(Ruby ruby, String requirement) {
+        try {
+            evalScriptlet( ruby, "require %q(" + requirement + ")" );
+        } catch (Throwable t) {
+            // Do nothing - that's the point of the method. Duh.
+        }
+    }
 
     public static void requireUnlessDefined(Ruby ruby, String requirement, String constant) {
         try {

@@ -23,6 +23,7 @@ import java.io.File;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
+import org.jruby.javasupport.JavaEmbedUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -50,17 +51,13 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
         
         if ( this.rubyAppMetaData.getTorqueBoxInit() != null ) {
         	// TODO: Figure out how to do this
+//        	log.warn("About to call torquebox_init proc");
+//        	log.warn("The proc class is: " + this.rubyAppMetaData.getTorqueBoxInit().getClass().getCanonicalName());
+//        	log.warn("The proc string is: " + this.rubyAppMetaData.getTorqueBoxInit().toString());        	
 //        	RuntimeHelper.call(ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null);
+//        	JavaEmbedUtils.invokeMethod( ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null, Object.class );
         }
-        try {
-        	log.warn("Looking for torquebox_init.rb");
-            RuntimeHelper.evalScriptlet( ruby, "require %q(torquebox_init)" );
-        } catch (Throwable t) {
-            // We can do this quietly since, torquebox_init.rb is not required
-        	// But people get afeared of errors, and evalScriptlet generates one.
-        	// So, let's clarify.
-        	log.warn("No torquebox_init.rb found. That's just fine. Moving on...");
-        }
+        RuntimeHelper.requireIfAvailable(ruby, "torquebox_init");
     }
 
     public RubyAppMetaData getRubyAppMetaData() {
