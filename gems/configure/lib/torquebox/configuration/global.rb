@@ -128,6 +128,9 @@ module TorqueBox
               metadata['auth'][name] = data
             end
 
+          when 'torquebox_init' # runtime intialization
+            metadata[entry_name] = entry_data
+          
           when 'job' # => jobs:
             entry_data.each do |klass, data|
               name = data.delete( :name ) || unique_name( klass.to_s, metadata['jobs'].keys )

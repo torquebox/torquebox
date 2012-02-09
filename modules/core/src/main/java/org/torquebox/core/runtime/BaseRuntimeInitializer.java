@@ -51,7 +51,14 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
         if ( this.rubyAppMetaData.getTorqueBoxInit() != null ) {
         	RuntimeHelper.call(ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null);
         }
-        RuntimeHelper.require( ruby, "torquebox_init" );        
+        try {
+            RuntimeHelper.evalScriptlet( ruby, "require %q(torquebox_init)" );
+        } catch (Throwable t) {
+            // We can do this quietly since, torquebox_init.rb is not required
+        	// But people get afeared of errors, and evalScriptlet generates one.
+        	// So, let's clarify.
+        	log.warn("No torquebox_init.rb found. That's just fine. Moving on...");
+        }
     }
 
     public RubyAppMetaData getRubyAppMetaData() {
