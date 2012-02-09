@@ -35,7 +35,7 @@ module TorqueBox
 
       def with_new_connection(options, &block)
         client_id = options[:client_id]
-        connection = create_connection( options[:naming_host], options[:naming_port] )
+        connection = create_connection( options )
         connection.client_id = client_id if client_id
         connection.start
         begin
@@ -46,9 +46,11 @@ module TorqueBox
         return result
       end
 
-      def create_connection(host, port)
-        host ||= "localhost"
-        port ||= 5445
+      def create_connection(options)
+        host     = options[:naming_host] || "localhost"
+        port     = options[:naming_port] || 5445
+        username = options[:username]
+        password = options[:password]
         if !@internal_connection_factory
           # try to connect to HornetQ directly
           connect_opts = { "host" => host, "port" => port }
@@ -59,7 +61,7 @@ module TorqueBox
             org.hornetq.api.jms.HornetQJMSClient.createConnectionFactoryWithoutHA( org.hornetq.api.jms::JMSFactoryType::CF, transport_config )
         end
 
-        Connection.new( @internal_connection_factory.create_connection )
+        Connection.new( @internal_connection_factory.create_connection( username, password ) )
       end
 
 

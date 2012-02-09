@@ -383,6 +383,22 @@ require 'torquebox-messaging'
             </row>
 
             <row>
+              <entry><parameter>:username</parameter></entry>
+
+              <entry>nil</entry>
+
+              <entry>The username to use when connecting to the HornetQ server.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:password</parameter></entry>
+
+              <entry>nil</entry>
+
+              <entry>The password to use when connecting to the HornetQ server.</entry>
+            </row>
+
+            <row>
               <entry><parameter>:client_id</parameter></entry>
 
               <entry></entry>

@@ -41,6 +41,16 @@ describe TorqueBox::Messaging::Destination do
     queue.connect_options[:naming_host].should == "bart"
   end
 
+  it "should connect with username and password if given" do
+    factory = mock("factory")
+    connection = mock("connection").as_null_object
+    factory.should_receive(:create_connection).with("ham", "biscuit").and_return(connection)
+    TorqueBox::Registry.merge!("connection-factory" => factory)
+
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo", :username => "ham", :password => "biscuit")
+    queue.with_session { }
+  end
+
   it "should start and stop a queue" do
     server = Mockito.mock(JMSServerManagerImpl.java_class)
     TorqueBox::ServiceRegistry.stub!(:lookup).with("jboss.messaging.default.jms.manager").and_yield(server)
