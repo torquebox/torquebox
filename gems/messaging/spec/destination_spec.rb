@@ -10,6 +10,10 @@ java_import org.hornetq.jms.server.impl.JMSServerManagerImpl
 
 describe TorqueBox::Messaging::Destination do
 
+  after(:each) do
+    TorqueBox::Registry.registry.clear
+  end
+
   it "should return its name for to_s" do
     queue = TorqueBox::Messaging::Queue.new("/queues/foo")
     queue.name.should == "/queues/foo"
@@ -37,8 +41,18 @@ describe TorqueBox::Messaging::Destination do
   end
 
   it "should initialize with connect options if given" do
-    queue = TorqueBox::Messaging::Queue.new("/queues/foo", :naming_host => "bart")
-    queue.connect_options[:naming_host].should == "bart"
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo", :host => "bart")
+    queue.connect_options[:host].should == "bart"
+  end
+
+  it "should connect with host and port if given" do
+    factory = mock("factory")
+    connection = mock("connection").as_null_object
+    factory.stub(:create_connection).and_return(connection)
+
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo", :host => "bar", :port => 123)
+    queue.connection_factory.should_receive(:create_connection_factory).with("bar", 123).and_return(factory)
+    queue.with_session { }
   end
 
   it "should connect with username and password if given" do

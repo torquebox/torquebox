@@ -47,21 +47,23 @@ module TorqueBox
       end
 
       def create_connection(options)
-        host     = options[:naming_host] || "localhost"
-        port     = options[:naming_port] || 5445
+        host     = options[:host] || "localhost"
+        port     = options[:port] || 5445
         username = options[:username]
         password = options[:password]
         if !@internal_connection_factory
-          # try to connect to HornetQ directly
-          connect_opts = { "host" => host, "port" => port }
-          transport_config =
-            org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory", 
-                                                            connect_opts)
-          @internal_connection_factory =
-            org.hornetq.api.jms.HornetQJMSClient.createConnectionFactoryWithoutHA( org.hornetq.api.jms::JMSFactoryType::CF, transport_config )
+          @internal_connection_factory = create_connection_factory( host, port )
         end
 
         Connection.new( @internal_connection_factory.create_connection( username, password ) )
+      end
+
+      def create_connection_factory(host, port)
+        connect_opts = { "host" => host, "port" => port }
+        transport_config =
+          org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory",
+                                                          connect_opts)
+        org.hornetq.api.jms.HornetQJMSClient.createConnectionFactoryWithoutHA( org.hornetq.api.jms::JMSFactoryType::CF, transport_config )
       end
 
 

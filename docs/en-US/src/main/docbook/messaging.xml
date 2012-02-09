@@ -366,20 +366,20 @@ require 'torquebox-messaging'
 
           <tbody>
             <row>
-              <entry><parameter>:naming_host</parameter></entry>
+              <entry><parameter>:host</parameter></entry>
 
               <entry>localhost</entry>
 
-              <entry>Should be the hostname or ip address of the JNDI naming
-              server containing the destination names.</entry>
+              <entry>Should be the hostname or ip address of the
+              HornetQ server containing the destinations.</entry>
             </row>
 
             <row>
-              <entry><parameter>:naming_port</parameter></entry>
+              <entry><parameter>:port</parameter></entry>
 
-              <entry>1099</entry>
+              <entry>5445</entry>
 
-              <entry>The port of the JNDI naming server.</entry>
+              <entry>The port of the HornetQ server.</entry>
             </row>
 
             <row>
@@ -479,8 +479,8 @@ queue.publish {:key =&gt; 'value', :list =&gt; %w{one two three}}
           <title>Send message using a remote JNDI server</title>
 
           <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo', 
-                                        :naming_host =&gt; 'jndi.jboss.org',
-                                        :naming_port =&gt; 1099)
+                                        :host =&gt; 'hornetq_server.mydomain.com',
+                                        :port =&gt; 5445)
 queue.publish "Some message"</programlisting></para>
         </example>
 
