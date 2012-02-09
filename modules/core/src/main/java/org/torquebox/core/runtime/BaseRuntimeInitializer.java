@@ -49,9 +49,11 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
         RuntimeHelper.evalScriptlet( ruby, script.toString() );
         
         if ( this.rubyAppMetaData.getTorqueBoxInit() != null ) {
-        	RuntimeHelper.call(ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null);
+        	// TODO: Figure out how to do this
+//        	RuntimeHelper.call(ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null);
         }
         try {
+        	log.warn("Looking for torquebox_init.rb");
             RuntimeHelper.evalScriptlet( ruby, "require %q(torquebox_init)" );
         } catch (Throwable t) {
             // We can do this quietly since, torquebox_init.rb is not required
@@ -69,7 +71,6 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
 	    return rubyAppMetaData.getRoot();
 	}
     
-	@SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
     
     private RubyAppMetaData rubyAppMetaData;
