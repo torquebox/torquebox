@@ -19,6 +19,8 @@
 
 package org.torquebox.core.runtime;
 
+import java.io.File;
+
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
@@ -37,20 +39,30 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
 
     @Override
     public void initialize(Ruby ruby) throws Exception {
-        StringBuilder script = new StringBuilder();
         String appName = this.rubyAppMetaData.getApplicationName();
-                
+        ruby.setCurrentDirectory( getApplicationRoot().getCanonicalPath() );
+
+        StringBuilder script = new StringBuilder();
         script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );
         script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
-
+        
         RuntimeHelper.evalScriptlet( ruby, script.toString() );
+        
+        if ( this.rubyAppMetaData.getTorqueBoxInit() != null ) {
+        	RuntimeHelper.call(ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null);
+        }
+        RuntimeHelper.require( ruby, "torquebox_init" );        
     }
 
     public RubyAppMetaData getRubyAppMetaData() {
         return rubyAppMetaData;
     }
 
-    @SuppressWarnings("unused")
+    public File getApplicationRoot() {
+	    return rubyAppMetaData.getRoot();
+	}
+    
+	@SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
     
     private RubyAppMetaData rubyAppMetaData;

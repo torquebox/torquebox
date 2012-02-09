@@ -34,6 +34,7 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.TorqueBoxMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 
 public class TorqueBoxRbProcessor extends AbstractParsingProcessor {
@@ -76,6 +77,8 @@ public class TorqueBoxRbProcessor extends AbstractParsingProcessor {
             if ( existingMetaData != null ) {
                 metaData = existingMetaData.overlayOnto( metaData );
             }
+            RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
+            appMetaData.setTorqueBoxInit( metaData.getTorqueBoxInit() );
             unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
         }
     }

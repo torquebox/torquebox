@@ -37,14 +37,9 @@ public class BundlerAwareRuntimeInitializer extends BaseRuntimeInitializer {
         super( rubyAppMetaData );
     }
 
-    public File getApplicationRoot() {
-        return getRubyAppMetaData().getRoot();
-    }
-
     @Override
     public void initialize(Ruby ruby) throws Exception {
         super.initialize( ruby );
-        ruby.setCurrentDirectory( getRubyAppMetaData().getRoot().getCanonicalPath() );
         
         File gemfile = new File( getApplicationRoot(), "Gemfile" );
         if (gemfile.exists()) {

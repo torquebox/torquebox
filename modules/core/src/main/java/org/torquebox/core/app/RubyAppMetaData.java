@@ -76,4 +76,13 @@ public class RubyAppMetaData extends ApplicationMetaData {
     }
     
     private Map<String, Map<String, String>> authenticationConfig;
+	private Object torqueBoxInit;
+
+	public void setTorqueBoxInit(Object torqueBoxInit) {
+		this.torqueBoxInit = torqueBoxInit;		
+	}
+	
+	public Object getTorqueBoxInit() {
+		return this.torqueBoxInit;
+	}
 }

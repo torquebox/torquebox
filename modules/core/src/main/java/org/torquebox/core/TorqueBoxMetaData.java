@@ -99,7 +99,7 @@ public class TorqueBoxMetaData {
     public Object getSection(String name) {
         return this.data.get( normalizeSectionName( name ) );
     }
-
+    
     @SuppressWarnings("unchecked")
     public String getApplicationRoot() {
         return findApplicationRoot( (Map<String, String>) getSection( "application" ) );
@@ -240,4 +240,8 @@ public class TorqueBoxMetaData {
     public String toString() {
         return "[TorqueBoxMetaData: data=" + this.data + "]";
     }
+
+	public Object getTorqueBoxInit() {
+		return getSection("torquebox_init");
+	}
 }
