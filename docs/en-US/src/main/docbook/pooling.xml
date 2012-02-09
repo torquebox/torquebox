@@ -287,4 +287,21 @@ end</programlisting></para>
       </example>
     </section>
   </section>
+
+  <section id="runtime-initialization">
+    <title>Runtime Initialization</title>
+
+    <para>Ruby runtimes are initialized with standard load paths, such as
+      <code>./lib</code> enabled. Rails applications benefit from the load
+      path magic that Rails performs automatically. For non-rails applications,
+      TorqueBox initializes Ruby runtimes with <code>./lib</code> and
+      <code>./config</code> added to the load path. Additionally, for 
+      custom runtime initialization, you may place a
+      <code>torquebox_init.rb</code> in <code>./config</code> or the root
+      directory of your application. This file will be evaluated for all
+      runtimes as they are initialized.  
+    </para>
+
+
+  </section>
 </chapter>
