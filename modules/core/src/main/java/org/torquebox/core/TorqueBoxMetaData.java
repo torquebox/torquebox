@@ -241,7 +241,4 @@ public class TorqueBoxMetaData {
         return "[TorqueBoxMetaData: data=" + this.data + "]";
     }
 
-	public Object getTorqueBoxInit() {
-		return getSection("torquebox_init");
-	}
 }

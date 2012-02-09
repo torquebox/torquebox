@@ -162,13 +162,6 @@ module TorqueBox
       end
     end
     
-    class BlockEntry < Entry
-      # [TORQUE-708] runtime initialization block - we'll save this for later
-      def eval_block(&block) ; @config[@name.to_s] = block end
-      def finalize_options ; end
-    end
-
- 
     class Configuration < Hash
       def initialize
         super { |hash, key| hash[key] = { } }

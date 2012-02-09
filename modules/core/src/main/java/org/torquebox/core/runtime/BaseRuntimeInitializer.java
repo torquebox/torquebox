@@ -46,17 +46,7 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
         StringBuilder script = new StringBuilder();
         script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );
         script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
-        
         RuntimeHelper.evalScriptlet( ruby, script.toString() );
-        
-        if ( this.rubyAppMetaData.getTorqueBoxInit() != null ) {
-        	// TODO: Figure out how to do this
-//        	log.warn("About to call torquebox_init proc");
-//        	log.warn("The proc class is: " + this.rubyAppMetaData.getTorqueBoxInit().getClass().getCanonicalName());
-//        	log.warn("The proc string is: " + this.rubyAppMetaData.getTorqueBoxInit().toString());        	
-//        	RuntimeHelper.call(ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null);
-//        	JavaEmbedUtils.invokeMethod( ruby, this.rubyAppMetaData.getTorqueBoxInit(), "call", null, Object.class );
-        }
         RuntimeHelper.requireIfAvailable(ruby, "torquebox_init");
     }
 

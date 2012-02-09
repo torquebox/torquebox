@@ -78,7 +78,6 @@ public class TorqueBoxRbProcessor extends AbstractParsingProcessor {
                 metaData = existingMetaData.overlayOnto( metaData );
             }
             RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
-            appMetaData.setTorqueBoxInit( metaData.getTorqueBoxInit() );
             unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
         }
     }
