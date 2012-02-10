@@ -476,7 +476,7 @@ queue.publish {:key =&gt; 'value', :list =&gt; %w{one two three}}
         </example>
 
         <example>
-          <title>Send message using a remote JNDI server</title>
+          <title>Send message using a remote HornetQ server</title>
 
           <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo', 
                                         :host =&gt; 'hornetq_server.mydomain.com',
