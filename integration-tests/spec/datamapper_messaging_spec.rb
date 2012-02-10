@@ -35,7 +35,7 @@ describe "torquebox-messaging with datamapper" do
     touchfile = Pathname.new( BAR_FILE )
     FileUtils.rm_rf( touchfile )
     visit '/datamapper-messaging/bar/world'
-    sleep 5
+    sleep 10
     touchfile.should exist
     File.read( touchfile ).strip.should eql( 'world' )
     page.should have_content('success')
