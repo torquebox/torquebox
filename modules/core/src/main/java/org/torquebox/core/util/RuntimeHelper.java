@@ -121,9 +121,16 @@ public class RuntimeHelper {
     
     public static void requireIfAvailable(Ruby ruby, String requirement) {
         try {
-            evalScriptlet( ruby, "require %q(" + requirement + ")" );
+        	StringBuilder script = new StringBuilder();
+        	script.append("begin\n");
+        	script.append("require %q(");
+        	script.append(requirement);
+        	script.append(")\n");
+        	script.append("rescue LoadError\n");
+        	script.append("end\n");
+            evalScriptlet( ruby, script.toString() );
         } catch (Throwable t) {
-            // Do nothing - that's the point of the method. Duh.
+            log.errorf( t, "Error encountered. Unable to require file: %s", requirement );
         }
     }
 

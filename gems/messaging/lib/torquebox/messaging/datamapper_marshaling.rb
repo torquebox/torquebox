@@ -19,23 +19,24 @@
 # does not like that. So, when sending or receiving a DataMapper::Resource
 # we need to override _dump and _load to just serialize the ID and
 # class name of the resource, and use Resource.get to _load it.
-module DataMapper
-  module Resource
+module TorqueBox
+  module Messaging
+    module DataMapper
 
-    def self.included(base)
-      base.extend(ClassMethods)
-    end
-    
-    def _dump( level )
-      [id, self.class].join(':')
-    end
+      def self.included(base)
+        base.extend(ClassMethods)
+      end
+      
+      def _dump( level )
+        [id, self.class].join(':')
+      end
 
-    module ClassMethods
-      def _load( string )
-        id, clazz = string.split(':')
-        Kernel.const_get(clazz).get(id)
+      module ClassMethods
+        def _load( string )
+          id, clazz = string.split(':')
+          Kernel.const_get(clazz).get(id)
+        end
       end
     end
   end
 end
-

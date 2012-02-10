@@ -1,11 +1,11 @@
 require 'torquebox/messaging/datamapper_marshaling'
 
 class MyTestDataMapperModel
-  include DataMapper::Resource 
+  include TorqueBox::Messaging::DataMapper
   def id ; 100 end
 end
 
-describe DataMapper::Resource do
+describe TorqueBox::Messaging::DataMapper do
 
   describe "DataMapper::Resource" do
     it "should _dump as a string with the ID and class name" do
