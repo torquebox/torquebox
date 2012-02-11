@@ -9,15 +9,19 @@ class Foo
   include DataMapper::Resource
   include TorqueBox::Messaging::Backgroundable
   include TorqueBox::Messaging::DataMapper
-
-  always_background :foo
+  
   property :id, Serial
-
+  
   def foo( message )
-    File.open( ENV['FOO_FILE'], 'w' ) do |f|
-      f.puts( message )
-    end
+    queue = TorqueBox::Messaging::Queue.new( '/queue/backchannel' )
+    queue.publish( message )
+    $stderr.puts "foo CALLED"
   end
+
+  # a bug in dm-core prevents us from calling always_background
+  # before the method is defined - see https://github.com/datamapper/dm-core/pull/182
+  always_background :foo
+
 end
 
 
@@ -25,13 +29,13 @@ class Bar
   include DataMapper::Resource
   include TorqueBox::Messaging::Backgroundable
   include TorqueBox::Messaging::DataMapper
-
+  
   property :id, Serial
 
   def bar( message )
-    File.open( ENV['BAR_FILE'], 'w' ) do |f|
-      f.puts( message )
-    end
+    queue = TorqueBox::Messaging::Queue.new( '/queue/backchannel' )
+    queue.publish( message )
+    $stderr.puts "bar CALLED"
   end
 
 end
