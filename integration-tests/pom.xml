@@ -452,7 +452,7 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
         <configuration>
-          <jrubyJvmArgs>-XX:MaxPermSize=384m -Xmx768m</jrubyJvmArgs>
+          <jrubyJvmArgs>-XX:MaxPermSize=384m -Xmx1024m</jrubyJvmArgs>
           <systemProperties>
             <property>
               <name>max.heap</name>
