@@ -178,8 +178,8 @@ class Assembler
   def stash_stock_configs
     FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-full.xml',
                   config_stash + '/standalone-full.xml' ) unless File.exist?( config_stash + '/standalone-full.xml' )
-    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-ha.xml',
-                  config_stash + '/standalone-ha.xml' ) unless File.exist?( config_stash + '/standalone-ha.xml' )
+    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-full-ha.xml',
+                  config_stash + '/standalone-full-ha.xml' ) unless File.exist?( config_stash + '/standalone-full-ha.xml' )
     FileUtils.cp( tool.jboss_dir + '/domain/configuration/domain.xml',
                   config_stash + '/domain.xml' )     unless File.exist?( config_stash + '/domain.xml' )
   end
@@ -205,8 +205,8 @@ class Assembler
     tool.transform_config(config_stash + '/standalone-full.xml',
                           'standalone/configuration/standalone-full.xml',
                           :extra_modules => polyglot_mods)
-    tool.transform_config(config_stash + '/standalone-ha.xml',
-                          'standalone/configuration/standalone-ha.xml',
+    tool.transform_config(config_stash + '/standalone-full-ha.xml',
+                          'standalone/configuration/standalone-full-ha.xml',
                           :extra_modules => polyglot_mods,
                           :ha => true )
     tool.transform_config(config_stash + '/domain.xml',
@@ -234,6 +234,7 @@ class Assembler
     transform_host_config
     Dir.chdir( tool.jboss_dir ) do
       FileUtils.cp( 'standalone/configuration/standalone-full.xml', 'standalone/configuration/standalone.xml' )
+      FileUtils.cp( 'standalone/configuration/standalone-full-ha.xml', 'standalone/configuration/standalone-ha.xml' )
     end
   end
 end
