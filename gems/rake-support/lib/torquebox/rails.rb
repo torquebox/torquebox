@@ -18,7 +18,7 @@
 
 begin
   require 'rails/version'
-rescue
+rescue LoadError
 end
 
 module TorqueBox
