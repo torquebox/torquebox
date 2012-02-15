@@ -11,7 +11,7 @@ TorqueSpec.local {
 
 TorqueSpec.configure do |config|
   config.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
-  config.jvm_args = "-Xms256m -Xmx1024m -XX:NewRatio=8 -XX:MaxPermSize=512m -XX:+UseParallelGC -XX:+UseParallelOldGC -Djruby.home=#{config.jruby_home}"
+  config.jvm_args = "-Xms256m -Xmx1024m -XX:MaxPermSize=512m -XX:NewRatio=8 -XX:+UseParallelGC -XX:+UseParallelOldGC -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:#{config.jboss_home}/standalone/log/gc.log -Djruby.home=#{config.jruby_home}"
   config.max_heap = java.lang::System.getProperty( 'max.heap' )
   config.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
   config.jvm_args += " -Dgem.path=default"
