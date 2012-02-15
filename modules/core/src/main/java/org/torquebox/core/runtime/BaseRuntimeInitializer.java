@@ -20,9 +20,12 @@
 package org.torquebox.core.runtime;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.jruby.javasupport.JavaEmbedUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
@@ -38,6 +41,7 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
         this.rubyAppMetaData = rubyAppMetaData;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void initialize(Ruby ruby) throws Exception {
         String appName = this.rubyAppMetaData.getApplicationName();
@@ -48,6 +52,19 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
         script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
         RuntimeHelper.evalScriptlet( ruby, script.toString() );
         RuntimeHelper.requireIfAvailable(ruby, "torquebox_init");
+        
+        //
+        // HACK - Remove once upgraded to JRuby 1.6.7
+        //
+        try {
+            Field recursiveField = ruby.getClass().getDeclaredField( "recursive" );
+            recursiveField.setAccessible( true );
+            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( ruby )).remove();
+        }
+        catch (Exception ex) {
+            // safe to ignore
+        }
+        // END HACK
     }
 
     public RubyAppMetaData getRubyAppMetaData() {

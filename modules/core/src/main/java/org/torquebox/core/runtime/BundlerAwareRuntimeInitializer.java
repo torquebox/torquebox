@@ -20,9 +20,12 @@
 package org.torquebox.core.runtime;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -37,6 +40,7 @@ public class BundlerAwareRuntimeInitializer extends BaseRuntimeInitializer {
         super( rubyAppMetaData );
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void initialize(Ruby ruby) throws Exception {
         super.initialize( ruby );
@@ -47,6 +51,19 @@ public class BundlerAwareRuntimeInitializer extends BaseRuntimeInitializer {
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + gemfile.getAbsolutePath() +  "'" );
             RuntimeHelper.require( ruby, "bundler/setup" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']=nil" );
+            
+            //
+            // HACK - Remove once upgraded to JRuby 1.6.7
+            //
+            try {
+                Field recursiveField = ruby.getClass().getDeclaredField( "recursive" );
+                recursiveField.setAccessible( true );
+                ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( ruby )).remove();
+            }
+            catch (Exception ex) {
+                // safe to ignore
+            }
+            // END HACK
         }
     }
 
