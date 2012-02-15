@@ -24,7 +24,7 @@
     <version.json>1.4.6</version.json>
     <assembly.dir>${project.basedir}/../build/assembly/target/stage/torquebox</assembly.dir>
     <integ.dist.dir>target/integ-dist</integ.dist.dir>
-    <max.heap>2304m</max.heap>
+    <max.heap>1024m</max.heap>
     <jboss.lazy>false</jboss.lazy>
     <driver.type>any</driver.type>
     <ruby.compat.version>1.8</ruby.compat.version>
@@ -304,6 +304,7 @@
       <id>ci</id>
       <properties>
         <driver.type>headless</driver.type>
+        <max.heap>3072m</max.heap>
       </properties>
     </profile>
     <profile>
