@@ -19,11 +19,7 @@
 
 package org.torquebox.core.component;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
 import org.jruby.Ruby;
-import org.jruby.RubyHash;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -52,24 +48,8 @@ public class ComponentEval implements ComponentInstantiator {
         return this.location;
     }
 
-    @SuppressWarnings("unchecked")
     public IRubyObject newInstance(Ruby runtime, Object[] initParams) {
-        IRubyObject instance = RuntimeHelper.executeScript( runtime, this.code, this.location );
-        
-        //
-        // HACK - Remove once upgraded to JRuby 1.6.7
-        //
-        try {
-            Field recursiveField = runtime.getClass().getDeclaredField( "recursive" );
-            recursiveField.setAccessible( true );
-            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( runtime )).remove();
-        }
-        catch (Exception ex) {
-            // safe to ignore
-        }
-        // END HACK
-        
-        return instance;
+        return RuntimeHelper.executeScript( runtime, this.code, this.location );
     }
 
 }

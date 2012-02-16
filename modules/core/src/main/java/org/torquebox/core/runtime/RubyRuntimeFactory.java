@@ -259,7 +259,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         return createInstance( contextInfo, true );
     }
 
-    @SuppressWarnings("unchecked")
     public Ruby createInstance(String contextInfo, boolean initialize) throws Exception {
 
         TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
@@ -341,19 +340,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         }
 
         RuntimeContext.registerRuntime( runtime );
-        
-        //
-        // HACK - Remove once upgraded to JRuby 1.6.7
-        //
-        try {
-            Field recursiveField = runtime.getClass().getDeclaredField( "recursive" );
-            recursiveField.setAccessible( true );
-            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( runtime )).remove();
-        }
-        catch (Exception ex) {
-            // safe to ignore
-        }
-        // END HACK
 
         return runtime;
     }
@@ -429,10 +415,23 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         return fullContext;
     }
 
+    @SuppressWarnings("unchecked")
     public synchronized void destroyInstance(Ruby instance) {
         RuntimeContext.deregisterRuntime( instance );
         if (undisposed.remove( instance )) {
             instance.tearDown( false );
+            //
+            // HACK - Remove once upgraded to JRuby 1.6.7
+            //
+            try {
+                Field recursiveField = instance.getClass().getDeclaredField( "recursive" );
+                recursiveField.setAccessible( true );
+                ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( instance )).remove();
+            }
+            catch (Exception ex) {
+                // safe to ignore
+            }
+            // END HACK
         }
     }
 
