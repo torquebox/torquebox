@@ -5,13 +5,16 @@ require 'torquebox-rake-support'
 
 $: << File.dirname( __FILE__ )
 
+jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
+jboss_log_dir = File.join( jboss_home, 'standalone', 'log' )
+
 TorqueSpec.local {
   require 'spec_helper_integ'
 }
 
 TorqueSpec.configure do |config|
-  config.jboss_home = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist', 'jboss' ) )
-  config.jvm_args = "-Xms256m -Xmx1024m -XX:MaxPermSize=512m -XX:NewRatio=8 -XX:+UseParallelGC -XX:+UseParallelOldGC -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:#{config.jboss_home}/standalone/log/gc.log -Djruby.home=#{config.jruby_home}"
+  config.jboss_home = jboss_home
+  config.jvm_args = "-Xms256m -Xmx1024m -XX:MaxPermSize=512m -XX:NewRatio=8 -XX:+UseParallelGC -XX:+UseParallelOldGC -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -Xloggc:#{File.join( jboss_log_dir, 'gc.log' )} -Djruby.home=#{config.jruby_home}"
   config.max_heap = java.lang::System.getProperty( 'max.heap' )
   config.lazy = java.lang::System.getProperty( 'jboss.lazy' ) == "true"
   config.jvm_args += " -Dgem.path=default"
@@ -20,6 +23,7 @@ TorqueSpec.configure do |config|
   config.spec_dir = File.dirname( __FILE__ )
 end
 FileUtils.mkdir_p(TorqueSpec.knob_root) unless File.exist?(TorqueSpec.knob_root)
+FileUtils.mkdir_p( jboss_log_dir ) unless File.exist?( jboss_log_dir )
 
 MUTABLE_APP_BASE_PATH  = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps' )
 TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
