@@ -304,7 +304,7 @@
       <id>ci</id>
       <properties>
         <driver.type>headless</driver.type>
-        <max.heap>3072m</max.heap>
+        <max.heap>2560m</max.heap>
       </properties>
     </profile>
     <profile>
@@ -451,7 +451,7 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
         <configuration>
-          <jrubyJvmArgs>-XX:MaxPermSize=384m -Xmx1024m</jrubyJvmArgs>
+          <jrubyJvmArgs>-XX:MaxPermSize=384m -Xmx256m -Xmx1024m -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps</jrubyJvmArgs>
           <systemProperties>
             <property>
               <name>max.heap</name>
