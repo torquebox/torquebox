@@ -23,7 +23,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +43,6 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
-import org.jruby.RubyHash;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.ast.executable.Script;
@@ -415,23 +413,10 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         return fullContext;
     }
 
-    @SuppressWarnings("unchecked")
     public synchronized void destroyInstance(Ruby instance) {
         RuntimeContext.deregisterRuntime( instance );
         if (undisposed.remove( instance )) {
             instance.tearDown( false );
-            //
-            // HACK - Remove once upgraded to JRuby 1.6.7
-            //
-            try {
-                Field recursiveField = instance.getClass().getDeclaredField( "recursive" );
-                recursiveField.setAccessible( true );
-                ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( instance )).remove();
-            }
-            catch (Exception ex) {
-                // safe to ignore
-            }
-            // END HACK
         }
     }
 
