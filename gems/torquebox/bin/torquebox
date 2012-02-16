@@ -113,10 +113,10 @@ class TorqueBoxCommand < Thor
     TorqueBox::Server.setup_environment
     options = "--connect"
     if Config::CONFIG['host_os'] =~ /mswin/
-      path = File.join(TorqueBox::Server.jboss_home, "bin\\jboss-cli")
+      path = File.join(ENV['JBOSS_HOME'], "bin\\jboss-cli")
       exec(path, options)
     else
-      path = "/bin/sh #{File.join(TorqueBox::Server.jboss_home, 'bin/jboss-cli.sh')}"
+      path = "/bin/sh #{File.join(ENV['JBOSS_HOME'], 'bin/jboss-cli.sh')}"
       exec "#{path} #{options}"
     end
   end
