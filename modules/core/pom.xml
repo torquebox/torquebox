@@ -147,6 +147,12 @@
             </goals>
             <configuration>
               <file>./bin/generate-build-info.rb</file>
+              <jrubyJvmArgs>
+                -Dversion.torquebox=${project.version}
+                -Dversion.jbossas=${version.jbossas}
+                -Dversion.jruby=${version.jruby}
+                -Dversion.polyglot=${version.polyglot}
+              </jrubyJvmArgs>
             </configuration>
           </execution>
           <execution>
