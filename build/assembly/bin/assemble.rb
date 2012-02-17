@@ -2,10 +2,13 @@
 
 $: << File.dirname( __FILE__ ) + '/../lib'
 
+require 'java'
 require 'assembly_tool'
 require 'fileutils'
 require 'rexml/document'
 require 'rbconfig'
+
+java_import java.lang.System
 
 class Assembler 
 
@@ -36,13 +39,12 @@ class Assembler
   end
 
   def determine_versions
-    doc = REXML::Document.new( File.read( tool.base_dir + '/../../pom.xml' ) )
-    @torquebox_version = doc.get_elements( "project/version" ).first.text
-    @jboss_version     = doc.get_elements( "project/properties/version.jbossas" ).first.text
-    @jruby_version     = doc.get_elements( "project/properties/version.jruby" ).first.text
-    @polyglot_version  = doc.get_elements( "project/properties/version.polyglot" ).first.text
-    @stilts_version    = doc.get_elements( "project/properties/version.org.projectodd.stilts" ).first.text
-    puts "TorqueBox.... #{@torquebox_version}" 
+    @torquebox_version = System.getProperty( "version.torquebox" )
+    @jboss_version     = System.getProperty( "version.jbossas" )
+    @jruby_version     = System.getProperty( "version.jruby" )
+    @polyglot_version  = System.getProperty( "version.polyglot" )
+    @stilts_version    = System.getProperty( "version.stilts" )
+    puts "TorqueBox.... #{@torquebox_version}"
     puts "JBoss........ #{@jboss_version}"
     puts "JRuby........ #{@jruby_version}"
     puts "Polyglot..... #{@polyglot_version}"

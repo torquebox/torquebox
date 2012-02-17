@@ -101,6 +101,13 @@
             </goals>
             <configuration>
               <file>bin/assemble.rb</file>
+              <jrubyJvmArgs>
+                -Dversion.torquebox=${project.version}
+                -Dversion.jbossas=${version.jbossas}
+                -Dversion.jruby=${version.jruby}
+                -Dversion.polyglot=${version.polyglot}
+                -Dversion.stilts=${version.org.projectodd.stilts}
+              </jrubyJvmArgs>
             </configuration>
           </execution>
         </executions>
