@@ -27,6 +27,7 @@
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
         <resource-root path="polyglot-core.jar"/>
+        <resource-root path="yaml-schema.jar"/>
     </resources>
 
     <exports>

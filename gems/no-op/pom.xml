@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>rubygems</groupId>
+    <artifactId>torquebox-gems-parent</artifactId>
+    <version>2.0.0.CR1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>torquebox-no-op</artifactId>
+  <packaging>gem</packaging>
+  <name>TorqueBox No-Op Gem</name>
+  <description />
+
+  <dependencies>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-package</id>
+            <configuration>
+              <includeDependencies>true</includeDependencies>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>rspec-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>run-specs</id>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>jruby-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>install-gem</id>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
+

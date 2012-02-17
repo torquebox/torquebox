@@ -536,11 +536,11 @@ end</programlisting></para>
     application may also include any traditional JavaEE or JBoss-specific
     descriptors within its <filename>config/</filename> directory.</para>
 
-    <section id="config-web-xml">
-      <title>config/web.xml</title>
+    <section id="webinf-web-xml">
+      <title>WEB-INF/web.xml</title>
 
       <para>A JavaEE <filename>web.xml</filename> deployment descriptor may be
-      included in your application's <filename>config/</filename> directory.
+      included in your application's <filename>WEB-INF/</filename> directory.
       Additional Java Servlets, Filters or other configuration may be
       performed within this file. Its contents will be mixed with other
       information when your application is deployed. If desired, your

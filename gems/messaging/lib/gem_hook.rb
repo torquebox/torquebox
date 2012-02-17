@@ -44,3 +44,5 @@ require 'torquebox/messaging/message_processor'
 require 'torquebox/messaging/task'
 require 'torquebox/messaging/backgroundable'
 require 'torquebox/messaging/processor_wrapper'
+
+require 'torquebox/messaging/datamapper_marshaling.rb'

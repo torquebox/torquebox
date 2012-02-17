@@ -19,7 +19,7 @@ require 'dm-core/spec/lib/pending_helpers'
 require 'datamapper/dm-infinispan-adapter'
 require 'cache'
 
-Spec::Runner.configure do |config|
+RSpec::Runner.configure do |config|
   config.include(DataMapper::Spec::PendingHelpers)
 end
 

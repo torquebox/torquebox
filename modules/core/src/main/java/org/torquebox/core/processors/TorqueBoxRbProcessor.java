@@ -19,6 +19,8 @@
 
 package org.torquebox.core.processors;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import org.jboss.as.server.deployment.Attachments;
@@ -32,6 +34,7 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.TorqueBoxMetaData;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 
 public class TorqueBoxRbProcessor extends AbstractParsingProcessor {
@@ -44,38 +47,48 @@ public class TorqueBoxRbProcessor extends AbstractParsingProcessor {
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
         VirtualFile root = resourceRoot.getRoot();
 
-        VirtualFile file = getMetaDataFile( root, TORQUEBOX_RB_FILE );
+        VirtualFile vFile = getMetaDataFile( root, TORQUEBOX_RB_FILE );
 
-        if ( file != null ) {
+        
+        if ( vFile != null ) {
             HashMap<String, Object> metaDataHash;
+            File file;
+            
+            try {
+                file = vFile.getPhysicalFile();
+            } catch (IOException e) {
+                log.error( e );
+                return;
+            }
+            
             try {
                 GlobalRuby ruby = (GlobalRuby)phaseContext.getServiceRegistry().getRequiredService( CoreServices.GLOBAL_RUBY ).getValue();
                 metaDataHash =  eval( ruby, file );
-
             } catch (Exception e) {
                 log.error( "============================================================" );
-                log.error( "Failed to load '" + file.getPathName() + "':"  );
+                log.error( "Failed to load '" + file.getAbsolutePath() + "':"  );
                 log.error( "  " + e.getMessage() );
                 log.error( "============================================================" );
                 
-                throw new DeploymentUnitProcessingException( "Failed to load " + file.getPathName(), e );
+                throw new DeploymentUnitProcessingException( "Failed to load " + file.getAbsolutePath(), e );
             }
             TorqueBoxMetaData metaData = new TorqueBoxMetaData( metaDataHash );
             TorqueBoxMetaData existingMetaData = unit.getAttachment( TorqueBoxMetaData.ATTACHMENT_KEY );
             if ( existingMetaData != null ) {
                 metaData = existingMetaData.overlayOnto( metaData );
             }
+            RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
             unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static HashMap<String, Object> eval(GlobalRuby ruby, VirtualFile file) throws Exception {
+    public static HashMap<String, Object> eval(GlobalRuby ruby, File file) throws Exception {
         log.info( "evaling: " + file );
 
         StringBuffer script = new StringBuffer( "require 'rubygems'\n");
         script.append( "require 'torquebox-configure'\n" );
-        script.append( "TorqueBox::Configuration::GlobalConfiguration.load_configuration( %q{" ).append( file.getPathName() ).append( "} ).to_java" );
+        script.append( "TorqueBox::Configuration::GlobalConfiguration.load_configuration( %q{" ).append( file.getAbsolutePath() ).append( "} ).to_java" );
 
         return (HashMap<String, Object>)((IRubyObject)ruby.evaluate( script.toString() )).toJava( HashMap.class );
     }

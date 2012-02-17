@@ -64,7 +64,8 @@ class TorqueBoxCommand < Thor
     path = TorqueBox::DeployUtils.create_archive(:name => archive_name, :app_dir => root)
     puts "Created archive: #{path}"
     if options.deploy
-      puts "Deploying #{archive_name} to #{ENV['TORQUEBOX_HOME']}"
+      puts "Deployed: #{archive_name}"
+      puts "    into: #{ENV['TORQUEBOX_HOME']}"
       TorqueBox::DeployUtils.deploy_archive( :archive_path => path )
     end
   end
@@ -112,10 +113,10 @@ class TorqueBoxCommand < Thor
     TorqueBox::Server.setup_environment
     options = "--connect"
     if Config::CONFIG['host_os'] =~ /mswin/
-      path = File.join(TorqueBox::Server.jboss_home, "bin\\jboss-admin")
+      path = File.join(ENV['JBOSS_HOME'], "bin\\jboss-cli")
       exec(path, options)
     else
-      path = "/bin/sh #{File.join(TorqueBox::Server.jboss_home, 'bin/jboss-admin.sh')}"
+      path = "/bin/sh #{File.join(ENV['JBOSS_HOME'], 'bin/jboss-cli.sh')}"
       exec "#{path} #{options}"
     end
   end

@@ -37,7 +37,7 @@ public class CDIExtension extends AbstractBootstrappableExtension {
     public void initialize(ExtensionContext context) {
         bootstrap();
         log.info( "Initializing TorqueBox CDI Subsystem" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CDISubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
@@ -56,7 +56,7 @@ public class CDIExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), CDISubsystemParser.getInstance());
+        context.setSubsystemXmlMapping(SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), CDISubsystemParser.getInstance());
     }
     
     public static final String SUBSYSTEM_NAME = "torquebox-cdi";

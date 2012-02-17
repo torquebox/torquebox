@@ -37,7 +37,7 @@ public class CacheExtension extends AbstractBootstrappableExtension {
     public void initialize(ExtensionContext context) {
         bootstrap();
         log.info( "Initializing TorqueBox Cache Subsystem" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CacheSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
@@ -57,7 +57,7 @@ public class CacheExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping(Namespace.CURRENT.getUriString(), CacheSubsystemParser.getInstance());
+        context.setSubsystemXmlMapping(SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), CacheSubsystemParser.getInstance());
     }
     
     

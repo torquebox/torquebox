@@ -143,8 +143,22 @@
         and undeploy them separate from any app, creating additional
         work.</para>
       </section>
-    </section>
 
+      <section id="destination-deployment-runtime">
+        <title>Deploying destinations at runtime</title>
+
+        <para>You can also choose to deploy messaging destinations at runtime:</para>
+
+        <para><example>
+          <title>Deploying queues and topics at runtime</title>
+        
+          <para><programlisting>TorqueBox::Messaging::Queue.start '/queues/foo'
+TorqueBox::Messaging::Topic.start '/topics/bar'</programlisting>
+          </para></example>
+        </para>
+      </section>
+    </section>
+  
     <section id="messaging-deployment-descriptors">
       <title>Deployment Descriptors</title>
 
@@ -352,20 +366,36 @@ require 'torquebox-messaging'
 
           <tbody>
             <row>
-              <entry><parameter>:naming_host</parameter></entry>
+              <entry><parameter>:host</parameter></entry>
 
               <entry>localhost</entry>
 
-              <entry>Should be the hostname or ip address of the JNDI naming
-              server containing the destination names.</entry>
+              <entry>Should be the hostname or ip address of the
+              HornetQ server containing the destinations.</entry>
             </row>
 
             <row>
-              <entry><parameter>:naming_port</parameter></entry>
+              <entry><parameter>:port</parameter></entry>
 
-              <entry>1099</entry>
+              <entry>5445</entry>
 
-              <entry>The port of the JNDI naming server.</entry>
+              <entry>The port of the HornetQ server.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:username</parameter></entry>
+
+              <entry>nil</entry>
+
+              <entry>The username to use when connecting to the HornetQ server.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:password</parameter></entry>
+
+              <entry>nil</entry>
+
+              <entry>The password to use when connecting to the HornetQ server.</entry>
             </row>
 
             <row>
@@ -446,11 +476,11 @@ queue.publish {:key =&gt; 'value', :list =&gt; %w{one two three}}
         </example>
 
         <example>
-          <title>Send message using a remote JNDI server</title>
+          <title>Send message using a remote HornetQ server</title>
 
           <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo', 
-                                        :naming_host =&gt; 'jndi.jboss.org',
-                                        :naming_port =&gt; 1099)
+                                        :host =&gt; 'hornetq_server.mydomain.com',
+                                        :port =&gt; 5445)
 queue.publish "Some message"</programlisting></para>
         </example>
 
@@ -1095,7 +1125,7 @@ end</programlisting></para>
                 </row>
 
                 <row>
-                  <entry><parameter>filter</parameter></entry>
+                  <entry><parameter>selector</parameter></entry>
 
                   <entry></entry>
 
@@ -1149,7 +1179,7 @@ end</programlisting></para>
 messaging:
   /queues/foo:
     MyFooHandler:
-      filter: "cost &gt; 30"
+      selector: "cost &gt; 30"
       concurrency: 2
       config:
         type: "premium"
@@ -1163,7 +1193,7 @@ messaging:
   ...
   queue '/queues/foo' do
     processor MyFooHandler do 
-      filter "cost &gt; 30"
+      selector "cost &gt; 30"
       concurrency 2
       config do
         type "premium"
@@ -1198,7 +1228,7 @@ messaging:
     - Handler
         concurrency: 5
     - Observer: &amp;defaults
-        filter: "x &gt; 18"
+        selector: "x &gt; 18"
         config:
           x: ex
           y: why
@@ -1207,7 +1237,7 @@ messaging:
 /queues/students:
     VerySimpleAnalyzer:
     YouthMonitor:
-      filter: "y &lt; 18"
+      selector: "y &lt; 18"
       config:
         h: ache
         i: eye
@@ -1233,7 +1263,7 @@ messaging:
     processor SimpleHandler
   end
 
-  common_config = { :filter =&gt; "x &gt; 18", :config =&gt; { :x =&gt; 'ex', :y =&gt; 'why' } }
+  common_config = { :selector =&gt; "x &gt; 18", :config =&gt; { :x =&gt; 'ex', :y =&gt; 'why' } }
 
   topic '/topics/popular' do |topic| 
     topic.processor Handler, :concurrency =&gt; 5
@@ -1244,7 +1274,7 @@ messaging:
   queue '/queues/students' do |queue|
     queue.processor VerySimpleAnalyzer
     queue.processor YouthMonitor do 
-      filter "y &lt; 18"
+      selector "y &lt; 18"
       config do
         h 'ache'
         i 'eye'

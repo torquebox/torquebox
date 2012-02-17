@@ -23,6 +23,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +44,7 @@ import org.jboss.vfs.VFS;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.ast.executable.Script;
@@ -257,6 +259,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         return createInstance( contextInfo, true );
     }
 
+    @SuppressWarnings("unchecked")
     public Ruby createInstance(String contextInfo, boolean initialize) throws Exception {
 
         TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
@@ -338,6 +341,19 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         }
 
         RuntimeContext.registerRuntime( runtime );
+        
+        //
+        // HACK - Remove once upgraded to JRuby 1.6.7
+        //
+        try {
+            Field recursiveField = runtime.getClass().getDeclaredField( "recursive" );
+            recursiveField.setAccessible( true );
+            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( runtime )).remove();
+        }
+        catch (Exception ex) {
+            // safe to ignore
+        }
+        // END HACK
 
         return runtime;
     }

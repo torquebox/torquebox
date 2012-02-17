@@ -63,7 +63,7 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
         setRuntimeType( ruby, "rails" );
         super.initialize( ruby );
        
-        Logger logger = Logger.getLogger( this.rubyAppMetaData.getApplicationName() );
+        Logger logger = Logger.getLogger( getRubyAppMetaData().getApplicationName() );
         IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby( ruby, logger );
         ruby.getGlobalVariables().set( "$JBOSS_RAILS_LOGGER", rubyLogger );
 

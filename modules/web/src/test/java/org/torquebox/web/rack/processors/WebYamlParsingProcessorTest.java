@@ -65,6 +65,21 @@ public class WebYamlParsingProcessorTest extends AbstractDeploymentProcessorTest
     }
 
     @Test
+    public void testNoUnitsSessionTimeout() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "timeout-nounits-web.yml" );
+
+        RackMetaData rackMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
+
+        assertNotNull( rackMetaData );
+
+        assertEquals( "/tengwar", rackMetaData.getContextPath() );
+        assertEquals( 1, rackMetaData.getHosts().size() );
+        assertEquals( "mordor.com", rackMetaData.getHosts().get( 0 ) );
+        assertNull( rackMetaData.getStaticPathPrefix() );
+        assertEquals( 600, rackMetaData.getSessionTimeout() );
+    }
+    
+    @Test
     public void testValidWebYmlCustomStaticPathPrefix() throws Exception {
         MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "static-path-web.yml" );
 

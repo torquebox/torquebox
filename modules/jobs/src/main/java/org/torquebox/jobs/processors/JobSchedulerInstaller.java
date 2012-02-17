@@ -24,11 +24,12 @@ import java.util.List;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
-import org.projectodd.polyglot.core.processors.ClusterAwareProcessor;
+import org.projectodd.polyglot.core.util.ClusterUtil;
 import org.projectodd.polyglot.hasingleton.HASingleton;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.torquebox.core.as.CoreServices;
@@ -40,7 +41,7 @@ import org.torquebox.jobs.as.JobsServices;
 /**
  * Creates a JobScheduler service if there are any job meta data
  */
-public class JobSchedulerInstaller extends ClusterAwareProcessor {
+public class JobSchedulerInstaller implements DeploymentUnitProcessor {
 
     public JobSchedulerInstaller() {
     }
@@ -73,7 +74,7 @@ public class JobSchedulerInstaller extends ClusterAwareProcessor {
         DeployedJobTypes jobTypes = getJobTypes( allMetaData );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
 
-        if (isClustered( phaseContext )) {
+        if (ClusterUtil.isClustered( phaseContext )) {
             log.debug( "Deploying clustered scheduler: " + unit );
             if (jobTypes.singletonJobs) {
                 this.buildScheduler( phaseContext, true );

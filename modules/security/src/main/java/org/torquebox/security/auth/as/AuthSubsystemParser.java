@@ -63,7 +63,7 @@ public class AuthSubsystemParser implements XMLStreamConstants, XMLElementReader
         requireNoContent( reader );
 
         final ModelNode address = new ModelNode();
-        address.add( SUBSYSTEM, SecurityExtension.AUTHENTICATION_SUBSYSTEM_NAME );
+        address.add( SUBSYSTEM, SecurityExtension.SUBSYSTEM_NAME );
         address.protect();
 
         list.add( AuthSubsystemAdd.createOperation( address ) );

@@ -48,7 +48,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
 import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
-import org.projectodd.polyglot.core.processors.KnobStructureProcessor;
+import org.projectodd.polyglot.core.processors.ArchiveStructureProcessor;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.TorqueBoxStdioContextSelector;
@@ -67,6 +67,7 @@ import org.torquebox.core.datasource.processors.DatabaseYamlParsingProcessor;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
 import org.torquebox.core.injection.analysis.processors.InjectionIndexingProcessor;
 import org.torquebox.core.injection.processors.CorePredeterminedInjectableInstaller;
+import org.torquebox.core.injection.processors.InjectionYamlParsingProcessor;
 import org.torquebox.core.injection.processors.PredeterminedInjectableProcessor;
 import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
 import org.torquebox.core.processors.KnobRootMountProcessor;
@@ -110,9 +111,9 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, final InjectableHandlerRegistry registry) {
 
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobStructureProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 20, new AppKnobYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 100, rootSafe( new AppJarScanningProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new ArchiveStructureProcessor( ".knob" ) );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 800, new AppKnobYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 900, rootSafe( new AppJarScanningProcessor() ) );
 
         processorTarget.addDeploymentProcessor( Phase.PARSE, 0, rootSafe( new RubyApplicationRecognizer() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 5, new TorqueBoxYamlParsingProcessor() );
@@ -121,13 +122,15 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( Phase.PARSE, 30, new EnvironmentYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 35, rootSafe( new PoolingYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 36, rootSafe( new RubyYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( Phase.PARSE, 37, rootSafe( new InjectionYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 40, rootSafe( new RubyApplicationDefaultsProcessor() ) );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 100, new ApplicationExploder() );
         processorTarget.addDeploymentProcessor( Phase.PARSE, 4000, rootSafe( new BaseRubyRuntimeInstaller() ) );
 
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 0, rootSafe( new CoreDependenciesProcessor() ) );
-        // processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, rootSafe( new JdkDependenciesProcessor() ) );
+        // processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10,
+        // rootSafe( new JdkDependenciesProcessor() ) );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1000, rootSafe( new PredeterminedInjectableProcessor( registry ) ) );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1001, rootSafe( new CorePredeterminedInjectableInstaller() ) );
         processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 1100, rootSafe( new InjectionIndexingProcessor( registry ) ) );

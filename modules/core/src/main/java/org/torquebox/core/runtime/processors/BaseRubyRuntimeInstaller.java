@@ -19,11 +19,15 @@
 
 package org.torquebox.core.runtime.processors;
 
+import java.io.File;
+
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.core.runtime.BaseRuntimeInitializer;
 import org.torquebox.core.runtime.BundlerAwareRuntimeInitializer;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
@@ -51,12 +55,21 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
             unit.putAttachment( RubyRuntimeMetaData.ATTACHMENT_KEY, runtimeMetaData );
         }
 
-        runtimeMetaData.setBaseDir( rubyAppMetaData.getRoot() );
+        File root = rubyAppMetaData.getRoot();
+        runtimeMetaData.setBaseDir( root );
         runtimeMetaData.setEnvironment( rubyAppMetaData.getEnvironmentVariables() );
         runtimeMetaData.setRuntimeType( RubyRuntimeMetaData.RuntimeType.BARE );
-        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( rubyAppMetaData.getRoot() ) );
-        
-        RuntimeInitializer initializer = new BundlerAwareRuntimeInitializer( rubyAppMetaData );
+        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( root ) );
+        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( root, "lib" ) ) );
+        runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( root, "config" ) ) );
+
+        RuntimeInitializer initializer = null;
+        File gemfile = new File( root, "Gemfile" );
+        if (gemfile.exists()) {
+            initializer = new BundlerAwareRuntimeInitializer( rubyAppMetaData );
+        } else {
+        	initializer = new BaseRuntimeInitializer( rubyAppMetaData );
+        }
         runtimeMetaData.setRuntimeInitializer( initializer );
 
     }
@@ -64,7 +77,5 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
     @Override
     public void undeploy(DeploymentUnit context) {
         // TODO Auto-generated method stub
-
     }
-
 }

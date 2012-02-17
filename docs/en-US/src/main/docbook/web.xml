@@ -91,7 +91,25 @@
     Java session.</para>
 
     <para>The supported scalar types are <type>numerics</type>,
-    <type>strings</type>, <type>booleans</type> and <type>nil</type>.</para>
+    <type>strings</type>, <type>booleans</type> and <type>nil</type>. The session
+    timeout can be configured in your TorqueBox deployment descriptor(s). The general
+    format for the session timeout value is numeric with an optional unit of measure, where
+    <literal>ms</literal> = milliseconds, <literal>s</literal> = seconds,
+    <literal>m</literal> = minutes and <literal>h</literal> = hours. If no
+    unit of measure is provided, minutes will be assumed.
+    Ex: <literal>session-timeout: 10 h</literal> will set the session timeout to
+    10 hours.</para>
+
+    <para><example>
+        <title>Example deployment descriptor</title>
+
+        <para>Configuring session timeout:<programlisting>...
+  
+web:
+  host: foobar.com
+  context: /tacos
+  session-timeout: 10</programlisting></para>
+      </example></para>
   </section>
 
   <section id="torque-box-store">
@@ -359,6 +377,20 @@ run app</programlisting></para>
           application.</para>
 
           <para><screen><prompt>$</prompt> <command>gem</command> <parameter>install rails</parameter></screen></para>
+        </section>
+
+        <section id="using-torquebox-rails">
+          <title>Using the torquebox command line</title>
+          
+          <para>TorqueBox ships with a command line application which you can use
+            to setup a new Rails 3.x application or modify an existing one to work with
+            TorqueBox. The same command works for both scenarios. If the application 
+            directory exists, it will apply the TorqueBox rails template to that application.
+            If it does not exist, a new Rails 3.x application will be created.
+          </para>
+
+          <para><screen><prompt>$</prompt> <command>torquebox</command> rails <parameter>/path/to/myapp</parameter></screen></para>
+
         </section>
 
         <section id="using-the-rails-application-template">

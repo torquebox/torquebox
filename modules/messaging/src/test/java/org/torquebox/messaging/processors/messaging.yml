@@ -4,7 +4,7 @@ messaging:
   /array:
     - One
     - Two: &foo
-        filter: "x > 18"
+        selector: "x > 18"
         config:
           x: ex
           y: why
@@ -13,7 +13,7 @@ messaging:
   /hash:
     A:
     B:
-      filter: "y < 18"
+      selector: "y < 18"
       config:
         h: ache
         i: eye

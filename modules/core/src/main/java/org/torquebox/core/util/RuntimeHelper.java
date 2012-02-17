@@ -118,6 +118,21 @@ public class RuntimeHelper {
             log.errorf( t, "Unable to require file: %s", requirement );
         }
     }
+    
+    public static void requireIfAvailable(Ruby ruby, String requirement) {
+        try {
+        	StringBuilder script = new StringBuilder();
+        	script.append("begin\n");
+        	script.append("require %q(");
+        	script.append(requirement);
+        	script.append(")\n");
+        	script.append("rescue LoadError\n");
+        	script.append("end\n");
+            evalScriptlet( ruby, script.toString() );
+        } catch (Throwable t) {
+            log.errorf( t, "Error encountered. Unable to require file: %s", requirement );
+        }
+    }
 
     public static void requireUnlessDefined(Ruby ruby, String requirement, String constant) {
         try {

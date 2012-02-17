@@ -59,6 +59,48 @@ remote_describe "in-container messaging tests" do
     end
   end
 
+  describe "message priorities" do
+    it "should be fifo for same priority messages" do
+      with_queue("/queues/priorities") do |queue|
+        queue.publish "first"
+        queue.publish "second"
+        queue.publish "third"
+        queue.publish "fourth"
+        queue.receive.should == "first"
+        queue.receive.should == "second"
+        queue.receive.should == "third"
+        queue.receive.should == "fourth"
+      end
+    end
+    it "should send higher priority messages first" do
+      with_queue("/queues/priorities") do |queue|
+        queue.publish "first", :priority => :low
+        queue.publish "second", :priority => :normal
+        queue.publish "third", :priority => :high
+        queue.publish "fourth", :priority => :critical
+        queue.receive.should == "fourth"
+        queue.receive.should == "third"
+        queue.receive.should == "second"
+        queue.receive.should == "first"
+      end
+    end
+  end
+
+  describe "message ttl" do
+    it "should live" do
+      with_queue("/queues/ttl") do |queue|
+        queue.publish "live!", :ttl => 9999
+        queue.receive(:timeout => 1000).should_not be_nil
+      end
+    end
+    it "should die" do
+      with_queue("/queues/ttl") do |queue|
+        queue.publish "die!", :ttl => 1
+        queue.receive(:timeout => 1000).should be_nil
+      end
+    end
+  end
+
   context "message selectors" do
     {
       'prop = true' => true,

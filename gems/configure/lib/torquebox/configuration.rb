@@ -162,7 +162,6 @@ module TorqueBox
       end
     end
     
- 
     class Configuration < Hash
       def initialize
         super { |hash, key| hash[key] = { } }

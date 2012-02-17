@@ -78,6 +78,7 @@ class Coat
   property :color,      String
 end
 
+
 DataMapper::Model.raise_on_save_failure = true 
 DataMapper.finalize
 
@@ -91,5 +92,3 @@ brown  = Coat.create(:color=>'Brown')
 Muppet.create(:num=>10, :name=>'Big Bird', :bio=>'Tall, yellow and handsome', :created_at => DateTime.parse(yesterday.to_s), :coat => Coat.create(:color=>'Yellow'))
 Muppet.create(:num=>20, :name=>'Snuffleupagus', :bio=>"You don't see me", :created_at => DateTime.parse(today.to_s), :coat => brown)
 Muppet.create(:num=>30, :name=>'Cookie Monster', :bio=>"Nom nom nom nom nom", :created_at => DateTime.parse(tomorrow.to_s), :coat => blue)
-
-

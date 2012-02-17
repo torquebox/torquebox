@@ -15,30 +15,69 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
+
 begin
-  require 'rails/generators'
-  require 'rails/generators/rails/app/app_generator'
+  require 'rails/version'
 rescue LoadError
-  # Rails isn't installed, bail out
-  return
 end
 
 module TorqueBox
   class Rails
+
     def self.new_app
+      print_rails_not_installed_and_exit unless rails_installed?
+      require_generators
       # Assumes ARGV[0] already has the application name
       ARGV << [ "-m", TorqueBox::Rails.template ]
       ARGV.flatten!
-      ::Rails::Generators::AppGenerator.start
+      if using_rails3?
+        ::Rails::Generators::AppGenerator.start
+      else
+        ::Rails::Generator::Base.use_application_sources!
+        ::Rails::Generator::Scripts::Generate.new.run(ARGV, :generator => 'app')
+      end
     end
 
     def self.apply_template( root )
-      generator = ::Rails::Generators::AppGenerator.new( [root], {}, :destination_root => root )
-      generator.apply TorqueBox::Rails.template 
+      print_rails_not_installed_and_exit unless rails_installed?
+      require_generators
+      if using_rails3?
+        generator = ::Rails::Generators::AppGenerator.new( [root], {}, :destination_root => root )
+        generator.apply TorqueBox::Rails.template
+      else
+        ::Rails::TemplateRunner.new( TorqueBox::Rails.template )
+      end
     end
+
 
     def self.template
       "#{ENV['TORQUEBOX_HOME']}/share/rails/template.rb"
     end
+
+    def self.rails_installed?
+      defined? ::Rails::VERSION
+    end
+
+    def self.print_rails_not_installed_and_exit
+      $stderr.puts "Rails not installed. Unable to load generators"
+      exit 1
+    end
+
+    def self.using_rails3?
+      ::Rails::VERSION::MAJOR == 3
+    end
+
+    def self.require_generators
+      if using_rails3?
+        require 'rails/generators'
+        require 'rails/generators/rails/app/app_generator'
+      else
+        require 'rails_generator'
+        require 'rails_generator/generators/applications/app/app_generator'
+        require 'rails_generator/generators/applications/app/template_runner'
+        require 'rails_generator/scripts/generate'
+      end
+    end
   end
 end
+

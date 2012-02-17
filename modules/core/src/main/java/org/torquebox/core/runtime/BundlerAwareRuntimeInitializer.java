@@ -20,9 +20,12 @@
 package org.torquebox.core.runtime;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -31,19 +34,16 @@ import org.torquebox.core.util.RuntimeHelper;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class BundlerAwareRuntimeInitializer implements RuntimeInitializer {
+public class BundlerAwareRuntimeInitializer extends BaseRuntimeInitializer {
 
     public BundlerAwareRuntimeInitializer(RubyAppMetaData rubyAppMetaData) {
-        this.rubyAppMetaData = rubyAppMetaData;
+        super( rubyAppMetaData );
     }
 
-    public File getApplicationRoot() {
-        return this.rubyAppMetaData.getRoot();
-    }
-
+    @SuppressWarnings("unchecked")
     @Override
     public void initialize(Ruby ruby) throws Exception {
-        ruby.setCurrentDirectory( this.rubyAppMetaData.getRoot().getCanonicalPath() );
+        super.initialize( ruby );
         
         File gemfile = new File( getApplicationRoot(), "Gemfile" );
         if (gemfile.exists()) {
@@ -51,13 +51,25 @@ public class BundlerAwareRuntimeInitializer implements RuntimeInitializer {
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + gemfile.getAbsolutePath() +  "'" );
             RuntimeHelper.require( ruby, "bundler/setup" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']=nil" );
+            
+            //
+            // HACK - Remove once upgraded to JRuby 1.6.7
+            //
+            try {
+                Field recursiveField = ruby.getClass().getDeclaredField( "recursive" );
+                recursiveField.setAccessible( true );
+                ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( ruby )).remove();
+            }
+            catch (Exception ex) {
+                // safe to ignore
+            }
+            // END HACK
         }
     }
 
 
-    @SuppressWarnings("unused")
-    private static final Logger log = Logger.getLogger( BundlerAwareRuntimeInitializer.class );
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 
-    protected RubyAppMetaData rubyAppMetaData;
+ 
 
 }

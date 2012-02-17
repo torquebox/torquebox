@@ -66,13 +66,12 @@ module TorqueBox
         end
 
         def method_added(method)
+          super
           method = method.to_s
           if @__backgroundable_methods &&
               @__backgroundable_methods[method] &&
               !@__backgroundable_methods[method][:backgrounding]
             __enable_backgrounding(method)
-          else
-            super
           end
         end
 

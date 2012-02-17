@@ -24,14 +24,14 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.weld.WeldDeploymentMarker;
-import org.projectodd.polyglot.core.as.KnobDeploymentMarker;
+import org.projectodd.polyglot.core.as.ArchivedDeploymentMarker;
 
 public class CDIStructureProcessor implements DeploymentUnitProcessor {
 
     @Override
     public void deploy(final DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
-        if ( KnobDeploymentMarker.isMarked( unit ) ) {
+        if ( ArchivedDeploymentMarker.isMarked( unit ) ) {
             WeldDeploymentMarker.mark( unit );
         }
     }

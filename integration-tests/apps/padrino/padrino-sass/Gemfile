@@ -8,5 +8,5 @@ gem 'sass'
 gem 'haml'
 
 # Padrino Stable Gem
-gem 'padrino', '0.10.4'
+gem 'padrino', '0.10.5'
 

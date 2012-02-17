@@ -33,9 +33,10 @@ module TorqueBox
         @internal_connection_factory = internal_connection_factory
       end
 
-      def with_new_connection(client_id = nil, &block)
-        connection = create_connection
-        connection.client_id = client_id
+      def with_new_connection(options, &block)
+        client_id = options[:client_id]
+        connection = create_connection( options )
+        connection.client_id = client_id if client_id
         connection.start
         begin
           result = block.call( connection )
@@ -45,19 +46,24 @@ module TorqueBox
         return result
       end
 
-      def create_connection()
+      def create_connection(options)
+        host     = options[:host] || "localhost"
+        port     = options[:port] || 5445
+        username = options[:username]
+        password = options[:password]
         if !@internal_connection_factory
-          # try to connect to HornetQ directly - this currently
-          # assumes localhost, and the default AS7 HQ Netty port of 5445
-          connect_opts = { org.hornetq.core.remoting.impl.netty.TransportConstants::PORT_PROP_NAME => 5445.to_java( java.lang.Integer ) }
-          transport_config =
-            org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory", 
-                                                            connect_opts)
-          @internal_connection_factory =
-            org.hornetq.api.jms.HornetQJMSClient.createConnectionFactoryWithoutHA( org.hornetq.api.jms::JMSFactoryType::CF, transport_config )
+          @internal_connection_factory = create_connection_factory( host, port )
         end
 
-        Connection.new( @internal_connection_factory.create_connection )
+        Connection.new( @internal_connection_factory.create_connection( username, password ) )
+      end
+
+      def create_connection_factory(host, port)
+        connect_opts = { "host" => host, "port" => port }
+        transport_config =
+          org.hornetq.api.core.TransportConfiguration.new("org.hornetq.core.remoting.impl.netty.NettyConnectorFactory",
+                                                          connect_opts)
+        org.hornetq.api.jms.HornetQJMSClient.createConnectionFactoryWithoutHA( org.hornetq.api.jms::JMSFactoryType::CF, transport_config )
       end
 
 

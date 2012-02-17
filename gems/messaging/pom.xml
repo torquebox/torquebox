@@ -3,7 +3,7 @@
   <parent>
     <groupId>rubygems</groupId>
     <artifactId>torquebox-gems-parent</artifactId>
-    <version>2.0.0.beta2-SNAPSHOT</version>
+    <version>2.0.0.CR1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -32,31 +32,31 @@
     <dependency>
       <groupId>org.jboss.spec.javax.jms</groupId>
       <artifactId>jboss-jms-api_1.1_spec</artifactId>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.spec.javax.transaction</groupId>
       <artifactId>jboss-transaction-api_1.1_spec</artifactId>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-core</artifactId>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.hornetq</groupId>
       <artifactId>hornetq-jms</artifactId>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
       <groupId>org.jboss.netty</groupId>
       <artifactId>netty</artifactId>
-      <scope>provided</scope>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>

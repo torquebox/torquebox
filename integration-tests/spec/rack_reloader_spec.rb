@@ -24,7 +24,7 @@ describe "rack reloading" do
     seen_values = Set.new
     seen_values << element.text
     counter = 1
-    while seen_values.size <= 3 && counter < 20 do
+    while seen_values.size <= 3 && counter < 60 do
       visit "/reloader-rack?#{counter}"
       element = page.find_by_id("success")
       element.should_not be_nil

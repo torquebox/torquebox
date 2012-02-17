@@ -1,7 +1,7 @@
 messaging:
   /topics/foo:
     MyClass:
-      filter: myfilter
+      selector: mySelector
       config:
         a: "toast"
       concurrency: 2

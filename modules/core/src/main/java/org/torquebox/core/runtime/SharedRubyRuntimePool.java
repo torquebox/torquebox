@@ -19,10 +19,13 @@
 
 package org.torquebox.core.runtime;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.torquebox.core.pool.SharedPool;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -74,9 +77,22 @@ public class SharedRubyRuntimePool extends SharedPool<Ruby> implements RubyRunti
         return borrowInstance( requester );
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void returnRuntime(Ruby runtime) {
         releaseInstance( runtime );
+        //
+        // HACK - Remove once upgraded to JRuby 1.6.7
+        //
+        try {
+            Field recursiveField = runtime.getClass().getDeclaredField( "recursive" );
+            recursiveField.setAccessible( true );
+            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( runtime )).remove();
+        }
+        catch (Exception ex) {
+            // safe to ignore
+        }
+        // END HACK
     }
 
     /**

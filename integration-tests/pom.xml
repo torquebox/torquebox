@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-parent</artifactId>
-    <version>2.0.0.beta2-SNAPSHOT</version>
+    <version>2.0.0.CR1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -88,7 +88,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
-      <version>0.4.7</version>
+      <version>0.4.8</version>
       <type>gem</type>
     </dependency>
 
@@ -303,8 +303,8 @@
     <profile>
       <id>ci</id>
       <properties>
-        <max.heap>4096m</max.heap>
         <driver.type>headless</driver.type>
+        <max.heap>2560m</max.heap>
       </properties>
     </profile>
     <profile>
@@ -317,7 +317,6 @@
       <id>19</id>
       <properties>
         <ruby.compat.version>1.9</ruby.compat.version>
-        <max.heap>3072m</max.heap>
       </properties>
     </profile>
     <profile>
@@ -452,7 +451,7 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
         <configuration>
-          <jrubyJvmArgs>-XX:MaxPermSize=384m -Xmx1024m</jrubyJvmArgs>
+          <jrubyJvmArgs>-XX:MaxPermSize=384m -Xmx256m -Xmx1280m -verbose:gc -XX:+PrintGCDetails -XX:+PrintGCTimeStamps</jrubyJvmArgs>
           <systemProperties>
             <property>
               <name>max.heap</name>

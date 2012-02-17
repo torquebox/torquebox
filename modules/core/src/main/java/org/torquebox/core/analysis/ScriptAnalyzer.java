@@ -23,11 +23,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyProc;
 import org.jruby.ast.Node;
@@ -136,6 +139,7 @@ public class ScriptAnalyzer {
      *            analysis.
      * @return The result provided by the specific <code>NodeVisitor</code>.
      */
+    @SuppressWarnings("unchecked")
     public void analyze(String filename, String script, NodeVisitor visitor, Version rubyVersion) {
         try {
             Constructor<LocalStaticScope> constructor = LocalStaticScope.class.getDeclaredConstructor( StaticScope.class );
@@ -163,6 +167,19 @@ public class ScriptAnalyzer {
         catch (InvocationTargetException e) {}
         catch (IllegalAccessException e) {}
         catch (InstantiationException e) {}
+
+        //
+        // HACK - Remove once upgraded to JRuby 1.6.7
+        //
+        try {
+            Field recursiveField = analyzingRuby.getClass().getDeclaredField( "recursive" );
+            recursiveField.setAccessible( true );
+            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( analyzingRuby )).remove();
+        }
+        catch (Exception ex) {
+            // safe to ignore
+        }
+        // END HACK
     }
 
     /**
@@ -175,6 +192,7 @@ public class ScriptAnalyzer {
      *            analysis.
      * @return The result provided by the specific <code>NodeVisitor</code>.
      */
+    @SuppressWarnings("unchecked")
     public void analyze(RubyProc proc, NodeVisitor visitor) {
         BlockBody body = proc.getBlock().getBody();
         if (body instanceof InterpretedBlock ) {
@@ -186,6 +204,18 @@ public class ScriptAnalyzer {
         } else {
             System.err.println( "Unable to analyze: " + body.getClass() );
         }
+        //
+        // HACK - Remove once upgraded to JRuby 1.6.7
+        //
+        try {
+            Field recursiveField = proc.getRuntime().getClass().getDeclaredField( "recursive" );
+            recursiveField.setAccessible( true );
+            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( proc.getRuntime() )).remove();
+        }
+        catch (Exception ex) {
+            // safe to ignore
+        }
+        // END HACK
 
     }
 }

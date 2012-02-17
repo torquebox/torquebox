@@ -23,7 +23,6 @@ import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.ADD
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.DESCRIBE;
 
 import java.io.IOException;
-import java.util.logging.Level;
 
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.PathElement;
@@ -45,7 +44,7 @@ public class CoreExtension extends AbstractBootstrappableExtension {
         bootstrap();
         
         log.info( "Initializing TorqueBox Core Subsystem" );
-        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME );
+        final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CoreSubsystemProviders.SUBSYSTEM );
 
         subsystem.registerOperationHandler( ADD,
@@ -80,7 +79,7 @@ public class CoreExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initializeParsers(ExtensionParsingContext context) {
-        context.setSubsystemXmlMapping( Namespace.CURRENT.getUriString(), CoreSubsystemParser.getInstance() );
+        context.setSubsystemXmlMapping( SUBSYSTEM_NAME, Namespace.CURRENT.getUriString(), CoreSubsystemParser.getInstance() );
     }
 
     public static final String SUBSYSTEM_NAME = "torquebox-core";

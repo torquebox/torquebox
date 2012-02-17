@@ -30,12 +30,13 @@ import org.jboss.as.jmx.ObjectNameFactory;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceBuilder;
 import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.msc.service.ServiceName;
-import org.projectodd.polyglot.core.processors.ClusterAwareProcessor;
+import org.projectodd.polyglot.core.util.ClusterUtil;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.projectodd.polyglot.jobs.BaseScheduledJob;
 import org.torquebox.core.app.RubyAppMetaData;
@@ -56,7 +57,7 @@ import org.torquebox.jobs.as.JobsServices;
  * 
  * Creates objects from metadata
  */
-public class ScheduledJobInstaller extends ClusterAwareProcessor {
+public class ScheduledJobInstaller implements DeploymentUnitProcessor {
 
     public ScheduledJobInstaller() {
     }
@@ -93,7 +94,7 @@ public class ScheduledJobInstaller extends ClusterAwareProcessor {
         ServiceBuilder<BaseScheduledJob> builder = phaseContext.getServiceTarget().addService( serviceName, job );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, job.getRubyRuntimePoolInjector() );
         builder.addDependency( JobsServices.jobComponentResolver( unit, metaData.getName() ), ComponentResolver.class, job.getComponentResolverInjector() );
-        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && isClustered( phaseContext ) ), BaseJobScheduler.class, job.getJobSchedulerInjector() );
+        builder.addDependency( JobsServices.jobScheduler( unit, metaData.isSingleton() && ClusterUtil.isClustered( phaseContext ) ), BaseJobScheduler.class, job.getJobSchedulerInjector() );
 
         builder.setInitialMode( Mode.PASSIVE );
         builder.install();

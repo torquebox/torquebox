@@ -79,8 +79,35 @@ class Assembler
       puts "Laying down JRuby" 
       Dir.chdir( File.dirname( tool.jruby_dir ) ) do
         tool.unzip( jruby_zip )
-        original_dir= File.expand_path( Dir[ 'jruby-*' ].first )
+        original_dir = File.expand_path( Dir[ 'jruby-*' ].first )
         FileUtils.mv original_dir, tool.jruby_dir
+
+        ### HACK begin
+        ###
+        ### JRuby 1.6.6 suffers from a StackOverflowError in some cases
+        ### and this hack (see http://jira.codehaus.org/browse/JRUBY-6407)
+        ### moves a require() statement around to avoid the aforementioned
+        ### StackOverflowError
+        ###
+        ### Remove this when JRuby 1.6.7 is released
+        ###
+        open( tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb', 'r' ) do |original_rb|
+          open( tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb.new', 'w' ) do |new_rb|
+            new_rb.puts( "require 'jruby/util'" )
+            original_rb.each do |line|
+              if ( line =~ %r(jruby/util) ) 
+                puts "skip #{line}"
+              else
+                puts line
+                new_rb.puts line
+              end
+            end
+          end
+        end
+        FileUtils.mv tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb.new', tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb'
+        ###
+        ### HACK end
+
       end
     end
   end
@@ -138,6 +165,7 @@ class Assembler
     js_dir    = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'javascript' ) )
 
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'init', 'torquebox.conf' ), init_dir )
+    FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'init', 'torquebox.conf.erb' ), init_dir )
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'init', 'TorqueBoxAgent.plist.template' ), init_dir )
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'rails', 'template.rb' ), rails_dir )
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'rails', 'openshift_app_builder.rb' ), rails_dir )
@@ -150,8 +178,8 @@ class Assembler
   def stash_stock_configs
     FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-full.xml',
                   config_stash + '/standalone-full.xml' ) unless File.exist?( config_stash + '/standalone-full.xml' )
-    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-ha.xml',
-                  config_stash + '/standalone-ha.xml' ) unless File.exist?( config_stash + '/standalone-ha.xml' )
+    FileUtils.cp( tool.jboss_dir + '/standalone/configuration/standalone-full-ha.xml',
+                  config_stash + '/standalone-full-ha.xml' ) unless File.exist?( config_stash + '/standalone-full-ha.xml' )
     FileUtils.cp( tool.jboss_dir + '/domain/configuration/domain.xml',
                   config_stash + '/domain.xml' )     unless File.exist?( config_stash + '/domain.xml' )
   end
@@ -177,8 +205,8 @@ class Assembler
     tool.transform_config(config_stash + '/standalone-full.xml',
                           'standalone/configuration/standalone-full.xml',
                           :extra_modules => polyglot_mods)
-    tool.transform_config(config_stash + '/standalone-ha.xml',
-                          'standalone/configuration/standalone-ha.xml',
+    tool.transform_config(config_stash + '/standalone-full-ha.xml',
+                          'standalone/configuration/standalone-full-ha.xml',
                           :extra_modules => polyglot_mods,
                           :ha => true )
     tool.transform_config(config_stash + '/domain.xml',
@@ -206,6 +234,7 @@ class Assembler
     transform_host_config
     Dir.chdir( tool.jboss_dir ) do
       FileUtils.cp( 'standalone/configuration/standalone-full.xml', 'standalone/configuration/standalone.xml' )
+      FileUtils.cp( 'standalone/configuration/standalone-full-ha.xml', 'standalone/configuration/standalone-ha.xml' )
     end
   end
 end

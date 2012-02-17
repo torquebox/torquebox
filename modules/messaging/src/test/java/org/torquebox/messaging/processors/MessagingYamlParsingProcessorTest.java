@@ -60,7 +60,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         appMetaData.attachTo( unit );
         deploy( context );
 
-        assertEquals( "biscuit", env.get( "DEFAULT_MESSAGE_ENCODING" ) );
+        assertEquals( "marshal", env.get( "DEFAULT_MESSAGE_ENCODING" ) );
 
         List<MessageProcessorMetaData> procMetaData = unit.getAttachmentList( MessageProcessorMetaData.ATTACHMENTS_KEY );
         assertEquals( 1, procMetaData.size() );
@@ -99,7 +99,7 @@ public class MessagingYamlParsingProcessorTest extends AbstractDeploymentProcess
         assertNotNull( metaData );
         assertEquals( "MyClass", metaData.getRubyClassName() );
         assertEquals( "/topics/foo", metaData.getDestinationName() );
-        assertEquals( "myfilter", metaData.getMessageSelector() );
+        assertEquals( "mySelector", metaData.getMessageSelector() );
         assertEquals( "toast", metaData.getRubyConfig().get( "a" ) );
         assertEquals( new Integer( 2 ), metaData.getConcurrency() );
     }

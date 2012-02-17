@@ -50,7 +50,7 @@ public class WebDependenciesProcessor implements DeploymentUnitProcessor {
     }
 
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
-        moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false ) );
+        moduleSpecification.addLocalDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, false, false, false ) );
     }
 
     @Override

@@ -46,7 +46,7 @@ public class CacheDependenciesProcessor implements DeploymentUnitProcessor {
     }
 
     private void addDependency(ModuleSpecification moduleSpecification, ModuleLoader moduleLoader, ModuleIdentifier moduleIdentifier) {
-        moduleSpecification.addSystemDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, true, false ) );
+        moduleSpecification.addSystemDependency( new ModuleDependency( moduleLoader, moduleIdentifier, false, true, false, false ) );
     }
 
     @Override

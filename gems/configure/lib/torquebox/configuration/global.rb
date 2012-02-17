@@ -45,6 +45,9 @@ module TorqueBox
           :credential  => ThingsEntry.with_settings(:require_parent => [:authentication],
                                                    :discrete => true),
           :environment => OptionsEntry,
+          :injection   => OptionsEntry.with_settings(:validate => {
+                                                       :required => [{ :enabled => [true, false] }]
+                                                     }),
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {
                                                                 :required => [:cron],
@@ -74,7 +77,7 @@ module TorqueBox
                                                                               { :durable => [true, false] },
                                                                               :client_id,
                                                                               :config,
-                                                                              :filter,
+                                                                              :selector,
                                                                               :name
                                                                              ]
                                                               }),
@@ -124,6 +127,9 @@ module TorqueBox
               metadata['auth'][name] = data
             end
 
+          when 'torquebox_init' # runtime intialization
+            metadata[entry_name] = entry_data
+          
           when 'job' # => jobs:
             entry_data.each do |klass, data|
               name = data.delete( :name ) || unique_name( klass.to_s, metadata['jobs'].keys )

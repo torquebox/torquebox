@@ -25,17 +25,20 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jboss.as.server.deployment.AttachmentKey;
+import org.projectodd.yaml.Schema;
+import org.projectodd.yaml.SchemaException;
 import org.torquebox.core.app.processors.ApplicationYamlParsingProcessor;
 import org.torquebox.core.app.processors.RubyYamlParsingProcessor;
 import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 
-/** Generalized opaque holder of <code>torquebox.yml</code>-specified metadata.
+/**
+ * Generalized opaque holder of <code>torquebox.yml</code>-specified metadata.
  * 
  * <p>
- * Once <code>torquebox.yml</code> has been parsed, each top-level section and its
- * associated un-casted value block are added to the TorqueBoxMetaData for use by
- * other, more-specific deployment processors.
+ * Once <code>torquebox.yml</code> has been parsed, each top-level section and
+ * its associated un-casted value block are added to the TorqueBoxMetaData for
+ * use by other, more-specific deployment processors.
  * </p>
  * 
  * @see TorqueBoxYamlParsingProcessor
@@ -44,47 +47,59 @@ import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
  * @see PoolingYamlParsingProcessor
  */
 public class TorqueBoxMetaData {
-    
-    public static final AttachmentKey<TorqueBoxMetaData> ATTACHMENT_KEY = AttachmentKey.create(TorqueBoxMetaData.class);
+
+    public static final AttachmentKey<TorqueBoxMetaData> ATTACHMENT_KEY = AttachmentKey.create( TorqueBoxMetaData.class );
+
+    private static Schema schema;
+
+    static {
+        try {
+            schema = new Schema( TorqueBoxMetaData.class.getResourceAsStream( "/org/torquebox/schema.yml" ), false );
+        } catch (SchemaException e) {
+            throw new RuntimeException( e );
+        }
+    }
 
     private Map<String, Object> data;
 
-    /** Construct with parsed YAML results.
+    /**
+     * Construct with parsed YAML results.
      * 
      * @param data The data, keyed by section name.
      */
     public TorqueBoxMetaData(Map<String, Object> data) {
         this.data = normalizeSectionNames( data );
     }
-    
+
     /**
      * Normalize section names, since some drift has occurred.
+     * 
      * @param data
      * @return
      */
     private Map<String, Object> normalizeSectionNames(Map<String, Object> data) {
         Map<String, Object> normalized = new HashMap<String, Object>();
-        
+
         Set<String> keys = data.keySet();
-        
-        for ( String key : keys ) {
+
+        for (String key : keys) {
             normalized.put( normalizeSectionName( key ), data.get( key ) );
         }
         return normalized;
     }
-    
+
     private String normalizeSectionName(String name) {
-        if ( name.equalsIgnoreCase( "app" ) ) {
+        if (name.equalsIgnoreCase( "app" )) {
             return "application";
         }
-        
+
         return name.toLowerCase();
     }
 
     public Object getSection(String name) {
         return this.data.get( normalizeSectionName( name ) );
     }
-
+    
     @SuppressWarnings("unchecked")
     public String getApplicationRoot() {
         return findApplicationRoot( (Map<String, String>) getSection( "application" ) );
@@ -103,13 +118,14 @@ public class TorqueBoxMetaData {
         if (path == null) {
             return null;
         }
-           
-        if ( path.startsWith( "~" ) ) {
+
+        if (path.startsWith( "~" )) {
             path = System.getProperty( "user.home" ) + path.substring( 1 );
         }
-        return new File( path ); 
+        return new File( path );
     }
-    
+
+    @SuppressWarnings("unchecked")
     public File getApplicationRootFile() {
         return findApplicationRootFile( (Map<String, String>) getSection( "application" ) );
     }
@@ -191,7 +207,7 @@ public class TorqueBoxMetaData {
                     envKey = determineEnvironmentKey( mergedAppSection );
                     mergedAppSection.put( envKey, envName );
                 }
-                
+
             } else {
                 mergedData.put( key, merge( key, thisData, baseData ) );
             }
@@ -200,14 +216,15 @@ public class TorqueBoxMetaData {
         return new TorqueBoxMetaData( mergedData );
     }
 
-    protected Object merge( Object key, Map src, Map tgt ) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected Object merge(Object key, Map src, Map tgt) {
         Object value = src.get( key );
-        if ( value instanceof Map && tgt != null ) {
+        if (value instanceof Map && tgt != null) {
             Map source = (Map) value;
             Object target = tgt.get( key );
-            if ( target != null ) {
+            if (target != null) {
                 Map result = new HashMap( (Map) target );
-                for( Object k: source.keySet() ) {
+                for (Object k : source.keySet()) {
                     result.put( k, merge( k, source, result ) );
                 }
                 return result;
@@ -216,7 +233,12 @@ public class TorqueBoxMetaData {
         return value;
     }
 
+    public void validate() throws SchemaException {
+        schema.validate( this.data, false );
+    }
+
     public String toString() {
         return "[TorqueBoxMetaData: data=" + this.data + "]";
     }
+
 }

@@ -158,11 +158,9 @@ class AssemblyTool
     if options[:deployment_timeout]
       profiles = doc.root.get_elements( '//profile' )
       profiles.each do |profile|
-        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.0']" ).first
-        unless subsystem.nil?
-          scanner = subsystem.get_elements( 'deployment-scanner' ).first
-          scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
-        end
+        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.1']" ).first
+        scanner = subsystem.get_elements( 'deployment-scanner' ).first
+        scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
       end
     end
   end
@@ -170,13 +168,11 @@ class AssemblyTool
   def add_cache(doc)
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.0']" ).first
-      unless subsystem.nil?
-        container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
-        cache = container.add_element( 'local-cache', 'name'=>'sessions' )
-        cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )
-        cache.add_element( 'expiration', 'max-idle'=>'100000' )
-      end
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.1']" ).first
+      container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
+      cache = container.add_element( 'local-cache', 'name'=>'sessions' )
+      cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )
+      cache.add_element( 'expiration', 'max-idle'=>'100000' )
     end
   end
 
@@ -296,8 +292,13 @@ class AssemblyTool
     end
   end
 
-  def unquote_cookie_path(doc)
+  def tweak_jboss_web_properties(doc)
+    # Ensure cookie paths don't get quoted
     set_system_property(doc, 'org.apache.tomcat.util.http.ServerCookie.FWD_SLASH_IS_SEPARATOR', false)
+    # Wait for an available thread instead of dropping new connections
+    # when max-threads is reached
+    # FIXME: Temporarily disabled because of performance issues
+    set_system_property(doc, 'org.apache.tomcat.util.net.WAIT_FOR_THREAD', false)
   end
 
   def set_system_property(doc, name, value)
@@ -358,6 +359,13 @@ class AssemblyTool
     settings = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server/address-settings/address-setting" ).first
     settings.get_elements( 'address-full-policy' ).first.text = 'PAGE'
     settings.get_elements( 'max-size-bytes' ).first.text = '20971520'
+  end
+
+  def remove_messaging_security(doc)
+    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    e = REXML::Element.new( 'security-enabled' )
+    e.text = 'false'
+    hornetq_server.add_element( e )
   end
 
   def fix_messaging_clustering(doc)
@@ -468,12 +476,23 @@ class AssemblyTool
 
       server.add_element( jvm )
 
-      socket_binding_group = REXML::Element.new( 'socket-binding-group' )
-      socket_binding_group.attributes['ref'] = 'standard-sockets'
+      socket_binding_group = REXML::Element.new( 'socket-bindings' )
       socket_binding_group.attributes['port-offset'] = (i-1) * 100
       server.add_element( socket_binding_group )
      
       servers.add_element( server )
+    end
+  end
+
+  def add_logger_categories(doc)
+    categories = { 'org.jboss.jca.adapters.jdbc.extensions.mysql' => 'ERROR' }
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:logging:1.1']" ).first
+      categories.each_pair do |category, level|
+        container = subsystem.add_element( 'logger', 'category' => category )
+        container.add_element( 'level', 'name' => level )
+      end
     end
   end
 
@@ -496,12 +515,12 @@ class AssemblyTool
 
     Dir.chdir( @jboss_dir ) do
       
-      increase_deployment_timeout(doc)
+      increase_deployment_timeout(doc) unless domain
       add_extensions(doc, options[:extra_modules])
       add_subsystems(doc, options[:extra_modules])
       add_cache(doc)
       set_welcome_root(doc)
-      unquote_cookie_path(doc)
+      tweak_jboss_web_properties(doc)
       remove_destinations(doc)
       disable_management_security(doc)
 
@@ -520,6 +539,9 @@ class AssemblyTool
 
       adjust_messaging_config(doc)
       enable_messaging_jmx(doc)
+      remove_messaging_security(doc)
+
+      add_logger_categories(doc)
 
       # Uncomment to create a minimal standalone.xml
       # remove_non_web_extensions(doc)

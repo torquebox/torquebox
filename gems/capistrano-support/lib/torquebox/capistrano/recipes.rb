@@ -68,7 +68,7 @@ module Capistrano
         set( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } ) unless exists?( :jruby_bin )
 
         set( :jboss_home,          lambda{ "#{torquebox_home}/jboss" } ) unless exists?( :jboss_home )
-        set( :jboss_control_style, :initid ) unless exists?( :jboss_control_style )
+        set( :jboss_control_style, :initd ) unless exists?( :jboss_control_style )
         set( :jboss_init_script,   '/etc/init.d/jboss-as-standalone' ) unless exists?( :jboss_init_script )
         set( :jboss_bind_address,  '0.0.0.0' ) unless exists?( :jboss_bind_address )
 
@@ -101,7 +101,7 @@ module Capistrano
               when :initd
                 run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
               when :binscripts
-                run "#{jboss_home}/bin/jboss-admin.sh --connect :shutdown"
+                run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
             end
           end
         

@@ -28,9 +28,10 @@ class GemInstaller
   def initialize(versions={})
     @versions = versions
     @installer = Gem::DependencyInstaller.new
+    @no_deps_installer = Gem::DependencyInstaller.new(:ignore_dependencies => true)
   end
 
-  def install(gem_name, version=nil)
+  def install(gem_name, version=nil, include_deps=true)
     if ( version.nil? )
       version = @versions[ gem_name.gsub(/-/, '_').to_sym ]
     end
@@ -41,7 +42,8 @@ class GemInstaller
     end
     puts "Must specify version of #{gem_name}" and return unless version
     puts "Installing #{gem_name} #{version}"
-    @installer.install( gem_name, version )
+    installer = include_deps ? @installer : @no_deps_installer
+    installer.install( gem_name, version )
 
   end
 

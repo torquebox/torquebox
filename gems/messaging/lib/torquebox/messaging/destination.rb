@@ -32,10 +32,10 @@ module TorqueBox
       attr_accessor :connect_options
 
       PRIORITY_MAP = {
-          :low => 1,
-          :normal => 4,
-          :high => 7,
-          :critical => 9
+        :low => 1,
+        :normal => 4,
+        :high => 7,
+        :critical => 9
       }
 
       def _dump(depth)
@@ -44,13 +44,18 @@ module TorqueBox
       end
 
       def self._load(str)
-       self.new( str )
+        self.new( str )
       end
 
-      def initialize(destination, connection_factory = __inject__( 'connection-factory' ))
+      def initialize(destination, connection_factory_or_options = nil)
+        if connection_factory_or_options.nil? || connection_factory_or_options.is_a?( Hash )
+          @connection_factory = ConnectionFactory.new( __inject__( 'connection-factory' ) )
+          @connect_options = connection_factory_or_options || {}
+        else
+          @connection_factory  = ConnectionFactory.new( connection_factory_or_options )
+          @connect_options = {}
+        end
         @name                = destination
-        @connection_factory  = ConnectionFactory.new( connection_factory )
-        @connect_options     = {}
         @enumerable_options  = {}
       end
 
@@ -86,7 +91,7 @@ module TorqueBox
 
       def with_session(opts = {})
         transactional = opts.fetch(:tx, true)
-        connection_factory.with_new_connection( connect_options[:client_id] ) do |connection|
+        connection_factory.with_new_connection( connect_options ) do |connection|
           connection.with_session(transactional) do |session|
             yield session
           end
@@ -119,7 +124,7 @@ module TorqueBox
           if PRIORITY_MAP[options[:priority]]
             options[:priority] = PRIORITY_MAP[options[:priority]]
           elsif (0..9) === options[:priority].to_i
-          options[:priority] = options[:priority].to_i
+            options[:priority] = options[:priority].to_i
           else
             raise ArgumentError.new(":priority must in the range 0..9, or one of #{PRIORITY_MAP.keys.collect {|k| ":#{k}"}.join(',')}")
           end

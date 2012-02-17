@@ -350,7 +350,7 @@ module TorqueBox
         config.transaction.transactionMode( transaction_mode )
 
         if transactional?
-          config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup ) 
+          config.transaction.transactionManagerLookup( transaction_manager_lookup ) 
           config.transaction.lockingMode( locking_mode )
         end
         
