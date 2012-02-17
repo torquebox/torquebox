@@ -29,6 +29,7 @@ describe TorqueBox::Rails do
 
   context "Rails 3" do
     before(:each) do
+      TorqueBox::Rails.stub!(:rails_installed?).and_return(true)
       TorqueBox::Rails.stub(:using_rails3?).and_return(true)
       TorqueBox::Rails.stub(:require_generators)
       module ::Rails; module Generators; class AppGenerator; end; end; end
@@ -54,6 +55,7 @@ describe TorqueBox::Rails do
 
   context "Rails 2" do
     before(:each) do
+      TorqueBox::Rails.stub!(:rails_installed?).and_return(true)
       TorqueBox::Rails.stub(:using_rails3?).and_return(false)
       TorqueBox::Rails.stub(:require_generators)
       module ::Rails; module Generator; class Base; end; end; end
