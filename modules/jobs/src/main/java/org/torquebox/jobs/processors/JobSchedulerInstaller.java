@@ -19,8 +19,6 @@
 
 package org.torquebox.jobs.processors;
 
-import java.util.List;
-
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
@@ -38,20 +36,14 @@ import org.torquebox.jobs.JobScheduler;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.jobs.as.JobsServices;
 
+import java.util.List;
+
 /**
  * Creates a JobScheduler service if there are any job meta data
  */
 public class JobSchedulerInstaller implements DeploymentUnitProcessor {
 
     public JobSchedulerInstaller() {
-    }
-
-    public void setRubyRuntimePoolName(String runtimePoolName) {
-        this.runtimePoolName = runtimePoolName;
-    }
-
-    public String getRubyRuntimePoolName() {
-        return this.runtimePoolName;
     }
 
     @Override
@@ -122,8 +114,6 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
-
-    private String runtimePoolName;
 
     private class DeployedJobTypes {
         boolean regularJobs = false;
