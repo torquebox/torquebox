@@ -19,10 +19,6 @@
 
 package org.torquebox.core.processors;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-
 import org.jboss.as.server.deployment.Attachments;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
@@ -34,8 +30,11 @@ import org.jruby.runtime.builtin.IRubyObject;
 import org.projectodd.polyglot.core.processors.AbstractParsingProcessor;
 import org.torquebox.core.GlobalRuby;
 import org.torquebox.core.TorqueBoxMetaData;
-import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class TorqueBoxRbProcessor extends AbstractParsingProcessor {
 
@@ -77,7 +76,6 @@ public class TorqueBoxRbProcessor extends AbstractParsingProcessor {
             if ( existingMetaData != null ) {
                 metaData = existingMetaData.overlayOnto( metaData );
             }
-            RubyAppMetaData appMetaData = unit.getAttachment( RubyAppMetaData.ATTACHMENT_KEY );
             unit.putAttachment( TorqueBoxMetaData.ATTACHMENT_KEY, metaData );
         }
     }
