@@ -305,6 +305,42 @@ describe TorqueBox::DeployUtils do
       command, options = @util.run_command_line(:bind_address => '0.0.0.0')
       options.should include('-b 0.0.0.0')
     end
+
+    it 'should not set port offset by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Djboss.socket.binding.port-offset')
+    end
+
+    it 'should set port offset when given' do
+      command, options = @util.run_command_line(:port_offset => '100')
+      options.should include('-Djboss.socket.binding.port-offset=100')
+    end
+
+    it 'should not set node name by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Djboss.node.name')
+    end
+
+    it 'should set node name when given' do
+      command, options = @util.run_command_line(:node_name => 'mynode')
+      options.should include('-Djboss.node.name=mynode')
+    end
+
+    it 'should not set data directory by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Djboss.server.data.dir')
+    end
+
+    it 'should set data directory when given' do
+      command, options = @util.run_command_line(:data_directory => '/tmp/mynode')
+      options.should include('-Djboss.server.data.dir=/tmp/mynode')
+    end
+
+    it 'should allow extra parameters to be passed through to JBoss AS' do
+      command, options = @util.run_command_line(:pass_through => '--help')
+      options.should include('--help')
+    end
+
   end
 
   describe '.create_archive' do
