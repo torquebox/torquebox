@@ -121,11 +121,16 @@ module TorqueBox
         options = "#{options} --server-config=#{cluster_config_file}" if opts[:clustered]
         options = "#{options} -Dorg.torquebox.web.http.maxThreads=#{opts[:max_threads]}" if opts[:max_threads]
         options = "#{options} -b #{opts[:bind_address]}" if opts[:bind_address]
+        options = "#{options} -Djboss.socket.binding.port-offset=#{opts[:port_offset]}" if opts[:port_offset]
+        options = "#{options} -Djboss.node.name=#{opts[:node_name]}" if opts[:node_name]
+        options = "#{options} -Djboss.server.data.dir=#{opts[:data_directory]}" if opts[:data_directory]
+        options = "#{options} #{opts[:pass_through]}" if opts[:pass_through]
         if windows?
           cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
         else
           cmd = "/bin/sh bin/standalone.sh"
         end
+        puts "#{cmd} #{options}" # Make it clear to the user what is being passed through to JBoss AS
         [cmd, options]
       end
 
