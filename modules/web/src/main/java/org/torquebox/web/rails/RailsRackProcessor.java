@@ -48,7 +48,7 @@ public class RailsRackProcessor implements DeploymentUnitProcessor {
     }
     
     protected String getRackUpScript(String context) {
-        if (context.endsWith( "/" )) {
+        if (context != null && context.endsWith( "/" )) {
             context = context.substring( 0, context.length() - 1 );
         }
         return "require %q(org/torquebox/web/rails/rackup)\n" + "run TorqueBox::Rails.app\n";
