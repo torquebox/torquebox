@@ -55,7 +55,6 @@ public class RailsApplicationRecognizer extends FileLocatingProcessor {
 
                 if (rackAppMetaData == null) {
                     rackAppMetaData = new RackMetaData();
-                    rackAppMetaData.setContextPath( "/" );
                     rackAppMetaData.attachTo( unit );
                 }
 
