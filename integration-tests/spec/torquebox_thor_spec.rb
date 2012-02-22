@@ -85,6 +85,13 @@ describe "torquebox thor utility tests" do
     end
     
   end
+
+  describe "torquebox run" do
+    it "should pass JVM options specified on the command line" do
+      output = tb( 'run -J \"-Xmx384m -Dmy.property=value\" --extra \"\--version\"' )
+      output.should match( /\s+JAVA_OPTS: .* -Xmx384m -Dmy\.property=value/ )
+    end
+  end
   
   private
   

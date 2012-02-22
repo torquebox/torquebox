@@ -223,7 +223,7 @@ describe TorqueBox::DeployUtils do
         begin
           @util.check_server
         rescue Exception => e
-          e.message.should =~ %r{doesn't appear to be a valid TorqueBox install}
+          e.message.should =~ /doesn't appear to be a valid TorqueBox install/
         end
       end
     end
@@ -248,6 +248,11 @@ describe TorqueBox::DeployUtils do
     it 'should check if the current directory is deployed' do
       @util.should_receive(:is_deployed?).and_return( true )
       @util.run_server
+    end
+
+    it 'should set java options' do
+      @util.should_receive(:set_java_opts).with('java options')
+      @util.run_server(:jvm_options => 'java options')
     end
   end
 

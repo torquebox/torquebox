@@ -116,6 +116,10 @@ module TorqueBox
         puts "TorqueBox install OK: #{opt_torquebox}"
       end
 
+      def set_java_opts(options)
+        ENV['APPEND_JAVA_OPTS'] = options
+      end
+
       def run_command_line(opts={})
         options = ENV['JBOSS_OPTS'] || ''
         options = "#{options} --server-config=#{cluster_config_file}" if opts[:clustered]
@@ -139,7 +143,6 @@ module TorqueBox
       end
 
       def run_server(options={})
-        
         puts "[WARNING] #{deployment_name} has not been deployed. Starting TorqueBox anyway." unless ( is_deployed? )
 
         Dir.chdir(jboss_home) do
@@ -149,6 +152,7 @@ module TorqueBox
           # is probably not what we want.
           ENV.delete('BUNDLE_GEMFILE')
 
+          set_java_opts(options[:jvm_options])
           exec_command(run_command_line(options).join(' '))
         end
       end

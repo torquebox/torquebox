@@ -554,5 +554,19 @@ class AssemblyTool
     end
   end
 
+  def transform_standalone_conf
+    conf = File.join( jboss_dir, 'bin', 'standalone.conf')
+    File.open( conf, 'a' ) do |file|
+      file.write( 'JAVA_OPTS="$JAVA_OPTS $APPEND_JAVA_OPTS"' )
+    end
+  end
+
+  def transform_standalone_conf_bat
+    conf = File.join( jboss_dir, 'bin', 'standalone.conf.bat')
+    File.open( conf, 'a' ) do |file|
+      file.write ('set "JAVA_OPTS=%JAVA_OPTS% %APPEND_JAVA_OPTS%"' )
+    end
+  end
+
 end
 

@@ -197,7 +197,12 @@ class Assembler
     tool.transform_host_config( config_stash + '/host.xml', 'domain/configuration/host.xml' )
   end
 
-  def assemble() 
+  def transform_standalone_confs
+    tool.transform_standalone_conf
+    tool.transform_standalone_conf_bat
+  end
+
+  def assemble()
     #clean
     prepare
     lay_down_jruby
@@ -207,6 +212,7 @@ class Assembler
     install_share
     transform_configs
     transform_host_config
+    transform_standalone_confs
     Dir.chdir( tool.jboss_dir ) do
       FileUtils.cp( 'standalone/configuration/standalone-full.xml', 'standalone/configuration/standalone.xml' )
       FileUtils.cp( 'standalone/configuration/standalone-full-ha.xml', 'standalone/configuration/standalone-ha.xml' )

@@ -35,6 +35,7 @@ class TorqueBoxCommand < Thor
   method_option 'bind-address', :aliases => '-b', :type => :string, :desc => "IP address to bind to"
   method_option 'node-name', :type => :string, :desc => 'Override the name of the node (which by default is the hostname)'
   method_option 'port-offset', :type => :numeric, :desc => 'Offset all port numbers listened on by TorqueBox by this number'
+  method_option 'jvm-options', :aliases => '-J', :type => :string, :desc => 'Pass options on to the JVM'
   def start
     TorqueBox::Server.setup_environment
     TorqueBox::DeployUtils.run_server(:clustered => options.clustered,
@@ -43,7 +44,8 @@ class TorqueBoxCommand < Thor
                                       :port_offset => options['port-offset'],
                                       :pass_through => options['extra'],
                                       :node_name => options['node-name'],
-                                      :data_directory => options['data-directory'] )
+                                      :data_directory => options['data-directory'],
+                                      :jvm_options => options['jvm-options'])
   end
 
   desc "rails ROOT", "Create a Rails application at ROOT using the TorqueBox Rails template, or apply the TorqueBox template to an existing application at ROOT."
