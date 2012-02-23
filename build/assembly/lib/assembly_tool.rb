@@ -371,10 +371,6 @@ class AssemblyTool
   def fix_messaging_clustering(doc)
     hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
 
-    e = REXML::Element.new( 'clustered' )
-    e.text = 'true'
-    hornetq_server.add_element( e )
-
     e = REXML::Element.new( 'cluster-user' )
     e.text = 'admin'
     hornetq_server.add_element( e );
@@ -382,74 +378,6 @@ class AssemblyTool
     e = REXML::Element.new( 'cluster-password' )
     e.text = 'password'
     hornetq_server.add_element( e )
-
-    broadcast_groups = REXML::Element.new( 'broadcast-groups' )
-    broadcast_group = REXML::Element.new( 'broadcast-group' )
-    broadcast_group.attributes['name'] = 'default-broadcast-group'
-
-    e = REXML::Element.new( 'group-address' )
-    e.text = '231.7.7.7' 
-    broadcast_group.add_element( e )
-
-    e = REXML::Element.new( 'group-port' )
-    e.text = '9876'
-    broadcast_group.add_element( e )
-
-    e = REXML::Element.new( 'broadcast-period' )
-    e.text = '100'
-    broadcast_group.add_element( e )
-
-    e = REXML::Element.new( 'connector-ref' )
-    e.text = 'netty'
-    broadcast_group.add_element( e )
-    broadcast_groups.add_element( broadcast_group )
-    hornetq_server.add_element( broadcast_groups )
-
-    discovery_groups = REXML::Element.new( 'discovery-groups' )
-    discovery_group = REXML::Element.new( 'discovery-group' )
-    discovery_group.attributes['name'] = 'default-discovery-group'
-
-    e = REXML::Element.new( 'group-address' )
-    e.text = '231.7.7.7' 
-    discovery_group.add_element( e )
-
-    e = REXML::Element.new( 'group-port' )
-    e.text = '9876'
-    discovery_group.add_element( e )
-
-    e = REXML::Element.new( 'refresh-timeout' )
-    e.text = '20000'
-    discovery_group.add_element( e )
-
-    discovery_groups.add_element( discovery_group )
-    hornetq_server.add_element( discovery_groups )
-
-    cluster_connections = REXML::Element.new( 'cluster-connections' )
-    cluster_connection = REXML::Element.new( 'cluster-connection' )
-    cluster_connection.attributes['name'] = 'default-cluster-connection'
-
-    e = REXML::Element.new( 'address' )
-    e.text = 'jms'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'connector-ref' )
-    e.text = 'netty'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'retry-interval' )
-    e.text = '500'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'forward-when-no-consumers' )
-    e.text = 'true'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'discovery-group-ref' )
-    e.attributes['discovery-group-name'] = 'default-discovery-group'
-    cluster_connection.add_element( e )
-
-    cluster_connections.add_element( cluster_connection )
-    hornetq_server.add_element( cluster_connections )
   end
 
   def fix_host_servers(doc)
@@ -556,15 +484,19 @@ class AssemblyTool
 
   def transform_standalone_conf
     conf = File.join( jboss_dir, 'bin', 'standalone.conf')
-    File.open( conf, 'a' ) do |file|
-      file.write( 'JAVA_OPTS="$JAVA_OPTS $APPEND_JAVA_OPTS"' )
+    unless File.read( conf ).include?('$APPEND_JAVA_OPTS')
+      File.open( conf, 'a' ) do |file|
+        file.write( %Q(\nJAVA_OPTS="$JAVA_OPTS $APPEND_JAVA_OPTS"\n) )
+      end
     end
   end
 
   def transform_standalone_conf_bat
     conf = File.join( jboss_dir, 'bin', 'standalone.conf.bat')
-    File.open( conf, 'a' ) do |file|
-      file.write ('set "JAVA_OPTS=%JAVA_OPTS% %APPEND_JAVA_OPTS%"' )
+    unless File.read( conf ).include?('%APPEND_JAVA_OPTS%')
+      File.open( conf, 'a' ) do |file|
+        file.write (%Q(\nset "JAVA_OPTS=%JAVA_OPTS% %APPEND_JAVA_OPTS%"\n) )
+      end
     end
   end
 
