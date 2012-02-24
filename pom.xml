@@ -266,7 +266,7 @@
     <profile>
       <id>jboss-eap-repository</id>
       <properties>
-        <version.jbossas>7.1.0.CR1-redhat-2</version.jbossas>
+        <version.jbossas>7.1.0.Final-redhat-1</version.jbossas>
       </properties>
     </profile>
   </profiles>
