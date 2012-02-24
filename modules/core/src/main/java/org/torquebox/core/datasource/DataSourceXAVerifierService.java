@@ -44,11 +44,10 @@ import org.torquebox.core.datasource.DataSourceInfoList.Info;
 
 public class DataSourceXAVerifierService implements Service<DataSourceInfoList.Info> {
 
-    public DataSourceXAVerifierService(Info info, ServiceRegistry serviceRegistry, String jndiName, ServiceName dataSourceServiceName) {
+    public DataSourceXAVerifierService(Info info, ServiceRegistry serviceRegistry, String jndiName) {
         this.info = info;
         this.serviceRegistry = serviceRegistry;
         this.jndiName = jndiName;
-        this.dataSourceServiceName = dataSourceServiceName;
     }
 
     @Override
@@ -57,7 +56,6 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
             this.info = Info.DISABLED;
             removeBinder();
             removeReferenceFactory();
-            removeDataSource();
         }
 
         log.info( "Verifier completed" );
@@ -70,10 +68,6 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
     
     private void removeReferenceFactory() {
         removeService( DataSourceReferenceFactoryService.SERVICE_NAME_BASE .append(jndiName) );
-    }
-    
-    private void removeDataSource() {
-        removeService( this.dataSourceServiceName );
     }
     
     private void removeService(ServiceName serviceName) {
@@ -135,7 +129,6 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
 
     private DataSourceInfoList.Info info;
     private String jndiName;
-    private ServiceName dataSourceServiceName;
     private ServiceRegistry serviceRegistry;
 
     private org.jboss.logmanager.Logger logger;

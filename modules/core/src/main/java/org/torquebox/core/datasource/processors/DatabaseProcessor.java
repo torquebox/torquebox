@@ -270,10 +270,9 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             String adapterName = (String) dbMeta.getConfiguration().get( "adapter" );
             Info dsInfo = new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName );
 
-            DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo, phaseContext.getServiceRegistry(), jndiName, dataSourceServiceName );
+            DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo, phaseContext.getServiceRegistry(), jndiName );
             ServiceName verifierServiceName = dataSourceServiceName.append( "xa-verifier" );
             phaseContext.getServiceTarget().addService( verifierServiceName, verifierService )
-                    // marked as OPTIONAL because we may need to remove it
                     .addDependency( DependencyType.OPTIONAL, dataSourceServiceName, DataSource.class, verifierService.getDataSourceInjector() )
                     .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, verifierService.getTransactionManagerInjector() )
                     .install();
