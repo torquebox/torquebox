@@ -118,6 +118,18 @@ class TorqueBoxCommand < Thor
     end
   end
 
+  desc "list applications", "List applications deployed to TorqueBox and their deployment status"
+  def list(root = ".")
+    TorqueBox::Server.setup_environment
+    apps = TorqueBox::DeployUtils.deployment_status
+    puts "Nothing deployed." if apps.empty?
+    apps.each do |k,v|
+      puts k
+      puts "  Descriptor: #{v[:descriptor]}"
+      puts "  Status: #{v[:status]}"
+    end
+  end
+
   desc "cli", "Run the JBoss AS7 CLI"
   def cli
     TorqueBox::Server.setup_environment

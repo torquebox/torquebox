@@ -330,9 +330,33 @@ module TorqueBox
       def normalize_archive_name(name)
         name[-5..-1] == '.knob' ? name : name + '.knob'
       end
+
+      def deployment_descriptors
+        Dir.glob( "#{deploy_dir}/*-knob.yml" ).collect { |d| File.basename( d ) }
+      end
+
+      def deployment_status
+        applications = {}
+        deployment_descriptors.each do | descriptor |
+          descriptor_path = File.join( deploy_dir, descriptor )
+          appname = descriptor.sub( /\-knob.yml/, '' ) 
+          applications[appname] = {}
+          applications[appname][:descriptor] = descriptor_path
+          applications[appname][:status] = case 
+                                           when File.exists?("#{descriptor_path}.dodeploy")
+                                             "awaiting deployment"
+                                           when File.exists?("#{descriptor_path}.deployed")
+                                             "deployed"
+                                           when File.exists?("#{descriptor_path}.failed")
+                                             "deployment failed"
+                                           else "unknown: try running `torquebox deploy #{appname}`"
+                                           end
+        end
+        applications
+      end
       
       private 
-      
+
       def undeploy(name, opts = {})
         puts "Attempting to undeploy #{name}"
         from_dir = find_option( opts, 'deploy_dir' ) || deploy_dir

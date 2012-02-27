@@ -396,4 +396,45 @@ describe TorqueBox::DeployUtils do
       path.should == "/tmp/simpleapp.knob"
     end
   end
+
+  describe '.deployment_status' do
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+      ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+      @myapp = @util.deployment_name( 'my-app' )
+      @appname = @myapp.sub /\-knob.yml/, ''
+      File.stub('exists?').with(File.join(@util.torquebox_home, 'apps')).and_return false
+      File.stub('exists?').with(File.join(@util.deploy_dir, @myapp)).and_return true
+      File.stub('exists?').with(File.join(@util.deploy_dir, "#{@myapp}.dodeploy")).and_return false
+      File.stub('exists?').with(File.join(@util.deploy_dir, "#{@myapp}.deployed")).and_return false
+      File.stub('exists?').with(File.join(@util.deploy_dir, "#{@myapp}.failed")).and_return false
+      Dir.stub('glob').with( "#{@util.deploy_dir}/*-knob.yml" ).and_return [ File.join( @util.deploy_dir, @myapp ) ]
+    end
+
+    it 'should return a hash of deployment info keyed by application name' do
+      @util.deployment_status[@appname].should_not be_nil
+    end
+
+    it 'should provide the deployment descriptor path' do
+      @util.deployment_status[@appname][:descriptor].should_not be_nil
+    end
+
+    it 'should provide a deployment status if awaiting deployment' do
+      dodeploy_file = File.join(@util.deploy_dir, "#{@myapp}.dodeploy")
+      File.stub('exists?').with(dodeploy_file).and_return true
+      @util.deployment_status[@appname][:status].should == 'awaiting deployment'
+    end
+
+    it 'should provide a deployment status if deployed' do
+      deployed_file = File.join(@util.deploy_dir, "#{@myapp}.deployed")
+      File.stub('exists?').with(deployed_file).and_return true
+      @util.deployment_status[@appname][:status].should == 'deployed'
+    end
+
+    it 'should provide a deployment status if failed' do
+      failed_file   = File.join(@util.deploy_dir, "#{@myapp}.failed")
+      File.stub('exists?').with(failed_file).and_return true
+      @util.deployment_status[@appname][:status].should == 'deployment failed'
+    end
+  end
 end
