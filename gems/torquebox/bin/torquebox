@@ -95,6 +95,11 @@ class TorqueBoxCommand < Thor
     opts = {:root => root}.merge(options)
     descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor(opts)
     deployed_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml(descriptor, opts)
+    failed_file = File.join( deploy_dir, "#{deployed_name}.failed" )
+    if File.exists? failed_file
+      puts "Removing failed descriptor: #{failed_file}" 
+      FileUtils.rm( failed_file ) 
+    end
     puts "Deployed: #{deployed_name}"
     puts "    into: #{deploy_dir}"
   end
