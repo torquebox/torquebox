@@ -268,7 +268,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             binderBuilder.install();
 
             String adapterName = (String) dbMeta.getConfiguration().get( "adapter" );
-            Info dsInfo = new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName );
+            Info dsInfo = new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName, adapter );
 
             DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo, phaseContext.getServiceRegistry(), jndiName );
             ServiceName verifierServiceName = dataSourceServiceName.append( "xa-verifier" );

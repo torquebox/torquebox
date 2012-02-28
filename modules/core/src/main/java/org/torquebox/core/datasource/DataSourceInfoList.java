@@ -23,22 +23,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jboss.msc.service.ServiceName;
+import org.torquebox.core.datasource.db.Adapter;
 
 public class DataSourceInfoList {
     
     public static class Info {
-        public static final Info DISABLED = new Info( null, null, null, null);
+        public static final Info DISABLED = new Info( null, null, null, null, null);
         
         private String name;
         private String jndiName;
         private String adapterName;
         private ServiceName serviceName;
+        private Adapter adapter;
         
-        public Info(String name, String jndiName, String adapterName, ServiceName serviceName) {
+        public Info(String name, String jndiName, String adapterName, ServiceName serviceName, Adapter adapter) {
             this.name = name;
             this.jndiName = jndiName;
             this.adapterName = adapterName;
             this.serviceName = serviceName;
+            this.adapter = adapter;
         }
         
         public String getName() {
@@ -55,6 +58,10 @@ public class DataSourceInfoList {
         
         public ServiceName getServiceName() {
             return this.serviceName;
+        }
+        
+        public Adapter getAdapter() {
+            return this.adapter;
         }
     }
     

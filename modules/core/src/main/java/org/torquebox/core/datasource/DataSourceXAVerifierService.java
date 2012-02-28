@@ -20,6 +20,8 @@
 package org.torquebox.core.datasource;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
@@ -89,6 +91,12 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
                 return false;
             }
             TransactionManager tm = this.transactionManagerInjector.getValue();
+            if ( getAdapterId().equals( "postgresql" ) ) {
+                if ( postgresqlMaxPreparedTransactions( dataSource ) == 0 ) {
+                    log.warnf( "PostgreSQL max_prepared_transactions set to 0; XA will not be enabled: %s", this.info.getName() );
+                    return false;
+                }
+            }
             tm.begin();
             Transaction tx = tm.getTransaction();
             Connection connection = dataSource.getConnection();
@@ -103,6 +111,31 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
         }
 
         return true;
+    }
+
+    protected int postgresqlMaxPreparedTransactions(DataSource dataSource) {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery( "show max_prepared_transactions;" );
+            result.next();
+            int max = result.getInt( 1 );
+            return max;
+        } catch (SQLException e) {
+            log.warnf( "Error determining PostgreSQL max_prepared_transactions: %s", this.info.getName() );
+            return 0;
+        } finally {
+            try {
+                if (statement != null) { statement.close(); }
+                if (connection != null) { connection.close(); }
+            } catch (SQLException ignored) { }
+        }
+    }
+
+    protected String getAdapterId() {
+        return this.info.getAdapter().getId();
     }
 
     @Override
