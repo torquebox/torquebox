@@ -513,23 +513,32 @@ queue.publish "Some message"</programlisting></para>
                 message. TorqueBox provides the following built-in encodings:
                 <itemizedlist>
                     <listitem>
-                      <para><parameter>:marshal</parameter> - The message in
+                      <para><parameter>:marshal</parameter> - The message is
                       encoded/decoded via Marshal, and is transmitted as a
                       binary message.</para>
                     </listitem>
 
                     <listitem>
                       <para><parameter>:marshal_base64</parameter> - The
-                      message in encoded/decoded via Marshal, and is
+                      message is encoded/decoded via Marshal, and is
                       transmitted as a base64 encoded text message. This was
                       the encoding scheme used in TorqueBox 1.x.</para>
                     </listitem>
 
                     <listitem>
-                      <para><parameter>:json</parameter> - The message in
+                      <para><parameter>:json</parameter> - The message is
                       encoded/decoded via JSON, and is transmitted as a text
                       message. This encoding is limited, and should only be
                       used for simple messages.</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:clojure</parameter> - The
+                      message is encoded/decoded via the
+                      <filename>clj</filename> gem, and is transmitted
+                      as a text message. This encoding is most
+                      convenient for messages that can be represented
+                      using standard Clojure data structures.</para>
                     </listitem>
 
                     <listitem>
@@ -867,6 +876,16 @@ message = queue.publish_and_receive "ping", :timeout =&gt; 5000
               encoding will need to provide the json gem via its Gemfile, or,
               if you are not using Bundler, the json gem must at least be
               installed.</para>
+            </listitem>
+
+            <listitem>
+              <para><parameter>:clojure</parameter> - The message in
+              encoded/decoded via the <filename>clj</filename>
+              rubygem, and is transmitted as a text message.  This
+              encoding is intended to provide interoperability with
+              message producers and consumers written in Clojure. See
+              <ulink url="http://immutant.org">the Immutant
+              project</ulink> for more information.</para>
             </listitem>
 
             <listitem>
