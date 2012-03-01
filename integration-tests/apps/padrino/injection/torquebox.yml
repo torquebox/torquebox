@@ -1,0 +1,9 @@
+services:
+  AppService:
+  FooService:
+  BarService:
+
+queues:
+  /queue/app:
+  /queue/foo:
+  /queue/bar:
