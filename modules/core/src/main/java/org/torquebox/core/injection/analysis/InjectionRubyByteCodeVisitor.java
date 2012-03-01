@@ -85,6 +85,8 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
                 if (injectable != null) {
                     this.injectables.add( injectable );
                 }
+            } else {
+                defaultVisitNode( node );
             }
         }
 
