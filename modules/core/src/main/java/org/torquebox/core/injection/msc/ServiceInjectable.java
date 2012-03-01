@@ -28,7 +28,7 @@ import org.torquebox.core.injection.SimpleNamedInjectable;
 public class ServiceInjectable extends SimpleNamedInjectable {
     
     public ServiceInjectable(String name, boolean generic) {
-        this( "service", name, generic );
+        this( type, name, generic );
     }
     
     protected ServiceInjectable(String type, String name, boolean generic) {
@@ -39,5 +39,7 @@ public class ServiceInjectable extends SimpleNamedInjectable {
     public ServiceName getServiceName(ServiceTarget serviceTarget, DeploymentUnit unit) {
         return ServiceName.parse( getName() );
     }
+    
+    public static final String type = "service";
 
 }
