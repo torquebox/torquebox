@@ -48,6 +48,7 @@ module TorqueBox
           :injection   => OptionsEntry.with_settings(:validate => {
                                                        :required => [{ :enabled => [true, false] }]
                                                      }),
+          :config => OptionsEntry,
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {
                                                                 :required => [:cron],

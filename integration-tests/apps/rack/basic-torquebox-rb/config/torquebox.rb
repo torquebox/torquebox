@@ -22,9 +22,12 @@ TorqueBox.configure do
 
   job AJob do
     cron '*/1 * * * * ?'
-    config('ham' => 'biscuit')
+    config do 
+      ham 'biscuit'
+    end
   end
   queue '/queue/a-queue', :durable => false
+  queue '/queue/another-queue', :durable => false
   
   queue '/queue/job-queue' do
     durable false
@@ -58,6 +61,9 @@ TorqueBox.configure do
 
   service AnotherService do
     name 'biscuit'
+    config do
+      flavor 'with honey'
+    end
   end
 
   service AnotherService
