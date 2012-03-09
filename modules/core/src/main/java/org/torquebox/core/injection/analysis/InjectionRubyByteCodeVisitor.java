@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.jboss.logging.Logger;
 import org.jboss.msc.inject.InjectionException;
 import org.jruby.ast.ArrayNode;
 import org.jruby.ast.FCallNode;
@@ -57,9 +58,15 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
         String callName = node.getName();
 
         if (!this.markerSeen && (callName.equals( "include" ) || callName.equals( "extend" ))) {
-            String includedName = getConstString( ((ArrayNode) node.getArgsNode()).get( 0 ) );
-            if (includedName.equals( TORQUEBOX_MARKER_MODULE )) {
-                this.markerSeen = true;
+            Node argsNode = node.getArgsNode();
+            if (argsNode instanceof ArrayNode) {
+                String includedName = getConstString( ((ArrayNode) node.getArgsNode()).get( 0 ) );
+                if (includedName.equals( TORQUEBOX_MARKER_MODULE )) {
+                    this.markerSeen = true;
+                }
+            }
+            else {
+                log.debugf( "Ignoring non-array arg node for include/extend: %s", argsNode );
             }
         } else {
             InjectableHandler handler = null;
@@ -93,7 +100,6 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
         return null;
     }
 
-
     public InjectionAnalyzer getAnalyzer() {
         return this.analyzer;
     }
@@ -104,7 +110,7 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
         }
         return this.injectables;
     }
-    
+
     public void assumeMarkerSeen() {
         this.markerSeen = true;
     }
@@ -121,5 +127,7 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
     private boolean markerSeen = false;
 
     private Set<Injectable> injectables = new HashSet<Injectable>();
+
+    private static final Logger log = Logger.getLogger( "org.torquebox.core.injection.analysis" );
 
 }

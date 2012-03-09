@@ -154,6 +154,11 @@ public class InjectionAnalyzerTest {
     public void testIVarIllegalAnalysis() throws Exception {
         analyzeScript( "ivar_illegal_injection.rb" );
     }
+    
+    @Test
+    public void testSplatIncludes() throws Exception {
+        analyzeScript( "splat_injection.rb" );
+    }
 
     
     @Test
