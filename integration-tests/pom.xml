@@ -316,6 +316,15 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>newrelic_rpm</artifactId>
+      <version>${version.newrelic}</version>
+      <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
+
 
   </dependencies>
 
