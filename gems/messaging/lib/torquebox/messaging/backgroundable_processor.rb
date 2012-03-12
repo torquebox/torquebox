@@ -28,7 +28,7 @@ module TorqueBox
           # TORQUE-741 allow always_background methods to report as background tasks in NewRelic
           begin
             if TorqueBox::Messaging::Backgroundable::NEWRELIC_AVAILABLE
-              hash[:receiver].class.class_eval do
+              class << hash[:receiver]
                 include NewRelic::Agent::Instrumentation::ControllerInstrumentation
                 add_transaction_tracer hash[:method], :name => hash[:method].sub("__sync_", ""), :category => :task
               end

@@ -4,7 +4,6 @@ class Something
   include TorqueBox::Messaging::Backgroundable
   include TorqueBox::Injectors
   
-  TorqueBox::Messaging::Backgroundable::NEWRELIC_AVAILABLE = false
   always_background :foo
 
   def initialize
