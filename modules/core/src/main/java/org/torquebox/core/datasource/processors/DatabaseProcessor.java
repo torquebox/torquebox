@@ -105,8 +105,14 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         return currentEnv.equals( configName );
     }
 
-    protected boolean isAtypicalDatabase(String configName) {
-        return !TYPICAL_ENVIRONMENTS.contains( configName );
+    protected boolean isXAExplicitlyEnabled(DatabaseMetaData metaData) {
+        Object xaEntry = metaData.getConfiguration().get( "xa" );
+        return xaEntry != null && xaEntry == Boolean.TRUE;
+    }
+
+    protected boolean isXAExplicitlyDisabled(DatabaseMetaData metaData) {
+        Object xaEntry = metaData.getConfiguration().get( "xa" );
+        return xaEntry != null && xaEntry == Boolean.FALSE;
     }
 
     @Override
@@ -133,7 +139,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
             String configName = each.getConfigurationName();
 
-            if (!isCurrentEnvironmentDatabase( currentEnv, configName ) && !isAtypicalDatabase( configName )) {
+            if (!isCurrentEnvironmentDatabase( currentEnv, configName ) && !isXAExplicitlyEnabled( each )) {
                 continue;
             }
 
@@ -141,9 +147,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
                 continue;
             }
 
-            Object xaEntry = each.getConfiguration().get( "xa" );
-
-            if (xaEntry != null && xaEntry == Boolean.FALSE) {
+            if (isXAExplicitlyDisabled( each )) {
                 continue;
             }
 

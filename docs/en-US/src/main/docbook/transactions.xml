@@ -161,19 +161,19 @@
   <section>
     <title>Examples</title>
 
-    <para>Distributed transactions support comes enabled by default, so no extra
-    configuration is required to enable it. If you don't need this feature, it is possible to
-    disable it by setting <code>xa</code> to false in your 
-    database.yml.</para>
+    <para>Distributed transactions support comes enabled by default,
+    so no extra configuration is required to enable it. If you don't
+    need this feature, it is possible to disable it by setting
+    <code>xa</code> to false in your database.yml. If your application
+    uses more than one database, you'll need to enable distributed
+    transactions explicitly for the additional databases by setting
+    <code>xa</code> to true.</para>
 
-    <section>
-      <title>Disabling XA support in a application environment</title>
+    <para><example>
+      <title>Disabling XA support
+      (<filename>config/database.yml</filename>)</title>
 
-      <para><example>
-          <title>Disabling XA support
-          (<filename>config/database.yml</filename>)</title>
-
-          <para><programlisting>production:
+      <para><programlisting>production:
   adapter: mysql
   xa: false
   database: my_database
@@ -181,8 +181,22 @@
   username: my_username
   password: my_password
   encoding: utf8
-            </programlisting></para>
-        </example></para>
-    </section>
+      </programlisting></para>
+    </example></para>
+
+    <para><example>
+      <title>Enabling XA support for additional databases
+      (<filename>config/database.yml</filename>)</title>
+
+      <para><programlisting>some_other_database:
+  adapter: mysql
+  xa: true
+  database: my_database
+  host: my_host
+  username: my_username
+  password: my_password
+  encoding: utf8
+      </programlisting></para>
+    </example></para>
   </section>
 </chapter>
