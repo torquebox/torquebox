@@ -168,7 +168,7 @@ class AssemblyTool
   def add_cache(doc)
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.1']" ).first
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.2']" ).first
       container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
       cache = container.add_element( 'local-cache', 'name'=>'sessions' )
       cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )

@@ -228,7 +228,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             phaseContext.getServiceTarget().addService( dataSourceServiceName, service )
                     .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, service.getDriverRegistryInjector() )
                     .addDependency( DataSourceServices.driverName( unit, adapter.getId() ), Driver.class, service.getDriverInjector() )
-                    .addDependency( ConnectorServices.MANAGEMENT_REPOSISTORY_SERVICE, ManagementRepository.class, service.getmanagementRepositoryInjector() )
+                    .addDependency( ConnectorServices.MANAGEMENT_REPOSITORY_SERVICE, ManagementRepository.class, service.getManagementRepositoryInjector() )
                     .addDependency( ConnectorServices.TRANSACTION_INTEGRATION_SERVICE, TransactionIntegration.class, service.getTransactionIntegrationInjector() )
                     .addDependency( NamingService.SERVICE_NAME )
                     .addDependency(ConnectorServices.CCM_SERVICE, CachedConnectionManager.class, service.getCcmInjector())
