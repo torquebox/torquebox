@@ -1,0 +1,3 @@
+<% user_file = File.join(Rails.root, 'config', 'user', "database.#{ENV['USER']}.yml") %>
+<% default_file = File.join(Rails.root, 'config', 'database.example.yml') %>
+<%= if File.exist?(user_file) then IO.read(user_file) else IO.read(default_file) end %>

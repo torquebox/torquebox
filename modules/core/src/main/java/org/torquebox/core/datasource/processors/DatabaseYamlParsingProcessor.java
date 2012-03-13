@@ -21,7 +21,10 @@ package org.torquebox.core.datasource.processors;
 
 import java.util.Map;
 
+import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
+import org.jboss.logging.Logger;
 import org.torquebox.core.datasource.DatabaseMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 
@@ -39,6 +42,15 @@ public class DatabaseYamlParsingProcessor extends AbstractSplitYamlParsingProces
     }
 
     @Override
+    public void deploy(DeploymentPhaseContext phaseContext) throws DeploymentUnitProcessingException {
+        try {
+            super.deploy( phaseContext );
+        } catch (DeploymentUnitProcessingException ignored) {
+            log.warnf( "Failed to parse database.yml - XA will not be enabled for %s", phaseContext.getDeploymentUnit() );
+        }
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     protected void parse(DeploymentUnit unit, Object data) throws Exception {
         Map<String, Map<String, Object>> file = (Map<String, Map<String, Object>>) data;
@@ -49,5 +61,7 @@ public class DatabaseYamlParsingProcessor extends AbstractSplitYamlParsingProces
             unit.addToAttachmentList( DatabaseMetaData.ATTACHMENTS, md );
         }
     }
+
+    private static final Logger log = Logger.getLogger( DatabaseYamlParsingProcessor.class );
 
 }
