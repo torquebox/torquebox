@@ -145,6 +145,10 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
 - http://rubygems.org
 - http://torquebox.org/2x/builds/LATEST/gem-repo/</screen>
       </para>
+      <para><emphasis>Note for Postgres users:</emphasis>TorqueBox includes support XA transactions by default. If you're relying on Postgres for persistence, you'll need to 
+      configure it for XA transactions. Simply set the max_prepared_transactions parameter to a number 
+      greater than 0, and XA support will be enabled for Postgres.
+      </para>
     </section>
 
     <section id="running-torquebox">
