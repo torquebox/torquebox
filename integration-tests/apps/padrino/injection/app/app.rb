@@ -65,13 +65,13 @@ class Myapp < Padrino::Application
     render_injections(service, queue)
   end
 
-  get 'from-models' do
+  get '/from-models' do
     service = Foo.new.service
     queue = Foo.new.queue
     render_injections(service, queue)
   end
 
-  get 'from-lib' do
+  get '/from-lib' do
     service = Bar.new.service
     queue = Bar.new.queue
     render_injections(service, queue)

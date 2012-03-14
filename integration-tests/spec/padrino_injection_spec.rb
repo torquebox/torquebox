@@ -30,4 +30,10 @@ describe 'padrino injection test' do
     page.should have_content('service is BarService')
     page.should have_content('queue is /queue/bar')
   end
+
+  it 'should inject from controller' do
+    visit '/padrino-injection/from-controller'
+    page.should have_content('service is ControllerService')
+    page.should have_content('queue is /queue/controller')
+  end
 end
