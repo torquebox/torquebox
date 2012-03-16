@@ -345,6 +345,15 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       config['<root>']['job'].should == [['AJob', { :cron => '1234' }], ['AJob', { :cron => '1234' }]]
     end
 
+    it "should allow jobs in modules" do
+      config = TorqueBox.configure do
+        job 'One::AJob', :cron => '1234'
+        job 'Two::AJob', :cron => '1234'
+      end
+
+      config['<root>']['job'].should == [['One::AJob', { :cron => '1234' }], ['Two::AJob', { :cron => '1234' }]]
+    end
+
     it "should allow cron to be set in a block" do
       lambda {
         TorqueBox.configure do

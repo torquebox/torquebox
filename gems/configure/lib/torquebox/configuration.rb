@@ -29,7 +29,7 @@ module TorqueBox
     end
 
     def self.const_missing(name)
-      FakeConstant.new( name )
+      FakeConstant.new( name ).to_const
     end
 
     class Entry < BlankSlate
@@ -79,7 +79,8 @@ module TorqueBox
       end
 
       def self.const_missing(name)
-        FakeConstant.new( name )
+        puts "CONST_MISSING #{name}"
+        FakeConstant.new( name ).to_const
       end
 
       def self.with_settings(options)
@@ -171,6 +172,22 @@ module TorqueBox
     class FakeConstant
       def initialize(name)
         @name = name.to_s
+        puts "MODULE #{name}"
+        s = <<-END
+          module ::#{name}
+            def self.const_missing(k)
+              FakeConstant.new( "#{name}::" + k.to_s )
+            end
+          end
+        END
+
+        puts "eval #{s}"
+        eval s
+ 
+      end
+
+      def to_const
+        eval @name
       end
 
       def to_s
