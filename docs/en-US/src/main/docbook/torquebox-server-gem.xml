@@ -76,7 +76,7 @@ Undeploy an application from TorqueBox</screen>
     Multiple instances of TorqueBox can run on the same machine by
     binding each one to a specific IP address:
 
-    <screen><prompt>$</prompt> <command>torquebox run -b 0.0.0.0</command></screen></para>
+    <screen><prompt>$</prompt> <command>torquebox run -b 10.100.10.25</command></screen></para>
 
     <formalpara>
       <title>Run Help</title>
@@ -86,9 +86,14 @@ Usage:
   torquebox run
 
 Options:
-      [--clustered]                  # Run TorqueBox in clustered mode
-      [--max-threads=N]              # Maximum number of HTTP threads
-  -b, [--bind-address=BIND-ADDRESS]  # IP address to bind to
+      [--clustered]                      # Run TorqueBox in clustered mode
+      [--data-directory=DATA-DIRECTORY]  # Override the directory TorqueBox uses to store it runtime data
+  -e, [--extra=EXTRA]                    # Extra options to pass through to JBoss AS, you will to escape dashes with \ (e.g. \--help)
+      [--max-threads=N]                  # Maximum number of HTTP threads
+  -b, [--bind-address=BIND-ADDRESS]      # IP address to bind to - don't set this to 0.0.0.0 if used with --clustered
+      [--node-name=NODE-NAME]            # Override the name of the node (which by default is the hostname)
+      [--port-offset=N]                  # Offset all port numbers listened on by TorqueBox by this number
+  -J, [--jvm-options=JVM-OPTIONS]        # Pass options on to the JVM
 
 Run TorqueBox</screen>
     </formalpara>
