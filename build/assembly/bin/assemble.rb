@@ -198,8 +198,9 @@ class Assembler
   end
 
   def transform_standalone_confs
-    tool.transform_standalone_conf
-    tool.transform_standalone_conf_bat
+    torquebox_java_opts = "-Xss2048k"
+    tool.transform_standalone_conf( torquebox_java_opts )
+    tool.transform_standalone_conf_bat( torquebox_java_opts )
   end
 
   def assemble()

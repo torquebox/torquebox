@@ -482,20 +482,20 @@ class AssemblyTool
     end
   end
 
-  def transform_standalone_conf
+  def transform_standalone_conf(torquebox_java_opts)
     conf = File.join( jboss_dir, 'bin', 'standalone.conf')
     unless File.read( conf ).include?('$APPEND_JAVA_OPTS')
       File.open( conf, 'a' ) do |file|
-        file.write( %Q(\nJAVA_OPTS="$JAVA_OPTS $APPEND_JAVA_OPTS"\n) )
+        file.write( %Q(\nJAVA_OPTS="$JAVA_OPTS #{torquebox_java_opts} $APPEND_JAVA_OPTS"\n) )
       end
     end
   end
 
-  def transform_standalone_conf_bat
+  def transform_standalone_conf_bat(torquebox_java_opts)
     conf = File.join( jboss_dir, 'bin', 'standalone.conf.bat')
     unless File.read( conf ).include?('%APPEND_JAVA_OPTS%')
       File.open( conf, 'a' ) do |file|
-        file.write (%Q(\nset "JAVA_OPTS=%JAVA_OPTS% %APPEND_JAVA_OPTS%"\n) )
+        file.write( %Q(\nset "JAVA_OPTS=%JAVA_OPTS% #{torquebox_java_opts} %APPEND_JAVA_OPTS%"\n) )
       end
     end
   end
