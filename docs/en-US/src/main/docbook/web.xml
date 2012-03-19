@@ -348,16 +348,7 @@ run app</programlisting></para>
         <title>Rails 2.3.x versus 3.x</title>
 
         <para>TorqueBox supports both the 2.3.x and 3.x codelines of Rails. By
-        default, all utilities prefer the latest version of a given gem, which
-        in the current case is ${version.rails3}.</para>
-
-        <para>To specify a specific version of utilities such as the rails
-        command used to create applications, simply specify the version number
-        between underscores immediately following the command name.</para>
-
-        <informalexample>
-          <para><screen>$ rails _${version.rails2}_ myapp</screen></para>
-        </informalexample>
+        default, all utilities prefer the latest version of a given gem.</para>
       </section>
 
       <section id="preparing-your-rails-application">
@@ -376,58 +367,46 @@ run app</programlisting></para>
           longer included. You'll need to install the version needed by your
           application.</para>
 
-          <para><screen><prompt>$</prompt> <command>gem</command> <parameter>install rails</parameter></screen></para>
+          <para><screen><prompt>$</prompt> <command>gem</command> <parameter>install rails --version=[rails version]</parameter></screen></para>
         </section>
 
         <section id="using-torquebox-rails">
           <title>Using the torquebox command line</title>
           
           <para>TorqueBox ships with a command line application which you can use
-            to setup a new Rails 3.x application or modify an existing one to work with
+            to setup a new Rails application or modify an existing one to work with
             TorqueBox. The same command works for both scenarios. If the application 
             directory exists, it will apply the TorqueBox rails template to that application.
-            If it does not exist, a new Rails 3.x application will be created.
+            If it does not exist, a new Rails application will be created.
+
+            <screen><prompt>$</prompt> <command>torquebox</command> rails <parameter>/path/to/myapp</parameter></screen>
+
           </para>
 
-          <para><screen><prompt>$</prompt> <command>torquebox</command> rails <parameter>/path/to/myapp</parameter></screen></para>
 
-        </section>
+          <para>If you have multiple versions of Rails installed, you can generate 
+            applications for a specific version by using bundler.  For example, 
+            you have Rails 2.3.14 and 3.2.2 installed.  By default, Rails will
+            use version 3.2.2 when creating a new application. To create
+            a new Rails 2.3.14 application using the TorqueBox template, just
+            create a Gemfile that specifies the Rails version.
 
-        <section id="using-the-rails-application-template">
-          <title>Using the application template</title>
+            <programlisting language="ruby">gem 'rails', 2.3.14'
+gem 'torquebox', '2.0.0'</programlisting>
+            
+            To generate the Rails app, first run bundler.
+            
+            <screen><prompt>$</prompt> <command>bundle</command>
+              <parameter>install</parameter></screen>
 
-          <para>You can use the included application template to setup a new
-          Rails application or modify an existing one to work with
-          TorqueBox.</para>
+            Then, when you generate the application, use bundler. It will use
+            the Rails version you specified in your Gemfile.
 
-          <section id="creating-a-new-rails-application">
-            <title>Creating a new Rails application</title>
+            <screen><prompt>$</prompt> <command>bundle</command>
+              <parameter>exec torquebox rails [myapp]</parameter></screen>
 
-            <para>To create a new Rails application using the template, simply
-            use the <parameter>-m</parameter> parameter when you execute the
-            <command>rails</command> command.</para>
+          </para>
 
-            <formalpara>
-              <title>Rails 2.3.x</title>
-
-              <para><screen><prompt>$</prompt> <command>rails</command> <parameter>_${version.rails2}_ myapp -m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen></para>
-            </formalpara>
-
-            <formalpara>
-              <title>Rails 3.x</title>
-
-              <para><screen><prompt>$</prompt> <command>rails</command> new <parameter>myapp -m <envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</parameter></screen></para>
-            </formalpara>
-          </section>
-
-          <section id="applying-template-to-existing-application">
-            <title>Applying template to an existing application</title>
-
-            <para>To apply the template to an existing application, simply use
-            the <command>rails:template</command> rake task.</para>
-
-            <para><screen><prompt>$</prompt> <command>rake</command> <parameter>rails:template</parameter> <varname>LOCATION</varname>=<envar>$TORQUEBOX_HOME</envar>/share/rails/template.rb</screen></para>
-          </section>
         </section>
 
         <section id="manually-configuring-a-rails-application">
