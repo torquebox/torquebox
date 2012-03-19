@@ -201,10 +201,10 @@ module TorqueBox
       def ruby_to_java(object)
         r = object
         case ( object )
-          when Hash:
-            r = hash_to_hashmap(object)
-          when Array:
-            r = array_to_arraylist(object)
+        when Hash
+          r = hash_to_hashmap(object)
+        when Array
+          r = array_to_arraylist(object)
         end
         r
       end
