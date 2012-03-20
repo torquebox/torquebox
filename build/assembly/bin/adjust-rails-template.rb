@@ -7,7 +7,8 @@ class RailsTemplateAdjuster
 
   attr_accessor :build_number
 
-  def initialize(build_number)
+  def initialize(version, build_number)
+    @version      = version
     @build_number = build_number
   end
    
@@ -21,7 +22,7 @@ class RailsTemplateAdjuster
         output.puts generate_source
         input.each_line do |line|
           if line =~ /gem [\'\"](torquebox.*?)[\'\"]/
-            output.puts "gem \'#{$1}\', \'2.x.incremental.#{@build_number}\'"
+            output.puts "gem \'#{$1}\', \'#{@version}\'"
           else
             output.puts line unless line =~ /^add_source \"http\:\/\/torquebox.org\/.+?\/builds\/[0-9]+\/gem-repo\"$/
           end
@@ -44,4 +45,4 @@ class RailsTemplateAdjuster
 
 end
 
-RailsTemplateAdjuster.new( ARGV[0] ).adjust
+RailsTemplateAdjuster.new( ARGV[0], ARGV[1] ).adjust

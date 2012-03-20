@@ -15,10 +15,8 @@ else
 end
 
 # gems defs common to v2 and v3
-gem 'torquebox'
-gem "torquebox-rake-support"
-#gem 'torquebox', "${project.version}"
-#gem "torquebox-rake-support", "${project.version}"
+gem 'torquebox', "${env.BUILD_NUMBER}"
+gem "torquebox-rake-support", "${env.BUILD_NUMBER}"
 
 
 if RAILS_2 

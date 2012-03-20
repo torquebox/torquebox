@@ -48,7 +48,9 @@
 
   <profiles>
     <profile>
-      <id>ci</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
       <build>
         <plugins>
           <plugin>
@@ -63,7 +65,7 @@
                 </goals>
                 <configuration>
                   <file>bin/adjust-rails-template.rb</file>
-                  <args>${env.BUILD_NUMBER}</args>
+                  <args>${project.version} ${env.BUILD_NUMBER}</args>
                 </configuration>
               </execution>
             </executions>
