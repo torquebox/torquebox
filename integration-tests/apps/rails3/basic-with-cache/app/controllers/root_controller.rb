@@ -4,6 +4,11 @@ class RootController < ApplicationController
   def index
   end
 
+  # Be sure we're using torquebox cache
+  def torqueboxey
+    @cache_type = Rails.cache.class.name
+  end
+
   def cachey
     Rails.cache.write( "taco", "crunchy" )
     @cache_value = Rails.cache.read( "taco" )

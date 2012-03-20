@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "basic rails3 asset test" do
+describe "basic rails3 with cache test" do
 
   deploy <<-END.gsub(/^ {4}/,'')
     ---
@@ -17,6 +17,12 @@ describe "basic rails3 asset test" do
   it "should deploy, at least" do
     visit "/basic-cache"
     page.find('#success').should have_content( "It works" )
+  end
+
+  it "should use ActiveSupport::Cache::TorqueBoxStore" do
+    visit "/basic-cache/root/torqueboxey" do 
+      page.find("#success").should have_content( "TorqueBoxStore" )
+    end
   end
 
   it "should perform caching" do

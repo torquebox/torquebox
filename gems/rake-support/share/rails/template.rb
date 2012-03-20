@@ -38,7 +38,6 @@ else
     <<-INIT
 # Configure the TorqueBox Servlet-based session store.
 # Provides for server-based, in-memory, cluster-compatible sessions
-#{app_const}.config.session_store :torquebox_store
 if ENV['TORQUEBOX_APP_NAME']
   #{app_const}.config.session_store :torquebox_store
 else
@@ -46,6 +45,15 @@ else
 end  
     INIT
   end
+end
+
+initializer("cache_store.rb") do
+  <<-INIT
+# Configure the TorqueBox cache to be used in Rails.
+ActionController::Base.cache_store = :torque_box_store
+  INIT
+  # TODO: Figure out why :torquebox_store works for sessions, but
+  # here it has to be :torque_box_store
 end
 
 initializer("active_record_backgroundable.rb") do
@@ -62,9 +70,9 @@ end
   INIT
 end
 
-# Create app/tasks and app/jobs, just for fun
+# Create directories for tasks, jobs, services, and processors just for fun
 inside('app') {
-  %w( tasks jobs ).each { |dir| FileUtils.mkdir(dir) unless File.exists?(dir) }
+  %w( tasks jobs services processors).each { |dir| FileUtils.mkdir(dir) unless File.exists?(dir) }
 }
 
 app_constant = RAILS_2 ? 'Rails::Application' : app_const
