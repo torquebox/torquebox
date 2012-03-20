@@ -20,9 +20,8 @@ describe "basic rails3 with cache test" do
   end
 
   it "should use ActiveSupport::Cache::TorqueBoxStore" do
-    visit "/basic-cache/root/torqueboxey" do 
-      page.find("#success").should have_content( "TorqueBoxStore" )
-    end
+    visit "/basic-cache/root/torqueboxey" 
+    page.find("#success").should have_content( "TorqueBoxStore" )
   end
 
   it "should perform caching" do

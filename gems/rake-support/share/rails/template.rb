@@ -47,13 +47,8 @@ end
   end
 end
 
-initializer("cache_store.rb") do
-  <<-INIT
-# Configure the TorqueBox cache to be used in Rails.
-ActionController::Base.cache_store = :torque_box_store
-  INIT
-  # TODO: Figure out why :torquebox_store works for sessions, but
-  # here it has to be :torque_box_store
+environment do
+  "config.cache_store = :torque_box_store"
 end
 
 initializer("active_record_backgroundable.rb") do
