@@ -20,9 +20,12 @@ describe "alacarte runtime initialization test" do
 
   END
 
-  it "should work" do
-    touchfile = Pathname.new( TOUCHFILE )
-    touchfile.should exist
+  remote_describe "torquebox_init" do
+    include TorqueBox::Injectors
+    it "should work" do
+      queue = inject('/queues/tb_init_test')
+      queue.receive.should == "M1M2"
+    end
   end
 
 end

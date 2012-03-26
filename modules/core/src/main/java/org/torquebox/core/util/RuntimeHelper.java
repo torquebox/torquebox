@@ -19,6 +19,7 @@
 
 package org.torquebox.core.util;
 
+import java.io.File;
 import java.util.concurrent.Callable;
 
 import org.jboss.logging.Logger;
@@ -118,20 +119,36 @@ public class RuntimeHelper {
             log.errorf( t, "Unable to require file: %s", requirement );
         }
     }
+
+    /**
+     * Looks in application ROOT/config and application ROOT for configurationFile
+     * and requires it if possible.
+     */
+    public static void requireTorqueBoxInit(Ruby ruby) {
+      RuntimeHelper.requireIfAvailable( ruby, "config" + File.separator + "torquebox_init");
+      RuntimeHelper.requireIfAvailable( ruby, "torquebox_init" );
+    }
     
-    public static void requireIfAvailable(Ruby ruby, String requirement) {
+    /**
+     * Calls "require 'requirement'" in the Ruby provided.
+     * @returns boolean If successful, returns true, otherwise false.
+     */
+    public static boolean requireIfAvailable(Ruby ruby, String requirement) {
+        boolean success = false;
         try {
-        	StringBuilder script = new StringBuilder();
-        	script.append("begin\n");
-        	script.append("require %q(");
-        	script.append(requirement);
-        	script.append(")\n");
-        	script.append("rescue LoadError\n");
-        	script.append("end\n");
+            StringBuilder script = new StringBuilder();
+            script.append("begin\n");
+            script.append("require %q(");
+            script.append(requirement);
+            script.append(")\n");
+            script.append("rescue LoadError\n");
+            script.append("end\n");
             evalScriptlet( ruby, script.toString() );
+            success = true;
         } catch (Throwable t) {
             log.errorf( t, "Error encountered. Unable to require file: %s", requirement );
         }
+        return success;
     }
 
     public static void requireUnlessDefined(Ruby ruby, String requirement, String constant) {

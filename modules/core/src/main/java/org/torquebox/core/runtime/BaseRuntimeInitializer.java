@@ -23,7 +23,6 @@ import java.io.File;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.jruby.javasupport.JavaEmbedUtils;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -47,7 +46,7 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
         script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );
         script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
         RuntimeHelper.evalScriptlet( ruby, script.toString() );
-        RuntimeHelper.requireIfAvailable(ruby, "torquebox_init");
+        RuntimeHelper.requireTorqueBoxInit(ruby);
     }
 
     public RubyAppMetaData getRubyAppMetaData() {

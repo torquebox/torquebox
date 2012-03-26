@@ -1,20 +1,15 @@
 
+require 'torquebox-messaging'
+
 class SimpleService
+  include TorqueBox::Injectors
 
   def initialize(opts={})
+    @queue = inject('/queues/tb_init_test')
   end
 
   def start()
-    begin
-      ::ServiceHelper.new.write_message( "Hello from SimpleService!" )
-    rescue
-      FileUtils.rm_rf( ENV['TOUCHFILE'] )
-    end
+    @queue.publish( PART_ONE + PART_TWO )
   end
-
-  def stop()
-    FileUtils.rm_rf( ENV['TOUCHFILE'] )
-  end
-
 end
 
