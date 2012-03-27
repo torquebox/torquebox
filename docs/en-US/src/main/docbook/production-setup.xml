@@ -4,67 +4,263 @@
 <chapter id="production-setup">
   <title>TorqueBox Production Setup</title>
 
+  <section id="basic-deployment">
+    <para>A basic TorqueBox installation running a Rails 3.x application on a
+    Fedora 15 server is a fairly straightforward setup. This section will
+    outline the steps needed to deploy TorqueBox into a production
+    enviornment. The example scenario assumes a stock Fedora 15.</para>
+
+    <section>
+      <title>Package Installation</title>
+
+      <para>With a stock operating system, you'll need to install a few
+        packages.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>In this example, we'll use PostgreSQL. Substitute your
+          database flavor of choice.</para>
+
+          <screen>$ yum install postgresql-server</screen>
+        </listitem>
+
+        <listitem>
+          <para>The Java runtime is required for AS7 and JRuby.</para>
+
+          <screen>$ yum install java-1.6.0-openjdk </screen>
+        </listitem>
+
+        <listitem>
+          <para>We'll deploy from SCM and use git.</para>
+
+          <screen>$ yum install git</screen>
+        </listitem>
+
+        <listitem>
+          <para>We'll use Apache as the web server, and JBoss mod_cluster for
+          request dispatching. To install Apache:
+
+          <screen>$ yum install httpd</screen>
+
+          Since AS7 uses mod_cluster 1.2, we'll need to
+          install that from source. Download and installation instructions for
+          mod_cluster can be found on the <ulink
+          url="http://www.jboss.org/mod_cluster/downloads/1-2-0-Final">mod_cluster
+          downloads page</ulink>; essentially it's download and compile, and 
+          then copy modules to your http module directory. 
+          </para>
+        </listitem>
+      </itemizedlist>
+    </section>
+    <section>
+      <title>TorqueBox Installation</title>
+      <para>Download the latest release from the website, and unzip it. By
+        convention, TorqueBox is placed in <code>/opt/torquebox/current</code>
+        and is owned by the <code>torquebox</code> user. 
+
+        <screen>$ wget http://torquebox.org/release/org/torquebox/torquebox-dist/2.0.0.cr1/torquebox-dist-2.0.0.cr1-bin.zip
+$ mkdir /opt/torquebox
+$ chown torquebox:torquebox /opt/torquebox
+$ su torquebox
+$ unzip torquebox-dist-2.0.0.cr1-bin.zip -d /opt/torquebox/
+$ cd /opt/torquebox
+$ ln -s torquebox-dist-2.0.0.cr1 current</screen>
+        To ensure that the <code>TORQUEBOX_HOME</code> and other relevant
+        environment variables are available to system users, add these to
+        <code>/etc/profile.d/torquebox.sh</code>
+        <programlisting>
+export TORQUEBOX_HOME=/opt/torquebox/current
+export JBOSS_HOME=$TORQUEBOX_HOME/jboss
+export JRUBY_HOME=$TORQUEBOX_HOME/jruby
+PATH=$JBOSS_HOME/bin:$JRUBY_HOME/bin:$PATH
+        </programlisting>
+        You can test your installation by logging in with a new shell and running
+        the <code>torquebox</code> command.
+        <screen>$ torquebox
+Tasks:
+  torquebox deploy ROOT        # Deploy an application to TorqueBox
+  torquebox undeploy ROOT      # Undeploy an application from TorqueBox
+  torquebox run                # Run TorqueBox
+  torquebox rails ROOT         # Create a Rails application at ROOT using the...
+  torquebox archive ROOT       # Create a nice self-contained application arc...
+  torquebox cli                # Run the JBoss AS7 CLI
+  torquebox env [VARIABLE]     # Display TorqueBox environment variables
+  torquebox help [TASK]        # Describe available tasks or one specific task
+  torquebox list applications  # List applications deployed to TorqueBox and ...</screen>
+
+        Check to see if the server starts correctly by executing <code>torquebox run</code>.
+        You can just type <code>^C</code> to kill the server and continue to set up your system.
+      </para>
+    </section>
+    <section>
+      <title>Installing TorqueBox as a Startup Service</title>
+      <para>These instructions are for setting up TorqueBox as a system service
+        that will be started at boot time on Fedora 15. Instructions for operating
+        systems other than Fedora 15 may vary slighty.</para>
+
+      <para>JBoss AS7 ships with an <code>init.d</code> startup script that 
+        you can use. Copy it to the <code>/etc/init.d</code> directory
+        <screen>$ cp $JBOSS_HOME/bin/init.d/jboss-as-standalone.sh
+          /etc/init.d/jboss-as-standalone</screen>
+      </para>
+
+      <para>The jboss-as-standalone startup script makes use of a few
+        environment variables that can be set by creating a jboss-as.conf file
+        in <code>/etc/jboss-as</code>. 
+        <screen>$ mkdir /etc/jboss-as</screen>
+        <programlisting filename="jboss-as.conf"># General configuration for the init.d script
+JBOSS_USER=torquebox
+JBOSS_HOME=/opt/torquebox/current/jboss
+JBOSS_PIDFILE=/var/run/torquebox/torquebox.pid
+JBOSS_CONSOLE_LOG=/var/log/torquebox/console.log
+JBOSS_CONFIG=standalone-ha.xml</programlisting>
+        Run <code>chkconfig</code>
+        <screen>chkconfig --add jboss-as-standalone</screen>
+        to make sure the service is started at boot.  If everything is done
+        correctly, you can test your installation by running the following
+        command.
+
+        <screen>$ service jboss-as-standalone start</screen>
+
+        Then check the output in <code>/var/log/console.log</code>. 
+      </para>
+    </section>
+    <section>
+      <title>Request Dispatching</title>
+      <para>
+        As with MRI, a TorqueBox production server will typically have a request
+        dispatcher fronting the application, accepting web requests and handing
+        them off to your application. In this case, we will use Apache and
+        <code>mod_cluster</code> to achieve that. Even though we're not running
+        a cluster of servers, <code>mod_cluster</code> makes it very simple to
+        get Apache and TorqueBox talking with each other. And when the
+        application does outgrow a single backend, it's trivial to add more to
+        the cluster.  
+      </para>
+      <para>
+        Download and install <code>mod_cluster</code> using the instructions
+        provided from the <ulink
+          url="http://www.jboss.org/mod_cluster/downloads/1-2-0-Final">mod_cluster
+          downloads page</ulink>.
+      </para>
+      <para>
+        After downloading and installing, check the
+        configuration file <code>/etc/httpd/conf.d/mod_cluster.conf</code>.
+        It should look something like this.
+        <programlisting>LoadModule slotmem_module       modules/mod_slotmem.so
+LoadModule proxy_cluster_module modules/mod_proxy_cluster.so
+LoadModule advertise_module     modules/mod_advertise.so
+LoadModule manager_module       modules/mod_manager.so
+
+&lt;Location /mod_cluster_manager&gt;
+    SetHandler mod_cluster-manager
+    AllowDisplay On
+&lt;/Location&gt;
+
+Listen torquebox-balancer:6666
+&lt;VirtualHost torquebox-balancer:6666&gt;
+ 
+  &lt;Directory /&gt;
+    Order deny,allow
+    Deny from all
+    Allow from all
+  &lt;/Directory&gt;
+ 
+  KeepAliveTimeout 60
+  MaxKeepAliveRequests 0
+
+  EnableMCPMReceive
+ 
+  ManagerBalancerName torquebox-balancer
+  AllowDisplay On
+  AdvertiseFrequency 5
+  AdvertiseSecurityKey secret
+ 
+&lt;/VirtualHost&gt;</programlisting>
+      Note that you will likely need to add the <code>AdvertiseSecurityKey</code>
+      setting to the configuration file that comes out of the box when you install.
+      You'll also need to set this in your JBoss <code>standalone-ha.xml</code>
+      file. 
+      <programlisting>&lt;mod-cluster-config advertise-socket="modcluster" proxy-list="torquebox-server:6666" advertise-security-key="secret"&gt;</programlisting>
+      The <code>torquebox-server</code> and <code>torquebox-balancer</code> names
+      in these examples are host names that we've added to <code>/etc/hosts</code>.
+      <programlisting>127.0.0.1 torquebox-server
+127.0.0.1 torquebox-balancer</programlisting>
+      With these settings, you should have Apache's httpd accepting web requests
+      on your host and JBoss <code>mod_cluster</code> dispatching those requests
+      to the TorqueBox system process.
+      </para>
+    </section>
+    <section>
+      <title>Capistrano Deployment</title>
+      <para>Using Capistrano to deploy your application is similar to deploying
+        with Capistrano to other servers. See Chapter 17, TorqueBox Capistrano 
+        Support for full details.</para>
+    </section>
+  </section>
+
   <section id="number-http-threads">
     <title>Sizing Number of HTTP Threads to Connection Pool</title>
 
-    <para>When running under load in production and against a
-    database, you'll want to size the number of HTTP threads
-    concurrently processing web requests based on the number of
-    connections available in your database connection pool so you
-    don't have too many requests waiting to grab a connection from the
-    pool and timing out. The specific ratio of HTTP threads to
-    database connection pool size will depend on your application, but
-    a good starting point is 1 to 1.</para>
+    <para>When running under load in production and against a database, you'll
+    want to size the number of HTTP threads concurrently processing web
+    requests based on the number of connections available in your database
+    connection pool so you don't have too many requests waiting to grab a
+    connection from the pool and timing out. The specific ratio of HTTP
+    threads to database connection pool size will depend on your application,
+    but a good starting point is 1 to 1.</para>
 
     <section>
       <title>Setting Database Connection Pool Size</title>
 
       <para><example>
-        <title>Database Connection Pool
-        (<filename>config/database.yml</filename>)</title>
+          <title>Database Connection Pool
+          (<filename>config/database.yml</filename>)</title>
 
-        <para><programlisting>production:
+          <para><programlisting>production:
   adapter: mysql
   database: my_database
   host: my_host
   username: my_username
   password: my_password
   encoding: utf8
-  pool: 100</programlisting>This example sets the database connection
-      pool size to 100.</para>
-      </example></para>
+  pool: 100</programlisting>This example sets the database connection pool
+          size to 100.</para>
+        </example></para>
     </section>
 
     <section>
       <title>Setting Max Number of HTTP Threads</title>
 
-      <para>If using the <code>torquebox-server</code> gem, you can
-      pass the <parameter>--max-threads</parameter> parameter to set
-      the maximum number of HTTP threads.
-      <screen><prompt>$</prompt> <command>torquebox-server run --max-threads=25</command></screen></para>
+      <para>If using the <code>torquebox-server</code> gem, you can pass the
+      <parameter>--max-threads</parameter> parameter to set the maximum number
+      of HTTP threads. <screen><prompt>$</prompt> <command>torquebox-server run --max-threads=25</command></screen></para>
 
-      <para>If not using the <code>torquebox-server</code> gem, you
-      can control the maximum number of HTTP threads by setting a
-      system property.</para>
+      <para>If not using the <code>torquebox-server</code> gem, you can
+      control the maximum number of HTTP threads by setting a system
+      property.</para>
 
       <table>
         <title>Number of HTTP Threads System Property</title>
+
         <tgroup cols="2">
           <thead>
             <row>
               <entry>System Property</entry>
+
               <entry>Description</entry>
             </row>
           </thead>
+
           <tbody>
             <row>
               <entry><parameter>org.torquebox.web.http.maxThreads</parameter></entry>
-              <entry>The maximum number of threads to use for the
-              default HTTP connector. If you've changed the
-              connector's name from <emphasis>http</emphasis> in
-              <filename>standalone.xml</filename> then substitute
-              <emphasis>http</emphasis> for the new connector name in
-              the property key. The default value is inherited from
+
+              <entry>The maximum number of threads to use for the default HTTP
+              connector. If you've changed the connector's name from
+              <emphasis>http</emphasis> in <filename>standalone.xml</filename>
+              then substitute <emphasis>http</emphasis> for the new connector
+              name in the property key. The default value is inherited from
               AS7 and is 512 * the number of CPUs.</entry>
             </row>
           </tbody>
@@ -72,184 +268,173 @@
       </table>
 
       <para><example>
-        <title>Number of HTTP Threads
-        (<filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>)</title>
+          <title>Number of HTTP Threads
+          (<filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>)</title>
 
-        <para><programlisting><![CDATA[    <extensions>
+          <para><programlisting>    &lt;extensions&gt;
         ...
-    </extensions>
-    <system-properties>
-        <property name='org.torquebox.web.http.maxThreads' value='100'/>
-    </system-properties>]]>
-      </programlisting>This example sets the maximum of HTTP threads to 100.</para>
-      </example></para>
+    &lt;/extensions&gt;
+    &lt;system-properties&gt;
+        &lt;property name='org.torquebox.web.http.maxThreads' value='100'/&gt;
+    &lt;/system-properties&gt;
+      </programlisting>This example sets the maximum of HTTP threads to
+          100.</para>
+        </example></para>
     </section>
-
   </section>
 
   <section id="clustering-without-multicast">
     <title>Clustering TorqueBox Without Multicast</title>
 
-    <para>By default when you start TorqueBox in clustered mode other
-    members of the cluster are discovered using multicast. Sometimes
-    this isn't the desired behavior, either because the environment
-    doesn't support multicast or the administrator wants direct
-    control over the members of a cluster. In these cases, it's
-    possible to configure TorqueBox to use a predefined set of cluster
-    members.</para>
+    <para>By default when you start TorqueBox in clustered mode other members
+    of the cluster are discovered using multicast. Sometimes this isn't the
+    desired behavior, either because the environment doesn't support multicast
+    or the administrator wants direct control over the members of a cluster.
+    In these cases, it's possible to configure TorqueBox to use a predefined
+    set of cluster members.</para>
 
     <section id="clustering-infinispan-without-multicast">
       <title>Clustering Infinispan</title>
 
-      <para>Infinispan is used for web session replication and can be
-      used for clustered caching if your application is setup
-      appropriately. See <xref linkend="cache"/> for more details on
-      this setup. Under the hood Infinispan uses a library called
-      JGroups to handle the cluster discovery and transports. An
-      example of configuring Infinispan to cluster without multicast
-      is below.</para>
+      <para>Infinispan is used for web session replication and can be used for
+      clustered caching if your application is setup appropriately. See <xref
+      linkend="cache"/> for more details on this setup. Under the hood
+      Infinispan uses a library called JGroups to handle the cluster discovery
+      and transports. An example of configuring Infinispan to cluster without
+      multicast is below.</para>
 
       <para><example>
-        <title>JGroups Configuration
-        (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
+          <title>JGroups Configuration
+          (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
 
-        <para><programlisting><![CDATA[<server name="xyz" xmlns="urn:jboss:domain:1.1">
-  <profile>
+          <para><programlisting>&lt;server name="xyz" xmlns="urn:jboss:domain:1.1"&gt;
+  &lt;profile&gt;
     ...
-    <subsystem xmlns="urn:jboss:domain:jgroups:1.0" default-stack="tcp">
-      <stack name="tcp">
-        <transport type="TCP" socket-binding="jgroups-tcp" diagnostics-socket-binding="jgroups-diagnostics"/>
-        <protocol type="TCPPING">
-          <property name="initial_hosts">
+    &lt;subsystem xmlns="urn:jboss:domain:jgroups:1.0" default-stack="tcp"&gt;
+      &lt;stack name="tcp"&gt;
+        &lt;transport type="TCP" socket-binding="jgroups-tcp" diagnostics-socket-binding="jgroups-diagnostics"/&gt;
+        &lt;protocol type="TCPPING"&gt;
+          &lt;property name="initial_hosts"&gt;
             10.100.10.2[7600],10.100.10.3[7600]
-          </property>
-        </protocol>
-        <protocol type="MERGE2"/>
-        <protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/>
-        <protocol type="FD"/>
-        <protocol type="VERIFY_SUSPECT"/>
-        <protocol type="BARRIER"/>
-        <protocol type="pbcast.NAKACK"/>
-        <protocol type="UNICAST2"/>
-        <protocol type="pbcast.STABLE"/>
-        <protocol type="pbcast.GMS"/>
-        <protocol type="UFC"/>
-        <protocol type="MFC"/>
-        <protocol type="FRAG2"/>
-        <protocol type="pbcast.STATE_TRANSFER"/>
-        <protocol type="pbcast.FLUSH"/>
-      </stack>
-    </subsystem>
+          &lt;/property&gt;
+        &lt;/protocol&gt;
+        &lt;protocol type="MERGE2"/&gt;
+        &lt;protocol type="FD_SOCK" socket-binding="jgroups-tcp-fd"/&gt;
+        &lt;protocol type="FD"/&gt;
+        &lt;protocol type="VERIFY_SUSPECT"/&gt;
+        &lt;protocol type="BARRIER"/&gt;
+        &lt;protocol type="pbcast.NAKACK"/&gt;
+        &lt;protocol type="UNICAST2"/&gt;
+        &lt;protocol type="pbcast.STABLE"/&gt;
+        &lt;protocol type="pbcast.GMS"/&gt;
+        &lt;protocol type="UFC"/&gt;
+        &lt;protocol type="MFC"/&gt;
+        &lt;protocol type="FRAG2"/&gt;
+        &lt;protocol type="pbcast.STATE_TRANSFER"/&gt;
+        &lt;protocol type="pbcast.FLUSH"/&gt;
+      &lt;/stack&gt;
+    &lt;/subsystem&gt;
     ...
-  </profile>
-  <socket-binding-group name="standard-sockets" default-interface="public">
+  &lt;/profile&gt;
+  &lt;socket-binding-group name="standard-sockets" default-interface="public"&gt;
     ...
-    <socket-binding name="jgroups-tcp" port="7600"/>
-    <socket-binding name="jgroups-tcp-fd" port="57600"/>
+    &lt;socket-binding name="jgroups-tcp" port="7600"/&gt;
+    &lt;socket-binding name="jgroups-tcp-fd" port="57600"/&gt;
     ...
-  </socket-binding-group>
-</server>]]>
-        </programlisting>
-        The most important bit here is the initial_hosts property. Be
-        sure to replace the IP addresses with the correct values for
-        your environment and change the ports from 7600 if you've
-        changed the jgroups-tcp socket binding to a different port on
-        those hosts.</para>
-
-      </example></para>
-
+  &lt;/socket-binding-group&gt;
+&lt;/server&gt;
+        </programlisting> The most important bit here is the initial_hosts
+          property. Be sure to replace the IP addresses with the correct
+          values for your environment and change the ports from 7600 if you've
+          changed the jgroups-tcp socket binding to a different port on those
+          hosts.</para>
+        </example></para>
     </section>
 
     <section id="clustering-hornetq-without-multicast">
       <title>Clustering HornetQ</title>
 
-      <para>HornetQ is used for all messaging. Right now HornetQ
-      doesn't use JGroups for its cluster configuration so we must
-      configure it separately from Infinispan. An example of
-      configuring HornetQ to cluster without multicast is
-      below.</para>
+      <para>HornetQ is used for all messaging. Right now HornetQ doesn't use
+      JGroups for its cluster configuration so we must configure it separately
+      from Infinispan. An example of configuring HornetQ to cluster without
+      multicast is below.</para>
 
       <para><example>
-        <title>HornetQ Configuration
-        (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
+          <title>HornetQ Configuration
+          (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
 
-        <para><programlisting><![CDATA[<server name="xyz" xmlns="urn:jboss:domain:1.1">
-  <profile>
+          <para><programlisting>&lt;server name="xyz" xmlns="urn:jboss:domain:1.1"&gt;
+  &lt;profile&gt;
     ...
-    <subsystem xmlns="urn:jboss:domain:messaging:1.1">
-      <hornetq-server>
+    &lt;subsystem xmlns="urn:jboss:domain:messaging:1.1"&gt;
+      &lt;hornetq-server&gt;
         ...
-        <connectors>
-          <netty-connector name="netty" socket-binding="messaging"/>
+        &lt;connectors&gt;
+          &lt;netty-connector name="netty" socket-binding="messaging"/&gt;
           ...
-          <netty-connector name="server2-connector" socket-binding="messaging-server2"/>
-          <netty-connector name="server3-connector" socket-binding="messaging-server3"/>
-        </connectors>
+          &lt;netty-connector name="server2-connector" socket-binding="messaging-server2"/&gt;
+          &lt;netty-connector name="server3-connector" socket-binding="messaging-server3"/&gt;
+        &lt;/connectors&gt;
         ...
-        <cluster-connections>
-          <cluster-connection name="default-cluster-connection">
-            <address>
+        &lt;cluster-connections&gt;
+          &lt;cluster-connection name="default-cluster-connection"&gt;
+            &lt;address&gt;
               jms
-            </address>
-            <connector-ref>
+            &lt;/address&gt;
+            &lt;connector-ref&gt;
               netty
-            </connector-ref>
-            <retry-interval>
+            &lt;/connector-ref&gt;
+            &lt;retry-interval&gt;
               500
-            </retry-interval>
-            <forward-when-no-consumers>
+            &lt;/retry-interval&gt;
+            &lt;forward-when-no-consumers&gt;
               true
-            </forward-when-no-consumers>
-            <static-connectors>
-              <connector-ref>
+            &lt;/forward-when-no-consumers&gt;
+            &lt;static-connectors&gt;
+              &lt;connector-ref&gt;
                 server2-connector
-              </connector-ref>
-              <connector-ref>
+              &lt;/connector-ref&gt;
+              &lt;connector-ref&gt;
                 server3-connector
-              </connector-ref>
-            </static-connectors>
-          </cluster-connection>
-        </cluster-connections>
+              &lt;/connector-ref&gt;
+            &lt;/static-connectors&gt;
+          &lt;/cluster-connection&gt;
+        &lt;/cluster-connections&gt;
         ...
-      </hornetq-server>
-    </subsystem>
+      &lt;/hornetq-server&gt;
+    &lt;/subsystem&gt;
     ...
-  </profile>
-  <socket-binding-group name="standard-sockets" default-interface="public">
+  &lt;/profile&gt;
+  &lt;socket-binding-group name="standard-sockets" default-interface="public"&gt;
     ...
-    <socket-binding name="messaging" port="5445"/>
+    &lt;socket-binding name="messaging" port="5445"/&gt;
       ...
-      <outbound-socket-binding name="messaging-server2">
-        <remote-destination host="10.100.10.2" port="5445"/>
-      </outbound-socket-binding>
-      <outbound-socket-binding name="messaging-server3">
-        <remote-destination host="10.100.10.3" port="5445"/>
-      </outbound-socket-binding>
-  </socket-binding-group>
-</server>]]>
-        </programlisting>
-        Change the outbound socket binding hosts and ports to match
-        your environment. The port should match the value of the
-        messaging socket binding configured on each host. Each
-        additional host needs the netty-connector, connector-ref under
-        static-connectors, and outbound-socket-binding
-        elements.</para>
-
-      </example></para>
-
+      &lt;outbound-socket-binding name="messaging-server2"&gt;
+        &lt;remote-destination host="10.100.10.2" port="5445"/&gt;
+      &lt;/outbound-socket-binding&gt;
+      &lt;outbound-socket-binding name="messaging-server3"&gt;
+        &lt;remote-destination host="10.100.10.3" port="5445"/&gt;
+      &lt;/outbound-socket-binding&gt;
+  &lt;/socket-binding-group&gt;
+&lt;/server&gt;
+        </programlisting> Change the outbound socket binding hosts and ports
+          to match your environment. The port should match the value of the
+          messaging socket binding configured on each host. Each additional
+          host needs the netty-connector, connector-ref under
+          static-connectors, and outbound-socket-binding elements.</para>
+        </example></para>
     </section>
-
   </section>
 
   <section>
     <title>SSL JBoss Web</title>
 
-    <para></para>
+    <para/>
   </section>
 
   <section>
     <title>Including singleton jobs/services</title>
 
-    <para></para>
+    <para/>
   </section>
 </chapter>
