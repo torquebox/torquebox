@@ -126,7 +126,7 @@ JBOSS_CONFIG=standalone-ha.xml</programlisting>
       </para>
     </section>
     <section>
-      <title>Request Dispatching</title>
+      <title>Request Dispatching with <code>mod_cluster</code></title>
       <para>
         As with MRI, a TorqueBox production server will typically have a request
         dispatcher fronting the application, accepting web requests and handing

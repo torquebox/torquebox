@@ -18,7 +18,7 @@
       multiple resources may participate in a distributed
       transaction. The most common example of a transactional resource
       is a relational database, but other examples include message
-      brokers and even NoSQL data grids. Distributed transactions
+      brokers and some NoSQL data grids. Distributed transactions
       allow your application to say, tie the success of a database
       update to the delivery of a message, i.e. the message is only
       sent if the database update succeeds, and vice versa. If either
@@ -40,7 +40,7 @@
         <listitem>
           <para>
             An arbitrary number of resources to enlist in the current
-            transaction (you probably won't ever use this)
+            transaction (not needed for built-in services)
           </para>
         </listitem>
 
@@ -164,10 +164,11 @@
     <para>Distributed transactions support comes enabled by default,
     so no extra configuration is required to enable it. If you don't
     need this feature, it is possible to disable it by setting
-    <code>xa</code> to false in your database.yml. If your application
-    uses more than one database, you'll need to enable distributed
-    transactions explicitly for the additional databases by setting
-    <code>xa</code> to true.</para>
+    <code>xa</code> to false in your
+    <filename>database.yml</filename>. If your application uses more
+    than one database, you'll need to enable distributed transactions
+    explicitly for the additional databases by setting <code>xa</code>
+    to true.</para>
 
     <para><example>
       <title>Disabling XA support
