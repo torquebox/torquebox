@@ -15,7 +15,7 @@
       are two ways that applications can take advantage of this data store.
       <itemizedlist>
         <listitem><code>TorqueBox::Infinispan::Cache</code> Direct Ruby access to the Infinispan cache</listitem>
-        <listitem><code>ActiveSupport::Cache::Store</code> Sinatra and Rails session, fragment and other framework caching</listitem>
+        <listitem><code>ActiveSupport::Cache::TorqueBoxStore</code> Sinatra and Rails session, fragment and other framework caching</listitem>
         <!--        <listitem><code>dm-infinispan-adapter</code> Infinispan-backed <ulink url="http://datamapper.org">DataMapper</ulink> adapter</listitem> -->
       </itemizedlist>
 
@@ -151,7 +151,7 @@
           <row>
             <entry><parameter>:sync</parameter></entry>
 
-            <entry>false</entry>
+            <entry>true</entry>
 
             <entry>The coordination between nodes in a cluster can happen
             either synchronously (slower writes) or asynchronously (faster
