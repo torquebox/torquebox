@@ -13,7 +13,7 @@ jobs:
     cron: 01 01 01 15 * ?
     
   job.three:
-    job: SingletonJobClass
-    description: My singleton job class
+    job: NonSingletonJobClass
+    description: My non-singleton job class
     cron: 01 01 01 15 * ?
-    singleton: true
+    singleton: false

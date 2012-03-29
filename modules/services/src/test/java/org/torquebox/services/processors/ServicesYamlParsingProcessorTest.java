@@ -143,14 +143,14 @@ public class ServicesYamlParsingProcessorTest extends AbstractDeploymentProcesso
 
     @Test
     public void testRequiresSingletonHandlesNullParams() throws Exception {
-        assertFalse( this.deployer.requiresSingleton( null ) );
+        assertTrue( this.deployer.requiresSingleton( null ) );
     }
 
     @Test
-    public void testRequiresSingletonReturnsFalseWhenNoSingletonKey() throws Exception {
+    public void testRequiresSingletonReturnsTrueWhenNoSingletonKey() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put( "key_other_than_singleton", "value" );
-        assertFalse( this.deployer.requiresSingleton( params ) );
+        assertTrue( this.deployer.requiresSingleton( params ) );
     }
 
     @Test

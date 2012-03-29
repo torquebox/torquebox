@@ -14,8 +14,8 @@
     may be deployed as part of a web application or as its own
     application without any web component. Services have full access
     to the entire Ruby environment. This means that a service deployed
-    as part of a web application can interact with database models and
-    other application functionality.</para>
+    as part of a web application can use the app's database models,
+    for example.</para>
   </section>
 
   <section id="service-classes">
@@ -52,21 +52,29 @@
       sleep(1)
     end
   end
-end</programlisting>This example service prints a message every second until stopped. By
-      convention the long-running task is executed in a
-      <methodname>run</methodname> method but could also reside inside the
-      block passed to Thread.new in the <methodname>start</methodname>
-      method.</para>
+end</programlisting>This example service prints a message every second
+until stopped.
+      </para>
     </example></para>
 
-    <para></para>
+    <para>
+      The service's <methodname>start</methodname> method will be
+      invoked when the service is deployed, and
+      <methodname>stop</methodname> will be invoked automatically when
+      the service is undeployed. Thus a convenient hook is provided
+      for cleanly shutting down any threads or other resources used by
+      the service.
+    </para>
+
   </section>
 
   <section id="deploying-services">
     <title>Deploying Services</title>
 
-    <para>Services are deployed by creating a services section inside
-    your application's deployment descriptor.</para>
+    <para>Services are deployed by creating a <code>services</code>
+    section inside your application's <link
+    linkend="deployment-descriptors">deployment
+    descriptor</link>.</para>
 
     <section id="services-format">
       <title>Configuration Format</title>
@@ -157,50 +165,49 @@ end</programlisting>This example service prints a message every second until sto
   <section id="clustered-services">
     <title>Clustered Services</title>
 
-    <section id="services-running-on-every-node">
-      <title>Services Running on Every Node</title>
-
-      <para>By default, if a service is deployed to every node in a
-      cluster it will run on each node. This is useful for stateless
-      services.</para>
-    </section>
-
     <section id="ha-singleton-services">
       <title>High Availability Singleton Services</title>
 
-      <para>TorqueBox also supports high availability singleton
-      services. In this scenario, the service only runs on one node in
-      the cluster and if that node goes down it automatically starts
-      on a new node.</para>
+      <para>TorqueBox supports highly-available singleton services. By
+      default, a service only runs on one node in a cluster and if
+      that node fails or the service is interrupted for any reason, it
+      automatically starts on another node.</para>
 
-      <para>To use high availability singleton services, you must
-      start TorqueBox with a clustered configuration. For example:</para>
+      <para>To use highly-available singleton services, you must start
+      TorqueBox with a clustered configuration. For example:</para>
 
       <para><screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command></screen></para>
 
-      <para>You also need to add a special <code>singleton</code> key
-      with a value of <code>true</code> to your services section of
-      <filename>torquebox.yml</filename>. If no <code>singleton</code>
-      key is defined or it has a value of <code>false</code> the
-      service will run on every node in the cluster.</para>
+      <para>
+        Alternatively, using the <command>torquebox</command> command:
+        <screen> <prompt>$</prompt> <command>torquebox run --clustered</command></screen>
+      </para>
+
+      <para>HA services are configured using the
+      <code>singleton</code> key in the services section of
+      <filename>torquebox.yml</filename>. Its default value is
+      <code>true</code> so you must manually configure it with a value
+      of <code>false</code> for the service to run on every node in
+      the cluster.</para>
 
       <para><example>
         <title>Example deployment descriptor</title>
 
         <para>Using the YAML syntax:<programlisting>services:
   MyService:
-    singleton: true
     config:
       name: TorqueBox User
 
   AnotherService:
 
   ham-machine:
+    singleton: false
     service: FoodMachine
     config: 
       food: ham
   
   biscuit-machine:
+    singleton: false
     service: FoodMachine
     config:
       food: biscuit</programlisting></para>
@@ -208,7 +215,6 @@ end</programlisting>This example service prints a message every second until sto
        <para>And using the DSL:<programlisting>TorqueBox.configure do 
   ...
   service MyService do 
-    singleton true
     config do
       name 'TorqueBox User'
     end
@@ -218,6 +224,7 @@ end</programlisting>This example service prints a message every second until sto
 
   service FoodMachine do
     name 'ham-machine'
+    singleton false
     config do
       food 'ham'
     end
@@ -225,18 +232,32 @@ end</programlisting>This example service prints a message every second until sto
 
   service FoodMachine do
     name 'biscuit-machine'
+    singleton false
     config do
       food 'biscuit'
     end
   end</programlisting>This is the same
         deployment descriptor from the example above but
-        this time <classname>MyService</classname> is marked as a
-        singleton and will only run on one node in the cluster.
-        The remaining jobs will run on all nodes
-        in the cluster since a <code>singleton</code> key isn't
-        specified.</para>
+        this time <classname>FoodMachine</classname> services are
+        configured to run on all nodes in the cluster. The
+        <classname>MyService</classname> and
+        <classname>AnotherService</classname> services are
+        singletons and will only run on one node in the cluster.
+       </para>
       </example></para>
     </section>
+
+    <section id="services-running-on-every-node">
+      <title>Services Running on Every Node</title>
+
+      <para>
+        It may be desirous for some stateless services to run on all
+        nodes in a cluster. To accomplish this, set
+        <code>sinngleton</code> to <code>false</code> in the
+        deployment descriptor.
+      </para>
+    </section>
+
   </section>
 
   <section id="resouce-injection-with-services">

@@ -71,7 +71,7 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "01 * * * * ?", jobOne.getCronExpression() );
         assertEquals( "MyJobClass", jobOne.getRubyClassName() );
         assertEquals( "bar", jobOne.getParameters().get( "foo" ) );
-        assertFalse( jobOne.isSingleton() );
+        assertTrue( jobOne.isSingleton() );
         assertNotNull( jobOne.getGroup() );
 
         ScheduledJobMetaData jobTwo = getJobMetaData( allJobMetaData, "job.two" );
@@ -80,16 +80,16 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "My other Job is extraodinary", jobTwo.getDescription() );
         assertEquals( "01 01 01 15 * ?", jobTwo.getCronExpression() );
         assertEquals( "MyOtherJobClass", jobTwo.getRubyClassName() );
-        assertFalse( jobTwo.isSingleton() );
+        assertTrue( jobTwo.isSingleton() );
         assertNotNull( jobTwo.getGroup() );
 
         ScheduledJobMetaData jobThree = getJobMetaData( allJobMetaData, "job.three" );
         assertNotNull( jobThree );
         assertEquals( "job.three", jobThree.getName() );
-        assertEquals( "My singleton job class", jobThree.getDescription() );
+        assertEquals( "My non-singleton job class", jobThree.getDescription() );
         assertEquals( "01 01 01 15 * ?", jobThree.getCronExpression() );
-        assertEquals( "SingletonJobClass", jobThree.getRubyClassName() );
-        assertTrue( jobThree.isSingleton() );
+        assertEquals( "NonSingletonJobClass", jobThree.getRubyClassName() );
+        assertFalse( jobThree.isSingleton() );
         assertNotNull( jobTwo.getGroup() );
 
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
