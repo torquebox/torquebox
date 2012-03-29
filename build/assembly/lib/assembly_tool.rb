@@ -176,6 +176,18 @@ class AssemblyTool
     end
   end
 
+  def add_ha_cache(doc)
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.2']" ).first
+      container = subsystem.get_elements( "cache-container[@name='web']" ).first
+      #subsystem.get_elements( "cache-container" ).each do |c|
+        #puts "CACHE_CONTAINER: #{c.to_s}"
+      #end
+      container.add_attribute( "aliases", "torquebox standard-session-cache" ) if container
+    end
+  end
+
   def add_extensions(doc, extra_extensions)
     extensions = doc.root.get_elements( 'extensions' ).first
     all_modules = modules.map { |name| "org.torquebox.#{name}" }
@@ -446,7 +458,7 @@ class AssemblyTool
       increase_deployment_timeout(doc) unless domain
       add_extensions(doc, options[:extra_modules])
       add_subsystems(doc, options[:extra_modules])
-      add_cache(doc)
+      ha ? add_ha_cache(doc) : add_cache(doc) # add_cache seems unnecessary here!
       set_welcome_root(doc)
       tweak_jboss_web_properties(doc)
       remove_destinations(doc)

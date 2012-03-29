@@ -112,7 +112,7 @@ module TorqueBox
       def clustering_mode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
         distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
-        sync = !!options[:sync]
+        sync = !!!options[:sync]
         case
         when replicated 
           sync ? CacheMode::REPL_SYNC : CacheMode::REPL_ASYNC
@@ -302,7 +302,7 @@ module TorqueBox
         cache = manager.get_cache(name)
         base_config = cache.configuration
         unless base_config.cache_mode == mode
-          log( "Reconfiguring Infinispan cache #{name} from #{config.cache_mode} to #{mode}" )
+          log( "Reconfiguring Infinispan cache #{name} from #{base_config.cache_mode} to #{mode}" )
           cache.stop
           base_config.cache_mode = mode
           config = base_config.fluent
