@@ -115,7 +115,7 @@
     </para>
   </section>
 
-  <section>
+  <section id="transaction-configuration">
     <title>Configuration</title>
     <para>
       No extra configuration of your app is required other that what
@@ -127,7 +127,7 @@
     <para>
       Distributed transactions are restricted to those databases
       supported by both the <code>activerecord-jdbc-adapter</code> and
-      JBoss XA datasources.. Currently, that includes PostgreSQL,
+      JBoss XA datasources. Currently, that includes PostgreSQL,
       MySQL, H2, Derby, Oracle, Microsoft SQL Server, and IBM
       DB2. Sqlite3 doesn't support XA. Default installations of some
       of these databases may require additional configuration to

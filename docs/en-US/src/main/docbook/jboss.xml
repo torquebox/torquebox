@@ -39,11 +39,11 @@
     <para>TorqueBox uses standalone mode by default but can be run in
     domain mode as well.</para>
 
-    <para>JBoss AS 7 comes with a modular architecture - libraries
+    <para>JBoss AS 7 uses a modular architecture - libraries
     common to all server configurations are kept under the
     <filename>modules/</filename> directory. Configuration files are
     stored inside <filename>standalone/configuration/</filename> and
-    <filename>domain/configuration</filename> folders.</para>
+    <filename>domain/configuration/</filename> folders.</para>
 
     <para>Both standalone and domain modes have a common folder
     structure, including the following directories:
@@ -104,16 +104,14 @@
     <para>Each runtime mode has a <literal>deployments/</literal>
     subdirectory, the contents of which determine the applications and
     services JBoss runs. These apps and services are represented as archives,
-    "exploded" folders, or text files called "deployment descriptors". JBoss
-    deployment scanner comes with meaningful changes, operating in two
-    different modes: <emphasis role="bold">auto-deploy</emphasis> and
+    "exploded" folders, or text files called "deployment descriptors". The JBoss
+    operates in two different modes: <emphasis role="bold">auto-deploy</emphasis> and
     <emphasis role="bold">manual deploy</emphasis>.</para>
 
-    <para>Auto-deploy mode works like in previous releases of AS, at every
-    time that timestamp changes, content will be deployed. The scanner take
-    responsability to place a marker file suffix with
-    "<literal>.deployed</literal>" status, in case of content deletion, the
-    scanner will not trigger undeployment process automatically.</para>
+    <para>Auto-deploy mode works like in previous releases of AS, in that a 
+    resource will be redeployed every time its timestamp changes. The scanner creates
+    a marker file with a "<literal>.deployed</literal>" suffix, and if the resource
+    gets deleted the scanner will not trigger an undeployment.</para>
 
     <para>In manual deploy mode the scanner will rely on addition or removal
     of a marker file suffix. To understand a little further about deployment
