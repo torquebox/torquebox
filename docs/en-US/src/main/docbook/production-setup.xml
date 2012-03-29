@@ -5,6 +5,7 @@
   <title>TorqueBox Production Setup</title>
 
   <section id="basic-deployment">
+    <title>Example Fedora 15 Production Setup</title>
     <para>A basic TorqueBox installation running a Rails 3.x application on a
     Fedora 15 server is a fairly straightforward setup. This section will
     outline the steps needed to deploy TorqueBox into a production
@@ -194,92 +195,21 @@ Listen torquebox-balancer:6666
     <section>
       <title>Capistrano Deployment</title>
       <para>Using Capistrano to deploy your application is similar to deploying
-        with Capistrano to other servers. See Chapter 17, TorqueBox Capistrano 
-        Support for full details.</para>
+        with Capistrano to other servers. See <xref linkend="capistrano-support"/>
+        for full details.</para>
     </section>
   </section>
 
-  <section id="number-http-threads">
-    <title>Sizing Number of HTTP Threads to Connection Pool</title>
-
-    <para>When running under load in production and against a database, you'll
-    want to size the number of HTTP threads concurrently processing web
-    requests based on the number of connections available in your database
-    connection pool so you don't have too many requests waiting to grab a
-    connection from the pool and timing out. The specific ratio of HTTP
-    threads to database connection pool size will depend on your application,
-    but a good starting point is 1 to 1.</para>
+  <section id="production-clustering">
+    <title>Clustering Notes</title>
 
     <section>
-      <title>Setting Database Connection Pool Size</title>
+      <title>Don't Bind to 0.0.0.0</title>
 
-      <para><example>
-          <title>Database Connection Pool
-          (<filename>config/database.yml</filename>)</title>
-
-          <para><programlisting>production:
-  adapter: mysql
-  database: my_database
-  host: my_host
-  username: my_username
-  password: my_password
-  encoding: utf8
-  pool: 100</programlisting>This example sets the database connection pool
-          size to 100.</para>
-        </example></para>
-    </section>
-
-    <section>
-      <title>Setting Max Number of HTTP Threads</title>
-
-      <para>If using the <code>torquebox-server</code> gem, you can pass the
-      <parameter>--max-threads</parameter> parameter to set the maximum number
-      of HTTP threads. <screen><prompt>$</prompt> <command>torquebox-server run --max-threads=25</command></screen></para>
-
-      <para>If not using the <code>torquebox-server</code> gem, you can
-      control the maximum number of HTTP threads by setting a system
-      property.</para>
-
-      <table>
-        <title>Number of HTTP Threads System Property</title>
-
-        <tgroup cols="2">
-          <thead>
-            <row>
-              <entry>System Property</entry>
-
-              <entry>Description</entry>
-            </row>
-          </thead>
-
-          <tbody>
-            <row>
-              <entry><parameter>org.torquebox.web.http.maxThreads</parameter></entry>
-
-              <entry>The maximum number of threads to use for the default HTTP
-              connector. If you've changed the connector's name from
-              <emphasis>http</emphasis> in <filename>standalone.xml</filename>
-              then substitute <emphasis>http</emphasis> for the new connector
-              name in the property key. The default value is inherited from
-              AS7 and is 512 * the number of CPUs.</entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table>
-
-      <para><example>
-          <title>Number of HTTP Threads
-          (<filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>)</title>
-
-          <para><programlisting>    &lt;extensions&gt;
-        ...
-    &lt;/extensions&gt;
-    &lt;system-properties&gt;
-        &lt;property name='org.torquebox.web.http.maxThreads' value='100'/&gt;
-    &lt;/system-properties&gt;
-      </programlisting>This example sets the maximum of HTTP threads to
-          100.</para>
-        </example></para>
+      <para>JGroups, the underlying library used for most of TorqueBox
+      clustering, doesn't support clustering if bound to 0.0.0.0. Make
+      sure you bind TorqueBox to a real IP address that's accessible
+      from other nodes in the cluster.</para>
     </section>
   </section>
 
@@ -422,6 +352,90 @@ Listen torquebox-balancer:6666
           messaging socket binding configured on each host. Each additional
           host needs the netty-connector, connector-ref under
           static-connectors, and outbound-socket-binding elements.</para>
+        </example></para>
+    </section>
+  </section>
+
+  <section id="number-http-threads">
+    <title>Sizing Number of HTTP Threads to Connection Pool</title>
+
+    <para>When running under load in production and against a database, you'll
+    want to size the number of HTTP threads concurrently processing web
+    requests based on the number of connections available in your database
+    connection pool so you don't have too many requests waiting to grab a
+    connection from the pool and timing out. The specific ratio of HTTP
+    threads to database connection pool size will depend on your application,
+    but a good starting point is 1 to 1.</para>
+
+    <section>
+      <title>Setting Database Connection Pool Size</title>
+
+      <para><example>
+          <title>Database Connection Pool
+          (<filename>config/database.yml</filename>)</title>
+
+          <para><programlisting>production:
+  adapter: mysql
+  database: my_database
+  host: my_host
+  username: my_username
+  password: my_password
+  encoding: utf8
+  pool: 100</programlisting>This example sets the database connection pool
+          size to 100.</para>
+        </example></para>
+    </section>
+
+    <section>
+      <title>Setting Max Number of HTTP Threads</title>
+
+      <para>If using the <code>torquebox-server</code> gem, you can pass the
+      <parameter>--max-threads</parameter> parameter to set the maximum number
+      of HTTP threads. <screen><prompt>$</prompt> <command>torquebox-server run --max-threads=25</command></screen></para>
+
+      <para>If not using the <code>torquebox-server</code> gem, you can
+      control the maximum number of HTTP threads by setting a system
+      property.</para>
+
+      <table>
+        <title>Number of HTTP Threads System Property</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry>System Property</entry>
+
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>org.torquebox.web.http.maxThreads</parameter></entry>
+
+              <entry>The maximum number of threads to use for the default HTTP
+              connector. If you've changed the connector's name from
+              <emphasis>http</emphasis> in <filename>standalone.xml</filename>
+              then substitute <emphasis>http</emphasis> for the new connector
+              name in the property key. The default value is inherited from
+              AS7 and is 512 * the number of CPUs.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para><example>
+          <title>Number of HTTP Threads
+          (<filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>)</title>
+
+          <para><programlisting>    &lt;extensions&gt;
+        ...
+    &lt;/extensions&gt;
+    &lt;system-properties&gt;
+        &lt;property name='org.torquebox.web.http.maxThreads' value='100'/&gt;
+    &lt;/system-properties&gt;
+      </programlisting>This example sets the maximum of HTTP threads to
+          100.</para>
         </example></para>
     </section>
   </section>
