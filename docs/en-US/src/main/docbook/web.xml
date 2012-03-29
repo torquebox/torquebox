@@ -399,117 +399,115 @@ gem 'torquebox', '2.0.0'</programlisting>
             
           To generate the Rails app, first run bundler.
             
-          <screen><prompt>$</prompt> <command>bundle</command>
-            <parameter>install</parameter></screen>
+          <screen><prompt>$</prompt> <command>bundle</command> <parameter>install</parameter></screen>
 
           Then, when you generate the application, use bundler. It will use
           the Rails version you specified in your Gemfile.
 
-          <screen><prompt>$</prompt> <command>bundle</command>
-            <parameter>exec torquebox rails [myapp]</parameter></screen>
+          <screen><prompt>$</prompt> <command>bundle</command> <parameter>exec torquebox rails [myapp]</parameter></screen>
 
         </para>
 
       </section>
 
-      <section id="manually-configuring-a-rails-application">
-        <title>Manually configuring an application</title>
+      <section id="include-jdbc-gems">
+        <title>Include the JDBC Gems for Database Connectivity</title>
 
-        <section id="include-jdbc-gems">
-          <title>Include the JDBC Gems for Database Connectivity</title>
+        <para>ActiveRecord applications deployed on TorqueBox benefit from
+        using the Java-based JDBC database drivers. These drivers are
+        provided as a handful of gems which you may include into your
+        application through <filename>config/environment.rb</filename> or
+        a <filename>Gemfile</filename>. For more information on database
+        connectivity within the TorqueBox environment, please see <xref
+        linkend="database" />.</para>
 
-          <para>ActiveRecord applications deployed on TorqueBox benefit from
-          using the Java-based JDBC database drivers. These drivers are
-          provided as a handful of gems which you may include into your
-          application through <filename>config/environment.rb</filename> or
-          a <filename>Gemfile</filename>. For more information on database
-          connectivity wihtin the TorqueBox environment, please see <xref
-          linkend="database" />.</para>
+        <para>When using the TorqueBox Rails application template
+        described above, these modifications are made for you.</para>
 
-          <formalpara>
-            <title>Rails 2.x</title>
+        <formalpara>
+          <title>Rails 2.x</title>
 
-            <para>You simply must reference the
-            <filename>activerecord-jdbc-adapter</filename> from your
-            <filename>environment.rb</filename> within the
-            <code>Rails::Initializer.run</code> block.</para>
-          </formalpara>
+          <para>You simply must reference the
+          <filename>activerecord-jdbc-adapter</filename> from your
+          <filename>environment.rb</filename> within the
+          <code>Rails::Initializer.run</code> block.</para>
+        </formalpara>
 
-          <para><programlisting language="ruby">Rails::Initializer.run do |config|
+        <para><programlisting language="ruby">Rails::Initializer.run do |config|
 
 <emphasis>  config.gem "activerecord-jdbc-adapter",
              :require=&gt;'jdbc_adapter'
 </emphasis>
-end
-          </programlisting></para>
+end</programlisting></para>
 
-          <para>All databases will require inclusion of the
-          <filename>activerecord-jdbc-adapter</filename>. No other gems need
-          to be required or loaded, since ActiveRecord will perform further
-          discovery on its own.</para>
+        <para>All databases will require inclusion of the
+        <filename>activerecord-jdbc-adapter</filename>. No other gems need
+        to be required or loaded, since ActiveRecord will perform further
+        discovery on its own.</para>
 
-          <formalpara>
-            <title>Rails 3.x</title>
+        <formalpara>
+          <title>Rails 3.x</title>
 
-            <para>Rails 3 uses bundler to manage the dependencies of your
-            application. To specify the requirement of the
-            <filename>activerecord-jdbc-adapter</filename> with Rails 3,
-            simple add it to your <filename>Gemfile</filename>.
-            Additionally, any specific JDBC driver your application will
-            require should be indicated.</para>
-          </formalpara>
+          <para>Rails 3 uses bundler to manage the dependencies of
+          your application. To specify the requirement of the
+          <filename>activerecord-jdbc-adapter</filename> with Rails 3,
+          simple add it to your <filename>Gemfile</filename>.
+          Additionally, any specific JDBC driver your application will
+          require should be indicated. Applications created with Rails
+          3.1 and later should already include the necessary JDBC
+          gems.</para>
+        </formalpara>
 
-          <para><informalexample>
-            <para><programlisting>gem 'activerecord-jdbc-adapter'
+        <para><informalexample>
+          <para><programlisting>gem 'activerecord-jdbc-adapter'
 gem 'jdbc-sqlite3'</programlisting></para>
-          </informalexample></para>
-        </section>
-
-        <section id="rails-sessions">
-          <title>Configure Sessions</title>
-
-          <para>By default, both Rails 2 and Rails 3 use the simple
-          cookie-based session store, which requires no support from the
-          server. TorqueBox can leverage the cluster-compatible sessions
-          provided by the application server to keep session state on the
-          server. The TorqueBox session store requires no specific
-          configuration of a database or other technology. To use the
-          TorqueBox session store, you must adjust
-          <filename>config/initializers/session_store.rb</filename>. The
-          contents vary depending on the version of Rails your application
-          uses.</para>
-
-          <para>In both cases, your application should require the
-          <code>torquebox</code> gem, which provides the
-          implementation.</para>
-
-          <para>When using the TorqueBox Rails application template,
-          described above, these modifications are made for you.</para>
-
-          <formalpara>
-            <title>Rails 2.x</title>
-
-            <para>In
-            <filename>config/initializers/session_store.rb</filename></para>
-          </formalpara>
-
-          <screen>ActionController::Base.session_store = :torquebox_store</screen>
-
-          <formalpara>
-            <title>Rails 3.x</title>
-
-            <para>In
-            <filename>config/initializers/session_store.rb</filename>
-            (adjust for your application's name)</para>
-          </formalpara>
-
-          <screen><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store</screen>
-        </section>
+        </informalexample></para>
       </section>
     </section>
 
+    <section id="rails-sessions">
+      <title>Rails Sessions Configuration</title>
+
+      <para>By default, both Rails 2 and Rails 3 use the simple
+      cookie-based session store, which requires no support from the
+      server. TorqueBox can leverage the cluster-compatible sessions
+      provided by the application server to keep session state on the
+      server. The TorqueBox session store requires no specific
+      configuration of a database or other technology. To use the
+      TorqueBox session store, you must adjust
+      <filename>config/initializers/session_store.rb</filename>. The
+      contents vary depending on the version of Rails your application
+      uses.</para>
+
+      <para>In both cases, your application should require the
+      <code>torquebox</code> gem, which provides the
+      implementation.</para>
+
+      <para>When using the TorqueBox Rails application template
+      described above, these modifications are made for you.</para>
+
+      <formalpara>
+        <title>Rails 2.x</title>
+
+        <para>In
+        <filename>config/initializers/session_store.rb</filename></para>
+      </formalpara>
+
+      <screen>ActionController::Base.session_store = :torquebox_store</screen>
+
+      <formalpara>
+        <title>Rails 3.x</title>
+
+        <para>In
+        <filename>config/initializers/session_store.rb</filename>
+        (adjust for your application's name)</para>
+      </formalpara>
+
+      <screen><replaceable>MyApp</replaceable>::Application.config.session_store :torquebox_store</screen>
+    </section>
+
     <section id="rails-cache-configuration">
-      <title>Caching Configuration</title>
+      <title>Rails Caching Configuration</title>
 
       <para>You configure the TorqueBox cache store the same way you would
       any other Rails cache store, but we recommend setting it in
@@ -576,7 +574,7 @@ end
     caching, will work for Sinatra app just as well.</para>
 
     <section id="sinatra-sessions">
-      <title>Sessions</title>
+      <title>Sinatra Sessions Configuration</title>
 
       <para>Because the TorqueBox session store is Rack compliant, you
       configure it the same way you would any other session store in
@@ -620,9 +618,9 @@ end
       </programlisting></para>
 
       <para>By default, the <code>TorqueBoxStore</code> will be in
-      <emphasis>asynchronous invalidation</emphasis> mode when clustered
-      (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode
-      when not. But you can certainly override the defaults:</para>
+      <emphasis>asynchronous invalidation</emphasis> mode when
+      clustered and <emphasis>local</emphasis> mode when not. But you
+      can certainly override the defaults:</para>
 
       <para><programlisting language="ruby">
   set :cache, ActiveSupport::Cache::TorqueBoxStore.new(:mode =&gt; :distributed, :sync =&gt; true)
