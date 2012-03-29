@@ -12,6 +12,7 @@
   <packaging>gem</packaging>
   <name>TorqueBox No-Op Gem</name>
   <description />
+  <url>http://torquebox.org/</url>
 
   <dependencies>
   </dependencies>

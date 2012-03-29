@@ -12,6 +12,7 @@
   <packaging>java-gem</packaging>
   <name>TorqueBox Naming Client</name>
   <description />
+  <url>http://torquebox.org/</url>
 
   <dependencies>
 

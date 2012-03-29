@@ -12,6 +12,7 @@
   <packaging>gem</packaging>
   <name>TorqueBox Rake Support</name>
   <description />
+  <url>http://torquebox.org/</url>
 
   <dependencies>
     <dependency>

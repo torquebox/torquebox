@@ -14,6 +14,7 @@
   <packaging>java-gem</packaging>
   <name>TorqueBox Server Gem</name>
   <description />
+  <url>http://torquebox.org/</url>
 
   <dependencies>
 

@@ -12,6 +12,7 @@
   <packaging>java-gem</packaging>
   <name>TorqueBox Security Gem</name>
   <description />
+  <url>http://torquebox.org/</url>
 
   <dependencies>
     <dependency>

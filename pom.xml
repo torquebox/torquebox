@@ -13,7 +13,7 @@
   <version>2.0.0.cr2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TorqueBox</name>
-  <url>http://www.torquebox.org/</url>
+  <url>http://torquebox.org/</url>
 
   <description>
     The TorqueBox Parent POM
