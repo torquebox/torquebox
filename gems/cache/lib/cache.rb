@@ -98,6 +98,7 @@ module TorqueBox
         @options = opts
         options[:transaction_mode] = :transactional unless options.has_key?( :transaction_mode )
         options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
+        options[:sync] = true if options[:sync].nil?
         cache
       end
 
@@ -112,7 +113,7 @@ module TorqueBox
       def clustering_mode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
         distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
-        sync = !!!options[:sync]
+        sync = options[:sync]
         case
         when replicated 
           sync ? CacheMode::REPL_SYNC : CacheMode::REPL_ASYNC
