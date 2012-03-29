@@ -4,23 +4,24 @@
 <chapter id="deployment-descriptors">
   <title>TorqueBox Deployment Descriptors</title>
 
-  <para>TorqueBox applications contain one central, but optional deployment
+  <para>TorqueBox applications contain one central but optional internal deployment
   descriptor. A deployment descriptor is simply a configuration file that
   affects how your components are woven together at deployment time. The
-  primary deployment descriptor used by TorqueBox can be either a YAML text
+  internal deployment descriptor used by TorqueBox can be either a YAML text
   file (known as <filename>torquebox.yml</filename>) or a Ruby file (known as
   <filename>torquebox.rb</filename>).</para>
 
   <para>The deployment descriptor may be placed inside your application so
   that it is entirely self-contained. Alternatively, an additional (YAML only)
-  descriptor may be used outside of your application, overriding portions of
+  external descriptor may be used outside of your application, overriding portions of
   the descriptor contained within the application.</para>
 
   <para>Each subsystem within TorqueBox may contribute one or more
   configurable sections to the descriptor. For more information on the various
-  subsystem descriptor sections, please see: <xref linkend="websockets" />,
-  <xref linkend="messaging" />, <xref linkend="scheduled-jobs" />, <xref
-  linkend="services" />, <xref linkend="authentication" />, and <xref
+  subsystem descriptor sections, please see: <xref linkend="web" />,
+  <xref linkend="messaging" />, <xref linkend="stomp" />, 
+  <xref linkend="scheduled-jobs" />, <xref linkend="services" />, 
+  <xref linkend="resource-injection" />, <xref linkend="authentication" />, and <xref
   linkend="pooling" />.</para>
 
   <section id="external-and-internal-descriptors">
@@ -54,7 +55,12 @@
     <title>Contents of a descriptor</title>
 
     <para>There are two syntaxes available for use in an internal descriptor:
-    YAML and a Ruby DSL.</para>
+    YAML and a Ruby DSL. For the configuration specifics for each subystem,
+    see: <xref linkend="web" />,
+    <xref linkend="messaging" />, <xref linkend="stomp" />, 
+    <xref linkend="scheduled-jobs" />, <xref linkend="services" />, 
+    <xref linkend="resource-injection" />, <xref linkend="authentication" />, and <xref
+    linkend="pooling" />.</para>
 
     <section id="yaml-descriptor-layout">
       <title>YAML syntax layout</title>
@@ -62,41 +68,6 @@
       <para>The YAML descriptor has several sections, grouped by subsystem,
       represented as top-level keys in a YAML associative array.</para>
 
-      <orderedlist spacing="compact">
-        <listitem>
-          <para><varname>application</varname>: General application
-          configuration</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>web</varname>: Web-specific configuration</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>ruby</varname>: Runtime version and JIT
-          options</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>environment</varname>: Environment variables</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>jobs</varname>: Scheduled executions</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>messaging</varname>: Advanced message-handling</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>pooling</varname>: Runtime pooling control</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>services</varname>: low-level service daemons</para>
-        </listitem>
-      </orderedlist>
     </section>
 
     <section id="ruby-descriptor-layout">
@@ -500,7 +471,7 @@ end</programlisting></para>
         </informalexample></para>
 
       <para>Any variable set in the environment section is accessible from
-      within the Rack app using the ENV hash, e.g.
+      within the application using the ENV hash, e.g.
       ENV['MAIL_HOST']=='mail.yourhost.com'</para>
 
       <section id="application-environment">
