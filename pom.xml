@@ -530,7 +530,7 @@
     <repository>
       <id>jboss-third-party-releases</id>
       <name>JBoss 3rd Party Releases</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public-thirdparty-releases/</url>
+      <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content</url>
       <releases>
         <enabled>true</enabled>
       </releases>
