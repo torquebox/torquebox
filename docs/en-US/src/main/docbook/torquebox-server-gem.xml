@@ -9,15 +9,25 @@
   gives you access to a new <command>torquebox</command> command to
   deploy and undeploy applications and start Torquebox.</para>
 
+  <section id="install-jruby">
+    <title>Install JRuby</title>
+
+    <para>Before installing the torquebox-server gem you'll want the
+    latest JRuby installed. We recommend at least 1.6.7 since it fixes
+    an out of memory error during gem install.</para>
+
+    <para>Follow instructions at <ulink
+    url="http://jruby.org">http://jruby.org</ulink> to install JRuby
+    if it isn't already.</para>
+  </section>
+
   <section id="installing-torquebox-server">
-    <title>Installation</title>
+    <title>Install torquebox-server</title>
 
-    <screen><prompt>$</prompt> <command>jruby -J-Xmx1024m -S gem install torquebox-server --pre \</command>
-    <command>--source http://torquebox.org/2x/builds/LATEST/gem-repo</command></screen>
+    <screen><prompt>$</prompt> <command>jruby -S gem install torquebox-server</command></screen>
 
-    <para>Due to the large gem size, the maximum memory allocated to
-    the gem installation must be increased or you'll receive an
-    OutOfMemory error.</para>
+    <para>If you're using a JRuby version older than 1.6.7, be you'll
+    also need to pass "-J-Xmx1024m" to the jruby command above.</para>
   </section>
 
   <section id="applications-torquebox-server">
@@ -44,6 +54,7 @@ Usage:
 Options:
   [--context-path=CONTEXT_PATH]  # Context Path (ex: /, /my_app)
   [--env=ENV]                    # Application Environment (ex: development, test, production)
+  [--name=NAME]                  # The desired name of the deployment artifact (ex: foo)
 
 Description:
   Deploy an application to TorqueBox. The ROOT argument should point to either a 
@@ -57,6 +68,9 @@ Description:
       <screen><prompt>$</prompt> <command>torquebox help undeploy</command>
 Usage:
   torquebox undeploy ROOT
+
+Options:
+  [--name=NAME]  # The name of the artifact to undeploy (ex: foo)
 
 Undeploy an application from TorqueBox</screen>
     </formalpara>
@@ -73,10 +87,18 @@ Undeploy an application from TorqueBox</screen>
 
     <screen><prompt>$</prompt> <command>torquebox run --clustered</command></screen>
 
-    Multiple instances of TorqueBox can run on the same machine by
-    binding each one to a specific IP address:
+    Multiple instances of TorqueBox can run on the same
+    machine. You'll need to pass a unique node name, data directory,
+    and bind each instance to a different IP address or use port
+    offsets. Below are examples of setting up a local two-node cluster
+    using different IP addresses and port offsets, respectively.
 
-    <screen><prompt>$</prompt> <command>torquebox run -b 10.100.10.25</command></screen></para>
+    <screen><prompt>$</prompt> <command>torquebox run --clustered --node-name=node1 --data-directory=/tmp/node1 -b 10.100.10.25</command>
+<prompt>$</prompt> <command>torquebox run --clustered --node-name=node2 --data-directory=/tmp/node2 -b 10.100.10.26</command></screen>
+
+    <screen><prompt>$</prompt> <command>torquebox run --clustered --node-name=node1 --data-directory=/tmp/node1</command>
+<prompt>$</prompt> <command>torquebox run --clustered --node-name=node2 --data-directory=/tmp/node2 --port-offset=100</command></screen>
+    </para>
 
     <formalpara>
       <title>Run Help</title>
