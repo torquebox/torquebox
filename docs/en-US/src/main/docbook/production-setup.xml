@@ -204,6 +204,32 @@ Listen torquebox-balancer:6666
     <title>Clustering Notes</title>
 
     <section>
+      <title>Enabling Clustering</title>
+
+      <screen><prompt>$</prompt> <command>torquebox run --clustered</command></screen>
+
+      <para>If you're starting JBoss AS7 directly via standalone.sh,
+      you'll need to pass the server-config option to enable
+      clustering.</para>
+
+      <screen><prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command></screen>
+
+      <para>The --clustered option to torquebox run just chooses the
+      standalone-ha.xml configuration for you under the covers. So, if
+      you need to edit any of the underlying AS7 configuration the
+      file's location is
+      <filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>.</para>
+    </section>
+
+    <section>
+      <title>Multicast Out of the Box</title>
+
+      <para>Clustering is designed to use multicast out of the box. If
+      you're on a network that can't use multicast, see <xref
+      linkend="clustering-without-multicast"/></para>
+    </section>
+
+    <section>
       <title>Don't Bind to 0.0.0.0</title>
 
       <para>JGroups, the underlying library used for most of TorqueBox
@@ -428,27 +454,64 @@ Listen torquebox-balancer:6666
           <title>Number of HTTP Threads
           (<filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>)</title>
 
-          <para><programlisting>    &lt;extensions&gt;
-        ...
-    &lt;/extensions&gt;
-    &lt;system-properties&gt;
-        &lt;property name='org.torquebox.web.http.maxThreads' value='100'/&gt;
-    &lt;/system-properties&gt;
+          <para><programlisting>&lt;extensions&gt;
+  ...
+&lt;/extensions&gt;
+&lt;system-properties&gt;
+  &lt;property name='org.torquebox.web.http.maxThreads' value='100'/&gt;
+&lt;/system-properties&gt;
       </programlisting>This example sets the maximum of HTTP threads to
           100.</para>
         </example></para>
     </section>
   </section>
 
-  <section>
-    <title>SSL JBoss Web</title>
+  <section id="ssl-configuration">
+    <title>SSL Configuration</title>
 
-    <para/>
-  </section>
+    <section id="ssl-apache">
+      <title>SSL Termination at Load Balancer</title>
 
-  <section>
-    <title>Including singleton jobs/services</title>
+      <para>If you choose to terminate SSL at the load balancer,
+      you'll want to set the request header X_FORWARDED_PROTO to
+      'https' before forwarding the request to TorqueBox. Rails will
+      pick up on this header automatically but other web frameworks
+      may require you to check this header manually to determine if a
+      request came in over HTTP or HTTPS.</para>
 
-    <para/>
+      <para>To set this header under Apache, add the following line to
+      the HTTPS VirtualHost configuration:
+
+      <screen>set X_FORWARDED_PROTO 'https'</screen></para>
+    </section>
+
+    <section id="ssl-torquebox">
+      <title>SSL Termination at TorqueBox</title>
+
+      <para>Another option is to terminate SSL connections at
+      TorqueBox. This requires editing the appropriate configuration
+      file -
+      <filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>
+      when not running in a cluster or
+      <filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>
+      when running in a cluster.</para>
+
+      <para><example>
+        <title>SSL Configuration in standalone.xml</title>
+
+        <para><programlisting>&lt;subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host"&rt;
+  &lt;connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http"/&rt;
+  &lt;connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true"&rt;
+    &lt;ssl name="https" key-alias="myalias" password="foobar" certificate-key-file="/tmp/keystore"/&rt;
+  &lt;/connector&rt;
+  &lt;virtual-server name="default-host" enable-welcome-root="false"&rt;
+    &lt;alias name="localhost"/&rt;
+    &lt;alias name="example.com"/&rt;
+  &lt;/virtual-server&rt;
+&lt;/subsystem&rt;
+        </programlisting>This is an example of the entire JBoss Web subsystem after
+        being configured to terminate SSL.</para>
+      </example></para>
+    </section>
   </section>
 </chapter>
