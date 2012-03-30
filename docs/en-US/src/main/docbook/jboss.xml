@@ -96,6 +96,10 @@
     require it, in production you may prefer to control JBoss via a Unix "init
     script", examples of which may be found in <filename>bin/</filename>. Feel
     free to tweak one for your particular OS.</para>
+
+    <para>We also provide support for managing TorqueBox via 
+    <ulink url="http://upstart.ubuntu.com/">upstart</ulink>. See <xref linkend="rake-server-control"/> 
+    for more details.</para>
   </section>
 
   <section id="deploying-to-jboss">
@@ -103,41 +107,10 @@
 
     <para>Each runtime mode has a <literal>deployments/</literal>
     subdirectory, the contents of which determine the applications and
-    services JBoss runs. These apps and services are represented as archives,
-    "exploded" folders, or text files called "deployment descriptors". The JBoss
-    operates in two different modes: <emphasis role="bold">auto-deploy</emphasis> and
-    <emphasis role="bold">manual deploy</emphasis>.</para>
-
-    <para>Auto-deploy mode works like in previous releases of AS, in that a 
-    resource will be redeployed every time its timestamp changes. The scanner creates
-    a marker file with a "<literal>.deployed</literal>" suffix, and if the resource
-    gets deleted the scanner will not trigger an undeployment.</para>
-
-    <para>In manual deploy mode the scanner will rely on addition or removal
-    of a marker file suffix. To understand a little further about deployment
-    method, take a look at marker files section from <ulink
-    url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-DeploymentCommands">administrator
-    guide.</ulink></para>
-
-    <para><mediaobject>
-        <imageobject>
-          <imagedata align="center" fileref="images/jboss-deploy.png"
-                     format="PNG" scale="100" />
-        </imageobject>
-      </mediaobject></para>
-
-    <para>With the introduction of <emphasis
-    role="bold">knob</emphasis> files TorqueBox became more
-    technology-agnostic. It's possible now to deploy any combination
-    of web, messaging, job, or service components.  Application source
-    files don't have to reside in a specific directory - the JBoss
-    deployment scanner will look at the knob files inside
-    <filename>/standalone/deployments</filename> folder which point to
-    the application's root directory.</para>
-
-    <para>TorqueBox provides Rake tasks to create and copy a deployment
-    descriptor for your Ruby application to
-    <filename>$TORQUEBOX_HOME/standalone/deployments/</filename>. For more
+    services JBoss runs. These apps and services are represented as archives 
+    or text files called "deployment descriptors". 
+    TorqueBox provides Rake tasks and a <command>torquebox</command> 
+    to aid the deployment process. For more
     details, see <xref linkend="deployment" /> and <xref
     linkend="deployment-descriptors" />.</para>
   </section>

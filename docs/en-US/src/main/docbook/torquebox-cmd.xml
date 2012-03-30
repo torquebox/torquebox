@@ -160,6 +160,9 @@ Undeployed: myapp-knob.yml
           </tbody>
         </tgroup>
       </table>
+      The server will retain control of the console while it is running.
+      To stop the server, simply send a <code>SIGINT</code>, typically by
+      typing <keycap>control-C</keycap>.
     </para>
   </section>
 
