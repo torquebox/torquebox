@@ -14,16 +14,13 @@
     details so you can focus on writing your applications.
   </para>
   <para>
-    TorqueBox applications can authenticate against any security
-    policy that you have specified in your JBoss login-config.xml
-    configuration. To learn more about how JBoss security works and is
-    configured, refer to <ulink
-    url="http://www.jboss.org/jbossas/docs/6-x/Core-Documentation/security.html">the
+    TorqueBox applications can authenticate against any security realm that you
+    have specified in your JBoss configuration file (typically standalone.xml
+    or standalone-ha.xml).  configuration. To learn more about how JBoss
+    security works and is configured, refer to <ulink
+    url="https://docs.jboss.org/author/display/AS7/Admin+Guide#AdminGuide-SecurityRealms">the
     JBoss documentation</ulink>. The TorqueBox integration, however,
     makes authenticating against a corporate JAAS data store trivial.
-    NOTE: With AS7, security configuration moves to standalone/configuration/standalone.xml.
-    Documentation is still being written for AS7, so stay tuned for additional
-    links.
   </para>
 
   <section id="security-domains">
