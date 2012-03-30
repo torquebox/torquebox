@@ -70,6 +70,128 @@
     <para>For more details, please see <xref linkend="production-setup"/>.</para>
   </section>
 
+    <section id="web-specific-config-in-descriptor">
+      <title>Configuration</title>
+
+      <para>Ruby web apps are often deployed individually, without respect to
+      hostnames or context-path. Running under TorqueBox, however, you may
+      host several apps under a single host, or multiple apps under different
+      hostnames.</para>
+
+      <para>In a YAML configuration, the web settings  grouped under the
+      <varname>web</varname> key. For the DSL, they are grouped within the
+      <varname>web</varname> block.</para>
+
+      <table>
+        <title>web</title>
+
+        <tgroup cols="3">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>YAML Key/DSL Method</entry>
+
+              <entry>Description</entry>
+
+              <entry>Default</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><varname>rackup</varname></entry>
+
+              <entry>The "rackup" script containing the complete logic for
+              initializing your application.</entry>
+
+              <entry><filename>config.ru</filename></entry>
+            </row>
+
+            <row>
+              <entry><varname>host</varname></entry>
+
+              <entry>Virtual hosts allow one application to respond to
+              <emphasis>www.host-one.com</emphasis>, while another running
+              within the same JBoss AS to respond to
+              <emphasis>www.host-two.com</emphasis>. This value can be either
+              a single hostname or a YAML list of hostnames.</entry>
+
+              <entry><parameter>localhost</parameter></entry>
+            </row>
+
+            <row>
+              <entry><varname>context</varname></entry>
+
+              <entry>Applications within a single TorqueBox Server may be
+              separated purely by a <emphasis>context path</emphasis>. For a
+              given host, the context path is the prefix used to access the
+              application, e.g. http://some.host.com/context. Traditional Ruby
+              web apps respond from the top of a site, i.e. the root context.
+              By using a context path, you can mount applications at a
+              location beneath the root.</entry>
+
+              <entry><filename>/</filename></entry>
+            </row>
+
+            <row>
+              <entry><varname>static</varname></entry>
+
+              <entry>Any static web content provided by your app should reside
+              beneath this directory.</entry>
+
+              <entry><emphasis>none</emphasis> unless deploying a Rails
+              application, then <filename>public</filename>.</entry>
+            </row>
+
+            <row>
+              <entry><varname>session-timeout</varname></entry>
+
+              <entry>Time (defaults to minutes) for idle sessions to timeout.
+              Specified as an integer followed by a units
+              designation<itemizedlist>
+                  <listitem>
+                    <para><code>ms</code> designates milliseconds</para>
+                  </listitem>
+
+                  <listitem>
+                    <para><code>s</code> designates seconds</para>
+                  </listitem>
+
+                  <listitem>
+                    <para><code>m</code> designates minutes (default if no
+                    units are specified)</para>
+                  </listitem>
+
+                  <listitem>
+                    <para><code>h</code> designates hours</para>
+                  </listitem>
+                </itemizedlist></entry>
+
+              <entry><code>30m</code>, specifying 30 minutes.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>For example, in YAML: <informalexample>
+          <para><programlisting>web:
+  rackup: alternative/path/to/my_config.ru
+  context: /app-one
+  static: public
+  host: www.host-one.com</programlisting></para>
+        </informalexample> And via the DSL: <informalexample>
+          <para><programlisting>TorqueBox.configure do
+  web do
+    rackup "alternative/path/to/my_config.ru"
+    context "/app-one"
+    static "public"
+    host "www.host-one.com"
+  end
+end</programlisting></para>
+        </informalexample></para>
+    </section>
+
   <section id="web-sessions">
     <title>Sessions</title>
 
@@ -527,8 +649,7 @@ gem 'jdbc-sqlite3'</programlisting></para>
     config.cache_store = :torque_box_store
 </emphasis>
   end
-end
-      </programlisting></para>
+end</programlisting></para>
 
       <para>Using this symbolized form causes Rails to load the appropriate
       Ruby file for you. Alternatively, you may load the file yourself and
@@ -540,20 +661,16 @@ end
       clustered and <emphasis>local</emphasis> mode when not. But you
       can certainly override the defaults:</para>
 
-      <para><programlisting language="ruby">
-        config.cache_store = :torque_box_store, {:mode =&gt; :distributed, :sync =&gt; true}
-      </programlisting></para>
+      <para><programlisting language="ruby">config.cache_store = :torque_box_store, {:mode =&gt; :distributed, :sync =&gt; true}</programlisting></para>
 
       <para>You can even create multiple cache stores in your app, each
       potentially in a different clustering mode. You should use the
       <code>:name</code> option to identify any additional caches you
       create, e.g.</para>
 
-      <para><programlisting language="ruby">
-    COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
-                                                        :mode =&gt; :replicated, 
-                                                        :sync =&gt; true)
-      </programlisting></para>
+      <para><programlisting language="ruby">COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
+                                                    :mode =&gt; :replicated, 
+                                                    :sync =&gt; true)</programlisting></para>
     </section>
 
     <section>
@@ -596,8 +713,7 @@ class SinatraSessions &lt; Sinatra::Base
     session[:message]   # =&gt; 'Hello World!'
   end
 
-end
-      </programlisting></para>
+end</programlisting></para>
     </section>
 
     <section id="sinatra-cache-configuration">
@@ -614,28 +730,23 @@ end
       <para><programlisting language="ruby">require 'active_support/cache/torque_box_store'
 class SinatraCache &lt; Sinatra::Base
   set :cache, ActiveSupport::Cache::TorqueBoxStore.new
-end
-      </programlisting></para>
+end</programlisting></para>
 
       <para>By default, the <code>TorqueBoxStore</code> will be in
       <emphasis>asynchronous invalidation</emphasis> mode when
       clustered and <emphasis>local</emphasis> mode when not. But you
       can certainly override the defaults:</para>
 
-      <para><programlisting language="ruby">
-  set :cache, ActiveSupport::Cache::TorqueBoxStore.new(:mode =&gt; :distributed, :sync =&gt; true)
-      </programlisting></para>
+      <para><programlisting language="ruby">set :cache, ActiveSupport::Cache::TorqueBoxStore.new(:mode =&gt; :distributed, :sync =&gt; true)</programlisting></para>
 
       <para>You can even create multiple cache stores in your app, each
       potentially in a different clustering mode. You should use the
       <code>:name</code> option to identify any additional caches you
       create, e.g.</para>
 
-      <para><programlisting language="ruby">
-    COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
-                                                        :mode =&gt; :replicated, 
-                                                        :sync =&gt; true)
-      </programlisting></para>
+      <para><programlisting language="ruby">COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
+                                                    :mode =&gt; :replicated, 
+                                                    :sync =&gt; true)</programlisting></para>
     </section>
 
     <section>
