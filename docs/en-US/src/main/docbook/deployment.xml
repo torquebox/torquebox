@@ -13,7 +13,7 @@
   <section id="rake-deployment">
     <title>Rake tasks</title>
 
-    <para>TorqueBox provides a gem that include Rake tasks which
+    <para>TorqueBox provides a gem that includes Rake tasks which
     assist in the deployment to and undeployment from an instance of the
     TorqueBox Server in addition to other server management tasks. Please
     see <xref linkend="rake-support"/> for details.</para>
@@ -39,7 +39,7 @@
     <para>To deploy manually, you'll need to create two files in the deployment
     directory, which is by default <filename>$JBOSS_HOME/standalone/deployments/</filename>.
     The first file is either a small text file (called a <emphasis>deployment
-    descriptor</emphasis>) or an <emphasis>TorqueBox archive</emphasis>, depending
+    descriptor</emphasis>) or a <emphasis>TorqueBox archive</emphasis>, depending
     on whether you are deploying an application from where it sits on disk or as
     a self-contained archive. The second file you will need to create is a 
     <emphasis>deployment marker</emphasis>. TorqueBox uses various deployment 
@@ -83,8 +83,8 @@
       you need to write a deployment descriptor that references the application directory
       from its <varname>root</varname> entry to 
       <filename>$JBOSS_HOME/standalone/deployments/</filename>. The descriptor is a 
-      <ulink url="http://yaml.org/">YAML</ulink> file that must end with 
-      <filename>-knob.yml</filename>.
+      <ulink url="http://yaml.org/">YAML</ulink> file with a required
+      suffix of <filename>-knob.yml</filename>.
       For details on the various options for authoring deployment
       descriptors, see <xref linkend="deployment-descriptors" />. For TorqueBox to
       notice your deployment, you'll also need to create an empty 
@@ -104,7 +104,7 @@
       bundles created with the Java <command>jar</command> tool. The Rake tasks 
       and the torquebox command both provide support for the creation and deployment 
       of archives. Please see <xref linkend="torquebox-cmd-archive"/> or
-      <xref linkend="rake-archive"/> for more detais.</para>
+      <xref linkend="rake-archive"/> for more details.</para>
 
       <para>To manually deploy an archive file, copy it to 
       <filename>$JBOSS_HOME/standalone/deployments/</filename> and create an
