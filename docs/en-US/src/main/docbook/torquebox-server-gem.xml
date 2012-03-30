@@ -33,6 +33,11 @@
   <section id="applications-torquebox-server">
     <title>Deploying and Undeploying Applications</title>
 
+    <para>The torquebox-server gem ships with a <command>torquebox</command>
+      binary, which may be used to deploy and undeploy applications, as well
+      as starting the server and other functions. For complete documentation,
+      see <xref linkend="torquebox-cmd" />.</para>
+
     <para>To deploy an application to TorqueBox:
 
     <screen><prompt>$</prompt> <command>torquebox deploy /path/to/my_app</command></screen>
