@@ -19,24 +19,21 @@ Tasks:
   torquebox cli                # Run the JBoss AS7 CLI
   torquebox env [VARIABLE]     # Display TorqueBox environment variables
   torquebox help [TASK]        # Describe available tasks or one specific task
-  torquebox list applications  # List applications deployed to TorqueBox and ...
-    </screen>
+  torquebox list applications  # List applications deployed to TorqueBox and ...  </screen>
   </para>
 
   <section id="torquebox-cmd-deploy">
     <title>torquebox deploy</title>
 
-    <para>Running <command>torquebox deploy ROOT</command> will deploy your
+    <para>Running <command>torquebox deploy</command> will deploy your
       current working directory as an application to TorqueBox. If provided
-      with a path, such as <command>torquebox deploy /path/to/my/app</command>
+      with a ROOT path, such as <command>torquebox deploy /path/to/my/app</command>
       the command will deploy the application found at that path.
       <screen>
 $ torquebox deploy myapp
 Deployed: myapp-knob.yml
-    into: /opt/torquebox/jboss/standalone/deployments
-      </screen>
+    into: /opt/torquebox/jboss/standalone/deployments </screen>
 
-      If provided with a ROOT argument, it will deploy the application at ROOT.
       ROOT can be directory containing the application you want to deploy, a
       -knob.yml file, a .knob archive, or any Java deployable artifact (.war,
       .ear, etc).
@@ -76,12 +73,12 @@ Deployed: myapp-knob.yml
     <title>torquebox undeploy</title>
 
     <para>Just the opposite of <command>torquebox deploy</command> is 
-      <command>torquebox undeploy</command>. This command will undeploy 
-      your application from TorqueBox. Similar to deploying, running
-      this with no arguments, will attempt to undeploy an application
-      with the same name as the current working directory. Providing
-      a name or path, will cause <command>torquebox undeploy</command> to
-      attempt to undeploy an application with that name.
+      <command>torquebox undeploy [ROOT]</command>. This command will undeploy
+      your application from TorqueBox. Similar to deploying, running this with
+      no arguments, will attempt to undeploy an application with the same name
+      as the current working directory. Providing a name or path, will cause
+      <command>torquebox undeploy</command> to attempt to undeploy an
+      application with that name.
       <table>
         <title>torquebox undeploy options</title>
         <tgroup cols="2">
@@ -102,6 +99,11 @@ Deployed: myapp-knob.yml
           </tbody>
         </tgroup>
       </table>
+      <screen>
+$ torquebox undeploy myapp
+Attempting to undeploy myapp-knob.yml
+Undeployed: myapp-knob.yml
+      from: /opt/torquebox/jboss/standalone/deployments </screen>
     </para>
   </section>
 
@@ -165,15 +167,15 @@ Deployed: myapp-knob.yml
     <title>torquebox rails</title>
 
     <para>
-      The <command>torquebox rails ROOT</command> command creates a Rails
+      The <command>torquebox rails [ROOT]</command> command creates a Rails
       application at ROOT using the TorqueBox Rails template, or applies the
-      TorqueBox template to an existing Rails application at ROOT.
+      TorqueBox template to an existing Rails application at ROOT. As with other
+      commands that take a ROOT argument, if ROOT is omitted, the command will
+      operate on the current working directory.
       <screen>
-$ torquebox rails /path/to/my/app # apply the TorqueBox Rails template to an app
-      </screen>
+$ torquebox rails /path/to/my/app # apply the TorqueBox Rails template to an app </screen>
       <screen>
-$ torquebox rails # Create a new Rails application in the current directory
-      </screen>
+$ torquebox rails # Create a new Rails application in the current directory </screen>
     </para>
   </section>
 
@@ -181,11 +183,12 @@ $ torquebox rails # Create a new Rails application in the current directory
     <title>torquebox archive</title>
 
     <para>
-      The <command>torquebox archive ROOT</command> command creates an
+      The <command>torquebox archive [ROOT]</command> command creates an
       application archive containing all of your application dependencies. The
       archive can be deployed to TorqueBox with the <command>--deploy</command>
       option or by hand after the archive file, known as a .knob, has been
-      created by using <command>torquebox deploy myapp.knob</command>.
+      created by using <command>torquebox deploy myapp.knob</command>. If
+      ROOT is omitted, the command will operate on the current directory.
       <table>
         <title>torquebox archive options</title>
         <tgroup cols="2">
@@ -216,8 +219,7 @@ $ torquebox rails # Create a new Rails application in the current directory
       The <command>torquebox cli</command> command runs the JBoss AS7
       command line interface.
       <screen>
-$ torquebox cli
-      </screen>
+$ torquebox cli</screen>
     </para>
   </section>
 
@@ -227,18 +229,17 @@ $ torquebox cli
     <para>
       The <command>torquebox env [VARIABLE]</command> command displays the
       TorqueBox environment variables TORQUEBOX_HOME, JBOSS_HOME and
-      JRUBY_HOME. The optional <command>VARIABLE</command> can be one of these
-      three values and will cause the command to display only that value.
+      JRUBY_HOME. The optional <command>VARIABLE</command> argument can be one
+      of these three values and will cause the command to display only that
+      value.
       <screen>
 $ torquebox env
 TORQUEBOX_HOME=/opt/torquebox
 JBOSS_HOME=/opt/torquebox/jboss
-JRUBY_HOME=/opt/torquebox/jruby
-      </screen>
+JRUBY_HOME=/opt/torquebox/jruby </screen>
       <screen>
 $ torquebox env JBOSS_HOME
-/opt/torquebox/jboss
-      </screen>
+/opt/torquebox/jboss </screen>
     </para>
   </section>
 
@@ -266,9 +267,7 @@ cachetest
   Status: deployed
 myapp
   Descriptor: /opt/torquebox/jboss/standalone/deployments/myapp-knob.yml
-  Status: awaiting deployment
-        
-      </screen>
+  Status: awaiting deployment </screen>
     </para>
   </section>
 
