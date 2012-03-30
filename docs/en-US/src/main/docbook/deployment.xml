@@ -16,7 +16,7 @@
     <para>TorqueBox provides a gem that include Rake tasks which
     assist in the deployment to and undeployment from an instance of the
     TorqueBox Server in addition to other server management tasks. Please
-    see <xref linked="rake-support"/> for details.</para>
+    see <xref linkend="rake-support"/> for details.</para>
   </section>
 
   <section id="cmd-deployment">
@@ -25,7 +25,7 @@
     <para>In addition to the <command>rake</command> tasks, TorqueBox provides 
     an executable script that assists in the deployment to and undeployment from 
     an instance of the TorqueBox Server in addition to other server management tasks. 
-    Please see <xref linked="torquebox-cmd"/> for details.</para>
+    Please see <xref linkend="torquebox-cmd"/> for details.</para>
   </section>
 
   <section id="manual-deployment">
