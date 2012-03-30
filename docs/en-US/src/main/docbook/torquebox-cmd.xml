@@ -19,7 +19,7 @@ Tasks:
   torquebox cli                # Run the JBoss AS7 CLI
   torquebox env [VARIABLE]     # Display TorqueBox environment variables
   torquebox help [TASK]        # Describe available tasks or one specific task
-  torquebox list applications  # List applications deployed to TorqueBox and ...  </screen>
+  torquebox list               # List applications deployed to TorqueBox and ...  </screen>
   </para>
 
   <section id="torquebox-cmd-deploy">
