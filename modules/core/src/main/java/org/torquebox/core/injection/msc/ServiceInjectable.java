@@ -40,6 +40,6 @@ public class ServiceInjectable extends SimpleNamedInjectable {
         return ServiceName.parse( getName() );
     }
     
-    public static final String type = "service";
+    public static final String type = "msc";
 
 }

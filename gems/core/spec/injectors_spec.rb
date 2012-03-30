@@ -9,7 +9,8 @@ describe TorqueBox::Injectors do
     TorqueBox::Registry.merge!('this' => :that)
     TorqueBox::Registry['this'].should == :that
     inject('this').should == :that
-    inject_mc('this').should == :that
+    inject_msc('this').should == :that
+    inject_service('this').should == :that
     inject_cdi(:this).should == :that
     inject_jndi('this').should == :that
     inject_queue('this').should == :that

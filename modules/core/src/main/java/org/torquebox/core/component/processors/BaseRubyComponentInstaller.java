@@ -67,8 +67,9 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
             Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
 
             for (Injectable injectable : injectables) {
-                if ( typesToExcludeList.contains( injectable.getType() ) ) {
-                    continue; // Used by services to prevent circular injection dependencies
+                if (typesToExcludeList.contains( injectable.getType() )) {
+                    continue; // Used by services to prevent circular injection
+                              // dependencies
                 }
                 try {
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
@@ -87,8 +88,8 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
                     if (serviceName != null) {
                         builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
-                    } else if ( ! injectable.isOptional() ) {
-                        log.error( "Unable to inject: " + injectable.getName());
+                    } else if (!injectable.isOptional()) {
+                        log.error( "Unable to inject: " + injectable.getName() );
                     }
                 } catch (Exception e) {
                     throw new DeploymentUnitProcessingException( e );
