@@ -82,7 +82,7 @@
         </informalexample></para>
     </section>
 
-    <section>
+    <section id="rake-archive">
       <title>Archive-based deployments</title>
 
       <para>In the event you need to deploy the application as an archive,
