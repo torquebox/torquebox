@@ -154,10 +154,9 @@ end</programlisting></para>
       The first two methods, <code>default</code> and <code>[]</code> are used
       to get the default authentication domain or to lookup an authenticator by
       name.  The last is to actually authenticate a user.  To use the Ruby API,
-      include <code>torquebox</code> and
-      <code>org/torquebox/auth/authentication</code> as shown below. This code
-      shows a simple Ruby authentication module that authenticates agains the
-      JAAS security configuration.
+      require <code>torquebox</code> and <code>torquebox-authentication</code>
+      as shown below. This code shows a simple Ruby authentication module that
+      authenticates agains the JAAS security configuration.
     </para>
     
     <para>
