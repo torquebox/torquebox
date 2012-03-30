@@ -123,7 +123,7 @@ class TorqueBoxCommand < Thor
     end
   end
 
-  desc "list applications", "List applications deployed to TorqueBox and their deployment status"
+  desc "list", "List applications deployed to TorqueBox and their deployment status"
   def list(root = ".")
     TorqueBox::Server.setup_environment
     apps = TorqueBox::DeployUtils.deployment_status
