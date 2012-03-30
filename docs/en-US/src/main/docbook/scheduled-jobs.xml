@@ -99,18 +99,18 @@ end</programlisting></para>
     <section id="jobs-format">
       <title>Configuration Format</title>
 
-      <para>Within the internal <filename>torquebox.yml</filename> descriptor 
-      (or through an external <filename><replaceable>*</replaceable>-knob.yml</filename> 
-      descriptor), scheduled jobs are configured using the a <parameter>jobs:</parameter> 
-      section.</para>
-
-      <para>Within the <parameter>jobs</parameter>, a block of information is
-      provided for each job. The block starts with arbitrary name for the job.
-      Each block must also define the job class and the schedule
-      specification. Optionally a <parameter>description</parameter>
-      and a <parameter>config</parameter> may be provided. If you do provide
-      a <parameter>config</parameter>, its value will be passed to the initialize
-      method of the job class.</para>
+      <para>Within the internal <filename>torquebox.yml</filename>
+      descriptor (or through an external
+      <filename><replaceable>*</replaceable>-knob.yml</filename>
+      descriptor), scheduled jobs are configured using the
+      <parameter>jobs:</parameter> section, in which a block of
+      information is provided for each job. The block starts with an
+      arbitrary name for the job. Each block must also define the job
+      class and the schedule specification. Optionally a
+      <parameter>description</parameter> and a
+      <parameter>config</parameter> may be provided. If you do provide
+      a <parameter>config</parameter>, its value will be passed to the
+      initialize method of the job class.</para>
 
       <para>If you are using the DSL (via <filename>torquebox.rb</filename>) in
       your internal descriptor, each job is defined using the <methodname>job</methodname>
@@ -209,32 +209,29 @@ end</programlisting></para>
   <section id="clustered-jobs">
     <title>Clustered Jobs</title>
 
-    <section id="jobs-running-on-every-node">
-      <title>Jobs Running on Every Node</title>
-
-      <para>By default, if a job will run on each node in a cluster 
-      where the application has been deployed.</para>
-    </section>
-
     <section id="ha-singleton-jobs">
       <title>High Availability Singleton Jobs</title>
 
-      <para>TorqueBox also supports high availability singleton
-      jobs. In this scenario, the job only runs on one node in
-      the cluster and if that node goes down it is automatically
-      scheduled on a new node.</para>
+      <para>TorqueBox supports highly-available singleton jobs. By
+      default, a job only runs on one node in the cluster and if that
+      node goes down or the job fails to run to completion, it is
+      automatically scheduled on a new node.</para>
 
       <para>To use high availability singleton jobs, you must
       start TorqueBox with a clustered configuration. For example:</para>
 
       <para><screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command></screen></para>
 
-      <para>You also need to add a special <code>singleton</code> key
-      with a value of <code>true</code> to your job specification in
-      your deployment descriptor. If no <code>singleton</code>
-      key is defined or it has a value of <code>false</code> the
-      job will run on every node in the cluster.</para>
+      <para>
+        Alternatively, use the <command>torquebox</command> command:
+        <screen> <prompt>$</prompt> <command>torquebox run --clustered</command></screen>
+      </para>
 
+      <para>HA jobs are configured using the <code>singleton</code>
+      key in the job specification in your deployment descriptor. Its
+      default value is <code>true</code> so you must manually
+      configure it with a value of <code>false</code> for the job to
+      run on every node in the cluster.</para>
 
       <para><example>
           <title>Example deployment descriptor</title>
@@ -262,11 +259,21 @@ jobs:
     end
   end
 end</programlisting>This is the same
-        deployment descriptors from the example above but
-        this time <classname>mail.notifier</classname> is marked as a
-        singleton and will only run on one node in the cluster.</para>
+        deployment descriptor from the example above.
+        Including the <code>singleton</code> attribute with a value
+        of <code>true</code> is redundant of course, since jobs will
+        only run on a single node when clustered, by default.</para>
       </example></para>
     </section>
+
+    <section id="jobs-running-on-every-node">
+      <title>Jobs Running on Every Node</title>
+
+      <para>To configure a job to run on every node in a cluster, set
+      <code>sinngleton</code> to <code>false</code> in the deployment
+      descriptor.</para>
+    </section>
+
   </section>
 
   <section id="resouce-injection-with-jobs">

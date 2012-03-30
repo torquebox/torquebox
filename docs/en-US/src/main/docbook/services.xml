@@ -179,7 +179,7 @@ until stopped.
       <para><screen> <prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh --server-config=standalone-ha.xml</command></screen></para>
 
       <para>
-        Alternatively, using the <command>torquebox</command> command:
+        Alternatively, use the <command>torquebox</command> command:
         <screen> <prompt>$</prompt> <command>torquebox run --clustered</command></screen>
       </para>
 
@@ -251,9 +251,8 @@ until stopped.
       <title>Services Running on Every Node</title>
 
       <para>
-        It may be desirous for some stateless services to run on all
-        nodes in a cluster. To accomplish this, set
-        <code>sinngleton</code> to <code>false</code> in the
+        To configure your services to run on all nodes in a cluster,
+        set <code>sinngleton</code> to <code>false</code> in the
         deployment descriptor.
       </para>
     </section>
