@@ -536,9 +536,9 @@ end
       <filename>ActiveSupport::Cache::TorqueBoxStore</filename>.</para>
 
       <para>By default, the <code>TorqueBoxStore</code> will be in
-      <emphasis>asynchronous invalidation</emphasis> mode when clustered
-      (<code>JBOSS_CONF=all</code>), and <emphasis>local</emphasis> mode
-      when not. But you can certainly override the defaults:</para>
+      <emphasis>asynchronous invalidation</emphasis> mode when
+      clustered and <emphasis>local</emphasis> mode when not. But you
+      can certainly override the defaults:</para>
 
       <para><programlisting language="ruby">
         config.cache_store = :torque_box_store, {:mode =&gt; :distributed, :sync =&gt; true}
