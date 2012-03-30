@@ -201,7 +201,7 @@ Listen torquebox-balancer:6666
   </section>
 
   <section id="production-clustering">
-    <title>Clustering Notes</title>
+    <title>Clustering</title>
 
     <section>
       <title>Enabling Clustering</title>
