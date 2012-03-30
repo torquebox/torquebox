@@ -3,4 +3,274 @@
 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <chapter id="torquebox-cmd">
   <title>The torquebox Command</title>
+
+  <para>When you install TorqueBox you get a <command>torquebox</command>
+    command line utility that can be used to deploy and undeploy applications,
+    start and stop the server, and more. Running <command>torquebox</command>
+    without any arguments displays the help screen.
+    <screen>
+$ torquebox 
+Tasks:
+  torquebox deploy ROOT        # Deploy an application to TorqueBox
+  torquebox undeploy ROOT      # Undeploy an application from TorqueBox
+  torquebox run                # Run TorqueBox
+  torquebox rails ROOT         # Create a Rails application at ROOT using the...
+  torquebox archive ROOT       # Create a nice self-contained application arc...
+  torquebox cli                # Run the JBoss AS7 CLI
+  torquebox env [VARIABLE]     # Display TorqueBox environment variables
+  torquebox help [TASK]        # Describe available tasks or one specific task
+  torquebox list applications  # List applications deployed to TorqueBox and ...
+    </screen>
+  </para>
+
+  <section id="torquebox-cmd-deploy">
+    <title>torquebox deploy</title>
+
+    <para>Running <command>torquebox deploy ROOT</command> will deploy your
+      current working directory as an application to TorqueBox. If provided
+      with a path, such as <command>torquebox deploy /path/to/my/app</command>
+      the command will deploy the application found at that path.
+      <screen>
+$ torquebox deploy myapp
+Deployed: myapp-knob.yml
+    into: /opt/torquebox/jboss/standalone/deployments
+      </screen>
+
+      If provided with a ROOT argument, it will deploy the application at ROOT.
+      ROOT can be directory containing the application you want to deploy, a
+      -knob.yml file, a .knob archive, or any Java deployable artifact (.war,
+      .ear, etc).
+
+      <table>
+        <title>torquebox deploy options</title>
+        <tgroup cols="2">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Option</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>--context-path=CONTEXT_PATH</parameter></entry>
+              <entry>The web context path for your application. (e.g. / or /myapp)</entry>
+            </row>
+            <row>
+              <entry><parameter>--env=ENV</parameter></entry>
+              <entry>The application environment. (e.g. development, test, production)</entry>
+            </row>
+            <row>
+              <entry><parameter>--name=NAME</parameter></entry>
+              <entry>The name of the deployment artifact. (e.g. myapp)</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </para>
+  </section>
+
+  <section id="torquebox-cmd-undeploy">
+    <title>torquebox undeploy</title>
+
+    <para>Just the opposite of <command>torquebox deploy</command> is 
+      <command>torquebox undeploy</command>. This command will undeploy 
+      your application from TorqueBox. Similar to deploying, running
+      this with no arguments, will attempt to undeploy an application
+      with the same name as the current working directory. Providing
+      a name or path, will cause <command>torquebox undeploy</command> to
+      attempt to undeploy an application with that name.
+      <table>
+        <title>torquebox undeploy options</title>
+        <tgroup cols="2">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Option</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>--name=NAME</parameter></entry>
+              <entry>The name of the deployment artifact to undeploy. (e.g. myapp)</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </para>
+  </section>
+
+  <section id="torquebox-cmd-run">
+    <title>torquebox run</title>
+
+    <para>The <command>torquebox run</command> command will run the TorqueBox
+      server. In development, this is similar to <command>rails server</command>.
+      <table>
+        <title>torquebox run options</title>
+        <tgroup cols="2">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Option</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>--clustered</parameter></entry>
+              <entry>Runs TorqueBox in clustered mode.</entry>
+            </row>
+            <row>
+              <entry><parameter>--data-directory=DATA-DIRECTORY</parameter></entry>
+              <entry>Override the directory TorqueBox uses to store it runtime data.</entry>
+            </row>
+            <row>
+              <entry><parameter>--extra=EXTRA</parameter></entry>
+              <entry>Extra options to pass through to JBoss AS, you will to escape dashes with \ (e.g. \--help)</entry>
+            </row>
+            <row>
+              <entry><parameter>--max-threads=N</parameter></entry>
+              <entry>Maximum number of HTTP threads</entry>
+            </row>
+            <row>
+              <entry><parameter>--bind-address=BIND-ADDRESS</parameter></entry>
+              <entry>IP address to bind to - don't set this to 0.0.0.0 if used with --clustered</entry>
+            </row>
+            <row>
+              <entry><parameter>--node-name=NODE-NAME</parameter></entry>
+              <entry>Override the name of the node (which by default is the hostname)</entry>
+            </row>
+            <row>
+              <entry><parameter>--port-offset=N</parameter></entry>
+              <entry>Offset all port numbers listened on by TorqueBox by this number</entry>
+            </row>
+            <row>
+              <entry><parameter>--jvm-options=JVM-OPTIONS</parameter></entry>
+              <entry>Options to be passed to the JVM</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </para>
+  </section>
+
+  <section id="torquebox-cmd-rails">
+    <title>torquebox rails</title>
+
+    <para>
+      The <command>torquebox rails ROOT</command> command creates a Rails
+      application at ROOT using the TorqueBox Rails template, or applies the
+      TorqueBox template to an existing Rails application at ROOT.
+      <screen>
+$ torquebox rails /path/to/my/app # apply the TorqueBox Rails template to an app
+      </screen>
+      <screen>
+$ torquebox rails # Create a new Rails application in the current directory
+      </screen>
+    </para>
+  </section>
+
+  <section id="torquebox-cmd-archive">
+    <title>torquebox archive</title>
+
+    <para>
+      The <command>torquebox archive ROOT</command> command creates an
+      application archive containing all of your application dependencies. The
+      archive can be deployed to TorqueBox with the <command>--deploy</command>
+      option or by hand after the archive file, known as a .knob, has been
+      created by using <command>torquebox deploy myapp.knob</command>.
+      <table>
+        <title>torquebox archive options</title>
+        <tgroup cols="2">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Option</entry>
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>--deploy</parameter></entry>
+              <entry>Deploys the resulting archive to TORQUEBOX_HOME</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </para>
+  </section>
+
+  <section id="torquebox-cmd-cli">
+    <title>torquebox cli</title>
+
+    <para>
+      The <command>torquebox cli</command> command runs the JBoss AS7
+      command line interface.
+      <screen>
+$ torquebox cli
+      </screen>
+    </para>
+  </section>
+
+  <section id="torquebox-cmd-env">
+    <title>torquebox env</title>
+
+    <para>
+      The <command>torquebox env [VARIABLE]</command> command displays the
+      TorqueBox environment variables TORQUEBOX_HOME, JBOSS_HOME and
+      JRUBY_HOME. The optional <command>VARIABLE</command> can be one of these
+      three values and will cause the command to display only that value.
+      <screen>
+$ torquebox env
+TORQUEBOX_HOME=/opt/torquebox
+JBOSS_HOME=/opt/torquebox/jboss
+JRUBY_HOME=/opt/torquebox/jruby
+      </screen>
+      <screen>
+$ torquebox env JBOSS_HOME
+/opt/torquebox/jboss
+      </screen>
+    </para>
+  </section>
+
+  <section id="torquebox-cmd-list">
+    <title>torquebox list</title>
+
+    <para>
+      The <command>torquebox list</command> command displays all applications
+      currently deployed to torquebox and their deployement status (e.g. 
+      deployed, awaiting deployment, failed).
+      that value.
+      <screen>
+$ torquebox list
+cachetest
+  Descriptor: /opt/torquebox/jboss/standalone/deployments/cachetest-knob.yml
+  Status: deployed
+
+$ torquebox deploy 
+Deployed: myapp-knob.yml
+    into: /opt/torquebox/jboss/standalone/deployments
+
+$ torquebox list
+cachetest
+  Descriptor: /opt/torquebox/jboss/standalone/deployments/cachetest-knob.yml
+  Status: deployed
+myapp
+  Descriptor: /opt/torquebox/jboss/standalone/deployments/myapp-knob.yml
+  Status: awaiting deployment
+        
+      </screen>
+    </para>
+  </section>
+
 </chapter>
+
