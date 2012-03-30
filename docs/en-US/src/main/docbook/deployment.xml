@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+"http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<chapter id="deployment">
+  <title>TorqueBox Application Deployment</title>
+
+  <para>The TorqueBox Application Server is capable of serving many
+  applications simultaneously. To add your application to the server, you must
+  <emphasis>deploy</emphasis> it. To deploy an application, you tell TorqueBox
+  where to find it. You can do so via our <command>rake</command> tasks, the 
+  <command>torquebox</command> command, or manually.</para>
+
+  <section id="rake-deployment">
+    <title>Rake tasks</title>
+
+    <para>TorqueBox provides a gem that include Rake tasks which
+    assist in the deployment to and undeployment from an instance of the
+    TorqueBox Server in addition to other server management tasks. Please
+    see <xref linked="rake-support"/> for details.</para>
+  </section>
+
+  <section id="cmd-deployment">
+    <title>The torquebox command</title>
+
+    <para>In addition to the <command>rake</command> tasks, TorqueBox provides 
+    an executable script that assists in the deployment to and undeployment from 
+    an instance of the TorqueBox Server in addition to other server management tasks. 
+    Please see <xref linked="torquebox-cmd"/> for details.</para>
+  </section>
+
+  <section id="manual-deployment">
+    <title>Manual deployment</title>
+
+    <para>To customize some of the aspects of deployment, instead of using the
+    Rake tasks or the torquebox command, you may manually deploy your artifacts. 
+    This manual process is identical to the automation that the tasks and command
+    provide.</para>
+
+    <para>To deploy manually, you'll need to create two files in the deployment
+    directory, which is by default <filename>$JBOSS_HOME/standalone/deployments/</filename>.
+    The first file is either a small text file (called a <emphasis>deployment
+    descriptor</emphasis>) or an <emphasis>TorqueBox archive</emphasis>, depending
+    on whether you are deploying an application from where it sits on disk or as
+    a self-contained archive. The second file you will need to create is a 
+    <emphasis>deployment marker</emphasis>. TorqueBox uses various deployment 
+    markers to manage the lifecycle of a deployment.</para>
+
+    <section id="deployment-markers">
+      <title>Deployment markers</title>
+
+      <para>AS7 (and therefore TorqueBox) uses a set of files in the deployment
+      directory called <emphasis>deployment markers</emphasis> to manage the deployment
+      lifecycle of a deployment artifact. A deployment marker for a deployment artifact
+      is an empty file with the same name as the artifact with the marker suffix appended.
+      For manual deployment, you usually only need to be concerned with two of them:
+      <filename>.dodeploy</filename> and <filename>.deployed</filename>.       
+      There are quite a few other marker files, and you see the full list in
+     <ulink url="https://docs.jboss.org/author/display/AS71/Application+deployment#Applicationdeployment-MarkerFiles">the AS7 docs</ulink>.
+
+      <itemizedlist>
+        <listitem><filename>.dodeploy</filename> - signifies that the artifact should be 
+        deployed. You would create this file to trigger deployment. TorqueBox removes
+        this marker file after completing the deployment.</listitem>
+        <listitem><filename>.deployed</filename> - signifies that the artifact has been 
+        deployed. TorqueBox creates this file after completing the deployment.</listitem>
+      </itemizedlist>
+</para>
+
+      <para>To trigger redeployment of an already deployed application, simply update the
+      timestamp on its <filename>.deployed</filename> marker file. To undeploy an application,
+      remove the <filename>.deployed</filename> marker file. Example:</para>
+
+      <para><informalexample><screen># redeploy
+<prompt>$</prompt> <command>touch</command> <filename>$JBOSS_HOME/standalone/deployments/my-app-knob.yml.deployed</filename>
+# undeploy
+<prompt>$</prompt> <command>rm</command> <filename>$JBOSS_HOME/standalone/deployments/my-app-knob.yml.deployed</filename>
+</screen></informalexample></para>
+    </section>
+
+    <section id="deployment-via-descriptor">
+      <title>Manually deploying with a descriptor</title>
+      <para>Applications may be deployed from where they sit on disk. To do so manually,
+      you need to write a deployment descriptor that references the application directory
+      from its <varname>root</varname> entry to 
+      <filename>$JBOSS_HOME/standalone/deployments/</filename>. The descriptor is a 
+      <ulink url="http://yaml.org/">YAML</ulink> file that must end with 
+      <filename>-knob.yml</filename>.
+      For details on the various options for authoring deployment
+      descriptors, see <xref linkend="deployment-descriptors" />. For TorqueBox to
+      notice your deployment, you'll also need to create an empty 
+      <filename>.dodeploy</filename> marker. Example:
+      </para>
+
+      <para><informalexample><screen><prompt>$</prompt> <command>echo</command> <command>"application:\n  root: /path/to/my-app/" ></command> <filename>$JBOSS_HOME/standalone/deployments/my-app-knob.yml</filename>
+<prompt>$</prompt> <command>touch</command> <filename>$JBOSS_HOME/standalone/deployments/my-app-knob.yml.dodeploy</filename></screen></informalexample></para>
+    </section>
+
+    <section id="deployment-via-archive">
+      <title>Manually deploying an archive</title>
+
+      <para>Ruby web applications may be deployed as atomic
+      <emphasis>self-contained archives</emphasis>. An archive is simply a
+      packaging of the application's directory. The TorqueBox server deploys
+      bundles created with the Java <command>jar</command> tool. The Rake tasks 
+      and the torquebox command both provide support for the creation and deployment 
+      of archives. Please see <xref linkend="torquebox-cmd-archive"/> or
+      <xref linkend="rake-archive"/> for more detais.</para>
+
+      <para>To manually deploy an archive file, copy it to 
+      <filename>$JBOSS_HOME/standalone/deployments/</filename> and create an
+      empty <filename>app-name.knob.dodeploy</filename> marker file in
+      <filename>$JBOSS_HOME/standalone/deployments/</filename>. Example:</para>
+
+      <para><informalexample><screen><prompt>$</prompt> <command>cp</command> <filename>something.knob</filename> <filename>$JBOSS_HOME/standalone/deployments/</filename>
+<prompt>$</prompt> <command>touch</command> <filename>$JBOSS_HOME/standalone/deployments/something.knob.dodeploy</filename></screen></informalexample></para>
+
+    <section><title>Deploying an archive with a deployment descriptor</title>
+    <para>If you don't want to place your TorqueBox archive in the deployment directory, or
+    need to override some of the configuration options set in the archive, you can instead deploy
+    a deployment descriptor that points to the archive file. Follow the steps described in
+    <xref linkend="deployment-via-descriptor"/>, but use the path to the archive 
+    <filename>.knob</filename> as the <varname>root</varname> instead of the path to
+    the application directory.</para></section>
+    </section>
+  </section>
+</chapter>
