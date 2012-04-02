@@ -252,7 +252,7 @@ until stopped.
 
       <para>
         To configure your services to run on all nodes in a cluster,
-        set <code>sinngleton</code> to <code>false</code> in the
+        set <code>singleton</code> to <code>false</code> in the
         deployment descriptor.
       </para>
     </section>

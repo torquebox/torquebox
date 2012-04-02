@@ -270,7 +270,7 @@ end</programlisting>This is the same
       <title>Jobs Running on Every Node</title>
 
       <para>To configure a job to run on every node in a cluster, set
-      <code>sinngleton</code> to <code>false</code> in the deployment
+      <code>singleton</code> to <code>false</code> in the deployment
       descriptor.</para>
     </section>
 
