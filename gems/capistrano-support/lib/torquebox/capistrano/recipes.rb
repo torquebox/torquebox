@@ -22,7 +22,8 @@ module Capistrano
     def create_deployment_descriptor( root )
         dd = {
           'application'=>{
-            'root'=>"#{root}",
+            # Force the encoding to UTF-8 on 1.9 since the value may be ASCII-8BIT, which marshals as an encoded bytestream, not a String.
+            'root'=>"#{root.respond_to?(:force_encoding) ? root.force_encoding('UTF-8') : root}",
           },
         }
 
