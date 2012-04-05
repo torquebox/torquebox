@@ -161,8 +161,8 @@ module Capistrano
 
         end
 
-        before 'deploy:check',   'deploy:torquebox:check'
-        after  'deploy:symlink', 'deploy:torquebox:deployment_descriptor'
+        before 'deploy:check',          'deploy:torquebox:check'
+        after  'deploy:create_symlink', 'deploy:torquebox:deployment_descriptor'
       end
     end
   end
