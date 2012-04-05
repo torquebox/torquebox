@@ -77,13 +77,7 @@ module Capistrano
         set( :bundle_flags,        '' ) unless exists?( :bundle_flags )
         
         namespace :deploy do
-        
-          desc "Perform a deployment"
 
-          task :default do
-            update
-          end
-        
           desc "Restart Application"
           task :restart do
             run "touch #{jboss_home}/standalone/deployments/#{application}-knob.yml.dodeploy"
