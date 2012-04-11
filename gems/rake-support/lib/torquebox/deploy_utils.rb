@@ -289,28 +289,49 @@ module TorqueBox
       end
 
       def exec_command(cmd)
-        IO.popen4( cmd ) do |pid, stdin, stdout, stderr|
+        exiting = false
+        IO.popen4(cmd) do |pid, stdin, stdout, stderr|
+          stdout.sync = true
+          stderr.sync = true
           trap("INT") do
+            exiting = true
+            stdin.close
             puts "caught SIGINT, shutting down"
             `taskkill /F /T /PID #{pid}` if windows?
           end
-          stdin.close
-          [
-           Thread.new(stdout) {|stdout_io|
-             stdout_io.each_line do |l|
-               STDOUT.puts l
-               STDOUT.flush
-             end
-             stdout_io.close
-           },
 
-           Thread.new(stderr) {|stderr_io|
-             stderr_io.each_line do |l|
-               STDERR.puts l
-               STDERR.flush
-             end
-           }
-          ].each( &:join )
+          # Don't join on stdin since interrupting a blocking read on
+          # JRuby is pretty tricky
+          Thread.new(stdin) { |stdin_io|
+            begin
+              until exiting
+                stdin_io.write(STDIN.readpartial(1024))
+                stdin_io.flush
+              end
+            rescue Errno::EBADF, IOError
+            end
+          }
+
+          # Join on stdout/stderr since they'll be closed
+          # automatically once TorqueBox exits
+          [ Thread.new(stdout) { |stdout_io|
+              begin
+                while true
+                  STDOUT.write(stdout_io.readpartial(1024))
+                end
+              rescue EOFError
+              end
+            },
+
+            Thread.new(stderr) { |stderr_io|
+              begin
+                while true
+                  STDERR.write(stderr_io.readpartial(1024))
+                end
+              rescue EOFError
+              end
+            }
+          ].each( &:join)
         end
 
       end
