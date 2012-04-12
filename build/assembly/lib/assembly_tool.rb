@@ -436,6 +436,23 @@ class AssemblyTool
     end
   end
 
+  def adjust_modcluster_config(doc)
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:modcluster:1.0']" ).first
+      unless subsystem.nil?
+        config = subsystem.get_elements( 'mod-cluster-config' ).first
+
+        # Remove once upgraded to AS 7.1.2
+        fixed_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:modcluster:1.1']" ).first
+        raise 'Looks like we upgraded to AS 7.1.2 - remove modcluster muckage' unless fixed_subsystem.nil?
+        config.add_attribute( 'advertise-security-key', 'secret' )
+        # end things to be removed after AS 7.1.2
+      end
+    end
+  end
+
   def transform_host_config(input_file, output_file)
     doc = REXML::Document.new( File.read( input_file ) )
     Dir.chdir( @jboss_dir ) do
@@ -475,6 +492,7 @@ class AssemblyTool
       if ( domain || ha )
         fix_messaging_clustering(doc)
         add_messaging_socket_binding(doc)
+        adjust_modcluster_config(doc)
       end
 
       adjust_messaging_config(doc)
