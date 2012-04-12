@@ -350,7 +350,7 @@ describe TorqueBox::DeployUtils do
 
   describe '.create_archive' do
     it 'should not include excluded dirs and files' do
-      @util.should_receive(:exec_command) do |arg|
+      @util.should_receive(:run_command) do |arg|
         ["config.ru", "app"].permutation.map {|p|
           "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
         }.should include(arg)
@@ -366,7 +366,7 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should exclude based on patterns' do
-      @util.should_receive(:exec_command) do |arg|
+      @util.should_receive(:run_command) do |arg|
         ["puppet", "config.ru", "app"].permutation.map {|p|
           "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
         }.should include(arg)
@@ -382,7 +382,7 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should include all dirs and files except default' do
-      @util.should_receive(:exec_command) do |arg|
+      @util.should_receive(:run_command) do |arg|
         ["config.ru", "app", "puppet", "simpleapp.box"].permutation.map {|p|
           "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
         }.should include(arg)

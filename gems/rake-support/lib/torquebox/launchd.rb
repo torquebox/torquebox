@@ -74,7 +74,7 @@ module TorqueBox
           end
         end
         puts "Created launchd plist #{plist_file}, loading now."
-        TorqueBox::DeployUtils.exec_command "launchctl load #{plist_file}"
+        TorqueBox::DeployUtils.run_command "launchctl load #{plist_file}"
         check_install
         FileUtils.mkdir_p log_dir, :mode => 0755 unless File.exists? log_dir
       end

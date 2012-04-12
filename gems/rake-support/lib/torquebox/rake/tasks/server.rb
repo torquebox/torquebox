@@ -48,18 +48,18 @@ namespace :torquebox do
 
     desc "Start TorqueBox when running as a launchd daemon"
     task :start=>[ :check ] do
-      TorqueBox::DeployUtils.exec_command( 'launchctl start org.torquebox.TorqueBox' )
+      TorqueBox::DeployUtils.run_command( 'launchctl start org.torquebox.TorqueBox' )
     end
 
     desc "Stop TorqueBox when running as an launchd daemon"
     task :stop=>[ :check ] do
-      TorqueBox::DeployUtils.exec_command( 'launchctl stop org.torquebox.TorqueBox' )
+      TorqueBox::DeployUtils.run_command( 'launchctl stop org.torquebox.TorqueBox' )
     end
 
     desc "Restart TorqueBox when running as an launchd daemon"
     task :restart=>[ :check ] do
-      TorqueBox::DeployUtils.exec_command( 'launchctl stop org.torquebox.TorqueBox' )
-      TorqueBox::DeployUtils.exec_command( 'launchctl start org.torquebox.TorqueBox' )
+      TorqueBox::DeployUtils.run_command( 'launchctl stop org.torquebox.TorqueBox' )
+      TorqueBox::DeployUtils.run_command( 'launchctl start org.torquebox.TorqueBox' )
     end
 
   end
@@ -80,17 +80,17 @@ namespace :torquebox do
 
     desc "Start TorqueBox when running as an upstart service"
     task :start=>[ :check ] do
-      TorqueBox::DeployUtils.exec_command( 'start torquebox' )
+      TorqueBox::DeployUtils.run_command( 'start torquebox' )
     end
 
     desc "Stop TorqueBox when running as an upstart service"
     task :stop=>[ :check ] do
-      TorqueBox::DeployUtils.exec_command( 'stop torquebox' )
+      TorqueBox::DeployUtils.run_command( 'stop torquebox' )
     end
 
     desc "Restart TorqueBox when running as an upstart service"
     task :restart=>[ :check ] do
-      TorqueBox::DeployUtils.exec_command( 'restart torquebox' )
+      TorqueBox::DeployUtils.run_command( 'restart torquebox' )
     end
 
   end

@@ -183,7 +183,7 @@ module TorqueBox
           end
 
           cmd = "jar cvf #{archive_path} #{include_files.join(' ')}"
-          exec_command( cmd )
+          run_command( cmd )
         end
 
         archive_path
@@ -193,8 +193,8 @@ module TorqueBox
         Dir.chdir( app_dir ) do
           jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
           jruby << " --1.9" if RUBY_VERSION =~ /^1\.9\./
-          exec_command( "#{jruby} -S bundle package" )
-          exec_command( "#{jruby} -S bundle install --local --path vendor/bundle" )
+          run_command( "#{jruby} -S bundle package" )
+          run_command( "#{jruby} -S bundle install --local --path vendor/bundle" )
         end
       end
 
@@ -288,7 +288,18 @@ module TorqueBox
         success
       end
 
+      # Used when we want to effectively replace this process with the
+      # given command. On Windows this does call Kernel#exec but on
+      # everything else we just delegate to run_command.
+      #
+      # This is mainly so CTRL+C, STDIN, STDOUT, and STDERR work as
+      # expected across all operating systems.
       def exec_command(cmd)
+        windows? ? exec(cmd) : run_command(cmd)
+      end
+
+      # Used to run a command as a subprocess
+      def run_command(cmd)
         exiting = false
         IO.popen4(cmd) do |pid, stdin, stdout, stderr|
           stdout.sync = true
