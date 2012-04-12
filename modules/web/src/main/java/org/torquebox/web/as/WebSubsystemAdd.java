@@ -37,6 +37,7 @@ import org.jboss.as.controller.ServiceVerificationHandler;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
+import org.jboss.as.web.WebServer;
 import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
@@ -45,6 +46,7 @@ import org.jboss.msc.service.ServiceController.Mode;
 import org.projectodd.polyglot.web.WebConnectorConfigService;
 import org.projectodd.polyglot.web.processors.VirtualHostInstaller;
 import org.projectodd.polyglot.web.processors.WebApplicationDefaultsProcessor;
+import org.torquebox.web.ModClusterUuidFixService;
 import org.torquebox.web.component.processors.RackApplicationComponentResolverInstaller;
 import org.torquebox.web.rack.processors.RackApplicationRecognizer;
 import org.torquebox.web.rack.processors.RackRuntimeProcessor;
@@ -75,9 +77,11 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
+        
 
         try {
             addWebConnectorConfigServices( context, verificationHandler, newControllers );
+            addModClusterUuidFixService( context, verificationHandler, newControllers );
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
@@ -128,6 +132,17 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 .addDependency( WebSubsystemServices.JBOSS_WEB_CONNECTOR.append( connectorName ), Connector.class, service.getConnectorInjector() )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.ACTIVE )
+                .install() );
+    }
+
+    protected void addModClusterUuidFixService(final OperationContext context,
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) {
+        ModClusterUuidFixService service = new ModClusterUuidFixService();
+        newControllers.add( context.getServiceTarget().addService( WebServices.MOD_CLUSTER_UUID_FIX, service )
+                .addDependency( WebSubsystemServices.JBOSS_WEB, WebServer.class, service.getWebServerInjector() )
+                .addListener( verificationHandler )
+                .setInitialMode( Mode.PASSIVE )
                 .install() );
     }
 

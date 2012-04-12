@@ -31,6 +31,7 @@ public class WebServices {
     public static final ServiceName WEB                  = CoreServices.TORQUEBOX.append( "web" );
     public static final ServiceName RACK                 = WEB.append( "rack" );
     public static final ServiceName WEB_CONNECTOR_CONFIG = WEB.append( "connector_config" );
+    public static final ServiceName MOD_CLUSTER_UUID_FIX = WEB.append(  "mod_cluster_uuid_fix" );
     
     public static ServiceName rackApplicationFactoryName(final String name) {
         return RACK.append("factory").append( name );
