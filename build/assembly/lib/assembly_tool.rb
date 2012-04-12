@@ -443,6 +443,7 @@ class AssemblyTool
       subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:modcluster:1.0']" ).first
       unless subsystem.nil?
         config = subsystem.get_elements( 'mod-cluster-config' ).first
+        config.add_attribute( 'excluded-contexts', 'invoker,jbossws,juddi,console' )
 
         # Remove once upgraded to AS 7.1.2
         fixed_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:modcluster:1.1']" ).first
