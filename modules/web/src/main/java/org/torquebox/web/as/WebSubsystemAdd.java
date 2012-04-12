@@ -34,6 +34,7 @@ import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.modcluster.ModCluster;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
@@ -41,11 +42,14 @@ import org.jboss.as.web.WebServer;
 import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.web.WebConnectorConfigService;
 import org.projectodd.polyglot.web.processors.VirtualHostInstaller;
 import org.projectodd.polyglot.web.processors.WebApplicationDefaultsProcessor;
+import org.torquebox.web.ModClusterSecurityKeyFixService;
 import org.torquebox.web.ModClusterUuidFixService;
 import org.torquebox.web.component.processors.RackApplicationComponentResolverInstaller;
 import org.torquebox.web.rack.processors.RackApplicationRecognizer;
@@ -82,6 +86,7 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
         try {
             addWebConnectorConfigServices( context, verificationHandler, newControllers );
             addModClusterUuidFixService( context, verificationHandler, newControllers );
+            addModClusterSecurityKeyFixService( context, verificationHandler, newControllers );
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
@@ -141,6 +146,17 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
         ModClusterUuidFixService service = new ModClusterUuidFixService();
         newControllers.add( context.getServiceTarget().addService( WebServices.MOD_CLUSTER_UUID_FIX, service )
                 .addDependency( WebSubsystemServices.JBOSS_WEB, WebServer.class, service.getWebServerInjector() )
+                .addListener( verificationHandler )
+                .setInitialMode( Mode.PASSIVE )
+                .install() );
+    }
+
+    protected void addModClusterSecurityKeyFixService(final OperationContext context,
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) {
+        ModClusterSecurityKeyFixService service = new ModClusterSecurityKeyFixService();
+        newControllers.add( context.getServiceTarget().addService(  WebServices.MOD_CLUSTER_KEY_FIX, service )
+                .addDependency( DependencyType.OPTIONAL, ServiceName.JBOSS.append("mod-cluster"), ModCluster.class, service.getModClusterInjector() )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.PASSIVE )
                 .install() );

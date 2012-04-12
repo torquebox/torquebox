@@ -444,12 +444,6 @@ class AssemblyTool
       unless subsystem.nil?
         config = subsystem.get_elements( 'mod-cluster-config' ).first
         config.add_attribute( 'excluded-contexts', 'invoker,jbossws,juddi,console' )
-
-        # Remove once upgraded to AS 7.1.2
-        fixed_subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:modcluster:1.1']" ).first
-        raise 'Looks like we upgraded to AS 7.1.2 - remove modcluster muckage' unless fixed_subsystem.nil?
-        config.add_attribute( 'advertise-security-key', 'secret' )
-        # end things to be removed after AS 7.1.2
       end
     end
   end
