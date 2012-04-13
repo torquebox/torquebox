@@ -10,7 +10,9 @@ class RailsTemplateAdjuster
   def initialize( version, build_number )
     @version      = version
     @build_number = build_number
+    @incremental = @version =~ /\-SNAPSHOT$/
     @version.gsub!(/\-SNAPSHOT$/, '')
+
   end
    
   def adjust
@@ -45,8 +47,10 @@ class RailsTemplateAdjuster
   def generate_source 
     if local_build?
       "# Local build - no source needed"
-    else
+    elsif @incremental
       "add_source \"http://torquebox.org/2x/builds/#{@build_number}/gem-repo\""
+    else
+      ""
     end
   end
    
