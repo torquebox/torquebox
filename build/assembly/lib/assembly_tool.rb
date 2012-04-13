@@ -368,9 +368,15 @@ class AssemblyTool
   end
 
   def adjust_messaging_config(doc)
-    settings = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server/address-settings/address-setting" ).first
-    settings.get_elements( 'address-full-policy' ).first.text = 'PAGE'
-    settings.get_elements( 'max-size-bytes' ).first.text = '20971520'
+    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    address_setting = hornetq_server.get_elements( "address-settings/address-setting" ).first
+    address_setting.get_elements( 'address-full-policy' ).first.text = 'PAGE'
+    address_setting.get_elements( 'max-size-bytes' ).first.text = '20971520'
+
+    in_vm_factory = hornetq_server.get_elements( "jms-connection-factories/connection-factory[@name='InVmConnectionFactory']").first
+    e = REXML::Element.new( 'consumer-window-size' )
+    e.text = '0'
+    in_vm_factory.add_element( e )
   end
 
   def remove_messaging_security(doc)
