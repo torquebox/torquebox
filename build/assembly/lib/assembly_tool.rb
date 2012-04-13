@@ -373,10 +373,12 @@ class AssemblyTool
     address_setting.get_elements( 'address-full-policy' ).first.text = 'PAGE'
     address_setting.get_elements( 'max-size-bytes' ).first.text = '20971520'
 
-    in_vm_factory = hornetq_server.get_elements( "jms-connection-factories/connection-factory[@name='InVmConnectionFactory']").first
-    e = REXML::Element.new( 'consumer-window-size' )
-    e.text = '0'
-    in_vm_factory.add_element( e )
+    factories = hornetq_server.get_elements( "jms-connection-factories/connection-factory")
+    factories.each do |factory|
+      e = REXML::Element.new( 'consumer-window-size' )
+      e.text = '0'
+      factory.add_element( e )
+    end
   end
 
   def remove_messaging_security(doc)
