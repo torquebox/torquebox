@@ -158,8 +158,8 @@ LoadModule manager_module       modules/mod_manager.so
     AllowDisplay On
 &lt;/Location&gt;
 
-Listen torquebox-balancer:6666
-&lt;VirtualHost torquebox-balancer:6666&gt;
+Listen 127.0.0.1:6666
+&lt;VirtualHost 127.0.0.1:6666&gt;
  
   &lt;Directory /&gt;
     Order deny,allow
@@ -175,18 +175,8 @@ Listen torquebox-balancer:6666
   ManagerBalancerName torquebox-balancer
   AllowDisplay On
   AdvertiseFrequency 5
-  AdvertiseSecurityKey secret
  
 &lt;/VirtualHost&gt;</programlisting>
-      Note that you will likely need to add the <code>AdvertiseSecurityKey</code>
-      setting to the configuration file that comes out of the box when you install.
-      You'll also need to set this in your JBoss <code>standalone-ha.xml</code>
-      file. 
-      <programlisting>&lt;mod-cluster-config advertise-socket="modcluster" proxy-list="torquebox-server:6666" advertise-security-key="secret"&gt;</programlisting>
-      The <code>torquebox-server</code> and <code>torquebox-balancer</code> names
-      in these examples are host names that we've added to <code>/etc/hosts</code>.
-      <programlisting>127.0.0.1 torquebox-server
-127.0.0.1 torquebox-balancer</programlisting>
       With these settings, you should have Apache's httpd accepting web requests
       on your host and JBoss <code>mod_cluster</code> dispatching those requests
       to the TorqueBox system process.
