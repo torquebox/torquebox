@@ -55,6 +55,18 @@ describe TorqueBox::Messaging::Destination do
     queue.with_session { }
   end
 
+  it "should connect with host and port if given even when inside container" do
+    internal_factory = Object.new
+    TorqueBox::Registry.merge!("connection-factory" => internal_factory)
+    factory = mock("factory")
+    connection = mock("connection").as_null_object
+    factory.stub(:create_connection).and_return(connection)
+
+    queue = TorqueBox::Messaging::Queue.new("/queues/foo", :host => "bar", :port => 123)
+    queue.connection_factory.should_receive(:create_connection_factory).with("bar", 123).and_return(factory)
+    queue.with_session { }
+  end
+
   it "should connect with username and password if given" do
     factory = mock("factory")
     connection = mock("connection").as_null_object
