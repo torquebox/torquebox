@@ -376,7 +376,7 @@ class AssemblyTool
     factories = hornetq_server.get_elements( "jms-connection-factories/connection-factory")
     factories.each do |factory|
       e = REXML::Element.new( 'consumer-window-size' )
-      e.text = '0'
+      e.text = '1'
       factory.add_element( e )
     end
   end
