@@ -59,13 +59,13 @@
         convention, TorqueBox is placed in <code>/opt/torquebox/current</code>
         and is owned by the <code>torquebox</code> user. 
 
-        <screen>$ wget http://torquebox.org/release/org/torquebox/torquebox-dist/2.0.0.cr1/torquebox-dist-2.0.0.cr1-bin.zip
+        <screen>$ wget http://torquebox.org/release/org/torquebox/torquebox-dist/2.0.1/torquebox-dist-2.0.1-bin.zip
 $ mkdir /opt/torquebox
 $ chown torquebox:torquebox /opt/torquebox
 $ su torquebox
-$ unzip torquebox-dist-2.0.0.cr1-bin.zip -d /opt/torquebox/
+$ unzip torquebox-dist-2.0.1-bin.zip -d /opt/torquebox/
 $ cd /opt/torquebox
-$ ln -s torquebox-dist-2.0.0.cr1 current</screen>
+$ ln -s torquebox-dist-2.0.1current</screen>
         To ensure that the <code>TORQUEBOX_HOME</code> and other relevant
         environment variables are available to system users, add these to
         <code>/etc/profile.d/torquebox.sh</code>
