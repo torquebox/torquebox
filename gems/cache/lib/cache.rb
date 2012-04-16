@@ -387,7 +387,7 @@ module TorqueBox
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        log( "Nothing: Can't get or create an Infinispan cache. No caching will occur", 'ERROR' )
+        log( "Nothing: Can't get or create an Infinispan cache. No caching will occur", 'ERROR' ) if defined?(TORQUEBOX_APP_NAME)
         result
       end
 
