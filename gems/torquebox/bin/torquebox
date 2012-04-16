@@ -27,7 +27,7 @@ class TorqueBoxCommand < Thor
   TASK_ORDER = %w(deploy undeploy start rails archive cli env help)
 
   map "run" => "start"
-  desc "run", "Run TorqueBox"
+  desc "run", "Run TorqueBox (binds to localhost, use -b to override)"
   method_option :clustered, :type => :boolean, :desc => "Run TorqueBox in clustered mode"
   method_option 'data-directory', :type => :string, :desc => 'Override the directory TorqueBox uses to store it runtime data'
   method_option 'extra', :aliases => '-e', :type => :string, :desc => 'Extra options to pass through to JBoss AS, you will to escape dashes with \ (e.g. \--help)'

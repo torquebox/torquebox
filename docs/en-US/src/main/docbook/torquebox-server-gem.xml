@@ -129,7 +129,7 @@ Options:
       [--port-offset=N]                  # Offset all port numbers listened on by TorqueBox by this number
   -J, [--jvm-options=JVM-OPTIONS]        # Pass options on to the JVM
 
-Run TorqueBox</screen>
+Run TorqueBox (binds to localhost, use -b to override)</screen>
     </formalpara>
   </section>
 
