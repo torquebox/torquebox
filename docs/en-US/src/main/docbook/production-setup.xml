@@ -65,7 +65,7 @@ $ chown torquebox:torquebox /opt/torquebox
 $ su torquebox
 $ unzip torquebox-dist-2.0.1-bin.zip -d /opt/torquebox/
 $ cd /opt/torquebox
-$ ln -s torquebox-2.0.1 torquebox-current</screen>
+$ ln -s torquebox-2.0.1 current</screen>
         To ensure that the <code>TORQUEBOX_HOME</code> and other relevant
         environment variables are available to system users, add these to
         <code>/etc/profile.d/torquebox.sh</code>
