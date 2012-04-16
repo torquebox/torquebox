@@ -88,6 +88,13 @@ Undeploy an application from TorqueBox</screen>
 
     <screen><prompt>$</prompt> <command>torquebox run</command></screen>
 
+    Out of the box, TorqueBox only is only accessible from
+    localhost. To access it from other machines pass the -b parameter
+    to bind to a real IP address or any available IP address:
+
+    <screen><prompt>$</prompt> <command>torquebox run -b 10.100.10.25</command>
+<prompt>$</prompt> <command>torquebox run -b 0.0.0.0</command></screen>
+
     To run TorqueBox in clustered mode, use:
 
     <screen><prompt>$</prompt> <command>torquebox run --clustered</command></screen>
