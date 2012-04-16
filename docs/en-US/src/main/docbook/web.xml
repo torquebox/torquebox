@@ -517,7 +517,7 @@ run app</programlisting></para>
         create a Gemfile that specifies the Rails version.
 
         <programlisting language="ruby">gem 'rails', 2.3.14'
-gem 'torquebox', '2.0.0'</programlisting>
+gem 'torquebox', '${project.version}'</programlisting>
             
           To generate the Rails app, first run bundler.
             
