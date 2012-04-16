@@ -339,14 +339,14 @@ class AssemblyTool
   def fix_profiles(doc)
     profile = doc.root.get_elements( "//profile[@name='default']" ).first
     profile.remove
-    profile = doc.root.get_elements( "//profile[@name='ha']" ).first
+    profile = doc.root.get_elements( "//profile[@name='full-ha']" ).first
     profile.attributes['name'] = 'default' 
   end
 
   def fix_socket_binding_groups(doc)
     group = doc.root.get_elements( "//socket-binding-group[@name='standard-sockets']" ).first
     group.remove
-    group = doc.root.get_elements( "//socket-binding-group[@name='ha-sockets']" ).first
+    group = doc.root.get_elements( "//socket-binding-group[@name='full-ha-sockets']" ).first
     group.attributes['name'] = 'standard-sockets'
   end
 
@@ -382,10 +382,11 @@ class AssemblyTool
   end
 
   def remove_messaging_security(doc)
-    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
-    e = REXML::Element.new( 'security-enabled' )
-    e.text = 'false'
-    hornetq_server.add_element( e )
+    doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).each do |hornetq_server|
+      e = REXML::Element.new( 'security-enabled' )
+      e.text = 'false'
+      hornetq_server.add_element( e )
+    end
   end
 
   def fix_messaging_clustering(doc)
