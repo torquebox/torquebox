@@ -32,13 +32,15 @@ import org.torquebox.services.as.ServicesServices;
  * @author Bob McWhirter
  */
 public class ServiceInjectable extends SimpleNamedInjectable {
+    
+    public static final String TYPE = "service";
 
     public ServiceInjectable(String name) {
-        super( "service", name, false );
+        super( TYPE, name, false );
     }
     
     public String getKey() {
-        return "service:" + getName();
+        return TYPE + ":" + getName();
     }
 
     @Override

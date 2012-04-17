@@ -38,6 +38,40 @@ describe "jobs alacarte" do
   it_should_behave_like "alacarte"
 end
 
+describe "modular jobs alacarte" do
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/modular_jobs
+      env: development
+
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it_should_behave_like "alacarte"
+end
+
+describe "modular jobs alacarte with torquebox.rb" do
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/modular_jobs_rb
+      env: development
+
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it_should_behave_like "alacarte"
+end
+
 describe "services alacarte" do
   deploy <<-END.gsub(/^ {4}/,'')
     ---

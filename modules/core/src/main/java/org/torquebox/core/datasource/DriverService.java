@@ -19,9 +19,7 @@
 
 package org.torquebox.core.datasource;
 
-import java.lang.reflect.Field;
 import java.sql.Driver;
-import java.util.Map;
 
 import org.jboss.as.connector.registry.DriverRegistry;
 import org.jboss.as.connector.registry.InstalledDriver;
@@ -33,7 +31,6 @@ import org.jboss.msc.service.StartException;
 import org.jboss.msc.service.StopContext;
 import org.jboss.msc.value.InjectedValue;
 import org.jruby.Ruby;
-import org.jruby.RubyHash;
 import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 import org.torquebox.core.util.RuntimeHelper;
@@ -72,7 +69,6 @@ public class DriverService implements Service<Driver> {
         this.driverRegistryInjector.getValue().unregisterInstalledDriver( this.installedDriver );
     }
 
-    @SuppressWarnings("unchecked")
     protected Driver instantiateDriver() throws Exception {
         Ruby ruby = this.runtimeInjector.getValue();
 
@@ -85,20 +81,6 @@ public class DriverService implements Service<Driver> {
             ClassLoader classLoader = ruby.getJRubyClassLoader();
             final Class<? extends Driver> driverClass = classLoader.loadClass( this.adapter.getDriverClassName() ).asSubclass( Driver.class );
             Driver driver = driverClass.newInstance();
-            
-            //
-            // HACK - Remove once upgraded to JRuby 1.6.7
-            //
-            try {
-                Field recursiveField = ruby.getClass().getDeclaredField( "recursive" );
-                recursiveField.setAccessible( true );
-                ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( ruby )).remove();
-            }
-            catch (Exception ex) {
-                // safe to ignore
-            }
-            // END HACK
-            
             return driver;
         }
     }

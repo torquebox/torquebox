@@ -4,23 +4,24 @@
 <chapter id="deployment-descriptors">
   <title>TorqueBox Deployment Descriptors</title>
 
-  <para>TorqueBox applications contain one central, but optional deployment
+  <para>TorqueBox applications contain one central but optional internal deployment
   descriptor. A deployment descriptor is simply a configuration file that
   affects how your components are woven together at deployment time. The
-  primary deployment descriptor used by TorqueBox can be either a YAML text
+  internal deployment descriptor used by TorqueBox can be either a YAML text
   file (known as <filename>torquebox.yml</filename>) or a Ruby file (known as
   <filename>torquebox.rb</filename>).</para>
 
   <para>The deployment descriptor may be placed inside your application so
   that it is entirely self-contained. Alternatively, an additional (YAML only)
-  descriptor may be used outside of your application, overriding portions of
+  external descriptor may be used outside of your application, overriding portions of
   the descriptor contained within the application.</para>
 
   <para>Each subsystem within TorqueBox may contribute one or more
   configurable sections to the descriptor. For more information on the various
-  subsystem descriptor sections, please see: <xref linkend="websockets" />,
-  <xref linkend="messaging" />, <xref linkend="scheduled-jobs" />, <xref
-  linkend="services" />, <xref linkend="authentication" />, and <xref
+  subsystem descriptor sections, please see: <xref linkend="web" />,
+  <xref linkend="messaging" />, <xref linkend="stomp" />, 
+  <xref linkend="scheduled-jobs" />, <xref linkend="services" />, 
+  <xref linkend="resource-injection" />, <xref linkend="authentication" />, and <xref
   linkend="pooling" />.</para>
 
   <section id="external-and-internal-descriptors">
@@ -54,7 +55,12 @@
     <title>Contents of a descriptor</title>
 
     <para>There are two syntaxes available for use in an internal descriptor:
-    YAML and a Ruby DSL.</para>
+    YAML and a Ruby DSL. For the configuration specifics for each subystem,
+    see: <xref linkend="web" />,
+    <xref linkend="messaging" />, <xref linkend="stomp" />, 
+    <xref linkend="scheduled-jobs" />, <xref linkend="services" />, 
+    <xref linkend="resource-injection" />, <xref linkend="authentication" />, and <xref
+    linkend="pooling" />.</para>
 
     <section id="yaml-descriptor-layout">
       <title>YAML syntax layout</title>
@@ -62,41 +68,6 @@
       <para>The YAML descriptor has several sections, grouped by subsystem,
       represented as top-level keys in a YAML associative array.</para>
 
-      <orderedlist spacing="compact">
-        <listitem>
-          <para><varname>application</varname>: General application
-          configuration</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>web</varname>: Web-specific configuration</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>ruby</varname>: Runtime version and JIT
-          options</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>environment</varname>: Environment variables</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>jobs</varname>: Scheduled executions</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>messaging</varname>: Advanced message-handling</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>pooling</varname>: Runtime pooling control</para>
-        </listitem>
-
-        <listitem>
-          <para><varname>services</varname>: low-level service daemons</para>
-        </listitem>
-      </orderedlist>
     </section>
 
     <section id="ruby-descriptor-layout">
@@ -217,128 +188,6 @@ end</programlisting></para>
       <para>For example, in YAML: <informalexample>
           <para><programlisting>application:
   root: /path/to/myapp</programlisting></para>
-        </informalexample></para>
-    </section>
-
-    <section id="web-specific-config-in-descriptor">
-      <title>Web-specific configuration</title>
-
-      <para>Ruby web apps are often deployed individually, without respect to
-      hostnames or context-path. Running under TorqueBox, however, you may
-      host several apps under a single host, or multiple apps under different
-      hostnames.</para>
-
-      <para>In a YAML configuration, the web settings are grouped under the
-      <varname>web</varname> key. For the DSL, they are grouped within the
-      <varname>web</varname> block.</para>
-
-      <table>
-        <title>web</title>
-
-        <tgroup cols="3">
-          <colspec align="left" />
-
-          <thead>
-            <row>
-              <entry>YAML Key/DSL Method</entry>
-
-              <entry>Description</entry>
-
-              <entry>Default</entry>
-            </row>
-          </thead>
-
-          <tbody>
-            <row>
-              <entry><varname>rackup</varname></entry>
-
-              <entry>The "rackup" script containing the complete logic for
-              initializing your application.</entry>
-
-              <entry><filename>config.ru</filename></entry>
-            </row>
-
-            <row>
-              <entry><varname>host</varname></entry>
-
-              <entry>Virtual hosts allow one application to respond to
-              <emphasis>www.host-one.com</emphasis>, while another running
-              within the same JBoss AS to respond to
-              <emphasis>www.host-two.com</emphasis>. This value can be either
-              a single hostname or a YAML list of hostnames.</entry>
-
-              <entry><parameter>localhost</parameter></entry>
-            </row>
-
-            <row>
-              <entry><varname>context</varname></entry>
-
-              <entry>Applications within a single TorqueBox Server may be
-              separated purely by a <emphasis>context path</emphasis>. For a
-              given host, the context path is the prefix used to access the
-              application, e.g. http://some.host.com/context. Traditional Ruby
-              web apps respond from the top of a site, i.e. the root context.
-              By using a context path, you can mount applications at a
-              location beneath the root.</entry>
-
-              <entry><filename>/</filename></entry>
-            </row>
-
-            <row>
-              <entry><varname>static</varname></entry>
-
-              <entry>Any static web content provided by your app should reside
-              beneath this directory.</entry>
-
-              <entry><emphasis>none</emphasis> unless deploying a Rails
-              application, then <filename>public</filename>.</entry>
-            </row>
-
-            <row>
-              <entry><varname>sesion-timeout</varname></entry>
-
-              <entry>Time (defaults to minutes) for idle sessions to timeout.
-              Specified as an integer followed by a units
-              designation<itemizedlist>
-                  <listitem>
-                    <para><code>ms</code> designates milliseconds</para>
-                  </listitem>
-
-                  <listitem>
-                    <para><code>s</code> designates seconds</para>
-                  </listitem>
-
-                  <listitem>
-                    <para><code>m</code> designates minutes (default if no
-                    units are specified)</para>
-                  </listitem>
-
-                  <listitem>
-                    <para><code>h</code> designates hours</para>
-                  </listitem>
-                </itemizedlist></entry>
-
-              <entry><code>30m</code>, specifying 30 minutes.</entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table>
-
-      <para>For example, in YAML: <informalexample>
-          <para><programlisting>web:
-  rackup: alternative/path/to/my_config.ru
-  context: /app-one
-  static: public
-  host: www.host-one.com</programlisting></para>
-        </informalexample> And via the DSL: <informalexample>
-          <para><programlisting>TorqueBox.configure do
-  web do
-    rackup "alternative/path/to/my_config.ru"
-    context "/app-one"
-    static "public"
-    host "www.host-one.com"
-  end
-end</programlisting></para>
         </informalexample></para>
     </section>
 
@@ -500,7 +349,7 @@ end</programlisting></para>
         </informalexample></para>
 
       <para>Any variable set in the environment section is accessible from
-      within the Rack app using the ENV hash, e.g.
+      within the application using the ENV hash, e.g.
       ENV['MAIL_HOST']=='mail.yourhost.com'</para>
 
       <section id="application-environment">

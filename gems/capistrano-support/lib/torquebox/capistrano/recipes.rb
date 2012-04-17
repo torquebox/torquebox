@@ -22,7 +22,8 @@ module Capistrano
     def create_deployment_descriptor( root )
         dd = {
           'application'=>{
-            'root'=>"#{root}",
+            # Force the encoding to UTF-8 on 1.9 since the value may be ASCII-8BIT, which marshals as an encoded bytestream, not a String.
+            'root'=>"#{root.respond_to?(:force_encoding) ? root.force_encoding('UTF-8') : root}",
           },
         }
 
@@ -76,48 +77,47 @@ module Capistrano
         set( :bundle_flags,        '' ) unless exists?( :bundle_flags )
         
         namespace :deploy do
-        
-          desc "Perform a deployment"
 
-          task :default do
-            update
-          end
-        
-          desc "Start TorqueBox Server"
-          task :start do
-            puts "Starting TorqueBox AS"
-            case ( jboss_control_style )
-              when :initd
-                run "#{jboss_init_script} start"
-              when :binscripts
-                run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
-            end
-          end
-        
-          desc "Stop TorqueBox Server"
-          task :stop do
-            puts "Stopping TorqueBox AS"
-            case ( jboss_control_style )
-              when :initd
-                run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
-              when :binscripts
-                run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
-            end
-          end
-        
-          desc "Restart TorqueBox Server"
+          desc "Restart Application"
           task :restart do
-            case ( jboss_control_style )
-              when :initd
-                puts "Restarting TorqueBox AS"
-                puts "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
-              when :binscripts
-                run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
-                run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
-            end
+            run "touch #{jboss_home}/standalone/deployments/#{application}-knob.yml.dodeploy"
           end
-        
+ 
           namespace :torquebox do
+
+            desc "Start TorqueBox Server"
+            task :start do
+              puts "Starting TorqueBox AS"
+              case ( jboss_control_style )
+                when :initd
+                  run "#{jboss_init_script} start"
+                when :binscripts
+                  run "nohup #{jboss_home}/bin/standalone.sh -b #{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
+              end
+            end
+        
+            desc "Stop TorqueBox Server"
+            task :stop do
+              puts "Stopping TorqueBox AS"
+              case ( jboss_control_style )
+                when :initd
+                  run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+                when :binscripts
+                  run "#{jboss_home}/bin/jboss-cli.sh --connect :shutdown"
+              end
+            end
+        
+            desc "Restart TorqueBox Server"
+            task :restart do
+              case ( jboss_control_style )
+                when :initd
+                  puts "Restarting TorqueBox AS"
+                  puts "JBOSS_HOME=#{jboss_home} #{jboss_init_script} restart"
+                when :binscripts
+                  run "JBOSS_HOME=#{jboss_home} #{jboss_init_script} stop"
+                  run "nohup #{jboss_home}/bin/standalone.sh -bpublic=#{jboss_bind_address} < /dev/null > /dev/null 2>&1 &"
+              end
+            end
 
             task :info do
               puts "torquebox_home.....#{torquebox_home}"
@@ -147,7 +147,6 @@ module Capistrano
               end
               cmd += " && echo '' >> #{dd_file}"
               run cmd
-              run "touch #{dd_file}.dodeploy"
             end
           end
 
@@ -162,8 +161,8 @@ module Capistrano
 
         end
 
-        before 'deploy:check',   'deploy:torquebox:check'
-        after  'deploy:symlink', 'deploy:torquebox:deployment_descriptor'
+        before 'deploy:check',          'deploy:torquebox:check'
+        after  'deploy:create_symlink', 'deploy:torquebox:deployment_descriptor'
       end
     end
   end

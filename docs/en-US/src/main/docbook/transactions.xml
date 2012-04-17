@@ -18,7 +18,7 @@
       multiple resources may participate in a distributed
       transaction. The most common example of a transactional resource
       is a relational database, but other examples include message
-      brokers and even NoSQL data grids. Distributed transactions
+      brokers and some NoSQL data grids. Distributed transactions
       allow your application to say, tie the success of a database
       update to the delivery of a message, i.e. the message is only
       sent if the database update succeeds, and vice versa. If either
@@ -40,7 +40,7 @@
         <listitem>
           <para>
             An arbitrary number of resources to enlist in the current
-            transaction (you probably won't ever use this)
+            transaction (not needed for built-in services)
           </para>
         </listitem>
 
@@ -115,7 +115,7 @@
     </para>
   </section>
 
-  <section>
+  <section id="transaction-configuration">
     <title>Configuration</title>
     <para>
       No extra configuration of your app is required other that what
@@ -127,7 +127,7 @@
     <para>
       Distributed transactions are restricted to those databases
       supported by both the <code>activerecord-jdbc-adapter</code> and
-      JBoss XA datasources.. Currently, that includes PostgreSQL,
+      JBoss XA datasources. Currently, that includes PostgreSQL,
       MySQL, H2, Derby, Oracle, Microsoft SQL Server, and IBM
       DB2. Sqlite3 doesn't support XA. Default installations of some
       of these databases may require additional configuration to
@@ -161,19 +161,20 @@
   <section>
     <title>Examples</title>
 
-    <para>Distributed transactions support comes enabled by default, so no extra
-    configuration is required to enable it. If you don't need this feature, it is possible to
-    disable it by setting <code>xa</code> to false in your 
-    database.yml.</para>
+    <para>Distributed transactions support comes enabled by default,
+    so no extra configuration is required to enable it. If you don't
+    need this feature, it is possible to disable it by setting
+    <code>xa</code> to false in your
+    <filename>database.yml</filename>. If your application uses more
+    than one database, you'll need to enable distributed transactions
+    explicitly for the additional databases by setting <code>xa</code>
+    to true.</para>
 
-    <section>
-      <title>Disabling XA support in a application environment</title>
+    <para><example>
+      <title>Disabling XA support
+      (<filename>config/database.yml</filename>)</title>
 
-      <para><example>
-          <title>Disabling XA support
-          (<filename>config/database.yml</filename>)</title>
-
-          <para><programlisting>production:
+      <para><programlisting>production:
   adapter: mysql
   xa: false
   database: my_database
@@ -181,8 +182,22 @@
   username: my_username
   password: my_password
   encoding: utf8
-            </programlisting></para>
-        </example></para>
-    </section>
+      </programlisting></para>
+    </example></para>
+
+    <para><example>
+      <title>Enabling XA support for additional databases
+      (<filename>config/database.yml</filename>)</title>
+
+      <para><programlisting>some_other_database:
+  adapter: mysql
+  xa: true
+  database: my_database
+  host: my_host
+  username: my_username
+  password: my_password
+  encoding: utf8
+      </programlisting></para>
+    </example></para>
   </section>
 </chapter>

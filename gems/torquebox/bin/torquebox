@@ -27,15 +27,25 @@ class TorqueBoxCommand < Thor
   TASK_ORDER = %w(deploy undeploy start rails archive cli env help)
 
   map "run" => "start"
-  desc "run", "Run TorqueBox"
+  desc "run", "Run TorqueBox (binds to localhost, use -b to override)"
   method_option :clustered, :type => :boolean, :desc => "Run TorqueBox in clustered mode"
+  method_option 'data-directory', :type => :string, :desc => 'Override the directory TorqueBox uses to store it runtime data'
+  method_option 'extra', :aliases => '-e', :type => :string, :desc => 'Extra options to pass through to JBoss AS, you will to escape dashes with \ (e.g. \--help)'
   method_option 'max-threads', :type => :numeric, :desc => "Maximum number of HTTP threads"
-  method_option 'bind-address', :aliases => '-b', :type => :string, :desc => "IP address to bind to"
+  method_option 'bind-address', :aliases => '-b', :type => :string, :desc => "IP address to bind to - don't set this to 0.0.0.0 if used with --clustered"
+  method_option 'node-name', :type => :string, :desc => 'Override the name of the node (which by default is the hostname)'
+  method_option 'port-offset', :type => :numeric, :desc => 'Offset all port numbers listened on by TorqueBox by this number'
+  method_option 'jvm-options', :aliases => '-J', :type => :string, :desc => 'Pass options on to the JVM'
   def start
     TorqueBox::Server.setup_environment
     TorqueBox::DeployUtils.run_server(:clustered => options.clustered,
                                       :max_threads => options['max-threads'],
-                                      :bind_address => options['bind-address'])
+                                      :bind_address => options['bind-address'],
+                                      :port_offset => options['port-offset'],
+                                      :pass_through => options['extra'],
+                                      :node_name => options['node-name'],
+                                      :data_directory => options['data-directory'],
+                                      :jvm_options => options['jvm-options'])
   end
 
   desc "rails ROOT", "Create a Rails application at ROOT using the TorqueBox Rails template, or apply the TorqueBox template to an existing application at ROOT."
@@ -85,6 +95,11 @@ class TorqueBoxCommand < Thor
     opts = {:root => root}.merge(options)
     descriptor = TorqueBox::DeployUtils.basic_deployment_descriptor(opts)
     deployed_name, deploy_dir = TorqueBox::DeployUtils.deploy_yaml(descriptor, opts)
+    failed_file = File.join( deploy_dir, "#{deployed_name}.failed" )
+    if File.exists? failed_file
+      puts "Removing failed descriptor: #{failed_file}" 
+      FileUtils.rm( failed_file ) 
+    end
     puts "Deployed: #{deployed_name}"
     puts "    into: #{deploy_dir}"
   end
@@ -105,6 +120,18 @@ class TorqueBoxCommand < Thor
       puts "      from: #{deploy_dir}"
     else
       puts "Nothing to undeploy"
+    end
+  end
+
+  desc "list", "List applications deployed to TorqueBox and their deployment status"
+  def list(root = ".")
+    TorqueBox::Server.setup_environment
+    apps = TorqueBox::DeployUtils.deployment_status
+    puts "Nothing deployed." if apps.empty?
+    apps.each do |k,v|
+      puts k
+      puts "  Descriptor: #{v[:descriptor]}"
+      puts "  Status: #{v[:status]}"
     end
   end
 

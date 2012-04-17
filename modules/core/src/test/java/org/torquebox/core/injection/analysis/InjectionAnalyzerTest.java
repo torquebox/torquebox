@@ -97,7 +97,7 @@ public class InjectionAnalyzerTest {
 
         assertEquals( 2, injectables.size() );
 
-        assertContains( injectables, ServiceInjectable.class, "service", "org.jboss.whatever.Thing", "org.jboss.whatever.Thing" );
+        assertContains( injectables, ServiceInjectable.class, "msc", "org.jboss.whatever.Thing", "org.jboss.whatever.Thing" );
         assertContains( injectables, JNDIInjectable.class, "jndi", "java:/comp/whatever", "java:/comp/whatever" );
     }
 
@@ -153,6 +153,11 @@ public class InjectionAnalyzerTest {
     @Test(expected=IllegalInjectionException.class)
     public void testIVarIllegalAnalysis() throws Exception {
         analyzeScript( "ivar_illegal_injection.rb" );
+    }
+    
+    @Test
+    public void testSplatIncludes() throws Exception {
+        analyzeScript( "splat_injection.rb" );
     }
 
     

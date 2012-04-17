@@ -21,9 +21,10 @@
   <xi:include href="what-is-torquebox.xml"            xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="installation.xml"                 xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="jboss.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="deployment.xml"                   xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="deployment-descriptors.xml"       xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="web.xml"                          xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="cache.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
-  <xi:include href="deployment-descriptors.xml"       xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="messaging.xml"                    xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="stomp.xml"                        xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="scheduled-jobs.xml"               xmlns:xi="http://www.w3.org/2001/XInclude" />
@@ -33,6 +34,7 @@
   <xi:include href="database.xml"                     xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="transactions.xml"                 xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="pooling.xml"                      xmlns:xi="http://www.w3.org/2001/XInclude" />
+  <xi:include href="torquebox-cmd.xml"                xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="rake-support.xml"                 xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="capistrano-support.xml"           xmlns:xi="http://www.w3.org/2001/XInclude" />
   <xi:include href="torquebox-server-gem.xml"         xmlns:xi="http://www.w3.org/2001/XInclude" />

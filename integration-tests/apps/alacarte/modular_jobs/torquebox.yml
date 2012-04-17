@@ -1,0 +1,17 @@
+
+jobs:
+  job.one:
+    job: Another::SimpleJob
+    description: My Job is simple 
+    cron: '*/1 * * * * ?'
+    config:
+      color: blue
+      an_array:
+        - one
+        - two
+
+queues:
+  /queue/response:
+    durable: false
+  /queue/init_params:
+    durable: false

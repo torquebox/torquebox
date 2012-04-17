@@ -15,9 +15,25 @@ else
 end
 
 # gems defs common to v2 and v3
-gem "torquebox-rake-support"
-gem 'torquebox'
+gem 'torquebox', "${env.BUILD_NUMBER}"
+gem "torquebox-rake-support", "${env.BUILD_NUMBER}"
 
+
+# Write a dummy torquebox.yml file
+if File.exists? 'config/torquebox.yml'
+  puts "TorqueBox configuration file already exists."
+else
+  File.open('config/torquebox.yml', 'w') do |f|
+    f << <<-TORQUEBOX_CONFIG
+---
+# This is the TorqueBox configuration file. Refer to the TorqueBox
+# documentation at http://torquebox.org/documentation/current/ 
+# for all configuration options.
+web:
+  context: "/"
+    TORQUEBOX_CONFIG
+  end
+end
 
 if RAILS_2 
   initializer("session_store.rb") do
@@ -38,7 +54,6 @@ else
     <<-INIT
 # Configure the TorqueBox Servlet-based session store.
 # Provides for server-based, in-memory, cluster-compatible sessions
-#{app_const}.config.session_store :torquebox_store
 if ENV['TORQUEBOX_APP_NAME']
   #{app_const}.config.session_store :torquebox_store
 else
@@ -46,6 +61,13 @@ else
 end  
     INIT
   end
+end
+
+environment do
+  <<-ENVIRONMENT
+  # Use TorqueBox::Infinispan::Cache for the Rails cache store
+  config.cache_store = :torque_box_store
+  ENVIRONMENT
 end
 
 initializer("active_record_backgroundable.rb") do
@@ -62,9 +84,9 @@ end
   INIT
 end
 
-# Create app/tasks and app/jobs, just for fun
+# Create directories for tasks, jobs, services, and processors just for fun
 inside('app') {
-  %w( tasks jobs ).each { |dir| FileUtils.mkdir(dir) unless File.exists?(dir) }
+  %w( tasks jobs services processors).each { |dir| FileUtils.mkdir(dir) unless File.exists?(dir) }
 }
 
 app_constant = RAILS_2 ? 'Rails::Application' : app_const

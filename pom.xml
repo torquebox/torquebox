@@ -10,10 +10,10 @@
 
   <groupId>org.torquebox</groupId>
   <artifactId>torquebox-parent</artifactId>
-  <version>2.0.0.CR1-SNAPSHOT</version>
+  <version>2.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>TorqueBox</name>
-  <url>http://www.torquebox.org/</url>
+  <url>http://torquebox.org/</url>
 
   <description>
     The TorqueBox Parent POM
@@ -263,6 +263,12 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>jboss-eap-repository</id>
+      <properties>
+        <version.jbossas>7.1.0.Final-redhat-1</version.jbossas>
+      </properties>
+    </profile>
   </profiles>
     
   <dependencyManagement>
@@ -477,7 +483,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.polyglot>1.5.0-SNAPSHOT</version.polyglot>
+    <version.polyglot>1.5.3</version.polyglot>
     <version.jruby-maven-plugins>0.28.4</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
@@ -509,10 +515,11 @@
     <version.rake>[0.8.7,1.0.0]</version.rake>
     <version.rubyzip>0.9.4</version.rubyzip>
     <version.rspec>2.7.0</version.rspec>
+    <version.newrelic>3.3.2</version.newrelic>
 
-    <version.jbossas>7.1.0.Final</version.jbossas>
+    <version.jbossas>7.1.1.Final</version.jbossas>
 
-    <version.org.projectodd.stilts>0.1.25</version.org.projectodd.stilts>
+    <version.org.projectodd.stilts>0.1.27</version.org.projectodd.stilts>
     <version.org.projectodd.yaml-schema>0.2</version.org.projectodd.yaml-schema>
 
     <version.org.hibernate.search>4.1.0.Beta1</version.org.hibernate.search>
@@ -523,7 +530,7 @@
     <repository>
       <id>jboss-third-party-releases</id>
       <name>JBoss 3rd Party Releases</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public-thirdparty-releases/</url>
+      <url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content</url>
       <releases>
         <enabled>true</enabled>
       </releases>

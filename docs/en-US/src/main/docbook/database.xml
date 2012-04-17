@@ -96,4 +96,12 @@ DataMapper.setup(:default, 'postgres://user:pass@localhost/databasename')
       </screen>
     </para>
   </section>
+
+  <section>
+    <title>Distributed Transactions</title>
+    <para>TorqueBox includes support for distributed (XA) transactions. Depending
+    on your database, you may need to alter its configuration to take advantage
+    of transactions. See <xref linkend="transactions"/> for more details.</para>
+  </section>
+
 </chapter>

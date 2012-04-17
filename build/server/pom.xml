@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-build</artifactId>
-    <version>2.0.0.CR1-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -14,6 +14,7 @@
   <packaging>java-gem</packaging>
   <name>TorqueBox Server Gem</name>
   <description />
+  <url>http://torquebox.org/</url>
 
   <dependencies>
 
@@ -70,41 +71,6 @@
         </executions>
         </plugin>
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-assembly-jboss-for-gem</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/torquebox-server/jboss</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/../assembly/target/stage/torquebox/jboss</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-assembly-share-for-gem</id>
-            <phase>process-sources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/torquebox-server/share</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}/../assembly/target/stage/torquebox/share</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>gem-maven-plugin</artifactId>
         <configuration>
@@ -116,6 +82,27 @@
         <groupId>de.saumya.mojo</groupId>
         <artifactId>jruby-maven-plugin</artifactId>
         <executions>
+          <execution>
+            <id>copy-jboss-and-share</id>
+            <phase>process-sources</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <script>
+                require 'fileutils'
+                def cp( src, dest )
+                  puts %Q(copying #{src} to #{dest})
+                  FileUtils.mkdir_p( dest )
+                  FileUtils.cp_r( src, dest )
+                end
+                cp( %Q(${basedir}/../assembly/target/stage/torquebox/jboss),
+                    %Q(${basedir}/target/torquebox-server) )
+                cp( %Q(${basedir}/../assembly/target/stage/torquebox/share),
+                    %Q(${basedir}/target/torquebox-server) )
+              </script>
+            </configuration>
+          </execution>
           <execution>
             <id>copy-gem</id>
             <inherited>true</inherited>

@@ -98,6 +98,7 @@ module TorqueBox
         @options = opts
         options[:transaction_mode] = :transactional unless options.has_key?( :transaction_mode )
         options[:locking_mode] ||= :optimistic if (transactional? && !options.has_key?( :locking_mode ))
+        options[:sync] = true if options[:sync].nil?
         cache
       end
 
@@ -112,7 +113,7 @@ module TorqueBox
       def clustering_mode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
         distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
-        sync = !!options[:sync]
+        sync = options[:sync]
         case
         when replicated 
           sync ? CacheMode::REPL_SYNC : CacheMode::REPL_ASYNC
@@ -302,7 +303,7 @@ module TorqueBox
         cache = manager.get_cache(name)
         base_config = cache.configuration
         unless base_config.cache_mode == mode
-          log( "Reconfiguring Infinispan cache #{name} from #{config.cache_mode} to #{mode}" )
+          log( "Reconfiguring Infinispan cache #{name} from #{base_config.cache_mode} to #{mode}" )
           cache.stop
           base_config.cache_mode = mode
           config = base_config.fluent
@@ -386,7 +387,7 @@ module TorqueBox
       def nothing
         result = Object.new
         def result.method_missing(*args); end
-        log( "Nothing: Can't get or create an Infinispan cache. No caching will occur", 'ERROR' )
+        log( "Nothing: Can't get or create an Infinispan cache. No caching will occur", 'ERROR' ) if defined?(TORQUEBOX_APP_NAME)
         result
       end
 

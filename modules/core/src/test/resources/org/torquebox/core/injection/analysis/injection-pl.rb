@@ -9,7 +9,7 @@ module TheModule
     include ::SomethingElse
     
     def initialize()
-      @random = inject_mc('jboss.whatever.Thing')
+      @random = inject_msc('jboss.whatever.Thing')
     end
     
     def do_something()

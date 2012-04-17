@@ -2,10 +2,13 @@
 
 $: << File.dirname( __FILE__ ) + '/../lib'
 
+require 'java'
 require 'assembly_tool'
 require 'fileutils'
 require 'rexml/document'
 require 'rbconfig'
+
+java_import java.lang.System
 
 class Assembler 
 
@@ -36,13 +39,12 @@ class Assembler
   end
 
   def determine_versions
-    doc = REXML::Document.new( File.read( tool.base_dir + '/../../pom.xml' ) )
-    @torquebox_version = doc.get_elements( "project/version" ).first.text
-    @jboss_version     = doc.get_elements( "project/properties/version.jbossas" ).first.text
-    @jruby_version     = doc.get_elements( "project/properties/version.jruby" ).first.text
-    @polyglot_version  = doc.get_elements( "project/properties/version.polyglot" ).first.text
-    @stilts_version    = doc.get_elements( "project/properties/version.org.projectodd.stilts" ).first.text
-    puts "TorqueBox.... #{@torquebox_version}" 
+    @torquebox_version = System.getProperty( "version.torquebox" )
+    @jboss_version     = System.getProperty( "version.jbossas" )
+    @jruby_version     = System.getProperty( "version.jruby" )
+    @polyglot_version  = System.getProperty( "version.polyglot" )
+    @stilts_version    = System.getProperty( "version.stilts" )
+    puts "TorqueBox.... #{@torquebox_version}"
     puts "JBoss........ #{@jboss_version}"
     puts "JRuby........ #{@jruby_version}"
     puts "Polyglot..... #{@polyglot_version}"
@@ -81,33 +83,6 @@ class Assembler
         tool.unzip( jruby_zip )
         original_dir = File.expand_path( Dir[ 'jruby-*' ].first )
         FileUtils.mv original_dir, tool.jruby_dir
-
-        ### HACK begin
-        ###
-        ### JRuby 1.6.6 suffers from a StackOverflowError in some cases
-        ### and this hack (see http://jira.codehaus.org/browse/JRUBY-6407)
-        ### moves a require() statement around to avoid the aforementioned
-        ### StackOverflowError
-        ###
-        ### Remove this when JRuby 1.6.7 is released
-        ###
-        open( tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb', 'r' ) do |original_rb|
-          open( tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb.new', 'w' ) do |new_rb|
-            new_rb.puts( "require 'jruby/util'" )
-            original_rb.each do |line|
-              if ( line =~ %r(jruby/util) ) 
-                puts "skip #{line}"
-              else
-                puts line
-                new_rb.puts line
-              end
-            end
-          end
-        end
-        FileUtils.mv tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb.new', tool.jruby_dir + '/lib/ruby/site_ruby/1.8/rubygems/defaults/jruby.rb'
-        ###
-        ### HACK end
-
       end
     end
   end
@@ -222,7 +197,13 @@ class Assembler
     tool.transform_host_config( config_stash + '/host.xml', 'domain/configuration/host.xml' )
   end
 
-  def assemble() 
+  def transform_standalone_confs
+    torquebox_java_opts = "-Xss2048k"
+    tool.transform_standalone_conf( torquebox_java_opts )
+    tool.transform_standalone_conf_bat( torquebox_java_opts )
+  end
+
+  def assemble()
     #clean
     prepare
     lay_down_jruby
@@ -232,6 +213,7 @@ class Assembler
     install_share
     transform_configs
     transform_host_config
+    transform_standalone_confs
     Dir.chdir( tool.jboss_dir ) do
       FileUtils.cp( 'standalone/configuration/standalone-full.xml', 'standalone/configuration/standalone.xml' )
       FileUtils.cp( 'standalone/configuration/standalone-full-ha.xml', 'standalone/configuration/standalone-ha.xml' )

@@ -212,6 +212,36 @@ set :jruby_home,        '/usr/local/jruby'</screen></para>
       <para></para>
     </section>
 
+    <section id="sample-deploy-file">
+      <title>Sample deploy.rb File</title>
+      <programlisting language="ruby">
+require 'torquebox-capistrano-support'
+require 'bundler/capistrano'
+
+# SCM
+set :application,       "myapp.com"
+set :repository,        "git@github.com:account/repo.git"
+set :branch,            "torquebox-2.0"
+set :user,              "torquebox"
+set :scm,               :git
+set :scm_verbose,       true
+set :use_sudo,          false
+
+# Production server
+set :deploy_to,         "/opt/apps/myapp.com"
+set :torquebox_home,    "/opt/torquebox/current"
+set :jboss_init_script, "/etc/init.d/jboss-as-standalone"
+set :app_environment,   "RAILS_ENV: production"
+set :app_context,       "/"
+
+ssh_options[:forward_agent] = false
+
+role :web, "www.myapp.com"
+role :app, "torquebox.myapp.com"
+role :db,  "torquebox.myapp.com", :primary => true 
+      </programlisting>
+    </section>
+
     <section id="perform-deployes-with-cap">
       <title>Perform deployments</title>
 
@@ -254,6 +284,11 @@ RewriteRule ^.*$  -  [redirect=503,last]</screen></para>
 
       <para><screen>$ jruby -S cap deploy</screen></para>
 
+      <para>To restart an application but not the server itself, use 
+        <command>restart</command></para>
+
+      <para><screen>$ jruby -S cap deploy:restart</screen></para>
+
       <formalpara>
         <title>Control the TorqueBox AS</title>
 
@@ -262,10 +297,14 @@ RewriteRule ^.*$  -  [redirect=503,last]</screen></para>
         running when last shutdown will be redeployed.</para>
       </formalpara>
 
-      <para><screen>$ jruby -S cap deploy:stop</screen>To start the TorqueBox
-      AS and re-deploy all previously-running applications:</para>
+      <screen>$ jruby -S cap deploy:torquebox:stop</screen>
 
-      <para><screen>$ jruby -S cap deploy:start</screen></para>
+      <para>To start the TorqueBox AS and re-deploy all previously-running applications:</para>
+      <para><screen>$ jruby -S cap deploy:torquebox:start</screen></para>
+
+      <para>To restart the TorqueBox AS and re-deploy all previously-running applications:</para>
+      <para><screen>$ jruby -S cap deploy:torquebox:restart</screen></para>
+
     </section>
   </section>
 </chapter>

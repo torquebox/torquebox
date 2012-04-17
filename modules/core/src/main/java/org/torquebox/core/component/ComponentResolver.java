@@ -19,7 +19,6 @@
 
 package org.torquebox.core.component;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 
 import org.jboss.as.naming.context.NamespaceContextSelector;
@@ -27,7 +26,6 @@ import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
 import org.jboss.msc.inject.Injector;
 import org.jruby.Ruby;
-import org.jruby.RubyHash;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.torquebox.core.injection.analysis.Injectable;
 import org.torquebox.core.util.RuntimeHelper;
@@ -40,7 +38,6 @@ public class ComponentResolver {
     	this.alwaysReload = alwaysReload;
     }
 
-    @SuppressWarnings("unchecked")
     public RubyComponent resolve(final Ruby runtime) throws Exception {
         final ComponentRegistry registry = ComponentRegistry.getRegistryFor( runtime );
         IRubyObject rubyComponent = null;
@@ -61,19 +58,6 @@ public class ComponentResolver {
         if (rubyComponent == null) {
             return null;
         }
-        
-        //
-        // HACK - Remove once upgraded to JRuby 1.6.7
-        //
-        try {
-            Field recursiveField = runtime.getClass().getDeclaredField( "recursive" );
-            recursiveField.setAccessible( true );
-            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( runtime )).remove();
-        }
-        catch (Exception ex) {
-            // safe to ignore
-        }
-        // END HACK
 
         return wrapComponent( rubyComponent );
     }

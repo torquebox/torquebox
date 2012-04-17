@@ -85,11 +85,11 @@ public class XAStompletComponent extends AbstractRubyComponent implements XAStom
 
     @Override
     public void onSubscribe(Subscriber subscriber) throws StompException {
-        String subscriberId = subscriber.getId();
-        Subscriber xaSubscriber = new SubscriberImpl( subscriber.getSession(), stomplet, subscriberId, subscriber.getDestination(), new PseudoXAStompletAcknowledgeableMessageSink(
+        String subscriptionId = subscriber.getSubscriptionId();
+        Subscriber xaSubscriber = new SubscriberImpl( subscriber.getSession(), stomplet, subscriptionId, subscriber.getDestination(), new PseudoXAStompletAcknowledgeableMessageSink(
                 this.resourceManager, subscriber ),
                 subscriber.getAckMode() );
-        this.subscribers.put( subscriberId, xaSubscriber );
+        this.subscribers.put( subscriber.getId(), xaSubscriber );
         this.stomplet.onSubscribe( xaSubscriber );
     }
 

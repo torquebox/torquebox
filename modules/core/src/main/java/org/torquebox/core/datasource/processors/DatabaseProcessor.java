@@ -105,8 +105,14 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         return currentEnv.equals( configName );
     }
 
-    protected boolean isAtypicalDatabase(String configName) {
-        return !TYPICAL_ENVIRONMENTS.contains( configName );
+    protected boolean isXAExplicitlyEnabled(DatabaseMetaData metaData) {
+        Object xaEntry = metaData.getConfiguration().get( "xa" );
+        return xaEntry != null && xaEntry == Boolean.TRUE;
+    }
+
+    protected boolean isXAExplicitlyDisabled(DatabaseMetaData metaData) {
+        Object xaEntry = metaData.getConfiguration().get( "xa" );
+        return xaEntry != null && xaEntry == Boolean.FALSE;
     }
 
     @Override
@@ -133,7 +139,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
             String configName = each.getConfigurationName();
 
-            if (!isCurrentEnvironmentDatabase( currentEnv, configName ) && !isAtypicalDatabase( configName )) {
+            if (!isCurrentEnvironmentDatabase( currentEnv, configName ) && !isXAExplicitlyEnabled( each )) {
                 continue;
             }
 
@@ -141,9 +147,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
                 continue;
             }
 
-            Object xaEntry = each.getConfiguration().get( "xa" );
-
-            if (xaEntry != null && xaEntry == Boolean.FALSE) {
+            if (isXAExplicitlyDisabled( each )) {
                 continue;
             }
 
@@ -224,7 +228,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             phaseContext.getServiceTarget().addService( dataSourceServiceName, service )
                     .addDependency( ConnectorServices.JDBC_DRIVER_REGISTRY_SERVICE, DriverRegistry.class, service.getDriverRegistryInjector() )
                     .addDependency( DataSourceServices.driverName( unit, adapter.getId() ), Driver.class, service.getDriverInjector() )
-                    .addDependency( ConnectorServices.MANAGEMENT_REPOSISTORY_SERVICE, ManagementRepository.class, service.getmanagementRepositoryInjector() )
+                    .addDependency( ConnectorServices.MANAGEMENT_REPOSITORY_SERVICE, ManagementRepository.class, service.getManagementRepositoryInjector() )
                     .addDependency( ConnectorServices.TRANSACTION_INTEGRATION_SERVICE, TransactionIntegration.class, service.getTransactionIntegrationInjector() )
                     .addDependency( NamingService.SERVICE_NAME )
                     .addDependency(ConnectorServices.CCM_SERVICE, CachedConnectionManager.class, service.getCcmInjector())
@@ -268,12 +272,11 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
             binderBuilder.install();
 
             String adapterName = (String) dbMeta.getConfiguration().get( "adapter" );
-            Info dsInfo = new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName );
+            Info dsInfo = new DataSourceInfoList.Info( dbMeta.getConfigurationName(), jndiName, adapterName, dataSourceServiceName, adapter );
 
-            DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo, phaseContext.getServiceRegistry(), jndiName, dataSourceServiceName );
+            DataSourceXAVerifierService verifierService = new DataSourceXAVerifierService( dsInfo, phaseContext.getServiceRegistry(), jndiName );
             ServiceName verifierServiceName = dataSourceServiceName.append( "xa-verifier" );
             phaseContext.getServiceTarget().addService( verifierServiceName, verifierService )
-                    // marked as OPTIONAL because we may need to remove it
                     .addDependency( DependencyType.OPTIONAL, dataSourceServiceName, DataSource.class, verifierService.getDataSourceInjector() )
                     .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, verifierService.getTransactionManagerInjector() )
                     .install();

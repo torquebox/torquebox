@@ -19,11 +19,6 @@
     and design of messaging end-points, instead of simple direct bridging to
     some other underlying messaging technology, such as a JMS broker.</para>
 
-    <para><important>
-        <para>Everything described in this chapter is in flux at this point in
-        time. Community input is sought. Provide feedback!</para>
-      </important></para>
-
     <section id="websockets-overview">
       <title>What are WebSockets?</title>
 
@@ -37,7 +32,8 @@
       <para>A browser may access a WebSockets-based service using Javascript.
       Once connected, the client and server must determine the meaning of any
       data sent across the socket. The WebSockets transport itself provides no
-      protocol semantics beyond data frames passing each direction.</para>
+      protocol semantics beyond data frames passing each direction. TorqueBox
+      implicitly applies STOMP semantics to the WebSocket connection.</para>
     </section>
 
     <section>
@@ -50,32 +46,34 @@
       integrations.</para>
 
       <para>STOMP provides higher semantics on top of the WebSockets
-      transport. STOMP defines a handful of frame types that are mapped to
+      transport. STOMP defines a handful of frame types that are mapped onto
       WebSockets frames.</para>
 
       <para><itemizedlist>
           <listitem>
-            <para>CONNECT</para>
+            <para><command>CONNECT</command></para>
           </listitem>
 
           <listitem>
-            <para>SUBSCRIBE</para>
+            <para><command>SUBSCRIBE</command></para>
           </listitem>
 
           <listitem>
-            <para>UNSUBSCRIBE</para>
+            <para><command>UNSUBSCRIBE</command></para>
           </listitem>
 
           <listitem>
-            <para>SEND (messages sent to the server)</para>
+            <para><command>SEND</command> (messages sent to the server)</para>
           </listitem>
 
           <listitem>
-            <para>MESSAGE (for messages send from the server)</para>
+            <para><command>MESSAGE</command> (for messages send from the
+            server)</para>
           </listitem>
 
           <listitem>
-            <para>BEGIN, COMMIT, ROLLBACK</para>
+            <para><command>BEGIN</command>, <command>COMMIT</command>,
+            <command>ROLLBACK</command> (transaction management)</para>
           </listitem>
         </itemizedlist></para>
     </section>
@@ -96,8 +94,8 @@
   <section>
     <title>Ruby Stomplets</title>
 
-    <para>Ruby Stomplets have a handful of methods which must be implemented
-    to support all messaging actions.</para>
+    <para>Ruby Stomplets have a handful of methods which may be implemented to
+    support all messaging actions.</para>
 
     <para><itemizedlist>
         <listitem>
@@ -128,8 +126,6 @@
 
     <section>
       <title>Stomplet API</title>
-
-      <para></para>
 
       <section>
         <title><code>configure(config)</code></title>
@@ -245,8 +241,8 @@ end</programlisting></para>
   <section>
     <title>JMS Integration</title>
 
-    <para>TorqueBox provides useful classes to build your own application's
-    Stomplets upon. The most useful of these is
+    <para>TorqueBox provides useful classes upon which you can build your own
+    application's Stomplets. The most useful of these is
     <classname>TorqueBox::Stomp::JmsStomplet</classname>, which handles a
     large portion of bridging between STOMP and JMS, while allowing the
     flexibility to adapt the integration to match your particular
@@ -321,10 +317,11 @@ end</programlisting></para>
   <section>
     <title>Deployment descriptors</title>
 
-    <para>To deploy Stomplets with your application, a stomp: section is added
-    to your application's torquebox.yml descriptor. The section should contain
-    named sections for each Stomplet your application needs to deploy. Each
-    Stomplet is bound to a route, which works similar to Rails request
+    <para>To deploy Stomplets with your application, a <code>stomp</code>
+    section is added to your application's <filename>torquebox.yml</filename>
+    or <filename>torquebox.rb</filename> descriptor. The section should
+    contain named sections for each Stomplet your application needs to deploy.
+    Each Stomplet is bound to a route, which works similar to Rails request
     routing, but matches against STOMP destinations instead of web URLs.
     Additionally, it specifies the class of the implementation, along with
     optional configuration in the form of name/value pairs of strings.</para>
@@ -393,20 +390,6 @@ end</programlisting></para>
     <filename>share/javascripts/</filename> directory. The client is derived
     from work by Jeff Mesnil.</para>
 
-    <para><important>
-        <para>The Javascript relies on the browser's native support for
-        WebSockets. Many browsers have disabled WebSockets by default. Please
-        see instructions for your particular browser regarding how to enable
-        and verify WebSockets support. We currently test with Firefox
-        6.</para>
-
-        <formalpara>
-          <title>Firefox</title>
-
-          <para>https://developer.mozilla.org/en/WebSockets</para>
-        </formalpara>
-      </important></para>
-
     <section>
       <title>Using the Javascript client</title>
 
@@ -440,8 +423,11 @@ end</programlisting></para>
         function which will be invoked once the connection has been
         established.</para>
 
-        <para>Currently the username and password parameters are
-        ignored.</para>
+        <para>Currently the username and password parameters are ignored.
+        Typical applications will authenticate the user through traditional
+        web-based logins, storing an authorization token in the session, which
+        is then available to each Stomplet to positively identify the
+        connected client.</para>
 
         <para><informalexample>
             <programlisting>client.connect( "username", "password", function() {
@@ -605,11 +591,5 @@ run app</programlisting></para>
     Stilts is written by the same people who write TorqueBox.</para>
 
     <para><uri>http://stilts.projectodd.org/</uri></para>
-
-    <para></para>
-
-    <para></para>
-
-    <para></para>
   </section>
 </chapter>

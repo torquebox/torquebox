@@ -23,7 +23,7 @@ module TheModule
     end
    
     def initialize()
-      @random = inject_service('org.jboss.whatever.Thing')
+      @random = inject_msc('org.jboss.whatever.Thing')
     end
     
     def do_something()

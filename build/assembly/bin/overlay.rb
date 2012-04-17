@@ -29,6 +29,7 @@ class Overlayer
     @assembler.install_share
     @assembler.transform_configs
     @assembler.transform_host_config
+    @assembler.transform_standalone_confs
   end
 end
 

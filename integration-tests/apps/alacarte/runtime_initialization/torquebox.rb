@@ -1,3 +1,6 @@
 TorqueBox.configure do
-  service SimpleService
+  queue '/queues/tb_init_test' do
+    durable false 
+  end
+  service SimpleService 
 end

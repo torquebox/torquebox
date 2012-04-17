@@ -20,6 +20,7 @@
 package org.torquebox.core.component.processors;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -52,13 +53,24 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
     protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
             ServiceBuilder<ComponentResolver> builder)
             throws DeploymentUnitProcessingException {
+        addInjections( phaseContext, resolver, injectionPathPrefixes, builder, new String[] {} );
+    }
+
+    protected void addInjections(DeploymentPhaseContext phaseContext, ComponentResolver resolver, List<String> injectionPathPrefixes,
+            ServiceBuilder<ComponentResolver> builder, String... typesToExclude)
+            throws DeploymentUnitProcessingException {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         InjectionIndex index = unit.getAttachment( InjectionIndex.ATTACHMENT_KEY );
+        List<String> typesToExcludeList = Arrays.asList( typesToExclude );
 
         if (index != null) {
             Set<Injectable> injectables = index.getInjectablesFor( injectionPathPrefixes );
 
             for (Injectable injectable : injectables) {
+                if (typesToExcludeList.contains( injectable.getType() )) {
+                    continue; // Used by services to prevent circular injection
+                              // dependencies
+                }
                 try {
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
                     builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
@@ -76,8 +88,8 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
                     ServiceName serviceName = injectable.getServiceName( phaseContext.getServiceTarget(), phaseContext.getDeploymentUnit() );
                     if (serviceName != null) {
                         builder.addDependency( serviceName, resolver.getInjector( injectable.getKey() ) );
-                    } else if ( ! injectable.isOptional() ) {
-                        log.error( "Unable to inject: " + injectable.getName());
+                    } else if (!injectable.isOptional()) {
+                        log.error( "Unable to inject: " + injectable.getName() );
                     }
                 } catch (Exception e) {
                     throw new DeploymentUnitProcessingException( e );
@@ -133,8 +145,10 @@ public abstract class BaseRubyComponentInstaller implements DeploymentUnitProces
 
     protected List<String> defaultInjectionPathPrefixes() {
         List<String> defaults = new ArrayList<String>();
-        defaults.add( "app/models/" );
+        defaults.add( "app/" );
         defaults.add( "lib/" );
+        defaults.add( "models/" );
+        defaults.add( "." );
         return defaults;
     }
 

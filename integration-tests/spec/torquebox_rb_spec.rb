@@ -120,8 +120,13 @@ describe "an app using a torquebox.rb" do
       response.should == :bar
     end
 
+    it "should pass configuration to the service from a block" do
+      response = TorqueBox::Messaging::Queue.new( '/queue/flavor-queue' ).receive( :timeout => 120_000 )
+      response.should == 'with honey'
+    end
+
     it "should pass configuration to the job" do
-      response = TorqueBox::Messaging::Queue.new( '/queue/job-queue' ).receive( :timeout => 120_000 )
+      response = TorqueBox::Messaging::Queue.new( '/queue/configured-job-queue' ).receive( :timeout => 120_000 )
       response.should == 'biscuit'
     end
 

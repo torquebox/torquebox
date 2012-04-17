@@ -72,7 +72,7 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             jobMetaData.setCronExpression( cron.trim() );
             jobMetaData.setParameters( params );
             jobMetaData.setRubyRequirePath( StringUtils.underscore( job.trim() ) );
-            jobMetaData.setSingleton( singleton == null ? false : (Boolean) singleton );
+            jobMetaData.setSingleton( singleton == null ? true : (Boolean) singleton );
     
             unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
         }

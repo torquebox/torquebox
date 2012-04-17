@@ -7,17 +7,18 @@
   <section id="what-is-resource-injection">
     <title>What is Resource Injection?</title>
 
-    <para>Resource injection is the term given a software architectural
-    strategy that moves the responsibility of finding and connecting
-    components to a container, allowing components to remain simple and
-    testable. Components declare what they need, and when instantiated by the
-    container, the container also satisfies those needs.</para>
+    <para><emphasis>Resource injection</emphasis> is the term given a software
+    architectural strategy that moves the responsibility of finding and
+    connecting components to a container, allowing components to remain simple
+    and testable. Components declare what they need, and when instantiated by
+    the container, the container also satisfies those needs.</para>
 
     <formalpara>
       <title>What's a resource?</title>
 
-      <para>A resource may be any component within your application, ranging
-      from instances of Java classes, to messaging destinations.</para>
+      <para>A resource may be most any component within your application,
+      ranging from instances of Java classes, to messaging
+      destinations.</para>
     </formalpara>
   </section>
 
@@ -25,8 +26,8 @@
     <title>Basics of Resource Injection</title>
 
     <para>TorqueBox supports injection within the context of jobs, services,
-    messaging-handlers and web applications. The two key components of using
-    the injection capabilities are:</para>
+    messaging-handlers, Stomplets and web applications. The two key components
+    of using the injection capabilities are:</para>
 
     <para><itemizedlist>
         <listitem>
@@ -46,21 +47,34 @@
           literal value. Variable interpolation is not supported within the
           argument list of <methodname>inject(...)</methodname>. For
           convenience, the result of the <methodname>inject(...)</methodname>
-          call would be assigned to an instance value, but this is not
+          call may be assigned to an instance value, but this is not
           required.</para>
         </listitem>
       </itemizedlist></para>
-      
-      <para>TorqueBox supports injection in the following locations (relative 
-      to the root directory of your application):
-        <itemizedlist>
-          <listitem>your app's root directory</listitem>
-          <listitem>/app</listitem>
-          <listitem>/lib</listitem>
-          <listitem>/helpers</listitem>
-          <listitem>/models (for Padrino apps)</listitem>
-        </itemizedlist>
-      </para>
+
+    <para>TorqueBox supports injection for source files in the following
+    locations (relative to the root directory of your application):
+    <itemizedlist>
+        <listitem>
+          <para>your app's root directory</para>
+        </listitem>
+
+        <listitem>
+          <para><filename>/app</filename></para>
+        </listitem>
+
+        <listitem>
+          <para><filename>/lib</filename></para>
+        </listitem>
+
+        <listitem>
+          <para><filename>/helpers</filename></para>
+        </listitem>
+
+        <listitem>
+          <para><filename>/models</filename> (for Padrino apps)</para>
+        </listitem>
+      </itemizedlist></para>
 
     <para>For instance:</para>
 
@@ -128,7 +142,7 @@ end</programlisting>
     and javax, amongst others. For other top-level packages based on country
     codes, such as <literal>pl</literal>, <literal>de</literal>, or
     <literal>za</literal>, to perform injection you should reference your
-    class through the Java ruby package.</para>
+    class through the <classname>Java</classname> ruby package.</para>
 
     <para><informalexample>
         <para><programlisting>inject( Java::pl.softwaremine.PolishingService )</programlisting></para>
@@ -186,10 +200,9 @@ end</programlisting>
     <formalpara>
       <title>JBoss MSC Services</title>
 
-      <para>JBoss Modular Service Container is the container that
-      drives the entire TorqueBox AS. Many components are accessible
-      as MSC Services. These may be injected by passing the
-      ServiceName as a string to
+      <para>JBoss Modular Service Container is the container that drives the
+      entire TorqueBox AS. Many components are accessible as MSC Services.
+      These may be injected by passing the ServiceName as a string to
       <methodname>inject(...)</methodname>.</para>
     </formalpara>
 
@@ -208,10 +221,10 @@ end</programlisting>
     <formalpara>
       <title>Services</title>
 
-      <para>TorqueBox Services may be injected into your components if
-      the argument to <methodname>inject(...)</methodname> begins with
-      <literal>"service:"</literal> followed by the key used to configure
-      the service in <filename>torquebox.yml</filename>.</para>
+      <para>TorqueBox Services may be injected into your components if the
+      argument to <methodname>inject(...)</methodname> begins with
+      <literal>"service:"</literal> followed by the key used to configure the
+      service in <filename>torquebox.yml</filename>.</para>
     </formalpara>
 
     <para><informalexample>
@@ -265,9 +278,15 @@ end</programlisting>
     </formalpara>
 
     <formalpara>
-      <title><methodname>inject_mc(...)</methodname></title>
+      <title><methodname>inject_msc(...)</methodname></title>
 
-      <para>Injects MCBeans by literal name.</para>
+      <para>Injects MSC services by literal name.</para>
+    </formalpara>
+
+    <formalpara>
+      <title><methodname>inject_service(...)</methodname></title>
+
+      <para>Injects a TorqueBox application service component</para>
     </formalpara>
   </section>
 
@@ -291,21 +310,20 @@ end</programlisting>
     <literal>"Java::JavaUtil::Set"</literal> when used as an injection lookup
     key.</para>
   </section>
-  
+
   <section id="disabling-the-scanner">
     <title>Disabling the Injection Scanner</title>
-    
+
     <para>If you're not making use of injection, you can disable the injection
     scanner on a per-application basis. Simply add:</para>
-    
-    <para><informalexample><programlisting>injection:
+
+    <para><informalexample>
+        <programlisting>injection:
   enabled: false
     </programlisting>
-    </informalexample></para>
-    
-    <para>to your -knob.yml or torquebox.yml file, and injection scanning will be 
-    disabled for your application.</para>
-    
+      </informalexample></para>
+
+    <para>to your -knob.yml or torquebox.yml file, and injection scanning will
+    be disabled for your application.</para>
   </section>
-  
 </chapter>

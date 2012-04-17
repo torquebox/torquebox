@@ -74,7 +74,7 @@ public class ServicesYamlParsingProcessor extends AbstractSplitYamlParsingProces
 
     protected boolean requiresSingleton(Map<String, Object> params) {
         Boolean singleton = params == null ? null : (Boolean) params.remove( "singleton" );
-        return singleton != null && singleton.booleanValue();
+        return singleton == null || singleton.booleanValue();
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.services" );

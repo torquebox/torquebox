@@ -27,6 +27,14 @@ module TorqueBox
     # Backgroundable provides mechanism for executing an object's
     # methods asynchronously.
     module Backgroundable
+      NEWRELIC_AVAILABLE ||= 
+        begin
+          require 'newrelic_rpm'
+          true
+        rescue LoadError
+          false
+        end
+
       def self.included(base)
         base.extend(ClassMethods)
         base.send(:include, FutureStatus)
@@ -96,6 +104,7 @@ module TorqueBox
             if privatize || protect
               send((privatize ? :private : :protected), method, sync_method, async_method)
             end
+
           end
         ensure
           @__backgroundable_methods[method][:backgrounding] = nil

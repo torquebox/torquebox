@@ -48,6 +48,7 @@ module TorqueBox
           :injection   => OptionsEntry.with_settings(:validate => {
                                                        :required => [{ :enabled => [true, false] }]
                                                      }),
+          :config => OptionsEntry,
           :job         => ThingWithOptionsEntry.with_settings(:discrete => true,
                                                               :validate => {
                                                                 :required => [:cron],
@@ -194,16 +195,35 @@ module TorqueBox
           end
         end
 
-        hash_to_hashmap( metadata )
+        ruby_to_java( metadata )
+      end
+
+      def ruby_to_java(object)
+        r = object
+        case ( object )
+        when Hash
+          r = hash_to_hashmap(object)
+        when Array
+          r = array_to_arraylist(object)
+        end
+        r
       end
 
       def hash_to_hashmap(hash)
         hashmap = java.util.HashMap.new
         hash.each do |key, value|
-          value = hash_to_hashmap( value ) if value.is_a?( Hash )
+          value = ruby_to_java( value ) 
           hashmap[key.to_s] = value
         end
         hashmap
+      end
+
+      def array_to_arraylist(array)
+        arraylist = java.util.ArrayList.new
+        array.each do |value|
+          arraylist.add( ruby_to_java( value ) )
+        end
+        arraylist
       end
 
       protected

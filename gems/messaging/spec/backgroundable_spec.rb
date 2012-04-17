@@ -55,6 +55,7 @@ describe TorqueBox::Messaging::Backgroundable do
       @util.protected_instance_methods_include?(MyTestModel, '__async_some_peeking').should be_true
       @util.protected_instance_methods_include?(MyTestModel, '__sync_some_peeking').should be_true
     end
+
   end
 
   describe "a method handled asynchronously" do

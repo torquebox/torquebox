@@ -39,6 +39,7 @@ import org.torquebox.core.component.processors.BaseRubyComponentInstaller;
 import org.torquebox.services.ServiceMetaData;
 import org.torquebox.services.as.ServicesServices;
 import org.torquebox.services.component.ServiceComponent;
+import org.torquebox.services.injection.ServiceInjectable;
 
 public class ServiceComponentResolverInstaller extends BaseRubyComponentInstaller {
 
@@ -69,7 +70,7 @@ public class ServiceComponentResolverInstaller extends BaseRubyComponentInstalle
         ComponentResolverService service = new ComponentResolverService( resolver );
         ServiceBuilder<ComponentResolver> builder = phaseContext.getServiceTarget().addService( serviceName, service );
         builder.setInitialMode( Mode.PASSIVE );
-        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, serviceMetaData.getRubyRequirePath() ), builder );
+        addInjections( phaseContext, resolver, getInjectionPathPrefixes( phaseContext, serviceMetaData.getRubyRequirePath() ), builder, ServiceInjectable.TYPE );
         addNamespaceContext( phaseContext, service, builder );
         builder.install();
         

@@ -31,6 +31,7 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.module.ResourceRoot;
 import org.jboss.vfs.VirtualFile;
 import org.projectodd.polyglot.core.processors.FileLocatingProcessor;
+import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.rails.RailsMetaData;
 
 public class RailsApplicationRecognizer extends FileLocatingProcessor {
@@ -49,7 +50,13 @@ public class RailsApplicationRecognizer extends FileLocatingProcessor {
 
         try {
             if (isRailsApplication( root )) {
+                RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
                 RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
+
+                if (rackAppMetaData == null) {
+                    rackAppMetaData = new RackMetaData();
+                    rackAppMetaData.attachTo( unit );
+                }
 
                 if (railsAppMetaData == null) {
                     railsAppMetaData = new RailsMetaData();

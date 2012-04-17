@@ -3,7 +3,7 @@
   <parent>
     <groupId>rubygems</groupId>
     <artifactId>torquebox-gems-parent</artifactId>
-    <version>2.0.0.CR1-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -12,6 +12,7 @@
   <packaging>java-gem</packaging>
   <name>TorqueBox Messaging Client</name>
   <description />
+  <url>http://torquebox.org/</url>
 
   <dependencies>
 
@@ -26,6 +27,13 @@
       <groupId>rubygems</groupId>
       <artifactId>torquebox-transactions</artifactId>
       <version>${project.version}</version>
+      <type>gem</type>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>clj</artifactId>
+      <version>0.0.5.6</version>
       <type>gem</type>
     </dependency>
 
@@ -70,6 +78,14 @@
       <groupId>rubygems</groupId>
       <artifactId>rspec</artifactId>
       <type>gem</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>newrelic_rpm</artifactId>
+      <type>gem</type>
+      <version>${version.newrelic}</version>
       <scope>test</scope>
     </dependency>
 

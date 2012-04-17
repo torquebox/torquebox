@@ -20,6 +20,8 @@
 package org.torquebox.core.datasource;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
@@ -44,11 +46,10 @@ import org.torquebox.core.datasource.DataSourceInfoList.Info;
 
 public class DataSourceXAVerifierService implements Service<DataSourceInfoList.Info> {
 
-    public DataSourceXAVerifierService(Info info, ServiceRegistry serviceRegistry, String jndiName, ServiceName dataSourceServiceName) {
+    public DataSourceXAVerifierService(Info info, ServiceRegistry serviceRegistry, String jndiName) {
         this.info = info;
         this.serviceRegistry = serviceRegistry;
         this.jndiName = jndiName;
-        this.dataSourceServiceName = dataSourceServiceName;
     }
 
     @Override
@@ -57,7 +58,6 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
             this.info = Info.DISABLED;
             removeBinder();
             removeReferenceFactory();
-            removeDataSource();
         }
 
         log.info( "Verifier completed" );
@@ -70,10 +70,6 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
     
     private void removeReferenceFactory() {
         removeService( DataSourceReferenceFactoryService.SERVICE_NAME_BASE .append(jndiName) );
-    }
-    
-    private void removeDataSource() {
-        removeService( this.dataSourceServiceName );
     }
     
     private void removeService(ServiceName serviceName) {
@@ -95,6 +91,12 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
                 return false;
             }
             TransactionManager tm = this.transactionManagerInjector.getValue();
+            if ( getAdapterId().equals( "postgresql" ) ) {
+                if ( postgresqlMaxPreparedTransactions( dataSource ) == 0 ) {
+                    log.warnf( "PostgreSQL max_prepared_transactions set to 0; XA will not be enabled: %s", this.info.getName() );
+                    return false;
+                }
+            }
             tm.begin();
             Transaction tx = tm.getTransaction();
             Connection connection = dataSource.getConnection();
@@ -109,6 +111,31 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
         }
 
         return true;
+    }
+
+    protected int postgresqlMaxPreparedTransactions(DataSource dataSource) {
+        Connection connection = null;
+        Statement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.createStatement();
+            ResultSet result = statement.executeQuery( "show max_prepared_transactions;" );
+            result.next();
+            int max = result.getInt( 1 );
+            return max;
+        } catch (SQLException e) {
+            log.warnf( "Error determining PostgreSQL max_prepared_transactions: %s", this.info.getName() );
+            return 0;
+        } finally {
+            try {
+                if (statement != null) { statement.close(); }
+                if (connection != null) { connection.close(); }
+            } catch (SQLException ignored) { }
+        }
+    }
+
+    protected String getAdapterId() {
+        return this.info.getAdapter().getId();
     }
 
     @Override
@@ -135,7 +162,6 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
 
     private DataSourceInfoList.Info info;
     private String jndiName;
-    private ServiceName dataSourceServiceName;
     private ServiceRegistry serviceRegistry;
 
     private org.jboss.logmanager.Logger logger;

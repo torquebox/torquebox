@@ -29,7 +29,7 @@ module TorqueBox
     end
     alias_method :inject, :__inject__
     
-    %w{ mc cdi jndi queue topic }.each do |type|
+    %w{ msc service cdi jndi queue topic }.each do |type|
       define_method("inject_#{type}".to_sym) do |key|
         __inject__(key)
       end

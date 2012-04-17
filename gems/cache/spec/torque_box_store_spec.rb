@@ -192,14 +192,14 @@ describe ActiveSupport::Cache::TorqueBoxStore do
   describe "clustering" do
     
     it "should default to invalidation mode" do
-      @cache.clustering_mode.should == CacheMode::INVALIDATION_ASYNC
-      TorqueBoxStore.new(:mode => :unknown).clustering_mode.should == CacheMode::INVALIDATION_ASYNC
+      @cache.clustering_mode.should == CacheMode::INVALIDATION_SYNC
+      TorqueBoxStore.new(:mode => :unknown).clustering_mode.should == CacheMode::INVALIDATION_SYNC
     end
 
     [:repl, :dist, :invalidation].each do |mode|
       it "should be configurable in #{mode} mode" do
-        TorqueBoxStore.new(:mode => mode).clustering_mode.to_s.should == "#{mode.to_s.upcase}_ASYNC"
-        TorqueBoxStore.new(:mode => mode, :sync => true).clustering_mode.to_s.should == "#{mode.to_s.upcase}_SYNC"
+        TorqueBoxStore.new(:mode => mode).clustering_mode.to_s.should == "#{mode.to_s.upcase}_SYNC"
+        TorqueBoxStore.new(:name => 'async', :mode => mode, :sync => false).clustering_mode.to_s.should == "#{mode.to_s.upcase}_ASYNC"
       end
     end
 

@@ -49,8 +49,15 @@ module TorqueBox
 
       def initialize(destination, connection_factory_or_options = nil)
         if connection_factory_or_options.nil? || connection_factory_or_options.is_a?( Hash )
-          @connection_factory = ConnectionFactory.new( __inject__( 'connection-factory' ) )
-          @connect_options = connection_factory_or_options || {}
+          options = connection_factory_or_options
+          connection_factory = __inject__( 'connection-factory' )
+          unless options.nil?
+            # Don't use our internal connection factory if the user
+            # has specified a host or port to connect to
+            connection_factory = nil if options[:host] or options[:port]
+          end
+          @connection_factory = ConnectionFactory.new( connection_factory )
+          @connect_options = options || {}
         else
           @connection_factory  = ConnectionFactory.new( connection_factory_or_options )
           @connect_options = {}

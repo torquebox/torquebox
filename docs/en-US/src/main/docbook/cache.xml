@@ -15,7 +15,7 @@
       are two ways that applications can take advantage of this data store.
       <itemizedlist>
         <listitem><code>TorqueBox::Infinispan::Cache</code> Direct Ruby access to the Infinispan cache</listitem>
-        <listitem><code>ActiveSupport::Cache::Store</code> Sinatra and Rails session, fragment and other framework caching</listitem>
+        <listitem><code>ActiveSupport::Cache::TorqueBoxStore</code> Sinatra and Rails session, fragment and other framework caching</listitem>
         <!--        <listitem><code>dm-infinispan-adapter</code> Infinispan-backed <ulink url="http://datamapper.org">DataMapper</ulink> adapter</listitem> -->
       </itemizedlist>
 
@@ -151,7 +151,7 @@
           <row>
             <entry><parameter>:sync</parameter></entry>
 
-            <entry>false</entry>
+            <entry>true</entry>
 
             <entry>The coordination between nodes in a cluster can happen
             either synchronously (slower writes) or asynchronously (faster
@@ -240,46 +240,48 @@
     <para>
       Adding, removing and updating items in the cache is as you might expect.
       <programlisting>
-        # Put some stuff in the cache
-        cache.put( 'akey', "a string value" )
-        cache.put( "time", Time.now )
-        cache.put( user.id, user )
+# Put some stuff in the cache
+cache.put( 'akey', "a string value" )
+cache.put( "time", Time.now )
+cache.put( user.id, user )
 
-        # Get it back again
-        time = cache.get( "time" )
-        user = cache.get( params[:id] )
+# Get it back again
+time = cache.get( "time" )
+user = cache.get( params[:id] )
 
-        # Remove something
-        cache.remove( 'akey' )</programlisting>
+# Remove something
+cache.remove( 'akey' )
+      </programlisting>
 
       You also have typical hash-like methods which allow you to manipulate
       and query the cache for key information.
 
       <programlisting>
-        # Get all of the keys
-        keyset = cache.keys
+# Get all of the keys
+keyset = cache.keys
 
-        # See if the cache contains a key
-        cache.contains_key? user.id
+# See if the cache contains a key
+cache.contains_key? user.id
 
-        # Get everything! Caution, this could be very expensive
-        thewholeshebang = cache.all
+# Get everything! Caution, this could be very expensive
+thewholeshebang = cache.all
 
-        # Clear it out. This happens asynchronously, so returns quickly
-        cache.clear
+# Clear it out. This happens asynchronously, so returns quickly
+cache.clear
 
-        # Only put this in the cache if there isn't already something there with the same key
-        cache.put_if_absent( key, session[:user] )
+# Only put this in the cache if there isn't already something there with the same key
+cache.put_if_absent( key, session[:user] )
 
-        # And you can replace a value in the cache conditionally 
-        # - if it hasn't changed since the last time you accessed it
-        t1 = Time.now
-        t2 = Time.now + 10
-        cache.put( "time", t1 )
-        # replaces t1 with t2
-        cache.replace( "time", t1, t2 )
-        # does NOT replace since the value is now t2
-        cache.replace( "time", t1, Time.now + 20 )</programlisting>
+# And you can replace a value in the cache conditionally 
+# - if it hasn't changed since the last time you accessed it
+t1 = Time.now
+t2 = Time.now + 10
+cache.put( "time", t1 )
+# replaces t1 with t2
+cache.replace( "time", t1, t2 )
+# does NOT replace since the value is now t2
+cache.replace( "time", t1, Time.now + 20 )
+      </programlisting>
 
       <formalpara>
         <title>Increment, Decrement and Transactions</title>
@@ -294,20 +296,21 @@
       </formalpara>
 
       <programlisting>
-        cache.increment('mykey') # 1
-        cache.increment('mykey') # 2
-        cache.decrement('mykey') # 1
+cache.increment('mykey') # 1
+cache.increment('mykey') # 2
+cache.decrement('mykey') # 1
 
-        # Automatically participates in XA transactions
-        Torquebox.transaction do
-          cache.increment('mykey')
-          # ...
-        end
+# Automatically participates in XA transactions
+Torquebox.transaction do
+  cache.increment('mykey')
+  # ...
+end
 
-        # And can scope transactions itself
-        cache.transaction do
-          cache.decrement('mykey')
-        end</programlisting>
+# And can scope transactions itself
+cache.transaction do
+  cache.decrement('mykey')
+  end
+      </programlisting>
       <para>To read more about transactions see <xref linkend='transactions'/>.</para>
     </para>
 
@@ -323,7 +326,7 @@
     </para>
 
     <para> 
-      In additions to the common options for
+      In addition to the common options for
       <code>TorqueBox::Infinispan::Cache</code> as noted above,
       <code>ActiveSupport::Cache::TorqueBoxStore</code> supports all the
       options of the existing Rails implementations, including the advanced

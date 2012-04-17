@@ -43,6 +43,7 @@ import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
+import org.torquebox.core.util.StringUtils;
 import org.torquebox.jobs.ScheduledJob;
 import org.torquebox.jobs.ScheduledJobMBean;
 import org.torquebox.jobs.ScheduledJobMetaData;
@@ -104,7 +105,7 @@ public class ScheduledJobInstaller implements DeploymentUnitProcessor {
         String mbeanName = ObjectNameFactory.create( "torquebox.jobs", new Hashtable<String, String>() {
             {
                 put( "app", rubyAppMetaData.getApplicationName() );
-                put( "name", metaData.getName() );
+                put( "name", StringUtils.underscore( metaData.getName() ) );
             }
         } ).toString();
 

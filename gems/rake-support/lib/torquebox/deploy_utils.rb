@@ -116,16 +116,25 @@ module TorqueBox
         puts "TorqueBox install OK: #{opt_torquebox}"
       end
 
+      def set_java_opts(options)
+        ENV['APPEND_JAVA_OPTS'] = options
+      end
+
       def run_command_line(opts={})
         options = ENV['JBOSS_OPTS'] || ''
         options = "#{options} --server-config=#{cluster_config_file}" if opts[:clustered]
         options = "#{options} -Dorg.torquebox.web.http.maxThreads=#{opts[:max_threads]}" if opts[:max_threads]
         options = "#{options} -b #{opts[:bind_address]}" if opts[:bind_address]
+        options = "#{options} -Djboss.socket.binding.port-offset=#{opts[:port_offset]}" if opts[:port_offset]
+        options = "#{options} -Djboss.node.name=#{opts[:node_name]}" if opts[:node_name]
+        options = "#{options} -Djboss.server.data.dir=#{opts[:data_directory]}" if opts[:data_directory]
+        options = "#{options} #{opts[:pass_through]}" if opts[:pass_through]
         if windows?
           cmd = "#{jboss_home.gsub('/', '\\')}\\bin\\standalone.bat"
         else
           cmd = "/bin/sh bin/standalone.sh"
         end
+        puts "#{cmd} #{options}" # Make it clear to the user what is being passed through to JBoss AS
         [cmd, options]
       end
 
@@ -134,7 +143,6 @@ module TorqueBox
       end
 
       def run_server(options={})
-        
         puts "[WARNING] #{deployment_name} has not been deployed. Starting TorqueBox anyway." unless ( is_deployed? )
 
         Dir.chdir(jboss_home) do
@@ -144,6 +152,7 @@ module TorqueBox
           # is probably not what we want.
           ENV.delete('BUNDLE_GEMFILE')
 
+          set_java_opts(options[:jvm_options])
           exec_command(run_command_line(options).join(' '))
         end
       end
@@ -174,7 +183,7 @@ module TorqueBox
           end
 
           cmd = "jar cvf #{archive_path} #{include_files.join(' ')}"
-          exec_command( cmd )
+          run_command( cmd )
         end
 
         archive_path
@@ -184,8 +193,8 @@ module TorqueBox
         Dir.chdir( app_dir ) do
           jruby = File.join( RbConfig::CONFIG['bindir'], RbConfig::CONFIG['ruby_install_name'] )
           jruby << " --1.9" if RUBY_VERSION =~ /^1\.9\./
-          exec_command( "#{jruby} -S bundle package" )
-          exec_command( "#{jruby} -S bundle install --local --path vendor/bundle" )
+          run_command( "#{jruby} -S bundle package" )
+          run_command( "#{jruby} -S bundle install --local --path vendor/bundle" )
         end
       end
 
@@ -279,27 +288,61 @@ module TorqueBox
         success
       end
 
+      # Used when we want to effectively replace this process with the
+      # given command. On Windows this does call Kernel#exec but on
+      # everything else we just delegate to run_command.
+      #
+      # This is mainly so CTRL+C, STDIN, STDOUT, and STDERR work as
+      # expected across all operating systems.
       def exec_command(cmd)
-        IO.popen4( cmd ) do |pid, stdin, stdout, stderr|
+        windows? ? exec(cmd) : run_command(cmd)
+      end
+
+      # Used to run a command as a subprocess
+      def run_command(cmd)
+        exiting = false
+        IO.popen4(cmd) do |pid, stdin, stdout, stderr|
+          stdout.sync = true
+          stderr.sync = true
           trap("INT") do
+            exiting = true
+            stdin.close
             puts "caught SIGINT, shutting down"
             `taskkill /F /T /PID #{pid}` if windows?
           end
-          [
-           Thread.new(stdout) {|stdout_io|
-             stdout_io.each_line do |l|
-               STDOUT.puts l
-               STDOUT.flush
-             end
-           },
 
-           Thread.new(stderr) {|stderr_io|
-             stderr_io.each_line do |l|
-               STDERR.puts l
-               STDERR.flush
-             end
-           }
-          ].each( &:join )
+          # Don't join on stdin since interrupting a blocking read on
+          # JRuby is pretty tricky
+          Thread.new(stdin) { |stdin_io|
+            begin
+              until exiting
+                stdin_io.write(STDIN.readpartial(1024))
+                stdin_io.flush
+              end
+            rescue Errno::EBADF, IOError
+            end
+          }
+
+          # Join on stdout/stderr since they'll be closed
+          # automatically once TorqueBox exits
+          [ Thread.new(stdout) { |stdout_io|
+              begin
+                while true
+                  STDOUT.write(stdout_io.readpartial(1024))
+                end
+              rescue EOFError
+              end
+            },
+
+            Thread.new(stderr) { |stderr_io|
+              begin
+                while true
+                  STDERR.write(stderr_io.readpartial(1024))
+                end
+              rescue EOFError
+              end
+            }
+          ].each( &:join)
         end
 
       end
@@ -319,9 +362,33 @@ module TorqueBox
       def normalize_archive_name(name)
         name[-5..-1] == '.knob' ? name : name + '.knob'
       end
+
+      def deployment_descriptors
+        Dir.glob( "#{deploy_dir}/*-knob.yml" ).collect { |d| File.basename( d ) }
+      end
+
+      def deployment_status
+        applications = {}
+        deployment_descriptors.each do | descriptor |
+          descriptor_path = File.join( deploy_dir, descriptor )
+          appname = descriptor.sub( /\-knob.yml/, '' ) 
+          applications[appname] = {}
+          applications[appname][:descriptor] = descriptor_path
+          applications[appname][:status] = case 
+                                           when File.exists?("#{descriptor_path}.dodeploy")
+                                             "awaiting deployment"
+                                           when File.exists?("#{descriptor_path}.deployed")
+                                             "deployed"
+                                           when File.exists?("#{descriptor_path}.failed")
+                                             "deployment failed"
+                                           else "unknown: try running `torquebox deploy #{appname}`"
+                                           end
+        end
+        applications
+      end
       
       private 
-      
+
       def undeploy(name, opts = {})
         puts "Attempting to undeploy #{name}"
         from_dir = find_option( opts, 'deploy_dir' ) || deploy_dir

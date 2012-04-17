@@ -10,6 +10,9 @@ class Something
     @foreground = inject("queue/foreground")
     @background = inject("queue/background")
   end
+
+  def foo
+  end
   
   def self.define_foo
     class_eval do

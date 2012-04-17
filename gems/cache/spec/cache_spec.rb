@@ -144,13 +144,6 @@ describe TorqueBox::Infinispan::Cache do
     @cache.get('a false value').should be_false
   end
 
-  it "should store and retrieve nil values" do
-    pending
-    @cache.put('a nil value', nil)
-    @cache.contains_key?('a nil value').should be_true
-    @cache.get('a nil value').should be_nil
-  end
-
   it "should expire entries based on provided expiry durations" do
     cache = TorqueBox::Infinispan::Cache.new( :name => 'expiring-cache' )
     cache.put("foo", "bar", 0.1)

@@ -31,7 +31,7 @@ import org.torquebox.core.injection.analysis.Injectable;
  */
 public class ServiceInjectableHandler extends AbstractInjectableHandler {
     
-    public static final String TYPE = "service";
+    public static final String TYPE = "msc";
 
     public ServiceInjectableHandler() {
         super( TYPE );

@@ -277,6 +277,19 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
 
       config['<root>']['service'].should == [['AService', { }], ['AService', { }]]
     end
+
+    it "should allow service configuration with a block" do
+      config = TorqueBox.configure do
+        service 'AConfiguredService' do
+          config do
+            food :biscuit
+          end
+        end
+      end
+
+      config['<root>']['service'].should == [["AConfiguredService", {"config"=>{:food=>:biscuit}}]]
+    end
+        
   end
 
   describe '#stomp' do
@@ -332,6 +345,15 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       config['<root>']['job'].should == [['AJob', { :cron => '1234' }], ['AJob', { :cron => '1234' }]]
     end
 
+    it "should allow jobs in modules" do
+      config = TorqueBox.configure do
+        job 'One::AJob', :cron => '1234'
+        job 'Two::AJob', :cron => '1234'
+      end
+
+      config['<root>']['job'].should == [['One::AJob', { :cron => '1234' }], ['Two::AJob', { :cron => '1234' }]]
+    end
+
     it "should allow cron to be set in a block" do
       lambda {
         TorqueBox.configure do
@@ -351,6 +373,19 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       }.should raise_error(TorqueBox::Configuration::ConfigurationError)
     end
 
+    it "should allow job configuration with a block" do
+      config = TorqueBox.configure do
+        job 'AConfiguredJob' do
+          cron '123'
+          config do
+            food :biscuit
+          end
+        end
+      end
+
+      config['<root>']['job'].should == [["AConfiguredJob", {:cron=>"123", "config"=>{:food=>:biscuit}}]]
+    end
+        
   end
 
   describe "#to_metadata_hash" do

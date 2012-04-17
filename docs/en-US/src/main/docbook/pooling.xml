@@ -59,7 +59,7 @@
     <title>Subsystem Pools</title>
 
     <para>As noted above, an advanced application may use the functionality of
-    multiple subsystems. Each susbsystem is configured to use a distinct pool
+    multiple subsystems. Each subsystem is configured to use a distinct pool
     in order to provide a modicum of isolation and prevent wayward
     interaction. The configuration of various subsystem pools are affected by
     how the application is deployed. Each subsystem is automatically

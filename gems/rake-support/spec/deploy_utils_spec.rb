@@ -223,7 +223,7 @@ describe TorqueBox::DeployUtils do
         begin
           @util.check_server
         rescue Exception => e
-          e.message.should =~ %r{doesn't appear to be a valid TorqueBox install}
+          e.message.should =~ /doesn't appear to be a valid TorqueBox install/
         end
       end
     end
@@ -248,6 +248,11 @@ describe TorqueBox::DeployUtils do
     it 'should check if the current directory is deployed' do
       @util.should_receive(:is_deployed?).and_return( true )
       @util.run_server
+    end
+
+    it 'should set java options' do
+      @util.should_receive(:set_java_opts).with('java options')
+      @util.run_server(:jvm_options => 'java options')
     end
   end
 
@@ -305,11 +310,47 @@ describe TorqueBox::DeployUtils do
       command, options = @util.run_command_line(:bind_address => '0.0.0.0')
       options.should include('-b 0.0.0.0')
     end
+
+    it 'should not set port offset by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Djboss.socket.binding.port-offset')
+    end
+
+    it 'should set port offset when given' do
+      command, options = @util.run_command_line(:port_offset => '100')
+      options.should include('-Djboss.socket.binding.port-offset=100')
+    end
+
+    it 'should not set node name by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Djboss.node.name')
+    end
+
+    it 'should set node name when given' do
+      command, options = @util.run_command_line(:node_name => 'mynode')
+      options.should include('-Djboss.node.name=mynode')
+    end
+
+    it 'should not set data directory by default' do
+      command, options = @util.run_command_line
+      options.should_not include('-Djboss.server.data.dir')
+    end
+
+    it 'should set data directory when given' do
+      command, options = @util.run_command_line(:data_directory => '/tmp/mynode')
+      options.should include('-Djboss.server.data.dir=/tmp/mynode')
+    end
+
+    it 'should allow extra parameters to be passed through to JBoss AS' do
+      command, options = @util.run_command_line(:pass_through => '--help')
+      options.should include('--help')
+    end
+
   end
 
   describe '.create_archive' do
     it 'should not include excluded dirs and files' do
-      @util.should_receive(:exec_command) do |arg|
+      @util.should_receive(:run_command) do |arg|
         ["config.ru", "app"].permutation.map {|p|
           "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
         }.should include(arg)
@@ -325,7 +366,7 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should exclude based on patterns' do
-      @util.should_receive(:exec_command) do |arg|
+      @util.should_receive(:run_command) do |arg|
         ["puppet", "config.ru", "app"].permutation.map {|p|
           "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
         }.should include(arg)
@@ -341,7 +382,7 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should include all dirs and files except default' do
-      @util.should_receive(:exec_command) do |arg|
+      @util.should_receive(:run_command) do |arg|
         ["config.ru", "app", "puppet", "simpleapp.box"].permutation.map {|p|
           "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
         }.should include(arg)
@@ -353,6 +394,47 @@ describe TorqueBox::DeployUtils do
           :dest_dir => "/tmp"
       )
       path.should == "/tmp/simpleapp.knob"
+    end
+  end
+
+  describe '.deployment_status' do
+    before( :each ) do
+      ENV['TORQUEBOX_HOME'] = '/torquebox'
+      ENV['JBOSS_HOME'] = ENV['TORQUEBOX_HOME'] + '/jboss'
+      @myapp = @util.deployment_name( 'my-app' )
+      @appname = @myapp.sub /\-knob.yml/, ''
+      File.stub('exists?').with(File.join(@util.torquebox_home, 'apps')).and_return false
+      File.stub('exists?').with(File.join(@util.deploy_dir, @myapp)).and_return true
+      File.stub('exists?').with(File.join(@util.deploy_dir, "#{@myapp}.dodeploy")).and_return false
+      File.stub('exists?').with(File.join(@util.deploy_dir, "#{@myapp}.deployed")).and_return false
+      File.stub('exists?').with(File.join(@util.deploy_dir, "#{@myapp}.failed")).and_return false
+      Dir.stub('glob').with( "#{@util.deploy_dir}/*-knob.yml" ).and_return [ File.join( @util.deploy_dir, @myapp ) ]
+    end
+
+    it 'should return a hash of deployment info keyed by application name' do
+      @util.deployment_status[@appname].should_not be_nil
+    end
+
+    it 'should provide the deployment descriptor path' do
+      @util.deployment_status[@appname][:descriptor].should_not be_nil
+    end
+
+    it 'should provide a deployment status if awaiting deployment' do
+      dodeploy_file = File.join(@util.deploy_dir, "#{@myapp}.dodeploy")
+      File.stub('exists?').with(dodeploy_file).and_return true
+      @util.deployment_status[@appname][:status].should == 'awaiting deployment'
+    end
+
+    it 'should provide a deployment status if deployed' do
+      deployed_file = File.join(@util.deploy_dir, "#{@myapp}.deployed")
+      File.stub('exists?').with(deployed_file).and_return true
+      @util.deployment_status[@appname][:status].should == 'deployed'
+    end
+
+    it 'should provide a deployment status if failed' do
+      failed_file   = File.join(@util.deploy_dir, "#{@myapp}.failed")
+      File.stub('exists?').with(failed_file).and_return true
+      @util.deployment_status[@appname][:status].should == 'deployment failed'
     end
   end
 end

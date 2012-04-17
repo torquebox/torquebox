@@ -1,1 +1,1 @@
-require 'service_helper'
+PART_ONE = "M1"

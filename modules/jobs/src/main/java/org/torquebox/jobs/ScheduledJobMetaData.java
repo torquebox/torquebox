@@ -113,6 +113,6 @@ public class ScheduledJobMetaData {
     private Map<String, Object> parameters;
     
     private String rubySchedulerName;
-    private boolean singleton;
+    private boolean singleton = true;
 
 }

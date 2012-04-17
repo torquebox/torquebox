@@ -76,6 +76,6 @@ public class ServiceMetaData {
     private String rubyRequirePath;
     private String name;
     private Map<String, Object> parameters;
-    private boolean requiresSingleton;
+    private boolean requiresSingleton = true;
 
 }

@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.torquebox</groupId>
     <artifactId>torquebox-modules-parent</artifactId>
-    <version>2.0.0.CR1-SNAPSHOT</version>
+    <version>2.0.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -58,6 +58,11 @@
     <dependency>
       <groupId>org.jboss.as</groupId>
       <artifactId>jboss-as-threads</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-modcluster</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>

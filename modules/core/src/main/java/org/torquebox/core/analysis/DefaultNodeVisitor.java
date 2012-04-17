@@ -35,6 +35,8 @@ public class DefaultNodeVisitor implements NodeVisitor {
 
     private boolean trace = false;
 
+    private static final int MAX_INDENT_LEVEL = 100;
+
     protected Object defaultVisitNode(Node node) {
 
         List<Object> results = new ArrayList<Object>();
@@ -54,9 +56,13 @@ public class DefaultNodeVisitor implements NodeVisitor {
                     log.trace( indent + " " + node + " // "  + getNodeName( node ) );
                 }
 
-                ++indentLevel;
             }
         }
+
+        if (indentLevel > MAX_INDENT_LEVEL) {
+            return null;
+        }
+        ++indentLevel;
 
         for (Node child : node.childNodes()) {
             if ( ! ( child.getNodeType() == NodeType.ARGUMENTNODE) && ! ( child.getNodeType() == NodeType.LISTNODE ) ) {
@@ -74,9 +80,7 @@ public class DefaultNodeVisitor implements NodeVisitor {
             }
         }
 
-        if (trace) {
-            --indentLevel;
-        }
+        --indentLevel;
 
         if (results.isEmpty()) {
             return null;

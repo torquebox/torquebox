@@ -125,23 +125,26 @@ remote_describe "in-container messaging tests" do
 
   describe "sending and receiving" do
 
-    context "with an encoding of json" do
-      it "should be able to publish to and receive from a queue" do
-        with_queue("/queues/foo") do |queue|
-          queue.publish ["howdy"], :encoding => :json
-          message = queue.receive
+    [:clojure, :json].each do |encoding|
 
-          message.should eql( ["howdy"] )
+      context "with an encoding of #{encoding}" do
+        it "should be able to publish to and receive from a queue" do
+          with_queue("/queues/foo") do |queue|
+            queue.publish ["howdy"], :encoding => encoding
+            message = queue.receive
+
+            message.should eql( ["howdy"] )
+          end
         end
-      end
 
-      it "should be able to publish a hash to and receive from a queue" do
-        with_queue("/queues/foo") do |queue|
-          data = { :array => [1, 'abc'], :int => 123, :string => 'abc' }
-          queue.publish data, :encoding => :json
-          message = queue.receive
+        it "should be able to publish a hash to and receive from a queue" do
+          with_queue("/queues/foo") do |queue|
+            data = { :array => [1, 'abc'], :int => 123, :string => 'abc' }
+            queue.publish data, :encoding => encoding
+            message = queue.receive
 
-          message.should eql( data )
+            message.should eql( data )
+          end
         end
       end
     end

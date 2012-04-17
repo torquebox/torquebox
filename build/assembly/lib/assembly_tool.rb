@@ -168,11 +168,23 @@ class AssemblyTool
   def add_cache(doc)
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.1']" ).first
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.2']" ).first
       container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
       cache = container.add_element( 'local-cache', 'name'=>'sessions' )
       cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )
       cache.add_element( 'expiration', 'max-idle'=>'100000' )
+    end
+  end
+
+  def add_ha_cache(doc)
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.2']" ).first
+      container = subsystem.get_elements( "cache-container[@name='web']" ).first
+      #subsystem.get_elements( "cache-container" ).each do |c|
+        #puts "CACHE_CONTAINER: #{c.to_s}"
+      #end
+      container.add_attribute( "aliases", "torquebox standard-session-cache" ) if container
     end
   end
 
@@ -327,14 +339,14 @@ class AssemblyTool
   def fix_profiles(doc)
     profile = doc.root.get_elements( "//profile[@name='default']" ).first
     profile.remove
-    profile = doc.root.get_elements( "//profile[@name='ha']" ).first
+    profile = doc.root.get_elements( "//profile[@name='full-ha']" ).first
     profile.attributes['name'] = 'default' 
   end
 
   def fix_socket_binding_groups(doc)
     group = doc.root.get_elements( "//socket-binding-group[@name='standard-sockets']" ).first
     group.remove
-    group = doc.root.get_elements( "//socket-binding-group[@name='ha-sockets']" ).first
+    group = doc.root.get_elements( "//socket-binding-group[@name='full-ha-sockets']" ).first
     group.attributes['name'] = 'standard-sockets'
   end
 
@@ -356,24 +368,29 @@ class AssemblyTool
   end
 
   def adjust_messaging_config(doc)
-    settings = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server/address-settings/address-setting" ).first
-    settings.get_elements( 'address-full-policy' ).first.text = 'PAGE'
-    settings.get_elements( 'max-size-bytes' ).first.text = '20971520'
+    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    address_setting = hornetq_server.get_elements( "address-settings/address-setting" ).first
+    address_setting.get_elements( 'address-full-policy' ).first.text = 'PAGE'
+    address_setting.get_elements( 'max-size-bytes' ).first.text = '20971520'
+
+    factories = hornetq_server.get_elements( "jms-connection-factories/connection-factory")
+    factories.each do |factory|
+      e = REXML::Element.new( 'consumer-window-size' )
+      e.text = '1'
+      factory.add_element( e )
+    end
   end
 
   def remove_messaging_security(doc)
-    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
-    e = REXML::Element.new( 'security-enabled' )
-    e.text = 'false'
-    hornetq_server.add_element( e )
+    doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).each do |hornetq_server|
+      e = REXML::Element.new( 'security-enabled' )
+      e.text = 'false'
+      hornetq_server.add_element( e )
+    end
   end
 
   def fix_messaging_clustering(doc)
     hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
-
-    e = REXML::Element.new( 'clustered' )
-    e.text = 'true'
-    hornetq_server.add_element( e )
 
     e = REXML::Element.new( 'cluster-user' )
     e.text = 'admin'
@@ -382,74 +399,6 @@ class AssemblyTool
     e = REXML::Element.new( 'cluster-password' )
     e.text = 'password'
     hornetq_server.add_element( e )
-
-    broadcast_groups = REXML::Element.new( 'broadcast-groups' )
-    broadcast_group = REXML::Element.new( 'broadcast-group' )
-    broadcast_group.attributes['name'] = 'default-broadcast-group'
-
-    e = REXML::Element.new( 'group-address' )
-    e.text = '231.7.7.7' 
-    broadcast_group.add_element( e )
-
-    e = REXML::Element.new( 'group-port' )
-    e.text = '9876'
-    broadcast_group.add_element( e )
-
-    e = REXML::Element.new( 'broadcast-period' )
-    e.text = '100'
-    broadcast_group.add_element( e )
-
-    e = REXML::Element.new( 'connector-ref' )
-    e.text = 'netty'
-    broadcast_group.add_element( e )
-    broadcast_groups.add_element( broadcast_group )
-    hornetq_server.add_element( broadcast_groups )
-
-    discovery_groups = REXML::Element.new( 'discovery-groups' )
-    discovery_group = REXML::Element.new( 'discovery-group' )
-    discovery_group.attributes['name'] = 'default-discovery-group'
-
-    e = REXML::Element.new( 'group-address' )
-    e.text = '231.7.7.7' 
-    discovery_group.add_element( e )
-
-    e = REXML::Element.new( 'group-port' )
-    e.text = '9876'
-    discovery_group.add_element( e )
-
-    e = REXML::Element.new( 'refresh-timeout' )
-    e.text = '20000'
-    discovery_group.add_element( e )
-
-    discovery_groups.add_element( discovery_group )
-    hornetq_server.add_element( discovery_groups )
-
-    cluster_connections = REXML::Element.new( 'cluster-connections' )
-    cluster_connection = REXML::Element.new( 'cluster-connection' )
-    cluster_connection.attributes['name'] = 'default-cluster-connection'
-
-    e = REXML::Element.new( 'address' )
-    e.text = 'jms'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'connector-ref' )
-    e.text = 'netty'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'retry-interval' )
-    e.text = '500'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'forward-when-no-consumers' )
-    e.text = 'true'
-    cluster_connection.add_element( e )
-
-    e = REXML::Element.new( 'discovery-group-ref' )
-    e.attributes['discovery-group-name'] = 'default-discovery-group'
-    cluster_connection.add_element( e )
-
-    cluster_connections.add_element( cluster_connection )
-    hornetq_server.add_element( cluster_connections )
   end
 
   def fix_host_servers(doc)
@@ -496,6 +445,18 @@ class AssemblyTool
     end
   end
 
+  def adjust_modcluster_config(doc)
+    profiles = doc.root.get_elements( '//profile' )
+    profiles.each do |profile|
+
+      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:modcluster:1.0']" ).first
+      unless subsystem.nil?
+        config = subsystem.get_elements( 'mod-cluster-config' ).first
+        config.add_attribute( 'excluded-contexts', 'invoker,jbossws,juddi,console' )
+      end
+    end
+  end
+
   def transform_host_config(input_file, output_file)
     doc = REXML::Document.new( File.read( input_file ) )
     Dir.chdir( @jboss_dir ) do
@@ -518,7 +479,7 @@ class AssemblyTool
       increase_deployment_timeout(doc) unless domain
       add_extensions(doc, options[:extra_modules])
       add_subsystems(doc, options[:extra_modules])
-      add_cache(doc)
+      ha ? add_ha_cache(doc) : add_cache(doc) # add_cache seems unnecessary here!
       set_welcome_root(doc)
       tweak_jboss_web_properties(doc)
       remove_destinations(doc)
@@ -535,6 +496,7 @@ class AssemblyTool
       if ( domain || ha )
         fix_messaging_clustering(doc)
         add_messaging_socket_binding(doc)
+        adjust_modcluster_config(doc)
       end
 
       adjust_messaging_config(doc)
@@ -550,6 +512,24 @@ class AssemblyTool
       FileUtils.mkdir_p( File.dirname(output_file) )
       open( output_file, 'w' ) do |f|
         doc.write( f, 4 )
+      end
+    end
+  end
+
+  def transform_standalone_conf(torquebox_java_opts)
+    conf = File.join( jboss_dir, 'bin', 'standalone.conf')
+    unless File.read( conf ).include?('$APPEND_JAVA_OPTS')
+      File.open( conf, 'a' ) do |file|
+        file.write( %Q(\nJAVA_OPTS="$JAVA_OPTS #{torquebox_java_opts} $APPEND_JAVA_OPTS"\n) )
+      end
+    end
+  end
+
+  def transform_standalone_conf_bat(torquebox_java_opts)
+    conf = File.join( jboss_dir, 'bin', 'standalone.conf.bat')
+    unless File.read( conf ).include?('%APPEND_JAVA_OPTS%')
+      File.open( conf, 'a' ) do |file|
+        file.write( %Q(\nset "JAVA_OPTS=%JAVA_OPTS% #{torquebox_java_opts} %APPEND_JAVA_OPTS%"\n) )
       end
     end
   end

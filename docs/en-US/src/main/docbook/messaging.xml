@@ -100,10 +100,10 @@
   <section id="deploying-destinations">
     <title>Deploying Destinations</title>
 
-    <para>Queues and topics (collectively known as destinations) may be
-    deployed with your application, or separate from your application.
-    Additionally, various parts of your application may also implicitly deploy
-    and use some destinations.</para>
+    <para>Queues and topics (collectively known as destinations) may
+    be deployed with your application, or separate from your
+    application. Various parts of your application may also implicitly
+    deploy and use some destinations.</para>
 
     <para>Each method has advantages and disadvantages involving the
     expectations of your application and its interaction with resources
@@ -115,14 +115,16 @@
       <section id="destination-deployment-with-app">
         <title>Deploying destinations with your application</title>
 
-        <para>If you decide to deploy your queues and topics with your
-        application, you automatically align their lifecycle to the deployment
-        cycle of your application. If you undeploy your application, your
-        queues and topics will also disappear, and be unable to receive
-        messages. If the queues are used only internally to your application,
-        and short lifespan semantics are useful to you, deploying destinations
-        with your application reduces deployment steps and moving
-        parts.</para>
+        <para>The recommended style is to deploy your queues and
+        topics with your application. This aligns their lifecycle to
+        the deployment cycle of your application. When the app is
+        deployed, its message destinations will be started, if
+        necessary. And when the app is undeployed, its message
+        destinations will be stopped as well, unless they're currently
+        in use by another application. This is by design: messaging
+        destinations are an excellent means of inter-application
+        coordination, so destinations are only stopped when there are
+        no other applications consuming messages from them.</para>
       </section>
 
       <section id="destination-deployment-apart-from-app">
@@ -165,19 +167,56 @@ TorqueBox::Messaging::Topic.start '/topics/bar'</programlisting>
       <para>You have several options when deploying queues and topics, based
       on the lifecycle that suits your systems best.</para>
 
+      <section id="application-linked-destinations">
+        <title>Application-linked queues and topics</title>
+
+        <para>
+          Destinations deployed with your application are configured
+          in your application's <link
+          linkend="deployment-descriptors">deployment
+          descriptor</link>, either its internal one or its external
+          "knob" file.
+        </para>
+
+        <para>Within either of these files, you may use a
+        <parameter>queues:</parameter> section to define queues and a
+        <parameter>topics:</parameter> section to define topics.</para>
+
+        <para><example>
+            <title>Defining topics and queues in a deployment
+            descriptor</title>
+
+            <para>Using the YAML syntax:<programlisting>application:
+  ..
+queues:
+  /queues/my_app_queue:
+
+topics:
+  /queues/my_app_topic:</programlisting></para>
+
+            <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  queue '/queues/my_app_queue'
+  topic '/queues/my_app_topic'
+end</programlisting></para>
+          </example></para>
+      </section>
+
       <section id="long-lived-destinations">
         <title><filename>Long-lived queues and topics</filename></title>
 
-        <para>If your queues and topics have a lifecycle that extends beyond
-        the deployment of any single app, you may want long-lived queues and
-        topics. Long-lived destinations are first-order components, and may be
-        deployed on their own. In this way, many applications can come and go
-        over time, publishing and consuming from the same queues.</para>
+        <para>If your queues and topics have a lifecycle that extends
+        beyond the deployment of your applications, you may want
+        long-lived destinations, which are first-order components, and
+        may be deployed on their own. In this way, many applications
+        can come and go over time, publishing and consuming from the
+        same queues.</para>
 
         <para>When using long-lived destinations,
-        <filename><replaceable>*</replaceable>-knob.yml</filename> deployment
-        descriptors are placed directly into the
-        <filename>deployments/</filename> directory of TorqueBox AS.</para>
+        <filename><replaceable>*</replaceable>-knob.yml</filename>
+        deployment descriptors are placed directly into the
+        <filename>deployments/</filename> directory of TorqueBox
+        AS.</para>
 
         <formalpara>
           <title>Queues</title>
@@ -242,38 +281,6 @@ TorqueBox::Messaging::Topic.start '/topics/bar'</programlisting>
           </example></para>
       </section>
 
-      <section id="application-linked-destinations">
-        <title>Application-linked queues and topics</title>
-
-        <para>Destinations deployed with your application also undeploy when
-        your application is undeployed. These destinations are configuration
-        through either your application's internal descriptor, or through an
-        external <filename><replaceable>*</replaceable>-knob.yml</filename>
-        descriptor.</para>
-
-        <para>Within either of these files, you may use a
-        <parameter>queues:</parameter> section to define queues and a
-        <parameter>topics:</parameter> section to define topics.</para>
-
-        <para><example>
-            <title>Defining topics and queues in a deployment
-            descriptor</title>
-
-            <para>Using the YAML syntax:<programlisting>application:
-  ..
-queues:
-  /queues/my_app_queue:
-
-topics:
-  /queues/my_app_topic:</programlisting></para>
-
-            <para>And via the DSL:<programlisting>TorqueBox.configure do
-  ...
-  queue '/queues/my_app_queue'
-  topic '/queues/my_app_topic'
-end</programlisting></para>
-          </example></para>
-      </section>
     </section>
   </section>
 
@@ -513,23 +520,32 @@ queue.publish "Some message"</programlisting></para>
                 message. TorqueBox provides the following built-in encodings:
                 <itemizedlist>
                     <listitem>
-                      <para><parameter>:marshal</parameter> - The message in
+                      <para><parameter>:marshal</parameter> - The message is
                       encoded/decoded via Marshal, and is transmitted as a
                       binary message.</para>
                     </listitem>
 
                     <listitem>
                       <para><parameter>:marshal_base64</parameter> - The
-                      message in encoded/decoded via Marshal, and is
+                      message is encoded/decoded via Marshal, and is
                       transmitted as a base64 encoded text message. This was
                       the encoding scheme used in TorqueBox 1.x.</para>
                     </listitem>
 
                     <listitem>
-                      <para><parameter>:json</parameter> - The message in
+                      <para><parameter>:json</parameter> - The message is
                       encoded/decoded via JSON, and is transmitted as a text
                       message. This encoding is limited, and should only be
                       used for simple messages.</para>
+                    </listitem>
+
+                    <listitem>
+                      <para><parameter>:clojure</parameter> - The
+                      message is encoded/decoded via the
+                      <filename>clj</filename> gem, and is transmitted
+                      as a text message. This encoding is most
+                      convenient for messages that can be represented
+                      using standard Clojure data structures.</para>
                     </listitem>
 
                     <listitem>
@@ -792,42 +808,48 @@ message = topic.receive
         </section>
       </section>
 
-      <section id="synchronous-messaging">
-        <title>Synchronous Messaging</title>
+    </section>
 
-        <para>The <methodname>publish</methodname> and
+    <section id="synchronous-messaging">
+      <title>Synchronous Messaging</title>
+
+      <para>
+        The <methodname>publish</methodname> and
         <methodname>receive</methodname> methods and our higher-level
-        messaging abstractions are designed for asynchronous communication and
-        are recommended for most uses. However, if you do need to send a
-        message and wait for a response, TorqueBox also provides a synchronous
-        messaging abstraction.</para>
+        messaging abstractions are designed for asynchronous
+        communication and are recommended for most uses. However, if
+        you do need to send a message and wait for a response,
+        TorqueBox also provides a synchronous messaging abstraction.
+      </para>
 
-        <example>
-          <title>Synchronous messaging</title>
+      <example>
+        <title>Synchronous messaging</title>
 
-          <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
+        <para><programlisting>queue = TorqueBox::Messaging::Queue.new('/queues/foo')
 Thread.new {
   queue.receive_and_publish(:timeout =&gt; 5000) { |message| message.upcase }
 }
 message = queue.publish_and_receive "ping", :timeout =&gt; 5000
 # message equals "PING"
-          </programlisting></para>
-        </example>
+        </programlisting></para>
+      </example>
 
-        <para>You send a message with the
-        <methodname>publish_and_receive</methodname> method which blocks until
-        the <parameter>:timeout</parameter> elapses or a response is received.
-        This method has a default <parameter>:timeout</parameter> of 10
-        seconds since you'll rarely want to wait indefinitely for a response.
-        In a separate thread (likely TorqueBox Services - <xref
-        linkend="services" />), you consume messages and publish responses
-        with the <methodname>receive_and_publish</methodname> method. The
+      <para>
+        You send a message with the
+        <methodname>publish_and_receive</methodname> method which
+        blocks until the <parameter>:timeout</parameter> elapses or a
+        response is received. This method has a default
+        <parameter>:timeout</parameter> of 10 seconds since you'll
+        rarely want to wait indefinitely for a response. In a separate
+        thread (likely TorqueBox Services - <xref linkend="services"
+        />), you consume messages and publish responses with the
+        <methodname>receive_and_publish</methodname> method. The
         return value of the block passed to this method is the message
-        response. The options allowed in both these methods are a union of
-        those from <methodname>publish</methodname> and
-        <methodname>receive</methodname>. Synchronous messaging is only
-        available with queues, not topics.</para>
-      </section>
+        response. The options allowed in both these methods are a
+        union of those from <methodname>publish</methodname> and
+        <methodname>receive</methodname>. Synchronous messaging is
+        only available with queues, not topics.
+      </para>
     </section>
 
     <section id="message-encodings">
@@ -867,6 +889,16 @@ message = queue.publish_and_receive "ping", :timeout =&gt; 5000
               encoding will need to provide the json gem via its Gemfile, or,
               if you are not using Bundler, the json gem must at least be
               installed.</para>
+            </listitem>
+
+            <listitem>
+              <para><parameter>:clojure</parameter> - The message in
+              encoded/decoded via the <filename>clj</filename>
+              rubygem, and is transmitted as a text message.  This
+              encoding is intended to provide interoperability with
+              message producers and consumers written in Clojure. See
+              <ulink url="http://immutant.org">the Immutant
+              project</ulink> for more information.</para>
             </listitem>
 
             <listitem>
