@@ -21,6 +21,8 @@ package org.torquebox.core.analysis;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
@@ -135,22 +137,33 @@ public class ScriptAnalyzer {
      * @return The result provided by the specific <code>NodeVisitor</code>.
      */
     public void analyze(String filename, String script, NodeVisitor visitor, Version rubyVersion) {
-        StaticScope staticScope = new LocalStaticScope( null );
-        DynamicScope scope = new ManyVarsDynamicScope( staticScope );
-        Ruby analyzingRuby = null;
-
-        if (rubyVersion.equals( Version.V1_8 )) {
-            analyzingRuby = this.ruby18;
-        } else if (rubyVersion.equals( Version.V1_9 )) {
-            analyzingRuby = this.ruby19;
-        }
-
         try {
-            Node result = analyzingRuby.parseEval( script, filename, scope, 0 );
-            result.accept( visitor );
-        } catch(RaiseException ex) {
-            log.trace( "JRuby exception when parsing file " + filename , ex );
+            // Temporary reflection hack until LocalStaticScope's constructor is visible again
+            Constructor<LocalStaticScope> constructor = LocalStaticScope.class.getDeclaredConstructor( StaticScope.class );
+            constructor.setAccessible( true );
+            StaticScope staticScope = constructor.newInstance( new Object[] { null } );
+            DynamicScope scope = new ManyVarsDynamicScope( staticScope );
+            Ruby analyzingRuby = null;
+
+            if (rubyVersion.equals( Version.V1_8 )) {
+                analyzingRuby = this.ruby18;
+            } else if (rubyVersion.equals( Version.V1_9 )) {
+                analyzingRuby = this.ruby19;
+            }
+
+            try {
+                Node result = analyzingRuby.parseEval( script, filename, scope, 0 );
+                result.accept( visitor );
+            } catch(RaiseException ex) {
+                log.trace( "JRuby exception when parsing file " + filename , ex );
+            }
         }
+        // Catch the reflection-related exceptions until LocalStaticScope's
+        // constructor is public again
+        catch (NoSuchMethodException e) {}
+        catch (InvocationTargetException e) {}
+        catch (IllegalAccessException e) {}
+        catch (InstantiationException e) {}
     }
 
     /**
