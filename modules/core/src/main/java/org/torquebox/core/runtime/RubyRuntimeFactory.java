@@ -32,15 +32,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.ServiceRegistry;
-import org.jboss.vfs.TempFileProvider;
-import org.jboss.vfs.VFS;
-import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig;
@@ -263,7 +258,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
         config.setLoader( getClassLoader() );
         // config.setClassCache( getClassCache() );
-        config.setLoadServiceCreator( new VFSLoadServiceCreator() );
+        config.setLoadServiceCreator( new NonLeakingLoadServiceCreator() );
         if (this.rubyVersion != null) {
             config.setCompatVersion( this.rubyVersion );
         }
@@ -346,29 +341,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         String internalJRubyHome = RubyInstanceConfig.class.getResource( "/META-INF/jruby.home" ).toURI().getSchemeSpecificPart();
 
         if (internalJRubyHome.startsWith( "file:" ) && internalJRubyHome.contains( "!/" )) {
-            int slashLoc = internalJRubyHome.indexOf( '/' );
-            int bangLoc = internalJRubyHome.indexOf( '!' );
-
-            String jarPath = internalJRubyHome.substring( slashLoc, bangLoc );
-
-            String extraPath = internalJRubyHome.substring( bangLoc + 1 );
-
-            VirtualFile vfsJar = VFS.getChild( jarPath );
-
-            if (vfsJar.exists()) {
-                if (!vfsJar.isDirectory()) {
-                    ScheduledExecutorService executor = Executors.newScheduledThreadPool( 1 );
-                    TempFileProvider tempFileProvider = TempFileProvider.create( "jruby.home", executor );
-                    this.mountedJRubyHomes.add( VFS.mountZip( vfsJar, vfsJar, tempFileProvider ) );
-                }
-
-                if (vfsJar.isDirectory()) {
-                    VirtualFile vfsJrubyHome = vfsJar.getChild( extraPath );
-                    if (vfsJrubyHome.exists()) {
-                        return vfsJrubyHome.toURL().toExternalForm();
-                    }
-                }
-            }
+            return internalJRubyHome;
         }
 
         return null;
