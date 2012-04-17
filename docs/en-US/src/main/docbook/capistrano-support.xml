@@ -45,10 +45,6 @@
     deploy.rb file is the primary location for configuring your deployment
     strategy.</para>
     
-    <para>You will need to install the torquebox-capistrano-support gem, 
-      as it does not install in the cap gem
-      <screen><prompt>$</prompt> <command>jruby</command> <option>-S</option> <command>gem</command> <command>install</command> torquebox-capistrano-support</screen>
-    </para>
     <section id="basic-deploy-rb-configuration">
       <title>Basic deploy.rb configuration</title>
 
@@ -71,10 +67,16 @@
       <para>First, you should include the Capistrano recipes which support
       TorqueBox deployments. If you use Bundler, you should also include the
       Bundler recipes at this point.</para>
-      
 
       <para><screen>require 'torquebox-capistrano-support'
 require 'bundler/capistrano'</screen></para>
+    
+      <para><emphasis>Note:</emphasis> You will need to install the <varname>torquebox-capistrano-support</varname>
+      gem
+      if you are using the <varname>torquebox-server</varname> gem install, as it is not installed 
+      by default.</para>  
+
+      <para><screen><prompt>$</prompt> <command>jruby</command> <option>-S</option> <command>gem</command> <command>install</command> torquebox-capistrano-support</screen></para>
     </section>
 
     <section id="set-up-home-variables">
