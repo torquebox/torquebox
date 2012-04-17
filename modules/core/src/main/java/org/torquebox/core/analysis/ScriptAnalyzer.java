@@ -30,6 +30,7 @@ import org.jboss.logging.Logger;
 import org.jboss.vfs.VirtualFile;
 import org.jruby.CompatVersion;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.jruby.RubyInstanceConfig;
 import org.jruby.RubyProc;
 import org.jruby.ast.Node;
@@ -158,6 +159,19 @@ public class ScriptAnalyzer {
             } catch(RaiseException ex) {
                 log.trace( "JRuby exception when parsing file " + filename , ex );
             }
+
+            //
+            // HACK - Remove once upgraded to JRuby 1.6.7
+            //
+            try {
+                Field recursiveField = analyzingRuby.getClass().getDeclaredField( "recursive" );
+                recursiveField.setAccessible( true );
+                ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( analyzingRuby )).remove();
+            }
+            catch (Exception ex) {
+                // safe to ignore
+            }
+            // END HACK
         }
         // Catch the reflection-related exceptions until LocalStaticScope's
         // constructor is public again
@@ -165,19 +179,6 @@ public class ScriptAnalyzer {
         catch (InvocationTargetException e) {}
         catch (IllegalAccessException e) {}
         catch (InstantiationException e) {}
-
-        //
-        // HACK - Remove once upgraded to JRuby 1.6.7
-        //
-        try {
-            Field recursiveField = analyzingRuby.getClass().getDeclaredField( "recursive" );
-            recursiveField.setAccessible( true );
-            ((ThreadLocal<Map<String, RubyHash>>) recursiveField.get( analyzingRuby )).remove();
-        }
-        catch (Exception ex) {
-            // safe to ignore
-        }
-        // END HACK
     }
 
     /**
