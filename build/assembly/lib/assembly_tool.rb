@@ -105,7 +105,7 @@ class AssemblyTool
     opts = {
       :bin_dir     => @jruby_dir + '/bin',
       :env_shebang => true,
-      :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
+      :install_dir => @jruby_dir + '/lib/ruby/gems/shared',
       :wrappers    => true
     }
 
