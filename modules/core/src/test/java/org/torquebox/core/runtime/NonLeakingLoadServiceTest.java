@@ -23,12 +23,14 @@ import static org.junit.Assert.assertNotNull;
 
 import org.jruby.Ruby;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.jruby.runtime.load.LoadService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class VFSLoadServiceWithRuntimeTest {
-    
-    private VFSLoadService loadService;
+public class NonLeakingLoadServiceTest {
+
+    private LoadService loadService;
     private Ruby ruby;
 
     @Before
@@ -36,14 +38,35 @@ public class VFSLoadServiceWithRuntimeTest {
         RubyRuntimeFactory factory = new RubyRuntimeFactory();
         factory.setUseJRubyHomeEnvVar( false );
         this.ruby = factory.createInstance( "test" );
-        this.loadService = (VFSLoadService) this.ruby.getLoadService();
+        this.loadService = ruby.getLoadService();
     }
 
     @Test
-    public void testRubygemsLoadable() throws Exception {
+    public void testRubygemsLoadable() {
         this.loadService.require( "rubygems" );
-        IRubyObject result = this.ruby.evalScriptlet(  "Gem"  );
+        IRubyObject result = this.ruby.evalScriptlet( "Gem" );
         assertNotNull( result );
+    }
+
+    @Test
+    public void testClasspathLoadable() {
+        this.loadService.require(  "dummy" );
+        IRubyObject result = this.ruby.evalScriptlet( "Dummy" );
+        assertNotNull( result );
+    }
+
+    @Test
+    @Ignore( "only run locally" ) 
+    /**
+     * Used only in manual testing to verify we're not leaking input streams
+     * when loading dummy.rb - lsof -p <pid> of test process to see number of
+     * references to dummy.rb. It's always 0 when fixed, double digits when leaking.
+     */
+    public void testNoLeaks() throws Exception {
+        for(int i = 0; i < 100000; i++) {
+            loadService.require( "dummy.rb" );
+            loadService.removeInternalLoadedFeature( "dummy.rb" );
+        }
     }
 
 }

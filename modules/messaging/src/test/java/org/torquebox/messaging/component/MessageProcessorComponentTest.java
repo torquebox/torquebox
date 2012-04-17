@@ -45,7 +45,7 @@ public class MessageProcessorComponentTest extends AbstractRubyTestCase {
         this.ruby = createRuby();
 
         URL rb = getClass().getResource( "test_message_processor.rb" );
-        this.ruby.getLoadService().require( rb.toString() );
+        this.ruby.getLoadService().require( rb.getPath() );
 
         this.rubyProcessor = RuntimeHelper.instantiate( ruby, "TestMessageProcessor" );
         assertNotNull( rubyProcessor );

@@ -23,18 +23,13 @@ import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig.LoadServiceCreator;
 import org.jruby.runtime.load.LoadService;
 
-/**
- * Factory for {@link VFSLoadService}.
- * 
- * @see VFSLoadService
- * 
- * @author Bob McWhirter <bmcwhirt@redhat.com>
- */
-public class VFSLoadServiceCreator implements LoadServiceCreator {
+public class NonLeakingLoadServiceCreator implements LoadServiceCreator {
 
-    @Override
-    public LoadService create(Ruby ruby) {
-        return new VFSLoadService( ruby );
+    public LoadService create(Ruby runtime) {
+        if (runtime.is1_9()) {
+            return new NonLeakingLoadService19(runtime);
+        }
+        return new NonLeakingLoadService(runtime);
     }
 
 }
