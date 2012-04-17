@@ -113,7 +113,7 @@ public class RubyRuntimeFactoryTest {
         factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
-        assertFalse( ruby.is1_9() );
+        assertTrue( ruby.is1_9() );
     }
 
     @Test
