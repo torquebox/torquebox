@@ -74,8 +74,6 @@ class Class
           alias_method :initialize_before_torquebox!, :initialize!
           
           def initialize!
-            require 'torquebox-web'
-            
             self.class.initializer "monkeypatch-ar", :before=>'active_record.initialize_database', :after=>'active_record.set_configs' do
               if ( defined?( ActiveRecord ) )
                 begin
