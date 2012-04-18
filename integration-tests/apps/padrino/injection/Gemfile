@@ -1,3 +1,4 @@
+source "file://#{File.dirname(__FILE__)}/../../../../assemblage/assembly/target/stage/gem-repo"
 source :rubygems
 
 # Server requirements (defaults to WEBrick)
@@ -23,3 +24,5 @@ gem 'padrino', '0.10.5'
 # %w(core gen helpers cache mailer admin).each do |g|
 #   gem 'padrino-' + g, '0.10.5'
 # end
+
+gem 'torquebox'

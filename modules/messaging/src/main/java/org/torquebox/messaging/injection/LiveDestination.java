@@ -44,7 +44,7 @@ public class LiveDestination implements ConvertableRubyInjection {
     
     @Override
     public Object convert(Ruby ruby) throws Exception {
-        IRubyObject gemRequired = RuntimeHelper.evalScriptlet( ruby, "begin; require %q(torquebox-messaging); true; rescue LoadError; false; end" );
+        IRubyObject gemRequired = RuntimeHelper.evalScriptlet( ruby, "begin; require %q(torquebox-messaging); true; rescue LoadError; $stderr.puts 'ERROR: torquebox-messaging gem not loaded - skipping destination injection'; false; end" );
         if (!gemRequired.isTrue()) {
             return null;
         }
