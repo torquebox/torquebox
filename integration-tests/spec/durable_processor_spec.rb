@@ -15,6 +15,7 @@ describe "messaging rack test" do
   END
 
   it "should receive a topic ham biscuit" do
+    pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
     proc = mbean( 'torquebox.messaging.processors:name=/topics/test/test_topic_consumer,app=messaging_rack_test' )
     proc.client_id.should == 'the-client'
     proc.durable.should be_true

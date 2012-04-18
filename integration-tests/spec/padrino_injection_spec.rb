@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+unless TorqueSpec.domain_mode   # singleton services won't even deploy [TORQUE-776]
+
 describe 'padrino injection test' do
 
     deploy <<-END.gsub(/^ {4}/,'')
@@ -36,4 +38,6 @@ describe 'padrino injection test' do
     page.should have_content('service is ControllerService')
     page.should have_content('queue is /queue/controller')
   end
+end
+
 end

@@ -20,6 +20,7 @@ describe "an app using a torquebox.rb" do
     end
 
     it "should have a pool specified with a hash" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       pool = nil
       lambda { 
         pool = mbean('torquebox.pools:name=foo,app=an_app_using_a_torquebox_rb')
@@ -30,6 +31,7 @@ describe "an app using a torquebox.rb" do
     end
     
     it "should have a pool specified as a block" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       pool = nil
       lambda { 
         pool = mbean('torquebox.pools:name=cheddar,app=an_app_using_a_torquebox_rb')
@@ -40,30 +42,35 @@ describe "an app using a torquebox.rb" do
     end
 
     it "should have a queue we specify" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       lambda { 
         mbean('org.hornetq:module=JMS,type=Queue,name="/queue/a-queue"')
       }.should_not raise_error(javax.management.InstanceNotFoundException)
     end
 
     it "should have a topic we specify" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       lambda { 
         mbean('org.hornetq:module=JMS,type=Topic,name="/topic/a-topic"')
       }.should_not raise_error(javax.management.InstanceNotFoundException)
     end
     
     it "should not have a backgroundable queue (options_for w/a disable)" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       lambda { 
         mbean('org.hornetq:module=JMS,type=Queue,name="/queues/torquebox/an_app_using_a_torquebox_rb/tasks/torquebox_backgroundable"')
       }.should raise_error(javax.management.InstanceNotFoundException)
     end
 
     it "should create a job" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       job = mbean('torquebox.jobs:name=a_job,app=an_app_using_a_torquebox_rb')
       job.cron_expression.should == '*/1 * * * * ?'
       job.ruby_class_name.should == 'AJob'
     end
 
     it "should create a processor with a hash" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       proc = mbean('torquebox.messaging.processors:name=/queue/another_queue/a_processor,app=an_app_using_a_torquebox_rb')
       proc.destination_name.should == '/queue/another-queue'
       proc.concurrency.should == 2
@@ -71,6 +78,7 @@ describe "an app using a torquebox.rb" do
     end
 
     it "should create a processor with a block" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       proc = mbean('torquebox.messaging.processors:name=/queue/yet_another_queue/a_processor,app=an_app_using_a_torquebox_rb')
       proc.destination_name.should == '/queue/yet-another-queue'
       proc.concurrency.should == 2
@@ -78,22 +86,26 @@ describe "an app using a torquebox.rb" do
     end
 
     it "should create allow a singleton processor" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       proc = mbean('torquebox.messaging.processors:name=/queue/singleton_queue/a_processor,app=an_app_using_a_torquebox_rb')
       proc.destination_name.should == '/queue/singleton-queue'
       proc.concurrency.should == 1
     end
 
     it "should create a service with a hash" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       service = mbean('torquebox.services:name=ham,app=an_app_using_a_torquebox_rb')
       service.ruby_class_name.should == 'AService'
     end
 
     it "should create a service with a block" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       service = mbean('torquebox.services:name=biscuit,app=an_app_using_a_torquebox_rb')
       service.ruby_class_name.should == 'AnotherService'
     end
 
     it "should create a service with the same class as another service" do
+      pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
       service = mbean('torquebox.services:name=another_service,app=an_app_using_a_torquebox_rb')
       service.ruby_class_name.should == 'AnotherService'
     end

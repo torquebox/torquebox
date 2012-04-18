@@ -8,6 +8,7 @@ shared_examples_for "rails backgroundable tests" do
   end
 
   it "should reload the model in the task runtime" do
+    pending("This no worky so well in a cluster", :if => TorqueSpec.domain_mode)
     visit "#{@context}/widgets"
     page.should have_content( 'it worked' )
     @response.receive(:timeout => 240_000).should == 'response 0'

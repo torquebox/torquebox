@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 
+unless TorqueSpec.domain_mode   # singleton services won't even deploy [TORQUE-776]
+
 describe "basic rack test with service injection" do
 
   deploy <<-END.gsub(/^ {4}/,'')
@@ -19,5 +21,7 @@ describe "basic rack test with service injection" do
     visit "/service-injection"
     page.find("#success")[:class].should == 'service-injection'
   end
+
+end
 
 end

@@ -16,6 +16,7 @@ describe "services" do
   END
   
   it "should keep state after start and stop" do
+    pending("JMX assertions are unpredictable in domain mode", :if => TorqueSpec.domain_mode)
     service_name = 'jboss.deployment.unit."services-knob.yml".service.SimpleService'
     verify_msc_service_state(service_name, "UP")
 
