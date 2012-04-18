@@ -27,6 +27,7 @@
     <max.heap>1024m</max.heap>
     <jboss.lazy>false</jboss.lazy>
     <driver.type>any</driver.type>
+    <domain.mode>false</domain.mode>
     <ruby.compat.version>1.8</ruby.compat.version>
   </properties>
 
@@ -108,7 +109,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>torquespec</artifactId>
-      <version>0.4.8</version>
+      <version>0.4.9</version>
       <type>gem</type>
     </dependency>
 
@@ -330,6 +331,12 @@
 
   <profiles>
     <profile>
+      <id>domain</id>
+      <properties>
+        <domain.mode>true</domain.mode>
+      </properties>
+    </profile>
+    <profile>
       <id>ci</id>
       <properties>
         <driver.type>headless</driver.type>
@@ -478,32 +485,12 @@
       <plugin>
         <groupId>de.saumya.mojo</groupId>
         <artifactId>rspec-maven-plugin</artifactId>
-        <configuration>
-          <jrubyJvmArgs>-XX:MaxPermSize=256m -Xms64m -Xmx1280m</jrubyJvmArgs>
-          <systemProperties>
-            <property>
-              <name>max.heap</name>
-              <value>${max.heap}</value>
-            </property>
-            <property>
-              <name>jboss.lazy</name>
-              <value>${jboss.lazy}</value>
-            </property>
-            <property>
-              <name>jruby.home</name>
-              <value>${integ.dist.dir}/jruby</value>
-            </property>
-            <property>
-              <name>org.jboss.modules</name>
-              <value>TRACE</value>
-            </property>
-          </systemProperties>
-        </configuration>
         <executions>
           <execution>
             <id>run-specs</id>
             <phase>test</phase>
             <configuration>
+              <jrubyJvmArgs>-XX:MaxPermSize=256m -Xms64m -Xmx1280m</jrubyJvmArgs>
               <systemProperties>
                 <property>
                   <name>max.heap</name>
@@ -518,8 +505,16 @@
                   <value>${integ.dist.dir}/jruby</value>
                 </property>
                 <property>
+                  <name>org.jboss.modules</name>
+                  <value>TRACE</value>
+                </property>
+                <property>
                   <name>driver.type</name>
                   <value>${driver.type}</value>
+                </property>
+                <property>
+                  <name>domain.mode</name>
+                  <value>${domain.mode}</value>
                 </property>
               </systemProperties>
             </configuration>
