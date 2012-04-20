@@ -15,7 +15,12 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'arjdbc'
+begin
+  require 'arjdbc'
+  TORQUEBOX_XA_JDBC = true
+rescue LoadError
+  TORQUEBOX_XA_JDBC = false
+end
 require 'set'
 
 module TorqueBox
@@ -27,15 +32,17 @@ module TorqueBox
 
       module Connection
 
-        def transaction(*)
-          super
-        rescue ActiveRecord::JDBCError => e
-          unless self.is_a?(XAResource)
-            puts "Creating an XAResource; exception=#{e}"
-            self.extend(XAResource)
-            retry
-          else
-            raise
+        if TORQUEBOX_XA_JDBC
+          def transaction(*)
+            super
+          rescue ActiveRecord::JDBCError => e
+            unless self.is_a?(XAResource)
+              puts "Creating an XAResource; exception=#{e}"
+              self.extend(XAResource)
+              retry
+            else
+              raise
+            end
           end
         end
 
@@ -114,14 +121,16 @@ module TorqueBox
   end
 end
 
-module ActiveRecord
-  module ConnectionAdapters
-    class JdbcAdapter 
-      include TorqueBox::Transactions::ActiveRecordAdapters::Connection
+if TORQUEBOX_XA_JDBC
+  module ActiveRecord
+    module ConnectionAdapters
+      class JdbcAdapter
+        include TorqueBox::Transactions::ActiveRecordAdapters::Connection
+      end
     end
   end
 end
-  
+
 module TorqueBox
   module Transactions
     class Manager
