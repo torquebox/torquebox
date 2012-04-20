@@ -30,7 +30,7 @@ class TorqueBoxCommand < Thor
   desc "run", "Run TorqueBox (binds to localhost, use -b to override)"
   method_option :clustered, :type => :boolean, :desc => "Run TorqueBox in clustered mode"
   method_option 'data-directory', :type => :string, :desc => 'Override the directory TorqueBox uses to store it runtime data'
-  method_option 'extra', :aliases => '-e', :type => :string, :desc => 'Extra options to pass through to JBoss AS, you will to escape dashes with \ (e.g. \--help)'
+  method_option 'extra', :aliases => '-e', :type => :string, :desc => 'Extra options to pass through to JBoss AS, you will need to escape dashes with \ (e.g. \--help)'
   method_option 'max-threads', :type => :numeric, :desc => "Maximum number of HTTP threads"
   method_option 'bind-address', :aliases => '-b', :type => :string, :desc => "IP address to bind to - don't set this to 0.0.0.0 if used with --clustered"
   method_option 'node-name', :type => :string, :desc => 'Override the name of the node (which by default is the hostname)'
