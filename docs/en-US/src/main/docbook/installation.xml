@@ -61,7 +61,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 1.6.0_07-b06-57, mixed mode)</screen>
       refer to the <ulink url="http://openjdk.java.net/install/">installation
       instructions provided</ulink> by the OpenJDK project. If you find a
       <command>java</command> on your system, ensure that it is not actually
-      <command>gcj</command>. <command>gcj</command> is insufficient for
+      <command>gcj</command>, as it is insufficient for
       running the TorqueBox server.</para>
 
       <para>For Apple OSX systems, Apple provides a JDK version 6.</para>
