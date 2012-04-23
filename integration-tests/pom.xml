@@ -29,6 +29,7 @@
     <driver.type>any</driver.type>
     <domain.mode>false</domain.mode>
     <ruby.compat.version>1.8</ruby.compat.version>
+    <spec.dir>spec</spec.dir>
   </properties>
 
   <dependencyManagement>
@@ -334,6 +335,7 @@
       <id>domain</id>
       <properties>
         <domain.mode>true</domain.mode>
+        <spec.dir>spec-domain</spec.dir>
       </properties>
     </profile>
     <profile>
@@ -491,6 +493,7 @@
             <phase>test</phase>
             <configuration>
               <jrubyJvmArgs>-XX:MaxPermSize=256m -Xms64m -Xmx1280m</jrubyJvmArgs>
+              <specSourceDirectory>${spec.dir}</specSourceDirectory>
               <systemProperties>
                 <property>
                   <name>max.heap</name>
