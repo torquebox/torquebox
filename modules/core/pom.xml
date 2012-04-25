@@ -158,6 +158,7 @@
                 -Dversion.jbossas=${version.jbossas}
                 -Dversion.jruby=${version.jruby}
                 -Dversion.polyglot=${version.polyglot}
+                -Dmaven.repo=${settings.localRepository}
               </jrubyJvmArgs>
             </configuration>
           </execution>

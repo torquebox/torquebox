@@ -25,7 +25,9 @@ class BuildInfo
   end
 
   def m2_repo
-    ENV['M2_REPO'] || (ENV['HOME'] + '/.m2/repository')
+    m2_repo = ENV['M2_REPO'] || from_system_property( "maven.repo" ) || (ENV['HOME'] + '/.m2/repository')
+    puts "Using maven local repo: " + m2_repo
+    m2_repo
   end
 
   def determine_component_versions
