@@ -118,25 +118,30 @@
   <section id="jboss-logging">
     <title>Logging</title>
 
+    <para>Here we'll focus on the default JBoss configuration and how
+    to expose the JBoss logging system to your Ruby applications, if
+    so desired.</para>
+
     <para>JBoss provides a very sophisticated logging system that
     nobody completely understands. It's possible to configure
     hierarchical, categorized log message routing, complex file
     rotation, syslog integration, SMTP notifications, SNMP traps, JMS,
     JMX and much more. Obviously, most of that is far beyond the scope
-    of this document, so we'll focus on the default configuration and
-    how to expose the JBoss logging system to your Ruby applications,
-    if so desired.</para>
+    of this document.</para>
 
     <para>All JBoss log messages, just like Ruby ones, have an
-    associated level, e.g. DEBUG, INFO, WARN, ERROR, etc. Unlike those
-    from a Ruby Logger, each JBoss log message also has a category.
-    Logging configuration rules are contained in the
+    associated <emphasis>level</emphasis>, including DEBUG, INFO,
+    WARN, ERROR, and FATAL. These levels are ordered by increasing
+    severity, e.g. FATAL is higher than ERROR, which is higher than
+    WARN, etc. Unlike messages from a Ruby Logger, each JBoss log
+    message also has a <emphasis>category</emphasis>. Logging
+    configuration rules determine where messages are logged according
+    to their category and level. These rules are contained in the
     <emphasis>logging</emphasis> subsystem element of
-    <filename>standalone/configuration/standalone.xml</filename>.
-    These rules determine where messages are logged according to their
-    category and level. By default, you will see INFO (and higher,
-    i.e. more severe) messages on the console (the shell where you
-    start TorqueBox) and written persistently to
+    <filename>standalone/configuration/standalone.xml</filename>. By
+    default, you will see INFO (and higher, i.e. more severe) messages
+    on the console (the shell where you start TorqueBox) and written
+    persistently to
     <filename>standalone/log/server.log</filename>.</para>
 
     <para>Anything written to <constant>stdout</constant> or
@@ -150,18 +155,19 @@
       <para>Of course, standard Ruby Loggers work fine inside of
       TorqueBox, and you'll find your Rails log files exactly where
       you expect them to be. But some users, especially those already
-      familiar with JBoss logging, may prefer for some Ruby log
+      familiar with Java logging, may prefer for some Ruby log
       messages to be passed to JBoss. This is easily achieved using
       the <classname>TorqueBox::Logger</classname>. For example, you
       may configure your Rails app like so:
 
       <screen><code>config.logger = TorqueBox::Logger.new</code></screen>
 
-      This results in all Rails-generated log messages passed to JBoss, hence
-      written to <filename>standalone/log/server.log</filename> in the default
-      configuration. The category for these messages will be the application's
-      name. You can override this by passing the category name in the
-      constructor: 
+      This results in all Rails-generated log messages being passed to
+      JBoss, hence written to
+      <filename>standalone/log/server.log</filename> in the default
+      configuration. The category for these messages will be the
+      application's name. You can override this by passing the
+      category name in the constructor:
 
       <screen><code>TorqueBox::Logger.new( "Billing" )</code></screen>
 
@@ -203,16 +209,16 @@
           <para>
             The message's category is compared to any defined
             <code>&lt;logger&gt;</code> elements. If a match is found,
-            the message is discarded unless its level is equal to or
-            greater than that of the <code>&lt;logger&gt;</code>.
+            the message's level must be greater than or equal to that
+            of the <code>&lt;logger&gt;</code>, else it's discarded.
           </para>
         </listitem>
         <listitem>
           <para>
             If no matching <code>&lt;logger&gt;</code> is found, the
-            message is discarded unless its level is equal to or
-            greater than the level of the
-            <code>&lt;root-logger&gt;</code>.
+            message's level must be greater than or equal to the level
+            of the <code>&lt;root-logger&gt;</code>, else it's
+            discarded.
           </para>
         </listitem>
         <listitem>
@@ -224,17 +230,17 @@
         </listitem>
         <listitem>
           <para>
-            If the handler has a <code>&lt;level&gt;</code> defined,
-            as is the case for the CONSOLE handler below, and it's
-            less than or equal to the message's level, the message is
-            logged.
+            If the handler has no <code>&lt;level&gt;</code> threshold
+            defined, as is the case for the FILE handler below, the
+            message is logged.
           </para>
         </listitem>
         <listitem>
           <para>
-            If the handler has no <code>&lt;level&gt;</code> defined,
-            as is the case for the FILE handler below, the message is
-            logged.
+            If the handler has a <code>&lt;level&gt;</code> threshold
+            defined, as is the case for the CONSOLE handler below, the
+            message's level must be greater than or equal to that
+            threshold to be logged.
           </para>
         </listitem>
       </orderedlist>
@@ -306,8 +312,8 @@
         default level for the root logger to DEBUG, but that results
         in DEBUG messages for every other category that doesn't match
         any of the loggers, potentially a lot of messages. A better
-        solution is to define a <code>&lt;logger&gt;</code> for the
-        category:
+        solution is to define a <code>&lt;logger&gt;</code>
+        specifically for the category:
       </para>
 
       <programlisting>
