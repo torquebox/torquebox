@@ -2,6 +2,11 @@
 require 'rubygems'
 require 'sinatra'
 
+options '/' do
+  response.headers['Access-Control-Allow-Origin'] = '*'
+  response.headers['Access-Control-Allow-Methods'] = 'POST'
+end
+
 get '/' do
   headers 'Biscuit' => 'Gravy'
   erb :index

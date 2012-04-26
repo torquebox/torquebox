@@ -43,6 +43,16 @@ describe "basic sinatra test" do
     visit "/basic-sinatra"
     page.response_headers['Biscuit'].should == 'Gravy'
   end
+
+  it "should allow OPTIONS requests (TORQUE-792)", :browser_not_supported => true do
+    uri = URI.parse(page.driver.send(:url, "/basic-sinatra/"))
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Options.new(uri.request_uri)
+    response = http.request(request)
+    response['access-control-allow-origin'].should == '*'
+    response['access-control-allow-methods'].should == 'POST'
+
+  end
   
   it "should test Sir Postalot" do
     500.times do |i|

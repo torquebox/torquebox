@@ -91,7 +91,7 @@ public class RackFilter implements Filter {
             chain.doFilter( request, responseCapture );
             if (responseCapture.isError()) {
                 response.reset();
-            } else {
+            } else if (response.isCommitted()) {
                 return;
             }
         } catch (ServletException e) {
