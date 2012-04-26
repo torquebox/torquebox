@@ -10,7 +10,7 @@
    ld|
    | Default: ~/.m2/repository
   -->
-  <localRepository>/home/mnovotny/.m2/repository-jb-wfk-2-rhel-6-build-mead</localRepository>
+  <localRepository>/home/mnovotny/.m2/repository-jb-wfk-2-rhel-6</localRepository>
 
   <!-- offline
    | Determines whether maven should attempt to connect to the network when executing a build.
@@ -36,13 +36,13 @@
      | Specifies a repository mirror site to use instead of a given repository. The repository that
      | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
      | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
-     |-->
+     |
    <mirror>
       <id>Central</id>
       <mirrorOf>central</mirrorOf>
       <name>Mead enviroment repository</name>
       <url>http://download.devel.redhat.com/brewroot/repos/jb-wfk-2-rhel-6-build/latest/maven</url>
-    </mirror>
+    </mirror>-->
   </mirrors>
 
   <profiles>
@@ -85,7 +85,7 @@
   </profiles>
 
   <activeProfiles>
-<!--    <activeProfile>jboss-wfk2-repository</activeProfile> -->
+   <activeProfile>jboss-wfk2-repository</activeProfile>
   </activeProfiles>
 
 </settings>
