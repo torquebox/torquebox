@@ -27,13 +27,6 @@ module TorqueBox
     # Backgroundable provides mechanism for executing an object's
     # methods asynchronously.
     module Backgroundable
-      NEWRELIC_AVAILABLE ||= 
-        begin
-          require 'newrelic_rpm'
-          true
-        rescue LoadError
-          false
-        end
 
       def self.included(base)
         base.extend(ClassMethods)
@@ -80,6 +73,18 @@ module TorqueBox
               @__backgroundable_methods[method] &&
               !@__backgroundable_methods[method][:backgrounding]
             __enable_backgrounding(method)
+          end
+        end
+
+        def __enable_backgroundable_newrelic_tracing(method)
+          if defined?(NewRelic::Agent)
+            include(NewRelic::Agent::Instrumentation::ControllerInstrumentation) unless
+              include?(NewRelic::Agent::Instrumentation::ControllerInstrumentation)
+            begin
+              add_transaction_tracer(method, :name => method.sub("__sync_", ""), :category => :task)
+            rescue Exception => e
+              log.error "Error loading New Relic for backgrounded method #{method.sub("__sync_", "")}: #{e}"
+            end
           end
         end
 

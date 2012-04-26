@@ -25,17 +25,7 @@ module TorqueBox
 
       def on_message(hash)
         FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id] ).respond do
-          # TORQUE-741 allow always_background methods to report as background tasks in NewRelic
-          begin
-            if TorqueBox::Messaging::Backgroundable::NEWRELIC_AVAILABLE
-              class << hash[:receiver]
-                include NewRelic::Agent::Instrumentation::ControllerInstrumentation
-                add_transaction_tracer hash[:method], :name => hash[:method].sub("__sync_", ""), :category => :task
-              end
-            end
-          rescue
-            log.error "Error loading New Relic for backgrouded process #{hash[:method]}"
-          end
+          hash[:receiver].class.__enable_backgroundable_newrelic_tracing(hash[:method])
           hash[:receiver].send(hash[:method], *hash[:args])
         end
       end
