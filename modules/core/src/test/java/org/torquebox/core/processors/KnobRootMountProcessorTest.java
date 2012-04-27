@@ -20,13 +20,12 @@
 package org.torquebox.core.processors;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.io.Closeable;
 
 import org.jboss.as.server.deployment.DeploymentUnit;
+import org.jboss.as.server.deployment.module.MountHandle;
+import org.jboss.as.server.deployment.module.ResourceRoot;
+import org.jboss.vfs.VFS;
 import org.junit.Test;
 import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
@@ -35,18 +34,18 @@ public class KnobRootMountProcessorTest extends AbstractDeploymentProcessorTestC
     
     @Test
     public void testUnmountsOnUndeploy() throws Exception {
-        KnobRootMountProcessor deployer = spy( new KnobRootMountProcessor() );
+        KnobRootMountProcessor deployer = new KnobRootMountProcessor();
         appendDeployer( deployer );
         
         MockDeploymentPhaseContext phaseContext = createPhaseContext();
         DeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
-        Closeable closeable = mock( Closeable.class );
-        when( deployer.getKnobCloseable() ).thenReturn( closeable );
+        MountHandle mountHandle = mock( MountHandle.class );
+        ResourceRoot resourceRoot = new ResourceRoot( VFS.getChild( "." ), mountHandle );
+        unit.putAttachment( KnobRootMountProcessor.KNOB_ROOT, resourceRoot );
         
         undeploy( unit );
         
-        verify( closeable ).close();
+        verify( mountHandle ).close();
     }
 
 }

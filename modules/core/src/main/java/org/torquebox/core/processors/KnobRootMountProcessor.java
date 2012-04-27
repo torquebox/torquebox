@@ -22,11 +22,14 @@ package org.torquebox.core.processors;
 import java.io.Closeable;
 import java.io.IOException;
 
+import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.Attachments;
+import org.jboss.as.server.deployment.DeploymentMountProvider;
 import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
+import org.jboss.as.server.deployment.MountType;
 import org.jboss.as.server.deployment.module.ModuleSpecification;
 import org.jboss.as.server.deployment.module.MountHandle;
 import org.jboss.as.server.deployment.module.ResourceRoot;
@@ -40,7 +43,7 @@ import org.jboss.vfs.VirtualFile;
  */
 public class KnobRootMountProcessor implements DeploymentUnitProcessor {
     
-    private Closeable knobCloseable;
+    public static final AttachmentKey<ResourceRoot> KNOB_ROOT = AttachmentKey.create(ResourceRoot.class);
 
     public KnobRootMountProcessor() {
     }
@@ -56,30 +59,47 @@ public class KnobRootMountProcessor implements DeploymentUnitProcessor {
         if (!deploymentUnit.getName().endsWith( "-knob.yml" )) {
             return;
         }
+        
+        final DeploymentMountProvider deploymentMountProvider = deploymentUnit.getAttachment( Attachments.SERVER_DEPLOYMENT_REPOSITORY );
+        if(deploymentMountProvider == null) {
+            throw new DeploymentUnitProcessingException( "No deployment repository available." );
+        }
 
-        VirtualFile root = deploymentUnit.getAttachment( Attachments.DEPLOYMENT_CONTENTS );
+        final VirtualFile deploymentContents = deploymentUnit.getAttachment( Attachments.DEPLOYMENT_CONTENTS );
+        
+        // internal deployments do not have any contents, so there is nothing to mount
+        if (deploymentContents == null)
+            return;
 
         String deploymentName = deploymentUnit.getName();
-        VirtualFile realRoot = root.getChild( deploymentName );
+        final VirtualFile deploymentRoot = VFS.getChild( "content/" + deploymentName );
+        Closeable handle = null;
+        final MountHandle mountHandle;
+        boolean failed = false;
         try {
-            knobCloseable = VFS.mountReal( root.getPhysicalFile(), realRoot );
-            MountHandle handle = new MountHandle( knobCloseable );
-            ResourceRoot expandedResourceRoot = new ResourceRoot( realRoot, handle );
-            deploymentUnit.putAttachment( Attachments.DEPLOYMENT_ROOT, expandedResourceRoot );
-            deploymentUnit.putAttachment( Attachments.MODULE_SPECIFICATION, new ModuleSpecification() );
+            handle = deploymentMountProvider.mountDeploymentContent( deploymentContents, deploymentRoot, MountType.REAL );
+            mountHandle = new MountHandle( handle );
         } catch (IOException e) {
-            throw new DeploymentUnitProcessingException( e );
+            failed = true;
+            throw new DeploymentUnitProcessingException( "Failed to mount -knob.yml file", e );
+        } finally {
+            if (failed) {
+                VFSUtils.safeClose( handle );
+            }
         }
+        final ResourceRoot resourceRoot = new ResourceRoot( deploymentRoot, mountHandle );
+        deploymentUnit.putAttachment( Attachments.DEPLOYMENT_ROOT, resourceRoot );
+        deploymentUnit.putAttachment( KNOB_ROOT, resourceRoot );
+        deploymentUnit.putAttachment( Attachments.MODULE_SPECIFICATION, new ModuleSpecification() );
     }
 
     @Override
     public void undeploy(DeploymentUnit context) {
-        VFSUtils.safeClose( getKnobCloseable() );
-    }
-    
-    // Exposed for testing undeploy method
-    protected Closeable getKnobCloseable() {
-        return knobCloseable;
+        final ResourceRoot knobRoot = context.removeAttachment( KNOB_ROOT );
+        if (knobRoot != null) {
+            final MountHandle mountHandle = knobRoot.getMountHandle();
+            VFSUtils.safeClose( mountHandle );
+        }
     }
 
 }
