@@ -130,8 +130,8 @@
     of this document.</para>
 
     <para>All JBoss log messages, just like Ruby ones, have an
-    associated <emphasis>level</emphasis>, including DEBUG, INFO,
-    WARN, ERROR, and FATAL. These levels are ordered by increasing
+    associated <emphasis>level</emphasis>, e.g. DEBUG, INFO,
+    WARN, ERROR, or FATAL. These levels are ordered by increasing
     severity, e.g. FATAL is higher than ERROR, which is higher than
     WARN, etc. Unlike messages from a Ruby Logger, each JBoss log
     message also has a <emphasis>category</emphasis>. Logging
@@ -154,11 +154,13 @@
 
       <para>Of course, standard Ruby Loggers work fine inside of
       TorqueBox, and you'll find your Rails log files exactly where
-      you expect them to be. But some users, especially those already
-      familiar with Java logging, may prefer for some Ruby log
-      messages to be passed to JBoss. This is easily achieved using
-      the <classname>TorqueBox::Logger</classname>. For example, you
-      may configure your Rails app like so:
+      you expect them to be (unless your app is archived, in which
+      case they'll reside beneath
+      <filename>standalone/log/</filename>). But some users,
+      especially those already familiar with Java logging, may prefer
+      for some Ruby log messages to be passed to JBoss. This is easily
+      achieved using the <classname>TorqueBox::Logger</classname>. For
+      example, you may configure your Rails app like so:
 
       <screen><code>config.logger = TorqueBox::Logger.new</code></screen>
 
@@ -180,11 +182,11 @@
 
       If the class is defined in a module, its name will be something
       like <classname>YourModule::YourClass</classname>. The logger
-      will replace the double-colons (::) with a period with (.),
-      yielding <classname>YourModule.YourClass</classname> as the
-      category. This is because categories are hierarchical and
-      delimited by a period, enabling you to define rules for all
-      classes in the same module, for example.</para>
+      will replace the double-colons (::) with a period (.), yielding
+      <classname>YourModule.YourClass</classname> as the category.
+      This is because categories are hierarchical and delimited by a
+      period, enabling you to define rules for all classes in the same
+      module, for example.</para>
 
       <para>It's important to understand that, although the
       <classname>TorqueBox::Logger</classname> does honor the Ruby
@@ -224,8 +226,8 @@
         <listitem>
           <para>
             If it hasn't been discarded, the message is passed to all
-            handlers associated with the
-            <code>&lt;root-logger&gt;</code>.
+            handlers associated with its <code>&lt;logger&gt;</code>,
+            including those in the <code>&lt;root-logger&gt;</code>.
           </para>
         </listitem>
         <listitem>
