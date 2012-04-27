@@ -268,16 +268,17 @@ class AssemblyTool
   end
 
   def add_messaging_socket_binding(doc)
-    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
-    hornetq_server.get_elements( 'broadcast-groups/broadcast-group' ).each do |broadcast_group|
-      broadcast_group.delete_element( 'group-address' )
-      broadcast_group.delete_element( 'group-port' )
-      broadcast_group.add_element( 'socket-binding').text = 'messaging-group'
-    end
-    hornetq_server.get_elements( 'discovery-groups/discovery-group' ).each do |discovery_group|
-      discovery_group.delete_element( 'group-address' )
-      discovery_group.delete_element( 'group-port' )
-      discovery_group.add_element( 'socket-binding').text = 'messaging-group'
+    doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).each do |hornetq_server|
+      hornetq_server.get_elements( 'broadcast-groups/broadcast-group' ).each do |broadcast_group|
+        broadcast_group.delete_element( 'group-address' )
+        broadcast_group.delete_element( 'group-port' )
+        broadcast_group.add_element( 'socket-binding').text = 'messaging-group'
+      end
+      hornetq_server.get_elements( 'discovery-groups/discovery-group' ).each do |discovery_group|
+        discovery_group.delete_element( 'group-address' )
+        discovery_group.delete_element( 'group-port' )
+        discovery_group.add_element( 'socket-binding').text = 'messaging-group'
+      end
     end
 
     groups = doc.root.get_elements( '//server/socket-binding-group' ) + doc.root.get_elements( '//domain/socket-binding-groups/socket-binding-group' )
