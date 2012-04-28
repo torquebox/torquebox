@@ -73,7 +73,6 @@ import org.torquebox.core.datasource.DataSourceServices;
 import org.torquebox.core.datasource.DataSourceXAVerifierService;
 import org.torquebox.core.datasource.DatabaseMetaData;
 import org.torquebox.core.datasource.DriverService;
-import org.torquebox.core.datasource.HackDataSourceService;
 import org.torquebox.core.datasource.JDBCDriverLoadingRuntimeService;
 import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.datasource.db.H2Adapter;
@@ -222,7 +221,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
 
         try {
             final ModifiableXaDataSource config = createConfig( unit, dbMeta, adapter );
-            XaDataSourceService service = new HackDataSourceService( jndiName );
+            XaDataSourceService service = new XaDataSourceService( jndiName );
 
             service.getDataSourceConfigInjector().inject( config );
             phaseContext.getServiceTarget().addService( dataSourceServiceName, service )
