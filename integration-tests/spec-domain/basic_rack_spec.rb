@@ -1,7 +1,4 @@
-puts "JC: ", $:
-
 require 'spec_helper'
-
 
 shared_examples_for "basic rack" do
 
