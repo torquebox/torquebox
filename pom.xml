@@ -519,7 +519,7 @@
 
     <version.jbossas>7.1.1.Final</version.jbossas>
 
-    <version.org.projectodd.stilts>0.1.27</version.org.projectodd.stilts>
+    <version.org.projectodd.stilts>0.1.28</version.org.projectodd.stilts>
     <version.org.projectodd.yaml-schema>0.2</version.org.projectodd.yaml-schema>
 
     <version.org.hibernate.search>4.1.0.Beta1</version.org.hibernate.search>
