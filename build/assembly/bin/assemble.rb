@@ -217,7 +217,7 @@ class Assembler
   def assemble()
     #clean
     prepare
-    lay_down_jruby if @jruby_included
+    lay_down_jruby if @include_jruby
     lay_down_jboss 
     install_modules
     install_gems
