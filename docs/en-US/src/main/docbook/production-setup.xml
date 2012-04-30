@@ -370,6 +370,40 @@ Listen 127.0.0.1:6666
           static-connectors, and outbound-socket-binding elements.</para>
         </example></para>
     </section>
+
+    <section id="clustering-modcluster-without-multicast">
+      <title>Clustering mod_cluster</title>
+
+      <para>mod_cluster can be used for load-balancing web requests to
+      a TorqueBox cluster. By default, clustered TorqueBox instances
+      look for mod_cluster servers via multicast but an example of
+      configuring mod_cluster without multicast is below.</para>
+
+      <para><example>
+          <title>mod_cluster Configuration
+          (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
+
+          <para><programlisting>&lt;server name="xyz" xmlns="urn:jboss:domain:1.1"&gt;
+  &lt;profile&gt;
+    ...
+    &lt;subsystem xmlns="urn:jboss:domain:modcluster:1.0"&gt;
+      &lt;mod-cluster-config proxy-list='mod_cluster_host:6666' advertise-socket='modcluster' excluded-contexts='invoker,jbossws,juddi,console'&rt;
+        &lt;dynamic-load-provider&rt;
+          &lt;load-metric type='busyness'/&rt;
+        &lt;/dynamic-load-provider&rt;
+      &lt;/mod-cluster-config&rt;
+    &lt;/subsystem&gt;
+    ...
+&lt;/server&gt;
+        </programlisting> The changed piece in the configuration above
+        is the proxy-list attribute. It should contain a
+        comma-separated list of host:pair entries, where each entry
+        points to a mod_cluster server. If you've changed the default
+        mod_cluster port in the Apache HTTP configuration then be sure
+        to change it from 6666 here as well.</para>
+        </example></para>
+    </section>
+
   </section>
 
   <section id="number-http-threads">
