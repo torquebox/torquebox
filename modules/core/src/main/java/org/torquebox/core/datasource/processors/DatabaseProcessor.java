@@ -77,6 +77,7 @@ import org.torquebox.core.datasource.JDBCDriverLoadingRuntimeService;
 import org.torquebox.core.datasource.db.Adapter;
 import org.torquebox.core.datasource.db.H2Adapter;
 import org.torquebox.core.datasource.db.MySQLAdapter;
+import org.torquebox.core.datasource.db.OracleAdapter;
 import org.torquebox.core.datasource.db.PostgresAdapter;
 import org.torquebox.core.runtime.RubyRuntimeFactory;
 
@@ -86,6 +87,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         addAdapter( new H2Adapter() );
         addAdapter( new PostgresAdapter() );
         addAdapter( new MySQLAdapter() );
+        addAdapter( new OracleAdapter() );
         // DriverManager.setLogWriter( new PrintWriter( System.err ) );
     }
 

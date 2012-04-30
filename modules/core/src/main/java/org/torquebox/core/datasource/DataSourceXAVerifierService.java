@@ -101,7 +101,11 @@ public class DataSourceXAVerifierService implements Service<DataSourceInfoList.I
             Transaction tx = tm.getTransaction();
             Connection connection = dataSource.getConnection();
             Statement statement = connection.createStatement();
-            statement.execute( "SELECT 1;" );
+            String sql = "SELECT 1;";
+            if (getAdapterId().equals( "oracle" )) {
+                sql = "SELECT 1 FROM DUAL";
+            }
+            statement.execute( sql );
             statement.close();
             tx.enlistResource( new DummyXAResource() );
             tm.commit();

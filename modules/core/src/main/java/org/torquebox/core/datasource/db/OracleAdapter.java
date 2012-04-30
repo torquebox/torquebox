@@ -27,7 +27,7 @@ import org.torquebox.core.datasource.DatabaseMetaData;
 public class OracleAdapter extends AbstractAdapter {
 
     public OracleAdapter() {
-        super( "oracle", "jdbc/oracle", "oracle.jdbc.driver.OracleDriver", "oracle.jdbc.xa.client.OracleXADataSource" );
+        super( "oracle", "ojdbc6.jar", "oracle.jdbc.OracleDriver", "oracle.jdbc.xa.client.OracleXADataSource" );
     }
     
     @Override
@@ -41,10 +41,18 @@ public class OracleAdapter extends AbstractAdapter {
     public Map<String, String> getPropertiesFor(DatabaseMetaData dbMeta) {
         Map<String, Object> config = dbMeta.getConfiguration();
         Map<String, String> properties = new HashMap<String, String>();
+        
+        String url = (String) config.get( "url" );
+        if (url == null) {
+            String host = config.get( "host" ) == null ? "localhost" : (String) config.get( "host" );
+            int port = config.get( "port" ) == null ? 1521 : (Integer) config.get( "port" );
+            String database = (String) config.get( "database" );
+            url = "jdbc:oracle:thin:@" + host + ":" + port + ":" + database;
+        }
 
-        properties.put( "URL"      , ""+config.get("url"));
-        properties.put( "User"     , ""+config.get("username") );
-        properties.put( "Password" , ""+config.get("password") );
+        properties.put( "URL"     , url );
+        properties.put( "User"    , ""+config.get("username") );
+        properties.put( "Password", ""+config.get("password") );
 
         return properties;
     }
