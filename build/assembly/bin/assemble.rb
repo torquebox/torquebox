@@ -7,6 +7,7 @@ require 'assembly_tool'
 require 'fileutils'
 require 'rexml/document'
 require 'rbconfig'
+require 'optparse'
 
 java_import java.lang.System
 
@@ -25,8 +26,10 @@ class Assembler
   attr_accessor :m2_repo
   attr_accessor :config_stash
   
-  def initialize() 
-    @tool = AssemblyTool.new(:deployment_timeout => 1200, :enable_welcome_root => false)
+  def initialize(cli)
+    @tool = AssemblyTool.new(:maven_repo_local=>cli.maven_repo_local, :deployment_timeout => 1200, :enable_welcome_root => false)
+    @include_jruby = cli.jruby
+
     determine_versions
 
     @m2_repo   = @tool.m2_repo
@@ -41,7 +44,11 @@ class Assembler
   def determine_versions
     @torquebox_version = System.getProperty( "version.torquebox" )
     @jboss_version     = System.getProperty( "version.jbossas" )
-    @jruby_version     = System.getProperty( "version.jruby" )
+    if ( ! @include_jruby )
+      @jruby_version     = "None (JRuby)"
+    else
+      @jruby_version     = System.getProperty( "version.jruby" )
+    end
     @polyglot_version  = System.getProperty( "version.polyglot" )
     @stilts_version    = System.getProperty( "version.stilts" )
     puts "TorqueBox.... #{@torquebox_version}"
@@ -119,13 +126,17 @@ class Assembler
     gem_dirs.each do |gem_dir|
       Dir[ tool.base_dir + '/../../gems/' + gem_dir + '/target/*.gem' ].each do |gem_package|
         puts "Install gem: #{gem_package}"
-        tool.install_gem( gem_package )
+        if ( @include_jruby )
+          tool.install_gem( gem_package )
+        else
+          tool.copy_gem_to_repo( gem_package )
+        end
       end
     end
 
     # Additionally install rack and bundler gems
-    tool.install_gem( 'rack' )
-    tool.install_gem( 'bundler' )
+    tool.install_gem( 'rack' ) if @include_jruby
+    tool.install_gem( 'bundler' ) if @include_jruby
     tool.update_gem_repo_index
   end
 
@@ -206,8 +217,8 @@ class Assembler
   def assemble()
     #clean
     prepare
-    lay_down_jruby
-    lay_down_jboss
+    lay_down_jruby if @jruby_included
+    lay_down_jboss 
     install_modules
     install_gems
     install_share
@@ -221,7 +232,35 @@ class Assembler
   end
 end
 
+class CLI 
+
+  def self.parse!(args)
+    CLI.new.parse! args
+  end
+
+  attr_accessor :jruby
+  attr_accessor :maven_repo_local
+
+  def initialize
+    @jruby = true
+    @maven_repo_local = ENV['M2_REPO'] || File.join( ENV['HOME'], '.m2/repository' )
+  end
+
+  def parse!(args)
+    opts = OptionParser.new do |opts|
+      opts.on( '--[no-]jruby', 'Include JRuby in assemblage (default: true)' ) do |i|
+        self.jruby = i
+      end
+      opts.on( '-m MAVEN_REPO_LOCAL', 'Specify local maven repository' ) do |m|
+        self.maven_repo_local = m
+      end
+    end
+    opts.parse! args
+    self
+  end 
+end
+
 if __FILE__ == $0 || '-e' == $0 # -e == called from mvn
-  Assembler.new.assemble
+  Assembler.new( CLI.parse!( ARGV ) ).assemble 
 end
 

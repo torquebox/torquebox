@@ -90,7 +90,7 @@
       <id>assemblage-present</id>
       <activation>
         <file>
-          <exists>../../build/assembly/target/stage/</exists>
+          <exists>../../build/assembly/target/stage/torquebox/jruby</exists>
         </file>
       </activation>
       <build>

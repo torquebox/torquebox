@@ -76,7 +76,8 @@ class AssemblyTool
     @jboss_dir = @torquebox_dir + '/jboss'
     @jruby_dir = @torquebox_dir + '/jruby'
 
-    @m2_repo = nil 
+    @m2_repo = nil
+
     if ( ENV['M2_REPO'] ) 
       @m2_repo = ENV['M2_REPO']
     else
@@ -136,6 +137,7 @@ class AssemblyTool
   def install_module(name, path, dest_suffix = nil, remember = true)
     puts "Installing #{name} from #{path}"
     dest_suffix ||= "/modules/org/torquebox/#{name}/main"
+    FileUtils.mkdir_p( @jboss_dir )
     Dir.chdir( @jboss_dir ) do 
       dest_dir = Dir.pwd + dest_suffix
       FileUtils.rm_rf dest_dir
