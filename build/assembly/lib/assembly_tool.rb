@@ -160,7 +160,7 @@ class AssemblyTool
     if options[:deployment_timeout]
       profiles = doc.root.get_elements( '//profile' )
       profiles.each do |profile|
-        subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:deployment-scanner:1.1']" ).first
+        subsystem = profile.get_elements( "subsystem[contains(@xmlns,'urn:jboss:domain:deployment-scanner:')]" ).first
         scanner = subsystem.get_elements( 'deployment-scanner' ).first
         scanner.add_attribute( 'deployment-timeout', options[:deployment_timeout] )
       end
@@ -170,7 +170,7 @@ class AssemblyTool
   def add_cache(doc)
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.2']" ).first
+      subsystem = profile.get_elements( "subsystem[contains(@xmlns, 'urn:jboss:domain:infinispan:')]" ).first
       container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
       cache = container.add_element( 'local-cache', 'name'=>'sessions' )
       cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )
@@ -181,7 +181,7 @@ class AssemblyTool
   def add_ha_cache(doc)
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:infinispan:1.2']" ).first
+      subsystem = profile.get_elements( "subsystem[contains(@xmlns,'urn:jboss:domain:infinispan:')]" ).first
       container = subsystem.get_elements( "cache-container[@name='web']" ).first
       #subsystem.get_elements( "cache-container" ).each do |c|
         #puts "CACHE_CONTAINER: #{c.to_s}"
@@ -228,7 +228,7 @@ class AssemblyTool
   end
 
   def add_subsystem(element, name)
-    previous_subsystem = element.get_elements( "subsystem[@xmlns='urn:jboss:domain:#{name}:1.0']" )
+    previous_subsystem = element.get_elements( "subsystem[contains(@xmlns, 'urn:jboss:domain:#{name}:')]" )
     if ( previous_subsystem.empty? )
       #element.add_element( 'subsystem', 'xmlns'=>"urn:jboss:domain:#{name}:1.0" )
       element.add_element( subsystem_element( name ) )
@@ -270,7 +270,7 @@ class AssemblyTool
   end
 
   def add_messaging_socket_binding(doc)
-    doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).each do |hornetq_server|
+    doc.root.get_elements( "//subsystem[contains(@xmlns,'urn:jboss:domain:messaging:')]/hornetq-server" ).each do |hornetq_server|
       hornetq_server.get_elements( 'broadcast-groups/broadcast-group' ).each do |broadcast_group|
         broadcast_group.delete_element( 'group-address' )
         broadcast_group.delete_element( 'group-port' )
@@ -304,7 +304,7 @@ class AssemblyTool
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
       to_remove.each do |name|
-        profile.delete_element( "subsystem[@xmlns='urn:jboss:domain:#{name}:1.1']" )
+        profile.delete_element( "subsystem[contains(@xmlns,'urn:jboss:domain:#{name}:')]" )
       end
     end
   end
@@ -383,7 +383,7 @@ class AssemblyTool
   end
 
   def adjust_messaging_config(doc)
-    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    hornetq_server = doc.root.get_elements( "//subsystem[contains(@xmlns, 'urn:jboss:domain:messaging:')]/hornetq-server" ).first
     address_setting = hornetq_server.get_elements( "address-settings/address-setting" ).first
     address_setting.get_elements( 'address-full-policy' ).first.text = 'PAGE'
     address_setting.get_elements( 'max-size-bytes' ).first.text = '20971520'
@@ -397,7 +397,7 @@ class AssemblyTool
   end
 
   def remove_messaging_security(doc)
-    doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).each do |hornetq_server|
+    doc.root.get_elements( "//subsystem[contains(@xmlns,'urn:jboss:domain:messaging:')]/hornetq-server" ).each do |hornetq_server|
       e = REXML::Element.new( 'security-enabled' )
       e.text = 'false'
       hornetq_server.add_element( e )
@@ -405,7 +405,7 @@ class AssemblyTool
   end
 
   def fix_messaging_clustering(doc)
-    hornetq_server = doc.root.get_elements( "//subsystem[@xmlns='urn:jboss:domain:messaging:1.1']/hornetq-server" ).first
+    hornetq_server = doc.root.get_elements( "//subsystem[contains(@xmlns,'urn:jboss:domain:messaging:')]/hornetq-server" ).first
 
     e = REXML::Element.new( 'cluster-user' )
     e.text = 'admin'
@@ -452,7 +452,7 @@ class AssemblyTool
     categories = { 'org.jboss.jca.adapters.jdbc.extensions.mysql' => 'ERROR' }
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:logging:1.1']" ).first
+      subsystem = profile.get_elements( "subsystem[contains(@xmlns,'urn:jboss:domain:logging:')]" ).first
       categories.each_pair do |category, level|
         container = subsystem.add_element( 'logger', 'category' => category )
         container.add_element( 'level', 'name' => level )
@@ -464,7 +464,7 @@ class AssemblyTool
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
 
-      subsystem = profile.get_elements( "subsystem[@xmlns='urn:jboss:domain:modcluster:1.0']" ).first
+      subsystem = profile.get_elements( "subsystem[contains(@xmlns,'urn:jboss:domain:modcluster:')]" ).first
       unless subsystem.nil?
         config = subsystem.get_elements( 'mod-cluster-config' ).first
         config.add_attribute( 'excluded-contexts', 'invoker,jbossws,juddi,console' )
