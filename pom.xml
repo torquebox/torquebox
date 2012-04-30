@@ -264,9 +264,9 @@
       </build>
     </profile>
     <profile>
-      <id>jboss-eap-repository</id>
+      <id>wfk</id>
       <properties>
-        <version.jbossas>7.1.0.Final-redhat-1</version.jbossas>
+        <version.jbossas>7.1.1.Final-redhat-1</version.jbossas>
       </properties>
     </profile>
   </profiles>
