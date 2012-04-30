@@ -19,6 +19,10 @@ shared_examples_for "basic rack" do
     page.find("#path").text.strip.should_not match(/^vfs:/)
   end
 
+  it "should set ENV['TORQUEBOX_CONTEXT'] to 'web'" do
+    page.find("#context").text.strip.should == 'web'
+  end
+
 end
 
 describe "basic rack test with heredoc" do

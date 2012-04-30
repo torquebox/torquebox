@@ -46,10 +46,10 @@ public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
     }
 
     @Override
-    public void initialize(Ruby ruby) throws Exception {
+    public void initialize(Ruby ruby, String runtimeContext) throws Exception {
         setRuntimeType( ruby, "rack" );
         RuntimeHelper.require(  ruby, "torquebox-web" );
-        super.initialize( ruby );
+        super.initialize( ruby, runtimeContext );
         RuntimeHelper.evalScriptlet( ruby, getInitializerScript() );
     }
 

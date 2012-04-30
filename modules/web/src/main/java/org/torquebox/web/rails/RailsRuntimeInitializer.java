@@ -59,9 +59,10 @@ public class RailsRuntimeInitializer extends RackRuntimeInitializer {
         return this.autoloadPaths;
     }
 
-    public void initialize(Ruby ruby) throws Exception {
+    @Override
+    public void initialize(Ruby ruby, String runtimeContext) throws Exception {
         setRuntimeType( ruby, "rails" );
-        super.initialize( ruby );
+        super.initialize( ruby, runtimeContext );
        
         Logger logger = Logger.getLogger( getRubyAppMetaData().getApplicationName() );
         IRubyObject rubyLogger = JavaEmbedUtils.javaToRuby( ruby, logger );

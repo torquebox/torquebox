@@ -42,7 +42,7 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
         RackRuntimeInitializer initializer = new RackRuntimeInitializer( rubyAppMetaData, rackAppMetaData );
 
         Ruby ruby = createRuby();
-        initializer.initialize( ruby );
+        initializer.initialize( ruby, "web" );
 
         String rackRoot = (String) ruby.evalScriptlet( "RACK_ROOT" ).toJava( String.class );
         assertEquals( root.getAbsolutePath(), rackRoot );
@@ -62,5 +62,7 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
         appName = (String) ruby.evalScriptlet( "TORQUEBOX_APP_NAME" ).toJava( String.class );
         assertEquals( "test-app", appName );
 
+        String context = (String) ruby.evalScriptlet( "ENV['TORQUEBOX_CONTEXT']" ).toJava( String.class );
+        assertEquals( "web", context );
     }
 }

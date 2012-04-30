@@ -38,13 +38,14 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
     }
 
     @Override
-    public void initialize(Ruby ruby) throws Exception {
+    public void initialize(Ruby ruby, String runtimeContext) throws Exception {
         String appName = this.rubyAppMetaData.getApplicationName();
         ruby.setCurrentDirectory( getApplicationRoot().getCanonicalPath() );
 
         StringBuilder script = new StringBuilder();
         script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );
         script.append( "ENV['TORQUEBOX_APP_NAME']=%q(" + appName + ")\n" );
+        script.append( "ENV['TORQUEBOX_CONTEXT']=%q(" + runtimeContext + ")\n" );
         RuntimeHelper.evalScriptlet( ruby, script.toString() );
         RuntimeHelper.requireTorqueBoxInit(ruby);
     }

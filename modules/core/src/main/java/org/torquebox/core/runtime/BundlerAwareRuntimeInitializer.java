@@ -38,8 +38,8 @@ public class BundlerAwareRuntimeInitializer extends BaseRuntimeInitializer {
     }
 
     @Override
-    public void initialize(Ruby ruby) throws Exception {
-        super.initialize( ruby );
+    public void initialize(Ruby ruby, String runtimeContext) throws Exception {
+        super.initialize( ruby, runtimeContext );
         
         File gemfile = new File( getApplicationRoot(), "Gemfile" );
         if (gemfile.exists()) {

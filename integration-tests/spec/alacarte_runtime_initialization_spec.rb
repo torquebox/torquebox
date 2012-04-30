@@ -28,5 +28,21 @@ describe "alacarte runtime initialization test" do
     end
   end
 
+  remote_describe "runtime context in a service" do
+    include TorqueBox::Injectors
+    it "should set ENV['TORQUEBOX_CONTEXT'] to 'services'" do
+      queue = inject('/queues/service_context')
+      queue.receive.should == "services"
+    end
+  end
+
+  remote_describe "runtime context in a job" do
+    include TorqueBox::Injectors
+    it "should set ENV['TORQUEBOX_CONTEXT'] to 'jobs'" do
+      queue = inject('/queues/jobs_context')
+      queue.receive.should == "jobs"
+    end
+  end
+
 end
 

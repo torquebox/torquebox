@@ -322,7 +322,7 @@ public class RubyRuntimeFactoryTest {
         public Ruby ruby;
 
         @Override
-        public void initialize(Ruby ruby) throws Exception {
+        public void initialize(Ruby ruby, String runtimeContext) throws Exception {
             this.ruby = ruby;
         }
 

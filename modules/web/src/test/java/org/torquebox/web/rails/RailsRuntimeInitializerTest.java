@@ -63,7 +63,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
 
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
-        initializer.initialize( ruby );
+        initializer.initialize( ruby, "web" );
 
         RubyClass objectClass = (RubyClass) ruby.getClassFromPath( "Object" );
 
@@ -85,7 +85,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
     public void testOpenSSL_HMAC_digest() throws Exception {
         RailsRuntimeInitializer initializer = create( root( "/src/test/faux-rails2" ), "development" );
 
-        initializer.initialize( ruby );
+        initializer.initialize( ruby, "web" );
 
         String script = "require 'openssl'\nOpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, 'mykey', 'hashme')";
         ruby.evalScriptlet( script );
@@ -98,7 +98,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         initializer.addAutoloadPath( "path1" );
         initializer.addAutoloadPath( "path2" );
 
-        initializer.initialize( ruby );
+        initializer.initialize( ruby, "web" );
 
         RubyModule object = ruby.getClassFromPath( "Object" );
 
@@ -116,7 +116,7 @@ public class RailsRuntimeInitializerTest extends AbstractRubyTestCase {
         File railsRoot = root( "/src/test/faux-rails3" );
         RailsRuntimeInitializer initializer = create( railsRoot, "development" );
 
-        initializer.initialize( ruby ); 
+        initializer.initialize( ruby, "web" ); 
         
         RubyClass objectClass = (RubyClass) ruby.getObject();
 
