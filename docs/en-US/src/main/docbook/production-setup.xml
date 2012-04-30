@@ -394,6 +394,8 @@ Listen 127.0.0.1:6666
       &lt;/mod-cluster-config&rt;
     &lt;/subsystem&gt;
     ...
+  &lt;/profile&gt;
+  ...
 &lt;/server&gt;
         </programlisting> The changed piece in the configuration above
         is the proxy-list attribute. It should contain a
