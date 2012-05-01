@@ -50,6 +50,12 @@
         <module>incremental</module>
       </modules>
     </profile>
+    <profile>
+      <id>wfk</id>
+      <modules>
+        <module>dist</module>
+      </modules>
+    </profile>
   </profiles>
 
 </project>
