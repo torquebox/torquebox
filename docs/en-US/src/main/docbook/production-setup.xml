@@ -126,7 +126,7 @@ JBOSS_CONFIG=standalone-ha.xml</programlisting>
         Then check the output in <code>/var/log/console.log</code>. 
       </para>
     </section>
-    <section>
+    <section id="mod-cluster-configuration">
       <title>Request Dispatching with <code>mod_cluster</code></title>
       <para>
         As with MRI, a TorqueBox production server will typically have a request
@@ -399,10 +399,9 @@ Listen 127.0.0.1:6666
 &lt;/server&gt;
         </programlisting> The changed piece in the configuration above
         is the proxy-list attribute. It should contain a
-        comma-separated list of host:pair entries, where each entry
-        points to a mod_cluster server. If you've changed the default
-        mod_cluster port in the Apache HTTP configuration then be sure
-        to change it from 6666 here as well.</para>
+        comma-separated list of host:port entries, where each entry
+        refers to a mod_cluster server. The port (6666) should agree
+        with the Listen directive specified in <xref linkend="mod-cluster-configuration"/>.</para>
         </example></para>
     </section>
 
