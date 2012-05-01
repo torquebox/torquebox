@@ -59,6 +59,15 @@ def assert_paths_are_equal(actual, expected)
   normalize_path(actual).should eql(normalize_path(expected))
 end
 
+def domain_host_for(server)
+  'localhost'
+end
+
+def domain_port_for(server, base_port)
+  port_offset = 100
+  server == :server1 ? base_port : base_port + port_offset
+end
+
 # Because DRb requires ObjectSpace and 1.9 disables it
 require 'jruby'
 JRuby.objectspace = true
