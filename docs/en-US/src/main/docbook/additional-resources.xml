@@ -74,58 +74,43 @@
     </section>
   </section>
 
-  <section id="stompbox">
-    <title>StompBox</title>
+  <section id="new-relic">
+    <title>New Relic</title>
 
-    <para>StompBox enables easy Git-based deployments to a TorqueBox AS.
+    <para><ulink url="http://newrelic.com">New Relic</ulink> is an application
+      monitoring and management tool that provides statistics about and insight
+      into your application. New Relic will work with TorqueBox just like any
+      other Ruby application. There are some minor caveats regarding JRuby
+      which New Relic lists on their 
+      <ulink url="https://newrelic.com/docs/general/new-relic-on-jruby">FAQ</ulink>.
     </para>
-
-    <para><mediaobject>
-        <imageobject>
-          <imagedata fileref="images/stompbox.jpg" width="100%" />
-        </imageobject>
-      </mediaobject></para>
-
-    <para>By using a post-commit POST-back hook, StompBox is able to check
-    your application code out of the repository and deploy it into the running
-    server.</para>
-
     <section>
-      <title>Features</title>
+      <title>Usage</title>
 
-      <formalpara>
-        <title>Deploy via Git</title>
+      <para>
+        Using New Relic with TorqueBox is just like using it with any other
+        Ruby application. You simply install the gem and ensure it's available
+        to your application. This is usually accomplished using Bundler.
+        Additionally, TorqueBox provides some basic integration with New Relic's
+        Background Tasks tab. Methods run in background tasks via
+        <code>always_background</code> or <code>obj.background.some_method</code>
+        will appear in this tab.
+        Complete details about New Relic's Ruby integration can be found on the
+        <ulink url="https://newrelic.com/docs/ruby/new-relic-for-ruby">
+          New Relic website</ulink>.
+      </para>
 
-        <para>Using POST-back hooks, deploy code using <command>git
-        push</command>.</para>
-      </formalpara>
-
-      <formalpara>
-        <title>Multiple Revisions</title>
-
-        <para>Roll forward or backward through revisions of your application
-        code.</para>
-      </formalpara>
-    </section>
-
-    <section>
-      <title>More Information</title>
-
-      <para>More Information About StompBox May Be Found On The 
-        <ulink url="http://torquebox.org/stompbox">TorqueBox Website.</ulink> 
-          The Source For StompBox Is Hosted At Github.</para>
-
-      <itemizedlist>
-        <listitem>
-          <para><ulink
-          url="http://torquebox.org/stompbox">Http://torquebox.org/stompbox</ulink></para>
-        </listitem>
-
-        <listitem>
-          <para><ulink
-          url="http://github.com/torquebox/stompbox">Http://github.com/torquebox/stompbox</ulink></para>
-        </listitem>
-      </itemizedlist>
+      <para>Note: when using New Relic with Rails 2.3.x you may need to add
+        the following code to your <code>config/environments/production.rb</code>
+        file.
+        <screen>begin
+  require 'newrelic_rpm'
+  NewRelic::Agent
+rescue
+  # Log the exception, mayhap
+end</screen>
+      </para>
     </section>
   </section>
+
 </chapter>
