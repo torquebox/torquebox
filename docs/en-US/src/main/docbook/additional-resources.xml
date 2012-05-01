@@ -113,4 +113,102 @@ end</screen>
     </section>
   </section>
 
+  <section id="visualvm">
+    <title>VisualVM</title>
+
+    <para>VisualVM is a useful tool for monitoring and troubleshooting
+    Java applications. Detailed below are the steps to connect to
+    TorqueBox from VisualVM when connecting to both local and remote
+    TorqueBox servers. More information about VisualVM itself can be
+    found in the <ulink
+    url="http://docs.oracle.com/javase/6/docs/technotes/guides/visualvm/index.html">Oracle
+    VisualVM documentation</ulink>. To start VisualVM from the command
+    line:
+
+    <screen><prompt>$</prompt><command>jvisualvm</command></screen></para>
+
+    <section>
+      <title>Connecting VisualVM to a Local TorqueBox</title>
+
+      <para>With TorqueBox running locally, simply start VisualVM and
+      connect to the "org.jboss.modules.Main" application listed.</para>
+
+      <para><mediaobject>
+        <imageobject>
+          <imagedata fileref="images/local_visualvm.png" width="100%" />
+        </imageobject>
+      </mediaobject></para>
+
+    </section>
+
+    <section>
+      <title>Connecting VisualVM to a Remote TorqueBox</title>
+
+      <para>Connecting to a remote TorqueBox server requires a few more steps.</para>
+
+      <para>On the remote TorqueBox server, edit
+      <filename>$JBOSS_HOME/standalone/configuration/standalone.xml</filename>
+      or, if running in a cluster,
+      <filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>
+      and instruct the JMX subsystem to not use the management
+      endpoint and instead use the remoting endpoint for remote JMX
+      connections.</para>
+
+      <para><example>
+        <title>JMX Configuration in standalone.xml</title>
+
+        <para><programlisting>&lt;subsystem xmlns='urn:jboss:domain:jmx:1.1'&gt;
+  &lt;show-model value='true'/&gt;
+  &lt;remoting-connector use-management-endpoint='false'/&gt;
+&lt;/subsystem&gt;
+        </programlisting></para>
+      </example></para>
+
+      <para>Next we need to add a new application user to the remote TorqueBox server.
+
+      <screen><prompt>$</prompt> <command>$JBOSS_HOME/bin/add-user.sh</command>
+
+What type of user do you wish to add? 
+ a) Management User (mgmt-users.properties) 
+ b) Application User (application-users.properties)
+(a): b
+
+Enter the details of the new user to add.
+Realm (ApplicationRealm) : 
+Username : testuser
+Password : 
+Re-enter Password : 
+What roles do you want this user to belong to? (Please enter a comma separated list, or leave blank for none) : 
+About to add user 'testuser' for realm 'ApplicationRealm'
+Is this correct yes/no? yes
+Added user 'testuser' to file '/opt/torquebox/jboss/standalone/configuration/application-users.properties'
+Added user 'testuser' to file '/opt/torquebox/jboss/domain/configuration/application-users.properties'</screen></para>
+
+      <para>Finally, start TorqueBox on the remote server and bind it
+      to a real IP address.
+
+      <screen><prompt>$</prompt> <command>torquebox run -b &lt;server_ip&gt;</command></screen></para>
+
+      <para>When running VisualVM on the local machine you'll need to
+      ensure
+      <filename>$JBOSS_HOME/bin/client/jboss-client.jar</filename> is
+      on the classpath. You can simply copy that file to the local
+      machine or if TorqueBox is installed locally use the jar from
+      inside there.
+
+      <screen><prompt>$</prompt> <command>jvisualvm --cp:a $JBOSS_HOME/bin/client/jboss-client.jar</command></screen></para>
+
+      <para>Inside VisualVM, click on File -> Add JMX Connection. The
+      connection string is
+      "service:jmx:remoting-jmx://&lt;remote_server_ip&gt;:4447". Also
+      check "Use Security Credentials" and enter the username /
+      password used in the add-user.sh script.</para>
+
+      <para><mediaobject>
+        <imageobject>
+          <imagedata fileref="images/remote_visualvm.png" width="100%" />
+        </imageobject>
+      </mediaobject></para>
+    </section>
+  </section>
 </chapter>
