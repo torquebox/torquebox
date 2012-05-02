@@ -91,7 +91,8 @@ public class RackFilter implements Filter {
             chain.doFilter( request, responseCapture );
             if (responseCapture.isError()) {
                 response.reset();
-            } else if (response.isCommitted()) {
+            } else if (!request.getMethod().equals( "OPTIONS" )) {
+                // Pass HTTP OPTIONS requests through to the Rack application
                 return;
             }
         } catch (ServletException e) {

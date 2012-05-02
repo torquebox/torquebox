@@ -2,6 +2,8 @@
 require 'rubygems'
 require 'sinatra'
 
+settings.static = false
+
 options '/' do
   response.headers['Access-Control-Allow-Origin'] = '*'
   response.headers['Access-Control-Allow-Methods'] = 'POST'

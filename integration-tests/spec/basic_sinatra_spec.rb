@@ -31,6 +31,15 @@ describe "basic sinatra test" do
     page.find('#success')[:class].should == 'default'
   end
 
+  it "should return 304 for unmodified static assets (TORQUE-810)", :browser_not_supported => true do
+    uri = URI.parse(page.driver.send(:url, "/basic-sinatra/some_page.html"))
+    http = Net::HTTP.new(uri.host, uri.port)
+    request = Net::HTTP::Get.new(uri.request_uri)
+    request.add_field('If-Modified-Since', 'Sat, 31 Dec 2050 00:00:00 GMT')
+    response = http.request(request)
+    response.code.should == "304"
+  end
+
   it "should post something" do
     visit "/basic-sinatra/poster"
     fill_in 'field', :with => 'something'
