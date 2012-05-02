@@ -69,6 +69,18 @@
               </descriptors>
             </configuration>
           </execution>
+          <execution>
+            <id>dist-rubygem-repo</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/dist-rubygem-repo.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
