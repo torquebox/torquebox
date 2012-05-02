@@ -9,7 +9,7 @@
       <directory>${basedir}/../assembly/target/stage/gem-repo</directory>
       <outputDirectory>/</outputDirectory>
       <excludes>
-      	<exclude>**/torquebox-server-2.0.2*</exclude>
+      	<exclude>**/torquebox-server-*</exclude>
       </excludes>
     </fileSet>
   </fileSets>
