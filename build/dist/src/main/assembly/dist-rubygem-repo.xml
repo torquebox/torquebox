@@ -1,0 +1,16 @@
+<assembly>
+  <id>rubygems-repo</id>
+  <baseDirectory>torquebox-rubygems-repo</baseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <fileSets>
+    <fileSet>
+      <directory>${basedir}/../assembly/target/stage/gem-repo</directory>
+      <outputDirectory>/</outputDirectory>
+      <excludes>
+      	<exclude>**/torquebox-server-2.0.2*</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+</assembly>
