@@ -151,14 +151,13 @@ until stopped.
   end</programlisting></para>
       </example></para>
 
-      <para>Service classes should be available in Ruby's load path. For
-      Rails applications, the convention is to put your service
-      classes in <filename>$RAILS_ROOT/app/services/</filename> and
-      ensure this directory is on your load path.</para>
+      <para>Service classes should be placed in a directory that is on the application's 
+      load path. For Rails applications, the convention is to put your service
+      classes in <filename>$RAILS_ROOT/app/services/</filename>. For non-Rails applications,
+      the convention is to use <filename>$RAILS_ROOT/services/</filename>. No matter what
+      type of application you have, both directories will automatically be added to the 
+      load path.</para>
 
-      <para><informalexample>
-        <para><programlisting>config.autoload_paths += %W(#{config.root}/app/services)</programlisting></para>
-      </informalexample></para>
     </section>
   </section>
 
