@@ -237,7 +237,7 @@ set :use_sudo,          false
 set :deploy_to,         "/opt/apps/myapp.com"
 set :torquebox_home,    "/opt/torquebox/current"
 set :jboss_init_script, "/etc/init.d/jboss-as-standalone"
-set :app_environment,   "RAILS_ENV: production"
+set :rails_env,         "production"
 set :app_context,       "/"
 
 ssh_options[:forward_agent] = false
