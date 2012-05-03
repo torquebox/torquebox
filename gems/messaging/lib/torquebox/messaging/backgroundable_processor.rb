@@ -23,16 +23,28 @@ module TorqueBox
   module Messaging
     class BackgroundableProcessor < MessageProcessor
 
+      def self.log_newrelic_notice(klass)
+        @newrelic_notice_logged ||=
+          log.warn( "The New Relic agent is loaded, but an issue with the inheritance hierachy of " <<
+                    klass.name << " prevents us from reporting on its Backgroundable calls." ) || true
+      end
+
       def on_message(hash)
         FutureResponder.new( Queue.new( hash[:future_queue] ), hash[:future_id] ).respond do
-          hash[:receiver].class.__enable_backgroundable_newrelic_tracing(hash[:method])
+          klass = hash[:receiver].class
+          if klass.respond_to?( :__enable_backgroundable_newrelic_tracing )
+            klass.__enable_backgroundable_newrelic_tracing( hash[:method] )
+          elsif Backgroundable.newrelic_available? 
+            self.class.log_newrelic_notice( klass )
+          end
+          
           hash[:receiver].send(hash[:method], *hash[:args])
         end
       end
 
       private
-      def log
-        @logger ||= TorqueBox::Logger.new(self.class)
+      def self.log
+        @logger ||= TorqueBox::Logger.new( self )
       end
     end
   end

@@ -33,6 +33,11 @@ module TorqueBox
         base.send(:include, FutureStatus)
       end
 
+      # Signals if the newrelic gem is loaded.
+      def self.newrelic_available?
+        defined?(NewRelic::Agent)
+      end
+
       # Allows you to background any method that has not been marked
       # as a backgrounded method via {ClassMethods#always_background}.
       # @param [Hash] options that are passed through to
@@ -77,13 +82,13 @@ module TorqueBox
         end
 
         def __enable_backgroundable_newrelic_tracing(method)
-          if defined?(NewRelic::Agent)
-            include(NewRelic::Agent::Instrumentation::ControllerInstrumentation) unless
+          if Backgroundable.newrelic_available?
+           include(NewRelic::Agent::Instrumentation::ControllerInstrumentation) unless
               include?(NewRelic::Agent::Instrumentation::ControllerInstrumentation)
             begin
               add_transaction_tracer(method, :name => method.sub("__sync_", ""), :category => :task)
             rescue Exception => e
-              log.error "Error loading New Relic for backgrounded method #{method.sub("__sync_", "")}: #{e}"
+              TorqueBox::Logger.new( Backgroundable ).error "Error loading New Relic for backgrounded method #{method.sub("__sync_", "")}: #{e}"
             end
           end
         end
