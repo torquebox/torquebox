@@ -602,4 +602,10 @@ public class DefaultNodeVisitor implements NodeVisitor {
     public Object visitZSuperNode(ZSuperNode iVisited) {
         return defaultVisitNode( iVisited );
     }
+
+    // No @Override annotation since this method only exists in
+    // NodeVisitor under JRuby 1.7
+    public Object visitLambdaNode(LambdaNode iVisited) {
+        return defaultVisitNode( iVisited );
+    }
 }
