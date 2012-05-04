@@ -37,6 +37,7 @@ import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.After;
 import org.junit.Test;
+import org.torquebox.core.util.JRubyConstants;
 
 public class RubyRuntimeFactoryTest {
 
@@ -113,7 +114,11 @@ public class RubyRuntimeFactoryTest {
         factory.create();
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
-        assertFalse( ruby.is1_9() );
+        if (isJRuby17()) {
+            assertTrue( ruby.is1_9() );
+        } else {
+            assertFalse( ruby.is1_9() );
+        }
     }
 
     @Test
@@ -136,7 +141,12 @@ public class RubyRuntimeFactoryTest {
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertTrue( ruby.is1_9() );
-        assertEquals( "1.9.2", ((RubyString) ruby.evalScriptlet( "RUBY_VERSION" )).toString() );
+        String rubyVersion = ((RubyString) ruby.evalScriptlet( "RUBY_VERSION" )).toString();
+        if (isJRuby17()) {
+            assertEquals( "1.9.3", rubyVersion );
+        } else {
+            assertEquals( "1.9.2", rubyVersion );
+        }
     }
 
     @Test
@@ -315,6 +325,10 @@ public class RubyRuntimeFactoryTest {
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
         assertFalse( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
+    }
+
+    public boolean isJRuby17() {
+        return JRubyConstants.getVersion().startsWith( "1.7" );
     }
 
     static class MockRuntimeInitializer implements RuntimeInitializer {
