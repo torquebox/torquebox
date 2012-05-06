@@ -81,11 +81,128 @@
          </pluginRepository>
       </pluginRepositories>
     </profile>
-
+	<profile>
+		<id>torquebox-repos</id>
+		<repositories>
+			<repository>
+				<id>jboss-third-party-releases</id>
+				<name>JBoss 3rd Party Releases</name>
+				<url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content</url>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>codehaus</id>
+				<name>Codehaus repo</name>
+				<url>http://repository.codehaus.org/</url>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>jboss-incremental</id>
+				<name>JBoss AS Incremental Builds</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/upstream</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>rubygems-proxy</id>
+				<name>Rubygems Proxy</name>
+				<url>http://rubygems-proxy.torquebox.org/releases</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+					<updatePolicy>never</updatePolicy>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>rubygems-releases</id>
+				<name>RubyGems Releases (Official)</name>
+				<url>http://gems.saumya.de/releases</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>false</enabled>
+					<updatePolicy>never</updatePolicy>
+				</releases>
+				<snapshots>
+					<enabled>fale</enabled>
+					<updatePolicy>never</updatePolicy>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>polyglot-snapshot</id>
+				<name>Polyglot SNAPSHOT builds</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/snapshot</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>false</enabled>
+				</releases>
+				<snapshots>
+					<enabled>true</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>projectodd-release</id>
+				<name>projectodd release</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/release</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+		</repositories>
+		<pluginRepositories>
+			<pluginRepository>
+				<id>sonatype-snapshots</id>
+				<name>Sonatype Snapshots Repository</name>
+				<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>false</enabled>
+				</releases>
+				<snapshots>
+					<enabled>true</enabled>
+					<updatePolicy>never</updatePolicy>
+				</snapshots>
+			</pluginRepository>
+			<pluginRepository>
+				<id>projectodd-release</id>
+				<name>projectodd release</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/release</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</pluginRepository>
+		</pluginRepositories>
+	</profile>
   </profiles>
 
   <activeProfiles>
    <activeProfile>jboss-wfk2-repository</activeProfile>
+   <activeProfile>torquebox-repos</activeProfile>
   </activeProfiles>
 
 </settings>
