@@ -6,7 +6,7 @@ ENV.delete('GEM_HOME')
 ENV.delete('GEM_PATH')
 
 def jruby
-  File.join(Config::CONFIG["bindir"], Config::CONFIG["ruby_install_name"])
+  File.join(RbConfig::CONFIG["bindir"], RbConfig::CONFIG["ruby_install_name"])
 end
 
 command = ARGV.join(" ")

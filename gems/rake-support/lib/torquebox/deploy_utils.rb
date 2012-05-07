@@ -342,7 +342,7 @@ module TorqueBox
       end
 
       def windows?
-        Config::CONFIG['host_os'] =~ /mswin/
+        RbConfig::CONFIG['host_os'] =~ /mswin/
       end
       
       def find_option(opt, key)
