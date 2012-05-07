@@ -104,7 +104,11 @@ module Infinispan
           org.infinispan.marshall.SerializeWith => { "value" => org.torquebox.cache.marshalling.JsonExternalizer.java_class }
         }
 
-        add_class_annotation( annotation )
+        if JRUBY_VERSION =~ /^1\.7/
+          add_class_annotations( annotation )
+        else
+          add_class_annotation( annotation )
+        end
 
         # Wonder twin powers... ACTIVATE!
         java_class = become_java!(false)

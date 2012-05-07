@@ -28,7 +28,11 @@ module TorqueBox
         end
       end
 
-      add_class_annotation( { org.infinispan.notifications.Listener => { } } )
+      if JRUBY_VERSION =~ /^1\.7/
+        add_class_annotations( { org.infinispan.notifications.Listener => { } } )
+      else
+        add_class_annotation( { org.infinispan.notifications.Listener => { } } )
+      end
       add_method_signature( "event_fired", [java.lang.Void::TYPE, org.infinispan.notifications.cachelistener.event.Event] )
       add_method_annotation( "event_fired", 
                             { org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated    => {},
