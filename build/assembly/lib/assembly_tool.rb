@@ -103,10 +103,15 @@ class AssemblyTool
 
   def install_gem(gem, update_index=false)
     puts "Installing #{gem}"
+    if JRUBY_VERSION =~ /^1\.7/
+      install_dir = @jruby_dir + '/lib/ruby/gems/shared'
+    else
+      install_dir = @jruby_dir + '/lib/ruby/gems/1.8'
+    end
     opts = {
       :bin_dir     => @jruby_dir + '/bin',
       :env_shebang => true,
-      :install_dir => @jruby_dir + '/lib/ruby/gems/1.8',
+      :install_dir => install_dir,
       :wrappers    => true
     }
 
