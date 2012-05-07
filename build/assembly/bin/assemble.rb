@@ -146,9 +146,9 @@ class Assembler
 
     FileUtils.cp File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'Rakefile' ), tool.torquebox_dir
 
-    init_dir  = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'init' ) )
-    rails_dir = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'rails' ) )
-    js_dir    = FileUtils.mkdir_p( File.join( tool.torquebox_dir, 'share', 'javascript' ) )
+    FileUtils.mkdir_p( init_dir  = File.join( tool.torquebox_dir, 'share', 'init' ) )
+    FileUtils.mkdir_p( rails_dir = File.join( tool.torquebox_dir, 'share', 'rails' ) )
+    FileUtils.mkdir_p( js_dir    = File.join( tool.torquebox_dir, 'share', 'javascript' ) )
 
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'init', 'torquebox.conf' ), init_dir )
     FileUtils.cp( File.join( tool.src_dir, 'gems', 'rake-support', 'share', 'init', 'torquebox.conf.erb' ), init_dir )

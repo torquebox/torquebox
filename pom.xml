@@ -792,6 +792,7 @@
           <version>${version.jruby-maven-plugins}</version>
           <extensions>true</extensions>
           <configuration>
+            <jrubySwitches>--1.9</jrubySwitches>
             <jrubyVersion>${version.jruby}</jrubyVersion>
           </configuration>
         </plugin>
