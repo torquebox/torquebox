@@ -36,6 +36,7 @@ class GemInstaller
       version = @versions[ gem_name.gsub(/-/, '_').to_sym ]
     end
     gem_dir = File.join( ENV['GEM_HOME'], 'gems', "#{gem_name}-#{version}*" )
+    gem_dir.gsub!('gems/1.8', 'gems/shared') if JRUBY_VERSION =~ /^1\.7/
     unless ( Dir[ gem_dir ].empty? )
       puts "Skipping #{gem_name}"
       return
