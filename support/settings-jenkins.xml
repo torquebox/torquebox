@@ -1,0 +1,207 @@
+
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+
+
+  <!-- localRepository
+   | The path to the local repository maven will use to store artifacts.
+   ld|
+   | Default: ~/.m2/repository
+  -->
+
+  <!-- offline
+   | Determines whether maven should attempt to connect to the network when executing a build.
+   | This will have an effect on artifact downloads, artifact deployment, and others.
+   |
+   | Default: false
+  <offline>false</offline>
+  -->
+
+  <!-- mirrors
+   | This is a list of mirrors to be used in downloading artifacts from remote repositories.
+   |
+   | It works like this: a POM may declare a repository to use in resolving certain artifacts.
+   | However, this repository may have problems with heavy traffic at times, so people have mirrored
+   | it to several places.
+   |
+   | That repository definition will have a unique id, so we can create a mirror reference for that
+   | repository, to be used as an alternate download site. The mirror site will be the preferred
+   | server for that repository.
+   |-->
+  <mirrors>
+    <!-- mirror
+     | Specifies a repository mirror site to use instead of a given repository. The repository that
+     | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
+     | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
+     |
+   <mirror>
+      <id>Central</id>
+      <mirrorOf>central</mirrorOf>
+      <name>Mead enviroment repository</name>
+      <url>http://download.devel.redhat.com/brewroot/repos/jb-wfk-2-rhel-6-build/latest/maven</url>
+    </mirror>-->
+  </mirrors>
+
+  <profiles>
+    <profile>
+      <id>jboss-wfk2-repository</id>
+      <repositories>
+        <repository>
+          <id>jboss-wfk2-repository</id>
+          <name>JBoss WFK2 internal Maven Repository</name>
+          <url>http://download.devel.redhat.com/brewroot/repos/jb-wfk-2-rhel-6-build/latest/maven</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+         <pluginRepository>
+          <id>jboss-wfk2-repository</id>
+          <name>JBoss WFK2 internal Maven Repository</name>
+          <url>http://download.devel.redhat.com/brewroot/repos/jb-wfk-2-rhel-6-build/latest/maven</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+         </pluginRepository>
+      </pluginRepositories>
+    </profile>
+	<profile>
+		<id>torquebox-repos</id>
+		<repositories>
+			<repository>
+				<id>jboss-third-party-releases</id>
+				<name>JBoss 3rd Party Releases</name>
+				<url>https://repository.jboss.org/nexus/service/local/repositories/thirdparty-releases/content</url>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>codehaus</id>
+				<name>Codehaus repo</name>
+				<url>http://repository.codehaus.org/</url>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>jboss-incremental</id>
+				<name>JBoss AS Incremental Builds</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/upstream</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>rubygems-proxy</id>
+				<name>Rubygems Proxy</name>
+				<url>http://rubygems-proxy.torquebox.org/releases</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+					<updatePolicy>never</updatePolicy>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>rubygems-releases</id>
+				<name>RubyGems Releases (Official)</name>
+				<url>http://gems.saumya.de/releases</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>false</enabled>
+					<updatePolicy>never</updatePolicy>
+				</releases>
+				<snapshots>
+					<enabled>fale</enabled>
+					<updatePolicy>never</updatePolicy>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>polyglot-snapshot</id>
+				<name>Polyglot SNAPSHOT builds</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/snapshot</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>false</enabled>
+				</releases>
+				<snapshots>
+					<enabled>true</enabled>
+				</snapshots>
+			</repository>
+			<repository>
+				<id>projectodd-release</id>
+				<name>projectodd release</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/release</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</repository>
+		</repositories>
+		<pluginRepositories>
+			<pluginRepository>
+				<id>sonatype-snapshots</id>
+				<name>Sonatype Snapshots Repository</name>
+				<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>false</enabled>
+				</releases>
+				<snapshots>
+					<enabled>true</enabled>
+					<updatePolicy>never</updatePolicy>
+				</snapshots>
+			</pluginRepository>
+			<pluginRepository>
+				<id>projectodd-release</id>
+				<name>projectodd release</name>
+				<url>https://repository-projectodd.forge.cloudbees.com/release</url>
+				<layout>default</layout>
+				<releases>
+					<enabled>true</enabled>
+				</releases>
+				<snapshots>
+					<enabled>false</enabled>
+				</snapshots>
+			</pluginRepository>
+		</pluginRepositories>
+	</profile>
+  </profiles>
+
+  <activeProfiles>
+   <activeProfile>jboss-wfk2-repository</activeProfile>
+   <activeProfile>torquebox-repos</activeProfile>
+  </activeProfiles>
+
+</settings>
