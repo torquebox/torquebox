@@ -62,9 +62,9 @@ class Publisher
         end
 
         if ( File.directory?( entry ) )
-          dav_mkdir_p( root_url + '/' + Pathname( entry ).cleanpath )
+          dav_mkdir_p( root_url + '/' + Pathname( entry ).cleanpath.to_s )
         else
-          dav_put( root_url + '/' + Pathname( entry ).cleanpath, entry, false )
+          dav_put( root_url + '/' + Pathname( entry ).cleanpath.to_s, entry, false )
         end
       end
       @published_artifacts << root_url
