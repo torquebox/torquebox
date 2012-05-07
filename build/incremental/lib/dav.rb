@@ -86,7 +86,7 @@ class DAV
       stderr_thr.join
     end
     lines = error.split( "\n" ).find{|e| e =~ /^< HTTP\/1.1/}
-    status_line = ((error.split( "\n" ).find{|e| e =~ /^< HTTP\/1.1/})||['']).first
+    status_line = (error.split( "\n" ).find{|e| e =~ /^< HTTP\/1.1/}) || ''
     status  = 500
     message = 'Unknown'
     if ( status_line =~ /HTTP\/1.1 ([0-9][0-9][0-9]) (.*)$/ ) 
