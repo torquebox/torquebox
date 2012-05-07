@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+ENV['GEM_HOME'] = ENV['GEM_HOME'].gsub('gems/1.8', 'gems/shared') if JRUBY_VERSION =~ /^1\.7/
+
 require File.dirname(__FILE__) + '/../lib/gem_installer.rb'
 
 versions = {
