@@ -34,5 +34,10 @@ describe TorqueBox::Logger do
     logger.error "JC: message too"
   end
 
+  it "should handle nil parameters" do
+    logger = TorqueBox::Logger.new
+    logger.info(nil)
+  end
+
 end
 
