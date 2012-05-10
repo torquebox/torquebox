@@ -48,8 +48,8 @@
       <id>wfk</id>
       <repositories>
         <repository>
-          <id>jboss-wfp-repository</id>
-          <name>JBoss WFP Maven Repository</name>
+          <id>jboss-wfk-repository</id>
+          <name>JBoss WFK Maven Repository</name>
           <url>http://download.devel.redhat.com/brewroot/repos/jb-wfk-2-rhel-6-build/latest/maven</url>
           <layout>default</layout>
           <releases>
@@ -64,8 +64,8 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>jboss-wfk-repository-group</id>
-          <name>JBoss EAP Maven Repository</name>
+          <id>jboss-wfk-repository</id>
+          <name>JBoss WFP Maven Repository</name>
           <url>http://download.devel.redhat.com/brewroot/repos/jb-wfk-2-rhel-6-build/latest/maven</url>
           <layout>default</layout>
           <releases>
@@ -78,6 +78,9 @@
           </snapshots>
         </pluginRepository>
       </pluginRepositories>
+      <properties>
+        <wfk>true</wfk>
+      </properties>
     </profile>
   </profiles>
 
