@@ -44,15 +44,15 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.as.txn.service.TxnServices;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
+import org.jboss.jca.common.api.metadata.ds.v11.DsXaPool;
 import org.jboss.jca.common.api.validator.ValidateException;
-import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
+import org.jboss.jca.common.metadata.ds.v11.DsXaPoolImpl;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.management.ManagementRepository;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
@@ -303,7 +303,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         boolean spy = false;
         boolean useCcm = false;
         String newConnectionSql = null;
-        CommonXaPool xaPool = createPool( dbMeta );
+        DsXaPool xaPool = createPool( dbMeta );
         Recovery recovery = null;
 
         return new ModifiableXaDataSource(
@@ -328,7 +328,7 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
                 recovery );
     }
 
-    protected CommonXaPool createPool(DatabaseMetaData dsMeta) throws ValidateException {
+    protected DsXaPool createPool(DatabaseMetaData dsMeta) throws ValidateException {
         Integer minPoolSize = 0;
         Integer maxPoolSize = (Integer) dsMeta.getConfiguration().get( "pool" );
         Boolean prefill = false;
@@ -339,8 +339,9 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
         Boolean padXid = false;
         Boolean wrapXaDataSource = false;
         Boolean noTxSeparatePool = false;
+        Boolean allowMultipleUsers = true;
 
-        return new CommonXaPoolImpl( minPoolSize,
+        return new DsXaPoolImpl( minPoolSize,
                 maxPoolSize,
                 prefill,
                 useStrictMin,
@@ -349,7 +350,8 @@ public class DatabaseProcessor implements DeploymentUnitProcessor {
                 interleaving,
                 padXid,
                 wrapXaDataSource,
-                noTxSeparatePool );
+                noTxSeparatePool,
+                allowMultipleUsers );
     }
 
     @Override
