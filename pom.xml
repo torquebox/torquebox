@@ -745,13 +745,6 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.jboss.maven.plugins</groupId>
-          <artifactId>maven-jdocbook-plugin</artifactId>
-          <!--<version>2.1.2</version>-->
-          <version>2.3.3</version>
-          <extensions>true</extensions>
-        </plugin>
-        <plugin>
           <groupId>de.saumya.mojo</groupId>
           <artifactId>gem-maven-plugin</artifactId>
           <version>${version.jruby-maven-plugins}</version>
