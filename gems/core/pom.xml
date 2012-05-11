@@ -14,6 +14,24 @@
   <description />
   <url>http://torquebox.org/</url>
 
+  <properties>
+  	<version.org.jboss.jboss-msc>1.0.0.Beta8</version.org.jboss.jboss-msc>
+  </properties>
+  
+  <profiles>
+  	<profile>
+      <activation>
+        <property>
+          <name>wfk</name>
+        </property>
+      </activation>
+  		<id>wfk</id>
+  		<properties>
+  			<version.org.jboss.jboss-msc>1.0.2.GA-redhat-1</version.org.jboss.jboss-msc>
+  		</properties>
+  	</profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>org.jboss.msc</groupId>
