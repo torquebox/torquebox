@@ -20,6 +20,11 @@
   
   <profiles>
   	<profile>
+      <activation>
+        <property>
+          <name>wfk</name>
+        </property>
+      </activation>
   		<id>wfk</id>
   		<properties>
   			<version.org.jboss.jboss-msc>1.0.2.GA-redhat-1</version.org.jboss.jboss-msc>
