@@ -76,12 +76,14 @@ class AssemblyTool
     @jboss_dir = @torquebox_dir + '/jboss'
     @jruby_dir = @torquebox_dir + '/jruby'
 
-    @m2_repo = nil
+    @m2_repo = options[:maven_repo_local ]
 
-    if ( ENV['M2_REPO'] ) 
-      @m2_repo = ENV['M2_REPO']
-    else
-      @m2_repo = ENV['HOME'] + '/.m2/repository'
+    if ( @m2_repo.nil? )
+      if ( ENV['M2_REPO'] ) 
+        @m2_repo = ENV['M2_REPO']
+      else
+        @m2_repo = ENV['HOME'] + '/.m2/repository'
+      end
     end
   end
 
