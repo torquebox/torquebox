@@ -118,7 +118,7 @@
             <configuration>
               <file>bin/assemble.rb</file>
               <jrubyArgs>
-                -m=${maven.repo.local} 
+                -m ${settings.localRepository} 
                 ${assembly.args}
               </jrubyArgs>
               <jrubyJvmArgs>
