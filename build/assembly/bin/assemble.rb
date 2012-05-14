@@ -27,7 +27,10 @@ class Assembler
   attr_accessor :config_stash
   
   def initialize(cli)
-    @tool = AssemblyTool.new(:maven_repo_local=>cli.maven_repo_local, :deployment_timeout => 1200, :enable_welcome_root => false)
+    @tool = AssemblyTool.new(:maven_repo_local=>cli.maven_repo_local,
+                             :deployment_timeout => 1200,
+                             :enable_welcome_root => false,
+                             :use_unzip => cli.unzip)
     @include_jruby = cli.jruby
 
     determine_versions
@@ -240,16 +243,21 @@ class CLI
 
   attr_accessor :jruby
   attr_accessor :maven_repo_local
+  attr_accessor :unzip
 
   def initialize
     @jruby = true
     @maven_repo_local = ENV['M2_REPO'] || File.join( ENV['HOME'], '.m2/repository' )
+    @unzip = true
   end
 
   def parse!(args)
     opts = OptionParser.new do |opts|
       opts.on( '--[no-]jruby', 'Include JRuby in assemblage (default: true)' ) do |i|
         self.jruby = i
+      end
+      opts.on( '--[no-]unzip', 'Use unzip when making assemblage (default: true)' ) do |i|
+        self.unzip = i
       end
       opts.on( '-m MAVEN_REPO_LOCAL', 'Specify local maven repository' ) do |m|
         self.maven_repo_local = m

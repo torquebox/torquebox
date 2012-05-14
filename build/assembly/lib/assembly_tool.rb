@@ -94,7 +94,11 @@ class AssemblyTool
   end
 
   def unzip(path)
-    windows? ? `jar xf #{path}` : `unzip -q #{path}`
+    if windows? || !options[:use_unzip]
+      `jar xf #{path}`
+    else
+      `unzip -q #{path}`
+    end
   end
 
   def windows?

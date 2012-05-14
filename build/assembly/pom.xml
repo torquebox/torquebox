@@ -84,7 +84,7 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <assembly.args>--no-jruby</assembly.args>
+        <assembly.args>--no-jruby --no-unzip</assembly.args>
       </properties>
     </profile>
   </profiles>
