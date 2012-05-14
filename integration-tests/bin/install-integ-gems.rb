@@ -44,7 +44,8 @@ versions = {
   :padrino        =>    '0.10.5',
   :bcrypt_ruby    =>    '3.0.1',
 
-  :sequel         =>    '3.29.0'
+  :sequel         =>    '3.29.0',
+  :thor           =>    '0.14.6'
 }
 
 #GemInstaller.into( File.dirname(__FILE__) + '/../target/integ-dist/jruby/lib/ruby/gems/1.8', versions ) do |installer|
@@ -88,4 +89,5 @@ GemInstaller.with( versions ) do |installer|
   installer.install( 'sinatra-flash', versions[:sinatra_flash] )
 
   installer.install( 'sequel', versions[:sequel] )
+  installer.install( 'thor', versions[:thor] )
 end
