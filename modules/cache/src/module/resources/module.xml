@@ -26,55 +26,7 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
-
-        <resource-root path="infinispan-query.jar"/>
-
-        <resource-root path="hibernate-commons-annotations.jar"/>
-        <resource-root path="hibernate-search.jar"/>
-        <resource-root path="hibernate-search-analyzers.jar"/>
-
-        <resource-root path="lucene-analyzers.jar"/>
-        <resource-root path="lucene-core.jar"/>
-        <resource-root path="lucene-grouping.jar"/>
-        <resource-root path="lucene-highlighter.jar"/>
-        <resource-root path="lucene-memory.jar"/>
-        <resource-root path="lucene-misc.jar"/>
-        <resource-root path="lucene-smartcn.jar"/>
-        <resource-root path="lucene-spatial.jar"/>
-        <resource-root path="lucene-spellchecker.jar"/>
-        <resource-root path="lucene-stempel.jar"/>
-
-        <resource-root path="solr-analysis-extras.jar"/>
-        <resource-root path="solr-commons-csv.jar"/>
-        <resource-root path="solr-core.jar"/>
-        <resource-root path="solr-solrj.jar"/>
-
-        <resource-root path="avro.jar"/>
-
-        <resource-root path="jackson-core-asl.jar"/>
-        <resource-root path="jackson-mapper-asl.jar"/>
-
-        <resource-root path="hibernate-search-engine.jar"/>
     </resources>
-
-    <exports>
-      <include-set>
-<!--
-        <path name="org/infinispan/commands"/>
-        <path name="org/infinispan/commands/module"/>
-        <path name="org/infinispan/query"/>
-        <path name="org/infinispan/query/impl"/>
-        <path name="org/infinispan/util"/>
--->
-        <path name="org/hibernate/search"/>
-        <path name="org/hibernate/search/spi"/>
-        <path name="org/hibernate/search/cfg/spi"/>
-        <path name="org/hibernate/search/impl"/>
-        <path name="org/hibernate/annotations/common/reflection"/>
-        <path name="org/apache/avro"/>
-        <path name="javax/xml/bind/annotation"/>
-      </include-set>
-    </exports>
 
     <dependencies>
         <module name="javax.api"/>
