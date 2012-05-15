@@ -81,6 +81,18 @@
               </descriptors>
             </configuration>
           </execution>
+          <execution>
+            <id>dist-src</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/dist-src.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>          
         </executions>
       </plugin>
       <plugin>
