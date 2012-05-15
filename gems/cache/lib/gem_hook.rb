@@ -17,6 +17,4 @@
 
 require 'cache'
 #require 'active_support/cache/torque_box_store.rb'
-#require 'datamapper/dm-infinispan-adapter'
-
 

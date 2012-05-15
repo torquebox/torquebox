@@ -1,8 +1,0 @@
-source "http://rubygems.org"
-gem "sinatra"
-gem "haml"
-gem "torquebox"
-gem "torquebox-cache"
-gem "dm-core", "1.1.0"
-gem "dm-serializer", "1.1.0"
-gem "json", "1.4.6"
