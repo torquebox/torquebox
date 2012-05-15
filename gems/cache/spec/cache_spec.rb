@@ -323,21 +323,6 @@ describe TorqueBox::Infinispan::Cache do
     end
   end
 
-  describe "with search" do
-    before :each do
-      @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
-    end
-
-    it "should ask the cache for the search managager" do
-      @cache.should_receive :search_manager
-      Infinispan::Search.new(@cache, lambda{|v|v})
-    end
-
-    after :each do
-      @cache.clear
-    end
-  end
-
 end
 
 class Snuffleuffagus
