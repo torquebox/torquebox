@@ -103,7 +103,7 @@ describe "torquebox thor utility tests" do
     isdeploying = "#{deployment}.isdeploying"
     deployed = "#{deployment}.deployed"
     File.exist?(deployment).should == true
-    (File.exist?(dodeploy) || File.exist?(isdeploying) || File.exist(deployed)).should == true
+    (File.exist?(dodeploy) || File.exist?(isdeploying) || File.exist?(deployed)).should == true
   end
 
   def check_undeployment(tb_command, name = 'basic', suffix = '-knob.yml')
