@@ -98,7 +98,7 @@ class AssemblyTool
   end
 
   def windows?
-    Config::CONFIG['host_os'] =~ /mswin/
+    RbConfig::CONFIG['host_os'] =~ /mswin/
   end
 
   def install_gem(gem, update_index=false)
