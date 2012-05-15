@@ -16,7 +16,6 @@
 
 require 'dm-core/spec/shared/adapter_spec'
 require 'dm-core/spec/lib/pending_helpers'
-require 'datamapper/dm-infinispan-adapter'
 require 'cache'
 
 RSpec::Runner.configure do |config|

@@ -106,10 +106,6 @@ module TorqueBox
         options[:name] || TORQUEBOX_APP_NAME
       end
 
-      def search_manager
-        @search_manager ||= org.infinispan.query.Search.getSearchManager(@cache)
-      end
-
       def clustering_mode
         replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
         distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
