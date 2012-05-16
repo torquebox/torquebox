@@ -53,36 +53,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.infinispan</groupId>
-      <artifactId>infinispan-query</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.logging</groupId>
-          <artifactId>jboss-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.thoughtworks.paranamer</groupId>
-          <artifactId>paranamer</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.xerial.snappy</groupId>
-          <artifactId>snappy-java</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>org.torquebox</groupId>
       <artifactId>torquebox-ruby-test-support</artifactId>
       <version>${project.version}</version>
