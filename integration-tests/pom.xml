@@ -401,6 +401,30 @@
         </plugins>
       </build>
     </profile>
+    <profile>
+      <id>wfk-test</id>
+      <activation>
+        <property>
+          <name>wfk</name>
+          <value>test</value>
+        </property>
+      </activation>
+      <repositories>
+        <repository>
+          <id>rubygems-proxy</id>
+          <name>Rubygems Proxy</name>
+          <url>http://rubygems-proxy.torquebox.org/releases</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+        </repository>
+      </repositories>
+    </profile>
   </profiles>
 
   <build>
