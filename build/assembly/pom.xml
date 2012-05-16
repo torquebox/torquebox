@@ -87,6 +87,18 @@
         <assembly.args>--no-jruby --no-unzip</assembly.args>
       </properties>
     </profile>
+    <profile>
+      <id>wfk-test</id>
+      <activation>
+        <property>
+          <name>wfk</name>
+          <value>test</value>
+        </property>
+      </activation>
+      <properties>
+        <assembly.args></assembly.args>
+      </properties>
+    </profile>
   </profiles>
 
   <build>
