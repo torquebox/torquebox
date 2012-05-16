@@ -43,6 +43,7 @@
   </profiles>
 
   <activeProfiles>
+    <activeProfile>wfk</activeProfile>
     <activeProfile>jboss-public-repository</activeProfile>
   </activeProfiles>
 
