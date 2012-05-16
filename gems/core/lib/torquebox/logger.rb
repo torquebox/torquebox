@@ -31,6 +31,7 @@ module TorqueBox
         message = progname
         progname = @category
       end
+      message = progname if message.nil?
       super( severity, message, @category, &block )
     end
   end 
@@ -57,12 +58,15 @@ module TorqueBox
 
     def method_missing(method, *args, &block)
       delegate = method
+      is_boolean = false
       if method.to_s.end_with?('?')
         delegate = "#{method.to_s.chop}_enabled?".to_sym
+        is_boolean = true
       end
       self.class.class_eval do
         define_method(method) do |*a, &b|
           params = [ a[0] || (b && b.call) ].compact
+          params = [""] if params.empty? && !is_boolean
           @logger.send(delegate, *params)
         end
       end
