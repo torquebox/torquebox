@@ -79,7 +79,7 @@
 
   </section>
 
-  <section>
+  <section id="transaction-messaging">
     <title>Messaging</title>
     <para>
       By default, all <classname>MessageProcessors</classname> are
