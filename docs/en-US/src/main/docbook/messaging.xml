@@ -428,6 +428,7 @@ require 'torquebox-messaging'
       linkend="messaging-consumers">Message Processors</link>, and <link
       linkend="backgroundable">Backgroundable</link> are often better-suited
       to the task.</para>
+    </section>
 
       <section id="messaging-producers">
         <title>Publishing Messages</title>
@@ -592,7 +593,7 @@ queue.publish "Some message"</programlisting></para>
               <row>
                 <entry><parameter>:ttl</parameter></entry>
 
-                <entry></entry>
+                <entry>0</entry>
 
                 <entry>The maximum time the message will wait in a destination
                 to be consumed, in milliseconds. If the message isn't consumed
@@ -602,6 +603,20 @@ queue.publish "Some message"</programlisting></para>
                 <varname>/queue/ExpiryQueue</varname> queue. If you want to do
                 something special with those messages, you'll need to add a
                 processor for that queue.</entry>
+              </row>
+
+              <row>
+                <entry><parameter>:tx</parameter></entry>
+
+                <entry>true</entry>
+
+                <entry>By default, messages published within the scope
+                of a transaction will not be delivered until that
+                transaction commits. Set to
+                <parameter>false</parameter> to override. Note that
+                <link linkend="transaction-messaging">message
+                processors define an implicit
+                transaction</link>.</entry>
               </row>
 
               <row>
@@ -807,8 +822,6 @@ message = topic.receive
           <methodname>unsubscribe</methodname>.</para>
         </section>
       </section>
-
-    </section>
 
     <section id="synchronous-messaging">
       <title>Synchronous Messaging</title>
@@ -1465,10 +1478,11 @@ end
         <title><classname>Backgroundable</classname> method invocation
         options</title>
 
-        <para>The priority, time-to-live (TTL), and persistence options that are
-        available when <link linkend="messaging-producers-options">publishing messages</link>
-         are available to <classname>Backgroundable</classname>
-        methods as well:</para>
+        <para>The priority, time-to-live (TTL), transaction, and
+        persistence options that are available when <link
+        linkend="messaging-producers-options">publishing
+        messages</link> are available to
+        <classname>Backgroundable</classname> methods as well:</para>
 
         <example>
           <title>Passing options to <classname>Backgroundable</classname>
@@ -1498,92 +1512,18 @@ widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
           invocation.</para>
         </example>
 
-        <table>
-          <title>Backgroundable invocation options</title>
-
-          <tgroup cols="3">
-            <colspec align="left" />
-
-            <thead>
-              <row>
-                <entry>Option</entry>
-
-                <entry>Default</entry>
-
-                <entry>Description</entry>
-              </row>
-            </thead>
-
-            <tbody>
-              <row>
-                <entry><parameter>:priority</parameter></entry>
-
-                <entry>:normal</entry>
-
-                <entry>Higher priority messages will be delivered before lower
-                priority messages within the context of a queue. You can
-                specify the priority as an integer in the range 0..9, or as
-                one of the following convenience symbols (with the
-                corresponding integer priorities in parentheses):
-                <itemizedlist>
-                    <listitem>
-                      <para><parameter>:low</parameter> (1)</para>
-                    </listitem>
-
-                    <listitem>
-                      <para><parameter>:normal</parameter> (4)</para>
-                    </listitem>
-
-                    <listitem>
-                      <para><parameter>:high</parameter> (7)</para>
-                    </listitem>
-
-                    <listitem>
-                      <para><parameter>:critical</parameter> (9)</para>
-                    </listitem>
-                  </itemizedlist> Higher priority messages will be processed
-                before lower priority ones for a specific message
-                processor.</entry>
-              </row>
-
-              <row>
-                <entry><parameter>:ttl</parameter></entry>
-
-                <entry></entry>
-
-                <entry>The maximum time the message will wait in a destination
-                to be consumed, in milliseconds. If the message isn't consumed
-                within this time it will be delivered to an expiry queue. By
-                default, messages don't have a ttl (and therefore never
-                expire). By default, expired messages end up on the
-                <varname>/queue/ExpiryQueue</varname> queue. If you want to do
-                something special with those messages, you'll need to add a
-                processor for that queue.</entry>
-              </row>
-
-              <row>
-                <entry><parameter>:persistent</parameter></entry>
-
-                <entry>true</entry>
-
-                <entry>By default, queued messages will survive across AS
-                restarts. If you don't want a message to be persistent, set
-                the persistence to <parameter>false</parameter>.</entry>
-              </row>
-            </tbody>
-          </tgroup>
-        </table>
       </section>
 
       <section id="backgroundable-message-processor-options">
         <title><classname>Backgroundable</classname> message processor
         options</title>
 
-        <para>The concurrency option that is <link
+        <para>All of the options <link
         linkend="task-message-processor-options">available to message
-        processors</link> in a deployment descriptor is available to
-        <classname>Backgroundable</classname> message processors as well.
-        Instead of a task class name, you specify
+        processors</link> in a deployment descriptor are available to
+        <classname>Backgroundable</classname> message processors, too,
+        though possibly only the <varname>concurrency</varname> option
+        is applicable. Instead of a task class name, you specify
         <classname>Backgroundable</classname>:</para>
 
         <example>
