@@ -21,8 +21,8 @@ package org.torquebox.core.datasource;
 
 import java.sql.Driver;
 
-import org.jboss.as.connector.registry.DriverRegistry;
-import org.jboss.as.connector.registry.InstalledDriver;
+import org.jboss.as.connector.services.driver.InstalledDriver;
+import org.jboss.as.connector.services.driver.registry.DriverRegistry;
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.service.Service;

@@ -30,7 +30,7 @@ import javax.sql.DataSource;
 import javax.transaction.TransactionManager;
 
 import org.jboss.as.connector.ConnectorServices;
-import org.jboss.as.connector.registry.DriverRegistry;
+import org.jboss.as.connector.services.driver.registry.DriverRegistry;
 import org.jboss.as.connector.subsystems.datasources.DataSourceReferenceFactoryService;
 import org.jboss.as.connector.subsystems.datasources.ModifiableXaDataSource;
 import org.jboss.as.connector.subsystems.datasources.XaDataSourceService;
