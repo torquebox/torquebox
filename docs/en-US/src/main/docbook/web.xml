@@ -697,7 +697,7 @@ end</programlisting></para>
       configure it the same way you would any other session store in
       Sinatra.</para>
 
-      <para><programlisting language="ruby">require 'sinatra''
+      <para><programlisting language="ruby">require 'sinatra'
 require 'torquebox'
 
 class SinatraSessions &lt; Sinatra::Base
