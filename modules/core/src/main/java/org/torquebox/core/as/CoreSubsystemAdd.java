@@ -49,6 +49,7 @@ import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
 import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
 import org.projectodd.polyglot.core.processors.ArchiveStructureProcessor;
+import org.projectodd.polyglot.core.processors.DescriptorRootMountProcessor;
 import org.torquebox.TorqueBox;
 import org.torquebox.TorqueBoxMBean;
 import org.torquebox.TorqueBoxStdioContextSelector;
@@ -70,7 +71,6 @@ import org.torquebox.core.injection.processors.CorePredeterminedInjectableInstal
 import org.torquebox.core.injection.processors.InjectionYamlParsingProcessor;
 import org.torquebox.core.injection.processors.PredeterminedInjectableProcessor;
 import org.torquebox.core.pool.processors.PoolingYamlParsingProcessor;
-import org.torquebox.core.processors.KnobRootMountProcessor;
 import org.torquebox.core.processors.TorqueBoxRbProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
 import org.torquebox.core.runtime.processors.BaseRubyRuntimeInstaller;
@@ -110,7 +110,7 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, final InjectableHandlerRegistry registry) {
 
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new KnobRootMountProcessor() );
+        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new DescriptorRootMountProcessor( "-knob.yml" ) );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 0, new ArchiveStructureProcessor( ".knob" ) );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 800, new AppKnobYamlParsingProcessor() );
         processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 900, rootSafe( new AppJarScanningProcessor() ) );
