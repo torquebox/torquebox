@@ -43,6 +43,7 @@ module TorqueBox
       require_generators
       if using_rails3?
         generator = ::Rails::Generators::AppGenerator.new( [root], {}, :destination_root => root )
+        Dir.chdir(root)
         generator.apply TorqueBox::Rails.template
       else
         ::Rails::TemplateRunner.new( TorqueBox::Rails.template )

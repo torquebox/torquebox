@@ -47,7 +47,7 @@ describe TorqueBox::Rails do
         generator = mock('generator')
         ::Rails::Generators::AppGenerator.stub(:new).and_return(generator)
         generator.should_receive(:apply).with(TorqueBox::Rails.template)
-        TorqueBox::Rails.apply_template('root')
+        TorqueBox::Rails.apply_template(File.expand_path("../fixtures/simpleapp", __FILE__))
       end
     end
 
