@@ -76,6 +76,10 @@ module TorqueBox
         @jms_message.send(*args)
       end
 
+      def respond_to?(symbol, include_private = false)
+        super || @jms_message.respond_to?(symbol, include_private)
+      end
+
       class << self
         alias :__new__ :new
 
