@@ -111,4 +111,25 @@ describe TorqueBox::Messaging::Message do
     end
   end
 
+  describe 'delegating to jms_message' do
+    before(:each) do
+      @jms_msg = mock_message
+      @message = Message.new(@jms_msg)
+    end
+
+    it "should pass any missing calls through" do
+      @jms_msg.should_receive(:ham).with(:biscuit)
+      @message.ham(:biscuit)
+    end
+
+    it "should properly report if the jms_message responds to the method" do
+      @jms_msg.should_receive(:ham).never
+      @message.respond_to?(:ham).should be_true
+    end
+
+    it "should properly report if the jms_message does not respond to the method" do
+      @message.respond_to?(:ham).should_not be_true
+    end
+  end
+  
 end
