@@ -49,12 +49,22 @@ public class TorqueBoxBootstrapper {
             log.fatal( "Unable to find a JRuby Home" );
         } else {
 
-            log.info( "===> " + jrubyHome );
+            log.info( "Attempting to use JRuby from " + jrubyHome );
 
             System.setProperty( "jruby.home", jrubyHome );
 
             File libDir = new File( jrubyHome, "lib" );
 
+            if (!libDir.exists()) {
+                // we can't throw here, since any exception will be swallowed, and a NoClassDefFoundError thrown
+                // instead since we are in a static initializer
+                log.fatal( "============================================================================================" );                        
+                log.fatal( "********************************************************************************************" );                        
+                log.fatal( "No lib dir found in " + jrubyHome + " - confirm that you are setting JRUBY_HOME properly" );
+                log.fatal( "********************************************************************************************" );                        
+                log.fatal( "============================================================================================" );
+            }
+            
             List<ResourceLoaderSpec> loaderSpecs = new ArrayList<ResourceLoaderSpec>();
 
             for (File child : libDir.listFiles()) {
