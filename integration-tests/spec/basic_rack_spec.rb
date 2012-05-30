@@ -53,3 +53,21 @@ describe "basic rack test with hash" do
   it_should_behave_like "basic rack"
 
 end
+
+describe "back rack with JRUBY_OPTS" do
+
+  deploy <<-END.gsub(/^ {4}/,'')
+
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/basic
+      env: development
+    web:
+      context: /basic-rack
+    environment:
+      JRUBY_OPTS: --#{RUBY_VERSION[0,3]}
+
+  END
+
+  it_should_behave_like "basic rack"
+
+end

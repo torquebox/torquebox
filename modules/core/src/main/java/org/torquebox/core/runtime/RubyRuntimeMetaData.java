@@ -57,6 +57,8 @@ public class RubyRuntimeMetaData {
         BARE, RACK, RAILS
     }
 
+    public static final Version DEFAULT_VERSION = Version.V1_8;
+
     /** Base working directory. */
     private File baseDir;
 
@@ -70,7 +72,7 @@ public class RubyRuntimeMetaData {
     private Map<String, String> environment;
 
     /** Version of Ruby to use. */
-    private Version version = Version.V1_8;
+    private Version version = null;
 
     /** JRuby JIT compile mode to use. */
     private CompileMode compileMode;
@@ -207,6 +209,16 @@ public class RubyRuntimeMetaData {
      */
     public Version getVersion() {
         return this.version;
+    }
+
+    /**
+     * Retrieve the version of the Ruby interpreter, or the default
+     * version if none is set.
+     * 
+     * @return The version.
+     */
+    public Version getVersionOrDefault() {
+        return this.version == null ? DEFAULT_VERSION : this.version;
     }
 
     /**

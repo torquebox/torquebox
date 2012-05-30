@@ -20,6 +20,9 @@
 package org.torquebox.core.util;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.projectodd.polyglot.core.util.StringUtil;
 
 /**
@@ -55,6 +58,40 @@ public class StringUtils extends StringUtil {
     public static String classNameToPath(String className) {
         String path = className;
         return path;
+    }
+
+    /**
+     * Parse a String into String[] similar to how the JVM parses commandline
+     * arguments into String[] args. This is basically the logic from
+     * jruby-launcher's argparser.cpp ported to Java.
+     */
+    public static String[] parseCommandLineOptions(String options) {
+        List<String> optionsList = new ArrayList<String>();
+        if (options != null && options.length() > 0) {
+            options = options.trim();
+            if (options.charAt( 0 ) == '"' || options.charAt( 0 ) == '\'') {
+                char quote = options.charAt( 0 );
+                if (options.charAt( options.length() - 1 ) == quote) {
+                    options = options.substring( 1, options.length() - 1 );
+                }
+            }
+
+            int start = 0, pos = 0;
+            while((pos = options.indexOf( ' ', start )) != -1) {
+                String part = options.substring( start, pos );
+                if (part.length() > 0) {
+                    optionsList.add( part );
+                }
+                start = pos + 1;
+            }
+            if (start < options.length()) {
+                String part = options.substring( start );
+                if (part.length() > 0) {
+                    optionsList.add( part );
+                }
+            }
+        }
+        return optionsList.toArray( new String[]{} );
     }
 
 }

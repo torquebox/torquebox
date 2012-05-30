@@ -327,6 +327,72 @@ public class RubyRuntimeFactoryTest {
         assertFalse( ((TorqueBoxRubyInstanceConfig) ruby.getInstanceConfig()).isInteractive() );
     }
 
+    @Test
+    public void testJRubyOpts18() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "--1.8" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertFalse( ruby.is1_9() );
+    }
+
+    @Test
+    public void testJRubyOpts19() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "--1.9" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ruby.is1_9() );
+    }
+
+    @Test
+    public void testJRubyOptsCompileModeFORCE() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "-X+C" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
+    }
+
+    @Test
+    public void testJRubyOptsCompileModeOFF() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "-X-C" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
+    }
+
+    @Test
+    public void testMultipleJRubyOpts() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "--1.9 -X+C" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertTrue( ruby.is1_9() );
+        assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
+    }
+
     public boolean isJRuby17() {
         return JRubyConstants.getVersion().startsWith( "1.7" );
     }

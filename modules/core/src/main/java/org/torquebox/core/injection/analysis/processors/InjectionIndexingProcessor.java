@@ -97,7 +97,7 @@ public class InjectionIndexingProcessor implements DeploymentUnitProcessor {
             if (shouldProcess( each )) {
                 try {
                     log.tracef( "Preparing analyzer for: %s", each.getName() );
-                    analyzer.analyzeRecursively( index, each, runtimeMetaData.getVersion() );
+                    analyzer.analyzeRecursively( index, each, runtimeMetaData.getVersionOrDefault() );
                 } catch (IOException e) {
                     log.error( "Error processing file: " + each );
                 }

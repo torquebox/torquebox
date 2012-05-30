@@ -22,6 +22,7 @@ package org.torquebox.core.runtime.processors;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.jboss.msc.service.ServiceName;
@@ -67,7 +68,7 @@ public class RubyRuntimeFactoryInstallerTest extends AbstractDeploymentProcessor
         RubyRuntimeFactory factory = (RubyRuntimeFactory) factoryValue.getValue();
 
         assertNotNull( factory );
-        assertEquals( CompatVersion.RUBY1_8, factory.getRubyVersion() );
+        assertNull( factory.getRubyVersion() );
     }
 
     @Test

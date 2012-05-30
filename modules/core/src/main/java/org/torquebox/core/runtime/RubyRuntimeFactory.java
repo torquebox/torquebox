@@ -48,6 +48,7 @@ import org.torquebox.core.component.InjectionRegistry;
 import org.torquebox.core.pool.InstanceFactory;
 import org.torquebox.core.util.JRubyConstants;
 import org.torquebox.core.util.RuntimeHelper;
+import org.torquebox.core.util.StringUtils;
 
 /**
  * Default Ruby runtime interpreter factory implementation.
@@ -256,6 +257,10 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
         TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
+        Map<String, String> environment = createEnvironment();
+        String jrubyOpts = environment.get( "JRUBY_OPTS" );
+        config.processArguments( StringUtils.parseCommandLineOptions( jrubyOpts ) );
+
         config.setLoader( getClassLoader() );
         // config.setClassCache( getClassCache() );
         config.setLoadServiceCreator( new NonLeakingLoadServiceCreator() );
@@ -289,7 +294,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             config.setJRubyHome( jrubyHome );
         }
 
-        config.setEnvironment( createEnvironment() );
+        config.setEnvironment( environment );
         config.setInput( getInput() );
         config.setOutput( getOutput() );
         config.setError( getError() );
