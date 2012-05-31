@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -258,8 +259,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         TorqueBoxRubyInstanceConfig config = new TorqueBoxRubyInstanceConfig();
 
         Map<String, String> environment = createEnvironment();
-        String jrubyOpts = environment.get( "JRUBY_OPTS" );
-        config.processArguments( StringUtils.parseCommandLineOptions( jrubyOpts ) );
+        config.processArguments( prepareJRubyOpts( environment ) );
 
         config.setLoader( getClassLoader() );
         // config.setClassCache( getClassCache() );
@@ -468,6 +468,20 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         }
 
         return env;
+    }
+
+    protected String[] prepareJRubyOpts(Map<String, String> environment) {
+        String jrubyOpts = environment.get( "JRUBY_OPTS" );
+        List<String> options = StringUtils.parseCommandLineOptions( jrubyOpts );
+        // Remove any -Xa.b or -Xa.b.c options since those are expected
+        // to already be converted to -Djruby.a.b JVM properties
+        Iterator<String> iterator = options.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().matches( "-X\\w+\\..+" )) {
+                iterator.remove();
+            }
+        }
+        return options.toArray( new String[]{} );
     }
 
     /**

@@ -152,7 +152,7 @@ module TorqueBox
           # is probably not what we want.
           ENV.delete('BUNDLE_GEMFILE')
 
-          set_java_opts(options[:jvm_options])
+          set_java_opts("#{options[:jvm_options]} #{jruby_opts_properties}")
           exec_command(run_command_line(options).join(' '))
         end
       end
@@ -406,6 +406,14 @@ module TorqueBox
         else
           puts "Can't undeploy #{deployment}. It does not appear to be deployed."
         end
+      end
+
+      def jruby_opts_properties
+        jruby_opts = ENV['JRUBY_OPTS']
+        return "" if jruby_opts.nil?
+        # Only convert -Xa.b, -Xa.b.c, -Xa.b.c.d style options to properties
+        properties = jruby_opts.scan(/-X(\w+\..+?)\s/)
+        properties.map { |matches| "-Djruby.#{matches.first}" }.join(' ')
       end
 
     end

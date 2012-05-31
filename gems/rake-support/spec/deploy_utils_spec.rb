@@ -251,7 +251,19 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should set java options' do
-      @util.should_receive(:set_java_opts).with('java options')
+      @util.should_receive(:set_java_opts).with('java options ')
+      @util.run_server(:jvm_options => 'java options')
+    end
+
+    it 'should pass JRUBY_OPTS properties' do
+      ENV['JRUBY_OPTS'] = '--1.9 -Xjit.logging=true -Xthread.pool.enabled=true -X+C'
+      @util.should_receive(:set_java_opts).with(' -Djruby.jit.logging=true -Djruby.thread.pool.enabled=true')
+      @util.run_server
+    end
+
+    it 'should set java options and pass JRUBY_OPTS properties' do
+      ENV['JRUBY_OPTS'] = '-X-C -Xjit.logging=true --ng'
+      @util.should_receive(:set_java_opts).with('java options -Djruby.jit.logging=true')
       @util.run_server(:jvm_options => 'java options')
     end
   end

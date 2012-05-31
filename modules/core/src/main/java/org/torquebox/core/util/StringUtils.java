@@ -61,11 +61,11 @@ public class StringUtils extends StringUtil {
     }
 
     /**
-     * Parse a String into String[] similar to how the JVM parses commandline
+     * Parse a String into List<String> similar to how the JVM parses commandline
      * arguments into String[] args. This is basically the logic from
      * jruby-launcher's argparser.cpp ported to Java.
      */
-    public static String[] parseCommandLineOptions(String options) {
+    public static List<String> parseCommandLineOptions(String options) {
         List<String> optionsList = new ArrayList<String>();
         if (options != null && options.length() > 0) {
             options = options.trim();
@@ -91,7 +91,7 @@ public class StringUtils extends StringUtil {
                 }
             }
         }
-        return optionsList.toArray( new String[]{} );
+        return optionsList;
     }
 
 }

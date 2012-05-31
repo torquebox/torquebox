@@ -393,6 +393,19 @@ public class RubyRuntimeFactoryTest {
         assertEquals( CompileMode.FORCE, ruby.getInstanceConfig().getCompileMode() );
     }
 
+    @Test
+    public void testJRubyOptsProperties() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "-X-C -Xjit.logging=true -Xthread.pool.enabled=false" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
+    }
+
     public boolean isJRuby17() {
         return JRubyConstants.getVersion().startsWith( "1.7" );
     }
