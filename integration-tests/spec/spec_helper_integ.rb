@@ -11,18 +11,22 @@ require 'stilts-stomp-client'
 require 'driver_helper'
 
 def mbean(name)
-  JMX::MBean.establish_connection :command => /org.jboss.as.standalone/i
-  JMX::MBean.find_by_name(name)
+  JMX::MBean.establish_connection :url => 'service:jmx:remoting-jmx://127.0.0.1:9999'
+  yield JMX::MBean.find_by_name(name)
+ensure
+  JMX::MBean.remove_connection
 end
 
 def get_msc_service_state(service_name)
-  @msc ||= mbean('jboss.msc:type=container,name=jboss-as')
-  @msc.getServiceStatus(service_name).get('stateName')
+  mbean('jboss.msc:type=container,name=jboss-as') do |msc|
+    msc.getServiceStatus(service_name).get('stateName')
+  end
 end
 
 def set_msc_service_mode(service_name, mode)
-  @msc ||= mbean('jboss.msc:type=container,name=jboss-as')
-  @msc.setServiceMode(service_name, mode)
+  mbean('jboss.msc:type=container,name=jboss-as') do |msc|
+    msc.setServiceMode(service_name, mode)
+  end
 end
 
 def verify_msc_service_state(service_name, state, options={})
