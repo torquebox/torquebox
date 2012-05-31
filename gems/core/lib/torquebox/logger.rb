@@ -38,7 +38,7 @@ module TorqueBox
 
   begin
     org.jboss.logging::Logger
-  rescue
+  rescue ::NameError
     Logger = FallbackLogger
     return
   end
