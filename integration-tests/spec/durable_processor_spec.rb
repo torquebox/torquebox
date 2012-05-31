@@ -15,12 +15,13 @@ describe "messaging rack test" do
   END
 
   it "should receive a topic ham biscuit" do
-    proc = mbean( 'torquebox.messaging.processors:name=/topics/test/test_topic_consumer,app=messaging_rack_test' )
-    proc.client_id.should == 'the-client'
-    proc.durable.should be_true
-    proc.stop
-    visit "/messaging-rack/?topic-ham-biscuit"
-    proc.start
+    mbean( 'torquebox.messaging.processors:name=/topics/test/test_topic_consumer,app=messaging_rack_test' ) do |proc|
+      proc.client_id.should == 'the-client'
+      proc.durable.should be_true
+      proc.stop
+      visit "/messaging-rack/?topic-ham-biscuit"
+      proc.start
+    end
     result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 30_000)
     result.should == "TestTopicConsumer=topic-ham-biscuit"
   end
