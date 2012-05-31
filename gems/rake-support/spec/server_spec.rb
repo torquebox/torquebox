@@ -8,7 +8,19 @@ describe TorqueBox::Server do
   end
 
   it "should return nil if torquebox-server is not installed" do
+    # if you have torquebox-server installed, this will actually return a 
+    # value instead of nil.  so reseting gem paths.
+    old_gem_home = ENV['GEM_HOME']
+    old_gem_path = ENV['GEM_PATH']
+    ENV['GEM_PATH'] = ""
+    ENV['GEM_HOME'] = ""
+    Gem.clear_paths
+
     TorqueBox::Server.torquebox_home.should == nil
+
+    Gem.clear_paths
+    ENV['GEM_HOME'] = old_gem_home
+    ENV['GEM_PATH'] = old_gem_path
   end
 
   describe ".setup_environment" do
