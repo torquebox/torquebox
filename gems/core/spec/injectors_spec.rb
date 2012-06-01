@@ -17,5 +17,17 @@ describe TorqueBox::Injectors do
     inject_topic('this').should == :that
   end
 
+  it "should return the same thing for all lookup types" do
+    TorqueBox::Registry.merge!('this' => :that)
+    TorqueBox::Registry['this'].should == :that
+    lookup('this').should == :that
+    lookup_msc('this').should == :that
+    lookup_service('this').should == :that
+    lookup_cdi(:this).should == :that
+    lookup_jndi('this').should == :that
+    lookup_queue('this').should == :that
+    lookup_topic('this').should == :that
+  end
+
 end
 
