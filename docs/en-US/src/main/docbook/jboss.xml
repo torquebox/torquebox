@@ -228,6 +228,8 @@
             If it hasn't been discarded, the message is passed to all
             handlers associated with its <code>&lt;logger&gt;</code>,
             including those in the <code>&lt;root-logger&gt;</code>.
+            Set <code>use-parent-handlers="false"</code> in the
+            <code>&lt;logger&gt;</code> to override this behavior.
           </para>
         </listitem>
         <listitem>
