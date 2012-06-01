@@ -18,7 +18,7 @@
 module javax.naming::Context
 
   def [](name)
-    fetch(name)
+    lookup(name)
   end
 
   def[]=(name, value)
