@@ -32,7 +32,7 @@ import org.torquebox.core.injection.analysis.Injectable;
  * </p>
  * 
  * <pre>
- *   inject( 'java:comp/env/whatever' )
+ *   lookup( 'java:comp/env/whatever' )
  * </pre>
  * 
  * @author Bob McWhirter
