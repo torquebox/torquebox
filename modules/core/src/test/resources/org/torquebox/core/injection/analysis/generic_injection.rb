@@ -9,15 +9,15 @@ module TheModule
     include ::SomethingElse
     
     def initialize()
-      @random = lookup('jboss.web:service=WebServer')
+      @random = fetch('jboss.web:service=WebServer')
     end
     
     def do_something()
-      @something = lookup('java:/comp/whatever' )
+      @something = fetch('java:/comp/whatever' )
     end
     
     def another_method() 
-      @another = lookup( com.mycorp.mypackage.MyThing )
+      @another = fetch( com.mycorp.mypackage.MyThing )
     end
     
   end

@@ -29,15 +29,15 @@ module TheModule
     end
     
     def do_something()
-      @something = lookup('java:/comp/whatever' )
+      @something = fetch('java:/comp/whatever' )
     end
     
     def another_method()
     end
     
     def some_messaging()
-      @my_cue = lookup( "/queues/mine" )
-      @your_topic = lookup( "/topics/yours" )
+      @my_cue = fetch( "/queues/mine" )
+      @your_topic = fetch( "/topics/yours" )
     end
   end
 end

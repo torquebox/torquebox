@@ -22,7 +22,7 @@ module TorqueBox
       include TorqueBox::Injectors
     
       def initialize()
-        @connection_factory = lookup( 'xa-connection-factory' )
+        @connection_factory = fetch( 'xa-connection-factory' )
         @subscriptions = {}
       end
     

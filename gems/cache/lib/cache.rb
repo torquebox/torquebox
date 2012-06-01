@@ -31,7 +31,7 @@ module TorqueBox
       end
 
       def getTransactionManager
-        lookup('transaction-manager')
+        fetch('transaction-manager')
       end
     end
 
@@ -216,7 +216,7 @@ module TorqueBox
       def transaction(&block)
         if !transactional?
           yield self
-        elsif lookup('transaction-manager').nil? 
+        elsif fetch('transaction-manager').nil?
           tm = cache.getAdvancedCache.getTransactionManager
           begin
             tm.begin if tm
@@ -325,7 +325,7 @@ module TorqueBox
       end
 
       def transaction_manager_lookup
-        @tm ||= if lookup('transaction-manager')
+        @tm ||= if fetch('transaction-manager')
                   ContainerTransactionManagerLookup.new 
                 else
                   org.infinispan.transaction.lookup.GenericTransactionManagerLookup.new
