@@ -24,6 +24,7 @@ module TorqueBox
       lookup( 'runtime-injection-analyzer' ).analyze_and_inject( block )
     end
 
+    # FTR "lookup" is a noun, not a verb
     def lookup(something)
       TorqueBox::Registry[something.to_s]
     end

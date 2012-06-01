@@ -20,13 +20,13 @@ describe TorqueBox::Injectors do
   it "should return the same thing for all lookup types" do
     TorqueBox::Registry.merge!('this' => :that)
     TorqueBox::Registry['this'].should == :that
-    fetch('this').should == :that
-    fetch_msc('this').should == :that
-    fetch_service('this').should == :that
-    fetch_cdi(:this).should == :that
-    fetch_jndi('this').should == :that
-    fetch_queue('this').should == :that
-    fetch_topic('this').should == :that
+    lookup('this').should == :that
+    lookup_msc('this').should == :that
+    lookup_service('this').should == :that
+    lookup_cdi(:this).should == :that
+    lookup_jndi('this').should == :that
+    lookup_queue('this').should == :that
+    lookup_topic('this').should == :that
   end
 
 end
