@@ -165,7 +165,7 @@ public class InjectionAnalyzerTest {
     public void testProcAnalysis() throws Exception {
         Ruby ruby = Ruby.newInstance();
         
-        RubyProc proc = (RubyProc) ruby.evalScriptlet( "Proc.new do |arg1, arg2|\n  lookup('/queues/foo')\nend");
+        RubyProc proc = (RubyProc) ruby.evalScriptlet( "Proc.new do |arg1, arg2|\n  fetch('/queues/foo')\nend");
         this.visitor.assumeMarkerSeen();
         analyzer.analyze( proc, this.visitor );
         

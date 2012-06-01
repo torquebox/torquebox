@@ -1,10 +1,10 @@
 module TorqueBox
   module Injectors
     def inject(*args)
-      lookup(*args)
+      fetch(*args)
     end
 
-    def lookup(*args)
+    def fetch(*args)
       DummyResource.new
     end
 

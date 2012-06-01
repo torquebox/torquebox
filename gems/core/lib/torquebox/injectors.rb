@@ -21,23 +21,22 @@ module TorqueBox
   module Injectors
 
     def self.analyze_and_inject(&block)
-      lookup( 'runtime-injection-analyzer' ).analyze_and_inject( block )
+      fetch( 'runtime-injection-analyzer' ).analyze_and_inject( block )
     end
 
-    # FTR "lookup" is a noun, not a verb
-    def lookup(something)
+    def fetch(something)
       TorqueBox::Registry[something.to_s]
     end
-    alias_method :inject, :lookup
-    alias_method :__inject__, :lookup
+    alias_method :inject, :fetch
+    alias_method :__inject__, :fetch
     
     %w{ msc service cdi jndi queue topic }.each do |type|
       define_method("inject_#{type}".to_sym) do |key|
-        lookup(key)
+        fetch(key)
       end
 
-      define_method("lookup_#{type}".to_sym) do |key|
-        lookup(key)
+      define_method("fetch_#{type}".to_sym) do |key|
+        fetch(key)
       end
     end
 

@@ -6,7 +6,7 @@ module TheModule
     include TorqueBox::Injectors
 
     def initialize()
-      lookup('something', 'somethingelse')
+      fetch('something', 'somethingelse')
     end
     
   end
