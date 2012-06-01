@@ -563,7 +563,7 @@ run app</programlisting></para>
       node.</para>
 
       <para><informalexample>
-          <para><programlisting>my_url = inject( 'stomp-endpoint' )</programlisting></para>
+          <para><programlisting>my_url = lookup( 'stomp-endpoint' )</programlisting></para>
         </informalexample>The URL may be used with the middleware-provided
       Javascript client to conveniently and reliably connect back to the STOMP
       endpoint, regardless of the current port being used.</para>
