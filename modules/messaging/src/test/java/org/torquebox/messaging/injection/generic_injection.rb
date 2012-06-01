@@ -29,15 +29,15 @@ module TheModule
     end
     
     def do_something()
-      @something = inject('java:/comp/whatever' )
+      @something = lookup('java:/comp/whatever' )
     end
     
     def another_method()
     end
     
     def some_messaging()
-      @my_cue = inject( "/queues/mine" )
-      @your_topic = inject( "/topics/yours" )
+      @my_cue = lookup( "/queues/mine" )
+      @your_topic = lookup( "/topics/yours" )
     end
   end
 end

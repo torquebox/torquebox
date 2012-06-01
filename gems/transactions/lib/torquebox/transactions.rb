@@ -74,7 +74,7 @@ module TorqueBox
       end
 
       def initialize()
-        @tm = inject('transaction-manager')
+        @tm = lookup('transaction-manager')
         @transactions = []
       end
 

@@ -4,9 +4,9 @@ module TheModule
   class TheClass
   
     include TorqueBox::Injectors
-    
+
     def initialize()
-      inject('something', 'somethingelse')
+      lookup('something', 'somethingelse')
     end
     
   end
