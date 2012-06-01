@@ -21,17 +21,22 @@ module TorqueBox
   module Injectors
 
     def self.analyze_and_inject(&block)
-      inject( 'runtime-injection-analyzer' ).analyze_and_inject( block )
+      lookup( 'runtime-injection-analyzer' ).analyze_and_inject( block )
     end
 
-    def __inject__(something)
+    def lookup(something)
       TorqueBox::Registry[something.to_s]
     end
-    alias_method :inject, :__inject__
+    alias_method :inject, :lookup
+    alias_method :__inject__, :lookup
     
     %w{ msc service cdi jndi queue topic }.each do |type|
       define_method("inject_#{type}".to_sym) do |key|
-        __inject__(key)
+        lookup(key)
+      end
+
+      define_method("lookup_#{type}".to_sym) do |key|
+        lookup(key)
       end
     end
 
