@@ -10,12 +10,13 @@
   <section id="built-upon-jboss-as">
     <title>Built upon JBoss AS</title>
 
-    <para>Instead of building a Ruby Application Platform from the ground-up,
-    TorqueBox leverages the existing ninja-grade functionality JBoss has been
-    shipping for years in the JBoss Application Server. JBoss AS includes
-    high-performance clustering, caching and messaging functionality. By
-    building Ruby capabilities on top of this foundation, your Ruby
-    applications gain more capabilities right out-of-the-box.</para>
+    <para>Instead of building a Ruby Application Platform from the
+    ground-up, TorqueBox leverages the existing functionality JBoss
+    has been shipping for years in the JBoss Application Server. JBoss
+    AS includes high-performance clustering, caching and messaging
+    functionality. By building Ruby capabilities on top of this
+    foundation, your Ruby applications gain more capabilities right
+    out-of-the-box.</para>
   </section>
 
   <section id="built-upon-jruby">
