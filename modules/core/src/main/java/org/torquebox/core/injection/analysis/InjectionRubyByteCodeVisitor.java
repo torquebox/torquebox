@@ -80,7 +80,7 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
                     throw new AmbiguousInjectionException( node.getPosition(), getString( argsNode ) );
                 }
                 generic = true;
-            } else if (callName.startsWith( INJECTION_PREFIX )) {
+            } else if (callName.startsWith( OLD_INJECTION_PREFIX ) || callName.startsWith( INJECTION_PREFIX )) {
                 String injectionType = callName.substring( INJECTION_PREFIX.length() );
                 handler = this.analyzer.getInjectableHandlerRegistry().getHandler( injectionType );
                 if (handler == null) {
@@ -120,7 +120,8 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
         this.injectables.clear();
     }
 
-    private static final String INJECTION_PREFIX = "inject_";
+    private static final String INJECTION_PREFIX = "fetch_";
+    private static final String OLD_INJECTION_PREFIX = "inject_";
     public static final String TORQUEBOX_MARKER_MODULE = "TorqueBox::Injectors";
 
     private InjectionAnalyzer analyzer;
