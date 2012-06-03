@@ -24,7 +24,7 @@ describe "TorqueBox::Infinispan::Cache sharing across runtimes" do
   end
 
   it "should work with an in-memory cache" do
-    pending "A fix for in-memory cache sharing"
+    #pending "A fix for in-memory cache sharing"
     visit "/shared-cache"
     page.find('#success').should have_content( "Ham biscuit" )
   end
