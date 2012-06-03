@@ -279,10 +279,14 @@ module TorqueBox
 
       def cache
         if INFINISPAN_AVAILABLE
-          @cache ||= clustered || local || nothing
+          @cache ||= lookup || clustered || local || nothing
         else
           @cache ||= nothing
         end
+      end
+
+      def lookup
+        manager.get_cache(name) if manager
       end
 
       def manager
@@ -342,6 +346,7 @@ module TorqueBox
         log( "Configuring Infinispan local cache #{name}" )
         bare_config = org.infinispan.config.Configuration.new
         bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
+        bare_config.cache_mode = CacheMode::LOCAL
 
         config  = bare_config.fluent
         config.transaction.transactionMode( transaction_mode )
@@ -367,14 +372,17 @@ module TorqueBox
           config.indexing.disable
         end
 
-        if ((local_manager = Cache.find_local_manager(name)) == nil)
+        if manager
+          local_manager = manager
+        elsif ((local_manager = Cache.find_local_manager(name)) == nil)
           log( "No local CacheManager exists for #{name}. Creating one." )
           local_manager = org.infinispan.manager.DefaultCacheManager.new
-          local_manager.define_configuration( name, config.build )
-          Cache.local_managers << local_manager
         end
 
-        local_manager.get_cache( self.name )
+        Cache.local_managers << local_manager
+        local_manager.define_configuration( name, config.build )
+        local_manager.get_cache( name )
+
       rescue Exception => e
         log( "Unable to obtain local cache: #{$!}", 'ERROR' )
         log( e.backtrace, 'ERROR' )
