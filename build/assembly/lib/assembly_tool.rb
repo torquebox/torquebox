@@ -177,9 +177,10 @@ class AssemblyTool
     profiles.each do |profile|
       subsystem = profile.get_elements( "subsystem[contains(@xmlns, 'urn:jboss:domain:infinispan:')]" ).first
       container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
-      cache = container.add_element( 'local-cache', 'name'=>'sessions' )
+      cache = container.add_element( 'local-cache', 'name'=>'sessions', 'start'=>'EAGER' )
       cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )
       cache.add_element( 'expiration', 'max-idle'=>'100000' )
+      cache.add_element( 'transaction', 'mode'=>"FULL_XA" )
     end
   end
 
@@ -188,10 +189,11 @@ class AssemblyTool
     profiles.each do |profile|
       subsystem = profile.get_elements( "subsystem[contains(@xmlns,'urn:jboss:domain:infinispan:')]" ).first
       container = subsystem.get_elements( "cache-container[@name='web']" ).first
-      #subsystem.get_elements( "cache-container" ).each do |c|
-        #puts "CACHE_CONTAINER: #{c.to_s}"
-      #end
-      container.add_attribute( "aliases", "torquebox standard-session-cache" ) if container
+      if container
+        default   = container.get_elements( "replicated-cache[@name='repl']" ).first
+        default.add_attribute( "start", "EAGER" ) if default
+        container.add_attribute( "aliases", "torquebox standard-session-cache" ) 
+      end
     end
   end
 
@@ -499,7 +501,7 @@ class AssemblyTool
       increase_deployment_timeout(doc) unless domain
       add_extensions(doc, options[:extra_modules])
       add_subsystems(doc, options[:extra_modules])
-      ha ? add_ha_cache(doc) : add_cache(doc) # add_cache seems unnecessary here!
+      ha ? add_ha_cache(doc) : add_cache(doc) 
       set_welcome_root(doc)
       tweak_jboss_web_properties(doc)
       remove_destinations(doc)
