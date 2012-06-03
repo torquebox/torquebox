@@ -54,6 +54,7 @@ module TorqueBox
         java_import org.infinispan.config.Configuration::CacheMode
         java_import org.infinispan.transaction::TransactionMode
         java_import org.infinispan.transaction::LockingMode
+        java_import org.torquebox.cache.as::CacheServices
         INFINISPAN_AVAILABLE = true
       rescue NameError
         INFINISPAN_AVAILABLE = false
@@ -90,7 +91,7 @@ module TorqueBox
       end
 
       def clustered?
-        replicated? || distributed? || invalidation? || manager.default_configuration.cache_mode != CacheMode::LOCAL
+        INFINISPAN_AVAILABLE && service.clustered? 
       end
 
       def clustering_mode
@@ -102,6 +103,7 @@ module TorqueBox
         when distributed?
           sync ? CacheMode::DIST_SYNC : CacheMode::DIST_ASYNC
         else
+          # CacheMode::REPL_ASYNC
           sync ? CacheMode::INVALIDATION_SYNC : CacheMode::INVALIDATION_ASYNC
         end
       end
@@ -262,8 +264,12 @@ module TorqueBox
         end
       end
 
+      def service
+        @service ||= TorqueBox::ServiceRegistry[CacheServices::CACHE]
+      end
+
       def manager
-        @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )] 
+        @manager ||= service.cache_container
       end
 
       def reconfigure(mode=clustering_mode)
