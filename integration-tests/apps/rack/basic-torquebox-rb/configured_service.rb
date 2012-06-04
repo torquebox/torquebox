@@ -6,7 +6,7 @@ class ConfiguredService
   end
   
   def start
-    queue = inject('/queue/flavor-queue')
+    queue = fetch('/queue/flavor-queue')
     message = @options['flavor'] ? @options['flavor'] : 'no message'
     queue.publish( message )
   end

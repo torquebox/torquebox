@@ -5,7 +5,7 @@ class UpperCaser < TorqueBox::Messaging::MessageProcessor
   include TorqueBox::Injectors
 
   def initialize
-    @queue = inject( '/queues/responses' )
+    @queue = fetch( '/queues/responses' )
   end
   def on_message(word) 
     puts "on_message! #{word}"

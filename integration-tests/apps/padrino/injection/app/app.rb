@@ -60,8 +60,8 @@ class Myapp < Padrino::Application
   #
 
   get '/from-app' do
-    service = inject('service:AppService')
-    queue = inject('/queue/app')
+    service = fetch('service:AppService')
+    queue = fetch('/queue/app')
     render_injections(service, queue)
   end
 

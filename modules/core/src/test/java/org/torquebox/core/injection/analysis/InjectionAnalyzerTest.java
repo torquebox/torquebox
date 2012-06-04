@@ -101,6 +101,16 @@ public class InjectionAnalyzerTest {
         assertContains( injectables, JNDIInjectable.class, "jndi", "java:/comp/whatever", "java:/comp/whatever" );
     }
 
+    @Test
+    public void testAnalysisOldWay() throws Exception {
+        Set<Injectable> injectables = analyzeScript( "injection_old.rb" );
+
+        assertEquals( 2, injectables.size() );
+
+        assertContains( injectables, ServiceInjectable.class, "msc", "org.jboss.whatever.Thing", "org.jboss.whatever.Thing" );
+        assertContains( injectables, JNDIInjectable.class, "jndi", "java:/comp/whatever", "java:/comp/whatever" );
+    }
+
  
     @Test(expected = InvalidInjectionTypeException.class)
     public void testInvalidAnalysis() throws Exception {

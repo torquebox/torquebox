@@ -4,7 +4,7 @@ class TweetsController < ApplicationController
   # GET /tweets
   # GET /tweets.xml
   def index
-    reader = inject( Java::pl.goldmann.confitura.beans.TweetReader )
+    reader = fetch( Java::pl.goldmann.confitura.beans.TweetReader )
     
     @tweets = reader.read
     @total = reader.count

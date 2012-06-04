@@ -15,7 +15,7 @@ class HaJob
         f.puts( "Updated #{Time.now}" )
     end
 
-    queue = inject('/queue/backchannel')
+    queue = fetch('/queue/backchannel')
     queue.publish(touchfile)
   end
   
