@@ -17,7 +17,7 @@ class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
       f.puts( "#{body[:tstamp]} // #{body[:cheese]}" )
     end
 
-    queue = inject( '/queue/backchannel' )
+    queue = fetch( '/queue/backchannel' )
     queue.publish('release')
   end
 

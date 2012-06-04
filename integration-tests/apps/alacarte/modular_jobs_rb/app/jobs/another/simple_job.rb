@@ -5,9 +5,9 @@ module Another
   
     def initialize(opts)
       @options = opts
-      @polish     = inject( Java::pl.softwaremine.ThingThree )
-      @response_queue = inject( '/queue/response' )
-      @init_params_queue = inject( '/queue/init_params' )
+      @polish     = fetch( Java::pl.softwaremine.ThingThree )
+      @response_queue = fetch( '/queue/response' )
+      @init_params_queue = fetch( '/queue/init_params' )
       puts "publishing #{@options.inspect}"
       puts "dump pre"
       Marshal.dump( @options )

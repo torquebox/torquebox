@@ -4,8 +4,8 @@ require 'sinatra'
 require 'torquebox-messaging'
 
 extend TorqueBox::Injectors
-publisher = inject( '/queues/requests' )
-receiver  = inject( '/queues/responses' )
+publisher = fetch( '/queues/requests' )
+receiver  = fetch( '/queues/responses' )
 
 get '/up/:word' do
   puts "publishing #{params[:word]}"

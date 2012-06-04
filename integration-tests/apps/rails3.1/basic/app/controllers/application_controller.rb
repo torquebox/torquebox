@@ -4,6 +4,6 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   def thing_one
-      inject( org.torquebox.ThingOne )
+      fetch( org.torquebox.ThingOne )
   end
 end

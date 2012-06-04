@@ -7,7 +7,7 @@ class Processor < TorqueBox::Messaging::MessageProcessor
 
   def on_message(msg)
     puts "JC: message is #{message.jms_message}"
-    output = inject( '/queue/output' )
+    output = fetch( '/queue/output' )
     response = 'yay!'
 
     if msg =~ /\s+(\d)\s+retries/

@@ -7,8 +7,8 @@ class Something
   always_background :foo
 
   def initialize
-    @foreground = inject("queue/foreground")
-    @background = inject("queue/background")
+    @foreground = fetch("queue/foreground")
+    @background = fetch("queue/background")
   end
 
   def foo

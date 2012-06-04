@@ -6,7 +6,7 @@ class AService
   end
   
   def start
-    queue = inject('/queue/a-queue')
+    queue = fetch('/queue/a-queue')
     queue.publish( @options['foo'] )
   end
 

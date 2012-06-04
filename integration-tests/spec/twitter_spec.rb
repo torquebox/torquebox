@@ -37,10 +37,10 @@ describe "end-to-end twitter testing" do
 
     # Runs remotely (in-container)
     it "should be running remotely" do
-      inject('deployment-unit').should_not be_nil
-      inject('service-registry').should_not be_nil
+      fetch('deployment-unit').should_not be_nil
+      fetch('service-registry').should_not be_nil
       TorqueBox::ServiceRegistry.lookup("jboss.messaging.default.jms.manager").should_not be_nil
-      inject( Java::pl.goldmann.confitura.beans.TweetReader ).should_not be_nil
+      fetch( Java::pl.goldmann.confitura.beans.TweetReader ).should_not be_nil
     end
   end
 

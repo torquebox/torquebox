@@ -47,7 +47,7 @@ module Transactions
 
     include TorqueBox::Injectors
     config.after_initialize do
-      arbitrary_object_common_to_runtimes = inject('deployment-unit')
+      arbitrary_object_common_to_runtimes = fetch('deployment-unit')
       unless arbitrary_object_common_to_runtimes.nil?
         arbitrary_object_common_to_runtimes.synchronized do
           puts "JC: migrating :person_database"

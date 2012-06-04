@@ -2,10 +2,10 @@ class Foo
   include TorqueBox::Injectors
 
   def service
-    inject('service:FooService')
+    fetch('service:FooService')
   end
 
   def queue
-    inject('/queue/foo')
+    fetch('/queue/foo')
   end
 end

@@ -8,12 +8,12 @@ class SimpleService
 
   def initialize(opts={})
     @options = opts
-    @something  = inject( org.torquebox.ThingOne )
-    @polish     = inject( Java::pl.softwaremine.ThingThree )
+    @something  = fetch( org.torquebox.ThingOne )
+    @polish     = fetch( Java::pl.softwaremine.ThingThree )
     @logger     = TorqueBox::Logger.new(self.class)
-    @response_queue = inject( '/queue/response' )
-    @next_response_queue = inject( '/queue/next_response' )
-    @init_params_queue = inject( '/queue/init_params' )
+    @response_queue = fetch( '/queue/response' )
+    @next_response_queue = fetch( '/queue/next_response' )
+    @init_params_queue = fetch( '/queue/init_params' )
     @queue = @response_queue
   end
 

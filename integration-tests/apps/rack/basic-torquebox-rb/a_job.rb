@@ -6,7 +6,7 @@ class AJob
   end
   
   def run
-    queue = inject('/queue/job-queue')
+    queue = fetch('/queue/job-queue')
     message = @options['ham'] ? @options['ham'] : 'no message'
     queue.publish message
   end

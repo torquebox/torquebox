@@ -4,7 +4,7 @@ class EnumerableThing
   
   def initialize
     @hash = { :a => :b }
-    queue = __inject__('/queues/injection_enumerable')
+    queue = fetch('/queues/injection_enumerable')
 
     inject('this should not barf') { |_, __| queue.publish('it worked') }
   end
