@@ -44,6 +44,26 @@
     </dependency>
   </dependencies>
 
+  <profiles>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>rubygems</groupId>
+          <artifactId>jruby_pageant</artifactId>
+          <type>gem</type>
+          <scope>test</scope>
+          <version>1.0.2</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+
   <build>
     <plugins>
       <plugin>
