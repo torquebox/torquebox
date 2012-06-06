@@ -55,7 +55,7 @@
       <dependencies>
         <dependency>
           <groupId>rubygems</groupId>
-          <artifactId>jruby_pageant</artifactId>
+          <artifactId>jruby-pageant</artifactId>
           <type>gem</type>
           <scope>test</scope>
           <version>1.0.2</version>
