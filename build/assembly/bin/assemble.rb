@@ -87,9 +87,7 @@ class Assembler
     else
       puts "Laying down JRuby" 
       Dir.chdir( File.dirname( tool.jruby_dir ) ) do
-        puts "!!! UNZIPPING #{jruby_zip}"
-        puts tool.unzip( jruby_zip )
-        puts "!!! Dir[ 'jruby-*' ] : #{Dir[ 'jruby-*' ]}"
+        tool.unzip( jruby_zip )
         original_dir = File.expand_path( Dir[ 'jruby-*' ].first )
         FileUtils.mv original_dir, tool.jruby_dir
       end
