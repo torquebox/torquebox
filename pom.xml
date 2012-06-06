@@ -641,6 +641,18 @@
         <enabled>false</enabled>
       </snapshots>
     </pluginRepository>
+    <pluginRepository>
+      <id>polyglot-snapshot</id>
+      <name>Polyglot SNAPSHOT builds</name>
+      <url>https://repository-projectodd.forge.cloudbees.com/snapshot</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </pluginRepository>
   </pluginRepositories>
 
   <dependencies>
