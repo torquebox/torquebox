@@ -9,6 +9,8 @@ describe "end-to-end twitter testing" do
       root: #{File.dirname(__FILE__)}/../apps/rails3/twitter
     queues:
       tweets:
+    web:
+      context: /twitter
   END
 
   before(:all) do
@@ -21,7 +23,7 @@ describe "end-to-end twitter testing" do
 
   # Runs locally using capybara DSL
   it "should retrieve the index using a Capybara DSL" do
-    visit "/tweets"
+    visit "/twitter/tweets"
     page.should have_content( "Last 20 tweets" )
     page.find("h1").text.should == "Tweets"
     if ( Capybara.current_driver == :browser )
