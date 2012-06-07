@@ -310,7 +310,7 @@ module TorqueBox
           Thread.new(stdin) { |stdin_io|
             begin
               until exiting
-                stdin_io.write(STDIN.readpartial(1024))
+                stdin_io.write(readpartial(STDIN))
                 stdin_io.flush
               end
             rescue Errno::EBADF, IOError
@@ -322,7 +322,7 @@ module TorqueBox
           [ Thread.new(stdout) { |stdout_io|
               begin
                 while true
-                  STDOUT.write(stdout_io.readpartial(1024))
+                  STDOUT.write(readpartial(stdout_io))
                 end
               rescue EOFError
               end
@@ -331,7 +331,7 @@ module TorqueBox
             Thread.new(stderr) { |stderr_io|
               begin
                 while true
-                  STDERR.write(stderr_io.readpartial(1024))
+                  STDERR.write(readpartial(stderr_io))
                 end
               rescue EOFError
               end
@@ -339,6 +339,10 @@ module TorqueBox
           ].each( &:join)
         end
 
+      end
+
+      def readpartial(stream)
+        windows? ? stream.read(1) : stream.readpartial(1024)
       end
 
       def windows?
