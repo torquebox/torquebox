@@ -9,6 +9,8 @@ TORQUEBOX_APP_NAME = 'active-support-unit-test'
 describe ActiveSupport::Cache::TorqueBoxStore do
 
   before(:each) do
+    manager = org.infinispan.manager.DefaultCacheManager.new 
+    TorqueBox::ServiceRegistry.stub!(:[]).with(org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )).and_return( manager )
     TorqueBox::ServiceRegistry.service_registry = nil
     @cache = ActiveSupport::Cache::TorqueBoxStore.new()
   end
@@ -169,6 +171,10 @@ describe ActiveSupport::Cache::TorqueBoxStore do
       @cache.read_multi("john", "paul").should == {"john" => "guitar", "paul" => "bass"}
     end
 
+    it "should default to local mode" do
+      @cache.clustering_mode.should == CacheMode::LOCAL
+    end
+
   end
 
   describe "advanced" do
@@ -190,26 +196,30 @@ describe ActiveSupport::Cache::TorqueBoxStore do
   end
 
   describe "clustering" do
-    
-    it "should default to invalidation mode" do
-      @cache.clustering_mode.should == CacheMode::INVALIDATION_SYNC
-      TorqueBoxStore.new(:mode => :unknown).clustering_mode.should == CacheMode::INVALIDATION_SYNC
+    global_config = org.infinispan.configuration.global.GlobalConfigurationBuilder.new.transport.cluster_name("test-cluster").build
+    manager = org.infinispan.manager.DefaultCacheManager.new( global_config ) 
+
+    before(:each) do
+      TorqueBox::ServiceRegistry.stub!(:[]).with(org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )).and_return( manager )
     end
 
     [:repl, :dist, :invalidation].each do |mode|
       it "should be configurable in #{mode} mode" do
+        pending
         TorqueBoxStore.new(:mode => mode).clustering_mode.to_s.should == "#{mode.to_s.upcase}_SYNC"
         TorqueBoxStore.new(:name => 'async', :mode => mode, :sync => false).clustering_mode.to_s.should == "#{mode.to_s.upcase}_ASYNC"
       end
     end
 
     it "should support replicated mode" do
+      pending
       [:r, :repl, :replicated, :replication].each do |mode|
         TorqueBoxStore.new(:mode => mode).clustering_mode.should be_replicated
       end
     end
 
     it "should support distributed mode" do
+      pending
       [:d, :dist, :distributed, :distribution].each do |mode|
         TorqueBoxStore.new(:mode => mode).clustering_mode.should be_distributed
       end
