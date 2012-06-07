@@ -18,6 +18,7 @@
 require 'torquebox/kernel'
 require 'torquebox/injectors'
 require 'torquebox/transactions'
+require 'sequence'
 
 module TorqueBox
   module Infinispan
@@ -42,40 +43,6 @@ module TorqueBox
 
       def self.decode(object)
         object
-      end
-    end
-
-    class Sequence
-      include java.io.Serializable
-
-      class Codec
-        def self.encode(sequence)
-          sequence.value.to_s
-        end
-
-        def self.decode(sequence_bytes)
-          sequence_bytes && Sequence.new( sequence_bytes.to_s.to_i )
-        end
-      end
-
-      def initialize(amount = 1) 
-        @data = amount
-      end
-
-      def value
-        @data ? @data.to_i : @data
-      end
-
-      def next(amount = 1)
-        Sequence.new( @data.to_i + amount )
-      end
-
-      def ==(other)
-        self.value == other.value
-      end
-
-      def to_s
-        "Sequence: #{self.value}"
       end
     end
 
@@ -106,14 +73,33 @@ module TorqueBox
         options[:name] || TORQUEBOX_APP_NAME
       end
 
+      def persisted?
+        !options[:persist].nil?
+      end
+
+      def replicated?
+        [:r, :repl, :replicated, :replication].include? options[:mode]
+      end
+
+      def distributed?
+        [:d, :dist, :distributed, :distribution].include? options[:mode]
+      end
+
+      def invalidation?
+        options[:mode] == :invalidation
+      end
+
+      def clustered?
+        replicated? || distributed? || invalidation? || manager.default_configuration.cache_mode != CacheMode::LOCAL
+      end
+
       def clustering_mode
-        replicated =  [:r, :repl, :replicated, :replication].include? options[:mode]
-        distributed = [:d, :dist, :distributed, :distribution].include? options[:mode]
+        return CacheMode::LOCAL unless clustered?
         sync = options[:sync]
         case
-        when replicated 
+        when replicated?
           sync ? CacheMode::REPL_SYNC : CacheMode::REPL_ASYNC
-        when distributed
+        when distributed?
           sync ? CacheMode::DIST_SYNC : CacheMode::DIST_ASYNC
         else
           sync ? CacheMode::INVALIDATION_SYNC : CacheMode::INVALIDATION_ASYNC
@@ -254,15 +240,6 @@ module TorqueBox
         cache.stop
       end
 
-      def self.shutdown
-        Cache.local_managers.each { |m| m.stop }
-      end
-
-      @@local_managers = []
-      def self.local_managers
-        @@local_managers
-      end
-
       def self.log( message, status = 'INFO' )
         $stdout.puts( "#{status}: #{message}" )
       end
@@ -278,52 +255,45 @@ module TorqueBox
       end
 
       def cache
-        if INFINISPAN_AVAILABLE
-          @cache ||= lookup || clustered || local || nothing
+        if INFINISPAN_AVAILABLE 
+          @cache ||= manager.running?( name ) ? reconfigure : configure
         else
           @cache ||= nothing
         end
       end
 
-      def lookup
-        manager.get_cache(name) if manager
+      def manager
+        @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )] 
       end
 
-      def manager
-        begin
-          @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )]
-        rescue Exception => e
-          log( "Caught exception while looking up Infinispan service.", 'ERROR' )
-          log( e.message, 'ERROR' )
-        end
-        @manager
-      end
-                       
       def reconfigure(mode=clustering_mode)
-        cache = manager.get_cache(name)
-        base_config = cache.configuration
+        existing_cache  = manager.get_cache(name)
+        base_config = existing_cache.configuration
         unless base_config.cache_mode == mode
           log( "Reconfiguring Infinispan cache #{name} from #{base_config.cache_mode} to #{mode}" )
-          cache.stop
-          base_config.cache_mode = mode
-          config = base_config.fluent
-          config.transaction.transactionMode( transaction_mode )
-          config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
-          manager.define_configuration(name, config.build)
-          cache.start
+          existing_cache .stop
+          configure(mode)
+          existing_cache .start
         end
-        return cache
+        return existing_cache 
       end
 
       def configure(mode=clustering_mode)
         log( "Configuring Infinispan cache #{name} as #{mode}" )
         base_config = manager.default_configuration.clone
-        base_config.class_loader = java.lang::Thread.current_thread.context_class_loader
         base_config.cache_mode = mode
-
         config = base_config.fluent
         config.transaction.transactionMode( transaction_mode )
-        config.transaction.recovery.transactionManagerLookup( transaction_manager_lookup )
+        if transactional?
+          config.transaction.transactionManagerLookup( transaction_manager_lookup ) 
+          config.transaction.lockingMode( locking_mode )
+        end
+        if persisted?
+          store = org.infinispan.loaders.file.FileCacheStoreConfig.new
+          store.purge_on_startup( false )
+          store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
+          config.loaders.add_cache_loader( store )
+        end
         manager.define_configuration(name, config.build )
         manager.get_cache(name)
       end
@@ -336,57 +306,6 @@ module TorqueBox
                 end
       end
 
-      def clustered
-        (manager.running?(name) ? reconfigure : configure) if manager
-      rescue
-        log( "Clustered: Can't get clustered cache; falling back to local: #{$!}", 'ERROR' )
-      end
-
-      def local
-        log( "Configuring Infinispan local cache #{name}" )
-        bare_config = org.infinispan.config.Configuration.new
-        bare_config.class_loader = java.lang::Thread.current_thread.context_class_loader
-        bare_config.cache_mode = CacheMode::LOCAL
-
-        config  = bare_config.fluent
-        config.transaction.transactionMode( transaction_mode )
-
-        if transactional?
-          config.transaction.transactionManagerLookup( transaction_manager_lookup ) 
-          config.transaction.lockingMode( locking_mode )
-        end
-        
-        if options[:persist]
-          log( "Configuring #{name} local cache for file-based persistence" )
-          store = org.infinispan.loaders.file.FileCacheStoreConfig.new
-          store.purge_on_startup( false )
-          store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
-          config.loaders.add_cache_loader( store )
-        end
-
-        if options[:index]
-          log( "Configuring #{name} local cache for local-only indexing" )
-          config.indexing.index_local_only(true)
-        else
-          log( "Configuring #{name} local cache with no indexing" )
-          config.indexing.disable
-        end
-
-        if manager
-          local_manager = manager
-        elsif ((local_manager = Cache.find_local_manager(name)) == nil)
-          log( "No local CacheManager exists for #{name}. Creating one." )
-          local_manager = org.infinispan.manager.DefaultCacheManager.new
-        end
-
-        Cache.local_managers << local_manager
-        local_manager.define_configuration( name, config.build )
-        local_manager.get_cache( name )
-
-      rescue Exception => e
-        log( "Unable to obtain local cache: #{$!}", 'ERROR' )
-        log( e.backtrace, 'ERROR' )
-      end
 
       def nothing
         result = Object.new
@@ -405,25 +324,11 @@ module TorqueBox
           args << expires_in << SECONDS
           args << expires << SECONDS
         end
-        #$stderr.puts "cache=#{cache.inspect}"
-        #$stderr.puts "*args=#{args.inspect}"
         cache.send( *args ) && true
-      end
-
-      # Finds the CacheManager for a given cache and returns it - or nil if not found
-      def self.find_local_manager( cache_name )
-        local_managers.each do |m|
-          if m.cache_exists( cache_name )
-            log( ":-:-:-: local_manager already exists for #{cache_name}" )
-            return m 
-          end
-        end
-        return nil
       end
 
     end
 
-    at_exit { Cache.shutdown }
   end
 end
 
