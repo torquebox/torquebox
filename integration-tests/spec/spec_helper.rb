@@ -28,6 +28,16 @@ FileUtils.mkdir_p( jboss_log_dir ) unless File.exist?( jboss_log_dir )
 MUTABLE_APP_BASE_PATH  = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps' )
 TESTING_ON_WINDOWS = ( java.lang::System.getProperty( "os.name" ) =~ /windows/i )
 
+module TorqueSpec
+  module AS7
+    def start_command
+      ENV['APPEND_JAVA_OPTS'] = "#{TorqueSpec.jvm_args} -Djboss.home.dir=\"#{TorqueSpec.jboss_home}\""
+      boot_script = TESTING_ON_WINDOWS ? "standalone.bat" : "standalone.sh"
+      "\"#{TorqueSpec.jboss_home}/bin/#{boot_script}\""
+    end
+  end
+end
+
 def mutable_app(path)
   full_path = File.join( MUTABLE_APP_BASE_PATH, path )
   dest_path = File.dirname( full_path )
