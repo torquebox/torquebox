@@ -18,6 +18,8 @@ require File.dirname(__FILE__) + '/spec_helper'
 
 describe TorqueBox::Infinispan::Cache do
   before :each do
+    manager = org.infinispan.manager.DefaultCacheManager.new 
+    TorqueBox::ServiceRegistry.stub!(:[]).with(org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )).and_return( manager )
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
@@ -27,11 +29,6 @@ describe TorqueBox::Infinispan::Cache do
 
   it "should have a name" do
     @cache.name.should == 'foo-cache'
-  end
-
-  it "should reuse existing cache managers for an extant local cache" do
-    TorqueBox::Infinispan::Cache.should_receive( :find_local_manager ).with( 'foo-cache' )
-    TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
   it "should respond to clustering_mode" do

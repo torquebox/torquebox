@@ -28,21 +28,6 @@ public class CacheServices {
     }
 
     public static final ServiceName CACHE = CoreServices.TORQUEBOX.append( "cache" );
-    
-//    public static ServiceName rackApplicationFactoryName(final String name) {
-//        return RACK.append("factory").append( name );
-//    }
-//    public static ServiceName rackApplicationPoolName(final String name) {
-//        return RACK.append("pool").append( name );
-//    }
-//    
-//    public static ServiceName rackApplicationComponentResolver() {
-//        return ServiceName.of(  "rack"  ).append(  "application"  );
-//    }
-//    
-//    public static ServiceName rackApplicationComponentResolver(DeploymentUnit unit) {
-//        return unit.getServiceName().append( rackApplicationComponentResolver() );
-//    }
-    
+    public static final ServiceName CONTAINER = CACHE.append("container");
 
 }
