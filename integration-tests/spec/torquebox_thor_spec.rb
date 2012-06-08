@@ -86,10 +86,14 @@ describe "torquebox thor utility tests" do
 
   end
 
-  describe "torquebox run" do
-    it "should pass JVM options specified on the command line" do
-      output = tb( 'run -J \"-Xmx384m -Dmy.property=value\" --extra \"\--version\"' )
-      output.should match( /\s+JAVA_OPTS: .* -Xmx384m -Dmy\.property=value/ )
+  # Disabled on Windows because it pops up a cmd.exe dialog that must
+  # be manually closed on the CI machine for the test to continue.
+  unless TESTING ON WINDOWS
+    describe "torquebox run" do
+      it "should pass JVM options specified on the command line" do
+        output = tb( 'run -J \"-Xmx384m -Dmy.property=value\" --extra \"\--version\"' )
+        output.should match( /\s+JAVA_OPTS: .* -Xmx384m -Dmy\.property=value/ )
+      end
     end
   end
 
