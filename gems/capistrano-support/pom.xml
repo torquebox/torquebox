@@ -55,6 +55,14 @@
       <type>gem</type>
       <scope>test</scope>
     </dependency>
+
+    <!-- Remove once upgraded to JRuby 1.7.0.preview2 -->
+    <dependency>
+      <groupId>jline</groupId>
+      <artifactId>jline</artifactId>
+      <scope>test</scope>
+      <version>2.6</version>
+    </dependency>
   </dependencies>
 
   <profiles>
