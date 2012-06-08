@@ -584,7 +584,7 @@
         <updatePolicy>never</updatePolicy>
       </releases>
       <snapshots>
-        <enabled>fale</enabled>
+        <enabled>false</enabled>
         <updatePolicy>never</updatePolicy>
       </snapshots>
     </repository>
