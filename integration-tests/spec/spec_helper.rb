@@ -78,7 +78,6 @@ def domain_port_for(server, base_port)
   server == :server1 ? base_port : base_port + port_offset
 end
 
-
 # JRuby 1.6.7.2 in 1.9 mode has a bug where it needs ObjectSpace for
 # DRb to work. So, we swipe JRuby master's implementation and patch
 # things up.
