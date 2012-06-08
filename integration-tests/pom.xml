@@ -563,7 +563,7 @@
                 </property>
                 <property>
                   <name>jruby.home</name>
-                  <value>${integ.dist.dir}/jruby</value>
+                  <value>${project.basedir}/${integ.dist.dir}/jruby</value>
                 </property>
                 <property>
                   <name>org.jboss.modules</name>
