@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'spec_helper'
 require 'torquebox-messaging'
 
@@ -18,6 +19,12 @@ describe "torquebox-messaging with datamapper" do
 
   before(:each) do
     @queue = TorqueBox::Messaging::Queue.new( '/queue/backchannel' )
+  end
+
+  after(:all) do
+    db = File.join(File.dirname(__FILE__), '..', 'apps', 'sinatra',
+                   'datamapper-messaging', 'dm-messaging-test.db')
+    FileUtils.rm_f(db)
   end
   
   it "should support always_backgrounded jobs on DataMapper::Resource" do
