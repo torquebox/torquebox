@@ -78,6 +78,6 @@ def domain_port_for(server, base_port)
   server == :server1 ? base_port : base_port + port_offset
 end
 
-# Because DRb requires ObjectSpace and 1.9 disables it
+# Because DRb requires ObjectSpace and 1.9 disspec/spec_helper.rb
 require 'jruby'
 JRuby.objectspace = true

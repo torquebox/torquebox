@@ -36,4 +36,15 @@ class RootController < ApplicationController
     render "root/cachey"
   end
 
+  def writecache
+    Rails.cache.write( "mode", "clustery" )
+    @cache_value = Rails.cache.read( "mode" )
+    render "root/cachey"
+  end
+
+  def readcache
+    @cache_value = Rails.cache.read( "mode" )
+    render "root/cachey"
+  end
+
 end
