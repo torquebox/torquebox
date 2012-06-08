@@ -422,7 +422,7 @@
         </os>
       </activation>
       <properties>
-        <max.heap>2048m</max.heap>
+        <max.heap>3072m</max.heap>
         <jboss.lazy>false</jboss.lazy>
       </properties>
       <build>
