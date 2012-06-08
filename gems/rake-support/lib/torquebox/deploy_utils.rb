@@ -282,18 +282,22 @@ module TorqueBox
         success
       end
 
+      def run_command(cmd)
+        puts `#{cmd} 2>&1`
+      end
+
       # Used when we want to effectively replace this process with the
       # given command. On Windows this does call Kernel#exec but on
-      # everything else we just delegate to run_command.
+      # everything else we just delegate to fake_exec.
       #
       # This is mainly so CTRL+C, STDIN, STDOUT, and STDERR work as
       # expected across all operating systems.
       def exec_command(cmd)
-        windows? ? exec(cmd) : run_command(cmd)
+        windows? ? exec(cmd) : fake_exec(cmd)
       end
 
       # Used to run a command as a subprocess
-      def run_command(cmd)
+      def fake_exec(cmd)
         exiting = false
         IO.popen4(cmd) do |pid, stdin, stdout, stderr|
           stdout.sync = true
