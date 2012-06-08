@@ -68,6 +68,64 @@ def domain_port_for(server, base_port)
   server == :server1 ? base_port : base_port + port_offset
 end
 
+
 # Because DRb requires ObjectSpace and 1.9 disables it
 require 'jruby'
 JRuby.objectspace = true
+
+# JRuby 1.6.7.2 in 1.9 mode has a bug where it needs ObjectSpace for
+# DRb to work. So, we swipe JRuby master's implementation and patch
+# things up.
+if RUBY_VERSION > '1.9' && JRUBY_VERSION < '1.7'
+  require 'drb'
+  require 'weakref'
+  module DRb
+    class DRbIdConv
+      # Convert an object reference id to an object.
+      #
+      # This implementation looks up the reference id in the local object
+      # space and returns the object it refers to.
+      def to_obj(ref)
+        _get(ref)
+      end
+
+      # Convert an object into a reference id.
+      #
+      # This implementation returns the object's __id__ in the local
+      # object space.
+      def to_id(obj)
+        obj.nil? ? nil : _put(obj)
+      end
+
+      def _clean
+        dead = []
+        id2ref.each {|id,weakref| dead << id unless weakref.weakref_alive?}
+        dead.each {|id| id2ref.delete(id)}
+      end
+
+      def _put(obj)
+        _clean
+        id2ref[obj.__id__] = WeakRef.new(obj)
+        obj.__id__
+      end
+
+      def _get(id)
+        weakref = id2ref[id]
+        if weakref
+          result = weakref.__getobj__ rescue nil
+          if result
+            return result
+          else
+            id2ref.delete id
+          end
+        end
+        nil
+      end
+
+      def id2ref
+        @id2ref ||= {}
+      end
+      private :_clean, :_put, :_get, :id2ref
+    end
+  end
+end

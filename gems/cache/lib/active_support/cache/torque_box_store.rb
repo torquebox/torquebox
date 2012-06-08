@@ -116,7 +116,7 @@ module ActiveSupport
       private
 
       def cache
-        @cache ||= TorqueBox::Infinispan::Cache.new(options)
+        @cache ||= TorqueBox::Infinispan::Cache.new(options.merge({:name=>'repl'}))
       end
     end
   end
