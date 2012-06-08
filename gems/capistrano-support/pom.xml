@@ -28,6 +28,19 @@
       <type>gem</type>
       <scope>test</scope>
       <version>2.9.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>rubygems</groupId>
+          <artifactId>net-ssh</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>rubygems</groupId>
+      <artifactId>net-ssh</artifactId>
+      <type>gem</type>
+      <scope>test</scope>
+      <version>2.3.0</version>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>
