@@ -258,7 +258,7 @@ module TorqueBox
 
       def cache
         if INFINISPAN_AVAILABLE 
-          @cache ||= manager.running?( name ) ? manager.get_cache(name) : configure
+          @cache ||= manager.running?( name ) ? reconfigure : configure
         else
           @cache ||= nothing
         end
