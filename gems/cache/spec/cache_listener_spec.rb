@@ -20,7 +20,9 @@ require 'cache_listener'
 describe TorqueBox::Infinispan::CacheListener do
   before :each do
     manager = org.infinispan.manager.DefaultCacheManager.new 
-    TorqueBox::ServiceRegistry.stub!(:[]).with(org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )).and_return( manager )
+    service = org.torquebox.cache.as.CacheService.new
+    service.stub!(:cache_container).and_return( manager )
+    TorqueBox::ServiceRegistry.stub!(:[]).with(org.torquebox.cache.as.CacheServices::CACHE).and_return( service )
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 

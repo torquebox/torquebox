@@ -90,11 +90,7 @@ module TorqueBox
       end
 
       def clustered?
-        INFINISPAN_AVAILABLE ? 
-          !TorqueBox::ServiceRegistry.lookup( org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService.getServiceName ).nil? :
-          false
-      rescue
-        false
+        INFINISPAN_AVAILABLE && service.clustered? 
       end
 
       def clustering_mode
@@ -266,8 +262,16 @@ module TorqueBox
         end
       end
 
+      def service
+        @service ||= TorqueBox::ServiceRegistry[org.torquebox.cache.as.CacheServices::CACHE]
+        puts "\n\n\n\n>>>>>>>>>>>>>>>>>"
+        puts "FOUND SERVICE: #{@service.to_s}"
+        puts ">>>>>>>>>>>>>>>>>\n\n\n\n"
+        @service
+      end
+
       def manager
-        @manager ||= TorqueBox::ServiceRegistry[org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )] 
+        @manager ||= service.cache_container
       end
 
       def reconfigure(mode=clustering_mode)
