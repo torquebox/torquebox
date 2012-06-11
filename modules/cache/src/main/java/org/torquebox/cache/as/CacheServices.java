@@ -28,6 +28,4 @@ public class CacheServices {
     }
 
     public static final ServiceName CACHE = CoreServices.TORQUEBOX.append( "cache" );
-    public static final ServiceName CONTAINER = CACHE.append("container");
-
 }
