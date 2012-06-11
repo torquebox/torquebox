@@ -41,6 +41,12 @@
       <artifactId>jboss-logging</artifactId>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-core</artifactId>
+      <version>${version.polyglot}</version>
+      <scope>provided</scope>
+    </dependency>
 
   </dependencies>
 

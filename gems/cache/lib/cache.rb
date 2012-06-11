@@ -90,7 +90,9 @@ module TorqueBox
       end
 
       def clustered?
-        replicated? || distributed? || invalidation? || manager.default_configuration.cache_mode != CacheMode::LOCAL
+        INFINISPAN_AVAILABLE ? 
+          !TorqueBox::ServiceRegistry.lookup( org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService.getServiceName ).nil? :
+          false
       end
 
       def clustering_mode
