@@ -177,7 +177,7 @@ class AssemblyTool
     profiles = doc.root.get_elements( '//profile' )
     profiles.each do |profile|
       subsystem = profile.get_elements( "subsystem[contains(@xmlns, 'urn:jboss:domain:infinispan:')]" ).first
-      container = subsystem.add_element( 'cache-container', 'name'=>'torquebox', 'default-cache'=>'sessions' )
+      container = subsystem.add_element( 'cache-container', 'name'=>'polyglot', 'default-cache'=>'sessions', 'aliases'=>'torquebox' )
       cache = container.add_element( 'local-cache', 'name'=>'sessions', 'start'=>'EAGER' )
       cache.add_element( 'eviction', 'strategy'=>'LRU', 'max-entries'=>'10000' )
       cache.add_element( 'expiration', 'max-idle'=>'100000' )
@@ -193,7 +193,7 @@ class AssemblyTool
       if container
         default   = container.get_elements( "replicated-cache[@name='repl']" ).first
         default.add_attribute( "start", "EAGER" ) if default
-        container.add_attribute( "aliases", "torquebox standard-session-cache" ) 
+        container.add_attribute( "aliases", "polyglot torquebox standard-session-cache" ) 
       end
     end
   end
