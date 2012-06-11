@@ -29,6 +29,11 @@ describe TorqueBox::ServiceRegistry do
     @foo.should eql("bar")
   end
 
+  it "should make the registry available" do
+    TorqueBox::ServiceRegistry.service_registry = @service_registry
+    TorqueBox::ServiceRegistry.registry.should == @service_registry
+  end
+
   # Mock a JBoss ServiceRegistry backed by a simple member Hash,
   # @registry, that holds the fixtures for the tests.
   before(:each) do
@@ -44,3 +49,4 @@ describe TorqueBox::ServiceRegistry do
   end
   
 end
+
