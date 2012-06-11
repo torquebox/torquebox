@@ -256,7 +256,7 @@ module TorqueBox
 
       def cache
         if INFINISPAN_AVAILABLE 
-          @cache ||= manager.running?( name ) ? manager.get_cache(name) : configure
+          @cache ||= manager.running?( name ) ? reconfigure : configure
         else
           @cache ||= nothing
         end
@@ -264,10 +264,6 @@ module TorqueBox
 
       def service
         @service ||= TorqueBox::ServiceRegistry[org.torquebox.cache.as.CacheServices::CACHE]
-        puts "\n\n\n\n>>>>>>>>>>>>>>>>>"
-        puts "FOUND SERVICE: #{@service.to_s}"
-        puts ">>>>>>>>>>>>>>>>>\n\n\n\n"
-        @service
       end
 
       def manager
