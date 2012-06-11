@@ -47,7 +47,7 @@ versions = {
   :padrino        =>    '0.10.5',
   :bcrypt_ruby    =>    '3.0.1',
 
-  :sequel         =>    '3.29.0',
+  :sequel         =>    '3.36.1',
   :thor           =>    '0.14.6'
 }
 
