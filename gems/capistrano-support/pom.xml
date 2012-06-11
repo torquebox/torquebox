@@ -66,7 +66,7 @@
           <artifactId>jruby-pageant</artifactId>
           <type>gem</type>
           <scope>test</scope>
-          <version>1.0.2</version>
+          <version>1.1.1</version>
         </dependency>
       </dependencies>
     </profile>
