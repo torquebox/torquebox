@@ -143,7 +143,7 @@
     <dependency>
       <groupId>rubygems</groupId>
       <artifactId>nokogiri</artifactId>
-      <version>1.5.0.beta.4</version>
+      <version>1.5.3</version>
       <type>gem</type>
       <scope>test</scope>
     </dependency>
