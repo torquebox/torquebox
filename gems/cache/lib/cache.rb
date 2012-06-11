@@ -93,6 +93,8 @@ module TorqueBox
         INFINISPAN_AVAILABLE ? 
           !TorqueBox::ServiceRegistry.lookup( org.jboss.as.clustering.jgroups.subsystem.ChannelFactoryService.getServiceName ).nil? :
           false
+      rescue
+        false
       end
 
       def clustering_mode
