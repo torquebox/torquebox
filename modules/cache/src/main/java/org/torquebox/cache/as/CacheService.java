@@ -23,7 +23,7 @@ public class CacheService implements Service<CacheService> {
 	public void start(StartContext context) throws StartException {
 		try {
 			InitialContext ic = new InitialContext();
-			container = (CacheContainer) ic.lookup("java:jboss/infinispan/container/polyglot");
+			container = (CacheContainer) ic.lookup(this.infinispanServiceName());
 			if (container != null) {
 				container.start();
 			} else {
@@ -50,6 +50,14 @@ public class CacheService implements Service<CacheService> {
 	
 	public boolean isClustered() {
 		return this.clustered;
+	}
+	
+	private String infinispanServiceName() {
+		if (this.isClustered()) {
+			return "java:jboss/infinispan/container/web";
+		} else {
+			return "java:jboss/infinispan/container/polyglot";
+		}
 	}
 
 }
