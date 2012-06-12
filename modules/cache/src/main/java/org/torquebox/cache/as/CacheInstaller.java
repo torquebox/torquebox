@@ -11,23 +11,23 @@ import org.projectodd.polyglot.core.util.ClusterUtil;
 
 public class CacheInstaller implements DeploymentUnitProcessor {
 
-	public CacheInstaller() {		
-	}
-	
-	@Override
-	public void deploy(DeploymentPhaseContext phaseContext)
-			throws DeploymentUnitProcessingException {
+    public CacheInstaller() {
+    }
+
+    @Override
+    public void deploy(DeploymentPhaseContext phaseContext)
+            throws DeploymentUnitProcessingException {
         CacheService service = new CacheService();
-        service.setClustered( ClusterUtil.isClustered(phaseContext) );
+        service.setClustered( ClusterUtil.isClustered( phaseContext ) );
         ServiceBuilder<CacheService> builder = phaseContext.getServiceTarget().addService( CacheServices.CACHE, service );
-        builder.addDependency( ServiceName.JBOSS.append("infinispan", "polyglot") );
+        builder.addDependency( ServiceName.JBOSS.append( "infinispan", "polyglot" ) );
         builder.setInitialMode( Mode.ACTIVE );
         builder.install();
-	}
+    }
 
-	@Override
-	public void undeploy(DeploymentUnit unit) {
-		
-	}
-	
+    @Override
+    public void undeploy(DeploymentUnit unit) {
+
+    }
+
 }
