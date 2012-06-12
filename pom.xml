@@ -834,7 +834,7 @@
                 <args>${spec}</args>
                 <verbose>false</verbose>
                 <jrubyVersion>${version.jruby}</jrubyVersion>
-                <jrubySwitches>--${ruby.compat.version}</jrubySwitches>
+                <jrubySwitches>-rjruby --${ruby.compat.version}</jrubySwitches>
                 <gemHome>${project.build.directory}/rubygems</gemHome>
                 <gemPath>${project.build.directory}/rubygems</gemPath>
                 <fork>true</fork>
