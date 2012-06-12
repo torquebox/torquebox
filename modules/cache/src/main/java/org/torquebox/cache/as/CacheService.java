@@ -29,15 +29,18 @@ public class CacheService implements Service<CacheService> {
 			} else {
 				System.err.println("ERROR: Can't find ye olde cache container");
 			}
-			} catch (NamingException e) {
-				// TODO
-				System.err.println("ERROR: Cannot get cache container.");
-			}
+		} catch (NamingException e) {
+			// TODO
+			System.err.println("ERROR: Cannot get cache container.");
+		}
 	}
 
 	@Override
 	public void stop(StopContext context) {
-		if (container != null) { container.stop(); }
+		// NOT SURE ABOUT THIS
+		// It seems like the service can be stopped while there are still apps that
+		// depend on it. So...
+		// if (container != null) { container.stop(); }
 	}
 	
 	public CacheContainer getCacheContainer() {
