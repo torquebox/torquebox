@@ -106,24 +106,8 @@ class Publisher
     File.dirname(__FILE__) + '/../../../target/site/apidocs'
   end
 
-  def dist_path()
-    File.dirname(__FILE__) + '/../../dist/target/torquebox-dist-bin.zip'
-  end
-
-  def dist_modules_path()
-    File.dirname(__FILE__) + '/../../dist/target/torquebox-dist-modules.zip'
-  end
-
-  def json_metadata_path()
-    File.dirname(__FILE__) + '/../../dist/target/build-metadata.json'
-  end
-
   def gem_repo_path()
     File.dirname(__FILE__) + '/../../assembly/target/stage/gem-repo'
-  end
-
-  def standalone_xml_path()
-    File.dirname(__FILE__) + '/../../assembly/target/stage/torquebox/jboss/standalone/configuration/standalone.xml'
   end
   
   def publish_documentation()
@@ -139,12 +123,18 @@ class Publisher
     dav_put_r( build_base_url + '/html-docs', html_docs_path )
   end
 
-  def publish_distribution()
-    dav_put( build_base_url + "/#{File.basename( json_metadata_path ) }", json_metadata_path )
-
-    dav_put( build_base_url  + "/#{File.basename( dist_path ) }", dist_path )
-    dav_put( build_base_url  + "/#{File.basename( dist_modules_path ) }", dist_modules_path )
-    dav_put( build_base_url  + "/#{File.basename( standalone_xml_path ) }", standalone_xml_path )
+    def publish_distribution()
+    [
+     '/../../dist/target/torquebox-dist-bin.zip',
+     '/../../dist/target/torquebox-dist-modules.zip',
+     '/../../dist/target/build-metadata.json',
+     '/../../assembly/target/stage/torquebox/jboss/standalone/configuration/standalone.xml'
+    ].each do |f|
+      file = File.dirname(__FILE__) + f
+      dav_put( build_base_url + "/#{File.basename( file )}", file )
+      sha1 = file + ".sha1"
+      dav_put( build_base_url + "/#{File.basename( sha1 )}", sha1 ) if File.exists?( sha1 )
+    end
   end
 
   def publish_gem_repo()

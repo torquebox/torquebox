@@ -97,6 +97,17 @@
               <file>bin/generate_build_metadata.rb</file>
             </configuration>
           </execution>
+          <execution>
+            <id>generate-sha1</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jruby</goal>
+            </goals>
+            <configuration>
+              <file>bin/generate_sha1.rb</file>
+              <args>target/*.{zip,json}</args>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
     </plugins>
