@@ -42,7 +42,6 @@ describe 'cache clustering' do
     host2 = "http://#{domain_host_for(:server2)}:#{domain_port_for(:server2, 8080)}"
     visit "#{host1}/cachey-cluster/root/writecache"
     page.find("#success").should have_content( "clustery" )
-    sleep 3 # Do we need to let infinispan have time? I doubt it.
     visit "#{host2}/cachey-cluster/root/readcache"
     page.find("#success").should have_content( "clustery" )
   end

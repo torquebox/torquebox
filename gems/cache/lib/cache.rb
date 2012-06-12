@@ -102,6 +102,7 @@ module TorqueBox
         when distributed?
           sync ? CacheMode::DIST_SYNC : CacheMode::DIST_ASYNC
         else
+          # CacheMode::REPL_ASYNC
           sync ? CacheMode::INVALIDATION_SYNC : CacheMode::INVALIDATION_ASYNC
         end
       end
