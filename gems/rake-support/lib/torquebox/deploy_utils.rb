@@ -1,15 +1,15 @@
 # Copyright 2008-2012 Red Hat, Inc, and individual contributors.
-# 
+#
 # This is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as
 # published by the Free Software Foundation; either version 2.1 of
 # the License, or (at your option) any later version.
-# 
+#
 # This software is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # Lesser General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Lesser General Public
 # License along with this software; if not, write to the Free
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
@@ -168,7 +168,7 @@ module TorqueBox
         skip_files = default_skip_files + opts_skip_files
 
         archive_path = File.join(dest_dir, archive)
-        
+
         Dir.chdir( app_dir ) do
           include_files = []
           Dir[ "*", ".bundle" ].each do |entry|
@@ -182,7 +182,7 @@ module TorqueBox
             include_files << entry unless ( entry == 'vendor/cache' )
           end
 
-          cmd = "jar cvf #{archive_path} #{include_files.join(' ')}"
+          cmd = "jar cvf '#{archive_path}' #{include_files.join(' ')}"
           run_command( cmd )
         end
 
@@ -205,7 +205,7 @@ module TorqueBox
 
         root = options[:root] || options['root'] || Dir.pwd
         context_path = options[:context_path] || options['context_path']
-        
+
         d = {}
         d['application'] = {}
         d['application']['root'] = root
@@ -248,11 +248,11 @@ module TorqueBox
       def deployed_file(name)
         File.join( DeployUtils.deploy_dir, "#{name}" ) + ".deployed"
       end
-      
+
       def undeploy_archive(opts = {})
         undeploy( normalize_archive_name( find_option( opts, 'name' ) || archive_name( opts[:root] ) ), opts )
-      end 
-      
+      end
+
       def undeploy_yaml(opts = {})
         undeploy( normalize_yaml_name( find_option( opts, 'name' ) || deployment_name( opts[:root] ) ), opts )
       end
@@ -352,15 +352,15 @@ module TorqueBox
       def windows?
         RbConfig::CONFIG['host_os'] =~ /mswin/
       end
-      
+
       def find_option(opt, key)
         opt[key.to_sym] || opt[key] || ENV[key] || ENV[key.upcase]
       end
-      
+
       def normalize_yaml_name(name)
         name[-9..-1] == '-knob.yml' ? name : name + '-knob.yml'
       end
-      
+
       def normalize_archive_name(name)
         name[-5..-1] == '.knob' ? name : name + '.knob'
       end
@@ -373,10 +373,10 @@ module TorqueBox
         applications = {}
         deployment_descriptors.each do | descriptor |
           descriptor_path = File.join( deploy_dir, descriptor )
-          appname = descriptor.sub( /\-knob.yml/, '' ) 
+          appname = descriptor.sub( /\-knob.yml/, '' )
           applications[appname] = {}
           applications[appname][:descriptor] = descriptor_path
-          applications[appname][:status] = case 
+          applications[appname][:status] = case
                                            when File.exists?("#{descriptor_path}.dodeploy")
                                              "awaiting deployment"
                                            when File.exists?("#{descriptor_path}.deployed")
@@ -388,8 +388,8 @@ module TorqueBox
         end
         applications
       end
-      
-      private 
+
+      private
 
       def undeploy(name, opts = {})
         puts "Attempting to undeploy #{name}"

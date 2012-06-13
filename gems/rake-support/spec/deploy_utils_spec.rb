@@ -210,11 +210,11 @@ describe TorqueBox::DeployUtils do
   end
 
   describe '.check_server' do
-    context "when it can't find the modules" do 
+    context "when it can't find the modules" do
       before(:each) do
         File.stub(:exist?).and_return(false)
       end
-      
+
       it "should raise if it can't find the torquebox modules" do
         lambda { @util.check_server }.should raise_error
       end
@@ -364,7 +364,7 @@ describe TorqueBox::DeployUtils do
     it 'should not include excluded dirs and files' do
       @util.should_receive(:run_command) do |arg|
         ["config.ru", "app"].permutation.map {|p|
-          "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
+          "jar cvf '/tmp/simpleapp.knob' #{p.join(" ")}"
         }.should include(arg)
       end
 
@@ -380,7 +380,7 @@ describe TorqueBox::DeployUtils do
     it 'should exclude based on patterns' do
       @util.should_receive(:run_command) do |arg|
         ["puppet", "config.ru", "app"].permutation.map {|p|
-          "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
+          "jar cvf '/tmp/simpleapp.knob' #{p.join(" ")}"
         }.should include(arg)
       end
 
@@ -396,7 +396,7 @@ describe TorqueBox::DeployUtils do
     it 'should include all dirs and files except default' do
       @util.should_receive(:run_command) do |arg|
         ["config.ru", "app", "puppet", "simpleapp.box"].permutation.map {|p|
-          "jar cvf /tmp/simpleapp.knob #{p.join(" ")}"
+          "jar cvf '/tmp/simpleapp.knob' #{p.join(" ")}"
         }.should include(arg)
       end
 
