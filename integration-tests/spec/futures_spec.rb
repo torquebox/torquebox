@@ -12,6 +12,8 @@ remote_describe 'in container futures tests' do
     queues:
       /queue/backchannel:
         durable: false
+    web:
+      context: /container-futures
   END
 
   shared_examples_for 'something with a future' do
