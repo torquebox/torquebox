@@ -35,7 +35,10 @@ import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
 
 class CacheSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
@@ -56,11 +59,15 @@ class CacheSubsystemAdd extends AbstractBoottimeAddStepHandler {
             }
         }, OperationContext.Stage.RUNTIME );
 
+        newControllers.add(  context.getServiceTarget().addService( CacheServices.CACHE, new CacheService() )
+                .addDependency( ServiceName.JBOSS.append( "infinispan", "polyglot" ) )
+                .addDependency( DependencyType.OPTIONAL, ServiceName.JBOSS.append( "jgroups", "stack" ) )
+                .setInitialMode( Mode.ACTIVE )
+                .install() );
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
         processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, rootSafe( new CacheDependenciesProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 20, rootSafe( new CacheInstaller() ) );
     }
 
     static ModelNode createOperation(ModelNode address) {
