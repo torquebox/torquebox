@@ -82,7 +82,7 @@ end
 # JRuby 1.6.7.2 in 1.9 mode has a bug where it needs ObjectSpace for
 # DRb to work. So, we swipe JRuby master's implementation and patch
 # things up.
-if RUBY_VERSION > '1.9'
+if RUBY_VERSION > '1.9' && JRUBY_VERSION < '1.7'
   require 'drb'
   require 'weakref'
   module DRb
