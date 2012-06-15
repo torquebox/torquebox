@@ -34,23 +34,17 @@ import org.jboss.as.controller.AbstractBoottimeAddStepHandler;
 import org.jboss.as.controller.OperationContext;
 import org.jboss.as.controller.OperationFailedException;
 import org.jboss.as.controller.ServiceVerificationHandler;
-import org.jboss.as.modcluster.ModCluster;
 import org.jboss.as.server.AbstractDeploymentChainStep;
 import org.jboss.as.server.DeploymentProcessorTarget;
 import org.jboss.as.server.deployment.Phase;
-import org.jboss.as.web.WebServer;
 import org.jboss.as.web.WebSubsystemServices;
 import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
-import org.jboss.msc.service.ServiceBuilder.DependencyType;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
-import org.jboss.msc.service.ServiceName;
 import org.projectodd.polyglot.web.WebConnectorConfigService;
 import org.projectodd.polyglot.web.processors.VirtualHostInstaller;
 import org.projectodd.polyglot.web.processors.WebApplicationDefaultsProcessor;
-import org.torquebox.web.ModClusterSecurityKeyFixService;
-import org.torquebox.web.ModClusterUuidFixService;
 import org.torquebox.web.component.processors.RackApplicationComponentResolverInstaller;
 import org.torquebox.web.rack.processors.RackApplicationRecognizer;
 import org.torquebox.web.rack.processors.RackRuntimeProcessor;
@@ -85,8 +79,6 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
         try {
             addWebConnectorConfigServices( context, verificationHandler, newControllers );
-            addModClusterUuidFixService( context, verificationHandler, newControllers );
-            addModClusterSecurityKeyFixService( context, verificationHandler, newControllers );
         } catch (Exception e) {
             throw new OperationFailedException( e, null );
         }
@@ -94,23 +86,23 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, rootSafe( new RackApplicationRecognizer() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, rootSafe( new RailsApplicationRecognizer() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, rootSafe( new WebYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, rootSafe( new RailsVersionProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 50, rootSafe( new RailsRackProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 60, rootSafe( new WebApplicationDefaultsProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 70, rootSafe( new RackWebApplicationInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, rootSafe( new RailsRuntimeProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, rootSafe( new RackRuntimeProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 0, rootSafe( new RackApplicationRecognizer() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 10, rootSafe( new RailsApplicationRecognizer() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, rootSafe( new WebYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 40, rootSafe( new RailsVersionProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 50, rootSafe( new RailsRackProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 60, rootSafe( new WebApplicationDefaultsProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 70, rootSafe( new RackWebApplicationInstaller() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 1000, rootSafe( new RailsRuntimeProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 1100, rootSafe( new RackRuntimeProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 1, rootSafe( new WebDependenciesProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 1, rootSafe( new WebDependenciesProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new WebRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, rootSafe( new RailsAutoloadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new WebRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 500, rootSafe( new RailsAutoloadPathProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new RackApplicationComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 2100, rootSafe( new VirtualHostInstaller() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new RackApplicationComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.INSTALL, 2100, rootSafe( new VirtualHostInstaller() ) );
     }
 
     protected void addWebConnectorConfigServices(final OperationContext context,
@@ -137,28 +129,6 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
                 .addDependency( WebSubsystemServices.JBOSS_WEB_CONNECTOR.append( connectorName ), Connector.class, service.getConnectorInjector() )
                 .addListener( verificationHandler )
                 .setInitialMode( Mode.ACTIVE )
-                .install() );
-    }
-
-    protected void addModClusterUuidFixService(final OperationContext context,
-            ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers) {
-        ModClusterUuidFixService service = new ModClusterUuidFixService();
-        newControllers.add( context.getServiceTarget().addService( WebServices.MOD_CLUSTER_UUID_FIX, service )
-                .addDependency( WebSubsystemServices.JBOSS_WEB, WebServer.class, service.getWebServerInjector() )
-                .addListener( verificationHandler )
-                .setInitialMode( Mode.PASSIVE )
-                .install() );
-    }
-
-    protected void addModClusterSecurityKeyFixService(final OperationContext context,
-            ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers) {
-        ModClusterSecurityKeyFixService service = new ModClusterSecurityKeyFixService();
-        newControllers.add( context.getServiceTarget().addService(  WebServices.MOD_CLUSTER_KEY_FIX, service )
-                .addDependency( DependencyType.OPTIONAL, ServiceName.JBOSS.append("mod-cluster"), ModCluster.class, service.getModClusterInjector() )
-                .addListener( verificationHandler )
-                .setInitialMode( Mode.PASSIVE )
                 .install() );
     }
 

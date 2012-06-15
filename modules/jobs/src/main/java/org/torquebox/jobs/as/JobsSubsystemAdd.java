@@ -63,12 +63,12 @@ public class JobsSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, rootSafe( new JobsYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, rootSafe( new JobsLoadPathProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new JobsRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new JobComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, rootSafe( new JobSchedulerInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 10, rootSafe( new ScheduledJobInstaller() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, rootSafe( new JobsYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new JobsLoadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new JobsRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new JobComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new JobSchedulerInstaller() ) );
+        processorTarget.addDeploymentProcessor( JobsExtension.SUBSYSTEM_NAME, Phase.INSTALL, 10, rootSafe( new ScheduledJobInstaller() ) );
     }
 
     static ModelNode createOperation(ModelNode address) {

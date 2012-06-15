@@ -47,8 +47,8 @@ class CDISubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.STRUCTURE, 11, rootSafe( new CDIStructureProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, rootSafe( new HackWeldBeanManagerServiceProcessor() ) );
+        processorTarget.addDeploymentProcessor( CDIExtension.SUBSYSTEM_NAME, Phase.STRUCTURE, 11, rootSafe( new CDIStructureProcessor() ) );
+        processorTarget.addDeploymentProcessor( CDIExtension.SUBSYSTEM_NAME, Phase.INSTALL, Phase.INSTALL_WELD_BEAN_MANAGER + 1, rootSafe( new HackWeldBeanManagerServiceProcessor() ) );
     }
 
     @Override

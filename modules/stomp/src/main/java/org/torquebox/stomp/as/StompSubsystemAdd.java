@@ -103,16 +103,16 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, String socketBindingRef) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 31, rootSafe( new StompYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1031, rootSafe( new StompWebAdjuster() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1032, rootSafe( new StompApplicationDefaultsProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, rootSafe( new StompletLoadPathProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new StompletsRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 5, rootSafe( new StompDependenciesProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new StompletComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 99, rootSafe( new SessionManagerInstaller( "localhost" ) ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 100, rootSafe( new StompletContainerInstaller( socketBindingRef ) ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 101, rootSafe( new StompletInstaller() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 31, rootSafe( new StompYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 1031, rootSafe( new StompWebAdjuster() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 1032, rootSafe( new StompApplicationDefaultsProcessor() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new StompletLoadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new StompletsRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 5, rootSafe( new StompDependenciesProcessor() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new StompletComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 99, rootSafe( new SessionManagerInstaller( "localhost" ) ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 100, rootSafe( new StompletContainerInstaller( socketBindingRef ) ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 101, rootSafe( new StompletInstaller() ) );
     }
 
     static ModelNode createOperation(ModelNode address) {

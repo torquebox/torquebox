@@ -84,26 +84,26 @@ class MessagingSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
 
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, rootSafe( new BackgroundablePresetsProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 35, rootSafe( new MessagingYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, rootSafe( new TasksYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 41, rootSafe( new TasksScanningProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 10, rootSafe( new BackgroundablePresetsProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 11, new QueuesYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 12, new TopicsYamlParsingProcessor() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 35, rootSafe( new MessagingYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 40, rootSafe( new TasksYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.PARSE, 41, rootSafe( new TasksScanningProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 3, rootSafe( new MessagingDependenciesProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 3, rootSafe( new MessagingDependenciesProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, rootSafe( new MessagingLoadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new MessagingLoadPathProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 11, rootSafe( new ApplicationNamingContextBindingProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 11, rootSafe( new ApplicationNamingContextBindingProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 220, rootSafe( new TasksInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 320, rootSafe( new MessagingRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 220, rootSafe( new TasksInstaller() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 320, rootSafe( new MessagingRuntimePoolProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 120, rootSafe( new MessageProcessorComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 220, rootSafe( new MessageProcessorInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 221, new QueueInstaller() );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 222, new TopicInstaller() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 120, rootSafe( new MessageProcessorComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 220, rootSafe( new MessageProcessorInstaller() ) );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 221, new QueueInstaller() );
+        processorTarget.addDeploymentProcessor( MessagingExtension.SUBSYSTEM_NAME, Phase.INSTALL, 222, new TopicInstaller() );
     }
 
     protected void addMessagingServices(final OperationContext context, ServiceVerificationHandler verificationHandler,

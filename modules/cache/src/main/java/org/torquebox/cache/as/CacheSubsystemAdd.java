@@ -67,7 +67,7 @@ class CacheSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 10, rootSafe( new CacheDependenciesProcessor() ) );
+        processorTarget.addDeploymentProcessor( CacheExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 10, rootSafe( new CacheDependenciesProcessor() ) );
     }
 
     static ModelNode createOperation(ModelNode address) {
