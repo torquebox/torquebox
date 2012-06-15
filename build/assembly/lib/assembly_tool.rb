@@ -276,33 +276,6 @@ class AssemblyTool
     end
   end
 
-  def add_messaging_socket_binding(doc)
-    doc.root.get_elements( "//subsystem[contains(@xmlns,'urn:jboss:domain:messaging:')]/hornetq-server" ).each do |hornetq_server|
-      hornetq_server.get_elements( 'broadcast-groups/broadcast-group' ).each do |broadcast_group|
-        broadcast_group.delete_element( 'group-address' )
-        broadcast_group.delete_element( 'group-port' )
-        broadcast_group.add_element( 'socket-binding').text = 'messaging-group'
-      end
-      hornetq_server.get_elements( 'discovery-groups/discovery-group' ).each do |discovery_group|
-        discovery_group.delete_element( 'group-address' )
-        discovery_group.delete_element( 'group-port' )
-        discovery_group.add_element( 'socket-binding').text = 'messaging-group'
-      end
-    end
-
-    groups = doc.root.get_elements( '//server/socket-binding-group' ) + doc.root.get_elements( '//domain/socket-binding-groups/socket-binding-group' )
-    groups.each do |group|
-      binding = group.get_elements( "*[@name='messaging-group']" )
-      if ( binding.empty? )
-        group.add_element( 'socket-binding',
-                           'name'=>'messaging-group',
-                           'port'=>'0',
-                           'multicast-address'=>'${jboss.messaging.group.address:231.7.7.7}',
-                           'multicast-port'=>'${jboss.messaging.group.port:9876}')
-      end
-    end
-  end
-
   def remove_non_web_subsystems(doc)
     to_remove = %W(datasources ejb3 infinispan jacorb jaxrs jca jpa messaging osgi
                    resource-adapters sar threads
@@ -411,18 +384,6 @@ class AssemblyTool
     end
   end
 
-  def fix_messaging_clustering(doc)
-    hornetq_server = doc.root.get_elements( "//subsystem[contains(@xmlns,'urn:jboss:domain:messaging:')]/hornetq-server" ).first
-
-    e = REXML::Element.new( 'cluster-user' )
-    e.text = 'admin'
-    hornetq_server.add_element( e );
-
-    e = REXML::Element.new( 'cluster-password' )
-    e.text = 'password'
-    hornetq_server.add_element( e )
-  end
-
   def fix_host_servers(doc)
     doc.root.get_elements( '//servers/server' ).each &:remove
     servers = doc.root.get_elements( '//servers' ).first
@@ -516,8 +477,6 @@ class AssemblyTool
       add_socket_bindings(doc)
 
       if ( domain || ha )
-        fix_messaging_clustering(doc)
-        add_messaging_socket_binding(doc)
         adjust_modcluster_config(doc)
       end
 
