@@ -64,11 +64,11 @@ public class ServicesSubsystemAdd extends AbstractBoottimeAddStepHandler {
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
 
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, rootSafe( new ServicesYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 0, rootSafe( new ServiceLoadPathProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new ServiceRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new ServiceComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 0, rootSafe( new ServiceInstaller() ) );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, rootSafe( new ServicesYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new ServiceLoadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new ServiceRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new ServiceComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( ServicesExtension.SUBSYSTEM_NAME, Phase.INSTALL, 0, rootSafe( new ServiceInstaller() ) );
 
     }
 

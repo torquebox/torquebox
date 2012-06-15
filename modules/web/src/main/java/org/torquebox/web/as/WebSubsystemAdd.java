@@ -86,23 +86,23 @@ class WebSubsystemAdd extends AbstractBoottimeAddStepHandler {
     }
 
     protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 0, rootSafe( new RackApplicationRecognizer() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 10, rootSafe( new RailsApplicationRecognizer() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 30, rootSafe( new WebYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 40, rootSafe( new RailsVersionProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 50, rootSafe( new RailsRackProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 60, rootSafe( new WebApplicationDefaultsProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 70, rootSafe( new RackWebApplicationInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1000, rootSafe( new RailsRuntimeProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.PARSE, 1100, rootSafe( new RackRuntimeProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 0, rootSafe( new RackApplicationRecognizer() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 10, rootSafe( new RailsApplicationRecognizer() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 30, rootSafe( new WebYamlParsingProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 40, rootSafe( new RailsVersionProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 50, rootSafe( new RailsRackProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 60, rootSafe( new WebApplicationDefaultsProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 70, rootSafe( new RackWebApplicationInstaller() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 1000, rootSafe( new RailsRuntimeProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.PARSE, 1100, rootSafe( new RackRuntimeProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.DEPENDENCIES, 1, rootSafe( new WebDependenciesProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 1, rootSafe( new WebDependenciesProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 100, rootSafe( new WebRuntimePoolProcessor() ) );
-        processorTarget.addDeploymentProcessor( Phase.CONFIGURE_MODULE, 500, rootSafe( new RailsAutoloadPathProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new WebRuntimePoolProcessor() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 500, rootSafe( new RailsAutoloadPathProcessor() ) );
 
-        processorTarget.addDeploymentProcessor( Phase.POST_MODULE, 120, rootSafe( new RackApplicationComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( Phase.INSTALL, 2100, rootSafe( new VirtualHostInstaller() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new RackApplicationComponentResolverInstaller() ) );
+        processorTarget.addDeploymentProcessor( WebExtension.SUBSYSTEM_NAME, Phase.INSTALL, 2100, rootSafe( new VirtualHostInstaller() ) );
     }
 
     protected void addWebConnectorConfigServices(final OperationContext context,
