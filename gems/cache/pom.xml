@@ -37,10 +37,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.torquebox</groupId>
-      <artifactId>torquebox-cache</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-cache</artifactId>
+      <version>${version.polyglot}</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.torquebox</groupId>
@@ -97,20 +97,6 @@
       <artifactId>torquebox-transactions</artifactId>
       <version>${project.version}</version>
       <type>gem</type>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>dm-serializer</artifactId>
-      <version>1.1.0</version>
-      <type>gem</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>rubygems</groupId>
-      <artifactId>dm-core</artifactId>
-      <version>1.1.0</version>
-      <type>gem</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>rubygems</groupId>

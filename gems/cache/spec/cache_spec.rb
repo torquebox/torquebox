@@ -19,9 +19,9 @@ require File.dirname(__FILE__) + '/spec_helper'
 describe TorqueBox::Infinispan::Cache do
   before :each do
     manager = org.infinispan.manager.DefaultCacheManager.new 
-    service = org.torquebox.cache.as.CacheService.new
+    service = org.projectodd.polyglot.cache.as.CacheService.new
     service.stub!(:cache_container).and_return( manager )
-    TorqueBox::ServiceRegistry.stub!(:[]).with(org.torquebox.cache.as.CacheServices::CACHE).and_return( service )
+    TorqueBox::ServiceRegistry.stub!(:[]).with(org.projectodd.polyglot.cache.as.CacheService::CACHE).and_return( service )
     @cache = TorqueBox::Infinispan::Cache.new( :name => 'foo-cache' )
   end
 
@@ -126,9 +126,7 @@ describe TorqueBox::Infinispan::Cache do
   end
 
   it "should increment a sequence" do
-    puts "AAAA"
     @cache.increment("My Sequence Name", 1).should == 1
-    puts "BBBB"
     @cache.increment("My Sequence Name", 1).should == 2
   end
 

@@ -54,9 +54,9 @@ module TorqueBox
         java_import org.infinispan.config.Configuration::CacheMode
         java_import org.infinispan.transaction::TransactionMode
         java_import org.infinispan.transaction::LockingMode
-        java_import org.torquebox.cache.as::CacheServices
+        java_import org.projectodd.polyglot.cache.as::CacheService
         INFINISPAN_AVAILABLE = true
-      rescue NameError
+      rescue NameError => e
         INFINISPAN_AVAILABLE = false
         # Not running inside TorqueBox
       end
@@ -265,7 +265,7 @@ module TorqueBox
       end
 
       def service
-        @service ||= TorqueBox::ServiceRegistry[CacheServices::CACHE]
+        @service ||= TorqueBox::ServiceRegistry[CacheService::CACHE]
       end
 
       def manager
