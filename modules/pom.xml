@@ -16,7 +16,6 @@
   <modules>
     <module>bootstrap</module>
     <module>core</module>
-    <module>cache</module>
     <module>services</module>
     <module>web</module>
     <module>messaging</module>

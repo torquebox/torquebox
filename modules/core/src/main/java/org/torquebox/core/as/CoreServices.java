@@ -30,7 +30,7 @@ public class CoreServices {
     public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
     public static final ServiceName CORE      = TORQUEBOX.append( "core" );
     public static final ServiceName RUNTIME   = CORE.append( "runtime" );
-    public static final ServiceName INJECTION   = CORE.append( "injection" );
+    public static final ServiceName INJECTION = CORE.append( "injection" );
     
     public static final ServiceName GLOBAL_RUBY                   = RUNTIME.append( "global" );
     public static final ServiceName INJECTABLE_HANDLER_REGISTRY   = INJECTION.append( "injectable-handler-registry" );

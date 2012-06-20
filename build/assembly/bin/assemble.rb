@@ -98,7 +98,7 @@ class Assembler
   end
 
   def polyglot_modules
-    @polyglot_modules ||= ['hasingleton']
+    @polyglot_modules ||= ['hasingleton', 'cache']
   end
   
   def install_modules

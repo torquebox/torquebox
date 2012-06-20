@@ -14,13 +14,7 @@
 # limitations under the License.
 #
 
-require 'dm-core/spec/shared/adapter_spec'
-require 'dm-core/spec/lib/pending_helpers'
 require 'cache'
-
-RSpec::Runner.configure do |config|
-  config.include(DataMapper::Spec::PendingHelpers)
-end
 
 def random_string( length = 20 )
   chars = ('a'..'z').to_a + ('A'..'Z').to_a
