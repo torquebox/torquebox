@@ -209,7 +209,7 @@ class Assembler
   end
 
   def transform_standalone_confs
-    torquebox_java_opts = "-Xss2048k"
+    torquebox_java_opts = "-Xss2048k -Djruby.compile.invokedynamic=false"
     tool.transform_standalone_conf( torquebox_java_opts )
     tool.transform_standalone_conf_bat( torquebox_java_opts )
   end
