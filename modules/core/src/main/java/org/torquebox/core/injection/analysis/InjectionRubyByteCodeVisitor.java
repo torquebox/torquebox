@@ -72,19 +72,30 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
             InjectableHandler handler = null;
 
             boolean generic = false;
-            if (isValidInjectCall( node )) {
-                Node argsNode = node.getArgsNode();
-                handler = this.analyzer.getInjectableHandlerRegistry().getHandler( argsNode );
 
-                if (handler == null) {
-                    throw new AmbiguousInjectionException( node.getPosition(), getString( argsNode ) );
-                }
-                generic = true;
-            } else if (callName.startsWith( INJECTION_PREFIX )) {
-                String injectionType = callName.substring( INJECTION_PREFIX.length() );
-                handler = this.analyzer.getInjectableHandlerRegistry().getHandler( injectionType );
-                if (handler == null) {
-                    throw new InvalidInjectionTypeException( node.getPosition(), injectionType );
+            if (this.markerSeen) {
+                if (isValidInjectCall( node )) {
+                    Node argsNode = node.getArgsNode();
+                    handler = this.analyzer.getInjectableHandlerRegistry().getHandler( argsNode );
+
+                    if (handler == null) {
+                        throw new AmbiguousInjectionException( node.getPosition(), getString( argsNode ) );
+                    }
+                    generic = true;
+                } else if (callName.startsWith( INJECTION_PREFIX )) {
+                    String injectionType = callName.substring( INJECTION_PREFIX.length() );
+                    handler = this.analyzer.getInjectableHandlerRegistry().getHandler( injectionType );
+                    if (handler == null) {
+                        throw new InvalidInjectionTypeException( node.getPosition(), injectionType );
+                    }
+                } else if (callName.startsWith( OLD_INJECTION_PREFIX )) {
+                    // this is basically a copy and paste from above, but it's temporary so i figured it didn't warrant
+                    // refactoring this whole thing.
+                    String injectionType = callName.substring( OLD_INJECTION_PREFIX.length() );
+                    handler = this.analyzer.getInjectableHandlerRegistry().getHandler( injectionType );
+                    if (handler == null) {
+                        throw new InvalidInjectionTypeException( node.getPosition(), injectionType );
+                    }
                 }
             }
             if (handler != null && isLegalInjection( node.getArgsNode() )) {
@@ -120,7 +131,8 @@ public class InjectionRubyByteCodeVisitor extends DefaultNodeVisitor {
         this.injectables.clear();
     }
 
-    private static final String INJECTION_PREFIX = "inject_";
+    private static final String INJECTION_PREFIX = "fetch_";
+    private static final String OLD_INJECTION_PREFIX = "inject_";
     public static final String TORQUEBOX_MARKER_MODULE = "TorqueBox::Injectors";
 
     private InjectionAnalyzer analyzer;

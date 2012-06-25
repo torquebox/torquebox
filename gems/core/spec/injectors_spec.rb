@@ -17,5 +17,17 @@ describe TorqueBox::Injectors do
     inject_topic('this').should == :that
   end
 
+  it "should return the same thing for all fetch types" do
+    TorqueBox::Registry.merge!('this' => :that)
+    TorqueBox::Registry['this'].should == :that
+    fetch('this').should == :that
+    fetch_msc('this').should == :that
+    fetch_service('this').should == :that
+    fetch_cdi(:this).should == :that
+    fetch_jndi('this').should == :that
+    fetch_queue('this').should == :that
+    fetch_topic('this').should == :that
+  end
+
 end
 

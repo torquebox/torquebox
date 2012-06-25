@@ -8,11 +8,11 @@ module TheModule
     include *incs
     
     def initialize()
-      @random = inject_msc('org.jboss.whatever.Thing')
+      @random = fetch_msc('org.jboss.whatever.Thing')
     end
     
     def do_something()
-      @something = inject_jndi('java:/comp/whatever' )
+      @something = fetch_jndi('java:/comp/whatever' )
     end
     
   end

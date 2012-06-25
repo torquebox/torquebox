@@ -25,7 +25,7 @@ module ActiveRecord
 
       def configurations
         xa_configs = configurations_before_torquebox.dup
-        inject( 'xa-ds-info' ).configurations.each do |config|
+        fetch( 'xa-ds-info' ).configurations.each do |config|
           xa_configs[ config.name ][ 'jndi' ] = config.jndi_name
         end 
         xa_configs 

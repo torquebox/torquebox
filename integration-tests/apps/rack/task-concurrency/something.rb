@@ -7,7 +7,7 @@ class Something
   always_background :foo
 
   def initialize
-    @backchannel = inject("/queues/backchannel")
+    @backchannel = fetch("/queues/backchannel")
   end
 
   def foo

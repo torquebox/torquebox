@@ -188,7 +188,7 @@ public class RubyInjectionUtils {
         // check to make sure it's not a call to Enumerable#inject (it should
         // have a block (iter) in that case)
         return ("inject".equals( callName ) && null == node.getIterNode()) ||
-                "__inject__".equals( callName );
+                "__inject__".equals( callName ) || "fetch".equals( callName );
     }
 
 }

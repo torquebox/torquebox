@@ -152,7 +152,7 @@ end</programlisting></para>
     </para>
     <para>
       The first two methods, <code>default</code> and <code>[]</code> are used
-      to get the default authentication domain or to lookup an authenticator by
+      to get the default authentication domain or to look up an authenticator by
       name.  The last is to actually authenticate a user.  To use the Ruby API,
       require <code>torquebox</code> and <code>torquebox-authentication</code>
       as shown below. This code shows a simple Ruby authentication module that

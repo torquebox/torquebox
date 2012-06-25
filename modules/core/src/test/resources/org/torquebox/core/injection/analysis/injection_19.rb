@@ -11,7 +11,7 @@ module TheModule
     hash19 = { a: 'b' }
 
     ->(a, b=:stabbylambda, *c, d) {
-      inject_jndi('java:/some/hidden/thing')
+      fetch_jndi('java:/some/hidden/thing')
     }
 
     lambda { |a, b=:lambda, *c, d|
@@ -23,11 +23,11 @@ module TheModule
     end
    
     def initialize()
-      @random = inject_msc('org.jboss.whatever.Thing')
+      @random = fetch_msc('org.jboss.whatever.Thing')
     end
     
     def do_something()
-      @something = inject_jndi('java:/comp/whatever' )
+      @something = fetch_jndi('java:/comp/whatever' )
     end
     
   end

@@ -9,15 +9,15 @@ module TheModule
     include ::SomethingElse
     
     def initialize()
-      @random = inject('jboss.web:service=WebServer')
+      @random = fetch('jboss.web:service=WebServer')
     end
     
     def do_something()
-      @something = inject('java:/comp/whatever' )
+      @something = fetch('java:/comp/whatever' )
     end
     
     def another_method() 
-      @another = inject( com.mycorp.mypackage.MyThing )
+      @another = fetch( com.mycorp.mypackage.MyThing )
     end
     
   end

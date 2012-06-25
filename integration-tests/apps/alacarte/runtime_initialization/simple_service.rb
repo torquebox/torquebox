@@ -5,8 +5,8 @@ class SimpleService
   include TorqueBox::Injectors
 
   def initialize(opts={})
-    @queue = inject('/queues/tb_init_test')
-    @context_queue = inject('/queues/service_context')
+    @queue = fetch('/queues/tb_init_test')
+    @context_queue = fetch('/queues/service_context')
   end
 
   def start()

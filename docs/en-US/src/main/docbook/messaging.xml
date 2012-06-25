@@ -444,7 +444,7 @@ require 'torquebox-messaging'
         <para>To send a message, you will need access to a
         <classname>Topic</classname> or <classname>Queue</classname> instance.
         The preferred method for accessing the destination instance is to use
-        <methodname>inject(...)</methodname> (see <xref
+        <methodname>fetch(...)</methodname> (see <xref
         linkend="injectable-destinations" /> for more details). If you need to
         pass options to the instance, or only have access to the destination
         name at runtime, construct either a <classname>Topic</classname> or a
@@ -463,10 +463,10 @@ require 'torquebox-messaging'
         <example>
           <title>Publish text messages</title>
 
-          <para><programlisting>queue = inject('/queues/foo')
+          <para><programlisting>queue = fetch('/queues/foo')
 queue.publish "A text message"
 
-topic = inject('/topics/foo')
+topic = fetch('/topics/foo')
 topic.publish "A text message"
           </programlisting></para>
         </example>
@@ -474,7 +474,7 @@ topic.publish "A text message"
         <example>
           <title>Publish a Ruby Hash</title>
 
-          <para><programlisting>queue = inject('/queues/foo')
+          <para><programlisting>queue = fetch('/queues/foo')
 queue.publish {:key =&gt; 'value', :list =&gt; %w{one two three}}
           </programlisting></para>
 

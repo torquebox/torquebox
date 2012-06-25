@@ -21,17 +21,22 @@ module TorqueBox
   module Injectors
 
     def self.analyze_and_inject(&block)
-      inject( 'runtime-injection-analyzer' ).analyze_and_inject( block )
+      fetch( 'runtime-injection-analyzer' ).analyze_and_inject( block )
     end
 
-    def __inject__(something)
+    def fetch(something)
       TorqueBox::Registry[something.to_s]
     end
-    alias_method :inject, :__inject__
+    alias_method :inject, :fetch
+    alias_method :__inject__, :fetch
     
     %w{ msc service cdi jndi queue topic }.each do |type|
       define_method("inject_#{type}".to_sym) do |key|
-        __inject__(key)
+        fetch(key)
+      end
+
+      define_method("fetch_#{type}".to_sym) do |key|
+        fetch(key)
       end
     end
 

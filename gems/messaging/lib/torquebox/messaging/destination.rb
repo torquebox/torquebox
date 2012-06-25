@@ -50,7 +50,7 @@ module TorqueBox
       def initialize(destination, connection_factory_or_options = nil)
         if connection_factory_or_options.nil? || connection_factory_or_options.is_a?( Hash )
           options = connection_factory_or_options
-          connection_factory = __inject__( 'connection-factory' )
+          connection_factory = fetch( 'connection-factory' )
           unless options.nil?
             # Don't use our internal connection factory if the user
             # has specified a host or port to connect to

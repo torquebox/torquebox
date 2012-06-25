@@ -1,5 +1,5 @@
 extend TorqueBox::Injectors
-service = inject( 'service:LoopyService' )
+service = fetch( 'service:LoopyService' )
 
 puts "Outside Service is: #{service}"
 

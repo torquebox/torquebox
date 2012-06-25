@@ -2,7 +2,7 @@ class TweetRemover
   include TorqueBox::Injectors
   
   def initialize
-    @remover = inject( Java::pl.goldmann.confitura.beans.TweetRemover )
+    @remover = fetch( Java::pl.goldmann.confitura.beans.TweetRemover )
   end
  
   def run

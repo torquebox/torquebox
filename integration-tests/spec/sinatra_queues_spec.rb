@@ -20,7 +20,7 @@ describe "sinatra queues test" do
   remote_describe "jobs check" do
     include TorqueBox::Injectors
     it "should be employed" do
-      msg = inject('/queues/jobs').receive(:timeout => 45000)
+      msg = fetch('/queues/jobs').receive(:timeout => 45000)
       msg.should == "employment!"
     end
   end

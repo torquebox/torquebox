@@ -25,7 +25,7 @@ module TorqueBox
 
       def initialize(jms_connection)
         @jms_connection = jms_connection
-        @tm = inject('transaction-manager')
+        @tm = fetch('transaction-manager')
       end
 
       def start
