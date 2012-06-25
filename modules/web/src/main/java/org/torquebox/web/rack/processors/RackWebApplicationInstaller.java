@@ -152,7 +152,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
         setUpStaticResourceServlet( rackAppMetaData, jbossWebMetaData );
         ensureSomeServlet( rackAppMetaData, jbossWebMetaData );
         try {
-            setUpHostAndContext( unit, rackAppMetaData, warMetaData, jbossWebMetaData );
+            jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
             setUpPoolDependency( rackAppMetaData, jbossWebMetaData );
         } catch (Exception e) {
             throw new DeploymentUnitProcessingException( e );
@@ -276,11 +276,6 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
             List<ServletMappingMetaData> servletMappings = jbossWebMetaData.getServletMappings();
             servletMappings.add( fiveHundredMapping );
         }
-    }
-
-    protected void setUpHostAndContext(DeploymentUnit unit, RackMetaData rackAppMetaData, WarMetaData warMetaData, JBossWebMetaData jbossWebMetaData)
-            throws Exception {
-        jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
     }
 
     protected void setUpPoolDependency(RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
