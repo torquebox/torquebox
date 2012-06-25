@@ -8,6 +8,9 @@ module TorqueBox
       def publish(*args)
         # no-op
       end
+      def receive(*args)
+        # no-op
+      end
     end
   end
 end
