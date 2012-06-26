@@ -18,7 +18,7 @@
     <dependency>
       <groupId>org.jboss.msc</groupId>
       <artifactId>jboss-msc</artifactId>
-      <version>1.0.0.Beta8</version>
+      <version>${version.org.jboss.jboss-msc}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
