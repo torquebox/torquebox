@@ -33,7 +33,6 @@ describe 'cache clustering' do
   end
 
   it "should rollback failed transactional cache objects in the store" do
-    pending "A fix for [TORQUE-855]"
     visit "/cachey-cluster/root/cacheytxthrows"
     page.find("#success").should have_content( "soft" )
   end
