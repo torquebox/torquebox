@@ -18,5 +18,6 @@
 require 'torquebox-core'
 require 'torquebox-naming'
 require 'torquebox-messaging'
+require 'torquebox-cache'
 require 'torquebox-web'
 require 'torquebox-rake-support'
