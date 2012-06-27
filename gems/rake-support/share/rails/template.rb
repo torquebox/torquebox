@@ -84,9 +84,9 @@ end
   INIT
 end
 
-# Create directories for tasks, jobs, services, and processors just for fun
+# Create directories for jobs, services, and processors just for fun
 inside('app') {
-  %w( tasks jobs services processors).each { |dir| FileUtils.mkdir(dir) unless File.exists?(dir) }
+  %w(jobs services processors).each { |dir| FileUtils.mkdir(dir) unless File.exists?(dir) }
 }
 
 app_constant = RAILS_2 ? 'Rails::Application' : app_const
