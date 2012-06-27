@@ -15,7 +15,6 @@ describe "basic rails3 with explicitly constructed cache test" do
   END
 
   it "should work" do
-    pending "A fix for TORQUE-830"
     visit "/basic-with-explicit-cache"
     page.find("#success").should have_content( "TorqueBoxStore" )
   end
