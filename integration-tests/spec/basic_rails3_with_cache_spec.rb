@@ -21,7 +21,12 @@ describe "basic rails3 with cache test" do
 
   it "should use ActiveSupport::Cache::TorqueBoxStore" do
     visit "/basic-cache/root/torqueboxey" 
-    page.find("#success").should have_content( "TorqueBoxStore" )
+    page.find("#type").should have_content( "TorqueBoxStore" )
+  end
+
+  it "should default to local mode" do
+    visit "/basic-cache/root/torqueboxey" 
+    page.find("#mode").should have_content( "LOCAL" )
   end
 
   it "should perform caching" do

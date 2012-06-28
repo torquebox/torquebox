@@ -86,8 +86,8 @@ module TorqueBox
         [:d, :dist, :distributed, :distribution].include? options[:mode]
       end
 
-      def invalidation?
-        options[:mode] == :invalidation
+      def invalidated?
+        [:i, :inv, :invalidated, :invalidation].include? options[:mode] 
       end
 
       def clustered?
@@ -102,9 +102,10 @@ module TorqueBox
           sync ? CacheMode::REPL_SYNC : CacheMode::REPL_ASYNC
         when distributed?
           sync ? CacheMode::DIST_SYNC : CacheMode::DIST_ASYNC
-        else
-          # CacheMode::REPL_ASYNC
+        when invalidated?
           sync ? CacheMode::INVALIDATION_SYNC : CacheMode::INVALIDATION_ASYNC
+        else
+          sync ? CacheMode::DIST_SYNC : CacheMode::DIST_ASYNC
         end
       end
 

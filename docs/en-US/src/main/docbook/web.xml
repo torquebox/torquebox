@@ -250,13 +250,13 @@ web:
     <para>TorqueBox provides an implementation of the <ulink
     url="http://guides.rubyonrails.org/caching_with_rails.html">Rails 3.x
     <code>ActiveSupport::Cache::Store</code></ulink> that exposes your
-    application to the sexy <ulink
+    application to the <ulink
     url="http://infinispan.org">Infinispan</ulink> data grid. Additionally,
     TorqueBox provides similar functionality for Sinatra sessions. See
     specific configuration options in the Ruby Web Frameworks sections below.
-    To learn more about <code>ActiveSupport::Cache::Store</code>, the
-    Infinispan cache, and the many other ways it is used by TorqueBox and can
-    be used by you, please see <xref linkend="cache" />.</para>
+    To learn more about the Infinispan cache, and the many other ways it is
+    used by TorqueBox and can be used by you, please see <xref linkend="cache"
+      />.</para>
   </section>
 
   <section id="rack">
@@ -671,6 +671,7 @@ end</programlisting></para>
       <para><programlisting language="ruby">COUNTERS = ActiveSupport::Cache::TorqueBoxStore.new(:name =&gt; 'counters', 
                                                     :mode =&gt; :replicated, 
                                                     :sync =&gt; true)</programlisting></para>
+      <para>See <xref linkend="cache"/> for additional details.</para>
     </section>
 
     <section>

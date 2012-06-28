@@ -197,36 +197,14 @@ describe ActiveSupport::Cache::TorqueBoxStore do
 
   end
 
-  describe "clustering" do
-    global_config = org.infinispan.configuration.global.GlobalConfigurationBuilder.new.transport.cluster_name("test-cluster").build
-    manager = org.infinispan.manager.DefaultCacheManager.new( global_config ) 
-
-    before(:each) do
-      TorqueBox::ServiceRegistry.stub!(:[]).with(org.jboss.msc.service.ServiceName::JBOSS.append( "infinispan", "torquebox" )).and_return( manager )
+  describe "options when not clustered" do
+    it "should default to :local mode" do
+      TorqueBoxStore.new.clustering_mode.to_s.should == "LOCAL"
     end
-
-    [:repl, :dist, :invalidation].each do |mode|
-      it "should be configurable in #{mode} mode" do
-        pending
-        TorqueBoxStore.new(:mode => mode).clustering_mode.to_s.should == "#{mode.to_s.upcase}_SYNC"
-        TorqueBoxStore.new(:name => 'async', :mode => mode, :sync => false).clustering_mode.to_s.should == "#{mode.to_s.upcase}_ASYNC"
-      end
+    
+    it "should not fail if set to a clustered mode" do
+      TorqueBoxStore.new( :mode => :repl ).clustering_mode.to_s.should == "LOCAL"
     end
-
-    it "should support replicated mode" do
-      pending
-      [:r, :repl, :replicated, :replication].each do |mode|
-        TorqueBoxStore.new(:mode => mode).clustering_mode.should be_replicated
-      end
-    end
-
-    it "should support distributed mode" do
-      pending
-      [:d, :dist, :distributed, :distribution].each do |mode|
-        TorqueBoxStore.new(:mode => mode).clustering_mode.should be_distributed
-      end
-    end
-
   end
 
 end
