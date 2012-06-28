@@ -81,24 +81,12 @@ end</programlisting></para>
 
     end
 
-    def on_timeout
-    
-      # perform work here 
-
-    end
-
   end
 end</programlisting></para>
       </example></para>
 
     <para>From within the class's <methodname>run()</methodname> method, the
-    full application environment is available. In some cases scheduled jobs
-    runs longer than the scheduled interval time, in this case
-    <methodname>on_timeout</methodname> method will be invoked to perform some
-    action before job be interrupted by timeout.</para>
-
-    <para>We will look further in the next sections to understand how to
-    configure job timeouts.</para>
+    full application environment is available.</para>
   </section>
 
   <section id="scheduling-jobs">
@@ -119,8 +107,11 @@ end</programlisting></para>
       information is provided for each job. The block starts with an
       arbitrary name for the job. Each block must also define the job
       class and the schedule specification. Optionally a
-      <parameter>description</parameter> and a
-      <parameter>config</parameter> may be provided. If you do provide
+      <parameter>timeout</parameter>, a <parameter>description</parameter>, and a
+      <parameter>config</parameter> may be provided. Providing a 
+      <parameter>timeout</parameter> will cause the job to be interrupted
+      if it runs beyond the timeout period (see <xref linkend="jobs-timeout" />).
+      If you provide
       a <parameter>config</parameter>, its value will be passed to the
       initialize method of the job class.</para>
 
@@ -137,8 +128,8 @@ end</programlisting></para>
   ..
 jobs:
   mail.notifier:
-    job:         Mail::Notifier
-    cron:        '0 */5 * * * ?'
+    job: Mail::Notifier
+    cron: '0 */5 * * * ?'
     timeout: 50000 ms
     description: Deliver queued mail notifications
     config: 
@@ -149,6 +140,7 @@ jobs:
   job Mail::Notifier do
     name 'mail.notifier' # optional, unless the job class is used by multiple jobs
     cron '0 */5 * * * ?'
+    timeout '5s'
     description 'Deliver queued mail notifications' # optional
     config do
       throttle true
@@ -217,13 +209,72 @@ end</programlisting></para>
       <para>Either day-of-month or day-of-week must be specified using the
       <code>?</code> character, since specifying both is contradictory.</para>
 
-      <para>To configure timeout interruption for long running jobs you must
-      setup <literal>timeout</literal> field and specify time unit suffix
-      where <literal>ms</literal> = milliseconds, <literal>s</literal> =
-      seconds, <literal>m</literal> = minutes and <literal>h</literal> =
-      hours. If no suffix provided, <literal>milliseconds</literal> will be
-      assumed by default. Ex: <literal>timeout: 50 m</literal> will be
-      converted in minutes.</para>
+    </section>
+    <section id="jobs-timeout">
+      <title>Timing Out Jobs</title>
+
+      <para>To keep jobs from running too long, you can set a 
+      <parameter>timeout</parameter> setting for the job. The format of 
+      the timeout is a integer followed by an optional time unit.
+      The available time units are:</para>
+
+      <itemizedlist spacing="compact">
+        <listitem>
+          <para><literal>ms</literal> - milliseconds</para> 
+        </listitem>
+
+        <listitem>
+          <para><literal>s</literal> - seconds</para> 
+        </listitem>
+
+        <listitem>
+          <para><literal>m</literal> - minutes</para> 
+        </listitem>
+
+        <listitem>
+          <para><literal>h</literal> - hours</para> 
+        </listitem>
+
+    </itemizedlist>
+
+    <para>If no unit is provided, seconds are assumed.</para>
+
+    <para>In addition to specifying a timeout parameter, you will also have
+    to implement a <methodname>on_timeout</methodname> method on your job class 
+    that will be called when the timeout occurs. This method is responsible
+    for actually shutting down the job - TorqueBox will not kill the job
+    when the timeout occurs. One approach would be for your job to periodically
+    check a flag while processing, with <methodname>on_timeout</methodname> setting
+    that flag when called.</para>
+
+<para><example>
+        <title>Job with timeout
+        (<filename>mail/notifier.rb</filename>)</title>
+
+        <para><programlisting>module Mail
+  class Notifier
+
+    # optional, only needed if you pass config options to the job
+    def initialize(options = {})
+      @options = options
+      @timeout = false
+    end
+
+    def run()
+      notification_list.each do |n|
+        raise 'Timeout!' if @timeout
+        n.notify
+      end
+    end
+
+    def on_timeout
+      @timeout = true
+    end
+
+  end
+end</programlisting></para>
+      </example></para>
+
     </section>
   </section>
 
