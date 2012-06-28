@@ -1,12 +1,14 @@
 
 class RootController < ApplicationController
 
+
   def index
   end
 
   # Be sure we're using torquebox cache
   def torqueboxey
     @cache_type = Rails.cache.class.name
+    @cache_mode = Rails.cache.clustering_mode
   end
 
   def cachey
@@ -36,14 +38,43 @@ class RootController < ApplicationController
     render "root/cachey"
   end
 
+  # The Rails.cache is using ActiveSupport::Cache::TorqueBoxStore which
+  # defaults to invalidation mode. That mode does not replicate or
+  # distribute values across nodes. So, we'll use an alacarte cache
+  # to test clustered values
+
+  # Clustered tests
+  def clustery
+    cache = TorqueBox::Infinispan::Cache.new
+    @cache_type = cache.class.name
+    @cache_mode = cache.clustering_mode
+    render "root/torqueboxey"
+  end
+
+  def putcache
+    cache = TorqueBox::Infinispan::Cache.new
+    cache.put( "mode", "clustery" )
+    @cache_value = cache.get( "mode" )
+    render "root/cachey"
+  end
+
+  def getcache
+    cache = TorqueBox::Infinispan::Cache.new
+    cache.put( "mode", "clustery" )
+    @cache_value = cache.get( "mode" )
+    render "root/cachey"
+  end
+
   def writecache
-    Rails.cache.write( "mode", "clustery" )
-    @cache_value = Rails.cache.read( "mode" )
+    cache = ActiveSupport::Cache::TorqueBoxStore.new(:mode=>:dist, :name=>'distributed_cache_test')
+    cache.write( "mode", "clustery" )
+    @cache_value = cache.read( "mode" )
     render "root/cachey"
   end
 
   def readcache
-    @cache_value = Rails.cache.read( "mode" )
+    cache = ActiveSupport::Cache::TorqueBoxStore.new(:mode=>:dist, :name=>'distributed_cache_test')
+    @cache_value = cache.read( "mode" )
     render "root/cachey"
   end
 

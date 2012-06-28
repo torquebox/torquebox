@@ -84,6 +84,10 @@ module ActiveSupport
 
       protected
 
+      def defaults
+        {:name=>'__torque_box_store__', :mode => :invalidation, :sync => false}
+      end
+
       def encode value
         Marshal.dump(value).to_java_bytes
       end
@@ -116,7 +120,7 @@ module ActiveSupport
       private
 
       def cache
-        @cache ||= TorqueBox::Infinispan::Cache.new(options.merge({:name=>'__torque_box_store__'}))
+        @cache ||= TorqueBox::Infinispan::Cache.new( defaults.merge(options) )
       end
     end
   end

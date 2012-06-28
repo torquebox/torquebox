@@ -46,12 +46,15 @@
     <formalpara>
       <title>Invalidation</title>
 
-      <para>This is the default mode when TorqueBox runs clustered.
+      <para>
       No data is actually shared among the nodes in this mode. Instead,
       notifications are sent to all nodes when data changes, causing them to
-      evict their stale copies of
-      the updated entry. This mode works very well for Rails' fragment and
-      action caching.</para>
+      evict their stale copies of the updated entry. This mode works best when
+      the infinispan data store is backed by a single, canonical data source
+      such as a relational database. It also works very well for Rails' 
+      fragment and action caching, and is the default mode for the cache
+      underlying <code>ActiveSupport::Cache::TorqueBoxStore</code>.
+    </para>
     </formalpara>
 
     <formalpara>
@@ -67,7 +70,8 @@
     <formalpara>
       <title>Distributed</title>
 
-      <para>This mode enables Infinispan clusters to achieve "linear
+      <para>This is the default mode for a la carte caches when TorqueBox runs
+      clustered.  This mode enables Infinispan clusters to achieve "linear
       scalability". Cache entries are copied to a fixed number of cluster
       nodes (2, by default) regardless of the cluster size. Distribution
       uses a consistent hashing algorithm to determine which nodes will
@@ -81,9 +85,7 @@
     <para>The <code>TorqueBox::Infinispan::Cache</code> supports a number
       of options.  All components that use the cache as their underlying
       storage, e.g. <code>ActiveSupport::Cache::TorqueBoxStore</code>
-      <!--and <code>dm-infinispan-adapter</code>-->
-      as well as the 
-      <code>Cache</code> class itself accept a hash of options.
+      as well as the <code>Cache</code> class itself accept a hash of options.
       The common options for all cache components are:</para>
 
     <table>
@@ -106,7 +108,7 @@
           <row>
             <entry><parameter>:mode</parameter></entry>
 
-            <entry><parameter>:invalidation</parameter></entry>
+            <entry><parameter>:distributed</parameter></entry>
 
             <entry>Any of the following will result in
             <emphasis>replicated</emphasis> mode: <itemizedlist>
@@ -142,9 +144,24 @@
                 <listitem>
                   <para><parameter>:distribution</parameter></para>
                 </listitem>
-              </itemizedlist> Any other value for
+              </itemizedlist> Any of the following will result in
+              <emphasis>invalidation</emphasis> mode: <itemizedlist>
+                <listitem>
+                  <para><parameter>:i</parameter></para>
+                </listitem>
+                <listitem>
+                  <para><parameter>:inv</parameter></para>
+                </listitem>
+                <listitem>
+                  <para><parameter>:invalidated</parameter></para>
+                </listitem>
+                <listitem>
+                  <para><parameter>:invalidation</parameter></para>
+                </listitem>
+              </itemizedlist>
+              Any other value for
             <parameter>:mode</parameter> will result in
-            <emphasis>invalidation</emphasis> when clustered and
+            <emphasis>distributed</emphasis> when clustered and
             <emphasis>local</emphasis> otherwise.</entry>
           </row>
 
@@ -178,27 +195,9 @@
               <parameter>:persist</parameter> which is a path to a writable
               directory will be used for cache storage.</entry>
           </row>
-          <!--
-          <row>
-            <entry><parameter>:index</parameter></entry>
-
-            <entry>false</entry>
-
-            <entry>The <parameter>:index</parameter> option enables indexing
-            of the entries and their fields in the cache for searching.  This
-            allows cache clients to retrieve values from the cache without
-            knowing their keys. The requirements placed on the objects being
-            stored are determined by Infinispan and Hibernate Search and are
-            beyond the scope of this explanation.  This option is currently
-            enabled only for <code>dm-infinispan-adapter</code> model indexing and
-            searching. Use with extreme caution.</entry>
-          </row>
-          -->
           <row>
             <entry><parameter>:transaction_mode</parameter></entry>
-
             <entry><parameter>:transactional</parameter></entry>
-
             <entry>By default, all local caches are transactional. If you
               don't need transactions, set this to <parameter>:non_transactional</parameter>.
             </entry>
@@ -317,12 +316,17 @@ cache.transaction do
   </section>
 
   <section id='torque-box-store-usage'>
-    <title>ActiveSupport::Cache::Store Options and Usage</title>
+    <title>ActiveSupport::Cache::TorqueBoxStore Options and Usage</title>
 
     <para>
       As noted in <xref linkend='web'/> the TorqueBox store can be used for 
       all of the implicit caching within Rails and session storage within
-      Sinatra. 
+      Sinatra. <emphasis>NB:</emphasis>The <code>TorqueBoxStore</code> uses 
+      <code>:invalidation</code> as it's default mode. If you will be using
+      the Rails cache to explicitly store and retreive values across a cluster
+      you should change the default clustering mode to <code>:replicated</code>
+      or <code>:distributed</code> mode.
+      <programlisting>config.cache_store = :torque_box_store, {:mode => :distributed}</programlisting>
     </para>
 
     <para> 
@@ -340,51 +344,6 @@ cache.transaction do
     </para>
   </section>
 
-  <!--
-  <section id='dm-infinispan-adapter'>
-    <title>dm-infinispan-adapter Options and Usage</title>
-    <para><code>TorqueBox</code> also provides support for storing, searching and
-      retrieving <code>DataMapper</code> models within Infinispan using the
-      <code>dm-infinispan-adapter</code> gem.  Usage is simple and, aside from the 
-      <code>TorqueBox</code> runtime requirement, no different than any other
-      <code>DataMapper</code> adapter.  Simply add <code>torquebox-cache</code> to
-      your Gemfile and require <code>dm-infinispan-adapter</code> as shown below.
-    </para>
-    <programlisting>
-      require 'dm-core'
-      require 'dm-infinispan-adapter'
-
-      class Beer
-        include DataMapper::Resource
-
-        property :id, Serial
-        property :name, String
-        property :rating, Integer
-        property :notes, Text
-
-        belongs_to :user
-      end
-
-      class User
-        include DataMapper::Resource
-
-        property :id, Serial
-        property :name, String
-
-        has n, :beers
-      end
-
-      DataMapper.setup(:default, :adapter=>'infinispan', :persist=>true)
-      DataMapper.finalize</programlisting>
-    <para>
-      The <code>DataMapper.setup</code> method accepts an optional hash
-      as the final parameter. In the example above, we are specifying that
-      the cache data should be persisted through server restarts. You may
-      also provide any of the options mentioned above for the <code>Cache</code>
-      and they will be passed on to the <code>Cache</code> constructor.
-    </para>
-  </section>
-  -->
 </chapter>
 
 
