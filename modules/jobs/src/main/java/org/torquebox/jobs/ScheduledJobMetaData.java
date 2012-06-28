@@ -19,11 +19,12 @@
 
 package org.torquebox.jobs;
 
-import org.jboss.as.server.deployment.AttachmentKey;
-import org.jboss.as.server.deployment.AttachmentList;
-
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.jboss.as.server.deployment.AttachmentKey;
+import org.jboss.as.server.deployment.AttachmentList;
+import org.projectodd.polyglot.core.util.TimeInterval;
 
 public class ScheduledJobMetaData {
     public static final AttachmentKey<AttachmentList<ScheduledJobMetaData>> ATTACHMENTS_KEY = 
@@ -105,29 +106,19 @@ public class ScheduledJobMetaData {
         return this.rubySchedulerName;
     }
 
-    public long getTimeout() {
-        return timeout;
+    public TimeInterval getTimeout() {
+        return this.timeout;
     }
 
-    public void setTimeout(long timeout, TimeUnit unit) {
-        if (timeout < 0) {
-            this.timeout = -1;
-            return;
-        }
-        long convertedTimeout = TimeUnit.SECONDS.convert( timeout, unit );
-
-        if (convertedTimeout > Integer.MAX_VALUE) {
-            this.timeout = Integer.MAX_VALUE;
-        } else {
-            this.timeout = (int) convertedTimeout;
-        }
+    public void setTimeout(TimeInterval timeout) {
+        this.timeout = timeout;
     }
-
+    
     private String group;
     private String name;
     private String description;
     private String cronExpression;
-    private long timeout;
+    private TimeInterval timeout;
     private String rubyClassName;
     private String rubyRequirePath;
     private Map<String, Object> parameters;

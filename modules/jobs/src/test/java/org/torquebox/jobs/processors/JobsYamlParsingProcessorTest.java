@@ -26,10 +26,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.junit.Before;
 import org.junit.Test;
+import org.projectodd.polyglot.core.util.TimeInterval;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
@@ -98,8 +100,8 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "My long running job has timeout", jobFour.getDescription() );
         assertEquals( "01 01 01 15 * ?", jobFour.getCronExpression() );
         assertEquals( "MyLongRunningJob", jobFour.getRubyClassName() );
-        assertEquals( 5, jobFour.getTimeout() );
-        assertFalse( jobFour.isSingleton() );
+        assertEquals( new TimeInterval( 5000, TimeUnit.MILLISECONDS ), jobFour.getTimeout() );
+        assertTrue( jobFour.isSingleton() );
         assertNotNull( jobFour.getGroup() );
 
         assertEquals( jobOne.getGroup(), jobTwo.getGroup() );
@@ -121,9 +123,8 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "My Job is routine", jobOne.getDescription() );
         assertEquals( "01 * * * * ?", jobOne.getCronExpression() );
         assertEquals( "MyNoUnitJobClass", jobOne.getRubyClassName() );
-        assertEquals( 60, jobOne.getTimeout() );
-
-        assertFalse( jobOne.isSingleton() );
+        assertEquals( new TimeInterval( 60, TimeUnit.SECONDS ), jobOne.getTimeout() );
+        assertTrue( jobOne.isSingleton() );
         assertNotNull( jobOne.getGroup() );
 
     }

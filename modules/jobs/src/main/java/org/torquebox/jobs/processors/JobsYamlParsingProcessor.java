@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
-import org.projectodd.polyglot.core.util.TimeIntervalUtil;
+import org.projectodd.polyglot.core.util.TimeInterval;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.core.util.StringUtils;
 import org.torquebox.jobs.ScheduledJobMetaData;
@@ -79,15 +79,10 @@ public class JobsYamlParsingProcessor extends AbstractSplitYamlParsingProcessor 
             unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMetaData );
 
             String timeoutStr = jobSpec.containsKey( "timeout" ) ?
-                jobSpec.get( "timeout" ).toString() : null;
+                    jobSpec.get( "timeout" ).toString() : null;
 
-            if (timeoutStr != null) {
-                TimeIntervalUtil.IntervalData timeout = TimeIntervalUtil.parseInterval( timeoutStr, TimeUnit.SECONDS );
-                    
-                if (timeout != null) {
-                    jobMetaData.setTimeout(timeout.interval, timeout.unit);
-                }
-            }
+            jobMetaData.setTimeout( TimeInterval.parseInterval( timeoutStr, TimeUnit.SECONDS ) );
+           
         }
     }
 

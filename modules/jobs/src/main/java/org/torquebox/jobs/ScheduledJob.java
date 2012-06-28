@@ -19,21 +19,22 @@
 
 package org.torquebox.jobs;
 
+import java.text.ParseException;
+
 import org.jboss.logging.Logger;
 import org.jboss.msc.inject.Injector;
 import org.jboss.msc.value.InjectedValue;
 import org.jboss.msc.value.Value;
+import org.projectodd.polyglot.core.util.TimeInterval;
 import org.projectodd.polyglot.jobs.BaseScheduledJob;
 import org.quartz.SchedulerException;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
-import java.text.ParseException;
-
 public class ScheduledJob extends BaseScheduledJob implements ScheduledJobMBean {
     public static final String RUNTIME_POOL_KEY = "torquebox.ruby.pool";
 	
-    public ScheduledJob(String group, String name, String description, String cronExpression, long timeout, boolean singleton, String rubyClassName) {
+    public ScheduledJob(String group, String name, String description, String cronExpression, TimeInterval timeout, boolean singleton, String rubyClassName) {
         super( RubyJobProxy.class, group, name, description, cronExpression, timeout, singleton );
         this.rubyClassName = rubyClassName;
     }
