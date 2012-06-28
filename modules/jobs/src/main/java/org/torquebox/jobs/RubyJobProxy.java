@@ -21,15 +21,17 @@ package org.torquebox.jobs;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
-import org.quartz.*;
+import org.quartz.InterruptableJob;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.StatefulJob;
+import org.quartz.UnableToInterruptJobException;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.component.JobComponent;
 
 public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
-
-    private Ruby ruby;
-    private JobComponent job;
 
     public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver) {
         this.runtimePool = runtimePool;
@@ -38,33 +40,39 @@ public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
-         try {
-             ruby = this.runtimePool.borrowRuntime( resolver.getComponentName() );
-             job = (JobComponent)resolver.resolve( ruby );
-             job.run();
-         } catch (Exception e) {
-        	 throw new JobExecutionException( e );
-         } finally {
-        	 if (ruby != null) {
-        		 this.runtimePool.returnRuntime( ruby );
-        	 }
-         }
+        Ruby ruby = null;
+        JobComponent job;
+
+        try {
+            ruby = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
+            job = (JobComponent)resolver.resolve( ruby );
+            job.run();
+        } catch (Exception e) {
+            throw new JobExecutionException( e );
+        } finally {
+            if (ruby != null) {
+                this.runtimePool.returnRuntime( ruby );
+            }
+        }
     }
 
     @Override
     public void interrupt() throws UnableToInterruptJobException {
-         log.info("|||||||||||||||||||| Interruption Job  ||||||||||||||||||||");
-         try {
-             ruby = this.runtimePool.borrowRuntime( resolver.getComponentName() );
-             job = (JobComponent)resolver.resolve( ruby );
-             job.onTimeout();
-         } catch (Exception e) {
-        	 throw new UnableToInterruptJobException( e );
-         } finally {
-        	 if (ruby != null) {
-        		 this.runtimePool.returnRuntime( ruby );
-        	 }
-         }
+        log.warn( "Interrupting job " + this.resolver.getComponentName() );
+        Ruby ruby = null;
+        JobComponent job;
+
+        try {
+            ruby = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
+            job = (JobComponent)resolver.resolve( ruby );
+            job.onTimeout();
+        } catch (Exception e) {
+            throw new UnableToInterruptJobException( e );
+        } finally {
+            if (ruby != null) {
+                this.runtimePool.returnRuntime( ruby );
+            }
+        }
     }
 
     private RubyRuntimePool runtimePool;
