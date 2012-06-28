@@ -31,6 +31,7 @@
     <domain.mode>false</domain.mode>
     <ruby.compat.version>1.8</ruby.compat.version>
     <spec.dir>spec</spec.dir>
+    <integ.debug>false</integ.debug>
   </properties>
 
   <dependencyManagement>
@@ -579,6 +580,10 @@
                 <property>
                   <name>domain.mode</name>
                   <value>${domain.mode}</value>
+                </property>
+                <property>
+                  <name>integ.debug</name>
+                  <value>${integ.debug}</value>
                 </property>
               </systemProperties>
             </configuration>

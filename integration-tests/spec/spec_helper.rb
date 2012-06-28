@@ -21,6 +21,10 @@ TorqueSpec.configure do |config|
   #config.jvm_args += " -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"
   config.knob_root = File.expand_path( File.join( File.dirname( __FILE__ ), '..', 'target', 'knobs' ) )
   config.spec_dir = File.dirname( __FILE__ )
+
+  if java.lang::System.getProperty( "integ.debug" ) == "true"
+    config.jvm_args += " -Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y"
+  end
 end
 FileUtils.mkdir_p(TorqueSpec.knob_root) unless File.exist?(TorqueSpec.knob_root)
 FileUtils.mkdir_p( jboss_log_dir ) unless File.exist?( jboss_log_dir )
