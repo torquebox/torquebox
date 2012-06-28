@@ -1,0 +1,34 @@
+
+jobs:
+  timeout-real:
+    job: LongRunningJob
+    cron: "*/3 * * * * ?"
+    timeout: 5 s
+    config:
+      queue: /queue/timeout-real
+
+  timeout0s:
+    job: LongRunningJob
+    cron: "*/3 * * * * ?"
+    timeout: 0s
+    config:
+      queue: /queue/timeout0s
+
+  notimeout:
+    job: LongRunningJob
+    cron: "*/3 * * * * ?"
+    config:
+      queue: /queue/notimeout
+
+queues:
+  /queue/timeout-real:
+    durable: false
+  /queue/timeout0s:
+    durable: false
+  /queue/notimeout:
+    durable: false
+
+pooling:
+  jobs:
+    min: 3
+    max: 5
