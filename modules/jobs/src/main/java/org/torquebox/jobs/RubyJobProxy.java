@@ -33,54 +33,51 @@ import org.torquebox.jobs.component.JobComponent;
 
 public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
 
-    public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver) {
+    public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver, String jobName) {
         this.runtimePool = runtimePool;
         this.resolver = resolver;
+        this.jobName = jobName;
     }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         Ruby ruby = null;
-        JobComponent job;
-
+        
         try {
             ruby = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
-            job = (JobComponent)resolver.resolve( ruby );
-            job.run();
+            this.job = (JobComponent)resolver.resolve( ruby );
+            this.running = true;
+            this.job.run();
         } catch (Exception e) {
             throw new JobExecutionException( e );
         } finally {
             if (ruby != null) {
                 this.runtimePool.returnRuntime( ruby );
             }
+            this.running = false;
         }
     }
 
     @Override
     public void interrupt() throws UnableToInterruptJobException {
-        log.warn( "Interrupting job " + this.resolver.getComponentName() );
-        Ruby ruby = null;
-        JobComponent job;
-
-        try {
-            ruby = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
-            job = (JobComponent)resolver.resolve( ruby );
-            job.onTimeout();
-        } catch (Exception e) {
-            throw new UnableToInterruptJobException( e );
-        } finally {
-            if (ruby != null) {
-                this.runtimePool.returnRuntime( ruby );
+        if (this.running) {
+            log.warn( "Interrupting job " + this.jobName );
+            try {   
+                this.job.onTimeout();
+            } catch (Exception e) {
+                throw new UnableToInterruptJobException( e );
             }
+        } else if (this.job == null) {
+            log.warn( "Attempted to interrupt job '" + this.jobName + "' before it started executing." );
         }
     }
 
     private RubyRuntimePool runtimePool;
     private ComponentResolver resolver;
-
-    @SuppressWarnings("unused")
+    private JobComponent job;
+    private String jobName;
+    private boolean running = false;
+    
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
-
-
 
 }
