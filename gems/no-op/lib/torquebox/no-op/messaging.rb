@@ -17,7 +17,16 @@ module TorqueBox
     end
 
     class MessageProcessor
-
+    end
+    
+    class Queue
+      def publish(*args)
+        # no-op
+      end
+      
+      def receive(*args)
+        # no-op
+      end
     end
   end
 end
