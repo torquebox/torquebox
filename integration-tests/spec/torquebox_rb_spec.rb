@@ -19,6 +19,11 @@ describe "an app using a torquebox.rb" do
       page.find("#success")[:class].should =~ /baz/
     end
 
+    it "should be in the correct dir" do
+      page.find("#dir").text.should =~ %r{apps/rack/basic-torquebox-rb/config$}
+    end
+
+
     it "should have a pool specified with a hash" do
       lambda { 
         mbean('torquebox.pools:name=foo,app=an_app_using_a_torquebox_rb') do |pool|

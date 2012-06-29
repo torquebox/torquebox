@@ -1,5 +1,6 @@
+
 TorqueBox.configure do
-  environment 'biscuit' => 'gravy'
+  environment 'biscuit' => 'gravy', 'dir' => File.expand_path(File.dirname(__FILE__))
   
   environment { 
     HAM :biscuit
