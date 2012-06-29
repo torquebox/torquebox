@@ -24,7 +24,9 @@ module TorqueBox
     def self.load_configuration(file, config, entry_map)
       Thread.current[:torquebox_config] = config
       Thread.current[:torquebox_config_entry_map] = entry_map
-      eval( File.read( file ) )
+      Dir.chdir( File.dirname( file ) ) do
+        eval( File.read( file ) )
+      end
       config
     end
 
