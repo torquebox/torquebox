@@ -73,6 +73,23 @@ describe 'cache clustering' do
       page.find("#success").should have_content( "clustery" )
     end
 
+    it 'should write to the cache on one server and read values on another using :replicated mode' do
+      host1 = "http://#{domain_host_for(:server1)}:#{domain_port_for(:server1, 8080)}"
+      host2 = "http://#{domain_host_for(:server2)}:#{domain_port_for(:server2, 8080)}"
+      visit "#{host1}/cachey-cluster/root/putrepl"
+      page.find("#success").should have_content( "clustery" )
+      visit "#{host2}/cachey-cluster/root/getrepl"
+      page.find("#success").should have_content( "clustery" )
+    end
+
+    it 'should read/write across the cluster in message processors' do
+      host1 = "http://#{domain_host_for(:server1)}:#{domain_port_for(:server1, 8080)}"
+      host2 = "http://#{domain_host_for(:server2)}:#{domain_port_for(:server2, 8080)}"
+      visit "#{host1}/cachey-cluster/root/putprocessor"
+      visit "#{host2}/cachey-cluster/root/getprocessor"
+      page.find("#success").should have_content( "clustery" )
+    end
+
   end
 
 end

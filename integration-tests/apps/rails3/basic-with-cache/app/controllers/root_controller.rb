@@ -1,6 +1,7 @@
 
 class RootController < ApplicationController
 
+  include TorqueBox::Injectors
 
   def index
   end
@@ -45,37 +46,77 @@ class RootController < ApplicationController
 
   # Clustered tests
   def clustery
-    cache = TorqueBox::Infinispan::Cache.new
-    @cache_type = cache.class.name
-    @cache_mode = cache.clustering_mode
+    @cache_type = defaultcache.class.name
+    @cache_mode = defaultcache.clustering_mode
     render "root/torqueboxey"
   end
 
   def putcache
-    cache = TorqueBox::Infinispan::Cache.new
-    cache.put( "mode", "clustery" )
-    @cache_value = cache.get( "mode" )
+    defaultcache.put( "mode", "clustery" )
+    @cache_value = defaultcache.get( "mode" )
     render "root/cachey"
   end
 
   def getcache
-    cache = TorqueBox::Infinispan::Cache.new
-    cache.put( "mode", "clustery" )
-    @cache_value = cache.get( "mode" )
+    @cache_value = defaultcache.get( "mode" )
     render "root/cachey"
   end
 
   def writecache
-    cache = ActiveSupport::Cache::TorqueBoxStore.new(:mode=>:dist, :name=>'distributed_cache_test')
-    cache.write( "mode", "clustery" )
-    @cache_value = cache.read( "mode" )
+    storecache.write( "mode", "clustery" )
+    @cache_value = storecache.read( "mode" )
     render "root/cachey"
   end
 
   def readcache
-    cache = ActiveSupport::Cache::TorqueBoxStore.new(:mode=>:dist, :name=>'distributed_cache_test')
-    @cache_value = cache.read( "mode" )
+    @cache_value = storecache.read( "mode" )
     render "root/cachey"
+  end
+
+  def putrepl
+    replcache.put( "mode", "clustery" )
+    @cache_value = replcache.get( "mode" )
+    render "root/cachey"
+  end
+
+  def getrepl
+    @cache_value = replcache.get( "mode" )
+    render "root/cachey"
+  end
+
+  def putprocessor
+    # causes the processor to write to the cache
+    queue = fetch( '/queue/simple_queue' )
+    message = { :action => "write", :message => "clustery" } 
+    queue.publish( message )
+
+    @cache_value = "success"
+    render "root/cachey"
+  end
+
+  def getprocessor
+    # cause the processor to read from the cache 
+    # and publish the value to backchannel
+    queue = fetch( '/queue/simple_queue' )
+    message = { :action => "read" }
+    queue.publish( message )
+
+    queue = fetch( '/queue/backchannel' )
+    @cache_value = queue.receive(:timeout=>3000)
+    render "root/cachey"
+  end
+
+  protected
+  def defaultcache
+    @defaultcache ||= TorqueBox::Infinispan::Cache.new
+  end
+
+  def replcache
+    @replcache ||= TorqueBox::Infinispan::Cache.new(:name=>'testrepl', :mode=>:repl)
+  end
+
+  def storecache
+    @storecache ||= ActiveSupport::Cache::TorqueBoxStore.new(:mode=>:dist, :name=>'distributed_cache_test')
   end
 
 end
