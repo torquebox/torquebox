@@ -38,7 +38,7 @@ public class RubyJobProxyFactory implements JobFactory {
     	JobDetail jobDetail = bundle.getJobDetail();
         
         ComponentResolver resolver = this.componentResolvers.get( jobDetail.getName() );
-        RubyJobProxy rubyJob = new RubyJobProxy( this.runtimePool, resolver, jobDetail.getFullName() );
+        RubyJobProxy rubyJob = new RubyJobProxy( this.runtimePool, resolver, jobDetail );
        
         return rubyJob;
     }

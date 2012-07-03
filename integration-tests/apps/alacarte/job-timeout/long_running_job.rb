@@ -10,7 +10,7 @@ class LongRunningJob
   def run()
     $stderr.puts "Job executing! " + @queue_name
     @response_queue.publish( 'started' )
-    sleep( 10 )
+    sleep( 3 )
     @response_queue.publish( @interrupted ? 'interrupted' : 'done', :properties => { 'completion' => 'true' } )
   end
 

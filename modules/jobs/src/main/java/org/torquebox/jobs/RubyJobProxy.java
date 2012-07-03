@@ -21,8 +21,12 @@ package org.torquebox.jobs;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
+import org.projectodd.polyglot.core.util.TimeInterval;
+import org.projectodd.polyglot.jobs.BaseJob;
+import org.projectodd.polyglot.jobs.TimeoutListener;
 import org.quartz.InterruptableJob;
 import org.quartz.Job;
+import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.StatefulJob;
@@ -31,12 +35,16 @@ import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.component.JobComponent;
 
-public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
+public class RubyJobProxy extends BaseJob implements Job, StatefulJob, InterruptableJob {
 
-    public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver, String jobName) {
+    public RubyJobProxy(RubyRuntimePool runtimePool, ComponentResolver resolver, JobDetail detail) {
+        super( detail.getFullName() );
         this.runtimePool = runtimePool;
         this.resolver = resolver;
-        this.jobName = jobName;
+        TimeInterval timeout = (TimeInterval)detail.getJobDataMap().get( "timeout" );
+        if (timeout != null) {
+            this.addListener( new TimeoutListener( timeout ) );
+        }
     }
 
     @Override
@@ -46,9 +54,12 @@ public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
         try {
             ruby = this.runtimePool.borrowRuntime( this.resolver.getComponentName() );
             this.job = (JobComponent)resolver.resolve( ruby );
+            notifyStarted( context );
             this.running = true;
             this.job.run();
+            notifyFinished( context );
         } catch (Exception e) {
+            notifyError( context, e );
             throw new JobExecutionException( e );
         } finally {
             if (ruby != null) {
@@ -67,6 +78,7 @@ public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
             } catch (Exception e) {
                 throw new UnableToInterruptJobException( e );
             }
+            notifyInterrupted();
         } else if (this.job == null) {
             log.warn( "Attempted to interrupt job '" + this.jobName + "' before it started executing." );
         }
@@ -75,7 +87,6 @@ public class RubyJobProxy implements Job, StatefulJob, InterruptableJob {
     private RubyRuntimePool runtimePool;
     private ComponentResolver resolver;
     private JobComponent job;
-    private String jobName;
     private boolean running = false;
     
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
