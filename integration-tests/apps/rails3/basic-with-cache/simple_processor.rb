@@ -10,10 +10,11 @@ class SimpleProcessor < TorqueBox::Messaging::MessageProcessor
   end
 
   def on_message(body)
+    queue = inject( '/queue/backchannel' )
     if ( body[:action] == "write" )
       @cache.put( 'simple_processor_key', body[:message] )
+      queue.publish( "published #{body[:message]}" )
     else
-      queue = inject( '/queue/backchannel' )
       queue.publish( @cache.get('simple_processor_key') )
     end
   end
