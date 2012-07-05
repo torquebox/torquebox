@@ -404,6 +404,7 @@
       <id>ci</id>
       <properties>
         <driver.type>headless</driver.type>
+        <jboss.max.heap>1536m</jboss.max.heap>
       </properties>
     </profile>
     <profile>
