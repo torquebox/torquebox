@@ -253,10 +253,10 @@ Listen 127.0.0.1:6666
           <title>JGroups Configuration
           (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
 
-          <para><programlisting>&lt;server name="xyz" xmlns="urn:jboss:domain:1.1"&gt;
+          <para><programlisting>&lt;server xmlns="urn:jboss:domain:1.3"&gt;
   &lt;profile&gt;
     ...
-    &lt;subsystem xmlns="urn:jboss:domain:jgroups:1.0" default-stack="tcp"&gt;
+    &lt;subsystem xmlns="urn:jboss:domain:jgroups:1.1" default-stack="tcp"&gt;
       &lt;stack name="tcp"&gt;
         &lt;transport type="TCP" socket-binding="jgroups-tcp" diagnostics-socket-binding="jgroups-diagnostics"/&gt;
         &lt;protocol type="TCPPING"&gt;
@@ -276,8 +276,7 @@ Listen 127.0.0.1:6666
         &lt;protocol type="UFC"/&gt;
         &lt;protocol type="MFC"/&gt;
         &lt;protocol type="FRAG2"/&gt;
-        &lt;protocol type="pbcast.STATE_TRANSFER"/&gt;
-        &lt;protocol type="pbcast.FLUSH"/&gt;
+        &lt;protocol type="RSVP"/&gt;
       &lt;/stack&gt;
     &lt;/subsystem&gt;
     ...
@@ -289,11 +288,13 @@ Listen 127.0.0.1:6666
     ...
   &lt;/socket-binding-group&gt;
 &lt;/server&gt;
-        </programlisting> The most important bit here is the initial_hosts
-          property. Be sure to replace the IP addresses with the correct
-          values for your environment and change the ports from 7600 if you've
-          changed the jgroups-tcp socket binding to a different port on those
-          hosts.</para>
+        </programlisting> The most important bits here are the TCPPING
+        protocol with its initial_hosts property and the
+        default-stack="tcp" attribute and value. Be sure to replace
+        the initial_hosts IP addresses with the correct values for
+        your environment and change the ports from 7600 if you've
+        changed the jgroups-tcp socket binding to a different port on
+        those hosts.</para>
         </example></para>
     </section>
 
@@ -309,10 +310,10 @@ Listen 127.0.0.1:6666
           <title>HornetQ Configuration
           (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
 
-          <para><programlisting>&lt;server name="xyz" xmlns="urn:jboss:domain:1.1"&gt;
+          <para><programlisting>&lt;server xmlns="urn:jboss:domain:1.3"&gt;
   &lt;profile&gt;
     ...
-    &lt;subsystem xmlns="urn:jboss:domain:messaging:1.1"&gt;
+    &lt;subsystem xmlns="urn:jboss:domain:messaging:1.2"&gt;
       &lt;hornetq-server&gt;
         ...
         &lt;connectors&gt;
@@ -323,19 +324,13 @@ Listen 127.0.0.1:6666
         &lt;/connectors&gt;
         ...
         &lt;cluster-connections&gt;
-          &lt;cluster-connection name="default-cluster-connection"&gt;
+          &lt;cluster-connection name="my-cluster"&gt;
             &lt;address&gt;
               jms
             &lt;/address&gt;
             &lt;connector-ref&gt;
               netty
             &lt;/connector-ref&gt;
-            &lt;retry-interval&gt;
-              500
-            &lt;/retry-interval&gt;
-            &lt;forward-when-no-consumers&gt;
-              true
-            &lt;/forward-when-no-consumers&gt;
             &lt;static-connectors&gt;
               &lt;connector-ref&gt;
                 server2-connector
@@ -383,13 +378,13 @@ Listen 127.0.0.1:6666
           <title>mod_cluster Configuration
           (<filename>$JBOSS_HOME/standalone/configuration/standalone-ha.xml</filename>)</title>
 
-          <para><programlisting>&lt;server name="xyz" xmlns="urn:jboss:domain:1.1"&gt;
+          <para><programlisting>&lt;server xmlns="urn:jboss:domain:1.3"&gt;
   &lt;profile&gt;
     ...
-    &lt;subsystem xmlns="urn:jboss:domain:modcluster:1.0"&gt;
-      &lt;mod-cluster-config proxy-list='mod_cluster_host:6666' advertise-socket='modcluster' excluded-contexts='invoker,jbossws,juddi,console'&rt;
+    &lt;subsystem xmlns="urn:jboss:domain:modcluster:1.1"&gt;
+      &lt;mod-cluster-config advertise="false" proxy-list="mod_cluster_host:6666" excluded-contexts="invoker,jbossws,juddi,console"&rt;
         &lt;dynamic-load-provider&rt;
-          &lt;load-metric type='busyness'/&rt;
+          &lt;load-metric type="busyness"/&rt;
         &lt;/dynamic-load-provider&rt;
       &lt;/mod-cluster-config&rt;
     &lt;/subsystem&gt;
@@ -397,11 +392,13 @@ Listen 127.0.0.1:6666
   &lt;/profile&gt;
   ...
 &lt;/server&gt;
-        </programlisting> The changed piece in the configuration above
-        is the proxy-list attribute. It should contain a
-        comma-separated list of host:port entries, where each entry
-        refers to a mod_cluster server. The port (6666) should agree
-        with the Listen directive specified in <xref linkend="mod-cluster-configuration"/>.</para>
+        </programlisting> The changed pieces in the configuration
+        above are the proxy-list and advertise attributes. The
+        proxy-list attribute should contain a comma-separated list of
+        host:port entries, where each entry refers to a mod_cluster
+        server. The port (6666) should agree with the Listen directive
+        specified in <xref
+        linkend="mod-cluster-configuration"/>.</para>
         </example></para>
     </section>
 
