@@ -90,6 +90,11 @@ class RootController < ApplicationController
     message = { :action => "write", :message => "clustery" } 
     queue.publish( message )
 
+    # wait until the processor has spun up and placed the message in
+    # the cache
+    queue = fetch( '/queue/backchannel' )
+    queue.receive( :timeout => 30000 )
+
     @cache_value = "success"
     render "root/cachey"
   end
@@ -102,7 +107,7 @@ class RootController < ApplicationController
     queue.publish( message )
 
     queue = fetch( '/queue/backchannel' )
-    @cache_value = queue.receive(:timeout=>3000)
+    @cache_value = queue.receive( :timeout => 30000 )
     render "root/cachey"
   end
 
