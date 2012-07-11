@@ -32,6 +32,7 @@ import org.projectodd.polyglot.test.as.MockDeploymentPhaseContext;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.projectodd.polyglot.test.as.MockServiceBuilder;
 import org.torquebox.jobs.JobScheduler;
+import org.torquebox.jobs.JobSchedulerMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.jobs.as.JobsServices;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
@@ -39,16 +40,16 @@ import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCase {
     
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         appendDeployer( new JobSchedulerInstaller() );
+        this.phaseContext = createPhaseContext();
+        this.unit = this.phaseContext.getMockDeploymentUnit();
+        this.unit.putAttachment( JobSchedulerMetaData.ATTACHMENT_KEY, new JobSchedulerMetaData() );
     }
     
     /** Ensure that given no jobs, a scheduler is not deployed. */
     @Test
     public void testNoJobsNoScheduler() throws Exception {
-        MockDeploymentPhaseContext phaseContext = createPhaseContext();
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
         deploy( phaseContext );
 
         ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
@@ -60,10 +61,6 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
     /** Ensure that given at least one job, a scheduler is deployed. */
     @Test
     public void testSchedulerDeployment() throws Exception {
-
-        MockDeploymentPhaseContext phaseContext = createPhaseContext();
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
         ScheduledJobMetaData jobMeta = new ScheduledJobMetaData();
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMeta );
         
@@ -86,9 +83,6 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
     @Ignore
     @Test
     public void testSingletonSchedulerDeployment() throws Throwable {
-        MockDeploymentPhaseContext phaseContext = createPhaseContext();
-        MockDeploymentUnit unit = phaseContext.getMockDeploymentUnit();
-        
         ScheduledJobMetaData jobMeta = new ScheduledJobMetaData();
         jobMeta.setSingleton( true );
         unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMeta );
@@ -106,5 +100,29 @@ public class JobSchedulerInstallerTest extends AbstractDeploymentProcessorTestCa
         assertNotNull( scheduler );
     
     }
+    
+    /** Ensure that a thread count is passed through. */
+    @Test
+    public void testWithAThreadCount() throws Exception {
+        this.unit.getAttachment( JobSchedulerMetaData.ATTACHMENT_KEY ).setThreadCount( 55 );
+        ScheduledJobMetaData jobMeta = new ScheduledJobMetaData();
+        unit.addToAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY, jobMeta );
+        
+        deploy( phaseContext );
+
+        ServiceName schedulerServiceName = JobsServices.jobScheduler( unit, false );
+        MockServiceBuilder<?> builder = phaseContext.getMockServiceTarget().getMockServiceBuilder( schedulerServiceName );
+        assertNotNull( builder );
+        
+        Value<?> value = builder.getValue();
+        assertNotNull( value );
+        
+        JobScheduler scheduler = (JobScheduler) value.getValue();
+        assertNotNull( scheduler );
+        
+        assertEquals( 55, scheduler.getThreadCount() );
+    }
+    private MockDeploymentPhaseContext phaseContext;
+    private MockDeploymentUnit unit;
 
 }

@@ -1,5 +1,6 @@
 
 jobs:
+  concurrency: 5
   job.one:
     job: MyJobClass
     description: My Job is routine

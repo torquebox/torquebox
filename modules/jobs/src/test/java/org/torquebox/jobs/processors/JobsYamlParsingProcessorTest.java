@@ -35,6 +35,7 @@ import org.projectodd.polyglot.core.util.TimeInterval;
 import org.projectodd.polyglot.test.as.MockDeploymentUnit;
 import org.torquebox.core.app.processors.AppKnobYamlParsingProcessor;
 import org.torquebox.core.processors.TorqueBoxYamlParsingProcessor;
+import org.torquebox.jobs.JobSchedulerMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.test.as.AbstractDeploymentProcessorTestCase;
 
@@ -61,6 +62,11 @@ public class JobsYamlParsingProcessorTest extends AbstractDeploymentProcessorTes
     public void testValidJobsYml() throws Exception {
         MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "valid-jobs.yml" );
 
+        JobSchedulerMetaData schedulerMetaData = unit.getAttachment( JobSchedulerMetaData.ATTACHMENT_KEY );
+        
+        assertNotNull( schedulerMetaData );
+        assertEquals( 5, schedulerMetaData.getThreadCount() );
+        
         List<ScheduledJobMetaData> allJobMetaData = unit.getAttachmentList( ScheduledJobMetaData.ATTACHMENTS_KEY );
 
         assertNotNull( allJobMetaData );

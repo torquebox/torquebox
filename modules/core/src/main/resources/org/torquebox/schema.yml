@@ -20,7 +20,10 @@
   dependencies: /application/root
   type: map
   arbitrary: true
+  -concurrency: integer
   value-types:
+    integer:
+      required: false
     map:
       job: string
       cron: string

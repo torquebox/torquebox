@@ -33,6 +33,7 @@ import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.core.runtime.RubyRuntimePool;
 import org.torquebox.jobs.JobScheduler;
+import org.torquebox.jobs.JobSchedulerMetaData;
 import org.torquebox.jobs.ScheduledJobMetaData;
 import org.torquebox.jobs.as.JobsServices;
 
@@ -84,8 +85,9 @@ public class JobSchedulerInstaller implements DeploymentUnitProcessor {
     private void buildScheduler(DeploymentPhaseContext phaseContext, boolean singleton) {
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         ServiceName serviceName = JobsServices.jobScheduler( unit, singleton );
-
-        JobScheduler scheduler = new JobScheduler( "JobScheduler$" + unit.getName() );
+        JobSchedulerMetaData schedulerMetaData = unit.getAttachment( JobSchedulerMetaData.ATTACHMENT_KEY );
+        
+        JobScheduler scheduler = new JobScheduler( "JobScheduler$" + unit.getName(), schedulerMetaData.getThreadCount() );
 
         ServiceBuilder<BaseJobScheduler> builder = phaseContext.getServiceTarget().addService( serviceName, scheduler );
         builder.addDependency( CoreServices.runtimePoolName( unit, "jobs" ), RubyRuntimePool.class, scheduler.getRubyRuntimePoolInjector() );

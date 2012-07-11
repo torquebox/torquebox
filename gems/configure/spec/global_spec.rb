@@ -414,7 +414,9 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                      } ] ],
         'options_for' => {
           FakeConstant.new( 'Backgroundable' ) => { :concurrency => 42 },
-          'messaging' => { :default_message_encoding => :biscuit }
+          'messaging' => { :default_message_encoding => :biscuit },
+          'jobs' => { :concurrency => 55 }
+          
         },
         'pool' => {
           'web' => { :type => :shared },
@@ -477,7 +479,11 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     it "should properly set messaging options from options_for" do
       @metadata['messaging']['default_message_encoding'].should == 'biscuit'
     end
-    
+
+    it "should properly set jobs options from options_for" do
+      @metadata['jobs']['concurrency'].should == 55
+    end
+
     it "should properly set task options from options_for" do
       @metadata['tasks']['Backgroundable']['concurrency'].should == 42
     end

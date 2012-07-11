@@ -276,6 +276,43 @@ end</programlisting></para>
       </example></para>
 
     </section>
+
+    <section id="jobs-concurrency">
+      <title>Job Concurrency</title>
+
+      <para>Quartz manages its own thread pool for running jobs. By default,
+      this pool contains three threads. If you have more than three jobs executing
+      at the same time, you may want to increase this pool size. You can do so via
+      the <parameter>concurrency</parameter> setting.</para>
+
+      <para><example>
+          <title>Setting job concurrency</title>
+
+          <para>Using the YAML syntax:<programlisting>application:
+  ..
+jobs:
+  concurrency: 10
+  mail.notifier:
+    job: Mail::Notifier
+    cron: '0 */5 * * * ?'</programlisting></para>
+
+          <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  options_for :jobs, :concurrency => 10
+
+  job Mail::Notifier do
+    name 'mail.notifier' # optional, unless the job class is used by multiple jobs
+    cron '0 */5 * * * ?'
+  end
+end</programlisting></para>
+        </example></para>
+        
+        <para>Note that if you are using a bounded runtime pool for the jobs
+        subsystem that is smaller than the concurrency setting, your
+        available concurrency will be limited to the pool size. See <xref
+        linkend="pooling" /> for more details.</para>
+    </section>
+
   </section>
 
   <section id="clustered-jobs">

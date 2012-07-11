@@ -139,10 +139,15 @@ module TorqueBox
               job.merge!( data )
             end
 
-          when 'options_for' # => tasks:, messaging:\n  default_message_encoding:
+          when 'options_for' # => tasks:, messaging:\n default_message_encoding:, jobs:\n concurrency:
             if (messaging_opts = entry_data.delete( 'messaging' )) &&
                 (default_encoding = messaging_opts.delete( :default_message_encoding ))
               metadata['messaging']['default_message_encoding'] = default_encoding.to_s
+            end
+
+            if (job_opts = entry_data.delete( 'jobs' )) &&
+                (concurrency = job_opts.delete( :concurrency ))
+              metadata['jobs']['concurrency'] = concurrency.to_java(java.lang.Integer)
             end
 
             entry_data.each do |name, data|

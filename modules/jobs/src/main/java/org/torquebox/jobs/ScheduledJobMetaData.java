@@ -20,7 +20,6 @@
 package org.torquebox.jobs;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;

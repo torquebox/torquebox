@@ -31,8 +31,8 @@ import org.torquebox.core.runtime.RubyRuntimePool;
 
 public class JobScheduler extends BaseJobScheduler  {
 
-	public JobScheduler(String name) {
-		super( name );
+	public JobScheduler(String name, int threadCount) {
+		super( name, threadCount );
 	}
 	
     public void start() throws IOException, SchedulerException {
