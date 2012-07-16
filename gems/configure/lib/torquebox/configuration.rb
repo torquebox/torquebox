@@ -178,7 +178,7 @@ module TorqueBox
         s = <<-END
           module ::#{name}
             def self.const_missing(k)
-              FakeConstant.new( "#{name}::" + k.to_s )
+              FakeConstant.new( "#{name}::" + k.to_s ).to_const
             end
           end
         END
