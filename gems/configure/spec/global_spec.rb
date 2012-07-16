@@ -350,8 +350,21 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
         job 'One::AJob', :cron => '1234'
         job 'Two::AJob', :cron => '1234'
       end
+      
+      config['<root>']['job'].should == [['One::AJob', { :cron => '1234' }],
+                                         ['Two::AJob', { :cron => '1234' }]]
+    end
 
-      config['<root>']['job'].should == [['One::AJob', { :cron => '1234' }], ['Two::AJob', { :cron => '1234' }]]
+    it "should allow jobs as constants" do
+      config = TorqueBox.configure do |cfg|
+        cfg.instance_eval("job JobX, :cron => '1234'")
+        cfg.instance_eval("job Mod1::JobY, :cron => '1234'")
+        cfg.instance_eval("job Mod2::Mod3::JobZ, :cron => '1234'")
+      end
+
+      config['<root>']['job'].should == [['JobX', { :cron => '1234' }],
+                                         ['Mod1::JobY', { :cron => '1234' }],
+                                         ['Mod2::Mod3::JobZ', { :cron => '1234' }]]
     end
 
     it "should allow cron to be set in a block" do
