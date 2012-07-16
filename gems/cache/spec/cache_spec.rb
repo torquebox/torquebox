@@ -141,6 +141,37 @@ describe TorqueBox::Infinispan::Cache do
     @cache.get('a false value').should be_false
   end
 
+  it "should allow symbols as keys for basic put" do
+    @cache.put(:asymbol, "a value")
+    @cache.get(:asymbol).should == "a value"
+  end
+
+  it "should allow symbols as keys for put_if_absent" do
+    @cache.put_if_absent(:asymbol, "a value")
+    @cache.get(:asymbol).should == "a value"
+  end
+
+  it "should allow symbols as keys for increment" do
+    @cache.increment :countsymbol
+    @cache.get(:countsymbol).should == "1"
+    @cache.increment(:countsymbol).should == 2
+  end
+
+  it "should store and retrieve zero" do
+    @cache.put(:mynumber, 0)
+    @cache.get(:mynumber).should == 0
+  end
+
+  it "should store and retrieve integers" do
+    @cache.put(:mynumber, 30)
+    @cache.get(:mynumber).should == 30
+  end
+
+  it "should store and retrieve floats" do
+    @cache.put(:mynumber, 1.0)
+    @cache.get(:mynumber).should == 1.0
+  end
+
   it "should expire entries based on provided expiry durations" do
     cache = TorqueBox::Infinispan::Cache.new( :name => 'expiring-cache' )
     cache.put("foo", "bar", 0.1)
