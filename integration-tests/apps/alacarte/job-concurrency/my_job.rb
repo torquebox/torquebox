@@ -8,7 +8,7 @@ class MyJob
 
   def run()
     @queue.publish("job-#{@number}")
-    sleep(5)
+    sleep(10)
   end
 
 end

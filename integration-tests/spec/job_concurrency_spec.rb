@@ -21,7 +21,7 @@ describe "job concurrency" do
     results = []
     results << queue.receive(:timeout => 120_000)
     4.times do
-      results << queue.receive(:timeout => 1_000)
+      results << queue.receive(:timeout => 5_000)
     end
 
     expected = []
