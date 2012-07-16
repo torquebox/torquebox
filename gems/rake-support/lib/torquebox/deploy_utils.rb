@@ -151,6 +151,9 @@ module TorqueBox
           # app. Otherwise, they'll end up sharing this Gemfile, which
           # is probably not what we want.
           ENV.delete('BUNDLE_GEMFILE')
+          # If called from rake within a rails app, bundler will try
+          # to init itself via RUBYOPT, which we don't want
+          ENV.delete('RUBYOPT') 
 
           set_java_opts(options[:jvm_options])
           exec_command(run_command_line(options).join(' '))
