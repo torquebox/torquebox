@@ -81,7 +81,6 @@ module TorqueBox
       end
 
       def self.const_missing(name)
-        puts "CONST_MISSING #{name}"
         FakeConstant.new( name ).to_const
       end
 
@@ -174,7 +173,7 @@ module TorqueBox
     class FakeConstant
       def initialize(name)
         @name = name.to_s
-        puts "MODULE #{name}"
+
         s = <<-END
           module ::#{name}
             def self.const_missing(k)
@@ -183,7 +182,6 @@ module TorqueBox
           end
         END
 
-        puts "eval #{s}"
         eval s
  
       end
