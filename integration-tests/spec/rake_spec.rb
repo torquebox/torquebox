@@ -171,6 +171,10 @@ describe "rake tasks" do
 
       File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == false
       File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}.dodeploy").should == false
+      # sleep for a few more seconds to ensure things are actually
+      # undeployed inside AS7 vs the undeployment simply being picked
+      # up by the deployment scanner
+      sleep 3
     end
 
   def root_dir
