@@ -73,13 +73,14 @@ def assert_paths_are_equal(actual, expected)
   normalize_path(actual).should eql(normalize_path(expected))
 end
 
-def domain_host_for(server)
-  'localhost'
-end
-
-def domain_port_for(server, base_port)
-  port_offset = 100
-  server == :server1 ? base_port : base_port + port_offset
+def wait_for(timeout, interval, condition)
+  start_time = Time.now
+  while (Time.now - start_time < timeout) do
+    value = yield
+    return value if condition.call(value)
+    sleep(interval)
+  end
+  nil
 end
 
 # JRuby 1.6.7.2 in 1.9 mode has a bug where it needs ObjectSpace for

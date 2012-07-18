@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'spec_helper_domain'
 
 shared_examples_for "basic rack" do
 
