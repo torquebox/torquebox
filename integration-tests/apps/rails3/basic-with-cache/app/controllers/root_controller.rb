@@ -102,7 +102,7 @@ class RootController < ApplicationController
     queue.publish( message )
 
     queue = inject( '/queue/backchannel' )
-    @cache_value = queue.receive(:timeout=>6000)
+    @cache_value = queue.receive(:timeout=>9000)
     render "root/cachey"
   end
 
