@@ -361,12 +361,25 @@ describe TorqueBox::DeployUtils do
   end
 
   describe '.create_archive' do
-    it 'should not include excluded dirs and files' do
+
+    ALL_EXPECTED_FILES = %w{config.ru
+                            app/app.rb
+                            app/puppet-master.rb
+                            app/app.box
+                            app/a-non-cached.gem
+                            vendor/vendor.rb
+                            puppet/puppet.rb
+                            simpleapp.box}
+    
+    def mock_run_command(expected_includes)
       @util.should_receive(:run_command) do |arg|
-        ["config.ru", "app"].permutation.map {|p|
-          "jar cvf '/tmp/simpleapp.knob' #{p.join(" ")}"
-        }.should include(arg)
+        included_files = arg =~ /@(.*)/ ? File.new($1).readlines.map(&:strip) : []
+        expected_includes.permutation.to_a.should include(included_files)
       end
+    end
+    
+    it 'should not include excluded dirs and files' do
+      mock_run_command(ALL_EXPECTED_FILES - %w{puppet/puppet.rb simpleapp.box})
 
       path = @util.create_archive(
           :name => "simpleapp",
@@ -378,11 +391,7 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should exclude based on patterns' do
-      @util.should_receive(:run_command) do |arg|
-        ["puppet", "config.ru", "app"].permutation.map {|p|
-          "jar cvf '/tmp/simpleapp.knob' #{p.join(" ")}"
-        }.should include(arg)
-      end
+      mock_run_command(ALL_EXPECTED_FILES - %w{simpleapp.box})
 
       path = @util.create_archive(
           :name => "simpleapp",
@@ -394,12 +403,8 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should include all dirs and files except default' do
-      @util.should_receive(:run_command) do |arg|
-        ["config.ru", "app", "puppet", "simpleapp.box"].permutation.map {|p|
-          "jar cvf '/tmp/simpleapp.knob' #{p.join(" ")}"
-        }.should include(arg)
-      end
-
+      mock_run_command ALL_EXPECTED_FILES
+      
       path = @util.create_archive(
           :name => "simpleapp",
           :app_dir => File.join(File.dirname(__FILE__), 'fixtures/simpleapp'),

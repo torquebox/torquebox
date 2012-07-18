@@ -17,6 +17,7 @@
 
 require 'tmpdir'
 require 'rbconfig'
+require 'tempfile'
 require 'yaml'
 require 'rake'
 require 'torquebox/server'
@@ -166,26 +167,28 @@ module TorqueBox
         app_dir = find_option( opts, 'app_dir') || Dir.pwd
         dest_dir = find_option( opts, 'dest_dir') || Dir.pwd
 
-        default_skip_files = %w{ ^log$ ^tmp$ ^test$ ^spec$ \.knob$ vendor }
-        opts_skip_files = (find_option(opts, 'exclude') || "").split(/,/)
+        default_skip_files = %w{ ^log/ ^tmp/ ^test/ ^spec/ ^[^/]*\.knob$ vendor/.*cache/.*\.gem$ }
+        opts_skip_files = (find_option(opts, 'exclude') || "").
+          split(/,/).
+          map { |r| "^[^/]*#{r}"}
         skip_files = default_skip_files + opts_skip_files
 
         archive_path = File.join(dest_dir, archive)
 
         Dir.chdir( app_dir ) do
           include_files = []
-          Dir[ "*", ".bundle" ].each do |entry|
-            entry = File.basename( entry )
-            unless ( skip_files.any?{ |regex| entry.match(regex)} )
-              include_files << entry
+          Dir[ "**/**", ".bundle/**/**" ].each do |entry|
+            unless File.directory?(entry) || skip_files.any? {|regex| entry.match(regex)}
+              include_files << entry 
             end
           end
 
-          Dir[ 'vendor/*' ].each do |entry|
-            include_files << entry unless ( entry == 'vendor/cache' )
-          end
+          includes = Tempfile.new("include-files")
+          includes.write(include_files.join("\n"))
+          includes.close
+          
+          cmd = "jar cvf '#{archive_path}' @#{includes.path}"
 
-          cmd = "jar cvf '#{archive_path}' #{include_files.join(' ')}"
           run_command( cmd )
         end
 
