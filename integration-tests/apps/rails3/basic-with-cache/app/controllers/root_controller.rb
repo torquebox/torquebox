@@ -93,7 +93,7 @@ class RootController < ApplicationController
     # wait until the processor has spun up and placed the message in
     # the cache
     queue = fetch( '/queue/backchannel' )
-    queue.receive( :timeout => 90000 )
+    queue.receive( :timeout => 900000 )
 
     @cache_value = "success"
     render "root/cachey"
@@ -107,7 +107,7 @@ class RootController < ApplicationController
     queue.publish( message )
 
     queue = inject( '/queue/backchannel' )
-    @cache_value = queue.receive(:timeout=>9000)
+    @cache_value = queue.receive(:timeout=>90000)
     render "root/cachey"
   end
 
