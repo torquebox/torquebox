@@ -185,11 +185,12 @@ module TorqueBox
 
           includes = Tempfile.new("include-files")
           includes.write(include_files.join("\n"))
-          includes.close
-          
+          includes.flush
+
           cmd = "jar cvf '#{archive_path}' @#{includes.path}"
 
           run_command( cmd )
+          includes.close( true )
         end
 
         archive_path
