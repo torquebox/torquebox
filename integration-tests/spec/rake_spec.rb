@@ -61,26 +61,26 @@ describe "rake tasks" do
 
     it "should do a yaml deployment with a context supplied on the command line" do
       Dir.chdir( root_dir ) do
-        check_deployment( 'torquebox:deploy[/foo]' )
+        check_deployment( 'torquebox:deploy[/foo]', :context => '/foo' )
         contents = File.read("#{TorqueBox::DeployUtils.deploy_dir}/basic-knob.yml")
         contents.should include('context: /foo')
-        check_undeployment( 'torquebox:undeploy' )
+        check_undeployment( 'torquebox:undeploy', :context => '/foo' )
       end
     end
 
     it "should do a yaml deployment with a name supplied on the command line" do
       Dir.chdir( root_dir ) do
-        check_deployment( 'torquebox:deploy[/foo,foo]', 'foo' )
+        check_deployment( 'torquebox:deploy[/foo,foo]', :name => 'foo', :context => '/foo' )
         contents = File.read("#{TorqueBox::DeployUtils.deploy_dir}/foo-knob.yml")
         contents.should include('context: /foo')
-        check_undeployment( 'torquebox:undeploy[foo]', 'foo' )
+        check_undeployment( 'torquebox:undeploy[foo]', :name => 'foo', :context => '/foo' )
       end
     end
 
     it "should do a yaml deployment with a name supplied as an env variable" do
       Dir.chdir( root_dir ) do
-        check_deployment( 'torquebox:deploy NAME=foo', 'foo' )
-        check_undeployment( 'torquebox:undeploy NAME=foo', 'foo' )
+        check_deployment( 'torquebox:deploy NAME=foo', :name => 'foo' )
+        check_undeployment( 'torquebox:undeploy NAME=foo', :name => 'foo' )
       end
     end
 
@@ -99,8 +99,8 @@ describe "rake tasks" do
 
     it "should do a basic archive deployment" do
       Dir.chdir(root_dir) do
-        check_deployment( 'torquebox:deploy:archive', 'basic', '.knob' )
-        check_undeployment('torquebox:undeploy:archive', 'basic', '.knob' )
+        check_deployment( 'torquebox:deploy:archive', :name => 'basic', :suffix => '.knob' )
+        check_undeployment('torquebox:undeploy:archive', :name => 'basic', :suffix => '.knob' )
         File.exist?("#{root_dir}/basic.knob").should == true
         FileUtils.rm_rf("#{root_dir}/basic.knob")
       end
@@ -108,8 +108,8 @@ describe "rake tasks" do
 
     it "should do a archive deployment with a name supplied on the command line" do
       Dir.chdir(root_dir) do
-        check_deployment( 'torquebox:deploy:archive[baz]', 'baz', '.knob' )
-        check_undeployment('torquebox:undeploy:archive[baz]', 'baz', '.knob' )
+        check_deployment( 'torquebox:deploy:archive[baz]', :name => 'baz', :suffix => '.knob' )
+        check_undeployment('torquebox:undeploy:archive[baz]', :name => 'baz', :suffix => '.knob' )
         File.exist?("#{root_dir}/baz.knob").should == true
         FileUtils.rm_rf("#{root_dir}/baz.knob")
       end
@@ -117,8 +117,8 @@ describe "rake tasks" do
 
     it "should do a archive deployment with a name supplied as an env variable" do
       Dir.chdir(root_dir) do
-        check_deployment( 'torquebox:deploy:archive NAME=joe', 'joe', '.knob' )
-        check_undeployment('torquebox:undeploy:archive NAME=joe', 'joe', '.knob' )
+        check_deployment( 'torquebox:deploy:archive NAME=joe', :name => 'joe', :suffix => '.knob' )
+        check_undeployment('torquebox:undeploy:archive NAME=joe', :name => 'joe', :suffix => '.knob' )
         File.exist?("#{root_dir}/joe.knob").should == true
         FileUtils.rm_rf("#{root_dir}/joe.knob")
       end
@@ -134,8 +134,8 @@ describe "rake tasks" do
 
     it "should be able to undeploy an archive using only torquebox:undeploy" do
       Dir.chdir( root_dir ) do
-        check_deployment( 'torquebox:deploy:archive NAME=joe', 'joe', '.knob' )
-        check_undeployment('torquebox:undeploy NAME=joe', 'joe', '.knob' )
+        check_deployment( 'torquebox:deploy:archive NAME=joe', :name => 'joe', :suffix => '.knob' )
+        check_undeployment('torquebox:undeploy NAME=joe', :name => 'joe', :suffix => '.knob' )
         File.exist?("#{root_dir}/joe.knob").should == true
         FileUtils.rm_rf("#{root_dir}/joe.knob")
       end
@@ -149,15 +149,29 @@ describe "rake tasks" do
 
   private
 
-    def check_deployment(rake_command, name = 'basic', suffix = '-knob.yml')
+    def check_deployment(rake_command, options = {})
+      name = options[:name] || 'basic'
+      suffix = options[:suffix] || '-knob.yml'
+      context = options[:context] || '/'
       output = rake(rake_command)
       output.should include("Deployed: #{name}#{suffix}")
       output.should include("into: #{TorqueBox::DeployUtils.deploy_dir}")
       File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == true
       File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}.dodeploy").should == true
+
+      # Wait for the application to actually deploy
+      30.times {
+        visit(context)
+        break if page.source.include?('It works')
+        sleep 1
+      }
+      page.should have_content('It works')
     end
 
-    def check_undeployment(rake_command, name = 'basic', suffix = '-knob.yml')
+    def check_undeployment(rake_command, options = {})
+      name = options[:name] || 'basic'
+      suffix = options[:suffix] || '-knob.yml'
+      context = options[:context] || '/'
       output = rake(rake_command)
       output.should include("Undeployed: #{name}#{suffix}")
       output.should include("from: #{TorqueBox::DeployUtils.deploy_dir}")
@@ -171,10 +185,14 @@ describe "rake tasks" do
 
       File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}").should == false
       File.exist?("#{TorqueBox::DeployUtils.deploy_dir}/#{name}#{suffix}.dodeploy").should == false
-      # sleep for a few more seconds to ensure things are actually
-      # undeployed inside AS7 vs the undeployment simply being picked
-      # up by the deployment scanner
-      sleep 3
+
+      # Wait for the application to actually undeploy
+      30.times {
+        visit(context)
+        break if page.source.empty?
+        sleep 1
+      }
+      page.source.should be_empty
     end
 
   def root_dir
