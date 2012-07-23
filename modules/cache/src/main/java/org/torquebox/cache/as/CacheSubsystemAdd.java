@@ -19,7 +19,42 @@
 
 package org.torquebox.cache.as;
 
+import java.util.List;
+
+import org.jboss.as.controller.OperationContext;
+import org.jboss.as.controller.OperationFailedException;
+import org.jboss.as.controller.ServiceVerificationHandler;
+import org.jboss.as.server.AbstractDeploymentChainStep;
+import org.jboss.as.server.DeploymentProcessorTarget;
+import org.jboss.dmr.ModelNode;
+import org.jboss.msc.service.ServiceBuilder.DependencyType;
+import org.jboss.msc.service.ServiceController;
+import org.jboss.msc.service.ServiceController.Mode;
+import org.jboss.msc.service.ServiceName;
+import org.projectodd.polyglot.cache.as.CacheService;
+
 class CacheSubsystemAdd extends org.projectodd.polyglot.cache.as.CacheSubsystemAdd {
+
+    @Override
+    protected void performBoottime(OperationContext context, ModelNode operation, ModelNode model,
+            ServiceVerificationHandler verificationHandler,
+            List<ServiceController<?>> newControllers) throws OperationFailedException {
+
+        context.addStep( new AbstractDeploymentChainStep() {
+            @Override
+            protected void execute(DeploymentProcessorTarget processorTarget) {
+                addDeploymentProcessors( processorTarget );
+            }
+        }, OperationContext.Stage.RUNTIME );
+
+        CacheService cacheService = new CacheService();
+        cacheService.setCacheContainerName( "torquebox" );
+        newControllers.add(  context.getServiceTarget().addService( CacheService.CACHE, cacheService )
+                .addDependency( ServiceName.JBOSS.append( "infinispan", "torquebox" ) )
+                .addDependency( DependencyType.OPTIONAL, ServiceName.JBOSS.append( "jgroups", "stack" ) )
+                .setInitialMode( Mode.ACTIVE )
+                .install() );
+    }
 
     static final CacheSubsystemAdd ADD_INSTANCE = new CacheSubsystemAdd();
 
