@@ -112,6 +112,10 @@ class Assembler
     # Ensure boot module is first
     modules.unshift( modules.assoc( "bootstrap" ) ).uniq!
 
+    # Install cache module but don't add it to the configs
+    cache_module = modules.delete( modules.assoc( "cache" ) )
+    tool.install_module( cache_module[0], cache_module[1], nil, false )
+
     modules.each do |module_name, module_dir|
       tool.install_module( module_name, module_dir )
     end
