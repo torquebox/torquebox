@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'torquebox-messaging'
 
 # A remote group nested within a local one
 describe "end-to-end twitter testing" do 
@@ -7,10 +8,25 @@ describe "end-to-end twitter testing" do
   deploy <<-END.gsub(/^ {4}/,'')
     application:
       root: #{File.dirname(__FILE__)}/../apps/rails3/twitter
-    queues:
-      tweets:
     web:
       context: /twitter
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+    jobs:
+      job.one:
+        job: SimpleJob
+        cron: '*/1 * * * * ?'
+        config:
+          color: blue
+          an_array:
+            - one
+            - two
+    queues:
+      tweets:
+      /queue/response:
+        durable: false
+      /queue/init_params:
+        durable: false
   END
 
   before(:all) do
@@ -30,6 +46,25 @@ describe "end-to-end twitter testing" do
       page.find("table")[:class].should == ''
     else
       page.find("table")[:class].should be_nil
+    end
+  end
+
+  context 'jobs' do
+    it "should detect activity" do
+      responseq = TorqueBox::Messaging::Queue.new( '/queue/response' )
+      response = responseq.receive( :timeout => 120_000 )
+      5.times do
+        response.should == 'done'
+        response = responseq.receive( :timeout => 120_000 )
+      end
+    end
+
+    it "should have its init params" do
+      responseq = TorqueBox::Messaging::Queue.new( '/queue/init_params' )
+      response = responseq.receive( :timeout => 120_000 )
+
+      response['color'].should == 'blue'
+      response['an_array'].to_a.should == %w{ one two }
     end
   end
 
