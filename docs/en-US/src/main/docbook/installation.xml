@@ -167,4 +167,97 @@ export JRUBY_HOME=$TORQUEBOX_HOME/jruby</screen></para>
       linkend="torquebox-cmd-run"/> for more details.</para>
     </section>
   </section>
+
+  <section id="setting-jvm-properties">
+    <title>Setting JVM Properties</title>
+
+    <para>If using the <command>torquebox</command> command (<xref
+    linkend="torquebox-cmd"/>), JVM properties can be set with the -J
+    flag. The only caveat is hypens must be escaped with a "\".
+    </para>
+
+    <para>For example:
+      <informalexample>
+        <para><screen><prompt>$</prompt> <command>torquebox run -J "\-Xmx2048m \-Djruby.jit.logging=true"</command></screen></para>
+      </informalexample>
+    </para>
+
+    <para>If using <command>standalone.sh</command>, just append the
+    JVM properties to the end of the command.</para>
+
+    <para>For example:
+      <informalexample>
+        <para><screen><prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh -Djruby.jit.logging=true</command></screen></para>
+      </informalexample>
+    </para>
+
+    <para>If you'd prefer not to pass the JVM properties on the
+    commandline, they can also be set in
+    <filename>$JBOSS_HOME/bin/standalone.conf</filename> by appending
+    to the <varname>JAVA_OPTS</varname> variable.</para>
+
+    <para>For example:
+      <informalexample>
+        <para><programlisting>...
+if [ "x$JAVA_OPTS" = "x" ]; then
+   JAVA_OPTS="-Xms64m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000"
+   JAVA_OPTS="$JAVA_OPTS -Djboss.modules.system.pkgs=$JBOSS_MODULES_SYSTEM_PKGS -Djava.awt.headless=true"
+   JAVA_OPTS="$JAVA_OPTS -Djboss.server.default.config=standalone.xml"
+else
+   echo "JAVA_OPTS already set in environment; overriding default settings with values: $JAVA_OPTS"
+fi
+
+JAVA_OPTS="$JAVA_OPTS -Djruby.jit.logging=true"</programlisting></para>
+      </informalexample>
+    </para>
+
+    <para>You can also set the JAVA_OPTS environment variable directly
+    in the shell, but if you do this make sure you copy the increased
+    MaxPermSize from
+    <filename>$JBOSS_HOME/bin/standalone.conf</filename> since if
+    JAVA_OPTS is set in the shell the defaults in this file won't be
+    applied.</para>
+
+    <para>For example:
+      <informalexample>
+        <para><screen><prompt>$</prompt> <command>export JAVA_OPTS="-Xmx1024m -XX:MaxPermSize=256m -Djruby.jit.logging=true"</command></screen></para>
+      </informalexample>
+    </para>
+
+  </section>
+
+  <section id="setting-jruby-properties">
+    <title>Setting JRuby Properties</title>
+
+    <para>While some JRuby properties can be set via torquebox.yml or
+    torquebox.rb as shown in <xref
+    linkend="ruby-runtime-config-in-descriptor"/>, JRuby supports many
+    more options than the ones TorqueBox exposes directly. As long as
+    you are using the <command>torquebox</command> command (<xref
+    linkend="torquebox-cmd"/>), you can set these other properties
+    with the <varname>JRUBY_OPTS</varname> environment
+    variable.</para>
+
+    <para>For example:
+      <informalexample>
+        <para><screen><prompt>$</prompt> <command>export JRUBY_OPTS="-X+C --1.9 -Xjit.logging=true"</command>
+<prompt>$</prompt> <command>torquebox run</command></screen></para>
+      </informalexample>
+    </para>
+
+    <para>If you are not using the <command>torquebox</command>
+    command, <varname>JRUBY_OPTS</varname> can still be used for
+    options like "--1.9", "--1.8", "-X+C", "+X-O", but not for options
+    of the style "-Xa.b" like "-Xjit.logging=true". The latter options
+    will need to be set as JVM properties (<xref
+    linkend="setting-jvm-properties"/>) by prefixing them with
+    "jruby." like "-Djruby.jit.logging=true".</para>
+
+    <para>For example:
+      <informalexample>
+        <para><screen><prompt>$</prompt> <command>export JRUBY_OPTS="-X+C --1.9"</command>
+<prompt>$</prompt> <command>$JBOSS_HOME/bin/standalone.sh -Djruby.jit.logging=true</command></screen></para>
+      </informalexample>
+    </para>
+  </section>
 </chapter>
