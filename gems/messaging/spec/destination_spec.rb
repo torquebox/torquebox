@@ -106,6 +106,15 @@ describe TorqueBox::Messaging::Destination do
     Mockito.verify(server).destroyTopic("my_topic")
   end
 
+  it "should raise ArgumentError if destination is nil" do
+    lambda {
+      TorqueBox::Messaging::Queue.new( nil )
+    }.should raise_error( ArgumentError )
+    lambda {
+      TorqueBox::Messaging::Topic.new( nil )
+    }.should raise_error( ArgumentError )
+  end
+
   describe "publish" do
     before(:each) do
       @session = mock('session')

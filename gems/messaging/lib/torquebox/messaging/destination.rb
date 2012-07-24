@@ -48,6 +48,7 @@ module TorqueBox
       end
 
       def initialize(destination, connection_factory_or_options = nil)
+        raise ArgumentError, "destination cannot be nil" unless destination
         if connection_factory_or_options.nil? || connection_factory_or_options.is_a?( Hash )
           options = connection_factory_or_options
           connection_factory = fetch( 'connection-factory' )
