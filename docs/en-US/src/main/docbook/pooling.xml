@@ -199,6 +199,7 @@
        <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
   pool :web do
+    type :bounded
     min 3
     max 10
   end
@@ -238,9 +239,11 @@ end</programlisting></para>
 
 pooling:
   jobs: 
+    type :bounded
     min: 1
     max: 2
   messaging:
+    type :bounded
     min: 1
     max: 2
   web: shared</programlisting></para>
