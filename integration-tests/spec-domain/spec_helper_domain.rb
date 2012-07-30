@@ -38,7 +38,7 @@ end
 
 def wait_for_status(server_config, expected_status, timeout)
   condition = lambda { |status| status == expected_status }
-  wait_for(timeout, 2, condition) do
+  wait_for_condition(timeout, 2, condition) do
     server_status(server_config)
   end
 end

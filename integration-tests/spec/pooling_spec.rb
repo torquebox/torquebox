@@ -84,7 +84,7 @@ shared_examples_for 'lazy_pool' do
     mbean("torquebox.pools:name=web,app=#{@app_prefix}_runtime_pooling") do |pool|
       pool.should_not be_nil
       pool.lazy.should == @web_lazy
-      wait_for(30, 0.5, lambda { |started| started == !@web_lazy }) do
+      wait_for_condition(30, 0.5, lambda { |started| started == !@web_lazy }) do
         pool.started
       end
       pool.started.should == !@web_lazy
@@ -93,7 +93,7 @@ shared_examples_for 'lazy_pool' do
     mbean("torquebox.pools:name=messaging,app=#{@app_prefix}_runtime_pooling") do |pool|
       pool.should_not be_nil
       pool.lazy.should == @messaging_lazy
-      wait_for(30, 0.5, lambda { |started| started == !@messaging_lazy }) do
+      wait_for_condition(30, 0.5, lambda { |started| started == !@messaging_lazy }) do
         pool.started
       end
       pool.started.should == !@messaging_lazy

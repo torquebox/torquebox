@@ -73,7 +73,7 @@ def assert_paths_are_equal(actual, expected)
   normalize_path(actual).should eql(normalize_path(expected))
 end
 
-def wait_for(timeout, interval, condition)
+def wait_for_condition(timeout, interval, condition)
   start_time = Time.now
   while (Time.now - start_time < timeout) do
     value = yield

@@ -29,7 +29,7 @@ describe 'ha singleton' do
                                             :host => domain_host_for(server),
                                             :port => domain_port_for(server, 5445))
     condition = lambda { |message| message != nil }
-    message = wait_for(30, 1, condition) do
+    message = wait_for_condition(30, 1, condition) do
       queue.publish_and_receive('node_name', :timeout => 5000)
     end
     message.should == "master:#{domain_server_config_for(server)}"
