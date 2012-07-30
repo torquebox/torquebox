@@ -39,7 +39,6 @@ public class HttpStompSessionManagerService implements Service<StompSessionManag
     @Override
     public void start(StartContext context) throws StartException {
         Manager webSessionManager = this.contextInjector.getValue().getManager();
-        System.err.println( "manager=" + webSessionManager );
         this.sessionManager = new HttpStompSessionManager( webSessionManager );
     }
 
