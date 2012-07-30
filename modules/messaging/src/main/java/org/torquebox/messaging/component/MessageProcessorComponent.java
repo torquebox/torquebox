@@ -22,7 +22,6 @@ package org.torquebox.messaging.component;
 import javax.jms.Message;
 import javax.jms.XASession;
 
-import org.jboss.logging.Logger;
 import org.jruby.RubyModule;
 import org.torquebox.core.component.AbstractRubyComponent;
 
@@ -32,6 +31,7 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
 
     }
 
+   
     public void process(Message message) {
         process( message, (XASession) null );
     }
@@ -39,19 +39,8 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
     public void process(Message message, XASession session) {
         RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
         Object wrappedMessage = _callRubyMethod( messageWrapperClass, "new", message );
-        if (session == null) {
-            _callRubyMethod( "process!", wrappedMessage );
-        } else {
-            RubyModule processorWrapperClass = getClass( "TorqueBox::Messaging::ProcessorWrapper" );
-            Object wrappedProcessor = _callRubyMethod( processorWrapperClass, "new", getRubyComponent(), session, wrappedMessage );
-            try {
-                _callRubyMethod( wrappedProcessor, "process!" );
-            } catch (Throwable t) {
-                log.errorf( t, "Unable to process inbound message" );
-            }
-        }
+        Object middleware = _callRubyMethod( "middleware" );
+        _callRubyMethod( middleware, "invoke", session, wrappedMessage, getRubyComponent() );
     }
-
-    private static final Logger log = Logger.getLogger( "org.torquebox.messaging" );
 
 }

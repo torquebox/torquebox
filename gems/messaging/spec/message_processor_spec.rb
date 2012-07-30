@@ -51,4 +51,11 @@ describe TorqueBox::Messaging::MessageProcessor do
     @processor.body.should eql(payload)
   end
 
+  describe "#middleware" do
+    it "should return the default middleware" do
+      @processor.middleware.inspect.should == "[TorqueBox::Messaging::ProcessorMiddleware::WithTransaction]"
+    end
+  end
+  
+
 end

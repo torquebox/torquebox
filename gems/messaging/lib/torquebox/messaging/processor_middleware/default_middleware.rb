@@ -15,36 +15,20 @@
 # Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-require 'torquebox/messaging/processor_middleware/default_middleware'
+require 'torquebox/messaging/processor_middleware/chain'
+require 'torquebox/messaging/processor_middleware/with_transaction'
 
 module TorqueBox
   module Messaging
-    class MessageProcessor
-      include ProcessorMiddleware::DefaultMiddleware
-      
-      attr_accessor :message
-
-      def initialize
-        @message = nil 
+    module ProcessorMiddleware
+      module DefaultMiddleware
+        
+        def middleware
+          @middleware ||= ProcessorMiddleware::Chain.new.append(WithTransaction)
+        end
+        
       end
-      
-      def on_message(body)
-        throw "Your subclass must implement on_message(body)"
-      end
-
-      def on_error(error)
-        raise error
-      end
-
-      def process!(message)
-        @message = message
-        begin
-          on_message( message.decode )
-        rescue Exception => e
-          on_error( e ) 
-        end 
-      end
-
     end
   end
 end
+

@@ -41,9 +41,11 @@ require 'torquebox/messaging/xa_connection_factory'
 require 'torquebox/messaging/xa_connection'
 require 'torquebox/messaging/xa_session'
 
+require 'torquebox/messaging/processor_middleware/chain'
+require 'torquebox/messaging/processor_middleware/with_transaction'
 require 'torquebox/messaging/message_processor'
 require 'torquebox/messaging/task'
 require 'torquebox/messaging/backgroundable'
-require 'torquebox/messaging/processor_wrapper'
 
-require 'torquebox/messaging/datamapper_marshaling.rb'
+
+require 'torquebox/messaging/datamapper_marshaling'

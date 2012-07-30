@@ -27,17 +27,6 @@ import org.jboss.as.server.deployment.AttachmentList;
 public class MessageProcessorMetaData {
     
     public static AttachmentKey<AttachmentList<MessageProcessorMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( MessageProcessorMetaData.class );
-
-    private String rubyClassName;
-    private String rubyRequirePath;
-    private String destinationName;
-    private String messageSelector;
-    private int concurrency = 1;
-    private boolean durable = false; //only has meaning for Topic processors
-    private String clientID;         //only has meaning for Topic processors
-    private boolean singleton = false;
-
-    private Map<String, Object> rubyConfig;
     
     public MessageProcessorMetaData() {
     }
@@ -124,5 +113,16 @@ public class MessageProcessorMetaData {
     public boolean isSingleton() {
         return this.singleton;
     }
+    
+    private String rubyClassName;
+    private String rubyRequirePath;
+    private String destinationName;
+    private String messageSelector;
+    private int concurrency = 1;
+    private boolean durable = false; //only has meaning for Topic processors
+    private String clientID;         //only has meaning for Topic processors
+    private boolean singleton = false;
+
+    private Map<String, Object> rubyConfig;
 
 }

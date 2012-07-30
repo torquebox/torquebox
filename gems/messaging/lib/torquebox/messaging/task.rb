@@ -19,12 +19,14 @@ require 'torquebox/messaging/queue'
 require 'torquebox/messaging/future_responder'
 require 'torquebox/messaging/future'
 require 'torquebox/messaging/future_status'
+require 'torquebox/messaging/processor_middleware/default_middleware'
 
 module TorqueBox
   module Messaging
     
-    class Task
+    class Task 
       include FutureStatus
+      include ProcessorMiddleware::DefaultMiddleware
       
       def self.queue_name( name = self.name[0...-4] )
         suffix = org.torquebox.core.util.StringUtils.underscore(name)

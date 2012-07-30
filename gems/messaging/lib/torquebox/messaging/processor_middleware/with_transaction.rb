@@ -19,18 +19,21 @@ require 'torquebox/transactions'
 
 module TorqueBox
   module Messaging
-    class ProcessorWrapper
+    module ProcessorMiddleware
+      class WithTransaction
       
-      def initialize(target, session, message)
-        @target = target
-        @session = session
-        @message = message
-      end
-
-      def process!
-        TorqueBox.transaction( @session ) do
-          @target.process!( @message )
+        def call(session, message)
+          if session
+            begin
+              TorqueBox.transaction( session ) { yield }
+            rescue Exception => ex
+              $stderr.puts("Unable to process inbound message", ex)
+            end
+          else
+            yield
+          end
         end
+        
       end
       
     end
