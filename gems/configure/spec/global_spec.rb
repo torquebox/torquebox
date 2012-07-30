@@ -466,7 +466,8 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
                                  :durable => true,
                                  :client_id => 'client-id',
                                  :config => { :foo => :bar } } ] ] } },
-          'web' => { :context => '/bacon' }
+        'web' => { :context => '/bacon',
+                   :host => ['host1', 'host2'] }
       }
 
       @metadata = @config.to_metadata_hash
@@ -550,10 +551,17 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
       @metadata['topics']['a-topic'].should == { 'durable' => true }
     end
 
-    it "should properly set web" do
+    it "should properly set context" do
       @metadata['web']['context'].should == '/bacon'
     end
+
+    it "should properly set hosts" do
+      @metadata['web']['host'].to_a.should == ['host1', 'host2']
+    end
+
+    
   end
+  
 end
 
 
