@@ -32,6 +32,13 @@ describe "messaging rack test" do
     receive_thread.join
   end
 
+  it "should work with a processor that doesn't inherit from MessageProcessor" do
+    visit "/messaging-rack/?parentless-ham-biscuit"
+    result = TorqueBox::Messaging::Queue.new('/queues/results').receive(:timeout => 30_000)
+    result.should == "ParentlessQueueConsumer=parentless-ham-biscuit"
+  end
+  
+
 end
 
 remote_describe "in-container messaging tests" do

@@ -39,8 +39,19 @@ public class MessageProcessorComponent extends AbstractRubyComponent {
     public void process(Message message, XASession session) {
         RubyModule messageWrapperClass = getClass( "TorqueBox::Messaging::Message" );
         Object wrappedMessage = _callRubyMethod( messageWrapperClass, "new", message );
-        Object middleware = _callRubyMethod( "middleware" );
-        _callRubyMethod( middleware, "invoke", session, wrappedMessage, getRubyComponent() );
+        _callRubyMethod( findMiddleware(), "invoke", session, wrappedMessage, getRubyComponent() );
+    }
+    
+    protected Object findMiddleware() {
+        Object middleware = _callRubyMethodIfDefined( "middleware" );
+        if (middleware != null) {
+            return middleware;
+        } else {
+            // This will only be the case when a processor that doesn't extend MessageProcessor or include DefaultMiddleware
+            // is provided.
+            return _callRubyMethod( getClass( "TorqueBox::Messaging::ProcessorMiddleware::DefaultMiddleware" ),
+                    "default" );
+        }
     }
 
 }

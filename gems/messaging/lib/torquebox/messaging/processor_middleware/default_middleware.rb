@@ -22,9 +22,13 @@ module TorqueBox
   module Messaging
     module ProcessorMiddleware
       module DefaultMiddleware
+
+        def self.default
+          ProcessorMiddleware::Chain.new.append(WithTransaction)
+        end
         
         def middleware
-          @middleware ||= ProcessorMiddleware::Chain.new.append(WithTransaction)
+          @middleware ||= DefaultMiddleware.default
         end
         
       end

@@ -2,6 +2,9 @@ queues:
   /queues/test:
     durable: false
 
+  /queues/parentless:
+    durable: false
+
   /queues/results:
     durable: false
 
@@ -11,6 +14,7 @@ topics:
 
 messaging:
   /queues/test: TestQueueConsumer
+  /queues/parentless: ParentlessQueueConsumer
   /topics/test: 
     TestTopicConsumer:
       durable: true
