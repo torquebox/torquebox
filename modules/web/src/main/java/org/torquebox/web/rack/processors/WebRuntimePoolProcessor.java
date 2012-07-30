@@ -44,6 +44,7 @@ public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
         if ( poolMetaData == null ) {
             poolMetaData = new PoolMetaData("web");
             poolMetaData.setShared();
+            poolMetaData.setDeferUntilRequested( false );
             unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         }
         

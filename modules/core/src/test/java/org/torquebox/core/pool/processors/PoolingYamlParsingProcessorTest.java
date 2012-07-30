@@ -78,4 +78,38 @@ public class PoolingYamlParsingProcessorTest extends AbstractDeploymentProcessor
         assertEquals( 200, poolTwo.getMaximumSize() );
     }
 
+    @Test
+    public void testSharedPoolingYml() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "shared-pooling.yml" );
+
+        List<PoolMetaData> pools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
+
+        assertFalse( pools.isEmpty() );
+        assertEquals( 1, pools.size() );
+        
+        PoolMetaData poolOne = pools.get( 0 );
+        assertNotNull( poolOne );
+        assertEquals( "pool_one", poolOne.getName() );
+        assertTrue( poolOne.isShared() );
+        assertTrue( poolOne.isDeferUntilRequested() );
+        assertFalse( poolOne.isStartAsynchronously() );
+    }
+
+    @Test
+    public void testEagerPoolingYml() throws Exception {
+        MockDeploymentUnit unit = deployResourceAsTorqueboxYml( "eager-pooling.yml" );
+
+        List<PoolMetaData> pools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
+
+        assertFalse( pools.isEmpty() );
+        assertEquals( 1, pools.size() );
+        
+        PoolMetaData poolOne = pools.get( 0 );
+        assertNotNull( poolOne );
+        assertEquals( "pool_one", poolOne.getName() );
+        assertTrue( poolOne.isShared() );
+        assertFalse( poolOne.isDeferUntilRequested() );
+        assertFalse( poolOne.isStartAsynchronously() );
+    }
+
 }

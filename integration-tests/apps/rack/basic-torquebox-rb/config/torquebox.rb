@@ -11,12 +11,13 @@ TorqueBox.configure do
   
   options_for Backgroundable, :disabled => true
 
-  pool :foo, :type => :bounded, :min => 0, :max => 6
+  pool :foo, :type => :bounded, :min => 0, :max => 6, :lazy => false
 
   pool :cheddar do
     type :bounded
     min 0
     max 6
+    lazy true
   end
 
   job AJob, :name => :a_job, :cron => '*/1 * * * * ?'

@@ -1,0 +1,3 @@
+pooling:
+  pool_one:
+    lazy: false

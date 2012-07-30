@@ -78,12 +78,25 @@ public class PoolingYamlParsingProcessor extends AbstractSplitYamlParsingProcess
                 if (pool instanceof Map) {
                     Map<String, Object> poolMap = (Map<String, Object>) pool;
 
+                    if (poolMap.get( "type" ) != null) {
+                        String type = poolMap.get( "type" ).toString();
+                        if (type.equals( "shared" )) {
+                            poolMetaData.setShared();
+                        } else if (type.equals( "global" )) {
+                            poolMetaData.setGlobal();
+                        }
+                    }
+
                     if (poolMap.get( "min" ) != null) {
                         poolMetaData.setMinimumSize( ((Number) poolMap.get( "min" )).intValue() );
                     }
 
                     if (poolMap.get( "max" ) != null) {
                         poolMetaData.setMaximumSize( ((Number) poolMap.get( "max" )).intValue() );
+                    }
+
+                    if (poolMap.get( "lazy" ) != null) {
+                        poolMetaData.setDeferUntilRequested( (Boolean) poolMap.get( "lazy" ) );
                     }
                 } else if (pool instanceof String) {
                     if (pool.toString().equals( "shared" )) {

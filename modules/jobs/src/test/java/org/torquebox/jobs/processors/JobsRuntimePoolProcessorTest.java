@@ -20,6 +20,7 @@
 package org.torquebox.jobs.processors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -119,6 +120,8 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
         
         assertEquals( "jobs", jobPoolMetaData.getName() );
         assertTrue( jobPoolMetaData.isShared() );
+        assertTrue( jobPoolMetaData.isDeferUntilRequested() );
+        assertFalse( jobPoolMetaData.isStartAsynchronously() );
     }
 
 }

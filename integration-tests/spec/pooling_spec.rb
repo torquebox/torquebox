@@ -78,3 +78,117 @@ describe "bounded runtime pooling" do
   end
 end
 
+shared_examples_for 'lazy_pool' do
+
+  it 'should be the proper lazy type' do
+    mbean("torquebox.pools:name=web,app=#{@app_prefix}_runtime_pooling") do |pool|
+      pool.should_not be_nil
+      pool.lazy.should == @web_lazy
+      wait_for(30, 0.5, lambda { |started| started == !@web_lazy }) do
+        pool.started
+      end
+      pool.started.should == !@web_lazy
+    end
+
+    mbean("torquebox.pools:name=messaging,app=#{@app_prefix}_runtime_pooling") do |pool|
+      pool.should_not be_nil
+      pool.lazy.should == @messaging_lazy
+      wait_for(30, 0.5, lambda { |started| started == !@messaging_lazy }) do
+        pool.started
+      end
+      pool.started.should == !@messaging_lazy
+    end
+
+    visit '/lazy-pooling/'
+
+    mbean("torquebox.pools:name=web,app=#{@app_prefix}_runtime_pooling") do |pool|
+      pool.should_not be_nil
+      pool.started.should == true
+    end
+
+    mbean("torquebox.pools:name=messaging,app=#{@app_prefix}_runtime_pooling") do |pool|
+      pool.should_not be_nil
+      pool.started.should == true
+    end
+  end
+end
+
+describe 'lazy runtime pooling' do
+
+    deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/messaging
+      env: development
+    web:
+      context: /lazy-pooling
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+
+    pooling:
+      web:
+        lazy: true
+        type: shared
+      messaging:
+        lazy: true
+        type: bounded
+        min:  1
+        max:  2
+  END
+
+  before(:each) do
+    @app_prefix = 'lazy'
+    @web_lazy = true
+    @messaging_lazy = true
+  end
+
+  it_should_behave_like 'lazy_pool'
+end
+
+describe 'eager runtime pooling' do
+  deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/messaging
+      env: development
+    web:
+      context: /lazy-pooling
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+    pooling:
+      web:
+        lazy: false
+        type: shared
+      messaging:
+        lazy: false
+        type: bounded
+        min:  1
+        max:  2
+  END
+
+  before(:each) do
+    @app_prefix = 'eager'
+    @web_lazy = false
+    @messaging_lazy = false
+  end
+
+  it_should_behave_like 'lazy_pool'
+end
+
+describe 'default runtime pooling' do
+  deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/rack/messaging
+      env: development
+    web:
+      context: /lazy-pooling
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  before(:each) do
+    @app_prefix = 'default'
+    @web_lazy = false
+    @messaging_lazy = true
+  end
+
+  it_should_behave_like 'lazy_pool'
+end

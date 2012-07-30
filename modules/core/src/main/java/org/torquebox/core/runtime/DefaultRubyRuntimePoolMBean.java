@@ -26,7 +26,10 @@ public interface DefaultRubyRuntimePoolMBean extends BasicRubyRuntimePoolMBean {
 
     void setMaximumInstances(int maxInstances);
     int getMaximumInstances();
-    
+
+    boolean isLazy();
+    boolean isStarted();
+
     int getSize();
     int getBorrowed();
     int getAvailable();

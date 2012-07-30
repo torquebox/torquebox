@@ -89,7 +89,7 @@ public class ManagedPool<T> implements Pool<T> {
     public void start() throws InterruptedException {
         if (!this.deferUntilRequested && !this.startAsynchronously) {
             startPool( true );
-        } else if (this.startAsynchronously) {
+        } else if (!this.deferUntilRequested && this.startAsynchronously) {
             Thread initThread = new Thread() {
                 public void run() {
                     try {
@@ -100,6 +100,8 @@ public class ManagedPool<T> implements Pool<T> {
                 }
             };
             initThread.start();
+        } else {
+            log.info( "Deferring start for " + getName() + " runtime pool." );
         }
     }
 
@@ -135,6 +137,10 @@ public class ManagedPool<T> implements Pool<T> {
 
     public boolean isStarted() {
         return this.started;
+    }
+
+    public boolean isLazy() {
+        return isDeferredUntilRequested();
     }
 
     public boolean isDeferredUntilRequested() {

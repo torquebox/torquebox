@@ -80,6 +80,8 @@
     map:
       -min: integer
       -max: integer
+      -type: string
+      -lazy: boolean
 -queues:
   arbitrary: true
   value-types:

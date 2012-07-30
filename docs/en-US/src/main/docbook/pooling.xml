@@ -179,13 +179,14 @@
       <formalpara>
         <title>Bounded pools</title>
 
-        <para>A bounded pool requires two parameters:
+        <para>A bounded pool has a <parameter>type</parameter>
+        parameter of 'bounded' and requires two additional parameters:
         <parameter>min</parameter> and <parameter>max</parameter>. The
-        <parameter>min</parameter> parameter specifies the minimum number of
-        managed interpreters that pool should initialize itself with. The
-        <parameter>max</parameter> parameter specifies the largest capacity
-        the pool should ever grow to in order to satisfy client
-        requests.</para>
+        <parameter>min</parameter> parameter specifies the minimum
+        number of managed interpreters that pool should initialize
+        itself with. The <parameter>max</parameter> parameter
+        specifies the largest capacity the pool should ever grow to in
+        order to satisfy client requests.</para>
       </formalpara>
 
       <example>
@@ -193,6 +194,7 @@
 
         <para>Using the YAML syntax:<programlisting>pooling:
   web:
+    type: bounded
     min: 3
     max: 10</programlisting></para>
       
@@ -209,7 +211,7 @@ end</programlisting></para>
       <formalpara>
         <title>Shared pools</title>
 
-        <para>A shared pool has no configuration other than indicating a
+        <para>A shared pool requires no configuration other than indicating a
         subsystem should use a shared pool.</para>
       </formalpara>
 
@@ -217,12 +219,44 @@ end</programlisting></para>
         <title>Configuring a shared pool</title>
 
         <para>Using the YAML syntax:<programlisting>pooling:
-  web: shared</programlisting></para>
+  web:
+    type: shared</programlisting></para>
 
         <para>And via the DSL:<programlisting>TorqueBox.configure do  
   ...
   pool :web do
     type :shared
+  end
+end</programlisting></para>
+      </example>
+
+      <formalpara>
+        <title>Lazy pools</title>
+
+        <para>A lazy pool is a bounded or shared pool that does not
+        start until it is needed. So, a lazy messaging pool would not
+        start until the first message was received. A lazy web pool
+        would not start until the first web request cames in. An eager
+        pool (opposite of lazy), on the other hand, starts when the
+        application is deployed even if it isn't needed yet.</para>
+      </formalpara>
+
+      <example>
+        <title>Configuring eager and lazy pools</title>
+
+        <para>Using the YAML syntax:<programlisting>pooling:
+  web:
+    lazy: false
+  jobs:
+    lazy: true</programlisting></para>
+
+        <para>And via the DSL:<programlisting>TorqueBox.configure do
+  ...
+  pool :web do
+    lazy false
+  end
+  pool :jobs do
+    lazy true
   end
 end</programlisting></para>
       </example>
@@ -239,28 +273,36 @@ end</programlisting></para>
 
 pooling:
   jobs: 
-    type :bounded
+    type: bounded
     min: 1
     max: 2
+    lazy: true
   messaging:
-    type :bounded
+    type: bounded
     min: 1
     max: 2
-  web: shared</programlisting></para>
+    lazy: true
+  web:
+    type: shared
+    lazy: false</programlisting></para>
 
         <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
   pool :jobs do
+    type :bounded
     min 1
     max 2
+    lazy true
   end
 
   pool :messaging do
+    type :bounded
     min 1
     max 2
+    lazy true
   end
 
-  pool :web, :type => :shared
+  pool :web, :type => :shared, :lazy => false
 end</programlisting></para>
         <para>Above is the implicit default
         configuration for an application deployed in <code>development</code>
@@ -274,15 +316,21 @@ end</programlisting></para>
   ...
 
 pooling:
-  jobs: shared
-  messaging: shared
-  web: shared</programlisting></para>
+  jobs:
+    type: shared
+    lazy: true
+  messaging:
+    type: shared
+    lazy: true
+  web:
+    type: shared
+    lazy: false</programlisting></para>
 
         <para>And via the DSL:<programlisting>TorqueBox.configure do
   ...
-  pool :jobs, :type => :shared
-  pool :messaging, :type => :shared
-  pool :web, :type => :shared
+  pool :jobs, :type => :shared, :lazy => true
+  pool :messaging, :type => :shared, :lazy => true
+  pool :web, :type => :shared, :lazy => false
 end</programlisting></para>
         <para>Above is the implicit default
         configuration for an application deployed in a mode other than

@@ -67,7 +67,7 @@ module TorqueBox
                                                               }),
           :pool        => ThingWithOptionsEntry.with_settings(:validate => {
                                                                 :required => [{ :type => [:bounded, :shared] }],
-                                                                :optional => [:min, :max]
+                                                                :optional => [:min, :max, { :lazy => [true, false] }]
                                                               }),
           :processor   => ThingWithOptionsEntry.with_settings(:require_parent => [:queue, :topic],
                                                               :discrete => true,

@@ -138,6 +138,14 @@ public class SharedPool<T> implements Pool<T> {
         }
     }
 
+    public boolean isLazy() {
+        return isDeferredUntilRequested();
+    }
+
+    public boolean isStarted() {
+        return this.instance != null;
+    }
+
     public boolean isDeferredUntilRequested() {
         return this.deferUntilRequested;
     }
@@ -170,7 +178,7 @@ public class SharedPool<T> implements Pool<T> {
         }
         if (!this.deferUntilRequested && !this.startAsynchronously) {
             startPool();
-        } else if (this.startAsynchronously) {
+        } else if (!this.deferUntilRequested && this.startAsynchronously) {
             log.info( "Starting " + this.name + " runtime pool asynchronously" );
             Thread initThread = new Thread() {
                 public void run() {

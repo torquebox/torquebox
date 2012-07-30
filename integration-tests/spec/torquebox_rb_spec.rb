@@ -30,6 +30,7 @@ describe "an app using a torquebox.rb" do
           pool.should_not be_nil
           pool.minimum_instances.should == 0
           pool.maximum_instances.should == 6
+          pool.lazy.should == false
         end
       }.should_not raise_error(javax.management.InstanceNotFoundException)
     end
@@ -40,6 +41,7 @@ describe "an app using a torquebox.rb" do
           pool.should_not be_nil
           pool.minimum_instances.should == 0
           pool.maximum_instances.should == 6
+          pool.lazy.should == true
         end
       }.should_not raise_error(javax.management.InstanceNotFoundException)
     end

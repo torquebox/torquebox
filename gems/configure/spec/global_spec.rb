@@ -175,11 +175,15 @@ describe "TorqueBox.configure using the GlobalConfiguration" do
     before(:each) { @method = 'pool' }
     it_should_behave_like 'a thing with options'
 
+    # type is required
+    it_should_not_allow_invalid_options { pool 'a-name', :min => 3, :max => 5 }
+
     it_should_not_allow_invalid_options { pool 'a-name', :foo => :bar }
-    it_should_allow_valid_options { pool 'a-name', :type => :shared, :min => '', :max => '' }
+    it_should_allow_valid_options { pool 'a-name', :type => :shared, :min => '', :max => '', :lazy => true }
 
     it_should_not_allow_invalid_option_values { pool 'a-name', :type => :bacon }
-    it_should_allow_valid_option_values { pool 'a-name', :type => :shared }
+    it_should_not_allow_invalid_option_values { pool 'a-name', :type => :shared, :lazy => 'foo' }
+    it_should_allow_valid_option_values { pool 'a-name', :type => :shared, :lazy => false }
   end
 
   %w{ queue topic }.each do |method|
