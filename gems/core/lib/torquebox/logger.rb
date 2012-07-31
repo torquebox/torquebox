@@ -43,7 +43,7 @@ module TorqueBox
     return
   end
 
-  class Logger 
+  class Logger
 
     def initialize name = nil
       category = name || (TORQUEBOX_APP_NAME if defined? TORQUEBOX_APP_NAME) || "TorqueBox"
@@ -56,6 +56,15 @@ module TorqueBox
 
     attr_accessor :level
 
+    def add(severity, message, progname, &block)
+      severities = ['debug', 'info', 'warn', 'error', 'fatal']
+      # default to warn for unknown log level since jboss logger
+      # doesn't support unknown
+      delegate = severity > (severities.length - 1) ? 'warn' : severities[severity]
+      params = params_for_logger([message, progname], block)
+      @logger.send(delegate, *params)
+    end
+
     def method_missing(method, *args, &block)
       delegate = method
       is_boolean = false
@@ -65,12 +74,18 @@ module TorqueBox
       end
       self.class.class_eval do
         define_method(method) do |*a, &b|
-          params = [ a[0] || (b && b.call) ].compact
+          params = params_for_logger(a, b)
           params = [""] if params.empty? && !is_boolean
           @logger.send(delegate, *params)
         end
       end
       self.send(method, *args, &block)
+    end
+
+    private
+
+    def params_for_logger(args, block)
+      [ args[0] || (block && block.call) ].compact
     end
 
   end

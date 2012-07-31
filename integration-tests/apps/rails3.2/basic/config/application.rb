@@ -55,5 +55,8 @@ module Basic
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
+
+    config.log_tags = [ :uuid ]
+    config.logger = ActiveSupport::TaggedLogging.new(TorqueBox::Logger.new('BasicRails32'))
   end
 end

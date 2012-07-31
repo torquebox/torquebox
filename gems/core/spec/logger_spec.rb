@@ -38,5 +38,29 @@ describe TorqueBox::Logger do
     logger = TorqueBox::Logger.new
     logger.info(nil)
   end
+
+  it "should support the add method" do
+    fake_logger = mock('logger')
+    org.jboss.logging::Logger.stub!(:getLogger).and_return(fake_logger)
+    logger = TorqueBox::Logger.new
+
+    fake_logger.should_receive(:debug).with('debug')
+    logger.add(Logger::DEBUG, 'debug', nil)
+
+    fake_logger.should_receive(:info).with('info')
+    logger.add(Logger::INFO, 'info', nil)
+
+    fake_logger.should_receive(:warn).with('warning')
+    logger.add(Logger::WARN, 'warning', nil)
+
+    fake_logger.should_receive(:error).with('error')
+    logger.add(Logger::ERROR, 'error', nil)
+
+    fake_logger.should_receive(:warn).with('unknown')
+    logger.add(Logger::UNKNOWN, 'unknown', nil)
+
+    fake_logger.should_receive(:warn).with('block')
+    logger.add(Logger::WARN, nil, nil) { 'block' }
+  end
 end
 
