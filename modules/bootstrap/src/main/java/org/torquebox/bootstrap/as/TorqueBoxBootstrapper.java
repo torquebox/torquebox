@@ -41,7 +41,7 @@ public class TorqueBoxBootstrapper {
     private static final Logger log = Logger.getLogger( "org.torquebox.bootstrap" );
 
     static {
-        log.info( "Bootstrapping TorqueBox" );
+        log.debug( "Bootstrapping TorqueBox" );
 
         String jrubyHome = JRubyHomeLocator.determineJRubyHome( true );
 
@@ -49,7 +49,7 @@ public class TorqueBoxBootstrapper {
             log.fatal( "Unable to find a JRuby Home" );
         } else {
 
-            log.info( "Attempting to use JRuby from " + jrubyHome );
+            log.info( "Bootstrapping TorqueBox with a JRuby home of " + jrubyHome );
 
             System.setProperty( "jruby.home", jrubyHome );
 
@@ -69,7 +69,7 @@ public class TorqueBoxBootstrapper {
 
             for (File child : libDir.listFiles()) {
                 if (child.getName().endsWith( ".jar" )) {
-                    log.info( "Adding: " + child );
+                    log.debug( "Adding: " + child );
                     try {
                         ResourceLoader loader = ResourceLoaders.createJarResourceLoader( child.getName(), new JarFile( child ) );
                         ResourceLoaderSpec loaderSpec = ResourceLoaderSpec.createResourceLoaderSpec( loader );
@@ -109,7 +109,7 @@ public class TorqueBoxBootstrapper {
 
             Method method = ModuleLoader.class.getDeclaredMethod( "setAndRefreshResourceLoaders", Module.class, Collection.class );
             method.setAccessible( true );
-            log.info( "Swizzle: " + loaderSpecs );
+            log.debug( "Swizzle: " + loaderSpecs );
             method.invoke( moduleLoader, module, loaderSpecs );
 
             Method refreshMethod = ModuleLoader.class.getDeclaredMethod( "refreshResourceLoaders", Module.class );

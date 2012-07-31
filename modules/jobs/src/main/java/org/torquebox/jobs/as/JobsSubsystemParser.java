@@ -49,7 +49,6 @@ public class JobsSubsystemParser implements XMLStreamConstants, XMLElementReader
 
     @Override
     public void readElement(final XMLExtendedStreamReader reader, final List<ModelNode> list) throws XMLStreamException {
-        log.info( "readElement" );
         requireNoAttributes(reader);
         requireNoContent(reader);
         
@@ -58,7 +57,6 @@ public class JobsSubsystemParser implements XMLStreamConstants, XMLElementReader
         address.protect();
 
         list.add(JobsSubsystemAdd.createOperation(address));
-        log.info( "done readElement" );
     }
 
     @Override

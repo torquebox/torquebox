@@ -23,16 +23,13 @@ import org.jboss.as.controller.Extension;
 import org.jboss.as.controller.ExtensionContext;
 import org.jboss.as.controller.SubsystemRegistration;
 import org.jboss.as.controller.parsing.ExtensionParsingContext;
-import org.jboss.as.controller.registry.ManagementResourceRegistration;
 import org.jboss.logging.Logger;
 
 public class BootstrapExtension implements Extension {
     
     @Override
     public void initialize(ExtensionContext context) {
-        log.info( "Bootstrapping TorqueBox" );
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
-        final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( BootstrapSubsystemProviders.SUBSYSTEM );
         registration.registerXMLElementWriter( BootstrapSubsystemParser.getInstance() );
     }
 

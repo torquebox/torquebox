@@ -39,11 +39,10 @@ public class CoreExtension extends AbstractBootstrappableExtension {
 
     @Override
     public void initialize(ExtensionContext context) {
-
-        log.info( "Boostrapping TorqueBox Core Subsystem" );
-        bootstrap();
-        
         log.info( "Initializing TorqueBox Core Subsystem" );
+        
+        bootstrap();
+                
         final SubsystemRegistration registration = context.registerSubsystem( SUBSYSTEM_NAME, 1, 0 );
         final ManagementResourceRegistration subsystem = registration.registerSubsystemModel( CoreSubsystemProviders.SUBSYSTEM );
 
