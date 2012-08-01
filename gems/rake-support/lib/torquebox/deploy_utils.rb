@@ -70,6 +70,10 @@ module TorqueBox
         File.join("#{server_dir}","configuration")
       end
 
+      def standalone_config_file
+        "standalone.xml"
+      end
+
       def cluster_config_file
         "standalone-ha.xml"
       end
@@ -157,6 +161,7 @@ module TorqueBox
           ENV.delete('RUBYOPT') 
 
           set_java_opts("#{options[:jvm_options]} #{jruby_opts_properties}")
+          print_server_config(options[:clustered])
           exec_command(run_command_line(options).join(' '))
         end
       end
@@ -429,6 +434,12 @@ module TorqueBox
         # Only convert -Xa.b, -Xa.b.c, -Xa.b.c.d style options to properties
         properties = jruby_opts.scan(/-X(\w+\..+?)\s/)
         properties.map { |matches| "-Djruby.#{matches.first}" }.join(' ')
+      end
+
+      def print_server_config(clustered)
+        config_file = clustered ? cluster_config_file : standalone_config_file
+        config_path = File.join(config_dir, config_file)
+        puts "Booting AS7 from configuration #{config_path}"
       end
 
     end
