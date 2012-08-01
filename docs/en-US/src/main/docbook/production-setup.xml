@@ -382,7 +382,7 @@ Listen 127.0.0.1:6666
   &lt;profile&gt;
     ...
     &lt;subsystem xmlns="urn:jboss:domain:modcluster:1.1"&gt;
-      &lt;mod-cluster-config advertise="false" proxy-list="mod_cluster_host:6666" excluded-contexts="invoker,jbossws,juddi,console"&rt;
+      &lt;mod-cluster-config advertise="false" connector="ajp" proxy-list="mod_cluster_host:6666" excluded-contexts="invoker,jbossws,juddi,console"&rt;
         &lt;dynamic-load-provider&rt;
           &lt;load-metric type="busyness"/&rt;
         &lt;/dynamic-load-provider&rt;
