@@ -47,7 +47,6 @@ import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
 import org.jboss.stdio.StdioContext;
 import org.projectodd.polyglot.core.processors.ApplicationExploder;
-import org.projectodd.polyglot.core.processors.ArchiveDirectoryMountingProcessor;
 import org.projectodd.polyglot.core.processors.ArchiveStructureProcessor;
 import org.projectodd.polyglot.core.processors.DescriptorRootMountProcessor;
 import org.torquebox.TorqueBox;
@@ -134,7 +133,6 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1000, rootSafe( new PredeterminedInjectableProcessor( registry ) ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1001, rootSafe( new CorePredeterminedInjectableInstaller() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 1100, rootSafe( new InjectionIndexingProcessor( registry ) ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 100, new ArchiveDirectoryMountingProcessor() );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 110, rootSafe( new RubyNamespaceContextSelectorProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 5000, rootSafe( new DatabaseProcessor() ) );
 
