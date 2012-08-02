@@ -209,4 +209,35 @@ public class ComponentResolverTest {
         assertNotSame( component.getRubyComponent(), componentToo.getRubyComponent() );
     }
 
+    /**
+     * Ensure that repeated resolutions resolve to different objects when always
+     * new instance
+     */
+    @Test
+    public void testAlwaysNewInstance() throws Exception {
+        ComponentResolver resolver = new ComponentResolver( false );
+        resolver.setAlwaysNewInstance( true );
+
+        this.ruby.evalScriptlet( "class ComponentClass; end" );
+        resolver.setComponentName( "component-foo" );
+        
+        ComponentClass componentClass = new ComponentClass();
+        componentClass.setClassName( "ComponentClass"  );
+        resolver.setComponentInstantiator( componentClass );
+
+        AbstractRubyComponent component = (AbstractRubyComponent) resolver.resolve( this.ruby );
+        assertNotNull( component );
+        assertNotNull( component.getRubyComponent() );
+        assertEquals( "ComponentClass", component.getRubyComponent().getMetaClass().getName() );
+
+        AbstractRubyComponent componentToo = (AbstractRubyComponent) resolver.resolve( this.ruby );
+        assertNotNull( componentToo );
+        assertNotNull( componentToo.getRubyComponent() );
+        assertEquals( "ComponentClass", componentToo.getRubyComponent().getMetaClass().getName() );
+
+        assertNotSame( component, componentToo );
+        assertNotSame( component.getRubyComponent(), componentToo.getRubyComponent() );
+        
+    }
+
 }

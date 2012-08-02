@@ -69,7 +69,7 @@ public class MessageProcessorComponentResolverInstaller extends BaseRubyComponen
 
         ServiceName serviceName = MessagingServices.messageProcessorComponentResolver( unit, metaData.getName() );
         ComponentResolver resolver = createComponentResolver( unit );
-        resolver.setAlwaysReload( true );
+        resolver.setAlwaysNewInstance( true );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( MessageProcessorComponent.class );

@@ -42,9 +42,9 @@ public class ComponentResolver {
         final ComponentRegistry registry = ComponentRegistry.getRegistryFor( runtime );
         IRubyObject rubyComponent = null;
 
-        if (!this.alwaysReload) {
+        if (!this.alwaysReload && !this.alwaysNewInstance) {
             rubyComponent = registry.lookup( this.componentName );
-        } else {
+        } else if (this.alwaysReload) {
         	// not yet sure this is needed - reloading is broken with and without the next two lines
         	RuntimeHelper.evalScriptlet( runtime, "Dispatcher.cleanup_application if defined?(Dispatcher) && Dispatcher.respond_to?(:cleanup_application)" ); // rails2
         	RuntimeHelper.evalScriptlet( runtime, "ActiveSupport::Dependencies.clear if defined?(ActiveSupport::Dependencies) && ActiveSupport::Dependencies.respond_to?(:clear)" ); // rails3
@@ -110,6 +110,10 @@ public class ComponentResolver {
         return this.alwaysReload;
     }
 
+    public void setAlwaysNewInstance(boolean alwaysNewInstance) {
+        this.alwaysNewInstance = alwaysNewInstance;
+    }
+
     public void setComponentWrapperClass(Class<? extends AbstractRubyComponent> wrapperClass) {
         this.wrapperClass = wrapperClass;
     }
@@ -151,5 +155,6 @@ public class ComponentResolver {
     private String componentName;
     private Object[] initializeParams;
     private boolean alwaysReload = false;
+    private boolean alwaysNewInstance = false;
 
 }
