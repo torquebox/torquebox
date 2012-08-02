@@ -4,6 +4,9 @@ queues:
     durable: false
   /queue/backchannel:
     durable: false
+  /queue/stateless_queue:
+    durable: false
 
 messaging:
   /queue/simple_queue: SimpleProcessor
+  /queue/stateless_queue: StatelessProcessor

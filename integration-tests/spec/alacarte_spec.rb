@@ -38,6 +38,30 @@ describe "jobs alacarte" do
   it_should_behave_like "alacarte"
 end
 
+describe "stateless jobs alacarte" do
+  deploy <<-END.gsub(/^ {4}/,'')
+    ---
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/jobs
+      env: production
+
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it "should not retain state after execution" do
+    responseq = TorqueBox::Messaging::Queue.new( '/queue/stateless_response' )
+    response = responseq.receive( :timeout => 120_000 )
+    5.times do
+      response.should == 'done'
+      response = responseq.receive( :timeout => 120_000 )
+    end
+  end
+end
+
 describe "modular jobs alacarte" do
   deploy <<-END.gsub(/^ {4}/,'')
     ---

@@ -9,9 +9,14 @@ jobs:
       an_array:
         - one
         - two
+  job.two:
+    job: StatelessJob
+    cron: '*/1 * * * * ?'
 
 queues:
   /queue/response:
     durable: false
   /queue/init_params:
+    durable: false
+  /queue/stateless_response:
     durable: false

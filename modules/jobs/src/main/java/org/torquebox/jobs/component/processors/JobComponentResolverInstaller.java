@@ -61,6 +61,7 @@ public class JobComponentResolverInstaller extends BaseRubyComponentInstaller {
 
         ServiceName serviceName = JobsServices.jobComponentResolver( unit, jobMetaData.getName() );
         ComponentResolver resolver = createComponentResolver( unit );
+        resolver.setAlwaysReload( true );
         resolver.setComponentInstantiator( instantiator );
         resolver.setComponentName( serviceName.getCanonicalName() );
         resolver.setComponentWrapperClass( JobComponent.class );

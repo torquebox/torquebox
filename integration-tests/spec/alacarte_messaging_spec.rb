@@ -35,3 +35,24 @@ describe "messaging alacarte rack test" do
   end
 
 end
+
+describe "stateless messaging alacarte test" do
+    deploy <<-END.gsub(/^ {4}/,'')
+    application:
+      root: #{File.dirname(__FILE__)}/../apps/alacarte/messaging
+      env: production
+    environment:
+      BASEDIR: #{File.dirname(__FILE__)}/..
+    ruby:
+      version: #{RUBY_VERSION[0,3]}
+  END
+
+  it "should not retain state after execution" do
+    queue = TorqueBox::Messaging::Queue.new('/queue/stateless_queue')
+    backchannel = TorqueBox::Messaging::Queue.new('/queue/backchannel')
+    5.times do
+      queue.publish('something')
+      backchannel.receive(:timeout => 120_000).should == 'done'
+    end
+  end
+end
