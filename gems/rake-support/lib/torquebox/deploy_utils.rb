@@ -190,7 +190,7 @@ module TorqueBox
           include_files = []
           Dir[ "**/**", ".bundle/**/**" ].each do |entry|
             unless File.directory?(entry) || skip_files.any? {|regex| entry.match(regex)}
-              include_files << entry 
+              include_files << '"' + entry.to_s + '"'
             end
           end
 
