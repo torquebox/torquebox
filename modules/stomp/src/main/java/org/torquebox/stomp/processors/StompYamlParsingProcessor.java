@@ -63,20 +63,22 @@ public class StompYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
 
         Map<String, Map<String, ?>> stomplets = (Map<String, Map<String, ?>>) data.get( "stomplets" );
 
-        for (String name : stomplets.keySet()) {
-            Map<String, ?> config = stomplets.get( name );
+        if (stomplets != null) {
+            for (String name : stomplets.keySet()) {
+                Map<String, ?> config = stomplets.get( name );
 
-            String destinationPattern = (String) config.get( "route" );
-            String rubyClassName = (String) config.get( "class" );
-            Map<String, String> stompletConfig = (Map<String, String>) config.get( "config" );
+                String destinationPattern = (String) config.get( "route" );
+                String rubyClassName = (String) config.get( "class" );
+                Map<String, String> stompletConfig = (Map<String, String>) config.get( "config" );
 
-            RubyStompletMetaData metaData = new RubyStompletMetaData( name );
-            metaData.setDestinationPattern( destinationPattern );
-            metaData.setRubyClassName( rubyClassName );
-            metaData.setRubyRequirePath( StringUtils.underscore( rubyClassName.trim() ) );
-            metaData.setStompletConfig( stompletConfig );
+                RubyStompletMetaData metaData = new RubyStompletMetaData( name );
+                metaData.setDestinationPattern( destinationPattern );
+                metaData.setRubyClassName( rubyClassName );
+                metaData.setRubyRequirePath( StringUtils.underscore( rubyClassName.trim() ) );
+                metaData.setStompletConfig( stompletConfig );
 
-            unit.addToAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY, metaData );
+                unit.addToAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY, metaData );
+            }
         }
 
     }
