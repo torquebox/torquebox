@@ -39,15 +39,16 @@
       <itemizedlist>
         <listitem>
           <para>
-            An arbitrary number of resources to enlist in the current
+            An arbitrary number of XAResources to enlist in the current
             transaction (not needed for built-in services)
           </para>
         </listitem>
 
         <listitem>
           <para>
-            An optional hash of options; currently only <code>:requires_new</code>
-            is supported, defaulting to <code>false</code>
+            Optionally, either a symbol or a hash indicating the scope
+            of the transaction. The <code>:scope</code> attribute
+            provides analogs to <ulink url="http://docs.oracle.com/javaee/6/tutorial/doc/bncij.html">the JEE transaction attributes</ulink>.
           </para>
         </listitem>
 
@@ -55,6 +56,69 @@
           <para>A block defining your transaction</para>
         </listitem>
       </itemizedlist>
+
+      <table>
+        <title>Transaction Scopes</title>
+
+        <tgroup cols="2">
+          <colspec align="left" />
+
+          <thead>
+            <row>
+              <entry>Scope</entry>
+
+              <entry>Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry><parameter>:required</parameter></entry>
+
+              <entry>Execute within current transaction, if any,
+              otherwise start a new one, execute, commit or
+              rollback.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:requires-new</parameter></entry>
+
+              <entry>Suspend current transaction, if any, start a new
+              one, execute, commit or rollback, and resume the
+              suspended one.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:not-supported</parameter></entry>
+
+              <entry>Suspend current transaction, if any, and execute
+              without a transaction.</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:supports</parameter></entry>
+
+              <entry>Execute the body whether there's a transaction or
+              not; may lead to unpredictable results</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:mandatory</parameter></entry>
+
+              <entry>Toss an exception if there's no active
+              transaction</entry>
+            </row>
+
+            <row>
+              <entry><parameter>:never</parameter></entry>
+
+              <entry>Toss an exception if there is an active
+              transaction</entry>
+            </row>
+
+          </tbody>
+        </tgroup>
+      </table>
 
     </para>
 

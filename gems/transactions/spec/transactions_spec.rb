@@ -44,14 +44,14 @@ describe TorqueBox::Transactions do
       method.should == :requires_new
     end
 
-    it "should parse only a hash containing :attribute key" do
-      resources, method = @mgr.parse_args(:attribute => :mandatory)
+    it "should parse only a hash containing :scope key" do
+      resources, method = @mgr.parse_args(:scope => :mandatory)
       resources.should == []
       method.should == :mandatory
     end
 
-    it "should parse only a hash, preferring :attribute to :requires_new" do
-      resources, method = @mgr.parse_args(:attribute => :required, :requires_new => true)
+    it "should parse only a hash, preferring :scope to :requires_new" do
+      resources, method = @mgr.parse_args(:scope => :required, :requires_new => true)
       resources.should == []
       method.should == :required
     end

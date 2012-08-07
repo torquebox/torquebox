@@ -159,7 +159,7 @@ module TorqueBox
       # enlisted in the transaction. The last argument passed is
       # expected to be either a symbol referring to one of the JEE
       # methods or a Hash in which the method symbol is associated
-      # with the :attribute key. If omitted, defaults to :required.
+      # with the :scope key. If omitted, defaults to :required.
       #
       # For backwards compatibility the hash may also contain a
       # :requires_new key which, if true, will result in the
@@ -175,7 +175,7 @@ module TorqueBox
                               [args, last]
                             when Hash
                               hash = args.pop
-                              last = hash[:attribute] || (hash[:requires_new] ? :requires_new : :required)
+                              last = hash[:scope] || (hash[:requires_new] ? :requires_new : :required)
                               [args, last]
                             else
                               [args, :required]

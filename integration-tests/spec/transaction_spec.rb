@@ -142,6 +142,23 @@ remote_describe "transactions testing" do
     end
   end
 
+  it "should not rollback cache transactions when suspended" do
+    begin
+      TorqueBox.transaction do
+        @cache.put("first", "1")
+        TorqueBox.transaction(:none) do
+          @cache.put("second", 2)
+          raise "rollback"
+        end
+      end
+      raise "should not get here"
+    rescue Exception => e
+      e.message.should == 'rollback'
+      @cache.keys.size.should == 1
+      @cache.get("second").should == 2
+    end
+  end
+
   it "should rollback nested cache transactions" do
     begin
       TorqueBox.transaction do
