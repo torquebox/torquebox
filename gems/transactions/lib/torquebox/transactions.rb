@@ -83,7 +83,8 @@ module TorqueBox
         @tm.transaction != nil
       end
 
-      def beguine
+      # Begin a transaction, yield, commit or rollback on error.
+      def start
         prepare
         result = yield
         commit
@@ -92,6 +93,7 @@ module TorqueBox
         error(e)
       end
 
+      # Suspend current transaction, yield, and resume
       def suspend
         @transactions.push( @tm.suspend )
         yield
@@ -99,36 +101,97 @@ module TorqueBox
         @tm.resume( @transactions.pop )
       end
 
+      # JEE Required
       def required &block
         if active?
           yield
         else
-          beguine &block
+          start &block
         end
       end
 
+      # JEE RequiresNew
       def requires_new &block
         if active?
           suspend do
-            beguine &block
+            start &block
           end
         else
-          beguine &block
+          start &block
         end
+      end
+
+      # JEE NotSupported
+      def not_supported &block
+        if active?
+          suspend &block
+        else
+          yield
+        end
+      end
+
+      # JEE Supports
+      def supports
+        yield
+      end
+
+      # JEE Mandatory
+      def mandatory
+        if active?
+          yield
+        else
+          raise "No active transaction"
+        end
+      end
+
+      # JEE Never
+      def never
+        if active?
+          raise "Active transaction detected"
+        else
+          yield
+        end
+      end
+
+      # Returns a 2-element tuple [resources, method] where method is
+      # a symbol corresponding to one of the JEE tx attribute methods
+      # above. All but the last argument should be XA resources to be
+      # enlisted in the transaction. The last argument passed is
+      # expected to be either a symbol referring to one of the JEE
+      # methods or a Hash in which the method symbol is associated
+      # with the :attribute key. If omitted, defaults to :required.
+      #
+      # For backwards compatibility the hash may also contain a
+      # :requires_new key which, if true, will result in the
+      # :requires_new method symbol being returned.
+      #
+      # :none may be used as an alias for :not_supported
+      #
+      # Whew!
+      def parse_args(*args)
+        resources, method = case args.last
+                            when Symbol
+                              last = args.pop
+                              [args, last]
+                            when Hash
+                              hash = args.pop
+                              last = hash[:attribute] || (hash[:requires_new] ? :requires_new : :required)
+                              [args, last]
+                            else
+                              [args, :required]
+                            end
+        method = :not_supported if method == :none
+        [resources, method]
       end
       
       def run(*args, &block)
         return yield unless @tm
-        opts = args.last.is_a?(Hash) ? args.pop : {}
+        resources, method = parse_args(*args)
         fn = lambda do
-          enlist(*args)
+          enlist(*resources)
           block.call
         end
-        if opts[:requires_new]
-          requires_new &fn
-        else
-          required &fn
-        end
+        send(method, &fn)
       ensure
         Thread.current[:torquebox_transaction] = nil if @transactions.empty?
       end
