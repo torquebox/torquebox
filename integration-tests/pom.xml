@@ -27,7 +27,7 @@
     <rspec.max.heap>1280m</rspec.max.heap>
     <jboss.max.heap>1024m</jboss.max.heap>
     <jboss.lazy>false</jboss.lazy>
-    <driver.type>any</driver.type>
+    <driver.type>headless</driver.type>
     <domain.mode>false</domain.mode>
     <ruby.compat.version>1.8</ruby.compat.version>
     <spec.dir>spec</spec.dir>
