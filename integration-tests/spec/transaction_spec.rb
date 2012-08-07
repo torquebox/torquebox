@@ -131,7 +131,6 @@ remote_describe "transactions testing" do
 
   it "should rollback cache transactions" do
     begin
-      @cache = TorqueBox::Infinispan::Cache.new( :name=>"tx-test" )
       TorqueBox.transaction do
         @cache.put("first", "1")
         raise "rollback"
