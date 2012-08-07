@@ -30,11 +30,10 @@ module TorqueBox
     # The default module mixed into the Manager. Adapters for various
     # resources are expected to override these methods as appropriate
     # for their library. See ActiveRecordAdapters::Transaction, for
-    # example.  These are the methods invoked by Manager#with_tx()
+    # example.
     module Transaction
 
       def prepare
-        @transactions.push( @tm.suspend ) if active?
         @tm.begin
       end
 
@@ -44,15 +43,6 @@ module TorqueBox
 
       def rollback
         @tm.rollback
-      end
-
-      def cleanup
-        @tm.suspend
-        if @transactions.last
-          @tm.resume( @transactions.pop )
-        else
-          Thread.current[:torquebox_transaction] = nil
-        end
       end
 
       def error( exception )
@@ -88,37 +78,59 @@ module TorqueBox
         end
       end
 
-      # Where we either begin a new transaction (with_tx) or simply
-      # yield as part of the current transaction.
-      def run(*args, &block)
-        return yield unless @tm
-        opts = args.last.is_a?(Hash) ? args.pop : {}
-        if active? && !opts[:requires_new]
-          enlist(*args)
-          yield
-        else
-          with_tx do
-            enlist(*args)
-            block.call
-          end
-        end
-      end
-
       # Is there an active transaction?
       def active?
         @tm.transaction != nil
       end
 
-      # The heart of the matter
-      def with_tx
+      def beguine
         prepare
         result = yield
         commit
         result
       rescue Exception => e
         error(e)
+      end
+
+      def suspend
+        @transactions.push( @tm.suspend )
+        yield
       ensure
-        cleanup
+        @tm.resume( @transactions.pop )
+      end
+
+      def required &block
+        if active?
+          yield
+        else
+          beguine &block
+        end
+      end
+
+      def requires_new &block
+        if active?
+          suspend do
+            beguine &block
+          end
+        else
+          beguine &block
+        end
+      end
+      
+      def run(*args, &block)
+        return yield unless @tm
+        opts = args.last.is_a?(Hash) ? args.pop : {}
+        fn = lambda do
+          enlist(*args)
+          block.call
+        end
+        if opts[:requires_new]
+          requires_new &fn
+        else
+          required &fn
+        end
+      ensure
+        Thread.current[:torquebox_transaction] = nil if @transactions.empty?
       end
 
     end
