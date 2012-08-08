@@ -357,14 +357,14 @@ describe TorqueBox::DeployUtils do
 
   describe '.create_archive' do
 
-    ALL_EXPECTED_FILES = %w{config.ru
-                            app/app.rb
-                            app/puppet-master.rb
-                            app/app.box
-                            app/a-non-cached.gem
-                            vendor/vendor.rb
-                            puppet/puppet.rb
-                            simpleapp.box}
+    ALL_EXPECTED_FILES = %w{"config.ru"
+                            "app/app.rb"
+                            "app/puppet-master.rb"
+                            "app/app.box"
+                            "app/a-non-cached.gem"
+                            "vendor/vendor.rb"
+                            "puppet/puppet.rb"
+                            "simpleapp.box"}
     
     def mock_run_command(expected_includes)
       @util.should_receive(:run_command) do |arg|
@@ -374,7 +374,7 @@ describe TorqueBox::DeployUtils do
     end
     
     it 'should not include excluded dirs and files' do
-      mock_run_command(ALL_EXPECTED_FILES - %w{puppet/puppet.rb simpleapp.box})
+      mock_run_command(ALL_EXPECTED_FILES - %w{"puppet/puppet.rb" "simpleapp.box"})
 
       path = @util.create_archive(
           :name => "simpleapp",
@@ -386,7 +386,7 @@ describe TorqueBox::DeployUtils do
     end
 
     it 'should exclude based on patterns' do
-      mock_run_command(ALL_EXPECTED_FILES - %w{simpleapp.box})
+      mock_run_command(ALL_EXPECTED_FILES - %w{"simpleapp.box"})
 
       path = @util.create_archive(
           :name => "simpleapp",
