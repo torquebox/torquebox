@@ -25,6 +25,18 @@
       fails, both rollback.
     </para>
 
+    <para>
+      In addition, Rails <classname>ActiveRecord</classname> models
+      are enhanced when run in TorqueBox so that connections from
+      multiple, class-specific databases can indeed participate in a
+      single distributed transaction. Further, the behavior of nested
+      transaction rollbacks won't surprise you: if the child rolls
+      back, the parent will, too, excepting when the
+      <code>:requires_new</code> option is passed to the child.
+      Callbacks for <code>after_commit</code> and
+      <code>after_rollback</code> work as one would expect.
+    </para>
+
   </section>
 
   <section>
@@ -39,8 +51,12 @@
       <itemizedlist>
         <listitem>
           <para>
-            An arbitrary number of XAResources to enlist in the current
-            transaction (not needed for built-in services)
+            An arbitrary number of XAResources to enlist in the
+            current transaction. This is rarely needed since TorqueBox
+            message destinations, background tasks and caches are all
+            transactionally aware. They will enlist themselves in the
+            transaction defined by <code>TorqueBox.transaction</code>
+            automatically, by default.
           </para>
         </listitem>
 
@@ -48,12 +64,18 @@
           <para>
             Optionally, either a symbol or a hash indicating the scope
             of the transaction. The <code>:scope</code> attribute
-            provides analogs to <ulink url="http://docs.oracle.com/javaee/6/tutorial/doc/bncij.html">the JEE transaction attributes</ulink>.
+            provides analogs to <ulink
+            url="http://docs.oracle.com/javaee/6/tutorial/doc/bncij.html">the
+            JEE transaction attributes</ulink>. The default is
+            <code>:required</code>.
           </para>
         </listitem>
 
         <listitem>
-          <para>A block defining your transaction</para>
+          <para>A block defining your transaction. All actions taken
+          in the block will be committed after the block is called
+          unless an exception is raised, in which case the transaction
+          will be rolled back.</para>
         </listitem>
       </itemizedlist>
 
@@ -81,7 +103,7 @@
             </row>
 
             <row>
-              <entry><parameter>:requires-new</parameter></entry>
+              <entry><parameter>:requires_new</parameter></entry>
 
               <entry>Suspend current transaction, if any, start a new
               one, execute, commit or rollback, and resume the
@@ -89,10 +111,11 @@
             </row>
 
             <row>
-              <entry><parameter>:not-supported</parameter></entry>
+              <entry><parameter>:not_supported</parameter></entry>
 
               <entry>Suspend current transaction, if any, and execute
-              without a transaction.</entry>
+              without a transaction. Also,
+              <parameter>:none</parameter> is an alias.</entry>
             </row>
 
             <row>
@@ -122,23 +145,49 @@
 
     </para>
 
+    <para><example>
+      <title>Nesting transactions with different scopes</title>
+
+      <para><programlisting>TorqueBox.transaction do
+  # ... tx #1 created due to default :required scope
+  TorqueBox.transaction(:none) do
+    # ... tx #1 suspended
+    # exceptions raised here won't rollback actions in this block
+    TorqueBox.transaction(:scope => :requires_new) do
+      # ... tx #2 begun
+      # exceptions raised here will rollback tx #2
+    end
+    # ... tx #2 committed
+  end
+  # ... tx #1 resumed
+  TorqueBox.transaction(:mandatory) do
+    # ... actions become a part of tx #1
+  end
+  TorqueBox.transaction(:requires_new => true) do  # deprecated syntax
+    # ... tx #1 suspended and tx #3 begun
+  end
+  # ... tx #3 committed (or rolled back) and tx #1 resumed
+  # exceptions raised (or uncaught) here will rollback tx #1
+end
+# ... tx #1 committed
+      </programlisting></para>
+    </example></para>
+
     <para>
-      TorqueBox message destinations, background tasks and caches are
-      all transactionally aware. They will enlist themselves in the
-      transaction defined by <code>TorqueBox.transaction</code>
-      automatically, by default.
+      Obviously, the above example is contrived. When multiple
+      transactional components collaborate, you don't often know how
+      methods, invoked directly or indirectly, might demarcate their
+      transactions. Rarely would you explicitly nest transactions
+      within one method, but the above serves as an example showing
+      the effects of transaction scope.
     </para>
 
     <para>
-      In addition, Rails <classname>ActiveRecord</classname> models
-      are enhanced when run in TorqueBox so that connections from
-      multiple, class-specific databases can indeed participate in a
-      single distributed transaction.  Further, the behavior of nested
-      transaction rollbacks won't surprise you: if the child rolls
-      back, the parent will, too, excepting when the
-      <code>:requires_new=>true</code> option is passed to the child.
-      Callbacks for <code>after_commit</code> and
-      <code>after_rollback</code> work as one would expect.
+      The above example also shows the options for setting scope
+      either as a symbol, e.g. <code>:requires_new</code>, or a hash,
+      e.g. <code>:scope => :requires_new</code>. The deprecated
+      syntax, <code>:requires_new => true</code>, matching the Rails
+      convention, is provided for backwards compatibility.
     </para>
 
   </section>
