@@ -293,11 +293,6 @@ describe TorqueBox::DeployUtils do
   end
 
   describe '.run_command_line' do
-    it 'should not add --server-config when not clustered' do
-      command, options = @util.run_command_line(:clustered => false)
-      options.should_not include('--server-config=')
-    end
-
     it 'should add --server-config when clustered' do
       command, options = @util.run_command_line(:clustered => true)
       options.should include('--server-config=')

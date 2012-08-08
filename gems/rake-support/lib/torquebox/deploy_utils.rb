@@ -71,11 +71,16 @@ module TorqueBox
       end
 
       def standalone_config_file
-        "standalone.xml"
+        eap? ? "standalone-full.xml" : "standalone.xml"
       end
 
       def cluster_config_file
-        "standalone-ha.xml"
+        eap? ? "standalone-full-ha.xml" : "standalone-ha.xml"
+      end
+
+      def eap?
+        index_html = File.join( jboss_home, 'welcome-content', 'index.html' )
+        File.exists?( index_html ) && File.read( index_html ) =~ /EAP 6/
       end
 
       def properties_dir
@@ -127,7 +132,8 @@ module TorqueBox
 
       def run_command_line(opts={})
         options = ENV['JBOSS_OPTS'] || ''
-        options = "#{options} --server-config=#{cluster_config_file}" if opts[:clustered]
+        config_file = opts[:clustered] ? cluster_config_file : standalone_config_file
+        options = "#{options} --server-config=#{config_file}"
         options = "#{options} -Dorg.torquebox.web.http.maxThreads=#{opts[:max_threads]}" if opts[:max_threads]
         options = "#{options} -b #{opts[:bind_address]}" if opts[:bind_address]
         options = "#{options} -Djboss.socket.binding.port-offset=#{opts[:port_offset]}" if opts[:port_offset]
