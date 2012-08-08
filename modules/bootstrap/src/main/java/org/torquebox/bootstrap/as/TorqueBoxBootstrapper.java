@@ -22,19 +22,12 @@ package org.torquebox.bootstrap.as;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.jar.JarFile;
 
 import org.jboss.logging.Logger;
-import org.jboss.modules.Module;
-import org.jboss.modules.ModuleClassLoader;
-import org.jboss.modules.ModuleLoader;
-import org.jboss.modules.ResourceLoader;
 import org.jboss.modules.ResourceLoaderSpec;
-import org.jboss.modules.ResourceLoaders;
+import org.projectodd.polyglot.core.util.ResourceLoaderUtil;
 import org.torquebox.bootstrap.JRubyHomeLocator;
 
 public class TorqueBoxBootstrapper {
@@ -71,9 +64,7 @@ public class TorqueBoxBootstrapper {
                 if (child.getName().endsWith( ".jar" )) {
                     log.debug( "Adding: " + child );
                     try {
-                        ResourceLoader loader = ResourceLoaders.createJarResourceLoader( child.getName(), new JarFile( child ) );
-                        ResourceLoaderSpec loaderSpec = ResourceLoaderSpec.createResourceLoaderSpec( loader );
-                        loaderSpecs.add( loaderSpec );
+                        loaderSpecs.add( ResourceLoaderUtil.createLoaderSpec( child ) );
                     } catch (IOException e) {
                         log.error( e );
                     }
@@ -84,41 +75,9 @@ public class TorqueBoxBootstrapper {
         }
     }
     
-    private static ResourceLoader[] getExistingResourceLoaders() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException,
-            InvocationTargetException {
-        Module module = Module.forClass( TorqueBoxBootstrapper.class );
-        ModuleClassLoader cl = module.getClassLoader();
-
-        Method method = ModuleClassLoader.class.getDeclaredMethod( "getResourceLoaders" );
-        method.setAccessible( true );
-        Object result = method.invoke( cl );
-
-        return (ResourceLoader[]) result;
-
-    }
-
     private static void swizzleResourceLoaders(List<ResourceLoaderSpec> loaderSpecs) {
-
-        Module module = Module.forClass( TorqueBoxBootstrapper.class );
-        ModuleLoader moduleLoader = module.getModuleLoader();
-
         try {
-            for (ResourceLoader each : getExistingResourceLoaders()) {
-                loaderSpecs.add( ResourceLoaderSpec.createResourceLoaderSpec( each ) );
-            }
-
-            Method method = ModuleLoader.class.getDeclaredMethod( "setAndRefreshResourceLoaders", Module.class, Collection.class );
-            method.setAccessible( true );
-            log.debug( "Swizzle: " + loaderSpecs );
-            method.invoke( moduleLoader, module, loaderSpecs );
-
-            Method refreshMethod = ModuleLoader.class.getDeclaredMethod( "refreshResourceLoaders", Module.class );
-            refreshMethod.setAccessible( true );
-            refreshMethod.invoke( moduleLoader, module );
-
-            Method relinkMethod = ModuleLoader.class.getDeclaredMethod( "relink", Module.class );
-            relinkMethod.setAccessible( true );
-            relinkMethod.invoke( moduleLoader, module );
+            ResourceLoaderUtil.refreshAndRelinkResourceLoaders( TorqueBoxBootstrapper.class, loaderSpecs, true );
         } catch (SecurityException e) {
             log.fatal( e.getMessage(), e );
         } catch (NoSuchMethodException e) {
