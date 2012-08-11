@@ -41,7 +41,6 @@ public class StompApplicationDefaultsProcessor implements DeploymentUnitProcesso
             stompAppMetaData.setContextPath( "/" );
         }
         
-        System.err.println( "STOMP HOSTS: " + stompAppMetaData.getHosts() );
     }
 
     @Override

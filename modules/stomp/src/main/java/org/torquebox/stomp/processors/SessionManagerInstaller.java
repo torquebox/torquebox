@@ -64,9 +64,6 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
             List<String> webHosts = rackAppMetaData.getHosts();
             List<String> stompHosts = stompAppMetaData.getHosts();
 
-            System.err.println( "webhosts: " + webHosts );
-            System.err.println( "stomphosts: " + stompHosts );
-
             if (stompHosts.isEmpty()) {
                 useWeb = true;
             } else if (webHosts.isEmpty()) {
@@ -100,7 +97,6 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
     }
 
     protected void deployWebBasedSessionManager(DeploymentPhaseContext phaseContext, String hostName, String context) {
-        System.err.println( "DEPLOY WEB MANAGER" );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         HttpStompSessionManagerService service = new HttpStompSessionManagerService();
         ServiceName serviceName = StompServices.container( unit ).append( "session-manager" );
@@ -112,7 +108,6 @@ public class SessionManagerInstaller implements DeploymentUnitProcessor {
     }
 
     protected void deployStandaloneSessionManager(DeploymentPhaseContext phaseContext) {
-        System.err.println( "DEPLOY STANDALONE SESSION MANAGER" );
         DeploymentUnit unit = phaseContext.getDeploymentUnit();
         SimpleStompSessionManager sessionManager = new SimpleStompSessionManager();
         ServiceName serviceName = StompServices.container( unit ).append( "session-manager" );
