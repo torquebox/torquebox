@@ -29,7 +29,6 @@ module TorqueBox
       end
       home.full_gem_path if home
     rescue Exception => e
-      puts "Cannot find torquebox-server: #{e}"
       nil
     end
 
@@ -50,7 +49,7 @@ module TorqueBox
       ENV['JBOSS_HOME'] ||= "#{ENV['TORQUEBOX_HOME']}/jboss"
       ENV['JRUBY_HOME'] ||= jruby_home
       ENV['JBOSS_OPTS'] ||= "-Djruby.home=#{jruby_home}"
-      %w(TORQUEBOX_HOME JBOSS_HOME JRUBY_HOME).each { |key| puts "[ERROR] #{key} is not set. Install torquebox-server gem or manually set #{key}" unless ENV[key] }
+      %w(JBOSS_HOME JRUBY_HOME).each { |key| puts "[ERROR] #{key} is not set. Install torquebox-server gem or manually set #{key}" unless ENV[key] }
     end
 
   end
