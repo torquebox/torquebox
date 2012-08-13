@@ -127,12 +127,15 @@ class EapOverlayer
         default.add_attribute("start", "EAGER") if default
         container.add_attribute("aliases", "polyglot torquebox standard-session-cache")
       else
-        container = subsystem.add_element('cache-container', 'name' => 'polyglot',
-                                          'default-cache' => 'sessions', 'aliases' => 'torquebox')
-        cache = container.add_element('local-cache', 'name' => 'sessions', 'start' => 'EAGER')
-        cache.add_element('eviction', 'strategy' => 'LRU', 'max-entries' => '10000')
-        cache.add_element('expiration', 'max-idle' => '100000')
-        cache.add_element('transaction', 'mode' => "FULL_XA")
+        container = subsystem.get_elements("cache-container[@name='polyglot']").first
+        unless container
+          container = subsystem.add_element('cache-container', 'name' => 'polyglot',
+                                            'default-cache' => 'sessions', 'aliases' => 'torquebox')
+          cache = container.add_element('local-cache', 'name' => 'sessions', 'start' => 'EAGER')
+          cache.add_element('eviction', 'strategy' => 'LRU', 'max-entries' => '10000')
+          cache.add_element('expiration', 'max-idle' => '100000')
+          cache.add_element('transaction', 'mode' => "FULL_XA")
+        end
       end
     end
   end
