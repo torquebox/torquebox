@@ -88,11 +88,6 @@ module TorqueBox
       end
 
       def deploy_dir
-        d = File.join( torquebox_home, 'apps' )
-        if ( File.exists?( d ) && File.directory?( d ) )
-          return d
-        end
-
         File.join( "#{server_dir}", "deployments" )
       end
 
