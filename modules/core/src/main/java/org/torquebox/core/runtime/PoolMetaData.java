@@ -241,14 +241,6 @@ public class PoolMetaData {
         this.deferUntilRequested = deferUntilRequested;
     }
 
-    public boolean isStartAsynchronously() {
-        return startInAsynchronously;
-    }
-
-    public void setStartAsynchronously(boolean startInAsynchronously) {
-        this.startInAsynchronously = startInAsynchronously;
-    }
-
     public String toString() {
         if (this.poolType == PoolType.NON_SHARED) {
             return "[PoolMetaData: name=" + this.name + " min=" + this.minimumSize + " max=" + this.maximumSize + "]";
@@ -275,6 +267,4 @@ public class PoolMetaData {
     private String instanceName;
     
     private boolean deferUntilRequested = true;
-    
-    private boolean startInAsynchronously = false;
 }

@@ -48,7 +48,6 @@ public class WebRuntimePoolProcessor implements DeploymentUnitProcessor {
             unit.addToAttachmentList( PoolMetaData.ATTACHMENTS_KEY, poolMetaData );
         }
         
-        poolMetaData.setStartAsynchronously( true );
     }
 
     @Override

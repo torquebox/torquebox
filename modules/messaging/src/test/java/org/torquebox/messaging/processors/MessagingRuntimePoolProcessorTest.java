@@ -41,7 +41,6 @@ public class MessagingRuntimePoolProcessorTest extends AbstractDeploymentProcess
         assertEquals( "messaging", messagingPoolMetaData.getName() );
         assertTrue( messagingPoolMetaData.isShared() );
         assertTrue( messagingPoolMetaData.isDeferUntilRequested() );
-        assertFalse( messagingPoolMetaData.isStartAsynchronously() );
     }
 
 }

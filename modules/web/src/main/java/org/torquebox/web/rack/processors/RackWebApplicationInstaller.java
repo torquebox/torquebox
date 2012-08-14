@@ -170,7 +170,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
         ServletContextAttribute runtimePoolNameValue = new ServletContextAttribute( "runtime.pool.service-name", CoreServices.runtimePoolName( unit, "web" ) );
         unit.addToAttachmentList( ServletContextAttribute.ATTACHMENT_KEY, runtimePoolNameValue );
-        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, CoreServices.runtimePoolName( unit, "web" ) );
+        unit.addToAttachmentList( Attachments.WEB_DEPENDENCIES, CoreServices.runtimeStartPoolName( unit, "web" ) );
     }
 
     private void setUpSessionConfig(JBossWebMetaData jbossWebMetaData, RackMetaData rackAppMetaData) {

@@ -154,14 +154,6 @@ public class SharedPool<T> implements Pool<T> {
         this.deferUntilRequested = deferUntilRequested;
     }
 
-    public boolean isStartAsynchronously() {
-        return startAsynchronously;
-    }
-
-    public void setStartAsynchronously(boolean startAsynchronously) {
-        this.startAsynchronously = startAsynchronously;
-    }
-
     /**
      * Create the pool.
      * 
@@ -176,22 +168,10 @@ public class SharedPool<T> implements Pool<T> {
         if (this.factory == null) {
             throw new IllegalArgumentException( "Neither an instance nor an instance-factory provided." );
         }
-        if (!this.deferUntilRequested && !this.startAsynchronously) {
-            startPool();
-        } else if (!this.deferUntilRequested && this.startAsynchronously) {
-            log.info( "Starting " + this.name + " runtime pool asynchronously" );
-            Thread initThread = new Thread() {
-                public void run() {
-                    try {
-                        SharedPool.this.startPool();
-                    } catch (Exception ex) {
-                        log.error( "Failed to start pool", ex );
-                    }
-                }
-            };
-            initThread.start();
-        } else {
+        if (this.deferUntilRequested) {
             log.info( "Deferring start for " + this.name + " runtime pool." );
+        } else {
+            startPool();
         }
     }
 
@@ -253,8 +233,6 @@ public class SharedPool<T> implements Pool<T> {
     private InstanceFactory<T> factory;
 
     private boolean deferUntilRequested = true;
-
-    private boolean startAsynchronously = false;
 
     private NamespaceContextSelector nsContextSelector = null;
 

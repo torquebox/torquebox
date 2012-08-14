@@ -82,7 +82,6 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
             
             pool.setName( poolMetaData.getName() );
             pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
-            pool.setStartAsynchronously( poolMetaData.isStartAsynchronously() );
             
             SharedRubyRuntimeFactoryPoolService service = new SharedRubyRuntimeFactoryPoolService( pool );
 
@@ -95,7 +94,8 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
 
             unit.addToAttachmentList( DeploymentNotifier.SERVICES_ATTACHMENT_KEY, name );
 
-            phaseContext.getServiceTarget().addService( name.append( "START" ), new RubyRuntimePoolStartService( pool ) )
+            ServiceName startName = CoreServices.runtimeStartPoolName( unit, pool.getName() );
+            phaseContext.getServiceTarget().addService( startName, new RubyRuntimePoolStartService( pool ) )
                     .addDependency( name )
                     .setInitialMode( Mode.PASSIVE )
                     .install();
@@ -121,7 +121,6 @@ public class RuntimePoolInstaller implements DeploymentUnitProcessor {
             pool.setMinimumInstances( poolMetaData.getMinimumSize() );
             pool.setMaximumInstances( poolMetaData.getMaximumSize() );
             pool.setDeferUntilRequested( poolMetaData.isDeferUntilRequested() );
-            pool.setStartAsynchronously( poolMetaData.isStartAsynchronously() );
         
             DefaultRubyRuntimePoolService service = new DefaultRubyRuntimePoolService( pool );
 

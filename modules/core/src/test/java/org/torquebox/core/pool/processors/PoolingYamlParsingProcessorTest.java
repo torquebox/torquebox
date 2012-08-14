@@ -92,7 +92,6 @@ public class PoolingYamlParsingProcessorTest extends AbstractDeploymentProcessor
         assertEquals( "pool_one", poolOne.getName() );
         assertTrue( poolOne.isShared() );
         assertTrue( poolOne.isDeferUntilRequested() );
-        assertFalse( poolOne.isStartAsynchronously() );
     }
 
     @Test
@@ -109,7 +108,6 @@ public class PoolingYamlParsingProcessorTest extends AbstractDeploymentProcessor
         assertEquals( "pool_one", poolOne.getName() );
         assertTrue( poolOne.isShared() );
         assertFalse( poolOne.isDeferUntilRequested() );
-        assertFalse( poolOne.isStartAsynchronously() );
     }
 
 }

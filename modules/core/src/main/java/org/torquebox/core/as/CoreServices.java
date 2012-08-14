@@ -44,6 +44,10 @@ public class CoreServices {
         return unit.getServiceName().append( RUNTIME).append("pool").append( poolName );
     }
 
+    public static ServiceName runtimeStartPoolName(DeploymentUnit unit, final String poolName) {
+        return runtimePoolName( unit, poolName).append( "START" );
+    }
+
     public static ServiceName serviceRegistryName(DeploymentUnit unit) {
         return unit.getServiceName().append( CORE ).append( "service-registry" );
     }

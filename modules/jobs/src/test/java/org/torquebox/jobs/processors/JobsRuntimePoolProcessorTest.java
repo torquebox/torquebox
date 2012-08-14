@@ -121,7 +121,6 @@ public class JobsRuntimePoolProcessorTest extends AbstractDeploymentProcessorTes
         assertEquals( "jobs", jobPoolMetaData.getName() );
         assertTrue( jobPoolMetaData.isShared() );
         assertTrue( jobPoolMetaData.isDeferUntilRequested() );
-        assertFalse( jobPoolMetaData.isStartAsynchronously() );
     }
 
 }

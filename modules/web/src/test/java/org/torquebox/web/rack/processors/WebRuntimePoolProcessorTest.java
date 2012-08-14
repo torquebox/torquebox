@@ -61,7 +61,6 @@ public class WebRuntimePoolProcessorTest extends AbstractDeploymentProcessorTest
         assertNotNull( poolMetaData );
         assertTrue( poolMetaData.isShared() );
         assertFalse( poolMetaData.isDeferUntilRequested() );
-        assertTrue( poolMetaData.isStartAsynchronously() );
 
         unit.removeAttachment( PoolMetaData.ATTACHMENTS_KEY );
 

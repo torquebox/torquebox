@@ -87,21 +87,10 @@ public class ManagedPool<T> implements Pool<T> {
     }
 
     public void start() throws InterruptedException {
-        if (!this.deferUntilRequested && !this.startAsynchronously) {
-            startPool( true );
-        } else if (!this.deferUntilRequested && this.startAsynchronously) {
-            Thread initThread = new Thread() {
-                public void run() {
-                    try {
-                        ManagedPool.this.startPool();
-                    } catch(Exception ex) {
-                        log.error( "Failed to start pool", ex );
-                    }
-                }
-            };
-            initThread.start();
-        } else {
+        if (this.deferUntilRequested) {
             log.info( "Deferring start for " + getName() + " runtime pool." );
+        } else {
+            startPool( true );
         }
     }
 
@@ -149,14 +138,6 @@ public class ManagedPool<T> implements Pool<T> {
 
     public void setDeferUntilRequested(boolean deferUntilRequested) {
         this.deferUntilRequested = deferUntilRequested;
-    }
-
-    public boolean isStartAsynchronously() {
-        return startAsynchronously;
-    }
-
-    public void setStartAsynchronously(boolean startAsynchronously) {
-        this.startAsynchronously = startAsynchronously;
     }
     
     public int getSize() {
@@ -213,7 +194,6 @@ public class ManagedPool<T> implements Pool<T> {
     private SimplePool<T> pool;
     private PoolManager<T> poolManager;
     private boolean deferUntilRequested = true;
-    private boolean startAsynchronously = false;
     private boolean started = false;
     private NamespaceContextSelector nsContextSelector;
     

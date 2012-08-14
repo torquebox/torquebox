@@ -41,7 +41,6 @@ public class ServiceRuntimePoolProcessorTest extends AbstractDeploymentProcessor
         assertEquals( "services", servicePoolMetaData.getName() );
         assertTrue( servicePoolMetaData.isShared() );
         assertTrue( servicePoolMetaData.isDeferUntilRequested() );
-        assertFalse( servicePoolMetaData.isStartAsynchronously() );
     }
 
 }
