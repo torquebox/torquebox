@@ -61,7 +61,9 @@
 end</programlisting></para>
       </example>Each job class should implement a no-argument
     <methodname>run()</methodname> method to perform the work when
-    fired.</para>
+    fired. The class may optionally implement a one-argument
+    <methodname>on_error(exception)</methodname> method to handle
+    any errors raised during the job's execution.</para>
 
     <para><example>
         <title>Scheduled job implementation
@@ -76,9 +78,12 @@ end</programlisting></para>
     end
 
     def run()
-
       # perform work here
+    end
 
+    def on_error(exception)
+      # Optionally implement this method to interrogate any exceptions
+      # raised inside the job's run method.
     end
 
   end

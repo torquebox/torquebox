@@ -56,7 +56,11 @@ public class RubyJobProxy extends BaseJob implements Job, StatefulJob, Interrupt
             this.job = (JobComponent)resolver.resolve( ruby );
             notifyStarted( context );
             this.running = true;
-            this.job.run();
+            try {
+                this.job.run();
+            } catch (Exception e) {
+                this.job.onError( e );
+            }
             notifyFinished( context );
         } catch (Exception e) {
             notifyError( context, e );
@@ -82,6 +86,10 @@ public class RubyJobProxy extends BaseJob implements Job, StatefulJob, Interrupt
         } else if (this.job == null) {
             log.warn( "Attempted to interrupt job '" + this.jobName + "' before it started executing." );
         }
+    }
+
+    public JobComponent getComponent() {
+        return this.job;
     }
 
     private RubyRuntimePool runtimePool;

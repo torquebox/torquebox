@@ -12,6 +12,11 @@ jobs:
   job.two:
     job: StatelessJob
     cron: '*/1 * * * * ?'
+  job.three:
+    job: SimpleJob
+    cron: '*/1 * * * * ?'
+    config:
+      raise_error: true
 
 queues:
   /queue/response:
@@ -19,4 +24,6 @@ queues:
   /queue/init_params:
     durable: false
   /queue/stateless_response:
+    durable: false
+  /queue/error:
     durable: false

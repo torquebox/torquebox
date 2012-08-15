@@ -31,4 +31,12 @@ public class JobComponent extends AbstractRubyComponent {
         _callRubyMethod( "on_timeout" );
     }
 
+    public void onError(Exception error) throws Exception {
+        if (_defined( "on_error" )) {
+            _callRubyMethod( "on_error", error );
+        } else {
+            throw error;
+        }
+    }
+
 }

@@ -91,6 +91,23 @@ public class AbstractRubyComponent implements RubyComponent {
         return _callRubyMethodIfDefined( this.rubyComponent, method, args );
     }
 
+    protected boolean _defined(Object target, String name) {
+        try {
+            if (this.namespaceContextSelector != null) {
+                NamespaceContextSelector.pushCurrentSelector( this.namespaceContextSelector );
+            }
+            return RuntimeHelper.defined( this.rubyComponent.getRuntime(), target, name );
+        } finally {
+            if (this.namespaceContextSelector != null) {
+                NamespaceContextSelector.popCurrentSelector();
+            }
+        }
+    }
+
+    public boolean _defined(String name) {
+        return _defined( this.rubyComponent, name );
+    }
+
     protected RubyModule getClass(String path) {
         return this.rubyComponent.getRuntime().getClassFromPath( path );
     }

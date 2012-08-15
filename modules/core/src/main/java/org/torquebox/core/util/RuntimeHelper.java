@@ -58,8 +58,7 @@ public class RuntimeHelper {
         return withinContext( ruby, new Callable<Boolean>() {
             public Boolean call() throws Exception {
                 boolean success = false;
-                Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name + "=" }, Boolean.class );
-                if (respondTo.booleanValue()) {
+                if (defined( ruby, target, name + "=" )) {
                     JavaEmbedUtils.invokeMethod( ruby, target, name + "=", new Object[] { value }, void.class );
                     success = true;
                 }
@@ -72,10 +71,7 @@ public class RuntimeHelper {
         return withinContext( ruby, new Callable<Object>() {
             public Object call() throws Exception {
                 Object result = null;
-
-                Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
-
-                if (respondTo.booleanValue()) {
+                if (defined( ruby, target, name )) {
                     result = JavaEmbedUtils.invokeMethod( ruby, target, name, new Object[] {}, Object.class );
                 }
                 return result;
@@ -95,14 +91,19 @@ public class RuntimeHelper {
         return withinContext( ruby, new Callable<Object>() {
             public Object call() throws Exception {
                 Object result = null;
-
-                Boolean respondTo = (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
-
-                if (respondTo.booleanValue()) {
+                if (defined( ruby, target, name )) {
                     result = JavaEmbedUtils.invokeMethod( ruby, target, name, parameters, Object.class );
                 }
 
                 return result;
+            }
+        } );
+    }
+
+    public static boolean defined(final Ruby ruby, final Object target, final String name) {
+        return withinContext( ruby, new Callable<Boolean>() {
+            public Boolean call() throws Exception {
+                return (Boolean) JavaEmbedUtils.invokeMethod( ruby, target, "respond_to?", new Object[] { name }, Boolean.class );
             }
         } );
     }
