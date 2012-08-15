@@ -16,6 +16,10 @@ jobs:
     job: SimpleJob
     cron: '*/1 * * * * ?'
     config:
+      color: blue
+      an_array:
+        - one
+        - two
       raise_error: true
 
 queues:
