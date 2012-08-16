@@ -72,7 +72,8 @@ module TorqueBox
         begin
           jms_message = consumer.receive( timeout )
           if jms_message
-            decode ? Message.new( jms_message ).decode : jms_message
+            message = decode ? Message.new( jms_message ).decode : jms_message
+            block_given? ? yield(message) : message
           end
         ensure
           consumer.close unless consumer.nil?

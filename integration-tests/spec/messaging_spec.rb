@@ -129,6 +129,35 @@ remote_describe "in-container messaging tests" do
 
   end
 
+  describe "receiving by yielding blocks" do
+
+    it "should receive result of yielded block" do
+      with_queue("/queue/foo") do |queue|
+        queue.publish "success"
+        queue.receive {|m| m + "ful"}.should == "successful"
+      end
+    end
+
+    it "should rollback delivery if block raises exception" do
+      with_queue("/queue/foo") do |queue|
+        queue.publish "success"
+        begin
+          queue.receive {|m| raise "rollback" }
+          raise "should not get here"
+        rescue Exception => e
+          e.message.should == "rollback"
+        end
+        queue.receive(:timeout => 500).should == "success"
+      end
+    end
+
+    it "should not yield if receive times out" do
+      with_queue("/queue/foo") do |queue|
+        queue.receive(:timeout => 1) { |m| raise "fail" }.should == nil
+      end
+    end
+
+  end
 
   describe "sending and receiving" do
 

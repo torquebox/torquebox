@@ -75,10 +75,17 @@ module TorqueBox
         end
       end
 
-      def receive(options = {})
+      def receive(options = {}, &block)
         wait_for_destination(options[:startup_timeout]) do
-          with_session(options) do |session|
-            session.receive self, options
+          func = lambda do
+            with_session(options) do |session|
+              session.receive self, options, &block
+            end
+          end
+          if block
+            TorqueBox.transaction &func
+          else
+            func.call
           end
         end
       end
