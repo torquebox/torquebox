@@ -709,8 +709,14 @@ message = topic.receive
           </programlisting></para>
         </example>
 
-        <para>The <methodname>receive</methodname> takes an optional argument
-        containing a hash of options:</para>
+        <para>The <methodname>receive</methodname> method takes an
+        optional hash of options, described below. It can also take an
+        optional block, to which the received message will be yielded.
+        If a block is supplied, <methodname>receive</methodname>
+        returns the value of the block. If the block tosses an
+        exception, the broker will consider the message undelivered
+        and will automatically retry delivery up to some configurable
+        limit [10].</para>
 
         <table>
           <title>Receive options</title>
