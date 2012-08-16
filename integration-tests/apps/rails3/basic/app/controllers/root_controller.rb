@@ -21,4 +21,15 @@ class RootController < ApplicationController
   def environment
   end
 
+  caches_page :page_caching
+
+  def page_caching
+    @time = params[:time]
+  end
+
+  def expire_page_cache
+    expire_page :action => :page_caching
+    render :index
+  end
+
 end

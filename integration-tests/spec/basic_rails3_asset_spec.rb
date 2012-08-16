@@ -54,6 +54,33 @@ describe "basic rails3 asset test" do
       visit "/images/rails.png"
       page.response_headers['Content-Type'].should == 'image/png'
     end
+
+    # Duplicated here to explicitly ensure page caching works at root context
+    it 'should support rails page caching with html' do
+      visit "/root/page_caching?time=#{Time.now.to_f}"
+      element = page.find_by_id('success')
+      element.should_not be_nil
+      first_time = element.text
+      visit "/root/page_caching?time=#{Time.now.to_f}"
+      element = page.find_by_id('success')
+      element.should_not be_nil
+      second_time = element.text
+      first_time.should == second_time
+      visit "/root/expire_page_cache"
+      visit "/root/page_caching?time=#{Time.now.to_f}"
+      element = page.find_by_id('success')
+      element.should_not be_nil
+      third_time = element.text
+      third_time.should_not == second_time
+      visit "/root/expire_page_cache"
+    end
+
+    it 'should return a static page beneath default public dir' do
+      visit "/some_page.html"
+      element = page.find('#success')
+      element.should_not be_nil
+      element.text.should == 'static page'
+    end
   end
 
   describe "non-root context" do
@@ -68,6 +95,13 @@ describe "basic rails3 asset test" do
     it "should return correct Content-Type header", :browser_not_supported=>true do
       visit "/basic-rails3-asset/images/rails.png"
       page.response_headers['Content-Type'].should == 'image/png'
+    end
+
+    it 'should return a static page beneath default public dir' do
+      visit "/basic-rails3-asset/some_page.html"
+      element = page.find('#success')
+      element.should_not be_nil
+      element.text.should == 'static page'
     end
   end
 

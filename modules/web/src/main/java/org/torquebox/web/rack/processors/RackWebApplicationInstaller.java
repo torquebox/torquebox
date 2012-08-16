@@ -60,6 +60,7 @@ import org.projectodd.polyglot.web.servlet.StaticResourceServlet;
 import org.torquebox.core.as.CoreServices;
 import org.torquebox.web.as.WebServices;
 import org.torquebox.web.rack.RackMetaData;
+import org.torquebox.web.rails.RailsMetaData;
 import org.torquebox.web.servlet.RackFilter;
 
 /**
@@ -98,6 +99,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
         ResourceRoot resourceRoot = unit.getAttachment( Attachments.DEPLOYMENT_ROOT );
 
         RackMetaData rackAppMetaData = unit.getAttachment( RackMetaData.ATTACHMENT_KEY );
+        RailsMetaData railsAppMetaData = unit.getAttachment( RailsMetaData.ATTACHMENT_KEY );
 
         if (rackAppMetaData == null) {
             return;
@@ -149,7 +151,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
         setUpMimeTypes( jbossWebMetaData );
         setUpRackFilter( unit, rackAppMetaData, jbossWebMetaData );
-        setUpStaticResourceServlet( rackAppMetaData, jbossWebMetaData );
+        setUpStaticResourceServlet( rackAppMetaData, jbossWebMetaData, railsAppMetaData != null );
         ensureSomeServlet( rackAppMetaData, jbossWebMetaData );
         try {
             jbossWebMetaData.setContextRoot( rackAppMetaData.getContextPath() );
@@ -226,7 +228,7 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
 
     }
 
-    protected void setUpStaticResourceServlet(RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData) {
+    protected void setUpStaticResourceServlet(RackMetaData rackAppMetaData, JBossWebMetaData jbossWebMetaData, boolean enablePageCache) {
         JBossServletsMetaData servlets = jbossWebMetaData.getServlets();
         if (servlets == null) {
             servlets = new JBossServletsMetaData();
@@ -245,10 +247,25 @@ public class RackWebApplicationInstaller implements DeploymentUnitProcessor {
             staticServlet.setServletName( STATIC_RESROUCE_SERVLET_NAME );
             staticServlet.setId( STATIC_RESROUCE_SERVLET_NAME );
 
+            List<ParamValueMetaData> paramsList = new ArrayList<ParamValueMetaData>();
             ParamValueMetaData resourceRootParam = new ParamValueMetaData();
             resourceRootParam.setParamName( "resource.root" );
             resourceRootParam.setParamValue( rackAppMetaData.getStaticPathPrefix() );
-            staticServlet.setInitParam( Collections.singletonList( resourceRootParam ) );
+            paramsList.add( resourceRootParam );
+
+            if (enablePageCache) {
+                // TODO: Let users configure the cache directory and default extension
+                ParamValueMetaData cacheDirectoryParam = new ParamValueMetaData();
+                cacheDirectoryParam.setParamName( "cache.directory" );
+                cacheDirectoryParam.setParamValue( rackAppMetaData.getStaticPathPrefix() );
+                paramsList.add( cacheDirectoryParam );
+                ParamValueMetaData cacheExtensionParam = new ParamValueMetaData();
+                cacheExtensionParam.setParamName( "cache.extension" );
+                cacheExtensionParam.setParamValue( ".html" );
+                paramsList.add( cacheExtensionParam );
+            }
+
+            staticServlet.setInitParam( paramsList );
             servlets.add( staticServlet );
 
             ServletMappingMetaData staticMapping = new ServletMappingMetaData();
