@@ -1170,6 +1170,20 @@ end</programlisting></para>
                 </row>
 
                 <row>
+                  <entry><parameter>singleton</parameter></entry>
+
+                  <entry>false</entry>
+
+                  <entry>By default, message processors run on all
+                  nodes in a cluster, enabling automatic load
+                  balancing. Setting this to true results in a single,
+                  HA processor, ensuring that only one node in a
+                  cluster receives all messages from its associated
+                  destination and, with concurrency set to 1, in the
+                  same order they were published.</entry>
+                </row>
+
+                <row>
                   <entry><parameter>selector</parameter></entry>
 
                   <entry></entry>
