@@ -64,7 +64,7 @@ describe "back rack with JRUBY_OPTS" do
     web:
       context: /basic-rack
     environment:
-      JRUBY_OPTS: --#{RUBY_VERSION[0,3]}
+      JRUBY_OPTS: --#{RUBY_VERSION[0,3]} --client
 
   END
 

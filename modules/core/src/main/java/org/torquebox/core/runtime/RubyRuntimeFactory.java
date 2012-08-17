@@ -470,6 +470,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         return env;
     }
 
+    private static final List<String> excludedJrubyOptions = Arrays.asList( "--sample", "--client", "--server", "--manage", "--headless" );
     protected String[] prepareJRubyOpts(Map<String, String> environment) {
         String jrubyOpts = environment.get( "JRUBY_OPTS" );
         List<String> options = StringUtils.parseCommandLineOptions( jrubyOpts );
@@ -477,7 +478,8 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         // to already be converted to -Djruby.a.b JVM properties
         Iterator<String> iterator = options.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().matches( "-X\\w+\\..+" )) {
+            String option = iterator.next();
+            if (option.matches( "-X\\w+\\..+" ) || excludedJrubyOptions.contains( option )) {
                 iterator.remove();
             }
         }

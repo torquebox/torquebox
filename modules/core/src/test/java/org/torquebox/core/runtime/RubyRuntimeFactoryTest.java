@@ -406,6 +406,20 @@ public class RubyRuntimeFactoryTest {
         assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
     }
 
+    @Test
+    public void testJRubyOptsDoesntBarfOnEverythingElse() throws Exception {
+        factory = new RubyRuntimeFactory( null );
+        factory.setUseJRubyHomeEnvVar( false );
+        Map<String, String> env = new HashMap<String, String>();
+        env.put( "JRUBY_OPTS", "-X-C --client --1.9 --sample --server --manage --headless" );
+        factory.setApplicationEnvironment( env );
+        factory.create();
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertEquals( CompileMode.OFF, ruby.getInstanceConfig().getCompileMode() );
+        assertTrue( ruby.is1_9() );
+    }
+
     public boolean isJRuby17() {
         return JRubyConstants.getVersion().startsWith( "1.7" );
     }
