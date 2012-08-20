@@ -25,4 +25,19 @@ describe "basic rails3.1 test" do
     find('#success').text.should == 'taco'
   end
 
+  if RUBY_VERSION[0,3] == '1.9'
+    it "should support streaming templates" do
+      uri = URI.parse(page.driver.send(:url, "/basic-rails31/root/streaming"))
+      Net::HTTP.get_response(uri) do |response|
+        chunk_count, body = 0, ""
+        response.read_body do |chunk|
+          chunk_count += 1
+          body += chunk
+        end
+        body.should include('It works')
+        chunk_count.should be > 1
+      end
+    end
+  end
+
 end
