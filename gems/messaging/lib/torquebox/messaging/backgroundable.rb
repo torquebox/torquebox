@@ -27,6 +27,7 @@ module TorqueBox
     # Backgroundable provides mechanism for executing an object's
     # methods asynchronously.
     module Backgroundable
+      MUTEX = Mutex.new
 
       def self.included(base)
         base.extend(ClassMethods)
@@ -82,13 +83,20 @@ module TorqueBox
         end
 
         def __enable_backgroundable_newrelic_tracing(method)
+          method = method.to_s
           if Backgroundable.newrelic_available?
-           include(NewRelic::Agent::Instrumentation::ControllerInstrumentation) unless
-              include?(NewRelic::Agent::Instrumentation::ControllerInstrumentation)
-            begin
-              add_transaction_tracer(method, :name => method.sub("__sync_", ""), :category => :task)
-            rescue Exception => e
-              TorqueBox::Logger.new( Backgroundable ).error "Error loading New Relic for backgrounded method #{method.sub("__sync_", "")}: #{e}"
+            TorqueBox::Messaging::Backgroundable::MUTEX.synchronize do
+              @__enabled_bg_tracing_methods ||= {}
+              if !@__enabled_bg_tracing_methods[method]
+                include(NewRelic::Agent::Instrumentation::ControllerInstrumentation) unless
+                  include?(NewRelic::Agent::Instrumentation::ControllerInstrumentation)
+                begin
+                  add_transaction_tracer(method, :name => method.sub("__sync_", ""), :category => :task)
+                rescue Exception => e
+                  TorqueBox::Logger.new( Backgroundable ).error "Error loading New Relic for backgrounded method #{method.sub("__sync_", "")}: #{e}"
+                end
+                @__enabled_bg_tracing_methods[method] = true
+              end
             end
           end
         end

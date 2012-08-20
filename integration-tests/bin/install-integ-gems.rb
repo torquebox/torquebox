@@ -48,7 +48,9 @@ versions = {
   :bcrypt_ruby    =>    '3.0.1',
 
   :sequel         =>    '3.37.0',
-  :thor           =>    '0.14.6'
+  :thor           =>    '0.14.6',
+
+  :newrelic_rpm   =>    '3.3.2'
 }
 
 #GemInstaller.into( File.dirname(__FILE__) + '/../target/integ-dist/jruby/lib/ruby/gems/1.8', versions ) do |installer|
@@ -93,4 +95,6 @@ GemInstaller.with( versions ) do |installer|
 
   installer.install( 'sequel', versions[:sequel] )
   installer.install( 'thor', versions[:thor] )
+
+  installer.install( 'newrelic_rpm', versions[:newrelic_rpm] )
 end

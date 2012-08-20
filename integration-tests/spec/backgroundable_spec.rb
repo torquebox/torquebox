@@ -35,4 +35,12 @@ describe "backgroundable tests" do
     result = @foreground.receive(:timeout => 120000)
     result.should == "success"
   end
+
+  it "should not error on .background calls with newrelic installed" do
+    visit "/background?bar=1"
+    page.should have_content('it worked')
+    @background.publish "release"
+    result = @foreground.receive(:timeout => 120000)
+    result.should == "success"
+  end
 end
