@@ -113,12 +113,12 @@ describe "STOMP applications" do
     stomp_message = org.projectodd.stilts.stomp::StompMessages.createStompMessage( '/bridge/bar', "this is my message" )
     tx.send( stomp_message )
 
-    sleep( 1 )
+    sleep( 2 )
 
     received_message.should be_nil
 
     tx.commit
-    sleep( 3 )
+    sleep( 5 )
 
     client.disconnect
 
