@@ -52,13 +52,15 @@ class RootController < ApplicationController
   end
 
   def putcache
-    defaultcache.put( "mode", "clustery" )
-    @cache_value = defaultcache.get( "mode" )
+    key = params['symbol'] ? :mode : 'mode'
+    defaultcache.put( key, "clustery" )
+    @cache_value = defaultcache.get( key )
     render "root/cachey"
   end
 
   def getcache
-    @cache_value = defaultcache.get( "mode" )
+    key = params['symbol'] ? :mode : 'mode'
+    @cache_value = defaultcache.get( key )
     render "root/cachey"
   end
 

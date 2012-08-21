@@ -90,6 +90,15 @@ describe 'cache clustering' do
       page.find("#success").should have_content( "clustery" )
     end
 
+    it 'should not throw an error when symbols are used as cache keys' do
+      host1 = "http://#{domain_host_for(:server1)}:#{domain_port_for(:server1, 8080)}"
+      host2 = "http://#{domain_host_for(:server2)}:#{domain_port_for(:server2, 8080)}"
+      visit "#{host1}/cachey-cluster/root/putcache?symbol=true"
+      page.find("#success").should have_content( "clustery" )
+      visit "#{host2}/cachey-cluster/root/getcache?symbol=true"
+      page.find("#success").should have_content( "clustery" )
+    end
+
   end
 
 end

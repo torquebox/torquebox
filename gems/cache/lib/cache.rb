@@ -140,12 +140,12 @@ module TorqueBox
       end
 
       def contains_key?( key )
-        cache.contains_key( key )
+        cache.contains_key( key.to_s )
       end
 
       # Get an entry from the cache 
       def get(key)
-        cache.get(key)
+        cache.get( key.to_s )
       end
 
       # Write an entry to the cache 
@@ -158,7 +158,7 @@ module TorqueBox
       end
 
       def evict( key )
-        cache.evict( key )
+        cache.evict( key.to_s )
       end
 
       def replace(key, original_value, new_value, codec=NoOpCodec)
@@ -171,13 +171,13 @@ module TorqueBox
 
         if ( decoded == original_value )
            # how does this work?
-           cache.replace( key, current, codec.encode( new_value ) )
+           cache.replace( key.to_s, current, codec.encode( new_value ) )
         end
       end
 
       # Delete an entry from the cache 
       def remove(key)
-        cache.removeAsync( key ) && true
+        cache.removeAsync( key.to_s ) && true
       end
 
       def increment( sequence_name, amount = 1 )
@@ -322,7 +322,7 @@ module TorqueBox
       end
 
       def __put(key, value, expires, operation)
-        args = [ operation, key, value ]
+        args = [ operation, key.to_s, value ]
         if expires > 0
           # Set the Infinispan expire a few minutes into the future to support
           # :race_condition_ttl on read
