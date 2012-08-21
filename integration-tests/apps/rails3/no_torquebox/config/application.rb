@@ -8,6 +8,11 @@ Bundler.require(:default, Rails.env) if defined?(Bundler)
 
 module Basic
   class Application < Rails::Application
+    # Use TorqueBox::Infinispan::Cache for the Rails cache store
+    if defined? TorqueBox::Infinispan::Cache
+      config.cache_store = :torque_box_store
+    end
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
