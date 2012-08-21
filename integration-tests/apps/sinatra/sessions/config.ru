@@ -17,6 +17,17 @@ class SinatraSessions < Sinatra::Base
   get '/inactive_interval' do
     env['servlet_request'].session.max_inactive_interval.to_s
   end
+
+  get '/set_value' do
+    session[:value] = 'the value'
+    @value = session[:value]
+    erb :get_value
+  end
+
+  get '/get_value' do
+    @value = session[:value]
+    erb :get_value
+  end
 end
 
 run SinatraSessions
