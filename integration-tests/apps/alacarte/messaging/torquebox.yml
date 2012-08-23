@@ -6,7 +6,16 @@ queues:
     durable: false
   /queue/stateless_queue:
     durable: false
+  /queue/echo_queue:
+    durable: false
+  /queue/echo_backchannel:
+    durable: false
 
 messaging:
   /queue/simple_queue: SimpleProcessor
   /queue/stateless_queue: StatelessProcessor
+  /queue/echo_queue:
+    Torquebox::Messaging::EchoProcessor:
+      concurrency: 10
+      config:
+        response_queue: /queue/echo_backchannel

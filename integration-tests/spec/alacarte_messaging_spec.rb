@@ -34,6 +34,16 @@ describe "messaging alacarte rack test" do
     content.should eql( "#{tstamp} // gouda" )
   end
 
+  it "should load message processors from gems" do
+    queue = TorqueBox::Messaging::Queue.new('/queue/echo_queue')
+    10.times { queue.publish('a message') }
+    backchannel = TorqueBox::Messaging::Queue.new('/queue/echo_backchannel')
+    10.times {
+      message = backchannel.receive(:timeout => 120_000)
+      message.should == 'a message'
+    }
+  end
+
 end
 
 describe "stateless messaging alacarte test" do
