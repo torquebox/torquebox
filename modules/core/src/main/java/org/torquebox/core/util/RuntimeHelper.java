@@ -20,10 +20,13 @@
 package org.torquebox.core.util;
 
 import java.io.File;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
+import org.jruby.RubyHash;
 import org.jruby.RubyModule;
 import org.jruby.RubyThread;
 import org.jruby.javasupport.JavaEmbedUtils;
@@ -219,6 +222,16 @@ public class RuntimeHelper {
 
     public static RubyThread currentThread(Ruby ruby) {
         return (RubyThread) invokeClassMethod( ruby, "Thread", "current", EMPTY_OBJECT_ARRAY );
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static RubyHash convertJavaMapToRubyHash(Ruby runtime, Map map) {
+        RubyHash rubyHash = RubyHash.newHash( runtime );
+        for (Object object : map.entrySet()) {
+            Entry entry = (Entry) object;
+            rubyHash.put( entry.getKey(), entry.getValue() );
+        }
+        return rubyHash;
     }
 
     // ------------------------------------------------------------------------

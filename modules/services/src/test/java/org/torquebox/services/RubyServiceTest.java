@@ -23,6 +23,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
+
 import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,12 +69,14 @@ public class RubyServiceTest {
     public void testInitialization() throws Exception {
         this.componentClass.setClassName( "TestService" );
         this.componentClass.setRequirePath( "org/torquebox/services/test_service" );
-        this.componentResolver.setInitializeParams( ruby.evalScriptlet( "{'foo'=>42}" ).convertToHash() );
+        this.componentResolver.setInitializeParams( Collections.singletonMap( "foo", 42 ) );
 
         service.create();
         service.start();
         Long foo = (Long) service.getComponent()._callRubyMethod( "[]", new Object[] { "foo" } );
         assertEquals( new Long( 42 ), foo );
+        String optionsClass = (String) service.getComponent()._callRubyMethod( "options_class_name" );
+        assertEquals( "Hash", optionsClass );
         service.stop();
         service.destroy();
     }

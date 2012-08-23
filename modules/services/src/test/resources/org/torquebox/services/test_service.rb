@@ -21,4 +21,8 @@ class TestService
     @options[key]
   end
 
+  def options_class_name
+    @options.class.name
+  end
+
 end

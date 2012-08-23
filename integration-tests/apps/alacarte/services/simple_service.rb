@@ -8,6 +8,7 @@ class SimpleService
 
   def initialize(opts={})
     @options = opts
+    raise 'not Hash' unless @options.is_a?(Hash)
     @something  = fetch( org.torquebox.ThingOne )
     @polish     = fetch( Java::pl.softwaremine.ThingThree )
     @logger     = TorqueBox::Logger.new(self.class)
