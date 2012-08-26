@@ -20,8 +20,7 @@ class EapOverlayer
       $stderr.puts "ERROR: #{eap_dir} is not a valid EAP 6 distribution"
       print_usage_and_exit(1)
     end
-    @wfk_dir = File.expand_path(File.dirname(__FILE__))
-    @torquebox_dir = Dir[File.join(@wfk_dir, 'torquebox-2.*')].first
+    @torquebox_dir = File.expand_path(File.dirname(__FILE__))
   end
 
   def overlay

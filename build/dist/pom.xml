@@ -82,6 +82,18 @@
             </configuration>
           </execution>
           <execution>
+            <id>dist-eap-overlay</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/assembly/dist-eap-overlay.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+          <execution>
             <id>dist-src</id>
             <phase>package</phase>
             <goals>

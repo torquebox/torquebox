@@ -1,0 +1,13 @@
+<assembly>
+  <id>eap-overlay</id>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <files>
+    <file>
+      <source>${basedir}/bin/torquebox_eap_overlay.rb</source>
+      <fileMode>0755</fileMode>
+    </file>
+  </files>
+</assembly>
