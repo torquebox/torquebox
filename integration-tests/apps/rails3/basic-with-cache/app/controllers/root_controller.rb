@@ -8,8 +8,13 @@ class RootController < ApplicationController
 
   # Be sure we're using torquebox cache
   def torqueboxey
-    @cache_type = Rails.cache.class.name
-    @cache_mode = Rails.cache.clustering_mode
+    if params[:mode]
+      cache = storecache(params[:mode], params[:sync])
+    else
+      cache = Rails.cache
+    end
+    @cache_type = cache.class.name
+    @cache_mode = cache.clustering_mode
   end
 
   def cachey
@@ -65,13 +70,15 @@ class RootController < ApplicationController
   end
 
   def writecache
-    storecache.write( "mode", "clustery" )
-    @cache_value = storecache.read( "mode" )
+    cache = storecache(params[:mode], params[:sync])
+    cache.write( "mode", "clustery" )
+    @cache_value = cache.read( "mode" )
     render "root/cachey"
   end
 
   def readcache
-    @cache_value = storecache.read( "mode" )
+    cache = storecache(params[:mode], params[:sync])
+    @cache_value = cache.read( "mode" )
     render "root/cachey"
   end
 
@@ -122,8 +129,11 @@ class RootController < ApplicationController
     @replcache ||= TorqueBox::Infinispan::Cache.new(:name=>'testrepl', :mode=>:repl)
   end
 
-  def storecache
-    @storecache ||= ActiveSupport::Cache::TorqueBoxStore.new(:mode=>:dist, :name=>'distributed_cache_test')
+  def storecache(mode, sync)
+    sync = sync == 'true'
+    @storecache ||= ActiveSupport::Cache::TorqueBoxStore.new(:mode=>mode.to_sym,
+                                                             :sync=>sync,
+                                                             :name=>"#{mode}_#{sync}_cache_test")
   end
 
 end
