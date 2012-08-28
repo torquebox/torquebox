@@ -85,13 +85,19 @@ public class PoolingYamlParsingProcessorTest extends AbstractDeploymentProcessor
         List<PoolMetaData> pools = unit.getAttachmentList( PoolMetaData.ATTACHMENTS_KEY );
 
         assertFalse( pools.isEmpty() );
-        assertEquals( 1, pools.size() );
+        assertEquals( 2, pools.size() );
         
         PoolMetaData poolOne = pools.get( 0 );
         assertNotNull( poolOne );
         assertEquals( "pool_one", poolOne.getName() );
         assertTrue( poolOne.isShared() );
         assertTrue( poolOne.isDeferUntilRequested() );
+        
+        PoolMetaData webPool = pools.get( 1 );
+        assertNotNull( webPool );
+        assertEquals( "web", webPool.getName() );
+        assertTrue( webPool.isShared() );
+        assertFalse( webPool.isDeferUntilRequested() );
     }
 
     @Test

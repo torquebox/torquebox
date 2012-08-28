@@ -74,6 +74,10 @@ public class PoolingYamlParsingProcessor extends AbstractSplitYamlParsingProcess
                 Object pool = pooling.get( name );
 
                 PoolMetaData poolMetaData = new PoolMetaData( name );
+                if (name.equals( "web" )) {
+                    // Web runtimes default to eager
+                    poolMetaData.setDeferUntilRequested( false );
+                }
 
                 if (pool instanceof Map) {
                     Map<String, Object> poolMap = (Map<String, Object>) pool;
