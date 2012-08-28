@@ -17,11 +17,9 @@ describe 'ha singleton' do
     stop_server(:server1)
     ensure_service_master(:server2)
     start_server(:server1)
-    ensure_service_master(:server2)
     stop_server(:server2)
     ensure_service_master(:server1)
     start_server(:server2)
-    ensure_service_master(:server1)
   end
 
   def ensure_service_master(server)
