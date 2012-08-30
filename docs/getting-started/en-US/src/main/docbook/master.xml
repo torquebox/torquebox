@@ -34,7 +34,56 @@
     <section>
       <title>Installation with RVM</title>
 
-      <para></para>
+      <para>
+        Ensure you have a recent JRuby installed then install the
+        <varname>torquebox-server</varname> gem into the global gemset.
+
+        <screen><prompt>$</prompt> <command>rvm install jruby-${version.jruby}</command>
+<prompt>$</prompt> <command>rvm use jruby-${version.jruby}@global</command>
+<prompt>$</prompt> <command>gem install torquebox-server</command>
+</screen>
+      </para>
+
+      <para>
+        If using bundler, ensure <varname>torquebox</varname> is in
+        the Gemfile for all projects.
+      </para>
+
+      <para>
+        If you use project-specific gemsets then you'll also need to
+        ensure <varname>torquebox-server</varname> is in the Gemfile
+        for each project if you plan to use the
+        <command>torquebox</command> command.
+      </para>
+
+      <para>
+        If you plan to deploy multiple applications to TorqueBox, then
+        always start TorqueBox from the global gemset and add
+        <varname>GEM_HOME</varname> and <varname>GEM_PATH</varname> to
+        the environment section of your
+        <filename>torquebox.rb</filename> file pointing to the
+        project-specific gemset. Note that even if you've chosen to
+        use <filename>torquebox.yml</filename> instead of
+        <filename>torquebox.rb</filename>, you'll still want to add a
+        <filename>torquebox.rb</filename> just for setting the
+        environment section since it can create relative paths by
+        evaluating the existing <varname>rvm_path</varname>
+        environment variable.
+      </para>
+
+      <para>
+        Example <filename>torquebox.rb</filename> for a project using
+        the project_foo gemset:
+
+        <informalexample><programlisting>
+TorqueBox.configure do
+  environment do
+    GEM_HOME "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@project_foo"
+    GEM_PATH "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@project_foo:#{ENV['rvm_path']}/gems/jruby-${version.jruby}@global"
+  end
+end
+        </programlisting></informalexample>
+      </para>
     </section>
   </chapter>
 
