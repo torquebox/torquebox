@@ -17,8 +17,43 @@
   <toc></toc>
 
   <chapter>
-    <title>placeholder</title>
-    <para>some text</para>
+    <title>Installation</title>
+
+    <section>
+      <title>Installation on Linux and Mac</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Installation on Windows</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Installation with RVM</title>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Creating Your First Application</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Add some more torquebox features to the app</title>
+
+    <para></para>
+  </chapter>
+
+  <chapter>
+    <title>Converting Existing Applications to JRuby and TorqueBox</title>
+
+    <para></para>
   </chapter>
 
 </book>
