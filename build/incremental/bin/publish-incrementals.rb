@@ -90,6 +90,10 @@ class Publisher
     File.dirname(__FILE__) + '/../../../docs/manual/en-US/target/docbook/publish/en-US/xhtml/'
   end
 
+  def getting_started_docs_path()
+    File.dirname(__FILE__) + '/../../../docs/getting-started/en-US/target/docbook/publish/en-US/xhtml/'
+  end
+
   def pdf_doc_path()
     File.dirname(__FILE__) + '/../../../docs/manual/en-US/target/docbook/publish/en-US/pdf/torquebox-docs-en_US.pdf'
   end
@@ -121,6 +125,8 @@ class Publisher
     dav_put( build_base_url + '/torquebox-docs.pdf', pdf_doc_path )
     dav_mkdir_p( build_base_url + '/html-docs' )
     dav_put_r( build_base_url + '/html-docs', html_docs_path )
+    dav_mkdir_p( build_base_url + '/getting-started' )
+    dav_pur_r( build_base_url + '/getting-started', getting_started_docs_path )
   end
 
     def publish_distribution()
