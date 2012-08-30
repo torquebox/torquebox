@@ -87,11 +87,11 @@ class Publisher
   end
 
   def html_docs_path()
-    File.dirname(__FILE__) + '/../../../docs/en-US/target/docbook/publish/en-US/xhtml/'
+    File.dirname(__FILE__) + '/../../../docs/manual/en-US/target/docbook/publish/en-US/xhtml/'
   end
 
   def pdf_doc_path()
-    File.dirname(__FILE__) + '/../../../docs/en-US/target/docbook/publish/en-US/pdf/torquebox-docs-en_US.pdf'
+    File.dirname(__FILE__) + '/../../../docs/manual/en-US/target/docbook/publish/en-US/pdf/torquebox-docs-en_US.pdf'
   end
 
   def epub_path()
