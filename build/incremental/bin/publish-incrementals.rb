@@ -126,7 +126,7 @@ class Publisher
     dav_mkdir_p( build_base_url + '/html-docs' )
     dav_put_r( build_base_url + '/html-docs', html_docs_path )
     dav_mkdir_p( build_base_url + '/getting-started' )
-    dav_pur_r( build_base_url + '/getting-started', getting_started_docs_path )
+    dav_put_r( build_base_url + '/getting-started', getting_started_docs_path )
   end
 
     def publish_distribution()
