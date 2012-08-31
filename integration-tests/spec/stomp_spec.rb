@@ -87,7 +87,9 @@ describe "STOMP applications" do
 
     client.send( "/bridge/foo", "this is my message" )
 
-    sleep( 1 )
+    wait_for_condition( 30, 1, lambda { |msg| msg != nil } ) do
+      received_message
+    end
 
     client.disconnect
 
@@ -118,7 +120,9 @@ describe "STOMP applications" do
     received_message.should be_nil
 
     tx.commit
-    sleep( 5 )
+    wait_for_condition( 30, 1, lambda { |msg| msg != nil } ) do
+      received_message
+    end
 
     client.disconnect
 
