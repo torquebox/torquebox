@@ -16,93 +16,267 @@
 
   <toc></toc>
 
-  <chapter>
-    <title>Installation</title>
+  <chapter id="first-steps">
+    <title>First Steps</title>
 
-    <section>
-      <title>Installation on Linux and Mac</title>
+    <para>
+      If you use Ruby Version Manager (RVM), be sure to follow the
+      <xref linkend="first-steps-rvm"/> instructions and not the
+      generic Mac / Linux instructions.
+    </para>
 
-      <para></para>
+    <section id="first-steps-mac-linux">
+      <title>First Steps on Mac / Linux</title>
+
+      <section>
+        <title>Your First Rails Application</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Subsequent Applications</title>
+
+        <para></para>
+      </section>
     </section>
 
-    <section>
-      <title>Installation on Windows</title>
+    <section id="first-steps-windows">
+      <title>First Steps on Windows</title>
 
-      <para></para>
+      <section>
+        <title>Your First Rails Application</title>
+
+        <para></para>
+      </section>
+
+      <section>
+        <title>Subsequent Applications</title>
+
+        <para></para>
+      </section>
+
     </section>
 
-    <section>
-      <title>Installation with RVM</title>
+    <section id="first-steps-rvm">
+      <title>First Steps with RVM</title>
 
-      <para>
-        Ensure you have a recent JRuby installed then install the
-        <varname>torquebox-server</varname> gem into the global gemset.
+      <section>
+        <title>Your First Rails Application</title>
+
+        <para>
+          Ensure you have a recent JRuby installed then install the
+          <varname>torquebox-server</varname> gem into the global
+          gemset.
 
         <screen><prompt>$</prompt> <command>rvm install jruby-${version.jruby}</command>
 <prompt>$</prompt> <command>rvm use jruby-${version.jruby}@global</command>
-<prompt>$</prompt> <command>gem install torquebox-server</command>
+<prompt>$</prompt> <command>gem install torquebox-server</command></screen>
+        </para>
+
+        <para>
+          Create a directory and project-specific gemset for our
+          example application.
+
+        <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rails_example</command>
+<prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
+<prompt>$</prompt> <command>rvm --rvmrc --create jruby-${version.jruby}@tb_rails_example</command></screen>
+        </para>
+
+        <para>
+          Change to the Rails example directory, trust the generated
+          .rvmrc file when prompted, and install Rails.
+
+        <screen><prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
+====================================================================================
+= NOTICE                                                                           =
+====================================================================================
+= RVM has encountered a new or modified .rvmrc file in the current directory       =
+= This is a shell script and therefore may contain any shell commands.             =
+=                                                                                  =
+= Examine the contents of this file carefully to be sure the contents are          =
+= safe before trusting it! ( Choose v[iew] below to view the contents )            =
+====================================================================================
+Do you wish to trust this .rvmrc file? (/Users/someone/torquebox_examples/rails_example/.rvmrc)
+y[es], n[o], v[iew], c[ancel]> y
+<prompt>$</prompt> <command>rvm gemset list</command>
+
+gemsets for jruby-${version.jruby} (found in /Users/someone/.rvm/gems/jruby-${version.jruby})
+   global
+=> tb_rails_example
+
+<prompt>$</prompt> <command>gem install rails</command>
+...
+Successfully installed rails-3.2.8
+28 gems installed</screen>
+        </para>
+
+        <para>
+          Create a new Rails application, add a simple scaffolded
+          resource, deploy it to TorqueBox, and run TorqueBox.
+
+        <screen><prompt>$</prompt> <command>rails new .</command>
+...
+Using rails (3.2.8) 
+Installing sass (3.2.1) 
+Installing sass-rails (3.2.5) 
+Installing therubyrhino_jar (1.7.4) 
+Installing therubyrhino (2.0.1) 
+Installing uglifier (1.3.0) 
+Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
+<prompt>$</prompt> <command>rails g scaffold post title body:text published:boolean</command>
+...
+      create      app/assets/stylesheets/posts.css.scss
+      invoke  scss
+<prompt>$</prompt> <command>rake db:migrate</command>
+==  CreatePosts: migrating ====================================================
+-- create_table(:posts)
+   -> 0.0060s
+   -> 0 rows
+==  CreatePosts: migrated (0.0080s) ===========================================
+
+<prompt>$</prompt> <command>torquebox deploy</command>
+Deployed: rails_example-knob.yml
+    into: /Users/someone/.rvm/gems/jruby-${version.jruby}@global/gems/torquebox-server-${project.version}-java/jboss/standalone/deployments
+<prompt>$</prompt> <command>torquebox run </command>
+...
+15:59:28,053 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 2) JBAS018559: Deployed "rails_example-knob.yml"</screen>
+        </para>
+
+        <para>
+          Open <ulink url="http://localhost:8080"/> in your browser
+          and you'll be greeted with the Rails "Welcome aboard"
+          page. Navigate to <ulink
+          url="http://localhost:8080/posts/"/> to see your scaffolded
+          resource.
+        </para>
+
+        <para>
+          Now edit
+          <filename>~/torquebox_examples/rails_example/app/views/posts/index.html.erb</filename>
+          then refresh the posts page in your browser and see your
+          changes. Changes to your Rails application show up
+          immediately in the browser, as expected. When you're done,
+          press CTRL+C in the terminal to stop TorqueBox before
+          continuing with the next steps.
+        </para>
+
+      </section>
+
+      <section>
+        <title>Subsequent Applications</title>
+
+        <para>
+          Deploying multiple applications to TorqueBox when using RVM
+          and project-specific gemsets requires a small amount of
+          extra work. To walk through the required steps, let's create
+          a second Rack application to go with our Rails example
+          application created earlier. If TorqueBox is still running
+          stop it with CTRL+C in its terminal window before following
+          the steps below.
+
+      <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rack_example</command>
+<prompt>$</prompt> <command>cd ~/torquebox_examples/rack_example</command>
+<prompt>$</prompt> <command>rvm --rvmrc --create jruby-${version.jruby}@tb_rack_example</command>
+<prompt>$</prompt> <command>cd ~/torquebox_examples/rack_example</command>
+====================================================================================
+= NOTICE                                                                           =
+====================================================================================
+= RVM has encountered a new or modified .rvmrc file in the current directory       =
+= This is a shell script and therefore may contain any shell commands.             =
+=                                                                                  =
+= Examine the contents of this file carefully to be sure the contents are          =
+= safe before trusting it! ( Choose v[iew] below to view the contents )            =
+====================================================================================
+Do you wish to trust this .rvmrc file? (/Users/someone/torquebox_examples/rack_example/.rvmrc)
+y[es], n[o], v[iew], c[ancel]> y
+<prompt>$</prompt> <command>rvm gemset list</command>
+
+gemsets for jruby-${version.jruby} (found in /Users/someone/.rvm/gems/jruby-${version.jruby})
+   global
+=> tb_rack_example
+   tb_rails_example
+
+<prompt>$</prompt> <command>gem install rack</command>
+Fetching: rack-1.4.1.gem (100%)
+Successfully installed rack-1.4.1
+1 gem installed
 </screen>
-      </para>
 
-      <para>
-        If using bundler, ensure <varname>torquebox</varname> is in
-        the Gemfile for all projects.
-      </para>
+          Now create a <filename>config.ru</filename> for our example
+          rack application.
+          <example>
+            <title><filename>~/torquebox_examples/rack_example/config.ru</filename></title>
+            <programlisting>app = lambda { |env|
+  [200, { 'Content-Type' => 'text/html' }, "Hello from Rack\n" ]
+}
+run app</programlisting>
+          </example>
 
-      <para>
-        If you use project-specific gemsets then you'll also need to
-        ensure <varname>torquebox-server</varname> is in the Gemfile
-        for each project if you plan to use the
-        <command>torquebox</command> command.
-      </para>
+          Deploy the Rack application at a context-path of "/rack"
+          since we already have the Rails application deployed at the
+          root context.
 
-      <para>
-        If you plan to deploy multiple applications to TorqueBox, then
-        always start TorqueBox from the global gemset and add
-        <varname>GEM_HOME</varname> and <varname>GEM_PATH</varname> to
-        the environment section of your
-        <filename>torquebox.rb</filename> file pointing to the
-        project-specific gemset. Note that even if you've chosen to
-        use <filename>torquebox.yml</filename> instead of
-        <filename>torquebox.rb</filename>, you'll still want to add a
-        <filename>torquebox.rb</filename> just for setting the
-        environment section since it can create relative paths by
-        evaluating the existing <varname>rvm_path</varname>
-        environment variable.
-      </para>
+        <screen><prompt>$</prompt> <command>torquebox deploy --context-path=/rack</command>
+Deployed: rack_example-knob.yml
+    into: /Users/bbrowning/.rvm/gems/jruby-${version.jruby}@global/gems/torquebox-server-${project.version}-java/jboss/standalone/deployments</screen>
+        </para>
 
-      <para>
-        Example <filename>torquebox.rb</filename> for a project using
-        the project_foo gemset:
+        <para>
+          Now that two applications are deployed to TorqueBox, each
+          with separate RVM gemsets, we hit an issue that trips up
+          most users of RVM and TorqueBox. TorqueBox runs as a single
+          process but RVM is really designed to have a separate
+          process per project for gemsets to work out of the box. We
+          can work around this by emulating the environment variables
+          RVM sets when reading our <filename>.rvmrc</filename> in a
+          <filename>torquebox.rb</filename> file for each application.
 
-        <informalexample><programlisting>
-TorqueBox.configure do
+          <example>
+            <title><filename>~/torquebox_examples/rack_example/torquebox.rb</filename></title>
+            <programlisting>TorqueBox.configure do
   environment do
-    GEM_HOME "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@project_foo"
-    GEM_PATH "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@project_foo:#{ENV['rvm_path']}/gems/jruby-${version.jruby}@global"
+    GEM_HOME "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@tb_rack_example"
+    GEM_PATH "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@tb_rack_example:#{ENV['rvm_path']}/gems/jruby-${version.jruby}@global"
   end
-end
-        </programlisting></informalexample>
-      </para>
+end</programlisting>
+          </example>
+
+          <example>
+            <title><filename>~/torquebox_examples/rails_example/config/torquebox.rb</filename></title>
+            <programlisting>TorqueBox.configure do
+  environment do
+    GEM_HOME "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@tb_rails_example"
+    GEM_PATH "#{ENV['rvm_path']}/gems/jruby-${version.jruby}@tb_rails_example:#{ENV['rvm_path']}/gems/jruby-${version.jruby}@global"
+  end
+end</programlisting>
+          </example>
+
+          Now you should be able to run TorqueBox and see both
+          applications deployed.
+
+        <screen><prompt>$</prompt> <command>torquebox run</command>
+...
+19:25:38,049 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 1) JBAS018559: Deployed "rails_example-knob.yml"
+19:25:38,050 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 1) JBAS018559: Deployed "rack_example-knob.yml"</screen>
+
+          Visit <ulink url="http://localhost:8080"/> and <ulink
+          url="http://localhost:8080/rack/"/> to see that both your
+          Rails and Rack applications are deployed and working.
+        </para>
+
+        <para>
+          Congratulations! You now know all the basics to proceed with
+          the rest of this getting started guide when using RVM. The
+          most important thing to remember is to add the
+          <filename>torquebox.rb</filename> that sets the
+          <varname>GEM_HOME</varname> and <varname>GEM_PATH</varname>
+          environment variables for each application that uses a
+          project-specific gemset.
+        </para>
+      </section>
     </section>
-  </chapter>
 
-  <chapter>
-    <title>Creating Your First Application</title>
-
-    <para></para>
-  </chapter>
-
-  <chapter>
-    <title>Add some more torquebox features to the app</title>
-
-    <para></para>
-  </chapter>
-
-  <chapter>
-    <title>Converting Existing Applications to JRuby and TorqueBox</title>
-
-    <para></para>
   </chapter>
 
 </book>
