@@ -9,7 +9,8 @@ class RootController < ApplicationController
   def expire_page_cache
     format = request.format.json? ? 'json' : 'html'
     expire_page :action => :page_caching, :format => format
-    render :index
+    @time = Time.now.to_f
+    render :page_caching
   end
 
 end
