@@ -19,17 +19,20 @@
 
 package org.torquebox.core.runtime;
 
+import org.jboss.msc.service.ServiceRegistry;
 import org.jruby.Ruby;
 
 /**
- * Functor to initialize Ruby runtimes by loading the user's application
+ * Functor to prepare Ruby runtimes by requiring bundler,
+ * requiring rubygems, etc but not actually loading the
+ * application itself
  * 
- * @author Bob McWhirter
+ * @author Ben Browning
  * 
  * @see RubyRuntimeFactory
  */
-public interface RuntimeInitializer {
+public interface RuntimePreparer {
 
-    public void initialize(Ruby ruby, String runtimeContext) throws Exception;
+    public void prepareRuntime(Ruby ruby, String runtimeContext, ServiceRegistry serviceRegistry) throws Exception;
 
 }

@@ -65,6 +65,9 @@ public class RubyRuntimeMetaData {
     /** Optional interpreter initializer. */
     private RuntimeInitializer initializer;
 
+    /** Optional interpreter preparer. */
+    private RuntimePreparer preparer;
+
     /** Ordered list of paths to add to the Ruby LOAD_PATH. */
     private List<RubyLoadPathMetaData> loadPaths = new LinkedList<RubyLoadPathMetaData>();
 
@@ -131,6 +134,25 @@ public class RubyRuntimeMetaData {
      */
     public RuntimeInitializer getRuntimeInitializer() {
         return this.initializer;
+    }
+    
+    /**
+     * Set the interpreter preparer.
+     * 
+     * @param preparer
+     *            The preparer.
+     */
+    public void setRuntimePreparer(RuntimePreparer preparer) {
+        this.preparer = preparer;
+    }
+
+    /**
+     * Retrieve the interpreter preparer.
+     * 
+     * @return The interpreter preparer.
+     */
+    public RuntimePreparer getRuntimePreparer() {
+        return this.preparer;
     }
 
     /**

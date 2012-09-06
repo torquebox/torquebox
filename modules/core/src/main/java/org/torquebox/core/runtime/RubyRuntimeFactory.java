@@ -44,10 +44,8 @@ import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.ast.executable.Script;
 import org.jruby.util.ClassCache;
 import org.torquebox.bootstrap.JRubyHomeLocator;
-import org.torquebox.core.component.ComponentRegistry;
 import org.torquebox.core.component.InjectionRegistry;
 import org.torquebox.core.pool.InstanceFactory;
-import org.torquebox.core.util.JRubyConstants;
 import org.torquebox.core.util.RuntimeHelper;
 import org.torquebox.core.util.StringUtils;
 
@@ -62,17 +60,27 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
      * Construct.
      */
     public RubyRuntimeFactory() {
-        this( null );
+        this( null, null );
+    }
+
+    public RubyRuntimeFactory(RuntimeInitializer initializer) {
+        this( initializer, null );
     }
 
     /**
-     * Construct with an initializer.
+     * Construct with an initializer and a preparer.
      * 
      * @param initializer
      *            The initializer (or null) to use for each created runtime.
+     * @param preparer
+     *            The preparer (or null) to use for each created runtime.
      */
-    public RubyRuntimeFactory(RuntimeInitializer initializer) {
+    public RubyRuntimeFactory(RuntimeInitializer initializer, RuntimePreparer preparer) {
         this.initializer = initializer;
+        this.preparer = preparer;
+        if (this.preparer == null) {
+            this.preparer = new BaseRuntimePreparer();
+        }
     }
 
     public void setApplicationName(String applicationName) {
@@ -313,7 +321,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
             runtime = Ruby.newInstance( config );
             runtime.getLoadService().require( "java" );
 
-            prepareRuntime( runtime, contextInfo );
+            preparer.prepareRuntime( runtime, contextInfo, this.serviceRegistry );
 
             log.debug( "Initialize? " + initialize );
             log.debug( "Initializer=" + this.initializer );
@@ -411,32 +419,6 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     private void setApplicationName(Ruby runtime) {
         RuntimeHelper.invokeClassMethod( runtime, "TorqueBox", "application_name=", new Object[] { applicationName } );
-    }
-
-    private void prepareRuntime(Ruby runtime, String contextInfo) {
-        if ("1.6.3".equals( JRubyConstants.getVersion() ) ||
-                "1.6.4".equals( JRubyConstants.getVersion() )) {
-            log.debug( "Disabling POSIX ENV passthrough for " + contextInfo + " runtime (TORQUE-497)" );
-            StringBuffer env_fix = new StringBuffer();
-            env_fix.append( "update_real_env_attr = org.jruby.RubyGlobal::StringOnlyRubyHash.java_class.declared_fields.find { |f| f.name == 'updateRealENV' }\n" );
-            env_fix.append( "update_real_env_attr.accessible = true\n" );
-            env_fix.append( "update_real_env_attr.set_value(ENV.to_java, false)\n" );
-            ;
-            RuntimeHelper.evalScriptlet( runtime, env_fix.toString() );
-        }
-
-        RuntimeHelper.require( runtime, "rubygems" );
-        RuntimeHelper.require( runtime, "torquebox-core" );
-
-        RuntimeHelper.require( runtime, "org/torquebox/core/runtime/thread_context_patch" );
-
-        injectServiceRegistry( runtime );
-        ComponentRegistry.createRegistryFor( runtime );
-    }
-
-    private void injectServiceRegistry(Ruby runtime) {
-        RuntimeHelper.require( runtime, "torquebox/service_registry" );
-        RuntimeHelper.invokeClassMethod( runtime, "TorqueBox::ServiceRegistry", "service_registry=", new Object[] { this.serviceRegistry } );
     }
 
     protected Map<String, String> createEnvironment() {
@@ -608,6 +590,9 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
 
     /** Re-usable initializer. */
     private RuntimeInitializer initializer;
+
+    /** Re-usable preparer. */
+    private RuntimePreparer preparer;
 
     /** ClassLoader for interpreter. */
     private ClassLoader classLoader;

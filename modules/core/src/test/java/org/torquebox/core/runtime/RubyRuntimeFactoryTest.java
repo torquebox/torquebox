@@ -93,6 +93,16 @@ public class RubyRuntimeFactoryTest {
     }
 
     @Test
+    public void testNullPreparerIsAllowed() throws Exception {
+        factory = new RubyRuntimeFactory( null, null );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
+
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+    }
+
+    @Test
     public void testOpenSSL_HMAC_digest() throws Exception {
         MockRuntimeInitializer initializer = new MockRuntimeInitializer();
         factory = new RubyRuntimeFactory( initializer );

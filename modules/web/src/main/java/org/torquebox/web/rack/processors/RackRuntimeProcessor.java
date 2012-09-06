@@ -27,9 +27,11 @@ import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
 import org.jboss.logging.Logger;
 import org.torquebox.core.app.RubyAppMetaData;
+import org.torquebox.core.runtime.BundlerAwareRuntimePreparer;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.core.runtime.RuntimeInitializer;
+import org.torquebox.core.runtime.RuntimePreparer;
 import org.torquebox.web.rack.RackMetaData;
 import org.torquebox.web.rack.RackRuntimeInitializer;
 
@@ -69,7 +71,9 @@ public class RackRuntimeProcessor implements DeploymentUnitProcessor {
         runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( rubyAppMetaData.getRoot(), "lib" ) ) );
 
         RuntimeInitializer initializer = new RackRuntimeInitializer( rubyAppMetaData, rackAppMetaData );
+        RuntimePreparer preparer = new BundlerAwareRuntimePreparer( rubyAppMetaData );
         runtimeMetaData.setRuntimeInitializer( initializer );
+        runtimeMetaData.setRuntimePreparer( preparer );
     }
 
 

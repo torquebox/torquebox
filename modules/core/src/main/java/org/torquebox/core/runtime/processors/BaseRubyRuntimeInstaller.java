@@ -25,13 +25,14 @@ import org.jboss.as.server.deployment.DeploymentPhaseContext;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.as.server.deployment.DeploymentUnitProcessor;
-import org.torquebox.core.TorqueBoxMetaData;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.runtime.BaseRuntimeInitializer;
-import org.torquebox.core.runtime.BundlerAwareRuntimeInitializer;
+import org.torquebox.core.runtime.BaseRuntimePreparer;
+import org.torquebox.core.runtime.BundlerAwareRuntimePreparer;
 import org.torquebox.core.runtime.RubyLoadPathMetaData;
 import org.torquebox.core.runtime.RubyRuntimeMetaData;
 import org.torquebox.core.runtime.RuntimeInitializer;
+import org.torquebox.core.runtime.RuntimePreparer;
 
 public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
 
@@ -63,14 +64,16 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
         runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( root, "lib" ) ) );
         runtimeMetaData.appendLoadPath( new RubyLoadPathMetaData( new File( root, "config" ) ) );
 
-        RuntimeInitializer initializer = null;
+        RuntimeInitializer initializer = new BaseRuntimeInitializer( rubyAppMetaData );
+        RuntimePreparer preparer = null;
         File gemfile = new File( root, "Gemfile" );
         if (gemfile.exists()) {
-            initializer = new BundlerAwareRuntimeInitializer( rubyAppMetaData );
+            preparer = new BundlerAwareRuntimePreparer( rubyAppMetaData );
         } else {
-        	initializer = new BaseRuntimeInitializer( rubyAppMetaData );
+        	preparer = new BaseRuntimePreparer();
         }
         runtimeMetaData.setRuntimeInitializer( initializer );
+        runtimeMetaData.setRuntimePreparer( preparer );
 
     }
 

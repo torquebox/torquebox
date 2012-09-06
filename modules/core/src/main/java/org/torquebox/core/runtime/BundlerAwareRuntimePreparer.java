@@ -22,37 +22,40 @@ package org.torquebox.core.runtime;
 import java.io.File;
 
 import org.jboss.logging.Logger;
+import org.jboss.msc.service.ServiceRegistry;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.RuntimeHelper;
 
-/**
- * {@link RuntimeInitializer} for Ruby Rack applications.
- * 
- * @author Bob McWhirter <bmcwhirt@redhat.com>
- */
-public class BundlerAwareRuntimeInitializer extends BaseRuntimeInitializer {
+public class BundlerAwareRuntimePreparer extends BaseRuntimePreparer {
 
-    public BundlerAwareRuntimeInitializer(RubyAppMetaData rubyAppMetaData) {
-        super( rubyAppMetaData );
+    public BundlerAwareRuntimePreparer(RubyAppMetaData rubyAppMetaData) {
+        this.rubyAppMetaData = rubyAppMetaData;
     }
 
     @Override
-    public void initialize(Ruby ruby, String runtimeContext) throws Exception {
-        super.initialize( ruby, runtimeContext );
-        
-        File gemfile = new File( getApplicationRoot(), "Gemfile" );
+    public void prepareRuntime(Ruby ruby, String runtimeContext, ServiceRegistry serviceRegistry) throws Exception {
+        // Ensure various TorqueBox bits are available even if torquebox
+        // isn't in the Gemfile. Don't directly require torquebox-core
+        // to avoid constant already initialized errors later on
+        RuntimeHelper.require( ruby, "rubygems" );
+        RuntimeHelper.require( ruby, "torquebox/service_registry" );
+        RuntimeHelper.require( ruby, "torquebox/component_manager" );
+        RuntimeHelper.require( ruby, "torquebox/injectors" );
+        RuntimeHelper.require( ruby, "torquebox/logger" );
+
+        File gemfile = new File( rubyAppMetaData.getRoot(), "Gemfile" );
         if (gemfile.exists()) {
             log.info(  "Setting up Bundler" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + gemfile.getAbsolutePath() +  "'" );
             RuntimeHelper.require( ruby, "bundler/setup" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']=nil" );
         }
+        super.prepareRuntime( ruby, runtimeContext, serviceRegistry );
     }
-
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
 
- 
+    private RubyAppMetaData rubyAppMetaData;
 
 }

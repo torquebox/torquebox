@@ -24,7 +24,7 @@ import java.io.IOException;
 import org.jboss.logging.Logger;
 import org.jruby.Ruby;
 import org.torquebox.core.app.RubyAppMetaData;
-import org.torquebox.core.runtime.BundlerAwareRuntimeInitializer;
+import org.torquebox.core.runtime.BaseRuntimeInitializer;
 import org.torquebox.core.runtime.RuntimeInitializer;
 import org.torquebox.core.util.RuntimeHelper;
 
@@ -33,7 +33,7 @@ import org.torquebox.core.util.RuntimeHelper;
  * 
  * @author Bob McWhirter <bmcwhirt@redhat.com>
  */
-public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
+public class RackRuntimeInitializer extends BaseRuntimeInitializer {
 
 
     public RackRuntimeInitializer(RubyAppMetaData rubyAppMetaData, RackMetaData rackMetaData) {
@@ -48,8 +48,8 @@ public class RackRuntimeInitializer extends BundlerAwareRuntimeInitializer {
     @Override
     public void initialize(Ruby ruby, String runtimeContext) throws Exception {
         setRuntimeType( ruby, "rack" );
-        RuntimeHelper.require(  ruby, "torquebox-web" );
         super.initialize( ruby, runtimeContext );
+        RuntimeHelper.requireIfAvailable(  ruby, "torquebox-web" );
         RuntimeHelper.evalScriptlet( ruby, getInitializerScript() );
     }
 
