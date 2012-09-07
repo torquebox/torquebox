@@ -240,7 +240,7 @@ module TorqueBox
         File.open( deployment, 'w' ) do |file|
           YAML.dump( deployment_descriptor, file )
         end
-        FileUtils.touch( dodeploy_file( name ) )
+        FileUtils.touch( dodeploy_file( name, dest_dir ) )
         [name, dest_dir]
       end
 
@@ -250,16 +250,16 @@ module TorqueBox
         dest_dir = find_option( opts, 'dest_dir' ) || deploy_dir
         FileUtils.cp( archive_path, dest_dir )
         archive = File.basename( archive_path )
-        FileUtils.touch( dodeploy_file( archive ) )
+        FileUtils.touch( dodeploy_file( archive, dest_dir ) )
         [archive, dest_dir]
       end
 
-      def dodeploy_file(name)
-        File.join( DeployUtils.deploy_dir, "#{name}" ) + ".dodeploy"
+      def dodeploy_file(name, deploy_dir = DeployUtils.deploy_dir)
+        File.join( deploy_dir, "#{name}" ) + ".dodeploy"
       end
 
-      def deployed_file(name)
-        File.join( DeployUtils.deploy_dir, "#{name}" ) + ".deployed"
+      def deployed_file(name, deploy_dir = DeployUtils.deploy_dir)
+        File.join( deploy_dir, "#{name}" ) + ".deployed"
       end
 
       def undeploy_archive(opts = {})
@@ -402,6 +402,14 @@ module TorqueBox
         applications
       end
 
+      def jruby_opts_properties
+        jruby_opts = ENV['JRUBY_OPTS']
+        return "" if jruby_opts.nil?
+        # Only convert -Xa.b, -Xa.b.c, -Xa.b.c.d style options to properties
+        properties = jruby_opts.scan(/-X(\w+\..+?)\s/)
+        properties.map { |matches| "-Djruby.#{matches.first}" }.join(' ')
+      end
+
       private
 
       def undeploy(name, opts = {})
@@ -427,14 +435,6 @@ module TorqueBox
         else
           puts "Can't undeploy #{deployment}. It does not appear to be deployed."
         end
-      end
-
-      def jruby_opts_properties
-        jruby_opts = ENV['JRUBY_OPTS']
-        return "" if jruby_opts.nil?
-        # Only convert -Xa.b, -Xa.b.c, -Xa.b.c.d style options to properties
-        properties = jruby_opts.scan(/-X(\w+\..+?)\s/)
-        properties.map { |matches| "-Djruby.#{matches.first}" }.join(' ')
       end
 
       def print_server_config(clustered)
