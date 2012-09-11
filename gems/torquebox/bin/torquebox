@@ -18,7 +18,6 @@
 # 02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
 require 'rubygems'
-gem 'thor', '0.14.6'
 
 require 'thor'
 require 'torquebox-rake-support'
@@ -26,8 +25,6 @@ require 'torquebox/server'
 require 'torquebox/rails'
 
 class TorqueBoxCommand < Thor
-
-  TASK_ORDER = %w(deploy undeploy start rails archive cli env help)
 
   map "run" => "start"
   desc "run", "Run TorqueBox (binds to localhost, use -b to override)"
@@ -162,35 +159,6 @@ class TorqueBoxCommand < Thor
       shell.say(ENV[key]) unless key.nil?
     end
   end
-
-  no_tasks {
-    class << self
-      # Override all_tasks and help methods in Thor to print options
-      # out in the order we prefer
-      alias_method :all_tasks_from_super, :all_tasks
-
-      def all_tasks
-        super_tasks = all_tasks_from_super
-        tasks = Thor::CoreExt::OrderedHash.new
-        TASK_ORDER.each do |task|
-          tasks[task] = super_tasks[task] unless super_tasks[task].nil?
-        end
-        tasks.merge(super_tasks)
-      end
-
-      def help(shell, subcommand = false)
-        list = printable_tasks(true, subcommand)
-        Thor::Util.thor_classes_in(self).each do |klass|
-          list += klass.printable_tasks(false)
-        end
-
-        shell.say "Tasks:"
-        shell.print_table(list, :ident => 2, :truncate => true)
-        shell.say
-        class_options_help(shell)
-      end
-    end
-  }
 
 end
 

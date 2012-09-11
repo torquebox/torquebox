@@ -48,7 +48,7 @@ versions = {
   :bcrypt_ruby    =>    '3.0.1',
 
   :sequel         =>    '3.37.0',
-  :thor           =>    '0.14.6',
+  :thor           =>    '0.16.0',
 
   :newrelic_rpm   =>    '3.3.2'
 }
