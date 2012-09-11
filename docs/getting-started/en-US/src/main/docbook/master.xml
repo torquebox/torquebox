@@ -161,6 +161,42 @@ Deployed: rails_example-knob.yml
           continuing with the next steps.
         </para>
 
+        <para>
+          When you want to take advantage of TorqueBox-specific
+          features, like we'll do in subsequent chapters, you'll need
+          the <varname>torquebox</varname> gem in your application's
+          Gemfile. However, since we're using
+          <varname>torquebox-server</varname> under RVM to install
+          TorqueBox, you'll want to ensure this gem is in the
+          development group for every application as well. If it's not
+          you'll receive errors trying to use the
+          <command>torquebox</command> because bundler will be unable
+          to find the <varname>torquebox-server</varname> gem.
+
+          <example>
+            <title><filename>~/torquebox_examples/rails_example/Gemfile</filename></title>
+            <programlisting>source 'https://rubygems.org'
+
+gem 'rails', '3.2.8'
+
+gem 'activerecord-jdbcsqlite3-adapter'
+gem 'jruby-openssl'
+gem 'json'
+
+group :assets do
+  gem 'sass-rails',   '~> 3.2.3'
+  gem 'coffee-rails', '~> 3.2.1'
+  gem 'therubyrhino'
+  gem 'uglifier', '>= 1.0.3'
+end
+
+gem 'jquery-rails'
+
+gem 'torquebox', '~> ${project.version}'
+gem 'torquebox-server', '~> ${project.version}', :group => :development</programlisting>
+          </example>
+        </para>
+
       </section>
 
       <section>
