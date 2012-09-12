@@ -62,6 +62,7 @@ import org.torquebox.core.app.processors.RubyApplicationDefaultsProcessor;
 import org.torquebox.core.app.processors.RubyApplicationInstaller;
 import org.torquebox.core.app.processors.RubyApplicationRecognizer;
 import org.torquebox.core.app.processors.RubyYamlParsingProcessor;
+import org.torquebox.core.datasource.DataSourceServices;
 import org.torquebox.core.datasource.processors.DatabaseProcessor;
 import org.torquebox.core.datasource.processors.DatabaseYamlParsingProcessor;
 import org.torquebox.core.injection.analysis.InjectableHandlerRegistry;
@@ -123,7 +124,9 @@ class CoreSubsystemAdd extends AbstractBoottimeAddStepHandler {
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 36, rootSafe( new RubyYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 37, rootSafe( new InjectionYamlParsingProcessor() ) );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 40, rootSafe( new RubyApplicationDefaultsProcessor() ) );
-        processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
+        if (DataSourceServices.enabled) {
+            processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 42, new DatabaseYamlParsingProcessor() );
+        }
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 100, new ApplicationExploder() );
         processorTarget.addDeploymentProcessor( CoreExtension.SUBSYSTEM_NAME, Phase.PARSE, 4000, rootSafe( new BaseRubyRuntimeInstaller() ) );
 

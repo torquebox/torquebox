@@ -23,7 +23,8 @@ import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 
 public class DataSourceServices {
-    
+
+    public static boolean enabled = Boolean.parseBoolean( System.getProperty( "org.torquebox.core.datasource.enabled", "true" ) );
     
     public static ServiceName driverName(DeploymentUnit unit, String driverType) {
         return unit.getServiceName().append( "jdbc", "drivers", driverType );

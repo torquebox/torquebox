@@ -75,13 +75,15 @@ class Class
           alias_method :initialize_before_torquebox!, :initialize!
           
           def initialize!
-            self.class.initializer "monkeypatch-ar", :before=>'active_record.initialize_database', :after=>'active_record.set_configs' do
-              if ( defined?( ActiveRecord ) )
-                begin
-                  require 'torquebox/transactions/ext/active_record/base'
-                  require 'torquebox/active_record_adapters'
-                rescue LoadError
-                  $stderr.puts "Unable to patch transaction support into ActiveRecord.  Try adding torquebox-transactions gem to your Gemfile."
+            unless java.lang.System.getProperty('org.torquebox.core.datasource.enabled') == 'false'
+              self.class.initializer "monkeypatch-ar", :before=>'active_record.initialize_database', :after=>'active_record.set_configs' do
+                if ( defined?( ActiveRecord ) )
+                  begin
+                    require 'torquebox/transactions/ext/active_record/base'
+                    require 'torquebox/active_record_adapters'
+                  rescue LoadError
+                    $stderr.puts "Unable to patch transaction support into ActiveRecord.  Try adding torquebox-transactions gem to your Gemfile."
+                  end
                 end
               end
             end
