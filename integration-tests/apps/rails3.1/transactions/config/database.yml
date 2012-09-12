@@ -5,7 +5,7 @@ development:
 
 person_database:
   adapter: h2
-  database: mem:people;MVCC=TRUE
+  database: mem:<%= 'PEOPLES'.chop.downcase %>;MVCC=TRUE
   pool: 50
   xa: true
 
