@@ -45,6 +45,7 @@ public class TorqueBoxLoginModule extends UsernamePasswordLoginModule {
     @Override
     public void initialize(Subject subject, CallbackHandler callbackHandler,
             Map<String, ?> sharedState, Map<String, ?> options) {
+        this.addValidOptions( new String[] { "credentials" } );
         super.initialize( subject, callbackHandler, sharedState, options );
         @SuppressWarnings("unchecked")
         Map<String, String> users = (Map<String, String>) options.get( "credentials" );
