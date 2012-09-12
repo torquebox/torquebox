@@ -50,6 +50,8 @@ public class BundlerAwareRuntimePreparer extends BaseRuntimePreparer {
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']='" + gemfile.getAbsolutePath() +  "'" );
             RuntimeHelper.require( ruby, "bundler/setup" );
             RuntimeHelper.evalScriptlet( ruby, "ENV['BUNDLE_GEMFILE']=nil" );
+            RuntimeHelper.require( ruby, "jruby" );
+            RuntimeHelper.evalScriptlet( ruby, "JRuby.runtime.load_service.addLoadedFeature( 'torquebox/service_registry' )" );
         }
         super.prepareRuntime( ruby, runtimeContext, serviceRegistry );
     }
