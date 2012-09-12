@@ -32,6 +32,7 @@ module TorqueBox
         if (length = @jms_message.get_body_length) > 0
           bytes = Java::byte[length].new
           @jms_message.read_bytes( bytes )
+          @jms_message.reset
           Marshal.restore( String.from_java_bytes( bytes ) )
         end
       end

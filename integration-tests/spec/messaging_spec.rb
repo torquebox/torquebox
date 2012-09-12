@@ -108,6 +108,24 @@ remote_describe "in-container messaging tests" do
     end
   end
 
+  describe "decode" do
+    [:marshal, :marshal_base64, :clojure, :json, :text].each do |encoding|
+      it "should be callable more than once for the #{encoding} encoding" do
+        with_queue("/queues/decode") do |q|
+          value = encoding == :text ? "foo" : ["foo"]
+          q.publish(value, :encoding => encoding)
+          msg = q.receive(:timeout => 10_000, :decode => false)
+          msg.should_not be_nil
+          msg = TorqueBox::Messaging::Message.new(msg)
+          msg.decode.should == value
+          msg.decode.should == value
+        end
+      end
+    end
+  end
+      
+
+
   context "message selectors" do
     {
       'prop = true' => true,
