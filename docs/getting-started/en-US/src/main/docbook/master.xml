@@ -19,19 +19,53 @@
   <chapter id="first-steps">
     <title>First Steps</title>
 
-    <para>
-      If you use Ruby Version Manager (RVM), be sure to follow the
-      <xref linkend="first-steps-rvm"/> instructions and not the
-      generic Mac / Linux instructions.
-    </para>
-
     <section id="first-steps-mac-linux">
       <title>First Steps on Mac / Linux</title>
+
+      <para>
+        If you use Ruby Version Manager (RVM), be sure to follow the
+        <xref linkend="first-steps-rvm"/> instructions and not the
+        generic Mac / Linux instructions.
+      </para>
 
       <section>
         <title>Your First Rails Application</title>
 
-        <para></para>
+        <para>
+          Ensure you have Java 6 or above installed then download and
+          extract the TorqueBox binary distribution and set a few
+          environment variables.
+
+          <screen><prompt>$</prompt> <command>wget http://torquebox.org/release/org/torquebox/torquebox-dist/${project.version}/torquebox-dist-${project.version}-bin.zip</command>
+...
+2012-09-13 09:35:56 (1.61 MB/s) - `torquebox-dist-${project.version}-bin.zip' saved [152039457/152039457]
+
+<prompt>$</prompt> <command>unzip torquebox-dist-${project.version}-bin.zip -d ~ </command>
+...
+  inflating: torquebox-2.1.1/Rakefile
+<prompt>$</prompt> <command>export TORQUEBOX_HOME=~/torquebox-${project.version}</command>
+<prompt>$</prompt> <command>export JBOSS_HOME=$TORQUEBOX_HOME/jboss</command>
+<prompt>$</prompt> <command>export JRUBY_HOME=$TORQUEBOX_HOME/jruby</command>
+<prompt>$</prompt> <command>export PATH=$JRUBY_HOME/bin:$PATH</command></screen>
+
+          You'll likely want to place the exports somewhere that gets
+          loaded automatically - <filename>~/.bashrc</filename>,
+          <filename>~/.bash_profile</filename>, or wherever your
+          operating system suggests placing user-specific environment
+          variables.
+        </para>
+
+        <para>
+          Make sure TorqueBox is installed properly by executing the
+          <command>torquebox run</command> command.
+
+          <screen><prompt>$</prompt> <command>torquebox run</command>
+...
+09:46:14,007 INFO  [org.torquebox.core.as] Welcome to TorqueBox AS - http://torquebox.org/
+09:46:14,007 INFO  [org.torquebox.core.as]   version........... ${project.version}
+...
+09:46:16,985 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015874: JBoss AS ${version.jbossas} "Steropes" started in 4164ms - Started 171 of 270 services (98 services are passive or on-demand)</screen>
+        </para>
       </section>
 
       <section>
@@ -167,11 +201,11 @@ Deployed: rails_example-knob.yml
           the <varname>torquebox</varname> gem in your application's
           Gemfile. However, since we're using
           <varname>torquebox-server</varname> under RVM to install
-          TorqueBox, you'll want to ensure this gem is in the
-          development group for every application as well. If it's not
-          you'll receive errors trying to use the
-          <command>torquebox</command> because bundler will be unable
-          to find the <varname>torquebox-server</varname> gem.
+          TorqueBox, you'll want to ensure this gem is in the Gemfile
+          for every application as well. If it's not you'll receive
+          errors trying to use the <command>torquebox</command>
+          because bundler will be unable to find the
+          <varname>torquebox-server</varname> gem.
 
           <example>
             <title><filename>~/torquebox_examples/rails_example/Gemfile</filename></title>
@@ -193,7 +227,7 @@ end
 gem 'jquery-rails'
 
 gem 'torquebox', '~> ${project.version}'
-gem 'torquebox-server', '~> ${project.version}', :group => :development</programlisting>
+gem 'torquebox-server', '~> ${project.version}'</programlisting>
           </example>
         </para>
 
