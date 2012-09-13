@@ -78,4 +78,11 @@ describe 'basic rails3.2 test' do
     element.text.should == 'static page'
   end
 
+  it "should support setting multiple cookies" do
+    visit "/basic-rails32/root/multiple_cookies"
+    page.driver.cookies['foo1'].value.should == 'bar1'
+    page.driver.cookies['foo2'].value.should == 'bar2'
+    page.driver.cookies['foo3'].value.should == 'bar3'
+  end
+
 end

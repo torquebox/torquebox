@@ -28,8 +28,10 @@ module TorqueBox
           servlet_response.setStatus( status_code )
 
           headers.each{|key,value|
-            if value.respond_to?( :each ) 
-              value.each { |v| servlet_response.addHeader( key, v ) }
+            if value.respond_to?( :each_line )
+              value.each_line { |v| servlet_response.addHeader( key, v.chomp("\n") ) }
+            elsif value.respond_to?( :each )
+              value.each { |v| servlet_response.addHeader( key, v.chomp("\n") ) }
             else
               servlet_response.addHeader( key, value )
             end

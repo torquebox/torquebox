@@ -87,6 +87,27 @@ public class RubyRackResponseTest extends AbstractRubyTestCase {
     }
 
     @Test
+    public void testHandleMultipleCookies() throws Exception {
+        RubyHash cookies = createHash( new HashMap<String, String>() {
+            private static final long serialVersionUID = 1L;
+
+            {
+                put( "Set-Cookie", "foo1=bar1; path=/\nfoo2=bar2; path=/; expires=Thu, 13-Sep-2012 22:52:32 GMT\nfoo3=bar3; path=/" );
+            }
+        } );
+
+        IRubyObject rubyRackResponse = createRubyRackResponse( 200, cookies, null );
+        RackResponse javaRackResponse = new RackResponse( rubyRackResponse );
+        HttpServletResponse servletResponse = mock( HttpServletResponse.class );
+
+        javaRackResponse.respond( servletResponse );
+        verify( servletResponse ).setStatus( 200 );
+        verify( servletResponse ).addHeader( "Set-Cookie", "foo1=bar1; path=/" );
+        verify( servletResponse ).addHeader( "Set-Cookie", "foo2=bar2; path=/; expires=Thu, 13-Sep-2012 22:52:32 GMT" );
+        verify( servletResponse ).addHeader( "Set-Cookie", "foo3=bar3; path=/" );
+    }
+
+    @Test
     public void testHandleBodyWithoutClose() throws Exception {
         RubyArray body = createBody();
 
