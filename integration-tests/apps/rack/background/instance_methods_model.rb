@@ -1,6 +1,6 @@
 require 'torquebox-messaging'
 
-class Something
+class InstanceMethodsModel
   include TorqueBox::Messaging::Backgroundable
   include TorqueBox::Injectors
   

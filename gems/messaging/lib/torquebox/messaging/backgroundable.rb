@@ -20,6 +20,7 @@ require 'torquebox/messaging/future'
 require 'torquebox/messaging/task'
 require 'torquebox/messaging/future_status'
 require 'torquebox/injectors'
+require 'torquebox/logger'
 
 module TorqueBox
   module Messaging
@@ -64,22 +65,31 @@ module TorqueBox
             if !@__backgroundable_methods[method]
               @__backgroundable_methods[method] ||= { }
               @__backgroundable_methods[method][:options] = options
-              if Util.instance_methods_include?(self, method) ||
-                  Util.private_instance_methods_include?(self, method)
+              if Util.singleton_methods_include?(self, method) ||
+                  Util.instance_methods_include?(self, method)
                 __enable_backgrounding(method)
               end
             end
           end
         end
 
+        # Allows you to background any method that has not been marked
+        # as a backgrounded method via {ClassMethods#always_background}.
+        # @param [Hash] options that are passed through to
+        #   {TorqueBox::Messaging::Destination#publish}
+        # @return [Future]
+        def background(options = { })
+          BackgroundProxy.new(self, options)
+        end
+
         def method_added(method)
           super
-          method = method.to_s
-          if @__backgroundable_methods &&
-              @__backgroundable_methods[method] &&
-              !@__backgroundable_methods[method][:backgrounding]
-            __enable_backgrounding(method)
-          end
+          __method_added(method)
+        end
+
+        def singleton_method_added(method)
+          super
+          __method_added(method)
         end
 
         def __enable_backgroundable_newrelic_tracing(method)
@@ -102,28 +112,57 @@ module TorqueBox
         end
 
         private
+        
+        def __method_added(method)
+          method = method.to_s
+          if @__backgroundable_methods &&
+              @__backgroundable_methods[method] &&
+              !@__backgroundable_methods[method][:backgrounding]
+            __enable_backgrounding(method)
+          end
+        end
+
         def __enable_backgrounding(method)
-          privatize = Util.private_instance_methods_include?(self, method)
-          protect = Util.protected_instance_methods_include?(self, method) unless privatize
+          singleton_method = Util.singleton_methods_include?(self, method)
+          singleton = (class << self; self; end)
+
+          if singleton_method
+
+            TorqueBox::Logger.new( self ).
+              warn("always_background called for :#{method}, but :#{method} " +
+                   "exists as both a class and instance method. Only the " +
+                   "class method will be backgrounded.") if Util.instance_methods_include?(self, method)
+
+            privatize = Util.private_singleton_methods_include?(self, method)
+            protect = Util.protected_singleton_methods_include?(self, method) unless privatize
+          else
+            privatize = Util.private_instance_methods_include?(self, method)
+            protect = Util.protected_instance_methods_include?(self, method) unless privatize
+          end
+
           async_method = "__async_#{method}"
           sync_method = "__sync_#{method}"
 
           @__backgroundable_methods[method][:backgrounding] = true
           options = @__backgroundable_methods[method][:options]
-          class_eval do
 
+          (singleton_method ? singleton : self).class_eval do
             define_method async_method do |*args|
               Util.publish_message(self, sync_method, args, options)
             end
-
-            alias_method sync_method, method
-            alias_method method, async_method
-
-            if privatize || protect
-              send((privatize ? :private : :protected), method, sync_method, async_method)
-            end
-
           end
+          
+          code = singleton_method ? "class << self" : ""
+          code << %Q{
+            alias_method :#{sync_method}, :#{method}
+            alias_method :#{method}, :#{async_method}
+          }
+          code << %Q{
+            #{privatize ? "private" : "protected"} :#{method}, :#{sync_method}, :#{async_method}
+          } if privatize || protect
+          code << "end" if singleton_method
+
+          class_eval code          
         ensure
           @__backgroundable_methods[method][:backgrounding] = nil
         end
@@ -163,8 +202,22 @@ module TorqueBox
             raise RuntimeError.new("The Backgroundable queue is not available. Did you disable it by setting its concurrency to 0?")
           end
 
+          def singleton_methods_include?(klass, method)
+            methods_include?(klass.singleton_methods, method) ||
+              private_singleton_methods_include?(klass, method)
+          end
+
+          def private_singleton_methods_include?(klass, method)
+            methods_include?(klass.private_methods, method)
+          end
+
+          def protected_singleton_methods_include?(klass, method)
+            methods_include?(klass.protected_methods, method)
+          end
+
           def instance_methods_include?(klass, method)
-            methods_include?(klass.instance_methods, method)
+            methods_include?(klass.instance_methods, method) ||
+              private_instance_methods_include?(klass, method)
           end
 
           def private_instance_methods_include?(klass, method)
