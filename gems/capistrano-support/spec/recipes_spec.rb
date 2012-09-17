@@ -25,17 +25,33 @@ describe Capistrano::TorqueBox, "loaded into a configuration" do
     Capistrano::TorqueBox.load_into(@configuration)
   end
 
-  it "should define app_ruby_version" do
-    @configuration.exists?( :app_ruby_version ).should be_true
+  it "should not define app_ruby_version by default" do
+    @configuration.exists?( :app_ruby_version ).should be_false
   end
 
-  it "should default app_ruby_version to 1.8" do
+  it "should allow default 1.9 override for app_ruby_version" do
+    @configuration.set( :app_ruby_version, 1.9 )
+    Capistrano::TorqueBox.load_into(@configuration)
+    @configuration.fetch( :app_ruby_version ).should == 1.9
+  end
+
+  it "should allow default 1.8 override for app_ruby_version" do
+    @configuration.set( :app_ruby_version, 1.8 )
+    Capistrano::TorqueBox.load_into(@configuration)
     @configuration.fetch( :app_ruby_version ).should == 1.8
   end
 
-  it "should allow default override for app_ruby_version" do
+  it "should add app_ruby_version if set to jruby opts if unset" do
     @configuration.set( :app_ruby_version, 1.9 )
-    @configuration.fetch( :app_ruby_version ).should == 1.9
+    Capistrano::TorqueBox.load_into(@configuration)
+    @configuration.fetch( :jruby_opts ).should == "--1.9"
+  end
+
+  it "should not modify jruby_opts if already set" do
+    @configuration.set( :app_ruby_version, 1.9 )
+    @configuration.set( :jruby_opts, "-X+C" )
+    Capistrano::TorqueBox.load_into(@configuration)
+    @configuration.fetch( :jruby_opts ).should == "-X+C"
   end
 
   it "should create a deployment descriptor" do
