@@ -61,11 +61,12 @@ module Capistrano
       configuration.load do 
         # --
 
-        set( :app_ruby_version,    1.8 ) unless exists?( :app_ruby_version )
         set( :torquebox_home,      '/opt/torquebox' ) unless exists?( :torquebox_home )
 
         set( :jruby_home,          lambda{ "#{torquebox_home}/jruby" } ) unless exists?( :jruby_home )
-        set( :jruby_opts,          lambda{ "--#{app_ruby_version}" } ) unless exists?( :jruby_opts )
+        if exists?( :app_ruby_version ) && !exists?( :jruby_opts )
+          set( :jruby_opts,          lambda{ "--#{app_ruby_version}" } )
+        end
         set( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } ) unless exists?( :jruby_bin )
 
         set( :jboss_home,          lambda{ "#{torquebox_home}/jboss" } ) unless exists?( :jboss_home )
