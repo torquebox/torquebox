@@ -52,10 +52,10 @@ class TorqueBoxCommand < Thor
   def rails(root = ".")
     ARGV.shift
     TorqueBox::Server.setup_environment
-    if File.exist?( root )
+    if File.exist?( File.join(root, 'config', 'environment.rb') )
       TorqueBox::Rails.apply_template( root )
     else
-      TorqueBox::Rails.new_app
+      TorqueBox::Rails.new_app( root )
     end
   end
 

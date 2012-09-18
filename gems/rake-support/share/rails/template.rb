@@ -14,9 +14,11 @@ else
   # rails 3.1+ properly detects jruby and does the right thing
 end
 
-# gems defs common to v2 and v3
-gem 'torquebox', "${env.BUILD_NUMBER}"
-gem "torquebox-rake-support", "${env.BUILD_NUMBER}"
+if RAILS_2
+  gem 'torquebox', :version => "${env.BUILD_NUMBER}"
+else
+  gem 'torquebox', "${env.BUILD_NUMBER}"
+end
 
 
 # Write a dummy torquebox.yml file
