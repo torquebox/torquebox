@@ -17,6 +17,7 @@
 
 
 begin
+  gem 'rails', ENV['RAILS_VERSION'] if ENV['RAILS_VERSION']
   require 'rails/version'
 rescue LoadError
 end

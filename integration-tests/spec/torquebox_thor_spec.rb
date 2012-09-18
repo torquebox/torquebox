@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'fileutils'
 
 describe "torquebox thor utility tests" do
 
@@ -94,6 +95,72 @@ describe "torquebox thor utility tests" do
         output = tb( 'run -J \"-Xmx384m -Dmy.property=value\" --extra \"\--version\"' )
         output.should match( /\s+JAVA_OPTS: .* -Xmx384m -Dmy\.property=value/ )
       end
+    end
+  end
+
+  describe "torquebox rails" do
+    before(:each) do
+      ENV['RAILS_VERSION'] = '>3.2'
+      @app_dir = File.join( File.dirname( __FILE__ ), '..', 'target', 'apps', 'torquebox_thor_spec_app' )
+    end
+
+    after(:each) do
+      ENV['RAILS_VERSION'] = nil
+      FileUtils.rm_rf( @app_dir )
+    end
+
+    it "should create the app and its directory" do
+      tb( "rails #{@app_dir}" )
+      check_app_dir
+    end
+
+    it "should create the app even if its directory already exists" do
+      FileUtils.mkdir_p( @app_dir )
+      Dir.chdir( @app_dir ) do
+        tb( 'rails' )
+      end
+      check_app_dir
+    end
+
+    it "should modify the app if it already exists" do
+      rails( ENV['RAILS_VERSION'], "new #{@app_dir}" )
+      File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
+      File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
+      tb( "rails #{@app_dir}" )
+      check_app_dir
+    end
+
+    it "should modify the app in the current directory if it already exists" do
+      rails( ENV['RAILS_VERSION'], "new #{@app_dir}" )
+      File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
+      File.read( File.join( @app_dir, 'Gemfile' ) ).should_not include( 'torquebox' )
+      Dir.chdir( @app_dir ) do
+        tb( 'rails' )
+      end
+      check_app_dir
+    end
+
+    it "should create a rails 2.3 app and its directory" do
+      # 2.3 will automatically get chosen if we don't specify, and
+      # this ensures things work without explicitly setting
+      # RAILS_VERSION
+      ENV['RAILS_VERSION'] = nil
+      tb( "rails #{@app_dir}" )
+      File.exist?( @app_dir ).should be_true
+      File.exist?( File.join( @app_dir, 'config', 'environment.rb' ) ).should be_true
+      File.read( File.join( @app_dir, 'config', 'environment.rb' ) ).should include( 'torquebox' )
+    end
+
+    def check_app_dir
+      File.exist?( @app_dir ).should be_true
+      File.exist?( File.join( @app_dir, 'Gemfile' ) ).should be_true
+      File.read( File.join( @app_dir, 'Gemfile' ) ).should include( 'torquebox' )
+    end
+
+    def rails( version, cmd )
+      rails = File.join( File.dirname( __FILE__ ), '..', 'target', 'integ-dist',
+                         'jruby', 'lib', 'ruby', 'gems', '1.8', 'bin', 'rails' )
+      integ_jruby( "#{rails} _#{version}_ #{cmd}" )
     end
   end
 
