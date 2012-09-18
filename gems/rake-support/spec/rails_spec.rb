@@ -11,7 +11,7 @@ describe TorqueBox::Rails do
       it "should print a warning" do
         $stderr.should_receive(:puts)
         lambda {
-          TorqueBox::Rails.new_app
+          TorqueBox::Rails.new_app('root')
         }.should raise_error SystemExit
       end
     end
@@ -38,7 +38,7 @@ describe TorqueBox::Rails do
     describe "new_app" do
       it "should generate" do
         ::Rails::Generators::AppGenerator.should_receive(:start)
-        TorqueBox::Rails.new_app
+        TorqueBox::Rails.new_app('root')
       end
     end
 
@@ -67,7 +67,7 @@ describe TorqueBox::Rails do
     describe "new_app" do
       it "should generate" do
         ::Rails::Generator::Scripts::Generate.any_instance.should_receive(:run)
-        TorqueBox::Rails.new_app
+        TorqueBox::Rails.new_app('root')
       end
     end
 

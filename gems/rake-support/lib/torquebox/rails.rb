@@ -24,10 +24,11 @@ end
 module TorqueBox
   class Rails
 
-    def self.new_app
+    def self.new_app( root )
       print_rails_not_installed_and_exit unless rails_installed?
       require_generators
-      # Assumes ARGV[0] already has the application name
+      # Ensure ARGV[0] has the application path
+      ARGV.unshift( root ) if ARGV.empty?
       ARGV << [ "-m", TorqueBox::Rails.template ]
       ARGV.flatten!
       if using_rails3?
