@@ -123,8 +123,11 @@ class AssemblyTool
       :wrappers    => true
     }
 
+    # Trick RubyGems into generating .bat stubs for us
+    Gem.class_eval('@@win_platform = true')
     installer = Gem::DependencyInstaller.new( opts )
     installer.install( gem )
+    Gem.class_eval('@@win_platform = nil')
     copy_gem_to_repo(gem, update_index) if File.exist?( gem )
   end
 
