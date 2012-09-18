@@ -56,22 +56,135 @@
         </para>
 
         <para>
-          Make sure TorqueBox is installed properly by executing the
-          <command>torquebox run</command> command.
+          Install Rails and create a new Rails example application.
 
-          <screen><prompt>$</prompt> <command>torquebox run</command>
+          <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rails_example</command>
+<prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
+<prompt>$</prompt> <command>gem install rails</command>
 ...
-09:46:14,007 INFO  [org.torquebox.core.as] Welcome to TorqueBox AS - http://torquebox.org/
-09:46:14,007 INFO  [org.torquebox.core.as]   version........... ${project.version}
+Successfully installed rails-3.2.8
+27 gems installed
+<prompt>$</prompt> <command>rails new .</command>
 ...
-09:46:16,985 INFO  [org.jboss.as] (Controller Boot Thread) JBAS015874: JBoss AS ${version.jbossas} "Steropes" started in 4164ms - Started 171 of 270 services (98 services are passive or on-demand)</screen>
+Using rails (3.2.8) 
+Installing sass (3.2.1) 
+Installing sass-rails (3.2.5) 
+Installing therubyrhino_jar (1.7.4) 
+Installing therubyrhino (2.0.1) 
+Installing uglifier (1.3.0) 
+Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.</screen>
+          <note>
+            <title>Bundler and jruby-openssl</title>
+            <para>
+              Some versions of JRuby, Bundler, and jruby-openssl don't
+              play well together so if you get an error when Rails
+              tries to run <command>bundle install</command> regarding
+              jruby-openssl, edit the <filename>Gemfile</filename> to
+              change the source line from https to http and manually
+              run <command>bundle install</command> afterwards.
+            </para>
+          </note>
+        </para>
+
+        <para>
+          Add a simple scaffolded resource, deploy it to TorqueBox,
+          and run TorqueBox.
+
+          <screen><prompt>$</prompt> <command>rails g scaffold post title body:text published:boolean</command>
+...
+      create      app/assets/stylesheets/posts.css.scss
+      invoke  scss
+<prompt>$</prompt> <command>rake db:migrate</command>
+==  CreatePosts: migrating ====================================================
+-- create_table(:posts)
+   -> 0.0060s
+   -> 0 rows
+==  CreatePosts: migrated (0.0080s) ===========================================
+
+<prompt>$</prompt> <command>torquebox deploy</command>
+Deployed: rails_example-knob.yml
+    into: /Users/someone/torquebox-${project.version}/jboss/standalone/deployments
+<prompt>$</prompt> <command>torquebox run </command>
+...
+15:59:28,053 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 2) JBAS018559: Deployed "rails_example-knob.yml"</screen>
+        </para>
+
+        <para>
+          Open <ulink url="http://localhost:8080"/> in your browser
+          and you'll be greeted with the Rails "Welcome aboard"
+          page. Navigate to <ulink
+          url="http://localhost:8080/posts/"/> to see your scaffolded
+          resource.
+        </para>
+
+        <para>
+          Now edit
+          <filename>~/torquebox_examples/rails_example/app/views/posts/index.html.erb</filename>
+          then refresh the posts page in your browser and see your
+          changes. Changes to your Rails application show up
+          immediately in the browser, as expected. When you're done,
+          press CTRL+C in the terminal to stop TorqueBox before
+          continuing with the next steps.
         </para>
       </section>
 
       <section>
         <title>Subsequent Applications</title>
 
-        <para></para>
+        <para>
+          Deploying multiple applications to TorqueBox is pretty
+          straightforward, but let's walk through the required steps.
+          We'll create a Rack application to go with our Rails example
+          application created earlier. If TorqueBox is still running
+          stop it with CTRL+C in its terminal window before following
+          the steps below.
+
+      <screen><prompt>$</prompt> <command>mkdir -p ~/torquebox_examples/rack_example</command>
+<prompt>$</prompt> <command>cd ~/torquebox_examples/rack_example</command>
+<prompt>$</prompt> <command>gem install rack</command>
+Fetching: rack-1.4.1.gem (100%)
+Successfully installed rack-1.4.1
+1 gem installed
+</screen>
+
+          Now create a <filename>config.ru</filename> for our example
+          rack application.
+          <example>
+            <title><filename>~/torquebox_examples/rack_example/config.ru</filename></title>
+            <programlisting>app = lambda { |env|
+  [200, { 'Content-Type' => 'text/html' }, "Hello from Rack\n" ]
+}
+run app</programlisting>
+          </example>
+
+          Deploy the Rack application at a context-path of "/rack"
+          since we already have the Rails application deployed at the
+          root context.
+
+        <screen><prompt>$</prompt> <command>torquebox deploy --context-path=/rack</command>
+Deployed: rack_example-knob.yml
+    into: /Users/someone/torquebox-${project.version}/jboss/standalone/deployments</screen>
+        </para>
+
+        <para>
+          Now you should be able to run TorqueBox and see both
+          applications deployed.
+
+        <screen><prompt>$</prompt> <command>torquebox run</command>
+...
+19:25:38,049 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 1) JBAS018559: Deployed "rails_example-knob.yml"
+19:25:38,050 INFO  [org.jboss.as.server] (DeploymentScanner-threads - 1) JBAS018559: Deployed "rack_example-knob.yml"</screen>
+
+          Visit <ulink url="http://localhost:8080"/> and <ulink
+          url="http://localhost:8080/rack/"/> to see that both your
+          Rails and Rack applications are deployed and working.
+        </para>
+
+        <para>
+          Congratulations! You now know all the basics to proceed with
+          the rest of this getting started guide when using a Mac or
+          Linux.
+        </para>
       </section>
     </section>
 
@@ -289,7 +402,7 @@ run app</programlisting>
 
         <screen><prompt>$</prompt> <command>torquebox deploy --context-path=/rack</command>
 Deployed: rack_example-knob.yml
-    into: /Users/bbrowning/.rvm/gems/jruby-${version.jruby}@global/gems/torquebox-server-${project.version}-java/jboss/standalone/deployments</screen>
+    into: /Users/someone/.rvm/gems/jruby-${version.jruby}@global/gems/torquebox-server-${project.version}-java/jboss/standalone/deployments</screen>
         </para>
 
         <para>
