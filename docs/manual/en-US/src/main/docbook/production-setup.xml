@@ -287,15 +287,23 @@ Listen 127.0.0.1:6666
     &lt;socket-binding name="jgroups-tcp-fd" port="57600"/&gt;
     ...
   &lt;/socket-binding-group&gt;
-&lt;/server&gt;
-        </programlisting> The most important bits here are the TCPPING
-        protocol with its initial_hosts property and the
-        default-stack="tcp" attribute and value. Be sure to replace
-        the initial_hosts IP addresses with the correct values for
-        your environment and change the ports from 7600 if you've
-        changed the jgroups-tcp socket binding to a different port on
-        those hosts.</para>
-        </example></para>
+&lt;/server&gt;</programlisting>
+          </para>
+        </example>
+
+        <note>
+          <title>Important Changes</title>
+
+          <para>The most important changes here are a) replacement of
+          the MPING protocol with the TCPPING protocol with its
+          initial_hosts property and b) the default-stack="tcp"
+          attribute and value added to the &lt;subsystem&gt;. Be sure
+          to replace the initial_hosts IP addresses with the correct
+          values for your environment and change the ports from 7600
+          if you've changed the jgroups-tcp socket binding to a
+          different port on those hosts.</para>
+        </note>
+      </para>
     </section>
 
     <section id="clustering-hornetq-without-multicast">
