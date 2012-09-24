@@ -19,6 +19,14 @@
   <chapter id="first-steps">
     <title>First Steps</title>
 
+    <para>
+      Choose the section below to follow based on your development
+      environment - Windows users should follow <xref
+      linkend="first-steps-windows"/>, RVM users should follow <xref
+      linkend="first-steps-rvm"/>, and regular Mac or Linux users
+      should follow <xref linkend="first-steps-mac-linux"/>.
+    </para>
+
     <section id="first-steps-mac-linux">
       <title>First Steps on Mac / Linux</title>
 
@@ -90,7 +98,7 @@ Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem 
           Add a simple scaffolded resource, deploy it to TorqueBox,
           and run TorqueBox.
 
-          <screen><prompt>$</prompt> <command>rails g scaffold post title body:text published:boolean</command>
+          <screen><prompt>$</prompt> <command>rails g scaffold post title body:text</command>
 ...
       create      app/assets/stylesheets/posts.css.scss
       invoke  scss
@@ -186,6 +194,8 @@ Deployed: rack_example-knob.yml
           the rest of this getting started guide when using a Mac or
           Linux.
         </para>
+
+        <para>Continue to <xref linkend="adding-torquebox-features"/>.</para>
       </section>
     </section>
 
@@ -262,7 +272,7 @@ Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem 
           Add a simple scaffolded resource, deploy it to TorqueBox,
           and run TorqueBox.
 
-          <screen><prompt>&gt;</prompt> <command>rails g scaffold post title body:text published:boolean</command>
+          <screen><prompt>&gt;</prompt> <command>rails g scaffold post title body:text</command>
 ...
       create      app/assets/stylesheets/posts.css.scss
       invoke  scss
@@ -372,8 +382,14 @@ Deployed: rack_example-knob.yml
 
         <para>
           Congratulations! You now know all the basics to proceed with
-          the rest of this getting started guide when using Windows.
+          the rest of this getting started guide when using
+          Windows. The filesystem paths and command prompts shown in
+          future chapters won't be Windows-specific, so be sure to
+          translate any paths to the appropriate format before
+          executing the example commands.
         </para>
+
+        <para>Continue to <xref linkend="adding-torquebox-features"/>.</para>
 
       </section>
 
@@ -445,7 +461,7 @@ Installing therubyrhino_jar (1.7.4)
 Installing therubyrhino (2.0.1) 
 Installing uglifier (1.3.0) 
 Your bundle is complete! Use `bundle show [gemname]` to see where a bundled gem is installed.
-<prompt>$</prompt> <command>rails g scaffold post title body:text published:boolean</command>
+<prompt>$</prompt> <command>rails g scaffold post title body:text</command>
 ...
       create      app/assets/stylesheets/posts.css.scss
       invoke  scss
@@ -632,9 +648,301 @@ end</programlisting>
           environment variables for each application that uses a
           project-specific gemset.
         </para>
+
+        <para>Continue to <xref linkend="adding-torquebox-features"/>.</para>
       </section>
     </section>
 
+  </chapter>
+
+  <chapter id="adding-torquebox-features">
+    <title>Adding TorqueBox Features</title>
+
+    <para>
+      This chapter builds upon the simple Rails application we created
+      in <xref linkend="first-steps"/> by modifying it to take
+      advantage of TorqueBox features.
+    </para>
+
+    <section id="features-rails-template">
+      <title>TorqueBox Rails Template</title>
+
+      <para>
+        TorqueBox ships with a Rails template that we can use to
+        automatically add <filename>torquebox</filename> to the
+        Gemfile, convert the session store to the optional TorqueBox
+        clustered session storage, setup all ActiveRecord objects to
+        have <classname>TorqueBox::Backgroundable</classname> methods
+        available, and add some TorqueBox-specific Rake tasks.
+
+        <screen><prompt>$</prompt> <command>cd ~/torquebox_examples/rails_example</command>
+<prompt>$</prompt> <command>torquebox rails</command>
+       apply  /Users/someone/torquebox-${project.version}/share/rails/template.rb
+     gemfile    torquebox (${project.version})
+      remove    config/initializers/session_store.rb
+ initializer    session_store.rb
+ initializer    active_record_backgroundable.rb
+    rakefile    torquebox.rake</screen>
+      </para>
+    </section>
+
+    <section id="features-backgroundable">
+      <title>Running Tasks in the Background</title>
+
+      <para>
+        To illustrate how TorqueBox makes it effortless to run
+        long-running tasks in the background, let's first add a
+        long-running task to our <classname>Post</classname>
+        model. After each <classname>Post</classname> is created, lets
+        publish a message to our favorite social network linking to
+        that post. For simplicitly we'll just log a message and sleep
+        for a few seconds to simulate the publish.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/models/post.rb</filename></title>
+          <programlisting><![CDATA[class Post < ActiveRecord::Base
+  attr_accessible :body, :title
+
+  after_create :publish_to_social_network
+
+  def publish_to_social_network
+    puts "Publishing '#{title}' to our favorite social network"
+    sleep(5)
+    puts "Post published"
+  end
+end]]></programlisting>
+        </example>
+
+        Start TorqueBox if it isn't already running via
+        <command>torquebox run</command> (Windows users remember to
+        use <command>echo Y | jruby -S torquebox run</command>),
+        navigate to <ulink url="http://localhost:8080/posts/"/>,
+        create a new post, and observe the output from the TorqueBox
+        console.
+
+        <screen>09:11:19,746 INFO  [stdout] (http-localhost/127.0.0.1:8080-1) Publishing 'Chunky Bacon Fever' to our favorite social network
+09:11:24,747 INFO  [stdout] (http-localhost/127.0.0.1:8080-1) Post published</screen>
+
+        As you can see, it took 5 seconds to publish the post and
+        during that five seconds the browser was waiting on a response
+        from the server. There's no reason the browser needs to wait
+        until the post is published, so let's see how easy it is to
+        convert the publish_to_social_network method to run in the
+        background.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/models/post.rb</filename></title>
+          <programlisting><![CDATA[class Post < ActiveRecord::Base
+  attr_accessible :body, :title
+
+  after_create :publish_to_social_network
+  always_background :publish_to_social_network
+
+  def publish_to_social_network
+    puts "Publishing '#{title}' to our favorite social network"
+    sleep(5)
+    puts "Post published"
+  end
+end]]></programlisting>
+        </example>
+
+        Create a new post and you'll see that the browser returns
+        immediately and in the TorqueBox console the messaging runtime
+        will spin up (since
+        <classname>TorqueBox::Backgroundable</classname> uses
+        messaging and the first message we send starts the messaging
+        runtime pool) and publish the post to our favorite social
+        network in the background.
+      </para>
+    </section>
+
+    <section id="features-scheduled-jobs">
+      <title>Scheduled Jobs</title>
+
+      <para>
+        TorqueBox also has built-in support for scheduled jobs (like
+        Cron or Windows Scheduler) but in a cross-platform way. To see
+        how scheduled jobs work, let's create a job that logs the
+        number of posts in our database every 10 seconds. To do this
+        create a <classname>PostCounter</classname> class in the
+        <filename>app/jobs</filename> directory created for us by the
+        TorqueBox Rails template earlier.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/jobs/post_counter.rb</filename></title>
+          <programlisting><![CDATA[class PostCounter
+
+  def run
+    puts "#{Post.count} posts in the database"
+  end
+
+end]]></programlisting>
+        </example>
+
+        We also have to tell TorqueBox about this new job and when to
+        run it. To do that, edit the
+        <filename>config/torquebox.yml</filename> created for us by
+        the TorqueBox Rails template to have the contents below.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/config/torquebox.yml</filename></title>
+          <programlisting>---
+# This is the TorqueBox configuration file. Refer to the TorqueBox
+# documentation at http://torquebox.org/documentation/current/ 
+# for all configuration options.
+web:
+  context: "/"
+jobs:
+  post_counter:
+    job: PostCounter
+    cron: "*/10 * * * * ?"</programlisting>
+        </example>
+
+        Since we had to make a change to
+        <filename>config/torquebox.yml</filename>, we need to restart
+        TorqueBox for the job to start running. After restarting
+        TorqueBox you should see output like below every 10 seconds.
+
+        <screen>09:45:30,029 INFO  [stdout] (JobScheduler$rails_example-knob.yml_Worker-2) 2 posts in the database</screen>
+      </para>
+    </section>
+
+    <section id="features-services">
+      <title>Long-Running Services</title>
+
+      <para>
+        TorqueBox supports the notion of long-running services that
+        get started when the application is deployed and stopped when
+        the application is undeployed. This could be useful to connect
+        a client to a streaming API service (like that provided by
+        some social networks), monitor a resource for changes and take
+        some action, or many other things. As an example, we'll create
+        a service that pretends to connect to a social network and
+        submit post ideas to a queue for later processing.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/services/post_idea_grabber.rb</filename></title>
+          <programlisting><![CDATA[class PostIdeaGrabber
+
+  def initialize(options)
+    @queue = TorqueBox::Messaging::Queue.new(options['queue_name'])
+  end
+
+  def start
+    puts "******** Starting PostIdeaGrabber ********"
+    Thread.new do
+      until @done
+        @queue.publish("Random idea #{rand(100)}")
+        sleep 2
+      end
+    end
+  end
+
+  def stop
+    @done = true
+  end
+end]]></programlisting>
+        </example>
+
+        Just like with our scheduled job, we need to tell TorqueBox
+        about this new service and the message queue it uses.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/config/torquebox.yml</filename></title>
+          <programlisting>---
+# This is the TorqueBox configuration file. Refer to the TorqueBox
+# documentation at http://torquebox.org/documentation/current/ 
+# for all configuration options.
+web:
+  context: "/"
+jobs:
+  post_counter:
+    job: PostCounter
+    cron: "*/10 * * * * ?"
+services:
+  post_idea_grabber:
+    service: PostIdeaGrabber
+    config:
+      queue_name: "/queue/post_ideas"
+queues:
+  /queue/post_ideas:
+    durable: false</programlisting>
+        </example>
+
+        Restart TorqueBox and you should see the service starting in
+        the logs.
+
+        <screen>10:43:56,316 INFO  [org.torquebox.core.runtime] (MSC service thread 1-7) Created ruby runtime (ruby_version: RUBY1_8, compile_mode: JIT, app: rails_example, context: services) in 17.73s
+10:43:56,325 INFO  [stdout] (MSC service thread 1-5) ******** Starting PostIdeaGrabber ********</screen>
+      </para>
+    </section>
+
+    <section id="features-processors">
+      <title>Message Processors</title>
+
+      <para>
+        We have a long-running service placing messages on a queue but
+        now we need something to consume those messages and do
+        something with them. TorqueBox has a feature designed
+        specifically for this purpose - message processors. We'll
+        create a message processor to randomly choose some of the
+        ideas and create new posts from them.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/processors/post_idea_processor.rb</filename></title>
+          <programlisting><![CDATA[class PostIdeaProcessor < TorqueBox::Messaging::MessageProcessor
+
+  def on_message(message)
+    if (rand(10) > 8)
+      puts "Creating new post from idea #{message}"
+      Post.create(:title => message, :body => "Random post created from an idea")
+    end
+  end
+
+end]]></programlisting>
+        </example>
+
+        As usual we need to edit
+        <filename>config/torquebox.yml</filename> so TorqueBox knows
+        how to wire up this new message processor.
+
+        <example>
+          <title><filename>~/torquebox_examples/rails_example/app/config/torquebox.yml</filename></title>
+          <programlisting>---
+# This is the TorqueBox configuration file. Refer to the TorqueBox
+# documentation at http://torquebox.org/documentation/current/ 
+# for all configuration options.
+web:
+  context: "/"
+jobs:
+  post_counter:
+    job: PostCounter
+    cron: "*/10 * * * * ?"
+services:
+  post_idea_grabber:
+    service: PostIdeaGrabber
+    config:
+      queue_name: "/queue/post_ideas"
+queues:
+  /queue/post_ideas:
+    durable: false
+messaging:
+  /queue/post_ideas: PostIdeaProcessor</programlisting>
+        </example>
+
+        Restart TorqueBox and you should see new posts being created
+        from the random ideas.
+
+        <screen>11:10:31,891 INFO  [stdout] (Thread-2 (HornetQ-client-global-threads-9512807)) Creating new post from idea Random idea 66</screen>
+      </para>
+
+      <para>
+        Congratulations! You now have an application that uses many of
+        the features of TorqueBox. For detailed documentation on
+        TorqueBox, look for the User Manual in the same location you
+        found this Getting Started Guide.
+      </para>
+    </section>
   </chapter>
 
 </book>
