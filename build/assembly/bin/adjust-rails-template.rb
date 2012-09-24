@@ -38,7 +38,7 @@ class RailsTemplateAdjuster
 
   def write_line( output, line )
     if line =~ /gem [\'\"](torquebox.*?)[\'\"]/
-      output.puts line.sub( @build_number, @version )
+      output.puts line.sub( @build_number, @version ).sub( "${env.BUILD_NUMBER}", @version )
     else
       output.puts line unless line =~ /^add_source \"http\:\/\/torquebox.org\/.+?\/builds\/[0-9]+\/gem-repo\"$/
     end
