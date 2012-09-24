@@ -160,6 +160,10 @@ module TorqueBox
           # If called from rake within a rails app, bundler will try
           # to init itself via RUBYOPT, which we don't want
           ENV.delete('RUBYOPT') 
+          # Match load-path of booted TorqueBox to the load-path of
+          # this process so that we know we can find bundler and our
+          # own gems if used with bundle install --deployment
+          ENV['RUBYLIB'] = "#{ENV['RUBYLIB']}:#{$:.join(':')}"
 
           set_java_opts("#{options[:jvm_options]} #{jruby_opts_properties}")
           print_server_config(options[:clustered])
