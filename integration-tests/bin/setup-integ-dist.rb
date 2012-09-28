@@ -38,3 +38,5 @@ end
 
 FileUtils.rm_rf( Dir["#{output_dir}/jboss/standalone/log/*"] )
 FileUtils.rm_rf( Dir["#{output_dir}/jboss/standalone/deployments/*"] )
+FileUtils.rm_rf( Dir["#{output_dir}/jboss/domain/servers/server-01/log/*"] )
+FileUtils.rm_rf( Dir["#{output_dir}/jboss/domain/servers/server-02/log/*"] )
