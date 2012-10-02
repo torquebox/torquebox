@@ -67,7 +67,7 @@ module Capistrano
         if exists?( :app_ruby_version ) && !exists?( :jruby_opts )
           set( :jruby_opts,          lambda{ "--#{app_ruby_version}" } )
         end
-        set( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts}" } ) unless exists?( :jruby_bin )
+        set( :jruby_bin,           lambda{ "#{jruby_home}/bin/jruby #{jruby_opts if exists?( :jruby_opts )}" } ) unless exists?( :jruby_bin )
 
         set( :jboss_home,          lambda{ "#{torquebox_home}/jboss" } ) unless exists?( :jboss_home )
         set( :jboss_control_style, :initd ) unless exists?( :jboss_control_style )
