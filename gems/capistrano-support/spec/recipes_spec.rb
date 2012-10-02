@@ -29,6 +29,13 @@ describe Capistrano::TorqueBox, "loaded into a configuration" do
     @configuration.exists?( :app_ruby_version ).should be_false
   end
 
+  it "should allow setting neither app_ruby_version nor jruby_opts" do
+    Capistrano::TorqueBox.load_into(@configuration)
+    @configuration.exists?( :app_ruby_version ).should be_false
+    @configuration.exists?( :jruby_opts ).should be_false
+    expect { @configuration.fetch( :jruby_bin ) }.not_to raise_error
+  end
+
   it "should allow default 1.9 override for app_ruby_version" do
     @configuration.set( :app_ruby_version, 1.9 )
     Capistrano::TorqueBox.load_into(@configuration)
