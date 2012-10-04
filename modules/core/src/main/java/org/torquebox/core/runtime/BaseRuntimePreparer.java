@@ -22,14 +22,23 @@ package org.torquebox.core.runtime;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceRegistry;
 import org.jruby.Ruby;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.component.ComponentRegistry;
 import org.torquebox.core.util.JRubyConstants;
 import org.torquebox.core.util.RuntimeHelper;
 
 public class BaseRuntimePreparer implements RuntimePreparer {
 
+    public BaseRuntimePreparer(RubyAppMetaData rubyAppMetaData) {
+        this.rubyAppMetaData = rubyAppMetaData;
+    }
+
     @Override
     public void prepareRuntime(Ruby ruby, String runtimeContext, ServiceRegistry serviceRegistry) throws Exception {
+        if (rubyAppMetaData != null) {
+            ruby.setCurrentDirectory( rubyAppMetaData.getRoot().getCanonicalPath() );
+        }
+
         if ("1.6.3".equals( JRubyConstants.getVersion() ) ||
                 "1.6.4".equals( JRubyConstants.getVersion() )) {
             log.debug( "Disabling POSIX ENV passthrough for " + runtimeContext + " runtime (TORQUE-497)" );
@@ -61,5 +70,7 @@ public class BaseRuntimePreparer implements RuntimePreparer {
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
+
+    protected RubyAppMetaData rubyAppMetaData;
 
 }
