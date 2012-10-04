@@ -70,7 +70,7 @@ public class BaseRubyRuntimeInstaller implements DeploymentUnitProcessor {
         if (gemfile.exists()) {
             preparer = new BundlerAwareRuntimePreparer( rubyAppMetaData );
         } else {
-        	preparer = new BaseRuntimePreparer();
+            preparer = new BaseRuntimePreparer( rubyAppMetaData );
         }
         runtimeMetaData.setRuntimeInitializer( initializer );
         runtimeMetaData.setRuntimePreparer( preparer );

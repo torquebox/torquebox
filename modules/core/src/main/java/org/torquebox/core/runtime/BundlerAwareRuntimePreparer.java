@@ -30,7 +30,7 @@ import org.torquebox.core.util.RuntimeHelper;
 public class BundlerAwareRuntimePreparer extends BaseRuntimePreparer {
 
     public BundlerAwareRuntimePreparer(RubyAppMetaData rubyAppMetaData) {
-        this.rubyAppMetaData = rubyAppMetaData;
+        super( rubyAppMetaData );
     }
 
     @Override
@@ -57,7 +57,5 @@ public class BundlerAwareRuntimePreparer extends BaseRuntimePreparer {
     }
 
     private static final Logger log = Logger.getLogger( "org.torquebox.core.runtime" );
-
-    private RubyAppMetaData rubyAppMetaData;
 
 }

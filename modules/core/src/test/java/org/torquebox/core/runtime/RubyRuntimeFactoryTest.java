@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import org.jruby.RubyString;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.junit.After;
 import org.junit.Test;
+import org.torquebox.core.app.RubyAppMetaData;
 import org.torquebox.core.util.JRubyConstants;
 
 public class RubyRuntimeFactoryTest {
@@ -100,6 +102,24 @@ public class RubyRuntimeFactoryTest {
 
         Ruby ruby = factory.createInstance( getClass().getSimpleName() );
         assertNotNull( ruby );
+    }
+
+    @Test
+    public void currentDirectoryIsSetBeforeInitialization() throws Exception {
+        String root = "/path/to/root";
+        RubyAppMetaData rubyAppMetaData = new RubyAppMetaData( "test_app" );
+        rubyAppMetaData.setRoot( new File( root ) );
+        BaseRuntimePreparer preparer = new BaseRuntimePreparer( rubyAppMetaData );
+        MockRuntimeInitializer initializer = new MockRuntimeInitializer();
+
+        factory = new RubyRuntimeFactory( initializer, preparer );
+        factory.setUseJRubyHomeEnvVar( false );
+        factory.create();
+
+        Ruby ruby = factory.createInstance( getClass().getSimpleName() );
+        assertNotNull( ruby );
+        assertEquals( root, initializer.currentDirectory );
+        assertEquals( root, ruby.getCurrentDirectory() );
     }
 
     @Test
@@ -437,10 +457,12 @@ public class RubyRuntimeFactoryTest {
     static class MockRuntimeInitializer implements RuntimeInitializer {
 
         public Ruby ruby;
+        public String currentDirectory;
 
         @Override
         public void initialize(Ruby ruby, String runtimeContext) throws Exception {
             this.ruby = ruby;
+            this.currentDirectory = ruby.getCurrentDirectory();
         }
 
     }

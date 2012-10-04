@@ -50,9 +50,6 @@ public class RackRuntimeInitializerTest extends AbstractRubyTestCase {
         String rackEnv = (String) ruby.evalScriptlet( "RACK_ENV" ).toJava( String.class );
         assertEquals( "test", rackEnv );
 
-        String pwd = (String) ruby.evalScriptlet( "Dir.pwd" ).toJava( String.class );
-        assertEquals( root.getCanonicalPath(), new File( pwd ).getCanonicalPath() );
-
         String baseUri = (String) ruby.evalScriptlet( "ENV['RACK_BASE_URI']" ).toJava( String.class );
         assertEquals( "/mycontext", baseUri );
 

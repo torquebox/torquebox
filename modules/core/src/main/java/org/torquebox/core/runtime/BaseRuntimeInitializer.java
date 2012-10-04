@@ -40,7 +40,6 @@ public class BaseRuntimeInitializer implements RuntimeInitializer {
     @Override
     public void initialize(Ruby ruby, String runtimeContext) throws Exception {
         String appName = this.rubyAppMetaData.getApplicationName();
-        ruby.setCurrentDirectory( getApplicationRoot().getCanonicalPath() );
 
         StringBuilder script = new StringBuilder();
         script.append( "TORQUEBOX_APP_NAME=%q(" + appName + ")\n" );

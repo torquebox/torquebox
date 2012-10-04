@@ -79,7 +79,7 @@ public class RubyRuntimeFactory implements InstanceFactory<Ruby> {
         this.initializer = initializer;
         this.preparer = preparer;
         if (this.preparer == null) {
-            this.preparer = new BaseRuntimePreparer();
+            this.preparer = new BaseRuntimePreparer( null );
         }
     }
 
