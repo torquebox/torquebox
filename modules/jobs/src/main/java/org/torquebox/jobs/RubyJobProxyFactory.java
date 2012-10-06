@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.jboss.logging.Logger;
 import org.quartz.Job;
+import org.quartz.JobKey;
 import org.quartz.JobDetail;
 import org.quartz.SchedulerException;
 import org.quartz.spi.JobFactory;
@@ -34,17 +35,17 @@ import org.torquebox.core.runtime.RubyRuntimePool;
 public class RubyJobProxyFactory implements JobFactory {
        
     @Override
-    public Job newJob(TriggerFiredBundle bundle) throws SchedulerException {
+    public Job newJob(TriggerFiredBundle bundle, org.quartz.Scheduler ignored) throws SchedulerException {
     	JobDetail jobDetail = bundle.getJobDetail();
         
-        ComponentResolver resolver = this.componentResolvers.get( jobDetail.getName() );
+        ComponentResolver resolver = this.componentResolvers.get( jobDetail.getKey() );
         RubyJobProxy rubyJob = new RubyJobProxy( this.runtimePool, resolver, jobDetail );
        
         return rubyJob;
     }
     
-    public void addComponentResolver(String rubyClassName, ComponentResolver resolver) {
-    	this.componentResolvers.put( rubyClassName, resolver );
+    public void addComponentResolver(JobKey key, ComponentResolver resolver) {
+    	this.componentResolvers.put( key, resolver );
     }
     
     public void setRubyRuntimePool(RubyRuntimePool runtimePool) {
@@ -52,7 +53,7 @@ public class RubyJobProxyFactory implements JobFactory {
     }
 
     private RubyRuntimePool runtimePool;
-    private Map<String, ComponentResolver> componentResolvers = new HashMap<String, ComponentResolver>();
+    private Map<JobKey, ComponentResolver> componentResolvers = new HashMap<JobKey, ComponentResolver>();
 
     @SuppressWarnings("unused")
     private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );

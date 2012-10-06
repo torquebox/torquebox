@@ -628,7 +628,7 @@
 
   <properties>
     <ruby.compat.version>1.8</ruby.compat.version>
-    <version.polyglot>1.7.2</version.polyglot>
+    <version.polyglot>1.7.4-SNAPSHOT</version.polyglot>
     <version.jruby-maven-plugins>0.28.4</version.jruby-maven-plugins> 
     <version.junit>4.7</version.junit>
     <version.jmock>2.5.1</version.jmock>
@@ -736,7 +736,7 @@
         <configuration>
           <source>1.6</source>
           <target>1.6</target>
-          <showDeprecation>true</showDeprecation>
+          <showDeprecation>false</showDeprecation>
           <showWarnings>true</showWarnings>
           <optimize>true</optimize>
         </configuration>

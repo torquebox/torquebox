@@ -26,14 +26,15 @@ import org.jboss.msc.inject.Injector;
 import org.jboss.msc.value.InjectedValue;
 import org.projectodd.polyglot.jobs.BaseJobScheduler;
 import org.quartz.SchedulerException;
+import org.quartz.JobKey;
 import org.torquebox.core.component.ComponentResolver;
 import org.torquebox.core.runtime.RubyRuntimePool;
 
 public class JobScheduler extends BaseJobScheduler  {
 
-	public JobScheduler(String name, int threadCount) {
-		super( name, threadCount );
-	}
+    public JobScheduler(String name, int threadCount) {
+        super( name, threadCount );
+    }
 	
     public void start() throws IOException, SchedulerException {
         RubyJobProxyFactory jobFactory = new RubyJobProxyFactory();
@@ -42,8 +43,8 @@ public class JobScheduler extends BaseJobScheduler  {
         super.start();
     }
 
-    public void addComponentResolver(String rubyClass, ComponentResolver resolver) {
-    	((RubyJobProxyFactory)getJobFactory()).addComponentResolver( rubyClass, resolver );
+    public void addComponentResolver(JobKey key, ComponentResolver resolver) {
+    	((RubyJobProxyFactory)getJobFactory()).addComponentResolver( key, resolver );
     }
        
     public Injector<RubyRuntimePool> getRubyRuntimePoolInjector() {
@@ -52,5 +53,5 @@ public class JobScheduler extends BaseJobScheduler  {
     
     private InjectedValue<RubyRuntimePool> rubyRuntimePoolInjector = new InjectedValue<RubyRuntimePool>();
     
-	private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
+    private static final Logger log = Logger.getLogger( "org.torquebox.jobs" );
 }

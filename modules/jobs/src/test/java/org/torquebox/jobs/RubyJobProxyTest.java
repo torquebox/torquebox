@@ -10,7 +10,7 @@ import org.jruby.Ruby;
 import org.junit.Before;
 import org.junit.Test;
 import org.projectodd.polyglot.core.util.TimeInterval;
-import org.quartz.JobDetail;
+import org.quartz.impl.JobDetailImpl;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.torquebox.core.component.ComponentClass;
@@ -29,7 +29,7 @@ public class RubyJobProxyTest extends AbstractRubyTestCase {
         this.componentResolver = new ComponentResolver( false );
         this.componentResolver.setComponentInstantiator( this.componentClass );
         this.componentResolver.setComponentWrapperClass( JobComponent.class );
-        this.jobDetail = new JobDetail();
+        this.jobDetail = new JobDetailImpl();
         this.jobDetail.setName( "RubyJobProxyTest" );
         this.context = mock( JobExecutionContext.class );
     }
@@ -94,6 +94,6 @@ public class RubyJobProxyTest extends AbstractRubyTestCase {
     private ComponentClass componentClass;
     private ComponentResolver componentResolver;
     private JobExecutionContext context;
-    private JobDetail jobDetail;
+    private JobDetailImpl jobDetail;
 
 }
