@@ -449,4 +449,35 @@ describe TorqueBox::DeployUtils do
       @util.deployment_status[@appname][:status].should == 'deployment failed'
     end
   end
+
+  describe '.rubylib_with_bundler' do
+    before(:each) do
+      @rubylib = ENV['RUBYLIB']
+    end
+
+    after(:each) do
+      ENV['RUBYLIB'] = @rubylib
+    end
+
+    it 'should equal ENV["RUBYLIB"] if bundler not in load path' do
+      ENV['RUBYLIB'] = '/path/to/somewhere'
+      @util.rubylib_with_bundler([]).should == '/path/to/somewhere'
+    end
+
+    it 'should be empty if ENV["RUBYLIB"] not set and bundler not on load path' do
+      ENV['RUBYLIB'] = nil
+      @util.rubylib_with_bundler([]).should be_empty
+    end
+
+    it 'should not include ENV["RUBYLIB"] if not set' do
+      ENV['RUBYLIB'] = nil
+      @util.rubylib_with_bundler(['/some/bundler/path']).should == '/some/bundler/path'
+    end
+
+    it 'should only include load path entries containing bundler' do
+      ENV['RUBYLIB'] = '/path/to/abc'
+      load_path = ['/some/bundler/path', '/some/other/path']
+      @util.rubylib_with_bundler(load_path).should =='/path/to/abc:/some/bundler/path'
+    end
+  end
 end
