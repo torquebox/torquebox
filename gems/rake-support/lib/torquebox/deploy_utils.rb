@@ -159,11 +159,12 @@ module TorqueBox
           ENV.delete('BUNDLE_GEMFILE')
           # If called from rake within a rails app, bundler will try
           # to init itself via RUBYOPT, which we don't want
-          ENV.delete('RUBYOPT') 
-          # Match load-path of booted TorqueBox to the load-path of
-          # this process so that we know we can find bundler and our
-          # own gems if used with bundle install --deployment
-          ENV['RUBYLIB'] = "#{ENV['RUBYLIB']}:#{$:.join(':')}"
+          ENV.delete('RUBYOPT')
+          # Ensure bundler gets on the Ruby load path of the booted
+          # TorqueBox instance if it's on the load path of this Ruby
+          # runtime so we can find bundler and our own gems if used
+          # with bundle install --deployment
+          ENV['RUBYLIB'] = rubylib_with_bundler($:)
 
           set_java_opts("#{options[:jvm_options]} #{jruby_opts_properties}")
           print_server_config(options[:clustered])
@@ -412,6 +413,15 @@ module TorqueBox
         # Only convert -Xa.b, -Xa.b.c, -Xa.b.c.d style options to properties
         properties = jruby_opts.scan(/-X(\w+\..+?)\s/)
         properties.map { |matches| "-Djruby.#{matches.first}" }.join(' ')
+      end
+
+      def rubylib_with_bundler(load_path)
+        bundler_load_paths = load_path.select { |p| p.include?('bundler') }
+        rubylib = (ENV['RUBYLIB'] || '').dup # ENV strings are frozen
+        unless rubylib.empty? || bundler_load_paths.empty?
+          rubylib << ':'
+        end
+        rubylib << bundler_load_paths.join(':')
       end
 
       private
