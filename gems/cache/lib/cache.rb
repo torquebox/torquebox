@@ -51,7 +51,8 @@ module TorqueBox
 
       SECONDS = java.util.concurrent.TimeUnit::SECONDS
       begin
-        java_import org.infinispan.config.Configuration::CacheMode
+        java_import org.infinispan.configuration.cache::CacheMode
+        java_import org.infinispan.configuration.cache::ConfigurationBuilder
         java_import org.infinispan.transaction::TransactionMode
         java_import org.infinispan.transaction::LockingMode
         java_import org.projectodd.polyglot.cache.as::CacheService
@@ -275,31 +276,29 @@ module TorqueBox
 
       def reconfigure(mode=clustering_mode)
         existing_cache  = manager.get_cache(name)
-        base_config = existing_cache.configuration
-        unless base_config.cache_mode == mode
+        base_config = existing_cache.cache_configuration
+        unless base_config.clustering.cache_mode == mode
           log( "Reconfiguring Infinispan cache #{name} from #{base_config.cache_mode} to #{mode}" )
-          existing_cache .stop
+          existing_cache.stop
           configure(mode)
-          existing_cache .start
+          existing_cache.start
         end
-        return existing_cache 
+        return existing_cache
       end
 
       def configure(mode=clustering_mode)
         log( "Configuring Infinispan cache #{name} as #{mode}" )
-        base_config = manager.default_configuration.clone
-        base_config.cache_mode = mode
-        config = base_config.fluent
+        config = ConfigurationBuilder.new.read( manager.default_cache_configuration )
+        config.clustering.cacheMode( mode )
         config.transaction.transactionMode( transaction_mode )
         if transactional?
-          config.transaction.transactionManagerLookup( transaction_manager_lookup ) 
+          config.transaction.transactionManagerLookup( transaction_manager_lookup )
           config.transaction.lockingMode( locking_mode )
         end
         if persisted?
-          store = org.infinispan.loaders.file.FileCacheStoreConfig.new
-          store.purge_on_startup( false )
-          store.location(options[:persist]) if File.exist?( options[:persist].to_s ) 
-          config.loaders.add_cache_loader( store )
+          store = config.loaders.add_file_cache_store
+          store.purgeOnStartup( false )
+          store.location(options[:persist]) if File.exist?( options[:persist].to_s )
         end
         manager.define_configuration(name, config.build )
         manager.get_cache(name)

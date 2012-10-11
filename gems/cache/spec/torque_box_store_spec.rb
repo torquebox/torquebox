@@ -1,7 +1,7 @@
 require 'active_support/cache/torque_box_store'
 require 'logger'
 
-java_import org.infinispan.config.Configuration::CacheMode
+java_import org.infinispan.configuration.cache::CacheMode
 include ActiveSupport::Cache
 
 TORQUEBOX_APP_NAME = 'active-support-unit-test'
