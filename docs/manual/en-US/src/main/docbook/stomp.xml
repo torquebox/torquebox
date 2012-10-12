@@ -20,7 +20,7 @@
     some other underlying messaging technology, such as a JMS broker.</para>
 
     <section id="websockets-overview">
-      <title>What are WebSockets?</title>
+      <title>What is WebSockets?</title>
 
       <para>WebSockets is a new specification to allow synchronous
       bidirectional communication between a client (such as a web browser) and
@@ -194,7 +194,7 @@
 
         <para>If the Stomplets are run as part of a larger application which
         involves web components (Rack, Sinatra, Rails, etc), then the user's
-        session will pass between from the web and STOMP components. Values
+        session will pass between the web and STOMP components. Values
         set on the session from a web-based controller will be visible within
         the scope of the Stomplet, and vice-versa.</para>
 
