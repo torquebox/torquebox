@@ -1372,7 +1372,7 @@ end</programlisting></para>
 
       <para>TorqueBox also provides <classname>Backgroundable</classname>
       methods. <classname>Backgroundable</classname> allows you to process any
-      method on any object asynchronously. You can mark a method to always
+      method on any class or object asynchronously. You can mark a method to always
       execute in the background, or send a method to the background on an ad
       hoc basis. Backgrounded methods return a <link
       linkend="messaging-futures">Future</link> object that can be used to
@@ -1381,12 +1381,27 @@ end</programlisting></para>
       advisable to replace any <classname>Task</classname> implementation with
       usage of <classname>Backgroundable</classname>.</para>
 
+      <section id="backgroundable-marshalling">
+        <title>A note on receiver/argument marshalling</title>
+
+        <para>We serialize the receiver and arguments using Marshal and
+        include them in the message that gets enqueued. The message processors
+        run in a separate ruby runtime from the application, which may be on a
+        different machine if you have a cluster. The marshaling works well for
+        basic ruby objects. It may not work as well for objects that expect a lot 
+        of plumbing in place (ActionControllers, for example). If you are using
+        instances with a backing store (ActiveRecord instances, for example), it's
+        generally a better idea to send the id of the instance instead of the full
+        instance, and to look it up from the backing store at the start of the
+        backgrounded method's invocation.</para>
+      </section>
+
       <section id="backgroundable-always-background">
         <title><function>always_background</function></title>
 
         <para><classname>Backgroundable</classname> provides the
         <function>always_background</function> class method that allows you to
-        flag a method to always be executed in the background:</para>
+        flag a class or instance method to always be executed in the background:</para>
 
         <example>
           <title>Having a method always execute in the background</title>
@@ -1394,15 +1409,13 @@ end</programlisting></para>
           <para><programlisting>class User &lt; ActiveRecord::Base
   always_background :send_signup_notification
 
-  def send_signup_notification
+  def self.send_signup_notification(user_id)
     ...
   end
 end
 
-user = User.find(id)
-
 # executes in the background, returning immediately
-future_result = user.send_signup_notification
+future_result = User.send_signup_notification(42)
   </programlisting>The <function>always_background</function> method can be
           called before or after the method being backgrounded is defined, and
           can take multiple method symbols: <function>always_background :foo,
@@ -1413,11 +1426,11 @@ future_result = user.send_signup_notification
         outside of the class definition if you prefer:</para>
 
         <example>
-          <title>Alternative <function>always_background</function>
+         <title>Alternative <function>always_background</function>
           usage</title>
 
           <para><programlisting>class User &lt; ActiveRecord::Base
-  def send_signup_notification
+  def self.send_signup_notification(user_id)
     ...
   end
 end
@@ -1425,37 +1438,102 @@ end
 User.always_background(:send_signup_notification)
   </programlisting></para>
         </example>
+
+        <section id="backgroundable-instance-methods">
+          <title>Using always_background with instance methods</title>
+          <para><function>always_background</function> can be used to enable 
+          backgrounding for class or instance methods, even in the same invocation:</para>
+
+        <example>
+
+          <para><programlisting>class User &lt; ActiveRecord::Base
+  always_background :a_class_method, :an_instance_method
+
+  def self.a_class_method
+    ...
+  end
+
+  def an_instance_method
+    ...
+  end
+end</programlisting></para>
+        </example>
+
+        <para>Even though you can background instance methods, we generally recommend 
+        you use class methods for backgrounding where possible, especially if the backing
+        store for an instance can change between when the backgrounded call is queued and
+        when it is executed. See the example below for the preferred method for dealing
+        with such instances (we'll use an <classname>ActiveRecord</classname> class for the
+        example, but the same applies for any instance with a backing store):</para>
+
+        <example>
+
+          <para><programlisting>class User &lt; ActiveRecord::Base
+  always_background :process_avatar_for
+
+  def process_avatar
+    ...
+  end
+
+  def self.process_avatar_for(id)
+    # pull the user from the db, in case it has changed since this
+    # call was backgrounded
+    User.find(id).process_avatar
+  end
+end
+
+user.avatar = some_file
+User.process_avatar_for(user.id)</programlisting></para>
+        </example>
+
+        </section>
+        
       </section>
+
 
       <section id="backgroundable-background">
         <title><function>background</function></title>
 
-        <para>If you have not marked an instance method with
+        <para>If you have not marked a method with
         <function>always_background</function>, you can background it at call
-        time with the <function>background</function> instance method. A
+        time with the <function>background</function> method. A
         method called via <function>background</function> will also return a
         <link linkend="messaging-futures">Future</link> object that can be
         used to monitor the status of the method invocation and retrieve the
-        final return value.</para>
+        final return value. <function>background</function> can be used with
+        class or isntance methods.</para>
 
         <example>
           <title>Backgrounding a method ad hoc</title>
 
           <para><programlisting>class User &lt; ActiveRecord::Base
-  def process_avatar(image_data)
+  def do_something
+    ...
+  end
+
+  def self.do_something_else
     ...
   end
 end
 
-user = User.find(id)
+user_instance = User.find(id)
 
 # executes in the background, returning immediately
-future_result = user.background.process_avatar(the_image)
+future_result = user_instance.background.do_something
 
 # executes in the foreground (this thread)
-regular_result = user.process_avatar(the_image)
-</programlisting></para>
+regular_result = user_instance.do_something
+
+# executes in the background, returning immediately
+future_result = User.background.do_something_else
+
+# executes in the foreground (this thread)
+regular_result = User.do_something_else</programlisting></para>
         </example>
+        <para>The same <link
+        linkend="backgroundable-instance-methods">caveats</link> listed above for 
+        using <function>always_background</function>
+        with instance methods apply to <function>background</function> as well.</para>
       </section>
 
       <section id="backgroundable-module">
@@ -1476,29 +1554,17 @@ regular_result = user.process_avatar(the_image)
 end
           </programlisting>Including <classname>Backgroundable</classname>
           provides both the <function>always_background</function> class
-          method and the <function>background</function> instance
-          method.</para>
+          method and <function>background</function> as both a class
+          and an instance method.</para>
         </example>
 
         <para>If your appplication uses Rails and you use the rails template
-        that ships with TorqueBox
+        that ships with TorqueBox to create or update your application
         (<filename>$TORQUEBOX_HOME/share/rails/template.rb</filename>), you
         should have an initializer
         (<filename>RAILS_ROOT/config/initializers/active_record_backgroundable.rb</filename>)
         that already includes <classname>Backgroundable</classname> into
         <classname>ActiveRecord::Base</classname>.</para>
-      </section>
-
-      <section id="backgroundable-marshalling">
-        <title>Object/argument marshalling</title>
-
-        <para>We serialize the receiver and arguments using Marshal and
-        include them in the message that gets enqueued. The message processors
-        run in a separate ruby runtime from the application, which may be on a
-        different machine if you have a cluster. The marshaling works well for
-        ActiveRecord objects and basic ruby objects. It may not work as well
-        for objects that expect a lot of plumbing in place (ActionControllers,
-        for example).</para>
       </section>
 
       <section id="backgroundable-invocation-options">
@@ -1517,18 +1583,16 @@ end
 
           <para><programlisting>class Widget
   always_background :productize, :priority =&gt; :low
-  def productize
+  def self.productize
     ...
   end
 
-  def monetize
+  def self.monetize
     ...
   end
 end
 
-widget = Widget.new
-
-widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
+Widget.background(:ttl =&gt; 1000, :persistent =&gt; false).monetize
 </programlisting>The message options are passed as a
           <classname>Hash</classname> as the last argument to
           <function>always_background</function>, and as the only argument to
@@ -1707,7 +1771,7 @@ end</programlisting></para>
   
   always_background :process_some_stuff
   ...
-  def process_some_stuff
+  def self.process_some_stuff
     stuff.each_with_index do |thing, index|
       thing.process_it
       # report the % complete
@@ -1716,7 +1780,7 @@ end</programlisting></para>
   end
 end
 
-future = Something.new.process_some_stuff
+future = Something.process_some_stuff
 # time passes
 future.started? # =&gt; true
 future.status   # =&gt; 22
