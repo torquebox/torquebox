@@ -19,31 +19,26 @@
 
 package org.torquebox.stomp;
 
-import java.util.Map;
 
 import org.jboss.as.server.deployment.AttachmentKey;
 import org.jboss.as.server.deployment.AttachmentList;
+import org.jboss.as.server.deployment.DeploymentUnit;
+import org.projectodd.polyglot.stomp.StompletMetaData;
 
-public class RubyStompletMetaData {
+public class RubyStompletMetaData extends StompletMetaData {
 
     public static final AttachmentKey<AttachmentList<RubyStompletMetaData>> ATTACHMENTS_KEY = AttachmentKey.createList( RubyStompletMetaData.class );
     
     public RubyStompletMetaData(String name) {
-        this.name = name;
+       super( name );
     }
     
-    public String getName() {
-        return this.name;
+    @Override
+    public void attachTo(DeploymentUnit unit) {
+        super.attachTo( unit );
+        unit.addToAttachmentList( ATTACHMENTS_KEY, this );
     }
     
-    public void setDestinationPattern(String destinationPattern) {
-        this.destinationPattern = destinationPattern;
-    }
-    
-    public String getDestinationPattern() {
-        return this.destinationPattern;
-    }
-
     public void setRubyClassName(String rubyClassName) {
         this.rubyClassName = rubyClassName;
     }
@@ -60,19 +55,7 @@ public class RubyStompletMetaData {
         return this.rubyRequirePath;
     }
     
-    public void setStompletConfig(Map<String, String> stompletConfig) {
-        this.stompletConfig = stompletConfig;
-    }
-    
-    public Map<String, String> getStompletConfig() {
-        return this.stompletConfig;
-    }
-        
-    
-    private String name;
-    private String destinationPattern;
     private String rubyClassName;
     private String rubyRequirePath;
-    private Map<String, String> stompletConfig;
 
 }

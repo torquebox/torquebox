@@ -20,12 +20,9 @@
 package org.torquebox.stomp.as;
 
 import static org.jboss.as.controller.descriptions.ModelDescriptionConstants.SUBSYSTEM;
-import static org.jboss.as.controller.parsing.ParseUtils.missingRequired;
+import static org.jboss.as.controller.parsing.ParseUtils.requireNoAttributes;
 import static org.jboss.as.controller.parsing.ParseUtils.requireNoContent;
-import static org.jboss.as.controller.parsing.ParseUtils.requireNoNamespaceAttribute;
-import static org.jboss.as.controller.parsing.ParseUtils.unexpectedAttribute;
 
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.stream.XMLStreamConstants;
@@ -61,31 +58,10 @@ public class StompSubsystemParser implements XMLStreamConstants, XMLElementReade
         address.add( SUBSYSTEM, StompExtension.SUBSYSTEM_NAME );
         address.protect();
 
-        ModelNode subsystem = StompSubsystemAdd.createOperation( address );
-
-        String bindingRef = null;
-
-        final int count = reader.getAttributeCount();
-        for (int i = 0; i < count; i++) {
-            requireNoNamespaceAttribute( reader, i );
-            final String value = reader.getAttributeValue( i );
-            final String name = reader.getAttributeLocalName( i );
-            if (name.equals( "socket-binding" )) {
-                bindingRef = value;
-            } else {
-                throw unexpectedAttribute( reader, i );
-            }
-        }
-
-        if (bindingRef == null) {
-            throw missingRequired( reader, Collections.singleton( "socket-binding" ) );
-        }
-
-        subsystem.get( "socket-binding" ).set( bindingRef );
-
-        requireNoContent( reader );
-
-        list.add( subsystem );
+        requireNoAttributes(reader);
+        requireNoContent(reader);
+        
+        list.add(StompSubsystemAdd.createOperation(address));
         
         // Tell the core that we've got injectable-handlers to add.
         
@@ -99,7 +75,6 @@ public class StompSubsystemParser implements XMLStreamConstants, XMLElementReade
     @Override
     public void writeContent(final XMLExtendedStreamWriter writer, final SubsystemMarshallingContext context) throws XMLStreamException {
         context.startSubsystemElement( Namespace.CURRENT.getUriString(), false );
-        writer.writeAttribute( "socket-binding", context.getModelNode().get( "socket-binding" ).asString() );
         writer.writeEndElement();
     }
 

@@ -44,6 +44,8 @@ public class StompDependenciesProcessor implements DeploymentUnitProcessor {
 
         if (unit.hasAttachment( RubyAppMetaData.ATTACHMENT_KEY )) {
             addDependency( moduleSpecification, moduleLoader, TORQUEBOX_STOMP_ID );
+            addDependency( moduleSpecification, moduleLoader,
+                    org.projectodd.polyglot.stomp.as.StompServices.MODULE_IDENTIFIER );
         }
     }
 

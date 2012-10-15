@@ -421,7 +421,7 @@
 
       <!-- Because AS7 integrates Stilts and is behind-the-times, 
            we must re-manage is back to a useful version. -->
-  
+    
       <dependency>
         <groupId>org.projectodd.stilts</groupId>
         <artifactId>stilts-stomplet-server-core</artifactId>

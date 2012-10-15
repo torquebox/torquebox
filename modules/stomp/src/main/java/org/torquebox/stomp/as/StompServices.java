@@ -22,26 +22,7 @@ package org.torquebox.stomp.as;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.msc.service.ServiceName;
 
-public class StompServices {
-    
-    private StompServices() {
-    }
-    
-    public static final ServiceName TORQUEBOX = ServiceName.of( "torquebox" );
-    public static final ServiceName STOMP = TORQUEBOX.append( "stomp" );
-    public static final ServiceName SERVER = STOMP.append( "server" );
-    
-    public static ServiceName container(DeploymentUnit unit) {
-        return unit.getServiceName().append( "stomp", "container" );
-    }
-    
-    public static ServiceName endpointBinding(DeploymentUnit unit) {
-        return container( unit ).append( "endpoint-binding" );
-    }
-    
-    public static ServiceName stomplet(DeploymentUnit unit, String name) {
-        return container( unit ).append( name );
-    }
+public class StompServices extends org.projectodd.polyglot.stomp.as.StompServices {
     
     public static ServiceName stompletComponentResolver(DeploymentUnit unit, String name) {
         return stomplet( unit, name ).append( "component-resolver" );

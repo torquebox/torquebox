@@ -22,6 +22,12 @@
     </dependency>
     <dependency>
       <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-stomp</artifactId>
+      <version>${version.polyglot}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
       <artifactId>polyglot-core</artifactId>
       <version>${version.polyglot}</version>
       <scope>provided</scope>
@@ -42,33 +48,6 @@
       <artifactId>torquebox-web</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.projectodd.stilts</groupId>
-      <artifactId>stilts-stomplet-server-core</artifactId>
-      <version>${version.org.projectodd.stilts}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.transaction</groupId>
-          <artifactId>jta</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.netty</groupId>
-          <artifactId>netty</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.logging</groupId>
-          <artifactId>jboss-logging</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jboss.as</groupId>

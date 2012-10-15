@@ -1,1 +1,0 @@
-<subsystem xmlns='urn:jboss:domain:torquebox-stomp:1.0' socket-binding="stomp"/>

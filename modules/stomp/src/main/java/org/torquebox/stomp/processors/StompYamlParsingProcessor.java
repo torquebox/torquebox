@@ -25,10 +25,10 @@ import java.util.Map;
 import org.jboss.as.server.deployment.DeploymentUnit;
 import org.jboss.as.server.deployment.DeploymentUnitProcessingException;
 import org.jboss.logging.Logger;
+import org.projectodd.polyglot.stomp.StompApplicationMetaData;
 import org.torquebox.core.processors.AbstractSplitYamlParsingProcessor;
 import org.torquebox.core.util.StringUtils;
 import org.torquebox.stomp.RubyStompletMetaData;
-import org.torquebox.stomp.StompApplicationMetaData;
 
 /**
  * Creates ScheduledJobMetaData instances from jobs.yml
@@ -77,7 +77,7 @@ public class StompYamlParsingProcessor extends AbstractSplitYamlParsingProcessor
                 metaData.setRubyRequirePath( StringUtils.underscore( rubyClassName.trim() ) );
                 metaData.setStompletConfig( stompletConfig );
 
-                unit.addToAttachmentList( RubyStompletMetaData.ATTACHMENTS_KEY, metaData );
+                metaData.attachTo( unit );
             }
         }
 

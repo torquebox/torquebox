@@ -41,14 +41,11 @@ import org.jboss.dmr.ModelNode;
 import org.jboss.logging.Logger;
 import org.jboss.msc.service.ServiceController;
 import org.jboss.msc.service.ServiceController.Mode;
+import org.projectodd.polyglot.stomp.StompletServerService;
+import org.projectodd.polyglot.stomp.processors.StompApplicationDefaultsProcessor;
 import org.projectodd.stilts.stomplet.server.StompletServer;
-import org.torquebox.stomp.StompWebAdjuster;
-import org.torquebox.stomp.StompletServerService;
 import org.torquebox.stomp.component.processors.StompletComponentResolverInstaller;
-import org.torquebox.stomp.processors.SessionManagerInstaller;
-import org.torquebox.stomp.processors.StompApplicationDefaultsProcessor;
 import org.torquebox.stomp.processors.StompYamlParsingProcessor;
-import org.torquebox.stomp.processors.StompletContainerInstaller;
 import org.torquebox.stomp.processors.StompletInstaller;
 import org.torquebox.stomp.processors.StompletLoadPathProcessor;
 import org.torquebox.stomp.processors.StompletsRuntimePoolProcessor;
@@ -67,51 +64,20 @@ public class StompSubsystemAdd extends AbstractBoottimeAddStepHandler {
         context.addStep( new AbstractDeploymentChainStep() {
             @Override
             protected void execute(DeploymentProcessorTarget processorTarget) {
-                final String bindingRef = operation.require( "socket-binding" ).asString();
-                addDeploymentProcessors( processorTarget, bindingRef );
+                addDeploymentProcessors( processorTarget );
             }
         }, OperationContext.Stage.RUNTIME );
 
-        try {
-            addCoreServices( context, operation, model, verificationHandler, newControllers );
-        } catch (Exception e) {
-            throw new OperationFailedException( e, null );
-        }
     }
 
-    protected void addCoreServices(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers) {
-        addStompletServer( context, operation, model, verificationHandler, newControllers );
-    }
-
-    private void addStompletServer(OperationContext context, ModelNode operation, ModelNode model, ServiceVerificationHandler verificationHandler,
-            List<ServiceController<?>> newControllers) {
-        StompletServer server = new StompletServer();
-        StompletServerService service = new StompletServerService( server );
-
-        final String bindingRef = operation.require( "socket-binding" ).asString();
-
-        ServiceController<StompletServer> controller = context.getServiceTarget().addService( StompServices.SERVER, service )
-                .addDependency( TxnServices.JBOSS_TXN_TRANSACTION_MANAGER, TransactionManager.class, service.getTransactionManagerInjector() )
-                .addDependency( SocketBinding.JBOSS_BINDING_NAME.append( bindingRef ), SocketBinding.class, service.getBindingInjector() )
-                .setInitialMode( Mode.ON_DEMAND )
-                .addListener( verificationHandler )
-                .install();
-
-        newControllers.add( controller );
-
-    }
-
-    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget, String socketBindingRef) {
+   
+    protected void addDeploymentProcessors(final DeploymentProcessorTarget processorTarget) {
         processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 31, rootSafe( new StompYamlParsingProcessor() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 1031, rootSafe( new StompWebAdjuster() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 1032, rootSafe( new StompApplicationDefaultsProcessor() ) );
+        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.PARSE, 1032, rootSafe( new StompApplicationDefaultsProcessor( true ) ) );
         processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 0, rootSafe( new StompletLoadPathProcessor() ) );
         processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.CONFIGURE_MODULE, 100, rootSafe( new StompletsRuntimePoolProcessor() ) );
         processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.DEPENDENCIES, 5, rootSafe( new StompDependenciesProcessor() ) );
         processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.POST_MODULE, 120, rootSafe( new StompletComponentResolverInstaller() ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 99, rootSafe( new SessionManagerInstaller( "localhost" ) ) );
-        processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 100, rootSafe( new StompletContainerInstaller( socketBindingRef ) ) );
         processorTarget.addDeploymentProcessor( StompExtension.SUBSYSTEM_NAME, Phase.INSTALL, 101, rootSafe( new StompletInstaller() ) );
     }
 

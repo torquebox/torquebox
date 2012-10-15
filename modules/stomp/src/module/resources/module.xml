@@ -26,15 +26,6 @@
 
     <resources>
         <resource-root path="${project.artifactId}.jar"/>
-
-        <resource-root path="stilts-stomp-api.jar"/>
-        <resource-root path="stilts-stomp-common.jar"/>
-        <resource-root path="stilts-stomp-server-core.jar"/>
-        <resource-root path="stilts-stomp-server-spi.jar"/>
-        <resource-root path="stilts-conduit-server-core.jar"/>
-        <resource-root path="stilts-conduit-server-spi.jar"/>
-        <resource-root path="stilts-stomplet-server-core.jar"/>
-        <resource-root path="stilts-stomplet-api.jar"/>
     </resources>
 
     <dependencies>
@@ -54,9 +45,9 @@
         <module name="org.jboss.msc"/>
         <module name="org.jboss.logging"/>
         <module name="org.jboss.vfs"/>
+        <module name="org.projectodd.polyglot.stomp"/>
         <module name="org.torquebox.core"/>
         <module name="org.torquebox.web"/>
-        <module name="org.jboss.netty"/>
     </dependencies>
 </module>
 

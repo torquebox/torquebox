@@ -252,11 +252,19 @@ class AssemblyTool
       element.add_element( subsystem_element( name ) )
     end
   end
-  
+
+  def find_subsystem_file(module_name, file)
+    group, name = module_name.split('-')
+    [
+     "#{base_dir}/target/stage/torquebox/jboss/modules/org/projectodd/#{group}/#{name}/main/subsystem/#{file}",
+     "#{base_dir}/../../modules/#{name}/src/subsystem/#{file}"
+    ].detect { |f| File.exist?(f) }
+  end
+
   def subsystem_element(name)
     short_name = name.split('-').last
-    custom_subsystem_path = base_dir + "/../../modules/#{short_name}/src/subsystem/subsystem.xml"
-    if ( ! File.exist?( custom_subsystem_path ) ) 
+    custom_subsystem_path = find_subsystem_file( name, "subsystem.xml" )
+    if ( ! custom_subsystem_path ) 
       e = REXML::Element.new( 'subsystem' )
       e.add_attribute( 'xmlns', "urn:jboss:domain:#{name}:1.0" )
       return e
@@ -266,12 +274,14 @@ class AssemblyTool
     custom_doc.root 
   end
 
-  def add_socket_bindings(doc)
+  def add_socket_bindings(doc, extra_modules)
     servers = doc.root.get_elements( '//server' ) + doc.root.get_elements( '//domain/socket-binding-groups' )
     servers.each do |server|
-      modules.each do |name|
-        binding_path = base_dir + "/../../modules/#{name}/src/subsystem/socket-binding.conf"
-        if ( File.exists?( binding_path ) )
+      module_names = modules.map { |n| "torquebox-#{n}" } +
+        extra_modules.map { |_, group, name| "#{group}-#{name}" }
+      module_names.each do |name|
+        binding_path = find_subsystem_file( name, "socket-binding.conf")
+        if ( binding_path )
           group_name, port_name, port = File.read( binding_path ).chomp.split(':')
           binding_group = server.get_elements( "socket-binding-group[@name='#{group_name}']" )
           if ( binding_group.empty? )
@@ -485,7 +495,7 @@ class AssemblyTool
         fix_socket_binding_groups(doc)
       end
 
-      add_socket_bindings(doc)
+      add_socket_bindings(doc, options[:extra_modules])
 
       if ( domain || ha )
         adjust_modcluster_config(doc)
