@@ -36,6 +36,30 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-cache</artifactId>
+      <version>${version.polyglot}</version>
+      <type>zip</type>
+      <classifier>module</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-hasingleton</artifactId>
+      <version>${version.polyglot}</version>
+      <type>zip</type>
+      <classifier>module</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectodd</groupId>
+      <artifactId>polyglot-stomp</artifactId>
+      <version>${version.polyglot}</version>
+      <type>zip</type>
+      <classifier>module</classifier>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>org.projectodd.stilts</groupId>
       <artifactId>stilts-stomp-client-js</artifactId>
       <type>js</type>
